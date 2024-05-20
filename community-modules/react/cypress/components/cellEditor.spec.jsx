@@ -1,9 +1,10 @@
 // noinspection ES6UnusedImports
-import React, {Component, forwardRef, useImperativeHandle, useState} from 'react'
-import {mount} from 'cypress-react-unit-test'
-import { AgGridReact } from "../..";
-import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
-import {ensureGridApiHasBeenSet} from "./utils";
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { mount } from 'cypress-react-unit-test';
+import React, { Component, forwardRef, useImperativeHandle, useState } from 'react';
+
+import { AgGridReact } from '../../dist/types/src';
+import { ensureGridApiHasBeenSet } from './utils';
 
 const CellEditor = forwardRef((props, ref) => {
     const [value, setValue] = useState(props.value);
@@ -14,8 +15,7 @@ const CellEditor = forwardRef((props, ref) => {
                 return true;
             },
 
-            afterGuiAttached() {
-            },
+            afterGuiAttached() {},
 
             getValue() {
                 return value;
@@ -27,8 +27,8 @@ const CellEditor = forwardRef((props, ref) => {
 
             isCancelAfterEnd() {
                 return false;
-            }
-        }
+            },
+        };
     });
 
     function incrementValue() {
@@ -41,54 +41,56 @@ const CellEditor = forwardRef((props, ref) => {
 
     return (
         <div>
-            <button className="increment" onClick={() => incrementValue()}>Increment</button>
-            <button className="close" onClick={() => close()}>Close</button>
+            <button className="increment" onClick={() => incrementValue()}>
+                Increment
+            </button>
+            <button className="close" onClick={() => close()}>
+                Close
+            </button>
             {value}
         </div>
-
     );
 });
 
 const GridComponent = () => {
-    const [rowData, setRowData] = useState([
-        {value: 1}
-    ]);
-    const [colDefs, setColDefs] = useState([
-        { field: 'value', editable: true, cellEditorComp: 'cellEditor' }
-    ]);
-
+    const [rowData, setRowData] = useState([{ value: 1 }]);
+    const [colDefs, setColDefs] = useState([{ field: 'value', editable: true, cellEditorComp: 'cellEditor' }]);
 
     return (
-        <div style={{height: 400, width: 900, marginTop: 15}}
-             className="ag-theme-alpine">
+        <div style={{ height: 400, width: 900, marginTop: 15 }} className="ag-theme-alpine">
             <AgGridReact
                 suppressReactUi={true}
                 ref={(element) => {
-                    window.gridComponentInstance = element
+                    window.gridComponentInstance = element;
                 }}
                 comps={{
-                    cellEditor: CellEditor
+                    cellEditor: CellEditor,
                 }}
                 rowData={rowData}
                 columnDefs={colDefs}
-                modules={[ClientSideRowModelModule]} />
+                modules={[ClientSideRowModelModule]}
+            />
         </div>
-    )
-}
-
+    );
+};
 
 describe('Cell Editor', () => {
     beforeEach((done) => {
         window.gridComponentInstance = null;
 
-        mount(<GridComponent/>, {
+        mount(<GridComponent />, {
             stylesheets: [
                 'https://cdn.jsdelivr.net/npm/@ag-grid-community/styles/ag-grid.css',
-                'https://cdn.jsdelivr.net/npm/@ag-grid-community/styles/ag-theme-alpine.css'
-            ]
-        })
+                'https://cdn.jsdelivr.net/npm/@ag-grid-community/styles/ag-theme-alpine.css',
+            ],
+        });
 
-        ensureGridApiHasBeenSet().then(() => setTimeout(() => done(), 20), () => { throw new Error("Grid API not set within expected time limits") });
+        ensureGridApiHasBeenSet().then(
+            () => setTimeout(() => done(), 20),
+            () => {
+                throw new Error('Grid API not set within expected time limits');
+            }
+        );
     });
     afterEach(() => {
         window.gridComponentInstance = null;
@@ -106,9 +108,9 @@ describe('Cell Editor', () => {
             .get('.ag-cell-value')
             .first()
             .invoke('text')
-            .should(text => {
+            .should((text) => {
                 // console.log(`[${text}]`);
-                expect(text).to.equal('1')
+                expect(text).to.equal('1');
             })
             .get('.ag-cell-value')
             .dblclick()
@@ -120,8 +122,8 @@ describe('Cell Editor', () => {
             .get('.ag-cell-value')
             .first()
             .invoke('text')
-            .should(text => {
-                expect(text).to.equal('2')
-            })
-    })
-})
+            .should((text) => {
+                expect(text).to.equal('2');
+            });
+    });
+});

@@ -1,19 +1,15 @@
 // noinspection ES6UnusedImports
-import React, {Component} from 'react';
-import {AgGridReact} from '../agGridReact';
-import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
+import { mount } from 'enzyme';
+import React, { Component } from 'react';
 
-import {ensureGridApiHasBeenSet} from "./utils"
-
-import {mount} from 'enzyme';
+import { AgGridReact } from '../agGridReact';
+import { ensureGridApiHasBeenSet } from './utils';
 
 let component = null;
 let agGridReact = null;
 
 beforeEach((done) => {
-    component = mount((
-        <App/>
-    ));
+    component = mount(<App />);
 
     agGridReact = component.find(AgGridReact).instance();
 
@@ -36,7 +32,7 @@ it('all rows selected', () => {
         // no actual event data is needed for this particular event/use case
     });
 
-    expect(agGridReact.api.getSelectedRows().length).toEqual(3)
+    expect(agGridReact.api.getSelectedRows().length).toEqual(3);
     expect(1).toEqual(1);
 });
 
@@ -58,48 +54,52 @@ class App extends Component {
 
         this.state = {
             columnDefs: [
-                {headerName: "Make", field: "make"},
-                {headerName: "Model", field: "model"},
-                {headerName: "Price", field: "price"}
-
+                { headerName: 'Make', field: 'make' },
+                { headerName: 'Model', field: 'model' },
+                { headerName: 'Price', field: 'price' },
             ],
             rowData: [
-                {make: "Toyota", model: "Celica", price: 35000},
-                {make: "Ford", model: "Mondeo", price: 32000},
-                {make: "Porsche", model: "Boxster", price: 72000}
-            ]
-        }
+                { make: 'Toyota', model: 'Celica', price: 35000 },
+                { make: 'Ford', model: 'Mondeo', price: 32000 },
+                { make: 'Porsche', model: 'Boxster', price: 72000 },
+            ],
+        };
     }
 
-    onGridReady = params => {
+    onGridReady = (params) => {
         this.api = params.api;
     };
 
-    handleSelectAll = event => {
-        this.api.selectAll()
+    handleSelectAll = (event) => {
+        this.api.selectAll();
     };
 
-    handleDeselectAll = event => {
-        this.api.deselectAll()
+    handleDeselectAll = (event) => {
+        this.api.deselectAll();
     };
 
     render() {
         return (
             <div>
-                <button id="selectAll" onClick={this.handleSelectAll}>Select All Rows</button>
-                <button id="deSelectAll" onClick={this.handleDeselectAll}>Deselect All Rows</button>
+                <button id="selectAll" onClick={this.handleSelectAll}>
+                    Select All Rows
+                </button>
+                <button id="deSelectAll" onClick={this.handleDeselectAll}>
+                    Deselect All Rows
+                </button>
                 <div
                     className="ag-theme-balham"
                     style={{
                         height: '500px',
-                        width: '600px'
-                    }}>
+                        width: '600px',
+                    }}
+                >
                     <AgGridReact
                         suppressReactUi={true}
                         columnDefs={this.state.columnDefs}
                         rowData={this.state.rowData}
-                        modules={[ClientSideRowModelModule]}
-                        onGridReady={this.onGridReady} />
+                        onGridReady={this.onGridReady}
+                    ></AgGridReact>
                 </div>
             </div>
         );
