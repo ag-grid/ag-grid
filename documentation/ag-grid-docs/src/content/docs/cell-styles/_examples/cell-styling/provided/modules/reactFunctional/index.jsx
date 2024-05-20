@@ -1,20 +1,21 @@
 'use strict';
 
-import React, { useCallback, useMemo, useState } from 'react';
-import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
+import React, { useCallback, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
 import './styles.css';
 
-import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const ragCellClassRules = {
-    'rag-green-outer': params => params.value === 2008,
-    'rag-blue-outer': params => params.value === 2004,
-    'rag-red-outer': params => params.value === 2000,
+    'rag-green-outer': (params) => params.value === 2008,
+    'rag-blue-outer': (params) => params.value === 2004,
+    'rag-red-outer': (params) => params.value === 2000,
 };
 
 const cellStyle = (params) => {
@@ -22,11 +23,11 @@ const cellStyle = (params) => {
     return {
         backgroundColor: color,
     };
-}
+};
 
 const cellClass = (params) => {
     return params.value === 'Swimming' ? 'rag-green' : 'rag-blue';
-}
+};
 
 const numberToColor = (val) => {
     if (val === 0) {
@@ -36,11 +37,11 @@ const numberToColor = (val) => {
     } else {
         return '#aaffaa';
     }
-}
+};
 
 const ragRenderer = (params) => {
     return <span className="rag-element">{params.value}</span>;
-}
+};
 
 const numberParser = (params) => {
     const newValue = params.newValue;
@@ -51,11 +52,9 @@ const numberParser = (params) => {
         valueAsNumber = parseFloat(params.newValue);
     }
     return valueAsNumber;
-}
-
+};
 
 const GridExample = () => {
-
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState();
@@ -111,24 +110,25 @@ const GridExample = () => {
             flex: 1,
             minWidth: 150,
             editable: true,
-        }
+        };
     }, []);
-
 
     const onGridReady = useCallback((params) => {
-
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then(resp => resp.json())
-            .then(data => setRowData(data));
+            .then((resp) => resp.json())
+            .then((data) => setRowData(data));
     }, []);
-
 
     return (
         <div style={containerStyle}>
-
-            <div style={gridStyle} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+            <div
+                style={gridStyle}
+                className={
+                    /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                    'ag-theme-quartz' /** DARK MODE END **/
+                }
+            >
                 <AgGridReact
-
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
@@ -137,8 +137,7 @@ const GridExample = () => {
             </div>
         </div>
     );
-
-}
+};
 
 const root = createRoot(document.getElementById('root'));
 root.render(<GridExample />);

@@ -1,11 +1,10 @@
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
-import { CtrlsService } from "../ctrlsService";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, PostConstruct } from '../context/context';
+import { CtrlsService } from '../ctrlsService';
+import { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 
 @Bean('columnAnimationService')
 export class ColumnAnimationService extends BeanStub {
-
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private gridBodyCtrl: GridBodyCtrl;
@@ -20,7 +19,7 @@ export class ColumnAnimationService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.ctrlsService.whenReady(p => this.gridBodyCtrl = p.gridBodyCtrl);
+        this.ctrlsService.whenReady((p) => (this.gridBodyCtrl = p.gridBodyCtrl));
     }
 
     public isActive(): boolean {
@@ -32,14 +31,20 @@ export class ColumnAnimationService extends BeanStub {
     }
 
     public start(): void {
-        if (this.active) { return; }
+        if (this.active) {
+            return;
+        }
 
-        if (this.gos.get('suppressColumnMoveAnimation')) { return; }
+        if (this.gos.get('suppressColumnMoveAnimation')) {
+            return;
+        }
 
         // if doing RTL, we don't animate open / close as due to how the pixels are inverted,
         // the animation moves all the row the the right rather than to the left (ie it's the static
         // columns that actually get their coordinates updated)
-        if (this.gos.get('enableRtl')) { return; }
+        if (this.gos.get('enableRtl')) {
+            return;
+        }
 
         this.ensureAnimationCssClassPresent();
 
@@ -47,8 +52,12 @@ export class ColumnAnimationService extends BeanStub {
     }
 
     public finish(): void {
-        if (!this.active) { return; }
-        this.flush(() => { this.active = false });
+        if (!this.active) {
+            return;
+        }
+        this.flush(() => {
+            this.active = false;
+        });
     }
 
     public executeNextVMTurn(func: Function): void {
@@ -83,17 +92,19 @@ export class ColumnAnimationService extends BeanStub {
     }
 
     private flush(callback: () => void): void {
-        if (this.executeNextFuncs.length === 0 && this.executeLaterFuncs.length === 0) { 
+        if (this.executeNextFuncs.length === 0 && this.executeLaterFuncs.length === 0) {
             callback();
-            return; 
+            return;
         }
 
         const runFuncs = (queue: Function[]) => {
             while (queue.length) {
                 const func = queue.pop();
-                if (func) { func(); }
+                if (func) {
+                    func();
+                }
             }
-        }
+        };
 
         this.getFrameworkOverrides().wrapIncoming(() => {
             window.setTimeout(() => runFuncs(this.executeNextFuncs), 0);

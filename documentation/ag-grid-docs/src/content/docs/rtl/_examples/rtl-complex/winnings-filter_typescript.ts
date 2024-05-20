@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "@ag-grid-community/core";
+import { IDoesFilterPassParams, IFilterComp, IFilterParams } from '@ag-grid-community/core';
 
 export class WinningsFilter implements IFilterComp {
     filterChangedCallback!: (additionalEventAttributes?: any) => void;
@@ -11,9 +11,9 @@ export class WinningsFilter implements IFilterComp {
     cbGreater90: any;
 
     init(params: IFilterParams) {
-        var uniqueId = Math.random()
-        this.filterChangedCallback = params.filterChangedCallback
-        this.eGui = document.createElement('div')
+        var uniqueId = Math.random();
+        this.filterChangedCallback = params.filterChangedCallback;
+        this.eGui = document.createElement('div');
         this.eGui.innerHTML =
             '<div style="padding: 4px;">' +
             '<div style="font-weight: bold;">Example Custom Filter</div>' +
@@ -32,54 +32,52 @@ export class WinningsFilter implements IFilterComp {
             '<div><label><input type="radio" name="filter"' +
             uniqueId +
             ' id="cbGreater90">&gt; &pound;90,000</label></div>' +
-            '</div>'
-        this.cbNoFilter = this.eGui.querySelector('#cbNoFilter')
-        this.cbPositive = this.eGui.querySelector('#cbPositive')
-        this.cbNegative = this.eGui.querySelector('#cbNegative')
-        this.cbGreater50 = this.eGui.querySelector('#cbGreater50')
-        this.cbGreater90 = this.eGui.querySelector('#cbGreater90')
-        this.cbNoFilter.checked = true // initialise the first to checked
-        this.cbNoFilter.onclick = this.filterChangedCallback
-        this.cbPositive.onclick = this.filterChangedCallback
-        this.cbNegative.onclick = this.filterChangedCallback
-        this.cbGreater50.onclick = this.filterChangedCallback
-        this.cbGreater90.onclick = this.filterChangedCallback
-        this.filterParams = params
+            '</div>';
+        this.cbNoFilter = this.eGui.querySelector('#cbNoFilter');
+        this.cbPositive = this.eGui.querySelector('#cbPositive');
+        this.cbNegative = this.eGui.querySelector('#cbNegative');
+        this.cbGreater50 = this.eGui.querySelector('#cbGreater50');
+        this.cbGreater90 = this.eGui.querySelector('#cbGreater90');
+        this.cbNoFilter.checked = true; // initialise the first to checked
+        this.cbNoFilter.onclick = this.filterChangedCallback;
+        this.cbPositive.onclick = this.filterChangedCallback;
+        this.cbNegative.onclick = this.filterChangedCallback;
+        this.cbGreater50.onclick = this.filterChangedCallback;
+        this.cbGreater90.onclick = this.filterChangedCallback;
+        this.filterParams = params;
     }
 
     getGui() {
-        return this.eGui
+        return this.eGui;
     }
 
     doesFilterPass(params: IDoesFilterPassParams) {
         var { node } = params;
 
-        var value = this.filterParams.getValue(node)
+        var value = this.filterParams.getValue(node);
 
         if (this.cbNoFilter.checked) {
-            return true
+            return true;
         } else if (this.cbPositive.checked) {
-            return value >= 0
+            return value >= 0;
         } else if (this.cbNegative.checked) {
-            return value < 0
+            return value < 0;
         } else if (this.cbGreater50.checked) {
-            return value >= 50000
+            return value >= 50000;
         } else if (this.cbGreater90.checked) {
-            return value >= 90000
+            return value >= 90000;
         } else {
-            console.error('invalid checkbox selection')
+            console.error('invalid checkbox selection');
         }
         return true;
     }
 
     isFilterActive() {
-        return !this.cbNoFilter.checked
+        return !this.cbNoFilter.checked;
     }
 
     // lazy, the example doesn't use getModel() and setModel()
-    getModel() {
-    }
+    getModel() {}
 
-    setModel() {
-    }
+    setModel() {}
 }

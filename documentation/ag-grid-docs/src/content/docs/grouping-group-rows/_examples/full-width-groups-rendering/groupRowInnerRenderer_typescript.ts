@@ -1,7 +1,7 @@
-import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export interface GroupFlagCellRendererParams extends ICellRendererParams {
-    flagCodes: Record<string, string>
+    flagCodes: Record<string, string>;
 }
 
 export class GroupRowInnerRenderer implements ICellRendererComp {
@@ -11,7 +11,7 @@ export class GroupRowInnerRenderer implements ICellRendererComp {
 
     init(params: GroupFlagCellRendererParams) {
         this.eGui = document.createElement('div');
-        this.eGui.style.display = "inline-block";
+        this.eGui.style.display = 'inline-block';
         this.params = params;
         this.refreshGui();
 
@@ -24,24 +24,30 @@ export class GroupRowInnerRenderer implements ICellRendererComp {
     }
 
     refreshGui() {
-
         var flagCode = this.params.flagCodes[this.params.node.key!];
 
         var html = '';
 
         if (flagCode) {
-            html += '<img class="flag" border="0" width="20" height="15" src="https://flags.fmcdn.net/data/flags/mini/' + flagCode + '.png">';
+            html +=
+                '<img class="flag" border="0" width="20" height="15" src="https://flags.fmcdn.net/data/flags/mini/' +
+                flagCode +
+                '.png">';
         }
 
         var node = this.params.node;
         var aggData = node.aggData;
 
         html += '<span class="groupTitle">COUNTRY_NAME</span>';
-        html += '<span class="medal gold" aria-label="COUNTRY_NAME - GOLD_COUNT gold medals"><i class="fas fa-medal"></i>GOLD_COUNT</span>';
-        html += '<span class="medal silver" aria-label="COUNTRY_NAME - SILVER_COUNT silver medals"><i class="fas fa-medal"></i>SILVER_COUNT</span>';
-        html += '<span class="medal bronze" aria-label="COUNTRY_NAME - BRONZE_COUNT bronze medals"><i class="fas fa-medal"></i>BRONZE_COUNT</span>';
+        html +=
+            '<span class="medal gold" aria-label="COUNTRY_NAME - GOLD_COUNT gold medals"><i class="fas fa-medal"></i>GOLD_COUNT</span>';
+        html +=
+            '<span class="medal silver" aria-label="COUNTRY_NAME - SILVER_COUNT silver medals"><i class="fas fa-medal"></i>SILVER_COUNT</span>';
+        html +=
+            '<span class="medal bronze" aria-label="COUNTRY_NAME - BRONZE_COUNT bronze medals"><i class="fas fa-medal"></i>BRONZE_COUNT</span>';
 
-        html = html.replace(/COUNTRY_NAME/g, node.key!)
+        html = html
+            .replace(/COUNTRY_NAME/g, node.key!)
             .replace(/GOLD_COUNT/g, aggData.gold)
             .replace(/SILVER_COUNT/g, aggData.silver)
             .replace(/BRONZE_COUNT/g, aggData.bronze);
@@ -63,5 +69,4 @@ export class GroupRowInnerRenderer implements ICellRendererComp {
     refresh(params: ICellRendererParams): boolean {
         return false;
     }
-
 }

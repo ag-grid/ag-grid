@@ -1,4 +1,4 @@
-import { GridApi } from "../gridApi";
+import { GridApi } from '../gridApi';
 
 /**
  * Enables types safe create of the given type without the need to set the common grid properties

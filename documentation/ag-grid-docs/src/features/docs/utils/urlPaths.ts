@@ -34,24 +34,14 @@ export interface UrlParams {
 /**
  * Dynamic path where examples are
  */
-export const getExampleUrl = ({
-    internalFramework,
-    pageName,
-    exampleName,
-    importType,
-}: UrlParams) => {
+export const getExampleUrl = ({ internalFramework, pageName, exampleName, importType }: UrlParams) => {
     return pathJoin(SITE_BASE_URL, 'examples', pageName, exampleName, importType, internalFramework);
 };
 
 /**
  * Dynamic path where docs example runner examples are
  */
-export const getExampleRunnerExampleUrl = ({
-    internalFramework,
-    pageName,
-    exampleName,
-    importType,
-}: UrlParams) => {
+export const getExampleRunnerExampleUrl = ({ internalFramework, pageName, exampleName, importType }: UrlParams) => {
     const exampleUrl = getExampleUrl({
         internalFramework,
         pageName,
@@ -64,12 +54,7 @@ export const getExampleRunnerExampleUrl = ({
 /**
  * Dynamic path for Plunkr examples url
  */
-export const getExamplePlunkrUrl = ({
-    internalFramework,
-    pageName,
-    exampleName,
-    importType,
-}: UrlParams) => {
+export const getExamplePlunkrUrl = ({ internalFramework, pageName, exampleName, importType }: UrlParams) => {
     const exampleUrl = getExampleUrl({
         internalFramework,
         pageName,
@@ -82,12 +67,7 @@ export const getExamplePlunkrUrl = ({
 /**
  * Dynamic path for Code Sandbox examples url
  */
-export const getExampleCodeSandboxUrl = ({
-    internalFramework,
-    pageName,
-    exampleName,
-    importType,
-}: UrlParams) => {
+export const getExampleCodeSandboxUrl = ({ internalFramework, pageName, exampleName, importType }: UrlParams) => {
     const exampleUrl = getExampleUrl({
         internalFramework,
         pageName,
@@ -100,12 +80,7 @@ export const getExampleCodeSandboxUrl = ({
 /**
  * Endpoint for all example files
  */
-export const getExampleContentsUrl = ({
-    internalFramework,
-    pageName,
-    exampleName,
-    importType,
-}: UrlParams) => {
+export const getExampleContentsUrl = ({ internalFramework, pageName, exampleName, importType }: UrlParams) => {
     const exampleUrl = getExampleUrl({
         internalFramework,
         pageName,

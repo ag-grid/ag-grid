@@ -1,18 +1,18 @@
 import {
-    _escapeString,
-    _removeFromParent,
     AgSelect,
     Component,
     DragAndDropService,
-    DraggingEvent,
     DragItem,
     DragSourceType,
+    DraggingEvent,
     DropTarget,
     ListOption,
     PillDragComp,
     PillDropZonePanel,
     PostConstruct,
-} from "@ag-grid-community/core";
+    _escapeString,
+    _removeFromParent,
+} from '@ag-grid-community/core';
 
 export interface AgPillSelectParams<TValue = string | null> {
     valueList?: TValue[];
@@ -26,14 +26,14 @@ export interface AgPillSelectParams<TValue = string | null> {
 }
 
 export interface AgPillSelectChangeParams<TValue> {
-    added: TValue[],
-    removed: TValue[],
-    updated: TValue[],
-    selected: TValue[]
+    added: TValue[];
+    removed: TValue[];
+    updated: TValue[];
+    selected: TValue[];
 }
 
 export class AgPillSelect<TValue = string | null> extends Component {
-    private static TEMPLATE = /* html */`<div class="ag-pill-select" role="presentation"></div>`;
+    private static TEMPLATE = /* html */ `<div class="ag-pill-select" role="presentation"></div>`;
 
     private dropZonePanel: PillSelectDropZonePanel<TValue>;
     private eSelect?: AgSelect<TValue>;
@@ -51,22 +51,24 @@ export class AgPillSelect<TValue = string | null> extends Component {
         const { selectedValueList, valueFormatter, valueList } = this.config;
         this.selectedValues = selectedValueList ?? [];
         this.valueList = valueList ?? [];
-        this.valueFormatter = valueFormatter ?? (value => _escapeString(value as any)!);
+        this.valueFormatter = valueFormatter ?? ((value) => _escapeString(value as any)!);
     }
 
     @PostConstruct
     private init(): void {
         const { ariaLabel, onValuesChange, dragSourceId } = this.config;
-        this.dropZonePanel = this.createManagedBean(new PillSelectDropZonePanel(
-            {
-                getValues: () => this.selectedValues,
-                setValues: values => this.updateValues(values),
-                isDraggable: () => this.selectedValues.length > 1
-            },
-            value => this.valueFormatter(value),
-            ariaLabel!,
-            dragSourceId
-        ));
+        this.dropZonePanel = this.createManagedBean(
+            new PillSelectDropZonePanel(
+                {
+                    getValues: () => this.selectedValues,
+                    setValues: (values) => this.updateValues(values),
+                    isDraggable: () => this.selectedValues.length > 1,
+                },
+                (value) => this.valueFormatter(value),
+                ariaLabel!,
+                dragSourceId
+            )
+        );
         const eGui = this.getGui();
         eGui.appendChild(this.dropZonePanel.getGui());
         this.initSelect();
@@ -76,7 +78,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
     }
 
     public setValues(valueList: TValue[], selectedValues: TValue[]): this {
-        const { added, removed, updated} = this.getChanges(this.valueList, valueList)
+        const { added, removed, updated } = this.getChanges(this.valueList, valueList);
         let refreshSelect = false;
         if (added.length || removed.length || updated.length) {
             refreshSelect = true;
@@ -97,12 +99,14 @@ export class AgPillSelect<TValue = string | null> extends Component {
             return false;
         }
         const { selectPlaceholder: placeholder } = this.config;
-        this.eSelect = this.createBean(new AgSelect({
-            options,
-            placeholder,
-            onValueChange: value => this.addValue(value),
-            pickerIcon: 'chartsMenuAdd'
-        }));
+        this.eSelect = this.createBean(
+            new AgSelect({
+                options,
+                placeholder,
+                onValueChange: (value) => this.addValue(value),
+                pickerIcon: 'chartsMenuAdd',
+            })
+        );
         this.getGui().appendChild(this.eSelect.getGui());
         return true;
     }
@@ -113,7 +117,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
         if (maxSelection && this.selectedValues.length >= maxSelection) {
             return options;
         }
-        this.valueList.forEach(value => {
+        this.valueList.forEach((value) => {
             if (!this.selectedValues.includes(value)) {
                 options.push({ value, text: this.valueFormatter(value) });
             }
@@ -150,9 +154,12 @@ export class AgPillSelect<TValue = string | null> extends Component {
         }
     }
 
-    private getChanges(previousSelectedValues: TValue[], newSelectedValues: TValue[]): AgPillSelectChangeParams<TValue> {
-        const added = newSelectedValues.filter(value => !previousSelectedValues.includes(value));
-        const removed = previousSelectedValues.filter(value => !newSelectedValues.includes(value));
+    private getChanges(
+        previousSelectedValues: TValue[],
+        newSelectedValues: TValue[]
+    ): AgPillSelectChangeParams<TValue> {
+        const added = newSelectedValues.filter((value) => !previousSelectedValues.includes(value));
+        const removed = previousSelectedValues.filter((value) => !newSelectedValues.includes(value));
         const updated = newSelectedValues.filter((value, index) => previousSelectedValues[index] !== value);
         return { added, removed, updated, selected: newSelectedValues };
     }
@@ -207,7 +214,7 @@ class PillSelectDragComp<TValue> extends PillDragComp<TValue> {
 
     protected createGetDragItem(): () => DragItem<TValue> {
         return () => ({
-            value: this.value
+            value: this.value,
         });
     }
 
@@ -227,9 +234,9 @@ class PillSelectDragComp<TValue> extends PillDragComp<TValue> {
 class PillSelectDropZonePanel<TValue> extends PillDropZonePanel<PillSelectDragComp<TValue>, TValue> {
     constructor(
         private readonly model: {
-            getValues: () => TValue[],
-            setValues: (values: TValue[]) => void
-            isDraggable: () => boolean
+            getValues: () => TValue[];
+            setValues: (values: TValue[]) => void;
+            isDraggable: () => boolean;
         },
         private readonly valueFormatter: (value: TValue) => string,
         private readonly ariaLabel: string,
@@ -244,7 +251,10 @@ class PillSelectDropZonePanel<TValue> extends PillDropZonePanel<PillSelectDragCo
     }
 
     protected isItemDroppable(item: TValue, draggingEvent: DraggingEvent): boolean {
-        return this.isSourceEventFromTarget(draggingEvent) || (this.sourceId != null && this.sourceId === draggingEvent.dragSource.sourceId);
+        return (
+            this.isSourceEventFromTarget(draggingEvent) ||
+            (this.sourceId != null && this.sourceId === draggingEvent.dragSource.sourceId)
+        );
     }
 
     protected updateItems(items: TValue[]): void {
@@ -264,7 +274,14 @@ class PillSelectDropZonePanel<TValue> extends PillDropZonePanel<PillSelectDragCo
     }
 
     protected createPillComponent(item: TValue, dropTarget: DropTarget, ghost: boolean): PillSelectDragComp<TValue> {
-        return new PillSelectDragComp(item, dropTarget, ghost, this.valueFormatter, this.model.isDraggable(), this.sourceId);
+        return new PillSelectDragComp(
+            item,
+            dropTarget,
+            ghost,
+            this.valueFormatter,
+            this.model.isDraggable(),
+            this.sourceId
+        );
     }
 
     protected getItems(dragItem: DragItem): TValue[] {

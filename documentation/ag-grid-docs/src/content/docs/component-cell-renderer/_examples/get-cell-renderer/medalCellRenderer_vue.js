@@ -2,7 +2,7 @@ export default {
     template: `<span>{{ displayValue }}</span>`,
     data: function () {
         return {
-            displayValue: ''
+            displayValue: '',
         };
     },
     beforeMount() {
@@ -10,7 +10,9 @@ export default {
     },
     methods: {
         medalUserFunction() {
-            console.log(`user function called for medal column: row = ${this.params.node.rowIndex}, column = ${this.params.column.getId()}`);
-        }
-    }
+            console.log(
+                `user function called for medal column: row = ${this.params.node.rowIndex}, column = ${this.params.column.getId()}`
+            );
+        },
+    },
 };

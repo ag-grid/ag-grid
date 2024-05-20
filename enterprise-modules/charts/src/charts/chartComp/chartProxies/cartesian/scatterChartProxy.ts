@@ -1,7 +1,8 @@
-import { AgBubbleSeriesOptions, AgCartesianAxisOptions, AgScatterSeriesOptions } from "ag-charts-community";
-import { ChartProxyParams, FieldDefinition, UpdateParams } from "../chartProxy";
-import { CartesianChartProxy } from "./cartesianChartProxy";
-import { ChartDataModel } from "../../model/chartDataModel";
+import { AgBubbleSeriesOptions, AgCartesianAxisOptions, AgScatterSeriesOptions } from 'ag-charts-community';
+
+import { ChartDataModel } from '../../model/chartDataModel';
+import { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
+import { CartesianChartProxy } from './cartesianChartProxy';
 
 interface SeriesDefinition {
     xField: FieldDefinition;
@@ -10,7 +11,6 @@ interface SeriesDefinition {
 }
 
 export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'> {
-
     public constructor(params: ChartProxyParams) {
         super(params);
     }
@@ -34,7 +34,7 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
         const seriesDefinitions = this.getSeriesDefinitions(params.fields, paired);
         const labelFieldDefinition = category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : category;
 
-        const series = seriesDefinitions.map(seriesDefinition => {
+        const series = seriesDefinitions.map((seriesDefinition) => {
             if (seriesDefinition?.sizeField) {
                 const opts: AgBubbleSeriesOptions = {
                     type: 'bubble',
@@ -69,7 +69,7 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
 
     private extractCrossFilterSeries(
         series: (AgScatterSeriesOptions | AgBubbleSeriesOptions)[],
-        params: UpdateParams,
+        params: UpdateParams
     ): (AgScatterSeriesOptions | AgBubbleSeriesOptions)[] {
         const { data } = params;
         const palette = this.getChartPalette();
@@ -95,10 +95,13 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
             return undefined;
         };
 
-        const updatePrimarySeries = <T extends AgScatterSeriesOptions | AgBubbleSeriesOptions>(series: T, idx: number): T => {
+        const updatePrimarySeries = <T extends AgScatterSeriesOptions | AgBubbleSeriesOptions>(
+            series: T,
+            idx: number
+        ): T => {
             const fill = palette?.fills?.[idx];
             const stroke = palette?.strokes?.[idx];
-            
+
             let markerDomain: [number, number] | undefined = undefined;
             if (series.type === 'bubble') {
                 const { sizeKey } = series;
@@ -117,10 +120,10 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                 highlightStyle: { item: { fill: 'yellow' } },
                 listeners: {
                     ...series.listeners,
-                    nodeClick: this.crossFilterCallback
+                    nodeClick: this.crossFilterCallback,
                 },
             };
-        }
+        };
 
         const updateFilteredOutSeries = <T extends AgScatterSeriesOptions | AgBubbleSeriesOptions>(series: T): T => {
             let { yKey, xKey } = series;
@@ -154,49 +157,64 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                             datum: { ...e.datum, [xKey!]: value },
                         };
                         this.crossFilterCallback(filterableEvent);
-                    }
+                    },
                 },
             };
         };
 
         const updatedSeries = series.map(updatePrimarySeries);
-        return [
-            ...updatedSeries,
-            ...updatedSeries.map(updateFilteredOutSeries),
-        ];
+        return [...updatedSeries, ...updatedSeries.map(updateFilteredOutSeries)];
     }
 
     private getSeriesDefinitions(fields: FieldDefinition[], paired: boolean): (SeriesDefinition | null)[] {
-        if (fields.length < 2) { return []; }
+        if (fields.length < 2) {
+            return [];
+        }
 
         const isBubbleChart = this.chartType === 'bubble';
 
         if (paired) {
             if (isBubbleChart) {
-                return fields.map((currentXField, i) => i % 3 === 0 ? ({
-                    xField: currentXField,
-                    yField: fields[i + 1],
-                    sizeField: fields[i + 2],
-                }) : null).filter(x => x && x.yField && x.sizeField);
+                return fields
+                    .map((currentXField, i) =>
+                        i % 3 === 0
+                            ? {
+                                  xField: currentXField,
+                                  yField: fields[i + 1],
+                                  sizeField: fields[i + 2],
+                              }
+                            : null
+                    )
+                    .filter((x) => x && x.yField && x.sizeField);
             }
-            return fields.map((currentXField, i) => i % 2 === 0 ? ({
-                xField: currentXField,
-                yField: fields[i + 1],
-            }) : null).filter(x => x && x.yField);
+            return fields
+                .map((currentXField, i) =>
+                    i % 2 === 0
+                        ? {
+                              xField: currentXField,
+                              yField: fields[i + 1],
+                          }
+                        : null
+                )
+                .filter((x) => x && x.yField);
         }
 
         const xField = fields[0];
 
         if (isBubbleChart) {
             return fields
-                .map((yField, i) => i % 2 === 1 ? ({
-                    xField,
-                    yField,
-                    sizeField: fields[i + 1],
-                }) : null)
-                .filter(x => x && x.sizeField);
+                .map((yField, i) =>
+                    i % 2 === 1
+                        ? {
+                              xField,
+                              yField,
+                              sizeField: fields[i + 1],
+                          }
+                        : null
+                )
+                .filter((x) => x && x.sizeField);
         }
 
-        return fields.filter((value, i) => i > 0).map(yField => ({ xField, yField }));
+        return fields.filter((value, i) => i > 0).map((yField) => ({ xField, yField }));
     }
 }

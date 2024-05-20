@@ -9,7 +9,6 @@ import {
     ChartParamsCellRange,
     ChartRef,
     ChartType,
-    ColumnModel,
     CreateCrossFilterChartParams,
     CreatePivotChartParams,
     CreateRangeChartParams,
@@ -24,35 +23,41 @@ import {
     SeriesChartType,
     SeriesGroupType,
     UpdateChartParams,
-} from "@ag-grid-community/core";
-import { AgChartThemeOverrides, AgChartThemePalette, VERSION as CHARTS_VERSION, _ModuleSupport} from "ag-charts-community";
-import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
+    VisibleColsService,
+} from '@ag-grid-community/core';
+import {
+    AgChartThemeOverrides,
+    AgChartThemePalette,
+    VERSION as CHARTS_VERSION,
+    _ModuleSupport,
+} from 'ag-charts-community';
+
+import { VERSION as GRID_VERSION } from '../version';
+import { GridChartComp, GridChartParams } from './chartComp/gridChartComp';
+import { ChartParamsValidator } from './chartComp/utils/chartParamsValidator';
 import { getCanonicalChartType } from './chartComp/utils/seriesTypeMapper';
-import { upgradeChartModel } from "./chartModelMigration";
-import { VERSION as GRID_VERSION } from "../version";
-import { ChartParamsValidator } from "./chartComp/utils/chartParamsValidator";
+import { upgradeChartModel } from './chartModelMigration';
 
 export interface CrossFilteringContext {
     lastSelectedChartId: string;
 }
 
 export interface CommonCreateChartParams extends BaseCreateChartParams {
-    cellRange: PartialCellRange,
-    pivotChart?: boolean,
-    suppressChartRanges?: boolean,
-    switchCategorySeries?: boolean,
-    aggFunc?: string | IAggFunc,
-    crossFiltering?: boolean,
-    chartOptionsToRestore?: AgChartThemeOverrides,
-    chartPaletteToRestore?: AgChartThemePalette,
-    seriesChartTypes?: SeriesChartType[],
-    seriesGroupType?: SeriesGroupType
+    cellRange: PartialCellRange;
+    pivotChart?: boolean;
+    suppressChartRanges?: boolean;
+    switchCategorySeries?: boolean;
+    aggFunc?: string | IAggFunc;
+    crossFiltering?: boolean;
+    chartOptionsToRestore?: AgChartThemeOverrides;
+    chartPaletteToRestore?: AgChartThemePalette;
+    seriesChartTypes?: SeriesChartType[];
+    seriesGroupType?: SeriesGroupType;
 }
 
 @Bean('chartService')
 export class ChartService extends BeanStub implements IChartService {
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Optional('rangeService') private rangeService?: IRangeService;
 
     public static CHARTS_VERSION = CHARTS_VERSION;
@@ -75,7 +80,7 @@ export class ChartService extends BeanStub implements IChartService {
             return;
         }
 
-        const chartComp = [...this.activeChartComps].find(chartComp => chartComp.getChartId() === params.chartId);
+        const chartComp = [...this.activeChartComps].find((chartComp) => chartComp.getChartId() === params.chartId);
         if (!chartComp) {
             console.warn(`AG Grid - Unable to update chart. No active chart found with ID: ${params.chartId}.`);
             return;
@@ -88,16 +93,16 @@ export class ChartService extends BeanStub implements IChartService {
         const models: ChartModel[] = [];
 
         const versionedModel = (c: ChartModel) => {
-            return {...c, version: GRID_VERSION };
+            return { ...c, version: GRID_VERSION };
         };
-        this.activeChartComps.forEach(c => models.push(versionedModel(c.getChartModel())));
+        this.activeChartComps.forEach((c) => models.push(versionedModel(c.getChartModel())));
 
         return models;
     }
 
     public getChartRef(chartId: string): ChartRef | undefined {
         let chartRef;
-        this.activeCharts.forEach(cr => {
+        this.activeCharts.forEach((cr) => {
             if (cr.chartId === chartId) {
                 chartRef = cr;
             }
@@ -107,7 +112,7 @@ export class ChartService extends BeanStub implements IChartService {
 
     public getChartComp(chartId: string): GridChartComp | undefined {
         let chartComp;
-        this.activeChartComps.forEach(comp => {
+        this.activeChartComps.forEach((comp) => {
             if (comp.getChartId() === chartId) {
                 chartComp = comp;
             }
@@ -117,7 +122,7 @@ export class ChartService extends BeanStub implements IChartService {
 
     public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
         let url: any;
-        this.activeChartComps.forEach(c => {
+        this.activeChartComps.forEach((c) => {
             if (c.getChartId() === params.chartId) {
                 url = c.getChartImageDataURL(params.fileFormat);
             }
@@ -126,17 +131,17 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     public downloadChart(params: ChartDownloadParams) {
-        const chartComp = Array.from(this.activeChartComps).find(c => c.getChartId() === params.chartId);
+        const chartComp = Array.from(this.activeChartComps).find((c) => c.getChartId() === params.chartId);
         chartComp?.downloadChart(params.dimensions, params.fileName, params.fileFormat);
     }
 
     public openChartToolPanel(params: OpenChartToolPanelParams) {
-        const chartComp = Array.from(this.activeChartComps).find(c => c.getChartId() === params.chartId);
+        const chartComp = Array.from(this.activeChartComps).find((c) => c.getChartId() === params.chartId);
         chartComp?.openChartToolPanel(params.panel);
     }
 
     public closeChartToolPanel(chartId: string) {
-        const chartComp = Array.from(this.activeChartComps).find(c => c.getChartId() === chartId);
+        const chartComp = Array.from(this.activeChartComps).find((c) => c.getChartId() === chartId);
         chartComp?.closeChartToolPanel();
     }
 
@@ -147,7 +152,7 @@ export class ChartService extends BeanStub implements IChartService {
 
     public restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
         if (!model) {
-            console.warn("AG Grid - unable to restore chart as no chart model is provided");
+            console.warn('AG Grid - unable to restore chart as no chart model is provided');
             return;
         }
 
@@ -162,7 +167,7 @@ export class ChartService extends BeanStub implements IChartService {
 
         if (model.modelType === 'pivot') {
             // if required enter pivot mode
-            this.gos.updateGridOptions({ options: { pivotMode: true}, source: 'pivotChart' as any });
+            this.gos.updateGridOptions({ options: { pivotMode: true }, source: 'pivotChart' as any });
 
             cellRange = this.createCellRange(undefined, true);
             pivotChart = true;
@@ -172,7 +177,9 @@ export class ChartService extends BeanStub implements IChartService {
             chartPaletteToRestore = model.chartPalette;
         }
 
-        if (!cellRange) { return; }
+        if (!cellRange) {
+            return;
+        }
 
         return this.createChart({
             ...model,
@@ -188,7 +195,9 @@ export class ChartService extends BeanStub implements IChartService {
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
         const cellRange = this.createCellRange(params.cellRange);
 
-        if (!cellRange) { return; }
+        if (!cellRange) {
+            return;
+        }
 
         return this.createChart({
             ...params,
@@ -198,11 +207,13 @@ export class ChartService extends BeanStub implements IChartService {
 
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
         // if required enter pivot mode
-        this.gos.updateGridOptions({ options: { pivotMode: true}, source: 'pivotChart' as any });
+        this.gos.updateGridOptions({ options: { pivotMode: true }, source: 'pivotChart' as any });
 
         const cellRange = this.createCellRange(undefined, true);
 
-        if (!cellRange) { return; }
+        if (!cellRange) {
+            return;
+        }
 
         return this.createChart({
             ...params,
@@ -215,9 +226,12 @@ export class ChartService extends BeanStub implements IChartService {
     public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
         const cellRange = this.createCellRange(params.cellRange);
 
-        if (!cellRange) { return; }
+        if (!cellRange) {
+            return;
+        }
 
-        const suppressChartRangesSupplied = typeof params.suppressChartRanges !== 'undefined' && params.suppressChartRanges !== null;
+        const suppressChartRangesSupplied =
+            typeof params.suppressChartRanges !== 'undefined' && params.suppressChartRanges !== null;
         const suppressChartRanges = suppressChartRangesSupplied ? params.suppressChartRanges : true;
 
         return this.createChart({
@@ -228,15 +242,16 @@ export class ChartService extends BeanStub implements IChartService {
         });
     }
 
-    private createChart(params: CommonCreateChartParams): ChartRef | undefined {        
+    private createChart(params: CommonCreateChartParams): ChartRef | undefined {
         const validationResult = ChartParamsValidator.validateCreateParams(params);
-        if (!validationResult) { return undefined; }
+        if (!validationResult) {
+            return undefined;
+        }
         params = validationResult === true ? params : validationResult;
 
         const { chartType, chartContainer } = params;
 
         const createChartContainerFunc = this.gos.getCallback('createChartContainer');
-
 
         const gridChartParams: GridChartParams = {
             ...params,
@@ -244,7 +259,7 @@ export class ChartService extends BeanStub implements IChartService {
             chartType: getCanonicalChartType(chartType),
             insideDialog: !(chartContainer || createChartContainerFunc),
             crossFilteringContext: this.crossFilteringContext,
-            crossFilteringResetCallback: () => this.activeChartComps.forEach(c => c.crossFilteringReset()),
+            crossFilteringResetCallback: () => this.activeChartComps.forEach((c) => c.crossFilteringReset()),
         };
 
         const chartComp = new GridChartComp(gridChartParams);
@@ -270,12 +285,10 @@ export class ChartService extends BeanStub implements IChartService {
             createChartContainerFunc(chartRef);
         } else {
             // add listener to remove from active charts list when charts are destroyed, e.g. closing chart dialog
-            chartComp.addEventListener(
-                GridChartComp.EVENT_DESTROYED,
-                () => {
-                    this.activeChartComps.delete(chartComp);
-                    this.activeCharts.delete(chartRef);
-                });
+            chartComp.addEventListener(GridChartComp.EVENT_DESTROYED, () => {
+                this.activeChartComps.delete(chartComp);
+                this.activeCharts.delete(chartRef);
+            });
         }
 
         return chartRef;
@@ -292,7 +305,7 @@ export class ChartService extends BeanStub implements IChartService {
             },
             chartElement: chartComp.getGui(),
             chart: chartComp.getUnderlyingChart(),
-            chartId: chartComp.getChartModel().chartId
+            chartId: chartComp.getChartModel().chartId,
         };
 
         this.activeCharts.add(chartRef);
@@ -311,22 +324,28 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     private createCellRange(cellRangeParams?: ChartParamsCellRange, allRange?: boolean): PartialCellRange | undefined {
-        const rangeParams = allRange ? {
-            rowStartIndex: null,
-            rowStartPinned: undefined,
-            rowEndIndex: null,
-            rowEndPinned: undefined,
-            columns: this.columnModel.getAllDisplayedColumns().map(col => col.getColId())
-        } : cellRangeParams;
-        const cellRange = rangeParams && this.rangeService?.createPartialCellRangeFromRangeParams(rangeParams as CellRangeParams, true);
+        const rangeParams = allRange
+            ? {
+                  rowStartIndex: null,
+                  rowStartPinned: undefined,
+                  rowEndIndex: null,
+                  rowEndPinned: undefined,
+                  columns: this.visibleColsService.getAllCols().map((col) => col.getColId()),
+              }
+            : cellRangeParams;
+        const cellRange =
+            rangeParams &&
+            this.rangeService?.createPartialCellRangeFromRangeParams(rangeParams as CellRangeParams, true);
         if (!cellRange) {
-            console.warn(`AG Grid - unable to create chart as ${allRange ? 'there are no columns in the grid' : 'no range is selected'}.`);
+            console.warn(
+                `AG Grid - unable to create chart as ${allRange ? 'there are no columns in the grid' : 'no range is selected'}.`
+            );
         }
         return cellRange;
     }
 
     @PreDestroy
     private destroyAllActiveCharts(): void {
-        this.activeCharts.forEach(chart => chart.destroyChart());
+        this.activeCharts.forEach((chart) => chart.destroyChart());
     }
 }

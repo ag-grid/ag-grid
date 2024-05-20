@@ -1,10 +1,11 @@
 .custom-tooltip {
     color: var(--ag-foreground-color);
-    background-color: #5577CC;
+    background-color: #5577cc;
     padding: 5px;
 }
 
-.custom-tooltip p, .custom-tooltip h3 {
+.custom-tooltip p,
+.custom-tooltip h3 {
     margin: 5px;
     white-space: nowrap;
 }

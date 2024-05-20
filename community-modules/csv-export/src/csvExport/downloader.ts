@@ -15,11 +15,13 @@ export class Downloader {
         element.style.display = 'none';
         document.body.appendChild(element);
 
-        element.dispatchEvent(new MouseEvent('click', {
-            bubbles: false,
-            cancelable: true,
-            view: win
-        }));
+        element.dispatchEvent(
+            new MouseEvent('click', {
+                bubbles: false,
+                cancelable: true,
+                view: win,
+            })
+        );
 
         document.body.removeChild(element);
 

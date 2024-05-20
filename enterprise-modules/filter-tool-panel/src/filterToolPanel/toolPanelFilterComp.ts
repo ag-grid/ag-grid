@@ -1,25 +1,25 @@
 import {
     Autowired,
     Column,
-    ColumnModel,
+    ColumnNameService,
     Component,
     Events,
     FilterManager,
     FilterOpenedEvent,
+    FilterWrapperComp,
     IFilterComp,
     KeyCode,
     PostConstruct,
     RefSelector,
-    FilterWrapperComp,
     _clearElement,
     _createIconNoSpan,
+    _loadTemplate,
     _setAriaExpanded,
     _setDisplayed,
-    _loadTemplate
-} from "@ag-grid-community/core";
+} from '@ag-grid-community/core';
 
 export class ToolPanelFilterComp extends Component {
-    private static TEMPLATE = /* html */`
+    private static TEMPLATE = /* html */ `
         <div class="ag-filter-toolpanel-instance">
             <div class="ag-filter-toolpanel-header ag-filter-toolpanel-instance-header" ref="eFilterToolPanelHeader" role="button" aria-expanded="false">
                 <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
@@ -36,7 +36,7 @@ export class ToolPanelFilterComp extends Component {
     @RefSelector('eExpand') private eExpand: Element;
 
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
 
     private eExpandChecked: Element;
     private eExpandUnchecked: Element;
@@ -46,7 +46,10 @@ export class ToolPanelFilterComp extends Component {
     private underlyingFilter: IFilterComp | null;
     private filterWrapperComp?: FilterWrapperComp;
 
-    constructor(hideHeader: boolean, private readonly expandedCallback: () => void) {
+    constructor(
+        hideHeader: boolean,
+        private readonly expandedCallback: () => void
+    ) {
         super(ToolPanelFilterComp.TEMPLATE);
         this.hideHeader = hideHeader;
     }
@@ -61,7 +64,8 @@ export class ToolPanelFilterComp extends Component {
 
     public setColumn(column: Column): void {
         this.column = column;
-        this.eFilterName.innerText = this.columnModel.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
+        this.eFilterName.innerText =
+            this.columnNameService.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', this.onKeyDown.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
@@ -104,7 +108,7 @@ export class ToolPanelFilterComp extends Component {
     }
 
     public getColumnFilterName(): string | null {
-        return this.columnModel.getDisplayNameForColumn(this.column, 'filterToolPanel', false);
+        return this.columnNameService.getDisplayNameForColumn(this.column, 'filterToolPanel', false);
     }
 
     public addCssClassToTitleBar(cssClass: string) {
@@ -112,7 +116,9 @@ export class ToolPanelFilterComp extends Component {
     }
 
     private addInIcon(iconName: string, eParent: Element, column: Column): void {
-        if (eParent == null) { return; }
+        if (eParent == null) {
+            return;
+        }
 
         const eIcon = _createIconNoSpan(iconName, this.gos, column)!;
         eParent.appendChild(eIcon);
@@ -132,7 +138,9 @@ export class ToolPanelFilterComp extends Component {
     }
 
     public expand(): void {
-        if (this.expanded) { return; }
+        if (this.expanded) {
+            return;
+        }
 
         this.expanded = true;
         _setAriaExpanded(this.eFilterToolPanelHeader, true);
@@ -146,27 +154,32 @@ export class ToolPanelFilterComp extends Component {
     }
 
     private addFilterElement(suppressFocus?: boolean): void {
-        const filterPanelWrapper = _loadTemplate(/* html */`<div class="ag-filter-toolpanel-instance-filter"></div>`);
+        const filterPanelWrapper = _loadTemplate(/* html */ `<div class="ag-filter-toolpanel-instance-filter"></div>`);
         const comp = this.createManagedBean(new FilterWrapperComp(this.column, 'TOOLBAR'));
         this.filterWrapperComp = comp;
 
-        if (!comp.hasFilter()) { return; }
+        if (!comp.hasFilter()) {
+            return;
+        }
 
-        comp.getFilter()?.then(filter => {
+        comp.getFilter()?.then((filter) => {
             this.underlyingFilter = filter;
 
-            if (!filter) { return; }
+            if (!filter) {
+                return;
+            }
             filterPanelWrapper.appendChild(comp.getGui());
 
             this.agFilterToolPanelBody.appendChild(filterPanelWrapper);
 
             comp.afterGuiAttached({ container: 'toolPanel', suppressFocus });
         });
-        
     }
 
     public collapse(): void {
-        if (!this.expanded) { return; }
+        if (!this.expanded) {
+            return;
+        }
 
         this.expanded = false;
         _setAriaExpanded(this.eFilterToolPanelHeader, false);
@@ -185,17 +198,20 @@ export class ToolPanelFilterComp extends Component {
         _clearElement(this.agFilterToolPanelBody);
     }
 
-
     public isExpanded(): boolean {
         return this.expanded;
     }
 
     public refreshFilter(isDisplayed: boolean): void {
-        if (!this.expanded) { return; }
+        if (!this.expanded) {
+            return;
+        }
 
         const filter = this.underlyingFilter as any;
 
-        if (!filter) { return; }
+        if (!filter) {
+            return;
+        }
 
         if (isDisplayed) {
             // set filters should be updated when the filter has been changed elsewhere, i.e. via api. Note that we can't
@@ -210,9 +226,15 @@ export class ToolPanelFilterComp extends Component {
     }
 
     private onFilterOpened(event: FilterOpenedEvent): void {
-        if (event.source !== 'COLUMN_MENU') { return; }
-        if (event.column !== this.column) { return; }
-        if (!this.expanded) { return; }
+        if (event.source !== 'COLUMN_MENU') {
+            return;
+        }
+        if (event.column !== this.column) {
+            return;
+        }
+        if (!this.expanded) {
+            return;
+        }
 
         this.collapse();
     }

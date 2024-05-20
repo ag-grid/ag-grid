@@ -1,5 +1,5 @@
-import { AgEvent } from "../events";
-import { BeanStub } from "../context/beanStub";
+import { BeanStub } from '../context/beanStub';
+import { AgEvent } from '../events';
 
 export interface LoadCompleteEvent extends AgEvent {
     success: boolean;
@@ -26,7 +26,6 @@ export interface LoadSuccessParams {
 }
 
 export abstract class RowNodeBlock extends BeanStub {
-
     public static EVENT_LOAD_COMPLETE = 'loadComplete';
 
     public static STATE_WAITING_TO_LOAD = 'needsLoading';
@@ -40,7 +39,7 @@ export abstract class RowNodeBlock extends BeanStub {
 
     private version = 0;
 
-    public abstract getBlockStateJson(): { id: string, state: any };
+    public abstract getBlockStateJson(): { id: string; state: any };
 
     protected abstract loadFromDatasource(): void;
 
@@ -107,7 +106,6 @@ export abstract class RowNodeBlock extends BeanStub {
     }
 
     protected successCommon(version: number, params: LoadSuccessParams) {
-
         // need to dispatch load complete before processing the data, as PaginationComp checks
         // RowNodeBlockLoader to see if it is still loading, so the RowNodeBlockLoader needs to
         // be updated first (via LoadComplete event) before PaginationComp updates (via processServerResult method)
@@ -127,7 +125,7 @@ export abstract class RowNodeBlock extends BeanStub {
         const event: LoadCompleteEvent = {
             type: RowNodeBlock.EVENT_LOAD_COMPLETE,
             success: success,
-            block: this
+            block: this,
         };
 
         this.dispatchEvent(event);

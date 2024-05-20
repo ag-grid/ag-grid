@@ -1,12 +1,11 @@
-import { ColDef, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
-import { getData } from "./data";
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
-
+import { getData } from './data';
 import { PartialMatchFilter } from './partialMatchFilter_typescript';
 
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const columnDefs: ColDef[] = [
     { field: 'row' },
@@ -14,7 +13,7 @@ const columnDefs: ColDef[] = [
         field: 'name',
         filter: PartialMatchFilter,
     },
-]
+];
 
 let gridApi: GridApi;
 
@@ -27,16 +26,16 @@ const gridOptions: GridOptions = {
     },
     columnDefs: columnDefs,
     rowData: getData(),
-}
+};
 
 function onClicked() {
-    gridApi!.getColumnFilterInstance<PartialMatchFilter>('name').then(instance => {
+    gridApi!.getColumnFilterInstance<PartialMatchFilter>('name').then((instance) => {
         instance!.componentMethod('Hello World!');
-    })
+    });
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-})
+});

@@ -1,16 +1,15 @@
+import { KeyCode } from '../constants/keyCode';
+import { Autowired, PostConstruct } from '../context/context';
+import { FocusService } from '../focusService';
+import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
+import { _setAriaLabel, _setAriaRole } from '../utils/aria';
+import { _clearElement } from '../utils/dom';
+import { _createIconNoSpan } from '../utils/icon';
 import { AgPromise } from '../utils/promise';
 import { RefSelector } from '../widgets/componentAnnotations';
-import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
-import { _clearElement } from '../utils/dom';
-import { _setAriaLabel, _setAriaRole } from '../utils/aria';
-import { KeyCode } from '../constants/keyCode';
-import { PostConstruct, Autowired } from '../context/context';
-import { FocusService } from '../focusService';
 import { TabGuardComp } from '../widgets/tabGuardComp';
-import { _createIconNoSpan } from '../utils/icon';
 
 export class TabbedLayout extends TabGuardComp {
-
     @Autowired('focusService') private focusService: FocusService;
 
     @RefSelector('eHeader') private readonly eHeader: HTMLElement;
@@ -36,14 +35,14 @@ export class TabbedLayout extends TabGuardComp {
         this.setupHeader();
 
         if (this.params.items) {
-            this.params.items.forEach(item => this.addItem(item));
+            this.params.items.forEach((item) => this.addItem(item));
         }
 
         this.initialiseTabGuard({
             onTabKeyDown: this.onTabKeyDown.bind(this),
             handleKeyDown: this.handleKeyDown.bind(this),
             focusInnerElement: this.focusInnerElement.bind(this),
-            focusTrapActive: true
+            focusTrapActive: true,
         });
 
         this.addDestroyFunc(() => this.activeItem?.tabbedItem?.afterDetachedCallback?.());
@@ -63,7 +62,7 @@ export class TabbedLayout extends TabGuardComp {
             if (cssClass) {
                 el.classList.add(`${cssClass}-${suffix}`);
             }
-        }
+        };
         if (enableCloseButton) {
             this.setupCloseButton(addCssClasses);
             this.eTabHeader = this.gos.getDocument().createElement('div');
@@ -81,12 +80,7 @@ export class TabbedLayout extends TabGuardComp {
         const eDocument = this.gos.getDocument();
         const eCloseButton = eDocument.createElement('button');
         addCssClasses(eCloseButton, 'close-button');
-        const eIcon = _createIconNoSpan(
-            'close',
-            this.gos,
-            undefined,
-            true
-        )!;
+        const eIcon = _createIconNoSpan('close', this.gos, undefined, true)!;
         _setAriaLabel(eCloseButton, this.params.closeButtonAriaLabel);
         eCloseButton.appendChild(eIcon);
         this.addManagedListener(eCloseButton, 'click', () => this.params.onCloseClicked?.());
@@ -102,13 +96,20 @@ export class TabbedLayout extends TabGuardComp {
         switch (e.key) {
             case KeyCode.RIGHT:
             case KeyCode.LEFT:
-                if (!this.eTabHeader.contains(this.gos.getActiveDomElement())) { return; }
+                if (!this.eTabHeader.contains(this.gos.getActiveDomElement())) {
+                    return;
+                }
                 const isRightKey = e.key === KeyCode.RIGHT;
                 const isRtl = this.gos.get('enableRtl');
                 const currentPosition = this.items.indexOf(this.activeItem);
-                const nextPosition = isRightKey !== isRtl ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
+                const nextPosition =
+                    isRightKey !== isRtl
+                        ? Math.min(currentPosition + 1, this.items.length - 1)
+                        : Math.max(currentPosition - 1, 0);
 
-                if (currentPosition === nextPosition) { return; }
+                if (currentPosition === nextPosition) {
+                    return;
+                }
 
                 e.preventDefault();
 
@@ -125,7 +126,9 @@ export class TabbedLayout extends TabGuardComp {
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {
-        if (e.defaultPrevented) { return; }
+        if (e.defaultPrevented) {
+            return;
+        }
 
         const { focusService, eHeader, eBody, activeItem, params } = this;
         const { suppressTrapFocus, enableCloseButton } = params;
@@ -220,7 +223,7 @@ export class TabbedLayout extends TabGuardComp {
 
         const wrapper: TabbedItemWrapper = {
             tabbedItem: item,
-            eHeaderButton: eHeaderButton
+            eHeaderButton: eHeaderButton,
         };
         this.items.push(wrapper);
 
@@ -228,7 +231,7 @@ export class TabbedLayout extends TabGuardComp {
     }
 
     public showItem(tabbedItem: TabbedItem): void {
-        const itemWrapper = this.items.find(wrapper => wrapper.tabbedItem === tabbedItem);
+        const itemWrapper = this.items.find((wrapper) => wrapper.tabbedItem === tabbedItem);
 
         if (itemWrapper) {
             this.showItemWrapper(itemWrapper);
@@ -241,7 +244,7 @@ export class TabbedLayout extends TabGuardComp {
         this.params.onItemClicked?.({ item: tabbedItem });
 
         if (this.activeItem === wrapper) {
-            this.params.onActiveItemClicked?.()
+            this.params.onActiveItemClicked?.();
             return;
         }
 
@@ -264,7 +267,8 @@ export class TabbedLayout extends TabGuardComp {
             }
 
             if (this.params.keepScrollPosition) {
-                const scrollableContainer = (tabbedItem.getScrollableContainer && tabbedItem.getScrollableContainer()) || body;
+                const scrollableContainer =
+                    (tabbedItem.getScrollableContainer && tabbedItem.getScrollableContainer()) || body;
                 this.lastScrollListener = this.addManagedListener(scrollableContainer, 'scroll', () => {
                     this.tabbedItemScrollMap.set(tabbedItem.name, scrollableContainer.scrollTop);
                 });

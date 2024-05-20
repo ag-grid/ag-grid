@@ -48,9 +48,7 @@
         "{workspaceRoot}/plugins/ag-grid-generate-example-files/gridOptionsTypes/baseGridOptions.ts",
         "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/propertyKeys.ts"
       ],
-      "outputs": [
-        "{workspaceRoot}/plugins/ag-grid-generate-example-files/gridOptionsTypes/_gridOptions_Types.json"
-      ]
+      "outputs": ["{workspaceRoot}/plugins/ag-grid-generate-example-files/gridOptionsTypes/_gridOptions_Types.json"]
     },
     "copySrcFilesForGeneration": {
       "executor": "nx:run-script",

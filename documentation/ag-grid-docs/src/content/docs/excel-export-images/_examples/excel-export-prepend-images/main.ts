@@ -1,79 +1,81 @@
-import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
-import { logos } from './imageUtils';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MenuModule } from '@ag-grid-enterprise/menu';
-import { ModuleRegistry } from "@ag-grid-community/core";
+
+import { logos } from './imageUtils';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MenuModule]);
 
-
 const columnDefs: ColDef[] = [
-  { field: 'athlete' },
-  { field: 'country' },
-  { field: 'age' },
-  { field: 'year' },
-  { field: 'date' },
-  { field: 'sport' },
-  { field: 'gold' },
-  { field: 'silver' },
-  { field: 'bronze' },
-  { field: 'total' },
-]
+    { field: 'athlete' },
+    { field: 'country' },
+    { field: 'age' },
+    { field: 'year' },
+    { field: 'date' },
+    { field: 'sport' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' },
+];
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-  columnDefs: columnDefs,
-  defaultColDef: {
-    width: 150,
-  },
-  defaultExcelExportParams: {
-    prependContent: [
-      {
-        cells: [{
-          data: {
-            type: 'String',
-            value: logos.AgGrid, // see imageUtils
-          },
-          mergeAcross: 1,
-        }],
-      },
-    ],
-    rowHeight: params => (params.rowIndex === 1 ? 82 : 20),
-    addImageToCell: (rowIndex, col, value) => {
-      if (rowIndex !== 1 || col.getColId() !== 'athlete') {
-        return
-      }
-
-      return {
-        image: {
-          id: 'logo',
-          base64: value,
-          imageType: 'png',
-          width: 295,
-          height: 100,
-          position: {
-            colSpan: 2,
-          },
-        },
-      }
+    columnDefs: columnDefs,
+    defaultColDef: {
+        width: 150,
     },
-  },
-  onGridReady: params => {
-    fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
-      .then(response => response.json())
-      .then(data => params.api.setGridOption('rowData', data))
-  },
-}
+    defaultExcelExportParams: {
+        prependContent: [
+            {
+                cells: [
+                    {
+                        data: {
+                            type: 'String',
+                            value: logos.AgGrid, // see imageUtils
+                        },
+                        mergeAcross: 1,
+                    },
+                ],
+            },
+        ],
+        rowHeight: (params) => (params.rowIndex === 1 ? 82 : 20),
+        addImageToCell: (rowIndex, col, value) => {
+            if (rowIndex !== 1 || col.getColId() !== 'athlete') {
+                return;
+            }
+
+            return {
+                image: {
+                    id: 'logo',
+                    base64: value,
+                    imageType: 'png',
+                    width: 295,
+                    height: 100,
+                    position: {
+                        colSpan: 2,
+                    },
+                },
+            };
+        },
+    },
+    onGridReady: (params) => {
+        fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
+            .then((response) => response.json())
+            .then((data) => params.api.setGridOption('rowData', data));
+    },
+};
 
 function onBtExport() {
-  gridApi!.exportDataAsExcel()
+    gridApi!.exportDataAsExcel();
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
+});

@@ -1,26 +1,25 @@
-import { Column } from "../../entities/column";
-import { RowNode } from "../../entities/rowNode";
-import { Beans } from "./../beans";
-import { Component } from "../../widgets/component";
-import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
-import { ICellRendererComp } from "./../cellRenderers/iCellRenderer";
-import { CheckboxSelectionComponent } from "./../checkboxSelectionComponent";
-import { RowCtrl } from "./../row/rowCtrl";
-import { RowDragComp } from "./../row/rowDragComp";
-import { PopupEditorWrapper } from "./../cellEditors/popupEditorWrapper";
-import { DndSourceComp } from "./../dndSourceComp";
-import { TooltipParentComp } from "../../widgets/tooltipStateManager";
-import { _setAriaRole } from "../../utils/aria";
-import { _escapeString } from "../../utils/string";
-import { _missing } from "../../utils/generic";
-import { _addStylesToElement, _clearElement, _removeFromParent } from "../../utils/dom";
-import { CellCtrl, ICellComp } from "./cellCtrl";
-import { UserCompDetails } from "../../components/framework/userComponentFactory";
-import { _browserSupportsPreventScroll } from "../../utils/browser";
-import { CellStyle } from "../../entities/colDef";
+import { UserCompDetails } from '../../components/framework/userComponentFactory';
+import { CellStyle } from '../../entities/colDef';
+import { Column } from '../../entities/column';
+import { RowNode } from '../../entities/rowNode';
+import { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import { _setAriaRole } from '../../utils/aria';
+import { _browserSupportsPreventScroll } from '../../utils/browser';
+import { _addStylesToElement, _clearElement, _removeFromParent } from '../../utils/dom';
+import { _missing } from '../../utils/generic';
+import { _escapeString } from '../../utils/string';
+import { Component } from '../../widgets/component';
+import { TooltipParentComp } from '../../widgets/tooltipStateManager';
+import { Beans } from './../beans';
+import { PopupEditorWrapper } from './../cellEditors/popupEditorWrapper';
+import { ICellRendererComp } from './../cellRenderers/iCellRenderer';
+import { CheckboxSelectionComponent } from './../checkboxSelectionComponent';
+import { DndSourceComp } from './../dndSourceComp';
+import { RowCtrl } from './../row/rowCtrl';
+import { RowDragComp } from './../row/rowDragComp';
+import { CellCtrl, ICellComp } from './cellCtrl';
 
 export class CellComp extends Component implements TooltipParentComp {
-
     private eCellWrapper: HTMLElement | undefined;
     private eCellValue: HTMLElement | undefined;
 
@@ -63,8 +62,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private rendererVersion = 0;
     private editorVersion = 0;
 
-    constructor(beans: Beans, cellCtrl: CellCtrl,
-        printLayout: boolean, eRow: HTMLElement, editingRow: boolean) {
+    constructor(beans: Beans, cellCtrl: CellCtrl, printLayout: boolean, eRow: HTMLElement, editingRow: boolean) {
         super();
         this.beans = beans;
         this.column = cellCtrl.getColumn();
@@ -102,19 +100,18 @@ export class CellComp extends Component implements TooltipParentComp {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setUserStyles: (styles: CellStyle) => _addStylesToElement(eGui, styles),
             getFocusableElement: () => this.getFocusableElement(),
-            
-            setIncludeSelection: include => this.includeSelection = include,
-            setIncludeRowDrag: include => this.includeRowDrag = include,
-            setIncludeDndSource: include => this.includeDndSource = include,
+
+            setIncludeSelection: (include) => (this.includeSelection = include),
+            setIncludeRowDrag: (include) => (this.includeRowDrag = include),
+            setIncludeDndSource: (include) => (this.includeDndSource = include),
 
             setRenderDetails: (compDetails, valueToDisplay, force) =>
                 this.setRenderDetails(compDetails, valueToDisplay, force),
-            setEditDetails: (compDetails, popup, position) =>
-                this.setEditDetails(compDetails, popup, position),
+            setEditDetails: (compDetails, popup, position) => this.setEditDetails(compDetails, popup, position),
 
             getCellEditor: () => this.cellEditor || null,
             getCellRenderer: () => this.cellRenderer || null,
-            getParentOfValue: () => this.getParentOfValue()
+            getParentOfValue: () => this.getParentOfValue(),
         };
 
         cellCtrl.setComp(compProxy, this.getGui(), this.eCellWrapper, printLayout, editingRow);
@@ -134,10 +131,16 @@ export class CellComp extends Component implements TooltipParentComp {
         return this.getGui();
     }
 
-    private setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any, forceNewCellRendererInstance: boolean): void {
+    private setRenderDetails(
+        compDetails: UserCompDetails | undefined,
+        valueToDisplay: any,
+        forceNewCellRendererInstance: boolean
+    ): void {
         // this can happen if the users asks for the cell to refresh, but we are not showing the vale as we are editing
         const isInlineEditing = this.cellEditor && !this.cellEditorPopupWrapper;
-        if (isInlineEditing) { return; }
+        if (isInlineEditing) {
+            return;
+        }
 
         // this means firstRender will be true for one pass only, as it's initialised to undefined
         this.firstRender = this.firstRender == null;
@@ -160,7 +163,11 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private setEditDetails(compDetails: UserCompDetails | undefined, popup?: boolean, position?: 'over' | 'under'): void {
+    private setEditDetails(
+        compDetails: UserCompDetails | undefined,
+        popup?: boolean,
+        position?: 'over' | 'under'
+    ): void {
         if (compDetails) {
             this.createCellEditorInstance(compDetails, popup, position);
         } else {
@@ -256,10 +263,12 @@ export class CellComp extends Component implements TooltipParentComp {
         const versionCopy = this.editorVersion;
 
         const cellEditorPromise = compDetails.newAgStackInstance();
-        if (!cellEditorPromise) { return; } // if empty, userComponentFactory already did a console message
+        if (!cellEditorPromise) {
+            return;
+        } // if empty, userComponentFactory already did a console message
 
         const { params } = compDetails;
-        cellEditorPromise.then(c => this.afterCellEditorCreated(versionCopy, c!, params, popup, position));
+        cellEditorPromise.then((c) => this.afterCellEditorCreated(versionCopy, c!, params, popup, position));
 
         // if we don't do this, and editor component is async, then there will be a period
         // when the component isn't present and keyboard navigation won't work - so example
@@ -286,7 +295,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private destroyRenderer(): void {
-        const {context} = this.beans;
+        const { context } = this.beans;
         this.cellRenderer = context.destroyBean(this.cellRenderer);
         _removeFromParent(this.cellRendererGui);
         this.cellRendererGui = null;
@@ -294,9 +303,11 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private destroyEditor(): void {
-        const {context} = this.beans;
+        const { context } = this.beans;
 
-        if (this.hideEditorPopup) { this.hideEditorPopup(); }
+        if (this.hideEditorPopup) {
+            this.hideEditorPopup();
+        }
         this.hideEditorPopup = undefined;
 
         this.cellEditor = context.destroyBean(this.cellEditor);
@@ -309,11 +320,15 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private refreshCellRenderer(compClassAndParams: UserCompDetails): boolean {
-        if (this.cellRenderer == null || this.cellRenderer.refresh == null) { return false; }
+        if (this.cellRenderer == null || this.cellRenderer.refresh == null) {
+            return false;
+        }
 
         // if different Cell Renderer configured this time (eg user is using selector, and
         // returns different component) then don't refresh, force recreate of Cell Renderer
-        if (this.cellRendererClass !== compClassAndParams.componentClass) { return false; }
+        if (this.cellRendererClass !== compClassAndParams.componentClass) {
+            return false;
+        }
 
         // take any custom params off of the user
         const result = this.cellRenderer.refresh(compClassAndParams.params);
@@ -328,17 +343,19 @@ export class CellComp extends Component implements TooltipParentComp {
     private createCellRendererInstance(compDetails: UserCompDetails): void {
         // never use task service if animation frame service is turned off.
         // and lastly we never use it if doing auto-height, as the auto-height service checks the
-        // row height directly after the cell is created, it doesn't wait around for the tasks to complete        
+        // row height directly after the cell is created, it doesn't wait around for the tasks to complete
         const suppressAnimationFrame = this.beans.gos.get('suppressAnimationFrame');
         const useTaskService = !suppressAnimationFrame;
 
         const displayComponentVersionCopy = this.rendererVersion;
 
-        const {componentClass} = compDetails;
+        const { componentClass } = compDetails;
 
         const createCellRendererFunc = () => {
             const staleTask = this.rendererVersion !== displayComponentVersionCopy || !this.isAlive();
-            if (staleTask) { return; }
+            if (staleTask) {
+                return;
+            }
 
             // this can return null in the event that the user has switched from a renderer component to nothing, for example
             // when using a cellRendererSelect to return a component or null depending on row data etc
@@ -353,7 +370,11 @@ export class CellComp extends Component implements TooltipParentComp {
         // if we changed this (always use task service) would make sense, however it would break tests, possibly
         // test of users.
         if (useTaskService && this.firstRender) {
-            this.beans.animationFrameService.createTask(createCellRendererFunc, this.rowNode.rowIndex!, 'createTasksP2');
+            this.beans.animationFrameService.createTask(
+                createCellRendererFunc,
+                this.rowNode.rowIndex!,
+                'createTasksP2'
+            );
         } else {
             createCellRendererFunc();
         }
@@ -375,7 +396,11 @@ export class CellComp extends Component implements TooltipParentComp {
         return this.cellEditor;
     }
 
-    private afterCellRendererCreated(cellRendererVersion: number, cellRendererClass: any, cellRenderer: ICellRendererComp): void {
+    private afterCellRendererCreated(
+        cellRendererVersion: number,
+        cellRendererClass: any,
+        cellRenderer: ICellRendererComp
+    ): void {
         const staleTask = !this.isAlive() || cellRendererVersion !== this.rendererVersion;
 
         if (staleTask) {
@@ -394,8 +419,13 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private afterCellEditorCreated(requestVersion: number, cellEditor: ICellEditorComp, params: ICellEditorParams, popup?: boolean, position?: 'over' | 'under'): void {
-
+    private afterCellEditorCreated(
+        requestVersion: number,
+        cellEditor: ICellEditorComp,
+        params: ICellEditorParams,
+        popup?: boolean,
+        position?: 'over' | 'under'
+    ): void {
         // if editingCell=false, means user cancelled the editor before component was ready.
         // if versionMismatch, then user cancelled the edit, then started the edit again, and this
         //   is the first editor which is now stale.
@@ -464,8 +494,10 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private addPopupCellEditor(params: ICellEditorParams, position?: 'over' | 'under'): void {
         if (this.beans.gos.get('editType') === 'fullRow') {
-            console.warn('AG Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
-                '- either turn off fullRowEdit, or stop using popup editors.');
+            console.warn(
+                'AG Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
+                    '- either turn off fullRowEdit, or stop using popup editors.'
+            );
         }
 
         const cellEditor = this.cellEditor!;
@@ -482,11 +514,8 @@ export class CellComp extends Component implements TooltipParentComp {
         const useModelPopup = this.beans.gos.get('stopEditingWhenCellsLoseFocus');
 
         // see if position provided by colDef, if not then check old way of method on cellComp
-        const positionToUse: 'over' | 'under' | undefined = position != null 
-            ? position 
-            : cellEditor.getPopupPosition 
-                ? cellEditor.getPopupPosition() 
-                : 'over';
+        const positionToUse: 'over' | 'under' | undefined =
+            position != null ? position : cellEditor.getPopupPosition ? cellEditor.getPopupPosition() : 'over';
         const isRtl = this.beans.gos.get('enableRtl');
 
         const positionParams = {
@@ -497,10 +526,10 @@ export class CellComp extends Component implements TooltipParentComp {
             eventSource: this.getGui(),
             position: positionToUse,
             alignSide: isRtl ? 'right' : 'left',
-            keepWithinBounds: true
+            keepWithinBounds: true,
         };
 
-        const positionCallback = popupService.positionPopupByComponent.bind(popupService, positionParams)
+        const positionCallback = popupService.positionPopupByComponent.bind(popupService, positionParams);
 
         const translate = this.beans.localeService.getLocaleTextFunc();
 
@@ -508,10 +537,12 @@ export class CellComp extends Component implements TooltipParentComp {
             modal: useModelPopup,
             eChild: ePopupGui,
             closeOnEsc: true,
-            closedCallback: () => { this.cellCtrl.onPopupEditorClosed(); },
+            closedCallback: () => {
+                this.cellCtrl.onPopupEditorClosed();
+            },
             anchorToElement: this.getGui(),
             positionCallback,
-            ariaLabel: translate('ariaLabelCellEditor', 'Cell Editor')
+            ariaLabel: translate('ariaLabelCellEditor', 'Cell Editor'),
         });
         if (addPopupRes) {
             this.hideEditorPopup = addPopupRes.hideFunc;

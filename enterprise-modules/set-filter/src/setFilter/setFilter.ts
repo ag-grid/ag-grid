@@ -1,40 +1,47 @@
 import {
     AgInputTextField,
+    AgPromise,
     Autowired,
     CellValueChangedEvent,
+    ColumnModel,
+    DataTypeService,
     Events,
-    IDoesFilterPassParams,
-    SetFilterParams,
-    ProvidedFilter,
-    RefSelector,
-    VirtualList,
-    VirtualListModel,
+    FuncColsService,
+    GROUP_AUTO_COLUMN_ID,
+    GetDataPath,
     IAfterGuiAttachedParams,
-    AgPromise,
+    IDoesFilterPassParams,
+    IRowNode,
+    ISetFilter,
     KeyCode,
     KeyCreatorParams,
-    ISetFilter,
+    ProvidedFilter,
+    RefSelector,
     SetFilterModel,
     SetFilterModelValue,
+    SetFilterParams,
     ValueFormatterParams,
-    ColumnModel,
     ValueService,
-    GetDataPath,
-    GROUP_AUTO_COLUMN_ID,
-    IRowNode,
-    DataTypeService,
+    VirtualList,
+    VirtualListModel,
     _areEqual,
     _last,
     _makeNull,
     _setDisplayed,
     _toStringOrNull,
-    _warnOnce
+    _warnOnce,
 } from '@ag-grid-community/core';
-import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
-import { SetFilterListItem, SetFilterListItemExpandedChangedEvent, SetFilterListItemParams, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
-import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
+
 import { SetFilterDisplayValue, SetFilterModelTreeItem } from './iSetDisplayValueModel';
+import { DEFAULT_LOCALE_TEXT, ISetFilterLocaleText } from './localeText';
+import {
+    SetFilterListItem,
+    SetFilterListItemExpandedChangedEvent,
+    SetFilterListItemParams,
+    SetFilterListItemSelectionChangedEvent,
+} from './setFilterListItem';
 import { SetFilterModelFormatter } from './setFilterModelFormatter';
+import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> implements ISetFilter<V> {
@@ -44,6 +51,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     @RefSelector('eFilterNoMatches') private readonly eNoMatches: HTMLElement;
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('dataTypeService') private readonly dataTypeService: DataTypeService;
 
@@ -73,10 +81,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     // unlike the simple filters, nothing in the set filter UI shows/hides.
     // maybe this method belongs in abstractSimpleFilter???
-    protected updateUiVisibility(): void { }
+    protected updateUiVisibility(): void {}
 
     protected createBodyTemplate(): string {
-        return /* html */`
+        return /* html */ `
             <div class="ag-set-filter">
                 <div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${this.translateForSetFilter('loadingOoo')}</div>
                 <ag-input-text-field class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
@@ -88,7 +96,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     protected handleKeyDown(e: KeyboardEvent): void {
         super.handleKeyDown(e);
 
-        if (e.defaultPrevented) { return; }
+        if (e.defaultPrevented) {
+            return;
+        }
 
         switch (e.key) {
             case KeyCode.SPACE:
@@ -111,10 +121,14 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private handleKeyEnter(e: KeyboardEvent): void {
-        if (!this.setFilterParams) { return; }
+        if (!this.setFilterParams) {
+            return;
+        }
 
         const { excelMode, readOnly } = this.setFilterParams || {};
-        if (!excelMode || !!readOnly) { return; }
+        if (!excelMode || !!readOnly) {
+            return;
+        }
 
         e.preventDefault();
 
@@ -136,18 +150,26 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private getComponentForKeyEvent(e: KeyboardEvent): SetFilterListItem<V> | undefined {
-        if (!this.eSetFilterList.contains(this.gos.getActiveDomElement()) || !this.virtualList) { return; }
+        if (!this.eSetFilterList.contains(this.gos.getActiveDomElement()) || !this.virtualList) {
+            return;
+        }
 
         const currentItem = this.virtualList.getLastFocusedRow();
-        if (currentItem == null) { return; }
+        if (currentItem == null) {
+            return;
+        }
 
         const component = this.virtualList.getComponentAt(currentItem) as SetFilterListItem<V>;
-        if (component == null) { return ; }
+        if (component == null) {
+            return;
+        }
 
         e.preventDefault();
 
         const { readOnly } = this.setFilterParams ?? {};
-        if (!!readOnly) { return; }
+        if (!!readOnly) {
+            return;
+        }
         return component;
     }
 
@@ -172,11 +194,17 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         // Those params have a large impact and should trigger a reload when they change.
         const paramsThatForceReload: (keyof SetFilterParams<any, V>)[] = [
-            'treeList', 'treeListFormatter', 'treeListPathGetter', 'convertValuesToStrings',
-            'caseSensitive', 'comparator', 'suppressSelectAll', 'excelMode'
+            'treeList',
+            'treeListFormatter',
+            'treeListPathGetter',
+            'convertValuesToStrings',
+            'caseSensitive',
+            'comparator',
+            'suppressSelectAll',
+            'excelMode',
         ];
 
-        if (paramsThatForceReload.some(param => params[param] !== this.setFilterParams?.[param])) {
+        if (paramsThatForceReload.some((param) => params[param] !== this.setFilterParams?.[param])) {
             return false;
         }
 
@@ -188,8 +216,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.updateSetFilterOnParamsChange(params);
         this.updateMiniFilter();
 
-        if (params.cellRenderer !== this.setFilterParams?.cellRenderer ||
-            params.valueFormatter !== this.setFilterParams?.valueFormatter) {
+        if (
+            params.cellRenderer !== this.setFilterParams?.cellRenderer ||
+            params.valueFormatter !== this.setFilterParams?.valueFormatter
+        ) {
             this.checkAndRefreshVirtualList();
         }
 
@@ -206,13 +236,18 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         const { colDef, keyCreator } = params;
         const { colDef: existingColDef, keyCreator: existingKeyCreator } = this.setFilterParams ?? {};
         const processedKeyCreator = keyCreator ?? colDef.keyCreator;
-        return colDef.filterValueGetter !== existingColDef?.filterValueGetter ||
+        return (
+            colDef.filterValueGetter !== existingColDef?.filterValueGetter ||
             processedKeyCreator !== (existingKeyCreator ?? existingColDef?.keyCreator) ||
-            (this.dataTypeService.getFormatValue(colDef.cellDataType as string) === processedKeyCreator && colDef.valueFormatter !== existingColDef?.valueFormatter);
+            (this.dataTypeService.getFormatValue(colDef.cellDataType as string) === processedKeyCreator &&
+                colDef.valueFormatter !== existingColDef?.valueFormatter)
+        );
     }
 
     private setModelAndRefresh(values: SetFilterModelValue | null): AgPromise<void> {
-        return this.valueModel ? this.valueModel.setModel(values).then(() => this.checkAndRefreshVirtualList()) : AgPromise.resolve();
+        return this.valueModel
+            ? this.valueModel.setModel(values).then(() => this.checkAndRefreshVirtualList())
+            : AgPromise.resolve();
     }
 
     protected resetUiToDefaults(): AgPromise<void> {
@@ -229,11 +264,15 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     public getModelFromUi(): SetFilterModel | null {
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
 
         const values = this.valueModel.getModel();
 
-        if (!values) { return null; }
+        if (!values) {
+            return null;
+        }
 
         return { values, filterType: this.getFilterType() };
     }
@@ -248,7 +287,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     protected areModelsEqual(a: SetFilterModel, b: SetFilterModel): boolean {
         // both are missing
-        if (a == null && b == null) { return true; }
+        if (a == null && b == null) {
+            return true;
+        }
 
         return a != null && b != null && _areEqual(a.values, b.values);
     }
@@ -258,13 +299,24 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.convertValuesToStrings = !!newParams.convertValuesToStrings;
         this.caseSensitive = !!newParams.caseSensitive;
         const keyCreator = newParams.keyCreator ?? newParams.colDef.keyCreator;
-        this.setValueFormatter(newParams.valueFormatter, keyCreator, this.convertValuesToStrings, !!newParams.treeList, !!newParams.colDef.refData);
+        this.setValueFormatter(
+            newParams.valueFormatter,
+            keyCreator,
+            this.convertValuesToStrings,
+            !!newParams.treeList,
+            !!newParams.colDef.refData
+        );
         const isGroupCol = newParams.column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
         this.treeDataTreeList = this.gos.get('treeData') && !!newParams.treeList && isGroupCol;
         this.getDataPath = this.gos.get('getDataPath');
-        this.groupingTreeList = !!this.columnModel.getRowGroupColumns().length && !!newParams.treeList && isGroupCol;
-        this.createKey = this.generateCreateKey(keyCreator, this.convertValuesToStrings, this.treeDataTreeList || this.groupingTreeList);
-    }
+        this.groupingTreeList =
+            !!this.funcColsService.getRowGroupColumns().length && !!newParams.treeList && isGroupCol;
+        this.createKey = this.generateCreateKey(
+            keyCreator,
+            this.convertValuesToStrings,
+            this.treeDataTreeList || this.groupingTreeList
+        );
+    };
 
     public setParams(params: SetFilterParams<any, V>): void {
         this.applyExcelModeOptions(params);
@@ -277,18 +329,19 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         this.valueModel = new SetValueModel({
             filterParams: params,
-            setIsLoading: loading => this.setIsLoading(loading),
-            translate: key => this.translateForSetFilter(key),
-            caseFormat: v => this.caseFormat(v),
+            setIsLoading: (loading) => this.setIsLoading(loading),
+            translate: (key) => this.translateForSetFilter(key),
+            caseFormat: (v) => this.caseFormat(v),
             createKey: this.createKey,
             valueFormatter: this.valueFormatter,
             usingComplexObjects: !!keyCreator,
             gos: this.gos,
             columnModel: this.columnModel,
+            funcColsService: this.funcColsService,
             valueService: this.valueService,
             treeDataTreeList: this.treeDataTreeList,
             groupingTreeList: this.groupingTreeList,
-            addManagedListener: (event, listener) => this.addManagedListener(this.eventService, event, listener)
+            addManagedListener: (event, listener) => this.addManagedListener(this.eventService, event, listener),
         });
 
         this.initialiseFilterBodyUi();
@@ -297,7 +350,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private onAddCurrentSelectionToFilterChange(newValue: boolean) {
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         this.valueModel.setAddCurrentSelectionToFilter(newValue);
     }
 
@@ -311,12 +366,14 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         let valueFormatter = providedValueFormatter;
         if (!valueFormatter) {
             if (keyCreator && !convertValuesToStrings && !treeList) {
-                throw new Error('AG Grid: Must supply a Value Formatter in Set Filter params when using a Key Creator unless convertValuesToStrings is enabled');
+                throw new Error(
+                    'AG Grid: Must supply a Value Formatter in Set Filter params when using a Key Creator unless convertValuesToStrings is enabled'
+                );
             }
             this.noValueFormatterSupplied = true;
             // ref data is handled by ValueService
             if (!isRefData) {
-                valueFormatter = params => _toStringOrNull(params.value)!;
+                valueFormatter = (params) => _toStringOrNull(params.value)!;
             }
         }
         this.valueFormatter = valueFormatter;
@@ -328,7 +385,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         treeDataOrGrouping: boolean
     ): (value: V | null | undefined, node?: IRowNode | null) => string | null {
         if (treeDataOrGrouping && !keyCreator) {
-            throw new Error('AG Grid: Must supply a Key Creator in Set Filter params when `treeList = true` on a group column, and Tree Data or Row Grouping is enabled.');
+            throw new Error(
+                'AG Grid: Must supply a Key Creator in Set Filter params when `treeList = true` on a group column, and Tree Data or Row Grouping is enabled.'
+            );
         }
         if (keyCreator) {
             return (value, node = null) => {
@@ -338,9 +397,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
         if (convertValuesToStrings) {
             // for backwards compatibility - keeping separate as it will eventually be removed
-            return value => Array.isArray(value) ? value as any : _makeNull(_toStringOrNull(value));
+            return (value) => (Array.isArray(value) ? (value as any) : _makeNull(_toStringOrNull(value)));
         } else {
-            return value => _makeNull(_toStringOrNull(value));
+            return (value) => _makeNull(_toStringOrNull(value));
         }
     }
 
@@ -352,9 +411,16 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
 
         const formattedValue = this.valueService.formatValue(
-            this.setFilterParams!.column, null, value, this.valueFormatter, false);
+            this.setFilterParams!.column,
+            null,
+            value,
+            this.valueFormatter,
+            false
+        );
 
-        return (formattedValue == null ? _toStringOrNull(value) : formattedValue) ?? this.translateForSetFilter('blanks')
+        return (
+            (formattedValue == null ? _toStringOrNull(value) : formattedValue) ?? this.translateForSetFilter('blanks')
+        );
     }
 
     private applyExcelModeOptions(params: SetFilterParams<any, V>): void {
@@ -382,30 +448,33 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
         if (params.excelMode && params.defaultToNothingSelected) {
             params.defaultToNothingSelected = false;
-            _warnOnce('The Set Filter Parameter "defaultToNothingSelected" value was ignored because it does not work when "excelMode" is used.');
+            _warnOnce(
+                'The Set Filter Parameter "defaultToNothingSelected" value was ignored because it does not work when "excelMode" is used.'
+            );
         }
     }
 
     private addEventListenersForDataChanges(): void {
-        if (!this.isValuesTakenFromGrid()) { return; }
+        if (!this.isValuesTakenFromGrid()) {
+            return;
+        }
 
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_CELL_VALUE_CHANGED,
-            (event: CellValueChangedEvent) => {
-                // only interested in changes to do with this column
-                if (this.setFilterParams && event.column === this.setFilterParams.column) {
-                    this.syncAfterDataChange();
-                }
-            });
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, (event: CellValueChangedEvent) => {
+            // only interested in changes to do with this column
+            if (this.setFilterParams && event.column === this.setFilterParams.column) {
+                this.syncAfterDataChange();
+            }
+        });
 
         this.addManagedPropertyListeners(['treeData', 'getDataPath', 'groupAllowUnbalanced'], () => {
             this.syncAfterDataChange();
-        })
+        });
     }
 
     private syncAfterDataChange(): AgPromise<void> {
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
 
         let promise = this.valueModel.refreshValues();
 
@@ -429,18 +498,24 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private initVirtualList(): void {
-        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
 
         const translate = this.localeService.getLocaleTextFunc();
         const filterListName = translate('ariaFilterList', 'Filter List');
         const isTree = !!this.setFilterParams.treeList;
 
-        const virtualList = this.virtualList = this.createBean(new VirtualList({
-            cssIdentifier: 'filter',
-            ariaRole: isTree ? 'tree' : 'listbox',
-            listName: filterListName
-        }));
+        const virtualList = (this.virtualList = this.createBean(
+            new VirtualList({
+                cssIdentifier: 'filter',
+                ariaRole: isTree ? 'tree' : 'listbox',
+                listName: filterListName,
+            })
+        ));
         const eSetFilterList = this.getRefElement('eSetFilterList');
 
         if (isTree) {
@@ -457,10 +532,14 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             virtualList.setRowHeight(cellHeight);
         }
 
-        const componentCreator = (item: SetFilterModelTreeItem | string | null, listItemElement: HTMLElement) => this.createSetListItem(item, isTree, listItemElement);
+        const componentCreator = (item: SetFilterModelTreeItem | string | null, listItemElement: HTMLElement) =>
+            this.createSetListItem(item, isTree, listItemElement);
         virtualList.setComponentCreator(componentCreator);
 
-        const componentUpdater = (item: SetFilterModelTreeItem | string | null, component: SetFilterListItem<V | string | null>) => this.updateSetListItem(item, component);
+        const componentUpdater = (
+            item: SetFilterModelTreeItem | string | null,
+            component: SetFilterListItem<V | string | null>
+        ) => this.updateSetListItem(item, component);
         virtualList.setComponentUpdater(componentUpdater);
 
         let model: VirtualListModel;
@@ -478,37 +557,49 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private getSelectAllLabel(): string {
-        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
 
-        const key = this.valueModel.getMiniFilter() == null || !this.setFilterParams.excelMode ?
-            'selectAll' : 'selectAllSearchResults';
+        const key =
+            this.valueModel.getMiniFilter() == null || !this.setFilterParams.excelMode
+                ? 'selectAll'
+                : 'selectAllSearchResults';
 
         return this.translateForSetFilter(key);
     }
 
     private getAddSelectionToFilterLabel(): string {
-        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
 
         return this.translateForSetFilter('addCurrentSelectionToFilter');
     }
 
-    private createSetListItem(item: SetFilterModelTreeItem | string | null, isTree: boolean, focusWrapper: HTMLElement): SetFilterListItem<V | string | null> {
-        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+    private createSetListItem(
+        item: SetFilterModelTreeItem | string | null,
+        isTree: boolean,
+        focusWrapper: HTMLElement
+    ): SetFilterListItem<V | string | null> {
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
 
         const groupsExist = this.valueModel.hasGroups();
         const { isSelected, isExpanded } = this.isSelectedExpanded(item);
 
-        const {
-            value,
-            depth,
-            isGroup,
-            hasIndeterminateExpandState,
-            selectedListener,
-            expandedListener,
-        } = this.newSetListItemAttributes(item, isTree);
+        const { value, depth, isGroup, hasIndeterminateExpandState, selectedListener, expandedListener } =
+            this.newSetListItemAttributes(item, isTree);
 
         const itemParams: SetFilterListItemParams<V | string | null> = {
             focusWrapper,
@@ -524,7 +615,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             isGroup,
             isExpanded,
             hasIndeterminateExpandState,
-        }
+        };
         const listItem = this.createBean(new SetFilterListItem<V | string | null>(itemParams));
 
         listItem.addEventListener(SetFilterListItem.EVENT_SELECTION_CHANGED, selectedListener as any);
@@ -535,18 +626,23 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return listItem;
     }
 
-    
-
-    private newSetTreeItemAttributes(item: SetFilterModelTreeItem, isTree: boolean): ({
-        value: V | string | (() => string) | null,
-        depth?: number | undefined,
-        isGroup?: boolean | undefined,
-        hasIndeterminateExpandState?: boolean | undefined,
-        selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void,
-        expandedListener?: (e: SetFilterListItemExpandedChangedEvent) => void,
-    }) {
-        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+    private newSetTreeItemAttributes(
+        item: SetFilterModelTreeItem,
+        isTree: boolean
+    ): {
+        value: V | string | (() => string) | null;
+        depth?: number | undefined;
+        isGroup?: boolean | undefined;
+        hasIndeterminateExpandState?: boolean | undefined;
+        selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void;
+        expandedListener?: (e: SetFilterListItemExpandedChangedEvent) => void;
+    } {
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
 
         const groupsExist = this.valueModel.hasGroups();
 
@@ -558,7 +654,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
                 depth: item.depth,
                 hasIndeterminateExpandState: true,
                 selectedListener: (e: SetFilterListItemSelectionChangedEvent) => this.onSelectAll(e.isSelected),
-                expandedListener: (e: SetFilterListItemExpandedChangedEvent<SetFilterModelTreeItem>) => this.onExpandAll(e.item, e.isExpanded),
+                expandedListener: (e: SetFilterListItemExpandedChangedEvent<SetFilterModelTreeItem>) =>
+                    this.onExpandAll(e.item, e.isExpanded),
             };
         }
 
@@ -571,39 +668,52 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
                 hasIndeterminateExpandState: false,
                 selectedListener: (e: SetFilterListItemSelectionChangedEvent) => {
                     this.onAddCurrentSelectionToFilterChange(e.isSelected);
-                }
+                },
             };
         }
 
         // Group
         if (item.children) {
             return {
-                value: this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth, item.parentTreeKeys) ?? item.treeKey,
+                value:
+                    this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth, item.parentTreeKeys) ??
+                    item.treeKey,
                 depth: item.depth,
                 isGroup: true,
-                selectedListener: (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) => this.onGroupItemSelected(e.item, e.isSelected),
-                expandedListener: (e: SetFilterListItemExpandedChangedEvent<SetFilterModelTreeItem>) => this.onExpandedChanged(e.item, e.isExpanded),
+                selectedListener: (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) =>
+                    this.onGroupItemSelected(e.item, e.isSelected),
+                expandedListener: (e: SetFilterListItemExpandedChangedEvent<SetFilterModelTreeItem>) =>
+                    this.onExpandedChanged(e.item, e.isExpanded),
             };
         }
 
         // Leaf
         return {
-            value: this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth, item.parentTreeKeys) ?? item.treeKey,
+            value:
+                this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth, item.parentTreeKeys) ?? item.treeKey,
             depth: item.depth,
-            selectedListener: (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) => this.onItemSelected(e.item.key!, e.isSelected),
+            selectedListener: (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) =>
+                this.onItemSelected(e.item.key!, e.isSelected),
         };
     }
 
-    private newSetListItemAttributes(item: SetFilterModelTreeItem | string | null, isTree: boolean): ({
-        value: V | string | (() => string) | null,
-        depth?: number | undefined,
-        isGroup?: boolean | undefined,
-        hasIndeterminateExpandState?: boolean | undefined,
-        selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void,
-        expandedListener?: (e: SetFilterListItemExpandedChangedEvent) => void,
-    }) {
-        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+    private newSetListItemAttributes(
+        item: SetFilterModelTreeItem | string | null,
+        isTree: boolean
+    ): {
+        value: V | string | (() => string) | null;
+        depth?: number | undefined;
+        isGroup?: boolean | undefined;
+        hasIndeterminateExpandState?: boolean | undefined;
+        selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void;
+        expandedListener?: (e: SetFilterListItemExpandedChangedEvent) => void;
+    } {
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
 
         // Tree item
         if (this.isSetFilterModelTreeItem(item)) {
@@ -617,9 +727,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
                 selectedListener: (e: SetFilterListItemSelectionChangedEvent<string>) => this.onSelectAll(e.isSelected),
             };
         }
-        
+
         // List item - 'Add selection to filter'
-        if (item === SetFilterDisplayValue.ADD_SELECTION_TO_FILTER)  {
+        if (item === SetFilterDisplayValue.ADD_SELECTION_TO_FILTER) {
             return {
                 value: () => this.getAddSelectionToFilterLabel(),
                 selectedListener: (e: SetFilterListItemSelectionChangedEvent<string | null>) => {
@@ -631,16 +741,23 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         // List item
         return {
             value: this.valueModel.getValue(item),
-            selectedListener: (e: SetFilterListItemSelectionChangedEvent<string | null>) => this.onItemSelected(e.item, e.isSelected),
+            selectedListener: (e: SetFilterListItemSelectionChangedEvent<string | null>) =>
+                this.onItemSelected(e.item, e.isSelected),
         };
     }
 
-    private updateSetListItem(item: SetFilterModelTreeItem | string | null, component: SetFilterListItem<V | string | null>): void {
+    private updateSetListItem(
+        item: SetFilterModelTreeItem | string | null,
+        component: SetFilterListItem<V | string | null>
+    ): void {
         const { isSelected, isExpanded } = this.isSelectedExpanded(item);
         component.refresh(item, isSelected, isExpanded);
     }
 
-    private isSelectedExpanded(item: SetFilterModelTreeItem | string | null): { isSelected: boolean | undefined, isExpanded: boolean | undefined } {
+    private isSelectedExpanded(item: SetFilterModelTreeItem | string | null): {
+        isSelected: boolean | undefined;
+        isExpanded: boolean | undefined;
+    } {
         let isSelected: boolean | undefined;
         let isExpanded: boolean | undefined;
         if (this.isSetFilterModelTreeItem(item)) {
@@ -671,8 +788,12 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private initMiniFilter() {
-        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
 
         const { eMiniFilter, localeService } = this;
         const translate = localeService.getLocaleTextFunc();
@@ -682,12 +803,16 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         eMiniFilter.onValueChange(() => this.onMiniFilterInput());
         eMiniFilter.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
 
-        this.addManagedListener(eMiniFilter.getInputElement(), 'keydown', e => this.onMiniFilterKeyDown(e));
+        this.addManagedListener(eMiniFilter.getInputElement(), 'keydown', (e) => this.onMiniFilterKeyDown(e));
     }
 
     private updateMiniFilter() {
-        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
 
         const { eMiniFilter } = this;
 
@@ -704,7 +829,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     // we need to have the GUI attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the GUI state
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
-        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
 
         super.afterGuiAttached(params);
 
@@ -737,10 +864,18 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     public applyModel(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
-        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
 
-        if (this.setFilterParams.excelMode && source !== 'rowDataUpdated' && this.valueModel.isEverythingVisibleSelected()) {
+        if (
+            this.setFilterParams.excelMode &&
+            source !== 'rowDataUpdated' &&
+            this.valueModel.isEverythingVisibleSelected()
+        ) {
             // In Excel, if the filter is applied with all visible values selected, then any active filter on the
             // column is removed. This ensures the filter is removed in this situation.
             this.valueModel.selectAllMatchingMiniFilter();
@@ -749,7 +884,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         // Here we implement AG-9090 TC2
         // When 'Add current selection to filter' is visible and checked, but no filter is applied:
         // Do NOT apply the current selection as filter.
-        const shouldKeepCurrentSelection = this.valueModel!.showAddCurrentSelectionToFilter() && this.valueModel!.isAddCurrentSelectionToFilterChecked();
+        const shouldKeepCurrentSelection =
+            this.valueModel!.showAddCurrentSelectionToFilter() &&
+            this.valueModel!.isAddCurrentSelectionToFilterChecked();
         if (shouldKeepCurrentSelection && !this.getModel()) {
             return false;
         }
@@ -764,7 +901,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
                 this.valueModel.setAppliedModelKeys(new Set());
             }
 
-            appliedModel.values.forEach(key => {
+            appliedModel.values.forEach((key) => {
                 this.valueModel!.addToAppliedModelKeys(key);
             });
         } else {
@@ -781,7 +918,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        if (!this.setFilterParams || !this.valueModel || !this.valueModel.getCaseFormattedAppliedModelKeys()) { return true; }
+        if (!this.setFilterParams || !this.valueModel || !this.valueModel.getCaseFormattedAppliedModelKeys()) {
+            return true;
+        }
 
         // if nothing selected, don't need to check value
         if (!this.valueModel.hasAnyAppliedModelKey()) {
@@ -807,7 +946,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             if (value.length === 0) {
                 return this.valueModel!.hasAppliedModelKey(null);
             }
-            return value.some(v => this.isInAppliedModel(this.createKey(v, node)));
+            return value.some((v) => this.isInAppliedModel(this.createKey(v, node)));
         }
 
         return this.isInAppliedModel(this.createKey(value, node));
@@ -819,7 +958,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             if (key.length === 0) {
                 return this.valueModel!.hasAppliedModelKey(null);
             }
-            return key.some(v => this.isInAppliedModel(v));
+            return key.some((v) => this.isInAppliedModel(v));
         }
 
         return this.isInAppliedModel(key as any);
@@ -834,19 +973,20 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private doesFilterPassForGrouping(node: IRowNode): boolean {
-        const dataPath = this.columnModel.getRowGroupColumns().map(groupCol => this.valueService.getKeyForNode(groupCol, node));
+        const dataPath = this.funcColsService
+            .getRowGroupColumns()
+            .map((groupCol) => this.valueService.getKeyForNode(groupCol, node));
         dataPath.push(this.getValueFromNode(node));
         return this.isInAppliedModel(this.createKey(this.checkMakeNullDataPath(dataPath) as any) as any);
-        
     }
 
     private checkMakeNullDataPath(dataPath: string[] | null): string[] | null {
         if (dataPath) {
-            dataPath = dataPath.map(treeKey => _toStringOrNull(_makeNull(treeKey))) as any;
+            dataPath = dataPath.map((treeKey) => _toStringOrNull(_makeNull(treeKey))) as any;
         }
-        if (dataPath?.some(treeKey => treeKey == null)) {
+        if (dataPath?.some((treeKey) => treeKey == null)) {
             if (this.gos.get('groupAllowUnbalanced') && _last(dataPath) != null) {
-                return dataPath.filter(treeKey => treeKey != null);
+                return dataPath.filter((treeKey) => treeKey != null);
             }
             return null;
         }
@@ -869,17 +1009,21 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             node: node,
             data: node?.data,
             api: this.setFilterParams!.api,
-            context: this.setFilterParams!.context
-        }
+            context: this.setFilterParams!.context,
+        };
     }
 
     public onNewRowsLoaded(): void {
-        if (!this.isValuesTakenFromGrid()) { return; }
+        if (!this.isValuesTakenFromGrid()) {
+            return;
+        }
         this.syncAfterDataChange();
     }
 
     private isValuesTakenFromGrid(): boolean {
-        if (!this.valueModel) { return false; }
+        if (!this.valueModel) {
+            return false;
+        }
         const valuesType = this.valueModel.getValuesType();
         return valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
     }
@@ -891,7 +1035,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
      * @param values The values to use.
      */
     public setFilterValues(values: (V | null)[]): void {
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
 
         this.valueModel.overrideValues(values).then(() => {
             this.checkAndRefreshVirtualList();
@@ -904,17 +1050,23 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
      * Public method provided so the user can reset the values of the filter once that it has started.
      */
     public resetFilterValues(): void {
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
 
         this.valueModel.setValuesType(SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES);
         this.syncAfterDataChange();
     }
 
     public refreshFilterValues(): void {
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
 
         // the model is still being initialised
-        if (!this.valueModel.isInitialised()) { return; }
+        if (!this.valueModel.isInitialised()) {
+            return;
+        }
 
         this.valueModel.refreshValues().then(() => {
             this.checkAndRefreshVirtualList();
@@ -925,11 +1077,15 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     public onAnyFilterChanged(): void {
         // don't block the current action when updating the values for this filter
         setTimeout(() => {
-            if (!this.isAlive()) { return; }
+            if (!this.isAlive()) {
+                return;
+            }
 
-            if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+            if (!this.valueModel) {
+                throw new Error('Value model has not been created.');
+            }
 
-            this.valueModel.refreshAfterAnyFilterChanged().then(refresh => {
+            this.valueModel.refreshAfterAnyFilterChanged().then((refresh) => {
                 if (refresh) {
                     this.checkAndRefreshVirtualList();
                     this.showOrHideResults();
@@ -939,10 +1095,16 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private onMiniFilterInput() {
-        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
 
-        if (!this.valueModel.setMiniFilter(this.eMiniFilter.getValue())) { return; }
+        if (!this.valueModel.setMiniFilter(this.eMiniFilter.getValue())) {
+            return;
+        }
 
         const { applyMiniFilterWhileTyping, readOnly } = this.setFilterParams || {};
         if (!readOnly && applyMiniFilterWhileTyping) {
@@ -953,8 +1115,12 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private updateUiAfterMiniFilterChange(): void {
-        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
 
         const { excelMode, readOnly } = this.setFilterParams || {};
         if (excelMode == null || !!readOnly) {
@@ -971,7 +1137,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private showOrHideResults(): void {
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
 
         const hideResults = this.valueModel.getMiniFilter() != null && this.valueModel.getDisplayedValueCount() < 1;
 
@@ -1008,8 +1176,12 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private filterOnAllVisibleValues(applyImmediately = true): void {
         const { readOnly } = this.setFilterParams || {};
 
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
-        if (!!readOnly) { throw new Error('Unable to filter in readOnly mode.'); }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
+        if (!!readOnly) {
+            throw new Error('Unable to filter in readOnly mode.');
+        }
 
         this.valueModel.selectAllMatchingMiniFilter(true);
         this.checkAndRefreshVirtualList();
@@ -1018,10 +1190,14 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private focusRowIfAlive(rowIndex: number | null): void {
-        if (rowIndex == null) { return; }
+        if (rowIndex == null) {
+            return;
+        }
 
         window.setTimeout(() => {
-            if (!this.virtualList) { throw new Error('Virtual list has not been created.'); }
+            if (!this.virtualList) {
+                throw new Error('Virtual list has not been created.');
+            }
 
             if (this.isAlive()) {
                 this.virtualList.focusRow(rowIndex);
@@ -1030,8 +1206,12 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private onSelectAll(isSelected: boolean): void {
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
-        if (!this.virtualList) { throw new Error('Virtual list has not been created.'); }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
+        if (!this.virtualList) {
+            throw new Error('Virtual list has not been created.');
+        }
 
         if (isSelected) {
             this.valueModel.selectAllMatchingMiniFilter();
@@ -1045,7 +1225,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private onGroupItemSelected(item: SetFilterModelTreeItem, isSelected: boolean): void {
         const recursiveGroupSelection = (i: SetFilterModelTreeItem) => {
             if (i.children) {
-                i.children.forEach(childItem => recursiveGroupSelection(childItem));
+                i.children.forEach((childItem) => recursiveGroupSelection(childItem));
             } else {
                 this.selectItem(i.key!, isSelected);
             }
@@ -1057,8 +1237,12 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private onItemSelected(key: string | null, isSelected: boolean): void {
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
-        if (!this.virtualList) { throw new Error('Virtual list has not been created.'); }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
+        if (!this.virtualList) {
+            throw new Error('Virtual list has not been created.');
+        }
 
         this.selectItem(key, isSelected);
 
@@ -1076,7 +1260,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private onExpandAll(item: SetFilterModelTreeItem, isExpanded: boolean): void {
         const recursiveExpansion = (i: SetFilterModelTreeItem) => {
             if (i.filterPasses && i.available && i.children) {
-                i.children.forEach(childItem => recursiveExpansion(childItem));
+                i.children.forEach((childItem) => recursiveExpansion(childItem));
                 i.expanded = isExpanded;
             }
         };
@@ -1085,13 +1269,13 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         this.refreshAfterExpansion();
     }
-    
+
     private onExpandedChanged(item: SetFilterModelTreeItem, isExpanded: boolean): void {
         item.expanded = isExpanded;
 
         this.refreshAfterExpansion();
     }
-    
+
     private refreshAfterExpansion(): void {
         const focusedRow = this.virtualList!.getLastFocusedRow();
 
@@ -1119,7 +1303,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private checkAndRefreshVirtualList() {
-        if (!this.virtualList) { throw new Error('Virtual list has not been created.'); }
+        if (!this.virtualList) {
+            throw new Error('Virtual list has not been created.');
+        }
 
         this.virtualList.refresh(!this.hardRefreshVirtualList);
 
@@ -1155,7 +1341,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private isSelectAllSelected(): boolean | undefined {
-        if (!this.setFilterParams || !this.valueModel) { return false; }
+        if (!this.setFilterParams || !this.valueModel) {
+            return false;
+        }
 
         if (!this.setFilterParams.defaultToNothingSelected) {
             // everything selected by default
@@ -1185,7 +1373,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             if (i.children) {
                 let someTrue = false;
                 let someFalse = false;
-                const mixed = i.children.some(child => {
+                const mixed = i.children.some((child) => {
                     if (!child.filterPasses || !child.available) {
                         return false;
                     }
@@ -1230,7 +1418,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         if (valueToFormat == null || typeof valueToFormat !== 'string') {
             return valueToFormat;
         }
-        return this.caseSensitive ? valueToFormat : valueToFormat.toUpperCase() as T;
+        return this.caseSensitive ? valueToFormat : (valueToFormat.toUpperCase() as T);
     }
 
     private resetExpansion(): void {
@@ -1243,7 +1431,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         if (this.isSetFilterModelTreeItem(selectAllItem)) {
             const recursiveCollapse = (i: SetFilterModelTreeItem) => {
                 if (i.children) {
-                    i.children.forEach(childItem => recursiveCollapse(childItem));
+                    i.children.forEach((childItem) => recursiveCollapse(childItem));
                     i.expanded = false;
                 }
             };
@@ -1262,8 +1450,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 }
 
 class ModelWrapper<V> implements VirtualListModel {
-    constructor(private readonly model: SetValueModel<V>) {
-    }
+    constructor(private readonly model: SetValueModel<V>) {}
 
     public getRowCount(): number {
         return this.model.getDisplayedValueCount();
@@ -1281,8 +1468,8 @@ class ModelWrapper<V> implements VirtualListModel {
 class ModelWrapperWithSelectAll<V> implements VirtualListModel {
     constructor(
         private readonly model: SetValueModel<V>,
-        private readonly isSelectAllSelected: (() => boolean | undefined)) {
-    }
+        private readonly isSelectAllSelected: () => boolean | undefined
+    ) {}
 
     public getRowCount(): number {
         const showAddCurrentSelectionToFilter = this.model.showAddCurrentSelectionToFilter();

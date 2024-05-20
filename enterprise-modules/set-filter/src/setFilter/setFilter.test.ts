@@ -1,19 +1,20 @@
 import {
-    ColDef,
-    IClientSideRowModel,
-    ValueService,
-    SetFilterParams,
-    Context,
-    AgInputTextField,
     AgCheckbox,
+    AgInputTextField,
+    ColDef,
+    FuncColsService,
+    Context,
     EventService,
-    VirtualList,
-    IRowModel,
-    SetFilterModel,
     GridOptionsService,
-    ColumnModel,
-    LocaleService
+    IClientSideRowModel,
+    IRowModel,
+    LocaleService,
+    SetFilterModel,
+    SetFilterParams,
+    ValueService,
+    VirtualList,
 } from '@ag-grid-community/core';
+
 import { mock } from '../test-utils/mock';
 import { SetFilter } from './setFilter';
 import { SetValueModel } from './setValueModel';
@@ -27,7 +28,7 @@ let eMiniFilter: jest.Mocked<AgInputTextField>;
 let eGui: jest.Mocked<HTMLElement>;
 let eSelectAll: jest.Mocked<AgCheckbox>;
 let gridOptionsService: jest.Mocked<GridOptionsService>;
-let columnModel: jest.Mocked<ColumnModel>;
+let funcColsService: jest.Mocked<FuncColsService>;
 let virtualList: jest.Mocked<VirtualList>;
 let setValueModel: jest.Mocked<SetValueModel<string>>;
 
@@ -41,12 +42,20 @@ beforeEach(() => {
     valueService.formatValue.mockImplementation((_1, _2, value) => value);
 
     localeService = mock<LocaleService>('getLocaleTextFunc');
-    localeService.getLocaleTextFunc.mockImplementation(() => ((_: string, defaultValue: string) => defaultValue));
+    localeService.getLocaleTextFunc.mockImplementation(() => (_: string, defaultValue: string) => defaultValue);
 
     context = mock<Context>('createBean');
-    context.createBean.mockImplementation(bean => bean);
+    context.createBean.mockImplementation((bean) => bean);
 
-    eMiniFilter = mock<AgInputTextField>('getGui', 'getValue', 'setValue', 'setDisplayed', 'onValueChange', 'getInputElement', 'setInputAriaLabel');
+    eMiniFilter = mock<AgInputTextField>(
+        'getGui',
+        'getValue',
+        'setValue',
+        'setDisplayed',
+        'onValueChange',
+        'getInputElement',
+        'setInputAriaLabel'
+    );
     eMiniFilter.getGui.mockImplementation(() => mock<HTMLElement>());
     eMiniFilter.getInputElement.mockImplementation(() => mock<HTMLInputElement>('addEventListener'));
 
@@ -58,8 +67,8 @@ beforeEach(() => {
 
     gridOptionsService = mock<GridOptionsService>('get', 'addEventListener');
 
-    columnModel = mock<ColumnModel>('getRowGroupColumns');
-    columnModel.getRowGroupColumns.mockImplementation(() => []);
+    funcColsService = mock<FuncColsService>('getRowGroupColumns');
+    funcColsService.getRowGroupColumns.mockImplementation(() => []);
 
     virtualList = mock<VirtualList>('refresh');
 
@@ -83,9 +92,9 @@ function createSetFilter(filterParams?: any): SetFilter<unknown> {
         column: { getId: () => '' },
         context: null,
         doesRowPassOtherFilter: () => true,
-        filterChangedCallback: () => { },
-        filterModifiedCallback: () => { },
-        valueGetter: ({node}) => node.data.value,
+        filterChangedCallback: () => {},
+        filterModifiedCallback: () => {},
+        valueGetter: ({ node }) => node.data.value,
         getValue: (node) => node.data.value,
         ...filterParams,
     };
@@ -102,7 +111,7 @@ function createSetFilter(filterParams?: any): SetFilter<unknown> {
     (setFilter as any).eMiniFilter = eMiniFilter;
     (setFilter as any).eSelectAll = eSelectAll;
     (setFilter as any).gos = gridOptionsService;
-    (setFilter as any).columnModel = columnModel;
+    (setFilter as any).funcColsService = funcColsService;
 
     setFilter.setParams(params);
 
@@ -136,7 +145,7 @@ describe('applyModel', () => {
         expect((setFilter.getModel() as SetFilterModel).values).toStrictEqual([]);
     });
 
-    it.each(['windows', 'mac'])('will not apply model with zero values in %s Excel Mode', excelMode => {
+    it.each(['windows', 'mac'])('will not apply model with zero values in %s Excel Mode', (excelMode) => {
         const setFilter = createSetFilter({ excelMode });
 
         setValueModel.getModel.mockReturnValue([]);
@@ -145,22 +154,25 @@ describe('applyModel', () => {
         expect(setFilter.getModel()).toBeNull();
     });
 
-    it.each(['windows', 'mac'])('preserves existing model if new model with zero values applied in %s Excel Mode', excelMode => {
-        const setFilter = createSetFilter({ excelMode });
-        const model = ['A', 'B'];
+    it.each(['windows', 'mac'])(
+        'preserves existing model if new model with zero values applied in %s Excel Mode',
+        (excelMode) => {
+            const setFilter = createSetFilter({ excelMode });
+            const model = ['A', 'B'];
 
-        setValueModel.getModel.mockReturnValue(model);
-        setFilter.applyModel();
+            setValueModel.getModel.mockReturnValue(model);
+            setFilter.applyModel();
 
-        expect((setFilter.getModel() as SetFilterModel).values).toStrictEqual(model);
+            expect((setFilter.getModel() as SetFilterModel).values).toStrictEqual(model);
 
-        setValueModel.getModel.mockReturnValue(model);
-        setFilter.applyModel();
+            setValueModel.getModel.mockReturnValue(model);
+            setFilter.applyModel();
 
-        expect((setFilter.getModel() as SetFilterModel).values).toStrictEqual(model);
-    });
+            expect((setFilter.getModel() as SetFilterModel).values).toStrictEqual(model);
+        }
+    );
 
-    it.each(['windows', 'mac'])('can reset model in %s Excel Mode', excelMode => {
+    it.each(['windows', 'mac'])('can reset model in %s Excel Mode', (excelMode) => {
         const setFilter = createSetFilter({ excelMode });
         const model = ['A', 'B'];
 
@@ -175,24 +187,27 @@ describe('applyModel', () => {
         expect(setFilter.getModel()).toBeNull();
     });
 
-    it.each(['windows', 'mac'])('ensures any active filter is removed by selecting all values if all visible values are selected', excelMode => {
-        setValueModel = mock<SetValueModel<string>>(
-            'getModel',
-            'setAppliedModelKeys',
-            'addToAppliedModelKeys',
-            'isEverythingVisibleSelected',
-            'selectAllMatchingMiniFilter',
-            'showAddCurrentSelectionToFilter',
-            'isAddCurrentSelectionToFilterChecked'
-        );
+    it.each(['windows', 'mac'])(
+        'ensures any active filter is removed by selecting all values if all visible values are selected',
+        (excelMode) => {
+            setValueModel = mock<SetValueModel<string>>(
+                'getModel',
+                'setAppliedModelKeys',
+                'addToAppliedModelKeys',
+                'isEverythingVisibleSelected',
+                'selectAllMatchingMiniFilter',
+                'showAddCurrentSelectionToFilter',
+                'isAddCurrentSelectionToFilterChecked'
+            );
 
-        const setFilter = createSetFilter({ excelMode });
+            const setFilter = createSetFilter({ excelMode });
 
-        setValueModel.isEverythingVisibleSelected.mockReturnValue(true);
-        setValueModel.getModel.mockReturnValue(null);
+            setValueModel.isEverythingVisibleSelected.mockReturnValue(true);
+            setValueModel.getModel.mockReturnValue(null);
 
-        setFilter.applyModel();
+            setFilter.applyModel();
 
-        expect(setValueModel.selectAllMatchingMiniFilter).toBeCalledTimes(1);
-    });
+            expect(setValueModel.selectAllMatchingMiniFilter).toBeCalledTimes(1);
+        }
+    );
 });

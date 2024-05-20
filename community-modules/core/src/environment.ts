@@ -1,9 +1,9 @@
-import { Bean, Autowired, PostConstruct } from './context/context';
 import { BeanStub } from './context/beanStub';
+import { Autowired, Bean, PostConstruct } from './context/context';
 import { Events } from './eventKeys';
-import { ResizeObserverService } from './misc/resizeObserverService';
-import { WithoutGridCommon } from './interfaces/iCommon';
 import { CssVariablesChanged } from './events';
+import { WithoutGridCommon } from './interfaces/iCommon';
+import { ResizeObserverService } from './misc/resizeObserverService';
 
 @Bean('environment')
 export class Environment extends BeanStub {
@@ -52,13 +52,13 @@ export class Environment extends BeanStub {
 
     public applyThemeClasses(el: HTMLElement) {
         for (const className of Array.from(el.classList)) {
-            if (className.startsWith("ag-theme-") && !this.themeClasses.includes(className)) {
-                el.classList.remove(className)
+            if (className.startsWith('ag-theme-') && !this.themeClasses.includes(className)) {
+                el.classList.remove(className);
             }
         }
         for (const className of this.themeClasses) {
             if (!el.classList.contains(className)) {
-                el.classList.add(className)
+                el.classList.add(className);
             }
         }
     }
@@ -110,7 +110,9 @@ export class Environment extends BeanStub {
         const measureSizeDiv = () => {
             let newSize = sizeDiv.offsetWidth;
             if (newSize === 0) {
-                console.warn(`AG Grid: no value for ${variable}. This usually means that the grid has been initialised before styles have been loaded. The default value of ${defaultValue} will be used, and updated when styles load.`);
+                console.warn(
+                    `AG Grid: no value for ${variable}. This usually means that the grid has been initialised before styles have been loaded. The default value of ${defaultValue} will be used, and updated when styles load.`
+                );
                 newSize = defaultValue;
             }
             this.calculatedVariableValues.set(variable, newSize);

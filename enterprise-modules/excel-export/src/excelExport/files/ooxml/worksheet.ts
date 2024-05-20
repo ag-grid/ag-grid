@@ -1,30 +1,33 @@
 import {
-    ExcelOOXMLTemplate,
-    ExcelWorksheet,
     ExcelCell,
-    ExcelRow,
     ExcelColumn,
-    XmlElement,
+    ExcelFont,
+    ExcelHeaderFooterConfig,
+    ExcelHeaderFooterContent,
+    ExcelOOXMLTemplate,
+    ExcelRow,
     ExcelSheetMargin,
     ExcelSheetPageSetup,
-    ExcelHeaderFooterContent,
-    ExcelHeaderFooterConfig,
-    ExcelFont,
-    _iterateObject,
-    _escapeString,
+    ExcelWorksheet,
+    XmlElement,
     _compose,
+    _escapeString,
+    _iterateObject,
 } from '@ag-grid-community/core';
-import { ExcelDataTable, ExcelHeaderFooterPosition } from '../../assets/excelInterfaces';
 
-import columnFactory from './column';
-import rowFactory from './row';
-import mergeCellFactory from './mergeCell';
-import { ExcelXlsxFactory } from '../../excelXlsxFactory';
+import { ExcelDataTable, ExcelHeaderFooterPosition } from '../../assets/excelInterfaces';
 import { getExcelColumnName } from '../../assets/excelUtils';
 import { ExcelGridSerializingParams } from '../../excelSerializingSession';
+import { ExcelXlsxFactory } from '../../excelXlsxFactory';
+import columnFactory from './column';
+import mergeCellFactory from './mergeCell';
+import rowFactory from './row';
 
-
-const getMergedCellsAndAddColumnGroups = (rows: ExcelRow[], cols: ExcelColumn[], suppressColumnOutline: boolean): string[] => {
+const getMergedCellsAndAddColumnGroups = (
+    rows: ExcelRow[],
+    cols: ExcelColumn[],
+    suppressColumnOutline: boolean
+): string[] => {
     const mergedCells: string[] = [];
     const cellsWithCollapsibleGroups: number[][] = [];
 
@@ -48,11 +51,11 @@ const getMergedCellsAndAddColumnGroups = (rows: ExcelRow[], cols: ExcelColumn[],
             if (!cols[min - 1]) {
                 cols[min - 1] = {} as ExcelColumn;
             }
-            
+
             const { collapsibleRanges } = currentCell;
 
             if (collapsibleRanges) {
-                collapsibleRanges.forEach(range => {
+                collapsibleRanges.forEach((range) => {
                     cellsWithCollapsibleGroups.push([min + range[0], min + range[1]]);
                 });
             }
@@ -65,33 +68,39 @@ const getMergedCellsAndAddColumnGroups = (rows: ExcelRow[], cols: ExcelColumn[],
     });
 
     cellsWithCollapsibleGroups.sort((a, b) => {
-        if (a[0] !== b[0]) { return a[0] - b[0]}
+        if (a[0] !== b[0]) {
+            return a[0] - b[0];
+        }
         return b[1] - a[1];
     });
 
     const rangeMap = new Map<string, boolean>();
     const outlineLevel = new Map<number, number>();
 
-    cellsWithCollapsibleGroups.filter(currentRange => {
-        const rangeString = currentRange.toString();
-        const inMap = rangeMap.get(rangeString);
+    cellsWithCollapsibleGroups
+        .filter((currentRange) => {
+            const rangeString = currentRange.toString();
+            const inMap = rangeMap.get(rangeString);
 
-        if (inMap) { return false; }
-        rangeMap.set(rangeString, true);
+            if (inMap) {
+                return false;
+            }
+            rangeMap.set(rangeString, true);
 
-        return  true;
-    }).forEach(range => {
-        const refCol = cols.find(col => col.min == range[0] && col.max == range[1]);
-        const currentOutlineLevel = outlineLevel.get(range[0]);
-        cols.push({
-            min: range[0],
-            max: range[1],
-            outlineLevel: suppressColumnOutline ? undefined : (currentOutlineLevel || 1),
-            width: (refCol || { width: 100 }).width
+            return true;
+        })
+        .forEach((range) => {
+            const refCol = cols.find((col) => col.min == range[0] && col.max == range[1]);
+            const currentOutlineLevel = outlineLevel.get(range[0]);
+            cols.push({
+                min: range[0],
+                max: range[1],
+                outlineLevel: suppressColumnOutline ? undefined : currentOutlineLevel || 1,
+                width: (refCol || { width: 100 }).width,
+            });
+
+            outlineLevel.set(range[0], (currentOutlineLevel || 0) + 1);
         });
-
-        outlineLevel.set(range[0], (currentOutlineLevel || 0) + 1);
-    });
 
     return mergedCells;
 };
@@ -105,12 +114,40 @@ const getPageOrientation = (orientation?: 'Portrait' | 'Landscape'): 'portrait' 
 };
 
 const getPageSize = (pageSize?: string): number => {
-    if (pageSize == null) { return 1; }
+    if (pageSize == null) {
+        return 1;
+    }
 
-    const positions = ['Letter', 'Letter Small', 'Tabloid', 'Ledger', 'Legal', 'Statement', 'Executive', 'A3', 'A4', 'A4 Small', 'A5', 'A6', 'B4', 'B5', 'Folio', 'Envelope', 'Envelope DL', 'Envelope C5', 'Envelope B5', 'Envelope C3', 'Envelope C4', 'Envelope C6', 'Envelope Monarch', 'Japanese Postcard', 'Japanese Double Postcard'];
+    const positions = [
+        'Letter',
+        'Letter Small',
+        'Tabloid',
+        'Ledger',
+        'Legal',
+        'Statement',
+        'Executive',
+        'A3',
+        'A4',
+        'A4 Small',
+        'A5',
+        'A6',
+        'B4',
+        'B5',
+        'Folio',
+        'Envelope',
+        'Envelope DL',
+        'Envelope C5',
+        'Envelope B5',
+        'Envelope C3',
+        'Envelope C4',
+        'Envelope C6',
+        'Envelope Monarch',
+        'Japanese Postcard',
+        'Japanese Double Postcard',
+    ];
     const pos = positions.indexOf(pageSize);
 
-    return pos === -1 ? 1 : (pos + 1);
+    return pos === -1 ? 1 : pos + 1;
 };
 
 const addColumns = (columns: ExcelColumn[]) => {
@@ -118,7 +155,7 @@ const addColumns = (columns: ExcelColumn[]) => {
         if (columns.length) {
             params.children.push({
                 name: 'cols',
-                children: columns.map(column => columnFactory.getTemplate(column))
+                children: columns.map((column) => columnFactory.getTemplate(column)),
             });
         }
         return params;
@@ -130,7 +167,7 @@ const addSheetData = (rows: ExcelRow[], sheetNumber: number) => {
         if (rows.length) {
             params.children.push({
                 name: 'sheetData',
-                children: rows.map((row, idx) => rowFactory.getTemplate(row, idx, sheetNumber))
+                children: rows.map((row, idx) => rowFactory.getTemplate(row, idx, sheetNumber)),
             });
         }
         return params;
@@ -144,10 +181,10 @@ const addMergeCells = (mergeCells: string[]) => {
                 name: 'mergeCells',
                 properties: {
                     rawMap: {
-                        count: mergeCells.length
-                    }
+                        count: mergeCells.length,
+                    },
                 },
-                children: mergeCells.map(mergedCell => mergeCellFactory.getTemplate(mergedCell))
+                children: mergeCells.map((mergedCell) => mergeCellFactory.getTemplate(mergedCell)),
             });
         }
         return params;
@@ -161,8 +198,8 @@ const addPageMargins = (margins: ExcelSheetMargin) => {
         params.children.push({
             name: 'pageMargins',
             properties: {
-                rawMap: { bottom, footer, header, left, right, top }
-            }
+                rawMap: { bottom, footer, header, left, right, top },
+            },
         });
 
         return params;
@@ -179,9 +216,9 @@ const addPageSetup = (pageSetup?: ExcelSheetPageSetup) => {
                         horizontalDpi: 0,
                         verticalDpi: 0,
                         orientation: getPageOrientation(pageSetup.orientation),
-                        paperSize: getPageSize(pageSetup.pageSize)
-                    }
-                }
+                        paperSize: getPageSize(pageSetup.pageSize),
+                    },
+                },
             });
         }
         return params;
@@ -197,7 +234,7 @@ const replaceHeaderFooterTokens = (value: string): string => {
         '&[Tab]': '&A',
         '&[Path]': '&Z',
         '&[File]': '&F',
-        '&[Picture]': '&G'
+        '&[Picture]': '&G',
     };
 
     _iterateObject<string>(map, (key, val) => {
@@ -208,14 +245,20 @@ const replaceHeaderFooterTokens = (value: string): string => {
 };
 
 const getHeaderPosition = (position?: string): 'L' | 'C' | 'R' => {
-    if (position === 'Center') { return 'C'; }
-    if (position === 'Right') { return 'R'; }
+    if (position === 'Center') {
+        return 'C';
+    }
+    if (position === 'Right') {
+        return 'R';
+    }
 
     return 'L';
 };
 
 const applyHeaderFontStyle = (headerString: string, font?: ExcelFont): string => {
-    if (!font) { return headerString; }
+    if (!font) {
+        return headerString;
+    }
 
     headerString += '&amp;&quot;';
     headerString += font.fontName || 'Calibri';
@@ -229,17 +272,27 @@ const applyHeaderFontStyle = (headerString: string, font?: ExcelFont): string =>
     }
     headerString += '&quot;';
 
-    if (font.size) { headerString += `&amp;${font.size}`; }
-    if (font.strikeThrough) { headerString += '&amp;S'; }
+    if (font.size) {
+        headerString += `&amp;${font.size}`;
+    }
+    if (font.strikeThrough) {
+        headerString += '&amp;S';
+    }
     if (font.underline) {
         headerString += `&amp;${font.underline === 'Double' ? 'E' : 'U'}`;
-     }
-    if (font.color) { headerString += `&amp;K${font.color.replace('#', '').toUpperCase()}`; }
+    }
+    if (font.color) {
+        headerString += `&amp;K${font.color.replace('#', '').toUpperCase()}`;
+    }
 
     return headerString;
 };
 
-const processHeaderFooterContent = (content: ExcelHeaderFooterContent[], location: 'H' | 'F', rule: 'EVEN' | 'FIRST' | ''): string =>
+const processHeaderFooterContent = (
+    content: ExcelHeaderFooterContent[],
+    location: 'H' | 'F',
+    rule: 'EVEN' | 'FIRST' | ''
+): string =>
     content.reduce((prev, curr, idx) => {
         const pos = getHeaderPosition(curr.position);
         const output = applyHeaderFontStyle(`${prev}&amp;${pos}`, curr.font);
@@ -262,24 +315,27 @@ const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElem
     const rules: ['all', 'first', 'even'] = ['all', 'first', 'even'];
     const headersAndFooters = [] as XmlElement[];
 
-    rules.forEach(rule => {
+    rules.forEach((rule) => {
         const headerFooter = headerFooterConfig[rule];
         const namePrefix = rule === 'all' ? 'odd' : rule;
 
-        if (!headerFooter) { return; }
+        if (!headerFooter) {
+            return;
+        }
 
         for (const [key, value] of Object.entries<ExcelHeaderFooterContent[]>(headerFooter)) {
             const nameSuffix = `${key.charAt(0).toUpperCase()}${key.slice(1)}`;
             const location: 'H' | 'F' = key[0].toUpperCase() as 'H' | 'F';
 
             if (value) {
-                const normalizedRule: 'FIRST' | 'EVEN' | '' = rule === 'all' ? '' : (rule.toUpperCase() as 'FIRST' | 'EVEN');
+                const normalizedRule: 'FIRST' | 'EVEN' | '' =
+                    rule === 'all' ? '' : (rule.toUpperCase() as 'FIRST' | 'EVEN');
                 headersAndFooters.push({
                     name: `${namePrefix}${nameSuffix}`,
                     properties: {
-                        rawMap: { 'xml:space': 'preserve' }
+                        rawMap: { 'xml:space': 'preserve' },
                     },
-                    textNode: processHeaderFooterContent(value, location, normalizedRule)
+                    textNode: processHeaderFooterContent(value, location, normalizedRule),
                 });
             }
         }
@@ -288,10 +344,11 @@ const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElem
     return headersAndFooters;
 };
 
-const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig
-) => {
+const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig) => {
     return (params: ComposedWorksheetParams) => {
-        if (!headerFooterConfig) { return params; }
+        if (!headerFooterConfig) {
+            return params;
+        }
 
         const differentFirst = headerFooterConfig.first != null ? 1 : 0;
         const differentOddEven = headerFooterConfig.even != null ? 1 : 0;
@@ -301,8 +358,8 @@ const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig
             properties: {
                 rawMap: {
                     differentFirst,
-                    differentOddEven
-                }
+                    differentOddEven,
+                },
             },
             children: buildHeaderFooter(headerFooterConfig),
         });
@@ -318,16 +375,18 @@ const addExcelTableRel = (excelTable?: ExcelDataTable) => {
                 properties: {
                     rawMap: {
                         count: '1',
-                    }
+                    },
                 },
-                children: [{
-                    name: 'tablePart',
-                    properties: {
-                        rawMap: {
-                            'r:id': `rId${++params.rIdCounter}`
-                        }
-                    }
-                }],
+                children: [
+                    {
+                        name: 'tablePart',
+                        properties: {
+                            rawMap: {
+                                'r:id': `rId${++params.rIdCounter}`,
+                            },
+                        },
+                    },
+                ],
             });
         }
 
@@ -343,16 +402,15 @@ const addDrawingRel = (currentSheet: number) => {
                 name: 'drawing',
                 properties: {
                     rawMap: {
-                        'r:id': `rId${++params.rIdCounter}`
-                    }
-                }
+                        'r:id': `rId${++params.rIdCounter}`,
+                    },
+                },
             });
         }
 
         return params;
     };
 };
-
 
 const addVmlDrawingRel = (currentSheet: number) => {
     return (params: ComposedWorksheetParams) => {
@@ -361,9 +419,9 @@ const addVmlDrawingRel = (currentSheet: number) => {
                 name: 'legacyDrawingHF',
                 properties: {
                     rawMap: {
-                        'r:id': `rId${++params.rIdCounter}`
-                    }
-                }
+                        'r:id': `rId${++params.rIdCounter}`,
+                    },
+                },
             });
         }
 
@@ -375,18 +433,20 @@ const addSheetPr = () => {
     return (params: { children: XmlElement[] }) => {
         params.children.push({
             name: 'sheetPr',
-            children: [{
-                name: 'outlinePr',
-                properties: {
-                    rawMap: {
-                        summaryBelow: 0
-                    }
-                }
-            }]
+            children: [
+                {
+                    name: 'outlinePr',
+                    properties: {
+                        rawMap: {
+                            summaryBelow: 0,
+                        },
+                    },
+                },
+            ],
         });
         return params;
-    }
-}
+    };
+};
 
 const addSheetFormatPr = (rows: ExcelRow[]) => {
     return (params: ComposedWorksheetParams) => {
@@ -403,31 +463,28 @@ const addSheetFormatPr = (rows: ExcelRow[]) => {
                 rawMap: {
                     baseColWidth: 10,
                     defaultRowHeight: 16,
-                    outlineLevelRow: maxOutline ? maxOutline : undefined
-                }
-            }
+                    outlineLevelRow: maxOutline ? maxOutline : undefined,
+                },
+            },
         });
         return params;
-    }
-}
+    };
+};
 
 type ComposedWorksheetParams = {
     children: XmlElement[];
     rIdCounter: number;
-}
+};
 
 const worksheetFactory: ExcelOOXMLTemplate = {
-    getTemplate(params: {
-        worksheet: ExcelWorksheet,
-        currentSheet: number,
-        config: ExcelGridSerializingParams
-    }) {
+    getTemplate(params: { worksheet: ExcelWorksheet; currentSheet: number; config: ExcelGridSerializingParams }) {
         const { worksheet, currentSheet, config } = params;
         const { margins = {}, pageSetup, headerFooterConfig, suppressColumnOutline } = config;
 
         const { table } = worksheet;
         const { rows, columns } = table;
-        const mergedCells = (columns && columns.length) ? getMergedCellsAndAddColumnGroups(rows, columns, !!suppressColumnOutline) : [];
+        const mergedCells =
+            columns && columns.length ? getMergedCellsAndAddColumnGroups(rows, columns, !!suppressColumnOutline) : [];
 
         const { worksheetDataTables } = ExcelXlsxFactory;
         const worksheetExcelTables = worksheetDataTables.get(currentSheet);
@@ -449,21 +506,23 @@ const worksheetFactory: ExcelOOXMLTemplate = {
         const { children } = createWorksheetChildren({ children: [], rIdCounter: 0 });
 
         return {
-            name: "worksheet",
+            name: 'worksheet',
             properties: {
-                prefixedAttributes:[{
-                    prefix: "xmlns:",
-                    map: {
-                        r: "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
-                    }
-                }],
+                prefixedAttributes: [
+                    {
+                        prefix: 'xmlns:',
+                        map: {
+                            r: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships',
+                        },
+                    },
+                ],
                 rawMap: {
-                    xmlns: "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
-                }
+                    xmlns: 'http://schemas.openxmlformats.org/spreadsheetml/2006/main',
+                },
             },
-            children
+            children,
         };
-    }
+    },
 };
 
 export default worksheetFactory;

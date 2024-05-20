@@ -1,64 +1,73 @@
 import {
-    AutoScrollService,
+    AgToggleButton,
     Autowired,
     ChartDataPanel as ChartDataPanelType,
     ChartType,
     Component,
     PostConstruct,
-    _warnOnce
-} from "@ag-grid-community/core";
-import { ChartController } from "../../chartController";
-import { ColState } from "../../model/chartDataModel";
-import { ChartOptionsService } from "../../services/chartOptionsService";
+    _setDisplayed,
+    _warnOnce,
+} from '@ag-grid-community/core';
+
+import { ChartService } from '../../../chartService';
+import { ChartController } from '../../chartController';
+import { ColState } from '../../model/chartDataModel';
 import { ChartTranslationService } from '../../services/chartTranslationService';
-import { CategoriesDataPanel } from "./categoriesDataPanel";
-import { SeriesDataPanel } from "./seriesDataPanel";
-import { SeriesChartTypePanel } from "./seriesChartTypePanel";
-import { SwitchCategorySeriesDataPanel } from './switchCategorySeriesDataPanel';
 import { getMaxNumCategories, getMaxNumSeries, supportsInvertedCategorySeries } from '../../utils/seriesTypeMapper';
-import { ChartService } from "../../../chartService";
+import { ChartMenuContext } from '../chartMenuContext';
+import { CategoriesDataPanel } from './categoriesDataPanel';
+import { ChartSpecificDataPanel } from './chartSpecificDataPanel';
+import { SeriesChartTypePanel } from './seriesChartTypePanel';
+import { SeriesDataPanel } from './seriesDataPanel';
 
 const DefaultDataPanelDef: ChartDataPanelType = {
     groups: [
         { type: 'categories', isOpen: true },
         { type: 'series', isOpen: true },
-        { type: 'seriesChartType', isOpen: true }
-    ]
+        { type: 'seriesChartType', isOpen: true },
+        { type: 'chartSpecific', isOpen: true },
+    ],
 };
 
 export class ChartDataPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper ag-scrollable-container"></div>`;
-    
+
     @Autowired('chartTranslationService') protected readonly chartTranslationService: ChartTranslationService;
     @Autowired('chartService') private chartService: ChartService;
 
-    private autoScrollService: AutoScrollService;
+    private readonly chartController: ChartController;
     private chartType?: ChartType;
     private isSwitchCategorySeriesToggled = false;
     private categoriesDataPanel?: CategoriesDataPanel;
     private seriesDataPanel?: SeriesDataPanel;
     private seriesChartTypePanel?: SeriesChartTypePanel;
-    private switchCategorySeriesPanel?: SwitchCategorySeriesDataPanel;
+    private chartSpecificPanel?: ChartSpecificDataPanel;
+    private switchCategorySeriesToggle: AgToggleButton;
+    private restoreSwitchCategorySeriesToggleFocus = false;
+    private panels: Component[] = [];
 
-    constructor(
-        private readonly chartController: ChartController,
-        private readonly chartOptionsService: ChartOptionsService,
-    ) {
+    constructor(private readonly chartMenuContext: ChartMenuContext) {
         super(ChartDataPanel.TEMPLATE);
+
+        this.chartController = chartMenuContext.chartController;
     }
 
     @PostConstruct
     public init() {
-        this.switchCategorySeriesPanel = this.addComponent(this.createManagedBean(new SwitchCategorySeriesDataPanel(
-            () => this.chartController.isCategorySeriesSwitched(),
-            (value: boolean) => this.chartController.switchCategorySeries(value)
-        )));
+        this.createSwitchCategorySeriesToggle();
         this.isSwitchCategorySeriesToggled = this.chartController.isCategorySeriesSwitched();
 
-        this.createAutoScrollService();
         this.updatePanels();
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATE, this.updatePanels.bind(this));
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, this.updatePanels.bind(this));
+        this.addManagedListener(
+            this.chartController,
+            ChartController.EVENT_CHART_MODEL_UPDATE,
+            this.updatePanels.bind(this)
+        );
+        this.addManagedListener(
+            this.chartController,
+            ChartController.EVENT_CHART_API_UPDATE,
+            this.updatePanels.bind(this)
+        );
     }
 
     protected destroy(): void {
@@ -75,25 +84,33 @@ export class ChartDataPanel extends Component {
 
         // Determine the state of the category/series toggle
         this.isSwitchCategorySeriesToggled = this.chartController.isCategorySeriesSwitched();
-        const hasChangedSwitchCategorySeries = (
-            this.isSwitchCategorySeriesToggled !== isSwitchCategorySeriesToggledCurrent
-        );
+        const hasChangedSwitchCategorySeries =
+            this.isSwitchCategorySeriesToggled !== isSwitchCategorySeriesToggledCurrent;
 
         // Attempt to re-use existing panels where possible in order to maintain keyboard focus
         if (this.canRefresh(currentChartType, this.chartType) && !hasChangedSwitchCategorySeries) {
             this.categoriesDataPanel?.refresh(dimensionCols);
             this.seriesDataPanel?.refresh(valueCols);
             this.seriesChartTypePanel?.refresh(valueCols);
+            this.chartSpecificPanel?.refresh();
         } else {
             this.recreatePanels(dimensionCols, valueCols);
         }
 
         // Ensure the category/series toggle UI control is up-to-date
-        this.switchCategorySeriesPanel?.setDisplayed(
-            supportsInvertedCategorySeries(this.chartType) && this.chartService.isEnterprise() && !this.chartController.isGrouping()
-        );
+        const isSwitchCategorySeriesDisplayed =
+            supportsInvertedCategorySeries(this.chartType) &&
+            this.chartService.isEnterprise() &&
+            !this.chartController.isGrouping();
+        _setDisplayed(this.switchCategorySeriesToggle.getGui(), isSwitchCategorySeriesDisplayed);
         if (hasChangedSwitchCategorySeries) {
-            this.switchCategorySeriesPanel?.refresh();
+            this.switchCategorySeriesToggle?.setValue(this.chartController.isCategorySeriesSwitched());
+        }
+        if (this.restoreSwitchCategorySeriesToggleFocus) {
+            this.restoreSwitchCategorySeriesToggleFocus = false;
+            if (isSwitchCategorySeriesDisplayed) {
+                this.switchCategorySeriesToggle.getFocusableElement().focus();
+            }
         }
     }
 
@@ -102,7 +119,8 @@ export class ChartDataPanel extends Component {
         if (oldChartType === newChartType) {
             return true;
         }
-        const isCombo = (chartType: ChartType) => ['columnLineCombo', 'areaColumnCombo', 'customCombo'].includes(chartType);
+        const isCombo = (chartType: ChartType) =>
+            ['columnLineCombo', 'areaColumnCombo', 'customCombo'].includes(chartType);
         if (isCombo(oldChartType) && isCombo(newChartType)) {
             return true;
         }
@@ -117,86 +135,74 @@ export class ChartDataPanel extends Component {
 
         const isCategorySeriesSwitched = this.chartController.isCategorySeriesSwitched();
 
-        const panels = this.getDataPanelDef().groups?.map(({ type, isOpen }): Component | null => {
+        this.getDataPanelDef().groups?.forEach(({ type, isOpen }) => {
             if (type === (isCategorySeriesSwitched ? 'series' : 'categories')) {
-                return this.categoriesDataPanel = this.createBean(new CategoriesDataPanel(
-                    this.chartController,
-                    this.autoScrollService,
-                    this.getCategoryGroupTitle(isCategorySeriesSwitched),
-                    this.getCategoryGroupMultipleSelect(chartType, isCategorySeriesSwitched),
-                    dimensionCols,
-                    isOpen
-                ));
-            } else if (type === (isCategorySeriesSwitched ? 'categories' : 'series')) {
-                return this.seriesDataPanel = this.createBean(new SeriesDataPanel(
-                    this.chartController,
-                    this.autoScrollService,
-                    this.chartOptionsService,
-                    this.getSeriesGroupTitle(isCategorySeriesSwitched),
-                    this.getSeriesGroupMultipleSelect(chartType, isCategorySeriesSwitched),
-                    this.getSeriesGroupMaxSelection(chartType, isCategorySeriesSwitched),
-                    valueCols,
-                    isOpen
-                ));
-            } else if (type === 'seriesChartType') {
-                if (this.chartController.isComboChart()) {
-                    return this.seriesChartTypePanel = this.createBean(new SeriesChartTypePanel(
+                this.categoriesDataPanel = this.createBean(
+                    new CategoriesDataPanel(
                         this.chartController,
+                        this.getCategoryGroupTitle(isCategorySeriesSwitched),
+                        this.getCategoryGroupMultipleSelect(chartType, isCategorySeriesSwitched),
+                        dimensionCols,
+                        isOpen
+                    )
+                );
+                this.panels.push(this.categoriesDataPanel);
+            } else if (type === (isCategorySeriesSwitched ? 'categories' : 'series')) {
+                this.seriesDataPanel = this.createBean(
+                    new SeriesDataPanel(
+                        this.chartController,
+                        this.chartMenuContext.chartOptionsService,
+                        this.getSeriesGroupTitle(isCategorySeriesSwitched),
+                        this.getSeriesGroupMultipleSelect(chartType, isCategorySeriesSwitched),
+                        this.getSeriesGroupMaxSelection(chartType, isCategorySeriesSwitched),
                         valueCols,
                         isOpen
-                    ));
+                    )
+                );
+                this.panels.push(this.seriesDataPanel);
+            } else if (type === 'seriesChartType') {
+                if (this.chartController.isComboChart()) {
+                    this.seriesChartTypePanel = this.createBean(
+                        new SeriesChartTypePanel(this.chartController, valueCols, isOpen)
+                    );
+                    this.panels.push(this.seriesChartTypePanel);
                 }
-                return null;
+            } else if (type === 'chartSpecific') {
+                this.chartSpecificPanel = this.createBean(new ChartSpecificDataPanel(this.chartMenuContext, isOpen));
+                this.panels.push(this.chartSpecificPanel);
             } else {
                 _warnOnce(`Invalid charts data panel group name supplied: '${type}'`);
-                return null;
             }
-        }).filter((value): value is NonNullable<typeof value> => value != null);
+        });
 
-        if (panels) this.addPanelComponents(panels);
+        (isCategorySeriesSwitched ? this.categoriesDataPanel : this.seriesDataPanel)?.addItem(
+            this.switchCategorySeriesToggle.getGui()
+        );
+
+        this.addPanelComponents();
     }
 
-    private addPanelComponents<T extends Component[]>(panels: T): T {
-        const fragment = document.createDocumentFragment();
-        for (const panel of panels) {
-            this.registerComponent(panel);
+    private addPanelComponents(): void {
+        if (!this.panels.length) {
+            return;
+        }
+        const eDocument = this.gos.getDocument();
+        const fragment = eDocument.createDocumentFragment();
+        for (const panel of this.panels) {
+            panel.addCssClass('ag-chart-data-section');
             fragment.appendChild(panel.getGui());
         }
-        const afterPanelElement = this.switchCategorySeriesPanel?.getGui();
-        this.getGui().insertBefore(fragment, afterPanelElement ?? null);
-        return panels;
+        this.getGui().appendChild(fragment);
     }
 
     private clearPanelComponents() {
         const eGui = this.getGui();
 
-        if (this.categoriesDataPanel) eGui.removeChild(this.categoriesDataPanel.getGui());
-        if (this.seriesDataPanel) eGui.removeChild(this.seriesDataPanel.getGui());
-        if (this.seriesChartTypePanel) eGui.removeChild(this.seriesChartTypePanel.getGui());
-
-        this.categoriesDataPanel = this.destroyBean(this.categoriesDataPanel);
-        this.seriesDataPanel = this.destroyBean(this.seriesDataPanel);
-        this.seriesChartTypePanel = this.destroyBean(this.seriesChartTypePanel);
-    }
-
-    private createAutoScrollService(): void {
-        const eGui = this.getGui();
-        this.autoScrollService = new AutoScrollService({
-            scrollContainer: eGui,
-            scrollAxis: 'y',
-            getVerticalPosition: () => eGui.scrollTop,
-            setVerticalPosition: (position) => eGui.scrollTop = position
+        this.panels.forEach((panel) => {
+            eGui.removeChild(panel.getGui());
+            this.destroyBean(panel);
         });
-    }
-
-    private addComponent<T extends Component>(component: T): T {
-        this.registerComponent(component);
-        this.getGui().appendChild(component.getGui());
-        return component;
-    }
-
-    private registerComponent<T extends Component>(component: T): void {
-        component.addCssClass('ag-chart-data-section');
+        this.panels = [];
     }
 
     private getDataPanelDef() {
@@ -225,5 +231,21 @@ export class ChartDataPanel extends Component {
     private getSeriesGroupMaxSelection(chartType: ChartType, isCategorySeriesSwitched: boolean): number | undefined {
         if (isCategorySeriesSwitched) return undefined;
         return getMaxNumSeries(chartType);
+    }
+
+    private createSwitchCategorySeriesToggle(): void {
+        this.switchCategorySeriesToggle = this.createManagedBean(
+            new AgToggleButton({
+                label: this.chartTranslationService.translate('switchCategorySeries'),
+                labelAlignment: 'left',
+                labelWidth: 'flex',
+                inputWidth: 'flex',
+                value: this.chartController.isCategorySeriesSwitched(),
+                onValueChange: (value) => {
+                    this.restoreSwitchCategorySeriesToggleFocus = true;
+                    this.chartController.switchCategorySeries(value);
+                },
+            })
+        );
     }
 }

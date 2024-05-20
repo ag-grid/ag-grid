@@ -1,7 +1,7 @@
-import { Component, ElementRef, ViewChild } from "@angular/core";
-import { IFilterAngularComp } from "@ag-grid-community/angular";
-import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
-import { FormsModule } from "@angular/forms";
+import { IFilterAngularComp } from '@ag-grid-community/angular';
+import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from '@ag-grid-community/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     standalone: true,
@@ -10,11 +10,19 @@ import { FormsModule } from "@angular/forms";
         <div class="person-filter">
             <div>Custom Athlete Filter</div>
             <div>
-                <input #eFilterText type="text" [(ngModel)]="filterText" (ngModelChange)="onInputChanged()" placeholder="Full name search..."/>
+                <input
+                    #eFilterText
+                    type="text"
+                    [(ngModel)]="filterText"
+                    (ngModelChange)="onInputChanged()"
+                    placeholder="Full name search..."
+                />
             </div>
-            <div>This filter does partial word search on multiple words, eg "mich phel" still brings back Michael Phelps.</div>
+            <div>
+                This filter does partial word search on multiple words, eg "mich phel" still brings back Michael Phelps.
+            </div>
         </div>
-    `
+    `,
 })
 export class PersonFilter implements IFilterAngularComp {
     @ViewChild('eFilterText') eFilterText!: ElementRef;
@@ -31,13 +39,16 @@ export class PersonFilter implements IFilterAngularComp {
         let passed = true;
         const { node } = params;
 
-        this.filterText.toLowerCase().split(' ').forEach(filterWord => {
-            const value = this.filterParams.getValue(node);
+        this.filterText
+            .toLowerCase()
+            .split(' ')
+            .forEach((filterWord) => {
+                const value = this.filterParams.getValue(node);
 
-            if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
-                passed = false;
-            }
-        });
+                if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
+                    passed = false;
+                }
+            });
 
         return passed;
     }
@@ -47,7 +58,9 @@ export class PersonFilter implements IFilterAngularComp {
     }
 
     getModel() {
-        if (!this.isFilterActive()) { return null; }
+        if (!this.isFilterActive()) {
+            return null;
+        }
 
         return { value: this.filterText };
     }

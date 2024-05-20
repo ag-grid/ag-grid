@@ -1,19 +1,20 @@
-import { Autowired } from "../context/context";
-import { PanelOptions, AgPanel } from "./agPanel";
-import { Component } from "./component";
-import { _setDisplayed } from "../utils/dom";
-import { _createIconNoSpan } from "../utils/icon";
-import { PopupService } from "./popupService";
-import { ResizableStructure } from "../rendering/features/positionableFeature";
+import { Autowired } from '../context/context';
+import { ResizableStructure } from '../rendering/features/positionableFeature';
+import { _setDisplayed } from '../utils/dom';
+import { _createIconNoSpan } from '../utils/icon';
+import { AgPanel, PanelOptions } from './agPanel';
+import { Component } from './component';
+import { PopupService } from './popupService';
 
-export type ResizableSides = 'topLeft' |
-    'top' |
-    'topRight' |
-    'right' |
-    'bottomRight' |
-    'bottom' |
-    'bottomLeft' |
-    'left';
+export type ResizableSides =
+    | 'topLeft'
+    | 'top'
+    | 'topRight'
+    | 'right'
+    | 'bottomRight'
+    | 'bottom'
+    | 'bottomLeft'
+    | 'left';
 
 export interface DialogOptions extends PanelOptions {
     eWrapper?: HTMLElement;
@@ -26,7 +27,6 @@ export interface DialogOptions extends PanelOptions {
 }
 
 export class AgDialog extends AgPanel<DialogOptions> {
-
     @Autowired('popupService') private popupService: PopupService;
 
     private isMaximizable: boolean = false;
@@ -41,11 +41,11 @@ export class AgDialog extends AgPanel<DialogOptions> {
         x: 0,
         y: 0,
         width: 0,
-        height: 0
+        height: 0,
     };
 
     constructor(config: DialogOptions) {
-        super({...config, popup: true });
+        super({ ...config, popup: true });
     }
 
     protected postConstruct() {
@@ -60,14 +60,20 @@ export class AgDialog extends AgPanel<DialogOptions> {
             this.popupService.bringPopupToFront(eGui);
         });
 
-        if (movable) { this.setMovable(movable); }
-        if (maximizable) { this.setMaximizable(maximizable); }
-        if (resizable) { this.setResizable(resizable); }
+        if (movable) {
+            this.setMovable(movable);
+        }
+        if (maximizable) {
+            this.setMaximizable(maximizable);
+        }
+        if (resizable) {
+            this.setResizable(resizable);
+        }
     }
 
     protected renderComponent() {
         const eGui = this.getGui();
-        const { alwaysOnTop, modal, title, afterGuiAttached  } = this.config;
+        const { alwaysOnTop, modal, title, afterGuiAttached } = this.config;
         const translate = this.localeService.getLocaleTextFunc();
 
         const addPopupRes = this.popupService.addPopup({
@@ -77,7 +83,7 @@ export class AgDialog extends AgPanel<DialogOptions> {
             closedCallback: this.onClosed.bind(this),
             alwaysOnTop,
             ariaLabel: title || translate('ariaLabelDialog', 'Dialog'),
-            afterGuiAttached
+            afterGuiAttached,
         });
 
         if (addPopupRes) {
@@ -118,7 +124,7 @@ export class AgDialog extends AgPanel<DialogOptions> {
 
     private clearMaximizebleListeners() {
         if (this.maximizeListeners.length) {
-            this.maximizeListeners.forEach(destroyListener => destroyListener());
+            this.maximizeListeners.forEach((destroyListener) => destroyListener());
             this.maximizeListeners.length = 0;
         }
 
@@ -156,7 +162,9 @@ export class AgDialog extends AgPanel<DialogOptions> {
 
         const eTitleBar = this.eTitleBar;
 
-        if (!eTitleBar || maximizable === this.isMaximizable) { return; }
+        if (!eTitleBar || maximizable === this.isMaximizable) {
+            return;
+        }
 
         const maximizeButtonComp = this.buildMaximizeAndMinimizeElements();
         this.refreshMaximizeIcon();
@@ -165,9 +173,7 @@ export class AgDialog extends AgPanel<DialogOptions> {
 
         this.addTitleBarButton(maximizeButtonComp, 0);
 
-        this.maximizeListeners.push(
-            this.addManagedListener(eTitleBar, 'dblclick', this.toggleMaximize.bind(this))!
-        );
+        this.maximizeListeners.push(this.addManagedListener(eTitleBar, 'dblclick', this.toggleMaximize.bind(this))!);
 
         this.resizeListenerDestroy = this.addManagedListener(this, 'resize', () => {
             this.isMaximized = false;
@@ -175,9 +181,10 @@ export class AgDialog extends AgPanel<DialogOptions> {
         });
     }
 
-    private buildMaximizeAndMinimizeElements(): Component{
-        const maximizeButtonComp = this.maximizeButtonComp =
-        this.createBean(new Component(/* html */`<div class="ag-dialog-button"></span>`));
+    private buildMaximizeAndMinimizeElements(): Component {
+        const maximizeButtonComp = (this.maximizeButtonComp = this.createBean(
+            new Component(/* html */ `<div class="ag-dialog-button"></span>`)
+        ));
 
         const eGui = maximizeButtonComp.getGui();
 

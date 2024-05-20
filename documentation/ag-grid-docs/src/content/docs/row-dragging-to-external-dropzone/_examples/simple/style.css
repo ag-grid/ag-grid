@@ -17,7 +17,7 @@ body {
     overflow: hidden;
 }
 
-.toolbar { 
+.toolbar {
     height: 30px;
 }
 
@@ -34,13 +34,14 @@ body {
     flex-direction: column;
 }
 
-.drop-target, .tile {
+.drop-target,
+.tile {
     color: white;
 }
 
 .drop-target {
     border: 1px solid #888;
-    background-color:#99999966;
+    background-color: #99999966;
     padding: 10px;
 }
 
@@ -56,7 +57,7 @@ body {
     flex: 1 1 auto;
 }
 
-.tile { 
+.tile {
     width: calc(50% - 30px);
     margin: 5px;
     padding: 10px;
@@ -64,21 +65,21 @@ body {
 }
 
 .red-row {
-    background-color: #CC333344 !important;
+    background-color: #cc333344 !important;
 }
 .green-row {
-    background-color: #33CC3344 !important;
+    background-color: #33cc3344 !important;
 }
 .blue-row {
-    background-color: #2244CC44 !important;
+    background-color: #2244cc44 !important;
 }
 
 .tile.red {
-    background-color: #CC333344;
+    background-color: #cc333344;
 }
 .tile.green {
-    background-color: #33CC3344;
+    background-color: #33cc3344;
 }
 .tile.blue {
-    background-color: #2244CC44;
+    background-color: #2244cc44;
 }

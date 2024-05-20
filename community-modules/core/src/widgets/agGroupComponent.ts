@@ -1,13 +1,13 @@
+import { KeyCode } from '../constants/keyCode';
+import { PostConstruct } from '../context/context';
+import { AgEvent } from '../events';
+import { _setAriaExpanded } from '../utils/aria';
+import { _setDisplayed } from '../utils/dom';
+import { _createIcon } from '../utils/icon';
+import { AgCheckbox } from './agCheckbox';
+import { AgToggleButton } from './agToggleButton';
 import { Component } from './component';
 import { RefSelector } from './componentAnnotations';
-import { PostConstruct } from '../context/context';
-import { AgCheckbox } from './agCheckbox';
-import { _createIcon } from '../utils/icon';
-import { _setDisplayed } from '../utils/dom';
-import { KeyCode } from '../constants/keyCode';
-import { _setAriaExpanded } from '../utils/aria';
-import { AgToggleButton } from './agToggleButton';
-import { AgEvent } from '../events';
 
 type GroupItem = Component | HTMLElement;
 type Align = 'start' | 'end' | 'center' | 'stretch';
@@ -27,6 +27,7 @@ export interface AgGroupComponentParams {
     onExpandedChange?: (expanded: boolean) => void;
     expanded?: boolean;
     useToggle?: boolean;
+    suppressKeyboardNavigation?: boolean;
 }
 
 interface ExpandChangedEvent extends AgEvent {
@@ -62,7 +63,12 @@ export class AgGroupComponent extends Component {
         super(AgGroupComponent.getTemplate(params));
 
         const {
-            enabled, items, suppressEnabledCheckbox, expanded, suppressToggleExpandOnEnableChange, useToggle: toggleMode
+            enabled,
+            items,
+            suppressEnabledCheckbox,
+            expanded,
+            suppressToggleExpandOnEnableChange,
+            useToggle: toggleMode,
         } = params;
 
         this.cssIdentifier = params.cssIdentifier || 'default';
@@ -187,7 +193,7 @@ export class AgGroupComponent extends Component {
     }
 
     public addItems(items: GroupItem[]) {
-        items.forEach(item => this.addItem(item));
+        items.forEach((item) => this.addItem(item));
     }
 
     public prependItem(item: GroupItem) {
@@ -240,7 +246,7 @@ export class AgGroupComponent extends Component {
     private dispatchEnableChangeEvent(enabled: boolean): void {
         const event: EnableChangeEvent = {
             type: AgGroupComponent.EVENT_ENABLE_CHANGE,
-            enabled
+            enabled,
         };
         this.dispatchEvent(event);
     }
@@ -266,7 +272,9 @@ export class AgGroupComponent extends Component {
     }
 
     public onEnableChange(callbackFn: (enabled: boolean) => void): this {
-        this.addManagedListener(this, AgGroupComponent.EVENT_ENABLE_CHANGE, (event: EnableChangeEvent) => callbackFn(event.enabled));
+        this.addManagedListener(this, AgGroupComponent.EVENT_ENABLE_CHANGE, (event: EnableChangeEvent) =>
+            callbackFn(event.enabled)
+        );
 
         return this;
     }
@@ -307,22 +315,26 @@ export class AgGroupComponent extends Component {
         const titleBar = this.createManagedBean(new DefaultTitleBar(this.params));
         this.eTitleBar = titleBar;
         titleBar.refreshOnExpand(this.expanded);
-        this.addManagedListener(titleBar, DefaultTitleBar.EVENT_EXPAND_CHANGED, (event: ExpandChangedEvent) => this.toggleGroupExpand(event.expanded));
+        this.addManagedListener(titleBar, DefaultTitleBar.EVENT_EXPAND_CHANGED, (event: ExpandChangedEvent) =>
+            this.toggleGroupExpand(event.expanded)
+        );
         return titleBar;
     }
 
     private createToggleTitleBar(): AgToggleButton {
-        const eToggle = this.createManagedBean(new AgToggleButton({
-            value: this.enabled,
-            label: this.params.title,
-            labelAlignment: 'left',
-            labelWidth: 'flex',
-            onValueChange: enabled => {
-                this.setEnabled(enabled, true);
-                this.dispatchEnableChangeEvent(enabled);
-            }
-        }));
-        eToggle.addCssClass('ag-group-title-bar')
+        const eToggle = this.createManagedBean(
+            new AgToggleButton({
+                value: this.enabled,
+                label: this.params.title,
+                labelAlignment: 'left',
+                labelWidth: 'flex',
+                onValueChange: (enabled) => {
+                    this.setEnabled(enabled, true);
+                    this.dispatchEnableChangeEvent(enabled);
+                },
+            })
+        );
+        eToggle.addCssClass('ag-group-title-bar');
         eToggle.addCssClass(`ag-${this.params.cssIdentifier ?? 'default'}-group-title-bar ag-unselectable`);
         this.eToggle = eToggle;
         this.toggleGroupExpand(this.enabled);
@@ -337,6 +349,7 @@ class DefaultTitleBar extends Component {
 
     private title: string | undefined;
     private suppressOpenCloseIcons: boolean = false;
+    private suppressKeyboardNavigation: boolean = false;
 
     @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
     @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
@@ -345,7 +358,7 @@ class DefaultTitleBar extends Component {
     constructor(params: AgGroupComponentParams = {}) {
         super(DefaultTitleBar.getTemplate(params));
 
-        const { title, suppressOpenCloseIcons } = params;
+        const { title, suppressOpenCloseIcons, suppressKeyboardNavigation } = params;
 
         if (!!title && title.length > 0) {
             this.title = title;
@@ -354,13 +367,17 @@ class DefaultTitleBar extends Component {
         if (suppressOpenCloseIcons != null) {
             this.suppressOpenCloseIcons = suppressOpenCloseIcons;
         }
+
+        this.suppressKeyboardNavigation = suppressKeyboardNavigation ?? false;
     }
 
     private static getTemplate(params: AgGroupComponentParams) {
         const cssIdentifier = params.cssIdentifier ?? 'default';
 
+        const role = params.suppressKeyboardNavigation ? 'presentation' : 'role';
+
         return /* html */ `
-            <div class="ag-group-title-bar ag-${cssIdentifier}-group-title-bar ag-unselectable" role="button">
+            <div class="ag-group-title-bar ag-${cssIdentifier}-group-title-bar ag-unselectable" role="${role}">
                 <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupOpenedIcon" role="presentation"></span>
                 <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupClosedIcon" role="presentation"></span>
                 <span ref="eTitle" class="ag-group-title ag-${cssIdentifier}-group-title"></span>
@@ -422,14 +439,14 @@ class DefaultTitleBar extends Component {
     private dispatchExpandChanged(expanded?: boolean): void {
         const event: ExpandChangedEvent = {
             type: DefaultTitleBar.EVENT_EXPAND_CHANGED,
-            expanded
+            expanded,
         };
         this.dispatchEvent(event);
     }
 
     public setTitle(title: string | undefined): this {
         const eGui = this.getGui();
-        const hasTitle = (!!title && title.length > 0);
+        const hasTitle = !!title && title.length > 0;
         title = hasTitle ? title : undefined;
 
         this.eTitle.textContent = title ?? '';
@@ -468,7 +485,7 @@ class DefaultTitleBar extends Component {
             eGui.removeAttribute('tabindex');
         } else {
             eGui.classList.remove(TITLE_BAR_DISABLED_CLASS);
-            if (typeof this.title === 'string') {
+            if (typeof this.title === 'string' && !this.suppressKeyboardNavigation) {
                 eGui.setAttribute('tabindex', '0');
             } else {
                 eGui.removeAttribute('tabindex');

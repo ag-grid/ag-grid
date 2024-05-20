@@ -1,15 +1,16 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { MenuModule } from '@ag-grid-enterprise/menu';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import './styles.css';
-import DetailCellRenderer from './detailCellRendererVue.js';
+import { createApp } from 'vue';
 
-import { ModuleRegistry } from '@ag-grid-community/core';
+import DetailCellRenderer from './detailCellRendererVue.js';
+import './styles.css';
+
 ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule]);
 
 const VueExample = {
@@ -37,28 +38,35 @@ const VueExample = {
     `,
     components: {
         'ag-grid-vue': AgGridVue,
-        myDetailCellRenderer: DetailCellRenderer
+        myDetailCellRenderer: DetailCellRenderer,
     },
     data: function () {
         return {
-            columnDefs: [{
-                field: "name",
-                cellRenderer: "agGroupCellRenderer"
-            }, { field: "account" }, { field: "calls" }, {
-                field: "minutes",
-                valueFormatter: "x.toLocaleString() + 'm'"
-            }],
+            columnDefs: [
+                {
+                    field: 'name',
+                    cellRenderer: 'agGroupCellRenderer',
+                },
+                { field: 'account' },
+                { field: 'calls' },
+                {
+                    field: 'minutes',
+                    valueFormatter: "x.toLocaleString() + 'm'",
+                },
+            ],
             gridApi: null,
             defaultColDef: { flex: 1 },
             detailRowHeight: null,
             detailCellRenderer: null,
             rowData: null,
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
-        }
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
+        };
     },
     beforeMount() {
         this.detailRowHeight = 310;
-        this.detailCellRenderer = "myDetailCellRenderer"
+        this.detailCellRenderer = 'myDetailCellRenderer';
     },
     methods: {
         onFirstDataRendered(params) {
@@ -74,7 +82,7 @@ const VueExample = {
             this.gridApi.onGroupExpandedOrCollapsed();
         },
         printDetailGridInfo() {
-            console.log('Currently registered detail grid\'s: ');
+            console.log("Currently registered detail grid's: ");
             this.gridApi.forEachDetailGridInfo(function (detailGridInfo) {
                 console.log(detailGridInfo);
             });
@@ -82,19 +90,15 @@ const VueExample = {
         onGridReady(params) {
             this.gridApi = params.api;
 
-
             const updateData = (data) => {
                 this.rowData = data;
             };
 
             fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
-                .then(resp => resp.json())
-                .then(data => updateData(data));
+                .then((resp) => resp.json())
+                .then((data) => updateData(data));
         },
-    }
-}
+    },
+};
 
-
-createApp(VueExample)
-    .mount("#app")
-
+createApp(VueExample).mount('#app');

@@ -1,36 +1,35 @@
-import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', headerName: 'The full Name of the athlete' },
-  { field: 'age', headerName: 'The number of Years since the athlete was born', initialWidth: 120 },
-  { field: 'country', headerName: 'The Country the athlete was born in' },
-  { field: 'sport', headerName: 'The Sport the athlete participated in'},
-  { field: 'total', headerName: 'The Total number of medals won by the athlete'},
-]
+    { field: 'athlete', headerName: 'The full Name of the athlete' },
+    { field: 'age', headerName: 'The number of Years since the athlete was born', initialWidth: 120 },
+    { field: 'country', headerName: 'The Country the athlete was born in' },
+    { field: 'sport', headerName: 'The Sport the athlete participated in' },
+    { field: 'total', headerName: 'The Total number of medals won by the athlete' },
+];
 
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-  defaultColDef: {
-    initialWidth: 200,
-    wrapHeaderText: true,
-    autoHeaderHeight: true,
-  },
-  columnDefs: columnDefs,
-}
+    defaultColDef: {
+        initialWidth: 200,
+        wrapHeaderText: true,
+        autoHeaderHeight: true,
+    },
+    columnDefs: columnDefs,
+};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(data => gridApi!.setGridOption('rowData', data))
-})
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then((response) => response.json())
+        .then((data) => gridApi!.setGridOption('rowData', data));
+});

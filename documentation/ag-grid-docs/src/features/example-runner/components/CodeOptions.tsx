@@ -26,7 +26,7 @@ const SELECTOR_CONFIG: Record<SelectorType, SelectorConfig> = {
             Javascript: 'reactFunctional',
             Typescript: 'reactFunctionalTs',
         },
-    }
+    },
 };
 const IMPORT_TYPE_CONFIG: Record<ImportType, string> = {
     modules: 'Modules',

@@ -1,15 +1,15 @@
-import { AgBarSeriesOptions, AgCartesianAxisOptions } from "ag-charts-community";
-import { ChartProxyParams, UpdateParams } from "../chartProxy";
-import { CartesianChartProxy } from "./cartesianChartProxy";
-import { deepMerge } from "../../utils/object";
-import { hexToRGBA } from "../../utils/color";
-import { isStacked } from "../../utils/seriesTypeMapper";
-import { _includes } from "@ag-grid-community/core";
+import { _includes } from '@ag-grid-community/core';
+import { AgBarSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-community';
+
+import { hexToRGBA } from '../../utils/color';
+import { deepMerge } from '../../utils/object';
+import { isStacked } from '../../utils/seriesTypeMapper';
+import { ChartProxyParams, UpdateParams } from '../chartProxy';
+import { CartesianChartProxy } from './cartesianChartProxy';
 
 const HORIZONTAL_CHART_TYPES = new Set(['bar', 'groupedBar', 'stackedBar', 'normalizedBar']);
 
 export class BarChartProxy extends CartesianChartProxy<'bar'> {
-
     public constructor(params: ChartProxyParams) {
         super(params);
     }
@@ -36,18 +36,19 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
 
     protected override getSeries(params: UpdateParams): AgBarSeriesOptions[] {
         const [category] = params.categories;
-        const series: AgBarSeriesOptions[] = params.fields.map(f => (
-            {
-                type: this.standaloneChartType,
-                direction: this.isHorizontal() ? 'horizontal' : 'vertical',
-                stacked: this.crossFiltering || isStacked(this.chartType),
-                normalizedTo: this.isNormalised() ? 100 : undefined,
-                xKey: category.id,
-                xName: category.name,
-                yKey: f.colId,
-                yName: f.displayName
-            } as AgBarSeriesOptions
-        ));
+        const series: AgBarSeriesOptions[] = params.fields.map(
+            (f) =>
+                ({
+                    type: this.standaloneChartType,
+                    direction: this.isHorizontal() ? 'horizontal' : 'vertical',
+                    stacked: this.crossFiltering || isStacked(this.chartType),
+                    normalizedTo: this.isNormalised() ? 100 : undefined,
+                    xKey: category.id,
+                    xName: category.name,
+                    yKey: f.colId,
+                    yName: f.displayName,
+                }) as AgBarSeriesOptions
+        );
 
         return this.crossFiltering ? this.extractCrossFilterSeries(series) : series;
     }
@@ -62,10 +63,10 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
                 fill: palette?.fills?.[index],
                 stroke: palette?.strokes?.[index],
                 listeners: {
-                    nodeClick: this.crossFilterCallback
-                }
-            }
-        }
+                    nodeClick: this.crossFilterCallback,
+                },
+            };
+        };
 
         const updateFilteredOutSeries = (seriesOptions: AgBarSeriesOptions): AgBarSeriesOptions => {
             const yKey = seriesOptions.yKey + '-filtered-out';
@@ -75,8 +76,8 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
                 fill: hexToRGBA(seriesOptions.fill!, '0.3'),
                 stroke: hexToRGBA(seriesOptions.stroke!, '0.3'),
                 showInLegend: false,
-            }
-        }
+            };
+        };
 
         const allSeries: AgBarSeriesOptions[] = [];
         for (let i = 0; i < series.length; i++) {

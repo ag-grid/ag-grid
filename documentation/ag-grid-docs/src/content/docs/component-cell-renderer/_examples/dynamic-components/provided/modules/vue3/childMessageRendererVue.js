@@ -7,13 +7,13 @@ export default {
     data: function () {
         return {};
     },
-    beforeMount() {
-    },
-    mounted() {
-    },
+    beforeMount() {},
+    mounted() {},
     methods: {
         invokeParentMethod() {
-            this.params.context.componentParent.methodFromParent(`Row: ${this.params.node.rowIndex}, Col: ${this.params.colDef.headerName}`)
-        }
-    }
+            this.params.context.componentParent.methodFromParent(
+                `Row: ${this.params.node.rowIndex}, Col: ${this.params.colDef.headerName}`
+            );
+        },
+    },
 };

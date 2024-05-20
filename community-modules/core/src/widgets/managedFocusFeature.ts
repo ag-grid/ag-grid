@@ -1,8 +1,8 @@
-import { PostConstruct, Autowired } from '../context/context';
-import { FocusService } from '../focusService';
 import { KeyCode } from '../constants/keyCode';
-import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../utils/event';
 import { BeanStub } from '../context/beanStub';
+import { Autowired, PostConstruct } from '../context/context';
+import { FocusService } from '../focusService';
+import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../utils/event';
 
 export interface ManagedFocusCallbacks {
     shouldStopEventPropagation?: (e: KeyboardEvent) => boolean;
@@ -13,7 +13,6 @@ export interface ManagedFocusCallbacks {
 }
 
 export class ManagedFocusFeature extends BeanStub {
-
     public static FOCUS_MANAGED_CLASS = 'ag-focus-managed';
 
     @Autowired('focusService') private readonly focusService: FocusService;
@@ -26,16 +25,20 @@ export class ManagedFocusFeature extends BeanStub {
         this.callbacks = {
             shouldStopEventPropagation: () => false,
             onTabKeyDown: (e: KeyboardEvent) => {
-                if (e.defaultPrevented) { return; }
+                if (e.defaultPrevented) {
+                    return;
+                }
 
                 const nextRoot = this.focusService.findNextFocusableElement(this.eFocusableElement, false, e.shiftKey);
 
-                if (!nextRoot) { return; }
+                if (!nextRoot) {
+                    return;
+                }
 
                 nextRoot.focus();
                 e.preventDefault();
             },
-            ...callbacks
+            ...callbacks,
         };
     }
 
@@ -56,7 +59,9 @@ export class ManagedFocusFeature extends BeanStub {
 
     private addKeyDownListeners(eGui: HTMLElement): void {
         this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
-            if (e.defaultPrevented || _isStopPropagationForAgGrid(e)) { return; }
+            if (e.defaultPrevented || _isStopPropagationForAgGrid(e)) {
+                return;
+            }
 
             if (this.callbacks.shouldStopEventPropagation!(e)) {
                 _stopPropagationForAgGrid(e);

@@ -57,18 +57,14 @@
     "build:core:modules": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "nx run-many -t build --projects=tag:module --exclude=tag:framework"
-        ]
+        "commands": ["nx run-many -t build --projects=tag:module --exclude=tag:framework"]
       },
       "cache": true
     },
     "build:core:packages": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "nx run-many -t build --projects=tag:package --exclude=tag:framework"
-        ]
+        "commands": ["nx run-many -t build --projects=tag:package --exclude=tag:framework"]
       },
       "cache": true
     },
@@ -81,9 +77,7 @@
     "test:modules": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "nx run-many -t test --projects=tag:module --exclude=tag:framework"
-        ]
+        "commands": ["nx run-many -t test --projects=tag:module --exclude=tag:framework"]
       },
       "cache": true
     },
@@ -144,14 +138,13 @@
         "commands": ["nx run-many -t test --parallel 1"]
       }
     },
-    "clean": { "command": "rimraf dist/ 'community-modules/*/dist/' 'community-modules/styles/*.css' 'enterprise-modules/*/dist/' 'packages/*/dist/' 'documentation/*/dist/'",
+    "clean": {
+      "command": "rimraf dist/ 'community-modules/*/dist/' 'community-modules/styles/*.css' 'enterprise-modules/*/dist/' 'packages/*/dist/' 'documentation/*/dist/'"
     },
     "generate-examples": {
       "executor": "nx:noop",
       "dependsOn": ["^generate-example"],
-      "inputs": [
-        { "externalDependencies": ["npm:typescript"] }
-      ],
+      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
       "outputs": [],
       "batch": true,
       "cache": true,
@@ -165,7 +158,7 @@
       "options": {
         "commands": [
           "nx run ag-grid-docs-src_content_docs_{args.page}__examples_{args.example}_main.ts:generate-example --skip-nx-cache"
-        ]        
+        ]
       }
     },
     "generate-doc-references": {

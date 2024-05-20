@@ -1,4 +1,4 @@
-import { ExampleConfig, ParsedBindings, ImportType } from '../types';
+import { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import {
     addBindingImports,
     addGenericInterfaceImport,

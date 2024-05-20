@@ -1,16 +1,10 @@
-import {
-    AgGroupComponentParams,
-    Autowired,
-    Component,
-    PostConstruct,
-} from "@ag-grid-community/core";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import { AgGroupComponentParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+
+import { ChartTranslationService } from '../../../services/chartTranslationService';
+import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class NavigatorPanel extends Component {
-
-    public static TEMPLATE = /* html */
-        `<div>
+    public static TEMPLATE /* html */ = `<div>
             <ag-group-component ref="navigatorGroup">
                 <ag-slider ref="navigatorHeightSlider"></ag-slider>
                 <ag-checkbox ref="navigatorMiniChartCheckbox"></ag-checkbox>
@@ -31,19 +25,26 @@ export class NavigatorPanel extends Component {
                 cssIdentifier: 'charts-advanced-settings-top-level',
                 direction: 'vertical',
                 suppressOpenCloseIcons: true,
-                title: this.chartTranslationService.translate("navigator"),
+                title: this.chartTranslationService.translate('navigator'),
                 suppressEnabledCheckbox: true,
-                useToggle: true
+                useToggle: true,
             }
         );
-        const navigatorHeightSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams("navigator.height", "height", 60);
+        const navigatorHeightSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams(
+            'navigator.height',
+            'height',
+            60
+        );
         navigatorHeightSliderParams.minValue = 10;
-        const navigatorMiniChartCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams("navigator.miniChart.enabled", "miniChart");
+        const navigatorMiniChartCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
+            'navigator.miniChart.enabled',
+            'miniChart'
+        );
 
         this.setTemplate(NavigatorPanel.TEMPLATE, {
             navigatorGroup: navigatorGroupParams,
             navigatorHeightSlider: navigatorHeightSliderParams,
-            navigatorMiniChartCheckbox: navigatorMiniChartCheckboxParams
+            navigatorMiniChartCheckbox: navigatorMiniChartCheckboxParams,
         });
     }
 }

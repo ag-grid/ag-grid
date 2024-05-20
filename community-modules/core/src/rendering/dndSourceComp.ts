@@ -1,12 +1,11 @@
-import { Component } from "../widgets/component";
-import { PostConstruct } from "../context/context";
-import { RowNode } from "../entities/rowNode";
-import { Column } from "../entities/column";
-import { _createIconNoSpan } from "../utils/icon";
-import { DndSourceOnRowDragParams } from "../entities/colDef";
+import { PostConstruct } from '../context/context';
+import { DndSourceOnRowDragParams } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { RowNode } from '../entities/rowNode';
+import { _createIconNoSpan } from '../utils/icon';
+import { Component } from '../widgets/component';
 
 export class DndSourceComp extends Component {
-
     private readonly rowNode: RowNode;
     private readonly column: Column;
     private readonly eCell: HTMLElement;
@@ -35,7 +34,6 @@ export class DndSourceComp extends Component {
     }
 
     private onDragStart(dragEvent: DragEvent): void {
-
         const providedOnRowDrag = this.column.getColDef().dndSourceOnRowDrag;
 
         dragEvent.dataTransfer!.setDragImage(this.eCell, 0, 0);
@@ -47,7 +45,6 @@ export class DndSourceComp extends Component {
 
                 dragEvent.dataTransfer!.setData('application/json', jsonData);
                 dragEvent.dataTransfer!.setData('text/plain', jsonData);
-
             } catch (e) {
                 // if we cannot convert the data to json, then we do not set the type
             }
@@ -55,7 +52,8 @@ export class DndSourceComp extends Component {
 
         if (providedOnRowDrag) {
             const params: DndSourceOnRowDragParams = this.gos.addGridCommonParams({
-                rowNode: this.rowNode, dragEvent: dragEvent
+                rowNode: this.rowNode,
+                dragEvent: dragEvent,
             });
             providedOnRowDrag(params);
         } else {

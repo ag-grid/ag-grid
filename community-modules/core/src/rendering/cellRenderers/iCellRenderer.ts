@@ -1,8 +1,8 @@
-import { ColDef } from "../../entities/colDef";
-import { Column } from "../../entities/column";
-import { AgGridCommon } from "../../interfaces/iCommon";
-import { IRowNode } from "../../interfaces/iRowNode";
-import { IComponent } from "../../interfaces/iComponent";
+import { ColDef } from '../../entities/colDef';
+import { Column } from '../../entities/column';
+import { AgGridCommon } from '../../interfaces/iCommon';
+import { IComponent } from '../../interfaces/iComponent';
+import { IRowNode } from '../../interfaces/iRowNode';
 
 export interface ICellRendererParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Value to be rendered. */
@@ -12,7 +12,7 @@ export interface ICellRendererParams<TData = any, TValue = any, TContext = any> 
     /** True if this is a full width row. */
     fullWidth?: boolean;
     /** Pinned state of the cell. */
-    pinned?: "left" | "right" | null;
+    pinned?: 'left' | 'right' | null;
     /** The row's data. Data property can be `undefined` when row grouping or loading infinite row models. */
     data: TData | undefined;
     /** The row node. */
@@ -40,7 +40,12 @@ export interface ICellRendererParams<TData = any, TValue = any, TContext = any> 
      * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.
      * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.
      */
-    registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void;
+    registerRowDragger: (
+        rowDraggerElement: HTMLElement,
+        dragStartPixels?: number,
+        value?: string,
+        suppressVisibilityChange?: boolean
+    ) => void;
     /**
      * Sets a tooltip to the main element of this component.
      * @param value The value to be displayed by the tooltip
@@ -73,7 +78,7 @@ export interface ICellRenderer<TData = any> {
     refresh(params: ICellRendererParams<TData>): boolean;
 }
 
-export interface ICellRendererComp<TData = any> extends IComponent<ICellRendererParams<TData>>, ICellRenderer<TData> { }
+export interface ICellRendererComp<TData = any> extends IComponent<ICellRendererParams<TData>>, ICellRenderer<TData> {}
 
 export interface ICellRendererFunc<TData = any> {
     (params: ICellRendererParams<TData>): HTMLElement | string;

@@ -1,4 +1,5 @@
-import { ExcelOOXMLTemplate, ExcelAlignment } from '@ag-grid-community/core';
+import { ExcelAlignment, ExcelOOXMLTemplate } from '@ag-grid-community/core';
+
 import { convertLegacyHorizontalAlignment, convertLegacyVerticalAlignment } from '../../../assets/excelLegacyConvert';
 
 const getReadingOrderId = (readingOrder: string): number => {
@@ -9,7 +10,7 @@ const getReadingOrderId = (readingOrder: string): number => {
 
 const alignmentFactory: ExcelOOXMLTemplate = {
     getTemplate(alignment: ExcelAlignment) {
-        const {horizontal, indent, readingOrder, rotate, shrinkToFit, vertical, wrapText} = alignment;
+        const { horizontal, indent, readingOrder, rotate, shrinkToFit, vertical, wrapText } = alignment;
 
         return {
             name: 'alignment',
@@ -21,11 +22,11 @@ const alignmentFactory: ExcelOOXMLTemplate = {
                     textRotation: rotate,
                     shrinkToFit,
                     vertical: vertical && convertLegacyVerticalAlignment(vertical),
-                    wrapText
-                }
-            }
+                    wrapText,
+                },
+            },
         };
-    }
+    },
 };
 
 export default alignmentFactory;

@@ -1,14 +1,13 @@
 import {
     GridApi,
-    createGrid,
     GridOptions,
     ICellRendererParams,
     IDatasource,
     IGetRowsParams,
+    createGrid,
 } from '@ag-grid-community/core';
-
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
@@ -25,9 +24,9 @@ const gridOptions: GridOptions<IOlympicData> = {
             valueGetter: 'node.id',
             cellRenderer: (params: ICellRendererParams) => {
                 if (params.value !== undefined) {
-                    return params.value
+                    return params.value;
                 } else {
-                    return '<img src="https://www.ag-grid.com/example-assets/loading.gif">'
+                    return '<img src="https://www.ag-grid.com/example-assets/loading.gif">';
                 }
             },
         },
@@ -69,7 +68,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     maxBlocksInCache: 10,
 
     // debug: true,
-}
+};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
@@ -77,13 +76,13 @@ document.addEventListener('DOMContentLoaded', function () {
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(response => response.json())
+        .then((response) => response.json())
         .then(function (data) {
             const dataSource: IDatasource = {
                 rowCount: undefined, // behave as infinite scroll
 
                 getRows: (params: IGetRowsParams) => {
-                    console.log('asking for ' + params.startRow + ' to ' + params.endRow)
+                    console.log('asking for ' + params.startRow + ' to ' + params.endRow);
 
                     // At this point in your code, you would call the server.
                     // To make the demo look real, wait for 500ms before returning
@@ -93,14 +92,14 @@ document.addEventListener('DOMContentLoaded', function () {
                         // if on or after the last page, work out the last row.
                         let lastRow = -1;
                         if (data.length <= params.endRow) {
-                            lastRow = data.length
+                            lastRow = data.length;
                         }
                         // call the success callback
-                        params.successCallback(rowsThisPage, lastRow)
-                    }, 500)
+                        params.successCallback(rowsThisPage, lastRow);
+                    }, 500);
                 },
             };
 
-            gridApi!.setGridOption('datasource', dataSource)
-        })
-})
+            gridApi!.setGridOption('datasource', dataSource);
+        });
+});

@@ -1,5 +1,4 @@
 export function getLineDash(lineCap: 'butt' | 'square' | 'round' | undefined, lineDash: string = 'solid'): number[] {
-
     const buttOrNull: { [key: string]: number[] } = {
         solid: [],
         dash: [4, 3],
@@ -12,7 +11,7 @@ export function getLineDash(lineCap: 'butt' | 'square' | 'round' | undefined, li
         shortDashDotDot: [3, 1, 1, 1, 1, 1],
         longDash: [8, 3],
         longDashDot: [8, 3, 1, 3],
-        longDashDotDot: [8, 3, 1, 3, 1, 3]
+        longDashDotDot: [8, 3, 1, 3, 1, 3],
     };
 
     const roundOrSquare: { [key: string]: number[] } = {
@@ -27,7 +26,7 @@ export function getLineDash(lineCap: 'butt' | 'square' | 'round' | undefined, li
         shortDashDotDot: [2, 2, 0, 2, 0, 2],
         longDash: [7, 3],
         longDashDot: [7, 3, 0, 3],
-        longDashDotDot: [7, 3, 0, 3, 0, 3]
+        longDashDotDot: [7, 3, 0, 3, 0, 3],
     };
 
     if (lineCap === 'round' || lineCap === 'square') {

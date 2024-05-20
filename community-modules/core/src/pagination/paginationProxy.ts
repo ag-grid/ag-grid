@@ -1,15 +1,14 @@
-import { IRowModel, RowBounds, RowModelType } from "../interfaces/iRowModel";
-import { BeanStub } from "../context/beanStub";
-import { Events, ModelUpdatedEvent, PaginationChangedEvent } from "../events";
-import { RowNode } from "../entities/rowNode";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { _missing, _exists } from "../utils/generic";
-import { RowPosition } from "../entities/rowPositionUtils";
-import { WithoutGridCommon } from "../interfaces/iCommon";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, PostConstruct } from '../context/context';
+import { RowNode } from '../entities/rowNode';
+import { RowPosition } from '../entities/rowPositionUtils';
+import { Events, ModelUpdatedEvent, PaginationChangedEvent } from '../events';
+import { WithoutGridCommon } from '../interfaces/iCommon';
+import { IRowModel, RowBounds, RowModelType } from '../interfaces/iRowModel';
+import { _exists, _missing } from '../utils/generic';
 
 @Bean('paginationProxy')
 export class PaginationProxy extends BeanStub {
-
     @Autowired('rowModel') private rowModel: IRowModel;
 
     private active: boolean;
@@ -50,8 +49,18 @@ export class PaginationProxy extends BeanStub {
         this.onModelUpdated();
     }
 
-    public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean {
-        const res = this.rowModel.ensureRowHeightsValid(startPixel, endPixel, this.getPageFirstRow(), this.getPageLastRow());
+    public ensureRowHeightsValid(
+        startPixel: number,
+        endPixel: number,
+        startLimitIndex: number,
+        endLimitIndex: number
+    ): boolean {
+        const res = this.rowModel.ensureRowHeightsValid(
+            startPixel,
+            endPixel,
+            this.getPageFirstRow(),
+            this.getPageLastRow()
+        );
         if (res) {
             this.calculatePages();
         }
@@ -59,8 +68,11 @@ export class PaginationProxy extends BeanStub {
     }
 
     private isPaginateChildRows(): boolean {
-        const shouldPaginate = this.gos.get('groupRemoveSingleChildren') || this.gos.get('groupRemoveLowestSingleChildren');
-        if (shouldPaginate) { return true; }
+        const shouldPaginate =
+            this.gos.get('groupRemoveSingleChildren') || this.gos.get('groupRemoveLowestSingleChildren');
+        if (shouldPaginate) {
+            return true;
+        }
         return this.gos.get('paginateChildRows');
     }
 
@@ -72,7 +84,7 @@ export class PaginationProxy extends BeanStub {
             newData: modelUpdatedEvent ? modelUpdatedEvent.newData : false,
             newPage: modelUpdatedEvent ? modelUpdatedEvent.newPage : false,
             newPageSize: modelUpdatedEvent ? modelUpdatedEvent.newPageSize : false,
-            keepRenderedRows: modelUpdatedEvent ? modelUpdatedEvent.keepRenderedRows : false
+            keepRenderedRows: modelUpdatedEvent ? modelUpdatedEvent.keepRenderedRows : false,
         };
         this.eventService.dispatchEvent(paginationChangedEvent);
     }
@@ -88,17 +100,19 @@ export class PaginationProxy extends BeanStub {
             newPageSize: false,
             // important to keep rendered rows, otherwise every time grid is resized,
             // we would destroy all the rows.
-            keepRenderedRows: true
+            keepRenderedRows: true,
         };
         this.eventService.dispatchEvent(paginationChangedEvent);
     }
 
     private onPageSizeGridOptionChanged(): void {
-        this.setPageSize(this.gos.get('paginationPageSize'),'gridOptions');
+        this.setPageSize(this.gos.get('paginationPageSize'), 'gridOptions');
     }
 
     public goToPage(page: number): void {
-        if (!this.active || this.currentPage === page || typeof this.currentPage !== 'number') { return; }
+        if (!this.active || this.currentPage === page || typeof this.currentPage !== 'number') {
+            return;
+        }
 
         this.currentPage = page;
         this.calculatePages();
@@ -136,17 +150,18 @@ export class PaginationProxy extends BeanStub {
         return Math.max(this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight - this.topRowBounds.rowTop, 0);
     }
 
-    public getCurrentPagePixelRange(): {pageFirstPixel: number, pageLastPixel: number} {
+    public getCurrentPagePixelRange(): { pageFirstPixel: number; pageLastPixel: number } {
         const pageFirstPixel = this.topRowBounds ? this.topRowBounds.rowTop : 0;
         const pageLastPixel = this.bottomRowBounds ? this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight : 0;
-        return {pageFirstPixel, pageLastPixel};
+        return { pageFirstPixel, pageLastPixel };
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
         if (!this.rowModel.isRowPresent(rowNode)) {
             return false;
         }
-        const nodeIsInPage = rowNode.rowIndex! >= this.topDisplayedRowIndex && rowNode.rowIndex! <= this.bottomDisplayedRowIndex;
+        const nodeIsInPage =
+            rowNode.rowIndex! >= this.topDisplayedRowIndex && rowNode.rowIndex! <= this.bottomDisplayedRowIndex;
         return nodeIsInPage;
     }
 
@@ -200,14 +215,18 @@ export class PaginationProxy extends BeanStub {
     }
 
     public goToPageWithIndex(index: any): void {
-        if (!this.active) { return; }
+        if (!this.active) {
+            return;
+        }
 
         const pageNumber = this.getPageForIndex(index);
         this.goToPage(pageNumber);
     }
 
     public isRowInPage(row: RowPosition): boolean {
-        if (!this.active) { return true; }
+        if (!this.active) {
+            return true;
+        }
         const rowPage = this.getPageForIndex(row.rowIndex);
         return rowPage === this.currentPage;
     }
@@ -252,20 +271,32 @@ export class PaginationProxy extends BeanStub {
     }
 
     private get pageSize(): number {
-        if (_exists(this.pageSizeAutoCalculated)) { return this.pageSizeAutoCalculated; }
-        if (_exists(this.pageSizeFromPageSizeSelector)) { return this.pageSizeFromPageSizeSelector; }
-        if (_exists(this.pageSizeFromInitialState)) { return this.pageSizeFromInitialState; }
-        if (_exists(this.pageSizeFromGridOptions)) { return this.pageSizeFromGridOptions; }
+        if (_exists(this.pageSizeAutoCalculated)) {
+            return this.pageSizeAutoCalculated;
+        }
+        if (_exists(this.pageSizeFromPageSizeSelector)) {
+            return this.pageSizeFromPageSizeSelector;
+        }
+        if (_exists(this.pageSizeFromInitialState)) {
+            return this.pageSizeFromInitialState;
+        }
+        if (_exists(this.pageSizeFromGridOptions)) {
+            return this.pageSizeFromGridOptions;
+        }
         return this.defaultPageSize;
     }
 
     public unsetAutoCalculatedPageSize(): void {
-        if (this.pageSizeAutoCalculated === undefined) { return; }
+        if (this.pageSizeAutoCalculated === undefined) {
+            return;
+        }
         const oldPageSize = this.pageSizeAutoCalculated;
 
         this.pageSizeAutoCalculated = undefined;
 
-        if (this.pageSize === oldPageSize) { return; }
+        if (this.pageSize === oldPageSize) {
+            return;
+        }
 
         this.calculatePages();
         const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
@@ -274,12 +305,15 @@ export class PaginationProxy extends BeanStub {
             newData: false,
             newPage: false,
             newPageSize: true,
-            keepRenderedRows: false
+            keepRenderedRows: false,
         };
         this.eventService.dispatchEvent(paginationChangedEvent);
     }
 
-    public setPageSize(size: number | undefined, source: 'autoCalculated' | 'pageSizeSelector' | 'initialState' | 'gridOptions'): void {
+    public setPageSize(
+        size: number | undefined,
+        source: 'autoCalculated' | 'pageSizeSelector' | 'initialState' | 'gridOptions'
+    ): void {
         const currentSize = this.pageSize;
         switch (source) {
             case 'autoCalculated':
@@ -287,7 +321,9 @@ export class PaginationProxy extends BeanStub {
                 break;
             case 'pageSizeSelector':
                 this.pageSizeFromPageSizeSelector = size;
-                if (this.currentPage !== 0) { this.goToFirstPage(); }
+                if (this.currentPage !== 0) {
+                    this.goToFirstPage();
+                }
                 break;
             case 'initialState':
                 this.pageSizeFromInitialState = size;
@@ -296,7 +332,9 @@ export class PaginationProxy extends BeanStub {
                 this.pageSizeFromGridOptions = size;
                 this.pageSizeFromInitialState = undefined;
                 this.pageSizeFromPageSizeSelector = undefined;
-                if (this.currentPage !== 0) { this.goToFirstPage(); }
+                if (this.currentPage !== 0) {
+                    this.goToFirstPage();
+                }
                 break;
         }
 
@@ -308,7 +346,7 @@ export class PaginationProxy extends BeanStub {
                 newData: false,
                 newPage: false,
                 newPageSize: true,
-                keepRenderedRows: true
+                keepRenderedRows: true,
             };
             this.eventService.dispatchEvent(paginationChangedEvent);
         }
@@ -339,10 +377,12 @@ export class PaginationProxy extends BeanStub {
     }
 
     private setPixelOffset(value: number): void {
-        if (this.pixelOffset === value) { return; }
+        if (this.pixelOffset === value) {
+            return;
+        }
 
         this.pixelOffset = value;
-        this.eventService.dispatchEvent({type: Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED});
+        this.eventService.dispatchEvent({ type: Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED });
     }
 
     private setZeroRows(): void {
@@ -354,7 +394,6 @@ export class PaginationProxy extends BeanStub {
     }
 
     private adjustCurrentPageIfInvalid() {
-
         if (this.currentPage >= this.totalPages) {
             this.currentPage = this.totalPages - 1;
         }
@@ -365,7 +404,6 @@ export class PaginationProxy extends BeanStub {
     }
 
     private calculatePagesMasterRowsOnly(): void {
-
         // const csrm = <ClientSideRowModel> this.rowModel;
         // const rootNode = csrm.getRootNode();
         // const masterRows = rootNode.childrenAfterSort;
@@ -379,12 +417,12 @@ export class PaginationProxy extends BeanStub {
         }
 
         const masterLastRowIndex = this.masterRowCount - 1;
-        this.totalPages = Math.floor((masterLastRowIndex) / this.pageSize) + 1;
+        this.totalPages = Math.floor(masterLastRowIndex / this.pageSize) + 1;
 
         this.adjustCurrentPageIfInvalid();
 
         const masterPageStartIndex = this.pageSize * this.currentPage;
-        let masterPageEndIndex = (this.pageSize * (this.currentPage + 1)) - 1;
+        let masterPageEndIndex = this.pageSize * (this.currentPage + 1) - 1;
 
         if (masterPageEndIndex > masterLastRowIndex) {
             masterPageEndIndex = masterLastRowIndex;
@@ -418,12 +456,12 @@ export class PaginationProxy extends BeanStub {
         }
 
         const maxRowIndex = this.masterRowCount - 1;
-        this.totalPages = Math.floor((maxRowIndex) / this.pageSize) + 1;
+        this.totalPages = Math.floor(maxRowIndex / this.pageSize) + 1;
 
         this.adjustCurrentPageIfInvalid();
 
         this.topDisplayedRowIndex = this.pageSize * this.currentPage;
-        this.bottomDisplayedRowIndex = (this.pageSize * (this.currentPage + 1)) - 1;
+        this.bottomDisplayedRowIndex = this.pageSize * (this.currentPage + 1) - 1;
 
         if (this.bottomDisplayedRowIndex > maxRowIndex) {
             this.bottomDisplayedRowIndex = maxRowIndex;

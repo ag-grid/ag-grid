@@ -30,7 +30,7 @@ export default {
         return {
             active: false,
             expanded: false,
-        }
+        };
     },
     methods: {
         setActive(active) {
@@ -65,4 +65,4 @@ export default {
             this.$refs.filterWrapper.appendChild(filter.getGui());
         });
     },
-}
+};

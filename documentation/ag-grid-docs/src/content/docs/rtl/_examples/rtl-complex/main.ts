@@ -1,3 +1,4 @@
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
     CellClassParams,
     CellStyle,
@@ -5,7 +6,6 @@ import {
     ColGroupDef,
     GetContextMenuItemsParams,
     GridApi,
-    createGrid,
     GridOptions,
     ICellRendererParams,
     IGroupCellRendererParams,
@@ -13,15 +13,15 @@ import {
     RowSelectedEvent,
     SelectionChangedEvent,
     ValueSetterParams,
+    createGrid,
 } from '@ag-grid-community/core';
-
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { CsvExportModule } from '@ag-grid-community/csv-export';
+import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
@@ -30,13 +30,28 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ClipboardModule, ColumnsToolPanelModule, CsvExportModule, ExcelExportModule, FiltersToolPanelModule, GridChartsModule, MenuModule, MultiFilterModule, RangeSelectionModule, RichSelectModule, RowGroupingModule, SetFilterModule, SideBarModule, StatusBarModule]);
+import { CountryCellRenderer } from './country-renderer_typescript';
+import { PersonFilter } from './person-filter_typescript';
+import { WinningsFilter } from './winnings-filter_typescript';
 
-import { PersonFilter } from './person-filter_typescript'
-import { WinningsFilter } from './winnings-filter_typescript'
-import { CountryCellRenderer } from './country-renderer_typescript'
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ClipboardModule,
+    ColumnsToolPanelModule,
+    CsvExportModule,
+    ExcelExportModule,
+    FiltersToolPanelModule,
+    GridChartsModule,
+    MenuModule,
+    MultiFilterModule,
+    RangeSelectionModule,
+    RichSelectModule,
+    RowGroupingModule,
+    SetFilterModule,
+    SideBarModule,
+    StatusBarModule,
+]);
 
 const colNames = [
     'Station',
@@ -195,20 +210,7 @@ const lastNames = [
     'Kobe',
 ];
 
-const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-];
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 const dataSize: string = '.1x22';
 
@@ -218,9 +220,9 @@ const autoGroupColumnDef: ColDef = {
     field: 'name',
     valueGetter: (params) => {
         if (params.node && params.node.group) {
-            return params.node.key
+            return params.node.key;
         } else {
-            return params.data[params.colDef.field!]
+            return params.data[params.colDef.field!];
         }
     },
     cellRenderer: 'agGroupCellRenderer',
@@ -257,28 +259,27 @@ const gridOptions: GridOptions = {
     onSelectionChanged: selectionChanged, //callback when selection changed,
     getBusinessKeyForNode: (node) => {
         if (node.data) {
-            return node.data.name
+            return node.data.name;
         } else {
-            return ''
+            return '';
         }
     },
     getContextMenuItems: getContextMenuItems,
-}
+};
 
 function getContextMenuItems(params: GetContextMenuItemsParams): (string | MenuItemDef)[] {
     const result: (string | MenuItemDef)[] = params.defaultItems!.splice(0);
     result.push({
         name: 'Custom Menu Item',
-        icon:
-            '<img src="https://www.ag-grid.com/examples-assets/lab.png" style="width: 14px;" />',
+        icon: '<img src="https://www.ag-grid.com/examples-assets/lab.png" style="width: 14px;" />',
         //shortcut: 'Alt + M',
         action: () => {
             const value = params.value ? params.value : '<empty>';
-            window.alert('You clicked a custom menu item on cell ' + value)
+            window.alert('You clicked a custom menu item on cell ' + value);
         },
-    })
+    });
 
-    return result
+    return result;
 }
 
 const firstColumn: ColDef = {
@@ -291,11 +292,11 @@ const firstColumn: ColDef = {
     filter: PersonFilter,
     checkboxSelection: (params) => {
         // we put checkbox on the name if we are not doing no grouping
-        return params.api.getRowGroupColumns().length === 0
+        return params.api.getRowGroupColumns().length === 0;
     },
     headerCheckboxSelection: (params) => {
         // we put checkbox on the name if we are not doing grouping
-        return params.api.getRowGroupColumns().length === 0
+        return params.api.getRowGroupColumns().length === 0;
     },
     headerCheckboxSelectionFilteredOnly: true,
     icons: {
@@ -395,7 +396,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 filter: 'agSetColumnFilter',
                 tooltipField: 'game.name',
                 cellClass: () => {
-                    return 'alphabet'
+                    return 'alphabet';
                 },
                 enableRowGroup: true,
                 enablePivot: true,
@@ -455,7 +456,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 suppressHeaderMenuButton: true,
                 cellStyle: { 'text-align': 'right' },
                 cellRenderer: () => {
-                    return 'Abra...'
+                    return 'Abra...';
                 },
             },
             {
@@ -467,7 +468,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 suppressHeaderMenuButton: true,
                 cellStyle: { 'text-align': 'left' },
                 cellRenderer: () => {
-                    return '...cadabra!'
+                    return '...cadabra!';
                 },
             },
         ],
@@ -522,30 +523,30 @@ months.forEach((month) => {
         cellRenderer: currencyRenderer,
         cellStyle: { 'text-align': 'right' },
     };
-    monthGroup.children.push(child)
+    monthGroup.children.push(child);
 });
 
 function getColCount() {
     switch (dataSize) {
         case '10x100':
-            return 100
+            return 100;
         default:
-            return 22
+            return 22;
     }
 }
 
 function getRowCount() {
     switch (dataSize) {
         case '.1x22':
-            return 100
+            return 100;
         case '1x22':
-            return 1000
+            return 1000;
         case '10x100':
-            return 10000
+            return 10000;
         case '100x22':
-            return 100000
+            return 100000;
         default:
-            return -1
+            return -1;
     }
 }
 
@@ -563,19 +564,19 @@ function createCols() {
             width: 200,
             editable: true,
         };
-        columns.push(colDef)
+        columns.push(colDef);
     }
 
-    return columns
+    return columns;
 }
 
 let loadInstance = 0;
 
 function createData() {
-    loadInstance++
+    loadInstance++;
 
     const loadInstanceCopy = loadInstance;
-    gridApi!.showLoadingOverlay()
+    gridApi!.showLoadingOverlay();
 
     const colDefs = createCols();
 
@@ -587,24 +588,24 @@ function createData() {
 
     const intervalId = setInterval(() => {
         if (loadInstanceCopy != loadInstance) {
-            clearInterval(intervalId)
-            return
+            clearInterval(intervalId);
+            return;
         }
 
         for (let i = 0; i < 1000; i++) {
             if (row < rowCount) {
                 const rowItem = createRowItem(row, colCount);
-                data.push(rowItem)
-                row++
+                data.push(rowItem);
+                row++;
             }
         }
 
         if (row >= rowCount) {
-            clearInterval(intervalId)
+            clearInterval(intervalId);
             setTimeout(() => {
-                gridApi!.setGridOption('columnDefs', colDefs)
-                gridApi!.setGridOption('rowData', data)
-            }, 0)
+                gridApi!.setGridOption('columnDefs', colDefs);
+                gridApi!.setGridOption('rowData', data);
+            }, 0);
         }
     }, 0);
 }
@@ -615,47 +616,39 @@ function createRowItem(row: number, colCount: number) {
     //create data for the known columns
     const countriesToPickFrom = Math.floor(countries.length * (((row % 3) + 1) / 3));
     const countryData = countries[(row * 19) % countriesToPickFrom];
-    rowItem.country = countryData.country
-    rowItem.continent = countryData.continent
-    rowItem.language = countryData.language
+    rowItem.country = countryData.country;
+    rowItem.continent = countryData.continent;
+    rowItem.language = countryData.language;
 
     const firstName = firstNames[row % firstNames.length];
     const lastName = lastNames[row % lastNames.length];
-    rowItem.name = firstName + ' ' + lastName
+    rowItem.name = firstName + ' ' + lastName;
 
     rowItem.game = {
         name: games[Math.floor(((row * 13) / 17) * 19) % games.length],
         bought: booleanValues[row % booleanValues.length],
-    }
+    };
 
-    rowItem.bankBalance = Math.round(pseudoRandom() * 10000000) / 100 - 3000
-    rowItem.rating = Math.round(pseudoRandom() * 5)
+    rowItem.bankBalance = Math.round(pseudoRandom() * 10000000) / 100 - 3000;
+    rowItem.rating = Math.round(pseudoRandom() * 5);
 
     let totalWinnings = 0;
     months.forEach((month) => {
         const value = Math.round(pseudoRandom() * 10000000) / 100 - 20;
-        rowItem[month.toLocaleLowerCase()] = value
-        totalWinnings += value
-    })
-    rowItem.totalWinnings = totalWinnings
+        rowItem[month.toLocaleLowerCase()] = value;
+        totalWinnings += value;
+    });
+    rowItem.totalWinnings = totalWinnings;
 
     //create dummy data for the additional columns
     for (let col = defaultCols.length; col < colCount; col++) {
-        var value
+        var value;
         const randomBit = pseudoRandom().toString().substring(2, 5);
-        value =
-            colNames[col % colNames.length] +
-            '-' +
-            randomBit +
-            ' - (' +
-            (row + 1) +
-            ',' +
-            col +
-            ')'
-        rowItem['col' + col] = value
+        value = colNames[col % colNames.length] + '-' + randomBit + ' - (' + (row + 1) + ',' + col + ')';
+        rowItem['col' + col] = value;
     }
 
-    return rowItem
+    return rowItem;
 }
 
 let seed = 123456789;
@@ -664,15 +657,12 @@ const a = 1103515245;
 const c = 12345;
 
 function pseudoRandom() {
-    seed = (a * seed + c) % m
-    return seed / m
+    seed = (a * seed + c) % m;
+    return seed / m;
 }
 
 function selectionChanged(event: SelectionChangedEvent) {
-    console.log(
-        'Callback selectionChanged: selection count = ' +
-        gridApi!.getSelectedNodes().length
-    )
+    console.log('Callback selectionChanged: selection count = ' + gridApi!.getSelectedNodes().length);
 }
 
 function rowSelected(event: RowSelectedEvent) {
@@ -680,10 +670,8 @@ function rowSelected(event: RowSelectedEvent) {
     // to stop the console from clogging up, we only print if in the first 10 (by chance we know
     // the node id's are assigned from 0 upwards)
     if (Number(event.node.id) < 10) {
-        const valueToPrint = event.node.group
-            ? 'group (' + event.node.key + ')'
-            : event.node.data.name;
-        console.log('Callback rowSelected: ' + valueToPrint)
+        const valueToPrint = event.node.group ? 'group (' + event.node.key + ')' : event.node.data.name;
+        console.log('Callback rowSelected: ' + valueToPrint);
     }
 }
 
@@ -691,66 +679,68 @@ function numberValueSetter(params: ValueSetterParams) {
     const newValue = params.newValue;
     let valueAsNumber;
     if (newValue === null || newValue === undefined || newValue === '') {
-        valueAsNumber = null
+        valueAsNumber = null;
     } else {
-        valueAsNumber = parseFloat(params.newValue)
+        valueAsNumber = parseFloat(params.newValue);
     }
     const field = params.colDef.field!;
     const data = params.data;
-    data[field] = valueAsNumber
+    data[field] = valueAsNumber;
     return true;
 }
 
 function currencyCssFunc(params: CellClassParams): CellStyle {
     if (params.value !== null && params.value !== undefined && params.value < 0) {
-        return { color: 'red', 'text-align': 'right', 'font-weight': 'bold' }
+        return { color: 'red', 'text-align': 'right', 'font-weight': 'bold' };
     } else {
-        return { 'text-align': 'right' }
+        return { 'text-align': 'right' };
     }
 }
 
 function ratingFilterRenderer(params: ICellRendererParams) {
-    return ratingRendererGeneral(params.value, true)
+    return ratingRendererGeneral(params.value, true);
 }
 
 function ratingRenderer(params: ICellRendererParams) {
-    return ratingRendererGeneral(params.value, false)
+    return ratingRendererGeneral(params.value, false);
 }
 
 function ratingRendererGeneral(value: any, forFilter: boolean) {
     if (value === '(Select All)') {
-        return value
+        return value;
     }
 
     let result = '<span>';
 
     for (let i = 0; i < 5; i++) {
         if (value > i) {
-            result +=
-                '<img src="https://www.ag-grid.com/example-assets/gold-star.png" />'
+            result += '<img src="https://www.ag-grid.com/example-assets/gold-star.png" />';
         }
     }
 
     if (forFilter && Number(value) === 0) {
-        result += '(No stars)'
+        result += '(No stars)';
     }
 
-    return result
+    return result;
 }
 
 function currencyRenderer(params: ICellRendererParams) {
     if (params.value === null || params.value === undefined) {
-        return null
+        return null;
     } else if (isNaN(params.value)) {
-        return 'NaN'
+        return 'NaN';
     } else {
         // if we are doing 'count', then we do not show pound sign
         if (params.node.group && params.column!.getAggFunc() === 'count') {
-            return params.value
+            return params.value;
         } else {
-            return ('&pound;' + Math.floor(params.value)
-                .toString()
-                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'));
+            return (
+                '&pound;' +
+                Math.floor(params.value)
+                    .toString()
+                    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+            );
         }
     }
 }
@@ -758,17 +748,15 @@ function currencyRenderer(params: ICellRendererParams) {
 function booleanComparator(value1: any, value2: any) {
     const value1Cleaned = booleanCleaner(value1);
     const value2Cleaned = booleanCleaner(value2);
-    const value1Ordinal =
-        value1Cleaned === true ? 0 : value1Cleaned === false ? 1 : 2;
-    const value2Ordinal =
-        value2Cleaned === true ? 0 : value2Cleaned === false ? 1 : 2;
-    return value1Ordinal - value2Ordinal
+    const value1Ordinal = value1Cleaned === true ? 0 : value1Cleaned === false ? 1 : 2;
+    const value2Ordinal = value2Cleaned === true ? 0 : value2Cleaned === false ? 1 : 2;
+    return value1Ordinal - value2Ordinal;
 }
 
 let count = 0;
 
 function booleanCellRenderer(params: ICellRendererParams) {
-    count++
+    count++;
     if (count <= 1) {
         // params.api.onRowHeightChanged();
     }
@@ -776,14 +764,14 @@ function booleanCellRenderer(params: ICellRendererParams) {
     const valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
         //this is the unicode for tick character
-        return "<span title='true'>&#10004;</span>"
+        return "<span title='true'>&#10004;</span>";
     } else if (valueCleaned === false) {
         //this is the unicode for cross character
-        return "<span title='false'>&#10006;</span>"
+        return "<span title='false'>&#10006;</span>";
     } else if (params.value !== null && params.value !== undefined) {
-        return params.value.toString()
+        return params.value.toString();
     } else {
-        return null
+        return null;
     }
 }
 
@@ -792,32 +780,32 @@ function booleanFilterCellRenderer(params: ICellRendererParams) {
 
     if (valueCleaned === true) {
         //this is the unicode for tick character
-        return '&#10004;'
+        return '&#10004;';
     } else if (valueCleaned === false) {
         //this is the unicode for cross character
-        return '&#10006;'
+        return '&#10006;';
     } else if (params.value === '(Select All)') {
-        return params.value
+        return params.value;
     } else {
-        return '(empty)'
+        return '(empty)';
     }
 }
 
 function booleanCleaner(value: any) {
     if (value === 'true' || value === true || value === 1) {
-        return true
+        return true;
     } else if (value === 'false' || value === false || value === 0) {
-        return false
+        return false;
     } else {
-        return null
+        return null;
     }
 }
 
 function languageCellRenderer(params: ICellRendererParams) {
     if (params.value !== null && params.value !== undefined) {
-        return params.value
+        return params.value;
     } else {
-        return null
+        return null;
     }
 }
 
@@ -825,5 +813,5 @@ document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
     gridApi = createGrid(gridDiv, gridOptions);
-    createData()
-})
+    createData();
+});

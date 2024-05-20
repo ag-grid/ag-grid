@@ -3,45 +3,58 @@ import {
     Bean,
     BeanStub,
     Column,
+    ColumnApplyStateService,
+    ColumnAutosizeService,
     ColumnModel,
+    ColumnNameService,
+    FocusService,
+    FuncColsService,
     GridApi,
     IAggFuncService,
     IClipboardService,
     MenuItemDef,
-    ModuleNames, ModuleRegistry,
-    Optional,
-    FocusService,
-    RowPositionUtils,
     MenuService,
+    ModuleNames,
+    ModuleRegistry,
+    Optional,
+    RowPositionUtils,
     SortController,
     _createIconNoSpan,
     _escapeString,
     _exists,
 } from '@ag-grid-community/core';
+
 import { ChartMenuItemMapper } from './chartMenuItemMapper';
 
 @Bean('menuItemMapper')
 export class MenuItemMapper extends BeanStub {
-
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
+    @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
+    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
     @Autowired('chartMenuItemMapper') private readonly chartMenuItemMapper: ChartMenuItemMapper;
     @Autowired('menuService') private readonly menuService: MenuService;
     @Autowired('sortController') private readonly sortController: SortController;
-    
+    @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
+
     @Optional('clipboardService') private readonly clipboardService?: IClipboardService;
     @Optional('aggFuncService') private readonly aggFuncService?: IAggFuncService;
 
-    public mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null, sourceElement: () => HTMLElement): (MenuItemDef | string)[] {
+    public mapWithStockItems(
+        originalList: (MenuItemDef | string)[],
+        column: Column | null,
+        sourceElement: () => HTMLElement
+    ): (MenuItemDef | string)[] {
         if (!originalList) {
             return [];
         }
 
         const resultList: (MenuItemDef | string)[] = [];
 
-        originalList.forEach(menuItemOrString => {
+        originalList.forEach((menuItemOrString) => {
             let result: MenuItemDef | string | null;
 
             if (typeof menuItemOrString === 'string') {
@@ -51,7 +64,9 @@ export class MenuItemMapper extends BeanStub {
                 result = { ...menuItemOrString };
             }
             // if no mapping, can happen when module is not loaded but user tries to use module anyway
-            if (!result) { return; }
+            if (!result) {
+                return;
+            }
 
             const resultDef = result as MenuItemDef;
             const { subMenu } = resultDef;
@@ -68,7 +83,11 @@ export class MenuItemMapper extends BeanStub {
         return resultList;
     }
 
-    private getStockMenuItem(key: string, column: Column | null, sourceElement: () => HTMLElement): MenuItemDef | string | null {
+    private getStockMenuItem(
+        key: string,
+        column: Column | null,
+        sourceElement: () => HTMLElement
+    ): MenuItemDef | string | null {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
 
@@ -77,28 +96,34 @@ export class MenuItemMapper extends BeanStub {
                 return {
                     name: localeTextFunc('pinColumn', 'Pin Column'),
                     icon: _createIconNoSpan('menuPin', this.gos, null),
-                    subMenu: ['clearPinned', 'pinLeft', 'pinRight']
+                    subMenu: ['clearPinned', 'pinLeft', 'pinRight'],
                 };
             case 'pinLeft':
                 return {
                     name: localeTextFunc('pinLeft', 'Pin Left'),
-                    action: () => this.columnModel.setColumnsPinned([column], 'left', "contextMenu"),
-                    checked: !!column && column.isPinnedLeft()
+                    action: () => this.columnModel.setColsPinned([column], 'left', 'contextMenu'),
+                    checked: !!column && column.isPinnedLeft(),
                 };
             case 'pinRight':
                 return {
                     name: localeTextFunc('pinRight', 'Pin Right'),
-                    action: () => this.columnModel.setColumnsPinned([column], 'right', "contextMenu"),
-                    checked: !!column && column.isPinnedRight()
+                    action: () => this.columnModel.setColsPinned([column], 'right', 'contextMenu'),
+                    checked: !!column && column.isPinnedRight(),
                 };
             case 'clearPinned':
                 return {
                     name: localeTextFunc('noPin', 'No Pin'),
-                    action: () => this.columnModel.setColumnsPinned([column], null, "contextMenu"),
-                    checked: !!column && !column.isPinned()
+                    action: () => this.columnModel.setColsPinned([column], null, 'contextMenu'),
+                    checked: !!column && !column.isPinned(),
                 };
             case 'valueAggSubMenu':
-                if (ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Aggregation from Menu', this.context.getGridId())) {
+                if (
+                    ModuleRegistry.__assertRegistered(
+                        ModuleNames.RowGroupingModule,
+                        'Aggregation from Menu',
+                        this.context.getGridId()
+                    )
+                ) {
                     if (!column?.isPrimary() && !column?.getColDef().pivotValueColumn) {
                         return null;
                     }
@@ -106,7 +131,7 @@ export class MenuItemMapper extends BeanStub {
                     return {
                         name: localeTextFunc('valueAggregation', 'Value Aggregation'),
                         icon: _createIconNoSpan('menuValue', this.gos, null),
-                        subMenu: this.createAggregationSubMenu(column!, this.aggFuncService!)
+                        subMenu: this.createAggregationSubMenu(column!, this.aggFuncService!),
                     };
                 } else {
                     return null;
@@ -114,19 +139,23 @@ export class MenuItemMapper extends BeanStub {
             case 'autoSizeThis':
                 return {
                     name: localeTextFunc('autosizeThiscolumn', 'Autosize This Column'),
-                    action: () => this.columnModel.autoSizeColumn(column, "contextMenu", skipHeaderOnAutoSize)
+                    action: () =>
+                        this.columnAutosizeService.autoSizeColumn(column, 'contextMenu', skipHeaderOnAutoSize),
                 };
             case 'autoSizeAll':
                 return {
                     name: localeTextFunc('autosizeAllColumns', 'Autosize All Columns'),
-                    action: () => this.columnModel.autoSizeAllColumns("contextMenu", skipHeaderOnAutoSize)
+                    action: () => this.columnAutosizeService.autoSizeAllColumns('contextMenu', skipHeaderOnAutoSize),
                 };
             case 'rowGroup':
                 return {
-                    name: localeTextFunc('groupBy', 'Group by') + ' ' + _escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
+                    name:
+                        localeTextFunc('groupBy', 'Group by') +
+                        ' ' +
+                        _escapeString(this.columnNameService.getDisplayNameForColumn(column, 'header')),
                     disabled: column?.isRowGroupActive() || !column?.getColDef().enableRowGroup,
-                    action: () => this.columnModel.addRowGroupColumns([column], "contextMenu"),
-                    icon: _createIconNoSpan('menuAddRowGroup', this.gos, null)
+                    action: () => this.funcColsService.addRowGroupColumns([column], 'contextMenu'),
+                    icon: _createIconNoSpan('menuAddRowGroup', this.gos, null),
                 };
             case 'rowUnGroup':
                 const icon = _createIconNoSpan('menuRemoveRowGroup', this.gos, null);
@@ -136,79 +165,118 @@ export class MenuItemMapper extends BeanStub {
                 if (showRowGroup === true) {
                     return {
                         name: localeTextFunc('ungroupAll', 'Un-Group All'),
-                        disabled: lockedGroups === -1 || lockedGroups >= this.columnModel.getRowGroupColumns().length,
-                        action: () => this.columnModel.setRowGroupColumns(this.columnModel.getRowGroupColumns().slice(0, lockedGroups), "contextMenu"),
-                        icon: icon
+                        disabled:
+                            lockedGroups === -1 || lockedGroups >= this.funcColsService.getRowGroupColumns().length,
+                        action: () =>
+                            this.funcColsService.setRowGroupColumns(
+                                this.funcColsService.getRowGroupColumns().slice(0, lockedGroups),
+                                'contextMenu'
+                            ),
+                        icon: icon,
                     };
                 }
                 // Handle multiple auto group columns
                 if (typeof showRowGroup === 'string') {
-                    const underlyingColumn = this.columnModel.getPrimaryColumn(showRowGroup);
-                    const ungroupByName = (underlyingColumn != null) ? _escapeString(this.columnModel.getDisplayNameForColumn(underlyingColumn, 'header')) : showRowGroup;
+                    const underlyingColumn = this.columnModel.getColDefCol(showRowGroup);
+                    const ungroupByName =
+                        underlyingColumn != null
+                            ? _escapeString(this.columnNameService.getDisplayNameForColumn(underlyingColumn, 'header'))
+                            : showRowGroup;
                     return {
                         name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName,
-                        disabled: underlyingColumn != null && this.columnModel.isColumnGroupingLocked(underlyingColumn),
-                        action: () => this.columnModel.removeRowGroupColumns([showRowGroup], "contextMenu"),
-                        icon: icon
+                        disabled: underlyingColumn != null && this.columnModel.isColGroupLocked(underlyingColumn),
+                        action: () => this.funcColsService.removeRowGroupColumns([showRowGroup], 'contextMenu'),
+                        icon: icon,
                     };
                 }
                 // Handle primary column
                 return {
-                    name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
-                    disabled: !column?.isRowGroupActive() || !column?.getColDef().enableRowGroup || this.columnModel.isColumnGroupingLocked(column),
-                    action: () => this.columnModel.removeRowGroupColumns([column], "contextMenu"),
-                    icon: icon
+                    name:
+                        localeTextFunc('ungroupBy', 'Un-Group by') +
+                        ' ' +
+                        _escapeString(this.columnNameService.getDisplayNameForColumn(column, 'header')),
+                    disabled:
+                        !column?.isRowGroupActive() ||
+                        !column?.getColDef().enableRowGroup ||
+                        this.columnModel.isColGroupLocked(column),
+                    action: () => this.funcColsService.removeRowGroupColumns([column], 'contextMenu'),
+                    icon: icon,
                 };
             case 'resetColumns':
                 return {
                     name: localeTextFunc('resetColumns', 'Reset Columns'),
-                    action: () => this.columnModel.resetColumnState("contextMenu")
+                    action: () => this.columnApplyStateService.resetColumnState('contextMenu'),
                 };
             case 'expandAll':
                 return {
                     name: localeTextFunc('expandAll', 'Expand All Row Groups'),
-                    action: () => this.gridApi.expandAll()
+                    action: () => this.gridApi.expandAll(),
                 };
             case 'contractAll':
                 return {
                     name: localeTextFunc('collapseAll', 'Collapse All Row Groups'),
-                    action: () => this.gridApi.collapseAll()
+                    action: () => this.gridApi.collapseAll(),
                 };
             case 'copy':
-                if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'Copy from Menu', this.context.getGridId())) {
+                if (
+                    ModuleRegistry.__assertRegistered(
+                        ModuleNames.ClipboardModule,
+                        'Copy from Menu',
+                        this.context.getGridId()
+                    )
+                ) {
                     return {
                         name: localeTextFunc('copy', 'Copy'),
                         shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
                         icon: _createIconNoSpan('clipboardCopy', this.gos, null),
-                        action: () => this.clipboardService!.copyToClipboard()
+                        action: () => this.clipboardService!.copyToClipboard(),
                     };
                 } else {
                     return null;
                 }
             case 'copyWithHeaders':
-                if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'Copy with Headers from Menu', this.context.getGridId())) {
+                if (
+                    ModuleRegistry.__assertRegistered(
+                        ModuleNames.ClipboardModule,
+                        'Copy with Headers from Menu',
+                        this.context.getGridId()
+                    )
+                ) {
                     return {
                         name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
                         icon: _createIconNoSpan('clipboardCopy', this.gos, null),
-                        action: () => this.clipboardService!.copyToClipboard({ includeHeaders: true })
+                        action: () => this.clipboardService!.copyToClipboard({ includeHeaders: true }),
                     };
                 } else {
                     return null;
                 }
             case 'copyWithGroupHeaders':
-                if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'Copy with Group Headers from Menu', this.context.getGridId())) {
+                if (
+                    ModuleRegistry.__assertRegistered(
+                        ModuleNames.ClipboardModule,
+                        'Copy with Group Headers from Menu',
+                        this.context.getGridId()
+                    )
+                ) {
                     return {
                         name: localeTextFunc('copyWithGroupHeaders', 'Copy with Group Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
                         icon: _createIconNoSpan('clipboardCopy', this.gos, null),
-                        action: () => this.clipboardService!.copyToClipboard({ includeHeaders: true, includeGroupHeaders: true })
+                        action: () =>
+                            this.clipboardService!.copyToClipboard({ includeHeaders: true, includeGroupHeaders: true }),
                     };
                 } else {
                     return null;
                 }
             case 'cut':
-                if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'Cut from Menu', this.context.getGridId())) {
+                if (
+                    ModuleRegistry.__assertRegistered(
+                        ModuleNames.ClipboardModule,
+                        'Cut from Menu',
+                        this.context.getGridId()
+                    )
+                ) {
                     const focusedCell = this.focusService.getFocusedCell();
                     const rowNode = focusedCell ? this.rowPositionUtils.getRowNode(focusedCell) : null;
                     const isEditable = rowNode ? focusedCell?.column.isCellEditable(rowNode) : false;
@@ -217,19 +285,25 @@ export class MenuItemMapper extends BeanStub {
                         shortcut: localeTextFunc('ctrlX', 'Ctrl+X'),
                         icon: _createIconNoSpan('clipboardCut', this.gos, null),
                         disabled: !isEditable || this.gos.get('suppressCutToClipboard'),
-                        action: () => this.clipboardService!.cutToClipboard(undefined, 'contextMenu')
+                        action: () => this.clipboardService!.cutToClipboard(undefined, 'contextMenu'),
                     };
                 } else {
                     return null;
                 }
             case 'paste':
-                if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'Paste from Clipboard', this.context.getGridId())) {
+                if (
+                    ModuleRegistry.__assertRegistered(
+                        ModuleNames.ClipboardModule,
+                        'Paste from Clipboard',
+                        this.context.getGridId()
+                    )
+                ) {
                     return {
                         name: localeTextFunc('paste', 'Paste'),
                         shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
                         disabled: true,
                         icon: _createIconNoSpan('clipboardPaste', this.gos, null),
-                        action: () => this.clipboardService!.pasteFromClipboard()
+                        action: () => this.clipboardService!.pasteFromClipboard(),
                     };
                 } else {
                     return null;
@@ -237,8 +311,14 @@ export class MenuItemMapper extends BeanStub {
             case 'export':
                 const exportSubMenuItems: string[] = [];
 
-                const csvModuleLoaded = ModuleRegistry.__isRegistered(ModuleNames.CsvExportModule, this.context.getGridId());
-                const excelModuleLoaded = ModuleRegistry.__isRegistered(ModuleNames.ExcelExportModule, this.context.getGridId());
+                const csvModuleLoaded = ModuleRegistry.__isRegistered(
+                    ModuleNames.CsvExportModule,
+                    this.context.getGridId()
+                );
+                const excelModuleLoaded = ModuleRegistry.__isRegistered(
+                    ModuleNames.ExcelExportModule,
+                    this.context.getGridId()
+                );
 
                 if (!this.gos.get('suppressCsvExport') && csvModuleLoaded) {
                     exportSubMenuItems.push('csvExport');
@@ -255,13 +335,13 @@ export class MenuItemMapper extends BeanStub {
                 return {
                     name: localeTextFunc('csvExport', 'CSV Export'),
                     icon: _createIconNoSpan('csvExport', this.gos, null),
-                    action: () => this.gridApi.exportDataAsCsv({})
+                    action: () => this.gridApi.exportDataAsCsv({}),
                 };
             case 'excelExport':
                 return {
                     name: localeTextFunc('excelExport', 'Excel Export'),
                     icon: _createIconNoSpan('excelExport', this.gos, null),
-                    action: () => this.gridApi.exportDataAsExcel()
+                    action: () => this.gridApi.exportDataAsExcel(),
                 };
             case 'separator':
                 return 'separator';
@@ -273,9 +353,13 @@ export class MenuItemMapper extends BeanStub {
                     return {
                         name: localeTextFunc('columnFilter', 'Column Filter'),
                         icon: _createIconNoSpan('filter', this.gos, null),
-                        action: () => this.menuService.showFilterMenu({
-                            column, buttonElement: sourceElement(), containerType: 'columnFilter', positionBy: 'button'
-                        })
+                        action: () =>
+                            this.menuService.showFilterMenu({
+                                column,
+                                buttonElement: sourceElement(),
+                                containerType: 'columnFilter',
+                                positionBy: 'button',
+                            }),
                     };
                 } else {
                     return null;
@@ -285,8 +369,8 @@ export class MenuItemMapper extends BeanStub {
                     return {
                         name: localeTextFunc('columnChooser', 'Choose Columns'),
                         icon: _createIconNoSpan('columns', this.gos, null),
-                        action: () => this.menuService.showColumnChooser({ column, eventSource: sourceElement() })
-                    }
+                        action: () => this.menuService.showColumnChooser({ column, eventSource: sourceElement() }),
+                    };
                 } else {
                     return null;
                 }
@@ -294,20 +378,20 @@ export class MenuItemMapper extends BeanStub {
                 return {
                     name: localeTextFunc('sortAscending', 'Sort Ascending'),
                     icon: _createIconNoSpan('sortAscending', this.gos, null),
-                    action: () => this.sortController.setSortForColumn(column!, 'asc', false, 'columnMenu')
-                }
+                    action: () => this.sortController.setSortForColumn(column!, 'asc', false, 'columnMenu'),
+                };
             case 'sortDescending':
                 return {
                     name: localeTextFunc('sortDescending', 'Sort Descending'),
                     icon: _createIconNoSpan('sortDescending', this.gos, null),
-                    action: () => this.sortController.setSortForColumn(column!, 'desc', false, 'columnMenu')
-                }
+                    action: () => this.sortController.setSortForColumn(column!, 'desc', false, 'columnMenu'),
+                };
             case 'sortUnSort':
                 return {
                     name: localeTextFunc('sortUnSort', 'Clear Sort'),
                     icon: _createIconNoSpan('sortUnSort', this.gos, null),
-                    action: () => this.sortController.setSortForColumn(column!, null, false, 'columnMenu')
-                }
+                    action: () => this.sortController.setSortForColumn(column!, null, false, 'columnMenu'),
+                };
             default: {
                 console.warn(`AG Grid: unknown menu item type ${key}`);
                 return null;
@@ -334,23 +418,22 @@ export class MenuItemMapper extends BeanStub {
             result.push({
                 name: localeTextFunc('noAggregation', 'None'),
                 action: () => {
-                    this.columnModel.removeValueColumns([columnToUse!], "contextMenu");
-                    this.columnModel.setColumnAggFunc(columnToUse, undefined, "contextMenu");
+                    this.funcColsService.removeValueColumns([columnToUse!], 'contextMenu');
+                    this.funcColsService.setColumnAggFunc(columnToUse, undefined, 'contextMenu');
                 },
-                checked: !columnIsAlreadyAggValue
-            })
+                checked: !columnIsAlreadyAggValue,
+            });
 
-            funcNames.forEach(funcName => {
+            funcNames.forEach((funcName) => {
                 result.push({
                     name: localeTextFunc(funcName, aggFuncService.getDefaultFuncLabel(funcName)),
                     action: () => {
-                        this.columnModel.setColumnAggFunc(columnToUse, funcName, "contextMenu");
-                        this.columnModel.addValueColumns([columnToUse!], "contextMenu");
+                        this.funcColsService.setColumnAggFunc(columnToUse, funcName, 'contextMenu');
+                        this.funcColsService.addValueColumns([columnToUse!], 'contextMenu');
                     },
-                    checked: columnIsAlreadyAggValue && columnToUse!.getAggFunc() === funcName
+                    checked: columnIsAlreadyAggValue && columnToUse!.getAggFunc() === funcName,
                 });
             });
-
         }
 
         return result;

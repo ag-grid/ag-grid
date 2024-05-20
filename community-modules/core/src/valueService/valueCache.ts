@@ -1,10 +1,9 @@
-import { Bean, PostConstruct } from "../context/context";
-import { RowNode } from "../entities/rowNode";
-import { BeanStub } from "../context/beanStub";
+import { BeanStub } from '../context/beanStub';
+import { Bean, PostConstruct } from '../context/context';
+import { RowNode } from '../entities/rowNode';
 
 @Bean('valueCache')
 export class ValueCache extends BeanStub {
-
     private cacheVersion = 0;
     private active: boolean;
     private neverExpires: boolean;
@@ -16,7 +15,9 @@ export class ValueCache extends BeanStub {
     }
 
     public onDataChanged(): void {
-        if (this.neverExpires) { return; }
+        if (this.neverExpires) {
+            return;
+        }
 
         this.expire();
     }

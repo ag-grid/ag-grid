@@ -1,5 +1,5 @@
+import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 import { Component } from '@angular/core';
-import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     standalone: true,
@@ -9,26 +9,26 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
                 <div>
                     <p>
                         <label>
-                            Call Id:<br>
-                            <input type="text" value={{firstRecord.callId}}>
+                            Call Id:<br />
+                            <input type="text" value="{{ firstRecord.callId }}" />
                         </label>
                     </p>
                     <p>
                         <label>
-                            Number:<br>
-                            <input type="text" value={{firstRecord.number}}>
+                            Number:<br />
+                            <input type="text" value="{{ firstRecord.number }}" />
                         </label>
                     </p>
                     <p>
                         <label>
-                            Direction:<br>
-                            <input type="text" value={{firstRecord.direction}}>
+                            Direction:<br />
+                            <input type="text" value="{{ firstRecord.direction }}" />
                         </label>
                     </p>
                 </div>
             </form>
         </div>
-    `
+    `,
 })
 export class DetailCellRenderer implements ICellRendererAngularComp {
     firstRecord!: any;
@@ -57,7 +57,7 @@ export class DetailCellRenderer implements ICellRendererAngularComp {
             if (el.checkVisibility) {
                 return el.checkVisibility({
                     checkOpacity: true,
-                    checkVisibilityCSS: true
+                    checkVisibilityCSS: true,
                 });
             }
             return !!el.offsetParent && window.getComputedStyle(el).visibility === 'visible';
@@ -67,7 +67,8 @@ export class DetailCellRenderer implements ICellRendererAngularComp {
         if (!previousRow || currentRow >= previousRow) {
             // Focus on the first input
             inputs[0].focus();
-        } else { // Navigating backwards
+        } else {
+            // Navigating backwards
             // Focus on the last input
             inputs[inputs.length - 1].focus();
         }
@@ -82,8 +83,10 @@ const findRowForEl = (el: HTMLElement): HTMLElement | null => {
     let rowEl: HTMLElement | null = el;
     while (rowEl) {
         rowEl = rowEl.parentElement;
-        if (rowEl && rowEl.getAttribute('role') === 'row') { return rowEl; }
+        if (rowEl && rowEl.getAttribute('role') === 'row') {
+            return rowEl;
+        }
     }
 
     return null;
-}
+};

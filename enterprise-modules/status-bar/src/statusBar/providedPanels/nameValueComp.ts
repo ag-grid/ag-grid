@@ -1,9 +1,7 @@
 import { Component, RefSelector } from '@ag-grid-community/core';
 
 export class NameValueComp extends Component {
-
-    private static TEMPLATE = /* html */
-        `<div class="ag-status-name-value">
+    private static TEMPLATE /* html */ = `<div class="ag-status-name-value">
             <span ref="eLabel"></span>:&nbsp;
             <span ref="eValue" class="ag-status-name-value-value"></span>
         </div>`;

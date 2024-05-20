@@ -58,13 +58,13 @@
         }
     },
     "ExcelHeaderFooterConfig": {
-        "all": {          
+        "all": {
             "type": "ExcelHeaderFooter"
         },
-        "first": {          
+        "first": {
             "type": "ExcelHeaderFooter"
         },
-        "even": {          
+        "even": {
             "type": "ExcelHeaderFooter"
         }
     },

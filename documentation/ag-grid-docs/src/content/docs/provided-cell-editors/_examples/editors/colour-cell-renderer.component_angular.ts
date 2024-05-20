@@ -1,6 +1,6 @@
-import {Component} from "@angular/core";
-import {ICellRendererParams} from "@ag-grid-community/core";
-import {ICellRendererAngularComp} from "@ag-grid-community/angular";
+import { ICellRendererAngularComp } from '@ag-grid-community/angular';
+import { ICellRendererParams } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
 
 // simple cell renderer returns dummy buttons. in a real application, a component would probably
 // be used with operations tied to the buttons. in this example, the cell renderer is just for
@@ -8,15 +8,18 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
 @Component({
     standalone: true,
     template: `
-        <div [style.overflow]="'hidden'" [style.textOverflow]="'ellipsis'"><span [style.borderLeft]="'10px solid ' + params.value" [style.paddingRight]="'5px'"></span>{{params.value}}</div>
+        <div [style.overflow]="'hidden'" [style.textOverflow]="'ellipsis'">
+            <span [style.borderLeft]="'10px solid ' + params.value" [style.paddingRight]="'5px'"></span
+            >{{ params.value }}
+        </div>
     `,
     styles: [
         `
             :host {
                 overflow: hidden;
             }
-        `
-    ]
+        `,
+    ],
 })
 export class ColourCellRenderer implements ICellRendererAngularComp {
     public params!: ICellRendererParams;
@@ -26,6 +29,6 @@ export class ColourCellRenderer implements ICellRendererAngularComp {
     }
 
     refresh() {
-        return false
+        return false;
     }
 }

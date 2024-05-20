@@ -1,7 +1,6 @@
 const fs = require('fs');
 
 function copyFile(sourceFile, destinationFile, addTsNoCheck = true) {
-
     fs.readFile(sourceFile, 'utf8', (err, data) => {
         if (err) {
             console.error(`Error reading file: ${err}`);
@@ -10,20 +9,24 @@ function copyFile(sourceFile, destinationFile, addTsNoCheck = true) {
 
         // Prepend '@ts-nocheck' to the content so we don't have to worry about typescript errors
         const modifiedContent = addTsNoCheck ? `// @ts-nocheck\n${data}` : data;
-        fs.writeFile(destinationFile, modifiedContent, {
-            encoding: 'utf8',
-            flag: 'w'
-        }, (err) => {
-            if (err) {
-                console.error(`Error writing file: ${err}`);
-                return;
+        fs.writeFile(
+            destinationFile,
+            modifiedContent,
+            {
+                encoding: 'utf8',
+                flag: 'w',
+            },
+            (err) => {
+                if (err) {
+                    console.error(`Error writing file: ${err}`);
+                    return;
+                }
             }
-        });
+        );
     });
 }
 
 function copyJsonFile(sourceFile, destinationFile) {
-
     fs.readFile(sourceFile, 'utf8', (err, data) => {
         if (err) {
             console.error(`Error reading file: ${err}`);
@@ -32,15 +35,20 @@ function copyJsonFile(sourceFile, destinationFile) {
 
         // Prepend '@ts-nocheck' to the content so we don't have to worry about typescript errors
         const modifiedContent = `export const moduleConfig = ${data}`;
-        fs.writeFile(destinationFile, modifiedContent, {
-            encoding: 'utf8',
-            flag: 'w'
-        }, (err) => {
-            if (err) {
-                console.error(`Error writing file: ${err}`);
-                return;
+        fs.writeFile(
+            destinationFile,
+            modifiedContent,
+            {
+                encoding: 'utf8',
+                flag: 'w',
+            },
+            (err) => {
+                if (err) {
+                    console.error(`Error writing file: ${err}`);
+                    return;
+                }
             }
-        });
+        );
     });
 }
 

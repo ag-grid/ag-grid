@@ -1,13 +1,19 @@
-import { Component } from "../../widgets/component";
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { Autowired, PostConstruct, PreDestroy } from "../../context/context";
-import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowContainerType } from "./rowContainerCtrl";
-import { _ensureDomOrder, _insertWithDomOrder } from "../../utils/dom";
-import { RowComp } from "../../rendering/row/rowComp";
-import { RowCtrl, RowCtrlInstanceId } from "../../rendering/row/rowCtrl";
-import { Beans } from "../../rendering/beans";
-import { _getAllValuesInObject } from "../../utils/object";
-import { _setAriaRole } from "../../utils/aria";
+import { Autowired, PostConstruct, PreDestroy } from '../../context/context';
+import { Beans } from '../../rendering/beans';
+import { RowComp } from '../../rendering/row/rowComp';
+import { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
+import { _setAriaRole } from '../../utils/aria';
+import { _ensureDomOrder, _insertWithDomOrder } from '../../utils/dom';
+import { _getAllValuesInObject } from '../../utils/object';
+import { Component } from '../../widgets/component';
+import { RefSelector } from '../../widgets/componentAnnotations';
+import {
+    IRowContainerComp,
+    RowContainerCtrl,
+    RowContainerName,
+    RowContainerType,
+    getRowContainerTypeForName,
+} from './rowContainerCtrl';
 
 function templateFactory(): string {
     const name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
@@ -24,20 +30,19 @@ function templateFactory(): string {
         name === RowContainerName.STICKY_BOTTOM_CENTER;
 
     if (centerTemplate) {
-        res = /* html */
+        res =
+            /* html */
             `<div class="${cssClasses.viewport}" ref="eViewport" role="presentation">
                 <div class="${cssClasses.container}" ref="eContainer"></div>
             </div>`;
     } else {
-        res = /* html */
-            `<div class="${cssClasses.container}" ref="eContainer"></div>`;
+        res = /* html */ `<div class="${cssClasses.container}" ref="eContainer"></div>`;
     }
 
     return res;
 }
 
 export class RowContainerComp extends Component {
-
     @Autowired('beans') private beans: Beans;
 
     @RefSelector('eViewport') private eViewport: HTMLElement;
@@ -46,7 +51,7 @@ export class RowContainerComp extends Component {
     private readonly name: RowContainerName;
     private readonly type: RowContainerType;
 
-    private rowComps: {[id: RowCtrlInstanceId]: RowComp} = {};
+    private rowComps: { [id: RowCtrlInstanceId]: RowComp } = {};
 
     // we ensure the rows are in the dom in the order in which they appear on screen when the
     // user requests this via gridOptions.ensureDomOrder. this is typically used for screen readers.
@@ -62,12 +67,12 @@ export class RowContainerComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         const compProxy: IRowContainerComp = {
-            setViewportHeight: height => this.eViewport.style.height = height,
+            setViewportHeight: (height) => (this.eViewport.style.height = height),
             setRowCtrls: ({ rowCtrls }) => this.setRowCtrls(rowCtrls),
-            setDomOrder: domOrder => {
+            setDomOrder: (domOrder) => {
                 this.domOrder = domOrder;
             },
-            setContainerWidth: width => this.eContainer.style.width = width
+            setContainerWidth: (width) => (this.eContainer.style.width = width),
         };
 
         const ctrl = this.createManagedBean(new RowContainerCtrl(this.name));
@@ -81,7 +86,7 @@ export class RowContainerComp extends Component {
     }
 
     private setRowCtrls(rowCtrls: RowCtrl[]): void {
-        const oldRows = {...this.rowComps};
+        const oldRows = { ...this.rowComps };
         this.rowComps = {};
 
         this.lastPlacedElement = null;
@@ -107,12 +112,12 @@ export class RowContainerComp extends Component {
         };
 
         rowCtrls.forEach(processRow);
-        _getAllValuesInObject(oldRows).forEach(oldRowComp => {
+        _getAllValuesInObject(oldRows).forEach((oldRowComp) => {
             this.eContainer.removeChild(oldRowComp.getGui());
             oldRowComp.destroy();
         });
 
-        _setAriaRole(this.eContainer, "rowgroup");
+        _setAriaRole(this.eContainer, 'rowgroup');
     }
 
     public appendRow(element: HTMLElement) {
@@ -130,5 +135,4 @@ export class RowContainerComp extends Component {
             this.lastPlacedElement = eRow;
         }
     }
-
 }

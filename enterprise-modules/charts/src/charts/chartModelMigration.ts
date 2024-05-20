@@ -2,11 +2,11 @@ import { ChartModel } from '@ag-grid-community/core';
 import { AgChartThemeName } from 'ag-charts-community';
 
 // @ts-ignore
-import { getCanonicalChartType, getSeriesType, isPieChartSeries } from './chartComp/utils/seriesTypeMapper';
+import { VERSION } from '../version';
 // @ts-ignore
 import { ALL_AXIS_TYPES, getLegacyAxisType } from './chartComp/utils/axisTypeMapper';
 // @ts-ignore
-import { VERSION } from '../version';
+import { getCanonicalChartType, getSeriesType, isPieChartSeries } from './chartComp/utils/seriesTypeMapper';
 
 const DEBUG = false;
 
@@ -31,6 +31,7 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
     model = migrateIfBefore('29.2.0', model, migrateV29_2);
     model = migrateIfBefore('30.0.0', model, migrateV30);
     model = migrateIfBefore('31.0.0', model, migrateV31);
+    model = migrateIfBefore('32.0.0', model, migrateV32);
     model = cleanup(model);
 
     // Bump version to latest.
@@ -276,7 +277,7 @@ function migrateV30(model: ChartModel) {
 function migrateV31(model: ChartModel) {
     const V30_LEGACY_PALETTES: Record<string, AgChartThemeName> = {
         'ag-pastel': 'ag-sheets',
-        'ag-solar': 'ag-polychroma'
+        'ag-solar': 'ag-polychroma',
     };
 
     const updatedModel = jsonRename('chartOptions.column', 'bar', model);
@@ -285,8 +286,24 @@ function migrateV31(model: ChartModel) {
 
     return {
         ...updatedModel,
-        chartThemeName
+        chartThemeName,
     };
+}
+
+function migrateV32(model: ChartModel) {
+    model = jsonMutateProperty('chartOptions.*.autoSize', true, model, (parent, targetProp) => {
+        if (parent[targetProp] === true) {
+            // autoSize: true was the OOB default, so just use the new OOB default baked-in.
+        } else if (parent[targetProp] === false) {
+            // Fallback to legacy Charts defaults for autoSize: false.
+            parent['minHeight'] = 600;
+            parent['minWidth'] = 300;
+        }
+
+        delete parent[targetProp];
+    });
+
+    return model;
 }
 
 function cleanup(model: ChartModel) {
@@ -463,7 +480,7 @@ function jsonMutateProperty(
     skipMissing: boolean,
     json: any,
     mutator: (parent: any, targetProp: string) => any
-): void {
+) {
     const pathElements = path instanceof Array ? path : path.split('.');
     const parentPathElements = pathElements.slice(0, pathElements.length - 1);
     const targetName = pathElements[pathElements.length - 1];

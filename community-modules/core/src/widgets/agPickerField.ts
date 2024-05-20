@@ -1,13 +1,13 @@
-import { AgAbstractField, AgFieldParams } from "./agAbstractField";
-import { Component } from "./component";
-import { RefSelector } from "./componentAnnotations";
-import { _setAriaExpanded, _setAriaRole } from "../utils/aria";
-import { _createIconNoSpan } from "../utils/icon";
-import { _setElementWidth, _getAbsoluteWidth, _getInnerHeight, _formatSize } from "../utils/dom";
 import { KeyCode } from '../constants/keyCode';
-import { AddPopupParams, PopupService } from "./popupService";
-import { Autowired } from "../context/context";
-import { Events } from "../eventKeys";
+import { Autowired } from '../context/context';
+import { Events } from '../eventKeys';
+import { _setAriaExpanded, _setAriaRole } from '../utils/aria';
+import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/dom';
+import { _createIconNoSpan } from '../utils/icon';
+import { AgAbstractField, AgFieldParams } from './agAbstractField';
+import { Component } from './component';
+import { RefSelector } from './componentAnnotations';
+import { AddPopupParams, PopupService } from './popupService';
 
 export interface AgPickerFieldParams extends AgFieldParams {
     pickerType: string;
@@ -30,7 +30,7 @@ export interface AgPickerFieldParams extends AgFieldParams {
     inputWidth?: number | 'flex';
 }
 
-const TEMPLATE = /* html */`
+const TEMPLATE = /* html */ `
     <div class="ag-picker-field" role="presentation">
         <div ref="eLabel"></div>
             <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-picker-collapsed">
@@ -39,8 +39,11 @@ const TEMPLATE = /* html */`
         </div>
     </div>`;
 
-export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams = AgPickerFieldParams, TComponent extends Component = Component> extends AgAbstractField<TValue, TConfig> {
-
+export abstract class AgPickerField<
+    TValue,
+    TConfig extends AgPickerFieldParams = AgPickerFieldParams,
+    TComponent extends Component = Component,
+> extends AgAbstractField<TValue, TConfig> {
     protected abstract createPickerComponent(): TComponent;
 
     protected pickerComponent: TComponent | undefined;
@@ -51,7 +54,6 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     protected minPickerWidth: string | undefined;
     protected maxPickerWidth: string | undefined;
     protected value: TValue;
-
 
     private skipClick: boolean = false;
     private pickerGap: number = 4;
@@ -74,7 +76,9 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
         this.onPickerFocusIn = this.onPickerFocusIn.bind(this);
         this.onPickerFocusOut = this.onPickerFocusOut.bind(this);
 
-        if (!config) { return; }
+        if (!config) {
+            return;
+        }
 
         const { pickerGap, maxPickerHeight, variableWidth, minPickerWidth, maxPickerWidth } = config;
 
@@ -127,8 +131,8 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
 
     protected setupAria(): void {
         const ariaEl = this.getAriaElement();
-        
-        ariaEl.setAttribute('tabindex', (this.gos.get('tabIndex')).toString());
+
+        ariaEl.setAttribute('tabindex', this.gos.get('tabIndex').toString());
 
         _setAriaExpanded(ariaEl, false);
 
@@ -158,7 +162,9 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
             return;
         }
 
-        if (this.isDisabled()) { return; }
+        if (this.isDisabled()) {
+            return;
+        }
 
         if (this.isPickerDisplayed) {
             this.hidePicker();
@@ -204,7 +210,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
         this.toggleExpandedStyles(true);
     }
 
-    protected renderAndPositionPicker(): (() => void) {
+    protected renderAndPositionPicker(): () => void {
         const eDocument = this.gos.getDocument();
         const ePicker = this.pickerComponent!.getGui();
 
@@ -223,7 +229,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
             eChild: ePicker,
             closeOnEsc: true,
             closedCallback: () => {
-                const activeEl = this.gos.getActiveDomElement()
+                const activeEl = this.gos.getActiveDomElement();
                 const shouldRestoreFocus = !activeEl || activeEl === eDocument.body;
                 this.beforeHidePicker();
 
@@ -232,7 +238,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
                 }
             },
             ariaLabel: translate(pickerAriaLabelKey, pickerAriaLabelValue),
-        }
+        };
 
         const addPopupRes = this.popupService.addPopup(popupParams);
 
@@ -261,7 +267,9 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     }
 
     protected alignPickerToComponent(): void {
-        if (!this.pickerComponent) { return; } 
+        if (!this.pickerComponent) {
+            return;
+        }
 
         const { pickerType } = this.config;
         const { pickerGap } = this;
@@ -275,7 +283,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
             position: 'under',
             alignSide,
             keepWithinBounds: true,
-            nudgeY: pickerGap
+            nudgeY: pickerGap,
         });
     }
 
@@ -298,7 +306,9 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     }
 
     protected toggleExpandedStyles(expanded: boolean): void {
-        if (!this.isAlive()) { return; }
+        if (!this.isAlive()) {
+            return;
+        }
 
         const ariaEl = this.getAriaElement();
 
@@ -319,7 +329,9 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     }
 
     private togglePickerHasFocus(focused: boolean): void {
-        if (!this.pickerComponent) { return; }
+        if (!this.pickerComponent) {
+            return;
+        }
 
         this.eWrapper.classList.toggle('ag-picker-has-focus', focused);
     }

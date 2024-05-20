@@ -1,4 +1,4 @@
-@use "ag";
+@use 'ag';
 
 @mixin output {
     .ag-filter-toolpanel-header {
@@ -11,7 +11,9 @@
     }
 
     @include ag.keyboard-focus((ag-filter-toolpanel-header), 4px);
-    .ag-filter-toolpanel-group:not(.ag-has-filter) > .ag-group-title-bar .ag-filter-toolpanel-group-instance-header-icon {
+    .ag-filter-toolpanel-group:not(.ag-has-filter)
+        > .ag-group-title-bar
+        .ag-filter-toolpanel-group-instance-header-icon {
         display: none;
     }
 
@@ -31,7 +33,11 @@
     .ag-filter-toolpanel-search-input {
         flex-grow: 1;
         height: calc(var(--ag-grid-size) * 4);
-        @include ag.unthemed-rtl(( margin-right: var(--ag-grid-size) ));
+        @include ag.unthemed-rtl(
+            (
+                margin-right: var(--ag-grid-size),
+            )
+        );
     }
 
     .ag-filter-toolpanel-group-level-0 {
@@ -40,7 +46,11 @@
 
     .ag-filter-toolpanel-expand,
     .ag-filter-toolpanel-group-title-bar-icon {
-        @include ag.unthemed-rtl(( margin-right: var(--ag-grid-size) ));
+        @include ag.unthemed-rtl(
+            (
+                margin-right: var(--ag-grid-size),
+            )
+        );
     }
 
     .ag-filter-toolpanel-group-title-bar {
@@ -48,13 +58,14 @@
     }
 
     .ag-filter-toolpanel-header {
-        @include ag.unthemed-rtl((
-            padding-left: calc(var(--ag-filter-tool-panel-group-indent) * var(--ag-indentation-level) + var(--ag-grid-size))
-        ));
-    }
-
-    .ag-filter-toolpanel-instance-header.ag-filter-toolpanel-group-level-1-header {
-        padding-left: var(--ag-grid-size);
+        @include ag.unthemed-rtl(
+            (
+                padding-left:
+                    calc(
+                        var(--ag-filter-tool-panel-group-indent) * var(--ag-indentation-level, 0) + var(--ag-grid-size)
+                    ),
+            )
+        );
     }
 
     .ag-filter-toolpanel-instance-filter {
@@ -65,7 +76,11 @@
 
     .ag-filter-toolpanel-group-instance-header-icon,
     .ag-filter-toolpanel-instance-header-icon {
-        @include ag.unthemed-rtl((margin-left: var(--ag-grid-size)));
+        @include ag.unthemed-rtl(
+            (
+                margin-left: var(--ag-grid-size),
+            )
+        );
     }
 
     .ag-set-filter-group-icons {

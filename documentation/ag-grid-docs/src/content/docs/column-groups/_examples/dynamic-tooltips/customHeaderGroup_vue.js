@@ -7,15 +7,18 @@ export default {
     `,
     data: function () {
         return {
-            groupExpanded: false
+            groupExpanded: false,
         };
     },
-    beforeMount() {
-    },
+    beforeMount() {},
     mounted() {
-        this.params.columnGroup.getProvidedColumnGroup().addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
+        this.params.columnGroup
+            .getProvidedColumnGroup()
+            .addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
         this.params.setTooltip(this.params.displayName, () => {
-            if (!this.$refs.label) { return false; }
+            if (!this.$refs.label) {
+                return false;
+            }
             return this.$refs.label.scrollWidth > this.$refs.label.clientWidth;
         });
         this.syncExpandButtons();
@@ -27,6 +30,6 @@ export default {
         },
         syncExpandButtons() {
             this.groupExpanded = this.params.columnGroup.getProvidedColumnGroup().isExpanded();
-        }
-    }
+        },
+    },
 };

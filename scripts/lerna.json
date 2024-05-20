@@ -1,18 +1,15 @@
 {
-  "packages": [
-    "grid-community-modules/*",
-    "grid-enterprise-modules/*",
-    "grid-packages/*",
-    "grid-packages/ag-grid-docs/documentation/"
-  ],
-  "useNx": true,
-  "command": {
-    "bootstrap": {
-      "npmClientArgs": [
-        "--no-package-lock",
-        "--force"
-      ]
-    }
-  },
-  "version": "31.1.0"
+    "packages": [
+        "grid-community-modules/*",
+        "grid-enterprise-modules/*",
+        "grid-packages/*",
+        "grid-packages/ag-grid-docs/documentation/"
+    ],
+    "useNx": true,
+    "command": {
+        "bootstrap": {
+            "npmClientArgs": ["--no-package-lock", "--force"]
+        }
+    },
+    "version": "31.1.0"
 }

@@ -6,11 +6,10 @@ import {
     Events,
     GridApi,
     PreConstruct,
-    RefSelector
-} from "@ag-grid-community/core";
+    RefSelector,
+} from '@ag-grid-community/core';
 
 export class PivotModePanel extends Component {
-
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('gridApi') private api: GridApi;
 
@@ -32,13 +31,17 @@ export class PivotModePanel extends Component {
 
         this.addManagedListener(this.cbPivotMode, Events.EVENT_FIELD_VALUE_CHANGED, this.onBtPivotMode.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onPivotModeChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
+            this.onPivotModeChanged.bind(this)
+        );
     }
 
     private onBtPivotMode(): void {
         const newValue = !!this.cbPivotMode.getValue();
         if (newValue !== this.columnModel.isPivotMode()) {
-            this.gos.updateGridOptions({ options: { pivotMode: newValue}, source: 'toolPanelUi' as any });
+            this.gos.updateGridOptions({ options: { pivotMode: newValue }, source: 'toolPanelUi' as any });
             const { api } = this;
             if (api) {
                 api.refreshHeader();

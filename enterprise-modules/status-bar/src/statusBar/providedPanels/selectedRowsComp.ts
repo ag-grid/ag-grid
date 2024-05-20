@@ -1,16 +1,25 @@
-import { Autowired, Events, PostConstruct, IStatusPanelComp, ISelectionService, IRowModel, _formatNumberCommas } from '@ag-grid-community/core';
-import { NameValueComp } from "./nameValueComp";
+import {
+    Autowired,
+    Events,
+    IRowModel,
+    ISelectionService,
+    IStatusPanelComp,
+    PostConstruct,
+    _formatNumberCommas,
+} from '@ag-grid-community/core';
+
+import { NameValueComp } from './nameValueComp';
 
 export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp {
-
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('selectionService') private selectionService: ISelectionService;
 
     @PostConstruct
     protected postConstruct(): void {
-
         if (!this.isValidRowModel()) {
-            console.warn(`AG Grid: agSelectedRowCountComponent should only be used with the client and server side row model.`);
+            console.warn(
+                `AG Grid: agSelectedRowCountComponent should only be used with the client and server side row model.`
+            );
             return;
         }
 
@@ -46,8 +55,7 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
         this.setDisplayed(selectedRowCount > 0);
     }
 
-    public init() {
-    }
+    public init() {}
 
     public refresh(): boolean {
         return true;
@@ -58,5 +66,4 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
     public destroy(): void {
         super.destroy();
     }
-
 }

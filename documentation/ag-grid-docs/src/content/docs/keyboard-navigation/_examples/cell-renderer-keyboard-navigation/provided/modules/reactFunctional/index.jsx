@@ -1,25 +1,27 @@
-
 'use strict';
 
-import React, { useCallback, useMemo, useState, StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import './styles.css';
+import React, { StrictMode, useCallback, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
 import CustomElements from './customElements.jsx';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const GRID_CELL_CLASSNAME = "ag-cell";
+const GRID_CELL_CLASSNAME = 'ag-cell';
 
 const getAllFocusableElementsOf = (el) => {
-    return Array.from(el.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')).filter((focusableEl) => {
+    return Array.from(
+        el.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+    ).filter((focusableEl) => {
         return focusableEl.tabIndex !== -1;
     });
-}
+};
 
 const getEventPath = (event) => {
     const path = [];
@@ -29,7 +31,7 @@ const getEventPath = (event) => {
         currentTarget = currentTarget.parentElement;
     }
     return path;
-}
+};
 
 /**
  * Capture whether the user is tabbing forwards or backwards and suppress keyboard event if tabbing
@@ -67,7 +69,7 @@ const suppressKeyboardEvent = ({ event }) => {
 
         if (isTabForward) {
             const isLastChildFocused = lastCellChildEl && document.activeElement === lastCellChildEl;
-      
+
             if (!isLastChildFocused) {
                 suppressEvent = true;
                 if (currentIndex !== -1 || document.activeElement === eGridCell) {
@@ -78,7 +80,8 @@ const suppressKeyboardEvent = ({ event }) => {
         }
         // Suppress keyboard event if tabbing backwards within the cell, and the current focused element is not the first child
         else {
-            const cellHasFocusedChildren = eGridCell.contains(document.activeElement) && eGridCell !== document.activeElement;
+            const cellHasFocusedChildren =
+                eGridCell.contains(document.activeElement) && eGridCell !== document.activeElement;
 
             // Manually set focus to the last child element if cell doesn't have focused children
             if (!cellHasFocusedChildren) {
@@ -100,38 +103,46 @@ const suppressKeyboardEvent = ({ event }) => {
     }
 
     return suppressEvent;
-}
+};
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
-    const gridStyle = useMemo(() => ({height: '100%', width: '100%'}), []);
+    const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState();
     const [columnDefs, setColumnDefs] = useState([
         {
-            field: "athlete"
+            field: 'athlete',
         },
         {
-            field: "country",
+            field: 'country',
             flex: 1,
-            cellRenderer: CustomElements
-        }
+            cellRenderer: CustomElements,
+        },
     ]);
-    const defaultColDef = useMemo(() => { return {
-        minWidth: 130,
-        suppressKeyboardEvent
-    } }, []);
+    const defaultColDef = useMemo(() => {
+        return {
+            minWidth: 130,
+            suppressKeyboardEvent,
+        };
+    }, []);
 
-            const onGridReady = useCallback((params) => {
-                fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
-                    .then(resp => resp.json())
-                    .then(data => {
-                        setRowData( data);
-                    });
-            }, []);
+    const onGridReady = useCallback((params) => {
+        fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
+            .then((resp) => resp.json())
+            .then((data) => {
+                setRowData(data);
+            });
+    }, []);
 
-    return  (
+    return (
         <div style={containerStyle}>
-            <div  style={gridStyle} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+            <div
+                style={gridStyle}
+                className={
+                    /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                    'ag-theme-quartz' /** DARK MODE END **/
+                }
+            >
                 <AgGridReact
                     rowData={rowData}
                     columnDefs={columnDefs}
@@ -142,7 +153,11 @@ const GridExample = () => {
             </div>
         </div>
     );
-}
+};
 
 const root = createRoot(document.getElementById('root'));
-root.render(<StrictMode><GridExample /></StrictMode>);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

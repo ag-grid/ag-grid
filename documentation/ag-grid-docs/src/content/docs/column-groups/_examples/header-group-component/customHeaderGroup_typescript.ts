@@ -1,4 +1,4 @@
-import { IHeaderGroupComp, IHeaderGroupParams } from "@ag-grid-community/core";
+import { IHeaderGroupComp, IHeaderGroupParams } from '@ag-grid-community/core';
 
 export class CustomHeaderGroup implements IHeaderGroupComp {
     params!: IHeaderGroupParams;
@@ -11,16 +11,21 @@ export class CustomHeaderGroup implements IHeaderGroupComp {
         this.params = params;
         this.eGui = document.createElement('div');
         this.eGui.className = 'ag-header-group-cell-label';
-        this.eGui.innerHTML = '' +
-            '<div class="customHeaderLabel">' + this.params.displayName + '</div>' +
+        this.eGui.innerHTML =
+            '' +
+            '<div class="customHeaderLabel">' +
+            this.params.displayName +
+            '</div>' +
             '<div class="customExpandButton"><i class="fa fa-arrow-right"></i></div>';
 
         this.onExpandButtonClickedListener = this.expandOrCollapse.bind(this);
-        this.eExpandButton = this.eGui.querySelector(".customExpandButton");
+        this.eExpandButton = this.eGui.querySelector('.customExpandButton');
         this.eExpandButton.addEventListener('click', this.onExpandButtonClickedListener);
 
         this.onExpandChangedListener = this.syncExpandButtons.bind(this);
-        this.params.columnGroup.getProvidedColumnGroup().addEventListener('expandedChanged', this.onExpandChangedListener);
+        this.params.columnGroup
+            .getProvidedColumnGroup()
+            .addEventListener('expandedChanged', this.onExpandChangedListener);
 
         this.syncExpandButtons();
     }

@@ -1,11 +1,9 @@
-import { Component } from "../../widgets/component";
-import { ILoadingCellRendererComp, ILoadingCellRendererParams } from "./loadingCellRenderer";
-import { _setAriaLabel, _setAriaLabelledBy } from "../../utils/aria";
+import { _setAriaLabel, _setAriaLabelledBy } from '../../utils/aria';
+import { Component } from '../../widgets/component';
+import { ILoadingCellRendererComp, ILoadingCellRendererParams } from './loadingCellRenderer';
 
 export class SkeletonCellRenderer extends Component implements ILoadingCellRendererComp {
-    private static TEMPLATE =
-        `<div class="ag-skeleton-container"></div>`;
-
+    private static TEMPLATE = `<div class="ag-skeleton-container"></div>`;
 
     constructor() {
         super(SkeletonCellRenderer.TEMPLATE);
@@ -24,7 +22,7 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         this.getGui().innerText = localeTextFunc('loadingError', 'ERR');
 
-        const ariaFailed = localeTextFunc('ariaSkeletonCellLoadingFailed', 'Row failed to load')
+        const ariaFailed = localeTextFunc('ariaSkeletonCellLoadingFailed', 'Row failed to load');
         _setAriaLabel(this.getGui(), ariaFailed);
     }
 
@@ -32,11 +30,11 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
         const eDocument = this.gos.getDocument();
         const skeletonEffect = eDocument.createElement('div');
         skeletonEffect.classList.add('ag-skeleton-effect');
-        
+
         this.getGui().appendChild(skeletonEffect);
 
         const localeTextFunc = this.localeService.getLocaleTextFunc();
-        const ariaLoading = localeTextFunc('ariaSkeletonCellLoading', 'Row data is loading')
+        const ariaLoading = localeTextFunc('ariaSkeletonCellLoading', 'Row data is loading');
         _setAriaLabel(this.getGui(), ariaLoading);
     }
 

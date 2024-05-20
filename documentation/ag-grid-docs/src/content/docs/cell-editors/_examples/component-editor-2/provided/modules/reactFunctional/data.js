@@ -1,5 +1,5 @@
 export function getData() {
-    const cloneObject = (obj) => JSON.parse(JSON.stringify(obj))
+    const cloneObject = (obj) => JSON.parse(JSON.stringify(obj));
 
     const students = [
         {
@@ -30,18 +30,18 @@ export function getData() {
             age: 12,
             mood: 'Happy',
         },
-    ]
+    ];
 
     // double the array twice, make more data!
-    students.forEach(item => {
-        students.push(cloneObject(item))
-    })
-    students.forEach(item => {
-        students.push(cloneObject(item))
-    })
-    students.forEach(item => {
-        students.push(cloneObject(item))
-    })
+    students.forEach((item) => {
+        students.push(cloneObject(item));
+    });
+    students.forEach((item) => {
+        students.push(cloneObject(item));
+    });
+    students.forEach((item) => {
+        students.push(cloneObject(item));
+    });
 
-    return students
+    return students;
 }

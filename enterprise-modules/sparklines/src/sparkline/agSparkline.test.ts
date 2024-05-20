@@ -1,7 +1,8 @@
-import { describe, beforeAll, afterAll, test, expect, jest } from '@jest/globals';
-import { AgSparkline, SparklineFactoryOptions } from './agSparkline';
-import 'jest-canvas-mock';
 import { ColumnFormat, ColumnFormatterParams, MarkerFormat, MarkerFormatterParams } from '@ag-grid-community/core';
+import { afterAll, beforeAll, describe, expect, jest, test } from '@jest/globals';
+import 'jest-canvas-mock';
+
+import { AgSparkline, SparklineFactoryOptions } from './agSparkline';
 import { SparklineTooltip } from './tooltip/sparklineTooltip';
 
 // mock the DOMMatrix

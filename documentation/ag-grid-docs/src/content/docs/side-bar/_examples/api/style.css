@@ -1,4 +1,3 @@
-
 .api-panel {
     display: flex;
     flex-direction: row;
@@ -28,7 +27,6 @@
 
 .grid-div {
     height: 100%;
-
 }
 
 .parent-div {

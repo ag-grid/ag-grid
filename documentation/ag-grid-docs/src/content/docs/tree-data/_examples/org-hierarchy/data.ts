@@ -17,44 +17,22 @@ export function getData(): any[] {
             employmentType: 'Permanent',
         },
         {
-            orgHierarchy: [
-                'Erica Rogers',
-                'Malcolm Barrett',
-                'Esther Baker',
-                'Brittany Hanson',
-            ],
+            orgHierarchy: ['Erica Rogers', 'Malcolm Barrett', 'Esther Baker', 'Brittany Hanson'],
             jobTitle: 'Fleet Coordinator',
             employmentType: 'Permanent',
         },
         {
-            orgHierarchy: [
-                'Erica Rogers',
-                'Malcolm Barrett',
-                'Esther Baker',
-                'Brittany Hanson',
-                'Leah Flowers',
-            ],
+            orgHierarchy: ['Erica Rogers', 'Malcolm Barrett', 'Esther Baker', 'Brittany Hanson', 'Leah Flowers'],
             jobTitle: 'Parts Technician',
             employmentType: 'Contract',
         },
         {
-            orgHierarchy: [
-                'Erica Rogers',
-                'Malcolm Barrett',
-                'Esther Baker',
-                'Brittany Hanson',
-                'Tammy Sutton',
-            ],
+            orgHierarchy: ['Erica Rogers', 'Malcolm Barrett', 'Esther Baker', 'Brittany Hanson', 'Tammy Sutton'],
             jobTitle: 'Service Technician',
             employmentType: 'Contract',
         },
         {
-            orgHierarchy: [
-                'Erica Rogers',
-                'Malcolm Barrett',
-                'Esther Baker',
-                'Derek Paul',
-            ],
+            orgHierarchy: ['Erica Rogers', 'Malcolm Barrett', 'Esther Baker', 'Derek Paul'],
             jobTitle: 'Inventory Control',
             employmentType: 'Permanent',
         },
@@ -65,45 +43,25 @@ export function getData(): any[] {
             employmentType: 'Permanent',
         },
         {
-            orgHierarchy: [
-                'Erica Rogers',
-                'Malcolm Barrett',
-                'Francis Strickland',
-                'Morris Hanson',
-            ],
+            orgHierarchy: ['Erica Rogers', 'Malcolm Barrett', 'Francis Strickland', 'Morris Hanson'],
             jobTitle: 'Sales Manager',
             employmentType: 'Permanent',
         },
         {
-            orgHierarchy: [
-                'Erica Rogers',
-                'Malcolm Barrett',
-                'Francis Strickland',
-                'Todd Tyler',
-            ],
+            orgHierarchy: ['Erica Rogers', 'Malcolm Barrett', 'Francis Strickland', 'Todd Tyler'],
             jobTitle: 'Sales Executive',
             employmentType: 'Contract',
         },
         {
-            orgHierarchy: [
-                'Erica Rogers',
-                'Malcolm Barrett',
-                'Francis Strickland',
-                'Bennie Wise',
-            ],
+            orgHierarchy: ['Erica Rogers', 'Malcolm Barrett', 'Francis Strickland', 'Bennie Wise'],
             jobTitle: 'Sales Executive',
             employmentType: 'Contract',
         },
         {
-            orgHierarchy: [
-                'Erica Rogers',
-                'Malcolm Barrett',
-                'Francis Strickland',
-                'Joel Cooper',
-            ],
+            orgHierarchy: ['Erica Rogers', 'Malcolm Barrett', 'Francis Strickland', 'Joel Cooper'],
             jobTitle: 'Sales Executive',
             employmentType: 'Permanent',
         },
-    ]
+    ];
     return rowData;
 }

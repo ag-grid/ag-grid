@@ -1,12 +1,12 @@
-import { Autowired, Bean, ColumnModel } from "@ag-grid-community/core";
+import { Autowired, Bean, FuncColsService, PivotResultColsService } from '@ag-grid-community/core';
 
 @Bean('ssrmListenerUtils')
 export class ListenerUtils {
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
 
     public isSortingWithValueColumn(changedColumnsInSort: string[]): boolean {
-        const valueColIds = this.columnModel.getValueColumns().map(col => col.getColId());
+        const valueColIds = this.funcColsService.getValueColumns().map((col) => col.getColId());
 
         for (let i = 0; i < changedColumnsInSort.length; i++) {
             if (valueColIds.indexOf(changedColumnsInSort[i]) > -1) {
@@ -18,11 +18,12 @@ export class ListenerUtils {
     }
 
     public isSortingWithSecondaryColumn(changedColumnsInSort: string[]): boolean {
-        if (!this.columnModel.getSecondaryColumns()) {
+        const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
+        if (!pivotResultCols) {
             return false;
         }
 
-        const secondaryColIds = this.columnModel.getSecondaryColumns()!.map(col => col.getColId());
+        const secondaryColIds = pivotResultCols.list.map((col) => col.getColId());
 
         for (let i = 0; i < changedColumnsInSort.length; i++) {
             if (secondaryColIds.indexOf(changedColumnsInSort[i]) > -1) {
@@ -32,5 +33,4 @@ export class ListenerUtils {
 
         return false;
     }
-
 }

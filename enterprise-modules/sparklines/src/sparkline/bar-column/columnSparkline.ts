@@ -1,4 +1,5 @@
 import { _Scale, _Scene, _Util } from 'ag-charts-community';
+
 import { BarColumnLabelPlacement, BarColumnSparkline, RectNodeDatum } from './barColumnSparkline';
 
 const { isNumber } = _Util;

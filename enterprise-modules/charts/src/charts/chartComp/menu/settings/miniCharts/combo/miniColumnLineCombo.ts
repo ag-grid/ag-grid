@@ -1,10 +1,10 @@
-import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { _Scene } from "ag-charts-community";
-import { ChartType } from "@ag-grid-community/core";
-import { createColumnRects, CreateColumnRectsParams, createLinePaths } from "../miniChartHelpers";
+import { ChartType } from '@ag-grid-community/core';
+import { _Scene } from 'ag-charts-community';
+
+import { CreateColumnRectsParams, createColumnRects, createLinePaths } from '../miniChartHelpers';
+import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export class MiniColumnLineCombo extends MiniChartWithAxes {
-
     static chartType: ChartType = 'columnLineCombo';
 
     private columns: _Scene.Rect[];
@@ -12,12 +12,10 @@ export class MiniColumnLineCombo extends MiniChartWithAxes {
 
     private columnData = [3, 4];
 
-    private lineData = [
-        [5, 4, 6, 5, 4]
-    ];
+    private lineData = [[5, 4, 6, 5, 4]];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {
-        super(container, "columnLineComboTooltip");
+        super(container, 'columnLineComboTooltip');
 
         const { root, columnData, lineData, size, padding } = this;
 
@@ -29,7 +27,7 @@ export class MiniColumnLineCombo extends MiniChartWithAxes {
             padding,
             xScaleDomain: [0, 1],
             yScaleDomain: [0, 4],
-            xScalePadding: 0.5
+            xScalePadding: 0.5,
         } as CreateColumnRectsParams);
 
         root.append(this.columns);
@@ -46,7 +44,7 @@ export class MiniColumnLineCombo extends MiniChartWithAxes {
         });
 
         this.lines.forEach((line: _Scene.Path, i: number) => {
-            line.stroke = fills[i+2];
+            line.stroke = fills[i + 2];
         });
     }
 }

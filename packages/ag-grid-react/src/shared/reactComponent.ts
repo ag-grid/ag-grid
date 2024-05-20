@@ -1,9 +1,10 @@
-import { createElement, ReactPortal } from 'react';
-import { _warnOnce, AgPromise, ComponentType, IComponent, WrappableInterface} from 'ag-grid-community';
-import { PortalManager } from './portalManager';
-import generateNewKey from './keyGenerator';
+import { AgPromise, ComponentType, IComponent, WrappableInterface, _warnOnce } from 'ag-grid-community';
+import { ReactPortal, createElement } from 'react';
 import { createPortal } from 'react-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
+
+import generateNewKey from './keyGenerator';
+import { PortalManager } from './portalManager';
 
 export class ReactComponent implements IComponent<any>, WrappableInterface {
     protected eParentElement!: HTMLElement;
@@ -24,7 +25,12 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
     private resolveInstanceCreated?: (value: boolean) => void;
     private suppressFallbackMethods: boolean;
 
-    constructor(reactComponent: any, portalManager: PortalManager, componentType: ComponentType, suppressFallbackMethods?: boolean) {
+    constructor(
+        reactComponent: any,
+        portalManager: PortalManager,
+        componentType: ComponentType,
+        suppressFallbackMethods?: boolean
+    ) {
         this.reactComponent = reactComponent;
         this.portalManager = portalManager;
         this.componentType = componentType;
@@ -35,9 +41,11 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
         this.key = generateNewKey();
         this.portalKey = generateNewKey();
 
-        this.instanceCreated = this.isStatelessComponent() ? AgPromise.resolve(false) : new AgPromise(resolve => {
-            this.resolveInstanceCreated = resolve;
-        })
+        this.instanceCreated = this.isStatelessComponent()
+            ? AgPromise.resolve(false)
+            : new AgPromise((resolve) => {
+                  this.resolveInstanceCreated = resolve;
+              });
     }
 
     public getGui(): HTMLElement {
@@ -75,14 +83,18 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
         }
 
         if (this.componentInstance.getReactContainerStyle && this.componentInstance.getReactContainerStyle()) {
-            _warnOnce('Since v31.1 "getReactContainerStyle" is deprecated. Apply styling directly to ".ag-react-container" if needed.');
+            _warnOnce(
+                'Since v31.1 "getReactContainerStyle" is deprecated. Apply styling directly to ".ag-react-container" if needed.'
+            );
             Object.assign(this.eParentElement.style, this.componentInstance.getReactContainerStyle());
         }
 
         if (this.componentInstance.getReactContainerClasses && this.componentInstance.getReactContainerClasses()) {
-            _warnOnce('Since v31.1 "getReactContainerClasses" is deprecated. Apply styling directly to ".ag-react-container" if needed.');
+            _warnOnce(
+                'Since v31.1 "getReactContainerClasses" is deprecated. Apply styling directly to ".ag-react-container" if needed.'
+            );
             const parentContainerClasses: string[] = this.componentInstance.getReactContainerClasses();
-            parentContainerClasses.forEach(className => this.eParentElement.classList.add(className));
+            parentContainerClasses.forEach((className) => this.eParentElement.classList.add(className));
         }
     }
 
@@ -112,14 +124,18 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
     }
 
     protected isStateless(Component: any) {
-        return (typeof Component === 'function' && !(Component.prototype && Component.prototype.isReactComponent))
-            || (typeof Component === 'object' && Component.$$typeof === this.getMemoType());
+        return (
+            (typeof Component === 'function' && !(Component.prototype && Component.prototype.isReactComponent)) ||
+            (typeof Component === 'object' && Component.$$typeof === this.getMemoType())
+        );
     }
 
     public hasMethod(name: string): boolean {
         const frameworkComponentInstance = this.getFrameworkComponentInstance();
-        return (!!frameworkComponentInstance && frameworkComponentInstance[name] != null) ||
-            this.fallbackMethodAvailable(name);
+        return (
+            (!!frameworkComponentInstance && frameworkComponentInstance[name] != null) ||
+            this.fallbackMethodAvailable(name)
+        );
     }
 
     public callMethod(name: string, args: IArguments): void {
@@ -127,7 +143,7 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
 
         if (this.isStatelessComponent()) {
             return this.fallbackMethod(name, !!args && args[0] ? args[0] : {});
-        } else if (!(!!frameworkComponentInstance)) {
+        } else if (!!!frameworkComponentInstance) {
             // instance not ready yet - wait for it
             setTimeout(() => this.callMethod(name, args));
             return;
@@ -154,7 +170,7 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
 
         this.createOrUpdatePortal(params);
 
-        return new AgPromise<void>(resolve => this.createReactComponent(resolve));
+        return new AgPromise<void>((resolve) => this.createReactComponent(resolve));
     }
 
     private createOrUpdatePortal(params: any) {
@@ -193,8 +209,10 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
     }
 
     public rendered(): boolean {
-        return (this.isStatelessComponent() && this.statelessComponentRendered()) ||
-            !!(!this.isStatelessComponent() && this.getFrameworkComponentInstance());
+        return (
+            (this.isStatelessComponent() && this.statelessComponentRendered()) ||
+            !!(!this.isStatelessComponent() && this.getFrameworkComponentInstance())
+        );
     }
 
     private valueRenderedIsNull(params: any): boolean {
@@ -212,8 +230,7 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
             // if a user is doing anything that uses useLayoutEffect (like material ui) then it will throw and we
             // can't do anything to stop it; this is just a warning and has no effect on anything so just suppress it
             // for this single operation
-            console.error = () => {
-            };
+            console.error = () => {};
             const staticMarkup = renderToStaticMarkup(createElement(this.reactComponent, params) as any);
             return staticMarkup === '';
         } catch (ignore) {
@@ -225,12 +242,12 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
     }
 
     /*
-    * fallback methods - these will be invoked if a corresponding instance method is not present
-    * for example if refresh is called and is not available on the component instance, then refreshComponent on this
-    * class will be invoked instead
-    *
-    * Currently only refresh is supported
-    */
+     * fallback methods - these will be invoked if a corresponding instance method is not present
+     * for example if refresh is called and is not available on the component instance, then refreshComponent on this
+     * class will be invoked instead
+     *
+     * Currently only refresh is supported
+     */
     protected refreshComponent(args: any): void {
         this.oldPortal = this.portal;
         this.createOrUpdatePortal(args);
@@ -245,7 +262,9 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
     }
 
     protected fallbackMethodAvailable(name: string): boolean {
-        if (this.suppressFallbackMethods) { return false; }
+        if (this.suppressFallbackMethods) {
+            return false;
+        }
         const method = (this as any)[`${name}Component`];
         return !!method;
     }

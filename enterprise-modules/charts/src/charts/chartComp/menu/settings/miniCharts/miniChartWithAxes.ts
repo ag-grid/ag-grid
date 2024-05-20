@@ -1,10 +1,10 @@
-import { PostConstruct } from "@ag-grid-community/core";
-import { MiniChart } from "./miniChart";
-import { _Scene } from "ag-charts-community";
-import { ChartTranslationKey } from "../../../services/chartTranslationService";
+import { PostConstruct } from '@ag-grid-community/core';
+import { _Scene } from 'ag-charts-community';
+
+import { ChartTranslationKey } from '../../../services/chartTranslationService';
+import { MiniChart } from './miniChart';
 
 export abstract class MiniChartWithAxes extends MiniChart {
-
     private readonly stroke = 'gray';
     private readonly axisOvershoot = 3;
 

@@ -1,18 +1,19 @@
 'use strict';
 
-import React, { useMemo, useState, StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, StatusPanelDef } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import './styles.css';
-import { ColDef, StatusPanelDef } from '@ag-grid-community/core';
+import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
+import React, { StrictMode, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
 import ClickableStatusBarComponent from './clickableStatusBarComponent';
 import CountStatusBarComponent from './countStatusBarComponent';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, StatusBarModule, RangeSelectionModule]);
 
@@ -49,7 +50,7 @@ const GridExample = () => {
             flex: 1,
             minWidth: 100,
             filter: true,
-        }
+        };
     }, []);
     const statusBar = useMemo<{
         statusPanels: StatusPanelDef[];
@@ -69,12 +70,18 @@ const GridExample = () => {
                     },
                 },
             ],
-        }
+        };
     }, []);
 
     return (
         <div style={containerStyle}>
-            <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+            <div
+                style={gridStyle}
+                className={
+                    /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+                    'ag-theme-quartz' /** DARK MODE END **/
+                }
+            >
                 <AgGridReact
                     rowData={rowData}
                     columnDefs={columnDefs}
@@ -87,7 +94,11 @@ const GridExample = () => {
             </div>
         </div>
     );
-}
+};
 
 const root = createRoot(document.getElementById('root')!);
-root.render(<StrictMode><GridExample /></StrictMode>);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

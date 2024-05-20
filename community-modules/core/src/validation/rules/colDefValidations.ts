@@ -1,14 +1,20 @@
 import { ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
-import { ModuleNames } from '../../modules/moduleNames';
-import { Deprecations, OptionsValidator, Validations } from "../validationTypes";
 import { GridOptions } from '../../entities/gridOptions';
+import { ModuleNames } from '../../modules/moduleNames';
+import { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 
 const COLUMN_DEFINITION_DEPRECATIONS: Deprecations<ColDef | ColGroupDef> = {
     columnsMenuParams: { version: '31.1', message: 'Use `columnChooserParams` instead.' },
     suppressMenu: { version: '31.1', message: 'Use `suppressHeaderMenuButton` instead.' },
     suppressCellFlash: { version: '31.2', message: 'Use `enableCellChangeFlash={false}` in the ColDef' },
-    dndSource: { version: '31.2', message: 'This feature has been replaced by `Row Dragging to an External DropZone`.' },
-    dndSourceOnRowDrag: { version: '31.2', message: 'This feature has been replaced by `Row Dragging to an External DropZone`.' },
+    dndSource: {
+        version: '31.2',
+        message: 'This feature has been replaced by `Row Dragging to an External DropZone`.',
+    },
+    dndSourceOnRowDrag: {
+        version: '31.2',
+        message: 'This feature has been replaced by `Row Dragging to an External DropZone`.',
+    },
 };
 
 const CSRM_REQUIRES_ROW_GROUP_MODULE = (_options: never, gridOptions: GridOptions) => {
@@ -38,7 +44,7 @@ const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
 
     menuTabs: (options) => {
         const enterpriseMenuTabs: ColumnMenuTab[] = ['columnsMenuTab', 'generalMenuTab'];
-        if (options.menuTabs?.some(tab => enterpriseMenuTabs.includes(tab))) {
+        if (options.menuTabs?.some((tab) => enterpriseMenuTabs.includes(tab))) {
             return {
                 module: ModuleNames.MenuModule,
             };
@@ -51,30 +57,31 @@ const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
     columnChooserParams: {
         module: [ModuleNames.MenuModule, ModuleNames.ColumnsToolPanelModule],
     },
-    
+
     headerCheckboxSelection: {
         supportedRowModels: ['clientSide', 'serverSide'],
-        dependencies: (_options, { rowSelection }) => (
-            rowSelection === 'multiple' ? null : 'headerCheckboxSelection is only supported with rowSelection=multiple'
-        )
+        dependencies: (_options, { rowSelection }) =>
+            rowSelection === 'multiple' ? null : 'headerCheckboxSelection is only supported with rowSelection=multiple',
     },
     headerCheckboxSelectionFilteredOnly: {
         supportedRowModels: ['clientSide'],
-        dependencies: (_options, { rowSelection }) => (
-            rowSelection === 'multiple' ? null : 'headerCheckboxSelectionFilteredOnly is only supported with rowSelection=multiple'
-        ),
+        dependencies: (_options, { rowSelection }) =>
+            rowSelection === 'multiple'
+                ? null
+                : 'headerCheckboxSelectionFilteredOnly is only supported with rowSelection=multiple',
     },
     headerCheckboxSelectionCurrentPageOnly: {
         supportedRowModels: ['clientSide'],
-        dependencies: (_options, { rowSelection }) => (
-            rowSelection === 'multiple' ? null : 'headerCheckboxSelectionCurrentPageOnly is only supported with rowSelection=multiple'
-        ),
+        dependencies: (_options, { rowSelection }) =>
+            rowSelection === 'multiple'
+                ? null
+                : 'headerCheckboxSelectionCurrentPageOnly is only supported with rowSelection=multiple',
     },
 
     children: () => COL_DEF_VALIDATORS,
 };
 
-type ColKey = keyof (ColDef) | (keyof ColGroupDef);
+type ColKey = keyof ColDef | keyof ColGroupDef;
 const colDefPropertyMap: Record<ColKey, undefined> = {
     headerName: undefined,
     columnGroupShow: undefined,
@@ -220,7 +227,6 @@ const colDefPropertyMap: Record<ColKey, undefined> = {
     loadingCellRendererSelector: undefined,
 };
 const ALL_PROPERTIES: ColKey[] = Object.keys(colDefPropertyMap) as ColKey[];
-
 
 export const COL_DEF_VALIDATORS: OptionsValidator<ColDef | ColGroupDef> = {
     objectName: 'colDef',

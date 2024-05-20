@@ -6,9 +6,10 @@ import {
     IExpansionService,
     IsServerSideGroupOpenByDefaultParams,
     RowNode,
-    WithoutGridCommon
-} from "@ag-grid-community/core";
-import { ServerSideRowModel } from "../serverSideRowModel";
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
+
+import { ServerSideRowModel } from '../serverSideRowModel';
 
 @Bean('expansionService')
 export class ServerSideExpansionService extends ExpansionService implements IExpansionService {
@@ -24,7 +25,9 @@ export class ServerSideExpansionService extends ExpansionService implements IExp
     }
 
     public checkOpenByDefault(rowNode: RowNode): void {
-        if (!rowNode.isExpandable()) { return; }
+        if (!rowNode.isExpandable()) {
+            return;
+        }
 
         if (this.queuedRowIds.has(rowNode.id!)) {
             this.queuedRowIds.delete(rowNode.id!);
@@ -33,11 +36,13 @@ export class ServerSideExpansionService extends ExpansionService implements IExp
         }
 
         const userFunc = this.gos.getCallback('isServerSideGroupOpenByDefault');
-        if (!userFunc) { return; }
+        if (!userFunc) {
+            return;
+        }
 
         const params: WithoutGridCommon<IsServerSideGroupOpenByDefaultParams> = {
             data: rowNode.data,
-            rowNode
+            rowNode,
         };
 
         const userFuncRes = userFunc(params);
@@ -48,7 +53,7 @@ export class ServerSideExpansionService extends ExpansionService implements IExp
     }
 
     public expandRows(rowIds: string[]): void {
-        rowIds.forEach(rowId => {
+        rowIds.forEach((rowId) => {
             const rowNode = this.serverSideRowModel.getRowNode(rowId);
             if (rowNode) {
                 rowNode.setExpanded(true);

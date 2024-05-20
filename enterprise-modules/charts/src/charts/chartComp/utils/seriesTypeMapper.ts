@@ -1,7 +1,11 @@
-import { ChartType, ChartMappings } from "@ag-grid-community/core";
-import { AgChartThemeOverrides } from "ag-charts-community";
+import { ChartMappings, ChartType } from '@ag-grid-community/core';
+import { AgChartThemeOverrides } from 'ag-charts-community';
 
-export type ChartSeriesType = typeof ChartMappings.CHART_TYPE_TO_SERIES_TYPE[keyof typeof ChartMappings.CHART_TYPE_TO_SERIES_TYPE] & keyof AgChartThemeOverrides;
+import { ChartTranslationKey } from '../services/chartTranslationService';
+
+export type ChartSeriesType =
+    (typeof ChartMappings.CHART_TYPE_TO_SERIES_TYPE)[keyof typeof ChartMappings.CHART_TYPE_TO_SERIES_TYPE] &
+        keyof AgChartThemeOverrides;
 
 // these values correspond to top level object names in `AgChartThemeOverrides`
 export type ChartThemeOverridesSeriesType = keyof AgChartThemeOverrides & (ChartSeriesType | 'common');
@@ -18,91 +22,91 @@ interface SeriesParams {
 }
 
 const SERIES_TYPES: { [key in ChartSeriesType]: SeriesParams } = {
-    'area': {
+    area: {
         isCartesian: true,
-        canInvert: true
+        canInvert: true,
     },
-    'bar': {
+    bar: {
         isCartesian: true,
-        canInvert: true
+        canInvert: true,
     },
-    'histogram': {
-        isCartesian: true
-    },
-    'line': {
+    histogram: {
         isCartesian: true,
-        canInvert: true
     },
-    'pie': {
-        isPie: true
+    line: {
+        isCartesian: true,
+        canInvert: true,
     },
-    'donut': {
+    pie: {
         isPie: true,
-        canInvert: true
     },
-    'scatter': {
-        isCartesian: true
+    donut: {
+        isPie: true,
+        canInvert: true,
     },
-    'bubble': {
-        isCartesian: true
+    scatter: {
+        isCartesian: true,
+    },
+    bubble: {
+        isCartesian: true,
     },
     'radial-column': {
         isPolar: true,
         isEnterprise: true,
         isRadial: true,
-        canInvert: true
+        canInvert: true,
     },
     'radial-bar': {
         isPolar: true,
         isEnterprise: true,
         isRadial: true,
-        canInvert: true
+        canInvert: true,
     },
     'radar-line': {
         isPolar: true,
         isEnterprise: true,
-        canInvert: true
+        canInvert: true,
     },
     'radar-area': {
         isPolar: true,
         isEnterprise: true,
-        canInvert: true
+        canInvert: true,
     },
-    'nightingale': {
+    nightingale: {
         isPolar: true,
         isEnterprise: true,
-        canInvert: true
+        canInvert: true,
     },
     'range-bar': {
         isCartesian: true,
         isEnterprise: true,
-        canSwitchDirection: true
+        canSwitchDirection: true,
     },
     'range-area': {
         isCartesian: true,
-        isEnterprise: true
+        isEnterprise: true,
     },
     'box-plot': {
         isCartesian: true,
         isEnterprise: true,
-        canSwitchDirection: true
+        canSwitchDirection: true,
     },
-    'treemap': {
+    treemap: {
         isEnterprise: true,
-        isHierarchical: true
+        isHierarchical: true,
     },
-    'sunburst': {
+    sunburst: {
         isEnterprise: true,
-        isHierarchical: true
+        isHierarchical: true,
     },
-    'heatmap': {
-        isCartesian: true,
-        isEnterprise: true
-    },
-    'waterfall': {
+    heatmap: {
         isCartesian: true,
         isEnterprise: true,
-        canSwitchDirection: true
+    },
+    waterfall: {
+        isCartesian: true,
+        isEnterprise: true,
+        canSwitchDirection: true,
     },
 };
 
@@ -111,7 +115,7 @@ export function isSeriesType(seriesType: ChartSeriesType): boolean {
 }
 
 export function isComboChart(chartType: ChartType): boolean {
-    return ChartMappings.COMBO_CHART_TYPES.includes(chartType as typeof ChartMappings.COMBO_CHART_TYPES[number]);
+    return ChartMappings.COMBO_CHART_TYPES.includes(chartType as (typeof ChartMappings.COMBO_CHART_TYPES)[number]);
 }
 
 function doesSeriesHaveProperty(seriesType: ChartSeriesType, prop: keyof SeriesParams): boolean {
@@ -178,9 +182,29 @@ export function getMaxNumSeries(chartType: ChartType): number | undefined {
 }
 
 export function supportsInvertedCategorySeries(chartType: ChartType): boolean {
-    return doesSeriesHaveProperty(getSeriesType(chartType), 'canInvert');
+    return !isComboChart(chartType) && doesSeriesHaveProperty(getSeriesType(chartType), 'canInvert');
 }
 
 export function canSwitchDirection(chartType: ChartType): boolean {
     return doesSeriesHaveProperty(getSeriesType(chartType), 'canSwitchDirection');
+}
+
+export function getFullChartNameTranslationKey(chartType: ChartType): ChartTranslationKey {
+    switch (chartType) {
+        case 'groupedColumn':
+        case 'stackedColumn':
+        case 'normalizedColumn':
+        case 'groupedBar':
+        case 'stackedBar':
+        case 'normalizedBar':
+        case 'stackedArea':
+        case 'normalizedArea':
+            return `${chartType}Full`;
+        case 'doughnut':
+            return 'donut';
+        case 'areaColumnCombo':
+            return 'AreaColumnCombo';
+        default:
+            return chartType;
+    }
 }

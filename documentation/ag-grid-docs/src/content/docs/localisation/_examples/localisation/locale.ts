@@ -1,6 +1,6 @@
 // Example locale file for English, give this to your locale team to translate
 
-export const AG_GRID_LOCALE_EN: Record<string,string> = {
+export const AG_GRID_LOCALE_EN: Record<string, string> = {
     // Set Filter
     selectAll: '(Select All)',
     selectAllSearchResults: '(Select All Search Results)',
@@ -128,7 +128,7 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
 
     // Row Drag
     rowDragRow: 'row',
-    rowDragRows:'rows',
+    rowDragRows: 'rows',
 
     // Other
     loadingOoo: 'Loading...',
@@ -231,7 +231,6 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     normalizedArea: '100% Stacked',
 
     histogramChart: 'Histogram',
-    histogramFrequency: "Frequency",
 
     polarChart: 'Polar',
     radarLine: 'Radar Line',
@@ -308,6 +307,7 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     padding: 'Padding',
     spacing: 'Spacing',
     chartStyle: 'Chart Style',
+    title: 'Title',
     chartTitles: 'Titles',
     chartTitle: 'Chart Title',
     chartSubtitle: 'Subtitle',
@@ -317,6 +317,7 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     titlePlaceholder: 'Chart title - double click to edit',
     background: 'Background',
     font: 'Font',
+    weight: 'Weight',
     top: 'Top',
     right: 'Right',
     bottom: 'Bottom',
@@ -434,16 +435,21 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     chartLinkToolbarTooltip: 'Linked to Grid',
     chartUnlinkToolbarTooltip: 'Unlinked from Grid',
     chartDownloadToolbarTooltip: 'Download Chart',
+    chartMenuToolbarTooltip: 'Menu',
     chartEdit: 'Edit Chart',
     chartAdvancedSettings: 'Advanced Settings',
     chartLink: 'Link to Grid',
     chartUnlink: 'Unlink from Grid',
     chartDownload: 'Download Chart',
+    histogramFrequency: 'Frequency',
     seriesChartType: 'Series Chart Type',
     seriesType: 'Series Type',
     secondaryAxis: 'Secondary Axis',
     seriesAdd: 'Add a series',
     categoryAdd: 'Add a category',
+    bar: 'Bar',
+    column: 'Column',
+    histogram: 'Histogram',
     advancedSettings: 'Advanced Settings',
     direction: 'Direction',
     horizontal: 'Horizontal',
@@ -453,6 +459,16 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     stackedSeriesGroupType: 'Stacked',
     normalizedSeriesGroupType: '100% Stacked',
     legendEnabled: 'Enabled',
+    invalidColor: 'Color value is invalid',
+    groupedColumnFull: 'Grouped Column',
+    stackedColumnFull: 'Stacked Column',
+    normalizedColumnFull: '100% Stacked Column',
+    groupedBarFull: 'Grouped Bar',
+    stackedBarFull: 'Stacked Bar',
+    normalizedBarFull: '100% Stacked Bar',
+    stackedAreaFull: 'Stacked Area',
+    normalizedAreaFull: '100% Stacked Area',
+    customCombo: 'Custom Combination',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Level ${variable}. Press ENTER to edit.',
@@ -481,7 +497,7 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     ariaFilterMenuOpen: 'Open Filter Menu',
     ariaFilteringOperator: 'Filtering Operator',
     ariaHidden: 'hidden',
-    ariaIndeterminate:'indeterminate',
+    ariaIndeterminate: 'indeterminate',
     ariaInputEditor: 'Input Editor',
     ariaMenuColumn: 'Press ALT DOWN to open column menu',
     ariaFilterColumn: 'Press CTRL ENTER to open filter',
@@ -499,6 +515,7 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     ariaSearchFilterValues: 'Search filter values',
     ariaPageSizeSelectorLabel: 'Page Size',
     ariaChartMenuClose: 'Close Chart Edit Menu',
+    ariaChartSelected: 'Selected',
     ariaSkeletonCellLoadingFailed: 'Row failed to load',
     ariaSkeletonCellLoading: 'Row data is loading',
 
@@ -568,11 +585,13 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
-}
+};
 
 export const AG_GRID_LOCALE_ZZZ: Record<string, string> = {};
 // Create a dummy locale based on english but prefix everything with zzz
-Object.keys(AG_GRID_LOCALE_EN).forEach(function(key) {
-    if (key === 'thousandSeparator' || key === 'decimalSeparator') { return; }
+Object.keys(AG_GRID_LOCALE_EN).forEach(function (key) {
+    if (key === 'thousandSeparator' || key === 'decimalSeparator') {
+        return;
+    }
     AG_GRID_LOCALE_ZZZ[key] = 'zzz-' + AG_GRID_LOCALE_EN[key];
 });

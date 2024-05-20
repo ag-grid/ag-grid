@@ -1,25 +1,29 @@
-import React, { ChangeEvent, Fragment } from 'react';
 import { CustomFloatingFilterProps } from '@ag-grid-community/react';
+import React, { ChangeEvent, Fragment } from 'react';
 
 export interface CustomProps extends CustomFloatingFilterProps {
-    color: string
+    color: string;
 }
 
 export default ({ model, onModelChange, color }: CustomProps) => {
     const value = (model && model.filter) || '';
 
     const onInput = ({ target: { value: newValue } }: ChangeEvent<HTMLInputElement>) => {
-        onModelChange(newValue === '' ? null : {
-            ...(model || {
-                type: 'greaterThan'
-            }),
-            filter: Number(newValue)
-        });
-    }
+        onModelChange(
+            newValue === ''
+                ? null
+                : {
+                      ...(model || {
+                          type: 'greaterThan',
+                      }),
+                      filter: Number(newValue),
+                  }
+        );
+    };
 
     const style = {
         borderColor: color,
-        width: "30px"
+        width: '30px',
     };
 
     return (

@@ -1,30 +1,31 @@
-import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
-import { CellPosition } from "../entities/cellPositionUtils";
-import { MouseEventService } from "./mouseEventService";
-import { PaginationProxy } from "../pagination/paginationProxy";
-import { Column } from "../entities/column";
-import { FocusService } from "../focusService";
-import { IRangeService } from "../interfaces/IRangeService";
-import { ColumnModel } from "../columns/columnModel";
-import { BeanStub } from "../context/beanStub";
-import { _exists, _missing } from "../utils/generic";
-import { _last } from "../utils/array";
+import { CellNavigationService } from '../cellNavigationService';
+import { ColumnModel } from '../columns/columnModel';
+import { VisibleColsService } from '../columns/visibleColsService';
 import { KeyCode } from '../constants/keyCode';
-import { CtrlsService } from "../ctrlsService";
-import { GridBodyCtrl } from "./gridBodyCtrl";
-import { CellCtrl } from "../rendering/cell/cellCtrl";
-import { RowCtrl } from "../rendering/row/rowCtrl";
-import { _warnOnce, _throttle } from "../utils/function";
-import { RowPosition, RowPositionUtils } from "../entities/rowPositionUtils";
-import { RowRenderer } from "../rendering/rowRenderer";
-import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
-import { CellNavigationService } from "../cellNavigationService";
-import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { NavigateToNextCellParams, TabToNextCellParams } from "../interfaces/iCallbackParams";
-import { WithoutGridCommon } from "../interfaces/iCommon";
-import { Events } from "../eventKeys";
-import { FullWidthRowFocusedEvent } from "../events";
-import { IRowModel } from "../interfaces/iRowModel";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
+import { CtrlsService } from '../ctrlsService';
+import { CellPosition } from '../entities/cellPositionUtils';
+import { Column } from '../entities/column';
+import { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
+import { Events } from '../eventKeys';
+import { FullWidthRowFocusedEvent } from '../events';
+import { FocusService } from '../focusService';
+import { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
+import { IRangeService } from '../interfaces/IRangeService';
+import { NavigateToNextCellParams, TabToNextCellParams } from '../interfaces/iCallbackParams';
+import { WithoutGridCommon } from '../interfaces/iCommon';
+import { IRowModel } from '../interfaces/iRowModel';
+import { PaginationProxy } from '../pagination/paginationProxy';
+import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
+import { CellCtrl } from '../rendering/cell/cellCtrl';
+import { RowCtrl } from '../rendering/row/rowCtrl';
+import { RowRenderer } from '../rendering/rowRenderer';
+import { _last } from '../utils/array';
+import { _throttle, _warnOnce } from '../utils/function';
+import { _exists, _missing } from '../utils/generic';
+import { GridBodyCtrl } from './gridBodyCtrl';
+import { MouseEventService } from './mouseEventService';
 
 interface NavigateParams {
     /** The rowIndex to vertically scroll to. */
@@ -41,19 +42,19 @@ interface NavigateParams {
 
 @Bean('navigationService')
 export class NavigationService extends BeanStub {
-
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
     @Autowired('rowRenderer') public rowRenderer: RowRenderer;
     @Autowired('headerNavigationService') public headerNavigationService: HeaderNavigationService;
-    @Autowired("rowPositionUtils") private rowPositionUtils: RowPositionUtils;
-    @Autowired("cellNavigationService") private cellNavigationService: CellNavigationService;
-    @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
-    
+    @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
+    @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
+    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
+
     @Optional('rangeService') private rangeService?: IRangeService;
 
     private gridBodyCon: GridBodyCtrl;
@@ -66,7 +67,7 @@ export class NavigationService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.ctrlsService.whenReady(p => {
+        this.ctrlsService.whenReady((p) => {
             this.gridBodyCon = p.gridBodyCtrl;
         });
     }
@@ -95,7 +96,9 @@ export class NavigationService extends BeanStub {
             case KeyCode.RIGHT:
             case KeyCode.UP:
             case KeyCode.DOWN:
-                if (!currentCell) { return false; }
+                if (!currentCell) {
+                    return false;
+                }
                 // handle when ctrl is pressed only, if shift is pressed
                 // it will be handled by the rangeService
                 if (ctrl && !alt && !rangeServiceShouldHandleShift) {
@@ -119,16 +122,14 @@ export class NavigationService extends BeanStub {
         return processed;
     }
 
-    private handlePageUpDown(
-        key: string,
-        currentCell: CellPosition | null,
-        fromFullWidth: boolean
-    ): boolean {
+    private handlePageUpDown(key: string, currentCell: CellPosition | null, fromFullWidth: boolean): boolean {
         if (fromFullWidth) {
             currentCell = this.focusService.getFocusedCell();
         }
 
-        if (!currentCell) { return false; }
+        if (!currentCell) {
+            return false;
+        }
 
         if (key === KeyCode.PAGE_UP) {
             this.onPageUp(currentCell);
@@ -160,7 +161,12 @@ export class NavigationService extends BeanStub {
 
         // if we don't do this, the range will be left on the last cell, which will leave the last focused cell
         // highlighted.
-        this.focusService.setFocusedCell({ rowIndex: focusIndex, column: focusColumn, rowPinned: null, forceBrowserFocus: true });
+        this.focusService.setFocusedCell({
+            rowIndex: focusIndex,
+            column: focusColumn,
+            rowPinned: null,
+            forceBrowserFocus: true,
+        });
 
         this.rangeService?.setRangeToCell({ rowIndex: focusIndex, rowPinned: null, column: focusColumn });
     }
@@ -174,7 +180,9 @@ export class NavigationService extends BeanStub {
         const pagingPixelOffset = this.paginationProxy.getPixelOffset();
 
         const currentPageBottomPixel = scrollPosition.top + pixelsInOnePage;
-        const currentPageBottomRow = this.paginationProxy.getRowIndexAtPixel(currentPageBottomPixel + pagingPixelOffset);
+        const currentPageBottomRow = this.paginationProxy.getRowIndexAtPixel(
+            currentPageBottomPixel + pagingPixelOffset
+        );
 
         if (this.columnModel.isAutoRowHeightActive()) {
             this.navigateToNextPageWithAutoHeight(gridCell, currentPageBottomRow);
@@ -208,8 +216,8 @@ export class NavigationService extends BeanStub {
         const currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex);
 
         const rowPixelDiff = up
-            ? (currentRowNode?.rowHeight! - pixelsInOnePage - pagingPixelOffset)
-            : (pixelsInOnePage - pagingPixelOffset);
+            ? currentRowNode?.rowHeight! - pixelsInOnePage - pagingPixelOffset
+            : pixelsInOnePage - pagingPixelOffset;
 
         const nextCellPixel = currentRowNode?.rowTop! + rowPixelDiff;
 
@@ -224,12 +232,20 @@ export class NavigationService extends BeanStub {
 
         if (up) {
             scrollType = 'bottom';
-            if (focusIndex < firstRow) { focusIndex = firstRow; }
-            if (scrollIndex < firstRow) { scrollIndex = firstRow; }
+            if (focusIndex < firstRow) {
+                focusIndex = firstRow;
+            }
+            if (scrollIndex < firstRow) {
+                scrollIndex = firstRow;
+            }
         } else {
             scrollType = 'top';
-            if (focusIndex > lastRow) { focusIndex = lastRow; }
-            if (scrollIndex > lastRow) { scrollIndex = lastRow; }
+            if (focusIndex > lastRow) {
+                focusIndex = lastRow;
+            }
+            if (scrollIndex > lastRow) {
+                scrollIndex = lastRow;
+            }
         }
 
         if (this.isRowTallerThanView(focusIndex)) {
@@ -242,7 +258,7 @@ export class NavigationService extends BeanStub {
             scrollType,
             scrollColumn: null,
             focusIndex,
-            focusColumn: gridCell.column
+            focusColumn: gridCell.column,
         });
     }
 
@@ -259,7 +275,7 @@ export class NavigationService extends BeanStub {
             scrollType: up ? 'bottom' : 'top',
             scrollColumn: null,
             focusIndex: scrollIndex,
-            focusColumn: gridCell.column
+            focusColumn: gridCell.column,
         });
         setTimeout(() => {
             const focusIndex = this.getNextFocusIndexForAutoHeight(gridCell, up);
@@ -270,7 +286,7 @@ export class NavigationService extends BeanStub {
                 scrollColumn: null,
                 focusIndex: focusIndex,
                 focusColumn: gridCell.column,
-                isAsync: true
+                isAsync: true,
             });
         }, 50);
     }
@@ -289,7 +305,9 @@ export class NavigationService extends BeanStub {
             if (currentCell) {
                 const currentCellHeight = currentCell.rowHeight ?? 0;
 
-                if (pixelSum + currentCellHeight > pixelsInOnePage) { break; }
+                if (pixelSum + currentCellHeight > pixelsInOnePage) {
+                    break;
+                }
                 pixelSum += currentCellHeight;
             }
 
@@ -300,7 +318,7 @@ export class NavigationService extends BeanStub {
     }
 
     private getViewportHeight(): number {
-        const {gridBodyCtrl, center } = this.ctrlsService.getParams();
+        const { gridBodyCtrl, center } = this.ctrlsService.getParams();
         const scrollPosition = gridBodyCtrl.getScrollFeature().getVScrollPosition();
         const scrollbarWidth = this.gos.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
@@ -314,11 +332,15 @@ export class NavigationService extends BeanStub {
 
     private isRowTallerThanView(rowIndex: number): boolean {
         const rowNode = this.paginationProxy.getRow(rowIndex);
-        if (!rowNode) { return false; }
+        if (!rowNode) {
+            return false;
+        }
 
         const rowHeight = rowNode.rowHeight;
 
-        if (typeof rowHeight !== 'number') { return false; }
+        if (typeof rowHeight !== 'number') {
+            return false;
+        }
 
         return rowHeight > this.getViewportHeight();
     }
@@ -332,7 +354,7 @@ export class NavigationService extends BeanStub {
             scrollType: null,
             scrollColumn: column,
             focusIndex: rowIndex,
-            focusColumn: column
+            focusColumn: column,
         });
     }
 
@@ -340,7 +362,7 @@ export class NavigationService extends BeanStub {
     // same cell into view (which means either scroll all the way up, or all the way down).
     private onHomeOrEndKey(key: string): void {
         const homeKey = key === KeyCode.PAGE_HOME;
-        const allColumns: Column[] = this.columnModel.getAllDisplayedColumns();
+        const allColumns: Column[] = this.visibleColsService.getAllCols();
         const columnToSelect = homeKey ? allColumns[0] : _last(allColumns);
         const scrollIndex = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
 
@@ -349,7 +371,7 @@ export class NavigationService extends BeanStub {
             scrollType: null,
             scrollColumn: columnToSelect,
             focusIndex: scrollIndex,
-            focusColumn: columnToSelect
+            focusColumn: columnToSelect,
         });
     }
 
@@ -379,7 +401,6 @@ export class NavigationService extends BeanStub {
                     keyboardEvent.preventDefault();
                     this.focusService.focusPreviousFromFirstCell(keyboardEvent);
                 }
-                
             }
         } else {
             // if the case it's a popup editor, the focus is on the editor and not the previous cell.
@@ -399,7 +420,9 @@ export class NavigationService extends BeanStub {
     public tabToNextCell(backwards: boolean, event?: KeyboardEvent): boolean {
         const focusedCell = this.focusService.getFocusedCell();
         // if no focus, then cannot navigate
-        if (!focusedCell) { return false; }
+        if (!focusedCell) {
+            return false;
+        }
 
         let cellOrRow: CellCtrl | RowCtrl | null = this.getCellByPosition(focusedCell);
 
@@ -415,7 +438,11 @@ export class NavigationService extends BeanStub {
         return !!this.tabToNextCellCommon(cellOrRow, backwards, event);
     }
 
-    private tabToNextCellCommon(previous: CellCtrl | RowCtrl, backwards: boolean, event?: KeyboardEvent): boolean | null {
+    private tabToNextCellCommon(
+        previous: CellCtrl | RowCtrl,
+        backwards: boolean,
+        event?: KeyboardEvent
+    ): boolean | null {
         let editing = previous.isEditing();
 
         // if cell is not editing, there is still chance row is editing if it's Full Row Editing
@@ -449,7 +476,11 @@ export class NavigationService extends BeanStub {
     }
 
     // returns null if no navigation should be performed
-    private moveToNextEditingCell(previousCell: CellCtrl, backwards: boolean, event: KeyboardEvent | null = null): boolean | null {
+    private moveToNextEditingCell(
+        previousCell: CellCtrl,
+        backwards: boolean,
+        event: KeyboardEvent | null = null
+    ): boolean | null {
         const previousPos = previousCell.getCellPosition();
 
         // before we stop editing, we need to focus the cell element
@@ -464,8 +495,12 @@ export class NavigationService extends BeanStub {
 
         // find the next cell to start editing
         const nextCell = this.findNextCellToFocusOn(previousPos, backwards, true) as CellCtrl | false;
-        if (nextCell === false) { return null; }
-        if (nextCell == null) { return false; }
+        if (nextCell === false) {
+            return null;
+        }
+        if (nextCell == null) {
+            return false;
+        }
 
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
@@ -475,20 +510,29 @@ export class NavigationService extends BeanStub {
     }
 
     // returns null if no navigation should be performed
-    private moveToNextEditingRow(previousCell: CellCtrl, backwards: boolean, event: KeyboardEvent | null = null): boolean | null {
+    private moveToNextEditingRow(
+        previousCell: CellCtrl,
+        backwards: boolean,
+        event: KeyboardEvent | null = null
+    ): boolean | null {
         const previousPos = previousCell.getCellPosition();
 
         // find the next cell to start editing
         const nextCell = this.findNextCellToFocusOn(previousPos, backwards, true) as CellCtrl | false;
-        if (nextCell === false) { return null; }
-        if (nextCell == null) { return false; }
+        if (nextCell === false) {
+            return null;
+        }
+        if (nextCell == null) {
+            return false;
+        }
 
         const nextPos = nextCell.getCellPosition();
 
         const previousEditable = this.isCellEditable(previousPos);
         const nextEditable = this.isCellEditable(nextPos);
 
-        const rowsMatch = nextPos && previousPos.rowIndex === nextPos.rowIndex && previousPos.rowPinned === nextPos.rowPinned;
+        const rowsMatch =
+            nextPos && previousPos.rowIndex === nextPos.rowIndex && previousPos.rowPinned === nextPos.rowPinned;
 
         if (previousEditable) {
             previousCell.setFocusOutOnEditor();
@@ -514,13 +558,13 @@ export class NavigationService extends BeanStub {
 
     // returns null if no navigation should be performed
     private moveToNextCellNotEditing(previousCell: CellCtrl | RowCtrl, backwards: boolean): boolean | null {
-        const displayedColumns = this.columnModel.getAllDisplayedColumns();
+        const displayedColumns = this.visibleColsService.getAllCols();
         let cellPos: CellPosition;
 
         if (previousCell instanceof RowCtrl) {
             cellPos = {
                 ...previousCell.getRowPosition(),
-                column: backwards ? displayedColumns[0] : _last(displayedColumns)
+                column: backwards ? displayedColumns[0] : _last(displayedColumns),
             };
         } else {
             cellPos = previousCell.getCellPosition();
@@ -530,7 +574,9 @@ export class NavigationService extends BeanStub {
 
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
-        if (nextCell === false) { return null; }
+        if (nextCell === false) {
+            return null;
+        }
         if (nextCell instanceof CellCtrl) {
             nextCell.focusCell(true);
         } else if (nextCell) {
@@ -544,11 +590,17 @@ export class NavigationService extends BeanStub {
      * called by the cell, when tab is pressed while editing.
      * @return: RenderedCell when navigation successful, false if navigation should not be performed, otherwise null
      */
-    private findNextCellToFocusOn(previousPosition: CellPosition, backwards: boolean, startEditing: boolean): CellCtrl | RowCtrl | null | false {
+    private findNextCellToFocusOn(
+        previousPosition: CellPosition,
+        backwards: boolean,
+        startEditing: boolean
+    ): CellCtrl | RowCtrl | null | false {
         let nextPosition: CellPosition | null | undefined = previousPosition;
 
         while (true) {
-            if (previousPosition !== nextPosition) { previousPosition = nextPosition; }
+            if (previousPosition !== nextPosition) {
+                previousPosition = nextPosition;
+            }
 
             if (!backwards) {
                 nextPosition = this.getLastCellOfColSpan(nextPosition);
@@ -563,42 +615,48 @@ export class NavigationService extends BeanStub {
                     backwards: backwards,
                     editing: startEditing,
                     previousCellPosition: previousPosition,
-                    nextCellPosition: nextPosition ? nextPosition : null
+                    nextCellPosition: nextPosition ? nextPosition : null,
                 };
                 const userResult = userFunc(params);
                 if (userResult === true || userResult === null) {
                     if (userResult === null) {
-                        _warnOnce('Returning `null` from tabToNextCell is deprecated. Return `true` to stay on the current cell, or `false` to let the browser handle the tab behaviour.');
+                        _warnOnce(
+                            'Returning `null` from tabToNextCell is deprecated. Return `true` to stay on the current cell, or `false` to let the browser handle the tab behaviour.'
+                        );
                     }
                     nextPosition = previousPosition;
                 } else if (userResult === false) {
                     return false;
                 } else {
                     if ((userResult as any).floating) {
-                        _warnOnce(`tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`);
+                        _warnOnce(
+                            `tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`
+                        );
                         userResult.rowPinned = (userResult as any).floating;
                     }
                     nextPosition = {
                         rowIndex: userResult.rowIndex,
                         column: userResult.column,
-                        rowPinned: userResult.rowPinned
+                        rowPinned: userResult.rowPinned,
                     } as CellPosition;
                 }
             }
 
             // if no 'next cell', means we have got to last cell of grid, so nothing to move to,
             // so bottom right cell going forwards, or top left going backwards
-            if (!nextPosition) { return null; }
+            if (!nextPosition) {
+                return null;
+            }
 
             if (nextPosition.rowIndex < 0) {
                 const headerLen = this.headerNavigationService.getHeaderRowCount();
 
                 this.focusService.focusHeaderPosition({
                     headerPosition: {
-                        headerRowIndex: headerLen + (nextPosition.rowIndex),
-                        column: nextPosition.column
+                        headerRowIndex: headerLen + nextPosition.rowIndex,
+                        column: nextPosition.column,
                     },
-                    fromCell: true
+                    fromCell: true,
                 });
 
                 return null;
@@ -612,7 +670,9 @@ export class NavigationService extends BeanStub {
             const fullRowEdit = this.gos.get('editType') === 'fullRow';
             if (startEditing && !fullRowEdit) {
                 const cellIsEditable = this.isCellEditable(nextPosition);
-                if (!cellIsEditable) { continue; }
+                if (!cellIsEditable) {
+                    continue;
+                }
             }
 
             this.ensureCellVisible(nextPosition);
@@ -631,7 +691,9 @@ export class NavigationService extends BeanStub {
                 return row;
             }
 
-            if (nextCell.isSuppressNavigable()) { continue; }
+            if (nextCell.isSuppressNavigable()) {
+                continue;
+            }
 
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
@@ -654,7 +716,9 @@ export class NavigationService extends BeanStub {
 
     public getCellByPosition(cellPosition: CellPosition): CellCtrl | null {
         const rowCtrl = this.rowRenderer.getRowByPosition(cellPosition);
-        if (!rowCtrl) { return null; }
+        if (!rowCtrl) {
+            return null;
+        }
 
         return rowCtrl.getCellCtrl(cellPosition.column);
     }
@@ -673,7 +737,12 @@ export class NavigationService extends BeanStub {
 
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
-    public navigateToNextCell(event: KeyboardEvent | null, key: string, currentCell: CellPosition, allowUserOverride: boolean) {
+    public navigateToNextCell(
+        event: KeyboardEvent | null,
+        key: string,
+        currentCell: CellPosition,
+        allowUserOverride: boolean
+    ) {
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
         let nextCell: CellPosition | null = currentCell;
         let hitEdgeOfGrid = false;
@@ -700,7 +769,7 @@ export class NavigationService extends BeanStub {
             nextCell = {
                 rowIndex: -1,
                 rowPinned: null,
-                column: currentCell.column
+                column: currentCell.column,
             };
         }
 
@@ -713,18 +782,20 @@ export class NavigationService extends BeanStub {
                     key: key,
                     previousCellPosition: currentCell,
                     nextCellPosition: nextCell ? nextCell : null,
-                    event: event
+                    event: event,
                 };
                 const userCell = userFunc(params);
                 if (_exists(userCell)) {
                     if ((userCell as any).floating) {
-                        _warnOnce(`tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`);
+                        _warnOnce(
+                            `tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`
+                        );
                         userCell.rowPinned = (userCell as any).floating;
                     }
                     nextCell = {
                         rowPinned: userCell.rowPinned,
                         rowIndex: userCell.rowIndex,
-                        column: userCell.column
+                        column: userCell.column,
                     } as CellPosition;
                 } else {
                     nextCell = null;
@@ -733,15 +804,17 @@ export class NavigationService extends BeanStub {
         }
 
         // no next cell means we have reached a grid boundary, eg left, right, top or bottom of grid
-        if (!nextCell) { return; }
+        if (!nextCell) {
+            return;
+        }
 
         if (nextCell.rowIndex < 0) {
             const headerLen = this.headerNavigationService.getHeaderRowCount();
 
             this.focusService.focusHeaderPosition({
-                headerPosition: { headerRowIndex: headerLen + (nextCell.rowIndex), column: currentCell.column },
+                headerPosition: { headerRowIndex: headerLen + nextCell.rowIndex, column: currentCell.column },
                 event: event || undefined,
-                fromCell: true
+                fromCell: true,
             });
 
             return;
@@ -764,7 +837,9 @@ export class NavigationService extends BeanStub {
         const cellCtrl = this.getCellByPosition(cellPosition);
 
         // not guaranteed to have a cellComp when using the SSRM as blocks are loading.
-        if (!cellCtrl) { return null; }
+        if (!cellCtrl) {
+            return null;
+        }
 
         cellPosition = cellCtrl.getCellPosition();
         // we call this again, as nextCell can be different to it's previous value due to Column Spanning
@@ -778,21 +853,24 @@ export class NavigationService extends BeanStub {
     }
 
     private tryToFocusFullWidthRow(position: CellPosition | RowPosition, backwards: boolean = false): boolean {
-        const displayedColumns = this.columnModel.getAllDisplayedColumns();
+        const displayedColumns = this.visibleColsService.getAllCols();
         const rowComp = this.rowRenderer.getRowByPosition(position);
-        if (!rowComp || !rowComp.isFullWidth()) { return false; }
+        if (!rowComp || !rowComp.isFullWidth()) {
+            return false;
+        }
 
         const currentCellFocused = this.focusService.getFocusedCell();
 
         const cellPosition: CellPosition = {
             rowIndex: position.rowIndex,
             rowPinned: position.rowPinned,
-            column: (position as CellPosition).column || (backwards ? _last(displayedColumns) : displayedColumns[0])
+            column: (position as CellPosition).column || (backwards ? _last(displayedColumns) : displayedColumns[0]),
         };
 
         this.focusPosition(cellPosition);
 
-        const fromBelow = currentCellFocused != null ? this.rowPositionUtils.before(cellPosition, currentCellFocused) : false;
+        const fromBelow =
+            currentCellFocused != null ? this.rowPositionUtils.before(cellPosition, currentCellFocused) : false;
 
         const focusEvent: WithoutGridCommon<FullWidthRowFocusedEvent> = {
             type: Events.EVENT_FULL_WIDTH_ROW_FOCUSED,
@@ -801,7 +879,7 @@ export class NavigationService extends BeanStub {
             column: cellPosition.column,
             isFullWidthCell: true,
             floating: cellPosition.rowPinned,
-            fromBelow
+            fromBelow,
         };
 
         this.eventService.dispatchEvent(focusEvent);
@@ -814,7 +892,7 @@ export class NavigationService extends BeanStub {
             rowIndex: cellPosition.rowIndex,
             column: cellPosition.column,
             rowPinned: cellPosition.rowPinned,
-            forceBrowserFocus: true
+            forceBrowserFocus: true,
         });
 
         this.rangeService?.setRangeToCell(cellPosition);
@@ -830,16 +908,20 @@ export class NavigationService extends BeanStub {
     private getLastCellOfColSpan(cell: CellPosition): CellPosition {
         const cellCtrl = this.getCellByPosition(cell);
 
-        if (!cellCtrl) { return cell; }
+        if (!cellCtrl) {
+            return cell;
+        }
 
         const colSpanningList = cellCtrl.getColSpanningList();
 
-        if (colSpanningList.length === 1) { return cell; }
+        if (colSpanningList.length === 1) {
+            return cell;
+        }
 
         return {
             rowIndex: cell.rowIndex,
             column: _last(colSpanningList),
-            rowPinned: cell.rowPinned
+            rowPinned: cell.rowPinned,
         };
     }
 

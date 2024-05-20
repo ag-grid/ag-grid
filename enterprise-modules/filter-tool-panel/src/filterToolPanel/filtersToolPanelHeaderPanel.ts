@@ -1,22 +1,27 @@
 import {
-    Autowired, Column,
+    AgInputTextField,
+    Autowired,
+    Column,
     ColumnModel,
     Component,
     Events,
     PostConstruct,
     PreConstruct,
     RefSelector,
-    AgInputTextField,
     _createIconNoSpan,
     _debounce,
-    _setDisplayed
-} from "@ag-grid-community/core";
-import { ToolPanelFiltersCompParams } from "./filtersToolPanel";
+    _setDisplayed,
+} from '@ag-grid-community/core';
 
-export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
+import { ToolPanelFiltersCompParams } from './filtersToolPanel';
+
+export enum EXPAND_STATE {
+    EXPANDED,
+    COLLAPSED,
+    INDETERMINATE,
+}
 
 export class FiltersToolPanelHeaderPanel extends Component {
-
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     @RefSelector('eExpand') private eExpand: Element;
@@ -34,7 +39,8 @@ export class FiltersToolPanelHeaderPanel extends Component {
 
     @PreConstruct
     private preConstruct(): void {
-        this.setTemplate(/* html */
+        this.setTemplate(
+            /* html */
             `<div class="ag-filter-toolpanel-search" role="presentation">
                 <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
                 <ag-input-text-field ref="eFilterTextField" class="ag-filter-toolpanel-search-input"></ag-input-text-field>
@@ -66,9 +72,11 @@ export class FiltersToolPanelHeaderPanel extends Component {
     }
 
     private createExpandIcons() {
-        this.eExpand.appendChild(this.eExpandChecked = _createIconNoSpan('columnSelectOpen', this.gos)!);
-        this.eExpand.appendChild(this.eExpandUnchecked = _createIconNoSpan('columnSelectClosed', this.gos)!);
-        this.eExpand.appendChild(this.eExpandIndeterminate = _createIconNoSpan('columnSelectIndeterminate', this.gos)!);
+        this.eExpand.appendChild((this.eExpandChecked = _createIconNoSpan('columnSelectOpen', this.gos)!));
+        this.eExpand.appendChild((this.eExpandUnchecked = _createIconNoSpan('columnSelectClosed', this.gos)!));
+        this.eExpand.appendChild(
+            (this.eExpandIndeterminate = _createIconNoSpan('columnSelectIndeterminate', this.gos)!)
+        );
     }
 
     // we only show expand / collapse if we are showing filters
@@ -80,7 +88,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
         this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
 
         const isFilterGroupPresent = (col: Column) => col.getOriginalParent() && col.isFilterAllowed();
-        const filterGroupsPresent = this.columnModel.getAllGridColumns().some(isFilterGroupPresent);
+        const filterGroupsPresent = this.columnModel.getCols().some(isFilterGroupPresent);
 
         _setDisplayed(this.eFilterTextField.getGui(), showFilterSearch);
         _setDisplayed(this.eExpand, showExpand && filterGroupsPresent);
@@ -89,7 +97,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
     private onSearchTextChanged(): void {
         if (!this.onSearchTextChangedDebounced) {
             this.onSearchTextChangedDebounced = _debounce(() => {
-                this.dispatchEvent({type: 'searchChanged', searchText: this.eFilterTextField.getValue()});
+                this.dispatchEvent({ type: 'searchChanged', searchText: this.eFilterTextField.getValue() });
             }, 300);
         }
 
@@ -97,7 +105,8 @@ export class FiltersToolPanelHeaderPanel extends Component {
     }
 
     private onExpandClicked(): void {
-        const event = this.currentExpandState === EXPAND_STATE.EXPANDED ? {type: 'collapseAll'} : {type: 'expandAll'};
+        const event =
+            this.currentExpandState === EXPAND_STATE.EXPANDED ? { type: 'collapseAll' } : { type: 'expandAll' };
         this.dispatchEvent(event);
     }
 

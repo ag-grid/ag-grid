@@ -6,20 +6,18 @@ describe('areEqual', () => {
         [null, undefined],
         [undefined, null],
         [null, null],
-    ])
-        ('returns true if both arrays are missing or empty: a = %s, b = %s', (a, b) => {
-            expect(_areEqual(a, b)).toBe(true);
-        });
+    ])('returns true if both arrays are missing or empty: a = %s, b = %s', (a, b) => {
+        expect(_areEqual(a, b)).toBe(true);
+    });
 
     it.each([
         [undefined, []],
         [[], undefined],
         [null, []],
         [[], null],
-    ])
-        ('returns false if only one array is missing: a = %s, b = %s', (a, b) => {
-            expect(_areEqual(a, b)).toBe(false);
-        });
+    ])('returns false if only one array is missing: a = %s, b = %s', (a, b) => {
+        expect(_areEqual(a, b)).toBe(false);
+    });
 
     it('returns false if arrays are different length', () => {
         expect(_areEqual([1, 2], [1, 2, 3])).toBe(false);
@@ -39,24 +37,22 @@ describe('areEqual', () => {
 
     it.each([
         [[{ getColId: () => 1 }, { getColId: () => 2 }], [{ getColId: () => 1 }, { getColId: () => 3 }], false],
-        [[{ getColId: () => 3 }, { getColId: () => 7 }], [{ getColId: () => 3 }, { getColId: () => 7 }], true]
-    ])
-        ('can use custom comparator: a = %s, b = %s, expected = %s', (a, b, expected) => {
-            expect(_areEqual(a, b, (a, b) => a.getColId() === b.getColId())).toBe(expected);
-        });
+        [[{ getColId: () => 3 }, { getColId: () => 7 }], [{ getColId: () => 3 }, { getColId: () => 7 }], true],
+    ])('can use custom comparator: a = %s, b = %s, expected = %s', (a, b, expected) => {
+        expect(_areEqual(a, b, (a, b) => a.getColId() === b.getColId())).toBe(expected);
+    });
 });
 
 describe('forEachReverse', () => {
-    it.each([undefined, null])('returns successfully if list is %s', value => {
-        expect(() => _forEachReverse(value!, () => { })).not.toThrow();
+    it.each([undefined, null])('returns successfully if list is %s', (value) => {
+        expect(() => _forEachReverse(value!, () => {})).not.toThrow();
     });
 
     it('executes for each value in reverse order', () => {
         const result: number[] = [];
 
-        _forEachReverse([1, 4, 7], value => result.push(value));
+        _forEachReverse([1, 4, 7], (value) => result.push(value));
 
         expect(result).toStrictEqual([7, 4, 1]);
     });
 });
-

@@ -17,4 +17,4 @@ export default {
             alert(`${this.params.name} clicked`);
         },
     },
-}
+};

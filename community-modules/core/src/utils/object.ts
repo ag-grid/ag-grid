@@ -1,7 +1,12 @@
 import { _exists } from './generic';
 
-export function _iterateObject<T>(object: { [p: string]: T; } | T[] | null | undefined, callback: (key: string, value: T) => void) {
-    if (object == null) { return; }
+export function _iterateObject<T>(
+    object: { [p: string]: T } | T[] | null | undefined,
+    callback: (key: string, value: T) => void
+) {
+    if (object == null) {
+        return;
+    }
 
     if (Array.isArray(object)) {
         for (let i = 0; i < object.length; i++) {
@@ -33,14 +38,17 @@ export function _cloneObject<T extends {}>(object: T): T {
 // deep copy all objects, but do not want to deep copy functions (eg when user provides
 // a function or class for colDef.cellRenderer)
 export function _deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | undefined {
-    if (!object) { return; }
+    if (!object) {
+        return;
+    }
 
     const obj = object as any;
     const res: any = {};
 
-    Object.keys(obj).forEach(key => {
-
-        if (keysToSkip && keysToSkip.indexOf(key) >= 0) { return; }
+    Object.keys(obj).forEach((key) => {
+        if (keysToSkip && keysToSkip.indexOf(key) >= 0) {
+            return;
+        }
 
         const value = obj[key];
 
@@ -61,7 +69,9 @@ export function _deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | u
 }
 
 export function _getAllValuesInObject<T extends Object, K extends keyof T, O extends T[K]>(obj: T): O[] {
-    if (!obj) { return []; }
+    if (!obj) {
+        return [];
+    }
     const anyObject = Object as any;
     if (typeof anyObject.values === 'function') {
         return anyObject.values(obj);
@@ -78,12 +88,16 @@ export function _getAllValuesInObject<T extends Object, K extends keyof T, O ext
 }
 
 export function _mergeDeep(dest: any, source: any, copyUndefined = true, makeCopyOfSimpleObjects = false): void {
-    if (!_exists(source)) { return; }
+    if (!_exists(source)) {
+        return;
+    }
 
     _iterateObject(source, (key: string, sourceValue: any) => {
         let destValue: any = dest[key];
 
-        if (destValue === sourceValue) { return; }
+        if (destValue === sourceValue) {
+            return;
+        }
 
         // when creating params, we don't want to just copy objects over. otherwise merging ColDefs (eg DefaultColDef
         // and Column Types) would result in params getting shared between objects.
@@ -114,7 +128,9 @@ export function _mergeDeep(dest: any, source: any, copyUndefined = true, makeCop
 }
 
 export function _getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any {
-    if (!field || !data) { return; }
+    if (!field || !data) {
+        return;
+    }
 
     // if no '.', then it's not a deep value
     if (!fieldContainsDots) {
@@ -138,7 +154,7 @@ export function _getValueUsingField(data: any, field: string, fieldContainsDots:
 // used by GridAPI to remove all references, so keeping grid in memory resulting in a
 // memory leak if user is not disposing of the GridAPI references
 export function _removeAllReferences<T>(obj: any, preserveKeys: (keyof T)[] = [], preDestroyLink: string): void {
-    Object.keys(obj).forEach(key => {
+    Object.keys(obj).forEach((key) => {
         const value = obj[key];
         // we want to replace all the @autowired services, which are objects. any simple types (boolean, string etc)
         // we don't care about
@@ -149,12 +165,12 @@ export function _removeAllReferences<T>(obj: any, preserveKeys: (keyof T)[] = []
     const proto = Object.getPrototypeOf(obj);
     const properties: any = {};
 
-    const msgFunc = (key: string) =>  
-    `AG Grid: Grid API function ${key}() cannot be called as the grid has been destroyed.
+    const msgFunc = (key: string) =>
+        `AG Grid: Grid API function ${key}() cannot be called as the grid has been destroyed.
     It is recommended to remove local references to the grid api. Alternatively, check gridApi.isDestroyed() to avoid calling methods against a destroyed grid.
     To run logic when the grid is about to be destroyed use the gridPreDestroy event. See: ${preDestroyLink}`;
 
-    Object.getOwnPropertyNames(proto).forEach(key => {
+    Object.getOwnPropertyNames(proto).forEach((key) => {
         const value = proto[key];
         // leave all basic types and preserveKeys this is needed for GridAPI to leave the "destroyed: boolean" attribute and isDestroyed() function.
         if (typeof value === 'function' && !preserveKeys.includes(key as any)) {

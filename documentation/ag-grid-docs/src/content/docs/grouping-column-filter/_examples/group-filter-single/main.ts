@@ -1,97 +1,99 @@
-import { GridApi, createGrid, GridOptions, IDateFilterParams, ISetFilterParams } from '@ag-grid-community/core';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { GridApi, GridOptions, IDateFilterParams, ISetFilterParams, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, FiltersToolPanelModule, MenuModule, MultiFilterModule, RowGroupingModule, SetFilterModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    FiltersToolPanelModule,
+    MenuModule,
+    MultiFilterModule,
+    RowGroupingModule,
+    SetFilterModule,
+]);
 
 const dateFilterParams: IDateFilterParams = {
-  comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
-    var dateAsString = cellValue
-    if (dateAsString == null) return -1
-    var dateParts = dateAsString.split('/')
-    var cellDate = new Date(
-      Number(dateParts[2]),
-      Number(dateParts[1]) - 1,
-      Number(dateParts[0])
-    )
+    comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
+        var dateAsString = cellValue;
+        if (dateAsString == null) return -1;
+        var dateParts = dateAsString.split('/');
+        var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
-    if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
-      return 0
-    }
+        if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
+            return 0;
+        }
 
-    if (cellDate < filterLocalDateAtMidnight) {
-      return -1
-    }
+        if (cellDate < filterLocalDateAtMidnight) {
+            return -1;
+        }
 
-    if (cellDate > filterLocalDateAtMidnight) {
-      return 1
-    }
-    return 0;
-  },
-  minValidYear: 2000,
-  maxValidYear: 2021,
-  inRangeFloatingFilterDateFormat: 'Do MMM YYYY',
-}
+        if (cellDate > filterLocalDateAtMidnight) {
+            return 1;
+        }
+        return 0;
+    },
+    minValidYear: 2000,
+    maxValidYear: 2021,
+    inRangeFloatingFilterDateFormat: 'Do MMM YYYY',
+};
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-  columnDefs: [
-    {
-      field: 'country',
-      rowGroup: true,
-      filter: 'agTextColumnFilter',
+    columnDefs: [
+        {
+            field: 'country',
+            rowGroup: true,
+            filter: 'agTextColumnFilter',
+        },
+        { field: 'year', rowGroup: true },
+        {
+            field: 'athlete',
+            rowGroup: true,
+            filter: false,
+        },
+        {
+            field: 'age',
+            headerName: 'Age',
+            filter: 'agMultiColumnFilter',
+        },
+        {
+            field: 'date',
+            filter: 'agDateColumnFilter',
+            filterParams: dateFilterParams,
+        },
+        { field: 'gold', filter: 'agNumberColumnFilter' },
+        {
+            field: 'silver',
+            filterParams: { excelMode: 'windows' } as ISetFilterParams,
+        },
+        { field: 'bronze' },
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+        filter: true,
+        floatingFilter: true,
+        enableRowGroup: true,
     },
-    { field: 'year', rowGroup: true },
-    {
-      field: 'athlete',
-      rowGroup: true,
-      filter: false,
+    autoGroupColumnDef: {
+        minWidth: 200,
+        filter: 'agGroupColumnFilter',
     },
-    {
-      field: 'age',
-      headerName: 'Age',
-      filter: 'agMultiColumnFilter'
-    },
-    {
-      field: 'date',
-      filter: 'agDateColumnFilter',
-      filterParams: dateFilterParams,
-    },
-    { field: 'gold', filter: 'agNumberColumnFilter' },
-    {
-      field: 'silver',
-      filterParams: { excelMode: 'windows' } as ISetFilterParams,
-    },
-    { field: 'bronze' },
-  ],
-  defaultColDef: {
-    flex: 1,
-    minWidth: 150,
-    filter: true,
-    floatingFilter: true,
-    enableRowGroup: true,
-  },
-  autoGroupColumnDef: {
-    minWidth: 200,
-    filter: 'agGroupColumnFilter',
-  },
-  rowGroupPanelShow: 'always',
-  sideBar: 'filters',
-}
+    rowGroupPanelShow: 'always',
+    sideBar: 'filters',
+};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
-})
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+});

@@ -1,9 +1,9 @@
-@use "sass:color";
+@use 'sass:color';
 
 @mixin output {
     // apply these variables to the root element that has the theme class name on
     // it, e.g. "ag-theme-alpine"
-    [class*="ag-theme-"] {
+    [class*='ag-theme-'] {
         --ag-foreground-color: #000;
 
         --ag-data-color: var(--ag-foreground-color);
@@ -28,7 +28,7 @@
 
         --ag-side-button-selected-background-color: var(--ag-control-panel-background-color);
 
-        --ag-selected-row-background-color: #BBB;
+        --ag-selected-row-background-color: #bbb;
 
         --ag-odd-row-background-color: var(--ag-background-color);
 
@@ -92,7 +92,7 @@
         --ag-row-border-width: 1px;
 
         --ag-cell-horizontal-border: solid transparent;
-        
+
         --ag-borders-input: var(--ag-borders-secondary);
 
         --ag-input-border-color: var(--ag-secondary-border-color);
@@ -118,7 +118,6 @@
         --ag-header-column-resize-handle-width: 1px;
         --ag-header-column-resize-handle-color: var(--ag-secondary-border-color);
 
-
         --ag-invalid-color: red;
         --ag-input-disabled-border-color: var(--ag-input-border-color);
         --ag-input-disabled-background-color: transparent;
@@ -142,10 +141,8 @@
         --ag-input-focus-box-shadow: none;
         --ag-input-focus-border-color: none;
 
-
         --ag-minichart-selected-chart-color: var(--ag-checkbox-checked-color);
         --ag-minichart-selected-page-color: var(--ag-checkbox-checked-color);
-
 
         --ag-grid-size: 4px;
 
@@ -186,7 +183,7 @@
 
         --ag-side-bar-panel-width: 200px;
 
-        --ag-font-family: "Helvetica Neue", sans-serif;
+        --ag-font-family: 'Helvetica Neue', sans-serif;
         --ag-font-size: 14px;
 
         --ag-card-radius: var(--ag-border-radius);
@@ -199,5 +196,5 @@
         --ag-advanced-filter-column-pill-color: #a6e194;
         --ag-advanced-filter-option-pill-color: #f3c08b;
         --ag-advanced-filter-value-pill-color: #85c0e4;
-    };
+    }
 }

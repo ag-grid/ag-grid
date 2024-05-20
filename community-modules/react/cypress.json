@@ -1,8 +1,8 @@
 {
-  "experimentalComponentTesting": true,
-  "componentFolder": "cypress/components",
-  "testFiles": "**/*.spec.{js,ts,jsx,tsx}",
-  "env": {
-    "coverage": false
-  }
+    "experimentalComponentTesting": true,
+    "componentFolder": "cypress/components",
+    "testFiles": "**/*.spec.{js,ts,jsx,tsx}",
+    "env": {
+        "coverage": false
+    }
 }

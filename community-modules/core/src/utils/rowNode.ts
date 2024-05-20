@@ -7,11 +7,13 @@ import { RowNode } from '../entities/rowNode';
  * don't have order id's
  * @param {RowNode[]} rowNodes
  * @param {Object} rowNodeOrder
- * 
+ *
  * @returns a boolean representing whether nodes were reordered
  */
-export function _sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: { [id: string]: number; }): boolean {
-    if (!rowNodes) { return false; }
+export function _sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: { [id: string]: number }): boolean {
+    if (!rowNodes) {
+        return false;
+    }
 
     const comparator = (nodeA: RowNode, nodeB: RowNode) => {
         const positionA = rowNodeOrder[nodeA.id!];

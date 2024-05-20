@@ -1,9 +1,20 @@
-import { getAllowedCharPattern, NumberFilter, NumberFilterModel, NumberFilterModelFormatter, NumberFilterParams } from './numberFilter';
-import { FloatingFilterInputService, FloatingFilterTextInputService, ITextInputFloatingFilterParams,TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
-import { SimpleFilterModelFormatter } from '../simpleFilter';
+import { BeanStub } from '../../../context/beanStub';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { BeanStub } from '../../../context/beanStub';
+import {
+    FloatingFilterInputService,
+    FloatingFilterTextInputService,
+    ITextInputFloatingFilterParams,
+    TextInputFloatingFilter,
+} from '../../floating/provided/textInputFloatingFilter';
+import { SimpleFilterModelFormatter } from '../simpleFilter';
+import {
+    NumberFilter,
+    NumberFilterModel,
+    NumberFilterModelFormatter,
+    NumberFilterParams,
+    getAllowedCharPattern,
+} from './numberFilter';
 
 class FloatingFilterNumberInputService extends BeanStub implements FloatingFilterInputService {
     private eFloatingFilterTextInput: AgInputTextField;
@@ -18,8 +29,8 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
 
         this.eFloatingFilterTextInput.setDisabled(true);
 
-        const eNumberInput = this.eFloatingFilterNumberInput.getGui()
-        const eTextInput = this.eFloatingFilterTextInput.getGui()
+        const eNumberInput = this.eFloatingFilterNumberInput.getGui();
+        const eTextInput = this.eFloatingFilterTextInput.getGui();
 
         parentElement.appendChild(eNumberInput);
         parentElement.appendChild(eTextInput);
@@ -60,9 +71,9 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
         this.addManagedListener(element, 'keydown', listener);
     }
 
-    public setParams(params: { ariaLabel: string, autoComplete?: boolean | string }): void {
+    public setParams(params: { ariaLabel: string; autoComplete?: boolean | string }): void {
         this.setAriaLabel(params.ariaLabel);
-        
+
         if (params.autoComplete !== undefined) {
             this.setAutoComplete(params.autoComplete);
         }
@@ -74,8 +85,7 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
     }
 }
 
-export interface INumberFloatingFilterParams extends ITextInputFloatingFilterParams {
-}
+export interface INumberFloatingFilterParams extends ITextInputFloatingFilterParams {}
 
 export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterModel> {
     private filterModelFormatter: SimpleFilterModelFormatter;
@@ -115,9 +125,11 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterMo
         this.allowedCharPattern = getAllowedCharPattern(params.filterParams);
         if (this.allowedCharPattern) {
             // need to use text input
-            return this.createManagedBean(new FloatingFilterTextInputService({
-                config: { allowedCharPattern: this.allowedCharPattern },
-            }));
+            return this.createManagedBean(
+                new FloatingFilterTextInputService({
+                    config: { allowedCharPattern: this.allowedCharPattern },
+                })
+            );
         }
         return this.createManagedBean(new FloatingFilterNumberInputService());
     }

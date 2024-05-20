@@ -1,4 +1,3 @@
-
 import { ref, transparentRef } from '../../css-helpers';
 import { definePart } from '../../theme-utils';
 import { colorSchemeLightCold, colorSchemeLightNeutral } from '../color-scheme/color-schemes';

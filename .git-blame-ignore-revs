@@ -1,0 +1,8 @@
+# Run this command to always ignore formatting commits in `git blame`
+# git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# ag-grid-docs + some root file prettier changes
+96b0a62b5acb59ce8febcae3352c9518b4311628
+
+# Prettier run on the whole repo
+a83be9b0727eedc7745e285521cfc6669178bf74

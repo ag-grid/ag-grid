@@ -1,7 +1,8 @@
-import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { _Scene } from "ag-charts-community";
-import { ChartType } from "@ag-grid-community/core";
-import { ThemeTemplateParameters } from "../../miniChartsContainer";
+import { ChartType } from '@ag-grid-community/core';
+import { _Scene } from 'ag-charts-community';
+
+import { ThemeTemplateParameters } from '../../miniChartsContainer';
+import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export interface ICoordinate {
     x: number;
@@ -9,18 +10,24 @@ export interface ICoordinate {
 }
 
 export class MiniArea extends MiniChartWithAxes {
-
     static chartType: ChartType = 'area';
     private readonly areas: _Scene.Path[];
 
     static readonly data = [
         [1, 3, 5],
         [2, 6, 4],
-        [5, 3, 1]
+        [5, 3, 1],
     ];
 
-    constructor(container: HTMLElement, fills: string[], strokes: string[], _themeTemplateParameters: ThemeTemplateParameters, _isCustomTheme: boolean, data: number[][] = MiniArea.data) {
-        super(container, "groupedAreaTooltip");
+    constructor(
+        container: HTMLElement,
+        fills: string[],
+        strokes: string[],
+        _themeTemplateParameters: ThemeTemplateParameters,
+        _isCustomTheme: boolean,
+        data: number[][] = MiniArea.data
+    ) {
+        super(container, 'groupedAreaTooltip');
 
         const size = this.size;
         const padding = this.padding;
@@ -49,17 +56,17 @@ export class MiniArea extends MiniChartWithAxes {
 
                 points[i] = {
                     x,
-                    y
+                    y,
                 };
 
                 points[last - i] = {
                     x,
-                    y: bottomY
+                    y: bottomY,
                 };
             });
         });
 
-        this.areas = pathData.reverse().map(points => {
+        this.areas = pathData.reverse().map((points) => {
             const area = new _Scene.Path();
             area.strokeWidth = 1;
             area.strokeOpacity = 0.75;
@@ -67,7 +74,7 @@ export class MiniArea extends MiniChartWithAxes {
 
             const path = area.path;
             path.clear();
-            points.forEach((point, i) => path[i > 0 ? "lineTo" : "moveTo"](point.x, point.y));
+            points.forEach((point, i) => path[i > 0 ? 'lineTo' : 'moveTo'](point.x, point.y));
             path.closePath();
 
             return area;

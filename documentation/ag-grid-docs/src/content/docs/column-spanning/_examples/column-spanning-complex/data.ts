@@ -16,6 +16,6 @@ export function getData(): any[] {
         { jan: 21, feb: 12, mar: 24, apr: 31, may: 28, jun: 31 },
         { jan: 2, feb: 32, mar: 24, apr: 31, may: 48, jun: 21 },
         { jan: 21, feb: 12, mar: 24, apr: 31, may: 28, jun: 31 },
-    ]
+    ];
     return rowData;
 }

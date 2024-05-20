@@ -5,27 +5,28 @@ const getColorChildren = (props: [string, string, string, string?]): XmlElement 
 
     return {
         name: `a:${type}`,
-        children: [{
-            name: `a:${innerType}`,
-            properties: {
-                rawMap: {
-                    val,
-                    lastClr
-                }
-            }
-        }]
+        children: [
+            {
+                name: `a:${innerType}`,
+                properties: {
+                    rawMap: {
+                        val,
+                        lastClr,
+                    },
+                },
+            },
+        ],
     };
 };
 
 const colorScheme: ExcelOOXMLTemplate = {
     getTemplate() {
-
         return {
-            name: "a:clrScheme",
+            name: 'a:clrScheme',
             properties: {
                 rawMap: {
-                    name: "Office"
-                }
+                    name: 'Office',
+                },
             },
             children: [
                 getColorChildren(['dk1', 'sysClr', 'windowText', '000000']),
@@ -39,10 +40,10 @@ const colorScheme: ExcelOOXMLTemplate = {
                 getColorChildren(['accent5', 'srgbClr', '5B9BD5']),
                 getColorChildren(['accent6', 'srgbClr', '70AD47']),
                 getColorChildren(['hlink', 'srgbClr', '0563C1']),
-                getColorChildren(['folHlink', 'srgbClr', '954F72'])
-            ]
+                getColorChildren(['folHlink', 'srgbClr', '954F72']),
+            ],
         };
-    }
+    },
 };
 
 export default colorScheme;

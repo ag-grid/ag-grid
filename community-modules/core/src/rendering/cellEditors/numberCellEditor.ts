@@ -1,10 +1,11 @@
-import { ICellEditorParams } from "../../interfaces/iCellEditor";
-import { AgInputNumberField } from "../../widgets/agInputNumberField";
-import { CellEditorInput, SimpleCellEditor } from "./simpleCellEditor";
-import { _exists } from "../../utils/generic";
-import { KeyCode } from "../../constants/keyCode";
+import { KeyCode } from '../../constants/keyCode';
+import { ICellEditorParams } from '../../interfaces/iCellEditor';
+import { _exists } from '../../utils/generic';
+import { AgInputNumberField } from '../../widgets/agInputNumberField';
+import { CellEditorInput, SimpleCellEditor } from './simpleCellEditor';
 
-export interface INumberCellEditorParams<TData = any, TContext = any> extends ICellEditorParams<TData, number, TContext> {
+export interface INumberCellEditorParams<TData = any, TContext = any>
+    extends ICellEditorParams<TData, number, TContext> {
     /** Min allowed value. */
     min?: number;
     /** Max allowed value. */
@@ -27,7 +28,7 @@ export interface INumberCellEditorParams<TData = any, TContext = any> extends IC
      * Set to `true` to prevent key up/down from stepping the field's value.
      * @default false
      */
-    preventStepping?: boolean
+    preventStepping?: boolean;
 }
 
 class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditorParams, AgInputNumberField> {
@@ -35,7 +36,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
     private params: INumberCellEditorParams;
 
     public getTemplate() {
-        return /* html */`<ag-input-number-field class="ag-cell-editor" ref="eInput"></ag-input-number-field>`;
+        return /* html */ `<ag-input-number-field class="ag-cell-editor" ref="eInput"></ag-input-number-field>`;
     }
 
     public init(eInput: AgInputNumberField, params: INumberCellEditorParams): void {

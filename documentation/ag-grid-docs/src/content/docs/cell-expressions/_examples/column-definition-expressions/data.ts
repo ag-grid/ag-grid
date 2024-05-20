@@ -1,5 +1,5 @@
 export function getData(): any[] {
-    const rowData = []
+    const rowData = [];
 
     const words = [
         'One',
@@ -14,29 +14,12 @@ export function getData(): any[] {
         'White',
         'Salt',
         'Beach',
-    ]
-    const firstNames = [
-        'Niall',
-        'John',
-        'Rob',
-        'Alberto',
-        'Bas',
-        'Dimple',
-        'Sean',
-    ]
-    const lastNames = [
-        'Pink',
-        'Black',
-        'White',
-        'Brown',
-        'Smith',
-        'Smooth',
-        'Anderson',
-    ]
+    ];
+    const firstNames = ['Niall', 'John', 'Rob', 'Alberto', 'Bas', 'Dimple', 'Sean'];
+    const lastNames = ['Pink', 'Black', 'White', 'Brown', 'Smith', 'Smooth', 'Anderson'];
 
     for (let i = 0; i < 100; i++) {
-        const randomWords =
-            words[i % words.length] + ' ' + words[(i * 17) % words.length]
+        const randomWords = words[i % words.length] + ' ' + words[(i * 17) % words.length];
         rowData.push({
             simple: randomWords,
             number: Math.floor(((i + 2) * 476321) % 10000),
@@ -44,8 +27,8 @@ export function getData(): any[] {
             b: Math.floor(i % 7),
             firstName: firstNames[i % firstNames.length],
             lastName: lastNames[i % lastNames.length],
-        })
+        });
     }
 
-    return rowData
+    return rowData;
 }

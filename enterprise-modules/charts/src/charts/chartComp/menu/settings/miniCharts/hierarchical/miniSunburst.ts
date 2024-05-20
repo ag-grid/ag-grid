@@ -1,6 +1,7 @@
-import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
-import { _Scene } from 'ag-charts-community';
 import { ChartType } from '@ag-grid-community/core';
+import { _Scene } from 'ag-charts-community';
+
+import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
 
 export class MiniSunburst extends MiniChartWithPolarAxes {
     static chartType: ChartType = 'sunburst';
@@ -23,7 +24,7 @@ export class MiniSunburst extends MiniChartWithPolarAxes {
 
         this.showRadiusAxisLine = false;
         this.showAngleAxisLines = false;
-        
+
         const { data, size, padding, angleOffset, innerRadiusRatio } = this;
 
         const radius = (size - padding * 2) / 2;
@@ -33,7 +34,7 @@ export class MiniSunburst extends MiniChartWithPolarAxes {
 
         const radiusRange = [radius * innerRadiusRatio, radius];
         const radiusExtent = Math.abs(radiusRange[1] - radiusRange[0]);
-        
+
         let maxDepth = 0;
         const findMaxDepth = (data: any[], parentDepth: number) => {
             data.forEach((child) => {
@@ -48,7 +49,7 @@ export class MiniSunburst extends MiniChartWithPolarAxes {
         const radiusRatio = radiusExtent / maxDepth;
         const center = this.size / 2;
         const startAngle = angleRange[0];
-        
+
         this.series = [];
 
         const createSectors = (

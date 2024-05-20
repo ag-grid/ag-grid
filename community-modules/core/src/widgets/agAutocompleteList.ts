@@ -1,17 +1,16 @@
-import { Component } from "./component";
-import { RefSelector } from "./componentAnnotations";
-import { VirtualList } from "./virtualList";
-import { KeyCode } from "../constants/keyCode";
-import { AgAutocompleteRow } from "./agAutocompleteRow";
-import { _fuzzySuggestions } from "../utils/fuzzyMatch";
-import { PopupComponent } from "./popupComponent";
-import { PostConstruct } from "../context/context";
-import { AutocompleteEntry } from "./autocompleteParams";
-import { _exists } from "../utils/generic";
+import { KeyCode } from '../constants/keyCode';
+import { PostConstruct } from '../context/context';
+import { _fuzzySuggestions } from '../utils/fuzzyMatch';
+import { _exists } from '../utils/generic';
+import { AgAutocompleteRow } from './agAutocompleteRow';
+import { AutocompleteEntry } from './autocompleteParams';
+import { Component } from './component';
+import { RefSelector } from './componentAnnotations';
+import { PopupComponent } from './popupComponent';
+import { VirtualList } from './virtualList';
 
 export class AgAutocompleteList extends PopupComponent {
-    private static TEMPLATE = /* html */
-        `<div class="ag-autocomplete-list-popup">
+    private static TEMPLATE /* html */ = `<div class="ag-autocomplete-list-popup">
             <div ref="eList" class="ag-autocomplete-list"></div>
         <div>`;
 
@@ -26,12 +25,14 @@ export class AgAutocompleteList extends PopupComponent {
 
     private searchString = '';
 
-    constructor(private params: {
-        autocompleteEntries: AutocompleteEntry[];
-        onConfirmed: () => void;
-        useFuzzySearch?: boolean;
-        forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
-    }) {
+    constructor(
+        private params: {
+            autocompleteEntries: AutocompleteEntry[];
+            onConfirmed: () => void;
+            useFuzzySearch?: boolean;
+            forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
+        }
+    ) {
         super(AgAutocompleteList.TEMPLATE);
     }
 
@@ -48,7 +49,7 @@ export class AgAutocompleteList extends PopupComponent {
 
         this.virtualList.setModel({
             getRowCount: () => this.autocompleteEntries.length,
-            getRow: (index: number) => this.autocompleteEntries[index]
+            getRow: (index: number) => this.autocompleteEntries[index],
         });
 
         const virtualListGui = this.virtualList.getGui();
@@ -82,21 +83,25 @@ export class AgAutocompleteList extends PopupComponent {
         this.updateSearchInList();
     }
 
-    private runContainsSearch(searchString: string, searchStrings: string[]): { topMatch: string | undefined, allMatches: string[] } {
+    private runContainsSearch(
+        searchString: string,
+        searchStrings: string[]
+    ): { topMatch: string | undefined; allMatches: string[] } {
         let topMatch: string | undefined;
         let topMatchStartsWithSearchString = false;
         const lowerCaseSearchString = searchString.toLocaleLowerCase();
-        const allMatches = searchStrings.filter(string => {
+        const allMatches = searchStrings.filter((string) => {
             const lowerCaseString = string.toLocaleLowerCase();
             const index = lowerCaseString.indexOf(lowerCaseSearchString);
             const startsWithSearchString = index === 0;
             const isMatch = index >= 0;
             // top match is shortest value that starts with the search string, otherwise shortest value that includes the search string
-            if (isMatch && (
-                !topMatch ||
-                (!topMatchStartsWithSearchString && startsWithSearchString) ||
-                (topMatchStartsWithSearchString === startsWithSearchString && string.length < topMatch.length)
-            )) {
+            if (
+                isMatch &&
+                (!topMatch ||
+                    (!topMatchStartsWithSearchString && startsWithSearchString) ||
+                    (topMatchStartsWithSearchString === startsWithSearchString && string.length < topMatch.length))
+            ) {
                 topMatch = string;
                 topMatchStartsWithSearchString = startsWithSearchString;
             }
@@ -110,7 +115,7 @@ export class AgAutocompleteList extends PopupComponent {
 
     private runSearch() {
         const { autocompleteEntries } = this.params;
-        const searchStrings = autocompleteEntries.map(v => v.displayValue ?? v.key);
+        const searchStrings = autocompleteEntries.map((v) => v.displayValue ?? v.key);
 
         let matchingStrings: string[];
         let topSuggestion: string | undefined;
@@ -123,8 +128,14 @@ export class AgAutocompleteList extends PopupComponent {
             topSuggestion = containsMatches.topMatch;
         }
 
-        let filteredEntries = autocompleteEntries.filter(({ key, displayValue }) => matchingStrings.includes(displayValue ?? key));
-        if (!filteredEntries.length && this.selectedValue && this.params?.forceLastSelection?.(this.selectedValue, this.searchString)) {
+        let filteredEntries = autocompleteEntries.filter(({ key, displayValue }) =>
+            matchingStrings.includes(displayValue ?? key)
+        );
+        if (
+            !filteredEntries.length &&
+            this.selectedValue &&
+            this.params?.forceLastSelection?.(this.selectedValue, this.searchString)
+        ) {
             filteredEntries = [this.selectedValue];
         }
         this.autocompleteEntries = filteredEntries;
@@ -152,7 +163,9 @@ export class AgAutocompleteList extends PopupComponent {
     private setSelectedValue(index: number): void {
         const value = this.autocompleteEntries[index];
 
-        if (this.selectedValue === value) { return; }
+        if (this.selectedValue === value) {
+            return;
+        }
 
         this.selectedValue = value;
         this.virtualList.ensureIndexVisible(index);
@@ -185,7 +198,9 @@ export class AgAutocompleteList extends PopupComponent {
     }
 
     public getSelectedValue(): AutocompleteEntry | null {
-        if (!this.autocompleteEntries.length) { return null };
+        if (!this.autocompleteEntries.length) {
+            return null;
+        }
         return this.selectedValue ?? null;
     }
 }

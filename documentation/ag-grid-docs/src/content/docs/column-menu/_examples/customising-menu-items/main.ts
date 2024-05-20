@@ -1,125 +1,123 @@
-import {
-  GridApi,
-  createGrid,
-  ColDef,
-  GetMainMenuItemsParams,
-  GridOptions,
-  MenuItemDef,
-  PostProcessPopupParams,
-} from '@ag-grid-community/core';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import {
+    ColDef,
+    GetMainMenuItemsParams,
+    GridApi,
+    GridOptions,
+    MenuItemDef,
+    PostProcessPopupParams,
+    createGrid,
+} from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule]);
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', minWidth: 200 },
-  {
-    field: 'age',
-    mainMenuItems: (params: GetMainMenuItemsParams) => {
-      const athleteMenuItems: (MenuItemDef | string)[] = params.defaultItems.slice(0)
-      athleteMenuItems.push({
-        name: 'A Custom Item',
-        action: () => {
-          console.log('A Custom Item selected')
+    { field: 'athlete', minWidth: 200 },
+    {
+        field: 'age',
+        mainMenuItems: (params: GetMainMenuItemsParams) => {
+            const athleteMenuItems: (MenuItemDef | string)[] = params.defaultItems.slice(0);
+            athleteMenuItems.push({
+                name: 'A Custom Item',
+                action: () => {
+                    console.log('A Custom Item selected');
+                },
+            });
+            athleteMenuItems.push({
+                name: 'Another Custom Item',
+                action: () => {
+                    console.log('Another Custom Item selected');
+                },
+            });
+            athleteMenuItems.push({
+                name: 'Custom Sub Menu',
+                subMenu: [
+                    {
+                        name: 'Black',
+                        action: () => {
+                            console.log('Black was pressed');
+                        },
+                    },
+                    {
+                        name: 'White',
+                        action: () => {
+                            console.log('White was pressed');
+                        },
+                    },
+                    {
+                        name: 'Grey',
+                        action: () => {
+                            console.log('Grey was pressed');
+                        },
+                    },
+                ],
+            });
+            return athleteMenuItems;
         },
-      })
-      athleteMenuItems.push({
-        name: 'Another Custom Item',
-        action: () => {
-          console.log('Another Custom Item selected')
-        },
-      })
-      athleteMenuItems.push({
-        name: 'Custom Sub Menu',
-        subMenu: [
-          {
-            name: 'Black',
-            action: () => {
-              console.log('Black was pressed')
+    },
+    {
+        field: 'country',
+        minWidth: 200,
+        mainMenuItems: [
+            {
+                // our own item with an icon
+                name: 'A Custom Item',
+                action: () => {
+                    console.log('A Custom Item selected');
+                },
+                icon: '<img src="https://www.ag-grid.com/example-assets/lab.png" style="width: 14px;" />',
             },
-          },
-          {
-            name: 'White',
-            action: () => {
-              console.log('White was pressed')
+            {
+                // our own icon with a check box
+                name: 'Another Custom Item',
+                action: () => {
+                    console.log('Another Custom Item selected');
+                },
+                checked: true,
             },
-          },
-          {
-            name: 'Grey',
-            action: () => {
-              console.log('Grey was pressed')
-            },
-          },
+            'resetColumns', // a built in item
         ],
-      })
-      return athleteMenuItems;
-    }
-  },
-  {
-    field: 'country',
-    minWidth: 200,
-    mainMenuItems: [
-      {
-        // our own item with an icon
-        name: 'A Custom Item',
-        action: () => {
-          console.log('A Custom Item selected')
+    },
+    {
+        field: 'year',
+        mainMenuItems: (params: GetMainMenuItemsParams) => {
+            const menuItems: (MenuItemDef | string)[] = [];
+            const itemsToExclude = ['separator', 'pinSubMenu', 'valueAggSubMenu'];
+            params.defaultItems.forEach((item) => {
+                if (itemsToExclude.indexOf(item) < 0) {
+                    menuItems.push(item);
+                }
+            });
+            return menuItems;
         },
-        icon:
-          '<img src="https://www.ag-grid.com/example-assets/lab.png" style="width: 14px;" />',
-      },
-      {
-        // our own icon with a check box
-        name: 'Another Custom Item',
-        action: () => {
-          console.log('Another Custom Item selected')
-        },
-        checked: true,
-      },
-      'resetColumns', // a built in item
-    ]
-  },
-  {
-    field: 'year',
-    mainMenuItems: (params: GetMainMenuItemsParams) => {
-      const menuItems: (MenuItemDef | string)[] = []
-      const itemsToExclude = ['separator', 'pinSubMenu', 'valueAggSubMenu']
-      params.defaultItems.forEach(item => {
-        if (itemsToExclude.indexOf(item) < 0) {
-          menuItems.push(item)
-        }
-      })
-      return menuItems;
-    }
-  },
-  { field: 'sport', minWidth: 200 },
-  { field: 'gold' },
-  { field: 'silver' },
-  { field: 'bronze' },
-  { field: 'total' },
-]
+    },
+    { field: 'sport', minWidth: 200 },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' },
+];
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-  columnDefs: columnDefs,
-  defaultColDef: {
-    flex: 1,
-    minWidth: 100,
-  },
-  columnMenu: 'new',
-}
+    columnDefs: columnDefs,
+    defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+    },
+    columnMenu: 'new',
+};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
-})
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+});

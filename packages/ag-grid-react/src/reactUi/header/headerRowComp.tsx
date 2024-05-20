@@ -1,12 +1,20 @@
-import { AbstractHeaderCellCtrl, HeaderGroupCellCtrl, HeaderCellCtrl, HeaderFilterCellCtrl, HeaderRowCtrl, HeaderRowType, IHeaderRowComp } from 'ag-grid-community';
+import {
+    AbstractHeaderCellCtrl,
+    HeaderCellCtrl,
+    HeaderFilterCellCtrl,
+    HeaderGroupCellCtrl,
+    HeaderRowCtrl,
+    HeaderRowType,
+    IHeaderRowComp,
+} from 'ag-grid-community';
 import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
-import HeaderCellComp from './headerCellComp';
-import HeaderGroupCellComp from './headerGroupCellComp';
-import HeaderFilterCellComp from './headerFilterCellComp';
+
 import { agFlushSync, getNextValueIfDifferent } from '../utils';
+import HeaderCellComp from './headerCellComp';
+import HeaderFilterCellComp from './headerFilterCellComp';
+import HeaderGroupCellComp from './headerGroupCellComp';
 
-const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
-
+const HeaderRowComp = (props: { ctrl: HeaderRowCtrl }) => {
     const { ctrl } = props;
 
     const { topOffset, rowHeight } = useMemo(() => ctrl.getTopAndHeight(), []);
@@ -17,7 +25,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
     const [top, setTop] = useState<string>(() => topOffset + 'px');
 
     const cellCtrlsRef = useRef<AbstractHeaderCellCtrl[] | null>(null);
-    const prevCellCtrlsRef = useRef<AbstractHeaderCellCtrl[] | null>(null);    
+    const prevCellCtrlsRef = useRef<AbstractHeaderCellCtrl[] | null>(null);
     const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>(() => ctrl.getHeaderCtrls());
 
     const eGui = useRef<HTMLDivElement | null>(null);
@@ -31,7 +39,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
         const compProxy: IHeaderRowComp = {
             setHeight: (height: string) => setHeight(height),
             setTop: (top: string) => setTop(top),
-            setHeaderCtrls: (ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean, afterScroll: boolean) =>{
+            setHeaderCtrls: (ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean, afterScroll: boolean) => {
                 prevCellCtrlsRef.current = cellCtrlsRef.current;
                 cellCtrlsRef.current = ctrls;
 
@@ -50,28 +58,30 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
         ctrl.setComp(compProxy, false);
     }, []);
 
-    const style = useMemo( ()=> ({
-        height: height,
-        top: top,
-    }), [height, top]);
+    const style = useMemo(
+        () => ({
+            height: height,
+            top: top,
+        }),
+        [height, top]
+    );
 
-
-    const createCellJsx = useCallback( (cellCtrl: AbstractHeaderCellCtrl) => {
+    const createCellJsx = useCallback((cellCtrl: AbstractHeaderCellCtrl) => {
         switch (ctrl.getType()) {
-            case HeaderRowType.COLUMN_GROUP :
+            case HeaderRowType.COLUMN_GROUP:
                 return <HeaderGroupCellComp ctrl={cellCtrl as HeaderGroupCellCtrl} key={cellCtrl.getInstanceId()} />;
 
-            case HeaderRowType.FLOATING_FILTER :
+            case HeaderRowType.FLOATING_FILTER:
                 return <HeaderFilterCellComp ctrl={cellCtrl as HeaderFilterCellCtrl} key={cellCtrl.getInstanceId()} />;
-                
-            default :
+
+            default:
                 return <HeaderCellComp ctrl={cellCtrl as HeaderCellCtrl} key={cellCtrl.getInstanceId()} />;
         }
     }, []);
 
     return (
         <div ref={setRef} className={className} role="row" style={style} aria-rowindex={ariaRowIndex}>
-            { cellCtrls.map( createCellJsx ) }
+            {cellCtrls.map(createCellJsx)}
         </div>
     );
 };

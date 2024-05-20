@@ -1,7 +1,8 @@
-import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
-import { _Scene } from 'ag-charts-community';
 import { ChartType } from '@ag-grid-community/core';
+import { _Scene } from 'ag-charts-community';
+
 import { accumulateData } from '../miniChartHelpers';
+import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
 
 export class MiniNightingale extends MiniChartWithPolarAxes {
     static chartType: ChartType = 'nightingale';
@@ -26,9 +27,9 @@ export class MiniNightingale extends MiniChartWithPolarAxes {
         angleScale.paddingInner = 0;
         angleScale.paddingOuter = 0;
         const bandwidth = angleScale.bandwidth * 0.7;
-        
+
         const { processedData, max } = accumulateData(this.data);
-        
+
         const radiusScale = new _Scene.LinearScale();
         radiusScale.domain = [0, max];
         radiusScale.range = [0, radius];

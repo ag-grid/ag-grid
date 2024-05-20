@@ -11,7 +11,7 @@ export default (props) => {
 
         return () => {
             node.removeEventListener('expandedChanged', expandListener);
-        }
+        };
     }, []);
 
     const onClick = useCallback(() => node.setExpanded(!node.expanded), [node]);
@@ -22,22 +22,20 @@ export default (props) => {
                 paddingLeft: `${node.level * 15}px`,
             }}
         >
-            {
-                node.group && (
-                    <div
-                        style={{
-                            cursor: 'pointer',
-                            transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
-                            display: 'inline-block'
-                        }}
-                        onClick={onClick}
-                    >
-                        &rarr;
-                    </div>
-                )
-            }
+            {node.group && (
+                <div
+                    style={{
+                        cursor: 'pointer',
+                        transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
+                        display: 'inline-block',
+                    }}
+                    onClick={onClick}
+                >
+                    &rarr;
+                </div>
+            )}
             &nbsp;
             {value}
         </div>
     );
-}
+};

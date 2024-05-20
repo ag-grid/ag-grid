@@ -22,7 +22,7 @@ function getFilteredMenuItems({ menuItems, framework }: { menuItems?: MenuItem[]
                           ...menuItem,
                           items: filteredItems,
                       };
-                  } 
+                  }
                   return menuItem;
               })
               .filter(Boolean) as MenuSection[])

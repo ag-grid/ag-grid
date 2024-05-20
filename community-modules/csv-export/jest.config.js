@@ -1,7 +1,5 @@
 module.exports = {
-    roots: [
-        '<rootDir>/src',
-    ],
+    roots: ['<rootDir>/src'],
     transform: {
         '^.+\\.tsx?$': [
             'ts-jest',
@@ -11,15 +9,8 @@ module.exports = {
         ],
     },
     testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
-    moduleFileExtensions: [
-        'js',
-        'json',
-        'jsx',
-        'node',
-        'ts',
-        'tsx',
-    ],
+    moduleFileExtensions: ['js', 'json', 'jsx', 'node', 'ts', 'tsx'],
     testEnvironment: 'jsdom',
     preset: 'ts-jest',
     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-}
+};

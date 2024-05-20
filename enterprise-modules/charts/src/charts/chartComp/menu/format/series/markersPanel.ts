@@ -1,22 +1,21 @@
 import {
     AgGroupComponentParams,
+    AgSelectParams,
     AgSlider,
     AgSliderParams,
     Autowired,
     Component,
     PostConstruct,
     RefSelector,
-    AgSelectParams,
-    _includes
-} from "@ag-grid-community/core";
-import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+    _includes,
+} from '@ag-grid-community/core';
+
 import { ChartOptionsService } from '../../../services/chartOptionsService';
+import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class MarkersPanel extends Component {
-
-    public static TEMPLATE = /* html */
-        `<div>
+    public static TEMPLATE /* html */ = `<div>
             <ag-group-component ref="seriesMarkersGroup">
                 <ag-select ref="seriesMarkerShapeSelect"></ag-select>
                 <ag-slider ref="seriesMarkerMinSizeSlider"></ag-slider>
@@ -31,7 +30,7 @@ export class MarkersPanel extends Component {
 
     constructor(
         private readonly chartOptionsService: ChartOptionsService,
-        private readonly chartMenuUtils: ChartMenuParamsFactory,
+        private readonly chartMenuUtils: ChartMenuParamsFactory
     ) {
         super();
     }
@@ -41,35 +40,32 @@ export class MarkersPanel extends Component {
         // scatter charts should always show markers
         const chartType = this.chartOptionsService.getChartType();
         const shouldHideEnabledCheckbox = _includes(['scatter', 'bubble'], chartType);
-        const seriesMarkersGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
-            'marker.enabled',
-            {
-                cssIdentifier: 'charts-format-sub-level',
-                direction: 'vertical',
-                title: this.chartTranslationService.translate("markers"),
-                suppressEnabledCheckbox: true,
-                useToggle: !shouldHideEnabledCheckbox,
-                suppressOpenCloseIcons: true
-            }
-        );
+        const seriesMarkersGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>('marker.enabled', {
+            cssIdentifier: 'charts-format-sub-level',
+            direction: 'vertical',
+            title: this.chartTranslationService.translate('markers'),
+            suppressEnabledCheckbox: true,
+            useToggle: !shouldHideEnabledCheckbox,
+            suppressOpenCloseIcons: true,
+        });
 
         const isBubble = chartType === 'bubble';
         let seriesMarkerMinSizeSliderParams: AgSliderParams;
         let seriesMarkerSizeSliderParams: AgSliderParams;
         if (isBubble) {
-            seriesMarkerMinSizeSliderParams = this.getSliderParams("marker.maxSize", "maxSize", 60);
-            seriesMarkerSizeSliderParams = this.getSliderParams("marker.size", "minSize", 60);
+            seriesMarkerMinSizeSliderParams = this.getSliderParams('marker.maxSize', 'maxSize', 60);
+            seriesMarkerSizeSliderParams = this.getSliderParams('marker.size', 'minSize', 60);
         } else {
             seriesMarkerMinSizeSliderParams = {};
-            seriesMarkerSizeSliderParams = this.getSliderParams("marker.size", "size", 60);
+            seriesMarkerSizeSliderParams = this.getSliderParams('marker.size', 'size', 60);
         }
-        
+
         this.setTemplate(MarkersPanel.TEMPLATE, {
             seriesMarkersGroup: seriesMarkersGroupParams,
             seriesMarkerShapeSelect: this.getMarkerShapeSelectParams(),
             seriesMarkerMinSizeSlider: seriesMarkerMinSizeSliderParams,
             seriesMarkerSizeSlider: seriesMarkerSizeSliderParams,
-            seriesMarkerStrokeWidthSlider: this.getSliderParams("marker.strokeWidth", "strokeWidth", 10)
+            seriesMarkerStrokeWidthSlider: this.getSliderParams('marker.strokeWidth', 'strokeWidth', 10),
         });
         if (!isBubble) {
             this.seriesMarkerMinSizeSlider.setDisplayed(false);
@@ -80,47 +76,41 @@ export class MarkersPanel extends Component {
         const options = [
             {
                 value: 'square',
-                text: 'Square'
+                text: 'Square',
             },
             {
                 value: 'circle',
-                text: 'Circle'
+                text: 'Circle',
             },
             {
                 value: 'cross',
-                text: 'Cross'
+                text: 'Cross',
             },
             {
                 value: 'diamond',
-                text: 'Diamond'
+                text: 'Diamond',
             },
             {
                 value: 'plus',
-                text: 'Plus'
+                text: 'Plus',
             },
             {
                 value: 'triangle',
-                text: 'Triangle'
+                text: 'Triangle',
             },
             {
                 value: 'heart',
-                text: 'Heart'
-            }
+                text: 'Heart',
+            },
         ];
-        return this.chartMenuUtils.addValueParams(
-            'marker.shape',
-            {
-                options,
-                label: this.chartTranslationService.translate('shape')
-            }
-        );
+        return this.chartMenuUtils.getDefaultSelectParams('marker.shape', 'shape', options);
     }
 
-    private getSliderParams(expression: string, labelKey: ChartTranslationKey, defaultMaxValue: number): AgSliderParams {
-        return this.chartMenuUtils.getDefaultSliderParams(
-            expression,
-            labelKey,
-            defaultMaxValue
-        );
+    private getSliderParams(
+        expression: string,
+        labelKey: ChartTranslationKey,
+        defaultMaxValue: number
+    ): AgSliderParams {
+        return this.chartMenuUtils.getDefaultSliderParams(expression, labelKey, defaultMaxValue);
     }
 }

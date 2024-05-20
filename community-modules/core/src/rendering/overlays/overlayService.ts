@@ -1,14 +1,14 @@
-import { BeanStub } from "../../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../../context/context";
-import { WithoutGridCommon } from "../../interfaces/iCommon";
-import { UserCompDetails, UserComponentFactory } from "../../components/framework/userComponentFactory";
-import { OverlayWrapperComponent } from "./overlayWrapperComponent";
-import { PaginationProxy } from "../../pagination/paginationProxy";
-import { ColumnModel } from "../../columns/columnModel";
-import { Events } from "../../eventKeys";
-import { ILoadingOverlayParams } from "./loadingOverlayComponent";
-import { INoRowsOverlayParams } from "./noRowsOverlayComponent";
-import { GridOptions } from "../../entities/gridOptions";
+import { ColumnModel } from '../../columns/columnModel';
+import { UserCompDetails, UserComponentFactory } from '../../components/framework/userComponentFactory';
+import { BeanStub } from '../../context/beanStub';
+import { Autowired, Bean, PostConstruct } from '../../context/context';
+import { GridOptions } from '../../entities/gridOptions';
+import { Events } from '../../eventKeys';
+import { WithoutGridCommon } from '../../interfaces/iCommon';
+import { PaginationProxy } from '../../pagination/paginationProxy';
+import { ILoadingOverlayParams } from './loadingOverlayComponent';
+import { INoRowsOverlayParams } from './noRowsOverlayComponent';
+import { OverlayWrapperComponent } from './overlayWrapperComponent';
 
 @Bean('overlayService')
 export class OverlayService extends BeanStub {
@@ -28,16 +28,15 @@ export class OverlayService extends BeanStub {
     public registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void {
         this.overlayWrapperComp = overlayWrapperComp;
 
-        if (
-            !this.gos.get('columnDefs') ||
-            (this.gos.isRowModelType('clientSide') && !this.gos.get('rowData'))
-        ) {
+        if (!this.gos.get('columnDefs') || (this.gos.isRowModelType('clientSide') && !this.gos.get('rowData'))) {
             this.showLoadingOverlay();
         }
     }
 
     public showLoadingOverlay(): void {
-        if (this.gos.get('suppressLoadingOverlay')) { return; }
+        if (this.gos.get('suppressLoadingOverlay')) {
+            return;
+        }
 
         const params: WithoutGridCommon<ILoadingOverlayParams> = {};
 
@@ -46,7 +45,9 @@ export class OverlayService extends BeanStub {
     }
 
     public showNoRowsOverlay(): void {
-        if (this.gos.get('suppressNoRowsOverlay')) { return; }
+        if (this.gos.get('suppressNoRowsOverlay')) {
+            return;
+        }
 
         const params: WithoutGridCommon<INoRowsOverlayParams> = {};
 
@@ -57,11 +58,13 @@ export class OverlayService extends BeanStub {
     private showOverlay(compDetails: UserCompDetails, wrapperCssClass: string, gridOption: keyof GridOptions): void {
         const promise = compDetails.newAgStackInstance();
         const listenerDestroyFunc = this.addManagedPropertyListener(gridOption, ({ currentValue }) => {
-            promise.then(comp => {
+            promise.then((comp) => {
                 if (comp!.refresh) {
-                    comp.refresh(this.gos.addGridCommonParams({
-                        ...(currentValue ?? {})
-                    }));
+                    comp.refresh(
+                        this.gos.addGridCommonParams({
+                            ...(currentValue ?? {}),
+                        })
+                    );
                 }
             });
         });

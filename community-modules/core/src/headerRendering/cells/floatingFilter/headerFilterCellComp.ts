@@ -1,16 +1,14 @@
-import { UserCompDetails } from "../../../components/framework/userComponentFactory";
+import { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { PostConstruct, PreDestroy } from '../../../context/context';
 import { IFloatingFilterComp } from '../../../filter/floating/floatingFilter';
+import { _setDisplayed } from '../../../utils/dom';
 import { AgPromise } from '../../../utils/promise';
-import { _setDisplayed } from "../../../utils/dom";
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import { HeaderFilterCellCtrl, IHeaderFilterCellComp } from './headerFilterCellCtrl';
 
 export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCellCtrl> {
-
-    private static TEMPLATE = /* html */
-        `<div class="ag-header-cell ag-floating-filter" role="gridcell">
+    private static TEMPLATE /* html */ = `<div class="ag-header-cell ag-floating-filter" role="gridcell">
             <div ref="eFloatingFilterBody" role="presentation"></div>
             <div class="ag-floating-filter-button ag-hidden" ref="eButtonWrapper" role="presentation">
                 <button type="button" class="ag-button ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
@@ -36,10 +34,10 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             addOrRemoveBodyCssClass: (cssClassName, on) => this.eFloatingFilterBody.classList.toggle(cssClassName, on),
             setButtonWrapperDisplayed: (displayed) => _setDisplayed(this.eButtonWrapper, displayed),
-            setCompDetails: compDetails => this.setCompDetails(compDetails),
+            setCompDetails: (compDetails) => this.setCompDetails(compDetails),
             getFloatingFilterComp: () => this.compPromise,
-            setWidth: width => eGui.style.width = width,
-            setMenuIcon: eIcon => this.eButtonShowMainFilter.appendChild(eIcon)
+            setWidth: (width) => (eGui.style.width = width),
+            setMenuIcon: (eIcon) => this.eButtonShowMainFilter.appendChild(eIcon),
         };
 
         this.ctrl.setComp(compProxy, eGui, this.eButtonShowMainFilter, this.eFloatingFilterBody);
@@ -53,7 +51,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         }
         // because we are providing defaultFloatingFilterType, we know it will never be undefined;
         this.compPromise = compDetails.newAgStackInstance();
-        this.compPromise.then(comp => this.afterCompCreated(comp));
+        this.compPromise.then((comp) => this.afterCompCreated(comp));
     }
 
     @PreDestroy
@@ -65,7 +63,9 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
     }
 
     private afterCompCreated(comp: IFloatingFilterComp | null): void {
-        if (!comp) { return; }
+        if (!comp) {
+            return;
+        }
 
         if (!this.isAlive()) {
             this.destroyBean(comp);

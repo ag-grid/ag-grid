@@ -1,9 +1,9 @@
-import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct, Qualifier } from "../context/context";
-import { Events } from "../eventKeys";
-import { _getMaxDivHeight } from "../utils/browser";
-import { CtrlsService } from "../ctrlsService";
-import { Logger, LoggerFactory } from "../logger";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, PostConstruct, Qualifier } from '../context/context';
+import { CtrlsService } from '../ctrlsService';
+import { Events } from '../eventKeys';
+import { Logger, LoggerFactory } from '../logger';
+import { _getMaxDivHeight } from '../utils/browser';
 
 /**
  * This class solves the 'max height' problem, where the user might want to show more data than
@@ -12,7 +12,6 @@ import { Logger, LoggerFactory } from "../logger";
 
 @Bean('rowContainerHeightService')
 export class RowContainerHeightService extends BeanStub {
-
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private maxDivHeight: number;
@@ -39,8 +38,8 @@ export class RowContainerHeightService extends BeanStub {
 
     private logger: Logger;
 
-    public agWire(@Qualifier("loggerFactory") loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create("RowContainerHeightService");
+    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+        this.logger = loggerFactory.create('RowContainerHeightService');
     }
 
     @PostConstruct
@@ -59,7 +58,9 @@ export class RowContainerHeightService extends BeanStub {
     }
 
     public updateOffset(): void {
-        if (!this.stretching) { return; }
+        if (!this.stretching) {
+            return;
+        }
 
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const newScrollY = gridBodyCon.getScrollFeature().getVScrollPosition().top;
@@ -90,7 +91,7 @@ export class RowContainerHeightService extends BeanStub {
     private setUiContainerHeight(height: number | null): void {
         if (height !== this.uiContainerHeight) {
             this.uiContainerHeight = height;
-            this.eventService.dispatchEvent({type: Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED});
+            this.eventService.dispatchEvent({ type: Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED });
         }
     }
 
@@ -103,17 +104,20 @@ export class RowContainerHeightService extends BeanStub {
     private setDivStretchOffset(newOffset: number): void {
         // because we are talking pixels, no point in confusing things with half numbers
         const newOffsetFloor = typeof newOffset === 'number' ? Math.floor(newOffset) : null;
-        if (this.divStretchOffset === newOffsetFloor) { return; }
+        if (this.divStretchOffset === newOffsetFloor) {
+            return;
+        }
 
         this.divStretchOffset = newOffsetFloor!;
-        this.eventService.dispatchEvent({type: Events.EVENT_HEIGHT_SCALE_CHANGED});
+        this.eventService.dispatchEvent({ type: Events.EVENT_HEIGHT_SCALE_CHANGED });
     }
 
     public setModelHeight(modelHeight: number | null): void {
         this.modelHeight = modelHeight;
-        this.stretching = modelHeight != null // null happens when in print layout
-                        && this.maxDivHeight > 0
-                        && modelHeight! > this.maxDivHeight;
+        this.stretching =
+            modelHeight != null && // null happens when in print layout
+            this.maxDivHeight > 0 &&
+            modelHeight! > this.maxDivHeight;
         if (this.stretching) {
             this.calculateOffset();
         } else {
@@ -136,7 +140,9 @@ export class RowContainerHeightService extends BeanStub {
     }
 
     public getScrollPositionForPixel(rowTop: number): number {
-        if (this.pixelsToShave <= 0) { return rowTop; }
+        if (this.pixelsToShave <= 0) {
+            return rowTop;
+        }
 
         const modelMaxScroll = this.modelHeight! - this.getUiBodyHeight();
         const scrollPercent = rowTop / modelMaxScroll;

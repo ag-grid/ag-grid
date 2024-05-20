@@ -1,21 +1,22 @@
 import {
+    AgPromise,
+    Autowired,
     Component,
     FilterChangedEvent,
+    FilterManager,
+    IFilter,
+    IFilterDef,
     IFloatingFilterComp,
     IFloatingFilterParams,
-    UserComponentFactory,
-    Autowired,
-    IFilterDef,
-    AgPromise,
-    MultiFilterParams,
     IMultiFilterModel,
-    IFilter,
-    FilterManager,
+    MultiFilterParams,
     UserCompDetails,
+    UserComponentFactory,
     _clearElement,
     _mergeDeep,
     _setDisplayed,
 } from '@ag-grid-community/core';
+
 import { MultiFilter } from './multiFilter';
 
 export class MultiFloatingFilterComp extends Component implements IFloatingFilterComp<MultiFilter> {
@@ -27,20 +28,20 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     private params: IFloatingFilterParams<MultiFilter>;
 
     constructor() {
-        super(/* html */`<div class="ag-multi-floating-filter ag-floating-filter-input"></div>`);
+        super(/* html */ `<div class="ag-multi-floating-filter ag-floating-filter-input"></div>`);
     }
 
     public init(params: IFloatingFilterParams<MultiFilter>): AgPromise<void> {
         this.params = params;
 
         const { compDetailsList } = this.getCompDetailsList(params);
-        return this.setParams( compDetailsList );
+        return this.setParams(compDetailsList);
     }
 
     private setParams(compDetailsList: UserCompDetails[]): AgPromise<void> {
         const floatingFilterPromises: AgPromise<IFloatingFilterComp>[] = [];
 
-        compDetailsList.forEach(compDetails => {
+        compDetailsList.forEach((compDetails) => {
             const floatingFilterPromise = compDetails?.newAgStackInstance();
 
             if (floatingFilterPromise != null) {
@@ -49,7 +50,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
             }
         });
 
-        return AgPromise.all(floatingFilterPromises).then(floatingFilters => {
+        return AgPromise.all(floatingFilterPromises).then((floatingFilters) => {
             floatingFilters!.forEach((floatingFilter, index) => {
                 this.floatingFilters.push(floatingFilter!);
 
@@ -71,8 +72,12 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     public refresh(params: IFloatingFilterParams<MultiFilter>): void {
         this.params = params;
         const { compDetailsList: newCompDetailsList, floatingFilterParamsList } = this.getCompDetailsList(params);
-        const allFloatingFilterCompsUnchanged = newCompDetailsList.length === this.compDetailsList.length
-            && newCompDetailsList.every((newCompDetails, index) => !this.filterManager.areFilterCompsDifferent(this.compDetailsList[index], newCompDetails));
+        const allFloatingFilterCompsUnchanged =
+            newCompDetailsList.length === this.compDetailsList.length &&
+            newCompDetailsList.every(
+                (newCompDetails, index) =>
+                    !this.filterManager.areFilterCompsDifferent(this.compDetailsList[index], newCompDetails)
+            );
 
         if (allFloatingFilterCompsUnchanged) {
             floatingFilterParamsList.forEach((floatingFilterParams, index) => {
@@ -99,7 +104,8 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     }
 
     private getCompDetailsList(params: IFloatingFilterParams<MultiFilter>): {
-        compDetailsList: UserCompDetails[], floatingFilterParamsList: IFloatingFilterParams<IFilter>[]
+        compDetailsList: UserCompDetails[];
+        floatingFilterParamsList: IFloatingFilterParams<IFilter>[];
     } {
         const compDetailsList: UserCompDetails[] = [];
         const floatingFilterParamsList: IFloatingFilterParams<IFilter>[] = [];
@@ -109,14 +115,16 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
             const floatingFilterParams: IFloatingFilterParams<IFilter> = {
                 ...params,
                 // set the parent filter instance for each floating filter to the relevant child filter instance
-                parentFilterInstance: (callback) => {   
+                parentFilterInstance: (callback) => {
                     this.parentMultiFilterInstance((parent) => {
                         const child = parent.getChildFilterInstance(index);
-                        if (child == null) { return; }
+                        if (child == null) {
+                            return;
+                        }
 
                         callback(child);
                     });
-                }
+                },
             };
             _mergeDeep(floatingFilterParams.filterParams, filterDef.filterParams);
 
@@ -133,7 +141,9 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         // We don't want to update the floating filter if the floating filter caused the change,
         // because the UI is already in sync. if we didn't do this, the UI would behave strangely
         // as it would be updating as the user is typing
-        if (event && event.afterFloatingFilter) { return; }
+        if (event && event.afterFloatingFilter) {
+            return;
+        }
 
         this.parentMultiFilterInstance((parent) => {
             if (model == null) {
@@ -149,7 +159,8 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
 
                     filter.onParentModelChanged(filterModel, event);
 
-                    const shouldShow = lastActiveFloatingFilterIndex == null ? i === 0 : i === lastActiveFloatingFilterIndex;
+                    const shouldShow =
+                        lastActiveFloatingFilterIndex == null ? i === 0 : i === lastActiveFloatingFilterIndex;
 
                     _setDisplayed(filter.getGui(), shouldShow);
                 });
@@ -165,10 +176,10 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     }
 
     private getCompDetails(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): UserCompDetails | undefined {
-        let defaultComponentName = this.userComponentFactory.getDefaultFloatingFilterType(
-            filterDef,
-            () => this.filterManager.getDefaultFloatingFilter(this.params.column)
-        ) ?? 'agReadOnlyFloatingFilter';
+        let defaultComponentName =
+            this.userComponentFactory.getDefaultFloatingFilterType(filterDef, () =>
+                this.filterManager.getDefaultFloatingFilter(this.params.column)
+            ) ?? 'agReadOnlyFloatingFilter';
 
         return this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);
     }

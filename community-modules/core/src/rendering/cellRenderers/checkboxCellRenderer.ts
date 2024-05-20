@@ -1,21 +1,22 @@
-import { ICellRenderer, ICellRendererParams } from "./iCellRenderer";
-import { Component } from "../../widgets/component";
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { AgCheckbox } from "../../widgets/agCheckbox";
-import { _stopPropagationForAgGrid } from "../../utils/event";
-import { CellEditingStartedEvent, CellEditingStoppedEvent, Events } from "../../events";
-import { WithoutGridCommon } from "../../interfaces/iCommon";
-import { KeyCode } from "../../constants/keyCode";
-import { _getAriaCheckboxStateName, _setAriaLive } from "../../utils/aria";
-import { GROUP_AUTO_COLUMN_ID } from "../../columns/autoGroupColService";
+import { GROUP_AUTO_COLUMN_ID } from '../../columns/autoColService';
+import { KeyCode } from '../../constants/keyCode';
+import { CellEditingStartedEvent, CellEditingStoppedEvent, Events } from '../../events';
+import { WithoutGridCommon } from '../../interfaces/iCommon';
+import { _getAriaCheckboxStateName, _setAriaLive } from '../../utils/aria';
+import { _stopPropagationForAgGrid } from '../../utils/event';
+import { AgCheckbox } from '../../widgets/agCheckbox';
+import { Component } from '../../widgets/component';
+import { RefSelector } from '../../widgets/componentAnnotations';
+import { ICellRenderer, ICellRendererParams } from './iCellRenderer';
 
-export interface ICheckboxCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<TData, boolean, TContext> {
+export interface ICheckboxCellRendererParams<TData = any, TContext = any>
+    extends ICellRendererParams<TData, boolean, TContext> {
     /** Set to `true` for the input to be disabled. */
     disabled?: boolean;
 }
 
 export class CheckboxCellRenderer extends Component implements ICellRenderer {
-    private static TEMPLATE = /* html*/`
+    private static TEMPLATE = /* html*/ `
         <div class="ag-cell-wrapper ag-checkbox-cell" role="presentation">
             <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
         </div>`;
@@ -40,10 +41,10 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
             if (this.eCheckbox.isDisabled()) {
                 return;
             }
-    
+
             const isSelected = this.eCheckbox.getValue();
-    
-            this.onCheckboxChanged(isSelected)
+
+            this.onCheckboxChanged(isSelected);
         });
 
         this.addManagedListener(inputEl, 'dblclick', (event: Event) => {
@@ -75,7 +76,8 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
             const colId = params.column.getColId();
             if (colId.startsWith(GROUP_AUTO_COLUMN_ID)) {
                 // if we're grouping by this column then the value is a string and we need to parse it
-                isSelected = params.value == null || (params.value as any) === '' ? undefined : (params.value as any) === 'true';
+                isSelected =
+                    params.value == null || (params.value as any) === '' ? undefined : (params.value as any) === 'true';
             } else if (params.node.aggData && params.node.aggData[colId] !== undefined) {
                 isSelected = params.value ?? undefined;
             } else {
@@ -110,7 +112,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
             node,
             rowIndex: node.rowIndex,
             rowPinned: node.rowPinned,
-            value
+            value,
         };
         this.eventService.dispatchEvent(eventStarted);
 
@@ -127,7 +129,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
             value,
             oldValue: value,
             newValue: isSelected,
-            valueChanged
+            valueChanged,
         };
         this.eventService.dispatchEvent(eventStopped);
     }

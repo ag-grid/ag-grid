@@ -5,13 +5,14 @@ import {
     Component,
     PostConstruct,
     TabbedItem,
-    TabbedLayout
-} from "@ag-grid-community/core";
-import { ChartDataPanel } from "./data/chartDataPanel";
-import { FormatPanel } from "./format/formatPanel";
-import { ChartSettingsPanel } from "./settings/chartSettingsPanel";
-import { ChartTranslationKey, ChartTranslationService } from "../services/chartTranslationService";
-import { ChartMenuContext } from "./chartMenuContext";
+    TabbedLayout,
+} from '@ag-grid-community/core';
+
+import { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
+import { ChartMenuContext } from './chartMenuContext';
+import { ChartDataPanel } from './data/chartDataPanel';
+import { FormatPanel } from './format/formatPanel';
+import { ChartSettingsPanel } from './settings/chartSettingsPanel';
 
 export class TabbedChartMenu extends Component {
     public static EVENT_CLOSED = 'closed';
@@ -33,7 +34,7 @@ export class TabbedChartMenu extends Component {
 
     @PostConstruct
     public init(): void {
-        this.panels.forEach(panel => {
+        this.panels.forEach((panel) => {
             const panelType = panel.replace('chart', '').toLowerCase() as 'settings' | 'data' | 'format';
             const panelComp = this.createPanel(panelType);
             const tabItem = this.createTab(panel, panelType, panelComp);
@@ -53,16 +54,12 @@ export class TabbedChartMenu extends Component {
             onCloseClicked: () => {
                 this.eventSource?.focus({ preventScroll: true });
                 this.dispatchEvent({ type: TabbedChartMenu.EVENT_CLOSED });
-            }
+            },
         });
         this.getContext().createBean(this.tabbedLayout);
     }
 
-    private createTab(
-        name: ChartToolPanelMenuOptions,
-        title: ChartTranslationKey,
-        panelComp: Component,
-    ): TabbedItem {
+    private createTab(name: ChartToolPanelMenuOptions, title: ChartTranslationKey, panelComp: Component): TabbedItem {
         const eWrapperDiv = document.createElement('div');
         eWrapperDiv.classList.add('ag-chart-tab', `ag-chart-${title}`);
 
@@ -82,7 +79,7 @@ export class TabbedChartMenu extends Component {
                 const scrollableContainer = eWrapperDiv.querySelector('.ag-scrollable-container');
                 return (scrollableContainer || eWrapperDiv) as HTMLElement;
             },
-            name
+            name,
         };
     }
 
@@ -110,14 +107,13 @@ export class TabbedChartMenu extends Component {
     }
 
     private createPanel(panelType: string): Component {
-        const { chartController, chartOptionsService } = this.chartMenuContext;
         switch (panelType) {
             case TabbedChartMenu.TAB_DATA:
-                return new ChartDataPanel(chartController, chartOptionsService);
+                return new ChartDataPanel(this.chartMenuContext);
             case TabbedChartMenu.TAB_FORMAT:
                 return new FormatPanel(this.chartMenuContext);
             default:
-                return new ChartSettingsPanel(chartController);
+                return new ChartSettingsPanel(this.chartMenuContext.chartController);
         }
     }
 }

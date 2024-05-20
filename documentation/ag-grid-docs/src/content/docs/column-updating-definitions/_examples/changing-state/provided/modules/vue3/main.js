@@ -1,11 +1,12 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { createApp } from 'vue';
+
 import './styles.css';
 
-import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
@@ -29,7 +30,6 @@ const VueExample = {
     `,
     components: {
         'ag-grid-vue': AgGridVue,
-
     },
     data: function () {
         return {
@@ -38,11 +38,13 @@ const VueExample = {
             defaultColDef: {
                 width: 100, // resets col widths if manually resized
                 pinned: null,
-                sort: null
+                sort: null,
             },
             rowData: null,
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
-        }
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
+        };
     },
     beforeMount() {
         this.columnDefs = this.getColumnDefs();
@@ -57,26 +59,25 @@ const VueExample = {
         onGridReady(params) {
             this.gridApi = params.api;
 
-
             const updateData = (data) => {
                 this.rowData = data;
             };
 
             fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-                .then(resp => resp.json())
-                .then(data => updateData(data));
+                .then((resp) => resp.json())
+                .then((data) => updateData(data));
         },
         getColumnDefs() {
             return [
                 {
                     field: 'athlete',
                     width: 100,
-                    sort: 'asc'
+                    sort: 'asc',
                 },
                 { field: 'age' },
                 {
                     field: 'country',
-                    pinned: 'left'
+                    pinned: 'left',
                 },
                 { field: 'sport' },
                 { field: 'year' },
@@ -84,12 +85,10 @@ const VueExample = {
                 { field: 'gold' },
                 { field: 'silver' },
                 { field: 'bronze' },
-                { field: 'total' }
+                { field: 'total' },
             ];
-        }
-    }
-}
+        },
+    },
+};
 
-createApp(VueExample)
-    .mount("#app")
-
+createApp(VueExample).mount('#app');

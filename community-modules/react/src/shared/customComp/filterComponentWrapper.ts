@@ -1,8 +1,12 @@
-import { AgPromise, IDoesFilterPassParams, IFilter, IFilterParams } from "@ag-grid-community/core";
-import { CustomComponentWrapper } from "./customComponentWrapper";
-import { CustomFilterProps, CustomFilterCallbacks } from "./interfaces";
+import { AgPromise, IDoesFilterPassParams, IFilter, IFilterParams } from '@ag-grid-community/core';
 
-export class FilterComponentWrapper extends CustomComponentWrapper<IFilterParams, CustomFilterProps, CustomFilterCallbacks> implements IFilter {
+import { CustomComponentWrapper } from './customComponentWrapper';
+import { CustomFilterCallbacks, CustomFilterProps } from './interfaces';
+
+export class FilterComponentWrapper
+    extends CustomComponentWrapper<IFilterParams, CustomFilterProps, CustomFilterCallbacks>
+    implements IFilter
+{
     private model: any = null;
     private readonly onModelChange = (model: any) => this.updateModel(model);
     private readonly onUiChange = () => this.sourceParams.filterChangedCallback();

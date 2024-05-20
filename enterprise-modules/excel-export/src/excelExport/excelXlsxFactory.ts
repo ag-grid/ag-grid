@@ -1,31 +1,36 @@
 import {
     Column,
     ExcelFactoryMode,
+    ExcelHeaderFooterImage,
     ExcelImage,
     ExcelRelationship,
     ExcelStyle,
-    ExcelWorksheet,
     ExcelTableConfig,
+    ExcelWorksheet,
     RowHeightCallbackParams,
-    ExcelHeaderFooterImage,
     _escapeString,
 } from '@ag-grid-community/core';
 
-import coreFactory from './files/ooxml/core';
+import {
+    ExcelCalculatedImage,
+    ExcelDataTable,
+    ExcelHeaderFooterCalculatedImage,
+    ExcelHeaderFooterPosition,
+    ImageIdMap,
+} from './assets/excelInterfaces';
+import { createXmlPart, setExcelImageTotalHeight, setExcelImageTotalWidth } from './assets/excelUtils';
+import { ExcelGridSerializingParams } from './excelSerializingSession';
 import contentTypesFactory from './files/ooxml/contentTypes';
+import coreFactory from './files/ooxml/core';
 import drawingFactory from './files/ooxml/drawing';
-import tableFactory from './files/ooxml/table';
-import officeThemeFactory from './files/ooxml/themes/office';
+import relationshipsFactory from './files/ooxml/relationships';
 import sharedStringsFactory from './files/ooxml/sharedStrings';
 import stylesheetFactory, { registerStyles } from './files/ooxml/styles/stylesheet';
+import tableFactory from './files/ooxml/table';
+import officeThemeFactory from './files/ooxml/themes/office';
+import vmlDrawingFactory from './files/ooxml/vmlDrawing';
 import workbookFactory from './files/ooxml/workbook';
 import worksheetFactory from './files/ooxml/worksheet';
-import relationshipsFactory from './files/ooxml/relationships';
-
-import { setExcelImageTotalHeight, setExcelImageTotalWidth, createXmlPart } from './assets/excelUtils';
-import { ImageIdMap, ExcelCalculatedImage, ExcelDataTable, ExcelHeaderFooterCalculatedImage, ExcelHeaderFooterPosition } from './assets/excelInterfaces';
-import { ExcelGridSerializingParams } from './excelSerializingSession';
-import vmlDrawingFactory from './files/ooxml/vmlDrawing';
 
 /**
  * See links for more info on the Office Open XML format being used:
@@ -33,12 +38,14 @@ import vmlDrawingFactory from './files/ooxml/vmlDrawing';
  * https://ecma-international.org/publications-and-standards/standards/ecma-376/
  */
 export class ExcelXlsxFactory {
-
     private static sharedStrings: Map<string, number> = new Map();
     private static sheetNames: string[] = [];
 
     /** Maps images to sheet */
-    public static images: Map<string, { sheetId: number, image: (ExcelCalculatedImage | ExcelHeaderFooterCalculatedImage)[] }[]> = new Map();
+    public static images: Map<
+        string,
+        { sheetId: number; image: (ExcelCalculatedImage | ExcelHeaderFooterCalculatedImage)[] }[]
+    > = new Map();
     /** Maps sheets to images */
     public static worksheetImages: Map<number, ExcelCalculatedImage[]> = new Map();
     /** Maps sheets to header/footer images */
@@ -84,8 +91,8 @@ export class ExcelXlsxFactory {
     private static showExcelTableNonCompatibleFeaturesWarning(featureName: string) {
         console.warn(
             `AG Grid: Excel table export does not work with ${featureName}. ` +
-            `The exported Excel file will not contain any Excel tables.\n` +
-            `Please turn off ${featureName} to enable Excel table exports.`
+                `The exported Excel file will not contain any Excel tables.\n` +
+                `Please turn off ${featureName} to enable Excel table exports.`
         );
     }
 
@@ -94,9 +101,10 @@ export class ExcelXlsxFactory {
     }
 
     public static getSanitizedTableName(name: string) {
-        return name.replace(/^[^a-zA-Z_]+/, '_')
-                   .replace(/\s/g, '_')
-                   .replace(/[^a-zA-Z0-9_]/g, '_')
+        return name
+            .replace(/^[^a-zA-Z_]+/, '_')
+            .replace(/\s/g, '_')
+            .replace(/[^a-zA-Z0-9_]/g, '_');
     }
 
     public static addTableToSheet(sheetIndex: number, table: ExcelDataTable): void {
@@ -108,16 +116,13 @@ export class ExcelXlsxFactory {
         this.worksheetDataTables.set(sheetIndex, table);
     }
 
-    private static processTableConfig(
-        worksheet: ExcelWorksheet,
-        config: ExcelGridSerializingParams
-    ) {
+    private static processTableConfig(worksheet: ExcelWorksheet, config: ExcelGridSerializingParams) {
         if (!config.exportAsExcelTable) {
             return;
         }
 
-        const tableConfig: Partial<ExcelTableConfig> = typeof config.exportAsExcelTable === 'boolean'
-            ? {} : config.exportAsExcelTable;
+        const tableConfig: Partial<ExcelTableConfig> =
+            typeof config.exportAsExcelTable === 'boolean' ? {} : config.exportAsExcelTable;
 
         const {
             name: nameFromConfig,
@@ -128,9 +133,7 @@ export class ExcelXlsxFactory {
             highlightLastColumn,
         } = tableConfig;
 
-        const tableName = this.getSanitizedTableName(
-            nameFromConfig || ExcelXlsxFactory.defaultTableDisplayName
-        );
+        const tableName = this.getSanitizedTableName(nameFromConfig || ExcelXlsxFactory.defaultTableDisplayName);
 
         const sheetIndex = this.sheetNames.length - 1;
         const { table } = worksheet;
@@ -147,8 +150,8 @@ export class ExcelXlsxFactory {
             const col = columns[i];
             tableColumns.push(col.displayName || '');
             showFilterButtons.push(
-                (showFilterButton === 'match' || showFilterButton === undefined)
-                    ? (col.filterAllowed ?? false) // We fall back to the column's filterAllowed property on match
+                showFilterButton === 'match' || showFilterButton === undefined
+                    ? col.filterAllowed ?? false // We fall back to the column's filterAllowed property on match
                     : showFilterButton
             );
         }
@@ -176,7 +179,7 @@ export class ExcelXlsxFactory {
         const sheetIndex = this.sheetNames.length - 1;
         const headerFooterImage = image as ExcelHeaderFooterCalculatedImage;
 
-        headerFooterImage.headerFooterPosition = position
+        headerFooterImage.headerFooterPosition = position;
 
         this.buildImageMap({ imageToAdd: headerFooterImage, idx: sheetIndex });
 
@@ -184,26 +187,34 @@ export class ExcelXlsxFactory {
 
         if (!headerFooterImagesForSheet) {
             headerFooterImagesForSheet = [];
-            this.worksheetHeaderFooterImages.set(sheetIndex, headerFooterImagesForSheet)
+            this.worksheetHeaderFooterImages.set(sheetIndex, headerFooterImagesForSheet);
         }
 
-        if (!headerFooterImagesForSheet.find(img => img.id === image.id)) {
+        if (!headerFooterImagesForSheet.find((img) => img.id === image.id)) {
             headerFooterImagesForSheet.push(image as ExcelHeaderFooterCalculatedImage);
         }
     }
 
-    public static addBodyImageToMap(image: ExcelImage, rowIndex: number, col: Column, columnsToExport?: Column[], rowHeight?: number | ((params: RowHeightCallbackParams) => number)): void {
+    public static addBodyImageToMap(
+        image: ExcelImage,
+        rowIndex: number,
+        col: Column,
+        columnsToExport?: Column[],
+        rowHeight?: number | ((params: RowHeightCallbackParams) => number)
+    ): void {
         let sheetIndex = this.sheetNames.length;
         const { row, column } = image.position || {};
         const calculatedImage = image as ExcelCalculatedImage;
 
         if (columnsToExport) {
             if (rowIndex != null && col != null && (!row || !column)) {
-                if (!image.position) { image.position = {}; }
+                if (!image.position) {
+                    image.position = {};
+                }
 
                 image.position = Object.assign({}, image.position, {
                     row: rowIndex,
-                    column: columnsToExport.indexOf(col) + 1
+                    column: columnsToExport.indexOf(col) + 1,
                 });
             }
             setExcelImageTotalWidth(calculatedImage, columnsToExport);
@@ -234,19 +245,19 @@ export class ExcelXlsxFactory {
 
     private static buildImageMap(params: {
         imageToAdd: ExcelCalculatedImage | ExcelHeaderFooterCalculatedImage;
-        idx: number,
+        idx: number;
     }): void {
         const { imageToAdd, idx } = params;
         const mappedImagesToSheet = this.images.get(imageToAdd.id);
 
         if (mappedImagesToSheet) {
-            const currentSheetImages = mappedImagesToSheet.find(currentImage => currentImage.sheetId === idx);
+            const currentSheetImages = mappedImagesToSheet.find((currentImage) => currentImage.sheetId === idx);
             if (currentSheetImages) {
                 currentSheetImages.image.push(imageToAdd);
             } else {
                 mappedImagesToSheet.push({
                     sheetId: idx,
-                    image: [imageToAdd]
+                    image: [imageToAdd],
                 });
             }
         } else {
@@ -317,15 +328,18 @@ export class ExcelXlsxFactory {
     }
 
     public static createRels(): string {
-        const rs = relationshipsFactory.getTemplate([{
-            Id: 'rId1',
-            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument',
-            Target: 'xl/workbook.xml'
-        }, {
-            Id: 'rId2',
-            Type: 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties',
-            Target: 'docProps/core.xml'
-        }]);
+        const rs = relationshipsFactory.getTemplate([
+            {
+                Id: 'rId1',
+                Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument',
+                Target: 'xl/workbook.xml',
+            },
+            {
+                Id: 'rId2',
+                Type: 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties',
+                Target: 'docProps/core.xml',
+            },
+        ]);
 
         return createXmlPart(rs);
     }
@@ -342,24 +356,27 @@ export class ExcelXlsxFactory {
         const worksheets = new Array(sheetLen).fill(undefined).map((v, i) => ({
             Id: `rId${i + 1}`,
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet',
-            Target: `worksheets/sheet${i + 1}.xml`
+            Target: `worksheets/sheet${i + 1}.xml`,
         }));
 
         const rs = relationshipsFactory.getTemplate([
             ...worksheets,
-        {
-            Id: `rId${sheetLen + 1}`,
-            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme',
-            Target: 'theme/theme1.xml'
-        }, {
-            Id: `rId${sheetLen + 2}`,
-            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles',
-            Target: 'styles.xml'
-        }, {
-            Id: `rId${sheetLen + 3}`,
-            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings',
-            Target: 'sharedStrings.xml'
-        }]);
+            {
+                Id: `rId${sheetLen + 1}`,
+                Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme',
+                Target: 'theme/theme1.xml',
+            },
+            {
+                Id: `rId${sheetLen + 2}`,
+                Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles',
+                Target: 'styles.xml',
+            },
+            {
+                Id: `rId${sheetLen + 3}`,
+                Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings',
+                Target: 'sharedStrings.xml',
+            },
+        ]);
 
         return createXmlPart(rs);
     }
@@ -372,11 +389,11 @@ export class ExcelXlsxFactory {
         const worksheetImageIds = this.worksheetImageIds.get(sheetIndex) || [];
         const XMLArr: ExcelRelationship[] = [];
 
-        for (const[ key, value ] of worksheetImageIds) {
+        for (const [key, value] of worksheetImageIds) {
             XMLArr.push({
                 Id: `rId${value.index + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
-                Target: `../media/image${this.workbookImageIds.get(key)!.index + 1}.${value.type}`
+                Target: `../media/image${this.workbookImageIds.get(key)!.index + 1}.${value.type}`,
             });
         }
 
@@ -384,7 +401,7 @@ export class ExcelXlsxFactory {
     }
 
     public static createVmlDrawing(sheetIndex: number) {
-        return createXmlPart(vmlDrawingFactory.getTemplate({ sheetIndex }), true)
+        return createXmlPart(vmlDrawingFactory.getTemplate({ sheetIndex }), true);
     }
 
     public static createVmlDrawingRel(sheetIndex: number) {
@@ -395,7 +412,9 @@ export class ExcelXlsxFactory {
             const headerFooterImage = worksheetHeaderFooterImages[i];
             const workbookImage = this.workbookImageIds.get(headerFooterImage.id);
 
-            if (!workbookImage) { continue; }
+            if (!workbookImage) {
+                continue;
+            }
 
             const { index, type } = workbookImage;
             const imageType = type === 'jpg' ? 'jpeg' : type;
@@ -403,7 +422,7 @@ export class ExcelXlsxFactory {
             XMLArr.push({
                 Id: `rId${i + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
-                Target: `../media/image${index + 1}.${imageType}`
+                Target: `../media/image${index + 1}.${imageType}`,
             });
         }
 
@@ -414,7 +433,7 @@ export class ExcelXlsxFactory {
         drawingIndex,
         vmlDrawingIndex,
         tableIndex,
-    } : {
+    }: {
         drawingIndex?: number;
         vmlDrawingIndex?: number;
         tableIndex?: number;
@@ -428,7 +447,7 @@ export class ExcelXlsxFactory {
             config.push({
                 Id: `rId${config.length + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing',
-                Target: `../drawings/drawing${drawingIndex + 1}.xml`
+                Target: `../drawings/drawing${drawingIndex + 1}.xml`,
             });
         }
 
@@ -436,7 +455,7 @@ export class ExcelXlsxFactory {
             config.push({
                 Id: `rId${config.length + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing',
-                Target: `../drawings/vmlDrawing${vmlDrawingIndex + 1}.vml`
+                Target: `../drawings/vmlDrawing${vmlDrawingIndex + 1}.vml`,
             });
         }
 
@@ -444,7 +463,7 @@ export class ExcelXlsxFactory {
             config.push({
                 Id: `rId${config.length + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/table',
-                Target: `../tables/${this.getTableNameFromIndex(tableIndex)}.xml`
+                Target: `../tables/${this.getTableNameFromIndex(tableIndex)}.xml`,
             });
         }
 
@@ -452,14 +471,13 @@ export class ExcelXlsxFactory {
         return createXmlPart(rs);
     }
 
-    private static createWorksheet(
-        worksheet: ExcelWorksheet,
-        config: ExcelGridSerializingParams
-    ): string {
-        return createXmlPart(worksheetFactory.getTemplate({
-            worksheet,
-            currentSheet: this.sheetNames.length - 1,
-            config
-        }));
+    private static createWorksheet(worksheet: ExcelWorksheet, config: ExcelGridSerializingParams): string {
+        return createXmlPart(
+            worksheetFactory.getTemplate({
+                worksheet,
+                currentSheet: this.sheetNames.length - 1,
+                config,
+            })
+        );
     }
 }

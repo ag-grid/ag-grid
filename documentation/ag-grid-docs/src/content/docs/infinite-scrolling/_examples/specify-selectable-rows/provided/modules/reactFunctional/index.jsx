@@ -1,17 +1,16 @@
 'use strict';
 
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
+import { AgGridReact } from '@ag-grid-community/react';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
-import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
-import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
 
-import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
 const GridExample = () => {
-
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
 
@@ -23,7 +22,7 @@ const GridExample = () => {
             // it is important to have node.id here, so that when the id changes (which happens
             // when the row is loaded) then the cell is refreshed.
             valueGetter: 'node.id',
-            cellRenderer: props => {
+            cellRenderer: (props) => {
                 if (props.value !== undefined) {
                     return props.value;
                 } else {
@@ -47,18 +46,16 @@ const GridExample = () => {
             flex: 1,
             minWidth: 100,
             sortable: false,
-        }
+        };
     }, []);
     const isRowSelectable = useCallback(function (rowNode) {
         return rowNode.data ? rowNode.data.country === 'United States' : false;
     }, []);
 
-
     const onGridReady = useCallback((params) => {
-
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then(resp => resp.json())
-            .then(data => {
+            .then((resp) => resp.json())
+            .then((data) => {
                 const dataSource = {
                     rowCount: undefined,
                     getRows: (params) => {
@@ -82,11 +79,15 @@ const GridExample = () => {
             });
     }, []);
 
-
     return (
         <div style={containerStyle}>
-
-            <div style={gridStyle} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+            <div
+                style={gridStyle}
+                className={
+                    /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                    'ag-theme-quartz' /** DARK MODE END **/
+                }
+            >
                 <AgGridReact
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
@@ -102,11 +103,9 @@ const GridExample = () => {
                     onGridReady={onGridReady}
                 />
             </div>
-
         </div>
     );
-
-}
+};
 
 const root = createRoot(document.getElementById('root'));
 root.render(<GridExample />);

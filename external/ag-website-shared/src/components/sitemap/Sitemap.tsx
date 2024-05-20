@@ -1,4 +1,5 @@
 import classnames from 'classnames';
+
 import styles from './sitemap.module.scss';
 
 export type CategorizedSitemap = {

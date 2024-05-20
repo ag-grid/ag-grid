@@ -6,9 +6,10 @@ import {
     ITooltipParams,
     PostConstruct,
     WithoutGridCommon,
-    _createIconNoSpan
-} from "@ag-grid-community/core";
-import { BaseDropZonePanel } from "./baseDropZonePanel";
+    _createIconNoSpan,
+} from '@ag-grid-community/core';
+
+import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class RowGroupDropZonePanel extends BaseDropZonePanel {
     constructor(horizontal: boolean) {
@@ -24,7 +25,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
         super.init({
             icon: _createIconNoSpan('rowGroupPanel', this.gos, null)!,
             emptyMessage: emptyMessage,
-            title
+            title,
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
@@ -46,13 +47,15 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
 
     protected isItemDroppable(column: Column, draggingEvent: DraggingEvent): boolean {
         // we never allow grouping of secondary columns
-        if (this.gos.get('functionsReadOnly') || !column.isPrimary()) { return false; }
+        if (this.gos.get('functionsReadOnly') || !column.isPrimary()) {
+            return false;
+        }
 
         return column.isAllowRowGroup() && (!column.isRowGroupActive() || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: Column[]) {
-        this.columnModel.setRowGroupColumns(columns, "toolPanelUi");
+        this.funcColsService.setRowGroupColumns(columns, 'toolPanelUi');
     }
 
     protected getIconName(): string {
@@ -60,6 +63,6 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): Column[] {
-        return this.columnModel.getRowGroupColumns();
+        return this.funcColsService.getRowGroupColumns();
     }
 }

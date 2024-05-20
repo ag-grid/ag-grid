@@ -1,21 +1,29 @@
-import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { _Scene } from "ag-charts-community";
-import { ChartType } from "@ag-grid-community/core";
+import { ChartType } from '@ag-grid-community/core';
+import { _Scene } from 'ag-charts-community';
+
+import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export class MiniBubble extends MiniChartWithAxes {
-
     static chartType: ChartType = 'bubble';
     private readonly points: _Scene.Shape[];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {
-        super(container, "bubbleTooltip");
+        super(container, 'bubbleTooltip');
 
         const size = this.size;
         const padding = this.padding;
 
         // [x, y, radius] triples
         const data = [
-            [[0.1, 0.3, 5], [0.5, 0.4, 7], [0.2, 0.8, 7]], [[0.8, 0.7, 5], [0.7, 0.3, 9]]
+            [
+                [0.1, 0.3, 5],
+                [0.5, 0.4, 7],
+                [0.2, 0.8, 7],
+            ],
+            [
+                [0.8, 0.7, 5],
+                [0.7, 0.3, 9],
+            ],
         ];
 
         const xScale = new _Scene.LinearScale();
@@ -28,7 +36,7 @@ export class MiniBubble extends MiniChartWithAxes {
 
         const points: _Scene.Shape[] = [];
 
-        data.forEach(series => {
+        data.forEach((series) => {
             series.forEach(([x, y, radius]) => {
                 const arc = new _Scene.Arc();
                 arc.strokeWidth = 0;
@@ -44,7 +52,9 @@ export class MiniBubble extends MiniChartWithAxes {
         this.updateColors(fills, strokes);
 
         const pointsGroup = new _Scene.Group();
-        pointsGroup.setClipRectInGroupCoordinateSpace(new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2));
+        pointsGroup.setClipRectInGroupCoordinateSpace(
+            new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2)
+        );
         pointsGroup.append(this.points);
         this.root.append(pointsGroup);
     }

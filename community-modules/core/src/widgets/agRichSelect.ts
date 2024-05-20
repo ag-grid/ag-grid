@@ -1,30 +1,30 @@
-import { UserCompDetails, UserComponentFactory } from "../components/framework/userComponentFactory";
-import { KeyCode } from "../constants/keyCode";
-import { Autowired } from "../context/context";
-import { Events } from "../eventKeys";
-import { FieldPickerValueSelectedEvent } from "../events";
-import { WithoutGridCommon } from "../interfaces/iCommon";
-import { AnimationFrameService } from "../misc/animationFrameService";
-import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
-import { AgPromise } from "../utils/promise";
-import { _setAriaActiveDescendant, _setAriaControls, _setAriaLabel } from "../utils/aria";
-import { _bindCellRendererToHtmlElement, _clearElement, _isVisible } from "../utils/dom";
-import { _stopPropagationForAgGrid } from "../utils/event";
-import { _debounce } from "../utils/function";
-import { _fuzzySuggestions } from "../utils/fuzzyMatch";
-import { _exists } from "../utils/generic";
-import { _isEventFromPrintableCharacter } from "../utils/keyboard";
-import { _escapeString } from "../utils/string";
-import { AgInputTextField } from "./agInputTextField";
-import { AgPickerField, AgPickerFieldParams } from "./agPickerField";
-import { RichSelectRow } from "./agRichSelectRow";
-import { Component } from "./component";
-import { RefSelector } from "./componentAnnotations";
-import { VirtualList } from "./virtualList";
+import { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
+import { KeyCode } from '../constants/keyCode';
+import { Autowired } from '../context/context';
+import { Events } from '../eventKeys';
+import { FieldPickerValueSelectedEvent } from '../events';
+import { WithoutGridCommon } from '../interfaces/iCommon';
+import { AnimationFrameService } from '../misc/animationFrameService';
+import { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
+import { _setAriaActiveDescendant, _setAriaControls, _setAriaLabel } from '../utils/aria';
+import { _bindCellRendererToHtmlElement, _clearElement, _isVisible } from '../utils/dom';
+import { _stopPropagationForAgGrid } from '../utils/event';
+import { _debounce } from '../utils/function';
+import { _fuzzySuggestions } from '../utils/fuzzyMatch';
+import { _exists } from '../utils/generic';
+import { _isEventFromPrintableCharacter } from '../utils/keyboard';
+import { AgPromise } from '../utils/promise';
+import { _escapeString } from '../utils/string';
+import { AgInputTextField } from './agInputTextField';
+import { AgPickerField, AgPickerFieldParams } from './agPickerField';
+import { RichSelectRow } from './agRichSelectRow';
+import { Component } from './component';
+import { RefSelector } from './componentAnnotations';
+import { VirtualList } from './virtualList';
 
 export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
     value?: TValue;
-    valueList?: TValue[]
+    valueList?: TValue[];
     allowTyping?: boolean;
     cellRenderer?: any;
     cellRowHeight?: number;
@@ -37,10 +37,10 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
     initialInputValue?: string;
 
     valueFormatter?: (value: TValue) => any;
-    searchStringCreator?: (values: TValue[]) => string[]
+    searchStringCreator?: (values: TValue[]) => string[];
 }
 
-const TEMPLATE = /* html */`
+const TEMPLATE = /* html */ `
     <div class="ag-picker-field" role="presentation">
         <div ref="eLabel"></div>
             <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-rich-select-value ag-picker-collapsed">
@@ -51,11 +51,10 @@ const TEMPLATE = /* html */`
     </div>`;
 
 export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelectParams<TValue>, VirtualList> {
-
     private searchString = '';
     private listComponent: VirtualList | undefined;
     protected values: TValue[];
-    private currentList: TValue[] | undefined
+    private currentList: TValue[] | undefined;
     private cellRowHeight: number;
     private highlightedItem: number = -1;
     private lastRowHovered: number = -1;
@@ -65,7 +64,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @RefSelector('eInput') private eInput: AgInputTextField;
-    
 
     constructor(config?: RichSelectParams<TValue>) {
         super({
@@ -109,9 +107,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         const { allowTyping, placeholder } = this.config;
 
         if (allowTyping) {
-            this.eInput
-                .setAutoComplete(false)
-                .setInputPlaceholder(placeholder);
+            this.eInput.setAutoComplete(false).setInputPlaceholder(placeholder);
 
             this.eDisplayField.classList.add('ag-hidden');
         } else {
@@ -126,11 +122,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         this.renderSelectedValue();
 
         if (allowTyping) {
-            this.eInput.onValueChange(value => this.searchTextFromString(value));
+            this.eInput.onValueChange((value) => this.searchTextFromString(value));
             this.addManagedListener(this.eWrapper, 'focus', this.onWrapperFocus.bind(this));
         }
         this.addManagedListener(this.eWrapper, 'focusout', this.onWrapperFocusOut.bind(this));
-
     }
 
     private createLoadingElement(): void {
@@ -144,17 +139,23 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     private createListComponent(): void {
-        this.listComponent = this.createBean(new VirtualList({ cssIdentifier: 'rich-select' }))
+        this.listComponent = this.createBean(new VirtualList({ cssIdentifier: 'rich-select' }));
         this.listComponent.setComponentCreator(this.createRowComponent.bind(this));
 
-        const componentUpdater = (item: TValue, component: any) => { /* nothing to update but method required to soft refresh */ };
+        const componentUpdater = (item: TValue, component: any) => {
+            /* nothing to update but method required to soft refresh */
+        };
         this.listComponent.setComponentUpdater(componentUpdater);
         this.listComponent.setParentComponent(this);
 
-        this.addManagedListener(this.listComponent, Events.EVENT_FIELD_PICKER_VALUE_SELECTED, (e: FieldPickerValueSelectedEvent) => {
-            this.onListValueSelected(e.value, e.fromEnterKey);
-        });
-        
+        this.addManagedListener(
+            this.listComponent,
+            Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
+            (e: FieldPickerValueSelectedEvent) => {
+                this.onListValueSelected(e.value, e.fromEnterKey);
+            }
+        );
+
         const { cellRowHeight } = this;
         if (cellRowHeight) {
             this.listComponent.setRowHeight(cellRowHeight);
@@ -164,7 +165,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         const eListAriaEl = this.listComponent.getAriaElement();
 
         this.addManagedListener(eListGui, 'mousemove', this.onPickerMouseMove.bind(this));
-        this.addManagedListener(eListGui, 'mousedown', e => e.preventDefault());
+        this.addManagedListener(eListGui, 'mousedown', (e) => e.preventDefault());
         eListGui.classList.add('ag-rich-select-list');
 
         const listId = `ag-rich-select-list-${this.listComponent.getCompId()}`;
@@ -182,7 +183,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         const valueFormatted = this.config.valueFormatter ? this.config.valueFormatter(value) : value;
 
         if (allowTyping) {
-            this.eInput.setValue(initialInputValue ?? valueFormatted)
+            this.eInput.setValue(initialInputValue ?? valueFormatted);
             return;
         }
 
@@ -191,7 +192,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         if (config.cellRenderer) {
             userCompDetails = this.userComponentFactory.getCellRendererDetails(this.config, {
                 value,
-                valueFormatted
+                valueFormatted,
             } as ICellRendererParams);
         }
 
@@ -204,7 +205,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         if (userCompDetailsPromise) {
             _clearElement(eDisplayField);
             _bindCellRendererToHtmlElement(userCompDetailsPromise, eDisplayField);
-            userCompDetailsPromise.then(renderer => {
+            userCompDetailsPromise.then((renderer) => {
                 this.addDestroyFunc(() => this.getContext().destroyBean(renderer));
             });
         } else {
@@ -214,7 +215,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             } else {
                 const { placeholder } = config;
                 if (_exists(placeholder)) {
-                    eDisplayField.innerHTML = `${_escapeString(placeholder)}`
+                    eDisplayField.innerHTML = `${_escapeString(placeholder)}`;
                     eDisplayField.classList.add('ag-display-as-placeholder');
                 } else {
                     _clearElement(eDisplayField);
@@ -223,7 +224,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
             this.setTooltip({
                 newTooltipText: valueFormatted ?? null,
-                shouldDisplayTooltip: () => this.eDisplayField.scrollWidth > this.eDisplayField.clientWidth
+                shouldDisplayTooltip: () => this.eDisplayField.scrollWidth > this.eDisplayField.clientWidth,
             });
         }
     }
@@ -231,7 +232,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     private getCurrentValueIndex(): number {
         const { currentList, value } = this;
 
-        if (value == null || !currentList) { return -1; }
+        if (value == null || !currentList) {
+            return -1;
+        }
 
         for (let i = 0; i < currentList.length; i++) {
             if (currentList[i] === value) {
@@ -272,7 +275,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     protected createPickerComponent() {
-        const { values }  = this;
+        const { values } = this;
 
         if (values) {
             this.setValueList({ valueList: values });
@@ -286,11 +289,15 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         this.searchStringCreator = searchStringFn;
     }
 
-    public setValueList(params: { valueList: TValue[], refresh?: boolean }): void {
+    public setValueList(params: { valueList: TValue[]; refresh?: boolean }): void {
         const { valueList, refresh } = params;
 
-        if (!this.listComponent) { return; }
-        if (this.currentList === valueList) { return; }
+        if (!this.listComponent) {
+            return;
+        }
+        if (this.currentList === valueList) {
+            return;
+        }
 
         this.currentList = valueList;
 
@@ -320,9 +327,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     private showCurrentValueInPicker(): void {
-        if (!this.listComponent) { return; }
+        if (!this.listComponent) {
+            return;
+        }
 
-        if (!this.currentList) { 
+        if (!this.currentList) {
             if (this.isPickerDisplayed && this.eLoading) {
                 this.listComponent.appendChild(this.eLoading);
             }
@@ -354,7 +363,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     private onWrapperFocus(): void {
-        if (!this.eInput) { return; }
+        if (!this.eInput) {
+            return;
+        }
 
         const focusableEl = this.eInput.getFocusableElement() as HTMLInputElement;
         focusableEl.focus();
@@ -389,17 +400,19 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     public searchTextFromString(str: string | null | undefined): void {
-        if (str == null) { str = ''; }
+        if (str == null) {
+            str = '';
+        }
         this.searchString = str;
         this.runSearch();
     }
 
     private buildSearchStrings(values: TValue[]): string[] | undefined {
-        const { valueFormatter = (value => value) } = this.config;
+        const { valueFormatter = (value) => value } = this.config;
 
         let searchStrings: string[] | undefined;
         if (typeof values[0] === 'number' || typeof values[0] === 'string') {
-            searchStrings = values.map(v => valueFormatter(v));
+            searchStrings = values.map((v) => valueFormatter(v));
         } else if (typeof values[0] === 'object' && this.searchStringCreator) {
             searchStrings = this.searchStringCreator(values);
         }
@@ -407,11 +420,16 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         return searchStrings;
     }
 
-    private getSuggestionsAndFilteredValues(searchValue: string, valueList: string[]): { suggestions: string[], filteredValues: TValue[] } {
+    private getSuggestionsAndFilteredValues(
+        searchValue: string,
+        valueList: string[]
+    ): { suggestions: string[]; filteredValues: TValue[] } {
         let suggestions: string[] = [];
         const filteredValues: TValue[] = [];
 
-        if (!searchValue.length) { return { suggestions, filteredValues } };
+        if (!searchValue.length) {
+            return { suggestions, filteredValues };
+        }
 
         const { searchType = 'fuzzy', filterList } = this.config;
 
@@ -430,7 +448,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
                 const currentValue = val.toLocaleLowerCase();
                 const valueToMatch = this.searchString.toLocaleLowerCase();
 
-                const isMatch = searchType === 'match' ? currentValue.startsWith(valueToMatch) : currentValue.indexOf(valueToMatch) !== -1;
+                const isMatch =
+                    searchType === 'match'
+                        ? currentValue.startsWith(valueToMatch)
+                        : currentValue.indexOf(valueToMatch) !== -1;
                 if (filterList && isMatch) {
                     filteredValues.push(this.values[idx]);
                 }
@@ -444,7 +465,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     private filterListModel(filteredValues: TValue[]): void {
         const { filterList } = this.config;
 
-        if (!filterList) { return; }
+        if (!filterList) {
+            return;
+        }
 
         this.setValueList({ valueList: filteredValues, refresh: true });
         this.alignPickerToComponent();
@@ -472,7 +495,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             this.selectListItem(topSuggestionIndex);
         } else {
             this.highlightSelectedValue(-1);
-            
+
             if (!shouldFilter || filterValueLen) {
                 this.listComponent?.ensureIndexVisible(0);
             } else if (shouldFilter) {
@@ -494,7 +517,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     private displayOrHidePicker(): void {
         const eListGui = this.listComponent?.getGui();
         const toggleValue = this.currentList ? this.currentList.length === 0 : false;
-        eListGui?.classList.toggle('ag-hidden', toggleValue)
+        eListGui?.classList.toggle('ag-hidden', toggleValue);
     }
 
     private clearSearchString(): void {
@@ -502,11 +525,19 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     private selectListItem(index: number, preventUnnecessaryScroll?: boolean): void {
-        if (!this.isPickerDisplayed || !this.currentList || !this.listComponent || index < 0 || index >= this.currentList.length) { return; }
+        if (
+            !this.isPickerDisplayed ||
+            !this.currentList ||
+            !this.listComponent ||
+            index < 0 ||
+            index >= this.currentList.length
+        ) {
+            return;
+        }
 
         const wasScrolled = this.listComponent.ensureIndexVisible(index, !preventUnnecessaryScroll);
 
-        if (wasScrolled  && !preventUnnecessaryScroll) {
+        if (wasScrolled && !preventUnnecessaryScroll) {
             this.listComponent.refresh(true);
         }
         this.highlightSelectedValue(index);
@@ -515,7 +546,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     public setValue(value: TValue, silent?: boolean, fromPicker?: boolean): this {
         const index = this.currentList ? this.currentList.indexOf(value) : -1;
 
-        if (index === -1) { return this; }
+        if (index === -1) {
+            return this;
+        }
 
         this.value = value;
 
@@ -547,8 +580,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     private getRowForMouseEvent(e: MouseEvent): number {
         const { listComponent } = this;
 
-        if (!listComponent) { return  -1; }
-
+        if (!listComponent) {
+            return -1;
+        }
 
         const eGui = listComponent?.getGui();
         const rect = eGui.getBoundingClientRect();
@@ -559,7 +593,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     private onPickerMouseMove(e: MouseEvent): void {
-        if (!this.listComponent) { return; }
+        if (!this.listComponent) {
+            return;
+        }
         const row = this.getRowForMouseEvent(e);
 
         if (row !== -1 && row != this.lastRowHovered) {
@@ -582,34 +618,42 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         const oldIndex = this.highlightedItem;
 
         const diff = isDown ? 1 : -1;
-        const newIndex = oldIndex === - 1 ? 0 : oldIndex + diff;
+        const newIndex = oldIndex === -1 ? 0 : oldIndex + diff;
 
         this.selectListItem(newIndex);
     }
 
     private onPageNavigation(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): void {
-        if (!this.isPickerDisplayed) { return ;}
+        if (!this.isPickerDisplayed) {
+            return;
+        }
         const newIndex = this.listComponent?.navigateToPage(key, this.highlightedItem);
 
         if (newIndex != null) {
             this.animationFrameService.requestAnimationFrame(() => {
-                if (!this.isAlive()) { return null; }
+                if (!this.isAlive()) {
+                    return null;
+                }
                 this.highlightSelectedValue(newIndex);
             });
         }
     }
 
     protected onEnterKeyDown(e: KeyboardEvent): void {
-        if (!this.isPickerDisplayed) { return; }
+        if (!this.isPickerDisplayed) {
+            return;
+        }
         e.preventDefault();
 
         if (this.currentList) {
-            this.onListValueSelected(this.currentList[this.highlightedItem], true)
+            this.onListValueSelected(this.currentList[this.highlightedItem], true);
         }
     }
 
     private onTabKeyDown(): void {
-        if (!this.isPickerDisplayed || !this.currentList) { return; }
+        if (!this.isPickerDisplayed || !this.currentList) {
+            return;
+        }
 
         this.setValue(this.currentList[this.highlightedItem], false, true);
     }
@@ -624,7 +668,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
             type: Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
             fromEnterKey,
-            value
+            value,
         };
 
         this.dispatchEvent(event);
@@ -661,7 +705,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
                     inputEl.setSelectionRange(target, target);
                     break;
                 }
-                // Only break here for allowTyping, otherwise use the same logic as PageUp/PageDown
+            // Only break here for allowTyping, otherwise use the same logic as PageUp/PageDown
             case KeyCode.PAGE_UP:
             case KeyCode.PAGE_DOWN:
                 event.preventDefault();
@@ -703,5 +747,4 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
         super.destroy();
     }
-
 }

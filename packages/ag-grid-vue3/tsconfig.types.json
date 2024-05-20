@@ -4,11 +4,6 @@
     "declaration": true,
     "emitDeclarationOnly": true
   },
-  "include": [
-    "src/main.ts"
-  ],
-  "exclude": [
-    "src/main-styles.ts",
-    "src/*.test.ts"
-  ]
+  "include": ["src/main.ts"],
+  "exclude": ["src/main-styles.ts", "src/*.test.ts"]
 }

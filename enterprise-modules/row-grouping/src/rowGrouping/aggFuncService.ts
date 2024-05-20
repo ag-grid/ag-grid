@@ -3,14 +3,14 @@ import {
     BeanStub,
     Column,
     IAggFunc,
+    IAggFuncParams,
     IAggFuncService,
     PostConstruct,
-    IAggFuncParams,
     _exists,
     _existsAndNotEmpty,
     _includes,
     _iterateObject,
-    _last
+    _last,
 } from '@ag-grid-community/core';
 
 const defaultAggFuncNames: { [key: string]: string } = {
@@ -25,7 +25,6 @@ const defaultAggFuncNames: { [key: string]: string } = {
 
 @Bean('aggFuncService')
 export class AggFuncService extends BeanStub implements IAggFuncService {
-
     private static AGG_SUM = 'sum';
     private static AGG_FIRST = 'first';
     private static AGG_LAST = 'last';
@@ -34,7 +33,7 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
     private static AGG_COUNT = 'count';
     private static AGG_AVG = 'avg';
 
-    private aggFuncsMap: { [key: string]: IAggFunc; } = {};
+    private aggFuncsMap: { [key: string]: IAggFunc } = {};
     private initialised = false;
 
     @PostConstruct
@@ -57,7 +56,7 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
         this.aggFuncsMap[AggFuncService.AGG_AVG] = aggAvg;
         this.initialised = true;
     }
-    
+
     private isAggFuncPossible(column: Column, func: string): boolean {
         const allKeys = this.getFuncNames(column);
         const allowed = _includes(allKeys, func);
@@ -84,7 +83,7 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
         return _existsAndNotEmpty(allKeys) ? allKeys[0] : null;
     }
 
-    public addAggFuncs(aggFuncs?: { [key: string]: IAggFunc; }): void {
+    public addAggFuncs(aggFuncs?: { [key: string]: IAggFunc }): void {
         this.init();
         _iterateObject(aggFuncs, (key: string, aggFunc: IAggFunc) => {
             this.aggFuncsMap[key] = aggFunc;
@@ -185,7 +184,6 @@ function aggCount(params: IAggFuncParams) {
         result += value != null && typeof value.value === 'number' ? value.value : 1;
     }
 
-
     // the previous aggregation data
     const existingAggData = params.rowNode?.aggData?.[params.column.getColId()];
     if (existingAggData && existingAggData.value === result) {
@@ -196,19 +194,24 @@ function aggCount(params: IAggFuncParams) {
     // it's important to wrap it in the object so we can determine if this is a group level
     return {
         value: result,
-        toString: function() {
+        toString: function () {
             return this.value.toString();
         },
         // used for sorting
-        toNumber: function() {
+        toNumber: function () {
             return this.value;
-        }
+        },
     };
 }
 
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
-function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count: number; toString(): string; toNumber(): number; } {
+function aggAvg(params: IAggFuncParams): {
+    value: number | bigint | null;
+    count: number;
+    toString(): string;
+    toNumber(): number;
+} {
     const { values } = params;
     let sum: any = 0; // the logic ensures that we never combine bigint arithmetic with numbers, but TS is hard to please
     let count = 0;
@@ -221,9 +224,15 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
         if (typeof currentValue === 'number' || typeof currentValue === 'bigint') {
             valueToAdd = currentValue;
             count++;
-        } else if (currentValue != null && (typeof currentValue.value === 'number' || typeof currentValue.value === 'bigint') && typeof currentValue.count === 'number') {
+        } else if (
+            currentValue != null &&
+            (typeof currentValue.value === 'number' || typeof currentValue.value === 'bigint') &&
+            typeof currentValue.count === 'number'
+        ) {
             // we are aggregating groups, so we take the aggregated values to calculated a weighted average
-            valueToAdd = currentValue.value * (typeof currentValue.value === 'number' ? currentValue.count : BigInt(currentValue.count));
+            valueToAdd =
+                currentValue.value *
+                (typeof currentValue.value === 'number' ? currentValue.count : BigInt(currentValue.count));
             count += currentValue.count;
         }
 
@@ -256,12 +265,12 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
         value,
         // the grid by default uses toString to render values for an object, so this
         // is a trick to get the default cellRenderer to display the avg value
-        toString: function() {
+        toString: function () {
             return typeof this.value === 'number' || typeof this.value === 'bigint' ? this.value.toString() : '';
         },
         // used for sorting
-        toNumber: function() {
+        toNumber: function () {
             return this.value;
-        }
+        },
     };
 }

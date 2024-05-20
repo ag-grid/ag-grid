@@ -1,7 +1,7 @@
-import { AgAbstractLabel, AgLabelParams } from './agAbstractLabel';
-import { _setFixedWidth } from '../utils/dom';
 import { Events } from '../eventKeys';
 import { _getAriaLabel, _setAriaLabel, _setAriaLabelledBy } from '../utils/aria';
+import { _setFixedWidth } from '../utils/dom';
+import { AgAbstractLabel, AgLabelParams } from './agAbstractLabel';
 
 export interface AgFieldParams extends AgLabelParams {
     value?: any;
@@ -10,12 +10,18 @@ export interface AgFieldParams extends AgLabelParams {
 }
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-export abstract class AgAbstractField<TValue, TConfig extends AgFieldParams = AgFieldParams> extends AgAbstractLabel<TConfig> {
-
+export abstract class AgAbstractField<
+    TValue,
+    TConfig extends AgFieldParams = AgFieldParams,
+> extends AgAbstractLabel<TConfig> {
     protected previousValue: TValue | null | undefined;
     protected value: TValue | null | undefined;
 
-    constructor(config?: TConfig, template?: string, protected readonly className?: string) {
+    constructor(
+        config?: TConfig,
+        template?: string,
+        protected readonly className?: string
+    ) {
         super(config, template);
     }
 

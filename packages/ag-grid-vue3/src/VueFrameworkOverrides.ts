@@ -1,5 +1,6 @@
-import {VanillaFrameworkOverrides} from 'ag-grid-community';
-import {VueComponentFactory} from './VueComponentFactory';
+import { VanillaFrameworkOverrides } from 'ag-grid-community';
+
+import { VueComponentFactory } from './VueComponentFactory';
 
 export class VueFrameworkOverrides extends VanillaFrameworkOverrides {
     private readonly parent: any;
@@ -19,7 +20,9 @@ export class VueFrameworkOverrides extends VanillaFrameworkOverrides {
         let result = !!VueComponentFactory.searchForComponentInstance(this.parent, name, 10, true) ? name : null;
         if (!result && components && components[name]) {
             const indirectName = components[name];
-            result = !!VueComponentFactory.searchForComponentInstance(this.parent, indirectName, 10, true) ? indirectName : null;
+            result = !!VueComponentFactory.searchForComponentInstance(this.parent, indirectName, 10, true)
+                ? indirectName
+                : null;
         }
         return result;
     }

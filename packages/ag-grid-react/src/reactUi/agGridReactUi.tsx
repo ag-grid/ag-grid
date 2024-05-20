@@ -1,20 +1,35 @@
 import {
-    BaseComponentWrapper, ComponentType,
+    BaseComponentWrapper,
+    ComponentType,
     ComponentUtil,
-    Context, CtrlsService, FrameworkComponentWrapper,
+    Context,
+    CtrlsService,
+    FrameworkComponentWrapper,
     FrameworkOverridesIncomingSource,
     GridApi,
     GridCoreCreator,
     GridOptions,
-    GridParams, IDetailCellRenderer, IDetailCellRendererCtrl,
-    IDetailCellRendererParams, ModuleRegistry, VanillaFrameworkOverrides, WrappableInterface, _warnOnce
+    GridParams,
+    IDetailCellRenderer,
+    IDetailCellRendererCtrl,
+    IDetailCellRendererParams,
+    ModuleRegistry,
+    VanillaFrameworkOverrides,
+    WrappableInterface,
+    _warnOnce,
 } from 'ag-grid-community';
 import React, {
     forwardRef,
-    useCallback, useContext, useEffect, useImperativeHandle, useMemo,
+    useCallback,
+    useContext,
+    useEffect,
+    useImperativeHandle,
+    useMemo,
     useRef,
-    useState
+    useState,
 } from 'react';
+
+import GroupCellRenderer from '../reactUi/cellRenderer/groupCellRenderer';
 import { DateComponentWrapper } from '../shared/customComp/dateComponentWrapper';
 import { FilterComponentWrapper } from '../shared/customComp/filterComponentWrapper';
 import { FloatingFilterComponentWrapper } from '../shared/customComp/floatingFilterComponentWrapper';
@@ -23,15 +38,13 @@ import { MenuItemComponentWrapper } from '../shared/customComp/menuItemComponent
 import { NoRowsOverlayComponentWrapper } from '../shared/customComp/noRowsOverlayComponentWrapper';
 import { StatusPanelComponentWrapper } from '../shared/customComp/statusPanelComponentWrapper';
 import { ToolPanelComponentWrapper } from '../shared/customComp/toolPanelComponentWrapper';
-import { AgGridReactProps } from '../shared/interfaces';
-import { ReactComponent } from '../shared/reactComponent';
-import { PortalManager } from '../shared/portalManager';
-import { BeansContext } from "./beansContext";
-import { CssClasses, runWithoutFlushSync } from "./utils";
-import GroupCellRenderer from "../reactUi/cellRenderer/groupCellRenderer";
-import GridComp from './gridComp';
 import { warnReactiveCustomComponents } from '../shared/customComp/util';
-
+import { AgGridReactProps } from '../shared/interfaces';
+import { PortalManager } from '../shared/portalManager';
+import { ReactComponent } from '../shared/reactComponent';
+import { BeansContext } from './beansContext';
+import GridComp from './gridComp';
+import { CssClasses, runWithoutFlushSync } from './utils';
 
 export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     const apiRef = useRef<GridApi<TData>>();
@@ -51,7 +64,6 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     const setRef = useCallback((e: HTMLDivElement) => {
         eGui.current = e;
         if (!eGui.current) {
-
             destroyFuncs.current.forEach((f) => f());
             destroyFuncs.current.length = 0;
 
@@ -76,7 +88,10 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
 
         const gridParams: GridParams = {
             providedBeanInstances: {
-                frameworkComponentWrapper: new ReactFrameworkComponentWrapper(portalManager.current, !!mergedGridOps.reactiveCustomComponents),
+                frameworkComponentWrapper: new ReactFrameworkComponentWrapper(
+                    portalManager.current,
+                    !!mergedGridOps.reactiveCustomComponents
+                ),
             },
             modules,
             frameworkOverrides: new ReactFrameworkOverrides(),
@@ -92,7 +107,6 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
             // because React is Async, we need to wait for the UI to be initialised before exposing the API's
             const ctrlsService = context.getBean(CtrlsService.NAME) as CtrlsService;
             ctrlsService.whenReady(() => {
-
                 if (context.isDestroyed()) {
                     return;
                 }
@@ -126,7 +140,6 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
             acceptChangesCallback,
             gridParams
         );
-
     }, []);
 
     const style = useMemo(() => {
@@ -149,7 +162,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
         prevProps.current = props;
         processWhenReady(() => {
             if (apiRef.current) {
-                ComponentUtil.processOnChange(changes, apiRef.current)
+                ComponentUtil.processOnChange(changes, apiRef.current);
             }
         });
     }, [props]);
@@ -164,7 +177,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
 
 function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: string]: any } {
     const changes: { [p: string]: any } = {};
-    Object.keys(nextProps).forEach(propKey => {
+    Object.keys(nextProps).forEach((propKey) => {
         const propValue = nextProps[propKey];
         if (prevProps[propKey] !== propValue) {
             changes[propKey] = propValue;
@@ -176,12 +189,16 @@ function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: strin
 
 class ReactFrameworkComponentWrapper
     extends BaseComponentWrapper<WrappableInterface>
-    implements FrameworkComponentWrapper {
-    constructor(private readonly parent: PortalManager, private readonly reactiveCustomComponents?: boolean) {
+    implements FrameworkComponentWrapper
+{
+    constructor(
+        private readonly parent: PortalManager,
+        private readonly reactiveCustomComponents?: boolean
+    ) {
         super();
     }
 
-    createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrappableInterface {
+    createWrapper(UserReactComponent: { new (): any }, componentType: ComponentType): WrappableInterface {
         if (this.reactiveCustomComponents) {
             const getComponentClass = (propertyName: string) => {
                 switch (propertyName) {
@@ -202,7 +219,7 @@ class ReactFrameworkComponentWrapper
                     case 'menuItem':
                         return MenuItemComponentWrapper;
                 }
-            }
+            };
             const ComponentClass = getComponentClass(componentType.propertyName);
             if (ComponentClass) {
                 return new ComponentClass(UserReactComponent, this.parent, componentType);
@@ -229,8 +246,8 @@ class ReactFrameworkComponentWrapper
 
 // Define DetailCellRenderer and ReactFrameworkOverrides here to avoid circular dependency
 const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: any) => {
-
-    const { ctrlsFactory, context, gos, resizeObserverService, clientSideRowModel, serverSideRowModel } = useContext(BeansContext);
+    const { ctrlsFactory, context, gos, resizeObserverService, clientSideRowModel, serverSideRowModel } =
+        useContext(BeansContext);
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [gridCssClasses, setGridCssClasses] = useState<CssClasses>(() => new CssClasses());
@@ -248,12 +265,16 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
 
     if (ref) {
         useImperativeHandle(ref, () => ({
-            refresh() { return ctrlRef.current?.refresh() ?? false; }
+            refresh() {
+                return ctrlRef.current?.refresh() ?? false;
+            },
         }));
     }
 
     if (props.template) {
-        _warnOnce('detailCellRendererParams.template is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://ag-grid.com/react-data-grid/master-detail-custom-detail/');
+        _warnOnce(
+            'detailCellRendererParams.template is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://ag-grid.com/react-data-grid/master-detail-custom-detail/'
+        );
     }
 
     const setRef = useCallback((e: HTMLDivElement) => {
@@ -268,15 +289,18 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
         }
 
         const compProxy: IDetailCellRenderer = {
-            addOrRemoveCssClass: (name: string, on: boolean) => setCssClasses(prev => prev.setClass(name, on)),
-            addOrRemoveDetailGridCssClass: (name: string, on: boolean) => setGridCssClasses(prev => prev.setClass(name, on)),
-            setDetailGrid: gridOptions => setDetailGridOptions(gridOptions),
-            setRowData: rowData => setDetailRowData(rowData),
-            getGui: () => eGuiRef.current!
+            addOrRemoveCssClass: (name: string, on: boolean) => setCssClasses((prev) => prev.setClass(name, on)),
+            addOrRemoveDetailGridCssClass: (name: string, on: boolean) =>
+                setGridCssClasses((prev) => prev.setClass(name, on)),
+            setDetailGrid: (gridOptions) => setDetailGridOptions(gridOptions),
+            setRowData: (rowData) => setDetailRowData(rowData),
+            getGui: () => eGuiRef.current!,
         };
 
         const ctrl = ctrlsFactory.getInstance('detailCellRenderer') as IDetailCellRendererCtrl;
-        if (!ctrl) { return; } // should never happen, means master/detail module not loaded
+        if (!ctrl) {
+            return;
+        } // should never happen, means master/detail module not loaded
         context.createBean(ctrl);
 
         ctrl.init(compProxy, props);
@@ -287,7 +311,9 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
             const checkRowSizeFunc = () => {
                 // when disposed, current is null, so nothing to do, and the resize observer will
                 // be disposed of soon
-                if (eGuiRef.current == null) { return; }
+                if (eGuiRef.current == null) {
+                    return;
+                }
 
                 const clientHeight = eGuiRef.current.clientHeight;
 
@@ -316,21 +342,25 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
     }, []);
 
     const setGridApi = useCallback((api: GridApi) => {
-        ctrlRef.current?.registerDetailWithMaster(api)
+        ctrlRef.current?.registerDetailWithMaster(api);
     }, []);
 
     return (
         <div className={topClassName} ref={setRef}>
-            {
-                detailGridOptions &&
-                <AgGridReactUi className={gridClassName} {...detailGridOptions} modules={parentModules} rowData={detailRowData} setGridApi={setGridApi} />
-            }
+            {detailGridOptions && (
+                <AgGridReactUi
+                    className={gridClassName}
+                    {...detailGridOptions}
+                    modules={parentModules}
+                    rowData={detailRowData}
+                    setGridApi={setGridApi}
+                />
+            )}
         </div>
     );
 });
 
 class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
-
     constructor() {
         super('react');
         this.renderingEngine = 'react';
@@ -339,7 +369,7 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
     private frameworkComponents: any = {
         agGroupCellRenderer: GroupCellRenderer,
         agGroupRowRenderer: GroupCellRenderer,
-        agDetailCellRenderer: DetailCellRenderer
+        agDetailCellRenderer: DetailCellRenderer,
     };
 
     public frameworkComponent(name: string): any {
@@ -347,7 +377,9 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
     }
 
     isFrameworkComponent(comp: any): boolean {
-        if (!comp) { return false; }
+        if (!comp) {
+            return false;
+        }
         const prototype = comp.prototype;
         const isJsComp = prototype && 'getGui' in prototype;
         return !isJsComp;
@@ -358,10 +390,9 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
             // As ensureVisible could easily be called from an effect which is already running inside a React render
             // we need to run it without flushSync to avoid the DEV error from React when calling flushSync inside a render.
             // This does mean there will be a flicker as the grid redraws the cells in the new location but this is deemed
-            // less of an issue then the error in the console for devs. 
+            // less of an issue then the error in the console for devs.
             return runWithoutFlushSync(callback);
         }
         return callback();
-    }
+    };
 }
-

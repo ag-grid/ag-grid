@@ -190,8 +190,7 @@ export function getStockData() {
             rateOfChange: [
                 [new Date(1976, 6, 4, 12, 30, 0, 0), 50.73],
                 [new Date(1977, 6, 4, 12, 30, 0, 0), 24.81],
-                [new Date(1978, 6, 4, 12, 30, 0, 0), -84]
-                [new Date(1979, 6, 4, 12, 30, 0, 0), 19.03],
+                [new Date(1978, 6, 4, 12, 30, 0, 0), -84][(new Date(1979, 6, 4, 12, 30, 0, 0), 19.03)],
                 [new Date(1980, 6, 4, 12, 30, 0, 0), 69.72],
                 [new Date(1981, 6, 4, 12, 30, 0, 0), 88.25],
                 [new Date(1982, 6, 4, 12, 30, 0, 0), 70.3],
@@ -212,8 +211,7 @@ export function getStockData() {
         },
         {
             symbol: 'ABEV',
-            name:
-                'Ambev S.A. American Depositary Shares (Each representing 1 Common Share)',
+            name: 'Ambev S.A. American Depositary Shares (Each representing 1 Common Share)',
             lastPrice: '3.14',
             marketCap: 49414685958,
             volume: 27226664,
@@ -301,5 +299,5 @@ export function getStockData() {
                 [new Date(1995, 6, 4, 12, 30, 0, 0), 1.64],
             ],
         },
-    ]
+    ];
 }

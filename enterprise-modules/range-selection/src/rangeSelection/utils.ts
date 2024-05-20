@@ -2,7 +2,9 @@ export function findLineByLeastSquares(values: number[]) {
     const len = values.length;
     let maxDecimals = 0;
 
-    if (len <= 1) { return values; }
+    if (len <= 1) {
+        return values;
+    }
 
     for (let i = 0; i < values.length; i++) {
         const value = values[i];
@@ -13,7 +15,9 @@ export function findLineByLeastSquares(values: number[]) {
             continue;
         }
 
-        if (Math.floor(value) === value) { continue; }
+        if (Math.floor(value) === value) {
+            continue;
+        }
 
         maxDecimals = Math.max(maxDecimals, value.toString().split('.')[1].length);
     }
@@ -34,7 +38,7 @@ export function findLineByLeastSquares(values: number[]) {
     }
 
     const m = (len * sum_xy - sum_x * sum_y) / (len * sum_xx - sum_x * sum_x);
-    const b = (sum_y / len) - (m * sum_x) / len;
+    const b = sum_y / len - (m * sum_x) / len;
 
     const result: number[] = [];
 

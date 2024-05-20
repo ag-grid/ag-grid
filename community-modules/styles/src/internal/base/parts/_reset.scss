@@ -2,7 +2,10 @@
 // avoid messing with custom component styles
 
 @mixin output {
-    [class^='ag-'], [class^='ag-']:focus, [class^='ag-']:after, [class^='ag-']:before {
+    [class^='ag-'],
+    [class^='ag-']:focus,
+    [class^='ag-']:after,
+    [class^='ag-']:before {
         box-sizing: border-box;
         outline: none;
     }

@@ -110,5 +110,5 @@ export function countries() {
         'Sri Lanka',
         'Mozambique',
         'Barbados',
-    ]
+    ];
 }

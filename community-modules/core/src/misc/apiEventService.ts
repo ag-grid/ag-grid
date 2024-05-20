@@ -1,14 +1,17 @@
-import { BeanStub } from "../context/beanStub"
-import { Bean, PostConstruct } from "../context/context";
-import { AgEventListener, AgGlobalEventListener, ALWAYS_SYNC_GLOBAL_EVENTS } from "../events";
-import { FrameworkEventListenerService } from "./frameworkEventListenerService";
+import { BeanStub } from '../context/beanStub';
+import { Bean, PostConstruct } from '../context/context';
+import { ALWAYS_SYNC_GLOBAL_EVENTS, AgEventListener, AgGlobalEventListener } from '../events';
+import { FrameworkEventListenerService } from './frameworkEventListenerService';
 
 @Bean('apiEventService')
 export class ApiEventService extends BeanStub {
     private syncEventListeners: Map<string, Set<AgEventListener>> = new Map();
     private asyncEventListeners: Map<string, Set<AgEventListener>> = new Map();
     private syncGlobalEventListeners: Set<AgGlobalEventListener> = new Set();
-    private globalEventListenerPairs = new Map<AgGlobalEventListener, { syncListener: AgGlobalEventListener, asyncListener: AgGlobalEventListener }>();
+    private globalEventListenerPairs = new Map<
+        AgGlobalEventListener,
+        { syncListener: AgGlobalEventListener; asyncListener: AgGlobalEventListener }
+    >();
     private frameworkEventWrappingService: FrameworkEventListenerService;
 
     @PostConstruct
@@ -19,7 +22,7 @@ export class ApiEventService extends BeanStub {
     public addEventListener(eventType: string, userListener: AgEventListener): void {
         const listener = this.frameworkEventWrappingService.wrap(userListener);
 
-        const async = this.gos.useAsyncEvents() && !ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType);;
+        const async = this.gos.useAsyncEvents() && !ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType);
         const listeners = async ? this.asyncEventListeners : this.syncEventListeners;
         if (!listeners.has(eventType)) {
             listeners.set(eventType, new Set());
@@ -28,7 +31,7 @@ export class ApiEventService extends BeanStub {
         this.eventService.addEventListener(eventType, listener, async);
     }
     public removeEventListener(eventType: string, userListener: AgEventListener): void {
-        const listener = this.frameworkEventWrappingService.unwrap(userListener);        
+        const listener = this.frameworkEventWrappingService.unwrap(userListener);
         const asyncListeners = this.asyncEventListeners.get(eventType);
         const hasAsync = !!asyncListeners?.delete(listener);
         if (!hasAsync) {
@@ -36,7 +39,6 @@ export class ApiEventService extends BeanStub {
         }
         this.eventService.removeEventListener(eventType, listener, hasAsync);
     }
-
 
     public addGlobalListener(userListener: AgGlobalEventListener): void {
         const listener = this.frameworkEventWrappingService.wrapGlobal(userListener);
@@ -55,18 +57,18 @@ export class ApiEventService extends BeanStub {
                     listener(eventType, event);
                 }
             };
-            this.globalEventListenerPairs.set(userListener, {syncListener, asyncListener});
+            this.globalEventListenerPairs.set(userListener, { syncListener, asyncListener });
             this.eventService.addGlobalListener(syncListener, false);
             this.eventService.addGlobalListener(asyncListener, true);
         } else {
             this.syncGlobalEventListeners.add(listener);
             this.eventService.addGlobalListener(listener, false);
-        }        
+        }
     }
 
     public removeGlobalListener(userListener: AgGlobalEventListener): void {
         const listener = this.frameworkEventWrappingService.unwrapGlobal(userListener);
-        
+
         const hasAsync = this.globalEventListenerPairs.has(listener);
         if (hasAsync) {
             // If it was async also remove the always sync listener we added
@@ -82,14 +84,14 @@ export class ApiEventService extends BeanStub {
 
     private destroyEventListeners(map: Map<string, Set<AgEventListener>>, async: boolean): void {
         map.forEach((listeners, eventType) => {
-            listeners.forEach(listener => this.eventService.removeEventListener(eventType, listener, async));
+            listeners.forEach((listener) => this.eventService.removeEventListener(eventType, listener, async));
             listeners.clear();
         });
         map.clear();
     }
 
     private destroyGlobalListeners(set: Set<AgGlobalEventListener>, async: boolean): void {
-        set.forEach(listener => this.eventService.removeGlobalListener(listener, async));
+        set.forEach((listener) => this.eventService.removeGlobalListener(listener, async));
         set.clear();
     }
 
@@ -99,7 +101,7 @@ export class ApiEventService extends BeanStub {
         this.destroyEventListeners(this.syncEventListeners, false);
         this.destroyEventListeners(this.asyncEventListeners, true);
         this.destroyGlobalListeners(this.syncGlobalEventListeners, false);
-        this.globalEventListenerPairs.forEach(({syncListener, asyncListener}) => {
+        this.globalEventListenerPairs.forEach(({ syncListener, asyncListener }) => {
             this.eventService.removeGlobalListener(syncListener, false);
             this.eventService.removeGlobalListener(asyncListener, true);
         });

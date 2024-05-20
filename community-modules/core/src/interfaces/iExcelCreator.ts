@@ -1,7 +1,7 @@
-import { Column } from "../entities/column";
-import { ExportFileNameGetter, ExportParams } from "./exportParams";
-import { AgGridCommon } from "./iCommon";
-import { XmlElement } from "./iXmlFactory";
+import { Column } from '../entities/column';
+import { ExportFileNameGetter, ExportParams } from './exportParams';
+import { AgGridCommon } from './iCommon';
+import { XmlElement } from './iXmlFactory';
 
 // Excel Styles
 export interface ExcelStyle {
@@ -32,7 +32,16 @@ export interface ExcelAlignment {
      * Use this property to change the cell horizontal alignment.
      * @default 'Automatic'
      */
-    horizontal?: 'Automatic' | 'Left' | 'Center' | 'Right' | 'Fill' | 'Justify' | 'CenterAcrossSelection' | 'Distributed' | 'JustifyDistributed';
+    horizontal?:
+        | 'Automatic'
+        | 'Left'
+        | 'Center'
+        | 'Right'
+        | 'Fill'
+        | 'Justify'
+        | 'CenterAcrossSelection'
+        | 'Distributed'
+        | 'JustifyDistributed';
     /**
      * Use this property to change the level of indentation in the cell.
      * @default 0
@@ -145,7 +154,7 @@ export interface ExcelFont {
      */
     strikeThrough?: boolean;
     /**
-     * Use this property to underline the cell text.     
+     * Use this property to underline the cell text.
      */
     underline?: 'Single' | 'Double';
     /** Use this property to change the default font alignment. Note: This is different than setting cell vertical alignment. */
@@ -158,7 +167,26 @@ export interface ExcelFont {
 
 export interface ExcelInterior {
     /** Use this property to set background color patterns. */
-    pattern: 'None' | 'Solid' | 'Gray75' | 'Gray50' | 'Gray25' | 'Gray125' | 'Gray0625' | 'HorzStripe' | 'VertStripe' | 'ReverseDiagStripe' | 'DiagStripe' | 'DiagCross' | 'ThickDiagCross' | 'ThinHorzStripe' | 'ThinVertStripe' | 'ThinReverseDiagStripe' | 'ThinDiagStripe' | 'ThinHorzCross' | 'ThinDiagCross';
+    pattern:
+        | 'None'
+        | 'Solid'
+        | 'Gray75'
+        | 'Gray50'
+        | 'Gray25'
+        | 'Gray125'
+        | 'Gray0625'
+        | 'HorzStripe'
+        | 'VertStripe'
+        | 'ReverseDiagStripe'
+        | 'DiagStripe'
+        | 'DiagCross'
+        | 'ThickDiagCross'
+        | 'ThinHorzStripe'
+        | 'ThinVertStripe'
+        | 'ThinReverseDiagStripe'
+        | 'ThinDiagStripe'
+        | 'ThinHorzCross'
+        | 'ThinDiagCross';
     /** The colour to be used as a secondary colour combined with patterns. */
     color?: string;
     /** The pattern color. */
@@ -231,7 +259,7 @@ export interface ExcelCell {
 
     /** The ExcelStyle id to be associated with the cell. */
     styleId?: string | string[];
-    
+
     /**
      * The number of cells to span across (1 means span 2 columns).
      * @default 0
@@ -332,7 +360,7 @@ export interface ExcelImage extends BaseImage {
  * (b) Boolean
  * (d) DateTime
  * (e) Error
-*/
+ */
 export type ExcelDataType = 'String' | 'Formula' | 'Number' | 'Boolean' | 'DateTime' | 'Error';
 export type ExcelOOXMLDataType = 'str' | 's' | 'f' | 'inlineStr' | 'n' | 'b' | 'd' | 'e' | 'empty';
 
@@ -362,7 +390,10 @@ export interface ExcelOOXMLTemplate {
 }
 
 // Excel Export
-export enum ExcelFactoryMode { SINGLE_SHEET, MULTI_SHEET }
+export enum ExcelFactoryMode {
+    SINGLE_SHEET,
+    MULTI_SHEET,
+}
 
 export interface ExcelSheetNameGetterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
 
@@ -450,7 +481,11 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      */
     mimeType?: string;
     /** Use to export an image for the gridCell in question. */
-    addImageToCell?: (rowIndex: number, column: Column, value: string) => { image: ExcelImage, value?: string } | undefined;
+    addImageToCell?: (
+        rowIndex: number,
+        column: Column,
+        value: string
+    ) => { image: ExcelImage; value?: string } | undefined;
 }
 
 export interface ExcelExportMultipleSheetParams {
@@ -493,12 +528,12 @@ export interface ExcelHeaderFooterConfig {
 type ExcelHeader = {
     /** An array of maximum 3 items (`Left`, `Center`, `Right`), containing header configurations. */
     header: ExcelHeaderFooterContent[];
-}
+};
 
 type ExcelFooter = {
     /** An array of maximum 3 items (`Left`, `Center`, `Right`), containing footer configurations. */
-    footer: ExcelHeaderFooterContent[]
-}
+    footer: ExcelHeaderFooterContent[];
+};
 
 export type ExcelHeaderFooter = ExcelFooter | ExcelHeader | (ExcelFooter & ExcelHeader);
 
@@ -574,7 +609,32 @@ export interface ExcelSheetPageSetup {
      * Use this property to set the sheet size.
      * @default 'Letter'
      */
-    pageSize?: 'Letter' | 'Letter Small' | 'Tabloid' | 'Ledger' | 'Legal' | 'Statement' | 'Executive' | 'A3' | 'A4' | 'A4 Small' | 'A5' | 'A6' | 'B4' | 'B5' | 'Folio' | 'Envelope' | 'Envelope DL' | 'Envelope C5' | 'Envelope B5' | 'Envelope C3' | 'Envelope C4' | 'Envelope C6' | 'Envelope Monarch' | 'Japanese Postcard' | 'Japanese Double Postcard';
+    pageSize?:
+        | 'Letter'
+        | 'Letter Small'
+        | 'Tabloid'
+        | 'Ledger'
+        | 'Legal'
+        | 'Statement'
+        | 'Executive'
+        | 'A3'
+        | 'A4'
+        | 'A4 Small'
+        | 'A5'
+        | 'A6'
+        | 'B4'
+        | 'B5'
+        | 'Folio'
+        | 'Envelope'
+        | 'Envelope DL'
+        | 'Envelope C5'
+        | 'Envelope B5'
+        | 'Envelope C3'
+        | 'Envelope C4'
+        | 'Envelope C6'
+        | 'Envelope Monarch'
+        | 'Japanese Postcard'
+        | 'Japanese Double Postcard';
 }
 
 export interface ExcelTableConfig {

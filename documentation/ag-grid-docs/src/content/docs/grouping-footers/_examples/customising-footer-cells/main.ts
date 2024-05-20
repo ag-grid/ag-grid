@@ -1,16 +1,14 @@
-import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
-import { getData } from "./data";
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { ModuleRegistry } from "@ag-grid-community/core";
+
+import { getData } from './data';
+import { MyInnerRenderer } from './myInnerRenderer_typescript';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
-import { MyInnerRenderer } from "./myInnerRenderer_typescript";
-
-
 let gridApi: GridApi;
-
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -27,16 +25,16 @@ const gridOptions: GridOptions = {
     autoGroupColumnDef: {
         minWidth: 300,
         cellRendererParams: {
-            innerRenderer: MyInnerRenderer
-        }
+            innerRenderer: MyInnerRenderer,
+        },
     },
     groupTotalRow: 'bottom',
     grandTotalRow: 'bottom',
     rowData: getData(),
-}
+};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-})
+});

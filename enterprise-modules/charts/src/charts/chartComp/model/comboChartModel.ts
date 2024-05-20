@@ -1,5 +1,6 @@
-import { BeanStub, ChartType, PostConstruct, SeriesChartType, } from "@ag-grid-community/core";
-import { ChartDataModel, ColState } from "./chartDataModel";
+import { BeanStub, ChartType, PostConstruct, SeriesChartType } from '@ag-grid-community/core';
+
+import { ChartDataModel, ColState } from './chartDataModel';
 
 export class ComboChartModel extends BeanStub {
     public static SUPPORTED_COMBO_CHART_TYPES = ['line', 'groupedColumn', 'stackedColumn', 'area', 'stackedArea'];
@@ -46,7 +47,7 @@ export class ComboChartModel extends BeanStub {
         }
 
         // ensure primary only chart types are not placed on secondary axis
-        this.seriesChartTypes = this.seriesChartTypes.map(seriesChartType => {
+        this.seriesChartTypes = this.seriesChartTypes.map((seriesChartType) => {
             const primaryOnly = ['groupedColumn', 'stackedColumn', 'stackedArea'].includes(seriesChartType.chartType);
             seriesChartType.secondaryAxis = primaryOnly ? false : seriesChartType.secondaryAxis;
             return seriesChartType;
@@ -68,9 +69,11 @@ export class ComboChartModel extends BeanStub {
         }
 
         // ensure correct chartTypes are supplied
-        this.seriesChartTypes = this.seriesChartTypes.map(s => {
+        this.seriesChartTypes = this.seriesChartTypes.map((s) => {
             if (!ComboChartModel.SUPPORTED_COMBO_CHART_TYPES.includes(s.chartType)) {
-                console.warn(`AG Grid: invalid chartType '${s.chartType}' supplied in 'seriesChartTypes', converting to 'line' instead.`);
+                console.warn(
+                    `AG Grid: invalid chartType '${s.chartType}' supplied in 'seriesChartTypes', converting to 'line' instead.`
+                );
                 s.chartType = 'line';
             }
             return s;
@@ -81,20 +84,22 @@ export class ComboChartModel extends BeanStub {
                 this.savedCustomSeriesChartTypes = this.seriesChartTypes;
             }
 
-            const providedSeriesChartType = this.savedCustomSeriesChartTypes.find(s => s.colId === valueCol.colId);
+            const providedSeriesChartType = this.savedCustomSeriesChartTypes.find((s) => s.colId === valueCol.colId);
             if (!providedSeriesChartType) {
                 if (valueCol.selected && !this.suppressComboChartWarnings) {
-                    console.warn(`AG Grid: no 'seriesChartType' found for colId = '${valueCol.colId}', defaulting to 'line'.`);
+                    console.warn(
+                        `AG Grid: no 'seriesChartType' found for colId = '${valueCol.colId}', defaulting to 'line'.`
+                    );
                 }
                 return {
                     colId: valueCol.colId,
                     chartType: 'line',
-                    secondaryAxis: false
+                    secondaryAxis: false,
                 };
             }
 
             return providedSeriesChartType;
-        }
+        };
 
         const updatedSeriesChartTypes = this.chartDataModel.valueColState.map(getSeriesChartType);
 
@@ -113,10 +118,10 @@ export class ComboChartModel extends BeanStub {
         let primaryChartType: ChartType = chartType === 'columnLineCombo' ? 'groupedColumn' : 'stackedArea';
         let secondaryChartType: ChartType = chartType === 'columnLineCombo' ? 'line' : 'groupedColumn';
 
-        const selectedCols = valueColState.filter(cs => cs.selected);
+        const selectedCols = valueColState.filter((cs) => cs.selected);
         const lineIndex = Math.ceil(selectedCols.length / 2);
         this.seriesChartTypes = selectedCols.map((valueCol: ColState, i: number) => {
-            const seriesType = (i >= lineIndex) ? secondaryChartType : primaryChartType;
+            const seriesType = i >= lineIndex ? secondaryChartType : primaryChartType;
             return { colId: valueCol.colId, chartType: seriesType, secondaryAxis: false };
         });
     }

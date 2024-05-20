@@ -1,12 +1,12 @@
-import { Autowired, Component, PostConstruct } from "@ag-grid-community/core";
-import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
-import { _Scene } from "ag-charts-community";
+import { Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { _Scene } from 'ag-charts-community';
+
+import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 
 const CANVAS_CLASS = 'ag-chart-mini-thumbnail-canvas';
 const ERROR_MESSAGE = 'AG Grid - chart update failed';
 
 export abstract class MiniChart extends Component {
-
     @Autowired('chartTranslationService')
     protected chartTranslationService: ChartTranslationService;
 
@@ -15,12 +15,15 @@ export abstract class MiniChart extends Component {
     protected readonly root: _Scene.Group = new _Scene.Group();
     protected readonly scene: _Scene.Scene;
 
-    constructor(container: HTMLElement, protected tooltipName: ChartTranslationKey) {
+    constructor(
+        container: HTMLElement,
+        protected tooltipName: ChartTranslationKey
+    ) {
         super();
 
         const scene = new _Scene.Scene({
             width: this.size,
-            height: this.size
+            height: this.size,
         });
 
         scene.canvas.element.classList.add(CANVAS_CLASS);
@@ -35,10 +38,9 @@ export abstract class MiniChart extends Component {
         this.scene.canvas.element.title = this.chartTranslationService.translate(this.tooltipName);
 
         // Necessary to force scene graph render as we are not using the standalone factory.
-        this.scene.render()
-            .catch((e: Error) => {
-                console.error(`${ERROR_MESSAGE}`, e);
-            });
+        this.scene.render().catch((e: Error) => {
+            console.error(`${ERROR_MESSAGE}`, e);
+        });
     }
 
     abstract updateColors(fills: string[], strokes: string[]): void;

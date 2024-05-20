@@ -1,7 +1,7 @@
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { CtrlsService } from "../ctrlsService";
-import { PaginationProxy } from "../pagination/paginationProxy";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, PostConstruct } from '../context/context';
+import { CtrlsService } from '../ctrlsService';
+import { PaginationProxy } from '../pagination/paginationProxy';
 
 interface TaskItem {
     task: () => void;
@@ -16,15 +16,14 @@ interface TaskList {
 
 @Bean('animationFrameService')
 export class AnimationFrameService extends BeanStub {
-
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     // p1 and p2 are create tasks are to do with row and cell creation.
     // for them we want to execute according to row order, so we use
     // TaskItem so we know what index the item is for.
-    private createTasksP1: TaskList = {list: [], sorted: false}; // eg drawing back-ground of rows
-    private createTasksP2: TaskList = {list: [], sorted: false}; // eg cell renderers, adding hover functionality
+    private createTasksP1: TaskList = { list: [], sorted: false }; // eg drawing back-ground of rows
+    private createTasksP2: TaskList = { list: [], sorted: false }; // eg cell renderers, adding hover functionality
 
     // destroy tasks are to do with row removal. they are done after row creation as the user will need to see new
     // rows first (as blank is scrolled into view), when we remove the old rows (no longer in view) is not as
@@ -78,7 +77,7 @@ export class AnimationFrameService extends BeanStub {
 
     public createTask(task: () => void, index: number, list: 'createTasksP1' | 'createTasksP2') {
         this.verifyAnimationFrameOn(list);
-        const taskItem: TaskItem = {task, index, createOrder: ++this.taskCount};
+        const taskItem: TaskItem = { task, index, createOrder: ++this.taskCount };
         this.addTaskToList(this[list], taskItem);
         this.schedule();
     }
@@ -101,7 +100,9 @@ export class AnimationFrameService extends BeanStub {
 
         // sort first by row index (taking into account scroll direction), then by
         // order of task creation (always ascending, so cells will render left-to-right)
-        taskList.list.sort((a, b) => a.index !== b.index ? sortDirection * (b.index - a.index) : b.createOrder - a.createOrder);
+        taskList.list.sort((a, b) =>
+            a.index !== b.index ? sortDirection * (b.index - a.index) : b.createOrder - a.createOrder
+        );
         taskList.sorted = true;
     }
 
@@ -123,7 +124,7 @@ export class AnimationFrameService extends BeanStub {
         const destroyTasks = this.destroyTasks;
 
         const frameStart = new Date().getTime();
-        let duration = (new Date().getTime()) - frameStart;
+        let duration = new Date().getTime() - frameStart;
 
         // 16ms is 60 fps
         const noMaxMillis = millis <= 0;
@@ -153,7 +154,7 @@ export class AnimationFrameService extends BeanStub {
                 }
             }
 
-            duration = (new Date().getTime()) - frameStart;
+            duration = new Date().getTime() - frameStart;
         }
 
         if (p1Tasks.length || p2Tasks.length || destroyTasks.length) {

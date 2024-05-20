@@ -20,15 +20,17 @@ import {
     ILoadingOverlayParams,
     INoRowsOverlayParams,
     IStatusPanelParams,
-    ITooltipParams
-} from "ag-grid-community";
-import { useContext } from "react";
-import { CustomContext } from "./customContext";
+    ITooltipParams,
+} from 'ag-grid-community';
+import { useContext } from 'react';
+
+import { CustomContext } from './customContext';
 
 // *** Props ***
 
 /** Props provided to custom cell editor components */
-export interface CustomCellEditorProps<TData = any, TValue = any, TContext = any> extends ICellEditorParams<TData, TValue, TContext> {
+export interface CustomCellEditorProps<TData = any, TValue = any, TContext = any>
+    extends ICellEditorParams<TData, TValue, TContext> {
     /** The value in the cell when editing started. */
     initialValue: TValue | null | undefined;
     /** The current value for the editor. */
@@ -40,27 +42,29 @@ export interface CustomCellEditorProps<TData = any, TValue = any, TContext = any
 /** Props provided to custom date components */
 export interface CustomDateProps<TData = any, TContext = any> extends BaseDateParams<TData, TContext> {
     /** The current date for the component. */
-    date: Date | null,
+    date: Date | null;
     /** Callback that should be called every time the date in the component changes. */
-    onDateChange: (date: Date | null) => void,
+    onDateChange: (date: Date | null) => void;
 }
 
 /** Props provided to custom filter components */
-export interface CustomFilterProps<TData = any, TContext = any, TModel = any> extends BaseFilterParams<TData, TContext> {
+export interface CustomFilterProps<TData = any, TContext = any, TModel = any>
+    extends BaseFilterParams<TData, TContext> {
     /** The current filter model for the component. */
-    model: TModel | null,
+    model: TModel | null;
     /** Callback that should be called every time the model in the component changes. */
-    onModelChange: (model: TModel | null) => void,
+    onModelChange: (model: TModel | null) => void;
     /**
      * Callback that can be optionally called every time the filter UI changes.
      * The grid will respond with emitting a FilterModifiedEvent.
      * Apart from emitting the event, the grid takes no further action.
      */
-    onUiChange: () => void,
+    onUiChange: () => void;
 }
 
 /** Props provided to custom floating filter components */
-export interface CustomFloatingFilterProps<P = IFilter, TData = any, TContext = any, TModel = any> extends IFloatingFilterParams<P, TData, TContext> {
+export interface CustomFloatingFilterProps<P = IFilter, TData = any, TContext = any, TModel = any>
+    extends IFloatingFilterParams<P, TData, TContext> {
     /** The current filter model for the component. */
     model: TModel | null;
     /** Callback that should be called every time the model in the component changes. */
@@ -68,12 +72,13 @@ export interface CustomFloatingFilterProps<P = IFilter, TData = any, TContext = 
 }
 
 /** Props provided to custom tool panel components */
-export interface CustomToolPanelProps<TData = any, TContext = any, TState = any> extends BaseToolPanelParams<TData, TContext, TState> {
+export interface CustomToolPanelProps<TData = any, TContext = any, TState = any>
+    extends BaseToolPanelParams<TData, TContext, TState> {
     /**
      * The current state for the component (used in grid state).
      * Initially set to the same value as `initialState`
      */
-    state: TState | undefined,
+    state: TState | undefined;
     /**
      * If using grid state, callback that should be called every time the state in the component changes.
      * If not using grid state, not required.
@@ -92,7 +97,8 @@ export interface CustomMenuItemProps<TData = any, TContext = any> extends BaseMe
 }
 
 /** Props provided to custom loading overlay component */
-export interface CustomLoadingOverlayProps<TData = any, TContext = any> extends ILoadingOverlayParams<TData, TContext> {}
+export interface CustomLoadingOverlayProps<TData = any, TContext = any>
+    extends ILoadingOverlayParams<TData, TContext> {}
 
 /** Props provided to custom no rows overlay component */
 export interface CustomNoRowsOverlayProps<TData = any, TContext = any> extends INoRowsOverlayParams<TData, TContext> {}
@@ -101,13 +107,16 @@ export interface CustomNoRowsOverlayProps<TData = any, TContext = any> extends I
 export interface CustomStatusPanelProps<TData = any, TContext = any> extends IStatusPanelParams<TData, TContext> {}
 
 /** Props provided to custom cell renderer components */
-export interface CustomCellRendererProps<TData = any, TValue = any, TContext = any> extends ICellRendererParams<TData, TValue, TContext> {}
+export interface CustomCellRendererProps<TData = any, TValue = any, TContext = any>
+    extends ICellRendererParams<TData, TValue, TContext> {}
 
 /** Props provided to custom detail cell renderer components */
-export interface CustomDetailCellRendererProps<TData = any, TDetail = any> extends IDetailCellRendererParams<TData, TDetail> {}
+export interface CustomDetailCellRendererProps<TData = any, TDetail = any>
+    extends IDetailCellRendererParams<TData, TDetail> {}
 
 /** Props provided to custom group cell renderer components */
-export interface CustomGroupCellRendererProps<TData = any, TValue = any> extends IGroupCellRendererParams<TData, TValue> {}
+export interface CustomGroupCellRendererProps<TData = any, TValue = any>
+    extends IGroupCellRendererParams<TData, TValue> {}
 
 /** Props provided to custom header components */
 export interface CustomHeaderProps<TData = any, TContext = any> extends IHeaderParams<TData, TContext> {}
@@ -116,10 +125,12 @@ export interface CustomHeaderProps<TData = any, TContext = any> extends IHeaderP
 export interface CustomHeaderGroupProps<TData = any, TContext = any> extends IHeaderGroupParams<TData, TContext> {}
 
 /** Props provided to custom loading cell renderer components */
-export interface CustomLoadingCellRendererProps<TData = any, TContext = any> extends ILoadingCellRendererParams<TData, TContext> {}
+export interface CustomLoadingCellRendererProps<TData = any, TContext = any>
+    extends ILoadingCellRendererParams<TData, TContext> {}
 
 /** Props provided to custom tooltip components */
-export interface CustomTooltipProps<TData = any, TValue = any, TContext = any> extends ITooltipParams<TData, TValue, TContext> {}
+export interface CustomTooltipProps<TData = any, TValue = any, TContext = any>
+    extends ITooltipParams<TData, TValue, TContext> {}
 
 // *** Callbacks ***
 

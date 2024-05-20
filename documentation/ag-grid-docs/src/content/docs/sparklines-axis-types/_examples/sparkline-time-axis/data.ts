@@ -147,5 +147,5 @@ export function getData(): any[] {
                 [new Date(1985, 6, 4, 12, 30, 0, 0), 18.43],
             ],
         },
-    ]
+    ];
 }

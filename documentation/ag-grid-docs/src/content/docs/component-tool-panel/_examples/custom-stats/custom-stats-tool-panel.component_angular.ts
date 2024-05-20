@@ -1,6 +1,6 @@
-import { Component } from "@angular/core";
-import { IToolPanelParams, IRowNode } from "@ag-grid-community/core";
-import { IToolPanelAngularComp } from "@ag-grid-community/angular";
+import { IToolPanelAngularComp } from '@ag-grid-community/angular';
+import { IRowNode, IToolPanelParams } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
 
 export interface CustomStatsToolPanelParams extends IToolPanelParams {
     title: string;
@@ -8,23 +8,32 @@ export interface CustomStatsToolPanelParams extends IToolPanelParams {
 
 @Component({
     standalone: true,
-    template: `
-      <div style="text-align: center">
-      <span>
-                <h2><i class="fa fa-calculator"></i> {{ title }}</h2>
-                <dl style="font-size: large; padding: 30px 40px 10px 30px">
-                    <dt class="totalStyle">Total Medals: <b>{{ numMedals }}</b></dt>
-                    <dt class="totalStyle">Total Gold: <b>{{ numGold }}</b></dt>
-                    <dt class="totalStyle">Total Silver: <b>{{ numSilver }}</b></dt>
-                    <dt class="totalStyle">Total Bronze: <b>{{ numBronze }}</b></dt>
-                </dl>
-            </span>
-      </div>`,
-    styles: [`
-        .totalStyle {
-            padding-bottom: 15px
-        }
-    `]
+    template: ` <div style="text-align: center">
+        <span>
+            <h2><i class="fa fa-calculator"></i> {{ title }}</h2>
+            <dl style="font-size: large; padding: 30px 40px 10px 30px">
+                <dt class="totalStyle">
+                    Total Medals: <b>{{ numMedals }}</b>
+                </dt>
+                <dt class="totalStyle">
+                    Total Gold: <b>{{ numGold }}</b>
+                </dt>
+                <dt class="totalStyle">
+                    Total Silver: <b>{{ numSilver }}</b>
+                </dt>
+                <dt class="totalStyle">
+                    Total Bronze: <b>{{ numBronze }}</b>
+                </dt>
+            </dl>
+        </span>
+    </div>`,
+    styles: [
+        `
+            .totalStyle {
+                padding-bottom: 15px;
+            }
+        `,
+    ],
 })
 export class CustomStatsToolPanel implements IToolPanelAngularComp {
     private params!: CustomStatsToolPanelParams;
@@ -49,7 +58,9 @@ export class CustomStatsToolPanel implements IToolPanelAngularComp {
     }
 
     updateTotals(): void {
-        let numGold = 0, numSilver = 0, numBronze = 0;
+        let numGold = 0,
+            numSilver = 0,
+            numBronze = 0;
 
         this.params.api.forEachNode((rowNode: IRowNode) => {
             const data = rowNode.data;
@@ -64,6 +75,5 @@ export class CustomStatsToolPanel implements IToolPanelAngularComp {
         this.numBronze = numBronze;
     }
 
-    refresh(): void {
-    }
+    refresh(): void {}
 }

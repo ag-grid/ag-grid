@@ -1,5 +1,5 @@
 export async function getData(delay: number = 100): Promise<any[]> {
-    return new Promise(resolve => setTimeout(() => resolve(generateData()), delay));
+    return new Promise((resolve) => setTimeout(() => resolve(generateData()), delay));
 }
 
 export function deepMerge(obj1: any, obj2: any): any {
@@ -20,10 +20,26 @@ export function deepMerge(obj1: any, obj2: any): any {
 
 function generateData(): any[] {
     const countries = [
-        'Ireland', 'Spain', 'United Kingdom', 'France', 'Germany',
-        'Luxembourg', 'Sweden', 'Norway', 'Italy', 'Greece',
-        'Iceland', 'Portugal', 'Malta', 'Brazil', 'Argentina',
-        'Colombia', 'Peru', 'Venezuela', 'Uruguay', 'Belgium',
+        'Ireland',
+        'Spain',
+        'United Kingdom',
+        'France',
+        'Germany',
+        'Luxembourg',
+        'Sweden',
+        'Norway',
+        'Italy',
+        'Greece',
+        'Iceland',
+        'Portugal',
+        'Malta',
+        'Brazil',
+        'Argentina',
+        'Colombia',
+        'Peru',
+        'Venezuela',
+        'Uruguay',
+        'Belgium',
     ];
 
     return countries.map((country, index) => ({

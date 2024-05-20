@@ -6,10 +6,9 @@ const buildSharedString = (strMap: Map<string, number>): XmlElement[] => {
     for (const key of strMap.keys()) {
         const textNode = key.toString();
 
-
         const child: XmlElement = {
             name: 't',
-            textNode: _escapeString(textNode)
+            textNode: _escapeString(textNode),
         };
 
         // if we have leading or trailing spaces, instruct Excel not to trim them
@@ -18,13 +17,13 @@ const buildSharedString = (strMap: Map<string, number>): XmlElement[] => {
         if (preserveSpaces) {
             child.properties = {
                 rawMap: {
-                    "xml:space": "preserve"
-                }
+                    'xml:space': 'preserve',
+                },
             };
         }
         ret.push({
             name: 'si',
-            children: [child]
+            children: [child],
         });
     }
 
@@ -34,17 +33,17 @@ const buildSharedString = (strMap: Map<string, number>): XmlElement[] => {
 const sharedStrings: ExcelOOXMLTemplate = {
     getTemplate(strings: Map<string, number>) {
         return {
-            name: "sst",
+            name: 'sst',
             properties: {
                 rawMap: {
                     xmlns: 'http://schemas.openxmlformats.org/spreadsheetml/2006/main',
                     count: strings.size,
-                    uniqueCount: strings.size
-                }
+                    uniqueCount: strings.size,
+                },
             },
-            children: buildSharedString(strings)
+            children: buildSharedString(strings),
         };
-    }
+    },
 };
 
 export default sharedStrings;

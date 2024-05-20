@@ -1,12 +1,11 @@
 export class CssClassManager {
-
     private getGui: () => HTMLElement | undefined | null;
 
     // to minimise DOM hits, we only apply CSS classes if they have changed. as adding a CSS class that is already
     // there, or removing one that wasn't present, all takes CPU.
     private cssClassStates: { [cssClass: string]: boolean } = {};
 
-    constructor(getGui: () => (HTMLElement | undefined | null)) {
+    constructor(getGui: () => HTMLElement | undefined | null) {
         this.getGui = getGui;
     }
 
@@ -14,7 +13,7 @@ export class CssClassManager {
         const list = (className || '').split(' ');
 
         if (list.length > 1) {
-            list.forEach(cls => this.addCssClass(cls));
+            list.forEach((cls) => this.addCssClass(cls));
             return;
         }
 
@@ -32,7 +31,7 @@ export class CssClassManager {
         const list = (className || '').split(' ');
 
         if (list.length > 1) {
-            list.forEach(cls => this.removeCssClass(cls));
+            list.forEach((cls) => this.removeCssClass(cls));
             return;
         }
 
@@ -49,20 +48,24 @@ export class CssClassManager {
 
     public containsCssClass(className: string): boolean {
         const eGui = this.getGui();
-        if (!eGui) { return false; }
+        if (!eGui) {
+            return false;
+        }
 
         return eGui.classList.contains(className);
     }
 
     public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
-        if (!className) { return; }
+        if (!className) {
+            return;
+        }
 
         // we check for spaces before doing the split, as doing the split
         // created a performance problem (on windows only, see AG-6765)
         if (className.indexOf(' ') >= 0) {
             const list = (className || '').split(' ');
             if (list.length > 1) {
-                list.forEach(cls => this.addOrRemoveCssClass(cls, addOrRemove));
+                list.forEach((cls) => this.addOrRemoveCssClass(cls, addOrRemove));
                 return;
             }
         }
@@ -73,7 +76,7 @@ export class CssClassManager {
             if (eGui) {
                 eGui.classList.toggle(className, addOrRemove);
             }
-            
+
             this.cssClassStates[className] = addOrRemove;
         }
     }

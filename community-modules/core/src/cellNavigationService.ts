@@ -1,30 +1,33 @@
-import { Autowired, Bean } from "./context/context";
-import { BeanStub } from "./context/beanStub";
-import { ColumnModel } from "./columns/columnModel";
-import { IRowModel } from "./interfaces/iRowModel";
-import { CellPosition } from "./entities/cellPositionUtils";
-import { RowNode } from "./entities/rowNode";
-import { Column } from "./entities/column";
-import { RowPosition } from "./entities/rowPositionUtils";
-import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
-import { _missing } from "./utils/generic";
-import { _last } from "./utils/array";
+import { VisibleColsService } from './columns/visibleColsService';
 import { KeyCode } from './constants/keyCode';
-import { PaginationProxy } from "./pagination/paginationProxy";
-import { RowRenderer } from "./rendering/rowRenderer";
-import { RowCtrl } from "./rendering/row/rowCtrl";
+import { BeanStub } from './context/beanStub';
+import { Autowired, Bean } from './context/context';
+import { CellPosition } from './entities/cellPositionUtils';
+import { Column } from './entities/column';
+import { RowNode } from './entities/rowNode';
+import { RowPosition } from './entities/rowPositionUtils';
+import { IRowModel } from './interfaces/iRowModel';
+import { PaginationProxy } from './pagination/paginationProxy';
+import { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
+import { RowCtrl } from './rendering/row/rowCtrl';
+import { RowRenderer } from './rendering/rowRenderer';
+import { _last } from './utils/array';
+import { _missing } from './utils/generic';
 
 @Bean('cellNavigationService')
 export class CellNavigationService extends BeanStub {
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     // returns null if no cell to focus on, ie at the end of the grid
-    public getNextCellToFocus(key: string, focusedCell: CellPosition, ctrlPressed: boolean = false): CellPosition | null {
+    public getNextCellToFocus(
+        key: string,
+        focusedCell: CellPosition,
+        ctrlPressed: boolean = false
+    ): CellPosition | null {
         if (ctrlPressed) {
             return this.getNextCellToFocusWithCtrlPressed(key, focusedCell);
         }
@@ -44,7 +47,7 @@ export class CellNavigationService extends BeanStub {
             rowIndex = upKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
             column = focusedCell.column;
         } else {
-            const allColumns: Column[] = this.columnModel.getAllDisplayedColumns();
+            const allColumns: Column[] = this.visibleColsService.getAllCols();
             const isRtl = this.gos.get('enableRtl');
             rowIndex = focusedCell.rowIndex;
             column = leftKey !== isRtl ? allColumns[0] : _last(allColumns);
@@ -53,7 +56,7 @@ export class CellNavigationService extends BeanStub {
         return {
             rowIndex,
             rowPinned: null,
-            column
+            column,
         };
     }
 
@@ -67,7 +70,6 @@ export class CellNavigationService extends BeanStub {
         // a) cell found that we can focus on
         // b) run out of cells (ie the method returns null)
         while (!finished) {
-
             switch (key) {
                 case KeyCode.UP:
                     pointer = this.getCellAbove(pointer);
@@ -121,36 +123,46 @@ export class CellNavigationService extends BeanStub {
                 break;
         }
 
-        if (!rowNode) { return false; }
+        if (!rowNode) {
+            return false;
+        }
 
         const suppressNavigable = column.isSuppressNavigable(rowNode);
         return !suppressNavigable;
     }
 
     private getCellToLeft(lastCell: CellPosition | null): CellPosition | null {
-        if (!lastCell) { return null; }
+        if (!lastCell) {
+            return null;
+        }
 
-        const colToLeft = this.columnModel.getDisplayedColBefore(lastCell.column);
-        if (!colToLeft) { return null; }
+        const colToLeft = this.visibleColsService.getColBefore(lastCell.column);
+        if (!colToLeft) {
+            return null;
+        }
 
         return {
             rowIndex: lastCell.rowIndex,
             column: colToLeft,
-            rowPinned: lastCell.rowPinned
+            rowPinned: lastCell.rowPinned,
         } as CellPosition;
     }
 
     private getCellToRight(lastCell: CellPosition | null): CellPosition | null {
-        if (!lastCell) { return null; }
+        if (!lastCell) {
+            return null;
+        }
 
-        const colToRight = this.columnModel.getDisplayedColAfter(lastCell.column);
+        const colToRight = this.visibleColsService.getColAfter(lastCell.column);
         // if already on right, do nothing
-        if (!colToRight) { return null; }
+        if (!colToRight) {
+            return null;
+        }
 
         return {
             rowIndex: lastCell.rowIndex,
             column: colToRight,
-            rowPinned: lastCell.rowPinned
+            rowPinned: lastCell.rowPinned,
         } as CellPosition;
     }
 
@@ -195,9 +207,13 @@ export class CellNavigationService extends BeanStub {
     }
 
     private getNextStickyPosition(rowNode?: RowNode, up?: boolean): RowPosition | undefined {
-        if (!this.gos.isGroupRowsSticky() || !rowNode || !rowNode.sticky) { return; }
+        if (!this.gos.isGroupRowsSticky() || !rowNode || !rowNode.sticky) {
+            return;
+        }
 
-        const isTopCtrls = this.rowRenderer.getStickyTopRowCtrls().some(ctrl => ctrl.getRowNode().rowIndex === rowNode.rowIndex);
+        const isTopCtrls = this.rowRenderer
+            .getStickyTopRowCtrls()
+            .some((ctrl) => ctrl.getRowNode().rowIndex === rowNode.rowIndex);
 
         let stickyRowCtrls: RowCtrl[] = [];
         if (isTopCtrls) {
@@ -211,7 +227,7 @@ export class CellNavigationService extends BeanStub {
         }
 
         const diff = up ? -1 : 1;
-        const idx = stickyRowCtrls.findIndex(ctrl => ctrl.getRowNode().rowIndex === rowNode.rowIndex);
+        const idx = stickyRowCtrls.findIndex((ctrl) => ctrl.getRowNode().rowIndex === rowNode.rowIndex);
         const nextCtrl = stickyRowCtrls[idx + diff];
 
         if (nextCtrl) {
@@ -220,14 +236,16 @@ export class CellNavigationService extends BeanStub {
     }
 
     private getCellBelow(lastCell: CellPosition | null): CellPosition | null {
-        if (!lastCell) { return null; }
+        if (!lastCell) {
+            return null;
+        }
 
         const rowBelow = this.getRowBelow(lastCell);
         if (rowBelow) {
             return {
                 rowIndex: rowBelow.rowIndex,
                 column: lastCell.column,
-                rowPinned: rowBelow.rowPinned
+                rowPinned: rowBelow.rowPinned,
             } as CellPosition;
         }
 
@@ -260,7 +278,9 @@ export class CellNavigationService extends BeanStub {
 
         // if already on top row, do nothing
         if (isFirstRow) {
-            if (pinned === 'top') { return null; }
+            if (pinned === 'top') {
+                return null;
+            }
 
             if (!pinned) {
                 if (this.pinnedRowModel.isRowsToRender('top')) {
@@ -292,7 +312,9 @@ export class CellNavigationService extends BeanStub {
     }
 
     private getCellAbove(lastCell: CellPosition | null): CellPosition | null {
-        if (!lastCell) { return null; }
+        if (!lastCell) {
+            return null;
+        }
 
         const rowAbove = this.getRowAbove({ rowIndex: lastCell.rowIndex, rowPinned: lastCell.rowPinned });
 
@@ -300,7 +322,7 @@ export class CellNavigationService extends BeanStub {
             return {
                 rowIndex: rowAbove.rowIndex,
                 column: lastCell.column,
-                rowPinned: rowAbove.rowPinned
+                rowPinned: rowAbove.rowPinned,
             } as CellPosition;
         }
 
@@ -328,20 +350,22 @@ export class CellNavigationService extends BeanStub {
     }
 
     public getNextTabbedCellForwards(gridCell: CellPosition): CellPosition | null {
-        const displayedColumns = this.columnModel.getAllDisplayedColumns();
+        const displayedColumns = this.visibleColsService.getAllCols();
 
         let newRowIndex: number | null = gridCell.rowIndex;
         let newFloating: string | null | undefined = gridCell.rowPinned;
 
         // move along to the next cell
-        let newColumn = this.columnModel.getDisplayedColAfter(gridCell.column);
+        let newColumn = this.visibleColsService.getColAfter(gridCell.column);
 
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {
             newColumn = displayedColumns[0];
 
             const rowBelow = this.getRowBelow(gridCell);
-            if (_missing(rowBelow)) { return null; }
+            if (_missing(rowBelow)) {
+                return null;
+            }
 
             // If we are tabbing and there is a paging panel present, tabbing should go
             // to the paging panel instead of loading the next page.
@@ -357,14 +381,13 @@ export class CellNavigationService extends BeanStub {
     }
 
     public getNextTabbedCellBackwards(gridCell: CellPosition): CellPosition | null {
-
-        const displayedColumns = this.columnModel.getAllDisplayedColumns();
+        const displayedColumns = this.visibleColsService.getAllCols();
 
         let newRowIndex: number | null = gridCell.rowIndex;
         let newFloating: string | null | undefined = gridCell.rowPinned;
 
         // move along to the next cell
-        let newColumn = this.columnModel.getDisplayedColBefore(gridCell.column);
+        let newColumn = this.visibleColsService.getColBefore(gridCell.column);
 
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {
@@ -372,7 +395,9 @@ export class CellNavigationService extends BeanStub {
 
             const rowAbove = this.getRowAbove({ rowIndex: gridCell.rowIndex, rowPinned: gridCell.rowPinned });
 
-            if (_missing(rowAbove)) { return null; }
+            if (_missing(rowAbove)) {
+                return null;
+            }
 
             // If we are tabbing and there is a paging panel present, tabbing should go
             // to the paging panel instead of loading the next page.
@@ -386,5 +411,4 @@ export class CellNavigationService extends BeanStub {
 
         return { rowIndex: newRowIndex, column: newColumn, rowPinned: newFloating } as CellPosition;
     }
-
 }

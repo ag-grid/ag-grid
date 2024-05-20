@@ -1,4 +1,4 @@
-import {nextTick} from 'vue';
+import { nextTick } from 'vue';
 
 export default {
     template: `<input :ref="'input'" @keydown="onKeyDown($event)" v-model="value" class="ag-input-field-input" />`,
@@ -15,22 +15,24 @@ export default {
         },
 
         onKeyDown(event) {
-            if (!event.key || event.key.length !== 1 || this.isNumericKey(event)) { return; }
-            this.$refs.input.focus()
+            if (!event.key || event.key.length !== 1 || this.isNumericKey(event)) {
+                return;
+            }
+            this.$refs.input.focus();
 
-            if (event.preventDefault) event.preventDefault()
+            if (event.preventDefault) event.preventDefault();
         },
 
         // when we tab into this editor, we want to focus the contents
         focusIn() {
-            this.$refs.input.focus()
-            this.$refs.input.select()
-            console.log('NumericCellEditor.focusIn()')
+            this.$refs.input.focus();
+            this.$refs.input.select();
+            console.log('NumericCellEditor.focusIn()');
         },
 
         // when we tab out of the editor, this gets called
         focusOut() {
-            console.log('NumericCellEditor.focusOut()')
+            console.log('NumericCellEditor.focusOut()');
         },
 
         isCharNumeric(charStr) {
@@ -44,7 +46,7 @@ export default {
     },
 
     created() {
-         // we only want to highlight this cell if it started the edit; it's possible
+        // we only want to highlight this cell if it started the edit; it's possible
         // another cell in this row started the edit
         this.focusAfterAttached = this.params.cellStartedEdit;
 
@@ -54,8 +56,8 @@ export default {
         nextTick(() => {
             if (this.$refs.input) {
                 if (this.focusAfterAttached) {
-                    this.$refs.input.focus()
-                    this.$refs.input.select()
+                    this.$refs.input.focus();
+                    this.$refs.input.select();
                 }
             }
         });

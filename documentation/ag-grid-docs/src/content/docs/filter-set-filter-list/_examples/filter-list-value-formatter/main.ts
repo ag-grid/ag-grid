@@ -1,102 +1,107 @@
-import {
-  FirstDataRenderedEvent,
-  GridApi,
-  createGrid,
-  GridOptions,
-  ISetFilterParams,
-  ValueFormatterParams,
-} from '@ag-grid-community/core';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import {
+    FirstDataRenderedEvent,
+    GridApi,
+    GridOptions,
+    ISetFilterParams,
+    ValueFormatterParams,
+    createGrid,
+} from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, MenuModule, SetFilterModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ColumnsToolPanelModule,
+    FiltersToolPanelModule,
+    MenuModule,
+    SetFilterModule,
+]);
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-  columnDefs: [
-    {
-      headerName: 'No Value Formatter',
-      field: 'country',
-      valueFormatter: countryValueFormatter,
-      filter: 'agSetColumnFilter',
-      filterParams: {
-        // no value formatter!
-      },
+    columnDefs: [
+        {
+            headerName: 'No Value Formatter',
+            field: 'country',
+            valueFormatter: countryValueFormatter,
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                // no value formatter!
+            },
+        },
+        {
+            headerName: 'With Value Formatter',
+            field: 'country',
+            valueFormatter: countryValueFormatter,
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                valueFormatter: countryValueFormatter,
+            } as ISetFilterParams,
+        },
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 225,
+        floatingFilter: true,
     },
-    {
-      headerName: 'With Value Formatter',
-      field: 'country',
-      valueFormatter: countryValueFormatter,
-      filter: 'agSetColumnFilter',
-      filterParams: {
-        valueFormatter: countryValueFormatter,
-      } as ISetFilterParams,
-    },
-  ],
-  defaultColDef: {
-    flex: 1,
-    minWidth: 225,
-    floatingFilter: true,
-  },
-  sideBar: 'filters',
-  onFirstDataRendered: onFirstDataRendered,
-}
+    sideBar: 'filters',
+    onFirstDataRendered: onFirstDataRendered,
+};
 
 function countryValueFormatter(params: ValueFormatterParams) {
-  var value = params.value
-  return value + ' (' + COUNTRY_CODES[value].toUpperCase() + ')'
+    var value = params.value;
+    return value + ' (' + COUNTRY_CODES[value].toUpperCase() + ')';
 }
 
 function printFilterModel() {
-  var filterModel = gridApi!.getFilterModel()
-  console.log(filterModel)
+    var filterModel = gridApi!.getFilterModel();
+    console.log(filterModel);
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  params.api.getToolPanelInstance('filters')!.expandFilters();
+    params.api.getToolPanelInstance('filters')!.expandFilters();
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(function (data) {
-      // only return data that has corresponding country codes
-      var dataWithFlags = data.filter(function (d: any) {
-        return COUNTRY_CODES[d.country]
-      })
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then((response) => response.json())
+        .then(function (data) {
+            // only return data that has corresponding country codes
+            var dataWithFlags = data.filter(function (d: any) {
+                return COUNTRY_CODES[d.country];
+            });
 
-      gridApi!.setGridOption('rowData', dataWithFlags)
-    })
-})
+            gridApi!.setGridOption('rowData', dataWithFlags);
+        });
+});
 
 var COUNTRY_CODES: Record<string, string> = {
-  Ireland: 'ie',
-  Luxembourg: 'lu',
-  Belgium: 'be',
-  Spain: 'es',
-  France: 'fr',
-  Germany: 'de',
-  Sweden: 'se',
-  Italy: 'it',
-  Greece: 'gr',
-  Iceland: 'is',
-  Portugal: 'pt',
-  Malta: 'mt',
-  Norway: 'no',
-  Brazil: 'br',
-  Argentina: 'ar',
-  Colombia: 'co',
-  Peru: 'pe',
-  Venezuela: 've',
-  Uruguay: 'uy',
-}
+    Ireland: 'ie',
+    Luxembourg: 'lu',
+    Belgium: 'be',
+    Spain: 'es',
+    France: 'fr',
+    Germany: 'de',
+    Sweden: 'se',
+    Italy: 'it',
+    Greece: 'gr',
+    Iceland: 'is',
+    Portugal: 'pt',
+    Malta: 'mt',
+    Norway: 'no',
+    Brazil: 'br',
+    Argentina: 'ar',
+    Colombia: 'co',
+    Peru: 'pe',
+    Venezuela: 've',
+    Uruguay: 'uy',
+};

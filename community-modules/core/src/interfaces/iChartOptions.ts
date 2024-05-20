@@ -1,18 +1,18 @@
 export interface ChartGroupsDef {
     // community chart groups
     columnGroup?: ('column' | 'stackedColumn' | 'normalizedColumn')[];
-    barGroup?: ('bar' | 'stackedBar' | 'normalizedBar')[],
-    pieGroup?: ('pie' | 'donut' | 'doughnut')[],
-    lineGroup?: ('line')[],
-    scatterGroup?: ('scatter' | 'bubble')[],
-    areaGroup?: ('area' | 'stackedArea' | 'normalizedArea')[],
-    combinationGroup?: ('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[]
+    barGroup?: ('bar' | 'stackedBar' | 'normalizedBar')[];
+    pieGroup?: ('pie' | 'donut' | 'doughnut')[];
+    lineGroup?: 'line'[];
+    scatterGroup?: ('scatter' | 'bubble')[];
+    areaGroup?: ('area' | 'stackedArea' | 'normalizedArea')[];
+    combinationGroup?: ('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[];
 
     // enterprise chart groups
-    polarGroup?: ('radarLine' | 'radarArea' | 'nightingale' | 'radialColumn' | 'radialBar')[],
-    statisticalGroup?: ('boxPlot' | 'histogram' | 'rangeBar' | 'rangeArea')[],
-    hierarchicalGroup?: ('treemap' | 'sunburst')[],
-    specializedGroup?: ('heatmap' | 'waterfall')[],
+    polarGroup?: ('radarLine' | 'radarArea' | 'nightingale' | 'radialColumn' | 'radialBar')[];
+    statisticalGroup?: ('boxPlot' | 'histogram' | 'rangeBar' | 'rangeArea')[];
+    hierarchicalGroup?: ('treemap' | 'sunburst')[];
+    specializedGroup?: ('heatmap' | 'waterfall')[];
 }
 
 export type ChartToolPanelName = 'settings' | 'data' | 'format';
@@ -22,15 +22,23 @@ export interface ChartSettingsPanel {
     chartGroupsDef?: ChartGroupsDef;
 }
 
-export type ChartFormatPanelGroup = 'chart' | 'titles' | 'legend' | 'axis' | 'horizontalAxis' | 'verticalAxis' | 'series' | 'navigator';
+export type ChartFormatPanelGroup =
+    | 'chart'
+    | 'titles'
+    | 'legend'
+    | 'axis'
+    | 'horizontalAxis'
+    | 'verticalAxis'
+    | 'series'
+    | 'navigator';
 
-export type ChartDataPanelGroup = 'categories' | 'series' | 'seriesChartType';
+export type ChartDataPanelGroup = 'categories' | 'series' | 'seriesChartType' | 'chartSpecific';
 
 export interface ChartPanelGroupDef<GroupType> {
     /** The panel group type */
-    type: GroupType,
+    type: GroupType;
     /** Whether the panel group is open by default. If not specified, it is closed */
-    isOpen?: boolean
+    isOpen?: boolean;
 }
 
 export interface ChartFormatPanel {
@@ -45,19 +53,19 @@ export interface ChartDataPanel {
 
 export interface ChartToolPanelsDef {
     /** Customisations for the chart panel and chart menu items in the Context Menu. */
-    settingsPanel?: ChartSettingsPanel,
+    settingsPanel?: ChartSettingsPanel;
     /** Customisations for the format panel */
-    formatPanel?: ChartFormatPanel,
+    formatPanel?: ChartFormatPanel;
     /** Customisations for the data panel */
-    dataPanel?: ChartDataPanel,
+    dataPanel?: ChartDataPanel;
     /** The ordered list of panels to show in the chart tool panels. If none specified, all panels are shown */
-    panels?: ChartToolPanelName[],
+    panels?: ChartToolPanelName[];
     /** The panel to open by default when the chart loads. If none specified, the tool panel is hidden by default and the first panel is open when triggered. */
-    defaultToolPanel?: ChartToolPanelName
+    defaultToolPanel?: ChartToolPanelName;
 }
 
 export type CrossFilterChartType =
-      'column'
+    | 'column'
     | 'bar'
     | 'line'
     | 'scatter'
@@ -115,6 +123,8 @@ export class ChartMappings {
     public static readonly SERIES_GROUP_TYPES = ['grouped', 'stacked', 'normalized'] as const;
 }
 
-export type ChartType = keyof typeof ChartMappings.CHART_TYPE_TO_SERIES_TYPE | typeof ChartMappings.COMBO_CHART_TYPES[number];
+export type ChartType =
+    | keyof typeof ChartMappings.CHART_TYPE_TO_SERIES_TYPE
+    | (typeof ChartMappings.COMBO_CHART_TYPES)[number];
 
-export type SeriesGroupType = typeof ChartMappings.SERIES_GROUP_TYPES[number];
+export type SeriesGroupType = (typeof ChartMappings.SERIES_GROUP_TYPES)[number];

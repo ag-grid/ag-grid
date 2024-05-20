@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class MedalCellRenderer implements ICellRendererComp {
     eGui!: HTMLSpanElement;
@@ -17,4 +17,3 @@ export class MedalCellRenderer implements ICellRendererComp {
         return false;
     }
 }
-

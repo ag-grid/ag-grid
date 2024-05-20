@@ -1,11 +1,11 @@
-import { PopupComponent } from '../widgets/popupComponent';
-import { IComponent } from '../interfaces/iComponent';
-import { _escapeString } from '../utils/string';
+import { ColDef, ColGroupDef } from '../entities/colDef';
 import { Column } from '../entities/column';
 import { ColumnGroup } from '../entities/columnGroup';
-import { ColGroupDef, ColDef } from '../entities/colDef';
 import { AgGridCommon } from '../interfaces/iCommon';
+import { IComponent } from '../interfaces/iComponent';
 import { IRowNode } from '../interfaces/iRowNode';
+import { _escapeString } from '../utils/string';
+import { PopupComponent } from '../widgets/popupComponent';
 
 export type TooltipLocation =
     | 'advancedFilter'
@@ -44,11 +44,11 @@ export interface ITooltipParams<TData = any, TValue = any, TContext = any> exten
     hideTooltipCallback?: () => void;
 }
 
-export interface ITooltipComp extends IComponent<ITooltipParams> { }
+export interface ITooltipComp extends IComponent<ITooltipParams> {}
 
 export class TooltipComponent extends PopupComponent implements ITooltipComp {
     constructor() {
-        super(/* html */`<div class="ag-tooltip"></div>`);
+        super(/* html */ `<div class="ag-tooltip"></div>`);
     }
 
     // will need to type params

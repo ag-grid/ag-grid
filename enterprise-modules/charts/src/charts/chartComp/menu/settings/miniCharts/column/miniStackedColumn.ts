@@ -1,9 +1,10 @@
-import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { _Scene } from "ag-charts-community";
-import { ChartType } from "@ag-grid-community/core";
-import { createColumnRects, CreateColumnRectsParams } from "../miniChartHelpers";
-import { ThemeTemplateParameters } from "../../miniChartsContainer";
-import { ChartTranslationKey } from "../../../../services/chartTranslationService";
+import { ChartType } from '@ag-grid-community/core';
+import { _Scene } from 'ag-charts-community';
+
+import { ChartTranslationKey } from '../../../../services/chartTranslationService';
+import { ThemeTemplateParameters } from '../../miniChartsContainer';
+import { CreateColumnRectsParams, createColumnRects } from '../miniChartHelpers';
+import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export class MiniStackedColumn extends MiniChartWithAxes {
     static chartType: ChartType = 'stackedColumn';
@@ -13,7 +14,7 @@ export class MiniStackedColumn extends MiniChartWithAxes {
     static data = [
         [8, 12, 16],
         [6, 9, 12],
-        [2, 3, 4]
+        [2, 3, 4],
     ];
 
     constructor(
@@ -24,7 +25,8 @@ export class MiniStackedColumn extends MiniChartWithAxes {
         _isCustomTheme: boolean,
         data = MiniStackedColumn.data,
         yScaleDomain = [0, 16],
-        tooltipName: ChartTranslationKey = "stackedColumnTooltip") {
+        tooltipName: ChartTranslationKey = 'stackedColumnTooltip'
+    ) {
         super(container, tooltipName);
 
         const { root, size, padding } = this;
@@ -40,14 +42,14 @@ export class MiniStackedColumn extends MiniChartWithAxes {
             xScalePadding: 0.3,
         } as CreateColumnRectsParams);
 
-        root.append(([]as _Scene.Rect[]).concat.apply([], this.stackedColumns));
+        root.append(([] as _Scene.Rect[]).concat.apply([], this.stackedColumns));
 
         this.updateColors(fills, strokes);
     }
 
     updateColors(fills: string[], strokes: string[]) {
         this.stackedColumns.forEach((series: _Scene.Rect[], i: number) =>
-            series.forEach(column => {
+            series.forEach((column) => {
                 column.fill = fills[i];
                 column.stroke = strokes[i];
             })

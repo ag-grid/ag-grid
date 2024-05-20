@@ -1,10 +1,9 @@
-import { _makeNull, _exists } from './generic';
+import { _exists, _makeNull } from './generic';
 
 describe('_makeNull', () => {
-    it.each([4, 'string', new Date()])
-        ('returns value if not null: %s', value => {
-            expect(_makeNull(value)).toBe(value);
-        });
+    it.each([4, 'string', new Date()])('returns value if not null: %s', (value) => {
+        expect(_makeNull(value)).toBe(value);
+    });
 
     it('converts undefined to null', () => {
         expect(_makeNull(undefined)).toBeNull();
@@ -32,8 +31,7 @@ describe('exists', () => {
         expect(_exists('', true)).toBe(true);
     });
 
-    it.each(['string', 123, true])
-        ('returns true if value is present: %s', value => {
-            expect(_exists(value)).toBe(true);
-        });
+    it.each(['string', 123, true])('returns true if value is present: %s', (value) => {
+        expect(_exists(value)).toBe(true);
+    });
 });

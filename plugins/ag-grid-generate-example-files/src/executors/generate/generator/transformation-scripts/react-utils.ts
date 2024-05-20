@@ -1,7 +1,7 @@
 import * as JSON5 from 'json5';
+
 import { Events } from '../_copiedFromCore/eventKeys';
 import { PropertyKeys } from '../_copiedFromCore/propertyKeys';
-
 import { getFunctionName, recognizedDomEvents } from './parser-utils';
 
 const toTitleCase = (value: string) => value[0].toUpperCase() + value.slice(1);
@@ -106,5 +106,7 @@ export const convertFunctionToConstCallbackTs = (code: string, callbackDependenc
 };
 
 export const EventAndCallbackNames = new Set([
-    ...PropertyKeys.CALLBACK_PROPERTIES, ...PropertyKeys.FUNCTIONAL_PROPERTIES, ...Object.values(Events)
+    ...PropertyKeys.CALLBACK_PROPERTIES,
+    ...PropertyKeys.FUNCTIONAL_PROPERTIES,
+    ...Object.values(Events),
 ]);

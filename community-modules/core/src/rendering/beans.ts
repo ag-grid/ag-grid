@@ -1,44 +1,49 @@
-import { Autowired, Bean, Context, Optional, PostConstruct } from "../context/context";
-import { ColumnModel } from "../columns/columnModel";
-import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
-import { RowRenderer } from "./rowRenderer";
-import { ValueService } from "../valueService/valueService";
-import { EventService } from "../eventService";
-import { ColumnAnimationService } from "./columnAnimationService";
-import { IRangeService, ISelectionHandleFactory } from "../interfaces/IRangeService";
-import { FocusService } from "../focusService";
-import { PopupService } from "../widgets/popupService";
-import { StylingService } from "../styling/stylingService";
-import { ColumnHoverService } from "./columnHoverService";
-import { PaginationProxy } from "../pagination/paginationProxy";
-import { AnimationFrameService } from "../misc/animationFrameService";
-import { UserComponentFactory } from "../components/framework/userComponentFactory";
-import { DragService } from "../dragAndDrop/dragService";
-import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
-import { SortController } from "../sortController";
-import { FilterManager } from "../filter/filterManager";
-import { RowContainerHeightService } from "./rowContainerHeightService";
-import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
-import { CellPositionUtils } from "../entities/cellPositionUtils";
-import { RowPositionUtils } from "../entities/rowPositionUtils";
-import { ISelectionService } from "../interfaces/iSelectionService";
-import { RowCssClassCalculator } from "./row/rowCssClassCalculator";
-import { IRowModel } from "../interfaces/iRowModel";
-import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
-import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
-import { ResizeObserverService } from "../misc/resizeObserverService";
-import { CtrlsService } from "../ctrlsService";
-import { NavigationService } from "../gridBodyComp/navigationService";
-import { AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
-import { CtrlsFactory } from "../ctrlsFactory";
-import { UserComponentRegistry } from "../components/framework/userComponentRegistry";
-import { ValueCache } from "../valueService/valueCache";
-import { RowNodeEventThrottle } from "../entities/rowNodeEventThrottle";
-import { GridOptionsService } from "../gridOptionsService";
-import { LocaleService } from "../localeService";
-import { Environment } from "../environment";
-import { SyncService } from "../syncService";
-import { AriaAnnouncementService } from "./ariaAnnouncementService";
+import { ColumnModel } from '../columns/columnModel';
+import { ColumnMoveService } from '../columns/columnMoveService';
+import { ColumnNameService } from '../columns/columnNameService';
+import { ColumnSizeService } from '../columns/columnSizeService';
+import { ColumnViewportService } from '../columns/columnViewportService';
+import { VisibleColsService } from '../columns/visibleColsService';
+import { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
+import { UserComponentFactory } from '../components/framework/userComponentFactory';
+import { UserComponentRegistry } from '../components/framework/userComponentRegistry';
+import { Autowired, Bean, Context, Optional, PostConstruct } from '../context/context';
+import { CtrlsFactory } from '../ctrlsFactory';
+import { CtrlsService } from '../ctrlsService';
+import { DragAndDropService } from '../dragAndDrop/dragAndDropService';
+import { DragService } from '../dragAndDrop/dragService';
+import { CellPositionUtils } from '../entities/cellPositionUtils';
+import { RowNodeEventThrottle } from '../entities/rowNodeEventThrottle';
+import { RowPositionUtils } from '../entities/rowPositionUtils';
+import { Environment } from '../environment';
+import { EventService } from '../eventService';
+import { FilterManager } from '../filter/filterManager';
+import { FocusService } from '../focusService';
+import { NavigationService } from '../gridBodyComp/navigationService';
+import { GridOptionsService } from '../gridOptionsService';
+import { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
+import { IRangeService, ISelectionHandleFactory } from '../interfaces/IRangeService';
+import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import { IRowModel } from '../interfaces/iRowModel';
+import { ISelectionService } from '../interfaces/iSelectionService';
+import { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
+import { LocaleService } from '../localeService';
+import { AnimationFrameService } from '../misc/animationFrameService';
+import { ResizeObserverService } from '../misc/resizeObserverService';
+import { PaginationProxy } from '../pagination/paginationProxy';
+import { SortController } from '../sortController';
+import { StylingService } from '../styling/stylingService';
+import { SyncService } from '../syncService';
+import { ValueCache } from '../valueService/valueCache';
+import { ValueService } from '../valueService/valueService';
+import { PopupService } from '../widgets/popupService';
+import { AriaAnnouncementService } from './ariaAnnouncementService';
+import { ColumnAnimationService } from './columnAnimationService';
+import { ColumnHoverService } from './columnHoverService';
+import { RowCssClassCalculator } from './row/rowCssClassCalculator';
+import { RowContainerHeightService } from './rowContainerHeightService';
+import { RowRenderer } from './rowRenderer';
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -47,7 +52,6 @@ import { AriaAnnouncementService } from "./ariaAnnouncementService";
  * and CellComp need. Not autowiring all the cells gives performance improvement. */
 @Bean('beans')
 export class Beans {
-
     @Autowired('resizeObserverService') public readonly resizeObserverService: ResizeObserverService;
     @Autowired('paginationProxy') public readonly paginationProxy: PaginationProxy;
     @Autowired('context') public readonly context: Context;
@@ -57,6 +61,11 @@ export class Beans {
     @Autowired('valueService') public readonly valueService: ValueService;
     @Autowired('eventService') public readonly eventService: EventService;
     @Autowired('columnModel') public readonly columnModel: ColumnModel;
+    @Autowired('columnViewportService') public readonly columnViewportService: ColumnViewportService;
+    @Autowired('columnNameService') public readonly columnNameService: ColumnNameService;
+    @Autowired('visibleColsService') public readonly visibleColsService: VisibleColsService;
+    @Autowired('columnMoveService') public readonly columnMoveService: ColumnMoveService;
+    @Autowired('columnSizeService') public readonly columnSizeService: ColumnSizeService;
     @Autowired('headerNavigationService') public readonly headerNavigationService: HeaderNavigationService;
     @Autowired('navigationService') public readonly navigationService: NavigationService;
     @Autowired('columnAnimationService') public readonly columnAnimationService: ColumnAnimationService;
@@ -86,7 +95,7 @@ export class Beans {
     @Autowired('localeService') public readonly localeService: LocaleService;
     @Autowired('syncService') public readonly syncService: SyncService;
     @Autowired('ariaAnnouncementService') public readonly ariaAnnouncementService: AriaAnnouncementService;
-    
+
     @Optional('rangeService') public readonly rangeService?: IRangeService;
     @Optional('selectionHandleFactory') public readonly selectionHandleFactory?: ISelectionHandleFactory;
 

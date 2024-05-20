@@ -1,18 +1,18 @@
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
     CellDoubleClickedEvent,
     CellKeyDownEvent,
     ColDef,
     GridApi,
-    createGrid,
     GridOptions,
+    createGrid,
 } from '@ag-grid-community/core';
-import { CustomGroupCellRenderer } from './customGroupCellRenderer_typescript';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { ModuleRegistry } from "@ag-grid-community/core";
+
+import { CustomGroupCellRenderer } from './customGroupCellRenderer_typescript';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
-
 
 const columnDefs: ColDef[] = [
     {
@@ -31,8 +31,7 @@ const columnDefs: ColDef[] = [
     {
         field: 'total',
         aggFunc: 'sum',
-
-    }
+    },
 ];
 
 const autoGroupColumnDef: ColDef = {
@@ -61,14 +60,14 @@ const gridOptions: GridOptions<IOlympicData> = {
         if (!(params.event instanceof KeyboardEvent)) {
             return;
         }
-        if (params.event.code !== "Enter") {
+        if (params.event.code !== 'Enter') {
             return;
         }
         if (params.colDef.showRowGroup) {
             params.node.setExpanded(!params.node.expanded);
         }
-    }
-}
+    },
+};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
@@ -76,6 +75,6 @@ document.addEventListener('DOMContentLoaded', function () {
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
-        .then(response => response.json())
-        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
-})
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+});

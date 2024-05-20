@@ -1,6 +1,6 @@
 {
   "sortingOrder": {
-    "typeName": "(SortDirection)[]",
+    "typeName": "SortDirection[]",
     "typesToInclude": [
       "SortDirection"
     ]
@@ -609,28 +609,28 @@
     ]
   },
   "navigateToNextHeader": {
-    "typeName": "(params: NavigateToNextHeaderParams<TData>) => (HeaderPosition | null)",
+    "typeName": "(params: NavigateToNextHeaderParams<TData>) => HeaderPosition | null",
     "typesToInclude": [
       "NavigateToNextHeaderParams",
       "HeaderPosition"
     ]
   },
   "tabToNextHeader": {
-    "typeName": "(params: TabToNextHeaderParams<TData>) => (HeaderPosition | boolean | null)",
+    "typeName": "(params: TabToNextHeaderParams<TData>) => HeaderPosition | boolean | null",
     "typesToInclude": [
       "TabToNextHeaderParams",
       "HeaderPosition"
     ]
   },
   "navigateToNextCell": {
-    "typeName": "(params: NavigateToNextCellParams<TData>) => (CellPosition | null)",
+    "typeName": "(params: NavigateToNextCellParams<TData>) => CellPosition | null",
     "typesToInclude": [
       "NavigateToNextCellParams",
       "CellPosition"
     ]
   },
   "tabToNextCell": {
-    "typeName": "(params: TabToNextCellParams<TData>) => (CellPosition | boolean | null)",
+    "typeName": "(params: TabToNextCellParams<TData>) => CellPosition | boolean | null",
     "typesToInclude": [
       "TabToNextCellParams",
       "CellPosition"

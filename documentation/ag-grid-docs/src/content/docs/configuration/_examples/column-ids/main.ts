@@ -1,7 +1,6 @@
-import { GridApi, createGrid, GridOptions, GridReadyEvent } from "@ag-grid-community/core";
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { GridApi, GridOptions, GridReadyEvent, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -21,7 +20,7 @@ const gridOptions: GridOptions = {
 
         // no colId, no field, so grid generated ID
         { headerName: 'Col 5', valueGetter: 'data.width' },
-        { headerName: 'Col 6', valueGetter: 'data.width' }
+        { headerName: 'Col 6', valueGetter: 'data.width' },
     ],
     rowData: createRowData(),
     onGridReady: (params: GridReadyEvent) => {
@@ -30,7 +29,7 @@ const gridOptions: GridOptions = {
             var colDef = col.getColDef();
             console.log(colDef.headerName + ', Column ID = ' + col.getId(), JSON.stringify(colDef));
         });
-    }
+    },
 };
 
 function createRowData() {
@@ -39,7 +38,7 @@ function createRowData() {
         data.push({
             height: Math.floor(Math.random() * 100),
             width: Math.floor(Math.random() * 100),
-            depth: Math.floor(Math.random() * 100)
+            depth: Math.floor(Math.random() * 100),
         });
     }
     return data;

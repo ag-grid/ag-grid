@@ -12,9 +12,14 @@ export function _createArrayOfNumbers(first: number, last: number): number[] {
     return result;
 }
 
-
-export function _formatNumberTwoDecimalPlacesAndCommas(value: number, thousandSeparator: string, decimalSeparator: string): string {
-    if (typeof value !== 'number') { return ''; }
+export function _formatNumberTwoDecimalPlacesAndCommas(
+    value: number,
+    thousandSeparator: string,
+    decimalSeparator: string
+): string {
+    if (typeof value !== 'number') {
+        return '';
+    }
 
     return _formatNumberCommas(Math.round(value * 100) / 100, thousandSeparator, decimalSeparator);
 }
@@ -27,9 +32,14 @@ export function _formatNumberTwoDecimalPlacesAndCommas(value: number, thousandSe
  * @returns {string}
  */
 export function _formatNumberCommas(value: number, thousandSeparator: string, decimalSeparator: string): string {
-    if (typeof value !== 'number') { return ''; }
+    if (typeof value !== 'number') {
+        return '';
+    }
 
-    return value.toString().replace('.', decimalSeparator).replace(/(\d)(?=(\d{3})+(?!\d))/g, `$1${thousandSeparator}`);
+    return value
+        .toString()
+        .replace('.', decimalSeparator)
+        .replace(/(\d)(?=(\d{3})+(?!\d))/g, `$1${thousandSeparator}`);
 }
 
 export function _sum(values: number[] | null) {

@@ -16,7 +16,9 @@ const Y_KEYCODE = 89;
 
 export function _isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
     // no allowed printable chars have alt or ctrl key combinations
-    if (event.altKey || event.ctrlKey || event.metaKey) { return false; }
+    if (event.altKey || event.ctrlKey || event.metaKey) {
+        return false;
+    }
 
     // if key is length 1, eg if it is 'a' for the a key, or '2' for the '2' key.
     // non-printable characters have names, eg 'Enter' or 'Backspace'.
@@ -44,7 +46,9 @@ export function _isUserSuppressingKeyboardEvent(
     const colDefFunc = column ? column.getColDef().suppressKeyboardEvent : undefined;
 
     // if no callbacks provided by user, then do nothing
-    if (!colDefFunc) { return false; }
+    if (!colDefFunc) {
+        return false;
+    }
 
     const params: SuppressKeyboardEventParams = gos.addGridCommonParams({
         event: keyboardEvent,
@@ -52,14 +56,16 @@ export function _isUserSuppressingKeyboardEvent(
         column,
         node: rowNode,
         data: rowNode.data,
-        colDef: column.getColDef()
+        colDef: column.getColDef(),
     });
 
     // colDef get first preference on suppressing events
     if (colDefFunc) {
         const colDefFuncResult = colDefFunc(params);
         // if colDef func suppressed, then return now, no need to call gridOption func
-        if (colDefFuncResult) { return true; }
+        if (colDefFuncResult) {
+            return true;
+        }
     }
 
     // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
@@ -75,13 +81,15 @@ export function _isUserSuppressingHeaderKeyboardEvent(
     const colDef = column.getDefinition();
     const colDefFunc = colDef && colDef.suppressHeaderKeyboardEvent;
 
-    if (!_exists(colDefFunc)) { return false; }
+    if (!_exists(colDefFunc)) {
+        return false;
+    }
 
     const params: SuppressHeaderKeyboardEventParams = gos.addGridCommonParams({
         colDef: colDef,
         column,
         headerRowIndex,
-        event: keyboardEvent
+        event: keyboardEvent,
     });
 
     return !!colDefFunc(params);
@@ -118,7 +126,9 @@ export function _normaliseQwertyAzerty(keyboardEvent: KeyboardEvent): string {
 }
 
 export function _isDeleteKey(key: string, alwaysReturnFalseOnBackspace = false) {
-    if (key === KeyCode.DELETE) { return true; }
+    if (key === KeyCode.DELETE) {
+        return true;
+    }
     if (!alwaysReturnFalseOnBackspace && key === KeyCode.BACKSPACE) {
         return _isMacOsUserAgent();
     }
