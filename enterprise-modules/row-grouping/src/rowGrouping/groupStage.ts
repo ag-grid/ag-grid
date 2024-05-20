@@ -572,6 +572,8 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private insertNodes(newRowNodes: RowNode[], details: GroupingDetails, isMove: boolean): void {
         if (details.usingTreeData) {
             this.buildNodeCacheFromRows(newRowNodes, details);
+        } else {
+            this.treeNodeCache = {};
         }
 
         newRowNodes.forEach(rowNode => {
@@ -641,7 +643,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         let nextNode = parentGroup?.childrenMapped?.[key];
 
         if (!nextNode) {
-            if (key in this.treeNodeCache) {
+            if (details.usingTreeData && key in this.treeNodeCache) {
                 nextNode = this.treeNodeCache[key];
                 nextNode.parent = parentGroup;
             } else {
