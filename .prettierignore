@@ -10,3 +10,7 @@ dist
 
 # Generated grid options json
 plugins/ag-grid-generate-example-files/gridOptionsTypes/_gridOptions_Types.json
+
+# Generated style build
+_icon-font-codes.scss
+styles/src/internal/ag/generated
