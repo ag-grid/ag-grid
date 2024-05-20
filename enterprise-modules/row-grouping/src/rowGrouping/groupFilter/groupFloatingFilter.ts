@@ -2,7 +2,6 @@ import {
     AgInputTextField,
     AgPromise,
     Autowired,
-    ColumnModel,
     Column,
     Component,
     FilterChangedEvent,
@@ -13,11 +12,13 @@ import {
     UserCompDetails,
     ColumnEvent,
     _clearElement,
+    ColumnNameService,
 } from '@ag-grid-community/core';
 import { GroupFilter } from './groupFilter';
 
 export class GroupFloatingFilterComp extends Component implements IFloatingFilterComp<GroupFilter> {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+
+    @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
 
     @RefSelector('eFloatingFilter') private readonly eFloatingFilter: HTMLElement;
@@ -69,7 +70,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     }
 
     private setParams(): void {
-        const displayName = this.columnModel.getDisplayNameForColumn(this.params.column, 'header', true);
+        const displayName = this.columnNameService.getDisplayNameForColumn(this.params.column, 'header', true);
         const translate = this.localeService.getLocaleTextFunc();
         this.eFloatingFilterText?.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }

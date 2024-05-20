@@ -4,7 +4,8 @@ import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { Events } from "../eventKeys";
 import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
 import { CtrlsService } from "../ctrlsService";
-import { ColumnModel, ISizeColumnsToFitParams } from "../columns/columnModel";
+import { ColumnModel } from "../columns/columnModel";
+import { ColumnSizeService, ISizeColumnsToFitParams } from "../columns/columnSizeService";
 import { ScrollVisibleService } from "./scrollVisibleService";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
 import { _getInnerWidth, _isElementChildOfClass, _isVerticalScrollShowing } from "../utils/dom";
@@ -60,6 +61,7 @@ export class GridBodyCtrl extends BeanStub {
     @Autowired('rowContainerHeightService') private rowContainerHeightService: RowContainerHeightService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('menuService') private menuService: MenuService;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
@@ -194,7 +196,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private onGridColumnsChanged(): void {
-        const columns = this.columnModel.getAllGridColumns();
+        const columns = this.columnModel.getCols();
         this.comp.setColumnCount(columns.length);
     }
 
@@ -479,7 +481,7 @@ export class GridBodyCtrl extends BeanStub {
         const availableWidth = bodyViewportWidth - scrollWidthToRemove;
 
         if (availableWidth > 0) {
-            this.columnModel.sizeColumnsToFit(availableWidth, "sizeColumnsToFit", false, params);
+            this.columnSizeService.sizeColumnsToFit(availableWidth, "sizeColumnsToFit", false, params);
             return;
         }
 

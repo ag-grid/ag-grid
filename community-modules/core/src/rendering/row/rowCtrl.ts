@@ -430,9 +430,9 @@ export class RowCtrl extends BeanStub {
     }
 
     private areAllContainersReady(): boolean {
-        const isLeftReady = !!this.leftGui || !this.beans.columnModel.isPinningLeft();
+        const isLeftReady = !!this.leftGui || !this.beans.visibleColsService.isPinningLeft();
         const isCenterReady = !!this.centerGui;
-        const isRightReady = !!this.rightGui || !this.beans.columnModel.isPinningRight();
+        const isRightReady = !!this.rightGui || !this.beans.visibleColsService.isPinningRight();
 
         return isLeftReady && isCenterReady && isRightReady;
     }
@@ -557,19 +557,20 @@ export class RowCtrl extends BeanStub {
     }
 
     private createAllCellCtrls() {
-        const columnModel = this.beans.columnModel;
+        const columnViewportService = this.beans.columnViewportService;
+        const presentedColsService = this.beans.visibleColsService;
         if (this.printLayout) {
-            this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, columnModel.getAllDisplayedColumns());
+            this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, presentedColsService.getAllCols());
             this.leftCellCtrls = { list: [], map: {} };
             this.rightCellCtrls = { list: [], map: {} };
         } else {
-            const centerCols = columnModel.getViewportCenterColumnsForRow(this.rowNode);
+            const centerCols = columnViewportService.getColsWithinViewport(this.rowNode);
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, centerCols);
 
-            const leftCols = columnModel.getDisplayedLeftColumnsForRow(this.rowNode);
+            const leftCols = presentedColsService.getLeftColsForRow(this.rowNode);
             this.leftCellCtrls = this.createCellCtrls(this.leftCellCtrls, leftCols, 'left');
 
-            const rightCols = columnModel.getDisplayedRightColumnsForRow(this.rowNode);
+            const rightCols = presentedColsService.getRightColsForRow(this.rowNode);
             this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols, 'right');
         }
     }
@@ -590,7 +591,7 @@ export class RowCtrl extends BeanStub {
 
         if (mightWantToKeepCell) {
             const column = cellCtrl.getColumn();
-            const displayedColumns = this.beans.columnModel.getAllDisplayedColumns();
+            const displayedColumns = this.beans.visibleColsService.getAllCols();
             const cellStillDisplayed = displayedColumns.indexOf(column) >= 0;
             return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
         }
@@ -616,8 +617,8 @@ export class RowCtrl extends BeanStub {
         if (this.isSticky() || !animateIn) { return; }
 
         const oldRowTopExists = _exists(this.rowNode.oldRowTop);
-        const pinningLeft = this.beans.columnModel.isPinningLeft();
-        const pinningRight = this.beans.columnModel.isPinningRight();
+        const pinningLeft = this.beans.visibleColsService.isPinningLeft();
+        const pinningRight = this.beans.visibleColsService.isPinningRight();
 
         if (oldRowTopExists) {
             if (this.isFullWidth() && !this.gos.get('embedFullWidthRows')) {
@@ -969,7 +970,7 @@ export class RowCtrl extends BeanStub {
         if (!this.isFullWidth()) { return; }
 
         const node = this.rowNode;
-        const columnModel = this.beans.columnModel;
+        const presentedColsService = this.beans.visibleColsService;
 
         if (this.beans.rangeService) {
             this.beans.rangeService.removeAllCellRanges();
@@ -977,7 +978,7 @@ export class RowCtrl extends BeanStub {
 
         this.beans.focusService.setFocusedCell({
             rowIndex: node.rowIndex!,
-            column: columnModel.getAllDisplayedColumns()[0],
+            column: presentedColsService.getAllCols()[0],
             rowPinned: node.rowPinned,
             forceBrowserFocus: true
         });

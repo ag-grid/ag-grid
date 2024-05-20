@@ -19,6 +19,7 @@ import {
     _values,
     _includes,
     _last,
+    PivotResultColsService
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "../model/chartDataModel";
 
@@ -43,6 +44,7 @@ interface IData {
 
 export class ChartDatasource extends BeanStub {
     @Autowired('rowModel') private readonly gridRowModel: IRowModel;
+    @Autowired('pivotResultColsService') private readonly pivotResultColsService: PivotResultColsService;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('rowNodeSorter') private readonly rowNodeSorter: RowNodeSorter;
@@ -142,7 +144,7 @@ export class ChartDatasource extends BeanStub {
             // first get data for dimensions columns
             dimensionCols.forEach(col => {
                 const colId = col.colId;
-                const column = this.columnModel.getGridColumn(colId);
+                const column = this.columnModel.getCol(colId);
 
                 if (column) {
                     const valueObject = this.valueService.getValue(column, rowNode);
@@ -314,7 +316,7 @@ export class ChartDatasource extends BeanStub {
     }
 
     private updatePivotKeysForSSRM() {
-        const secondaryColumns = this.columnModel.getSecondaryColumns();
+        const secondaryColumns = this.pivotResultColsService.getPivotResultCols()?.list;
 
         if (!secondaryColumns) { return; }
 

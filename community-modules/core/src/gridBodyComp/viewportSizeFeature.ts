@@ -11,6 +11,9 @@ import { WithoutGridCommon } from "../interfaces/iCommon";
 import { PinnedWidthService } from "./pinnedWidthService";
 import { Column } from "../entities/column";
 import { ProcessUnpinnedColumnsParams } from "../interfaces/iCallbackParams";
+import { ColumnSizeService } from "../columns/columnSizeService";
+import { VisibleColsService } from "../columns/visibleColsService";
+import { ColumnViewportService } from "../columns/columnViewportService";
 
 // listens to changes in the center viewport size, for column and row virtualisation,
 // and adjusts grid as necessary. there are two viewports, one for horizontal and one for
@@ -20,7 +23,10 @@ export class ViewportSizeFeature extends BeanStub {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
+    @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
+    @Autowired('columnViewportService') public columnViewportService: ColumnViewportService;
 
     private centerContainerCtrl: RowContainerCtrl;
     private gridBodyCtrl: GridBodyCtrl;
@@ -68,7 +74,7 @@ export class ViewportSizeFeature extends BeanStub {
 
             if (newWidth !== this.centerWidth) {
                 this.centerWidth = newWidth;
-                this.columnModel.refreshFlexedColumns(
+                this.columnSizeService.refreshFlexedColumns(
                     { viewportWidth: this.centerWidth, updateBodyWidths: true, fireResizedEvent: true }
                 );
             }
@@ -97,7 +103,7 @@ export class ViewportSizeFeature extends BeanStub {
             columnsToRemove = processUnpinnedColumns(params);
         }
 
-        this.columnModel.setColumnsPinned(columnsToRemove, null, 'viewportSizeFeature')
+        this.columnModel.setColsPinned(columnsToRemove, null, 'viewportSizeFeature')
     }
 
     private getPinnedColumnsOverflowingViewport(viewportWidth: number): Column[] {
@@ -107,8 +113,8 @@ export class ViewportSizeFeature extends BeanStub {
 
         if (totalPinnedWidth < viewportWidth) { return []; }
 
-        const pinnedLeftColumns: Column[] = [...this.columnModel.getDisplayedLeftColumns()];
-        const pinnedRightColumns: Column[] = [...this.columnModel.getDisplayedRightColumns()];
+        const pinnedLeftColumns: Column[] = [...this.visibleColsService.getLeftCols()];
+        const pinnedRightColumns: Column[] = [...this.visibleColsService.getRightCols()];
 
         let indexRight = 0;
         let indexLeft = 0;
@@ -198,6 +204,6 @@ export class ViewportSizeFeature extends BeanStub {
         const scrollWidth = this.centerContainerCtrl.getCenterWidth();
         const scrollPosition = this.centerContainerCtrl.getViewportScrollLeft();
 
-        this.columnModel.setViewportPosition(scrollWidth, scrollPosition);
+        this.columnViewportService.setScrollPosition(scrollWidth, scrollPosition);
     }
 }

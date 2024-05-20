@@ -123,6 +123,6 @@ export class ChartCrossFilterService extends BeanStub {
     }
 
     private getColumnById(colId: string) {
-        return this.columnModel.getGridColumn(colId) as Column;
+        return this.columnModel.getCol(colId) as Column;
     }
 }

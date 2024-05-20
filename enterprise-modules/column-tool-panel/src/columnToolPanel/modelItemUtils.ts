@@ -9,7 +9,8 @@ import {
     Column,
     EventService,
     ColumnState,
-    IAggFunc
+    IAggFunc,
+    ColumnApplyStateService
 } from "@ag-grid-community/core";
 
 @Bean('modelItemUtils')
@@ -17,8 +18,7 @@ export class ModelItemUtils {
 
     @Autowired('aggFuncService') aggFuncService: IAggFuncService;
     @Autowired('columnModel') columnModel: ColumnModel;
-    @Autowired('gridOptionsService') private gos: GridOptionsService;
-    @Autowired('eventService') private eventService: EventService;
+    @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
 
     public selectAllChildren(colTree: ColumnModelItem[], selectAllChecked: boolean, eventType: ColumnEventType): void {
         const cols = this.extractAllLeafColumns(colTree);
@@ -71,7 +71,7 @@ export class ModelItemUtils {
         });
 
         if (colStateItems.length > 0) {
-            this.columnModel.applyColumnState({state: colStateItems}, eventType);
+            this.columnApplyStateService.applyColumnState({state: colStateItems}, eventType);
         }
     }
 
@@ -124,7 +124,7 @@ export class ModelItemUtils {
         columns.forEach(action);
 
         if (colStateItems.length > 0) {
-            this.columnModel.applyColumnState({state: colStateItems}, eventType);
+            this.columnApplyStateService.applyColumnState({state: colStateItems}, eventType);
         }
     }
 
@@ -156,7 +156,7 @@ export class ModelItemUtils {
                 }
             }
         });
-        this.columnModel.applyColumnState({ state }, eventType);
+        this.columnApplyStateService.applyColumnState({ state }, eventType);
     }
 
     public createPivotState(column: Column): {

@@ -3,6 +3,7 @@ import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
 import { CellFocusedParams, CellFocusedEvent, Events, CellFocusClearedEvent, CommonCellFocusParams } from "./events";
 import { ColumnModel } from "./columns/columnModel";
+import { VisibleColsService } from "./columns/visibleColsService";
 import { CellPosition, CellPositionUtils } from "./entities/cellPositionUtils";
 import { RowNode } from "./entities/rowNode";
 import { HeaderPosition, HeaderPositionUtils } from "./headerRendering/common/headerPosition";
@@ -34,8 +35,9 @@ export class FocusService extends BeanStub {
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
     @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
-    @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
+    @Autowired('headerPositionUtils') private readonly headerPositionUtils: HeaderPositionUtils;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
     @Autowired('cellPositionUtils') private readonly cellPositionUtils: CellPositionUtils;
@@ -119,7 +121,7 @@ export class FocusService extends BeanStub {
         if (!this.focusedCellPosition) { return; }
 
         const col = this.focusedCellPosition.column;
-        const colFromColumnModel = this.columnModel.getGridColumn(col.getId());
+        const colFromColumnModel = this.columnModel.getCol(col.getId());
 
         if (col !== colFromColumnModel) {
             this.clearFocusedCell();
@@ -255,7 +257,7 @@ export class FocusService extends BeanStub {
             preventScrollOnBrowserFocus = false
         } = params;
 
-        const gridColumn = this.columnModel.getGridColumn(column!);
+        const gridColumn = this.columnModel.getCol(column!);
 
         // if column doesn't exist, then blank the focused cell and return. this can happen when user sets new columns,
         // and the focused cell is in a column that no longer exists. after columns change, the grid refreshes and tries
@@ -459,11 +461,11 @@ export class FocusService extends BeanStub {
     }
 
     public focusFirstHeader(): boolean {
-        let firstColumn: Column | ColumnGroup = this.columnModel.getAllDisplayedColumns()[0];
+        let firstColumn: Column | ColumnGroup = this.visibleColsService.getAllCols()[0];
         if (!firstColumn) { return false; }
 
         if (firstColumn.getParent()) {
-            firstColumn = this.columnModel.getColumnGroupAtLevel(firstColumn, 0)!;
+            firstColumn = this.visibleColsService.getColGroupAtLevel(firstColumn, 0)!;
         }
 
         const headerPosition = this.headerPositionUtils.getHeaderIndexToFocus(firstColumn, 0);
@@ -476,7 +478,7 @@ export class FocusService extends BeanStub {
 
     public focusLastHeader(event?: KeyboardEvent): boolean {
         const headerRowIndex = this.headerNavigationService.getHeaderRowCount() - 1;
-        const column = _last(this.columnModel.getAllDisplayedColumns());
+        const column = _last(this.visibleColsService.getAllCols());
 
         return this.focusHeaderPosition({
             headerPosition: { headerRowIndex, column },
@@ -670,7 +672,7 @@ export class FocusService extends BeanStub {
     }
 
     public focusNextFromAdvancedFilter(backwards?: boolean, forceFirstColumn?: boolean): boolean {
-        const column = (forceFirstColumn ? undefined : this.advancedFilterFocusColumn) ?? this.columnModel.getAllDisplayedColumns()?.[0];
+        const column = (forceFirstColumn ? undefined : this.advancedFilterFocusColumn) ?? this.visibleColsService.getAllCols()?.[0];
         if (backwards) {
             return this.focusHeaderPosition({
                 headerPosition: {

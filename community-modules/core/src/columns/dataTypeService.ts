@@ -19,7 +19,7 @@ import {
 import { IRowModel } from '../interfaces/iRowModel';
 import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { Events } from '../eventKeys';
-import { ColumnModel, ColumnState, ColumnStateParams, convertSourceType } from './columnModel';
+import { ColumnModel, convertSourceType } from './columnModel';
 import { _getValueUsingField } from '../utils/object';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { ModuleNames } from '../modules/moduleNames';
@@ -32,6 +32,8 @@ import { IRowNode } from '../interfaces/iRowNode';
 import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
 import { AgEventListener, AgGridEvent, DataTypesInferredEvent, RowDataUpdateStartedEvent } from '../events';
 import { WithoutGridCommon } from '../interfaces/iCommon';
+import { ColumnApplyStateService, ColumnState, ColumnStateParams } from './columnApplyStateService';
+import { FuncColsService } from './funcColsService';
 
 interface GroupSafeValueFormatter {
     groupSafeValueFormatter?: ValueFormatterFunc;
@@ -59,7 +61,9 @@ const MONTH_KEYS: (keyof typeof MONTH_LOCALE_TEXT)[] = ['january', 'february', '
 export class DataTypeService extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('funcColsService') private funcColsService: FuncColsService;
     @Autowired('valueService') private valueService: ValueService;
+    @Autowired('columnApplyStateService') private columnApplyStateService: ColumnApplyStateService;
 
     private dataTypeDefinitions: { [cellDataType: string]: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter } = {};
     private dataTypeMatchers: { [cellDataType: string]: ((value: any) => boolean) | undefined };
@@ -471,10 +475,10 @@ export class DataTypeService extends BeanStub {
         const newRowGroupColumnStateWithoutIndex: { [colId: string]: ColumnState } = {};
         const newPivotColumnStateWithoutIndex: { [colId: string]: ColumnState } = {};
         Object.entries(this.columnStateUpdatesPendingInference).forEach(([colId, columnStateUpdates]) => {
-            const column = this.columnModel.getGridColumn(colId);
+            const column = this.columnModel.getCol(colId);
             if (!column) { return; }
             const oldColDef = column.getColDef();
-            if (!this.columnModel.resetColumnDefIntoColumn(column, 'cellDataTypeInferred')) { return; }
+            if (!this.columnModel.resetColDefIntoCol(column, 'cellDataTypeInferred')) { return; }
             const newColDef = column.getColDef();
             if (columnTypeOverridesExist && newColDef.type && newColDef.type !== oldColDef.type) {
                 const updatedColumnState = this.getUpdatedColumnState(column, columnStateUpdates);
@@ -488,16 +492,16 @@ export class DataTypeService extends BeanStub {
             }
         });
         if (columnTypeOverridesExist) {
-            state.push(...this.columnModel.generateColumnStateForRowGroupAndPivotIndexes(newRowGroupColumnStateWithoutIndex, newPivotColumnStateWithoutIndex));
+            state.push(...this.funcColsService.generateColumnStateForRowGroupAndPivotIndexes(newRowGroupColumnStateWithoutIndex, newPivotColumnStateWithoutIndex));
         }
         if (state.length) {
-            this.columnModel.applyColumnState({ state }, 'cellDataTypeInferred');
+            this.columnApplyStateService.applyColumnState({ state }, 'cellDataTypeInferred');
         }
         this.initialData = null;
     }
 
     private getUpdatedColumnState(column: Column, columnStateUpdates: Set<keyof ColumnStateParams>): ColumnState {
-        const columnState = this.columnModel.getColumnStateFromColDef(column);
+        const columnState = this.columnApplyStateService.getColumnStateFromColDef(column);
         columnStateUpdates.forEach(key => {
             // if the column state has been updated, don't update again
             delete columnState[key];
@@ -714,7 +718,7 @@ export class DataTypeService extends BeanStub {
                     useFormatter: true,
                 };
                 colDef.comparator = (a: any, b: any) => {
-                    const column = this.columnModel.getPrimaryColumn(colId);
+                    const column = this.columnModel.getColDefCol(colId);
                     const colDef = column?.getColDef();
                     if (!column || !colDef) {
                         return 0;

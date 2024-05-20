@@ -9,7 +9,7 @@ import { EventService } from "./eventService";
 import { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 import { GridApi } from "./gridApi";
 import { ColumnFactory } from "./columns/columnFactory";
-import { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
+import { VisibleColsService } from "./columns/visibleColsService";
 import { ExpressionService } from "./valueService/expressionService";
 import { PopupService } from "./widgets/popupService";
 import { Logger, LoggerFactory } from "./logger";
@@ -31,7 +31,7 @@ import { ScrollVisibleService } from "./gridBodyComp/scrollVisibleService";
 import { StylingService } from "./styling/stylingService";
 import { ColumnHoverService } from "./rendering/columnHoverService";
 import { ColumnAnimationService } from "./rendering/columnAnimationService";
-import { AutoGroupColService } from "./columns/autoGroupColService";
+import { AutoColService } from "./columns/autoColService";
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { PaginationAutoPageSizeService } from "./pagination/paginationAutoPageSizeService";
 import { RowModelType } from "./interfaces/iRowModel";
@@ -101,6 +101,18 @@ import { ApiEventService } from "./misc/apiEventService";
 import { PageSizeSelectorComp } from "./pagination/pageSizeSelector/pageSizeSelectorComp";
 import { AriaAnnouncementService } from "./rendering/ariaAnnouncementService";
 import { MenuService } from "./misc/menuService";
+import { ColumnApplyStateService } from "./columns/columnApplyStateService";
+import { ColumnEventDispatcher } from "./columns/columnEventDispatcher";
+import { ColumnMoveService } from "./columns/columnMoveService";
+import { ColumnAutosizeService } from "./columns/columnAutosizeService";
+import { ColumnGetStateService } from "./columns/columnGetStateService";
+import { ColumnGroupStateService } from "./columns/columnGroupStateService";
+import { ColumnSizeService } from "./columns/columnSizeService";
+import { FuncColsService } from "./columns/funcColsService";
+import { ColumnNameService } from "./columns/columnNameService";
+import { ColumnViewportService } from "./columns/columnViewportService";
+import { PivotResultColsService } from "./columns/pivotResultColsService";
+import { ShowRowGroupColsService } from "./columns/showRowGroupColsService";
 
 export interface GridParams {
     // INTERNAL - used by Web Components
@@ -417,18 +429,22 @@ export class GridCoreCreator {
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
             RowContainerHeightService, HorizontalResizeService, LocaleService, ValidationService,
-            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsService,
+            PinnedRowModel, DragService, VisibleColsService, EventService, GridOptionsService,
             PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory,
             AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,
             AutoWidthCalculator, StandardMenuFactory, DragAndDropService,
             FocusService, MouseEventService, Environment, CellNavigationService, StylingService,
             ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
-            SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
+            SelectableService, AutoColService, ChangeDetectionService, AnimationFrameService,
             UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory, RowCssClassCalculator, 
             RowNodeBlockLoader, RowNodeSorter, CtrlsService, PinnedWidthService, RowNodeEventThrottle,
             CtrlsFactory, DataTypeService, QuickFilterService, SyncService, OverlayService, StateService,
-            ExpansionService, ApiEventService, AriaAnnouncementService, MenuService
+            ExpansionService, ApiEventService, AriaAnnouncementService, MenuService,
+            ColumnApplyStateService, ColumnEventDispatcher, ColumnMoveService, ColumnAutosizeService,
+            ColumnGetStateService, ColumnGroupStateService, ColumnSizeService,
+            FuncColsService, ColumnNameService, ColumnViewportService, PivotResultColsService,
+            ShowRowGroupColsService
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);
