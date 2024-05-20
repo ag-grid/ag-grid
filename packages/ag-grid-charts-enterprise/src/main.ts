@@ -24,6 +24,7 @@ import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import { ViewportRowModelModule } from '@ag-grid-enterprise/viewport-row-model';
 
+
 ModuleRegistry.__registerModules(
     [
         ClientSideRowModelModule,

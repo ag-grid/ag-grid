@@ -89,8 +89,9 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
     const gos = mock<GridOptionsService>('get', 'addGridCommonParams');
     gos.addGridCommonParams.mockImplementation((params) => params as any);
 
-    const columnModel = mock<ColumnModel>('getRowGroupColumns');
-    columnModel.getRowGroupColumns.mockImplementation(() => []);
+    const columnModel = mock<ColumnModel>();
+    const funcColsService = mock<FuncColsService>('getRowGroupColumns');
+    funcColsService.getRowGroupColumns.mockImplementation(() => []);
 
     return new SetValueModel<string>({
         filterParams: svmParams,
@@ -103,6 +104,7 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
         columnModel,
         valueService,
         addManagedListener: () => undefined,
+        funcColsService,
     });
 }
 

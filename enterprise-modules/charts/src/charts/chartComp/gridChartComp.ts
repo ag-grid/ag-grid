@@ -76,7 +76,7 @@ export interface GridChartParams {
 
 export class GridChartComp extends Component {
     private static TEMPLATE /* html */ = `<div class="ag-chart" tabindex="-1">
-            <div ref="eChartContainer" tabindex="-1" class="ag-chart-components-wrapper">
+            <div ref="eChartContainer" tabindex="-1" class="ag-chart-components-wrapper ag-chart-menu-hidden">
                 <div ref="eChart" class="ag-chart-canvas-wrapper"></div>
                 <div ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
             </div>

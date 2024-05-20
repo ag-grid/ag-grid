@@ -61,13 +61,11 @@
         @include ag.unthemed-rtl(
             (
                 padding-left:
-                    calc(var(--ag-filter-tool-panel-group-indent) * var(--ag-indentation-level) + var(--ag-grid-size)),
+                    calc(
+                        var(--ag-filter-tool-panel-group-indent) * var(--ag-indentation-level, 0) + var(--ag-grid-size)
+                    ),
             )
         );
-    }
-
-    .ag-filter-toolpanel-instance-header.ag-filter-toolpanel-group-level-1-header {
-        padding-left: var(--ag-grid-size);
     }
 
     .ag-filter-toolpanel-instance-filter {

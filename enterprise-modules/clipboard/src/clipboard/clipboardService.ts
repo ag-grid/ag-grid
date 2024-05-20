@@ -8,7 +8,6 @@ import {
     CellRange,
     ChangedPath,
     Column,
-    ColumnModel,
     CsvExportParams,
     CtrlsService,
     CutEndEvent,

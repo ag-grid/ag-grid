@@ -1,8 +1,7 @@
+import { AgPromise, ComponentType, IComponent, WrappableInterface, _warnOnce } from 'ag-grid-community';
 import { ReactPortal, createElement } from 'react';
 import { createPortal } from 'react-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
-
-import { AgPromise, ComponentType, IComponent, WrappableInterface, _warnOnce } from 'ag-grid-community';
 
 import generateNewKey from './keyGenerator';
 import { PortalManager } from './portalManager';

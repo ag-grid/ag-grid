@@ -1,17 +1,3 @@
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnDestroy,
-    Output,
-    ViewContainerRef,
-    ViewEncapsulation,
-} from '@angular/core';
-
-import { AgPromise, ComponentUtil, GridApi, GridOptions, GridParams, Module, createGrid } from 'ag-grid-community';
 // @START_IMPORTS@
 import {
     AdvancedFilterBuilderVisibleChangedEvent,
@@ -181,9 +167,30 @@ import {
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
 } from 'ag-grid-community';
+// @END_IMPORTS@
+import {
+    AgPromise,
+    ComponentUtil,
+    GridApi,
+    GridOptions,
+    GridParams,
+    Module,
+    createGrid,
+} from 'ag-grid-community';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnDestroy,
+    Output,
+    ViewContainerRef,
+    ViewEncapsulation,
+} from '@angular/core';
 
 import { AngularFrameworkComponentWrapper } from './angularFrameworkComponentWrapper';
-// @END_IMPORTS@
 import { AngularFrameworkOverrides } from './angularFrameworkOverrides';
 
 @Component({

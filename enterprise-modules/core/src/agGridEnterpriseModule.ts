@@ -4,7 +4,7 @@ import { GridLicenseManager as LicenseManager } from './license/gridLicenseManag
 import { AgWatermark } from './license/watermark';
 import { VERSION } from './version';
 
-export { AgWatermark as WatermarkComp } from './license/watermark';
+export { AgWatermark } from './license/watermark';
 
 export const EnterpriseCoreModule: Module = {
     version: VERSION,
