@@ -1,7 +1,7 @@
-import { AgInputTextField, AgInputTextFieldParams } from "./agInputTextField";
 import { _addOrRemoveAttribute } from '../utils/dom';
-import { _exists } from "../utils/generic";
-import { AgComponentSelector } from "./component";
+import { _exists } from '../utils/generic';
+import { AgInputTextField, AgInputTextFieldParams } from './agInputTextField';
+import { AgComponentSelector } from './component';
 
 export interface AgInputNumberFieldParams extends AgInputTextFieldParams {
     precision?: number;
@@ -52,7 +52,9 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
     }
 
     public normalizeValue(value: string): string {
-        if (value === '') { return ''; }
+        if (value === '') {
+            return '';
+        }
 
         if (this.precision != null) {
             value = this.adjustPrecision(value);
@@ -133,13 +135,19 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
     }
 
     public setValue(value?: string | null, silent?: boolean): this {
-        return this.setValueOrInputValue(v => super.setValue(v, silent), () => this, value);
+        return this.setValueOrInputValue(
+            (v) => super.setValue(v, silent),
+            () => this,
+            value
+        );
     }
 
     public setStartValue(value?: string | null): void {
         return this.setValueOrInputValue<void>(
-            v => super.setValue(v, true),
-            v => { this.eInput.value = v; },
+            (v) => super.setValue(v, true),
+            (v) => {
+                this.eInput.value = v;
+            },
             value
         );
     }
@@ -162,7 +170,9 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
                 setInputValueOnly = value != normalizedValue;
             }
 
-            if (setInputValueOnly) { return setInputValueOnlyFunc(value); }
+            if (setInputValueOnly) {
+                return setInputValueOnlyFunc(value);
+            }
         }
 
         return setValueFunc(value);

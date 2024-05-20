@@ -1,22 +1,22 @@
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { Column } from "../entities/column";
-import { CssVariablesChanged, Events } from '../events';
-import { BeanStub } from "../context/beanStub";
-import { _getAbsoluteHeight, _getAbsoluteWidth, _getElementRectWithOffset } from '../utils/dom';
-import { _last } from '../utils/array';
-import { _isElementInEventPath, _isStopPropagationForAgGrid } from '../utils/event';
 import { KeyCode } from '../constants/keyCode';
-import { FocusService } from "../focusService";
-import { GridCtrl } from "../gridComp/gridCtrl";
-import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
-import { AgPromise } from "../utils/promise";
-import { CtrlsService } from "../ctrlsService";
-import { _setAriaLabel, _setAriaRole } from "../utils/aria";
-import { PostProcessPopupParams } from "../interfaces/iCallbackParams";
-import { WithoutGridCommon } from "../interfaces/iCommon";
-import { ResizeObserverService } from "../misc/resizeObserverService";
-import { IRowNode } from "../interfaces/iRowNode";
-import { _exists } from "../utils/generic";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, PostConstruct } from '../context/context';
+import { CtrlsService } from '../ctrlsService';
+import { Column } from '../entities/column';
+import { CssVariablesChanged, Events } from '../events';
+import { FocusService } from '../focusService';
+import { GridCtrl } from '../gridComp/gridCtrl';
+import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
+import { PostProcessPopupParams } from '../interfaces/iCallbackParams';
+import { WithoutGridCommon } from '../interfaces/iCommon';
+import { IRowNode } from '../interfaces/iRowNode';
+import { ResizeObserverService } from '../misc/resizeObserverService';
+import { _setAriaLabel, _setAriaRole } from '../utils/aria';
+import { _last } from '../utils/array';
+import { _getAbsoluteHeight, _getAbsoluteWidth, _getElementRectWithOffset } from '../utils/dom';
+import { _isElementInEventPath, _isStopPropagationForAgGrid } from '../utils/event';
+import { _exists } from '../utils/generic';
+import { AgPromise } from '../utils/promise';
 
 export interface PopupPositionParams {
     ePopup: HTMLElement;
@@ -28,7 +28,7 @@ export interface PopupPositionParams {
     alignSide?: 'left' | 'right';
     keepWithinBounds?: boolean;
     skipObserver?: boolean;
-    updatePosition?: () => { x: number; y: number; };
+    updatePosition?: () => { x: number; y: number };
     postProcessCallback?: () => void;
 }
 
@@ -50,7 +50,10 @@ export interface AgPopup {
     stopAnchoringPromise?: AgPromise<() => void>;
 }
 
-enum DIRECTION { vertical, horizontal }
+enum DIRECTION {
+    vertical,
+    horizontal,
+}
 
 let instanceIdSeq = 0;
 
@@ -89,7 +92,6 @@ export interface AddPopupResult {
 
 @Bean('popupService')
 export class PopupService extends BeanStub {
-
     // really this should be using eGridDiv, not sure why it's not working.
     // maybe popups in the future should be parent to the body??
     @Autowired('focusService') private focusService: FocusService;
@@ -104,7 +106,7 @@ export class PopupService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.ctrlsService.whenReady(p => {
+        this.ctrlsService.whenReady((p) => {
             this.gridCtrl = p.gridCtrl;
         });
         this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.handleThemeChange.bind(this));
@@ -113,12 +115,14 @@ export class PopupService extends BeanStub {
     public getPopupParent(): HTMLElement {
         const ePopupParent = this.gos.get('popupParent');
 
-        if (ePopupParent) { return ePopupParent; }
+        if (ePopupParent) {
+            return ePopupParent;
+        }
 
         return this.gridCtrl.getGui();
     }
 
-    public positionPopupForMenu(params: { eventSource: HTMLElement; ePopup: HTMLElement; }): void {
+    public positionPopupForMenu(params: { eventSource: HTMLElement; ePopup: HTMLElement }): void {
         const { eventSource, ePopup } = params;
 
         const popupIdx = this.getPopupIndex(ePopup);
@@ -132,7 +136,7 @@ export class PopupService extends BeanStub {
         const parentRect = this.getParentRect();
         const y = this.keepXYWithinBounds(ePopup, sourceRect.top - parentRect.top, DIRECTION.vertical);
 
-        const minWidth = (ePopup.clientWidth > 0) ? ePopup.clientWidth : 200;
+        const minWidth = ePopup.clientWidth > 0 ? ePopup.clientWidth : 200;
         ePopup.style.minWidth = `${minWidth}px`;
         const widthOfParent = parentRect.right - parentRect.left;
         const maxX = widthOfParent - minWidth;
@@ -177,7 +181,9 @@ export class PopupService extends BeanStub {
         }
     }
 
-    public positionPopupUnderMouseEvent(params: PopupPositionParams & { type: string, mouseEvent: MouseEvent | Touch }): void {
+    public positionPopupUnderMouseEvent(
+        params: PopupPositionParams & { type: string; mouseEvent: MouseEvent | Touch }
+    ): void {
         const { ePopup, nudgeX, nudgeY, skipObserver } = params;
 
         this.positionPopup({
@@ -187,27 +193,45 @@ export class PopupService extends BeanStub {
             keepWithinBounds: true,
             skipObserver,
             updatePosition: () => this.calculatePointerAlign(params.mouseEvent),
-            postProcessCallback: () => this.callPostProcessPopup(params.type, params.ePopup, null, params.mouseEvent, params.column, params.rowNode)
+            postProcessCallback: () =>
+                this.callPostProcessPopup(
+                    params.type,
+                    params.ePopup,
+                    null,
+                    params.mouseEvent,
+                    params.column,
+                    params.rowNode
+                ),
         });
     }
 
-    private calculatePointerAlign(e: MouseEvent | Touch): { x: number, y: number; } {
+    private calculatePointerAlign(e: MouseEvent | Touch): { x: number; y: number } {
         const parentRect = this.getParentRect();
 
         return {
             x: e.clientX - parentRect.left,
-            y: e.clientY - parentRect.top
+            y: e.clientY - parentRect.top,
         };
     }
 
-    public positionPopupByComponent(params: PopupPositionParams & { type: string, eventSource: HTMLElement }) {
-        const { ePopup, nudgeX, nudgeY, keepWithinBounds, eventSource, alignSide = 'left', position = 'over', column, rowNode, type } = params;
+    public positionPopupByComponent(params: PopupPositionParams & { type: string; eventSource: HTMLElement }) {
+        const {
+            ePopup,
+            nudgeX,
+            nudgeY,
+            keepWithinBounds,
+            eventSource,
+            alignSide = 'left',
+            position = 'over',
+            column,
+            rowNode,
+            type,
+        } = params;
 
         const sourceRect = eventSource.getBoundingClientRect();
         const parentRect = this.getParentRect() as DOMRect;
 
         const popupIdx = this.getPopupIndex(ePopup);
-
 
         if (popupIdx !== -1) {
             const popup = this.popupList[popupIdx];
@@ -217,21 +241,21 @@ export class PopupService extends BeanStub {
         const updatePosition = () => {
             let x = sourceRect.left - parentRect.left;
             if (alignSide === 'right') {
-                x -= (ePopup.offsetWidth - sourceRect.width);
+                x -= ePopup.offsetWidth - sourceRect.width;
             }
 
             let y;
 
             if (position === 'over') {
-                y = (sourceRect.top - parentRect.top);
+                y = sourceRect.top - parentRect.top;
                 this.setAlignedStyles(ePopup, 'over');
             } else {
                 this.setAlignedStyles(ePopup, 'under');
                 const alignSide = this.shouldRenderUnderOrAbove(ePopup, sourceRect, parentRect, params.nudgeY || 0);
                 if (alignSide === 'under') {
-                    y = (sourceRect.top - parentRect.top + sourceRect.height);
+                    y = sourceRect.top - parentRect.top + sourceRect.height;
                 } else {
-                    y = (sourceRect.top - ePopup.offsetHeight - (nudgeY || 0) * 2) - parentRect.top;
+                    y = sourceRect.top - ePopup.offsetHeight - (nudgeY || 0) * 2 - parentRect.top;
                 }
             }
 
@@ -244,11 +268,16 @@ export class PopupService extends BeanStub {
             nudgeY,
             keepWithinBounds,
             updatePosition,
-            postProcessCallback: () => this.callPostProcessPopup(type, ePopup, eventSource, null, column, rowNode)
+            postProcessCallback: () => this.callPostProcessPopup(type, ePopup, eventSource, null, column, rowNode),
         });
     }
 
-    private shouldRenderUnderOrAbove(ePopup: HTMLElement, targetCompRect: DOMRect, parentRect: DOMRect, nudgeY: number): 'under' | 'above' {
+    private shouldRenderUnderOrAbove(
+        ePopup: HTMLElement,
+        targetCompRect: DOMRect,
+        parentRect: DOMRect,
+        nudgeY: number
+    ): 'under' | 'above' {
         const spaceAvailableUnder = parentRect.bottom - targetCompRect.bottom;
         const spaceAvailableAbove = targetCompRect.top - parentRect.top;
         const spaceRequired = ePopup.offsetHeight + nudgeY;
@@ -267,22 +296,28 @@ export class PopupService extends BeanStub {
     private setAlignedStyles(ePopup: HTMLElement, positioned: 'right' | 'left' | 'over' | 'above' | 'under' | null) {
         const popupIdx = this.getPopupIndex(ePopup);
 
-        if (popupIdx === -1) { return; }
+        if (popupIdx === -1) {
+            return;
+        }
 
         const popup = this.popupList[popupIdx];
 
         const { alignedToElement } = popup;
 
-        if (!alignedToElement) { return; }
+        if (!alignedToElement) {
+            return;
+        }
 
         const positions = ['right', 'left', 'over', 'above', 'under'];
 
-        positions.forEach(position => {
-            alignedToElement.classList.remove(`ag-has-popup-positioned-${position}`)
+        positions.forEach((position) => {
+            alignedToElement.classList.remove(`ag-has-popup-positioned-${position}`);
             ePopup.classList.remove(`ag-popup-positioned-${position}`);
         });
 
-        if (!positioned) { return; }
+        if (!positioned) {
+            return;
+        }
 
         alignedToElement.classList.add(`ag-has-popup-positioned-${positioned}`);
         ePopup.classList.add(`ag-popup-positioned-${positioned}`);
@@ -304,7 +339,7 @@ export class PopupService extends BeanStub {
                 ePopup: ePopup,
                 type: type,
                 eventSource: eventSource,
-                mouseEvent: mouseEvent
+                mouseEvent: mouseEvent,
             };
             callback(params);
         }
@@ -328,8 +363,12 @@ export class PopupService extends BeanStub {
             lastSize.width = ePopup.clientWidth;
             lastSize.height = ePopup.clientHeight;
 
-            if (nudgeX) { x += nudgeX; }
-            if (nudgeY) { y += nudgeY; }
+            if (nudgeX) {
+                x += nudgeX;
+            }
+            if (nudgeY) {
+                y += nudgeY;
+            }
 
             // if popup is overflowing to the bottom, move it up
             if (keepWithinBounds) {
@@ -351,7 +390,9 @@ export class PopupService extends BeanStub {
         if (!skipObserver) {
             // Since rendering popup contents can be asynchronous, use a resize observer to
             // reposition the popup after initial updates to the size of the contents
-            const resizeObserverDestroyFunc = this.resizeObserverService.observeResize(ePopup, () => updatePopupPosition(true));
+            const resizeObserverDestroyFunc = this.resizeObserverService.observeResize(ePopup, () =>
+                updatePopupPosition(true)
+            );
             // Only need to reposition when first open, so can clean up after a bit of time
             setTimeout(() => resizeObserverDestroyFunc(), PopupService.WAIT_FOR_POPUP_CONTENT_RESIZE);
         }
@@ -382,11 +423,7 @@ export class PopupService extends BeanStub {
         return _getElementRectWithOffset(popupParent);
     }
 
-    private keepXYWithinBounds(
-        ePopup: HTMLElement,
-        position: number,
-        direction: DIRECTION
-    ): number {
+    private keepXYWithinBounds(ePopup: HTMLElement, position: number, direction: DIRECTION): number {
         const isVertical = direction === DIRECTION.vertical;
         const sizeProperty = isVertical ? 'clientHeight' : 'clientWidth';
         const anchorProperty = isVertical ? 'top' : 'left';
@@ -403,7 +440,9 @@ export class PopupService extends BeanStub {
         const offsetSize = ePopup[offsetProperty];
         const getSize = isVertical ? _getAbsoluteHeight : _getAbsoluteWidth;
 
-        let sizeOfParent = isBody ? (getSize(docElement) + docElement[scrollPositionProperty]) : popupParent[sizeProperty];
+        let sizeOfParent = isBody
+            ? getSize(docElement) + docElement[scrollPositionProperty]
+            : popupParent[sizeProperty];
 
         if (isBody) {
             sizeOfParent -= Math.abs(documentRect[anchorProperty] - parentRect[anchorProperty]);
@@ -414,13 +453,13 @@ export class PopupService extends BeanStub {
         return Math.min(Math.max(position, 0), Math.abs(max));
     }
 
-    public addPopup(params: AddPopupParams): AddPopupResult { 
+    public addPopup(params: AddPopupParams): AddPopupResult {
         const eDocument = this.gos.getDocument();
         const { eChild, ariaLabel, alwaysOnTop, positionCallback, anchorToElement } = params;
 
         if (!eDocument) {
             console.warn('AG Grid: could not find the document, document is empty');
-            return { hideFunc: () => { } };
+            return { hideFunc: () => {} };
         }
 
         const pos = this.getPopupIndex(eChild);
@@ -442,7 +481,7 @@ export class PopupService extends BeanStub {
         this.addPopupToPopupList(eChild, wrapperEl, removeListeners, anchorToElement);
 
         return {
-            hideFunc: removeListeners
+            hideFunc: removeListeners,
         };
     }
 
@@ -467,10 +506,7 @@ export class PopupService extends BeanStub {
         this.environment.applyThemeClasses(eWrapper);
 
         eWrapper.classList.add('ag-popup');
-        element.classList.add(
-            this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr',
-            'ag-popup-child'
-        );
+        element.classList.add(this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr', 'ag-popup-child');
 
         if (!element.hasAttribute('role')) {
             _setAriaRole(element, 'dialog');
@@ -498,7 +534,9 @@ export class PopupService extends BeanStub {
         }
     }
 
-    private addEventListenersToPopup(params: AddPopupParams & { wrapperEl: HTMLElement }): (popupParams?: PopupEventParams) => void {
+    private addEventListenersToPopup(
+        params: AddPopupParams & { wrapperEl: HTMLElement }
+    ): (popupParams?: PopupEventParams) => void {
         const eDocument = this.gos.getDocument();
         const ePopupParent = this.getPopupParent();
 
@@ -523,14 +561,15 @@ export class PopupService extends BeanStub {
 
         const removeListeners = (popupParams: PopupEventParams = {}) => {
             const { mouseEvent, touchEvent, keyboardEvent, forceHide } = popupParams;
-            if (!forceHide && (
+            if (
+                !forceHide &&
                 // we don't hide popup if the event was on the child, or any
                 // children of this child
-                this.isEventFromCurrentPopup({ mouseEvent, touchEvent }, popupEl) ||
-                // this method should only be called once. the client can have different
-                // paths, each one wanting to close, so this method may be called multiple times.
-                popupHidden
-            )) {
+                (this.isEventFromCurrentPopup({ mouseEvent, touchEvent }, popupEl) ||
+                    // this method should only be called once. the client can have different
+                    // paths, each one wanting to close, so this method may be called multiple times.
+                    popupHidden)
+            ) {
                 return;
             }
 
@@ -574,13 +613,18 @@ export class PopupService extends BeanStub {
         return removeListeners;
     }
 
-    private addPopupToPopupList(element: HTMLElement, wrapperEl: HTMLElement, removeListeners: (popupParams?: PopupEventParams) => void, anchorToElement?: HTMLElement): void {
+    private addPopupToPopupList(
+        element: HTMLElement,
+        wrapperEl: HTMLElement,
+        removeListeners: (popupParams?: PopupEventParams) => void,
+        anchorToElement?: HTMLElement
+    ): void {
         this.popupList.push({
             element: element,
             wrapper: wrapperEl,
             hideFunc: removeListeners,
             instanceId: instanceIdSeq++,
-            isAnchored: !!anchorToElement
+            isAnchored: !!anchorToElement,
         });
 
         if (anchorToElement) {
@@ -589,31 +633,38 @@ export class PopupService extends BeanStub {
     }
 
     private getPopupIndex(el: HTMLElement): number {
-        return this.popupList.findIndex(p => p.element === el);
+        return this.popupList.findIndex((p) => p.element === el);
     }
 
-    public setPopupPositionRelatedToElement(popupEl: HTMLElement, relativeElement?: HTMLElement | null): AgPromise<() => void> | undefined {
+    public setPopupPositionRelatedToElement(
+        popupEl: HTMLElement,
+        relativeElement?: HTMLElement | null
+    ): AgPromise<() => void> | undefined {
         const popupIndex = this.getPopupIndex(popupEl);
 
-        if (popupIndex === -1) { return; }
+        if (popupIndex === -1) {
+            return;
+        }
 
         const popup = this.popupList[popupIndex];
 
         if (popup.stopAnchoringPromise) {
-            popup.stopAnchoringPromise.then(destroyFunc => destroyFunc && destroyFunc());
+            popup.stopAnchoringPromise.then((destroyFunc) => destroyFunc && destroyFunc());
         }
 
         popup.stopAnchoringPromise = undefined;
         popup.isAnchored = false;
 
-        if (!relativeElement) { return; }
+        if (!relativeElement) {
+            return;
+        }
 
         // keeps popup positioned under created, eg if context menu, if user scrolls
         // using touchpad and the cell moves, it moves the popup to keep it with the cell.
         const destroyPositionTracker = this.keepPopupPositionedRelativeTo({
             element: relativeElement,
             ePopup: popupEl,
-            hidePopup: popup.hideFunc
+            hidePopup: popup.hideFunc,
         });
 
         popup.stopAnchoringPromise = destroyPositionTracker;
@@ -626,12 +677,12 @@ export class PopupService extends BeanStub {
         this.setAlignedStyles(element, null);
         this.setPopupPositionRelatedToElement(element, null);
 
-        this.popupList = this.popupList.filter(p => p.element !== element);
+        this.popupList = this.popupList.filter((p) => p.element !== element);
     }
 
     private keepPopupPositionedRelativeTo(params: {
-        ePopup: HTMLElement,
-        element: HTMLElement,
+        ePopup: HTMLElement;
+        element: HTMLElement;
         hidePopup: (params?: PopupEventParams) => void;
     }): AgPromise<() => void> {
         const eParent = this.getPopupParent();
@@ -652,44 +703,53 @@ export class PopupService extends BeanStub {
         const leftPx = ePopup.style.left;
         const left = parseInt(leftPx!.substring(0, leftPx!.length - 1), 10);
 
-        return new AgPromise<() => void>(resolve => {
-            this.getFrameworkOverrides().setInterval(() => {
-                const pRect = eParent.getBoundingClientRect();
-                const sRect = element.getBoundingClientRect();
+        return new AgPromise<() => void>((resolve) => {
+            this.getFrameworkOverrides()
+                .setInterval(() => {
+                    const pRect = eParent.getBoundingClientRect();
+                    const sRect = element.getBoundingClientRect();
 
-                const elementNotInDom = sRect.top == 0 && sRect.left == 0 && sRect.height == 0 && sRect.width == 0;
-                if (elementNotInDom) {
-                    params.hidePopup();
-                    return;
-                }
-
-                const currentDiffTop = pRect.top - sRect.top;
-                if (currentDiffTop != lastDiffTop) {
-                    const newTop = this.keepXYWithinBounds(ePopup, top + initialDiffTop - currentDiffTop, DIRECTION.vertical);
-                    ePopup.style.top = `${newTop}px`;
-                }
-                lastDiffTop = currentDiffTop;
-
-                const currentDiffLeft = pRect.left - sRect.left;
-                if (currentDiffLeft != lastDiffLeft) {
-                    const newLeft = this.keepXYWithinBounds(ePopup, left + initialDiffLeft - currentDiffLeft, DIRECTION.horizontal);
-                    ePopup.style.left = `${newLeft}px`;
-                }
-                lastDiffLeft = currentDiffLeft;
-
-            }, 200).then(intervalId => {
-                const result = () => {
-                    if (intervalId != null) {
-                        window.clearInterval(intervalId);
+                    const elementNotInDom = sRect.top == 0 && sRect.left == 0 && sRect.height == 0 && sRect.width == 0;
+                    if (elementNotInDom) {
+                        params.hidePopup();
+                        return;
                     }
-                };
-                resolve(result);
-            });
+
+                    const currentDiffTop = pRect.top - sRect.top;
+                    if (currentDiffTop != lastDiffTop) {
+                        const newTop = this.keepXYWithinBounds(
+                            ePopup,
+                            top + initialDiffTop - currentDiffTop,
+                            DIRECTION.vertical
+                        );
+                        ePopup.style.top = `${newTop}px`;
+                    }
+                    lastDiffTop = currentDiffTop;
+
+                    const currentDiffLeft = pRect.left - sRect.left;
+                    if (currentDiffLeft != lastDiffLeft) {
+                        const newLeft = this.keepXYWithinBounds(
+                            ePopup,
+                            left + initialDiffLeft - currentDiffLeft,
+                            DIRECTION.horizontal
+                        );
+                        ePopup.style.left = `${newLeft}px`;
+                    }
+                    lastDiffLeft = currentDiffLeft;
+                }, 200)
+                .then((intervalId) => {
+                    const result = () => {
+                        if (intervalId != null) {
+                            window.clearInterval(intervalId);
+                        }
+                    };
+                    resolve(result);
+                });
         });
     }
 
     public hasAnchoredPopup(): boolean {
-        return this.popupList.some(popup => popup.isAnchored);
+        return this.popupList.some((popup) => popup.isAnchored);
     }
 
     private isEventFromCurrentPopup(params: PopupEventParams, target: HTMLElement): boolean {
@@ -697,16 +757,22 @@ export class PopupService extends BeanStub {
 
         const event = mouseEvent ? mouseEvent : touchEvent;
 
-        if (!event) { return false; }
+        if (!event) {
+            return false;
+        }
 
         const indexOfThisChild = this.getPopupIndex(target);
 
-        if (indexOfThisChild === -1) { return false; }
+        if (indexOfThisChild === -1) {
+            return false;
+        }
 
         for (let i = indexOfThisChild; i < this.popupList.length; i++) {
             const popup = this.popupList[i];
 
-            if (_isElementInEventPath(popup.element, event)) { return true; }
+            if (_isElementInEventPath(popup.element, event)) {
+                return true;
+            }
         }
 
         // if the user did not write their own Custom Element to be rendered as popup
@@ -753,7 +819,9 @@ export class PopupService extends BeanStub {
         const parent = this.getPopupParent();
         const popupList: HTMLElement[] = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup'));
         const popupLen = popupList.length;
-        const alwaysOnTopList: HTMLElement[] = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup.ag-always-on-top'));
+        const alwaysOnTopList: HTMLElement[] = Array.prototype.slice.call(
+            parent.querySelectorAll('.ag-popup.ag-always-on-top')
+        );
         const onTopLength = alwaysOnTopList.length;
         const eWrapper = this.getWrapper(ePopup);
 
@@ -766,7 +834,7 @@ export class PopupService extends BeanStub {
         const innerEls = eWrapper.querySelectorAll('div');
         const innerElsScrollMap: [HTMLElement, number][] = [];
 
-        innerEls.forEach(el => {
+        innerEls.forEach((el) => {
             if (el.scrollTop !== 0) {
                 innerElsScrollMap.push([el, el.scrollTop]);
             }

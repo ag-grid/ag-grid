@@ -1,16 +1,18 @@
-import { AgAbstractInputField } from './agAbstractInputField';
+import { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { _exists } from '../utils/generic';
 import { _isEventFromPrintableCharacter } from '../utils/keyboard';
-import { AgInputFieldParams } from '../interfaces/agFieldParams';
+import { AgAbstractInputField } from './agAbstractInputField';
 import { AgComponentSelector } from './component';
 
 export interface AgInputTextFieldParams extends AgInputFieldParams {
     allowedCharPattern?: string;
 }
 
-export class AgInputTextField<TConfig extends AgInputTextFieldParams = AgInputTextFieldParams> extends AgAbstractInputField<HTMLInputElement, string, TConfig> {
+export class AgInputTextField<
+    TConfig extends AgInputTextFieldParams = AgInputTextFieldParams,
+> extends AgAbstractInputField<HTMLInputElement, string, TConfig> {
     static readonly selector: AgComponentSelector = 'ag-input-text-field';
-    
+
     constructor(config?: TConfig, className = 'ag-text-field', inputType = 'text') {
         super(config, className, inputType);
     }
@@ -41,7 +43,9 @@ export class AgInputTextField<TConfig extends AgInputTextFieldParams = AgInputTe
         const pattern = new RegExp(`[${this.config.allowedCharPattern}]`);
 
         const preventCharacters = (event: KeyboardEvent) => {
-            if (!_isEventFromPrintableCharacter(event)) { return; }
+            if (!_isEventFromPrintableCharacter(event)) {
+                return;
+            }
 
             if (event.key && !pattern.test(event.key)) {
                 event.preventDefault();

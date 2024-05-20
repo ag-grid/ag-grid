@@ -1,10 +1,23 @@
-import { Component, GridOptions, ICellRenderer, RefSelector, GridApi, IDetailCellRenderer, IDetailCellRendererParams, ModuleRegistry, createGrid, GridParams, _cloneObject, _missing, _warnOnce } from "@ag-grid-community/core";
-import { DetailCellRendererCtrl } from "./detailCellRendererCtrl";
+import {
+    Component,
+    GridApi,
+    GridOptions,
+    GridParams,
+    ICellRenderer,
+    IDetailCellRenderer,
+    IDetailCellRendererParams,
+    ModuleRegistry,
+    RefSelector,
+    _cloneObject,
+    _missing,
+    _warnOnce,
+    createGrid,
+} from '@ag-grid-community/core';
+
+import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
 
 export class DetailCellRenderer extends Component implements ICellRenderer {
-
-    private static TEMPLATE = /* html */
-        `<div class="ag-details-row" role="gridcell">
+    private static TEMPLATE /* html */ = `<div class="ag-details-row" role="gridcell">
             <div ref="eDetailGrid" class="ag-details-grid" role="presentation"></div>
         </div>`;
 
@@ -17,16 +30,16 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     private ctrl: DetailCellRendererCtrl;
 
     public init(params: IDetailCellRendererParams): void {
-
         this.params = params;
         this.selectAndSetTemplate();
 
         const compProxy: IDetailCellRenderer = {
             addOrRemoveCssClass: (cssClassName: string, on: boolean) => this.addOrRemoveCssClass(cssClassName, on),
-            addOrRemoveDetailGridCssClass: (cssClassName: string, on: boolean) => this.eDetailGrid.classList.toggle(cssClassName, on),
-            setDetailGrid: gridOptions => this.setDetailGrid(gridOptions),
-            setRowData: rowData => this.setRowData(rowData),
-            getGui: () => this.eDetailGrid
+            addOrRemoveDetailGridCssClass: (cssClassName: string, on: boolean) =>
+                this.eDetailGrid.classList.toggle(cssClassName, on),
+            setDetailGrid: (gridOptions) => this.setDetailGrid(gridOptions),
+            setRowData: (rowData) => this.setRowData(rowData),
+            getGui: () => this.eDetailGrid,
         };
 
         this.ctrl = this.createManagedBean(new DetailCellRendererCtrl());
@@ -43,9 +56,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         super.destroy();
     }
 
-
     private selectAndSetTemplate(): void {
-
         if (this.params.pinned) {
             this.setTemplate('<div class="ag-details-row"></div>', []);
             return;
@@ -73,13 +84,17 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         }
 
         if (this.eDetailGrid == null) {
-            _warnOnce('Reference to eDetailGrid was missing from the details template. ' +
-                'Please add ref="eDetailGrid" to the template.');
+            _warnOnce(
+                'Reference to eDetailGrid was missing from the details template. ' +
+                    'Please add ref="eDetailGrid" to the template.'
+            );
         }
     }
 
     private setDetailGrid(gridOptions: GridOptions): void {
-        if (!this.eDetailGrid) { return; }
+        if (!this.eDetailGrid) {
+            return;
+        }
 
         // AG-1715
         // this is only needed when suppressReactUi=true, once we remove the old way

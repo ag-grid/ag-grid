@@ -1,12 +1,12 @@
-import { AutoScrollService } from "../autoScrollService";
-import { BeanStub } from "../context/beanStub";
-import { Autowired, PostConstruct } from "../context/context";
-import { AgEvent } from "../events";
-import { IEventEmitter } from "../interfaces/iEventEmitter";
-import { _radioCssClass } from "../utils/dom";
-import { Component } from "../widgets/component";
-import { VirtualList } from "../widgets/virtualList";
-import { DragAndDropService, DraggingEvent, DragSourceType, DropTarget } from "./dragAndDropService";
+import { AutoScrollService } from '../autoScrollService';
+import { BeanStub } from '../context/beanStub';
+import { Autowired, PostConstruct } from '../context/context';
+import { AgEvent } from '../events';
+import { IEventEmitter } from '../interfaces/iEventEmitter';
+import { _radioCssClass } from '../utils/dom';
+import { Component } from '../widgets/component';
+import { VirtualList } from '../widgets/virtualList';
+import { DragAndDropService, DragSourceType, DraggingEvent, DropTarget } from './dragAndDropService';
 
 const LIST_ITEM_HOVERED = 'ag-list-item-hovered';
 
@@ -39,12 +39,22 @@ export class VirtualListDragFeature<C extends Component, R extends Component, V,
         private readonly comp: C,
         private readonly virtualList: VirtualList,
         private readonly params: VirtualListDragParams<C, R, V, E>
-    ) { super(); }
+    ) {
+        super();
+    }
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedListener(this.params.eventSource, this.params.listItemDragStartEvent, this.listItemDragStart.bind(this));
-        this.addManagedListener(this.params.eventSource, this.params.listItemDragEndEvent, this.listItemDragEnd.bind(this));
+        this.addManagedListener(
+            this.params.eventSource,
+            this.params.listItemDragStartEvent,
+            this.listItemDragStart.bind(this)
+        );
+        this.addManagedListener(
+            this.params.eventSource,
+            this.params.listItemDragEndEvent,
+            this.listItemDragEnd.bind(this)
+        );
 
         this.createDropTarget();
         this.createAutoScrollService();
@@ -65,11 +75,11 @@ export class VirtualListDragFeature<C extends Component, R extends Component, V,
     private createDropTarget(): void {
         const dropTarget: DropTarget = {
             isInterestedIn: (type: DragSourceType) => type === this.params.dragSourceType,
-            getIconName: () => this.moveBlocked ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE,
+            getIconName: () => (this.moveBlocked ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE),
             getContainer: () => this.comp.getGui(),
             onDragging: (e) => this.onDragging(e),
             onDragStop: () => this.onDragStop(),
-            onDragLeave: () => this.onDragLeave()
+            onDragLeave: () => this.onDragLeave(),
         };
 
         this.dragAndDropService.addDropTarget(dropTarget);
@@ -81,17 +91,21 @@ export class VirtualListDragFeature<C extends Component, R extends Component, V,
             scrollContainer: virtualListGui,
             scrollAxis: 'y',
             getVerticalPosition: () => virtualListGui.scrollTop,
-            setVerticalPosition: (position) => virtualListGui.scrollTop = position
+            setVerticalPosition: (position) => (virtualListGui.scrollTop = position),
         });
     }
 
     private onDragging(e: DraggingEvent) {
-        if (!this.currentDragValue || this.moveBlocked) { return; }
+        if (!this.currentDragValue || this.moveBlocked) {
+            return;
+        }
 
         const hoveredListItem = this.getListDragItem(e);
         const comp = this.virtualList.getComponentAt(hoveredListItem.rowIndex);
 
-        if (!comp) { return; }
+        if (!comp) {
+            return;
+        }
 
         const el = comp!.getGui().parentElement as HTMLElement;
 
@@ -99,7 +113,9 @@ export class VirtualListDragFeature<C extends Component, R extends Component, V,
             this.lastHoveredListItem &&
             this.lastHoveredListItem.rowIndex === hoveredListItem.rowIndex &&
             this.lastHoveredListItem.position === hoveredListItem.position
-        ) { return; }
+        ) {
+            return;
+        }
 
         this.autoScrollService.check(e.event);
         this.clearHoveredItems();
@@ -120,13 +136,15 @@ export class VirtualListDragFeature<C extends Component, R extends Component, V,
 
         return {
             rowIndex: normalizedRowIndex,
-            position: (Math.round(rowIndex) > rowIndex || rowIndex > maxLen) ? 'bottom' : 'top',
-            component: this.virtualList.getComponentAt(normalizedRowIndex) as R
+            position: Math.round(rowIndex) > rowIndex || rowIndex > maxLen ? 'bottom' : 'top',
+            component: this.virtualList.getComponentAt(normalizedRowIndex) as R,
         };
     }
 
     private onDragStop() {
-        if (this.moveBlocked) { return; }
+        if (this.moveBlocked) {
+            return;
+        }
 
         this.params.moveItem(this.currentDragValue, this.lastHoveredListItem);
 
@@ -141,12 +159,8 @@ export class VirtualListDragFeature<C extends Component, R extends Component, V,
 
     private clearHoveredItems(): void {
         const virtualListGui = this.virtualList.getGui();
-        virtualListGui.querySelectorAll(`.${LIST_ITEM_HOVERED}`).forEach(el => {
-            [
-                LIST_ITEM_HOVERED,
-                'ag-item-highlight-top',
-                'ag-item-highlight-bottom'
-            ].forEach(cls => {
+        virtualListGui.querySelectorAll(`.${LIST_ITEM_HOVERED}`).forEach((el) => {
+            [LIST_ITEM_HOVERED, 'ag-item-highlight-top', 'ag-item-highlight-bottom'].forEach((cls) => {
                 (el as HTMLElement).classList.remove(cls);
             });
         });

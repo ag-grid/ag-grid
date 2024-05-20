@@ -25,8 +25,8 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
 // fail tests on console.errors
-Cypress.on(`window:before:load`, win => {
-    cy.stub(win.console, `error`).callsFake(msg => {
+Cypress.on(`window:before:load`, (win) => {
+    cy.stub(win.console, `error`).callsFake((msg) => {
         cy.now(`task`, `error`, '' + msg);
         throw new Error(msg);
     });

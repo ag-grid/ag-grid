@@ -8,7 +8,4 @@ type ApiRef = {
 /**
  * Alias for the grid API or an object containing the grid API for linking Aligned Grids.
  */
-export type AlignedGrid =
-    | TypeOrNull<GridApi>
-    | ApiRef
-    | { current: ApiRef };
+export type AlignedGrid = TypeOrNull<GridApi> | ApiRef | { current: ApiRef };

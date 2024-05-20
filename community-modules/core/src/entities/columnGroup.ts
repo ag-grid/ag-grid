@@ -1,24 +1,23 @@
-import { HeaderColumnId, IHeaderColumn } from "../interfaces/iHeaderColumn";
-import { ColGroupDef } from "./colDef";
-import { Column, ColumnPinnedType } from "./column";
-import { AbstractColDef } from "./colDef";
-import { ProvidedColumnGroup } from "./providedColumnGroup";
-import { EventService } from "../eventService";
-import { Autowired } from "../context/context";
-import { AgEvent, AgEventListener } from "../events";
-import { _last } from "../utils/array";
-import { GridOptionsService } from "../gridOptionsService";
+import { Autowired } from '../context/context';
+import { EventService } from '../eventService';
+import { AgEvent, AgEventListener } from '../events';
+import { GridOptionsService } from '../gridOptionsService';
+import { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
+import { _last } from '../utils/array';
+import { ColGroupDef } from './colDef';
+import { AbstractColDef } from './colDef';
+import { Column, ColumnPinnedType } from './column';
+import { ProvidedColumnGroup } from './providedColumnGroup';
 
 export type ColumnGroupShowType = 'open' | 'closed';
 
 export class ColumnGroup implements IHeaderColumn {
-
     public static EVENT_LEFT_CHANGED = 'leftChanged';
     public static EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
 
     // this is static, a it is used outside of this class
     public static createUniqueId(groupId: string, instanceId: number): HeaderColumnId {
-        return groupId + '_' + instanceId as HeaderColumnId;
+        return (groupId + '_' + instanceId) as HeaderColumnId;
     }
 
     @Autowired('gridOptionsService') gos: GridOptionsService;
@@ -73,9 +72,11 @@ export class ColumnGroup implements IHeaderColumn {
 
     public isMoving(): boolean {
         const allLeafColumns = this.getProvidedColumnGroup().getLeafColumns();
-        if (!allLeafColumns || allLeafColumns.length === 0) { return false; }
+        if (!allLeafColumns || allLeafColumns.length === 0) {
+            return false;
+        }
 
-        return allLeafColumns.every(col => col.isMoving());
+        return allLeafColumns.every((col) => col.isMoving());
     }
 
     public checkLeft(): void {
@@ -171,7 +172,9 @@ export class ColumnGroup implements IHeaderColumn {
     }
 
     public isResizable(): boolean {
-        if (!this.displayedChildren) { return false; }
+        if (!this.displayedChildren) {
+            return false;
+        }
 
         // if at least one child is resizable, then the group is resizable
         let result = false;
@@ -303,10 +306,13 @@ export class ColumnGroup implements IHeaderColumn {
         // Add cols based on columnGroupShow
         // Note - the below also adds padding groups, these are always added because they never have
         // colDef.columnGroupShow set.
-        this.children!.forEach(child => {
+        this.children!.forEach((child) => {
             // never add empty groups
-            const emptyGroup = child instanceof ColumnGroup && (!child.displayedChildren || !child.displayedChildren.length);
-            if (emptyGroup) { return; }
+            const emptyGroup =
+                child instanceof ColumnGroup && (!child.displayedChildren || !child.displayedChildren.length);
+            if (emptyGroup) {
+                return;
+            }
 
             const headerGroupShow = child.getColumnGroupShow();
             switch (headerGroupShow) {

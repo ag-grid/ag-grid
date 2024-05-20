@@ -1,5 +1,5 @@
-import { ColumnNameService } from '../../../columns/columnNameService';
 import { ColumnModel } from '../../../columns/columnModel';
+import { ColumnNameService } from '../../../columns/columnNameService';
 import { Autowired } from '../../../context/context';
 import { IFilter } from '../../../interfaces/iFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
@@ -11,7 +11,6 @@ import { IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParent } fro
 // they can provide a getModelAsString() method on the filter instead. this class just displays
 // the string returned from getModelAsString()
 export class ReadOnlyFloatingFilter extends Component implements IFloatingFilterComp<IFilter & IFloatingFilterParent> {
-
     @RefSelector('eFloatingFilterText') private eFloatingFilterText: AgInputTextField;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
@@ -19,10 +18,13 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
     private params: IFloatingFilterParams;
 
     constructor() {
-        super(/* html */`
+        super(
+            /* html */ `
             <div class="ag-floating-filter-input" role="presentation">
                 <ag-input-text-field ref="eFloatingFilterText"></ag-input-text-field>
-            </div>`, [AgInputTextField]);
+            </div>`,
+            [AgInputTextField]
+        );
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
@@ -46,7 +48,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
             return;
         }
 
-        this.params.parentFilterInstance(filterInstance => {
+        this.params.parentFilterInstance((filterInstance) => {
             // it would be nice to check if getModelAsString was present before creating this component,
             // however that is not possible, as React Hooks and VueJS don't attached the methods to the Filter until
             // AFTER the filter is created, not allowing inspection before this (we create floating filters as columns

@@ -1,6 +1,6 @@
 import { Bean } from '../context/context';
 import { _warnOnce } from '../utils/function';
-import { ComponentClass, AgComponentSelector } from '../widgets/component';
+import { AgComponentSelector, ComponentClass } from '../widgets/component';
 
 @Bean('agStackComponentsRegistry')
 export class AgStackComponentsRegistry {
@@ -18,7 +18,7 @@ export class AgStackComponentsRegistry {
         }
     }
 
-    public getComponent(name: Uppercase<AgComponentSelector>, optional: boolean = false): ComponentClass | undefined{
+    public getComponent(name: Uppercase<AgComponentSelector>, optional: boolean = false): ComponentClass | undefined {
         const comp = this.componentToNodeName.get(name);
         if (!comp && !optional && name.startsWith('AG-')) {
             _warnOnce(`(${name}) missing!`);
@@ -26,4 +26,3 @@ export class AgStackComponentsRegistry {
         return comp;
     }
 }
-

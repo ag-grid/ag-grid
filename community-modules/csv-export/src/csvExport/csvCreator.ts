@@ -9,16 +9,19 @@ import {
     GridOptionsService,
     ICsvCreator,
     PostConstruct,
-    ValueService
-} from "@ag-grid-community/core";
-import { BaseCreator } from "./baseCreator";
-import { Downloader } from "./downloader";
-import { GridSerializer } from "./gridSerializer";
-import { CsvSerializingSession } from "./sessions/csvSerializingSession";
+    ValueService,
+} from '@ag-grid-community/core';
+
+import { BaseCreator } from './baseCreator';
+import { Downloader } from './downloader';
+import { GridSerializer } from './gridSerializer';
+import { CsvSerializingSession } from './sessions/csvSerializingSession';
 
 @Bean('csvCreator')
-export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSession, CsvExportParams> implements ICsvCreator {
-
+export class CsvCreator
+    extends BaseCreator<CsvCustomContent, CsvSerializingSession, CsvExportParams>
+    implements ICsvCreator
+{
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('funcColsService') private funcColsService: FuncColsService;
@@ -30,7 +33,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     public postConstruct(): void {
         this.setBeans({
             gridSerializer: this.gridSerializer,
-            gos: this.gos
+            gos: this.gos,
         });
     }
 
@@ -48,11 +51,12 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         const mergedParams = this.getMergedParams(userParams);
         const data = this.getData(mergedParams);
 
-        const packagedFile = new Blob(["\ufeff", data], { type: 'text/plain' });
+        const packagedFile = new Blob(['\ufeff', data], { type: 'text/plain' });
 
-        const fileName = typeof mergedParams.fileName === 'function'
-            ? mergedParams.fileName(this.gos.getGridCommonParams())
-            : mergedParams.fileName;
+        const fileName =
+            typeof mergedParams.fileName === 'function'
+                ? mergedParams.fileName(this.gos.getGridCommonParams())
+                : mergedParams.fileName;
 
         Downloader.download(this.getFileName(fileName), packagedFile);
     }
@@ -62,9 +66,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     }
 
     public getDataAsCsv(params?: CsvExportParams, skipDefaultParams = false): string {
-        const mergedParams = skipDefaultParams
-            ? Object.assign({}, params)
-            : this.getMergedParams(params);
+        const mergedParams = skipDefaultParams ? Object.assign({}, params) : this.getMergedParams(params);
 
         return this.getData(mergedParams);
     }
@@ -81,7 +83,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
             processGroupHeaderCallback,
             processRowGroupCallback,
             suppressQuotes,
-            columnSeparator
+            columnSeparator,
         } = params!;
 
         return new CsvSerializingSession({
@@ -95,7 +97,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
             processGroupHeaderCallback: processGroupHeaderCallback || undefined,
             processRowGroupCallback: processRowGroupCallback || undefined,
             suppressQuotes: suppressQuotes || false,
-            columnSeparator: columnSeparator || ','
+            columnSeparator: columnSeparator || ',',
         });
     }
 

@@ -3,22 +3,18 @@ import { GridHeaderComp } from '../headerRendering/gridHeaderComp';
 import { IRangeService } from '../interfaces/IRangeService';
 import { ResizeObserverService } from '../misc/resizeObserverService';
 import { OverlayWrapperComponent } from '../rendering/overlays/overlayWrapperComponent';
-import { LayoutCssClasses } from "../styling/layoutFeature";
+import { LayoutCssClasses } from '../styling/layoutFeature';
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRowCount } from '../utils/aria';
 import { AgComponentSelector, Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { FakeHScrollComp } from './fakeHScrollComp';
 import { FakeVScrollComp } from './fakeVScrollComp';
-import {
-    CSS_CLASS_FORCE_VERTICAL_SCROLL,
-    GridBodyCtrl,
-    IGridBodyComp,
-    RowAnimationCssClasses
-} from "./gridBodyCtrl";
+import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from './gridBodyCtrl';
 import { RowContainerComp } from './rowContainer/rowContainerComp';
-import { RowContainerName } from "./rowContainer/rowContainerCtrl";
+import { RowContainerName } from './rowContainer/rowContainerCtrl';
 
-const GRID_BODY_TEMPLATE = /* html */
+const GRID_BODY_TEMPLATE =
+    /* html */
     `<div class="ag-root ag-unselectable" role="treegrid">
         <ag-header-root ref="gridHeader"></ag-header-root>
         <div class="ag-floating-top" ref="eTop" role="presentation">
@@ -76,12 +72,17 @@ export class GridBodyComp extends Component {
     private ctrl: GridBodyCtrl;
 
     constructor() {
-        super(GRID_BODY_TEMPLATE, [OverlayWrapperComponent, FakeHScrollComp, FakeVScrollComp, GridHeaderComp, RowContainerComp]);
+        super(GRID_BODY_TEMPLATE, [
+            OverlayWrapperComponent,
+            FakeHScrollComp,
+            FakeVScrollComp,
+            GridHeaderComp,
+            RowContainerComp,
+        ]);
     }
 
     @PostConstruct
     private init() {
-
         const setHeight = (height: number, element: HTMLElement) => {
             const heightString = `${height}px`;
             element.style.minHeight = heightString;
@@ -89,27 +90,25 @@ export class GridBodyComp extends Component {
         };
 
         const compProxy: IGridBodyComp = {
-            setRowAnimationCssOnBodyViewport: (cssClass, animate) => this.setRowAnimationCssOnBodyViewport(cssClass, animate),
-            setColumnCount: count => _setAriaColCount(this.getGui(), count),
-            setRowCount: count => _setAriaRowCount(this.getGui(), count),
-            setTopHeight: height => setHeight(height, this.eTop),
-            setBottomHeight: height => setHeight(height, this.eBottom),
-            setTopDisplay: display => this.eTop.style.display = display,
-            setBottomDisplay: display => this.eBottom.style.display = display,
-            setStickyTopHeight: height => this.eStickyTop.style.height = height,
-            setStickyTopTop: top => this.eStickyTop.style.top = top,
-            setStickyTopWidth: width => this.eStickyTop.style.width = width,
-            setStickyBottomHeight: height => this.eStickyBottom.style.height = height,
-            setStickyBottomBottom: bottom => this.eStickyBottom.style.bottom = bottom,
-            setStickyBottomWidth: width => this.eStickyBottom.style.width = width,
+            setRowAnimationCssOnBodyViewport: (cssClass, animate) =>
+                this.setRowAnimationCssOnBodyViewport(cssClass, animate),
+            setColumnCount: (count) => _setAriaColCount(this.getGui(), count),
+            setRowCount: (count) => _setAriaRowCount(this.getGui(), count),
+            setTopHeight: (height) => setHeight(height, this.eTop),
+            setBottomHeight: (height) => setHeight(height, this.eBottom),
+            setTopDisplay: (display) => (this.eTop.style.display = display),
+            setBottomDisplay: (display) => (this.eBottom.style.display = display),
+            setStickyTopHeight: (height) => (this.eStickyTop.style.height = height),
+            setStickyTopTop: (top) => (this.eStickyTop.style.top = top),
+            setStickyTopWidth: (width) => (this.eStickyTop.style.width = width),
+            setStickyBottomHeight: (height) => (this.eStickyBottom.style.height = height),
+            setStickyBottomBottom: (bottom) => (this.eStickyBottom.style.bottom = bottom),
+            setStickyBottomWidth: (width) => (this.eStickyBottom.style.width = width),
             setColumnMovingCss: (cssClass, flag) => this.addOrRemoveCssClass(cssClass, flag),
             updateLayoutClasses: (cssClass, params) => {
-                const classLists = [
-                    this.eBodyViewport.classList,
-                    this.eBody.classList
-                ];
+                const classLists = [this.eBodyViewport.classList, this.eBody.classList];
 
-                classLists.forEach(classList => {
+                classLists.forEach((classList) => {
                     classList.toggle(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
                     classList.toggle(LayoutCssClasses.NORMAL, params.normal);
                     classList.toggle(LayoutCssClasses.PRINT, params.print);
@@ -121,16 +120,18 @@ export class GridBodyComp extends Component {
             },
             setAlwaysVerticalScrollClass: (cssClass, on) =>
                 this.eBodyViewport.classList.toggle(CSS_CLASS_FORCE_VERTICAL_SCROLL, on),
-            registerBodyViewportResizeListener: listener => {
+            registerBodyViewportResizeListener: (listener) => {
                 const unsubscribeFromResize = this.resizeObserverService.observeResize(this.eBodyViewport, listener);
                 this.addDestroyFunc(() => unsubscribeFromResize());
             },
-            setPinnedTopBottomOverflowY: overflow => this.eTop.style.overflowY = this.eBottom.style.overflowY = overflow,
+            setPinnedTopBottomOverflowY: (overflow) =>
+                (this.eTop.style.overflowY = this.eBottom.style.overflowY = overflow),
             setCellSelectableCss: (cssClass: string, selectable: boolean) => {
-                [this.eTop, this.eBodyViewport, this.eBottom]
-                    .forEach(ct => ct.classList.toggle(cssClass, selectable));
+                [this.eTop, this.eBodyViewport, this.eBottom].forEach((ct) =>
+                    ct.classList.toggle(cssClass, selectable)
+                );
             },
-            setBodyViewportWidth: width => this.eBodyViewport.style.width = width
+            setBodyViewportWidth: (width) => (this.eBodyViewport.style.width = width),
         };
 
         this.ctrl = this.createManagedBean(new GridBodyCtrl());
@@ -141,10 +142,13 @@ export class GridBodyComp extends Component {
             this.eTop,
             this.eBottom,
             this.eStickyTop,
-            this.eStickyBottom,
+            this.eStickyBottom
         );
 
-        if (this.rangeService && this.gos.get('enableRangeSelection') || this.gos.get('rowSelection') === 'multiple') {
+        if (
+            (this.rangeService && this.gos.get('enableRangeSelection')) ||
+            this.gos.get('rowSelection') === 'multiple'
+        ) {
             _setAriaMultiSelectable(this.getGui(), true);
         }
     }

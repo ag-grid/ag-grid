@@ -1,20 +1,14 @@
-import {
-    AgSelect,
-    Autowired,
-    ChartMappings,
-    Component,
-    PostConstruct,
-    RefSelector
-} from "@ag-grid-community/core";
-import { ChartService } from "../../../chartService";
-import { ChartTranslationKey, ChartTranslationService } from "../../services/chartTranslationService";
-import { canSwitchDirection, getSeriesType } from "../../utils/seriesTypeMapper";
-import { ChartMenuContext } from "../chartMenuContext";
-import { ChartMenuParamsFactory } from "../chartMenuParamsFactory";
-import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
+import { AgSelect, Autowired, ChartMappings, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+
+import { ChartService } from '../../../chartService';
+import { ChartTranslationKey, ChartTranslationService } from '../../services/chartTranslationService';
+import { canSwitchDirection, getSeriesType } from '../../utils/seriesTypeMapper';
+import { ChartMenuContext } from '../chartMenuContext';
+import { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
 
 export class ChartSpecificDataPanel extends Component {
-    private static TEMPLATE = /* html */`
+    private static TEMPLATE = /* html */ `
         <div id="chartSpecificGroup">
             <ag-group-component ref="chartSpecificGroup"></ag-group-component>
         </div>`;
@@ -44,13 +38,10 @@ export class ChartSpecificDataPanel extends Component {
             suppressOpenCloseIcons: false,
             cssIdentifier: 'charts-data',
             expanded: this.isOpen,
-            items: [
-                ...this.createDirectionSelect(),
-                this.createGroupTypeSelect()
-            ]
-        }
+            items: [...this.createDirectionSelect(), this.createGroupTypeSelect()],
+        };
         this.setTemplate(ChartSpecificDataPanel.TEMPLATE, [AgGroupComponent], {
-            chartSpecificGroup: chartSpecificGroupParams
+            chartSpecificGroup: chartSpecificGroupParams,
         });
         this.setDisplayed(this.hasContent);
     }
@@ -90,21 +81,27 @@ export class ChartSpecificDataPanel extends Component {
     }
 
     private createDirectionSelect(): AgSelect[] {
-        if (!this.chartService.isEnterprise()) { return []; }
+        if (!this.chartService.isEnterprise()) {
+            return [];
+        }
         const { chartOptionsService, chartController } = this.chartMenuContext;
-        const chartOptionsSeriesProxy = chartOptionsService.getSeriesOptionsProxy(() => getSeriesType(chartController.getChartType()));
-        const chartSeriesMenuParamsFactory = this.createManagedBean(new ChartMenuParamsFactory(chartOptionsSeriesProxy));
-        const options = (['horizontal', 'vertical'] as const).map(value => ({
+        const chartOptionsSeriesProxy = chartOptionsService.getSeriesOptionsProxy(() =>
+            getSeriesType(chartController.getChartType())
+        );
+        const chartSeriesMenuParamsFactory = this.createManagedBean(
+            new ChartMenuParamsFactory(chartOptionsSeriesProxy)
+        );
+        const options = (['horizontal', 'vertical'] as const).map((value) => ({
             value,
-            text: this.chartTranslationService.translate(value)
+            text: this.chartTranslationService.translate(value),
         }));
         const params = chartSeriesMenuParamsFactory.getDefaultSelectParams('direction', 'direction', options);
         const onValueChange = params.onValueChange;
-        params.onValueChange = value => {
+        params.onValueChange = (value) => {
             onValueChange!(value);
             // series and axes configuration are based on direction
             chartController.raiseChartModelUpdateEvent();
-        }
+        };
         this.directionSelect = this.createManagedBean(new AgSelect(params));
         this.updateDirectionSelect();
         return [this.directionSelect];
@@ -117,25 +114,27 @@ export class ChartSpecificDataPanel extends Component {
 
     private createGroupTypeSelect(): AgSelect {
         const { chartController, chartMenuParamsFactory } = this.chartMenuContext;
-        this.groupTypeSelect = this.createManagedBean(new AgSelect(
-            chartMenuParamsFactory.getDefaultSelectParamsWithoutValueParams(
-                'seriesGroupType',
-                ChartMappings.SERIES_GROUP_TYPES.map(value => ({
-                    value,
-                    text: this.chartTranslationService.translate(`${value}SeriesGroupType`)
-                })),
-                chartController.getSeriesGroupType(),
-                value => chartController.setSeriesGroupType(value)
+        this.groupTypeSelect = this.createManagedBean(
+            new AgSelect(
+                chartMenuParamsFactory.getDefaultSelectParamsWithoutValueParams(
+                    'seriesGroupType',
+                    ChartMappings.SERIES_GROUP_TYPES.map((value) => ({
+                        value,
+                        text: this.chartTranslationService.translate(`${value}SeriesGroupType`),
+                    })),
+                    chartController.getSeriesGroupType(),
+                    (value) => chartController.setSeriesGroupType(value)
+                )
             )
-        ));
+        );
         this.updateGroupTypeSelect();
         return this.groupTypeSelect;
     }
 
     private updateGroupTypeSelect(): void {
-        const isDisplayed = [
-            'radialColumn', 'radialBar', 'nightingale'
-        ].includes(this.chartMenuContext.chartController.getChartType());
+        const isDisplayed = ['radialColumn', 'radialBar', 'nightingale'].includes(
+            this.chartMenuContext.chartController.getChartType()
+        );
         this.updateDisplayed(this.groupTypeSelect, isDisplayed);
     }
 

@@ -1,19 +1,19 @@
 import {
-    Autowired,
+    AgComponentSelector,
     AgEvent,
+    Autowired,
     Component,
-    PostConstruct,
-    ToolPanelDef,
-    PreDestroy,
     FocusService,
     KeyCode,
+    PostConstruct,
+    PreDestroy,
+    ToolPanelDef,
     VisibleColsService,
-    _last,
     _clearElement,
-    AgComponentSelector
-} from "@ag-grid-community/core";
+    _last,
+} from '@ag-grid-community/core';
 
-import { SideBarButtonComp } from "./sideBarButtonComp";
+import { SideBarButtonComp } from './sideBarButtonComp';
 
 export interface SideBarButtonClickedEvent extends AgEvent {
     toolPanelId: string;
@@ -39,7 +39,9 @@ export class AgSideBarButtons extends Component {
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
-        if (e.key !== KeyCode.TAB || !e.shiftKey) { return; }
+        if (e.key !== KeyCode.TAB || !e.shiftKey) {
+            return;
+        }
 
         const lastColumn = _last(this.visibleColsService.getAllCols());
 
@@ -49,7 +51,7 @@ export class AgSideBarButtons extends Component {
     }
 
     public setActiveButton(id: string | undefined): void {
-        this.buttonComps.forEach(comp => {
+        this.buttonComps.forEach((comp) => {
             comp.setSelected(id === comp.getToolPanelId());
         });
     }
@@ -62,7 +64,7 @@ export class AgSideBarButtons extends Component {
         buttonComp.addEventListener(SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED, () => {
             this.dispatchEvent({
                 type: AgSideBarButtons.EVENT_SIDE_BAR_BUTTON_CLICKED,
-                toolPanelId: def.id
+                toolPanelId: def.id,
             });
         });
 
@@ -74,5 +76,4 @@ export class AgSideBarButtons extends Component {
         this.buttonComps = this.destroyBeans(this.buttonComps);
         _clearElement(this.getGui());
     }
-
 }

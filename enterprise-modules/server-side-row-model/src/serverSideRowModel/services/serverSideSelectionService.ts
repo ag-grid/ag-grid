@@ -6,18 +6,19 @@ import {
     Events,
     IRowModel,
     ISelectionService,
+    ISetNodesSelectedParams,
     PostConstruct,
     RowNode,
     SelectionChangedEvent,
     SelectionEventSourceType,
-    WithoutGridCommon,
-    ISetNodesSelectedParams,
+    ServerSideRowGroupSelectionState,
     ServerSideRowSelectionState,
-    ServerSideRowGroupSelectionState
-} from "@ag-grid-community/core";
-import { DefaultStrategy } from "./selection/strategies/defaultStrategy";
-import { GroupSelectsChildrenStrategy } from "./selection/strategies/groupSelectsChildrenStrategy";
-import { ISelectionStrategy } from "./selection/strategies/iSelectionStrategy";
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
+
+import { DefaultStrategy } from './selection/strategies/defaultStrategy';
+import { GroupSelectsChildrenStrategy } from './selection/strategies/groupSelectsChildrenStrategy';
+import { ISelectionStrategy } from './selection/strategies/iSelectionStrategy';
 
 @Bean('selectionService')
 export class ServerSideSelectionService extends BeanStub implements ISelectionService {
@@ -46,13 +47,18 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
         const StrategyClazz = !groupSelectsChildren ? DefaultStrategy : GroupSelectsChildrenStrategy;
         this.selectionStrategy = this.createManagedBean(new StrategyClazz());
     }
- 
+
     public getSelectionState(): string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | null {
         return this.selectionStrategy.getSelectedState();
     }
 
-    public setSelectionState(state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState, source: SelectionEventSourceType): void {
-        if (Array.isArray(state)) { return; }
+    public setSelectionState(
+        state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState,
+        source: SelectionEventSourceType
+    ): void {
+        if (Array.isArray(state)) {
+            return;
+        }
         this.selectionStrategy.setSelectedState(state);
         this.shotgunResetNodeSelectionState();
 
@@ -64,7 +70,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
     }
 
     public setNodesSelected(params: ISetNodesSelectedParams): number {
-        const {nodes, ...otherParams} = params;
+        const { nodes, ...otherParams } = params;
 
         const rowSelection = this.gos.get('rowSelection');
         if (nodes.length > 1 && rowSelection !== 'multiple') {
@@ -78,7 +84,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
         }
 
         const adjustedParams = {
-            nodes: nodes.filter(node => node.selectable),
+            nodes: nodes.filter((node) => node.selectable),
             ...otherParams,
         };
 
@@ -86,7 +92,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
         if (!adjustedParams.nodes.length) {
             return 0;
         }
- 
+
         const changedNodes = this.selectionStrategy.setNodesSelected(adjustedParams);
         this.shotgunResetNodeSelectionState(adjustedParams.source);
         const event: WithoutGridCommon<SelectionChangedEvent> = {
@@ -117,7 +123,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
     }
 
     private shotgunResetNodeSelectionState(source?: SelectionEventSourceType) {
-        this.rowModel.forEachNode(node => {
+        this.rowModel.forEachNode((node) => {
             if (node.stub) {
                 return;
             }
@@ -181,14 +187,18 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
         return true;
     }
 
-    public selectAllRowNodes(params: { source: SelectionEventSourceType; justFiltered?: boolean | undefined; justCurrentPage?: boolean | undefined; }): void {
+    public selectAllRowNodes(params: {
+        source: SelectionEventSourceType;
+        justFiltered?: boolean | undefined;
+        justCurrentPage?: boolean | undefined;
+    }): void {
         if (params.justCurrentPage || params.justFiltered) {
             console.warn("AG Grid: selecting just filtered only works when gridOptions.rowModelType='clientSide'");
         }
 
         this.selectionStrategy.selectAllRowNodes(params);
 
-        this.rowModel.forEachNode(node => {
+        this.rowModel.forEachNode((node) => {
             if (node.stub) {
                 return;
             }
@@ -202,15 +212,19 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
         };
         this.eventService.dispatchEvent(event);
     }
-    
-    public deselectAllRowNodes(params: { source: SelectionEventSourceType; justFiltered?: boolean | undefined; justCurrentPage?: boolean | undefined; }): void {
+
+    public deselectAllRowNodes(params: {
+        source: SelectionEventSourceType;
+        justFiltered?: boolean | undefined;
+        justCurrentPage?: boolean | undefined;
+    }): void {
         if (params.justCurrentPage || params.justFiltered) {
             console.warn("AG Grid: selecting just filtered only works when gridOptions.rowModelType='clientSide'");
         }
 
         this.selectionStrategy.deselectAllRowNodes(params);
 
-        this.rowModel.forEachNode(node => {
+        this.rowModel.forEachNode((node) => {
             if (node.stub) {
                 return;
             }
@@ -230,13 +244,18 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
     }
 
     // used by CSRM
-    public updateGroupsFromChildrenSelections(source: SelectionEventSourceType, changedPath?: ChangedPath | undefined): boolean {
+    public updateGroupsFromChildrenSelections(
+        source: SelectionEventSourceType,
+        changedPath?: ChangedPath | undefined
+    ): boolean {
         return false;
     }
 
     // used by CSRM
     public getBestCostNodeSelection(): RowNode<any>[] | undefined {
-        console.warn('AG Grid: calling gridApi.getBestCostNodeSelection() is only possible when using rowModelType=`clientSide`.');
+        console.warn(
+            'AG Grid: calling gridApi.getBestCostNodeSelection() is only possible when using rowModelType=`clientSide`.'
+        );
         return undefined;
     }
 

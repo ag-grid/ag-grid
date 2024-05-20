@@ -9,7 +9,6 @@
 // getInstanceIdForKey('age') => 1
 // getInstanceIdForKey('country') => 4
 export class GroupInstanceIdCreator {
-
     // this map contains keys to numbers, so we remember what the last call was
     private existingIds: any = {};
 
@@ -27,5 +26,4 @@ export class GroupInstanceIdCreator {
 
         return result;
     }
-
 }

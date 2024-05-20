@@ -1,6 +1,6 @@
 export const INCH_TO_EMU = 9525;
 
-export const numberFormatMap: {[key: string]: number} = {
+export const numberFormatMap: { [key: string]: number } = {
     '0': 1,
     '0.00': 2,
     '#,##0': 3,
@@ -27,5 +27,5 @@ export const numberFormatMap: {[key: string]: number} = {
     '[h]:mm:ss': 46,
     'mmss.0': 47,
     '##0.0E+0': 48,
-    '@': 49
+    '@': 49,
 };

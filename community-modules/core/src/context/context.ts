@@ -1,9 +1,9 @@
-import { ILogger } from "../iLogger";
-import { Component } from "../widgets/component";
-import { _exists, _values } from "../utils/generic";
-import { _iterateObject } from "../utils/object";
-import { _getFunctionName } from "../utils/function";
-import { ModuleRegistry } from "../modules/moduleRegistry";
+import { ILogger } from '../iLogger';
+import { ModuleRegistry } from '../modules/moduleRegistry';
+import { _getFunctionName } from '../utils/function';
+import { _exists, _values } from '../utils/generic';
+import { _iterateObject } from '../utils/object';
+import { Component } from '../widgets/component';
 
 // steps in booting up:
 // 1. create all beans
@@ -38,8 +38,7 @@ interface BeanWrapper {
 }
 
 export class Context {
-
-    private beanWrappers: { [key: string]: BeanWrapper; } = {};
+    private beanWrappers: { [key: string]: BeanWrapper } = {};
     private contextParams: ContextParams;
     private logger: ILogger;
 
@@ -53,7 +52,7 @@ export class Context {
         this.contextParams = params;
 
         this.logger = logger;
-        this.logger.log(">> creating ag-Application Context");
+        this.logger.log('>> creating ag-Application Context');
 
         this.createBeans();
 
@@ -61,11 +60,11 @@ export class Context {
 
         this.wireBeans(beanInstances);
 
-        this.logger.log(">> ag-Application Context ready - component is alive");
+        this.logger.log('>> ag-Application Context ready - component is alive');
     }
 
     private getBeanInstances(): any[] {
-        return  _values(this.beanWrappers).map(beanEntry => beanEntry.beanInstance);
+        return _values(this.beanWrappers).map((beanEntry) => beanEntry.beanInstance);
     }
 
     public createBean<T extends any>(bean: T, afterPreCreateCallback?: (comp: Component) => void): T {
@@ -99,11 +98,15 @@ export class Context {
         // instantiate all beans - overridden beans will be left out
         _iterateObject(this.beanWrappers, (key: string, beanEntry: BeanWrapper) => {
             let constructorParamsMeta: any;
-            if (beanEntry.bean.__agBeanMetaData && beanEntry.bean.__agBeanMetaData.autowireMethods && beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor) {
+            if (
+                beanEntry.bean.__agBeanMetaData &&
+                beanEntry.bean.__agBeanMetaData.autowireMethods &&
+                beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor
+            ) {
                 constructorParamsMeta = beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor;
             }
             const constructorParams = this.getBeansForParameters(constructorParamsMeta, beanEntry.bean.name);
-            const newInstance = new (beanEntry.bean.bind.apply(beanEntry.bean, [null, ...constructorParams]));
+            const newInstance = new (beanEntry.bean.bind.apply(beanEntry.bean, [null, ...constructorParams]))();
             beanEntry.beanInstance = newInstance;
         });
 
@@ -120,7 +123,7 @@ export class Context {
             if (BeanClass.prototype.constructor) {
                 beanName = _getFunctionName(BeanClass.prototype.constructor);
             } else {
-                beanName = "" + BeanClass;
+                beanName = '' + BeanClass;
             }
             console.error(`Context item ${beanName} is not a bean`);
             return;
@@ -129,14 +132,14 @@ export class Context {
         const beanEntry = {
             bean: BeanClass,
             beanInstance: null as any,
-            beanName: metaData.beanName
+            beanName: metaData.beanName,
         };
 
         this.beanWrappers[metaData.beanName] = beanEntry;
     }
 
     private autoWireBeans(beanInstances: any[]): void {
-        beanInstances.forEach(beanInstance => {
+        beanInstances.forEach((beanInstance) => {
             this.forEachMetaDataInHierarchy(beanInstance, (metaData: any, beanName: string) => {
                 const attributes = metaData.agClassAttributes;
                 if (!attributes) {
@@ -152,11 +155,11 @@ export class Context {
     }
 
     private methodWireBeans(beanInstances: any[]): void {
-        beanInstances.forEach(beanInstance => {
+        beanInstances.forEach((beanInstance) => {
             this.forEachMetaDataInHierarchy(beanInstance, (metaData: any, beanName: BeanName) => {
                 _iterateObject(metaData.autowireMethods, (methodName: string, wireParams: any[]) => {
                     // skip constructor, as this is dealt with elsewhere
-                    if (methodName === "agConstructor") {
+                    if (methodName === 'agConstructor') {
                         return;
                     }
                     const initParams = this.getBeansForParameters(wireParams, beanName);
@@ -167,10 +170,8 @@ export class Context {
     }
 
     private forEachMetaDataInHierarchy(beanInstance: any, callback: (metaData: any, beanName: string) => void): void {
-
         let prototype: any = Object.getPrototypeOf(beanInstance);
         while (prototype != null) {
-
             const constructor: any = prototype.constructor;
 
             if (constructor.hasOwnProperty('__agBeanMetaData')) {
@@ -189,7 +190,7 @@ export class Context {
         }
 
         const constructorString = constructor.toString();
-        const beanName = constructorString.substring(9, constructorString.indexOf("("));
+        const beanName = constructorString.substring(9, constructorString.indexOf('('));
         return beanName;
     }
 
@@ -210,11 +211,14 @@ export class Context {
             return null;
         }
 
-        if (beanName === "context") {
+        if (beanName === 'context') {
             return this;
         }
 
-        if (this.contextParams.providedBeanInstances && this.contextParams.providedBeanInstances.hasOwnProperty(beanName)) {
+        if (
+            this.contextParams.providedBeanInstances &&
+            this.contextParams.providedBeanInstances.hasOwnProperty(beanName)
+        ) {
             return this.contextParams.providedBeanInstances[beanName];
         }
 
@@ -232,18 +236,18 @@ export class Context {
     }
 
     private callLifeCycleMethods(beanInstances: any[], lifeCycleMethod: string): void {
-        beanInstances.forEach(beanInstance => this.callLifeCycleMethodsOnBean(beanInstance, lifeCycleMethod));
+        beanInstances.forEach((beanInstance) => this.callLifeCycleMethodsOnBean(beanInstance, lifeCycleMethod));
     }
 
     private callLifeCycleMethodsOnBean(beanInstance: any, lifeCycleMethod: string, methodToIgnore?: string): void {
         // putting all methods into a map removes duplicates
-        const allMethods: { [methodName: string]: boolean; } = {};
+        const allMethods: { [methodName: string]: boolean } = {};
 
         // dump methods from each level of the metadata hierarchy
         this.forEachMetaDataInHierarchy(beanInstance, (metaData: any) => {
             const methods = metaData[lifeCycleMethod] as string[];
             if (methods) {
-                methods.forEach(methodName => {
+                methods.forEach((methodName) => {
                     if (methodName != methodToIgnore) {
                         allMethods[methodName] = true;
                     }
@@ -252,21 +256,23 @@ export class Context {
         });
 
         const allMethodsList = Object.keys(allMethods);
-        allMethodsList.forEach(methodName => beanInstance[methodName]());
+        allMethodsList.forEach((methodName) => beanInstance[methodName]());
     }
 
     public getBean(name: BeanName): any {
-        return this.lookupBeanInstance("getBean", name, true);
+        return this.lookupBeanInstance('getBean', name, true);
     }
 
     public destroy(): void {
-        if (this.destroyed) { return; }
+        if (this.destroyed) {
+            return;
+        }
 
         // Set before doing the destroy, so if context.destroy() gets called via another bean
         // we are marked as destroyed already to prevent running destroy() twice
         this.destroyed = true;
 
-        this.logger.log(">> Shutting down ag-Application Context");
+        this.logger.log('>> Shutting down ag-Application Context');
 
         const beanInstances = this.getBeanInstances();
         this.destroyBeans(beanInstances);
@@ -275,19 +281,23 @@ export class Context {
 
         ModuleRegistry.__unRegisterGridModules(this.contextParams.gridId);
 
-        this.logger.log(">> ag-Application Context shut down - component is dead");
+        this.logger.log('>> ag-Application Context shut down - component is dead');
     }
 
     public destroyBean<T>(bean: T): undefined {
-        if (!bean) { return; }
+        if (!bean) {
+            return;
+        }
 
         this.destroyBeans([bean]);
     }
 
     public destroyBeans<T>(beans: T[]): T[] {
-        if (!beans) { return []; }
+        if (!beans) {
+            return [];
+        }
 
-        beans.forEach(bean => {
+        beans.forEach((bean) => {
             this.callLifeCycleMethodsOnBean(bean, 'preDestroyMethods', 'destroy');
 
             // call destroy() explicitly if it exists
@@ -353,13 +363,20 @@ export function Optional(name?: BeanName): Function {
     };
 }
 
-function autowiredFunc(target: any, name: string | undefined, optional: boolean, classPrototype: any, methodOrAttributeName: string, index: number | null) {
+function autowiredFunc(
+    target: any,
+    name: string | undefined,
+    optional: boolean,
+    classPrototype: any,
+    methodOrAttributeName: string,
+    index: number | null
+) {
     if (name === null) {
-        console.error("AG Grid: Autowired name should not be null");
+        console.error('AG Grid: Autowired name should not be null');
         return;
     }
-    if (typeof index === "number") {
-        console.error("AG Grid: Autowired should be on an attribute");
+    if (typeof index === 'number') {
+        console.error('AG Grid: Autowired should be on an attribute');
         return;
     }
 
@@ -371,16 +388,16 @@ function autowiredFunc(target: any, name: string | undefined, optional: boolean,
     props.agClassAttributes.push({
         attributeName: methodOrAttributeName,
         beanName: name,
-        optional: optional
+        optional: optional,
     });
 }
 
 export function Qualifier(name: BeanName): Function {
     return (classPrototype: any, methodOrAttributeName: string, index: number) => {
-        const constructor: any = typeof classPrototype == "function" ? classPrototype : classPrototype.constructor;
+        const constructor: any = typeof classPrototype == 'function' ? classPrototype : classPrototype.constructor;
         let props: any;
 
-        if (typeof index === "number") {
+        if (typeof index === 'number') {
             // it's a parameter on a method
             let methodName: string;
             if (methodOrAttributeName) {
@@ -388,7 +405,7 @@ export function Qualifier(name: BeanName): Function {
                 methodName = methodOrAttributeName;
             } else {
                 props = getOrCreateProps(constructor);
-                methodName = "agConstructor";
+                methodName = 'agConstructor';
             }
             if (!props.autowireMethods) {
                 props.autowireMethods = {};
@@ -402,7 +419,7 @@ export function Qualifier(name: BeanName): Function {
 }
 
 function getOrCreateProps(target: any): any {
-    if (!target.hasOwnProperty("__agBeanMetaData")) {
+    if (!target.hasOwnProperty('__agBeanMetaData')) {
         target.__agBeanMetaData = {};
     }
 
@@ -410,155 +427,155 @@ function getOrCreateProps(target: any): any {
 }
 
 export type BeanName =
-| 'advancedFilterExpressionService'
-| 'advancedFilterService'
-| 'advancedSettingsMenuFactory'
-| 'aggFuncService'
-| 'agGridAngular'
-| 'agGridReact'
-| 'agGridVue'
-| 'agComponentUtils'
-| 'agStackComponentsRegistry'
-| 'aggregationStage'
-| 'alignedGridsService'
-| 'animationFrameService'
-| 'ariaAnnouncementService'
-| 'apiEventService'
-| 'autoColService'
-| 'autoWidthCalculator'
-| 'beans'
-| 'cellEditorFactory'
-| 'cellNavigationService'
-| 'cellPositionUtils'
-| 'cellRendererFactory'
-| 'cellRendererService'
-| 'changeDetectionService'
-| 'chartColumnService'
-| 'chartCrossFilterService'
-| 'chartMenuItemMapper'
-| 'chartMenuListFactory'
-| 'chartMenuService'
-| 'chartTranslationService'
-| 'chartService'
-| 'clipboardService'
-| 'columnAutosizeService'
-| 'columnChooserFactory'
-| 'columnController'
-| 'columnDefFactory'
-| 'columnEditorFactory'
-| 'columnEventDispatcher'
-| 'columnGetStateService'
-| 'columnSizeService'
-| 'columnFactory'
-| 'columnAnimationService'
-| 'columnHoverService'
-| 'columnMenuFactory'
-| 'columnModel'
-| 'columnMoveService'
-| 'columnPositionService'
-| 'columnNameService'
-| 'columnViewportService'
-| 'columnGroupStateService'
-| 'columnApplyStateService'
-| 'columnUtils'
-| 'pivotResultColsService'
-| 'componentMetadataProvider'
-| 'context'
-| 'contextMenuFactory'
-| 'ctrlsFactory'
-| 'ctrlsService'
-| 'csvCreator'
-| 'dataTypeService'
-| 'visibleColsService'
-| 'dragAndDropService'
-| 'dragService'
-| 'excelCreator'
-| 'enterpriseMenuFactory'
-| 'environment'
-| 'eventService'
-| 'eGridDiv'
-| 'expansionService'
-| 'expressionService'
-| 'filterAggregatesStage'
-| 'filterManager'
-| 'filterMenuFactory'
-| 'filterService'
-| 'filterStage'
-| 'flattenStage'
-| 'focusService'
-| 'funcColsService'
-| 'frameworkComponentWrapper'
-| 'frameworkOverrides'
-| 'globalEventListener'
-| 'globalSyncEventListener'
-| 'gridApi'
-| 'gridOptions'
-| 'gridOptionsService'
-| 'gridOptionsWrapper'
-| 'gridSerializer'
-| 'groupStage'
-| 'headerNavigationService'
-| 'headerPositionUtils'
-| 'horizontalResizeService'
-| 'immutableService'
-| 'lazyBlockLoadingService'
-| 'licenseManager'
-| 'localeService'
-| 'loggerFactory'
-| 'menuItemMapper'
-| 'menuService'
-| 'menuUtils'
-| 'modelItemUtils'
-| 'mouseEventService'
-| 'navigationService'
-| 'overlayService'
-| 'paginationAutoPageSizeService'
-| 'paginationProxy'
-| 'pinnedRowModel'
-| 'pinnedWidthService'
-| 'pivotColDefService'
-| 'pivotStage'
-| 'popupService'
-| 'quickFilterService'
-| 'rangeService'
-| 'resizeObserverService'
-| 'rowContainerHeightService'
-| 'rowCssClassCalculator'
-| 'rowModel'
-| 'rowNodeBlockLoader'
-| 'rowNodeEventThrottle'
-| 'rowNodeSorter'
-| 'rowPositionUtils'
-| 'rowRenderer'
-| 'scrollVisibleService'
-| 'selectableService'
-| 'selectionController'
-| 'selectionHandleFactory'
-| 'selectionService'
-| 'showRowGroupColsService'
-| 'sideBarService'
-| 'sortController'
-| 'sortService'
-| 'sortStage'
-| 'sparklineTooltipSingleton'
-| 'ssrmBlockUtils'
-| 'ssrmExpandListener'
-| 'ssrmFilterListener'
-| 'ssrmListenerUtils'
-| 'ssrmNodeManager'
-| 'ssrmSortService'
-| 'ssrmStoreFactory'
-| 'ssrmStoreUtils'
-| 'ssrmTransactionManager'
-| 'stateService'
-| 'statusBarService'
-| 'stylingService'
-| 'syncService'
-| 'templateService'
-| 'toolPanelColDefService'
-| 'undoRedoService'
-| 'userComponentFactory'
-| 'userComponentRegistry'
-| 'valueCache'
-| 'valueService'
-| 'validationService';
+    | 'advancedFilterExpressionService'
+    | 'advancedFilterService'
+    | 'advancedSettingsMenuFactory'
+    | 'aggFuncService'
+    | 'agGridAngular'
+    | 'agGridReact'
+    | 'agGridVue'
+    | 'agComponentUtils'
+    | 'agStackComponentsRegistry'
+    | 'aggregationStage'
+    | 'alignedGridsService'
+    | 'animationFrameService'
+    | 'ariaAnnouncementService'
+    | 'apiEventService'
+    | 'autoColService'
+    | 'autoWidthCalculator'
+    | 'beans'
+    | 'cellEditorFactory'
+    | 'cellNavigationService'
+    | 'cellPositionUtils'
+    | 'cellRendererFactory'
+    | 'cellRendererService'
+    | 'changeDetectionService'
+    | 'chartColumnService'
+    | 'chartCrossFilterService'
+    | 'chartMenuItemMapper'
+    | 'chartMenuListFactory'
+    | 'chartMenuService'
+    | 'chartTranslationService'
+    | 'chartService'
+    | 'clipboardService'
+    | 'columnAutosizeService'
+    | 'columnChooserFactory'
+    | 'columnController'
+    | 'columnDefFactory'
+    | 'columnEditorFactory'
+    | 'columnEventDispatcher'
+    | 'columnGetStateService'
+    | 'columnSizeService'
+    | 'columnFactory'
+    | 'columnAnimationService'
+    | 'columnHoverService'
+    | 'columnMenuFactory'
+    | 'columnModel'
+    | 'columnMoveService'
+    | 'columnPositionService'
+    | 'columnNameService'
+    | 'columnViewportService'
+    | 'columnGroupStateService'
+    | 'columnApplyStateService'
+    | 'columnUtils'
+    | 'pivotResultColsService'
+    | 'componentMetadataProvider'
+    | 'context'
+    | 'contextMenuFactory'
+    | 'ctrlsFactory'
+    | 'ctrlsService'
+    | 'csvCreator'
+    | 'dataTypeService'
+    | 'visibleColsService'
+    | 'dragAndDropService'
+    | 'dragService'
+    | 'excelCreator'
+    | 'enterpriseMenuFactory'
+    | 'environment'
+    | 'eventService'
+    | 'eGridDiv'
+    | 'expansionService'
+    | 'expressionService'
+    | 'filterAggregatesStage'
+    | 'filterManager'
+    | 'filterMenuFactory'
+    | 'filterService'
+    | 'filterStage'
+    | 'flattenStage'
+    | 'focusService'
+    | 'funcColsService'
+    | 'frameworkComponentWrapper'
+    | 'frameworkOverrides'
+    | 'globalEventListener'
+    | 'globalSyncEventListener'
+    | 'gridApi'
+    | 'gridOptions'
+    | 'gridOptionsService'
+    | 'gridOptionsWrapper'
+    | 'gridSerializer'
+    | 'groupStage'
+    | 'headerNavigationService'
+    | 'headerPositionUtils'
+    | 'horizontalResizeService'
+    | 'immutableService'
+    | 'lazyBlockLoadingService'
+    | 'licenseManager'
+    | 'localeService'
+    | 'loggerFactory'
+    | 'menuItemMapper'
+    | 'menuService'
+    | 'menuUtils'
+    | 'modelItemUtils'
+    | 'mouseEventService'
+    | 'navigationService'
+    | 'overlayService'
+    | 'paginationAutoPageSizeService'
+    | 'paginationProxy'
+    | 'pinnedRowModel'
+    | 'pinnedWidthService'
+    | 'pivotColDefService'
+    | 'pivotStage'
+    | 'popupService'
+    | 'quickFilterService'
+    | 'rangeService'
+    | 'resizeObserverService'
+    | 'rowContainerHeightService'
+    | 'rowCssClassCalculator'
+    | 'rowModel'
+    | 'rowNodeBlockLoader'
+    | 'rowNodeEventThrottle'
+    | 'rowNodeSorter'
+    | 'rowPositionUtils'
+    | 'rowRenderer'
+    | 'scrollVisibleService'
+    | 'selectableService'
+    | 'selectionController'
+    | 'selectionHandleFactory'
+    | 'selectionService'
+    | 'showRowGroupColsService'
+    | 'sideBarService'
+    | 'sortController'
+    | 'sortService'
+    | 'sortStage'
+    | 'sparklineTooltipSingleton'
+    | 'ssrmBlockUtils'
+    | 'ssrmExpandListener'
+    | 'ssrmFilterListener'
+    | 'ssrmListenerUtils'
+    | 'ssrmNodeManager'
+    | 'ssrmSortService'
+    | 'ssrmStoreFactory'
+    | 'ssrmStoreUtils'
+    | 'ssrmTransactionManager'
+    | 'stateService'
+    | 'statusBarService'
+    | 'stylingService'
+    | 'syncService'
+    | 'templateService'
+    | 'toolPanelColDefService'
+    | 'undoRedoService'
+    | 'userComponentFactory'
+    | 'userComponentRegistry'
+    | 'valueCache'
+    | 'valueService'
+    | 'validationService';

@@ -1,15 +1,9 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    FocusService,
-    PostConstruct,
-    TabGuardComp
-} from "@ag-grid-community/core";
-import { ChartTranslationService } from "../../services/chartTranslationService";
-import { ChartMenuContext } from "../chartMenuContext";
-import { AdvancedSettingsPanel } from "./advancedSettingsPanel";
-import { AgDialog } from "@ag-grid-enterprise/core";
+import { Autowired, Bean, BeanStub, FocusService, PostConstruct, TabGuardComp } from '@ag-grid-community/core';
+import { AgDialog } from '@ag-grid-enterprise/core';
+
+import { ChartTranslationService } from '../../services/chartTranslationService';
+import { ChartMenuContext } from '../chartMenuContext';
+import { AdvancedSettingsPanel } from './advancedSettingsPanel';
 
 @Bean('advancedSettingsMenuFactory')
 export class AdvancedSettingsMenuFactory extends BeanStub {
@@ -23,25 +17,27 @@ export class AdvancedSettingsMenuFactory extends BeanStub {
         this.hideMenu();
 
         const menu = this.createBean(new AdvancedSettingsMenu(chartMenuContext));
-     
-        this.activeDialog = this.createBean(new AgDialog({
-            title: this.chartTranslationService.translate('advancedSettings'),
-            component: menu,
-            width: 300,
-            height: 400,
-            resizable: true,
-            movable: true,
-            centered: true,
-            closable: true,
-            afterGuiAttached: () => {
-                this.focusService.findFocusableElements(menu.getGui())[0]?.focus();
-            },
-            closedCallback: () => {
-                this.activeMenu = this.destroyBean(this.activeMenu);
-                this.activeDialog = undefined;
-                eventSource?.focus({ preventScroll: true });
-            }
-        }));
+
+        this.activeDialog = this.createBean(
+            new AgDialog({
+                title: this.chartTranslationService.translate('advancedSettings'),
+                component: menu,
+                width: 300,
+                height: 400,
+                resizable: true,
+                movable: true,
+                centered: true,
+                closable: true,
+                afterGuiAttached: () => {
+                    this.focusService.findFocusableElements(menu.getGui())[0]?.focus();
+                },
+                closedCallback: () => {
+                    this.activeMenu = this.destroyBean(this.activeMenu);
+                    this.activeDialog = undefined;
+                    eventSource?.focus({ preventScroll: true });
+                },
+            })
+        );
 
         this.activeMenu = menu;
     }
@@ -62,13 +58,11 @@ export class AdvancedSettingsMenuFactory extends BeanStub {
 class AdvancedSettingsMenu extends TabGuardComp {
     @Autowired('focusService') private readonly focusService: FocusService;
 
-    private static TEMPLATE = /* html */`<div class="ag-chart-advanced-settings"></div>`;
+    private static TEMPLATE = /* html */ `<div class="ag-chart-advanced-settings"></div>`;
 
     private advancedSettingsPanel: AdvancedSettingsPanel;
 
-    constructor(
-        private readonly chartMenuContext: ChartMenuContext
-    ) {
+    constructor(private readonly chartMenuContext: ChartMenuContext) {
         super(AdvancedSettingsMenu.TEMPLATE);
     }
 
@@ -78,13 +72,14 @@ class AdvancedSettingsMenu extends TabGuardComp {
         this.getGui().appendChild(this.advancedSettingsPanel.getGui());
         this.initialiseTabGuard({
             onTabKeyDown: this.onTabKeyDown.bind(this),
-            focusTrapActive: true
+            focusTrapActive: true,
         });
-
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {
-        if (e.defaultPrevented) { return; }
+        if (e.defaultPrevented) {
+            return;
+        }
 
         e.preventDefault();
 

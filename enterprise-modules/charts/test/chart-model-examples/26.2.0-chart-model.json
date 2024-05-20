@@ -110,10 +110,7 @@
                     "gridStyle": [
                         {
                             "stroke": "rgb(219, 219, 219)",
-                            "lineDash": [
-                                4,
-                                2
-                            ]
+                            "lineDash": [4, 2]
                         }
                     ]
                 },
@@ -156,10 +153,7 @@
                     "gridStyle": [
                         {
                             "stroke": "rgb(219, 219, 219)",
-                            "lineDash": [
-                                4,
-                                2
-                            ]
+                            "lineDash": [4, 2]
                         }
                     ],
                     "base": 10
@@ -203,10 +197,7 @@
                     "gridStyle": [
                         {
                             "stroke": "rgb(219, 219, 219)",
-                            "lineDash": [
-                                4,
-                                2
-                            ]
+                            "lineDash": [4, 2]
                         }
                     ]
                 },
@@ -249,10 +240,7 @@
                     "gridStyle": [
                         {
                             "stroke": "rgb(219, 219, 219)",
-                            "lineDash": [
-                                4,
-                                2
-                            ]
+                            "lineDash": [4, 2]
                         }
                     ]
                 },
@@ -295,10 +283,7 @@
                     "gridStyle": [
                         {
                             "stroke": "rgb(219, 219, 219)",
-                            "lineDash": [
-                                4,
-                                2
-                            ]
+                            "lineDash": [4, 2]
                         }
                     ]
                 }
@@ -325,9 +310,7 @@
                 "fillOpacity": 0.8,
                 "strokeOpacity": 1,
                 "strokeWidth": 2,
-                "lineDash": [
-                    0
-                ],
+                "lineDash": [0],
                 "lineDashOffset": 0,
                 "shadow": {
                     "enabled": false,
@@ -385,12 +368,7 @@
     "cellRange": {
         "rowStartIndex": 0,
         "rowEndIndex": 7,
-        "columns": [
-            "country",
-            "sugar",
-            "fat",
-            "weight"
-        ]
+        "columns": ["country", "sugar", "fat", "weight"]
     },
     "suppressChartRanges": false,
     "unlinkChart": false

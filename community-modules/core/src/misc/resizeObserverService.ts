@@ -1,10 +1,9 @@
-import { Bean } from "../context/context";
-import { BeanStub } from "../context/beanStub";
+import { BeanStub } from '../context/beanStub';
+import { Bean } from '../context/context';
 
 const DEBOUNCE_DELAY = 50;
 @Bean('resizeObserverService')
 export class ResizeObserverService extends BeanStub {
-
     private polyfillFunctions: (() => void)[] = [];
     private polyfillScheduled: boolean;
 
@@ -26,7 +25,6 @@ export class ResizeObserverService extends BeanStub {
 
             const periodicallyCheckWidthAndHeight = () => {
                 if (running) {
-
                     const newWidth = element?.clientWidth ?? 0;
                     const newHeight = element?.clientHeight ?? 0;
 
@@ -44,7 +42,7 @@ export class ResizeObserverService extends BeanStub {
             periodicallyCheckWidthAndHeight();
 
             // the callback function we return sets running to false
-            return () => running = false;
+            return () => (running = false);
         };
 
         const suppressResize = this.gos.get('suppressBrowserResizeObserver');
@@ -57,14 +55,15 @@ export class ResizeObserverService extends BeanStub {
         return this.getFrameworkOverrides().wrapIncoming(() => usePolyfill(), 'resize-observer');
     }
 
-
     private doNextPolyfillTurn(func: () => void): void {
         this.polyfillFunctions.push(func);
         this.schedulePolyfill();
     }
 
     private schedulePolyfill(): void {
-        if (this.polyfillScheduled) { return; }
+        if (this.polyfillScheduled) {
+            return;
+        }
 
         const executeAllFuncs = () => {
             const funcs = this.polyfillFunctions;
@@ -74,11 +73,10 @@ export class ResizeObserverService extends BeanStub {
             this.polyfillScheduled = false;
             this.polyfillFunctions = [];
 
-            funcs.forEach(f => f());
+            funcs.forEach((f) => f());
         };
 
         this.polyfillScheduled = true;
         window.setTimeout(executeAllFuncs, DEBOUNCE_DELAY);
     }
-
 }

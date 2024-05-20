@@ -1,10 +1,10 @@
-import { MarkerFormat, MarkerFormatterParams, CrosshairLineOptions } from '@ag-grid-community/core';
+import { CrosshairLineOptions, MarkerFormat, MarkerFormatterParams } from '@ag-grid-community/core';
 import { _Scale, _Scene, _Util } from 'ag-charts-community';
 
+import { getLineDash } from '../../util/lineDash';
+import { getMarker } from '../marker/markerFactory';
 import { Point, SeriesNodeDatum, Sparkline, ZINDICIES } from '../sparkline';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
-import { getMarker } from '../marker/markerFactory';
-import { getLineDash } from '../../util/lineDash';
 
 const { extent } = _Util;
 const { BandScale } = _Scale;

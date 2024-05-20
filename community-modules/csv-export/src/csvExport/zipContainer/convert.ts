@@ -3,7 +3,7 @@ export const convertTime = (date: Date): number => {
     time <<= 6;
     time = time | date.getMinutes();
     time <<= 5;
-    time = time | date.getSeconds() / 2;
+    time = time | (date.getSeconds() / 2);
 
     return time;
 };

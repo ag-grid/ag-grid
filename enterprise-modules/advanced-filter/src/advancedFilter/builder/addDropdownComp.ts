@@ -6,8 +6,9 @@ import {
     _setDisplayed,
     _stopPropagationForAgGrid,
 } from '@ag-grid-community/core';
-import { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 import { AgRichSelect } from '@ag-grid-enterprise/core';
+
+import { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 
 export interface AddDropdownCompParams extends RichSelectParams<AutocompleteEntry> {
     wrapperClassName?: string;

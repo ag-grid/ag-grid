@@ -168,7 +168,9 @@
 }
 
 .ag-set-filter-item {
-    padding-left: calc(var(--ag-widget-container-horizontal-padding) + var(--ag-indentation-level) * var(--ag-set-filter-indent-size));
+    padding-left: calc(
+        var(--ag-widget-container-horizontal-padding) + var(--ag-indentation-level) * var(--ag-set-filter-indent-size)
+    );
 }
 
 .ag-set-filter-add-group-indent {

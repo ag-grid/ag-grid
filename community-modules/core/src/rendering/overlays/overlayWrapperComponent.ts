@@ -1,17 +1,16 @@
 import { Autowired, PostConstruct } from '../../context/context';
+import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
+import { _clearElement } from '../../utils/dom';
+import { AgPromise } from '../../utils/promise';
 import { AgComponentSelector, Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
-import { AgPromise } from '../../utils/promise';
-import { _clearElement } from '../../utils/dom';
-import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams } from "../../styling/layoutFeature";
-
 import { OverlayService } from './overlayService';
 
 export class OverlayWrapperComponent extends Component implements LayoutView {
     static readonly selector: AgComponentSelector = 'ag-overlay-wrapper';
 
     // wrapping in outer div, and wrapper, is needed to center the loading icon
-    private static TEMPLATE = /* html */`
+    private static TEMPLATE = /* html */ `
         <div class="ag-overlay" role="presentation">
             <div class="ag-overlay-panel" role="presentation">
                 <div class="ag-overlay-wrapper" ref="eOverlayWrapper" role="presentation"></div>
@@ -56,7 +55,11 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         overlayWrapperClassList.toggle(overlayWrapperCssClass, true);
     }
 
-    public showOverlay(overlayComp: AgPromise<Component> | null, overlayWrapperCssClass: string, updateListenerDestroyFunc: () => null): void {
+    public showOverlay(
+        overlayComp: AgPromise<Component> | null,
+        overlayWrapperCssClass: string,
+        updateListenerDestroyFunc: () => null
+    ): void {
         if (this.inProgress) {
             return;
         }
@@ -67,7 +70,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.inProgress = true;
 
         if (overlayComp) {
-            overlayComp.then(comp => {
+            overlayComp.then((comp) => {
                 this.inProgress = false;
 
                 this.eOverlayWrapper.appendChild(comp!.getGui());

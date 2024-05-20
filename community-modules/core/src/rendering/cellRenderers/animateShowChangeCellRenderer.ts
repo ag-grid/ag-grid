@@ -1,15 +1,14 @@
-import { Autowired } from "../../context/context";
-import { ICellRenderer } from "./iCellRenderer";
-import { Component } from "../../widgets/component";
-import { FilterManager } from "../../filter/filterManager";
-import { _exists } from "../../utils/generic";
-import { _clearElement } from "../../utils/dom";
+import { Autowired } from '../../context/context';
+import { FilterManager } from '../../filter/filterManager';
+import { _clearElement } from '../../utils/dom';
+import { _exists } from '../../utils/generic';
+import { Component } from '../../widgets/component';
+import { ICellRenderer } from './iCellRenderer';
 
 const ARROW_UP = '\u2191';
 const ARROW_DOWN = '\u2193';
 
 export class AnimateShowChangeCellRenderer extends Component implements ICellRenderer {
-
     private lastValue: number;
 
     private eValue: HTMLElement;
@@ -25,10 +24,10 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         const template = document.createElement('span');
         const delta = document.createElement('span');
         delta.setAttribute('class', 'ag-value-change-delta');
-        
+
         const value = document.createElement('span');
         value.setAttribute('class', 'ag-value-change-value');
-        
+
         template.appendChild(delta);
         template.appendChild(value);
 
@@ -43,13 +42,12 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
     }
 
     private showDelta(params: any, delta: number): void {
-
         const absDelta = Math.abs(delta);
         const valueFormatted = params.formatValue(absDelta);
 
         const valueToUse = _exists(valueFormatted) ? valueFormatted : absDelta;
 
-        const deltaUp = (delta >= 0);
+        const deltaUp = delta >= 0;
 
         if (deltaUp) {
             this.eDelta.textContent = ARROW_UP + valueToUse;

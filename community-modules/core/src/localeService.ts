@@ -1,12 +1,11 @@
-import { Bean } from "./context/context";
-import { BeanStub } from "./context/beanStub";
-import { GetLocaleTextParams } from "./interfaces/iCallbackParams";
-import { WithoutGridCommon } from "./interfaces/iCommon";
+import { BeanStub } from './context/beanStub';
+import { Bean } from './context/context';
+import { GetLocaleTextParams } from './interfaces/iCallbackParams';
+import { WithoutGridCommon } from './interfaces/iCommon';
 
 @Bean('localeService')
 export class LocaleService extends BeanStub {
     public getLocaleTextFunc(): (key: string, defaultValue: string, variableValues?: string[]) => string {
-
         const getLocaleText = this.gos.getCallback('getLocaleText');
         if (getLocaleText) {
             //key: string, defaultValue: string, variableValues?: string[]
@@ -14,7 +13,7 @@ export class LocaleService extends BeanStub {
                 const params: WithoutGridCommon<GetLocaleTextParams> = {
                     key,
                     defaultValue,
-                    variableValues
+                    variableValues,
                 };
                 return getLocaleText(params);
             };
@@ -27,9 +26,13 @@ export class LocaleService extends BeanStub {
             if (localisedText && variableValues && variableValues.length) {
                 let found = 0;
                 while (true) {
-                    if (found >= variableValues.length) { break; }
+                    if (found >= variableValues.length) {
+                        break;
+                    }
                     const idx = localisedText.indexOf('${variable}');
-                    if (idx === -1) { break; }
+                    if (idx === -1) {
+                        break;
+                    }
 
                     localisedText = localisedText.replace('${variable}', variableValues[found++]);
                 }

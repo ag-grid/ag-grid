@@ -1,9 +1,10 @@
-import { ICellEditorParams } from "../../interfaces/iCellEditor";
-import { AgInputTextField } from "../../widgets/agInputTextField";
-import { CellEditorInput, SimpleCellEditor } from "./simpleCellEditor";
-import { _exists } from "../../utils/generic";
+import { ICellEditorParams } from '../../interfaces/iCellEditor';
+import { _exists } from '../../utils/generic';
+import { AgInputTextField } from '../../widgets/agInputTextField';
+import { CellEditorInput, SimpleCellEditor } from './simpleCellEditor';
 
-export interface ITextCellEditorParams<TData = any, TValue = any, TContext = any> extends ICellEditorParams<TData, TValue, TContext> {
+export interface ITextCellEditorParams<TData = any, TValue = any, TContext = any>
+    extends ICellEditorParams<TData, TValue, TContext> {
     /** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor.
      * Used when the cell value needs formatting prior to editing, such as when using reference data and you
      * want to display text rather than code. */
@@ -13,15 +14,17 @@ export interface ITextCellEditorParams<TData = any, TValue = any, TContext = any
      * Max number of characters to allow.
      * @default 524288
      */
-    maxLength?: number
+    maxLength?: number;
 }
 
-class TextCellEditorInput<TValue = any> implements CellEditorInput<TValue, ITextCellEditorParams<any, TValue>, AgInputTextField> {
+class TextCellEditorInput<TValue = any>
+    implements CellEditorInput<TValue, ITextCellEditorParams<any, TValue>, AgInputTextField>
+{
     private eInput: AgInputTextField;
     private params: ITextCellEditorParams<any, TValue>;
 
     public getTemplate() {
-        return /* html */`<ag-input-text-field class="ag-cell-editor" ref="eInput"></ag-input-text-field>`;
+        return /* html */ `<ag-input-text-field class="ag-cell-editor" ref="eInput"></ag-input-text-field>`;
     }
     public getAgComponents() {
         return [AgInputTextField];
@@ -45,7 +48,7 @@ class TextCellEditorInput<TValue = any> implements CellEditorInput<TValue, IText
 
     public getStartValue(): string | null | undefined {
         const formatValue = this.params.useFormatter || this.params.column.getColDef().refData;
-        return formatValue ? this.params.formatValue(this.params.value) : this.params.value as any;
+        return formatValue ? this.params.formatValue(this.params.value) : (this.params.value as any);
     }
 
     public setCaret(): void {

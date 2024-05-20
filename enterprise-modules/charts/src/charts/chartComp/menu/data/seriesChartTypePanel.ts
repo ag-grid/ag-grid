@@ -8,14 +8,15 @@ import {
     SeriesChartType,
     _areEqual,
     _clearElement,
-} from "@ag-grid-community/core";
-import { ChartController } from "../../chartController";
-import { ColState } from "../../model/chartDataModel";
-import { ChartTranslationService } from "../../services/chartTranslationService";
-import { AgGroupComponent } from "@ag-grid-enterprise/core";
+} from '@ag-grid-community/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
+
+import { ChartController } from '../../chartController';
+import { ColState } from '../../model/chartDataModel';
+import { ChartTranslationService } from '../../services/chartTranslationService';
 
 export class SeriesChartTypePanel extends Component {
-    private static TEMPLATE = /* html */`<div id="seriesChartTypeGroup"></div>`;
+    private static TEMPLATE = /* html */ `<div id="seriesChartTypeGroup"></div>`;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
@@ -58,60 +59,75 @@ export class SeriesChartTypePanel extends Component {
     private getValidColIds(columns: ColState[]): string[] {
         const seriesChartTypes = this.chartController.getSeriesChartTypes();
 
-        return columns.filter(col => col.selected && !!seriesChartTypes.filter(s => s.colId === col.colId)[0])
+        return columns
+            .filter((col) => col.selected && !!seriesChartTypes.filter((s) => s.colId === col.colId)[0])
             .map(({ colId }) => colId);
     }
 
     private createSeriesChartTypeGroup(columns: ColState[]): void {
-        this.seriesChartTypeGroupComp = this.createBean(new AgGroupComponent({
-            title: this.chartTranslationService.translate('seriesChartType'),
-            enabled: true,
-            suppressEnabledCheckbox: true,
-            suppressOpenCloseIcons: false,
-            cssIdentifier: 'charts-data',
-            expanded: this.isOpen
-        }));
+        this.seriesChartTypeGroupComp = this.createBean(
+            new AgGroupComponent({
+                title: this.chartTranslationService.translate('seriesChartType'),
+                enabled: true,
+                suppressEnabledCheckbox: true,
+                suppressOpenCloseIcons: false,
+                cssIdentifier: 'charts-data',
+                expanded: this.isOpen,
+            })
+        );
 
         const seriesChartTypes = this.chartController.getSeriesChartTypes();
 
-        columns.forEach(col => {
-            if (!col.selected) { return; }
+        columns.forEach((col) => {
+            if (!col.selected) {
+                return;
+            }
 
-            const seriesChartType: SeriesChartType = seriesChartTypes.filter(s => s.colId === col.colId)[0];
-            if (!seriesChartType) { return; }
+            const seriesChartType: SeriesChartType = seriesChartTypes.filter((s) => s.colId === col.colId)[0];
+            if (!seriesChartType) {
+                return;
+            }
 
             this.selectedColIds.push(col.colId);
 
-            const seriesItemGroup = this.seriesChartTypeGroupComp.createManagedBean(new AgGroupComponent({
-                title: col.displayName!,
-                enabled: true,
-                suppressEnabledCheckbox: true,
-                suppressOpenCloseIcons: true,
-                cssIdentifier: 'charts-format-sub-level'
-            }));
+            const seriesItemGroup = this.seriesChartTypeGroupComp.createManagedBean(
+                new AgGroupComponent({
+                    title: col.displayName!,
+                    enabled: true,
+                    suppressEnabledCheckbox: true,
+                    suppressOpenCloseIcons: true,
+                    cssIdentifier: 'charts-format-sub-level',
+                })
+            );
 
-            const isSecondaryAxisDisabled = (chartType: ChartType) => ['groupedColumn', 'stackedColumn', 'stackedArea'].includes(chartType);
+            const isSecondaryAxisDisabled = (chartType: ChartType) =>
+                ['groupedColumn', 'stackedColumn', 'stackedArea'].includes(chartType);
 
-            const secondaryAxisComp = this.seriesChartTypeGroupComp
-                .createManagedBean(new AgCheckbox({
+            const secondaryAxisComp = this.seriesChartTypeGroupComp.createManagedBean(
+                new AgCheckbox({
                     label: this.chartTranslationService.translate('secondaryAxis'),
-                    labelWidth: "flex",
+                    labelWidth: 'flex',
                     disabled: isSecondaryAxisDisabled(seriesChartType.chartType),
                     value: !!seriesChartType.secondaryAxis,
-                    onValueChange: (enabled: boolean) => this.chartController.updateSeriesChartType(col.colId, undefined, enabled)
-                }));
+                    onValueChange: (enabled: boolean) =>
+                        this.chartController.updateSeriesChartType(col.colId, undefined, enabled),
+                })
+            );
 
             seriesItemGroup.addItem(secondaryAxisComp);
 
-            const options = ([
-                'line', 'area', 'stackedArea', 'groupedColumn', 'stackedColumn'
-            ] as const).map(value => ({ value, text: this.chartTranslationService.translate(value) }));
+            const options = (['line', 'area', 'stackedArea', 'groupedColumn', 'stackedColumn'] as const).map(
+                (value) => ({ value, text: this.chartTranslationService.translate(value) })
+            );
 
-            const chartTypeComp = seriesItemGroup.createManagedBean(new AgSelect({
-                options,
-                value: seriesChartType.chartType,
-                onValueChange: (chartType: ChartType) => this.chartController.updateSeriesChartType(col.colId, chartType)
-            }));
+            const chartTypeComp = seriesItemGroup.createManagedBean(
+                new AgSelect({
+                    options,
+                    value: seriesChartType.chartType,
+                    onValueChange: (chartType: ChartType) =>
+                        this.chartController.updateSeriesChartType(col.colId, chartType),
+                })
+            );
 
             seriesItemGroup.addItem(chartTypeComp);
 
@@ -125,9 +141,11 @@ export class SeriesChartTypePanel extends Component {
 
     private refreshComps(): void {
         const seriesChartTypes = this.chartController.getSeriesChartTypes();
-        this.selectedColIds.forEach(colId => {
-            const seriesChartType = seriesChartTypes.find(chartType => chartType.colId === colId);
-            if (!seriesChartType) { return; }
+        this.selectedColIds.forEach((colId) => {
+            const seriesChartType = seriesChartTypes.find((chartType) => chartType.colId === colId);
+            if (!seriesChartType) {
+                return;
+            }
             const chartTypeComp = this.chartTypeComps.get(colId);
             const secondaryAxisComp = this.secondaryAxisComps.get(colId);
 

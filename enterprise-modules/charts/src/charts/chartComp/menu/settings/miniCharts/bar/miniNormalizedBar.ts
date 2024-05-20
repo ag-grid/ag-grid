@@ -1,6 +1,7 @@
+import { ChartType } from '@ag-grid-community/core';
+
 import { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniStackedBar } from './miniStackedBar';
-import { ChartType } from '@ag-grid-community/core';
 
 export class MiniNormalizedBar extends MiniStackedBar {
     static chartType: ChartType = 'normalizedBar';
@@ -10,7 +11,22 @@ export class MiniNormalizedBar extends MiniStackedBar {
         [2, 4, 6],
     ];
 
-    constructor(container: HTMLElement, fills: string[], strokes: string[], themeTemplateParameters: ThemeTemplateParameters, isCustomTheme: boolean) {
-        super(container, fills, strokes, themeTemplateParameters, isCustomTheme, MiniNormalizedBar.data, [0, 10], 'normalizedBarTooltip');
+    constructor(
+        container: HTMLElement,
+        fills: string[],
+        strokes: string[],
+        themeTemplateParameters: ThemeTemplateParameters,
+        isCustomTheme: boolean
+    ) {
+        super(
+            container,
+            fills,
+            strokes,
+            themeTemplateParameters,
+            isCustomTheme,
+            MiniNormalizedBar.data,
+            [0, 10],
+            'normalizedBarTooltip'
+        );
     }
 }

@@ -1,4 +1,5 @@
 import * as JSON5 from 'json5';
+
 import { ExampleConfig, ParsedBindings } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import { getFunctionName, removeFunctionKeyword } from './parser-utils';
@@ -167,7 +168,12 @@ export function convertColumnDefs(rawColumnDefs, userComponentNames, vueComponen
                         const component = `${value.loadingCellRenderer.replace('AG_LITERAL_', '')}`;
                         if (isExternalVueFile(componentFileNames, component)) {
                             value.loadingCellRenderer = component;
-                            addToVueComponents(componentFileNames, vueComponents, 'loadingCellRenderer', value.loadingCellRenderer);
+                            addToVueComponents(
+                                componentFileNames,
+                                vueComponents,
+                                'loadingCellRenderer',
+                                value.loadingCellRenderer
+                            );
                         }
                     }
                     if (value.filters) {

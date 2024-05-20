@@ -1,5 +1,16 @@
-import { Component, PositionableFeature, PositionableOptions, PostConstruct, RefSelector, ResizableStructure, _createIconNoSpan, _getInnerHeight, _getInnerWidth, _isVisible, _setDisplayed } from "@ag-grid-community/core";
-
+import {
+    Component,
+    PositionableFeature,
+    PositionableOptions,
+    PostConstruct,
+    RefSelector,
+    ResizableStructure,
+    _createIconNoSpan,
+    _getInnerHeight,
+    _getInnerWidth,
+    _isVisible,
+    _setDisplayed,
+} from '@ag-grid-community/core';
 
 export interface PanelOptions extends PositionableOptions {
     component?: Component;
@@ -11,7 +22,6 @@ export interface PanelOptions extends PositionableOptions {
 }
 
 export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Component {
-
     protected static CLOSE_BTN_TEMPLATE = /* html */ `<div class="ag-button"></div>`;
     protected closable = true;
 
@@ -53,22 +63,33 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
             centered,
             popup,
             x,
-            y
+            y,
         } = this.config;
 
         this.positionableFeature = new PositionableFeature(this.getGui(), {
-            minWidth, width, minHeight, height, centered, x, y, popup,
-            calculateTopBuffer: () => this.positionableFeature.getHeight()! - this.getBodyHeight()
+            minWidth,
+            width,
+            minHeight,
+            height,
+            centered,
+            x,
+            y,
+            popup,
+            calculateTopBuffer: () => this.positionableFeature.getHeight()! - this.getBodyHeight(),
         });
 
         this.createManagedBean(this.positionableFeature);
 
         const eGui = this.getGui();
 
-        if (component) { this.setBodyComponent(component); }
+        if (component) {
+            this.setBodyComponent(component);
+        }
 
         if (!hideTitleBar) {
-            if (title) { this.setTitle(title); }
+            if (title) {
+                this.setTitle(title);
+            }
             this.setClosable(closable != null ? closable : this.closable);
         } else {
             _setDisplayed(this.eTitleBar, false);
@@ -91,7 +112,9 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
             }
         });
 
-        if (popup && this.positionableFeature.isPositioned()) { return; }
+        if (popup && this.positionableFeature.isPositioned()) {
+            return;
+        }
 
         if (this.renderComponent) {
             this.renderComponent();
@@ -133,7 +156,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         }
 
         if (closable) {
-            const closeButtonComp = this.closeButtonComp = new Component(AgPanel.CLOSE_BTN_TEMPLATE);
+            const closeButtonComp = (this.closeButtonComp = new Component(AgPanel.CLOSE_BTN_TEMPLATE));
             this.getContext().createBean(closeButtonComp);
 
             const eGui = closeButtonComp.getGui();

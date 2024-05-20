@@ -1,8 +1,8 @@
-import { IMenuItemComp, IMenuItemParams } from "../interfaces/menuItem";
-import { _setAriaExpanded } from "../utils/aria";
-import { _loadTemplate, _isNodeOrElement } from "../utils/dom";
-import { _createIconNoSpan } from "../utils/icon";
-import { Component } from "./component";
+import { IMenuItemComp, IMenuItemParams } from '../interfaces/menuItem';
+import { _setAriaExpanded } from '../utils/aria';
+import { _isNodeOrElement, _loadTemplate } from '../utils/dom';
+import { _createIconNoSpan } from '../utils/icon';
+import { Component } from './component';
 
 interface AgMenuItemRendererParams {
     cssClassPrefix?: string;
@@ -16,7 +16,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
     constructor() {
         super();
 
-        this.setTemplate(/* html */`<div></div>`, []);
+        this.setTemplate(/* html */ `<div></div>`, []);
     }
 
     public init(params: IMenuItemParams & AgMenuItemRendererParams): void {
@@ -34,8 +34,11 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
     }
 
     private addIcon(): void {
-        if (this.params.isCompact) { return; }
-        const icon = _loadTemplate(/* html */
+        if (this.params.isCompact) {
+            return;
+        }
+        const icon = _loadTemplate(
+            /* html */
             `<span ref="eIcon" class="${this.getClassName('part')} ${this.getClassName('icon')}" role="presentation"></span>`
         );
 
@@ -55,7 +58,8 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
     }
 
     private addName(): void {
-        const name = _loadTemplate(/* html */
+        const name = _loadTemplate(
+            /* html */
             `<span ref="eName" class="${this.getClassName('part')} ${this.getClassName('text')}">${this.params.name || ''}</span>`
         );
 
@@ -63,8 +67,11 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
     }
 
     private addShortcut(): void {
-        if (this.params.isCompact) { return; }
-        const shortcut = _loadTemplate(/* html */
+        if (this.params.isCompact) {
+            return;
+        }
+        const shortcut = _loadTemplate(
+            /* html */
             `<span ref="eShortcut" class="${this.getClassName('part')} ${this.getClassName('shortcut')}">${this.params.shortcut || ''}</span>`
         );
 
@@ -72,7 +79,8 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
     }
 
     private addSubMenu(): void {
-        const pointer = _loadTemplate(/* html */
+        const pointer = _loadTemplate(
+            /* html */
             `<span ref="ePopupPointer" class="${this.getClassName('part')} ${this.getClassName('popup-pointer')}"></span>`
         );
 

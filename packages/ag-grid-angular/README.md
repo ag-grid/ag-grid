@@ -1,4 +1,4 @@
-![AG Grid HTML5 Grid trusted by the community, built for enterprise](./github-banner.png "AG Grid")
+![AG Grid HTML5 Grid trusted by the community, built for enterprise](./github-banner.png 'AG Grid')
 
 [![CDNJS](https://img.shields.io/cdnjs/v/ag-grid.svg)](https://cdnjs.com/libraries/ag-grid)
 [![npm](https://img.shields.io/npm/dm/ag-grid-angular.svg)](https://www.npmjs.com/package/ag-grid-angular)
@@ -11,7 +11,7 @@ It delivers [outstanding performance](https://www.ag-grid.com/example?utm_source
 
 Here's how our grid looks with multiple filters and grouping enabled:
 
-![Image of AG Grid showing filtering and grouping enabled.](./github-grid-demo.jpg "AG Grid demo")
+![Image of AG Grid showing filtering and grouping enabled.](./github-grid-demo.jpg 'AG Grid demo')
 
 ## Supported Angular Versions
 
@@ -21,35 +21,35 @@ See Angular [Version Compatibility](https://ag-grid.com/angular-data-grid/angula
 
 In addition to the standard set of features you'd expect from any grid:
 
-* Column Interactions (resize, reorder, and pin columns)
-* Pagination
-* Sorting
-* Row Selection
+-   Column Interactions (resize, reorder, and pin columns)
+-   Pagination
+-   Sorting
+-   Row Selection
 
 Here are some of the features that make AG Grid stand out:
 
-* Grouping / Aggregation *
-* Accessibility support
-* Custom Filtering
-* In-place Cell Editing
-* Records Lazy Loading *
-* Server-Side Records Operations *
-* Live Stream Updates
-* Hierarchical Data Support & Tree View *
-* Customizable Appearance
-* Customizable Cell Contents
-* State Persistence
-* Keyboard Navigation
-* Data Export to CSV
-* Data Export to Excel *
-* Excel-like Pivoting *
-* Row Reordering
-* Copy / Paste
-* Column Spanning
-* Pinned Rows
-* Full Width Rows
-* Integrated Charting
-* Sparklines
+-   Grouping / Aggregation \*
+-   Accessibility support
+-   Custom Filtering
+-   In-place Cell Editing
+-   Records Lazy Loading \*
+-   Server-Side Records Operations \*
+-   Live Stream Updates
+-   Hierarchical Data Support & Tree View \*
+-   Customizable Appearance
+-   Customizable Cell Contents
+-   State Persistence
+-   Keyboard Navigation
+-   Data Export to CSV
+-   Data Export to Excel \*
+-   Excel-like Pivoting \*
+-   Row Reordering
+-   Copy / Paste
+-   Column Spanning
+-   Pinned Rows
+-   Full Width Rows
+-   Integrated Charting
+-   Sparklines
 
 \* The features marked with an asterisk are available in the [Enterprise version](https://www.ag-grid.com/license-pricing?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github) only.
 
@@ -68,8 +68,8 @@ $ npm install --save @ag-grid-community/core ag-grid-angular
 ### Import styles in `styles.css`
 
 ```scss
-@import "~@ag-grid-community/styles/ag-grid.css";
-@import "~@ag-grid-community/styles/ag-theme-quartz.css";
+@import '~@ag-grid-community/styles/ag-grid.css';
+@import '~@ag-grid-community/styles/ag-theme-quartz.css';
 ```
 
 ### Set the grid's configuration in a parent component
@@ -81,22 +81,22 @@ import { AgGridAngular } from 'ag-grid-angular';
     selector: 'app-grid',
     standalone: true,
     imports: [AgGridAngular],
-    template: ` ... `
+    template: ` ... `,
 })
 export class AppComponent {
-	title = 'app';
+    title = 'app';
 
-	columnDefs: ColDef[] = [
-		{ headerName: 'Make', field: 'make' },
-		{ headerName: 'Model', field: 'model' },
-		{ headerName: 'Price', field: 'price' }
-	];
+    columnDefs: ColDef[] = [
+        { headerName: 'Make', field: 'make' },
+        { headerName: 'Model', field: 'model' },
+        { headerName: 'Price', field: 'price' },
+    ];
 
-	rowData = [
-		{ make: 'Toyota', model: 'Celica', price: 35000 },
-		{ make: 'Ford', model: 'Mondeo', price: 32000 },
-		{ make: 'Porsche', model: 'Boxster', price: 72000 }
-	];
+    rowData = [
+        { make: 'Toyota', model: 'Celica', price: 35000 },
+        { make: 'Ford', model: 'Mondeo', price: 32000 },
+        { make: 'Porsche', model: 'Boxster', price: 72000 },
+    ];
 }
 ```
 
@@ -104,10 +104,11 @@ export class AppComponent {
 
 ```html
 <ag-grid-angular
-	style="width: 500px; height: 500px;"
-	class="ag-theme-quartz"
-	[rowData]="rowData"
-	[columnDefs]="columnDefs" />
+    style="width: 500px; height: 500px;"
+    class="ag-theme-quartz"
+    [rowData]="rowData"
+    [columnDefs]="columnDefs"
+/>
 ```
 
 ## Issue Reporting

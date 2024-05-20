@@ -2,26 +2,27 @@ import {
     AgPromise,
     Autowired,
     ChartCreated,
-    ChartToolbarMenuItemOptions,
     ChartToolPanelMenuOptions,
+    ChartToolbarMenuItemOptions,
     Component,
     Events,
-    PostConstruct
-} from "@ag-grid-community/core";
+    PostConstruct,
+} from '@ag-grid-community/core';
+import { AgPanel } from '@ag-grid-enterprise/core';
 
-import { TabbedChartMenu } from "./tabbedChartMenu";
-import { ChartController } from "../chartController";
-import { ExtraPaddingDirection } from "../chartProxies/chartProxy";
-import { ChartMenuListFactory } from "./chartMenuList";
-import { ChartToolbar } from "./chartToolbar";
-import { ChartMenuService } from "../services/chartMenuService";
-import { ChartMenuContext } from "./chartMenuContext";
-import { AgPanel } from "@ag-grid-enterprise/core";
+import { ChartController } from '../chartController';
+import { ExtraPaddingDirection } from '../chartProxies/chartProxy';
+import { ChartMenuService } from '../services/chartMenuService';
+import { ChartMenuContext } from './chartMenuContext';
+import { ChartMenuListFactory } from './chartMenuList';
+import { ChartToolbar } from './chartToolbar';
+import { TabbedChartMenu } from './tabbedChartMenu';
 
 type ChartToolbarButtons = {
     [key in ChartToolbarMenuItemOptions]: {
-        iconName: string, callback: (eventSource: HTMLElement) => void
-    }
+        iconName: string;
+        callback: (eventSource: HTMLElement) => void;
+    };
 };
 
 export class ChartMenu extends Component {
@@ -32,9 +33,12 @@ export class ChartMenu extends Component {
 
     private buttons: ChartToolbarButtons = {
         chartLink: { iconName: 'linked', callback: () => this.chartMenuService.toggleLinked(this.chartMenuContext) },
-        chartUnlink: { iconName: 'unlinked', callback: () => this.chartMenuService.toggleLinked(this.chartMenuContext) },
+        chartUnlink: {
+            iconName: 'unlinked',
+            callback: () => this.chartMenuService.toggleLinked(this.chartMenuContext),
+        },
         chartDownload: { iconName: 'save', callback: () => this.chartMenuService.downloadChart(this.chartMenuContext) },
-        chartMenu: { iconName: 'menuAlt', callback: (eventSource: HTMLElement) => this.showMenuList(eventSource) }
+        chartMenu: { iconName: 'menuAlt', callback: (eventSource: HTMLElement) => this.showMenuList(eventSource) },
     };
 
     private panels: ChartToolPanelMenuOptions[] = [];
@@ -61,7 +65,7 @@ export class ChartMenu extends Component {
     private postConstruct(): void {
         this.chartToolbar = this.createManagedBean(new ChartToolbar());
         this.getGui().appendChild(this.chartToolbar.getGui());
-        
+
         this.refreshToolbarAndPanels();
 
         this.addManagedListener(this.eventService, Events.EVENT_CHART_CREATED, (e: ChartCreated) => {
@@ -72,21 +76,29 @@ export class ChartMenu extends Component {
                 }
             }
         });
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_LINKED_CHANGED, this.refreshToolbarAndPanels.bind(this));
+        this.addManagedListener(
+            this.chartController,
+            ChartController.EVENT_CHART_LINKED_CHANGED,
+            this.refreshToolbarAndPanels.bind(this)
+        );
 
         this.refreshMenuClasses();
 
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, this.refreshToolbarAndPanels.bind(this));
+        this.addManagedListener(
+            this.chartController,
+            ChartController.EVENT_CHART_API_UPDATE,
+            this.refreshToolbarAndPanels.bind(this)
+        );
     }
 
     public isVisible(): boolean {
         return this.menuVisible;
     }
 
-    public getExtraPaddingDirections(): ExtraPaddingDirection[]  {
-        return ([
-            'chartMenu', 'chartLink', 'chartUnlink', 'chartDownload'
-        ] as const).some(v => this.chartToolbarOptions.includes(v))
+    public getExtraPaddingDirections(): ExtraPaddingDirection[] {
+        return (['chartMenu', 'chartLink', 'chartUnlink', 'chartDownload'] as const).some((v) =>
+            this.chartToolbarOptions.includes(v)
+        )
             ? ['top']
             : [];
     }
@@ -97,22 +109,19 @@ export class ChartMenu extends Component {
     }
 
     private initToolbarOptionsAndPanels(): void {
-        const {
-            panels,
-            defaultPanel
-        } = this.chartMenuService.getChartToolPanels(this.chartController);
+        const { panels, defaultPanel } = this.chartMenuService.getChartToolPanels(this.chartController);
         this.panels = panels;
         this.defaultPanel = defaultPanel;
         this.chartToolbarOptions = this.chartMenuService.getChartToolbarOptions();
     }
 
     private updateToolbar(): void {
-        const buttons = this.chartToolbarOptions.map(buttonName => {
+        const buttons = this.chartToolbarOptions.map((buttonName) => {
             const { iconName, callback } = this.buttons[buttonName];
             return {
                 buttonName,
                 iconName,
-                callback
+                callback,
             };
         });
         this.chartToolbar.updateParams({ buttons });
@@ -121,32 +130,27 @@ export class ChartMenu extends Component {
     private createMenuPanel(defaultTab: number): AgPromise<AgPanel> {
         const width = this.environment.getDefaultChartMenuPanelWidth();
 
-        const menuPanel = this.menuPanel = this.createBean(new AgPanel({
-            minWidth: width,
-            width,
-            height: '100%',
-            closable: true,
-            hideTitleBar: true,
-            cssIdentifier: 'chart-menu'
-        }));
+        const menuPanel = (this.menuPanel = this.createBean(
+            new AgPanel({
+                minWidth: width,
+                width,
+                height: '100%',
+                closable: true,
+                hideTitleBar: true,
+                cssIdentifier: 'chart-menu',
+            })
+        ));
 
         menuPanel.setParentComponent(this);
         this.eMenuPanelContainer.appendChild(menuPanel.getGui());
 
-        this.tabbedMenu = this.createBean(new TabbedChartMenu(
-            this.panels,
-            this.chartMenuContext
-        ));
+        this.tabbedMenu = this.createBean(new TabbedChartMenu(this.panels, this.chartMenuContext));
 
         this.addManagedListener(this.tabbedMenu, TabbedChartMenu.EVENT_CLOSED, () => {
             this.hideMenu();
         });
 
-        this.addManagedListener(
-            menuPanel,
-            Component.EVENT_DESTROYED,
-            () => this.destroyBean(this.tabbedMenu)
-        );
+        this.addManagedListener(menuPanel, Component.EVENT_DESTROYED, () => this.destroyBean(this.tabbedMenu));
 
         return new AgPromise((res: (arg0: any) => void) => {
             window.setTimeout(() => {
@@ -158,7 +162,9 @@ export class ChartMenu extends Component {
     }
 
     private showContainer(eventSource?: HTMLElement, suppressFocus?: boolean) {
-        if (!this.menuPanel) { return; }
+        if (!this.menuPanel) {
+            return;
+        }
 
         this.menuVisible = true;
         this.refreshMenuClasses();
@@ -169,9 +175,9 @@ export class ChartMenu extends Component {
         /**
          * Menu panel to show. If empty, shows the existing menu, or creates the default menu if menu panel has not been created
          */
-        panel?: ChartToolPanelMenuOptions,
-        eventSource?: HTMLElement,
-        suppressFocus?: boolean
+        panel?: ChartToolPanelMenuOptions;
+        eventSource?: HTMLElement;
+        suppressFocus?: boolean;
     }): void {
         const { panel, eventSource, suppressFocus } = params ?? {};
 
@@ -182,9 +188,9 @@ export class ChartMenu extends Component {
             let tab = this.panels.indexOf(menuPanel);
             if (tab < 0) {
                 console.warn(`AG Grid: '${panel}' is not a valid Chart Tool Panel name`);
-                tab = this.panels.indexOf(this.defaultPanel)
+                tab = this.panels.indexOf(this.defaultPanel);
             }
-    
+
             if (this.menuPanel) {
                 this.tabbedMenu.showTab(tab);
                 this.showContainer(eventSource, suppressFocus);
@@ -208,7 +214,7 @@ export class ChartMenu extends Component {
         this.chartMenuListFactory.showMenuList({
             eventSource,
             showMenu: () => this.showMenu({ eventSource }),
-            chartMenuContext: this.chartMenuContext
+            chartMenuContext: this.chartMenuContext,
         });
     }
 

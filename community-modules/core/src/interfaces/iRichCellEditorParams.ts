@@ -1,9 +1,9 @@
-import { AgPickerFieldParams } from "./agFieldParams";
-import { ICellEditorParams } from "./iCellEditor";
+import { AgPickerFieldParams } from './agFieldParams';
+import { ICellEditorParams } from './iCellEditor';
 
 export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
     value?: TValue;
-    valueList?: TValue[]
+    valueList?: TValue[];
     allowTyping?: boolean;
     cellRenderer?: any;
     cellRowHeight?: number;
@@ -16,7 +16,7 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
     initialInputValue?: string;
 
     valueFormatter?: (value: TValue) => any;
-    searchStringCreator?: (values: TValue[]) => string[]
+    searchStringCreator?: (values: TValue[]) => string[];
 }
 export interface RichCellEditorValuesCallback<TData = any, TValue = any> {
     (params: ICellEditorParams<TData, TValue>): TValue[] | Promise<TValue[]>;
@@ -39,17 +39,17 @@ export interface IRichCellEditorParams<TData = any, TValue = any> {
      * @default false
      */
     filterList?: boolean;
-    /** 
-     * The type of search algorithm that is used when searching for values. 
+    /**
+     * The type of search algorithm that is used when searching for values.
      *  - `match` - Matches if the value starts with the text typed.
      *  - `matchAny` - Matches if the value contains the text typed.
      *  - `fuzzy` - Matches the closest value to text typed.
-     * Note: When a cellRenderer is specified, this option will not work. 
-     * @default 'fuzzy' 
+     * Note: When a cellRenderer is specified, this option will not work.
+     * @default 'fuzzy'
      */
     searchType?: 'match' | 'matchAny' | 'fuzzy';
     /**
-     * If `true`, each item on the list of values will highlight the part of the text that matches the input. 
+     * If `true`, each item on the list of values will highlight the part of the text that matches the input.
      * Note: It only makes sense to use this option when `filterList` is `true` and `searchType` is **not** `fuzzy`.
      * @default false.
      */
@@ -67,17 +67,19 @@ export interface IRichCellEditorParams<TData = any, TValue = any> {
      */
     valueListGap?: number;
     /**
-     * The maximum height of the list of items. If the value is a `number` it will be 
+     * The maximum height of the list of items. If the value is a `number` it will be
      * treated as pixels, otherwise it should be a valid CSS size string.
      * @default 'calc(var(--ag-row-height) * 6.5)'
      */
     valueListMaxHeight?: number | string;
-    /** The maximum width of the list of items. If the value is a `number` it will be 
+    /** The maximum width of the list of items. If the value is a `number` it will be
      * treated as pixels, otherwise it should be a valid CSS size string. Default: Width of the cell being edited.
      */
     valueListMaxWidth?: number | string;
-     /** A callback function that allows you to change the displayed value for simple data. */
+    /** A callback function that allows you to change the displayed value for simple data. */
     formatValue?: (value: TValue | null | undefined) => string;
 }
 
-export interface RichCellEditorParams<TData = any, TValue = any, TContext = any> extends IRichCellEditorParams<TData, TValue>, Omit<ICellEditorParams<TData, TValue, TContext>, "formatValue"> {}
+export interface RichCellEditorParams<TData = any, TValue = any, TContext = any>
+    extends IRichCellEditorParams<TData, TValue>,
+        Omit<ICellEditorParams<TData, TValue, TContext>, 'formatValue'> {}

@@ -1,17 +1,16 @@
-import { Bean } from "../context/context";
-import { Autowired } from "../context/context";
-import { CellPosition } from "../entities/cellPositionUtils";
+import { BeanStub } from '../context/beanStub';
+import { Bean } from '../context/context';
+import { Autowired } from '../context/context';
+import { CtrlsService } from '../ctrlsService';
+import { DraggingEvent } from '../dragAndDrop/dragAndDropService';
+import { CellPosition } from '../entities/cellPositionUtils';
+import { CellCtrl } from '../rendering/cell/cellCtrl';
+import { _getCtrlForEventTarget } from '../utils/event';
+import { _exists } from '../utils/generic';
 import { NumberSequence } from '../utils/numberSequence';
-import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
-import { BeanStub } from "../context/beanStub";
-import { _getCtrlForEventTarget } from "../utils/event";
-import { _exists } from "../utils/generic";
-import { CtrlsService } from "../ctrlsService";
-import { CellCtrl } from "../rendering/cell/cellCtrl";
 
 @Bean('mouseEventService')
 export class MouseEventService extends BeanStub {
-
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private static gridInstanceSequence = new NumberSequence();
@@ -56,7 +55,7 @@ export class MouseEventService extends BeanStub {
         return cellComp ? cellComp.getCellPosition() : null;
     }
 
-    public getNormalisedPosition(event: MouseEvent | DraggingEvent): { x: number, y: number; } {
+    public getNormalisedPosition(event: MouseEvent | DraggingEvent): { x: number; y: number } {
         const gridPanelHasScrolls = this.gos.isDomLayout('normal');
         const e = event as MouseEvent;
         let x: number;
@@ -80,5 +79,4 @@ export class MouseEventService extends BeanStub {
 
         return { x, y };
     }
-
 }

@@ -5,32 +5,31 @@ import {
     Autowired,
     Component,
     Events,
+    ListOption,
     PostConstruct,
     RefSelector,
-    ListOption,
     _removeFromParent,
-    _setDisplayed
-} from "@ag-grid-community/core";
-import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
+    _setDisplayed,
+} from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import type { AgCartesianAxisOptions } from 'ag-charts-community';
-import { ChartController } from "../../../chartController";
-import { AxisTicksPanel } from "./axisTicksPanel";
-import { FontPanel, FontPanelParams } from "../fontPanel";
-import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
-import { FormatPanelOptions } from "../formatPanel";
-import { GridLinePanel } from './gridLinePanel';
-import { AgAngleSelect } from "../../../../../widgets/agAngleSelect";
-import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
-import { ChartOptionsProxy } from '../../../services/chartOptionsService';
+
+import { AgAngleSelect } from '../../../../../widgets/agAngleSelect';
 import { AgColorPicker, AgColorPickerParams } from '../../../../../widgets/agColorPicker';
-import { AgSlider, AgSliderParams } from "../../../../../widgets/agSlider";
+import { AgSlider, AgSliderParams } from '../../../../../widgets/agSlider';
+import { ChartController } from '../../../chartController';
+import { ChartOptionsProxy } from '../../../services/chartOptionsService';
+import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import { FontPanel, FontPanelParams } from '../fontPanel';
+import { FormatPanelOptions } from '../formatPanel';
+import { AxisTicksPanel } from './axisTicksPanel';
+import { GridLinePanel } from './gridLinePanel';
 
 const DEFAULT_TIME_AXIS_FORMAT = '%d %B %Y';
 
 export class CartesianAxisPanel extends Component {
-
-    public static TEMPLATE = /* html */
-        `<div>
+    public static TEMPLATE /* html */ = `<div>
             <ag-group-component ref="axisGroup">
                 <ag-select ref="axisTypeSelect"></ag-select>
                 <ag-select ref="axisTimeFormatSelect"></ag-select>
@@ -66,21 +65,31 @@ export class CartesianAxisPanel extends Component {
 
     @PostConstruct
     private init() {
-        const { isExpandedOnInit: expanded, chartOptionsService, chartController, registerGroupComponent } = this.options;
+        const {
+            isExpandedOnInit: expanded,
+            chartOptionsService,
+            chartController,
+            registerGroupComponent,
+        } = this.options;
         const labelKey: ChartTranslationKey = this.axisType;
         const axisGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-top-level',
             direction: 'vertical',
             title: this.translate(labelKey),
             expanded,
-            suppressEnabledCheckbox: true
+            suppressEnabledCheckbox: true,
         };
 
         const chartAxisOptionsProxy = chartOptionsService.getCartesianAxisOptionsProxy(this.axisType);
         const chartAxisOptions = this.createManagedBean(new ChartMenuParamsFactory(chartAxisOptionsProxy));
-        const chartAxisThemeOverrides = this.createManagedBean(new ChartMenuParamsFactory(chartOptionsService.getCartesianAxisThemeOverridesProxy(this.axisType)));
+        const chartAxisThemeOverrides = this.createManagedBean(
+            new ChartMenuParamsFactory(chartOptionsService.getCartesianAxisThemeOverridesProxy(this.axisType))
+        );
 
-        const axisTypeSelectParams = this.getAxisTypeSelectParams(chartAxisOptions, chartOptionsService.getCartesianAxisAppliedThemeOverridesProxy(this.axisType));
+        const axisTypeSelectParams = this.getAxisTypeSelectParams(
+            chartAxisOptions,
+            chartOptionsService.getCartesianAxisAppliedThemeOverridesProxy(this.axisType)
+        );
         const axisPositionSelectParams = this.getAxisPositionSelectParams(chartAxisOptions);
         const axisTimeFormatSelectParams = this.getAxisTimeFormatSelectParams(chartAxisOptions);
         const axisColorInputParams = this.getAxisColorInputParams(chartAxisThemeOverrides);
@@ -92,7 +101,7 @@ export class CartesianAxisPanel extends Component {
             axisPositionSelect: axisPositionSelectParams ?? undefined,
             axisTimeFormatSelect: axisTimeFormatSelectParams ?? undefined,
             axisColorInput: axisColorInputParams,
-            axisLineWidthSlider: axisLineWidthSliderParams
+            axisLineWidthSlider: axisLineWidthSliderParams,
         });
         registerGroupComponent(this.axisGroup);
 
@@ -100,7 +109,7 @@ export class CartesianAxisPanel extends Component {
         if (!axisPositionSelectParams) this.removeTemplateComponent(this.axisPositionSelect);
         const updateTimeFormatVisibility = () => {
             const isTimeAxis = chartAxisOptionsProxy.getValue('type') === 'time';
-            _setDisplayed(this.axisTimeFormatSelect.getGui(), isTimeAxis)
+            _setDisplayed(this.axisTimeFormatSelect.getGui(), isTimeAxis);
         };
         if (!axisTimeFormatSelectParams) {
             this.removeTemplateComponent(this.axisTimeFormatSelect);
@@ -117,23 +126,24 @@ export class CartesianAxisPanel extends Component {
         this.initAxisTicks(chartAxisThemeOverrides);
         this.initAxisLabels(chartAxisThemeOverrides);
 
-        const updateAxisLabelRotations = () => this.axisLabelUpdateFuncs.forEach(func => func());
+        const updateAxisLabelRotations = () => this.axisLabelUpdateFuncs.forEach((func) => func());
         this.addManagedListener(chartController, ChartController.EVENT_CHART_UPDATED, updateAxisLabelRotations);
-        this.addManagedListener(chartController, ChartController.EVENT_CHART_MODEL_UPDATE, () => setTimeout(() => {
-            // make sure this runs after the actual chart update has happened
-            this.refreshAxisTypeSelect(chartAxisOptions)
-            updateTimeFormatVisibility();
-        }));
+        this.addManagedListener(chartController, ChartController.EVENT_CHART_MODEL_UPDATE, () =>
+            setTimeout(() => {
+                // make sure this runs after the actual chart update has happened
+                this.refreshAxisTypeSelect(chartAxisOptions);
+                updateTimeFormatVisibility();
+            })
+        );
     }
 
-    private getAxisTypeSelectParams(chartAxisOptions: ChartMenuParamsFactory, chartAxisAppliedThemeOverrides: ChartOptionsProxy): AgSelectParams {
+    private getAxisTypeSelectParams(
+        chartAxisOptions: ChartMenuParamsFactory,
+        chartAxisAppliedThemeOverrides: ChartOptionsProxy
+    ): AgSelectParams {
         const chartOptions = chartAxisOptions.getChartOptions();
         const axisTypeSelectOptions = this.getAxisTypeSelectOptions();
-        const params = chartAxisOptions.getDefaultSelectParams(
-            'type',
-            'axisType',
-            axisTypeSelectOptions,
-        );
+        const params = chartAxisOptions.getDefaultSelectParams('type', 'axisType', axisTypeSelectOptions);
         params.onValueChange = (value: AgCartesianAxisOptions['type']): void => {
             const previousAxisType = chartOptions.getValue<AgCartesianAxisOptions['type']>('type');
             if (value === previousAxisType) return;
@@ -143,15 +153,20 @@ export class CartesianAxisPanel extends Component {
             // Optionally update the axis label format when switching between time and non-time axes
             const previousAxisIsTimeAxis = previousAxisType === 'time';
             const updatedAxisIsTimeAxis = value === 'time';
-            const updatedLabelFormat = (previousAxisIsTimeAxis !== updatedAxisIsTimeAxis
-                ? (updatedAxisIsTimeAxis ? DEFAULT_TIME_AXIS_FORMAT : undefined)
-                : null
-            );
+            const updatedLabelFormat =
+                previousAxisIsTimeAxis !== updatedAxisIsTimeAxis
+                    ? updatedAxisIsTimeAxis
+                        ? DEFAULT_TIME_AXIS_FORMAT
+                        : undefined
+                    : null;
             // Update the axis type (and label format if necessary)
             this.options.chartOptionsService.setCartesianCategoryAxisType(this.axisType, value);
             if (updatedLabelFormat !== null) {
                 const existingLabel = chartOptions.getValue<AgCartesianAxisOptions['label']>('label') ?? {};
-                chartOptions.setValue<AgCartesianAxisOptions['label']>('label', { ...existingLabel, format: updatedLabelFormat });
+                chartOptions.setValue<AgCartesianAxisOptions['label']>('label', {
+                    ...existingLabel,
+                    format: updatedLabelFormat,
+                });
             }
             // Reapply the previous theme overrides to the new axis type
             chartAxisAppliedThemeOverrides.setValue<AgCartesianAxisOptions>('*', previousAxisThemeOverrides);
@@ -164,9 +179,14 @@ export class CartesianAxisPanel extends Component {
         const hasOptions = !!options.length;
         this.axisTypeSelect.setDisplayed(hasOptions);
 
-        if (!hasOptions) { return; }
+        if (!hasOptions) {
+            return;
+        }
 
-        this.axisTypeSelect.clearOptions().addOptions(options).setValue(chartAxisOptions.getChartOptions().getValue('type'));
+        this.axisTypeSelect
+            .clearOptions()
+            .addOptions(options)
+            .setValue(chartAxisOptions.getChartOptions().getValue('type'));
     }
 
     private getAxisTypeSelectOptions(): ListOption[] {
@@ -174,13 +194,13 @@ export class CartesianAxisPanel extends Component {
         const chartType = chartController.getChartType();
         const supportsNumericalAxis = () => {
             const testDatum = chartController.getChartData()[0];
-            if (!testDatum) { return false; }
-            return chartController.getSelectedDimensions().every(col => !isNaN(parseFloat(testDatum[col.colId])));
-        }
+            if (!testDatum) {
+                return false;
+            }
+            return chartController.getSelectedDimensions().every((col) => !isNaN(parseFloat(testDatum[col.colId])));
+        };
         if (
-            [
-                'heatmap', 'histogram', 'boxPlot', 'rangeBar', 'scatter' , 'bubble'
-            ].includes(chartType) ||
+            ['heatmap', 'histogram', 'boxPlot', 'rangeBar', 'scatter', 'bubble'].includes(chartType) ||
             chartController.isGrouping() ||
             !this.isCategoryAxis() ||
             chartController.isCategorySeriesSwitched() ||
@@ -191,7 +211,7 @@ export class CartesianAxisPanel extends Component {
 
         return ['category', 'number', 'time'].map((value: 'category' | 'number' | 'time') => ({
             value,
-            text: this.translate(value)
+            text: this.translate(value),
         }));
     }
 
@@ -209,28 +229,28 @@ export class CartesianAxisPanel extends Component {
                 default:
                     switch (axisType) {
                         // Horizontal axis position can be changed between top and bottom
-                        case 'xAxis': return [
-                            { value: 'top', text: this.translate('top') },
-                            { value: 'bottom', text: this.translate('bottom') },
-                        ];
+                        case 'xAxis':
+                            return [
+                                { value: 'top', text: this.translate('top') },
+                                { value: 'bottom', text: this.translate('bottom') },
+                            ];
                         // Vertical axis position can be changed between left and right
-                        case 'yAxis': return [
-                            { value: 'left', text: this.translate('left') },
-                            { value: 'right', text: this.translate('right') },
-                        ];
+                        case 'yAxis':
+                            return [
+                                { value: 'left', text: this.translate('left') },
+                                { value: 'right', text: this.translate('right') },
+                            ];
                     }
             }
         })(this.options.chartController.getChartType(), this.axisType);
         if (!axisPositionSelectOptions) return null;
-        return chartAxisOptions.getDefaultSelectParams(
-            'position',
-            'position',
-            axisPositionSelectOptions,
-        );
+        return chartAxisOptions.getDefaultSelectParams('position', 'position', axisPositionSelectOptions);
     }
 
     private getAxisTimeFormatSelectParams(chartAxisOptions: ChartMenuParamsFactory): AgSelectParams | null {
-        if (!this.isCategoryAxis()) { return null; }
+        if (!this.isCategoryAxis()) {
+            return null;
+        }
 
         const axisTimeFormatSelectOptions = [
             { value: '%d/%m/%Y', text: this.translate('timeFormatSlashesDDMMYYYY') },
@@ -245,11 +265,7 @@ export class CartesianAxisPanel extends Component {
             { value: '%I:%M:%S %p', text: this.translate('timeFormatHHMMSSAmPm') },
         ];
 
-        return chartAxisOptions.getDefaultSelectParams(
-            'label.format',
-            'timeFormat',
-            axisTimeFormatSelectOptions,
-        );
+        return chartAxisOptions.getDefaultSelectParams('label.format', 'timeFormat', axisTimeFormatSelectOptions);
     }
 
     private getAxisColorInputParams(chartAxisThemeOverrides: ChartMenuParamsFactory): AgColorPickerParams {
@@ -268,12 +284,12 @@ export class CartesianAxisPanel extends Component {
         const setAxisLineWidth = (value: number | null): void => {
             chartOptions.setValues<number | boolean>([
                 { expression: 'line.enabled', value: value != null },
-                { expression: 'line.width', value: value ?? 0},
+                { expression: 'line.width', value: value ?? 0 },
             ]);
         };
         const axisLineWidthSliderParams = chartAxisThemeOverrides.getDefaultSliderParamsWithoutValueParams(
             getAxisLineWidth() ?? 0,
-            "thickness",
+            'thickness',
             10
         );
         axisLineWidthSliderParams.onValueChange = (newValue) => {
@@ -288,7 +304,7 @@ export class CartesianAxisPanel extends Component {
             // Some chart types do not support configuring grid lines
             case 'heatmap':
                 return;
-            default: 
+            default:
                 const gridLineComp = this.createBean(new GridLinePanel(chartAxisThemeOverrides));
                 this.axisGroup.addItem(gridLineComp);
                 this.activePanels.push(gridLineComp);
@@ -319,11 +335,11 @@ export class CartesianAxisPanel extends Component {
 
     private initAxisLabels(chartAxisThemeOverrides: ChartMenuParamsFactory) {
         const params: FontPanelParams = {
-            name: this.translate("labels"),
+            name: this.translate('labels'),
             enabled: true,
             suppressEnabledCheckbox: true,
             chartMenuParamsFactory: chartAxisThemeOverrides,
-            keyMapper: key => `label.${key}`
+            keyMapper: (key) => `label.${key}`,
         };
 
         const labelPanelComp = this.createBean(new FontPanel(params));
@@ -359,9 +375,9 @@ export class CartesianAxisPanel extends Component {
 
             // For the autoRotate option to take effect, we need to additionally clear the rotation option value
             chartOptions.setValues<boolean | number | undefined>([
-                { expression: "label.autoRotate", value: autoRotate },
+                { expression: 'label.autoRotate', value: autoRotate },
                 // Clear the rotation option when activating auto-rotate, reinstate the previous value when deactivating
-                { expression: "label.rotation", value: autoRotate ? undefined : this.prevRotation }
+                { expression: 'label.rotation', value: autoRotate ? undefined : this.prevRotation },
             ]);
 
             rotationComp.setDisabled(autoRotate);
@@ -370,11 +386,13 @@ export class CartesianAxisPanel extends Component {
         const rotation = getLabelRotationValue();
         const autoRotate = typeof rotation === 'number' ? false : getLabelAutoRotateValue();
 
-        const autoRotateCheckbox = this.createBean(new AgCheckbox({
-            label: this.translate('autoRotate'),
-            value: autoRotate,
-            onValueChange: updateAutoRotate
-        }));
+        const autoRotateCheckbox = this.createBean(
+            new AgCheckbox({
+                label: this.translate('autoRotate'),
+                value: autoRotate,
+                onValueChange: updateAutoRotate,
+            })
+        );
 
         // init rotation comp state
         rotationComp.setDisabled(autoRotate);
@@ -397,7 +415,7 @@ export class CartesianAxisPanel extends Component {
         const label = `${this.chartTranslationService.translate(labelKey)} ${degreesSymbol}`;
         const angleSelect = new AgAngleSelect({
             label,
-            labelWidth: "flex",
+            labelWidth: 'flex',
             value: getLabelRotationValue() ?? 0,
             onValueChange: setLabelRotationValue,
         });
@@ -411,11 +429,9 @@ export class CartesianAxisPanel extends Component {
     }
 
     private addLabelPadding(labelPanelComp: FontPanel, chartAxisThemeOverrides: ChartMenuParamsFactory) {
-        const labelPaddingSlider = this.createBean(new AgSlider(chartAxisThemeOverrides.getDefaultSliderParams(
-            "label.padding",
-            "padding",
-            30
-        )));
+        const labelPaddingSlider = this.createBean(
+            new AgSlider(chartAxisThemeOverrides.getDefaultSliderParams('label.padding', 'padding', 30))
+        );
 
         labelPanelComp.addItem(labelPaddingSlider);
     }
@@ -430,7 +446,7 @@ export class CartesianAxisPanel extends Component {
     }
 
     private destroyActivePanels(): void {
-        this.activePanels.forEach(panel => {
+        this.activePanels.forEach((panel) => {
             _removeFromParent(panel.getGui());
             this.destroyBean(panel);
         });

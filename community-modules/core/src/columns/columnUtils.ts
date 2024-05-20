@@ -1,9 +1,9 @@
-import { Context } from "../context/context";
-import { Column, ColumnInstanceId } from "../entities/column";
-import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
-import { IProvidedColumn } from "../interfaces/iProvidedColumn";
-import { GROUP_AUTO_COLUMN_ID } from "./autoColService";
-import { depthFirstOriginalTreeSearch } from "./columnFactory";
+import { Context } from '../context/context';
+import { Column, ColumnInstanceId } from '../entities/column';
+import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
+import { IProvidedColumn } from '../interfaces/iProvidedColumn';
+import { GROUP_AUTO_COLUMN_ID } from './autoColService';
+import { depthFirstOriginalTreeSearch } from './columnFactory';
 
 // Possible candidate for reuse (alot of recursive traversal duplication)
 export function getColumnsFromTree(rootColumns: IProvidedColumn[]): Column[] {
@@ -29,25 +29,31 @@ export function getWidthOfColsInList(columnList: Column[]) {
     return columnList.reduce((width, col) => width + col.getActualWidth(), 0);
 }
 
-export function destroyColumnTree(context: Context, oldTree: IProvidedColumn[] | null | undefined, newTree?: IProvidedColumn[] | null): void {
-    const oldObjectsById: {[id: ColumnInstanceId]: IProvidedColumn | null} = {};
+export function destroyColumnTree(
+    context: Context,
+    oldTree: IProvidedColumn[] | null | undefined,
+    newTree?: IProvidedColumn[] | null
+): void {
+    const oldObjectsById: { [id: ColumnInstanceId]: IProvidedColumn | null } = {};
 
-    if (!oldTree) { return; }
+    if (!oldTree) {
+        return;
+    }
 
     // add in all old columns to be destroyed
-    depthFirstOriginalTreeSearch(null, oldTree, child => {
+    depthFirstOriginalTreeSearch(null, oldTree, (child) => {
         oldObjectsById[child.getInstanceId()] = child;
     });
 
     // however we don't destroy anything in the new tree. if destroying the grid, there is no new tree
     if (newTree) {
-        depthFirstOriginalTreeSearch(null, newTree, child => {
+        depthFirstOriginalTreeSearch(null, newTree, (child) => {
             oldObjectsById[child.getInstanceId()] = null;
         });
     }
 
     // what's left can be destroyed
-    const colsToDestroy = Object.values(oldObjectsById).filter(item => item != null);
+    const colsToDestroy = Object.values(oldObjectsById).filter((item) => item != null);
     context.destroyBeans(colsToDestroy);
 }
 
@@ -55,4 +61,3 @@ export function isColumnGroupAutoCol(col: Column): boolean {
     const colId = col.getId();
     return colId.startsWith(GROUP_AUTO_COLUMN_ID);
 }
-

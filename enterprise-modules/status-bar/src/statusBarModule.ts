@@ -1,13 +1,14 @@
 import { Module, ModuleNames } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
-import { StatusBarService } from './statusBar/statusBarService';
+
 import { AgStatusBar } from './statusBar/agStatusBar';
 import { AgNameValue } from './statusBar/providedPanels/agNameValue';
-import { TotalAndFilteredRowsComp } from './statusBar/providedPanels/totalAndFilteredRowsComp';
-import { FilteredRowsComp } from './statusBar/providedPanels/filteredRowsComp';
-import { TotalRowsComp } from './statusBar/providedPanels/totalRowsComp';
-import { SelectedRowsComp } from './statusBar/providedPanels/selectedRowsComp';
 import { AggregationComp } from './statusBar/providedPanels/aggregationComp';
+import { FilteredRowsComp } from './statusBar/providedPanels/filteredRowsComp';
+import { SelectedRowsComp } from './statusBar/providedPanels/selectedRowsComp';
+import { TotalAndFilteredRowsComp } from './statusBar/providedPanels/totalAndFilteredRowsComp';
+import { TotalRowsComp } from './statusBar/providedPanels/totalRowsComp';
+import { StatusBarService } from './statusBar/statusBarService';
 import { VERSION } from './version';
 
 export const StatusBarModule: Module = {

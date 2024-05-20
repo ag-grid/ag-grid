@@ -1,4 +1,4 @@
-import { ComponentClass } from "../widgets/component";
+import { ComponentClass } from '../widgets/component';
 
 export type LabelAlignment = 'left' | 'right' | 'top';
 

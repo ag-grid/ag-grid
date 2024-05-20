@@ -1,16 +1,21 @@
-import { Autowired, Component, PostConstruct } from "@ag-grid-community/core";
-import { ChartMenu } from "../menu/chartMenu";
-import { ChartTranslationService } from "../services/chartTranslationService";
-import { ChartController } from "../chartController";
-import { ChartOptionsProxy, ChartOptionsService } from '../services/chartOptionsService';
-import { ChartMenuContext } from "../menu/chartMenuContext";
-import { ChartMenuService } from "../services/chartMenuService";
+import { Autowired, Component, PostConstruct } from '@ag-grid-community/core';
 
-interface BBox { x: number; y: number; width: number; height: number }
+import { ChartController } from '../chartController';
+import { ChartMenu } from '../menu/chartMenu';
+import { ChartMenuContext } from '../menu/chartMenuContext';
+import { ChartMenuService } from '../services/chartMenuService';
+import { ChartOptionsProxy, ChartOptionsService } from '../services/chartOptionsService';
+import { ChartTranslationService } from '../services/chartTranslationService';
+
+interface BBox {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
 
 export class TitleEdit extends Component {
-    private static TEMPLATE = /* html */
-        `<textarea
+    private static TEMPLATE /* html */ = `<textarea
              class="ag-chart-title-edit"
              style="padding:0; border:none; border-radius: 0; min-height: 0; text-align: center; resize: none;" />
         `;
@@ -45,9 +50,7 @@ export class TitleEdit extends Component {
     }
 
     /* should be called when the containing component changes to a new chart proxy */
-    public refreshTitle(
-        chartMenuContext: ChartMenuContext
-    ) {
+    public refreshTitle(chartMenuContext: ChartMenuContext) {
         this.chartController = chartMenuContext.chartController;
         this.chartOptionsService = chartMenuContext.chartOptionsService;
         this.chartMenuUtils = chartMenuContext.chartMenuParamsFactory.getChartOptions();
@@ -56,12 +59,12 @@ export class TitleEdit extends Component {
             destroyFn();
         }
         this.destroyableChartListeners = [];
-        
+
         const chartProxy = this.chartController.getChartProxy();
         const chart = chartProxy.getChart();
         const canvas = chart.canvasElement;
 
-        const destroyDbleClickListener = this.addManagedListener(canvas, 'dblclick', event => {
+        const destroyDbleClickListener = this.addManagedListener(canvas, 'dblclick', (event) => {
             const { title } = chart;
 
             if (title && title.node.containsPoint(event.offsetX, event.offsetY)) {
@@ -73,7 +76,7 @@ export class TitleEdit extends Component {
         });
 
         let wasInTitle = false;
-        const destroyMouseMoveListener = this.addManagedListener(canvas, 'mousemove', event => {
+        const destroyMouseMoveListener = this.addManagedListener(canvas, 'mousemove', (event) => {
             const { title } = chart;
 
             const inTitle = !!(title && title.enabled && title.node.containsPoint(event.offsetX, event.offsetY));
@@ -84,10 +87,7 @@ export class TitleEdit extends Component {
             wasInTitle = inTitle;
         });
 
-        this.destroyableChartListeners = [
-            destroyDbleClickListener!,
-            destroyMouseMoveListener!
-        ];
+        this.destroyableChartListeners = [destroyDbleClickListener!, destroyMouseMoveListener!];
     }
 
     private startEditing(titleBBox: BBox, canvasWidth: number): void {
@@ -119,7 +119,8 @@ export class TitleEdit extends Component {
         const oldTitleLines = oldTitle.split(/\r?\n/g).length;
 
         inputStyle.left = Math.round(titleBBox.x + titleBBox.width / 2 - inputWidth / 2 - 1) + 'px';
-        inputStyle.top = Math.round(titleBBox.y + titleBBox.height / 2 - (oldTitleLines * this.getLineHeight()) / 2 - 2) + 'px';
+        inputStyle.top =
+            Math.round(titleBBox.y + titleBBox.height / 2 - (oldTitleLines * this.getLineHeight()) / 2 - 2) + 'px';
         inputStyle.width = Math.round(inputWidth) + 'px';
         inputStyle.lineHeight = this.getLineHeight() + 'px';
         this.updateHeight();
@@ -134,10 +135,10 @@ export class TitleEdit extends Component {
         const oldTitleLines = this.chartMenuUtils.getValue('title.text').split(/\r?\n/g).length;
         const currentTitleLines = element.value.split(/\r?\n/g).length;
 
-        element.style.height = (Math.round(Math.max(oldTitleLines, currentTitleLines) * this.getLineHeight()) + 4) + 'px';
+        element.style.height = Math.round(Math.max(oldTitleLines, currentTitleLines) * this.getLineHeight()) + 4 + 'px';
     }
 
-    private getLineHeight() : number {
+    private getLineHeight(): number {
         const fixedLineHeight = this.chartMenuUtils.getValue('title.lineHeight');
         if (fixedLineHeight) {
             return parseInt(fixedLineHeight);
@@ -160,7 +161,7 @@ export class TitleEdit extends Component {
 
         // 4 - restore title color to its original value
         this.chartOptionsService.awaitChartOptionUpdate(() => {
-            this.chartMenuUtils.setValue('title.color', titleColor)
+            this.chartMenuUtils.setValue('title.color', titleColor);
         });
     }
 
@@ -182,7 +183,7 @@ export class TitleEdit extends Component {
 
         // await chart updates so `chartTitleEdit` event consumers can read the new state correctly
         this.chartOptionsService.awaitChartOptionUpdate(() => {
-            this.eventService.dispatchEvent({type: 'chartTitleEdit'});
+            this.eventService.dispatchEvent({ type: 'chartTitleEdit' });
         });
     }
 }

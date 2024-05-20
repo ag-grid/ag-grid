@@ -8,12 +8,20 @@ import { _padStartWidthZeros } from './number';
  * @param separator The separator to use between date parts
  */
 export function _serialiseDate(date: Date | null, includeTime = true, separator = '-'): string | null {
-    if (!date) { return null; }
+    if (!date) {
+        return null;
+    }
 
-    let serialised = [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(part => _padStartWidthZeros(part, 2)).join(separator);
+    let serialised = [date.getFullYear(), date.getMonth() + 1, date.getDate()]
+        .map((part) => _padStartWidthZeros(part, 2))
+        .join(separator);
 
     if (includeTime) {
-        serialised += ' ' + [date.getHours(), date.getMinutes(), date.getSeconds()].map(part => _padStartWidthZeros(part, 2)).join(':');
+        serialised +=
+            ' ' +
+            [date.getHours(), date.getMinutes(), date.getSeconds()]
+                .map((part) => _padStartWidthZeros(part, 2))
+                .join(':');
     }
 
     return serialised;
@@ -25,27 +33,38 @@ const calculateOrdinal = (value: number) => {
     }
     const remainder = value % 10;
     switch (remainder) {
-        case 1:  return "st";
-        case 2:  return "nd";
-        case 3:  return "rd";
+        case 1:
+            return 'st';
+        case 2:
+            return 'nd';
+        case 3:
+            return 'rd';
     }
     return 'th';
-}
+};
 
 /**
  * Serialises a Date to a string of format the defined format, does not include time.
  * @param date The date to serialise
  * @param format The string to format the date to, defaults to YYYY-MM-DD
  */
- export function _dateToFormattedString(date: Date, format: string = 'YYYY-MM-DD'): string {
+export function _dateToFormattedString(date: Date, format: string = 'YYYY-MM-DD'): string {
     const fullYear = _padStartWidthZeros(date.getFullYear(), 4);
     const months = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December',
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
     ];
-    const days = [
-        'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
-    ];
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const replace: { [key: string]: () => string } = {
         YYYY: () => fullYear.slice(fullYear.length - 4, fullYear.length),
         YY: () => fullYear.slice(fullYear.length - 2, fullYear.length),
@@ -73,27 +92,30 @@ const calculateOrdinal = (value: number) => {
     });
 }
 
-
 /**
  * Parses a date and time from a string in the format `yyyy-MM-dd HH:mm:ss`
  */
 export function _parseDateTimeFromString(value?: string | null): Date | null {
-    if (!value) { return null; }
+    if (!value) {
+        return null;
+    }
 
     const [dateStr, timeStr] = value.split(' ');
 
-    if (!dateStr) { return null; }
+    if (!dateStr) {
+        return null;
+    }
 
-    const fields = dateStr.split('-').map(f => parseInt(f, 10));
+    const fields = dateStr.split('-').map((f) => parseInt(f, 10));
 
-    if (fields.filter(f => !isNaN(f)).length !== 3) { return null; }
+    if (fields.filter((f) => !isNaN(f)).length !== 3) {
+        return null;
+    }
 
     const [year, month, day] = fields;
     const date = new Date(year, month - 1, day);
 
-    if (date.getFullYear() !== year ||
-        date.getMonth() !== month - 1 ||
-        date.getDate() !== day) {
+    if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
         // date was not parsed as expected so must have been invalid
         return null;
     }
@@ -102,7 +124,7 @@ export function _parseDateTimeFromString(value?: string | null): Date | null {
         return date;
     }
 
-    const [hours, minutes, seconds] = timeStr.split(':').map(part => parseInt(part, 10));
+    const [hours, minutes, seconds] = timeStr.split(':').map((part) => parseInt(part, 10));
 
     if (hours >= 0 && hours < 24) {
         date.setHours(hours);

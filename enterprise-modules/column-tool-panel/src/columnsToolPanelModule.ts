@@ -1,12 +1,12 @@
 import { Module, ModuleNames } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { SideBarModule } from '@ag-grid-enterprise/side-bar';
+
+import { AgPrimaryCols } from './columnToolPanel/agPrimaryCols';
 import { AgPrimaryColsHeader } from './columnToolPanel/agPrimaryColsHeader';
 import { AgPrimaryColsList } from './columnToolPanel/agPrimaryColsList';
 import { ColumnToolPanel } from './columnToolPanel/columnToolPanel';
-import { AgPrimaryCols } from './columnToolPanel/agPrimaryCols';
-
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 import { ModelItemUtils } from './columnToolPanel/modelItemUtils';
 import { VERSION } from './version';
 

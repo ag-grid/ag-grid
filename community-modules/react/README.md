@@ -1,4 +1,4 @@
-![AG Grid HTML5 Grid trusted by the community, built for enterprise](./github-banner.png "AG Grid")
+![AG Grid HTML5 Grid trusted by the community, built for enterprise](./github-banner.png 'AG Grid')
 
 [![CDNJS](https://img.shields.io/cdnjs/v/ag-grid.svg)](https://cdnjs.com/libraries/ag-grid)
 [![npm](https://img.shields.io/npm/dm/@ag-grid-community/react.svg)](https://www.npmjs.com/package/@ag-grid-community/react)
@@ -11,41 +11,41 @@ It delivers [outstanding performance](https://www.ag-grid.com/example?utm_source
 
 Here's how our grid looks with multiple filters and grouping enabled:
 
-![Image of AG Grid showing filtering and grouping enabled.](./github-grid-demo.jpg "AG Grid demo")
+![Image of AG Grid showing filtering and grouping enabled.](./github-grid-demo.jpg 'AG Grid demo')
 
 ## Features
 
 In addition to the standard set of features you'd expect from any grid:
 
-* Column Interactions (resize, reorder, and pin columns)
-* Pagination
-* Sorting
-* Row Selection
+-   Column Interactions (resize, reorder, and pin columns)
+-   Pagination
+-   Sorting
+-   Row Selection
 
 Here are some of the features that make AG Grid stand out:
 
-* Grouping / Aggregation *
-* Accessibility support
-* Custom Filtering
-* In-place Cell Editing
-* Records Lazy Loading *
-* Server-Side Records Operations *
-* Live Stream Updates
-* Hierarchical Data Support & Tree View *
-* Customizable Appearance
-* Customizable Cell Contents
-* State Persistence
-* Keyboard Navigation
-* Data Export to CSV
-* Data Export to Excel *
-* Excel-like Pivoting *
-* Row Reordering
-* Copy / Paste
-* Column Spanning
-* Pinned Rows
-* Full Width Rows
-* Integrated Charting
-* Sparklines
+-   Grouping / Aggregation \*
+-   Accessibility support
+-   Custom Filtering
+-   In-place Cell Editing
+-   Records Lazy Loading \*
+-   Server-Side Records Operations \*
+-   Live Stream Updates
+-   Hierarchical Data Support & Tree View \*
+-   Customizable Appearance
+-   Customizable Cell Contents
+-   State Persistence
+-   Keyboard Navigation
+-   Data Export to CSV
+-   Data Export to Excel \*
+-   Excel-like Pivoting \*
+-   Row Reordering
+-   Copy / Paste
+-   Column Spanning
+-   Pinned Rows
+-   Full Width Rows
+-   Integrated Charting
+-   Sparklines
 
 \* The features marked with an asterisk are available in the [Enterprise version](https://www.ag-grid.com/license-pricing?utm_source=@ag-grid-community/react-readme&utm_medium=repository&utm_campaign=github) only.
 
@@ -65,7 +65,6 @@ $ npm install --save @ag-grid-community/core @ag-grid-community/react
 
 ```js
 import { AgGridReact } from '@ag-grid-community/react';
-
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 ```

@@ -1,16 +1,15 @@
-import { IHeaderColumn } from "../../interfaces/iHeaderColumn";
-import { Column } from "../../entities/column";
-import { BeanStub } from "../../context/beanStub";
-import { Beans } from "../beans";
-import { PostConstruct } from "../../context/context";
-import { ColumnGroup } from "../../entities/columnGroup";
-import { _setAriaColSpan } from "../../utils/aria";
-import { _last } from "../../utils/array";
-import { _exists } from "../../utils/generic";
-import { Events } from "../../eventKeys";
+import { BeanStub } from '../../context/beanStub';
+import { PostConstruct } from '../../context/context';
+import { Column } from '../../entities/column';
+import { ColumnGroup } from '../../entities/columnGroup';
+import { Events } from '../../eventKeys';
+import { IHeaderColumn } from '../../interfaces/iHeaderColumn';
+import { _setAriaColSpan } from '../../utils/aria';
+import { _last } from '../../utils/array';
+import { _exists } from '../../utils/generic';
+import { Beans } from '../beans';
 
 export class SetLeftFeature extends BeanStub {
-
     private readonly columnOrGroup: IHeaderColumn;
     private eCell: HTMLElement;
     private ariaEl: HTMLElement;
@@ -51,7 +50,11 @@ export class SetLeftFeature extends BeanStub {
 
         // when in print layout, the left position is also dependent on the width of the pinned sections.
         // so additionally update left if any column width changes.
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onLeftChanged.bind(this));
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
+            this.onLeftChanged.bind(this)
+        );
 
         // setting left has a dependency on print layout
         this.addManagedPropertyListener('domLayout', this.onLeftChanged.bind(this));
@@ -60,7 +63,8 @@ export class SetLeftFeature extends BeanStub {
     private setLeftFirstTime(): void {
         const suppressMoveAnimation = this.beans.gos.get('suppressColumnMoveAnimation');
         const oldLeftExists = _exists(this.columnOrGroup.getOldLeft());
-        const animateColumnMove = this.beans.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
+        const animateColumnMove =
+            this.beans.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
         if (animateColumnMove) {
             this.animateInLeft();
         } else {
@@ -104,7 +108,9 @@ export class SetLeftFeature extends BeanStub {
     private modifyLeftForPrintLayout(colOrGroup: IHeaderColumn, leftPosition: number): number {
         const printLayout = this.beans.gos.isDomLayout('print');
 
-        if (!printLayout) { return leftPosition; }
+        if (!printLayout) {
+            return leftPosition;
+        }
 
         if (colOrGroup.getPinned() === 'left') {
             return leftPosition;
@@ -137,7 +143,9 @@ export class SetLeftFeature extends BeanStub {
             const columnGroup = this.columnOrGroup as ColumnGroup;
             const children = columnGroup.getLeafColumns();
 
-            if (!children.length) { return; }
+            if (!children.length) {
+                return;
+            }
 
             if (children.length > 1) {
                 _setAriaColSpan(this.ariaEl, children.length);

@@ -1,16 +1,16 @@
 import {
-    _exists,
-    _missingOrEmpty,
     Autowired,
     Bean,
     BeanStub,
+    Beans,
+    GetGroupIncludeFooterParams,
     IRowNodeStage,
     RowNode,
     StageExecuteParams,
-    Beans,
     WithoutGridCommon,
-    GetGroupIncludeFooterParams,
-} from "@ag-grid-community/core";
+    _exists,
+    _missingOrEmpty,
+} from '@ag-grid-community/core';
 
 interface FlattenDetails {
     hideOpenParents: boolean;
@@ -23,7 +23,6 @@ interface FlattenDetails {
 
 @Bean('flattenStage')
 export class FlattenStage extends BeanStub implements IRowNodeStage {
-
     @Autowired('beans') private beans: Beans;
 
     public execute(params: StageExecuteParams): RowNode[] {
@@ -45,10 +44,11 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         // we do not want the footer total if the gris is empty
         const atLeastOneRowPresent = result.length > 0;
 
-        const includeGrandTotalRow = !showRootNode
+        const includeGrandTotalRow =
+            !showRootNode &&
             // don't show total footer when showRootNode is true (i.e. in pivot mode and no groups)
-            && atLeastOneRowPresent
-            && details.grandTotalRow;
+            atLeastOneRowPresent &&
+            details.grandTotalRow;
 
         if (includeGrandTotalRow) {
             rootNode.createFooter();
@@ -62,7 +62,8 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
     private getFlattenDetails(): FlattenDetails {
         // these two are mutually exclusive, so if first set, we don't set the second
         const groupRemoveSingleChildren = this.gos.get('groupRemoveSingleChildren');
-        const groupRemoveLowestSingleChildren = !groupRemoveSingleChildren && this.gos.get('groupRemoveLowestSingleChildren');
+        const groupRemoveLowestSingleChildren =
+            !groupRemoveSingleChildren && this.gos.get('groupRemoveLowestSingleChildren');
 
         return {
             groupRemoveLowestSingleChildren,
@@ -106,17 +107,23 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
             // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all row groups')
             const neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
 
-            const isHiddenOpenParent = details.hideOpenParents && rowNode.expanded && !rowNode.master && !neverAllowToExpand;
+            const isHiddenOpenParent =
+                details.hideOpenParents && rowNode.expanded && !rowNode.master && !neverAllowToExpand;
 
-            const thisRowShouldBeRendered = !isSkippedLeafNode && !isHiddenOpenParent &&
-                !isRemovedSingleChildrenGroup && !isRemovedLowestSingleChildrenGroup;
+            const thisRowShouldBeRendered =
+                !isSkippedLeafNode &&
+                !isHiddenOpenParent &&
+                !isRemovedSingleChildrenGroup &&
+                !isRemovedLowestSingleChildrenGroup;
 
             if (thisRowShouldBeRendered) {
                 this.addRowNodeToRowsToDisplay(details, rowNode, result, uiLevel);
             }
 
             // if we are pivoting, we never map below the leaf group
-            if (skipLeafNodes && rowNode.leafGroup) { continue; }
+            if (skipLeafNodes && rowNode.leafGroup) {
+                continue;
+            }
 
             if (isParent) {
                 const excludedParent = isRemovedSingleChildrenGroup || isRemovedLowestSingleChildrenGroup;
@@ -162,7 +169,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         rowNode: RowNode,
         result: RowNode[],
         uiLevel: number,
-        addToTop?: boolean,
+        addToTop?: boolean
     ): void {
         if (addToTop) {
             result.unshift(rowNode);
@@ -173,7 +180,9 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
     }
 
     private createDetailNode(masterNode: RowNode): RowNode {
-        if (_exists(masterNode.detailNode)) { return masterNode.detailNode; }
+        if (_exists(masterNode.detailNode)) {
+            return masterNode.detailNode;
+        }
 
         const detailNode = new RowNode(this.beans);
 

@@ -1,5 +1,5 @@
-import { BeanStub } from "@ag-grid-community/core";
-import { AgGroupComponent } from "@ag-grid-enterprise/core";
+import { BeanStub } from '@ag-grid-community/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 // handles single group expansion
 export class GroupExpansionFeature extends BeanStub {
@@ -23,7 +23,8 @@ export class GroupExpansionFeature extends BeanStub {
                 this.expandedGroupComponent = id;
                 if (previouslyExpandedGroupComponent != null) {
                     const groupComponentGui = groupComponent.getGui();
-                    const groupPositionInViewport = groupComponentGui.offsetTop - this.groupContainer.parentElement!.scrollTop;
+                    const groupPositionInViewport =
+                        groupComponentGui.offsetTop - this.groupContainer.parentElement!.scrollTop;
 
                     this.groupComponents.get(previouslyExpandedGroupComponent)?.toggleGroupExpand(false, true);
 

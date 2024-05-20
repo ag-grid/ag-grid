@@ -1,7 +1,8 @@
 export type ResolveAndRejectCallback<T> = (resolve: (value: T | null) => void, reject: (params: any) => void) => void;
 
 export enum AgPromiseStatus {
-    IN_PROGRESS, RESOLVED
+    IN_PROGRESS,
+    RESOLVED,
 }
 
 export class AgPromise<T> {
@@ -10,12 +11,12 @@ export class AgPromise<T> {
     private waiters: ((value: T | null) => void)[] = [];
 
     static all<T>(promises: AgPromise<T | null>[]): AgPromise<(T | null)[]> {
-        return new AgPromise(resolve => {
+        return new AgPromise((resolve) => {
             let remainingToResolve = promises.length;
             const combinedValues = new Array<T | null>(remainingToResolve);
 
             promises.forEach((promise, index) => {
-                promise.then(value => {
+                promise.then((value) => {
                     combinedValues[index] = value;
                     remainingToResolve--;
 
@@ -28,19 +29,22 @@ export class AgPromise<T> {
     }
 
     static resolve<T>(value: T | null = null): AgPromise<T> {
-        return new AgPromise<T>(resolve => resolve(value));
+        return new AgPromise<T>((resolve) => resolve(value));
     }
 
     constructor(callback: ResolveAndRejectCallback<T>) {
-        callback(value => this.onDone(value), params => this.onReject(params));
+        callback(
+            (value) => this.onDone(value),
+            (params) => this.onReject(params)
+        );
     }
 
     public then<V>(func: (result: T | null) => V): AgPromise<V> {
-        return new AgPromise(resolve => {
+        return new AgPromise((resolve) => {
             if (this.status === AgPromiseStatus.RESOLVED) {
                 resolve(func(this.resolution));
             } else {
-                this.waiters.push(value => resolve(func(value)));
+                this.waiters.push((value) => resolve(func(value)));
             }
         });
     }
@@ -53,7 +57,7 @@ export class AgPromise<T> {
         this.status = AgPromiseStatus.RESOLVED;
         this.resolution = value;
 
-        this.waiters.forEach(waiter => waiter(value));
+        this.waiters.forEach((waiter) => waiter(value));
     }
 
     private onReject(params: any): void {

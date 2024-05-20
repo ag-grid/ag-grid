@@ -1,18 +1,17 @@
-import { Events } from "../../../eventKeys";
-import { SortController } from "../../../sortController";
-import { _setDisplayed, _clearElement } from "../../../utils/dom";
-import { Autowired } from "../../../context/context";
-import { Column } from "../../../entities/column";
-import { RefSelector } from "../../../widgets/componentAnnotations";
-import { AgComponentSelector, Component } from "../../../widgets/component";
-import { ColumnModel } from "../../../columns/columnModel";
-import { _createIconNoSpan } from "../../../utils/icon";
+import { ColumnModel } from '../../../columns/columnModel';
+import { Autowired } from '../../../context/context';
+import { Column } from '../../../entities/column';
+import { Events } from '../../../eventKeys';
+import { SortController } from '../../../sortController';
+import { _clearElement, _setDisplayed } from '../../../utils/dom';
+import { _createIconNoSpan } from '../../../utils/icon';
+import { AgComponentSelector, Component } from '../../../widgets/component';
+import { RefSelector } from '../../../widgets/componentAnnotations';
 
 export class SortIndicatorComp extends Component {
     static readonly selector: AgComponentSelector = 'ag-sort-indicator';
 
-    private static TEMPLATE = /* html */
-        `<span class="ag-sort-indicator-container">
+    private static TEMPLATE /* html */ = `<span class="ag-sort-indicator-container">
             <span ref="eSortOrder" class="ag-sort-indicator-icon ag-sort-order ag-hidden" aria-hidden="true"></span>
             <span ref="eSortAsc" class="ag-sort-indicator-icon ag-sort-ascending-icon ag-hidden" aria-hidden="true"></span>
             <span ref="eSortDesc" class="ag-sort-indicator-icon ag-sort-descending-icon ag-hidden" aria-hidden="true"></span>
@@ -26,8 +25,8 @@ export class SortIndicatorComp extends Component {
     @RefSelector('eSortMixed') private eSortMixed: HTMLElement;
     @RefSelector('eSortNone') private eSortNone: HTMLElement;
 
-    @Autowired('columnModel')  private readonly columnModel: ColumnModel;
-    @Autowired('sortController')  private readonly sortController: SortController;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('sortController') private readonly sortController: SortController;
 
     private column: Column;
     private suppressOrder: boolean;
@@ -69,18 +68,20 @@ export class SortIndicatorComp extends Component {
         this.addInIcon('sortUnSort', this.eSortNone, column);
 
         this.addManagedPropertyListener('unSortIcon', () => this.updateIcons());
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED,  () => this.updateIcons());
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.updateIcons());
 
         // Watch global events, as row group columns can effect their display column.
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED,  () => this.onSortChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, () => this.onSortChanged());
         // when grouping changes so can sort indexes and icons
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED,  () => this.onSortChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.onSortChanged());
 
         this.onSortChanged();
     }
 
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
-        if (eParent == null) { return; }
+        if (eParent == null) {
+            return;
+        }
 
         const eIcon = _createIconNoSpan(iconName, this.gos, column);
         if (eIcon) {
@@ -122,9 +123,13 @@ export class SortIndicatorComp extends Component {
         const areGroupsCoupled = this.gos.isColumnsSortingCoupledToGroup();
         if (areGroupsCoupled && isColumnShowingRowGroup) {
             // Watch global events, as row group columns can effect their display column.
-            this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, () => this.updateMultiSortIndicator());
+            this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, () =>
+                this.updateMultiSortIndicator()
+            );
             // when grouping changes so can sort indexes and icons
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED,  () => this.updateMultiSortIndicator());
+            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>
+                this.updateMultiSortIndicator()
+            );
             this.updateMultiSortIndicator();
         }
     }
@@ -140,12 +145,16 @@ export class SortIndicatorComp extends Component {
     // when sorting has been set on all column (if we listened just for our col (where we
     // set the asc / desc icons) then it's possible other cols are yet to get their sorting state.
     private updateSortOrder(): void {
-        if (!this.eSortOrder) { return; }
+        if (!this.eSortOrder) {
+            return;
+        }
 
         const allColumnsWithSorting = this.sortController.getColumnsWithSortingOrdered();
 
         const indexThisCol = this.sortController.getDisplaySortIndexForColumn(this.column) ?? -1;
-        const moreThanOneColSorting = allColumnsWithSorting.some(col => this.sortController.getDisplaySortIndexForColumn(col) ?? -1 >= 1);
+        const moreThanOneColSorting = allColumnsWithSorting.some(
+            (col) => this.sortController.getDisplaySortIndexForColumn(col) ?? -1 >= 1
+        );
         const showIndex = indexThisCol >= 0 && moreThanOneColSorting;
         _setDisplayed(this.eSortOrder, showIndex, { skipAriaHidden: true });
 
@@ -155,5 +164,4 @@ export class SortIndicatorComp extends Component {
             _clearElement(this.eSortOrder);
         }
     }
-
 }

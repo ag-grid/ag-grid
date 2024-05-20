@@ -11,11 +11,12 @@ import {
     RefSelector,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
+import { AgMenuItemComponent, AgMenuList } from '@ag-grid-enterprise/core';
+
 import { ChartController } from '../chartController';
 import { ChartMenuService } from '../services/chartMenuService';
 import { ChartTranslationService } from '../services/chartTranslationService';
 import { ChartMenuContext } from './chartMenuContext';
-import { AgMenuList, AgMenuItemComponent } from '@ag-grid-enterprise/core';
 
 @Bean('chartMenuListFactory')
 export class ChartMenuListFactory extends BeanStub {
@@ -26,19 +27,21 @@ export class ChartMenuListFactory extends BeanStub {
     private activeChartMenuList?: ChartMenuList;
 
     public showMenuList(params: {
-        eventSource: HTMLElement,
-        showMenu: () => void,
-        chartMenuContext: ChartMenuContext
+        eventSource: HTMLElement;
+        showMenu: () => void;
+        chartMenuContext: ChartMenuContext;
     }): void {
         const { eventSource, showMenu, chartMenuContext } = params;
-        const areChartToolPanelsEnabled = this.chartMenuService.doChartToolPanelsExist(chartMenuContext.chartController);
+        const areChartToolPanelsEnabled = this.chartMenuService.doChartToolPanelsExist(
+            chartMenuContext.chartController
+        );
         const menuItems = this.mapWithStockItems(
             this.getMenuItems(chartMenuContext.chartController, areChartToolPanelsEnabled),
             chartMenuContext,
             showMenu,
             eventSource,
-            areChartToolPanelsEnabled)
-        ;
+            areChartToolPanelsEnabled
+        );
         if (!menuItems.length) {
             return;
         }
@@ -53,7 +56,7 @@ export class ChartMenuListFactory extends BeanStub {
             alignSide = 'right';
         }
 
-        const eGui = chartMenuList.getGui()
+        const eGui = chartMenuList.getGui();
 
         this.popupService.addPopup({
             modal: true,
@@ -63,12 +66,12 @@ export class ChartMenuListFactory extends BeanStub {
                 this.destroyBean(chartMenuList);
                 this.activeChartMenuList = undefined;
                 const eDocument = this.gos.getDocument();
-                const activeEl = this.gos.getActiveDomElement()
+                const activeEl = this.gos.getActiveDomElement();
                 if (!activeEl || activeEl === eDocument.body) {
                     eventSource.focus({ preventScroll: true });
                 }
             },
-            afterGuiAttached: params => chartMenuList.afterGuiAttached(params),
+            afterGuiAttached: (params) => chartMenuList.afterGuiAttached(params),
             positionCallback: () => {
                 {
                     this.popupService.positionPopupByComponent({
@@ -83,16 +86,19 @@ export class ChartMenuListFactory extends BeanStub {
                     });
                 }
             },
-            ariaLabel: 'Chart Menu'
+            ariaLabel: 'Chart Menu',
         });
     }
 
-    private getMenuItems(chartController: ChartController, areChartToolPanelsEnabled: boolean): (MenuItemDef | string)[] {
+    private getMenuItems(
+        chartController: ChartController,
+        areChartToolPanelsEnabled: boolean
+    ): (MenuItemDef | string)[] {
         const defaultItems = [
             ...(areChartToolPanelsEnabled ? ['chartEdit'] : []),
             ...(chartController.isEnterprise() ? ['chartAdvancedSettings'] : []),
             chartController.isChartLinked() ? 'chartUnlink' : 'chartLink',
-            'chartDownload'
+            'chartDownload',
         ];
         const chartMenuItems = this.gos.get('chartMenuItems');
         if (!chartMenuItems) {
@@ -100,30 +106,52 @@ export class ChartMenuListFactory extends BeanStub {
         } else if (Array.isArray(chartMenuItems)) {
             return chartMenuItems;
         } else {
-            return chartMenuItems(this.gos.addGridCommonParams({
-                defaultItems
-            }));
+            return chartMenuItems(
+                this.gos.addGridCommonParams({
+                    defaultItems,
+                })
+            );
         }
     }
 
-    private mapWithStockItems(originalList: (MenuItemDef | string)[], chartMenuContext: ChartMenuContext, showMenu: () => void, eventSource: HTMLElement, areChartToolPanelsEnabled: boolean): MenuItemDef[] {
+    private mapWithStockItems(
+        originalList: (MenuItemDef | string)[],
+        chartMenuContext: ChartMenuContext,
+        showMenu: () => void,
+        eventSource: HTMLElement,
+        areChartToolPanelsEnabled: boolean
+    ): MenuItemDef[] {
         if (!originalList) {
             return [];
         }
         const resultList: MenuItemDef[] = [];
 
-        originalList.forEach(menuItemOrString => {
+        originalList.forEach((menuItemOrString) => {
             let result: MenuItemDef | null;
             if (typeof menuItemOrString === 'string') {
-                result = this.getStockMenuItem(menuItemOrString, chartMenuContext, showMenu, eventSource, areChartToolPanelsEnabled);
+                result = this.getStockMenuItem(
+                    menuItemOrString,
+                    chartMenuContext,
+                    showMenu,
+                    eventSource,
+                    areChartToolPanelsEnabled
+                );
             } else {
                 result = { ...menuItemOrString };
             }
-            if (!result) { return; }
+            if (!result) {
+                return;
+            }
 
             const { subMenu } = result;
             if (Array.isArray(subMenu)) {
-                result.subMenu = this.mapWithStockItems(subMenu, chartMenuContext, showMenu, eventSource, areChartToolPanelsEnabled);
+                result.subMenu = this.mapWithStockItems(
+                    subMenu,
+                    chartMenuContext,
+                    showMenu,
+                    eventSource,
+                    areChartToolPanelsEnabled
+                );
             }
 
             resultList.push(result);
@@ -132,10 +160,22 @@ export class ChartMenuListFactory extends BeanStub {
         return resultList;
     }
 
-    private getStockMenuItem(key: string, chartMenuContext: ChartMenuContext, showMenu: () => void, eventSource: HTMLElement, areChartToolPanelsEnabled: boolean): MenuItemDef | null {
+    private getStockMenuItem(
+        key: string,
+        chartMenuContext: ChartMenuContext,
+        showMenu: () => void,
+        eventSource: HTMLElement,
+        areChartToolPanelsEnabled: boolean
+    ): MenuItemDef | null {
         switch (key) {
             case 'chartEdit':
-                return areChartToolPanelsEnabled ? this.createMenuItem(this.chartTranslationService.translate('chartEdit'), 'chartsMenuEdit', showMenu) : null;
+                return areChartToolPanelsEnabled
+                    ? this.createMenuItem(
+                          this.chartTranslationService.translate('chartEdit'),
+                          'chartsMenuEdit',
+                          showMenu
+                      )
+                    : null;
             case 'chartAdvancedSettings':
                 return this.createMenuItem(
                     this.chartTranslationService.translate('chartAdvancedSettings'),
@@ -143,22 +183,20 @@ export class ChartMenuListFactory extends BeanStub {
                     () => this.chartMenuService.openAdvancedSettings(chartMenuContext, eventSource)
                 );
             case 'chartUnlink':
-                return chartMenuContext.chartController.isChartLinked() ? this.createMenuItem(
-                    this.chartTranslationService.translate('chartUnlink'),
-                    'unlinked',
-                    () => this.chartMenuService.toggleLinked(chartMenuContext)
-                ) : null;
+                return chartMenuContext.chartController.isChartLinked()
+                    ? this.createMenuItem(this.chartTranslationService.translate('chartUnlink'), 'unlinked', () =>
+                          this.chartMenuService.toggleLinked(chartMenuContext)
+                      )
+                    : null;
             case 'chartLink':
-                return !chartMenuContext.chartController.isChartLinked() ? this.createMenuItem(
-                    this.chartTranslationService.translate('chartLink'),
-                    'linked',
-                    () => this.chartMenuService.toggleLinked(chartMenuContext)
-                ) : null;
+                return !chartMenuContext.chartController.isChartLinked()
+                    ? this.createMenuItem(this.chartTranslationService.translate('chartLink'), 'linked', () =>
+                          this.chartMenuService.toggleLinked(chartMenuContext)
+                      )
+                    : null;
             case 'chartDownload':
-                return this.createMenuItem(
-                    this.chartTranslationService.translate('chartDownload'),
-                    'save',
-                    () => this.chartMenuService.downloadChart(chartMenuContext)
+                return this.createMenuItem(this.chartTranslationService.translate('chartDownload'), 'save', () =>
+                    this.chartMenuService.downloadChart(chartMenuContext)
                 );
         }
         return null;
@@ -168,8 +206,8 @@ export class ChartMenuListFactory extends BeanStub {
         return {
             name,
             icon: _createIconNoSpan(iconName, this.gos, null),
-            action
-        }
+            action,
+        };
     }
 
     protected destroy(): void {
@@ -187,7 +225,7 @@ class ChartMenuList extends Component {
     private mainMenuList: AgMenuList;
 
     constructor(private readonly menuItems: (MenuItemDef | string)[]) {
-        super(/* html */`
+        super(/* html */ `
             <div ref="eChartsMenu" role="presentation" class="ag-menu ag-chart-menu-popup"></div>
         `);
     }

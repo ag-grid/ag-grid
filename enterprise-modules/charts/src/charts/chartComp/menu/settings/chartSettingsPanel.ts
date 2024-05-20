@@ -1,15 +1,24 @@
-import { Component, PostConstruct, RefSelector, _clearElement, _createIconNoSpan, _getAbsoluteWidth, _radioCssClass, _setDisplayed, _shallowCompare } from "@ag-grid-community/core";
-import { MiniChartsContainer } from "./miniChartsContainer";
-import { AgChartThemePalette } from "ag-charts-community";
-import { ChartController } from "../../chartController";
-import { isStockTheme } from "../../chartProxies/chartTheme";
+import {
+    Component,
+    PostConstruct,
+    RefSelector,
+    _clearElement,
+    _createIconNoSpan,
+    _getAbsoluteWidth,
+    _radioCssClass,
+    _setDisplayed,
+    _shallowCompare,
+} from '@ag-grid-community/core';
+import { AgChartThemePalette } from 'ag-charts-community';
+
+import { ChartController } from '../../chartController';
+import { isStockTheme } from '../../chartProxies/chartTheme';
+import { MiniChartsContainer } from './miniChartsContainer';
 
 type AnimationDirection = 'left' | 'right';
 
 export class ChartSettingsPanel extends Component {
-
-    public static TEMPLATE = /* html */
-        `<div class="ag-chart-settings-wrapper">
+    public static TEMPLATE /* html */ = `<div class="ag-chart-settings-wrapper">
             <div ref="eMiniChartsContainer" class="ag-chart-settings-mini-charts-container ag-scrollable-container"></div>
             <div ref="eNavBar" class="ag-chart-settings-nav-bar">
                 <div ref="ePrevBtn" class="ag-chart-settings-prev">
@@ -37,9 +46,7 @@ export class ChartSettingsPanel extends Component {
 
     private isAnimating: boolean;
 
-    constructor(
-        private readonly chartController: ChartController,
-    ) {
+    constructor(private readonly chartController: ChartController) {
         super(ChartSettingsPanel.TEMPLATE);
     }
 
@@ -54,8 +61,12 @@ export class ChartSettingsPanel extends Component {
         this.addManagedListener(this.eNextBtn, 'click', () => this.setActivePalette(this.getNext(), 'right'));
 
         // change the selected chart when a combo chart is modified via the data panel, i.e. the custom combo should be selected
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_TYPE_CHANGED, () => this.resetPalettes(true));
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, () => this.resetPalettes(true));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_TYPE_CHANGED, () =>
+            this.resetPalettes(true)
+        );
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, () =>
+            this.resetPalettes(true)
+        );
         this.scrollSelectedIntoView();
     }
 
@@ -65,7 +76,7 @@ export class ChartSettingsPanel extends Component {
         setTimeout(() => {
             const isMiniChartsContainerVisible = (miniChartsContainers: MiniChartsContainer) => {
                 return !miniChartsContainers.getGui().classList.contains('ag-hidden');
-            }
+            };
             const currentMiniChartContainer = this.miniChartsContainers.find(isMiniChartsContainerVisible);
             const currentChart = currentMiniChartContainer!.getGui().querySelector('.ag-selected') as HTMLElement;
 
@@ -89,7 +100,7 @@ export class ChartSettingsPanel extends Component {
 
         this.palettes = palettes;
         this.themes = this.chartController.getThemeNames();
-        this.activePaletteIndex = this.themes.findIndex(name => name === this.chartController.getChartThemeName());
+        this.activePaletteIndex = this.themes.findIndex((name) => name === this.chartController.getChartThemeName());
         this.cardItems = [];
 
         _clearElement(this.eCardSelector);
@@ -162,7 +173,9 @@ export class ChartSettingsPanel extends Component {
     }
 
     private setActivePalette(index: number, animationDirection: AnimationDirection) {
-        if (this.isAnimating || this.activePaletteIndex === index) { return; }
+        if (this.isAnimating || this.activePaletteIndex === index) {
+            return;
+        }
 
         _radioCssClass(this.cardItems[index], 'ag-selected', 'ag-not-selected');
 
@@ -175,7 +188,7 @@ export class ChartSettingsPanel extends Component {
         futurePalette.updateSelectedMiniChart();
 
         const multiplier = animationDirection === 'left' ? -1 : 1;
-        const final = nextGui.style.left = `${(_getAbsoluteWidth(this.getGui()) * multiplier)}px`;
+        const final = (nextGui.style.left = `${_getAbsoluteWidth(this.getGui()) * multiplier}px`);
 
         this.activePaletteIndex = index;
 

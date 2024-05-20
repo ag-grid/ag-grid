@@ -1,9 +1,9 @@
-import { mock } from '../test-utils/mock';
-import { ExpressionService } from './expressionService';
-import { Column } from '../entities/column';
 import { ColDef, ValueFormatterParams } from '../entities/colDef';
+import { Column } from '../entities/column';
 import { RowNode } from '../entities/rowNode';
 import { GridOptionsService } from '../gridOptionsService';
+import { mock } from '../test-utils/mock';
+import { ExpressionService } from './expressionService';
 import { ValueService } from './valueService';
 
 let colDef: ColDef;
@@ -19,7 +19,7 @@ describe('formatValue', () => {
         column.getColDef.mockReturnValue(colDef);
 
         gos = mock<GridOptionsService>('get', 'addGridCommonParams');
-        gos.addGridCommonParams.mockImplementation(params => params as any);
+        gos.addGridCommonParams.mockImplementation((params) => params as any);
         expressionService = mock<ExpressionService>('evaluate');
         valueService = new ValueService();
         (valueService as any).gos = gos;
@@ -95,7 +95,7 @@ describe('formatValue', () => {
         const formatter = (params: ValueFormatterParams) => params.value.toString();
         colDef.refData = { [value]: 'bob' };
 
-        const formattedValue = valueService.formatValue(column, null,  value, formatter);
+        const formattedValue = valueService.formatValue(column, null, value, formatter);
 
         expect(formattedValue).toBe(returnValue);
     });

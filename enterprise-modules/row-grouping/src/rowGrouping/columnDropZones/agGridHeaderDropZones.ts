@@ -7,13 +7,14 @@ import {
     FuncColsService,
     PostConstruct,
     _setAriaRole,
-} from "@ag-grid-community/core";
-import { RowGroupDropZonePanel } from "./rowGroupDropZonePanel";
-import { PivotDropZonePanel } from "./pivotDropZonePanel";
+} from '@ag-grid-community/core';
+
+import { PivotDropZonePanel } from './pivotDropZonePanel';
+import { RowGroupDropZonePanel } from './rowGroupDropZonePanel';
 
 export class AgGridHeaderDropZones extends Component {
     static readonly selector: AgComponentSelector = 'ag-grid-header-drop-zones';
-    
+
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('funcColsService') private funcColsService: FuncColsService;
 
@@ -28,7 +29,9 @@ export class AgGridHeaderDropZones extends Component {
     private postConstruct(): void {
         this.setGui(this.createNorthPanel());
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.onRowGroupChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>
+            this.onRowGroupChanged()
+        );
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onRowGroupChanged());
         this.addManagedPropertyListener('rowGroupPanelShow', () => this.onRowGroupChanged());
         this.addManagedPropertyListener('pivotPanelShow', () => this.onPivotPanelShow());

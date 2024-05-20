@@ -8,10 +8,10 @@ import {
     _formatNumberCommas,
     _warnOnce,
 } from '@ag-grid-community/core';
-import { AgNameValue } from "./agNameValue";
+
+import { AgNameValue } from './agNameValue';
 
 export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPanelComp {
-
     @Autowired('rowModel') private rowModel: IRowModel;
 
     @PostConstruct
@@ -52,15 +52,19 @@ export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPane
     private getFilteredRowCountValue(): number {
         let filteredRowCount = 0;
         (this.rowModel as IClientSideRowModel).forEachNodeAfterFilter((node) => {
-            if (!node.group) { filteredRowCount++; }
+            if (!node.group) {
+                filteredRowCount++;
+            }
         });
         return filteredRowCount;
     }
 
     private getTotalRowCount(): number {
         let totalRowCount = 0;
-        this.rowModel.forEachNode(node => {
-            if (!node.group) { totalRowCount++; }
+        this.rowModel.forEachNode((node) => {
+            if (!node.group) {
+                totalRowCount++;
+            }
         });
         return totalRowCount;
     }
@@ -76,5 +80,4 @@ export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPane
     public destroy(): void {
         super.destroy();
     }
-
 }

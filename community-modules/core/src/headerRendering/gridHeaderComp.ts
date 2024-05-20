@@ -5,8 +5,7 @@ import { HeaderRowContainerComp } from './rowContainer/headerRowContainerComp';
 
 export class GridHeaderComp extends Component {
     static readonly selector: AgComponentSelector = 'ag-header-root';
-    private static TEMPLATE = /* html */
-        `<div class="ag-header" role="presentation"/>`;
+    private static TEMPLATE /* html */ = `<div class="ag-header" role="presentation"/>`;
 
     constructor() {
         super(GridHeaderComp.TEMPLATE);
@@ -14,13 +13,12 @@ export class GridHeaderComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-
         const compProxy: IGridHeaderComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            setHeightAndMinHeight: height => {
+            setHeightAndMinHeight: (height) => {
                 this.getGui().style.height = height;
                 this.getGui().style.minHeight = height;
-            }
+            },
         };
 
         const ctrl = this.createManagedBean(new GridHeaderCtrl());

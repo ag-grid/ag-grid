@@ -1,15 +1,26 @@
-import { AgInputNumberField, Autowired, DragService, Events, AgAbstractLabel, DragListenerParams, AgLabelParams, RefSelector, _exists, _setFixedWidth, AgComponentSelector } from "@ag-grid-community/core";
+import {
+    AgAbstractLabel,
+    AgComponentSelector,
+    AgInputNumberField,
+    AgLabelParams,
+    Autowired,
+    DragListenerParams,
+    DragService,
+    Events,
+    RefSelector,
+    _exists,
+    _setFixedWidth,
+} from '@ag-grid-community/core';
 
 export interface AgAngleSelectParams extends AgLabelParams {
     value?: number;
     onValueChange?: (value: number) => void;
-};
+}
 
 export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     static readonly selector: AgComponentSelector = 'ag-angle-select';
 
-    private static TEMPLATE = /* html */
-        `<div class="ag-angle-select">
+    private static TEMPLATE /* html */ = `<div class="ag-angle-select">
             <div ref="eLabel"></div>
             <div class="ag-wrapper ag-angle-select-wrapper">
                 <div ref="eAngleSelectField" class="ag-angle-select-field">
@@ -58,7 +69,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
                 this.parentCircleRect = this.eParentCircle.getBoundingClientRect();
             },
             onDragging: (e: MouseEvent | Touch) => this.calculateAngleDrag(e),
-            onDragStop: () => { }
+            onDragStop: () => {},
         };
 
         this.dragService.addDragSource(this.dragListener);
@@ -118,7 +129,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
 
         const radians = Math.atan2(y, x);
         this.degrees = this.toDegrees(radians);
-        this.radius = Math.sqrt((x * x) + (y * y));
+        this.radius = Math.sqrt(x * x + y * y);
 
         this.positionChildCircle(radians);
     }
@@ -127,9 +138,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
         const radians = this.toRadians(this.getValue());
         const radius = this.getRadius();
 
-        this
-            .setOffsetX(Math.cos(radians) * radius)
-            .setOffsetY(Math.sin(radians) * radius);
+        this.setOffsetX(Math.cos(radians) * radius).setOffsetY(Math.sin(radians) * radius);
     }
 
     private setOffsetX(offset: number): this {
@@ -166,11 +175,11 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     }
 
     private toDegrees(radians: number): number {
-        return radians / Math.PI * 180;
+        return (radians / Math.PI) * 180;
     }
 
     private toRadians(degrees: number): number {
-        return degrees / 180 * Math.PI;
+        return (degrees / 180) * Math.PI;
     }
 
     private normalizeNegativeValue(degrees: number): number {
@@ -194,7 +203,9 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     }
 
     public setRadius(r: number): this {
-        if (this.radius === r) { return this; }
+        if (this.radius === r) {
+            return this;
+        }
         this.radius = r;
         this.calculateCartesian();
 

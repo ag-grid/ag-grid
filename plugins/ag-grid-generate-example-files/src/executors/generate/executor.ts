@@ -4,7 +4,9 @@ import path from 'path';
 import prettier from 'prettier';
 
 import { readFile, readJSONFile, writeFile } from '../../executors-utils';
+import { SOURCE_ENTRY_FILE_NAME, getEnterprisePackageName } from './generator/constants';
 import gridVanillaSrcParser from './generator/transformation-scripts/grid-vanilla-src-parser';
+import { getInterfaceFileContents, removeModuleRegistration } from './generator/transformation-scripts/parser-utils';
 import {
     ExampleConfig,
     FRAMEWORKS,
@@ -13,9 +15,6 @@ import {
     InternalFramework,
     TYPESCRIPT_INTERNAL_FRAMEWORKS,
 } from './generator/types';
-
-import { getEnterprisePackageName, SOURCE_ENTRY_FILE_NAME } from './generator/constants';
-import { getInterfaceFileContents, removeModuleRegistration } from './generator/transformation-scripts/parser-utils';
 import {
     getBoilerPlateFiles,
     getEntryFileName,
@@ -118,9 +117,7 @@ export async function generateFiles(options: ExecutorOptions) {
         gridOptionsTypes
     );
 
-    const isIntegratedCharts = typedBindings.imports.some((m) =>
-        m.module.includes('@ag-grid-enterprise/charts')
-    );
+    const isIntegratedCharts = typedBindings.imports.some((m) => m.module.includes('@ag-grid-enterprise/charts'));
 
     let interfaceFile = undefined;
     if (sourceFileList.includes('interfaces.ts')) {

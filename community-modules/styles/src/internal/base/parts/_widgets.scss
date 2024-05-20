@@ -1,4 +1,4 @@
-@use "ag";
+@use 'ag';
 
 @mixin output {
     .ag-checkbox,
@@ -30,7 +30,11 @@
     }
 
     .ag-label-align-right .ag-label {
-        @include ag.unthemed-rtl((margin-left: var(--ag-grid-size)));
+        @include ag.unthemed-rtl(
+            (
+                margin-left: var(--ag-grid-size),
+            )
+        );
     }
 
     input[class^='ag-'] {
@@ -81,7 +85,8 @@
         padding: 0;
     }
 
-    input[class^='ag-'][type='button'], button[class^='ag-'] {
+    input[class^='ag-'][type='button'],
+    button[class^='ag-'] {
         &:focus {
             box-shadow: var(--ag-input-focus-box-shadow);
         }
@@ -94,7 +99,8 @@
     ////////////////////////////////////////
     // Lists
     ////////////////////////////////////////
-    .ag-list-item, .ag-virtual-list-item {
+    .ag-list-item,
+    .ag-virtual-list-item {
         height: var(--ag-list-item-height);
     }
 
@@ -121,7 +127,11 @@
     }
 
     .ag-select-list-item {
-        @include ag.unthemed-rtl(( padding-left: calc(var(--ag-cell-horizontal-padding) / 2) ));
+        @include ag.unthemed-rtl(
+            (
+                padding-left: calc(var(--ag-cell-horizontal-padding) / 2),
+            )
+        );
         @include ag.selectable(none);
         cursor: default;
         span {
@@ -138,14 +148,21 @@
     .ag-selection-checkbox,
     .ag-group-expanded,
     .ag-group-contracted {
-        @include ag.unthemed-rtl(( margin-right: var(--ag-cell-widget-spacing) ));
+        @include ag.unthemed-rtl(
+            (
+                margin-right: var(--ag-cell-widget-spacing),
+            )
+        );
 
         color: var(--ag-secondary-foreground-color);
     }
 
     .ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value) {
         // assign internal variables to simplify the `height` value
-        --ag-internal-calculated-line-height: var(--ag-line-height, calc(var(--ag-row-height) - var(--ag-row-border-width)));
+        --ag-internal-calculated-line-height: var(
+            --ag-line-height,
+            calc(var(--ag-row-height) - var(--ag-row-border-width))
+        );
         --ag-internal-padded-row-height: calc(var(--ag-row-height) - var(--ag-row-border-width));
         // Needed to capitalize min, because it clashes with old versions of Sass
         height: Min(var(--ag-internal-calculated-line-height), var(--ag-internal-padded-row-height));
@@ -166,7 +183,11 @@
     }
 
     .ag-group-child-count {
-        @include ag.unthemed-rtl(( margin-left: 2px ));
+        @include ag.unthemed-rtl(
+            (
+                margin-left: 2px,
+            )
+        );
     }
 
     .ag-group-title-bar {
@@ -179,8 +200,9 @@
         background-color: var(--ag-subheader-toolbar-background-color);
     }
 
-    .ag-disabled-group-title-bar, .ag-disabled-group-container {
-        opacity: 0.5
+    .ag-disabled-group-title-bar,
+    .ag-disabled-group-container {
+        opacity: 0.5;
     }
 
     .group-item {
@@ -189,7 +211,11 @@
 
     .ag-label {
         white-space: nowrap;
-        @include ag.unthemed-rtl((margin-right: var(--ag-grid-size)));
+        @include ag.unthemed-rtl(
+            (
+                margin-right: var(--ag-grid-size),
+            )
+        );
     }
 
     .ag-label-align-top .ag-label {
@@ -206,7 +232,11 @@
 
     .ag-slider-field,
     .ag-angle-select-field {
-        @include ag.unthemed-rtl((margin-right: calc(var(--ag-grid-size) * 2)));
+        @include ag.unthemed-rtl(
+            (
+                margin-right: calc(var(--ag-grid-size) * 2),
+            )
+        );
     }
 
     .ag-angle-select-parent-circle {
@@ -272,8 +302,13 @@
         }
     }
 
-    .ag-color-picker-color, .ag-color-picker-value {
-        @include ag.unthemed-rtl(( margin-right: var(--ag-grid-size) ));
+    .ag-color-picker-color,
+    .ag-color-picker-value {
+        @include ag.unthemed-rtl(
+            (
+                margin-right: var(--ag-grid-size),
+            )
+        );
     }
 
     .ag-color-panel {
@@ -352,17 +387,26 @@
     }
 
     .ag-color-input {
-        input[class^=ag-][type=text].ag-input-field-input {
-            @include ag.unthemed-rtl(( padding-left: calc(var(--ag-icon-size) + (var(--ag-grid-size) * 2)) ));
+        input[class^='ag-'][type='text'].ag-input-field-input {
+            @include ag.unthemed-rtl(
+                (
+                    padding-left: calc(var(--ag-icon-size) + (var(--ag-grid-size) * 2)),
+                )
+            );
         }
 
         .ag-color-input-color {
             position: absolute;
-            @include ag.unthemed-rtl(( margin-left: var(--ag-grid-size) ));
+            @include ag.unthemed-rtl(
+                (
+                    margin-left: var(--ag-grid-size),
+                )
+            );
         }
     }
 
-    .ag-color-picker-color, .ag-color-input-color {
+    .ag-color-picker-color,
+    .ag-color-input-color {
         width: var(--ag-icon-size);
         height: var(--ag-icon-size);
         border: var(--ag-borders-secondary) var(--ag-secondary-border-color);
@@ -401,8 +445,16 @@
     .ag-select {
         .ag-picker-field-wrapper {
             min-height: var(--ag-list-item-height);
-            @include ag.unthemed-rtl(( padding-left: calc(var(--ag-cell-horizontal-padding) / 2) ));
-            @include ag.unthemed-rtl(( padding-right: var(--ag-grid-size) ));
+            @include ag.unthemed-rtl(
+                (
+                    padding-left: calc(var(--ag-cell-horizontal-padding) / 2),
+                )
+            );
+            @include ag.unthemed-rtl(
+                (
+                    padding-right: var(--ag-grid-size),
+                )
+            );
             cursor: default;
         }
 
@@ -452,12 +504,24 @@
         border-bottom: var(--ag-borders-secondary) var(--ag-secondary-border-color);
         padding-top: 0;
         padding-bottom: 0;
-        @include ag.unthemed-rtl(( padding-left: calc(var(--ag-cell-horizontal-padding) / 2) ));
-        @include ag.unthemed-rtl(( padding-right: var(--ag-grid-size) ));
+        @include ag.unthemed-rtl(
+            (
+                padding-left: calc(var(--ag-cell-horizontal-padding) / 2),
+            )
+        );
+        @include ag.unthemed-rtl(
+            (
+                padding-right: var(--ag-grid-size),
+            )
+        );
     }
 
     .ag-rich-select-field-input {
-        @include ag.unthemed-rtl(( left: calc(var(--ag-cell-horizontal-padding)) ));
+        @include ag.unthemed-rtl(
+            (
+                left: calc(var(--ag-cell-horizontal-padding)),
+            )
+        );
     }
 
     .ag-popup-editor .ag-rich-select-value {
@@ -470,7 +534,7 @@
         height: var(--ag-list-item-height);
 
         &:focus-visible::after {
-            content: none
+            content: none;
         }
 
         &:hover {
@@ -479,7 +543,11 @@
     }
 
     .ag-rich-select-row {
-        @include ag.unthemed-rtl(( padding-left: calc(var(--ag-cell-horizontal-padding) / 2) ));
+        @include ag.unthemed-rtl(
+            (
+                padding-left: calc(var(--ag-cell-horizontal-padding) / 2),
+            )
+        );
     }
 
     .ag-rich-select-row-selected {
@@ -508,7 +576,7 @@
         height: var(--ag-list-item-height);
 
         &:focus-visible::after {
-            content: none
+            content: none;
         }
 
         &:hover {
@@ -552,7 +620,11 @@
     }
 
     .ag-panel-title-bar-button {
-        @include ag.unthemed-rtl((margin-left: var(--ag-grid-size)));
+        @include ag.unthemed-rtl(
+            (
+                margin-left: var(--ag-grid-size),
+            )
+        );
     }
 
     ////////////////////////////////////////
@@ -576,7 +648,11 @@
     }
 
     .ag-column-select-column {
-        @include ag.unthemed-rtl(( padding-left: calc(var(--ag-indentation-level) * var(--ag-column-select-indent-size)) ));
+        @include ag.unthemed-rtl(
+            (
+                padding-left: calc(var(--ag-indentation-level) * var(--ag-column-select-indent-size)),
+            )
+        );
     }
 
     .ag-column-select-header-icon {
@@ -594,7 +670,11 @@
     .ag-column-select-column-group-drag-handle,
     .ag-column-select-column-label {
         &:not(:last-child) {
-            @include ag.unthemed-rtl((margin-right: var(--ag-widget-horizontal-spacing)))
+            @include ag.unthemed-rtl(
+                (
+                    margin-right: var(--ag-widget-horizontal-spacing),
+                )
+            );
         }
     }
 
@@ -616,7 +696,11 @@
     // note - this applies a margin of the same width as a .ag-column-group-icons element, to indent columns
     // wihtout icons to the same level as siblings with icons. If changing .ag-column-group-icons, change this too.
     .ag-column-select-add-group-indent {
-        @include ag.unthemed-rtl(( margin-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2) ));
+        @include ag.unthemed-rtl(
+            (
+                margin-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2),
+            )
+        );
     }
 
     .ag-column-select-virtual-list-viewport {

@@ -1,4 +1,5 @@
-import { ExcelOOXMLTemplate, ExcelCell, _escapeString } from '@ag-grid-community/core';
+import { ExcelCell, ExcelOOXMLTemplate, _escapeString } from '@ag-grid-community/core';
+
 import { getStyleId } from './styles/stylesheet';
 
 const convertLegacyType = (type: string): string => {
@@ -25,37 +26,47 @@ const cellFactory: ExcelOOXMLTemplate = {
                 rawMap: {
                     r: ref,
                     t: convertedType === 'empty' ? undefined : convertedType,
-                    s: styleId ? getStyleId(styleId as string, currentSheet) : undefined
-                }
-            }
+                    s: styleId ? getStyleId(styleId as string, currentSheet) : undefined,
+                },
+            },
         };
 
-        if (convertedType === 'empty') { return obj; }
+        if (convertedType === 'empty') {
+            return obj;
+        }
 
         let children;
 
         if (convertedType === 'str' && type === 'f') {
-            children = [{
-                name: 'f',
-                textNode: _escapeString(value)
-            }];
+            children = [
+                {
+                    name: 'f',
+                    textNode: _escapeString(value),
+                },
+            ];
         } else if (convertedType === 'inlineStr') {
-            children = [{
-                name: 'is',
-                children: [{
-                    name: 't',
-                    textNode: _escapeString(value)
-                }]
-            }];
+            children = [
+                {
+                    name: 'is',
+                    children: [
+                        {
+                            name: 't',
+                            textNode: _escapeString(value),
+                        },
+                    ],
+                },
+            ];
         } else {
-            children = [{
-                name: 'v',
-                textNode: value,
-            }];
+            children = [
+                {
+                    name: 'v',
+                    textNode: value,
+                },
+            ];
         }
 
         return Object.assign({}, obj, { children });
-    }
+    },
 };
 
 export default cellFactory;

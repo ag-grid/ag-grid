@@ -1,16 +1,16 @@
-import { Autowired, Bean } from "../../context/context";
-import { BeanStub } from "../../context/beanStub";
-import { Column } from "../../entities/column";
-import { ColumnGroup } from "../../entities/columnGroup";
-import { CtrlsService } from "../../ctrlsService";
-import { HeaderRowType } from "../row/headerRowComp";
-import { _last } from "../../utils/array";
-import { VisibleColsService } from "../../columns/visibleColsService";
+import { VisibleColsService } from '../../columns/visibleColsService';
+import { BeanStub } from '../../context/beanStub';
+import { Autowired, Bean } from '../../context/context';
+import { CtrlsService } from '../../ctrlsService';
+import { Column } from '../../entities/column';
+import { ColumnGroup } from '../../entities/columnGroup';
+import { _last } from '../../utils/array';
+import { HeaderRowType } from '../row/headerRowComp';
 
 export interface HeaderPosition {
-/** A number from 0 to n, where n is the last header row the grid is rendering */
+    /** A number from 0 to n, where n is the last header row the grid is rendering */
     headerRowIndex: number;
-/** The grid column or column group */
+    /** The grid column or column group */
     column: Column | ColumnGroup;
 }
 
@@ -20,7 +20,6 @@ export interface HeaderFuturePosition extends HeaderPosition {
 
 @Bean('headerPositionUtils')
 export class HeaderPositionUtils extends BeanStub {
-
     @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
@@ -29,13 +28,15 @@ export class HeaderPositionUtils extends BeanStub {
         let getColMethod: 'getColBefore' | 'getColAfter';
 
         if (focusedHeader.column instanceof ColumnGroup) {
-            nextColumn = this.visibleColsService.getGroupAtDirection(focusedHeader.column, direction)!
+            nextColumn = this.visibleColsService.getGroupAtDirection(focusedHeader.column, direction)!;
         } else {
             getColMethod = `getCol${direction}` as any;
             nextColumn = this.visibleColsService[getColMethod](focusedHeader.column)!;
         }
 
-        if (!nextColumn) { return; }
+        if (!nextColumn) {
+            return;
+        }
 
         const { headerRowIndex } = focusedHeader;
 
@@ -46,19 +47,19 @@ export class HeaderPositionUtils extends BeanStub {
                 nextColumn = nextColumn.getParent();
                 columnsInPath.push(nextColumn);
             }
-    
+
             nextColumn = columnsInPath[columnsInPath.length - 1 - headerRowIndex];
         }
 
-        const { column, headerRowIndex: indexToFocus } = this.getHeaderIndexToFocus(nextColumn, headerRowIndex)
+        const { column, headerRowIndex: indexToFocus } = this.getHeaderIndexToFocus(nextColumn, headerRowIndex);
 
         return {
             column,
-            headerRowIndex: indexToFocus
+            headerRowIndex: indexToFocus,
         };
     }
 
-    public getHeaderIndexToFocus(column: Column | ColumnGroup, currentIndex: number,): HeaderPosition {
+    public getHeaderIndexToFocus(column: Column | ColumnGroup, currentIndex: number): HeaderPosition {
         let nextColumn: Column | undefined;
 
         if (column instanceof ColumnGroup && this.isAnyChildSpanningHeaderHeight(column) && column.isPadding()) {
@@ -73,13 +74,15 @@ export class HeaderPositionUtils extends BeanStub {
 
         return {
             column: nextColumn || column,
-            headerRowIndex: currentIndex
-        }
+            headerRowIndex: currentIndex,
+        };
     }
 
     private isAnyChildSpanningHeaderHeight(columnGroup: ColumnGroup): boolean {
-        if (!columnGroup) { return false; }
-        return columnGroup.getLeafColumns().some(col => col.isSpanHeaderHeight());
+        if (!columnGroup) {
+            return false;
+        }
+        return columnGroup.getLeafColumns().some((col) => col.isSpanHeaderHeight());
     }
 
     public getColumnVisibleParent(currentColumn: Column | ColumnGroup, currentIndex: number): HeaderFuturePosition {
@@ -108,7 +111,11 @@ export class HeaderPositionUtils extends BeanStub {
         return { column: nextFocusColumn, headerRowIndex: nextRow, headerRowIndexWithoutSpan };
     }
 
-    public getColumnVisibleChild(column: Column | ColumnGroup, currentIndex: number, direction: 'Before' | 'After' = 'After'): HeaderFuturePosition {
+    public getColumnVisibleChild(
+        column: Column | ColumnGroup,
+        currentIndex: number,
+        direction: 'Before' | 'After' = 'After'
+    ): HeaderFuturePosition {
         const currentRowType = this.getHeaderRowType(currentIndex);
         let nextFocusColumn: Column | ColumnGroup | null = column;
         let nextRow = currentIndex + 1;
@@ -157,7 +164,9 @@ export class HeaderPositionUtils extends BeanStub {
         const displayedColumns = this.visibleColsService.getAllCols();
         const column = displayedColumns[position === 'start' ? 0 : displayedColumns.length - 1];
 
-        if (!column) { return; }
+        if (!column) {
+            return;
+        }
 
         const childContainer = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned());
         const type = childContainer.getRowType(level);
@@ -166,14 +175,14 @@ export class HeaderPositionUtils extends BeanStub {
             const columnGroup = this.visibleColsService.getColGroupAtLevel(column, level);
             return {
                 headerRowIndex: level,
-                column: columnGroup!
+                column: columnGroup!,
             };
         }
 
         return {
             // if type==null, means the header level didn't exist
             headerRowIndex: type == null ? -1 : level,
-            column
+            column,
         };
     }
 }

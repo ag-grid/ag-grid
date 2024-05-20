@@ -1,26 +1,26 @@
-import { ColumnModel } from "../../columns/columnModel";
-import { VisibleColsService } from "../../columns/visibleColsService";
-import { FuncColsService } from "../../columns/funcColsService";
-import { UserCompDetails, UserComponentFactory } from "../../components/framework/userComponentFactory";
-import { KeyCode } from "../../constants/keyCode";
-import { BeanStub } from "../../context/beanStub";
-import { Autowired } from "../../context/context";
-import { CtrlsService } from "../../ctrlsService";
-import { CellRendererSelectorFunc, ColumnFunctionCallbackParams } from "../../entities/colDef";
-import { Column } from "../../entities/column";
-import { RowNode } from "../../entities/rowNode";
-import { IRowNode } from "../../interfaces/iRowNode";
-import { _removeAriaExpanded, _setAriaExpanded } from "../../utils/aria";
-import { _isElementInEventPath, _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from "../../utils/event";
-import { _warnOnce } from "../../utils/function";
-import { _missing } from "../../utils/generic";
-import { _createIconNoSpan } from "../../utils/icon";
-import { _cloneObject } from "../../utils/object";
-import { ExpressionService } from "../../valueService/expressionService";
-import { ValueService } from "../../valueService/valueService";
-import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
-import { RowDragComp } from "../row/rowDragComp";
-import { ICellRendererParams } from "./iCellRenderer";
+import { ColumnModel } from '../../columns/columnModel';
+import { FuncColsService } from '../../columns/funcColsService';
+import { VisibleColsService } from '../../columns/visibleColsService';
+import { UserCompDetails, UserComponentFactory } from '../../components/framework/userComponentFactory';
+import { KeyCode } from '../../constants/keyCode';
+import { BeanStub } from '../../context/beanStub';
+import { Autowired } from '../../context/context';
+import { CtrlsService } from '../../ctrlsService';
+import { CellRendererSelectorFunc, ColumnFunctionCallbackParams } from '../../entities/colDef';
+import { Column } from '../../entities/column';
+import { RowNode } from '../../entities/rowNode';
+import { IRowNode } from '../../interfaces/iRowNode';
+import { _removeAriaExpanded, _setAriaExpanded } from '../../utils/aria';
+import { _isElementInEventPath, _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../utils/event';
+import { _warnOnce } from '../../utils/function';
+import { _missing } from '../../utils/generic';
+import { _createIconNoSpan } from '../../utils/icon';
+import { _cloneObject } from '../../utils/object';
+import { ExpressionService } from '../../valueService/expressionService';
+import { ValueService } from '../../valueService/valueService';
+import { CheckboxSelectionComponent } from '../checkboxSelectionComponent';
+import { RowDragComp } from '../row/rowDragComp';
+import { ICellRendererParams } from './iCellRenderer';
 
 export interface IGroupCellRenderer {
     setInnerRenderer(compDetails: UserCompDetails | undefined, valueToDisplay: any): void;
@@ -39,7 +39,8 @@ export interface TotalValueGetterFunc {
     (params: GroupCellRendererParams): any;
 }
 
-export type GroupCheckboxSelectionCallbackParams<TData = any, TValue = any> = ColumnFunctionCallbackParams<TData> & GroupCellRendererParams<TData, TValue>;
+export type GroupCheckboxSelectionCallbackParams<TData = any, TValue = any> = ColumnFunctionCallbackParams<TData> &
+    GroupCellRendererParams<TData, TValue>;
 
 export interface GroupCheckboxSelectionCallback<TData = any, TValue = any> {
     (params: GroupCheckboxSelectionCallbackParams<TData, TValue>): boolean;
@@ -61,7 +62,7 @@ export interface IGroupCellRendererParams<TData = any, TValue = any> {
     totalValueGetter?: string | TotalValueGetterFunc;
     /** If `true`, count is not displayed beside the name. */
     suppressCount?: boolean;
-    /** 
+    /**
      * Set to `true`, or a function that returns `true`, if a checkbox should be included.
      */
     checkbox?: boolean | GroupCheckboxSelectionCallback<TData, TValue>;
@@ -79,7 +80,7 @@ export interface IGroupCellRendererFullRowParams {
      * Only when in fullWidth, this gives whether the comp is pinned or not.
      * If not doing fullWidth, then this is not provided, as pinned can be got from the column.
      */
-    pinned?: "left" | "right" | null;
+    pinned?: 'left' | 'right' | null;
     /** 'true' if comp is showing full width. */
     fullWidth: boolean;
 
@@ -90,16 +91,17 @@ export interface IGroupCellRendererFullRowParams {
  * Parameters provided by the grid to the `init` method of a `agGroupCellRenderer`.
  * Do not use in `colDef.cellRendererParams` - see `IGroupCellRendererParams` instead.
  */
-export type GroupCellRendererParams<TData = any, TValue = any> = IGroupCellRendererParams & ICellRendererParams<TData, TValue> & IGroupCellRendererFullRowParams;
+export type GroupCellRendererParams<TData = any, TValue = any> = IGroupCellRendererParams &
+    ICellRendererParams<TData, TValue> &
+    IGroupCellRendererFullRowParams;
 
 export class GroupCellRendererCtrl extends BeanStub {
-
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired("ctrlsService") private ctrlsService: CtrlsService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('funcColsService') private funcColsService: FuncColsService;
 
     private params: GroupCellRendererParams;
@@ -123,7 +125,15 @@ export class GroupCellRendererCtrl extends BeanStub {
     private comp: IGroupCellRenderer;
     private compClass: any;
 
-    public init(comp: IGroupCellRenderer, eGui: HTMLElement, eCheckbox: HTMLElement, eExpanded: HTMLElement, eContracted: HTMLElement, compClass: any, params: GroupCellRendererParams): void {
+    public init(
+        comp: IGroupCellRenderer,
+        eGui: HTMLElement,
+        eCheckbox: HTMLElement,
+        eExpanded: HTMLElement,
+        eContracted: HTMLElement,
+        compClass: any,
+        params: GroupCellRendererParams
+    ): void {
         this.params = params;
         this.eGui = eGui;
         this.eCheckbox = eCheckbox;
@@ -131,7 +141,6 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.eContracted = eContracted;
         this.comp = comp;
         this.compClass = compClass;
-
 
         const { node, value, colDef } = params;
         const topLevelFooter = this.isTopLevelFooter();
@@ -161,30 +170,43 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.findDisplayedGroupNode();
 
         if (!topLevelFooter) {
-            const showingFooterTotal = params.node.footer && params.node.rowGroupIndex === this.funcColsService.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup);
+            const showingFooterTotal =
+                params.node.footer &&
+                params.node.rowGroupIndex ===
+                    this.funcColsService
+                        .getRowGroupColumns()
+                        .findIndex((c) => c.getColId() === params.colDef?.showRowGroup);
             // if we're always showing a group value
             const isAlwaysShowing = this.gos.get('groupDisplayType') != 'multipleColumns' || this.gos.get('treeData');
             // if the cell is populated with a parent value due to `showOpenedGroup`
-            const showOpenGroupValue = (
-                isAlwaysShowing || (this.gos.get('showOpenedGroup') && !params.node.footer && (
-                    (
-                        !params.node.group ||
-                        (
-                            params.node.rowGroupIndex != null &&
-                            params.node.rowGroupIndex > this.funcColsService.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup)
-                        )
-                    )
-                ))
-            );
+            const showOpenGroupValue =
+                isAlwaysShowing ||
+                (this.gos.get('showOpenedGroup') &&
+                    !params.node.footer &&
+                    (!params.node.group ||
+                        (params.node.rowGroupIndex != null &&
+                            params.node.rowGroupIndex >
+                                this.funcColsService
+                                    .getRowGroupColumns()
+                                    .findIndex((c) => c.getColId() === params.colDef?.showRowGroup))));
             // not showing a leaf value (field/valueGetter)
             const leafWithValues = !node.group && (this.params.colDef?.field || this.params.colDef?.valueGetter);
             // doesn't have expand/collapse chevron
             const isExpandable = this.isExpandable();
             // is showing pivot leaf cell
-            const showPivotModeLeafValue = this.columnModel.isPivotMode() && node.leafGroup && node.rowGroupColumn?.getColId() === params.column?.getColDef().showRowGroup;
+            const showPivotModeLeafValue =
+                this.columnModel.isPivotMode() &&
+                node.leafGroup &&
+                node.rowGroupColumn?.getColId() === params.column?.getColDef().showRowGroup;
 
             // if not showing any values or chevron, skip cell.
-            const canSkipRenderingCell = !this.showingValueForOpenedParent && !isExpandable && !leafWithValues && !showOpenGroupValue && !showingFooterTotal && !showPivotModeLeafValue;
+            const canSkipRenderingCell =
+                !this.showingValueForOpenedParent &&
+                !isExpandable &&
+                !leafWithValues &&
+                !showOpenGroupValue &&
+                !showingFooterTotal &&
+                !showPivotModeLeafValue;
             if (canSkipRenderingCell) {
                 return;
             }
@@ -233,9 +255,13 @@ export class GroupCellRendererCtrl extends BeanStub {
 
     private isTopLevelFooter(): boolean {
         const totalRow = this.gos.getGrandTotalRow();
-        if (!totalRow) { return false; }
+        if (!totalRow) {
+            return false;
+        }
 
-        if (this.params.value != null || this.params.node.level != -1) { return false; }
+        if (this.params.value != null || this.params.node.level != -1) {
+            return false;
+        }
 
         // at this point, we know it's the root node and there is no value present, so it's a footer cell.
         // the only thing to work out is if we are displaying groups  across multiple
@@ -243,13 +269,19 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         const colDef = this.params.colDef;
         const doingFullWidth = colDef == null;
-        if (doingFullWidth) { return true; }
+        if (doingFullWidth) {
+            return true;
+        }
 
-        if (colDef!.showRowGroup === true) { return true; }
+        if (colDef!.showRowGroup === true) {
+            return true;
+        }
 
         const rowGroupCols = this.funcColsService.getRowGroupColumns();
         // this is a sanity check, rowGroupCols should always be present
-        if (!rowGroupCols || rowGroupCols.length === 0) { return true; }
+        if (!rowGroupCols || rowGroupCols.length === 0) {
+            return true;
+        }
 
         const firstRowGroupCol = rowGroupCols[0];
 
@@ -260,7 +292,9 @@ export class GroupCellRendererCtrl extends BeanStub {
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
     // in the right section. otherwise we would have the cell repeated in each section.
     private isEmbeddedRowMismatch(): boolean {
-        if (!this.params.fullWidth || !this.gos.get('embedFullWidthRows')) { return false; }
+        if (!this.params.fullWidth || !this.gos.get('embedFullWidthRows')) {
+            return false;
+        }
 
         const pinnedLeftCell = this.params.pinned === 'left';
         const pinnedRightCell = this.params.pinned === 'right';
@@ -352,7 +386,6 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private addGroupValue(): void {
-
         // we try and use the cellRenderer of the column used for the grouping if we can
         const paramsAdjusted = this.adjustParamsWithDetailsFromRelatedColumn();
         const innerCompDetails = this.getInnerCompDetails(paramsAdjusted);
@@ -361,11 +394,11 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         let valueWhenNoRenderer = valueFormatted;
         if (valueWhenNoRenderer == null) {
-            const isGroupColForNode = (
-                this.displayedGroupNode.rowGroupColumn && this.params.column?.isRowGroupDisplayed(this.displayedGroupNode.rowGroupColumn.getId())
-            );
+            const isGroupColForNode =
+                this.displayedGroupNode.rowGroupColumn &&
+                this.params.column?.isRowGroupDisplayed(this.displayedGroupNode.rowGroupColumn.getId());
 
-            if (this.displayedGroupNode.key === "" && this.displayedGroupNode.group && isGroupColForNode) {
+            if (this.displayedGroupNode.key === '' && this.displayedGroupNode.group && isGroupColForNode) {
                 const localeTextFunc = this.localeService.getLocaleTextFunc();
                 valueWhenNoRenderer = localeTextFunc('blanks', '(Blanks)');
             } else {
@@ -377,16 +410,19 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private adjustParamsWithDetailsFromRelatedColumn(): GroupCellRendererParams {
-
         const relatedColumn = this.displayedGroupNode.rowGroupColumn;
         const column = this.params.column;
 
-        if (!relatedColumn) { return this.params; }
+        if (!relatedColumn) {
+            return this.params;
+        }
 
         const notFullWidth = column != null;
         if (notFullWidth) {
             const showingThisRowGroup = column!.isRowGroupDisplayed(relatedColumn.getId());
-            if (!showingThisRowGroup) { return this.params; }
+            if (!showingThisRowGroup) {
+                return this.params;
+            }
         }
 
         const params = this.params;
@@ -399,7 +435,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         // would be read only
         const paramsAdjusted = {
             ...params,
-            valueFormatted: valueFormatted
+            valueFormatted: valueFormatted,
         };
 
         return paramsAdjusted;
@@ -440,11 +476,12 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private getInnerCompDetails(params: GroupCellRendererParams): UserCompDetails | undefined {
-
         // for full width rows, we don't do any of the below
         if (params.fullWidth) {
             return this.userComponentFactory.getFullWidthGroupRowInnerCellRenderer(
-                this.gos.get('groupRowRendererParams'), params);
+                this.gos.get('groupRowRendererParams'),
+                params
+            );
         }
 
         // when grouping, the normal case is we use the cell renderer of the grouped column. eg if grouping by country
@@ -461,12 +498,12 @@ export class GroupCellRendererCtrl extends BeanStub {
         // 3) groupedColDef.cellRendererParams.innerRenderer
 
         // we check if cell renderer provided for the group cell renderer, eg colDef.cellRendererParams.innerRenderer
-        const innerCompDetails = this.userComponentFactory
-            .getInnerRendererDetails(params, params);
+        const innerCompDetails = this.userComponentFactory.getInnerRendererDetails(params, params);
 
         // avoid using GroupCellRenderer again, otherwise stack overflow, as we insert same renderer again and again.
         // this covers off chance user is grouping by a column that is also configured with GroupCellRenderer
-        const isGroupRowRenderer = (details: UserCompDetails | undefined) => details && details.componentClass == this.compClass;
+        const isGroupRowRenderer = (details: UserCompDetails | undefined) =>
+            details && details.componentClass == this.compClass;
 
         if (innerCompDetails && !isGroupRowRenderer(innerCompDetails)) {
             // use the renderer defined in cellRendererParams.innerRenderer
@@ -481,17 +518,18 @@ export class GroupCellRendererCtrl extends BeanStub {
         }
 
         // otherwise see if we can use the cellRenderer of the column we are grouping by
-        const relatedCompDetails = this.userComponentFactory
-            .getCellRendererDetails(relatedColDef, params);
+        const relatedCompDetails = this.userComponentFactory.getCellRendererDetails(relatedColDef, params);
 
         if (relatedCompDetails && !isGroupRowRenderer(relatedCompDetails)) {
             // Only if the original column is using a specific renderer, it it is a using a DEFAULT one ignore it
             return relatedCompDetails;
         }
 
-        if (isGroupRowRenderer(relatedCompDetails) &&
+        if (
+            isGroupRowRenderer(relatedCompDetails) &&
             relatedColDef.cellRendererParams &&
-            relatedColDef.cellRendererParams.innerRenderer) {
+            relatedColDef.cellRendererParams.innerRenderer
+        ) {
             // edge case - this comes from a column which has been grouped dynamically, that has a renderer 'group'
             // and has an inner cell renderer
             const res = this.userComponentFactory.getInnerRendererDetails(relatedColDef.cellRendererParams, params);
@@ -502,9 +540,15 @@ export class GroupCellRendererCtrl extends BeanStub {
     private addChildCount(): void {
         // only include the child count if it's included, eg if user doing custom aggregation,
         // then this could be left out, or set to -1, ie no child count
-        if (this.params.suppressCount) { return; }
+        if (this.params.suppressCount) {
+            return;
+        }
 
-        this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, this.updateChildCount.bind(this));
+        this.addManagedListener(
+            this.displayedGroupNode,
+            RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED,
+            this.updateChildCount.bind(this)
+        );
 
         // filtering changes the child count, so need to cater for it
         this.updateChildCount();
@@ -519,11 +563,15 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private isShowRowGroupForThisRow(): boolean {
-        if (this.gos.get('treeData')) { return true; }
+        if (this.gos.get('treeData')) {
+            return true;
+        }
 
         const rowGroupColumn = this.displayedGroupNode.rowGroupColumn;
 
-        if (!rowGroupColumn) { return false; }
+        if (!rowGroupColumn) {
+            return false;
+        }
 
         // column is null for fullWidthRows
         const column = this.params.column;
@@ -558,21 +606,31 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         // expand / contract as the user hits enter
         this.addManagedListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
-        this.addManagedListener(params.node, RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
+        this.addManagedListener(
+            params.node,
+            RowNode.EVENT_EXPANDED_CHANGED,
+            this.showExpandAndContractIcons.bind(this)
+        );
 
         this.showExpandAndContractIcons();
 
         // because we don't show the expand / contract when there are no children, we need to check every time
         // the number of children change.
         const expandableChangedListener = this.onRowNodeIsExpandableChanged.bind(this);
-        this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, expandableChangedListener);
+        this.addManagedListener(
+            this.displayedGroupNode,
+            RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED,
+            expandableChangedListener
+        );
         this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_MASTER_CHANGED, expandableChangedListener);
         this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_GROUP_CHANGED, expandableChangedListener);
         this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_HAS_CHILDREN_CHANGED, expandableChangedListener);
     }
 
     private onExpandClicked(mouseEvent: MouseEvent): void {
-        if (_isStopPropagationForAgGrid(mouseEvent)) { return; }
+        if (_isStopPropagationForAgGrid(mouseEvent)) {
+            return;
+        }
 
         // so if we expand a node, it does not also get selected.
         _stopPropagationForAgGrid(mouseEvent);
@@ -600,13 +658,17 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private isExpandable(): boolean {
-        if (this.showingValueForOpenedParent) { return true; }
+        if (this.showingValueForOpenedParent) {
+            return true;
+        }
 
         const rowNode = this.displayedGroupNode;
         const reducedLeafNode = this.columnModel.isPivotMode() && rowNode.leafGroup;
         const expandableGroup = rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode;
 
-        if (!expandableGroup) { return false; }
+        if (!expandableGroup) {
+            return false;
+        }
 
         // column is null for fullWidthRows
         const column = this.params.column;
@@ -678,7 +740,9 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private setIndent(): void {
-        if (this.gos.get('groupHideOpenParents')) { return; }
+        if (this.gos.get('groupHideOpenParents')) {
+            return;
+        }
 
         const params = this.params;
         const rowNode: IRowNode = params.node;
@@ -698,7 +762,9 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private addFullWidthRowDraggerIfNeeded(): void {
-        if (!this.params.fullWidth || !this.params.rowDrag) { return; }
+        if (!this.params.fullWidth || !this.params.rowDrag) {
+            return;
+        }
 
         const rowDragComp = new RowDragComp(() => this.params.value, this.params.node as RowNode);
         this.createManagedBean(rowDragComp, this.context);
@@ -715,7 +781,8 @@ export class GroupCellRendererCtrl extends BeanStub {
 
     private addCheckboxIfNeeded(): void {
         const rowNode = this.displayedGroupNode;
-        const checkboxNeeded = this.isUserWantsSelected() &&
+        const checkboxNeeded =
+            this.isUserWantsSelected() &&
             // footers cannot be selected
             !rowNode.footer &&
             // pinned rows cannot be selected
@@ -746,25 +813,30 @@ export class GroupCellRendererCtrl extends BeanStub {
     private onKeyDown(event: KeyboardEvent): void {
         const isEnterKey = event.key === KeyCode.ENTER;
 
-        if (!isEnterKey || this.params.suppressEnterExpand) { return; }
+        if (!isEnterKey || this.params.suppressEnterExpand) {
+            return;
+        }
 
         const cellEditable = this.params.column && this.params.column.isCellEditable(this.params.node);
 
-        if (cellEditable) { return; }
+        if (cellEditable) {
+            return;
+        }
 
         this.onExpandOrContract(event);
     }
 
     private onCellDblClicked(mouseEvent: MouseEvent): void {
-        if (_isStopPropagationForAgGrid(mouseEvent)) { return; }
+        if (_isStopPropagationForAgGrid(mouseEvent)) {
+            return;
+        }
 
         // we want to avoid acting on double click events on the expand / contract icon,
         // as that icons already has expand / collapse functionality on it. otherwise if
         // the icon was double clicked, we would get 'click', 'click', 'dblclick' which
         // is open->close->open, however double click should be open->close only.
-        const targetIsExpandIcon
-            = _isElementInEventPath(this.eExpanded, mouseEvent)
-            || _isElementInEventPath(this.eContracted, mouseEvent);
+        const targetIsExpandIcon =
+            _isElementInEventPath(this.eExpanded, mouseEvent) || _isElementInEventPath(this.eContracted, mouseEvent);
 
         if (!targetIsExpandIcon) {
             this.onExpandOrContract(mouseEvent);

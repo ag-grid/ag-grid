@@ -1,11 +1,9 @@
 module.exports = {
-    chainWebpack: config => {
+    chainWebpack: (config) => {
         config
             .externals({
-                'ag-grid-community': 'agGrid'
+                'ag-grid-community': 'agGrid',
             })
-            .performance
-            .hints(false)
-    }
-}
-
+            .performance.hints(false);
+    },
+};

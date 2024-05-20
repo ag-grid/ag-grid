@@ -110,10 +110,7 @@
                     "gridStyle": [
                         {
                             "stroke": "rgb(219, 219, 219)",
-                            "lineDash": [
-                                4,
-                                2
-                            ]
+                            "lineDash": [4, 2]
                         }
                     ]
                 },
@@ -156,10 +153,7 @@
                     "gridStyle": [
                         {
                             "stroke": "rgb(219, 219, 219)",
-                            "lineDash": [
-                                4,
-                                2
-                            ]
+                            "lineDash": [4, 2]
                         }
                     ],
                     "base": 10
@@ -203,10 +197,7 @@
                     "gridStyle": [
                         {
                             "stroke": "rgb(219, 219, 219)",
-                            "lineDash": [
-                                4,
-                                2
-                            ]
+                            "lineDash": [4, 2]
                         }
                     ]
                 },
@@ -249,10 +240,7 @@
                     "gridStyle": [
                         {
                             "stroke": "rgb(219, 219, 219)",
-                            "lineDash": [
-                                4,
-                                2
-                            ]
+                            "lineDash": [4, 2]
                         }
                     ]
                 },
@@ -295,10 +283,7 @@
                     "gridStyle": [
                         {
                             "stroke": "rgb(219, 219, 219)",
-                            "lineDash": [
-                                4,
-                                2
-                            ]
+                            "lineDash": [4, 2]
                         }
                     ]
                 }
@@ -327,9 +312,7 @@
                 "yNames": [],
                 "grouped": false,
                 "strokeWidth": 1,
-                "lineDash": [
-                    0
-                ],
+                "lineDash": [0],
                 "lineDashOffset": 0,
                 "label": {
                     "enabled": false,
@@ -379,12 +362,7 @@
     "cellRange": {
         "rowStartIndex": 0,
         "rowEndIndex": 6,
-        "columns": [
-            "country",
-            "sugar",
-            "fat",
-            "weight"
-        ]
+        "columns": ["country", "sugar", "fat", "weight"]
     },
     "suppressChartRanges": false,
     "unlinkChart": false

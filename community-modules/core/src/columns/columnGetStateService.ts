@@ -1,20 +1,21 @@
-import { Autowired, Bean } from "../context/context";
-import { Column } from "../entities/column";
-import { _missing } from "../utils/generic";
-import { ColumnState } from "./columnApplyStateService";
-import { ColumnModel } from "./columnModel";
-import { FuncColsService } from "./funcColsService";
+import { Autowired, Bean } from '../context/context';
+import { Column } from '../entities/column';
+import { _missing } from '../utils/generic';
+import { ColumnState } from './columnApplyStateService';
+import { ColumnModel } from './columnModel';
+import { FuncColsService } from './funcColsService';
 
 @Bean('columnGetStateService')
 export class ColumnGetStateService {
-
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('funcColsService') private funcColsService: FuncColsService;
 
     public getColumnState(): ColumnState[] {
         const primaryCols = this.columnModel.getColDefCols();
 
-        if (_missing(primaryCols) || !this.columnModel.isAlive()) { return []; }
+        if (_missing(primaryCols) || !this.columnModel.isAlive()) {
+            return [];
+        }
 
         const colsForState = this.columnModel.getAllCols();
         const res: ColumnState[] = colsForState.map(this.createStateItemFromColumn.bind(this));
@@ -22,7 +23,6 @@ export class ColumnGetStateService {
         this.orderColumnStateList(res);
 
         return res;
-
     }
 
     private createStateItemFromColumn(column: Column): ColumnState {
@@ -49,7 +49,7 @@ export class ColumnGetStateService {
             rowGroupIndex,
             pivot: column.isPivotActive(),
             pivotIndex: pivotIndex,
-            flex
+            flex,
         };
 
         return res;
@@ -66,5 +66,4 @@ export class ColumnGetStateService {
             return posA! - posB!;
         });
     }
-
 }

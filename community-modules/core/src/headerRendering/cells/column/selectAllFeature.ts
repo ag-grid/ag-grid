@@ -1,16 +1,15 @@
-import { BeanStub } from "../../../context/beanStub";
-import { Autowired } from "../../../context/context";
-import { HeaderCheckboxSelectionCallbackParams } from "../../../entities/colDef";
-import { Column } from "../../../entities/column";
-import { Events, SelectionEventSourceType } from "../../../events";
-import { IRowModel } from "../../../interfaces/iRowModel";
-import { ISelectionService } from "../../../interfaces/iSelectionService";
-import { _setAriaHidden, _setAriaRole } from "../../../utils/aria";
-import { AgCheckbox } from "../../../widgets/agCheckbox";
-import { HeaderCellCtrl } from "./headerCellCtrl";
+import { BeanStub } from '../../../context/beanStub';
+import { Autowired } from '../../../context/context';
+import { HeaderCheckboxSelectionCallbackParams } from '../../../entities/colDef';
+import { Column } from '../../../entities/column';
+import { Events, SelectionEventSourceType } from '../../../events';
+import { IRowModel } from '../../../interfaces/iRowModel';
+import { ISelectionService } from '../../../interfaces/iSelectionService';
+import { _setAriaHidden, _setAriaRole } from '../../../utils/aria';
+import { AgCheckbox } from '../../../widgets/agCheckbox';
+import { HeaderCellCtrl } from './headerCellCtrl';
 
 export class SelectAllFeature extends BeanStub {
-
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('selectionService') private selectionService: ISelectionService;
 
@@ -47,7 +46,11 @@ export class SelectAllFeature extends BeanStub {
         this.showOrHideSelectAll();
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
+            this.onDisplayedColumnsChanged.bind(this)
+        );
         this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onSelectionChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
@@ -62,7 +65,9 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private onDisplayedColumnsChanged(): void {
-        if (!this.isAlive()) { return; }
+        if (!this.isAlive()) {
+            return;
+        }
         this.showOrHideSelectAll();
     }
 
@@ -81,27 +86,33 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private onModelChanged(): void {
-        if (!this.cbSelectAllVisible) { return; }
+        if (!this.cbSelectAllVisible) {
+            return;
+        }
         this.updateStateOfCheckbox();
     }
 
     private onSelectionChanged(): void {
-        if (!this.cbSelectAllVisible) { return; }
+        if (!this.cbSelectAllVisible) {
+            return;
+        }
         this.updateStateOfCheckbox();
     }
 
     private updateStateOfCheckbox(): void {
-        if (this.processingEventFromCheckbox) { return; }
+        if (this.processingEventFromCheckbox) {
+            return;
+        }
 
         this.processingEventFromCheckbox = true;
 
-        const allSelected = this.selectionService.getSelectAllState(
+        const allSelected = this.selectionService.getSelectAllState(this.isFilteredOnly(), this.isCurrentPageOnly());
+
+        this.cbSelectAll.setValue(allSelected!);
+        const hasNodesToSelect = this.selectionService.hasNodesToSelect(
             this.isFilteredOnly(),
             this.isCurrentPageOnly()
         );
-
-        this.cbSelectAll.setValue(allSelected!);
-        const hasNodesToSelect = this.selectionService.hasNodesToSelect(this.isFilteredOnly(), this.isCurrentPageOnly());
         this.cbSelectAll.setDisabled(!hasNodesToSelect);
         this.refreshSelectAllLabel();
 
@@ -113,7 +124,6 @@ export class SelectAllFeature extends BeanStub {
         const checked = this.cbSelectAll.getValue();
         const ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
         const ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
-
 
         if (!this.cbSelectAllVisible) {
             this.headerCellCtrl.setAriaDescriptionProperty('selectAll', null);
@@ -140,15 +150,21 @@ export class SelectAllFeature extends BeanStub {
         const rowModelMatches = rowModelType === 'clientSide' || rowModelType === 'serverSide';
 
         if (!rowModelMatches) {
-            console.warn(`AG Grid: ${feature} is only available if using 'clientSide' or 'serverSide' rowModelType, you are using ${rowModelType}.`);
+            console.warn(
+                `AG Grid: ${feature} is only available if using 'clientSide' or 'serverSide' rowModelType, you are using ${rowModelType}.`
+            );
             return false;
         }
         return true;
     }
 
     private onCbSelectAll(): void {
-        if (this.processingEventFromCheckbox) { return; }
-        if (!this.cbSelectAllVisible) { return; }
+        if (this.processingEventFromCheckbox) {
+            return;
+        }
+        if (!this.cbSelectAllVisible) {
+            return;
+        }
 
         const value = this.cbSelectAll.getValue();
         const justFiltered = this.isFilteredOnly();
@@ -180,13 +196,16 @@ export class SelectAllFeature extends BeanStub {
             const func = result as (params: HeaderCheckboxSelectionCallbackParams) => boolean;
             const params: HeaderCheckboxSelectionCallbackParams = this.gos.addGridCommonParams({
                 column: this.column,
-                colDef: this.column.getColDef()
+                colDef: this.column.getColDef(),
             });
             result = func(params);
         }
 
         if (result) {
-            return this.checkRightRowModelType('headerCheckboxSelection') && this.checkSelectionType('headerCheckboxSelection');
+            return (
+                this.checkRightRowModelType('headerCheckboxSelection') &&
+                this.checkSelectionType('headerCheckboxSelection')
+            );
         }
 
         return false;

@@ -1,19 +1,18 @@
-import { GridOptions } from "../../entities/gridOptions";
+import { ComponentUtil } from '../../components/componentUtil';
+import { GridOptions } from '../../entities/gridOptions';
 import { ModuleNames } from '../../modules/moduleNames';
-import { Deprecations, OptionsValidator, Validations } from "../validationTypes";
-import { COL_DEF_VALIDATORS } from "./colDefValidations";
-import { PropertyKeys } from "../../propertyKeys";
-import { ComponentUtil } from "../../components/componentUtil";
+import { PropertyKeys } from '../../propertyKeys';
+import { Deprecations, OptionsValidator, Validations } from '../validationTypes';
+import { COL_DEF_VALIDATORS } from './colDefValidations';
 
 /**
  * Deprecations have been kept separately for ease of removing them in the future.
- * 
+ *
  * If the property was simply renamed, use the `renamed` property. The value will be implicitly copied to the new property.
  */
 const GRID_OPTION_DEPRECATIONS: Deprecations<GridOptions> = {
-    
-    advancedFilterModel: { version: '31', message: 'Use `initialState.filter.advancedFilterModel` instead.'},
-    suppressAsyncEvents: { version: '31', message: 'Events should be handled asynchronously.'},
+    advancedFilterModel: { version: '31', message: 'Use `initialState.filter.advancedFilterModel` instead.' },
+    suppressAsyncEvents: { version: '31', message: 'Events should be handled asynchronously.' },
 
     cellFadeDelay: { version: '31.1', renamed: 'cellFadeDuration' },
     cellFlashDelay: { version: '31.1', renamed: 'cellFlashDuration' },
@@ -22,7 +21,10 @@ const GRID_OPTION_DEPRECATIONS: Deprecations<GridOptions> = {
     serverSideSortOnServer: { version: '31.1' },
     serverSideFilterOnServer: { version: '31.1' },
 
-    enableCellChangeFlash: { version: '31.2', message: 'Use `enableCellChangeFlash` in the `ColDef` or `defaultColDef` for all columns.'},
+    enableCellChangeFlash: {
+        version: '31.2',
+        message: 'Use `enableCellChangeFlash` in the `ColDef` or `defaultColDef` for all columns.',
+    },
 
     groupIncludeFooter: { version: '31.3', message: 'Use `groupTotalRow` instead.' },
     groupIncludeTotalFooter: { version: '31.3', message: 'Use `grandTotalRow` instead.' },
@@ -243,12 +245,12 @@ const GRID_OPTION_VALIDATIONS: Validations<GridOptions> = {
     enableRangeHandle: {
         dependencies: {
             enableRangeSelection: [true],
-        }
+        },
     },
     enableFillHandle: {
         dependencies: {
             enableRangeSelection: [true],
-        }
+        },
     },
 
     groupDefaultExpanded: {
@@ -275,18 +277,18 @@ const GRID_OPTION_VALIDATIONS: Validations<GridOptions> = {
         dependencies: {
             groupHideOpenParents: [undefined, false],
             groupRemoveLowestSingleChildren: [undefined, false],
-        }
+        },
     },
     groupRemoveLowestSingleChildren: {
         dependencies: {
             groupHideOpenParents: [undefined, false],
             groupRemoveSingleChildren: [undefined, false],
-        }
+        },
     },
     groupSelectsChildren: {
         dependencies: {
             rowSelection: ['multiple'],
-        }
+        },
     },
 
     viewportDatasource: {
@@ -317,10 +319,7 @@ const GRID_OPTION_VALIDATIONS: Validations<GridOptions> = {
 
 export const GRID_OPTIONS_VALIDATORS: OptionsValidator<GridOptions> = {
     objectName: 'gridOptions',
-    allProperties: [
-        ...PropertyKeys.ALL_PROPERTIES,
-        ...ComponentUtil.EVENT_CALLBACKS,
-    ],
+    allProperties: [...PropertyKeys.ALL_PROPERTIES, ...ComponentUtil.EVENT_CALLBACKS],
     propertyExceptions: ['api'],
     docsUrl: 'grid-options/',
     deprecations: GRID_OPTION_DEPRECATIONS,

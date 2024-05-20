@@ -17,15 +17,9 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "ES2022",
-    "lib": [
-      "es2018",
-      "dom"
-    ],
+    "lib": ["es2018", "dom"],
     "paths": {
-      "ag-grid-angular": [
-        "dist/ag-grid-angular/ag-grid-angular",
-        "dist/ag-grid-angular"
-      ]
+      "ag-grid-angular": ["dist/ag-grid-angular/ag-grid-angular", "dist/ag-grid-angular"]
     },
     "useDefineForClassFields": false
   },

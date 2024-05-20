@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, readFileSync } from 'fs';
+import { existsSync, readFileSync, readdirSync } from 'fs';
 import path from 'path';
 
 import type { InternalFramework, TransformTsFileExt } from '../types';

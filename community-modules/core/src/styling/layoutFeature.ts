@@ -1,7 +1,7 @@
-import { PostConstruct } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { DomLayoutType } from "../entities/gridOptions";
-import { _warnOnce } from "../utils/function";
+import { BeanStub } from '../context/beanStub';
+import { PostConstruct } from '../context/context';
+import { DomLayoutType } from '../entities/gridOptions';
+import { _warnOnce } from '../utils/function';
 
 export interface LayoutView {
     updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams): void;
@@ -10,7 +10,7 @@ export interface LayoutView {
 export enum LayoutCssClasses {
     AUTO_HEIGHT = 'ag-layout-auto-height',
     NORMAL = 'ag-layout-normal',
-    PRINT = 'ag-layout-print'
+    PRINT = 'ag-layout-print',
 }
 
 export interface UpdateLayoutClassesParams {
@@ -38,10 +38,13 @@ export class LayoutFeature extends BeanStub {
         const params = {
             autoHeight: domLayout === 'autoHeight',
             normal: domLayout === 'normal',
-            print: domLayout === 'print'
+            print: domLayout === 'print',
         };
-        const cssClass = params.autoHeight ? LayoutCssClasses.AUTO_HEIGHT :
-                            params.print ? LayoutCssClasses.PRINT : LayoutCssClasses.NORMAL;
+        const cssClass = params.autoHeight
+            ? LayoutCssClasses.AUTO_HEIGHT
+            : params.print
+              ? LayoutCssClasses.PRINT
+              : LayoutCssClasses.NORMAL;
         this.view.updateLayoutClasses(cssClass, params);
     }
 
@@ -57,5 +60,4 @@ export class LayoutFeature extends BeanStub {
 
         return domLayout;
     }
-
 }

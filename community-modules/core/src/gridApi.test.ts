@@ -1,5 +1,6 @@
+import { beforeAll, describe, expect, jest, test } from '@jest/globals';
+
 import { GridApi } from './gridApi';
-import { describe, test, beforeAll, jest, expect } from '@jest/globals';
 
 interface RowData {
     name: string;
@@ -87,7 +88,7 @@ describe('GridApi setGridOption, updateGridOptions types', () => {
     describe('getters', () => {
         describe('columnDefs', () => {
             beforeAll(() => {
-                jest.spyOn(GridApi.prototype, 'getGridOption').mockImplementation(() => [{ field: 'name'}]);
+                jest.spyOn(GridApi.prototype, 'getGridOption').mockImplementation(() => [{ field: 'name' }]);
             });
 
             test('no TData generic', () => {
@@ -118,7 +119,7 @@ describe('GridApi setGridOption, updateGridOptions types', () => {
 
         describe('rowData', () => {
             beforeAll(() => {
-                jest.spyOn(GridApi.prototype, 'getGridOption').mockImplementation(() => [{ name: 'a'}]);
+                jest.spyOn(GridApi.prototype, 'getGridOption').mockImplementation(() => [{ name: 'a' }]);
             });
 
             test('no TData generic', () => {

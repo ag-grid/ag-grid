@@ -4,7 +4,13 @@ export function RefSelector(ref: string): Function {
     return querySelectorFunc.bind(this, `[ref=${ref}]`, ref);
 }
 
-function querySelectorFunc(selector: string, refSelector: string, classPrototype: any, methodOrAttributeName: string, index: number) {
+function querySelectorFunc(
+    selector: string,
+    refSelector: string,
+    classPrototype: any,
+    methodOrAttributeName: string,
+    index: number
+) {
     if (selector === null) {
         console.error('AG Grid: QuerySelector selector should not be null');
         return;
@@ -18,7 +24,7 @@ function querySelectorFunc(selector: string, refSelector: string, classPrototype
     addToObjectProps(classPrototype, 'querySelectors', {
         attributeName: methodOrAttributeName,
         querySelector: selector,
-        refSelector: refSelector
+        refSelector: refSelector,
     });
 }
 

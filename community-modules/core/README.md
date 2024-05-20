@@ -1,4 +1,4 @@
-![AG Grid HTML5 Grid trusted by the community, built for enterprise](./github-banner.png "AG Grid")
+![AG Grid HTML5 Grid trusted by the community, built for enterprise](./github-banner.png 'AG Grid')
 
 [![CDNJS](https://img.shields.io/cdnjs/v/ag-grid)](https://cdnjs.com/libraries/ag-grid) [![Github Stars](https://img.shields.io/github/stars/ag-grid/ag-grid?style=social)](https://github.com/ag-grid/ag-grid) [![Twitter](https://img.shields.io/twitter/follow/ag_grid?style=social)](https://twitter.com/ag_grid)
 
@@ -14,7 +14,7 @@ Check out the [developer documentation](https://www.ag-grid.com/documentation/?u
 
 ## Core Module
 
-This package is the [core](https://ag-grid.com/angular-data-grid/modules/) feature module for the grid  to be used when working with AG Grid module setup in order to minimise your bundle size.
+This package is the [core](https://ag-grid.com/angular-data-grid/modules/) feature module for the grid to be used when working with AG Grid module setup in order to minimise your bundle size.
 
 ## Issue Reporting
 

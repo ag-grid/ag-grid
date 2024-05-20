@@ -1,13 +1,9 @@
-import {
-    AgCheckbox,
-    Autowired,
-    Component,
-    PostConstruct
-} from "@ag-grid-community/core";
-import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
-import { AgColorPicker } from "../../../../../widgets/agColorPicker";
+import { AgCheckbox, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+
+import { AgColorPicker } from '../../../../../widgets/agColorPicker';
+import { ChartTranslationService } from '../../../services/chartTranslationService';
+import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class CrosshairPanel extends Component {
     public static TEMPLATE = /* html */ `<div>
@@ -26,14 +22,17 @@ export class CrosshairPanel extends Component {
 
     @PostConstruct
     private init() {
-        const crosshairGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>('crosshair.enabled', {
-            cssIdentifier: 'charts-advanced-settings-top-level',
-            direction: 'vertical',
-            suppressOpenCloseIcons: true,
-            title: this.chartTranslationService.translate('crosshair'),
-            suppressEnabledCheckbox: true,
-            useToggle: true
-        });
+        const crosshairGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(
+            'crosshair.enabled',
+            {
+                cssIdentifier: 'charts-advanced-settings-top-level',
+                direction: 'vertical',
+                suppressOpenCloseIcons: true,
+                title: this.chartTranslationService.translate('crosshair'),
+                suppressEnabledCheckbox: true,
+                useToggle: true,
+            }
+        );
         const crosshairLabelCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'crosshair.label.enabled',
             'crosshairLabel'
@@ -46,11 +45,11 @@ export class CrosshairPanel extends Component {
             'crosshair.stroke',
             'color'
         );
-        this.setTemplate(CrosshairPanel.TEMPLATE, [ AgGroupComponent, AgCheckbox, AgColorPicker], {
+        this.setTemplate(CrosshairPanel.TEMPLATE, [AgGroupComponent, AgCheckbox, AgColorPicker], {
             crosshairGroup: crosshairGroupParams,
             crosshairLabelCheckbox: crosshairLabelCheckboxParams,
             crosshairSnapCheckbox: crosshairSnapCheckboxParams,
-            crosshairStrokeColorPicker: crosshairStrokeColorPickerParams
+            crosshairStrokeColorPicker: crosshairStrokeColorPickerParams,
         });
     }
 }

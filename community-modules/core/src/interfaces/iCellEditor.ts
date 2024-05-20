@@ -1,8 +1,8 @@
-import { ColDef } from "../entities/colDef";
-import { Column } from "../entities/column";
-import { AgGridCommon } from "./iCommon";
-import { IPopupComponent } from "./iPopupComponent";
-import { IRowNode } from "./iRowNode";
+import { ColDef } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { AgGridCommon } from './iCommon';
+import { IPopupComponent } from './iPopupComponent';
+import { IRowNode } from './iRowNode';
 
 export interface BaseCellEditor<TData = any, TValue = any, TContext = any> {
     /** Optional: Gets called once after initialised. If you return true, the editor will not be
@@ -98,4 +98,5 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
 }
 
 export interface ICellEditorComp<TData = any, TValue = any, TContext = any>
-    extends ICellEditor<TValue>, IPopupComponent<ICellEditorParams<TData, TValue, TContext>> { }
+    extends ICellEditor<TValue>,
+        IPopupComponent<ICellEditorParams<TData, TValue, TContext>> {}

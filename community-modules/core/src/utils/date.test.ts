@@ -1,4 +1,4 @@
-import { _serialiseDate, _parseDateTimeFromString } from './date';
+import { _parseDateTimeFromString, _serialiseDate } from './date';
 
 describe('_serialiseDate', () => {
     it('returns null if no date is supplied', () => {
@@ -42,20 +42,12 @@ describe('_parseDateTimeFromString', () => {
         expect(result).toStrictEqual(new Date(2020, 2, 27));
     });
 
-    it.each(
-        [
-            null,
-            '2017',
-            '2017-',
-            '2017-03',
-            '2017-03-',
-            '2017-00-04',
-            '2017-13-05',
-            '2017-02-30'
-        ])
-        ('returns null if invalid value supplied: %s', value => {
+    it.each([null, '2017', '2017-', '2017-03', '2017-03-', '2017-00-04', '2017-13-05', '2017-02-30'])(
+        'returns null if invalid value supplied: %s',
+        (value) => {
             expect(_parseDateTimeFromString(value)).toBeNull();
-        });
+        }
+    );
 
     it('can parse date with time', () => {
         const value = '2020-03-30 14:19:34';
@@ -64,14 +56,9 @@ describe('_parseDateTimeFromString', () => {
         expect(result).toStrictEqual(new Date(2020, 2, 30, 14, 19, 34));
     });
 
-    it.each(
-        [
-            '25:61:61',
-            '-1:-1:-1',
-        ])
-        ('ignores invalid time parts: %s', value => {
-            const result = _parseDateTimeFromString('2020-03-30 ' + value);
+    it.each(['25:61:61', '-1:-1:-1'])('ignores invalid time parts: %s', (value) => {
+        const result = _parseDateTimeFromString('2020-03-30 ' + value);
 
-            expect(result).toStrictEqual(new Date(2020, 2, 30));
-        });
+        expect(result).toStrictEqual(new Date(2020, 2, 30));
+    });
 });

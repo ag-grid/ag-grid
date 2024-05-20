@@ -1,5 +1,5 @@
-import { SideBarState } from "./gridState";
-import { IToolPanel } from "./iToolPanel";
+import { SideBarState } from './gridState';
+import { IToolPanel } from './iToolPanel';
 
 export interface ISideBarService {
     getSideBarComp(): ISideBar;
@@ -7,18 +7,17 @@ export interface ISideBarService {
 
 export interface ISideBar {
     refresh(): void;
-    setDisplayed(show:boolean): void;
+    setDisplayed(show: boolean): void;
     setSideBarPosition(position?: 'left' | 'right'): void;
     isToolPanelShowing(): boolean;
     openToolPanel(key: string, source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api'): void;
-    getToolPanelInstance(key:string): IToolPanel | undefined;
+    getToolPanelInstance(key: string): IToolPanel | undefined;
     close(source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api'): void;
     openedItem(): string | null;
     isDisplayed(): boolean;
     getDef(): SideBarDef | undefined;
     getState(): SideBarState;
 }
-
 
 export interface ToolPanelDef {
     /** The unique ID for this panel. Used in the API and elsewhere to refer to the panel. */

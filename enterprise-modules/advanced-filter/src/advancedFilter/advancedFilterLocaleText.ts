@@ -1,6 +1,8 @@
 export const ADVANCED_FILTER_LOCALE_TEXT = {
-    ariaAdvancedFilterBuilderItem: (variableValues: string[]) => `${variableValues[0]}. Level ${variableValues[1]}. Press ENTER to edit.`,
-    ariaAdvancedFilterBuilderItemValidation: (variableValues: string[]) => `${variableValues[0]}. Level ${variableValues[1]}. ${variableValues[2]} Press ENTER to edit.`,
+    ariaAdvancedFilterBuilderItem: (variableValues: string[]) =>
+        `${variableValues[0]}. Level ${variableValues[1]}. Press ENTER to edit.`,
+    ariaAdvancedFilterBuilderItemValidation: (variableValues: string[]) =>
+        `${variableValues[0]}. Level ${variableValues[1]}. ${variableValues[2]} Press ENTER to edit.`,
     ariaAdvancedFilterBuilderList: 'Advanced Filter Builder List',
     ariaAdvancedFilterBuilderFilterItem: 'Filter Condition',
     ariaAdvancedFilterBuilderGroupItem: 'Filter Group',
@@ -8,7 +10,7 @@ export const ADVANCED_FILTER_LOCALE_TEXT = {
     ariaAdvancedFilterBuilderOption: 'Option',
     ariaAdvancedFilterBuilderValue: 'Value',
     ariaAdvancedFilterBuilderJoinOperator: 'Join Operator',
-    
+
     ariaAdvancedFilterInput: 'Advanced Filter Input',
     ariaLabelAdvancedFilterAutocomplete: 'Advanced Filter Autocomplete',
     advancedFilterContains: 'contains',
@@ -44,8 +46,10 @@ export const ADVANCED_FILTER_LOCALE_TEXT = {
     advancedFilterValidationInvalidJoinOperator: 'Join operator not found',
     advancedFilterValidationMissingEndBracket: 'Missing end bracket',
     advancedFilterValidationExtraEndBracket: 'Too many end brackets',
-    advancedFilterValidationMessage: (variableValues: string[]) => `Expression has an error. ${variableValues[0]} - ${variableValues[1]}.`,
-    advancedFilterValidationMessageAtEnd: (variableValues: string[]) => `Expression has an error. ${variableValues[0]} at end of expression.`,
+    advancedFilterValidationMessage: (variableValues: string[]) =>
+        `Expression has an error. ${variableValues[0]} - ${variableValues[1]}.`,
+    advancedFilterValidationMessageAtEnd: (variableValues: string[]) =>
+        `Expression has an error. ${variableValues[0]} at end of expression.`,
     advancedFilterBuilderTitle: 'Advanced Filter',
     advancedFilterBuilderApply: 'Apply',
     advancedFilterBuilderCancel: 'Cancel',

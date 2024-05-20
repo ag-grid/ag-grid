@@ -1,4 +1,5 @@
 import { AgComponentSelector, Autowired, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
+
 import { GridLicenseManager as LicenseManager } from './gridLicenseManager';
 
 export class AgWatermark extends Component {
@@ -7,7 +8,8 @@ export class AgWatermark extends Component {
     @RefSelector('eLicenseTextRef') private eLicenseTextRef: HTMLElement;
 
     constructor() {
-        super(/* html*/
+        super(
+            /* html*/
             `<div class="ag-watermark">
                 <div ref="eLicenseTextRef" class="ag-watermark-text"></div>
             </div>`

@@ -1,13 +1,13 @@
 import {
-    CellRange,
+    AgComponentSelector,
     CellPosition,
+    CellRange,
     CellRangeType,
     SelectionHandleType,
     _last,
-    AgComponentSelector,
-} from "@ag-grid-community/core";
+} from '@ag-grid-community/core';
 
-import { AbstractSelectionHandle } from "./abstractSelectionHandle";
+import { AbstractSelectionHandle } from './abstractSelectionHandle';
 
 export class AgRangeHandle extends AbstractSelectionHandle {
     static readonly selector: AgComponentSelector = 'ag-range-handle';
@@ -25,7 +25,9 @@ export class AgRangeHandle extends AbstractSelectionHandle {
     protected onDrag(e: MouseEvent) {
         const lastCellHovered = this.getLastCellHovered();
 
-        if (!lastCellHovered) { return; }
+        if (!lastCellHovered) {
+            return;
+        }
 
         const cellRanges = this.rangeService.getCellRanges();
         const lastRange = _last(cellRanges);
@@ -38,12 +40,19 @@ export class AgRangeHandle extends AbstractSelectionHandle {
         this.endPosition = {
             rowIndex: lastCellHovered.rowIndex,
             rowPinned: lastCellHovered.rowPinned,
-            column: lastCellHovered.column
+            column: lastCellHovered.column,
         };
 
         // check if the cell ranges are for a chart
-        if (cellRanges.length === 2 && cellRanges[0].type === CellRangeType.DIMENSION && lastRange.type === CellRangeType.VALUE) {
-            const rowChanged = !this.rowPositionUtils.sameRow(this.endPosition, this.rangeService.getRangeEndRow(lastRange));
+        if (
+            cellRanges.length === 2 &&
+            cellRanges[0].type === CellRangeType.DIMENSION &&
+            lastRange.type === CellRangeType.VALUE
+        ) {
+            const rowChanged = !this.rowPositionUtils.sameRow(
+                this.endPosition,
+                this.rangeService.getRangeEndRow(lastRange)
+            );
 
             if (rowChanged) {
                 // ensure the dimension range is kept in sync with the value range (which has the handle)
@@ -51,9 +60,9 @@ export class AgRangeHandle extends AbstractSelectionHandle {
                     cellRanges[0],
                     {
                         ...this.endPosition,
-                        column: cellRanges[0].columns[0]
+                        column: cellRanges[0].columns[0],
                     },
-                    true,
+                    true
                 );
             }
         }

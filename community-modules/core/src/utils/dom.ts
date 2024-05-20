@@ -17,7 +17,7 @@ let rtlNegativeScroll: boolean;
  */
 export function _radioCssClass(element: HTMLElement, elementClass: string | null, otherElementClass?: string | null) {
     const parent = element.parentElement;
-    let sibling = parent && parent.firstChild as HTMLElement;
+    let sibling = parent && (parent.firstChild as HTMLElement);
 
     while (sibling) {
         if (elementClass) {
@@ -34,8 +34,7 @@ export const FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, 
 export const FOCUSABLE_EXCLUDE = '[disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
 
 export function _isFocusableFormField(element: HTMLElement): boolean {
-    const matches: (str: string) => boolean =
-        Element.prototype.matches || (Element as any).prototype.msMatchesSelector;
+    const matches: (str: string) => boolean = Element.prototype.matches || (Element as any).prototype.msMatchesSelector;
 
     const inputSelector = 'input, select, button, textarea';
     const isFocusable = matches.call(element, inputSelector);
@@ -48,7 +47,7 @@ export function _isFocusableFormField(element: HTMLElement): boolean {
 }
 
 export function _setDisplayed(element: Element, displayed: boolean, options: { skipAriaHidden?: boolean } = {}) {
-    const  { skipAriaHidden } = options;
+    const { skipAriaHidden } = options;
     element.classList.toggle('ag-hidden', !displayed);
     if (!skipAriaHidden) {
         _setAriaHidden(element, !displayed);
@@ -56,7 +55,7 @@ export function _setDisplayed(element: Element, displayed: boolean, options: { s
 }
 
 export function _setVisible(element: HTMLElement, visible: boolean, options: { skipAriaHidden?: boolean } = {}) {
-    const  { skipAriaHidden } = options;
+    const { skipAriaHidden } = options;
     element.classList.toggle('ag-invisible', !visible);
     if (!skipAriaHidden) {
         _setAriaHidden(element, !visible);
@@ -65,13 +64,13 @@ export function _setVisible(element: HTMLElement, visible: boolean, options: { s
 
 export function _setDisabled(element: HTMLElement, disabled: boolean) {
     const attributeName = 'disabled';
-    const addOrRemoveDisabledAttribute = disabled ?
-        (e: HTMLElement) => e.setAttribute(attributeName, '') :
-        (e: HTMLElement) => e.removeAttribute(attributeName);
+    const addOrRemoveDisabledAttribute = disabled
+        ? (e: HTMLElement) => e.setAttribute(attributeName, '')
+        : (e: HTMLElement) => e.removeAttribute(attributeName);
 
     addOrRemoveDisabledAttribute(element);
 
-    _nodeListForEach(element.querySelectorAll('input'), input => addOrRemoveDisabledAttribute(input));
+    _nodeListForEach(element.querySelectorAll('input'), (input) => addOrRemoveDisabledAttribute(input));
 }
 
 export function _isElementChildOfClass(
@@ -89,8 +88,12 @@ export function _isElementChildOfClass(
         element = element.parentElement;
 
         if (typeof maxNest == 'number') {
-            if (++counter > maxNest) { break; }
-        } else if (element === maxNest) { break; }
+            if (++counter > maxNest) {
+                break;
+            }
+        } else if (element === maxNest) {
+            break;
+        }
     }
 
     return false;
@@ -101,20 +104,20 @@ export function _isElementChildOfClass(
 // a) work with fractions (eg browser is zooming)
 // b) has CSS transitions applied (eg CSS scale, browser zoom), which we don't want, we want the un-transitioned values
 export function _getElementSize(el: HTMLElement): {
-    height: number,
-    width: number,
-    borderTopWidth: number,
-    borderRightWidth: number,
-    borderBottomWidth: number,
-    borderLeftWidth: number,
-    paddingTop: number,
-    paddingRight: number,
-    paddingBottom: number,
-    paddingLeft: number,
-    marginTop: number,
-    marginRight: number,
-    marginBottom: number,
-    marginLeft: number,
+    height: number;
+    width: number;
+    borderTopWidth: number;
+    borderRightWidth: number;
+    borderBottomWidth: number;
+    borderLeftWidth: number;
+    paddingTop: number;
+    paddingRight: number;
+    paddingBottom: number;
+    paddingLeft: number;
+    marginTop: number;
+    marginRight: number;
+    marginBottom: number;
+    marginLeft: number;
     boxSizing: string;
 } {
     const {
@@ -132,7 +135,7 @@ export function _getElementSize(el: HTMLElement): {
         marginRight,
         marginBottom,
         marginLeft,
-        boxSizing
+        boxSizing,
     } = window.getComputedStyle(el);
 
     return {
@@ -150,7 +153,7 @@ export function _getElementSize(el: HTMLElement): {
         marginRight: parseFloat(marginRight || '0'),
         marginBottom: parseFloat(marginBottom || '0'),
         marginLeft: parseFloat(marginLeft || '0'),
-        boxSizing
+        boxSizing,
     };
 }
 
@@ -202,11 +205,11 @@ export function _getElementRectWithOffset(el: HTMLElement): {
         left: offsetElementRect.left + (borderLeftWidth || 0),
         right: offsetElementRect.right + (borderRightWidth || 0),
         bottom: offsetElementRect.bottom + (borderBottomWidth || 0),
-    }
+    };
 }
 
 export function _isRtlNegativeScroll(): boolean {
-    if (typeof rtlNegativeScroll === "boolean") {
+    if (typeof rtlNegativeScroll === 'boolean') {
         return rtlNegativeScroll;
     }
 
@@ -218,7 +221,8 @@ export function _isRtlNegativeScroll(): boolean {
     template.style.top = '0px';
     template.style.overflow = 'hidden';
     template.dir = 'rtl';
-    template.innerHTML = /* html */
+    template.innerHTML =
+        /* html */
         `<div style="width: 2px">
             <span style="display: inline-block; width: 1px"></span>
             <span style="display: inline-block; width: 1px"></span>
@@ -261,7 +265,9 @@ export function _setScrollLeft(element: HTMLElement, value: number, rtl: boolean
 }
 
 export function _clearElement(el: HTMLElement): void {
-    while (el && el.firstChild) { el.removeChild(el.firstChild); }
+    while (el && el.firstChild) {
+        el.removeChild(el.firstChild);
+    }
 }
 
 export function _removeFromParent(node: Element | null) {
@@ -277,7 +283,7 @@ export function _isInDOM(element: HTMLElement): boolean {
 export function _isVisible(element: HTMLElement) {
     const el = element as any;
     if (el.checkVisibility) {
-        return el.checkVisibility({ checkVisibilityCSS: true })
+        return el.checkVisibility({ checkVisibilityCSS: true });
     }
 
     const isHidden = !_isInDOM(element) || window.getComputedStyle(element).visibility !== 'visible';
@@ -351,10 +357,14 @@ export function _insertWithDomOrder(
 }
 
 export function _addStylesToElement(eElement: any, styles: RowStyle | CellStyle | null | undefined) {
-    if (!styles) { return; }
+    if (!styles) {
+        return;
+    }
 
     for (const [key, value] of Object.entries(styles)) {
-        if (!key || !key.length || value == null) { continue; }
+        if (!key || !key.length || value == null) {
+            continue;
+        }
 
         // changes the key from camelCase into a hyphenated-string
         const parsedKey = _camelCaseToHyphenated(key);
@@ -428,17 +438,21 @@ export function _isNodeOrElement(o: any) {
  * @returns {Node[]}
  */
 export function _copyNodeList(nodeList: NodeListOf<Node> | null): Node[] {
-    if (nodeList == null) { return []; }
+    if (nodeList == null) {
+        return [];
+    }
 
     const result: Node[] = [];
 
-    _nodeListForEach(nodeList, node => result.push(node));
+    _nodeListForEach(nodeList, (node) => result.push(node));
 
     return result;
 }
 
 export function _iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void {
-    if (!map) { return; }
+    if (!map) {
+        return;
+    }
 
     for (let i = 0; i < map.length; i++) {
         const attr = map[i];
@@ -455,7 +469,9 @@ export function _addOrRemoveAttribute(element: HTMLElement, name: string, value:
 }
 
 export function _nodeListForEach<T extends Node>(nodeList: NodeListOf<T> | null, action: (value: T) => void): void {
-    if (nodeList == null) { return; }
+    if (nodeList == null) {
+        return;
+    }
 
     for (let i = 0; i < nodeList.length; i++) {
         action(nodeList[i]);
@@ -468,8 +484,11 @@ export function _nodeListForEach<T extends Node>(nodeList: NodeListOf<T> | null,
  * @param {AgPromise<ICellRendererComp>} cellRendererPromise
  * @param {HTMLElement} eTarget
  */
-export function _bindCellRendererToHtmlElement(cellRendererPromise: AgPromise<ICellRendererComp>, eTarget: HTMLElement) {
-    cellRendererPromise.then(cellRenderer => {
+export function _bindCellRendererToHtmlElement(
+    cellRendererPromise: AgPromise<ICellRendererComp>,
+    eTarget: HTMLElement
+) {
+    cellRendererPromise.then((cellRenderer) => {
         const gui: HTMLElement | string = cellRenderer!.getGui();
 
         if (gui != null) {

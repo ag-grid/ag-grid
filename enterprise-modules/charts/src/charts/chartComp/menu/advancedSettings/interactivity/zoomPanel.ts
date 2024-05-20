@@ -1,12 +1,7 @@
-import {
-    AgCheckbox,
-    Autowired,
-    Component,
-    PostConstruct,
-    RefSelector
-} from '@ag-grid-community/core';
-import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
-import { AgSlider } from "../../../../../widgets/agSlider";
+import { AgCheckbox, Autowired, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+
+import { AgSlider } from '../../../../../widgets/agSlider';
 import { ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -35,7 +30,7 @@ export class ZoomPanel extends Component {
             suppressOpenCloseIcons: true,
             title: this.chartTranslationService.translate('zoom'),
             suppressEnabledCheckbox: true,
-            useToggle: true
+            useToggle: true,
         });
         const zoomScrollingCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'zoom.enableScrolling',
@@ -44,7 +39,7 @@ export class ZoomPanel extends Component {
         const zoomScrollingStepSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams(
             'zoom.scrollingStep',
             'scrollingStep',
-            1,
+            1
         );
         zoomScrollingStepSliderParams.step = 0.01;
         zoomScrollingStepSliderParams.minValue = zoomScrollingStepSliderParams.step;
@@ -60,7 +55,7 @@ export class ZoomPanel extends Component {
             this.zoomScrollingStepInput.setDisabled(!value);
         })(zoomScrollingCheckboxParams.onValueChange);
 
-        this.setTemplate(ZoomPanel.TEMPLATE, [ AgGroupComponent, AgCheckbox, AgSlider ], {
+        this.setTemplate(ZoomPanel.TEMPLATE, [AgGroupComponent, AgCheckbox, AgSlider], {
             zoomGroup: zoomGroupParams,
             zoomScrollingCheckbox: zoomScrollingCheckboxParams,
             zoomScrollingStepInput: zoomScrollingStepSliderParams,

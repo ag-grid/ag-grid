@@ -124,10 +124,7 @@
             "gridStyle": [
                 {
                     "stroke": "rgb(219, 219, 219)",
-                    "lineDash": [
-                        4,
-                        2
-                    ]
+                    "lineDash": [4, 2]
                 }
             ]
         },
@@ -166,10 +163,7 @@
             "gridStyle": [
                 {
                     "stroke": "rgb(219, 219, 219)",
-                    "lineDash": [
-                        4,
-                        2
-                    ]
+                    "lineDash": [4, 2]
                 }
             ]
         },
@@ -191,29 +185,11 @@
                 "enabled": true
             },
             "fill": {
-                "colors": [
-                    "#f3622d",
-                    "#fba71b",
-                    "#57b757",
-                    "#41a9c9",
-                    "#4258c9",
-                    "#9a42c8",
-                    "#c84164",
-                    "#888888"
-                ],
+                "colors": ["#f3622d", "#fba71b", "#57b757", "#41a9c9", "#4258c9", "#9a42c8", "#c84164", "#888888"],
                 "opacity": 1
             },
             "stroke": {
-                "colors": [
-                    "#aa4520",
-                    "#b07513",
-                    "#3d803d",
-                    "#2d768d",
-                    "#2e3e8d",
-                    "#6c2e8c",
-                    "#8c2d46",
-                    "#5f5f5f"
-                ],
+                "colors": ["#aa4520", "#b07513", "#3d803d", "#2d768d", "#2e3e8d", "#6c2e8c", "#8c2d46", "#5f5f5f"],
                 "opacity": 1,
                 "width": 1
             },
@@ -258,10 +234,7 @@
                 "gridStyle": [
                     {
                         "stroke": "rgb(219, 219, 219)",
-                        "lineDash": [
-                            4,
-                            2
-                        ]
+                        "lineDash": [4, 2]
                     }
                 ],
                 "position": "bottom",
@@ -302,10 +275,7 @@
                 "gridStyle": [
                     {
                         "stroke": "rgb(219, 219, 219)",
-                        "lineDash": [
-                            4,
-                            2
-                        ]
+                        "lineDash": [4, 2]
                     }
                 ],
                 "position": "left",
@@ -331,29 +301,11 @@
                     "enabled": true
                 },
                 "fill": {
-                    "colors": [
-                        "#f3622d",
-                        "#fba71b",
-                        "#57b757",
-                        "#41a9c9",
-                        "#4258c9",
-                        "#9a42c8",
-                        "#c84164",
-                        "#888888"
-                    ],
+                    "colors": ["#f3622d", "#fba71b", "#57b757", "#41a9c9", "#4258c9", "#9a42c8", "#c84164", "#888888"],
                     "opacity": 1
                 },
                 "stroke": {
-                    "colors": [
-                        "#aa4520",
-                        "#b07513",
-                        "#3d803d",
-                        "#2d768d",
-                        "#2e3e8d",
-                        "#6c2e8c",
-                        "#8c2d46",
-                        "#5f5f5f"
-                    ],
+                    "colors": ["#aa4520", "#b07513", "#3d803d", "#2d768d", "#2e3e8d", "#6c2e8c", "#8c2d46", "#5f5f5f"],
                     "opacity": 1,
                     "width": 1
                 },
@@ -362,27 +314,9 @@
                 },
                 "type": "column",
                 "grouped": true,
-                "fills": [
-                    "#f3622d",
-                    "#fba71b",
-                    "#57b757",
-                    "#41a9c9",
-                    "#4258c9",
-                    "#9a42c8",
-                    "#c84164",
-                    "#888888"
-                ],
+                "fills": ["#f3622d", "#fba71b", "#57b757", "#41a9c9", "#4258c9", "#9a42c8", "#c84164", "#888888"],
                 "fillOpacity": 1,
-                "strokes": [
-                    "#aa4520",
-                    "#b07513",
-                    "#3d803d",
-                    "#2d768d",
-                    "#2e3e8d",
-                    "#6c2e8c",
-                    "#8c2d46",
-                    "#5f5f5f"
-                ],
+                "strokes": ["#aa4520", "#b07513", "#3d803d", "#2d768d", "#2e3e8d", "#6c2e8c", "#8c2d46", "#5f5f5f"],
                 "strokeOpacity": 1,
                 "strokeWidth": 1
             }
@@ -392,11 +326,6 @@
     "cellRange": {
         "rowStartIndex": 0,
         "rowEndIndex": 6,
-        "columns": [
-            "country",
-            "sugar",
-            "fat",
-            "weight"
-        ]
+        "columns": ["country", "sugar", "fat", "weight"]
     }
 }

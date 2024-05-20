@@ -1,17 +1,18 @@
 import {
+    Autowired,
+    Beans,
     IGetRowsParams,
+    LoadSuccessParams,
     NumberSequence,
     PostConstruct,
     PreDestroy,
     RowNode,
     RowNodeBlock,
-    LoadSuccessParams,
-    Beans,
-    Autowired,
+    _exists,
     _missing,
-    _exists
-} from "@ag-grid-community/core";
-import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
+} from '@ag-grid-community/core';
+
+import { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
 
 export class InfiniteBlock extends RowNodeBlock {
     @Autowired('beans') private beans: Beans;
@@ -43,15 +44,15 @@ export class InfiniteBlock extends RowNodeBlock {
         this.createRowNodes();
     }
 
-    public getBlockStateJson(): {id: string, state: any} {
+    public getBlockStateJson(): { id: string; state: any } {
         return {
             id: '' + this.getId(),
             state: {
                 blockNumber: this.getId(),
                 startRow: this.getStartRow(),
                 endRow: this.getEndRow(),
-                pageStatus: this.getState()
-            }
+                pageStatus: this.getState(),
+            },
         };
     }
 
@@ -96,14 +97,16 @@ export class InfiniteBlock extends RowNodeBlock {
             failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
             sortModel: this.params.sortModel,
             filterModel: this.params.filterModel,
-            context: this.gos.getGridCommonParams().context
+            context: this.gos.getGridCommonParams().context,
         };
         return params;
     }
 
-    public forEachNode(callback: (rowNode: RowNode, index: number) => void,
-                       sequence: NumberSequence,
-                       rowCount: number): void {
+    public forEachNode(
+        callback: (rowNode: RowNode, index: number) => void,
+        sequence: NumberSequence,
+        rowCount: number
+    ): void {
         this.rowNodes.forEach((rowNode: RowNode, index: number) => {
             const rowIndex = this.startRow + index;
             if (rowIndex < rowCount) {
@@ -173,7 +176,7 @@ export class InfiniteBlock extends RowNodeBlock {
 
     @PreDestroy
     private destroyRowNodes(): void {
-        this.rowNodes.forEach(rowNode => {
+        this.rowNodes.forEach((rowNode) => {
             // this is needed, so row render knows to fade out the row, otherwise it
             // sees row top is present, and thinks the row should be shown.
             rowNode.clearRowTopAndRowIndex();

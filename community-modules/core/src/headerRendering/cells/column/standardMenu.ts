@@ -1,24 +1,23 @@
-import { Autowired, Bean } from '../../../context/context';
-import { BeanStub } from "../../../context/beanStub";
-import { IMenuFactory } from '../../../interfaces/iMenuFactory';
-import { FilterManager } from '../../../filter/filterManager';
-import { Column } from '../../../entities/column';
-import { PopupService } from '../../../widgets/popupService';
-import { FocusService } from '../../../focusService';
-import { _isVisible } from '../../../utils/dom';
 import { KeyCode } from '../../../constants/keyCode';
-import { ContainerType } from '../../../interfaces/iAfterGuiAttachedParams';
+import { BeanStub } from '../../../context/beanStub';
+import { Autowired, Bean } from '../../../context/context';
 import { CtrlsService } from '../../../ctrlsService';
-import { _setAriaRole } from '../../../utils/aria';
-import { MenuService } from '../../../misc/menuService';
-import { WithoutGridCommon } from '../../../interfaces/iCommon';
-import { ColumnMenuVisibleChangedEvent } from '../../../events';
+import { Column } from '../../../entities/column';
 import { Events } from '../../../eventKeys';
+import { ColumnMenuVisibleChangedEvent } from '../../../events';
+import { FilterManager } from '../../../filter/filterManager';
 import { FilterWrapperComp } from '../../../filter/filterWrapperComp';
+import { FocusService } from '../../../focusService';
+import { ContainerType } from '../../../interfaces/iAfterGuiAttachedParams';
+import { WithoutGridCommon } from '../../../interfaces/iCommon';
+import { IMenuFactory } from '../../../interfaces/iMenuFactory';
+import { MenuService } from '../../../misc/menuService';
+import { _setAriaRole } from '../../../utils/aria';
+import { _isVisible } from '../../../utils/dom';
+import { PopupService } from '../../../widgets/popupService';
 
 @Bean('filterMenuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
-
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusService') private focusService: FocusService;
@@ -35,18 +34,32 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         }
     }
 
-    public showMenuAfterMouseEvent(column: Column | undefined, mouseEvent: MouseEvent | Touch, containerType: ContainerType): void {
-        this.showPopup(column, eMenu => {
-            this.popupService.positionPopupUnderMouseEvent({
-                column,
-                type: containerType,
-                mouseEvent,
-                ePopup: eMenu
-            });
-        }, containerType, mouseEvent.target as HTMLElement, this.menuService.isLegacyMenuEnabled());
+    public showMenuAfterMouseEvent(
+        column: Column | undefined,
+        mouseEvent: MouseEvent | Touch,
+        containerType: ContainerType
+    ): void {
+        this.showPopup(
+            column,
+            (eMenu) => {
+                this.popupService.positionPopupUnderMouseEvent({
+                    column,
+                    type: containerType,
+                    mouseEvent,
+                    ePopup: eMenu,
+                });
+            },
+            containerType,
+            mouseEvent.target as HTMLElement,
+            this.menuService.isLegacyMenuEnabled()
+        );
     }
 
-    public showMenuAfterButtonClick(column: Column | undefined, eventSource: HTMLElement, containerType: ContainerType): void {
+    public showMenuAfterButtonClick(
+        column: Column | undefined,
+        eventSource: HTMLElement,
+        containerType: ContainerType
+    ): void {
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
 
@@ -55,22 +68,28 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             multiplier = 1;
             alignSide = 'right';
         }
-        const nudgeX = isLegacyMenuEnabled ? undefined : (4 * multiplier);
+        const nudgeX = isLegacyMenuEnabled ? undefined : 4 * multiplier;
         const nudgeY = isLegacyMenuEnabled ? undefined : 4;
 
-        this.showPopup(column, eMenu => {
-            this.popupService.positionPopupByComponent({
-                type: containerType,
-                eventSource,
-                ePopup: eMenu,
-                nudgeX,
-                nudgeY,
-                alignSide,
-                keepWithinBounds: true,
-                position: 'under',
-                column,
-            });
-        }, containerType, eventSource, isLegacyMenuEnabled);
+        this.showPopup(
+            column,
+            (eMenu) => {
+                this.popupService.positionPopupByComponent({
+                    type: containerType,
+                    eventSource,
+                    ePopup: eMenu,
+                    nudgeX,
+                    nudgeY,
+                    alignSide,
+                    keepWithinBounds: true,
+                    position: 'under',
+                    column,
+                });
+            },
+            containerType,
+            eventSource,
+            isLegacyMenuEnabled
+        );
     }
 
     private showPopup(
@@ -98,11 +117,13 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         eMenu.appendChild(comp?.getGui()!);
 
-        let hidePopup: (() => void);
+        let hidePopup: () => void;
 
         const afterGuiDetached = () => comp?.afterGuiDetached();
 
-        const anchorToElement = this.menuService.isColumnMenuAnchoringEnabled() ? (eventSource ?? this.ctrlsService.getGridBodyCtrl().getGui()) : undefined;
+        const anchorToElement = this.menuService.isColumnMenuAnchoringEnabled()
+            ? eventSource ?? this.ctrlsService.getGridBodyCtrl().getGui()
+            : undefined;
         const closedCallback = (e: MouseEvent | TouchEvent | KeyboardEvent) => {
             column.setMenuVisible(false, 'contextMenu');
             const isKeyboardEvent = e instanceof KeyboardEvent;
@@ -114,7 +135,9 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             if (isKeyboardEvent && eventSource && _isVisible(eventSource)) {
                 const focusableEl = this.focusService.findTabbableParent(eventSource);
 
-                if (focusableEl) { focusableEl.focus(); }
+                if (focusableEl) {
+                    focusableEl.focus();
+                }
             }
             afterGuiDetached();
             this.destroyBean(this.activeMenu);
@@ -123,9 +146,10 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         const translate = this.localeService.getLocaleTextFunc();
 
-        const ariaLabel = isLegacyMenuEnabled && containerType !== 'columnFilter'
-            ? translate('ariaLabelColumnMenu', 'Column Menu')
-            : translate('ariaLabelColumnFilter', 'Column Filter');
+        const ariaLabel =
+            isLegacyMenuEnabled && containerType !== 'columnFilter'
+                ? translate('ariaLabelColumnMenu', 'Column Menu')
+                : translate('ariaLabelColumnFilter', 'Column Filter');
 
         const addPopupRes = this.popupService.addPopup({
             modal: true,
@@ -134,7 +158,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             closedCallback,
             positionCallback: () => positionCallback(eMenu),
             anchorToElement,
-            ariaLabel
+            ariaLabel,
         });
 
         if (addPopupRes) {
@@ -155,9 +179,11 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     private trapFocusWithin(e: KeyboardEvent, menu: HTMLElement) {
-        if (e.key !== KeyCode.TAB ||
+        if (
+            e.key !== KeyCode.TAB ||
             e.defaultPrevented ||
-            this.focusService.findNextFocusableElement(menu, false, e.shiftKey)) {
+            this.focusService.findNextFocusableElement(menu, false, e.shiftKey)
+        ) {
             return;
         }
 
@@ -172,9 +198,9 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             visible,
             switchingTab: false,
             key: containerType as 'columnMenu' | 'columnFilter' | 'floatingFilter',
-            column: column ?? null
-        }
-        this.eventService.dispatchEvent(displayedEvent)
+            column: column ?? null,
+        };
+        this.eventService.dispatchEvent(displayedEvent);
     }
 
     public isMenuEnabled(column: Column): boolean {

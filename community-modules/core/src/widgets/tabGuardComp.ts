@@ -1,10 +1,9 @@
-import { Component } from "./component";
-import { _isNodeOrElement, _clearElement } from "../utils/dom";
-import { TabGuardCtrl, ITabGuard, TabGuardClassNames } from "./tabGuardCtrl";
-import { _setAriaRole } from "../utils/aria";
+import { _setAriaRole } from '../utils/aria';
+import { _clearElement, _isNodeOrElement } from '../utils/dom';
+import { Component } from './component';
+import { ITabGuard, TabGuardClassNames, TabGuardCtrl } from './tabGuardCtrl';
 
 export class TabGuardComp extends Component {
-
     private eTopGuard: HTMLElement;
     private eBottomGuard: HTMLElement;
     private eFocusableElement: HTMLElement;
@@ -40,27 +39,33 @@ export class TabGuardComp extends Component {
         const tabGuards = [this.eTopGuard, this.eBottomGuard];
 
         const compProxy: ITabGuard = {
-            setTabIndex: tabIndex => {
-                tabGuards.forEach(tabGuard => tabIndex != null ? tabGuard.setAttribute('tabindex', tabIndex) : tabGuard.removeAttribute('tabindex'));
-            }
+            setTabIndex: (tabIndex) => {
+                tabGuards.forEach((tabGuard) =>
+                    tabIndex != null
+                        ? tabGuard.setAttribute('tabindex', tabIndex)
+                        : tabGuard.removeAttribute('tabindex')
+                );
+            },
         };
 
         this.addTabGuards(this.eTopGuard, this.eBottomGuard);
 
-        this.tabGuardCtrl = this.createManagedBean(new TabGuardCtrl({
-            comp: compProxy,
-            focusTrapActive: !!params.focusTrapActive,
-            eTopGuard: this.eTopGuard,
-            eBottomGuard: this.eBottomGuard,
-            eFocusableElement: this.eFocusableElement,
-            onFocusIn: params.onFocusIn,
-            onFocusOut: params.onFocusOut,
-            focusInnerElement: params.focusInnerElement,
-            handleKeyDown: params.handleKeyDown,
-            onTabKeyDown: params.onTabKeyDown,
-            shouldStopEventPropagation: params.shouldStopEventPropagation,
-            forceFocusOutWhenTabGuardsAreEmpty: params.forceFocusOutWhenTabGuardsAreEmpty
-        }));
+        this.tabGuardCtrl = this.createManagedBean(
+            new TabGuardCtrl({
+                comp: compProxy,
+                focusTrapActive: !!params.focusTrapActive,
+                eTopGuard: this.eTopGuard,
+                eBottomGuard: this.eBottomGuard,
+                eFocusableElement: this.eFocusableElement,
+                onFocusIn: params.onFocusIn,
+                onFocusOut: params.onFocusOut,
+                focusInnerElement: params.focusInnerElement,
+                handleKeyDown: params.handleKeyDown,
+                onTabKeyDown: params.onTabKeyDown,
+                shouldStopEventPropagation: params.shouldStopEventPropagation,
+                forceFocusOutWhenTabGuardsAreEmpty: params.forceFocusOutWhenTabGuardsAreEmpty,
+            })
+        );
     }
 
     private createTabGuard(side: 'top' | 'bottom'): HTMLElement {
@@ -88,10 +93,7 @@ export class TabGuardComp extends Component {
         this.tabGuardCtrl.forceFocusOutOfContainer(up);
     }
 
-    public appendChild(
-        newChild: Component | HTMLElement,
-        container?: HTMLElement | undefined
-    ): void {
+    public appendChild(newChild: Component | HTMLElement, container?: HTMLElement | undefined): void {
         if (!_isNodeOrElement(newChild)) {
             newChild = (newChild as Component).getGui();
         }

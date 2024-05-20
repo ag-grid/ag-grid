@@ -10,9 +10,10 @@ import {
     ProcessHeaderForExportParams,
     ProcessRowGroupForExportParams,
     RowNode,
-    ValueService
-} from "@ag-grid-community/core";
-import { GridSerializer } from "../gridSerializer";
+    ValueService,
+} from '@ag-grid-community/core';
+
+import { GridSerializer } from '../gridSerializer';
 
 export interface BaseCreatorBeans {
     gridSerializer: GridSerializer;
@@ -24,13 +25,19 @@ export interface RowAccumulator {
 }
 
 export interface RowSpanningAccumulator {
-    onColumn(columnGroup: ColumnGroup, header: string, index: number, span: number, collapsibleGroupRanges: number[][]): void;
+    onColumn(
+        columnGroup: ColumnGroup,
+        header: string,
+        index: number,
+        span: number,
+        collapsibleGroupRanges: number[][]
+    ): void;
 }
 
 export interface GridSerializingParams {
     columnModel: ColumnModel;
     funcColsService: FuncColsService;
-    columnNameService: ColumnNameService,
+    columnNameService: ColumnNameService;
     valueService: ValueService;
     gos: GridOptionsService;
     processCellCallback?: (params: ProcessCellForExportParams) => string;

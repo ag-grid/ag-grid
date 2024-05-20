@@ -5,17 +5,17 @@ import {
     Column,
     ColumnModel,
     ColumnNameService,
-    VisibleColsService,
     Events,
+    FuncColsService,
     PostConstruct,
     RowNode,
     RowPositionUtils,
+    ShowRowGroupColsService,
     ValueService,
-    FuncColsService,
-    ShowRowGroupColsService
-} from "@ag-grid-community/core";
+    VisibleColsService,
+} from '@ag-grid-community/core';
 
-@Bean("chartColumnService")
+@Bean('chartColumnService')
 export class ChartColumnService extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
@@ -62,13 +62,13 @@ export class ChartColumnService extends BeanStub {
         return this.columnModel.isPivotActive();
     }
 
-    public getChartColumns(): { dimensionCols: Set<Column>; valueCols: Set<Column>; } {
+    public getChartColumns(): { dimensionCols: Set<Column>; valueCols: Set<Column> } {
         const gridCols = this.columnModel.getCols();
 
         const dimensionCols = new Set<Column>();
         const valueCols = new Set<Column>();
 
-        gridCols.forEach(col => {
+        gridCols.forEach((col) => {
             const colDef = col.getColDef();
             const chartDataType = colDef.chartDataType;
 
@@ -85,7 +85,9 @@ export class ChartColumnService extends BeanStub {
                     case 'excluded':
                         return;
                     default:
-                        console.warn(`AG Grid: unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'`);
+                        console.warn(
+                            `AG Grid: unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'`
+                        );
                         break;
                 }
             }
@@ -139,7 +141,9 @@ export class ChartColumnService extends BeanStub {
     }
 
     private extractLeafData(row: RowNode, col: Column): any {
-        if (!row.allLeafChildren) { return null; }
+        if (!row.allLeafChildren) {
+            return null;
+        }
 
         for (let i = 0; i < row.allLeafChildren.length; i++) {
             const childRow = row.allLeafChildren[i];

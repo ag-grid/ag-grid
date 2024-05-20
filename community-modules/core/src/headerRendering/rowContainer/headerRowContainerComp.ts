@@ -1,5 +1,5 @@
-import { ColumnPinnedType } from '../../entities/column';
 import { PostConstruct, PreDestroy } from '../../context/context';
+import { ColumnPinnedType } from '../../entities/column';
 import { _ensureDomOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
@@ -9,13 +9,11 @@ import { HeaderRowCtrl, HeaderRowCtrlInstanceId } from '../row/headerRowCtrl';
 import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRowContainerCtrl';
 
 export class HeaderRowContainerComp extends Component {
+    private static PINNED_LEFT_TEMPLATE = /* html */ `<div class="ag-pinned-left-header" role="rowgroup"></div>`;
 
-    private static PINNED_LEFT_TEMPLATE =  /* html */ `<div class="ag-pinned-left-header" role="rowgroup"></div>`;
+    private static PINNED_RIGHT_TEMPLATE = /* html */ `<div class="ag-pinned-right-header" role="rowgroup"></div>`;
 
-    private static PINNED_RIGHT_TEMPLATE =  /* html */ `<div class="ag-pinned-right-header" role="rowgroup"></div>`;
-
-    private static CENTER_TEMPLATE =  /* html */
-        `<div class="ag-header-viewport" role="presentation">
+    private static CENTER_TEMPLATE /* html */ = `<div class="ag-header-viewport" role="presentation">
             <div class="ag-header-container" ref="eCenterContainer" role="rowgroup"></div>
         </div>`;
 
@@ -25,7 +23,7 @@ export class HeaderRowContainerComp extends Component {
 
     private pinned: ColumnPinnedType;
 
-    private headerRowComps: {[ctrlId: HeaderRowCtrlInstanceId]: HeaderRowComp} = {};
+    private headerRowComps: { [ctrlId: HeaderRowCtrlInstanceId]: HeaderRowComp } = {};
     private rowCompsList: HeaderRowComp[] = [];
 
     constructor(pinned: ColumnPinnedType) {
@@ -38,20 +36,20 @@ export class HeaderRowContainerComp extends Component {
         this.selectAndSetTemplate();
 
         const compProxy: IHeaderRowContainerComp = {
-            setDisplayed: displayed => this.setDisplayed(displayed),
-            setCtrls: ctrls => this.setCtrls(ctrls),
+            setDisplayed: (displayed) => this.setDisplayed(displayed),
+            setCtrls: (ctrls) => this.setCtrls(ctrls),
 
             // only gets called for center section
-            setCenterWidth: width => this.eCenterContainer.style.width = width,
-            setViewportScrollLeft: left => this.getGui().scrollLeft = left,
+            setCenterWidth: (width) => (this.eCenterContainer.style.width = width),
+            setViewportScrollLeft: (left) => (this.getGui().scrollLeft = left),
 
             // only gets called for pinned sections
-            setPinnedContainerWidth: width => {
+            setPinnedContainerWidth: (width) => {
                 const eGui = this.getGui();
                 eGui.style.width = width;
                 eGui.style.maxWidth = width;
                 eGui.style.minWidth = width;
-            }
+            },
         };
 
         const ctrl = this.createManagedBean(new HeaderRowContainerCtrl(this.pinned));
@@ -62,8 +60,11 @@ export class HeaderRowContainerComp extends Component {
         const pinnedLeft = this.pinned == 'left';
         const pinnedRight = this.pinned == 'right';
 
-        const template = pinnedLeft ? HeaderRowContainerComp.PINNED_LEFT_TEMPLATE :
-                         pinnedRight ? HeaderRowContainerComp.PINNED_RIGHT_TEMPLATE : HeaderRowContainerComp.CENTER_TEMPLATE;
+        const template = pinnedLeft
+            ? HeaderRowContainerComp.PINNED_LEFT_TEMPLATE
+            : pinnedRight
+              ? HeaderRowContainerComp.PINNED_RIGHT_TEMPLATE
+              : HeaderRowContainerComp.CENTER_TEMPLATE;
 
         this.setTemplate(template, []);
 
@@ -83,7 +84,6 @@ export class HeaderRowContainerComp extends Component {
     }
 
     private setCtrls(ctrls: HeaderRowCtrl[]): void {
-
         const oldRowComps = this.headerRowComps;
         this.headerRowComps = {};
         this.rowCompsList = [];
@@ -104,9 +104,9 @@ export class HeaderRowContainerComp extends Component {
             prevGui = eGui;
         };
 
-        ctrls.forEach(ctrl => {
+        ctrls.forEach((ctrl) => {
             const ctrlId = ctrl.getInstanceId();
-            const existingComp =  oldRowComps[ctrlId];
+            const existingComp = oldRowComps[ctrlId];
             delete oldRowComps[ctrlId];
 
             const rowComp = existingComp ? existingComp : this.createBean(new HeaderRowComp(ctrl));
@@ -116,6 +116,6 @@ export class HeaderRowContainerComp extends Component {
             appendEnsuringDomOrder(rowComp);
         });
 
-        _getAllValuesInObject(oldRowComps).forEach(c => this.destroyRowComp(c));
+        _getAllValuesInObject(oldRowComps).forEach((c) => this.destroyRowComp(c));
     }
 }

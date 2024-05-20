@@ -11,7 +11,7 @@ describe('object', () => {
         { target: {}, expression: 'a.b', value: 100, expected: { a: { b: 100 } } },
         { target: {}, expression: 'a.b.c', value: 100, expected: { a: { b: { c: 100 } } } },
         { target: { c: 50 }, expression: 'a.b', value: 100, expected: { a: { b: 100 }, c: 50 } },
-      ])('set($target, $expression, $value)', ({ target, expression, value, expected }) => {
+    ])('set($target, $expression, $value)', ({ target, expression, value, expected }) => {
         test(`returns ${JSON.stringify(expected)}`, () => {
             set(target, expression, value);
             expect(target).toEqual(expected);

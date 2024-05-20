@@ -1,6 +1,7 @@
-import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { _Scene } from "ag-charts-community";
-import { ChartType } from "@ag-grid-community/core";
+import { ChartType } from '@ag-grid-community/core';
+import { _Scene } from 'ag-charts-community';
+
+import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export class MiniHistogram extends MiniChartWithAxes {
     static chartType: ChartType = 'histogram';
@@ -8,7 +9,7 @@ export class MiniHistogram extends MiniChartWithAxes {
     private readonly bars: _Scene.Rect[];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {
-        super(container, "histogramTooltip");
+        super(container, 'histogramTooltip');
 
         const padding = this.padding;
         const size = this.size;
@@ -48,7 +49,7 @@ export class MiniHistogram extends MiniChartWithAxes {
     }
 
     updateColors([fill]: string[], [stroke]: string[]) {
-        this.bars.forEach(bar => {
+        this.bars.forEach((bar) => {
             bar.fill = fill;
             bar.stroke = stroke;
         });

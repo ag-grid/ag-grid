@@ -1,14 +1,15 @@
-import { Bean, RowNode, PreDestroy } from "@ag-grid-community/core";
+import { Bean, PreDestroy, RowNode } from '@ag-grid-community/core';
 
 @Bean('ssrmNodeManager')
 export class NodeManager {
-
-    private rowNodes: {[id: string]: RowNode | undefined } = {};
+    private rowNodes: { [id: string]: RowNode | undefined } = {};
 
     public addRowNode(rowNode: RowNode): void {
         const id = rowNode.id!;
         if (this.rowNodes[id]) {
-            console.warn(`AG Grid: Duplicate node id ${rowNode.id}. Row ID's are provided via the getRowId() callback. Please modify the getRowId() callback code to provide unique row id values.`);
+            console.warn(
+                `AG Grid: Duplicate node id ${rowNode.id}. Row ID's are provided via the getRowId() callback. Please modify the getRowId() callback code to provide unique row id values.`
+            );
             console.warn('first instance', this.rowNodes[id]!.data);
             console.warn('second instance', rowNode.data);
         }
@@ -27,5 +28,4 @@ export class NodeManager {
     public clear(): void {
         this.rowNodes = {};
     }
-
 }

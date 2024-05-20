@@ -7,18 +7,18 @@ import {
     IToolPanelComp,
     IToolPanelFiltersCompParams,
     IToolPanelParams,
-    RefSelector
-} from "@ag-grid-community/core";
-import { AgFiltersToolPanelHeader } from "./agFiltersToolPanelHeader";
-import { AgFiltersToolPanelList } from "./agFiltersToolPanelList";
+    RefSelector,
+} from '@ag-grid-community/core';
 
-export interface ToolPanelFiltersCompParams<TData = any, TContext = any> extends IToolPanelParams<TData, TContext, FiltersToolPanelState>, IToolPanelFiltersCompParams {
-}
+import { AgFiltersToolPanelHeader } from './agFiltersToolPanelHeader';
+import { AgFiltersToolPanelList } from './agFiltersToolPanelList';
+
+export interface ToolPanelFiltersCompParams<TData = any, TContext = any>
+    extends IToolPanelParams<TData, TContext, FiltersToolPanelState>,
+        IToolPanelFiltersCompParams {}
 
 export class FiltersToolPanel extends Component implements IFiltersToolPanel, IToolPanelComp {
-
-    private static TEMPLATE = /* html */
-        `<div class="ag-filter-toolpanel">
+    private static TEMPLATE /* html */ = `<div class="ag-filter-toolpanel">
             <ag-filters-tool-panel-header ref="filtersToolPanelHeaderPanel"></ag-filters-tool-panel-header>
             <ag-filters-tool-panel-list ref="filtersToolPanelListPanel"></ag-filters-tool-panel-list>
          </div>`;
@@ -38,7 +38,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     public init(params: ToolPanelFiltersCompParams): void {
         // if initialised is true, means this is a refresh
         if (this.initialised) {
-            this.listenerDestroyFuncs.forEach(func => func());
+            this.listenerDestroyFuncs.forEach((func) => func());
             this.listenerDestroyFuncs = [];
         }
 
@@ -47,11 +47,11 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         const defaultParams: Partial<ToolPanelFiltersCompParams> = this.gos.addGridCommonParams({
             suppressExpandAll: false,
             suppressFilterSearch: false,
-            suppressSyncLayoutWithGrid: false
+            suppressSyncLayoutWithGrid: false,
         });
         this.params = {
             ...defaultParams,
-            ...params
+            ...params,
         };
 
         this.filtersToolPanelHeaderPanel.init(this.params);
@@ -68,8 +68,16 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         this.listenerDestroyFuncs.push(
             this.addManagedListener(this.filtersToolPanelHeaderPanel, 'expandAll', this.onExpandAll.bind(this))!,
             this.addManagedListener(this.filtersToolPanelHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this))!,
-            this.addManagedListener(this.filtersToolPanelHeaderPanel, 'searchChanged', this.onSearchChanged.bind(this))!,
-            this.addManagedListener(this.filtersToolPanelListPanel, 'filterExpanded', this.onFilterExpanded.bind(this))!,
+            this.addManagedListener(
+                this.filtersToolPanelHeaderPanel,
+                'searchChanged',
+                this.onSearchChanged.bind(this)
+            )!,
+            this.addManagedListener(
+                this.filtersToolPanelListPanel,
+                'filterExpanded',
+                this.onFilterExpanded.bind(this)
+            )!,
             this.addManagedListener(this.filtersToolPanelListPanel, 'groupExpanded', this.onGroupExpanded.bind(this))!
         );
     }

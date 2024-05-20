@@ -1,4 +1,5 @@
 import { JSDOM } from 'jsdom';
+
 import type { CategorizedSitemap } from '../Sitemap';
 
 export default function parseSitemap(xml: string) {

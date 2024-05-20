@@ -1,20 +1,19 @@
-import { Autowired, Bean, PostConstruct } from "../../context/context";
-import { IComponent } from "../../interfaces/iComponent";
-import { AgComponentUtils } from "./agComponentUtils";
-import { BeanStub } from "../../context/beanStub";
+import { BeanStub } from '../../context/beanStub';
+import { Autowired, Bean, PostConstruct } from '../../context/context';
+import { IComponent } from '../../interfaces/iComponent';
+import { AgComponentUtils } from './agComponentUtils';
 
 export interface ComponentMetadata {
     mandatoryMethodList: string[];
     optionalMethodList: string[];
-    functionAdapter?: (callback: any) => { new(): IComponent<any> };
+    functionAdapter?: (callback: any) => { new (): IComponent<any> };
 }
 
-@Bean("componentMetadataProvider")
+@Bean('componentMetadataProvider')
 export class ComponentMetadataProvider extends BeanStub {
-
     private componentMetaData: { [key: string]: ComponentMetadata };
 
-    @Autowired("agComponentUtils")
+    @Autowired('agComponentUtils')
     private agComponentUtils: AgComponentUtils;
 
     @PostConstruct
@@ -22,65 +21,89 @@ export class ComponentMetadataProvider extends BeanStub {
         this.componentMetaData = {
             dateComponent: {
                 mandatoryMethodList: ['getDate', 'setDate'],
-                optionalMethodList: ['afterGuiAttached', 'setInputPlaceholder', 'setInputAriaLabel', 'setDisabled', 'onParamsUpdated', 'refresh']
+                optionalMethodList: [
+                    'afterGuiAttached',
+                    'setInputPlaceholder',
+                    'setInputAriaLabel',
+                    'setDisabled',
+                    'onParamsUpdated',
+                    'refresh',
+                ],
             },
             detailCellRenderer: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['refresh'],
-                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils),
             },
             headerComponent: {
                 mandatoryMethodList: [],
-                optionalMethodList: ['refresh']
+                optionalMethodList: ['refresh'],
             },
             headerGroupComponent: {
                 mandatoryMethodList: [],
-                optionalMethodList: []
+                optionalMethodList: [],
             },
             loadingCellRenderer: {
                 mandatoryMethodList: [],
                 optionalMethodList: [],
-                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils),
             },
             loadingOverlayComponent: {
                 mandatoryMethodList: [],
-                optionalMethodList: ['refresh']
+                optionalMethodList: ['refresh'],
             },
             noRowsOverlayComponent: {
                 mandatoryMethodList: [],
-                optionalMethodList: ['refresh']
+                optionalMethodList: ['refresh'],
             },
             floatingFilterComponent: {
                 mandatoryMethodList: ['onParentModelChanged'],
-                optionalMethodList: ['afterGuiAttached', 'onParamsUpdated', 'refresh']
+                optionalMethodList: ['afterGuiAttached', 'onParamsUpdated', 'refresh'],
             },
             cellRenderer: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['refresh', 'afterGuiAttached'],
-                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils),
             },
             cellEditor: {
                 mandatoryMethodList: ['getValue'],
-                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'getPopupPosition', 'focusIn', 'focusOut', 'afterGuiAttached', 'refresh']
+                optionalMethodList: [
+                    'isPopup',
+                    'isCancelBeforeStart',
+                    'isCancelAfterEnd',
+                    'getPopupPosition',
+                    'focusIn',
+                    'focusOut',
+                    'afterGuiAttached',
+                    'refresh',
+                ],
             },
             innerRenderer: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['afterGuiAttached'],
-                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils),
             },
             fullWidthCellRenderer: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['refresh', 'afterGuiAttached'],
-                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils),
             },
             groupRowRenderer: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['afterGuiAttached'],
-                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils),
             },
             filter: {
                 mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
-                optionalMethodList: ['afterGuiAttached', 'afterGuiDetached', 'onNewRowsLoaded', 'getModelAsString', 'onFloatingFilterChanged', 'onAnyFilterChanged', 'refresh']
+                optionalMethodList: [
+                    'afterGuiAttached',
+                    'afterGuiDetached',
+                    'onNewRowsLoaded',
+                    'getModelAsString',
+                    'onFloatingFilterChanged',
+                    'onAnyFilterChanged',
+                    'refresh',
+                ],
             },
             statusPanel: {
                 mandatoryMethodList: [],
@@ -88,15 +111,15 @@ export class ComponentMetadataProvider extends BeanStub {
             },
             toolPanel: {
                 mandatoryMethodList: [],
-                optionalMethodList: ['refresh', 'getState']
+                optionalMethodList: ['refresh', 'getState'],
             },
             tooltipComponent: {
                 mandatoryMethodList: [],
-                optionalMethodList: []
+                optionalMethodList: [],
             },
             menuItem: {
                 mandatoryMethodList: [],
-                optionalMethodList: ['setActive', 'select', 'setExpanded', 'configureDefaults']
+                optionalMethodList: ['setActive', 'select', 'setExpanded', 'configureDefaults'],
             },
         };
     }

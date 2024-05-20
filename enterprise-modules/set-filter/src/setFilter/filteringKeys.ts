@@ -34,9 +34,7 @@ export class SetValueModelFilteringKeys {
         this.hasNoAppliedFilteringKeys = !this.filteringKeys || this.filteringKeys.size === 0;
 
         this.filteringKeysCaseFormatted = new Set<string | null>();
-        this.filteringKeys.forEach(key =>
-            this.filteringKeysCaseFormatted!.add(this.caseFormat(key))
-        );
+        this.filteringKeys.forEach((key) => this.filteringKeysCaseFormatted!.add(this.caseFormat(key)));
     }
 
     public addFilteringKey(key: string | null): void {

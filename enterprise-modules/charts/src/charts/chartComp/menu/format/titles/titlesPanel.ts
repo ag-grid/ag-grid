@@ -1,15 +1,15 @@
-import { Autowired, Component, PostConstruct, RefSelector } from "@ag-grid-community/core";
-import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { isCartesian, isPolar } from "../../../utils/seriesTypeMapper";
-import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
-import { FormatPanelOptions } from "../formatPanel";
-import { ChartTitlePanel } from "./chartTitlePanel";
-import { TitlePanel } from "./titlePanel";
+import { Autowired, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+
+import { ChartTranslationService } from '../../../services/chartTranslationService';
+import { isCartesian, isPolar } from '../../../utils/seriesTypeMapper';
+import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import { FormatPanelOptions } from '../formatPanel';
+import { ChartTitlePanel } from './chartTitlePanel';
+import { TitlePanel } from './titlePanel';
 
 export class TitlesPanel extends Component {
-    private static TEMPLATE = /* html */
-        `<div>
+    private static TEMPLATE /* html */ = `<div>
             <ag-group-component ref="titleGroup"></ag-group-component>
         </div>`;
 
@@ -28,17 +28,24 @@ export class TitlesPanel extends Component {
             chartOptionsService,
             seriesType,
             isExpandedOnInit: expanded = false,
-            registerGroupComponent
+            registerGroupComponent,
         } = this.options;
         const axisTitlePanels: TitlePanel[] = [];
         if (isCartesian(seriesType)) {
-            const createAxisParamsFactory = (axisType: 'xAxis' | 'yAxis') => this.createManagedBean(
-                new ChartMenuParamsFactory(chartOptionsService.getCartesianAxisThemeOverridesProxy(axisType))
+            const createAxisParamsFactory = (axisType: 'xAxis' | 'yAxis') =>
+                this.createManagedBean(
+                    new ChartMenuParamsFactory(chartOptionsService.getCartesianAxisThemeOverridesProxy(axisType))
+                );
+            axisTitlePanels.push(
+                this.createManagedBean(new TitlePanel(createAxisParamsFactory('xAxis'), 'horizontalAxisTitle', 'title'))
             );
-            axisTitlePanels.push(this.createManagedBean(new TitlePanel(createAxisParamsFactory('xAxis'), 'horizontalAxisTitle', 'title')));
-            axisTitlePanels.push(this.createManagedBean(new TitlePanel(createAxisParamsFactory('yAxis'), 'verticalAxisTitle', 'title')));
+            axisTitlePanels.push(
+                this.createManagedBean(new TitlePanel(createAxisParamsFactory('yAxis'), 'verticalAxisTitle', 'title'))
+            );
         } else if (isPolar(seriesType)) {
-            axisTitlePanels.push(this.createManagedBean(new TitlePanel(chartAxisMenuParamsFactory, 'polarAxisTitle', 'title')));
+            axisTitlePanels.push(
+                this.createManagedBean(new TitlePanel(chartAxisMenuParamsFactory, 'polarAxisTitle', 'title'))
+            );
         }
         const titleGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-top-level',
@@ -49,9 +56,9 @@ export class TitlesPanel extends Component {
             items: [
                 this.createManagedBean(new ChartTitlePanel(chartMenuParamsFactory, 'chartTitle', 'title')),
                 this.createManagedBean(new TitlePanel(chartMenuParamsFactory, 'chartSubtitle', 'subtitle')),
-                ...axisTitlePanels
-            ]
-        }
+                ...axisTitlePanels,
+            ],
+        };
         this.setTemplate(TitlesPanel.TEMPLATE, [AgGroupComponent], { titleGroup: titleGroupParams });
         registerGroupComponent(this.titleGroup);
     }

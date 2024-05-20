@@ -33,14 +33,14 @@ export function _getSafariVersion(): number {
     return safariVersion;
 }
 
-
 /**
  * Returns true for Chrome and also for Edge (Chromium)
  */
 export function _isBrowserChrome(): boolean {
     if (isChrome === undefined) {
         const win = window as any;
-        isChrome = (!!win.chrome && (!!win.chrome.webstore || !!win.chrome.runtime)) ||
+        isChrome =
+            (!!win.chrome && (!!win.chrome.webstore || !!win.chrome.runtime)) ||
             (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor));
     }
 
@@ -65,9 +65,9 @@ export function _isMacOsUserAgent(): boolean {
 
 export function _isIOSUserAgent(): boolean {
     if (isIOS === undefined) {
-        isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
-             
-            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
+        isIOS =
+            /iPad|iPhone|iPod/.test(navigator.platform) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     }
 
     return isIOS;
@@ -80,7 +80,9 @@ export function _browserSupportsPreventScroll(): boolean {
 }
 
 export function _getTabIndex(el: HTMLElement | null): string | null {
-    if (!el) { return null; }
+    if (!el) {
+        return null;
+    }
 
     const numberTabIndex = el.tabIndex;
     const tabIndex = el.getAttribute('tabIndex');
@@ -93,7 +95,9 @@ export function _getTabIndex(el: HTMLElement | null): string | null {
 }
 
 export function _getMaxDivHeight(): number {
-    if (!document.body) { return -1; }
+    if (!document.body) {
+        return -1;
+    }
 
     let res = 1000000;
     // FF reports the height back but still renders blank after ~6M px
@@ -133,7 +137,6 @@ export function _getScrollbarWidth(): number | null {
 }
 
 function initScrollbarWidthAndVisibility(): void {
-
     const body = document.body;
     const div = document.createElement('div');
 
@@ -148,7 +151,9 @@ function initScrollbarWidthAndVisibility(): void {
     let width: number | null = div.offsetWidth - div.clientWidth;
 
     // if width is 0 and client width is 0, means the DOM isn't ready
-    if (width === 0 && div.clientWidth === 0) { width = null; }
+    if (width === 0 && div.clientWidth === 0) {
+        width = null;
+    }
 
     // remove div
     if (div.parentNode) {

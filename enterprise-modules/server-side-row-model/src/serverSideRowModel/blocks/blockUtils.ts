@@ -1,28 +1,28 @@
 import {
-    RowBounds,
     Autowired,
     Bean,
     BeanStub,
+    Beans,
     Column,
     ColumnModel,
-    RowNode,
-    ValueService,
-    NumberSequence,
-    Beans,
     IRowNode,
+    NumberSequence,
+    RowBounds,
+    RowNode,
+    ShowRowGroupColsService,
+    ValueService,
+    _doOnce,
     _exists,
     _missing,
-    _doOnce,
-    ShowRowGroupColsService
-} from "@ag-grid-community/core";
-import { NodeManager } from "../nodeManager";
-import { ServerSideExpansionService } from "../services/serverSideExpansionService";
+} from '@ag-grid-community/core';
+
+import { NodeManager } from '../nodeManager';
+import { ServerSideExpansionService } from '../services/serverSideExpansionService';
 
 export const GROUP_MISSING_KEY_ID: 'ag-Grid-MissingKey' = 'ag-Grid-MissingKey';
 
 @Bean('ssrmBlockUtils')
 export class BlockUtils extends BeanStub {
-
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
@@ -31,10 +31,14 @@ export class BlockUtils extends BeanStub {
     @Autowired('expansionService') private readonly expansionService: ServerSideExpansionService;
 
     public createRowNode(params: {
-        group: boolean, leafGroup: boolean, level: number,
-        parent: RowNode, field: string, rowGroupColumn: Column, rowHeight?: number
+        group: boolean;
+        leafGroup: boolean;
+        level: number;
+        parent: RowNode;
+        field: string;
+        rowGroupColumn: Column;
+        rowHeight?: number;
     }): RowNode {
-
         const rowNode = new RowNode(this.beans);
 
         const rowHeight = params.rowHeight != null ? params.rowHeight : this.gos.getRowHeightAsNumber();
@@ -75,7 +79,7 @@ export class BlockUtils extends BeanStub {
         if (rowNode.sibling && !rowNode.footer) {
             this.destroyRowNode(rowNode.sibling, false);
         }
-    
+
         // this is needed, so row render knows to fade out the row, otherwise it
         // sees row top is present, and thinks the row should be shown. maybe
         // rowNode should have a flag on whether it is visible???
@@ -164,7 +168,12 @@ export class BlockUtils extends BeanStub {
         }
     }
 
-    public setDataIntoRowNode(rowNode: RowNode, data: any, defaultId: string, cachedRowHeight: number | undefined): void {
+    public setDataIntoRowNode(
+        rowNode: RowNode,
+        data: any,
+        defaultId: string,
+        cachedRowHeight: number | undefined
+    ): void {
         rowNode.stub = false;
         const treeData = this.gos.get('treeData');
 
@@ -178,7 +187,6 @@ export class BlockUtils extends BeanStub {
             } else if (this.gos.get('masterDetail')) {
                 this.setMasterDetailInfo(rowNode);
             }
-
         } else {
             rowNode.setDataAndId(undefined, undefined);
             rowNode.key = null;
@@ -209,7 +217,7 @@ export class BlockUtils extends BeanStub {
 
         const usingTreeData = this.gos.get('treeData');
 
-        groupDisplayCols.forEach(col => {
+        groupDisplayCols.forEach((col) => {
             if (rowNode.groupData == null) {
                 rowNode.groupData = {};
             }
@@ -274,7 +282,6 @@ export class BlockUtils extends BeanStub {
     }
 
     public binarySearchForDisplayIndex(displayRowIndex: number, rowNodes: RowNode[]): IRowNode | undefined {
-
         let bottomPointer = 0;
         let topPointer = rowNodes.length - 1;
 
@@ -321,7 +328,7 @@ export class BlockUtils extends BeanStub {
     public extractRowBounds(rowNode: RowNode, index: number): RowBounds | undefined {
         const extractRowBounds = (currentRowNode: RowNode): RowBounds => ({
             rowHeight: currentRowNode.rowHeight!,
-            rowTop: currentRowNode.rowTop!
+            rowTop: currentRowNode.rowTop!,
         });
 
         if (rowNode.rowIndex === index) {

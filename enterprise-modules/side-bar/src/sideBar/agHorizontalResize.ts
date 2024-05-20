@@ -1,13 +1,13 @@
 import {
+    AgComponentSelector,
     Autowired,
     Component,
+    Events,
     HorizontalResizeService,
     PostConstruct,
     ToolPanelSizeChangedEvent,
     WithoutGridCommon,
-    Events,
-    AgComponentSelector
-} from "@ag-grid-community/core";
+} from '@ag-grid-community/core';
 
 export class AgHorizontalResize extends Component {
     static readonly selector: AgComponentSelector = 'ag-horizontal-resize';
@@ -35,7 +35,7 @@ export class AgHorizontalResize extends Component {
             dragStartPixels: 1,
             onResizeStart: this.onResizeStart.bind(this),
             onResizing: this.onResizing.bind(this),
-            onResizeEnd: this.onResizeEnd.bind(this)
+            onResizeEnd: this.onResizeEnd.bind(this),
         });
 
         this.addDestroyFunc(finishedWithResizeFunc);
@@ -49,11 +49,11 @@ export class AgHorizontalResize extends Component {
             started: start,
             ended: end,
         };
-        this.eventService.dispatchEvent(event)
+        this.eventService.dispatchEvent(event);
     }
 
     private onResizeStart(): void {
-        this.startingWidth = this.elementToResize.offsetWidth;        
+        this.startingWidth = this.elementToResize.offsetWidth;
         this.dispatchResizeEvent(true, false, this.startingWidth);
     }
 
@@ -63,13 +63,13 @@ export class AgHorizontalResize extends Component {
 
     private onResizing(delta: number, isEnd: boolean = false): void {
         const direction = this.inverted ? -1 : 1;
-        let newWidth = Math.max(this.minWidth, Math.floor(this.startingWidth - (delta * direction)));
+        let newWidth = Math.max(this.minWidth, Math.floor(this.startingWidth - delta * direction));
 
         if (this.maxWidth != null) {
             newWidth = Math.min(this.maxWidth, newWidth);
         }
         this.elementToResize.style.width = `${newWidth}px`;
-        this.dispatchResizeEvent(false, isEnd, newWidth);        
+        this.dispatchResizeEvent(false, isEnd, newWidth);
     }
 
     public setInverted(inverted: boolean) {

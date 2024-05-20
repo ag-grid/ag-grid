@@ -1,26 +1,29 @@
 import {
+    Autowired,
     Column,
+    ColumnEventType,
+    ColumnModel,
+    DragItem,
+    DragSourceType,
     DraggingEvent,
     DropTarget,
-    DragItem,
-    Autowired,
-    ColumnModel,
-    ColumnEventType,
     Events,
-    DragSourceType,
-    FuncColsService
-} from "@ag-grid-community/core";
-import { DropZoneColumnComp } from "./dropZoneColumnComp";
-import { PillDropZonePanel, PillDropZonePanelParams } from "@ag-grid-enterprise/core";
+    FuncColsService,
+} from '@ag-grid-community/core';
+import { PillDropZonePanel, PillDropZonePanelParams } from '@ag-grid-enterprise/core';
+
+import { DropZoneColumnComp } from './dropZoneColumnComp';
 
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, Column> {
-
     @Autowired('columnModel') protected readonly columnModel: ColumnModel;
     @Autowired('funcColsService') protected readonly funcColsService: FuncColsService;
 
-    constructor(horizontal: boolean, private dropZonePurpose: TDropZone) {
+    constructor(
+        horizontal: boolean,
+        private dropZonePurpose: TDropZone
+    ) {
         super(horizontal);
     }
 
@@ -29,7 +32,10 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.refreshGui.bind(this));
 
-        this.addManagedPropertyListeners(['functionsReadOnly', 'rowGroupPanelSuppressSort', 'groupLockGroupColumns'], this.refreshGui.bind(this));
+        this.addManagedPropertyListeners(
+            ['functionsReadOnly', 'rowGroupPanelSuppressSort', 'groupLockGroupColumns'],
+            this.refreshGui.bind(this)
+        );
     }
 
     protected getItems(dragItem: DragItem): Column[] {
@@ -60,7 +66,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         if (hideColumnOnExit) {
             const dragItem = draggingEvent.dragSource.getDragItem();
             const columns = dragItem.columns;
-            this.setColumnsVisible(columns, false, "uiColumnDragged");
+            this.setColumnsVisible(columns, false, 'uiColumnDragged');
         }
     }
 
@@ -70,13 +76,13 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         if (showColumnOnExit) {
             const dragItem = draggingEvent.dragSource.getDragItem();
 
-            this.setColumnsVisible(dragItem.columns, true, "uiColumnDragged");
-    }
+            this.setColumnsVisible(dragItem.columns, true, 'uiColumnDragged');
+        }
     }
 
     public setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType) {
         if (columns) {
-            const allowedCols = columns.filter(c => !c.getColDef().lockVisible);
+            const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
             this.columnModel.setColsVisible(allowedCols, visible, source);
         }
     }
@@ -84,8 +90,13 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     private isRowGroupPanel() {
         return this.dropZonePurpose === 'rowGroup';
     }
-    
-    protected createPillComponent(column: Column, dropTarget: DropTarget, ghost: boolean, horizontal: boolean): DropZoneColumnComp {
+
+    protected createPillComponent(
+        column: Column,
+        dropTarget: DropTarget,
+        ghost: boolean,
+        horizontal: boolean
+    ): DropZoneColumnComp {
         return new DropZoneColumnComp(column, dropTarget, ghost, this.dropZonePurpose, horizontal);
     }
 }

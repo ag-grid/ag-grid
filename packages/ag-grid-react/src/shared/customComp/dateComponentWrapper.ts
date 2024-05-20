@@ -1,8 +1,12 @@
-import { IDate, IDateParams } from "ag-grid-community";
-import { CustomComponentWrapper } from "./customComponentWrapper";
-import { CustomDateProps, CustomDateCallbacks } from "./interfaces";
+import { IDate, IDateParams } from 'ag-grid-community';
 
-export class DateComponentWrapper extends CustomComponentWrapper<IDateParams, CustomDateProps, CustomDateCallbacks> implements IDate {
+import { CustomComponentWrapper } from './customComponentWrapper';
+import { CustomDateCallbacks, CustomDateProps } from './interfaces';
+
+export class DateComponentWrapper
+    extends CustomComponentWrapper<IDateParams, CustomDateProps, CustomDateCallbacks>
+    implements IDate
+{
     private date: Date | null = null;
     private readonly onDateChange = (date: Date | null) => this.updateDate(date);
 

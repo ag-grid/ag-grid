@@ -81,7 +81,10 @@ export function _setAriaAtomic(element: Element, atomic: boolean | null) {
     _toggleAriaAttribute(element, 'atomic', atomic);
 }
 
-export function _setAriaRelevant(element: Element, relevant:  'additions' | 'additions text' | 'all' | 'removals' | 'text' | null) {
+export function _setAriaRelevant(
+    element: Element,
+    relevant: 'additions' | 'additions text' | 'all' | 'removals' | 'text' | null
+) {
     _toggleAriaAttribute(element, 'relevant', relevant);
 }
 
@@ -162,12 +165,13 @@ export function _setAriaControls(controllerElement: Element, controlledElement: 
     _setAriaLabelledBy(controlledElement, controllerElement.id);
 }
 
-
-export function _getAriaCheckboxStateName(translate: (key: string, defaultValue: string, variableValues?: string[]) => string, state?: boolean): string {
+export function _getAriaCheckboxStateName(
+    translate: (key: string, defaultValue: string, variableValues?: string[]) => string,
+    state?: boolean
+): string {
     return state === undefined
         ? translate('ariaIndeterminate', 'indeterminate')
-        : (state === true
-            ? translate('ariaChecked', 'checked')
-            : translate('ariaUnchecked', 'unchecked')
-        );
+        : state === true
+          ? translate('ariaChecked', 'checked')
+          : translate('ariaUnchecked', 'unchecked');
 }

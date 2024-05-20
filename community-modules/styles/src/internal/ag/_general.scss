@@ -1,5 +1,3 @@
-
-
 @mixin selectable($value) {
     @if $value == null {
         $value: none;

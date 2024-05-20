@@ -1,21 +1,26 @@
 import {
+    AgCheckbox,
+    AgComponentSelector,
+    AgInputTextField,
     Autowired,
     ColumnModel,
+    Component,
     Events,
-    RefSelector,
-    AgCheckbox,
-    AgInputTextField,
     KeyCode,
     PostConstruct,
-    Component,
+    RefSelector,
     _createIconNoSpan,
-    _setDisplayed,
     _debounce,
-    AgComponentSelector
-} from "@ag-grid-community/core";
-import { ToolPanelColumnCompParams } from "./columnToolPanel";
+    _setDisplayed,
+} from '@ag-grid-community/core';
 
-export enum ExpandState { EXPANDED, COLLAPSED, INDETERMINATE }
+import { ToolPanelColumnCompParams } from './columnToolPanel';
+
+export enum ExpandState {
+    EXPANDED,
+    COLLAPSED,
+    INDETERMINATE,
+}
 
 export class AgPrimaryColsHeader extends Component {
     static readonly selector: AgComponentSelector = 'ag-primary-cols-header';
@@ -39,8 +44,7 @@ export class AgPrimaryColsHeader extends Component {
 
     private params: ToolPanelColumnCompParams;
 
-    private static TEMPLATE = /* html */
-        `<div class="ag-column-select-header" role="presentation">
+    private static TEMPLATE /* html */ = `<div class="ag-column-select-header" role="presentation">
             <div ref="eExpand" class="ag-column-select-header-icon"></div>
             <ag-checkbox ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
             <ag-input-text-field class="ag-column-select-header-filter-wrapper" ref="eFilterTextField"></ag-input-text-field>
@@ -65,9 +69,7 @@ export class AgPrimaryColsHeader extends Component {
         this.addManagedListener(this.eSelect.getInputElement(), 'click', this.onSelectClicked.bind(this));
         this.addManagedPropertyListener('functionsReadOnly', () => this.onFunctionsReadOnlyPropChanged());
 
-        this.eFilterTextField
-            .setAutoComplete(false)
-            .onValueChange(() => this.onFilterTextChanged());
+        this.eFilterTextField.setAutoComplete(false).onValueChange(() => this.onFilterTextChanged());
 
         this.addManagedListener(
             this.eFilterTextField.getInputElement(),
@@ -104,17 +106,13 @@ export class AgPrimaryColsHeader extends Component {
     }
 
     private createExpandIcons() {
-        this.eExpand.appendChild((
-            this.eExpandChecked = _createIconNoSpan('columnSelectOpen', this.gos)!
-        ));
+        this.eExpand.appendChild((this.eExpandChecked = _createIconNoSpan('columnSelectOpen', this.gos)!));
 
-        this.eExpand.appendChild((
-            this.eExpandUnchecked = _createIconNoSpan('columnSelectClosed', this.gos)!
-        ));
+        this.eExpand.appendChild((this.eExpandUnchecked = _createIconNoSpan('columnSelectClosed', this.gos)!));
 
-        this.eExpand.appendChild((
-            this.eExpandIndeterminate = _createIconNoSpan('columnSelectIndeterminate', this.gos)!
-        ));
+        this.eExpand.appendChild(
+            (this.eExpandIndeterminate = _createIconNoSpan('columnSelectIndeterminate', this.gos)!)
+        );
 
         this.setExpandState(ExpandState.EXPANDED);
     }
@@ -138,7 +136,7 @@ export class AgPrimaryColsHeader extends Component {
         if (!this.onFilterTextChangedDebounced) {
             this.onFilterTextChangedDebounced = _debounce(() => {
                 const filterText = this.eFilterTextField.getValue();
-                this.dispatchEvent({ type: "filterChanged", filterText: filterText });
+                this.dispatchEvent({ type: 'filterChanged', filterText: filterText });
             }, AgPrimaryColsHeader.DEBOUNCE_DELAY);
         }
 

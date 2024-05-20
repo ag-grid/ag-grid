@@ -1,13 +1,13 @@
-import { Component } from "../../widgets/component";
-import { Autowired, PostConstruct, PreDestroy } from "../../context/context";
-import { RowNode } from "../../entities/rowNode";
-import { DragItem, DragSource, DragSourceType } from "../../dragAndDrop/dragAndDropService";
-import { Events } from "../../eventKeys";
-import { Beans } from "../beans";
-import { BeanStub } from "../../context/beanStub";
-import { Column } from "../../entities/column";
-import { _createIconNoSpan } from "../../utils/icon";
-import { _isFunction, _warnOnce } from "../../utils/function";
+import { BeanStub } from '../../context/beanStub';
+import { Autowired, PostConstruct, PreDestroy } from '../../context/context';
+import { DragItem, DragSource, DragSourceType } from '../../dragAndDrop/dragAndDropService';
+import { Column } from '../../entities/column';
+import { RowNode } from '../../entities/rowNode';
+import { Events } from '../../eventKeys';
+import { _isFunction, _warnOnce } from '../../utils/function';
+import { _createIconNoSpan } from '../../utils/icon';
+import { Component } from '../../widgets/component';
+import { Beans } from '../beans';
 
 export interface IRowDragItem extends DragItem {
     /** The default text that would be applied to this Drag Element */
@@ -15,7 +15,6 @@ export interface IRowDragItem extends DragItem {
 }
 
 export class RowDragComp extends Component {
-
     private dragSource: DragSource | null = null;
 
     @Autowired('beans') private readonly beans: Beans;
@@ -27,7 +26,9 @@ export class RowDragComp extends Component {
         private readonly customGui?: HTMLElement,
         private readonly dragStartPixels?: number,
         private readonly suppressVisibilityChange?: boolean
-    ) { super(); }
+    ) {
+        super();
+    }
 
     public isCustomGui(): boolean {
         return this.customGui != null;
@@ -46,9 +47,9 @@ export class RowDragComp extends Component {
         this.checkCompatibility();
 
         if (!this.suppressVisibilityChange) {
-            const strategy = this.gos.get('rowDragManaged') ?
-                new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column) :
-                new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column);
+            const strategy = this.gos.get('rowDragManaged')
+                ? new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column)
+                : new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column);
 
             this.createManagedBean(strategy, this.beans.context);
         }
@@ -61,7 +62,9 @@ export class RowDragComp extends Component {
 
     private getSelectedNodes(): RowNode[] {
         const isRowDragMultiRow = this.gos.get('rowDragMultiRow');
-        if (!isRowDragMultiRow) { return [this.rowNode]; }
+        if (!isRowDragMultiRow) {
+            return [this.rowNode];
+        }
 
         const selection = this.beans.selectionService.getSelectedNodes();
 
@@ -99,7 +102,9 @@ export class RowDragComp extends Component {
 
     private addDragSource(dragStartPixels: number = 4): void {
         // if this is changing the drag element, delete the previous dragSource
-        if (this.dragSource) { this.removeDragSource(); }
+        if (this.dragSource) {
+            this.removeDragSource();
+        }
 
         const translate = this.localeService.getLocaleTextFunc();
 
@@ -115,11 +120,13 @@ export class RowDragComp extends Component {
                     return rowDragText(dragItem, dragItemCount);
                 }
 
-                return dragItemCount === 1 ? this.cellValueFn() : `${dragItemCount} ${translate('rowDragRows', 'rows')}`;
+                return dragItemCount === 1
+                    ? this.cellValueFn()
+                    : `${dragItemCount} ${translate('rowDragRows', 'rows')}`;
             },
             getDragItem: () => this.getDragItem(),
             dragStartPixels,
-            dragSourceDomDataKey: this.gos.getDomDataKey()
+            dragSourceDomDataKey: this.gos.getDomDataKey(),
         };
 
         this.beans.dragAndDropService.addDragSource(this.dragSource, true);
@@ -190,7 +197,11 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
         this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.workOutVisibility.bind(this));
+        this.addManagedListener(
+            this.beans.eventService,
+            Events.EVENT_NEW_COLUMNS_LOADED,
+            this.workOutVisibility.bind(this)
+        );
 
         this.workOutVisibility();
     }
@@ -208,7 +219,6 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
 
 // when managed, the visibility depends on sort, filter and row group, as well as suppressRowDrag property
 class ManagedVisibilityStrategy extends VisibilityStrategy {
-
     private readonly beans: Beans;
 
     constructor(parent: RowDragComp, beans: Beans, rowNode: RowNode, column?: Column) {
@@ -221,9 +231,21 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         // we do not show the component if sort, filter or grouping is active
 
         this.addManagedListener(this.beans.eventService, Events.EVENT_SORT_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(this.beans.eventService, Events.EVENT_FILTER_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(this.beans.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.workOutVisibility.bind(this));
+        this.addManagedListener(
+            this.beans.eventService,
+            Events.EVENT_FILTER_CHANGED,
+            this.workOutVisibility.bind(this)
+        );
+        this.addManagedListener(
+            this.beans.eventService,
+            Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
+            this.workOutVisibility.bind(this)
+        );
+        this.addManagedListener(
+            this.beans.eventService,
+            Events.EVENT_NEW_COLUMNS_LOADED,
+            this.workOutVisibility.bind(this)
+        );
 
         // in case data changes, then we need to update visibility of drag item
         this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));

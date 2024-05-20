@@ -1,8 +1,8 @@
-import { ReactPortal } from "react";
-import { ReactComponent } from "./reactComponent";
+import { ReactPortal } from 'react';
+
+import { ReactComponent } from './reactComponent';
 
 export class PortalManager {
-
     private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component
 
     private refresher: () => void;
@@ -17,7 +17,9 @@ export class PortalManager {
     constructor(refresher: () => void, wrappingElement?: string, maxComponentCreationTimeMs?: number) {
         this.wrappingElement = wrappingElement ? wrappingElement : 'div';
         this.refresher = refresher;
-        this.maxComponentCreationTimeMs = maxComponentCreationTimeMs ? maxComponentCreationTimeMs : PortalManager.MAX_COMPONENT_CREATION_TIME_IN_MS;
+        this.maxComponentCreationTimeMs = maxComponentCreationTimeMs
+            ? maxComponentCreationTimeMs
+            : PortalManager.MAX_COMPONENT_CREATION_TIME_IN_MS;
     }
 
     public getPortals(): ReactPortal[] {
@@ -29,7 +31,7 @@ export class PortalManager {
     }
 
     public destroyPortal(portal: ReactPortal): void {
-        this.portals = this.portals.filter(curPortal => curPortal !== portal);
+        this.portals = this.portals.filter((curPortal) => curPortal !== portal);
         this.batchUpdate();
     }
 
@@ -54,7 +56,8 @@ export class PortalManager {
         }
 
         setTimeout(() => {
-            if (!this.destroyed) { // destroyed?
+            if (!this.destroyed) {
+                // destroyed?
                 this.refresher();
                 this.hasPendingPortalUpdate = false;
             }
@@ -81,8 +84,12 @@ export class PortalManager {
                     return;
                 }
 
-                console.error(`AG Grid: React Component '${reactComponent.getReactComponentName()}' not created within ${this.maxComponentCreationTimeMs}ms.`)
-                console.error("    If the component is using `forwardRef` but not `useImperativeHandle`, add the following: `useImperativeHandle(ref, () => ({}));`");
+                console.error(
+                    `AG Grid: React Component '${reactComponent.getReactComponentName()}' not created within ${this.maxComponentCreationTimeMs}ms.`
+                );
+                console.error(
+                    '    If the component is using `forwardRef` but not `useImperativeHandle`, add the following: `useImperativeHandle(ref, () => ({}));`'
+                );
                 return;
             }
 

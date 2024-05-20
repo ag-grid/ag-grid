@@ -26,5 +26,4 @@ export class KeyCode {
     static X = 'KeyX' as const;
     static Y = 'KeyY' as const;
     static Z = 'KeyZ' as const;
-
 }

@@ -1,7 +1,28 @@
-import { AgEvent, AgPromise, Autowired, BeanStub, Component, IComponent, IMenuActionParams, IMenuConfigParams, IMenuItemComp, KeyCode, MenuItemDef, PopupService, TooltipFeature, UserComponentFactory, WithoutGridCommon, _loadTemplate, _setAriaDisabled, _setAriaExpanded, _setAriaLevel, _setAriaRole } from "@ag-grid-community/core";
-import { AgMenuPanel } from "./agMenuPanel";
-import { AgMenuList } from "./agMenuList";
+import {
+    AgEvent,
+    AgPromise,
+    Autowired,
+    BeanStub,
+    Component,
+    IComponent,
+    IMenuActionParams,
+    IMenuConfigParams,
+    IMenuItemComp,
+    KeyCode,
+    MenuItemDef,
+    PopupService,
+    TooltipFeature,
+    UserComponentFactory,
+    WithoutGridCommon,
+    _loadTemplate,
+    _setAriaDisabled,
+    _setAriaExpanded,
+    _setAriaLevel,
+    _setAriaRole,
+} from '@ag-grid-community/core';
 
+import { AgMenuList } from './agMenuList';
+import { AgMenuPanel } from './agMenuPanel';
 
 export interface CloseMenuEvent extends AgEvent {
     mouseEvent?: MouseEvent;
@@ -62,11 +83,12 @@ export class AgMenuItemComponent extends BeanStub {
             ...menuItemDef,
             level,
             isAnotherSubMenuOpen,
-            openSubMenu: activateFirstItem => this.openSubMenu(activateFirstItem),
+            openSubMenu: (activateFirstItem) => this.openSubMenu(activateFirstItem),
             closeSubMenu: () => this.closeSubMenu(),
-            closeMenu: event => this.closeMenu(event),
-            updateTooltip: (tooltip?: string, shouldDisplayTooltip?: () => boolean)  => this.refreshTooltip(tooltip, shouldDisplayTooltip),
-            onItemActivated: () => this.onItemActivated()
+            closeMenu: (event) => this.closeMenu(event),
+            updateTooltip: (tooltip?: string, shouldDisplayTooltip?: () => boolean) =>
+                this.refreshTooltip(tooltip, shouldDisplayTooltip),
+            onItemActivated: () => this.onItemActivated(),
         });
         return compDetails.newAgStackInstance().then((comp: IMenuItemComp) => {
             this.menuItemComp = comp;
@@ -79,7 +101,7 @@ export class AgMenuItemComponent extends BeanStub {
 
     private addListeners(eGui: HTMLElement, params?: IMenuConfigParams): void {
         if (!params?.suppressClick) {
-            this.addManagedListener(eGui, 'click', e => this.onItemSelected(e));
+            this.addManagedListener(eGui, 'click', (e) => this.onItemSelected(e));
         }
         if (!params?.suppressKeyboardSelect) {
             this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
@@ -90,7 +112,7 @@ export class AgMenuItemComponent extends BeanStub {
             });
         }
         if (!params?.suppressMouseDown) {
-            this.addManagedListener(eGui, 'mousedown', e => {
+            this.addManagedListener(eGui, 'mousedown', (e) => {
                 // Prevent event bubbling to other event handlers such as PopupService triggering
                 // premature closing of any open sub-menu popup.
                 e.stopPropagation();
@@ -110,7 +132,9 @@ export class AgMenuItemComponent extends BeanStub {
     public openSubMenu(activateFirstItem = false): void {
         this.closeSubMenu();
 
-        if (!this.params.subMenu) { return; }
+        if (!this.params.subMenu) {
+            return;
+        }
 
         this.subMenuIsOpening = true;
 
@@ -149,7 +173,7 @@ export class AgMenuItemComponent extends BeanStub {
             ePopup.appendChild(childMenu.getGui());
 
             // bubble menu item selected events
-            this.addManagedListener(childMenu, AgMenuItemComponent.EVENT_CLOSE_MENU, e => this.dispatchEvent(e));
+            this.addManagedListener(childMenu, AgMenuItemComponent.EVENT_CLOSE_MENU, (e) => this.dispatchEvent(e));
             childMenu.addGuiEventListener('mouseenter', () => this.cancelDeactivate());
 
             destroySubMenu = () => this.destroyBean(childMenu);
@@ -162,8 +186,10 @@ export class AgMenuItemComponent extends BeanStub {
             }
         }
 
-        const positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService,
-            { eventSource: this.eGui, ePopup });
+        const positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService, {
+            eventSource: this.eGui,
+            ePopup,
+        });
 
         const translate = this.localeService.getLocaleTextFunc();
 
@@ -173,7 +199,7 @@ export class AgMenuItemComponent extends BeanStub {
             positionCallback: positionCallback,
             anchorToElement: this.eGui,
             ariaLabel: translate('ariaLabelSubMenu', 'SubMenu'),
-            afterGuiAttached
+            afterGuiAttached,
         });
 
         this.subMenuIsOpen = true;
@@ -200,7 +226,9 @@ export class AgMenuItemComponent extends BeanStub {
     }
 
     public closeSubMenu(): void {
-        if (!this.hideSubMenu) { return; }
+        if (!this.hideSubMenu) {
+            return;
+        }
         this.hideSubMenu();
         this.hideSubMenu = null;
         this.setAriaExpanded(false);
@@ -217,7 +245,9 @@ export class AgMenuItemComponent extends BeanStub {
     public activate(openSubMenu?: boolean): void {
         this.cancelActivate();
 
-        if (this.params.disabled) { return; }
+        if (this.params.disabled) {
+            return;
+        }
 
         this.isActive = true;
         if (!this.suppressRootStyles) {
@@ -271,14 +301,20 @@ export class AgMenuItemComponent extends BeanStub {
     private onItemSelected(event: MouseEvent | KeyboardEvent): void {
         this.menuItemComp.select?.();
         if (this.params.action) {
-            this.getFrameworkOverrides().wrapOutgoing(() => this.params.action!(this.gos.addGridCommonParams({
-                ...this.contextParams
-            })));
+            this.getFrameworkOverrides().wrapOutgoing(() =>
+                this.params.action!(
+                    this.gos.addGridCommonParams({
+                        ...this.contextParams,
+                    })
+                )
+            );
         } else {
             this.openSubMenu(event && event.type === 'keydown');
         }
 
-        if ((this.params.subMenu && !this.params.action) || this.params.suppressCloseOnSelect) { return; }
+        if ((this.params.subMenu && !this.params.action) || this.params.suppressCloseOnSelect) {
+            return;
+        }
 
         this.closeMenu(event);
     }
@@ -367,7 +403,7 @@ export class AgMenuItemComponent extends BeanStub {
         this.suppressRootStyles = !!params?.suppressRootStyles;
         if (!this.suppressRootStyles) {
             eGui.classList.add(this.cssClassPrefix);
-            this.params.cssClasses?.forEach(it => eGui.classList.add(it));
+            this.params.cssClasses?.forEach((it) => eGui.classList.add(it));
             if (this.params.disabled) {
                 eGui.classList.add(`${this.cssClassPrefix}-disabled`);
             }
@@ -403,12 +439,14 @@ export class AgMenuItemComponent extends BeanStub {
             return;
         }
 
-        this.tooltipFeature = this.createBean(new TooltipFeature({
-            getGui: () => this.getGui(),
-            getTooltipValue: () => this.tooltip,
-            getLocation: () => 'menu',
-            shouldDisplayTooltip
-        }));
+        this.tooltipFeature = this.createBean(
+            new TooltipFeature({
+                getGui: () => this.getGui(),
+                getTooltipValue: () => this.tooltip,
+                getLocation: () => 'menu',
+                shouldDisplayTooltip,
+            })
+        );
     }
 
     protected destroy(): void {

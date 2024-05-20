@@ -1,24 +1,24 @@
-export * from "./column/miniColumn";
-export * from "./column/miniStackedColumn";
-export * from "./column/miniNormalizedColumn";
+export * from './column/miniColumn';
+export * from './column/miniStackedColumn';
+export * from './column/miniNormalizedColumn';
 
-export * from "./bar/miniBar";
-export * from "./bar/miniStackedBar";
-export * from "./bar/miniNormalizedBar";
+export * from './bar/miniBar';
+export * from './bar/miniStackedBar';
+export * from './bar/miniNormalizedBar';
 
-export * from "./pie/miniPie";
-export * from "./pie/miniDonut";
+export * from './pie/miniPie';
+export * from './pie/miniDonut';
 
-export * from "./line/miniLine";
+export * from './line/miniLine';
 
-export * from "./scatter/miniScatter";
-export * from "./scatter/miniBubble";
+export * from './scatter/miniScatter';
+export * from './scatter/miniBubble';
 
-export * from "./area/miniArea";
-export * from "./area/miniStackedArea";
-export * from "./area/miniNormalizedArea";
+export * from './area/miniArea';
+export * from './area/miniStackedArea';
+export * from './area/miniNormalizedArea';
 
-export * from "./histogram/miniHistogram";
+export * from './histogram/miniHistogram';
 
 export * from './polar/miniRadialColumn';
 export * from './polar/miniRadialBar';
@@ -36,6 +36,6 @@ export * from './hierarchical/miniSunburst';
 export * from './specialized/miniHeatmap';
 export * from './specialized/miniWaterfall';
 
-export * from "./combo/miniColumnLineCombo";
-export * from "./combo/miniAreaColumnCombo";
-export * from "./combo/miniCustomCombo";
+export * from './combo/miniColumnLineCombo';
+export * from './combo/miniAreaColumnCombo';
+export * from './combo/miniCustomCombo';

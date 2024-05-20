@@ -1,12 +1,11 @@
-import { Autowired } from "../../context/context";
-import { ICellRenderer } from "./iCellRenderer";
-import { Component } from "../../widgets/component";
-import { FilterManager } from "../../filter/filterManager";
-import { _clearElement } from "../../utils/dom";
-import { _missing, _exists } from "../../utils/generic";
+import { Autowired } from '../../context/context';
+import { FilterManager } from '../../filter/filterManager';
+import { _clearElement } from '../../utils/dom';
+import { _exists, _missing } from '../../utils/generic';
+import { Component } from '../../widgets/component';
+import { ICellRenderer } from './iCellRenderer';
 
 export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
-
     private eCurrent: HTMLElement;
     private ePrevious: HTMLElement | null;
 
@@ -21,7 +20,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
 
         const template = document.createElement('span');
         const slide = document.createElement('span');
-        slide.setAttribute('class', 'ag-value-slide-current');        
+        slide.setAttribute('class', 'ag-value-slide-current');
         template.appendChild(slide);
 
         this.setTemplateFromElement(template, []);
@@ -47,7 +46,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         }
 
         const prevElement = document.createElement('span');
-        prevElement.setAttribute('class','ag-value-slide-previous ag-value-slide-out');
+        prevElement.setAttribute('class', 'ag-value-slide-previous ag-value-slide-out');
         this.ePrevious = prevElement;
 
         this.ePrevious.textContent = this.eCurrent.textContent;
@@ -58,12 +57,16 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         // complex set of setTimeout below creates the animation
         this.getFrameworkOverrides().wrapIncoming(() => {
             window.setTimeout(() => {
-                if (refreshCountCopy !== this.refreshCount) { return; }
+                if (refreshCountCopy !== this.refreshCount) {
+                    return;
+                }
                 this.ePrevious!.classList.add('ag-value-slide-out-end');
             }, 50);
 
             window.setTimeout(() => {
-                if (refreshCountCopy !== this.refreshCount) { return; }
+                if (refreshCountCopy !== this.refreshCount) {
+                    return;
+                }
                 this.getGui().removeChild(this.ePrevious!);
                 this.ePrevious = null;
             }, 3000);

@@ -1,8 +1,8 @@
-@use "sass:string";
-@use "sass:map";
-@use "sass:meta";
+@use 'sass:string';
+@use 'sass:map';
+@use 'sass:meta';
 
-@use "ag";
+@use 'ag';
 
 @mixin output() {
     .ag-icon {
@@ -15,7 +15,7 @@
         // ::before used for icon font glyph, content is overridden by
         // .ag-icon-iconname::before styles below
         &::before {
-            content: "";
+            content: '';
         }
 
         // ::after used for icon images
@@ -25,7 +25,7 @@
             opacity: var(--ag-icon-image-opacity, 0.9);
             position: absolute;
             inset: 0;
-            content: "";
+            content: '';
         }
     }
 

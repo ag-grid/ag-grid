@@ -1,18 +1,17 @@
-import { Autowired, PostConstruct } from "../context/context";
-import { AbstractFakeScrollComp } from "./abstractFakeScrollComp";
-import { _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from "../utils/dom";
-import { Events } from "../eventKeys";
-import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { RefSelector } from "../widgets/componentAnnotations";
-import { CenterWidthFeature } from "./centerWidthFeature";
-import { AgComponentSelector } from "../widgets/component";
-import { VisibleColsService } from "../columns/visibleColsService";
+import { VisibleColsService } from '../columns/visibleColsService';
+import { Autowired, PostConstruct } from '../context/context';
+import { Events } from '../eventKeys';
+import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
+import { _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from '../utils/dom';
+import { AgComponentSelector } from '../widgets/component';
+import { RefSelector } from '../widgets/componentAnnotations';
+import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
+import { CenterWidthFeature } from './centerWidthFeature';
 
 export class FakeHScrollComp extends AbstractFakeScrollComp {
     static readonly selector: AgComponentSelector = 'ag-fake-horizontal-scroll';
 
-    private static TEMPLATE = /* html */
-        `<div class="ag-body-horizontal-scroll" aria-hidden="true">
+    private static TEMPLATE /* html */ = `<div class="ag-body-horizontal-scroll" aria-hidden="true">
             <div class="ag-horizontal-left-spacer" ref="eLeftSpacer"></div>
             <div class="ag-body-horizontal-scroll-viewport" ref="eViewport">
                 <div class="ag-body-horizontal-scroll-container" ref="eContainer"></div>
@@ -40,17 +39,23 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         const spacerWidthsListener = this.setFakeHScrollSpacerWidths.bind(this);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, spacerWidthsListener);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, spacerWidthsListener);
-        this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_PINNED_ROW_DATA_CHANGED,
+            this.onPinnedRowDataChanged.bind(this)
+        );
         this.addManagedPropertyListener('domLayout', spacerWidthsListener);
 
         this.ctrlsService.register('fakeHScrollComp', this);
-        this.createManagedBean(new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`));
+        this.createManagedBean(new CenterWidthFeature((width) => (this.eContainer.style.width = `${width}px`)));
 
         this.addManagedPropertyListeners(['suppressHorizontalScroll'], this.onScrollVisibilityChanged.bind(this));
     }
 
     protected initialiseInvisibleScrollbar(): void {
-        if (this.invisibleScrollbar !== undefined) { return; }
+        if (this.invisibleScrollbar !== undefined) {
+            return;
+        }
 
         this.enableRtl = this.gos.get('enableRtl');
         super.initialiseInvisibleScrollbar();
@@ -65,10 +70,12 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     }
 
     private refreshCompBottom(): void {
-        if (!this.invisibleScrollbar) { return; }
+        if (!this.invisibleScrollbar) {
+            return;
+        }
         const bottomPinnedHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
 
-        this.getGui().style.bottom = `${bottomPinnedHeight}px`
+        this.getGui().style.bottom = `${bottomPinnedHeight}px`;
     }
 
     protected onScrollVisibilityChanged(): void {
@@ -108,8 +115,8 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
         const invisibleScrollbar = this.invisibleScrollbar;
         const isSuppressHorizontalScroll = this.gos.get('suppressHorizontalScroll');
-        const scrollbarWidth = hScrollShowing ? (this.gos.getScrollbarWidth() || 0) : 0;
-        const adjustedScrollbarWidth = (scrollbarWidth === 0 && invisibleScrollbar) ? 16 : scrollbarWidth;
+        const scrollbarWidth = hScrollShowing ? this.gos.getScrollbarWidth() || 0 : 0;
+        const adjustedScrollbarWidth = scrollbarWidth === 0 && invisibleScrollbar ? 16 : scrollbarWidth;
         const scrollContainerSize = !isSuppressHorizontalScroll ? adjustedScrollbarWidth : 0;
 
         this.addOrRemoveCssClass('ag-scrollbar-invisible', invisibleScrollbar);
@@ -124,7 +131,9 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     }
 
     public setScrollPosition(value: number): void {
-        if (!_isVisible(this.getViewport())) { this.attemptSettingScrollPosition(value); }
+        if (!_isVisible(this.getViewport())) {
+            this.attemptSettingScrollPosition(value);
+        }
         _setScrollLeft(this.getViewport(), value, this.enableRtl);
     }
 }

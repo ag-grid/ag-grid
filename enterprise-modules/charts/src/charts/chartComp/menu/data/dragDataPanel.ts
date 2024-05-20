@@ -1,15 +1,10 @@
-import {
-    AgSelect,
-    AgSelectParams,
-    Autowired,
-    Component,
-    ListOption,
-} from "@ag-grid-community/core";
-import { AgPillSelect, AgPillSelectChangeParams } from "../../../../widgets/agPillSelect";
-import { ChartController } from "../../chartController";
-import { ChartDataModel, ColState } from "../../model/chartDataModel";
-import { ChartTranslationKey, ChartTranslationService } from "../../services/chartTranslationService";
-import { AgGroupComponent } from "@ag-grid-enterprise/core";
+import { AgSelect, AgSelectParams, Autowired, Component, ListOption } from '@ag-grid-community/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
+
+import { AgPillSelect, AgPillSelectChangeParams } from '../../../../widgets/agPillSelect';
+import { ChartController } from '../../chartController';
+import { ChartDataModel, ColState } from '../../model/chartDataModel';
+import { ChartTranslationKey, ChartTranslationService } from '../../services/chartTranslationService';
 
 export abstract class DragDataPanel extends Component {
     @Autowired('chartTranslationService') protected readonly chartTranslationService: ChartTranslationService;
@@ -39,21 +34,23 @@ export abstract class DragDataPanel extends Component {
         skipAnimation?: () => boolean
     ): void {
         if (this.allowMultipleSelection) {
-            const selectedValueList = columns.filter(col => col.selected);
-            this.valuePillSelect = this.groupComp.createManagedBean(new AgPillSelect<ColState>({
-                valueList: columns,
-                selectedValueList,
-                valueFormatter,
-                selectPlaceholder: this.chartTranslationService.translate(selectLabelKey),
-                dragSourceId,
-                onValuesChange: params => this.onValueChange(params),
-                maxSelection: this.maxSelection,
-            }));
+            const selectedValueList = columns.filter((col) => col.selected);
+            this.valuePillSelect = this.groupComp.createManagedBean(
+                new AgPillSelect<ColState>({
+                    valueList: columns,
+                    selectedValueList,
+                    valueFormatter,
+                    selectPlaceholder: this.chartTranslationService.translate(selectLabelKey),
+                    dragSourceId,
+                    onValuesChange: (params) => this.onValueChange(params),
+                    maxSelection: this.maxSelection,
+                })
+            );
             this.groupComp.addItem(this.valuePillSelect);
         } else {
             const params: AgSelectParams<ColState> = this.createValueSelectParams(columns);
             params.onValueChange = (updatedColState: ColState) => {
-                columns.forEach(col => {
+                columns.forEach((col) => {
                     col.selected = false;
                 });
                 updatedColState.selected = true;
@@ -69,25 +66,27 @@ export abstract class DragDataPanel extends Component {
     }
 
     protected refreshValueSelect(columns: ColState[]): void {
-        if (!this.valueSelect) { return; }
+        if (!this.valueSelect) {
+            return;
+        }
         const { options, value } = this.createValueSelectParams(columns);
         this.valueSelect.clearOptions().addOptions(options).setValue(value, true);
     }
 
     private createValueSelectParams(columns: ColState[]): {
-        options: ListOption<ColState>[],
-        value: ColState
+        options: ListOption<ColState>[];
+        value: ColState;
     } {
         let selectedValue: ColState;
-        const options = columns.map(value => {
+        const options = columns.map((value) => {
             const text = value.displayName ?? '';
             if (value.selected) {
                 selectedValue = value;
             }
             return {
                 value,
-                text
-            }
+                text,
+            };
         });
         return {
             options,
@@ -97,13 +96,13 @@ export abstract class DragDataPanel extends Component {
 
     private onValueChange({ added, updated, removed, selected }: AgPillSelectChangeParams<ColState>) {
         let updatedColState: ColState | undefined;
-        let resetOrder: boolean | undefined
+        let resetOrder: boolean | undefined;
         const updateOrder = () => {
             selected.forEach((col, index) => {
                 col.order = index;
             });
             resetOrder = true;
-        }
+        };
         if (added.length) {
             updatedColState = added[0];
             updatedColState.selected = true;

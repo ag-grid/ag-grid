@@ -1,3 +1,3 @@
-export { ColumnsToolPanelModule } from "./columnsToolPanelModule";
+export { ColumnsToolPanelModule } from './columnsToolPanelModule';
 // used by the enterprise column menu
-export { AgPrimaryCols } from "./columnToolPanel/agPrimaryCols";
+export { AgPrimaryCols } from './columnToolPanel/agPrimaryCols';

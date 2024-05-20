@@ -1,4 +1,5 @@
 import {
+    AgChartThemeOverrides,
     Autowired,
     BeanStub,
     CellRange,
@@ -9,21 +10,23 @@ import {
     ChartRangeSelectionChanged,
     ChartType,
     Events,
+    IAggFunc,
     IRangeService,
+    PartialCellRange,
     PostConstruct,
     SeriesChartType,
-    WithoutGridCommon,
-    AgChartThemeOverrides,
-    UpdateCrossFilterChartParams,
+    SeriesGroupType,
     UpdateChartParams,
+    UpdateCrossFilterChartParams,
     UpdateRangeChartParams,
-    IAggFunc,
-    PartialCellRange,
-    SeriesGroupType
-} from "@ag-grid-community/core";
-import { ChartDataModel, ChartModelParams, ColState } from "./model/chartDataModel";
-import { ChartProxy, FieldDefinition, UpdateParams } from "./chartProxies/chartProxy";
-import { _Theme, AgChartThemePalette, _ModuleSupport, AgCartesianAxisType } from "ag-charts-community";
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
+import { AgCartesianAxisType, AgChartThemePalette, _ModuleSupport, _Theme } from 'ag-charts-community';
+
+import { ChartProxy, FieldDefinition, UpdateParams } from './chartProxies/chartProxy';
+import { isStockTheme } from './chartProxies/chartTheme';
+import { ChartDataModel, ChartModelParams, ColState } from './model/chartDataModel';
+import { ChartParamsValidator } from './utils/chartParamsValidator';
 import {
     ChartSeriesType,
     getMaxNumCategories,
@@ -31,13 +34,10 @@ import {
     getSeriesType,
     supportsInvertedCategorySeries,
 } from './utils/seriesTypeMapper';
-import { isStockTheme } from "./chartProxies/chartTheme";
-import { ChartParamsValidator } from "./utils/chartParamsValidator";
 
 export const DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
 
 export class ChartController extends BeanStub {
-
     public static EVENT_CHART_UPDATED = 'chartUpdated';
     public static EVENT_CHART_API_UPDATE = 'chartApiUpdate';
     public static EVENT_CHART_MODEL_UPDATE = 'chartModelUpdate';
@@ -57,7 +57,7 @@ export class ChartController extends BeanStub {
     private init(): void {
         this.setChartRange();
 
-        this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, event => {
+        this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, (event) => {
             if (event.id && event.id === this.model.chartId) {
                 this.updateForRangeChange();
             }
@@ -72,10 +72,18 @@ export class ChartController extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.updateForGridChange.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.updateForGridChange.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.updateForGridChange.bind(this));
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
+            this.updateForGridChange.bind(this)
+        );
 
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateForGridChange.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateForDataChange.bind(this));
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_CELL_VALUE_CHANGED,
+            this.updateForDataChange.bind(this)
+        );
     }
 
     public update(params: UpdateChartParams): boolean {
@@ -103,7 +111,7 @@ export class ChartController extends BeanStub {
             seriesChartTypes: undefined,
             suppressChartRanges: false,
             crossFiltering: false,
-        }
+        };
 
         let chartModelParams: ChartModelParams = { ...common };
 
@@ -136,7 +144,7 @@ export class ChartController extends BeanStub {
         removeChartCellRanges ? this.rangeService?.setCellRanges([]) : this.setChartRange();
     }
 
-    public updateForGridChange(params?: { maintainColState?: boolean, setColsFromRange?: boolean }): void {
+    public updateForGridChange(params?: { maintainColState?: boolean; setColsFromRange?: boolean }): void {
         if (this.model.unlinked) {
             return;
         }
@@ -163,7 +171,9 @@ export class ChartController extends BeanStub {
     }
 
     public updateForPanelChange(params: {
-        updatedColState: ColState, resetOrder?: boolean, skipAnimation?: boolean
+        updatedColState: ColState;
+        resetOrder?: boolean;
+        skipAnimation?: boolean;
     }): void {
         this.model.updateCellRanges(params);
         this.model.updateData();
@@ -180,7 +190,7 @@ export class ChartController extends BeanStub {
 
     public getChartUpdateParams(updatedOverrides?: AgChartThemeOverrides): UpdateParams {
         const selectedCols = this.getSelectedValueColState();
-        const fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
+        const fields = selectedCols.map((c) => ({ colId: c.colId, displayName: c.displayName }));
         const data = this.getChartData();
         const selectedDimensions = this.getSelectedDimensions();
 
@@ -191,22 +201,20 @@ export class ChartController extends BeanStub {
             categories: selectedDimensions.map((selectedDimension) => ({
                 id: selectedDimension.colId,
                 name: selectedDimension.displayName!,
-                chartDataType: this.model.categoryAxisType ?? this.model.getChartDataType(selectedDimension.colId)
+                chartDataType: this.model.categoryAxisType ?? this.model.getChartDataType(selectedDimension.colId),
             })),
             fields,
             chartId: this.getChartId(),
             getCrossFilteringContext: () => ({ lastSelectedChartId: 'xxx' }), //this.params.crossFilteringContext, //TODO
             seriesChartTypes: this.getSeriesChartTypes(),
             updatedOverrides: updatedOverrides,
-            seriesGroupType: this.model.seriesGroupType
+            seriesGroupType: this.model.seriesGroupType,
         };
 
-        return (this.isCategorySeriesSwitched() ? this.invertCategorySeriesParams(params) : params);
+        return this.isCategorySeriesSwitched() ? this.invertCategorySeriesParams(params) : params;
     }
 
-    private invertCategorySeriesParams(
-        params: UpdateParams,
-    ): UpdateParams {
+    private invertCategorySeriesParams(params: UpdateParams): UpdateParams {
         const [category] = params.categories;
         // Create a single synthetic output category that will contain the series name values
         const categories = [{ id: ChartDataModel.DEFAULT_CATEGORY, name: '' }];
@@ -257,7 +265,7 @@ export class ChartController extends BeanStub {
             aggFunc: this.model.aggFunc,
             unlinkChart: this.model.unlinked,
             seriesChartTypes,
-            seriesGroupType: this.model.seriesGroupType
+            seriesGroupType: this.model.seriesGroupType,
         };
     }
 
@@ -329,12 +337,14 @@ export class ChartController extends BeanStub {
             if (numSelected === 0) {
                 columns[0].selected = true;
             }
-        }
+        };
 
         const maxNumDimensions = getMaxNumCategories(chartType);
         const maxNumSeries = getMaxNumSeries(chartType);
-        const updateDimensionColState = maxNumDimensions != null && (getMaxNumCategories(previousChartType) ?? 100) > (maxNumDimensions ?? 100);
-        const updateValueColState = maxNumSeries != null && (getMaxNumSeries(previousChartType) ?? 100) > (maxNumSeries ?? 100);
+        const updateDimensionColState =
+            maxNumDimensions != null && (getMaxNumCategories(previousChartType) ?? 100) > (maxNumDimensions ?? 100);
+        const updateValueColState =
+            maxNumSeries != null && (getMaxNumSeries(previousChartType) ?? 100) > (maxNumSeries ?? 100);
         if (updateDimensionColState) {
             updateForMax(this.model.dimensionColState, maxNumDimensions);
         }
@@ -412,8 +422,8 @@ export class ChartController extends BeanStub {
         return this.model.valueColState.map(this.displayNameMapper.bind(this));
     }
 
-    public getSelectedValueColState(): { colId: string; displayName: string | null; }[] {
-        return this.getValueColState().filter(cs => cs.selected);
+    public getSelectedValueColState(): { colId: string; displayName: string | null }[] {
+        return this.getValueColState().filter((cs) => cs.selected);
     }
 
     public getSelectedDimensions(): ColState[] {
@@ -426,7 +436,7 @@ export class ChartController extends BeanStub {
         return col;
     }
 
-    public getColStateForMenu(): { dimensionCols: ColState[]; valueCols: ColState[]; } {
+    public getColStateForMenu(): { dimensionCols: ColState[]; valueCols: ColState[] } {
         return { dimensionCols: this.model.dimensionColState, valueCols: this.getValueColState() };
     }
 
@@ -486,9 +496,8 @@ export class ChartController extends BeanStub {
     }
 
     public updateSeriesChartType(colId: string, chartType?: ChartType, secondaryAxis?: boolean): void {
-        const seriesChartType = this.model.comboChartModel.seriesChartTypes.find(s => s.colId === colId);
+        const seriesChartType = this.model.comboChartModel.seriesChartTypes.find((s) => s.colId === colId);
         if (seriesChartType) {
-
             // once a combo chart has been modified it is now a 'customCombo' chart
             const updateChartType = this.model.chartType !== 'customCombo';
             if (updateChartType) {
@@ -515,14 +524,14 @@ export class ChartController extends BeanStub {
             if (updateChartType) {
                 // update the settings panel by raising an EVENT_CHART_TYPE_CHANGED event
                 this.dispatchEvent({
-                    type: ChartController.EVENT_CHART_TYPE_CHANGED
+                    type: ChartController.EVENT_CHART_TYPE_CHANGED,
                 });
             }
 
             if (prevSeriesChartType !== chartType) {
                 // update the format panel by raising an EVENT_CHART_SERIES_CHART_TYPE_CHANGED event
                 this.dispatchEvent({
-                    type: ChartController.EVENT_CHART_SERIES_CHART_TYPE_CHANGED
+                    type: ChartController.EVENT_CHART_SERIES_CHART_TYPE_CHANGED,
                 });
             }
 
@@ -531,8 +540,8 @@ export class ChartController extends BeanStub {
     }
 
     public getActiveSeriesChartTypes(): SeriesChartType[] {
-        const selectedColIds = this.getSelectedValueColState().map(c => c.colId);
-        return this.getSeriesChartTypes().filter(s => selectedColIds.includes(s.colId));
+        const selectedColIds = this.getSelectedValueColState().map((c) => c.colId);
+        return this.getSeriesChartTypes().filter((s) => selectedColIds.includes(s.colId));
     }
 
     public getChartSeriesTypes(chartType?: ChartType): ChartSeriesType[] {
@@ -561,32 +570,41 @@ export class ChartController extends BeanStub {
     public isEnterprise = () => _ModuleSupport.enterpriseModule.isEnterprise;
 
     private getCellRanges(): CellRange[] {
-        return [this.model.dimensionCellRange!, this.model.valueCellRange!].filter(r => r);
+        return [this.model.dimensionCellRange!, this.model.valueCellRange!].filter((r) => r);
     }
 
-    private createCellRange(params: UpdateRangeChartParams | UpdateCrossFilterChartParams): PartialCellRange | undefined {
-        return params.cellRange && this.rangeService?.createPartialCellRangeFromRangeParams(params.cellRange as CellRangeParams, true);
+    private createCellRange(
+        params: UpdateRangeChartParams | UpdateCrossFilterChartParams
+    ): PartialCellRange | undefined {
+        return (
+            params.cellRange &&
+            this.rangeService?.createPartialCellRangeFromRangeParams(params.cellRange as CellRangeParams, true)
+        );
     }
 
     private validUpdateType(params: UpdateChartParams): boolean {
         if (!params.type) {
-            console.warn(`AG Grid - Unable to update chart as the 'type' is missing. It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'.`);
+            console.warn(
+                `AG Grid - Unable to update chart as the 'type' is missing. It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'.`
+            );
             return false;
         }
 
         const chartTypeMap: Record<string, () => boolean> = {
             'Range Chart': () => !this.isPivotChart() && !this.isCrossFilterChart(),
             'Pivot Chart': () => this.isPivotChart(),
-            'Cross Filter Chart': () => this.isCrossFilterChart()
+            'Cross Filter Chart': () => this.isCrossFilterChart(),
         };
 
-        const currentChartType = Object.keys(chartTypeMap).find(type => chartTypeMap[type]()) ?? 'Range Chart';
+        const currentChartType = Object.keys(chartTypeMap).find((type) => chartTypeMap[type]()) ?? 'Range Chart';
 
-        const valid = params.type ===
-            `${currentChartType[0].toLowerCase()}${currentChartType.slice(1).replace(/ /g, '')}Update`;
+        const valid =
+            params.type === `${currentChartType[0].toLowerCase()}${currentChartType.slice(1).replace(/ /g, '')}Update`;
 
         if (!valid) {
-            console.warn(`AG Grid - Unable to update chart as a '${params.type}' update type is not permitted on a ${currentChartType}.`);
+            console.warn(
+                `AG Grid - Unable to update chart as a '${params.type}' update type is not permitted on a ${currentChartType}.`
+            );
         }
         return valid;
     }
@@ -602,7 +620,10 @@ export class ChartController extends BeanStub {
             rowStartPinned: startRow && startRow.rowPinned,
             rowEndIndex: endRow && endRow.rowIndex,
             rowEndPinned: endRow && endRow.rowPinned,
-            columns: cellRanges.reduce((columns, value) => columns.concat(value.columns.map(c => c.getId())), [] as string[])
+            columns: cellRanges.reduce(
+                (columns, value) => columns.concat(value.columns.map((c) => c.getId())),
+                [] as string[]
+            ),
         };
     }
 
@@ -622,7 +643,7 @@ export class ChartController extends BeanStub {
 
     public raiseChartModelUpdateEvent(): void {
         const event = {
-            type: ChartController.EVENT_CHART_MODEL_UPDATE
+            type: ChartController.EVENT_CHART_MODEL_UPDATE,
         };
 
         this.dispatchEvent(event);
@@ -630,7 +651,7 @@ export class ChartController extends BeanStub {
 
     public raiseChartUpdatedEvent(): void {
         const event = {
-            type: ChartController.EVENT_CHART_UPDATED
+            type: ChartController.EVENT_CHART_UPDATED,
         };
 
         this.dispatchEvent(event);
@@ -638,7 +659,7 @@ export class ChartController extends BeanStub {
 
     public raiseChartApiUpdateEvent(): void {
         const event = {
-            type: ChartController.EVENT_CHART_API_UPDATE
+            type: ChartController.EVENT_CHART_API_UPDATE,
         };
 
         this.dispatchEvent(event);
@@ -651,7 +672,7 @@ export class ChartController extends BeanStub {
             chartId,
             chartType,
             chartThemeName: this.getChartThemeName(),
-            chartOptions: this.chartProxy.getChartThemeOverrides()
+            chartOptions: this.chartProxy.getChartThemeOverrides(),
         };
 
         this.eventService.dispatchEvent(event);
@@ -662,7 +683,7 @@ export class ChartController extends BeanStub {
             type: Events.EVENT_CHART_RANGE_SELECTION_CHANGED,
             id: this.model.chartId,
             chartId: this.model.chartId,
-            cellRange: this.getCellRangeParams()
+            cellRange: this.getCellRangeParams(),
         };
 
         this.eventService.dispatchEvent(event);
@@ -676,4 +697,3 @@ export class ChartController extends BeanStub {
         }
     }
 }
-
