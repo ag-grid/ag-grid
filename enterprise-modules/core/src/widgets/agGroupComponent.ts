@@ -30,6 +30,7 @@ export interface AgGroupComponentParams {
     onExpandedChange?: (expanded: boolean) => void;
     expanded?: boolean;
     useToggle?: boolean;
+    suppressKeyboardNavigation?: boolean;
 }
 
 interface ExpandChangedEvent extends AgEvent {
@@ -353,6 +354,7 @@ class DefaultTitleBar extends Component {
 
     private title: string | undefined;
     private suppressOpenCloseIcons: boolean = false;
+    private suppressKeyboardNavigation: boolean = false;
 
     @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
     @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
@@ -361,7 +363,7 @@ class DefaultTitleBar extends Component {
     constructor(params: AgGroupComponentParams = {}) {
         super(DefaultTitleBar.getTemplate(params));
 
-        const { title, suppressOpenCloseIcons } = params;
+        const { title, suppressOpenCloseIcons, suppressKeyboardNavigation } = params;
 
         if (!!title && title.length > 0) {
             this.title = title;
@@ -370,13 +372,17 @@ class DefaultTitleBar extends Component {
         if (suppressOpenCloseIcons != null) {
             this.suppressOpenCloseIcons = suppressOpenCloseIcons;
         }
+
+        this.suppressKeyboardNavigation = suppressKeyboardNavigation ?? false;
     }
 
     private static getTemplate(params: AgGroupComponentParams) {
         const cssIdentifier = params.cssIdentifier ?? 'default';
 
+        const role = params.suppressKeyboardNavigation ? 'presentation' : 'role';
+
         return /* html */ `
-            <div class="ag-group-title-bar ag-${cssIdentifier}-group-title-bar ag-unselectable" role="button">
+            <div class="ag-group-title-bar ag-${cssIdentifier}-group-title-bar ag-unselectable" role="${role}">
                 <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupOpenedIcon" role="presentation"></span>
                 <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupClosedIcon" role="presentation"></span>
                 <span ref="eTitle" class="ag-group-title ag-${cssIdentifier}-group-title"></span>
@@ -484,7 +490,7 @@ class DefaultTitleBar extends Component {
             eGui.removeAttribute('tabindex');
         } else {
             eGui.classList.remove(TITLE_BAR_DISABLED_CLASS);
-            if (typeof this.title === 'string') {
+            if (typeof this.title === 'string' && !this.suppressKeyboardNavigation) {
                 eGui.setAttribute('tabindex', '0');
             } else {
                 eGui.removeAttribute('tabindex');

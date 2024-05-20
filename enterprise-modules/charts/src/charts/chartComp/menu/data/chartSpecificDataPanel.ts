@@ -2,8 +2,8 @@ import { AgSelect, Autowired, ChartMappings, Component, PostConstruct, RefSelect
 import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
 import { ChartService } from '../../../chartService';
-import { ChartTranslationKey, ChartTranslationService } from '../../services/chartTranslationService';
-import { canSwitchDirection, getSeriesType } from '../../utils/seriesTypeMapper';
+import { ChartTranslationService } from '../../services/chartTranslationService';
+import { canSwitchDirection, getFullChartNameTranslationKey, getSeriesType } from '../../utils/seriesTypeMapper';
 import { ChartMenuContext } from '../chartMenuContext';
 import { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
 
@@ -56,28 +56,7 @@ export class ChartSpecificDataPanel extends Component {
 
     private getTitle(): string {
         const chartType = this.chartMenuContext.chartController.getChartType();
-        let key: ChartTranslationKey;
-        switch (chartType) {
-            case 'groupedColumn':
-            case 'stackedColumn':
-            case 'normalizedColumn':
-            case 'groupedBar':
-            case 'stackedBar':
-            case 'normalizedBar':
-            case 'stackedArea':
-            case 'normalizedArea':
-                key = `${chartType}Full`;
-                break;
-            case 'doughnut':
-                key = 'donut';
-                break;
-            case 'areaColumnCombo':
-                key = 'AreaColumnCombo';
-                break;
-            default:
-                key = chartType;
-        }
-        return this.chartTranslationService.translate(key);
+        return this.chartTranslationService.translate(getFullChartNameTranslationKey(chartType));
     }
 
     private createDirectionSelect(): AgSelect[] {

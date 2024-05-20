@@ -3,6 +3,7 @@ import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import { ChartController } from '../../chartController';
 import { ChartTranslationService } from '../../services/chartTranslationService';
+import { getFullChartNameTranslationKey } from '../../utils/seriesTypeMapper';
 import {
     MiniArea,
     MiniAreaColumnCombo,
@@ -138,7 +139,7 @@ export class MiniChartsContainer extends Component {
     private readonly strokes: string[];
     private readonly themeTemplateParameters: ThemeTemplateParameters;
     private readonly isCustomTheme: boolean;
-    private wrappers: { [key: string]: HTMLElement } = {};
+    private wrappers: Map<ChartType, HTMLElement> = new Map();
     private chartController: ChartController;
 
     private chartGroups: ChartGroupsDef;
@@ -233,6 +234,7 @@ export class MiniChartsContainer extends Component {
                     suppressOpenCloseIcons: true,
                     cssIdentifier: 'charts-settings',
                     direction: 'horizontal',
+                    suppressKeyboardNavigation: true,
                 })
             );
 
@@ -240,14 +242,23 @@ export class MiniChartsContainer extends Component {
                 const MiniClass = menuItem.icon;
                 const miniWrapper = document.createElement('div');
                 miniWrapper.classList.add('ag-chart-mini-thumbnail');
+                miniWrapper.setAttribute('tabindex', '0');
+                miniWrapper.setAttribute('role', 'button');
 
                 const miniClassChartType: ChartType = MiniClass.chartType;
-                this.addManagedListener(miniWrapper, 'click', () => {
+                const listener = () => {
                     this.chartController.setChartType(miniClassChartType);
                     this.updateSelectedMiniChart();
+                };
+                this.addManagedListener(miniWrapper, 'click', listener);
+                this.addManagedListener(miniWrapper, 'keydown', (event) => {
+                    if (event.key == KeyCode.ENTER || event.key === KeyCode.SPACE) {
+                        event.preventDefault();
+                        listener();
+                    }
                 });
 
-                this.wrappers[miniClassChartType] = miniWrapper;
+                this.wrappers.set(miniClassChartType, miniWrapper);
 
                 this.createBean(
                     new MiniClass(
@@ -269,10 +280,20 @@ export class MiniChartsContainer extends Component {
 
     public updateSelectedMiniChart(): void {
         const selectedChartType = this.chartController.getChartType();
-        for (const miniChartType in this.wrappers) {
-            const miniChart = this.wrappers[miniChartType];
+        this.wrappers.forEach((miniChart, miniChartType) => {
             const selected = miniChartType === selectedChartType;
             miniChart.classList.toggle('ag-selected', selected);
-        }
+
+            const chartName = this.chartTranslationService.translate(getFullChartNameTranslationKey(miniChartType));
+            const ariaLabel = selected
+                ? `${chartName}. ${this.chartTranslationService.translate('ariaChartSelected')}`
+                : chartName;
+            _setAriaLabel(miniChart, ariaLabel);
+        });
+    }
+
+    protected destroy(): void {
+        this.wrappers.clear();
+        super.destroy();
     }
 }
