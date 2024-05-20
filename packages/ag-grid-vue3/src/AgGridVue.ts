@@ -1,6 +1,3 @@
-import { markRaw, toRaw } from '@vue/reactivity';
-import { PropType, defineComponent, getCurrentInstance, h } from 'vue';
-
 import {
     ALWAYS_SYNC_GLOBAL_EVENTS,
     ComponentUtil,
@@ -10,6 +7,8 @@ import {
     Module,
     createGrid,
 } from 'ag-grid-community';
+import { markRaw, toRaw } from '@vue/reactivity';
+import { PropType, defineComponent, getCurrentInstance, h } from 'vue';
 
 import { Properties, getAgGridProperties } from './Utils';
 import { VueFrameworkComponentWrapper } from './VueFrameworkComponentWrapper';

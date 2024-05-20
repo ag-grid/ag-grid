@@ -523,7 +523,7 @@
         padding: calc(var(--ag-grid-size) * 1.5) var(--ag-grid-size);
     }
 
-    .ag-filter-toolpanel-group-container {
+    .ag-filter-toolpanel-instance-body {
         @include ag.theme-rtl(
             (
                 padding-left: var(--ag-grid-size),

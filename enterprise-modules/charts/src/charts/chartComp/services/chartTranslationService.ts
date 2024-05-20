@@ -245,6 +245,7 @@ export class ChartTranslationService extends BeanStub {
 
         // aria
         ariaChartMenuClose: 'Close Chart Edit Menu',
+        ariaChartSelected: 'Selected',
 
         // group
         group: 'Group',

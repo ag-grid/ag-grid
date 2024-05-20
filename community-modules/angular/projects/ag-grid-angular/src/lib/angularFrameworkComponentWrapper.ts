@@ -9,7 +9,6 @@ import { ComponentRef, Injectable, ViewContainerRef } from '@angular/core';
 import { AngularFrameworkOverrides } from './angularFrameworkOverrides';
 import { AgFrameworkComponent } from './interfaces';
 
-
 @Injectable()
 export class AngularFrameworkComponentWrapper
     extends BaseComponentWrapper<WrappableInterface>

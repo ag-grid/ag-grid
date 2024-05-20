@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
-
 import { GridApi } from 'ag-grid-community';
+import React, { Component } from 'react';
 
 import { AgGridReactUi } from './reactUi/agGridReactUi';
 import { AgGridReactProps, AgReactUiProps } from './shared/interfaces';
