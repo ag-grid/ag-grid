@@ -5,7 +5,8 @@ import {
     PostConstruct,
     RefSelector,
     AgSelectParams,
-    _removeFromParent
+    _removeFromParent,
+    AgSelect
 } from "@ag-grid-community/core";
 import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
@@ -44,7 +45,7 @@ export class SeriesItemsPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(SeriesItemsPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
+        this.setTemplate(SeriesItemsPanel.TEMPLATE, [AgGroupComponent, AgSelect], {
             seriesItemsGroup: seriesItemsGroupParams,
             seriesItemSelect: this.getSeriesItemsParams()
         });

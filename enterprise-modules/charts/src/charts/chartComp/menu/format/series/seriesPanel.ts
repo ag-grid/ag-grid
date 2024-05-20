@@ -105,7 +105,7 @@ export class SeriesPanel extends Component {
             expanded,
             suppressEnabledCheckbox: true
         };
-        this.setTemplate(SeriesPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {seriesGroup: seriesGroupParams});
+        this.setTemplate(SeriesPanel.TEMPLATE, [AgGroupComponent], {seriesGroup: seriesGroupParams});
 
         registerGroupComponent(this.seriesGroup);
 

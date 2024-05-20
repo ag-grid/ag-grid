@@ -3,9 +3,10 @@ import {
     Component,
     PostConstruct
 } from "@ag-grid-community/core";
-import { AgGroupComponentParams } from "@ag-grid-enterprise/core";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import { AgSlider } from "../../../../../widgets/agSlider";
 
 export class CalloutPanel extends Component {
 
@@ -34,7 +35,7 @@ export class CalloutPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true
         };
-        this.setTemplate(CalloutPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
+        this.setTemplate(CalloutPanel.TEMPLATE, [AgGroupComponent, AgSlider], {
             calloutGroup: calloutGroupParams,
             calloutLengthSlider: this.chartMenuUtils.getDefaultSliderParams('calloutLine.length', 'length', 40),
             calloutStrokeWidthSlider: this.chartMenuUtils.getDefaultSliderParams('calloutLine.strokeWidth', 'strokeWidth', 10),

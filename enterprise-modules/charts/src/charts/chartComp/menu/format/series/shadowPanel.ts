@@ -3,10 +3,11 @@ import {
     Component,
     PostConstruct,
 } from "@ag-grid-community/core";
-import { AgGroupComponentParams } from "@ag-grid-enterprise/core";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
-import { AgSliderParams } from "../../../../../widgets/agSlider";
+import { AgSlider, AgSliderParams } from "../../../../../widgets/agSlider";
+import { AgColorPicker } from "../../../../../widgets/agColorPicker";
 
 export class ShadowPanel extends Component {
 
@@ -43,7 +44,7 @@ export class ShadowPanel extends Component {
             }
         );
         const shadowColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(`${propertyNamespace}.color`);
-        this.setTemplate(ShadowPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
+        this.setTemplate(ShadowPanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
             shadowGroup: shadowGroupParams,
             shadowColorPicker: shadowColorPickerParams,
             shadowBlurSlider: this.getSliderParams("blur", 0, 20),

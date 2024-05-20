@@ -1,9 +1,10 @@
 import {
+    AgInputNumberField,
     Autowired,
     Component,
     PostConstruct
 } from "@ag-grid-community/core";
-import { AgGroupComponentParams } from "@ag-grid-enterprise/core";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 
@@ -38,7 +39,7 @@ export class AnimationPanel extends Component {
         const animationHeightInputParams = this.chartMenuParamsFactory.getDefaultNumberInputParams("animation.duration", "durationMillis", {
             min: 0,
         });
-        this.setTemplate(AnimationPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
+        this.setTemplate(AnimationPanel.TEMPLATE, [AgGroupComponent, AgInputNumberField], {
             animationGroup: animationGroupParams,
             animationHeightInput: animationHeightInputParams
         });

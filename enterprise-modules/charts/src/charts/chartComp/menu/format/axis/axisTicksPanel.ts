@@ -3,9 +3,11 @@ import {
     Component,
     PostConstruct
 } from "@ag-grid-community/core";
-import { AgGroupComponentParams } from "@ag-grid-enterprise/core";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import { AgColorPicker } from "../../../../../widgets/agColorPicker";
+import { AgSlider } from "../../../../../widgets/agSlider";
 
 export class AxisTicksPanel extends Component {
 
@@ -40,7 +42,7 @@ export class AxisTicksPanel extends Component {
         const axisTicksColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams("tick.color");
         const axisTicksWidthSliderParams = this.chartMenuUtils.getDefaultSliderParams("tick.width", "width", 10);
         const axisTicksSizeSliderParams = this.chartMenuUtils.getDefaultSliderParams("tick.size", "length", 30);
-        this.setTemplate(AxisTicksPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
+        this.setTemplate(AxisTicksPanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
             axisTicksGroup: axisTicksGroupParams,
             axisTicksColorPicker: axisTicksColorPickerParams,
             axisTicksWidthSlider: axisTicksWidthSliderParams,

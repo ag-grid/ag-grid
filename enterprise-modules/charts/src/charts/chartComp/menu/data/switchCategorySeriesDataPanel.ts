@@ -4,7 +4,7 @@ import {
     Component,
     PostConstruct,
 } from '@ag-grid-community/core';
-import { AgGroupComponentParams } from "@ag-grid-enterprise/core";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ChartTranslationService } from '../../services/chartTranslationService';
 
 export class SwitchCategorySeriesDataPanel extends Component {
@@ -45,7 +45,7 @@ export class SwitchCategorySeriesDataPanel extends Component {
             items: [this.switchCategorySeriesToggleButton],
         };
 
-        this.setTemplate(SwitchCategorySeriesDataPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
+        this.setTemplate(SwitchCategorySeriesDataPanel.TEMPLATE, [ AgGroupComponent ], {
             switchCategorySeriesGroup: switchCategorySeriesGroupParams,
         });
     }

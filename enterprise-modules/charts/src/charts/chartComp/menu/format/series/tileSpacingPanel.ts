@@ -3,10 +3,10 @@ import {
     Component,
     PostConstruct,
 } from "@ag-grid-community/core";
-import { AgGroupComponentParams } from "@ag-grid-enterprise/core";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
-import { AgSliderParams } from "../../../../../widgets/agSlider";
+import { AgSlider, AgSliderParams } from "../../../../../widgets/agSlider";
 
 export class TileSpacingPanel extends Component {
 
@@ -37,7 +37,7 @@ export class TileSpacingPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(TileSpacingPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
+        this.setTemplate(TileSpacingPanel.TEMPLATE, [AgGroupComponent, AgSlider], {
             groupSpacing: { ...groupParams, title: this.chartTranslationService.translate("group") },
             tileSpacing: { ...groupParams, title: this.chartTranslationService.translate("tile") },
             groupPaddingSlider: this.getSliderParams('padding', 'group.padding'),

@@ -6,7 +6,7 @@ import {
     PostConstruct,
     RefSelector,
 } from "@ag-grid-community/core";
-import { AgGroupComponentParams } from "@ag-grid-enterprise/core";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { AgChartPaddingOptions, AgChartThemeOverrides } from "ag-charts-community";
 import { ChartController } from "../../../chartController";
@@ -46,7 +46,7 @@ export class PaddingPanel extends Component {
         const getSliderParams = (property: keyof AgChartPaddingOptions) => 
             this.chartMenuUtils.getDefaultSliderParams('padding.' + property, property, 200);
 
-        this.setTemplate(PaddingPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
+        this.setTemplate(PaddingPanel.TEMPLATE, [AgGroupComponent, AgSlider], {
             chartPaddingGroup: chartPaddingGroupParams,
             paddingTopSlider: getSliderParams('top'),
             paddingRightSlider: getSliderParams('right'),

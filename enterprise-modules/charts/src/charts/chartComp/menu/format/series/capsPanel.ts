@@ -3,9 +3,10 @@ import {
     Component,
     PostConstruct,
 } from "@ag-grid-community/core";
-import { AgGroupComponentParams } from "@ag-grid-enterprise/core";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import { AgSlider } from "../../../../../widgets/agSlider";
 
 export class CapsPanel extends Component {
 
@@ -35,7 +36,7 @@ export class CapsPanel extends Component {
         const capLengthRatioSliderParams = this.chartMenuUtils.getDefaultSliderParams("cap.lengthRatio", "capLengthRatio", 1);
         capLengthRatioSliderParams.step = 0.05;
 
-        this.setTemplate(CapsPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
+        this.setTemplate(CapsPanel.TEMPLATE, [AgGroupComponent, AgSlider], {
             capsGroup: capsGroupParams,
             capLengthRatioSlider: capLengthRatioSliderParams
         });

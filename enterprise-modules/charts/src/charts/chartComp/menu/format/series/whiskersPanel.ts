@@ -3,9 +3,11 @@ import {
     Component,
     PostConstruct,
 } from "@ag-grid-community/core";
-import { AgGroupComponentParams } from "@ag-grid-enterprise/core";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import { AgColorPicker } from "../../../../../widgets/agColorPicker";
+import { AgSlider } from "../../../../../widgets/agSlider";
 
 export class WhiskersPanel extends Component {
 
@@ -36,7 +38,7 @@ export class WhiskersPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(WhiskersPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
+        this.setTemplate(WhiskersPanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
             whiskersGroup: whiskersGroupParams,
             whiskerColorPicker: this.chartMenuUtils.getDefaultColorPickerParams('whisker.stroke'),
             whiskerThicknessSlider: this.chartMenuUtils.getDefaultSliderParams('whisker.strokeWidth', 'strokeWidth', 10),

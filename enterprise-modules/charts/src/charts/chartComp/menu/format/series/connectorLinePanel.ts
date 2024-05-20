@@ -3,10 +3,11 @@ import {
     Component,
     PostConstruct
 } from "@ag-grid-community/core";
-import { AgGroupComponentParams } from "@ag-grid-enterprise/core";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
-import { AgSliderParams } from "../../../../../widgets/agSlider";
+import { AgSlider, AgSliderParams } from "../../../../../widgets/agSlider";
+import { AgColorPicker } from "../../../../../widgets/agColorPicker";
 
 export class ConnectorLinePanel extends Component {
 
@@ -36,7 +37,7 @@ export class ConnectorLinePanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(ConnectorLinePanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
+        this.setTemplate(ConnectorLinePanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
             lineGroup: lineGroupParams,
             lineColorPicker: this.chartMenuUtils.getDefaultColorPickerParams("line.stroke"),
             lineStrokeWidthSlider: this.getSliderParams("strokeWidth", 10, "line.strokeWidth"),

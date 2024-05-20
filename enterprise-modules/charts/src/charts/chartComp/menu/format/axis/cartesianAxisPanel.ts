@@ -22,7 +22,7 @@ import { GridLinePanel } from './gridLinePanel';
 import { AgAngleSelect } from "../../../../../widgets/agAngleSelect";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 import { ChartOptionsProxy } from '../../../services/chartOptionsService';
-import { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
+import { AgColorPicker, AgColorPickerParams } from '../../../../../widgets/agColorPicker';
 import { AgSlider, AgSliderParams } from "../../../../../widgets/agSlider";
 
 const DEFAULT_TIME_AXIS_FORMAT = '%d %B %Y';
@@ -86,7 +86,7 @@ export class CartesianAxisPanel extends Component {
         const axisColorInputParams = this.getAxisColorInputParams(chartAxisThemeOverrides);
         const axisLineWidthSliderParams = this.getAxisLineWidthSliderParams(chartAxisThemeOverrides);
 
-        this.setTemplate(CartesianAxisPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
+        this.setTemplate(CartesianAxisPanel.TEMPLATE, [AgGroupComponent, AgSelect, AgColorPicker, AgSlider], {
             axisGroup: axisGroupParams,
             axisTypeSelect: axisTypeSelectParams ?? undefined,
             axisPositionSelect: axisPositionSelectParams ?? undefined,

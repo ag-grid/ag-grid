@@ -52,7 +52,7 @@ export class TitlesPanel extends Component {
                 ...axisTitlePanels
             ]
         }
-        this.setTemplate(TitlesPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], { titleGroup: titleGroupParams });
+        this.setTemplate(TitlesPanel.TEMPLATE, [AgGroupComponent], { titleGroup: titleGroupParams });
         registerGroupComponent(this.titleGroup);
     }
 }

@@ -13,6 +13,7 @@ import {ChartTranslationKey, ChartTranslationService} from '../../../services/ch
 import {FormatPanelOptions} from '../formatPanel';
 import {getSeriesType, isRadial} from '../../../utils/seriesTypeMapper';
 import { AgSlider } from "../../../../../widgets/agSlider";
+import { AgColorPicker } from '../../../../../widgets/agColorPicker';
 
 export class PolarAxisPanel extends Component {
     public static TEMPLATE = /* html */
@@ -43,7 +44,7 @@ export class PolarAxisPanel extends Component {
         };
         const axisColorInputParams = chartMenuParamsFactory.getDefaultColorPickerParams('line.color');
         const axisLineWidthSliderParams = chartMenuParamsFactory.getDefaultSliderParams('line.width', 'thickness', 10);
-        this.setTemplate(PolarAxisPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
+        this.setTemplate(PolarAxisPanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
             axisGroup: axisGroupParams,
             axisColorInput: axisColorInputParams,
             axisLineWidthSlider: axisLineWidthSliderParams

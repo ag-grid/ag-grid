@@ -3,9 +3,10 @@ import {
     Component,
     PostConstruct
 } from "@ag-grid-community/core";
-import { AgGroupComponentParams } from "@ag-grid-enterprise/core";
+import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import { AgColorPicker } from "../../../../../widgets/agColorPicker";
 
 export class BackgroundPanel extends Component {
     public static TEMPLATE = /* html */
@@ -35,7 +36,7 @@ export class BackgroundPanel extends Component {
             }
         );
         const colorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams('background.fill');
-        this.setTemplate(BackgroundPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
+        this.setTemplate(BackgroundPanel.TEMPLATE, [ AgGroupComponent, AgColorPicker], {
             chartBackgroundGroup: chartBackgroundGroupParams,
             colorPicker: colorPickerParams
         });

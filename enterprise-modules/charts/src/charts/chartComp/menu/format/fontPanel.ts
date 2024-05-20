@@ -1,4 +1,5 @@
 import {
+    AgSelect,
     AgSelectParams,
     Autowired,
     Component,
@@ -12,6 +13,7 @@ import { AgGroupComponent, AgGroupComponentParams } from "@ag-grid-enterprise/co
 import { ChartOptionsProxy } from '../../services/chartOptionsService';
 import { ChartTranslationService } from "../../services/chartTranslationService";
 import { ChartMenuParamsFactory } from "../chartMenuParamsFactory";
+import { AgColorPicker } from "../../../../widgets/agColorPicker";
 
 interface Font {
     fontFamily?: string;
@@ -74,7 +76,7 @@ export class FontPanel extends Component {
             },
             useToggle: !this.params.suppressEnabledCheckbox
         };
-        this.setTemplate(FontPanel.TEMPLATE, [/** Shared via GridChartsModule.agStackComponents */], {
+        this.setTemplate(FontPanel.TEMPLATE, [ AgGroupComponent, AgSelect, AgColorPicker], {
             fontGroup: fontGroupParams,
             familySelect: this.getFamilySelectParams(),
             weightStyleSelect: this.getWeightStyleSelectParams(),
