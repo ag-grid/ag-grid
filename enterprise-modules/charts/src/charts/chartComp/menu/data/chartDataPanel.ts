@@ -6,31 +6,32 @@ import {
     Component,
     PostConstruct,
     _setDisplayed,
-    _warnOnce
-} from "@ag-grid-community/core";
-import { ChartController } from "../../chartController";
-import { ColState } from "../../model/chartDataModel";
+    _warnOnce,
+} from '@ag-grid-community/core';
+
+import { ChartService } from '../../../chartService';
+import { ChartController } from '../../chartController';
+import { ColState } from '../../model/chartDataModel';
 import { ChartTranslationService } from '../../services/chartTranslationService';
-import { CategoriesDataPanel } from "./categoriesDataPanel";
-import { SeriesDataPanel } from "./seriesDataPanel";
-import { SeriesChartTypePanel } from "./seriesChartTypePanel";
 import { getMaxNumCategories, getMaxNumSeries, supportsInvertedCategorySeries } from '../../utils/seriesTypeMapper';
-import { ChartService } from "../../../chartService";
-import { ChartSpecificDataPanel } from "./chartSpecificDataPanel";
-import { ChartMenuContext } from "../chartMenuContext";
+import { ChartMenuContext } from '../chartMenuContext';
+import { CategoriesDataPanel } from './categoriesDataPanel';
+import { ChartSpecificDataPanel } from './chartSpecificDataPanel';
+import { SeriesChartTypePanel } from './seriesChartTypePanel';
+import { SeriesDataPanel } from './seriesDataPanel';
 
 const DefaultDataPanelDef: ChartDataPanelType = {
     groups: [
         { type: 'categories', isOpen: true },
         { type: 'series', isOpen: true },
         { type: 'seriesChartType', isOpen: true },
-        { type: 'chartSpecific', isOpen: true }
-    ]
+        { type: 'chartSpecific', isOpen: true },
+    ],
 };
 
 export class ChartDataPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper ag-scrollable-container"></div>`;
-    
+
     @Autowired('chartTranslationService') protected readonly chartTranslationService: ChartTranslationService;
     @Autowired('chartService') private chartService: ChartService;
 
@@ -57,8 +58,16 @@ export class ChartDataPanel extends Component {
         this.isSwitchCategorySeriesToggled = this.chartController.isCategorySeriesSwitched();
 
         this.updatePanels();
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATE, this.updatePanels.bind(this));
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, this.updatePanels.bind(this));
+        this.addManagedListener(
+            this.chartController,
+            ChartController.EVENT_CHART_MODEL_UPDATE,
+            this.updatePanels.bind(this)
+        );
+        this.addManagedListener(
+            this.chartController,
+            ChartController.EVENT_CHART_API_UPDATE,
+            this.updatePanels.bind(this)
+        );
     }
 
     protected destroy(): void {
@@ -75,9 +84,8 @@ export class ChartDataPanel extends Component {
 
         // Determine the state of the category/series toggle
         this.isSwitchCategorySeriesToggled = this.chartController.isCategorySeriesSwitched();
-        const hasChangedSwitchCategorySeries = (
-            this.isSwitchCategorySeriesToggled !== isSwitchCategorySeriesToggledCurrent
-        );
+        const hasChangedSwitchCategorySeries =
+            this.isSwitchCategorySeriesToggled !== isSwitchCategorySeriesToggledCurrent;
 
         // Attempt to re-use existing panels where possible in order to maintain keyboard focus
         if (this.canRefresh(currentChartType, this.chartType) && !hasChangedSwitchCategorySeries) {
@@ -90,7 +98,10 @@ export class ChartDataPanel extends Component {
         }
 
         // Ensure the category/series toggle UI control is up-to-date
-        const isSwitchCategorySeriesDisplayed = supportsInvertedCategorySeries(this.chartType) && this.chartService.isEnterprise() && !this.chartController.isGrouping();
+        const isSwitchCategorySeriesDisplayed =
+            supportsInvertedCategorySeries(this.chartType) &&
+            this.chartService.isEnterprise() &&
+            !this.chartController.isGrouping();
         _setDisplayed(this.switchCategorySeriesToggle.getGui(), isSwitchCategorySeriesDisplayed);
         if (hasChangedSwitchCategorySeries) {
             this.switchCategorySeriesToggle?.setValue(this.chartController.isCategorySeriesSwitched());
@@ -108,7 +119,8 @@ export class ChartDataPanel extends Component {
         if (oldChartType === newChartType) {
             return true;
         }
-        const isCombo = (chartType: ChartType) => ['columnLineCombo', 'areaColumnCombo', 'customCombo'].includes(chartType);
+        const isCombo = (chartType: ChartType) =>
+            ['columnLineCombo', 'areaColumnCombo', 'customCombo'].includes(chartType);
         if (isCombo(oldChartType) && isCombo(newChartType)) {
             return true;
         }
@@ -125,32 +137,34 @@ export class ChartDataPanel extends Component {
 
         this.getDataPanelDef().groups?.forEach(({ type, isOpen }) => {
             if (type === (isCategorySeriesSwitched ? 'series' : 'categories')) {
-                this.categoriesDataPanel = this.createBean(new CategoriesDataPanel(
-                    this.chartController,
-                    this.getCategoryGroupTitle(isCategorySeriesSwitched),
-                    this.getCategoryGroupMultipleSelect(chartType, isCategorySeriesSwitched),
-                    dimensionCols,
-                    isOpen
-                ));
+                this.categoriesDataPanel = this.createBean(
+                    new CategoriesDataPanel(
+                        this.chartController,
+                        this.getCategoryGroupTitle(isCategorySeriesSwitched),
+                        this.getCategoryGroupMultipleSelect(chartType, isCategorySeriesSwitched),
+                        dimensionCols,
+                        isOpen
+                    )
+                );
                 this.panels.push(this.categoriesDataPanel);
             } else if (type === (isCategorySeriesSwitched ? 'categories' : 'series')) {
-                this.seriesDataPanel = this.createBean(new SeriesDataPanel(
-                    this.chartController,
-                    this.chartMenuContext.chartOptionsService,
-                    this.getSeriesGroupTitle(isCategorySeriesSwitched),
-                    this.getSeriesGroupMultipleSelect(chartType, isCategorySeriesSwitched),
-                    this.getSeriesGroupMaxSelection(chartType, isCategorySeriesSwitched),
-                    valueCols,
-                    isOpen
-                ));
+                this.seriesDataPanel = this.createBean(
+                    new SeriesDataPanel(
+                        this.chartController,
+                        this.chartMenuContext.chartOptionsService,
+                        this.getSeriesGroupTitle(isCategorySeriesSwitched),
+                        this.getSeriesGroupMultipleSelect(chartType, isCategorySeriesSwitched),
+                        this.getSeriesGroupMaxSelection(chartType, isCategorySeriesSwitched),
+                        valueCols,
+                        isOpen
+                    )
+                );
                 this.panels.push(this.seriesDataPanel);
             } else if (type === 'seriesChartType') {
                 if (this.chartController.isComboChart()) {
-                    this.seriesChartTypePanel = this.createBean(new SeriesChartTypePanel(
-                        this.chartController,
-                        valueCols,
-                        isOpen
-                    ));
+                    this.seriesChartTypePanel = this.createBean(
+                        new SeriesChartTypePanel(this.chartController, valueCols, isOpen)
+                    );
                     this.panels.push(this.seriesChartTypePanel);
                 }
             } else if (type === 'chartSpecific') {
@@ -161,13 +175,17 @@ export class ChartDataPanel extends Component {
             }
         });
 
-        (isCategorySeriesSwitched ? this.categoriesDataPanel : this.seriesDataPanel)?.addItem(this.switchCategorySeriesToggle.getGui());
+        (isCategorySeriesSwitched ? this.categoriesDataPanel : this.seriesDataPanel)?.addItem(
+            this.switchCategorySeriesToggle.getGui()
+        );
 
         this.addPanelComponents();
     }
 
     private addPanelComponents(): void {
-        if (!this.panels.length) { return; }
+        if (!this.panels.length) {
+            return;
+        }
         const eDocument = this.gos.getDocument();
         const fragment = eDocument.createDocumentFragment();
         for (const panel of this.panels) {
@@ -180,7 +198,7 @@ export class ChartDataPanel extends Component {
     private clearPanelComponents() {
         const eGui = this.getGui();
 
-        this.panels.forEach(panel => {
+        this.panels.forEach((panel) => {
             eGui.removeChild(panel.getGui());
             this.destroyBean(panel);
         });
@@ -216,16 +234,18 @@ export class ChartDataPanel extends Component {
     }
 
     private createSwitchCategorySeriesToggle(): void {
-        this.switchCategorySeriesToggle = this.createManagedBean(new AgToggleButton({
-            label: this.chartTranslationService.translate('switchCategorySeries'),
-            labelAlignment: 'left',
-            labelWidth: "flex",
-            inputWidth: 'flex',
-            value: this.chartController.isCategorySeriesSwitched(),
-            onValueChange: (value) => {
-                this.restoreSwitchCategorySeriesToggleFocus = true;
-                this.chartController.switchCategorySeries(value);
-            }
-        }));
+        this.switchCategorySeriesToggle = this.createManagedBean(
+            new AgToggleButton({
+                label: this.chartTranslationService.translate('switchCategorySeries'),
+                labelAlignment: 'left',
+                labelWidth: 'flex',
+                inputWidth: 'flex',
+                value: this.chartController.isCategorySeriesSwitched(),
+                onValueChange: (value) => {
+                    this.restoreSwitchCategorySeriesToggleFocus = true;
+                    this.chartController.switchCategorySeries(value);
+                },
+            })
+        );
     }
 }

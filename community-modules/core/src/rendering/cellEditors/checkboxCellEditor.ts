@@ -1,21 +1,20 @@
-import { PopupComponent } from "../../widgets/popupComponent";
-import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { AgCheckbox } from "../../widgets/agCheckbox";
-import { _getAriaCheckboxStateName } from "../../utils/aria";
-import { Events } from "../../eventKeys";
+import { Events } from '../../eventKeys';
+import { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import { _getAriaCheckboxStateName } from '../../utils/aria';
+import { AgCheckbox } from '../../widgets/agCheckbox';
+import { RefSelector } from '../../widgets/componentAnnotations';
+import { PopupComponent } from '../../widgets/popupComponent';
 
 export class CheckboxCellEditor extends PopupComponent implements ICellEditorComp {
     constructor() {
-        super(/* html */`
+        super(/* html */ `
             <div class="ag-cell-wrapper ag-cell-edit-wrapper ag-checkbox-edit">
                 <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
-            </div>`
-        );
+            </div>`);
     }
 
     @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
-    private params: ICellEditorParams<any, boolean>
+    private params: ICellEditorParams<any, boolean>;
 
     public init(params: ICellEditorParams<any, boolean>): void {
         this.params = params;
@@ -28,10 +27,8 @@ export class CheckboxCellEditor extends PopupComponent implements ICellEditorCom
 
         this.setAriaLabel(isSelected);
 
-        this.addManagedListener(
-            this.eCheckbox,
-            Events.EVENT_FIELD_VALUE_CHANGED,
-            (event: { selected?: boolean }) => this.setAriaLabel(event.selected)
+        this.addManagedListener(this.eCheckbox, Events.EVENT_FIELD_VALUE_CHANGED, (event: { selected?: boolean }) =>
+            this.setAriaLabel(event.selected)
         );
     }
 

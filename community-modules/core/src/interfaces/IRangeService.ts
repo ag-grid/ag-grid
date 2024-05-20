@@ -1,8 +1,8 @@
-import { Column } from "../entities/column";
-import { CellPosition } from "../entities/cellPositionUtils";
-import { RowPosition } from "../entities/rowPositionUtils";
-import { CellCtrl } from "../rendering/cell/cellCtrl";
-import { RowPinnedType } from "../interfaces/iRowNode";
+import { CellPosition } from '../entities/cellPositionUtils';
+import { Column } from '../entities/column';
+import { RowPosition } from '../entities/rowPositionUtils';
+import { RowPinnedType } from '../interfaces/iRowNode';
+import { CellCtrl } from '../rendering/cell/cellCtrl';
 
 export interface IRangeService {
     isEmpty(): boolean;
@@ -28,7 +28,10 @@ export interface IRangeService {
     getRangeStartRow(cellRange: PartialCellRange): RowPosition;
     getRangeEndRow(cellRange: PartialCellRange): RowPosition;
     createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined;
-    createPartialCellRangeFromRangeParams(params: CellRangeParams, allowEmptyColumns: boolean): PartialCellRange | undefined
+    createPartialCellRangeFromRangeParams(
+        params: CellRangeParams,
+        allowEmptyColumns: boolean
+    ): PartialCellRange | undefined;
     setCellRanges(cellRanges: CellRange[]): void;
     clearCellRangeCellValues(params: ClearCellRangeParams): void;
 }
@@ -43,9 +46,15 @@ export interface ISelectionHandleFactory {
     createSelectionHandle(type: SelectionHandleType): ISelectionHandle;
 }
 
-export enum SelectionHandleType { FILL, RANGE }
+export enum SelectionHandleType {
+    FILL,
+    RANGE,
+}
 
-export enum CellRangeType { VALUE, DIMENSION }
+export enum CellRangeType {
+    VALUE,
+    DIMENSION,
+}
 
 export interface CellRange {
     id?: string;
@@ -81,11 +90,11 @@ export interface CellRangeParams {
 }
 
 export interface ClearCellRangeParams {
-    cellRanges?: CellRange[],
+    cellRanges?: CellRange[];
     /** Source passed to `cellValueChanged` event */
-    cellEventSource?: string,
+    cellEventSource?: string;
     /** `true` to dispatch `rangeDeleteStart` and `rangeDeleteEnd` events */
-    dispatchWrapperEvents?: boolean,
+    dispatchWrapperEvents?: boolean;
     /** Source passed to `rangeDeleteStart` and `rangeDeleteEnd` events */
-    wrapperEventSource?: 'deleteKey'
+    wrapperEventSource?: 'deleteKey';
 }

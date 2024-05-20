@@ -1,16 +1,16 @@
-import { RowNodeBlock } from "./rowNodeBlock";
-import { Autowired, Bean, PostConstruct, Qualifier } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { Logger, LoggerFactory } from "../logger";
-import { IRowModel } from "../interfaces/iRowModel";
-import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
-import { _removeFromArray } from "../utils/array";
-import { _debounce } from "../utils/function";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, PostConstruct, Qualifier } from '../context/context';
+import { IRowModel } from '../interfaces/iRowModel';
+import { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
+import { Logger, LoggerFactory } from '../logger';
+import { _removeFromArray } from '../utils/array';
+import { _debounce } from '../utils/function';
+import { RowNodeBlock } from './rowNodeBlock';
 
 @Bean('rowNodeBlockLoader')
 export class RowNodeBlockLoader extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
-    
+
     public static BLOCK_LOADED_EVENT = 'blockLoaded';
     public static BLOCK_LOADER_FINISHED_EVENT = 'blockLoaderFinished';
 
@@ -28,7 +28,10 @@ export class RowNodeBlockLoader extends BeanStub {
         const blockLoadDebounceMillis = this.gos.get('blockLoadDebounceMillis');
 
         if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
-            this.checkBlockToLoadDebounce = _debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
+            this.checkBlockToLoadDebounce = _debounce(
+                this.performCheckBlocksToLoad.bind(this),
+                blockLoadDebounceMillis
+            );
         }
     }
 
@@ -38,8 +41,12 @@ export class RowNodeBlockLoader extends BeanStub {
 
     private getMaxConcurrentDatasourceRequests(): number | undefined {
         const res = this.gos.get('maxConcurrentDatasourceRequests');
-        if (res == null) { return 2; } // 2 is the default
-        if (res <= 0) { return; } // negative number, eg -1, means no max restriction
+        if (res == null) {
+            return 2;
+        } // 2 is the default
+        if (res <= 0) {
+            return;
+        } // negative number, eg -1, means no max restriction
         return res;
     }
 
@@ -66,9 +73,9 @@ export class RowNodeBlockLoader extends BeanStub {
     public loadComplete(): void {
         this.activeBlockLoadsCount--;
         this.checkBlockToLoad();
-        this.dispatchEvent({type: RowNodeBlockLoader.BLOCK_LOADED_EVENT});
+        this.dispatchEvent({ type: RowNodeBlockLoader.BLOCK_LOADED_EVENT });
         if (this.activeBlockLoadsCount == 0) {
-            this.dispatchEvent({type: RowNodeBlockLoader.BLOCK_LOADER_FINISHED_EVENT});
+            this.dispatchEvent({ type: RowNodeBlockLoader.BLOCK_LOADER_FINISHED_EVENT });
         }
     }
 
@@ -81,7 +88,9 @@ export class RowNodeBlockLoader extends BeanStub {
     }
 
     private performCheckBlocksToLoad(): void {
-        if (!this.active) { return; }
+        if (!this.active) {
+            return;
+        }
 
         this.printCacheStatus();
 
@@ -91,12 +100,12 @@ export class RowNodeBlockLoader extends BeanStub {
         }
 
         const loadAvailability = this.getAvailableLoadingCount();
-        const blocksToLoad: RowNodeBlock[] = this.blocks.filter(block => (
-            block.getState() === RowNodeBlock.STATE_WAITING_TO_LOAD
-        )).slice(0, loadAvailability);
+        const blocksToLoad: RowNodeBlock[] = this.blocks
+            .filter((block) => block.getState() === RowNodeBlock.STATE_WAITING_TO_LOAD)
+            .slice(0, loadAvailability);
 
         this.registerLoads(blocksToLoad.length);
-        blocksToLoad.forEach(block => block.load());
+        blocksToLoad.forEach((block) => block.load());
         this.printCacheStatus();
     }
 
@@ -108,17 +117,18 @@ export class RowNodeBlockLoader extends BeanStub {
 
         const result: { [key: string]: any } = {};
         this.blocks.forEach((block: RowNodeBlock) => {
-            const {id, state} = block.getBlockStateJson();
+            const { id, state } = block.getBlockStateJson();
             result[id] = state;
         });
         return result;
     }
 
     private printCacheStatus(): void {
-
         if (this.logger.isLogging()) {
-            this.logger.log(`printCacheStatus: activePageLoadsCount = ${this.activeBlockLoadsCount},`
-                + ` blocks = ${JSON.stringify(this.getBlockState())}`);
+            this.logger.log(
+                `printCacheStatus: activePageLoadsCount = ${this.activeBlockLoadsCount},` +
+                    ` blocks = ${JSON.stringify(this.getBlockState())}`
+            );
         }
     }
 
@@ -131,6 +141,8 @@ export class RowNodeBlockLoader extends BeanStub {
     }
 
     public getAvailableLoadingCount() {
-        return this.maxConcurrentRequests !== undefined ? this.maxConcurrentRequests - this.activeBlockLoadsCount : undefined;
+        return this.maxConcurrentRequests !== undefined
+            ? this.maxConcurrentRequests - this.activeBlockLoadsCount
+            : undefined;
     }
 }

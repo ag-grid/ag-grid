@@ -1,8 +1,13 @@
-import { ChartProxy, ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
-import { AgDonutSeriesOptions, AgPieSeriesOptions, AgPolarChartOptions, AgPolarSeriesOptions, } from 'ag-charts-community';
+import {
+    AgDonutSeriesOptions,
+    AgPieSeriesOptions,
+    AgPolarChartOptions,
+    AgPolarSeriesOptions,
+} from 'ag-charts-community';
 
 import { changeOpacity } from '../../utils/color';
 import { deepMerge } from '../../utils/object';
+import { ChartProxy, ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 
 interface DonutOffset {
     offsetAmount: number;
@@ -10,7 +15,6 @@ interface DonutOffset {
 }
 
 export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donut'> {
-
     public constructor(params: ChartProxyParams) {
         super(params);
     }
@@ -29,41 +33,45 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
 
         const offset = {
             currentOffset: 0,
-            offsetAmount: numFields > 1 ? 20 : 40
+            offsetAmount: numFields > 1 ? 20 : 40,
         };
 
-        const series: (AgPieSeriesOptions | AgDonutSeriesOptions)[] = this.getFields(params).map((f: FieldDefinition) => {
-            // options shared by 'pie' and 'donut' charts
-            const options = {
-                type: this.standaloneChartType as AgPieSeriesOptions['type'],
-                angleKey: f.colId,
-                angleName: f.displayName!,
-                sectorLabelKey: f.colId,
-                calloutLabelName: category.name,
-                calloutLabelKey: category.id,
-            }
+        const series: (AgPieSeriesOptions | AgDonutSeriesOptions)[] = this.getFields(params).map(
+            (f: FieldDefinition) => {
+                // options shared by 'pie' and 'donut' charts
+                const options = {
+                    type: this.standaloneChartType as AgPieSeriesOptions['type'],
+                    angleKey: f.colId,
+                    angleName: f.displayName!,
+                    sectorLabelKey: f.colId,
+                    calloutLabelName: category.name,
+                    calloutLabelKey: category.id,
+                };
 
-            if (this.chartType === 'donut' || this.chartType === 'doughnut') {
-                const { outerRadiusOffset, innerRadiusOffset } = PieChartProxy.calculateOffsets(offset);
-                const title = f.displayName ? {
-                    title: { text: f.displayName, showInLegend: numFields > 1 },
-                } : undefined;
+                if (this.chartType === 'donut' || this.chartType === 'doughnut') {
+                    const { outerRadiusOffset, innerRadiusOffset } = PieChartProxy.calculateOffsets(offset);
+                    const title = f.displayName
+                        ? {
+                              title: { text: f.displayName, showInLegend: numFields > 1 },
+                          }
+                        : undefined;
 
-                // augment shared options with 'donut' specific options
-                return {
-                    ...options,
-                    type: 'donut',
-                    outerRadiusOffset,
-                    innerRadiusOffset,
-                    ...title,
-                    calloutLine: {
-                        colors: this.getChartPalette()?.strokes,
-                    }
+                    // augment shared options with 'donut' specific options
+                    return {
+                        ...options,
+                        type: 'donut',
+                        outerRadiusOffset,
+                        innerRadiusOffset,
+                        ...title,
+                        calloutLine: {
+                            colors: this.getChartPalette()?.strokes,
+                        },
+                    };
                 }
-            }
 
-            return options;
-        });
+                return options;
+            }
+        );
 
         return this.crossFiltering ? this.extractCrossFilterSeries(series) : series;
     }
@@ -72,7 +80,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
         const colId = params.fields[0].colId;
         const filteredOutColId = `${colId}-filtered-out`;
 
-        return params.data.map(d => {
+        return params.data.map((d) => {
             const total = d[colId] + d[filteredOutColId];
             d[`${colId}-total`] = total;
             d[filteredOutColId] = 1; // normalise to 1
@@ -98,7 +106,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
                     nodeClick: this.crossFilterCallback,
                 },
             };
-        }
+        };
 
         const filteredOutOptions = (seriesOptions: AgPieSeriesOptions | AgDonutSeriesOptions, angleKey: string) => {
             return {
@@ -108,7 +116,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
                 strokes: changeOpacity(seriesOptions.strokes ?? palette?.strokes ?? [], 0.3),
                 showInLegend: false,
             };
-        }
+        };
 
         // currently, only single 'donut' cross-filter series are supported
         const primarySeries = series[0];
@@ -117,10 +125,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
         const angleKey = primarySeries.angleKey!;
         const primaryOpts = primaryOptions(primarySeries);
 
-        return [
-            filteredOutOptions(primarySeries, angleKey),
-            primaryOpts,
-        ];
+        return [filteredOutOptions(primarySeries, angleKey), primaryOpts];
     }
 
     private static calculateOffsets(offset: DonutOffset) {

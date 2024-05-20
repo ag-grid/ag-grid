@@ -1,8 +1,8 @@
 import { readFileSync } from 'fs';
 
+import { moduleConfig } from '../_copiedFromCore/modules';
 import { getEnterprisePackageName } from '../constants';
 import type { InternalFramework } from '../types';
-import { moduleConfig } from '../_copiedFromCore/modules';
 
 const modules = moduleConfig.filter((m) => m.module && !m.framework);
 // const communityModules = modules.filter((m) => {
@@ -83,10 +83,7 @@ function addPackageJson(isEnterprise, framework, importType) {
             addDependency('ag-grid-react', agGridReactVersion);
         }
         addDependency('ag-grid-community', agGridVersion);
-        addDependency(
-            getEnterprisePackageName(),
-            agGridEnterpriseVersion
-        );
+        addDependency(getEnterprisePackageName(), agGridEnterpriseVersion);
     }
 
     return packageJson;

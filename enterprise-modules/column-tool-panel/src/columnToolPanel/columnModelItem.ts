@@ -1,13 +1,6 @@
-import {
-    AgEventListener,
-    Column,
-    EventService,
-    IEventEmitter,
-    ProvidedColumnGroup
-} from "@ag-grid-community/core";
+import { AgEventListener, Column, EventService, IEventEmitter, ProvidedColumnGroup } from '@ag-grid-community/core';
 
 export class ColumnModelItem implements IEventEmitter {
-
     private eventService: EventService = new EventService();
 
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
@@ -42,19 +35,37 @@ export class ColumnModelItem implements IEventEmitter {
         }
     }
 
-    public isGroup(): boolean { return this.group; }
-    public getDisplayName(): string | null { return this.displayName; }
-    public getColumnGroup(): ProvidedColumnGroup { return this.columnGroup; }
-    public getColumn(): Column { return this.column; }
-    public getDept(): number { return this.dept; }
-    public isExpanded(): boolean { return !!this.expanded; }
-    public getChildren(): ColumnModelItem[] { return this.children; }
-    public isPassesFilter(): boolean { return this.passesFilter; }
+    public isGroup(): boolean {
+        return this.group;
+    }
+    public getDisplayName(): string | null {
+        return this.displayName;
+    }
+    public getColumnGroup(): ProvidedColumnGroup {
+        return this.columnGroup;
+    }
+    public getColumn(): Column {
+        return this.column;
+    }
+    public getDept(): number {
+        return this.dept;
+    }
+    public isExpanded(): boolean {
+        return !!this.expanded;
+    }
+    public getChildren(): ColumnModelItem[] {
+        return this.children;
+    }
+    public isPassesFilter(): boolean {
+        return this.passesFilter;
+    }
 
     public setExpanded(expanded: boolean): void {
-        if (expanded === this.expanded) { return; }
+        if (expanded === this.expanded) {
+            return;
+        }
         this.expanded = expanded;
-        this.eventService.dispatchEvent({type: ColumnModelItem.EVENT_EXPANDED_CHANGED});
+        this.eventService.dispatchEvent({ type: ColumnModelItem.EVENT_EXPANDED_CHANGED });
     }
 
     public setPassesFilter(passesFilter: boolean): void {
@@ -68,5 +79,4 @@ export class ColumnModelItem implements IEventEmitter {
     public removeEventListener(eventType: string, listener: AgEventListener): void {
         this.eventService.removeEventListener(eventType, listener);
     }
-
 }

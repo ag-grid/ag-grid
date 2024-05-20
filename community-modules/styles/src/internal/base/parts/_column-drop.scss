@@ -1,4 +1,4 @@
-@use "ag";
+@use 'ag';
 
 @mixin output {
     .ag-column-drop-cell {
@@ -38,11 +38,19 @@
         height: var(--ag-header-height);
         border-bottom: var(--ag-borders) var(--ag-border-color);
 
-        @include ag.unthemed-rtl(( padding-left: var(--ag-cell-horizontal-padding) ));
+        @include ag.unthemed-rtl(
+            (
+                padding-left: var(--ag-cell-horizontal-padding),
+            )
+        );
     }
 
     .ag-column-drop-horizontal-half-width:not(:last-child) {
-        @include ag.unthemed-rtl((border-right: var(--ag-borders) var(--ag-border-color)));
+        @include ag.unthemed-rtl(
+            (
+                border-right: var(--ag-borders) var(--ag-border-color),
+            )
+        );
     }
 
     .ag-column-drop-horizontal-cell-separator {
@@ -55,7 +63,11 @@
     }
 
     .ag-column-drop-horizontal-icon {
-        @include ag.unthemed-rtl(( margin-right: var(--ag-cell-horizontal-padding) ));
+        @include ag.unthemed-rtl(
+            (
+                margin-right: var(--ag-cell-horizontal-padding),
+            )
+        );
     }
 
     // VERTICAL COLUMN DROP
@@ -72,7 +84,7 @@
 
     .ag-column-drop-vertical {
         min-height: 50px;
-        
+
         border-bottom: var(--ag-borders-secondary) var(--ag-secondary-border-color);
         &.ag-last-column-drop {
             border-bottom: none;
@@ -105,7 +117,11 @@
 
     .ag-select-agg-func-virtual-list-item {
         cursor: default;
-        @include ag.unthemed-rtl(( padding-left: calc(var(--ag-grid-size) * 2) ));
+        @include ag.unthemed-rtl(
+            (
+                padding-left: calc(var(--ag-grid-size) * 2),
+            )
+        );
 
         &:hover {
             background-color: var(--ag-selected-row-background-color);
@@ -120,6 +136,10 @@
     }
 
     .ag-sort-indicator-icon {
-        @include ag.unthemed-rtl(( padding-left: var(--ag-grid-size) ));
+        @include ag.unthemed-rtl(
+            (
+                padding-left: var(--ag-grid-size),
+            )
+        );
     }
 }

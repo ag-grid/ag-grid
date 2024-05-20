@@ -1,4 +1,4 @@
-![AG Grid HTML5 Grid trusted by the community, built for enterprise](./github-banner.png "AG Grid")
+![AG Grid HTML5 Grid trusted by the community, built for enterprise](./github-banner.png 'AG Grid')
 
 [![CDNJS](https://img.shields.io/cdnjs/v/ag-grid.svg)](https://cdnjs.com/libraries/ag-grid)
 [![npm](https://img.shields.io/npm/dm/@ag-grid-community/vue3.svg)](https://www.npmjs.com/package/@ag-grid-community/vue3)
@@ -11,41 +11,41 @@ It delivers [outstanding performance](https://www.ag-grid.com/example?utm_source
 
 Here's how our grid looks with multiple filters and grouping enabled:
 
-![Image of AG Grid showing filtering and grouping enabled.](./github-grid-demo.jpg "AG Grid demo")
+![Image of AG Grid showing filtering and grouping enabled.](./github-grid-demo.jpg 'AG Grid demo')
 
 ## Features
 
 In addition to the standard set of features you'd expect from any grid:
 
-* Column Interactions (resize, reorder, and pin columns)
-* Pagination
-* Sorting
-* Row Selection
+-   Column Interactions (resize, reorder, and pin columns)
+-   Pagination
+-   Sorting
+-   Row Selection
 
 Here are some of the features that make AG Grid stand out:
 
-* Grouping / Aggregation *
-* Accessibility support
-* Custom Filtering
-* In-place Cell Editing
-* Records Lazy Loading *
-* Server-Side Records Operations *
-* Live Stream Updates
-* Hierarchical Data Support & Tree View *
-* Customizable Appearance
-* Customizable Cell Contents
-* State Persistence
-* Keyboard Navigation
-* Data Export to CSV
-* Data Export to Excel *
-* Excel-like Pivoting *
-* Row Reordering
-* Copy / Paste
-* Column Spanning
-* Pinned Rows
-* Full Width Rows
-* Integrated Charting
-* Sparklines
+-   Grouping / Aggregation \*
+-   Accessibility support
+-   Custom Filtering
+-   In-place Cell Editing
+-   Records Lazy Loading \*
+-   Server-Side Records Operations \*
+-   Live Stream Updates
+-   Hierarchical Data Support & Tree View \*
+-   Customizable Appearance
+-   Customizable Cell Contents
+-   State Persistence
+-   Keyboard Navigation
+-   Data Export to CSV
+-   Data Export to Excel \*
+-   Excel-like Pivoting \*
+-   Row Reordering
+-   Copy / Paste
+-   Column Spanning
+-   Pinned Rows
+-   Full Width Rows
+-   Integrated Charting
+-   Sparklines
 
 \* The features marked with an asterisk are available in the [Enterprise version](https://www.ag-grid.com/license-pricing?utm_source=@ag-grid-community/vue3-readme&utm_medium=repository&utm_campaign=github) only.
 
@@ -64,92 +64,89 @@ $ npm install --save @ag-grid-community/core @ag-grid-community/vue3
 ### Import the `AgGridVue` Component
 
 ```ts
-import { AgGridVue } from "@ag-grid-community/vue3";
+import { AgGridVue } from '@ag-grid-community/vue3';
 ```
 
-### Import styles in 
+### Import styles in
 
 ```ts
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 ```
 
 ### Set the grid's configuration in the parent component
 
 ```ts
 export default {
-  name: "App",
-  components: {
-    AgGridVue,
-  },
-  setup() {
-    return {
-      columnDefs: [
-        { headerName: "Make", field: "make" },
-        { headerName: "Model", field: "model" },
-        { headerName: "Price", field: "price" },
-      ],
-      rowData: [
-        { make: "Toyota", model: "Celica", price: 35000 },
-        { make: "Ford", model: "Mondeo", price: 32000 },
-        { make: "Porsche", model: "Boxster", price: 72000 },
-      ],
-    };
-  },
+    name: 'App',
+    components: {
+        AgGridVue,
+    },
+    setup() {
+        return {
+            columnDefs: [
+                { headerName: 'Make', field: 'make' },
+                { headerName: 'Model', field: 'model' },
+                { headerName: 'Price', field: 'price' },
+            ],
+            rowData: [
+                { make: 'Toyota', model: 'Celica', price: 35000 },
+                { make: 'Ford', model: 'Mondeo', price: 32000 },
+                { make: 'Porsche', model: 'Boxster', price: 72000 },
+            ],
+        };
+    },
 };
 ```
 
-### Render the grid  
+### Render the grid
 
 ```html
-  <ag-grid-vue
-    style="width: 500px; height: 200px"
-    class="ag-theme-quartz"
-    :columnDefs="columnDefs"
-    :rowData="rowData">
-  </ag-grid-vue>
+<ag-grid-vue style="width: 500px; height: 200px" class="ag-theme-quartz" :columnDefs="columnDefs" :rowData="rowData">
+</ag-grid-vue>
 ```
 
 ### Complete example:
 
 ```html
 <template>
-  <ag-grid-vue
-    style="width: 500px; height: 200px"
-    class="ag-theme-quartz"
-    :columnDefs="columnDefs"
-    :rowData="rowData"
-  >
-  </ag-grid-vue>
+    <ag-grid-vue
+        style="width: 500px; height: 200px"
+        class="ag-theme-quartz"
+        :columnDefs="columnDefs"
+        :rowData="rowData"
+    >
+    </ag-grid-vue>
 </template>
 
 <script>
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import { AgGridVue } from "@ag-grid-community/vue3";
+    import '@ag-grid-community/styles/ag-grid.css';
+    import '@ag-grid-community/styles/ag-theme-quartz.css';
+    import { AgGridVue } from '@ag-grid-community/vue3';
 
-export default {
-  name: "App",
-  components: {
-    AgGridVue,
-  },
-  setup() {
-    return {
-      columnDefs: [
-        { headerName: "Make", field: "make" },
-        { headerName: "Model", field: "model" },
-        { headerName: "Price", field: "price" },
-      ],
-      rowData: [
-        { make: "Toyota", model: "Celica", price: 35000 },
-        { make: "Ford", model: "Mondeo", price: 32000 },
-        { make: "Porsche", model: "Boxster", price: 72000 },
-      ],
+    export default {
+        name: 'App',
+        components: {
+            AgGridVue,
+        },
+        setup() {
+            return {
+                columnDefs: [
+                    { headerName: 'Make', field: 'make' },
+                    { headerName: 'Model', field: 'model' },
+                    { headerName: 'Price', field: 'price' },
+                ],
+                rowData: [
+                    { make: 'Toyota', model: 'Celica', price: 35000 },
+                    { make: 'Ford', model: 'Mondeo', price: 32000 },
+                    { make: 'Porsche', model: 'Boxster', price: 72000 },
+                ],
+            };
+        },
     };
-  },
-};
 </script>
 ```
+
 ## Issue Reporting
 
 If you have found a bug, please report it in this repository's [issues](https://github.com/ag-grid/ag-grid/issues) section. If you're using the Enterprise version, please use the [private ticketing](https://ag-grid.zendesk.com/) system to do that.

@@ -1,16 +1,15 @@
-import { RowNode } from "../entities/rowNode";
-import { RowPinnedType } from "../interfaces/iRowNode";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { Events, PinnedRowDataChangedEvent } from "../events";
-import { BeanStub } from "../context/beanStub";
-import { _missingOrEmpty } from "../utils/generic";
-import { _last } from "../utils/array";
-import { Beans } from "../rendering/beans";
-import { WithoutGridCommon } from "../interfaces/iCommon";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, PostConstruct } from '../context/context';
+import { RowNode } from '../entities/rowNode';
+import { Events, PinnedRowDataChangedEvent } from '../events';
+import { WithoutGridCommon } from '../interfaces/iCommon';
+import { RowPinnedType } from '../interfaces/iRowNode';
+import { Beans } from '../rendering/beans';
+import { _last } from '../utils/array';
+import { _missingOrEmpty } from '../utils/generic';
 
 @Bean('pinnedRowModel')
 export class PinnedRowModel extends BeanStub {
-
     @Autowired('beans') private beans: Beans;
 
     private pinnedTopRows: RowNode[];
@@ -54,7 +53,7 @@ export class PinnedRowModel extends BeanStub {
         const rowData = this.gos.get('pinnedTopRowData');
         this.pinnedTopRows = this.createNodesFromData(rowData, true);
         const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
-            type: Events.EVENT_PINNED_ROW_DATA_CHANGED
+            type: Events.EVENT_PINNED_ROW_DATA_CHANGED,
         };
         this.eventService.dispatchEvent(event);
     }
@@ -63,7 +62,7 @@ export class PinnedRowModel extends BeanStub {
         const rowData = this.gos.get('pinnedBottomRowData');
         this.pinnedBottomRows = this.createNodesFromData(rowData, false);
         const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
-            type: Events.EVENT_PINNED_ROW_DATA_CHANGED
+            type: Events.EVENT_PINNED_ROW_DATA_CHANGED,
         };
         this.eventService.dispatchEvent(event);
     }
@@ -137,7 +136,9 @@ export class PinnedRowModel extends BeanStub {
     }
 
     private getTotalHeight(rowNodes: RowNode[]): number {
-        if (!rowNodes || rowNodes.length === 0) { return 0; }
+        if (!rowNodes || rowNodes.length === 0) {
+            return 0;
+        }
 
         const lastNode = _last(rowNodes);
         return lastNode.rowTop! + lastNode.rowHeight!;

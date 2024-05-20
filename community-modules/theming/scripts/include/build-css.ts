@@ -8,6 +8,7 @@ import cssImport from 'postcss-import';
 import cssNesting from 'postcss-nesting';
 import cssRtl from 'postcss-rtlcss';
 import cssUrl from 'postcss-url';
+
 import { DEV_MODE, camelCase, getProjectDir, writeTsFile } from './utils';
 
 export const generateAllCSSEmbeds = async () => {

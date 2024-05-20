@@ -1,4 +1,5 @@
-import { Column, TextFormatter, ValueService, ValueFormatterParams } from '@ag-grid-community/core';
+import { Column, TextFormatter, ValueFormatterParams, ValueService } from '@ag-grid-community/core';
+
 import { ISetDisplayValueModel, SetFilterDisplayValue } from './iSetDisplayValueModel';
 
 export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
@@ -22,7 +23,7 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     public updateDisplayedValuesToMatchMiniFilter(
         getValue: (key: string | null) => V | null,
-        _allKeys: Iterable<string | null> | undefined, 
+        _allKeys: Iterable<string | null> | undefined,
         availableKeys: Set<string | null>,
         matchesFilter: (valueToCheck: string | null) => boolean,
         nullMatchesFilter: boolean
@@ -37,7 +38,12 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
             } else {
                 const value = getValue(key);
                 const valueFormatterValue = this.valueService.formatValue(
-                    this.column, null, value, this.valueFormatter, false);
+                    this.column,
+                    null,
+                    value,
+                    this.valueFormatter,
+                    false
+                );
 
                 const textFormatterValue = this.formatter(valueFormatterValue);
 
@@ -63,7 +69,6 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     getAddSelectionToFilterItem(): string {
         return SetFilterDisplayValue.ADD_SELECTION_TO_FILTER;
     }
-
 
     public getDisplayedKeys(): (string | null)[] {
         return this.displayedKeys;

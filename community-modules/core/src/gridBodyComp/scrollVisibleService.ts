@@ -1,9 +1,9 @@
-import { Bean, Autowired, PostConstruct } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { Events, ScrollVisibilityChangedEvent } from "../events";
-import { CtrlsService } from "../ctrlsService";
-import { WithoutGridCommon } from "../interfaces/iCommon";
-import { ColumnAnimationService } from "../rendering/columnAnimationService";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, PostConstruct } from '../context/context';
+import { CtrlsService } from '../ctrlsService';
+import { Events, ScrollVisibilityChangedEvent } from '../events';
+import { WithoutGridCommon } from '../interfaces/iCommon';
+import { ColumnAnimationService } from '../rendering/columnAnimationService';
 
 export interface SetScrollsVisibleParams {
     horizontalScrollShowing: boolean;
@@ -12,7 +12,6 @@ export interface SetScrollsVisibleParams {
 
 @Bean('scrollVisibleService')
 export class ScrollVisibleService extends BeanStub {
-
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
     @Autowired('columnAnimationService') public columnAnimationService: ColumnAnimationService;
 
@@ -21,8 +20,16 @@ export class ScrollVisibleService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
+            this.onDisplayedColumnsChanged.bind(this)
+        );
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
+            this.onDisplayedColumnsWidthChanged.bind(this)
+        );
     }
 
     public onDisplayedColumnsChanged(): void {
@@ -34,8 +41,8 @@ export class ScrollVisibleService extends BeanStub {
     }
 
     private update(): void {
-        // Because of column animation, if user removes cols anywhere except at the RHS, 
-        // then the cols on the RHS will animate to the left to fill the gap. This animation 
+        // Because of column animation, if user removes cols anywhere except at the RHS,
+        // then the cols on the RHS will animate to the left to fill the gap. This animation
         // means just after the cols are removed, the remaining cols are still in the original
         // location at the start of the animation, so pre animation the H scrollbar is still
         // needed, but post animation it is not. So if animation is active, we only update
@@ -52,11 +59,13 @@ export class ScrollVisibleService extends BeanStub {
     private updateImpl(): void {
         const centerRowCtrl = this.ctrlsService.get('center');
 
-        if (!centerRowCtrl || this.columnAnimationService.isActive()) { return; }
+        if (!centerRowCtrl || this.columnAnimationService.isActive()) {
+            return;
+        }
 
         const params: SetScrollsVisibleParams = {
             horizontalScrollShowing: centerRowCtrl.isHorizontalScrollShowing(),
-            verticalScrollShowing: this.isVerticalScrollShowing()
+            verticalScrollShowing: this.isVerticalScrollShowing(),
         };
 
         this.setScrollsVisible(params);
@@ -72,7 +81,7 @@ export class ScrollVisibleService extends BeanStub {
             this.verticalScrollShowing = params.verticalScrollShowing;
 
             const event: WithoutGridCommon<ScrollVisibilityChangedEvent> = {
-                type: Events.EVENT_SCROLL_VISIBILITY_CHANGED
+                type: Events.EVENT_SCROLL_VISIBILITY_CHANGED,
             };
             this.eventService.dispatchEvent(event);
         }

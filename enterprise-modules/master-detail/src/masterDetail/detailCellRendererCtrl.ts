@@ -2,20 +2,19 @@ import {
     Autowired,
     BeanStub,
     DetailGridInfo,
-    GridApi,
-    IDetailCellRendererCtrl,
-    RowNode,
-    IDetailCellRendererParams,
-    IDetailCellRenderer,
     Events,
-    RowPositionUtils,
-    FullWidthRowFocusedEvent,
     FocusService,
+    FullWidthRowFocusedEvent,
+    GridApi,
+    IDetailCellRenderer,
+    IDetailCellRendererCtrl,
+    IDetailCellRendererParams,
+    RowNode,
+    RowPositionUtils,
     _missing,
-} from "@ag-grid-community/core";
+} from '@ag-grid-community/core';
 
 export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRendererCtrl {
-
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
     @Autowired('focusService') private readonly focusService: FocusService;
 
@@ -32,7 +31,9 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         this.comp = comp;
 
         const doNothingBecauseInsidePinnedSection = params.pinned != null;
-        if (doNothingBecauseInsidePinnedSection) { return; }
+        if (doNothingBecauseInsidePinnedSection) {
+            return;
+        }
 
         this.setAutoHeightClasses();
         this.setupRefreshStrategy();
@@ -40,7 +41,11 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         this.createDetailGrid();
         this.loadRowData();
 
-        this.addManagedListener(this.eventService, Events.EVENT_FULL_WIDTH_ROW_FOCUSED, this.onFullWidthRowFocused.bind(this));
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_FULL_WIDTH_ROW_FOCUSED,
+            this.onFullWidthRowFocused.bind(this)
+        );
     }
 
     private onFullWidthRowFocused(e: FullWidthRowFocusedEvent): void {
@@ -49,7 +54,9 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         const eventRow = { rowIndex: e.rowIndex!, rowPinned: e.rowPinned! };
         const isSameRow = this.rowPositionUtils.sameRow(row, eventRow);
 
-        if (!isSameRow) { return; }
+        if (!isSameRow) {
+            return;
+        }
 
         this.focusService.focusInto(this.comp.getGui(), e.fromBelow);
     }
@@ -58,7 +65,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         const autoHeight = this.gos.get('detailRowAutoHeight');
 
         const parentClass = autoHeight ? 'ag-details-row-auto-height' : 'ag-details-row-fixed-height';
-        const detailClass =  autoHeight ? 'ag-details-grid-auto-height' : 'ag-details-grid-fixed-height';
+        const detailClass = autoHeight ? 'ag-details-grid-auto-height' : 'ag-details-grid-fixed-height';
 
         this.comp.addOrRemoveCssClass(parentClass, true);
         this.comp.addOrRemoveDetailGridCssClass(detailClass, true);
@@ -67,17 +74,21 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     private setupRefreshStrategy(): void {
         const providedStrategy = this.params.refreshStrategy;
 
-        const validSelection = providedStrategy == 'everything' || providedStrategy == 'nothing' || providedStrategy == 'rows';
+        const validSelection =
+            providedStrategy == 'everything' || providedStrategy == 'nothing' || providedStrategy == 'rows';
         if (validSelection) {
             this.refreshStrategy = providedStrategy;
             return;
         }
 
-        if (providedStrategy!=null) {
-            console.warn("AG Grid: invalid cellRendererParams.refreshStrategy = '" + providedStrategy +
-                "' supplied, defaulting to refreshStrategy = 'rows'.");
+        if (providedStrategy != null) {
+            console.warn(
+                "AG Grid: invalid cellRendererParams.refreshStrategy = '" +
+                    providedStrategy +
+                    "' supplied, defaulting to refreshStrategy = 'rows'."
+            );
         }
-    
+
         this.refreshStrategy = 'rows';
     }
 
@@ -91,8 +102,10 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
     private createDetailGrid(): void {
         if (_missing(this.params.detailGridOptions)) {
-            console.warn('AG Grid: could not find detail grid options for master detail, ' +
-                'please set gridOptions.detailCellRendererParams.detailGridOptions');
+            console.warn(
+                'AG Grid: could not find detail grid options for master detail, ' +
+                    'please set gridOptions.detailCellRendererParams.detailGridOptions'
+            );
             return;
         }
 
@@ -101,7 +114,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         // we clone the detail grid options, as otherwise it would be shared
         // across many instances, and that would be a problem because we set
         // api into gridOptions
-        const gridOptions = {...this.params.detailGridOptions};
+        const gridOptions = { ...this.params.detailGridOptions };
 
         if (autoHeight) {
             gridOptions.domLayout = 'autoHeight';
@@ -122,8 +135,8 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         const rowNode = this.params.node as RowNode;
 
         // register with api if the master api is still alive
-        if(masterGridApi.isDestroyed()) { 
-            return; 
+        if (masterGridApi.isDestroyed()) {
+            return;
         }
         masterGridApi.addDetailGridInfo(rowId, gridInfo);
 
@@ -133,10 +146,12 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         this.addDestroyFunc(() => {
             // the gridInfo can be stale if a refresh happens and
             // a new row is created before the old one is destroyed.
-            if (rowNode.detailGridInfo !== gridInfo) { return; }
-            if(!masterGridApi.isDestroyed()) { 
+            if (rowNode.detailGridInfo !== gridInfo) {
+                return;
+            }
+            if (!masterGridApi.isDestroyed()) {
                 masterGridApi.removeDetailGridInfo(rowId); // unregister from api
-             }
+            }
             rowNode.detailGridInfo = null; // unregister from node
         });
     }
@@ -155,8 +170,10 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
         const userFunc = this.params.getDetailRowData;
         if (!userFunc) {
-            console.warn('AG Grid: could not find getDetailRowData for master / detail, ' +
-                'please set gridOptions.detailCellRendererParams.getDetailRowData');
+            console.warn(
+                'AG Grid: could not find getDetailRowData for master / detail, ' +
+                    'please set gridOptions.detailCellRendererParams.getDetailRowData'
+            );
             return;
         }
 
@@ -173,7 +190,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             // as the data could have been updated with new instance
             data: this.params.node.data,
             successCallback: successCallback,
-            context: this.gos.getGridCommonParams().context
+            context: this.gos.getGridCommonParams().context,
         };
         userFunc(funcParams);
     }
@@ -184,9 +201,11 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
         switch (this.refreshStrategy) {
             // ignore this refresh, make grid think we've refreshed but do nothing
-            case 'nothing': return GET_GRID_TO_DO_NOTHING;
+            case 'nothing':
+                return GET_GRID_TO_DO_NOTHING;
             // grid will destroy and recreate the cell
-            case 'everything': return GET_GRID_TO_REFRESH;
+            case 'everything':
+                return GET_GRID_TO_REFRESH;
         }
 
         // do the refresh here, and tell the grid to do nothing

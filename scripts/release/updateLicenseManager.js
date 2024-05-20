@@ -1,10 +1,10 @@
-const fs=require('fs')
+const fs = require('fs');
 
-const LICENSE_MANAGER_FILE='enterprise-modules/core/src/license/shared/licenseManager.ts';
+const LICENSE_MANAGER_FILE = 'enterprise-modules/core/src/license/shared/licenseManager.ts';
 
 if (process.argv.length !== 3) {
-    console.log("Usage: node scripts/release/updateLicenseManager.js NEW_LICENSE");
-    console.log("Note: This script should be run from the root of the monorepo");
+    console.log('Usage: node scripts/release/updateLicenseManager.js NEW_LICENSE');
+    console.log('Note: This script should be run from the root of the monorepo');
     process.exit(1);
 }
 
@@ -18,7 +18,4 @@ const existingLicenseKey = licenseManagerSrc.substring(startOfValue, endOfValue)
 
 const newLicenseManagerSrc = licenseManagerSrc.replace(existingLicenseKey, licenseKey);
 
-fs.writeFileSync(LICENSE_MANAGER_FILE,
-    newLicenseManagerSrc,
-    "utf8");
-
+fs.writeFileSync(LICENSE_MANAGER_FILE, newLicenseManagerSrc, 'utf8');

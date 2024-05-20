@@ -1,21 +1,21 @@
-import { AreaSparkline } from './area/areaSparkline';
-import { SparklineAxis } from './sparkline';
-import { LineSparkline } from './line/lineSparkline';
-import { BarSparkline } from './bar-column/barSparkline';
-import { ColumnSparkline } from './bar-column/columnSparkline';
-
 import {
     CrosshairLineOptions,
-    SparklineOptions,
     HighlightStyleOptions,
-    SparklineMarkerOptions,
-    SparklineLineOptions,
     PaddingOptions,
     SparklineCrosshairsOptions,
+    SparklineLineOptions,
+    SparklineMarkerOptions,
+    SparklineOptions,
 } from '@ag-grid-community/core';
-import { SparklineTooltip } from './tooltip/sparklineTooltip';
-import { BarColumnLabel } from './bar-column/barColumnSparkline';
 import { _Util } from 'ag-charts-community';
+
+import { AreaSparkline } from './area/areaSparkline';
+import { BarColumnLabel } from './bar-column/barColumnSparkline';
+import { BarSparkline } from './bar-column/barSparkline';
+import { ColumnSparkline } from './bar-column/columnSparkline';
+import { LineSparkline } from './line/lineSparkline';
+import { SparklineAxis } from './sparkline';
+import { SparklineTooltip } from './tooltip/sparklineTooltip';
 
 const { isNumber } = _Util;
 

@@ -1,12 +1,13 @@
 import {
     AgCartesianChartOptions,
-    AgHeatmapSeriesOptions,
     AgChartThemeOverrides,
+    AgHeatmapSeriesOptions,
     AgHeatmapSeriesTooltipRendererParams,
     AgTooltipRendererResult,
 } from 'ag-charts-community';
-import { ChartProxy, ChartProxyParams, UpdateParams } from '../chartProxy';
+
 import { flatMap } from '../../utils/array';
+import { ChartProxy, ChartProxyParams, UpdateParams } from '../chartProxy';
 
 export const HEATMAP_CATEGORY_KEY = 'AG-GRID-DEFAULT-HEATMAP-CATEGORY-KEY';
 export const HEATMAP_SERIES_KEY = 'AG-GRID-DEFAULT-HEATMAP-SERIES-KEY';
@@ -17,7 +18,10 @@ export class HeatmapChartProxy extends ChartProxy<AgCartesianChartOptions, 'heat
         super(params);
     }
 
-    protected getUpdateOptions(params: UpdateParams, commonChartOptions: AgCartesianChartOptions): AgCartesianChartOptions {
+    protected getUpdateOptions(
+        params: UpdateParams,
+        commonChartOptions: AgCartesianChartOptions
+    ): AgCartesianChartOptions {
         const xSeriesKey = HEATMAP_SERIES_KEY;
         const xValueKey = HEATMAP_VALUE_KEY;
         const yKey = HEATMAP_CATEGORY_KEY;
@@ -28,7 +32,12 @@ export class HeatmapChartProxy extends ChartProxy<AgCartesianChartOptions, 'heat
         };
     }
 
-    protected getSeries(params: UpdateParams, xSeriesKey: string, xValueKey: string, yKey: string): AgHeatmapSeriesOptions[] {
+    protected getSeries(
+        params: UpdateParams,
+        xSeriesKey: string,
+        xValueKey: string,
+        yKey: string
+    ): AgHeatmapSeriesOptions[] {
         const [category] = params.categories;
         return [
             {
@@ -65,8 +74,7 @@ export class HeatmapChartProxy extends ChartProxy<AgCartesianChartOptions, 'heat
                 [xValueKey]: datum[colId],
                 [yKey]: yValue,
             }));
-        }
-        );
+        });
     }
 
     protected override getSeriesChartThemeDefaults(): AgChartThemeOverrides['heatmap'] {

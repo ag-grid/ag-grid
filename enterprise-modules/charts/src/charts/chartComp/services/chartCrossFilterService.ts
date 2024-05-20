@@ -7,12 +7,11 @@ import {
     GridApi,
     RowNode,
     ValueService,
-    _includes
-} from "@ag-grid-community/core";
+    _includes,
+} from '@ag-grid-community/core';
 
-@Bean("chartCrossFilterService")
+@Bean('chartCrossFilterService')
 export class ChartCrossFilterService extends BeanStub {
-
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('valueService') private readonly valueService: ValueService;
@@ -31,8 +30,12 @@ export class ChartCrossFilterService extends BeanStub {
             // update filters based on current chart selections
             this.updateFilters(filterModel, event, colId);
         } else {
-            console.warn("AG Grid: cross filtering requires a 'agSetColumnFilter' or 'agMultiColumnFilter' " +
-                "to be defined on the column with id: '" + colId + "'");
+            console.warn(
+                "AG Grid: cross filtering requires a 'agSetColumnFilter' or 'agMultiColumnFilter' " +
+                    "to be defined on the column with id: '" +
+                    colId +
+                    "'"
+            );
         }
     }
 
@@ -69,7 +72,7 @@ export class ChartCrossFilterService extends BeanStub {
             filterModel[colId] = this.getUpdatedFilterModel(colId, updatedValues);
         } else {
             const updatedValues = [selectedValue];
-            filterModel = {[colId]: this.getUpdatedFilterModel(colId, updatedValues)};
+            filterModel = { [colId]: this.getUpdatedFilterModel(colId, updatedValues) };
         }
 
         this.gridApi.setFilterModel(filterModel);
@@ -78,9 +81,9 @@ export class ChartCrossFilterService extends BeanStub {
     private getUpdatedFilterModel(colId: any, updatedValues: any[]) {
         let columnFilterType = this.getColumnFilterType(colId);
         if (columnFilterType === 'agMultiColumnFilter') {
-            return {filterType: 'multi', filterModels: [null, {filterType: 'set', values: updatedValues}]};
+            return { filterType: 'multi', filterModels: [null, { filterType: 'set', values: updatedValues }] };
         }
-        return {filterType: 'set', values: updatedValues};
+        return { filterType: 'set', values: updatedValues };
     }
 
     private getCurrentGridValuesForCategory(colId: string) {

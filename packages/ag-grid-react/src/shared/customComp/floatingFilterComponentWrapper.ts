@@ -1,10 +1,14 @@
-import { IFloatingFilter, IFloatingFilterParams } from "ag-grid-community";
-import { CustomComponentWrapper } from "./customComponentWrapper";
-import { updateFloatingFilterParent } from "./floatingFilterComponentProxy";
-import { CustomFloatingFilterProps, CustomFloatingFilterCallbacks } from "./interfaces";
+import { IFloatingFilter, IFloatingFilterParams } from 'ag-grid-community';
+
+import { CustomComponentWrapper } from './customComponentWrapper';
+import { updateFloatingFilterParent } from './floatingFilterComponentProxy';
+import { CustomFloatingFilterCallbacks, CustomFloatingFilterProps } from './interfaces';
 
 // floating filter is normally instantiated via react header filter cell comp, but not in the case of multi filter
-export class FloatingFilterComponentWrapper extends CustomComponentWrapper<IFloatingFilterParams, CustomFloatingFilterProps, CustomFloatingFilterCallbacks> implements IFloatingFilter {
+export class FloatingFilterComponentWrapper
+    extends CustomComponentWrapper<IFloatingFilterParams, CustomFloatingFilterProps, CustomFloatingFilterCallbacks>
+    implements IFloatingFilter
+{
     private model: any = null;
     private readonly onModelChange = (model: any) => this.updateModel(model);
 

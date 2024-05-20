@@ -1,10 +1,10 @@
-import { ProvidedFilter, ProvidedFilterParams } from './providedFilter';
-import { ProvidedFilterModel, IDoesFilterPassParams } from '../../interfaces/iFilter';
+import { IDoesFilterPassParams, ProvidedFilterModel } from '../../interfaces/iFilter';
 import { IRowModel, RowModelType } from '../../interfaces/iRowModel';
-import { mock } from '../../test-utils/mock';
-import { AgPromise } from '../../utils/promise';
 import { LocaleService } from '../../localeService';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
+import { mock } from '../../test-utils/mock';
+import { AgPromise } from '../../utils/promise';
+import { ProvidedFilter, ProvidedFilterParams } from './providedFilter';
 
 class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {
     private uiModel: ProvidedFilterModel;
@@ -24,7 +24,12 @@ class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {
         rowModel.getType.mockReturnValue(rowModelType);
         (this as any).rowModel = rowModel;
 
-        (this as any).positionableFeature = mock<PositionableFeature>('restoreLastSize', 'setResizable', 'removeSizeFromEl', 'constrainSizeToAvailableHeight');
+        (this as any).positionableFeature = mock<PositionableFeature>(
+            'restoreLastSize',
+            'setResizable',
+            'removeSizeFromEl',
+            'constrainSizeToAvailableHeight'
+        );
 
         this.setParams(params);
     }
@@ -172,13 +177,13 @@ describe('closeOnApply', () => {
         expect(hidePopup).toHaveBeenCalledTimes(0);
     });
 
-    it.each([undefined, false])('does not close popup if closeOnApply is %s', value => {
+    it.each([undefined, false])('does not close popup if closeOnApply is %s', (value) => {
         const hidePopup = jest.fn();
         // @ts-ignore
         const params = mock<ProvidedFilterParams>('filterChangedCallback');
 
         // mocking library does not set property correctly for falsy values, so we have to do this instead
-        Object.defineProperty(params, 'closeOnApply', { get: () => value, set: () => { } });
+        Object.defineProperty(params, 'closeOnApply', { get: () => value, set: () => {} });
 
         const filter = new TestFilter(params);
 

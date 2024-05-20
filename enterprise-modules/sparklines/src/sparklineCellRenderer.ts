@@ -6,6 +6,7 @@ import {
     RefSelector,
     ResizeObserverService,
 } from '@ag-grid-community/core';
+
 import { AgSparkline, SparklineFactoryOptions } from './sparkline/agSparkline';
 import { SparklineTooltipSingleton } from './tooltip/sparklineTooltipSingleton';
 

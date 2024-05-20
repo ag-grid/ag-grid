@@ -1,8 +1,12 @@
-import { AgPromise, IMenuItem, IMenuItemParams } from "@ag-grid-community/core";
-import { CustomComponentWrapper } from "./customComponentWrapper";
-import { CustomMenuItemProps, CustomMenuItemCallbacks } from "./interfaces";
+import { AgPromise, IMenuItem, IMenuItemParams } from '@ag-grid-community/core';
 
-export class MenuItemComponentWrapper extends CustomComponentWrapper<IMenuItemParams, CustomMenuItemProps, CustomMenuItemCallbacks> implements IMenuItem {
+import { CustomComponentWrapper } from './customComponentWrapper';
+import { CustomMenuItemCallbacks, CustomMenuItemProps } from './interfaces';
+
+export class MenuItemComponentWrapper
+    extends CustomComponentWrapper<IMenuItemParams, CustomMenuItemProps, CustomMenuItemCallbacks>
+    implements IMenuItem
+{
     private active: boolean = false;
     private expanded: boolean = false;
     private readonly onActiveChange = (active: boolean) => this.updateActive(active);
@@ -27,7 +31,7 @@ export class MenuItemComponentWrapper extends CustomComponentWrapper<IMenuItemPa
 
     private updateActive(active: boolean): void {
         const result = this.awaitSetActive(active);
-        if (active){
+        if (active) {
             result.then(() => this.sourceParams.onItemActivated());
         }
     }

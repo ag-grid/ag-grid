@@ -5,27 +5,27 @@ import {
     Events,
     FilterManager,
     IDatasource,
+    IInfiniteRowModel,
+    ISelectionService,
     ModelUpdatedEvent,
     NumberSequence,
     PostConstruct,
     PreDestroy,
     RowBounds,
+    RowModelType,
     RowNode,
     RowNodeBlockLoader,
     RowRenderer,
-    ISelectionService,
     SortController,
-    IInfiniteRowModel,
     WithoutGridCommon,
-    RowModelType,
     _jsonEquals,
-    _warnOnce
-} from "@ag-grid-community/core";
-import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
+    _warnOnce,
+} from '@ag-grid-community/core';
+
+import { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
 
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
-
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('sortController') private readonly sortController: SortController;
     @Autowired('selectionService') private readonly selectionService: ISelectionService;
@@ -40,12 +40,17 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     public getRowBounds(index: number): RowBounds {
         return {
             rowHeight: this.rowHeight,
-            rowTop: this.rowHeight * index
+            rowTop: this.rowHeight * index,
         };
     }
 
     // we don't implement as lazy row heights is not supported in this row model
-    public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean {
+    public ensureRowHeightsValid(
+        startPixel: number,
+        endPixel: number,
+        startLimitIndex: number,
+        endLimitIndex: number
+    ): boolean {
         return false;
     }
 
@@ -66,7 +71,9 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     private verifyProps(): void {
         if (this.gos.exists('initialGroupOrderComparator')) {
-            _warnOnce('initialGroupOrderComparator cannot be used with Infinite Row Model as sorting is done on the server side');
+            _warnOnce(
+                'initialGroupOrderComparator cannot be used with Infinite Row Model as sorting is done on the server side'
+            );
         }
     }
 
@@ -180,7 +187,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
             newPageSize: false,
             newData: false,
             keepRenderedRows: true,
-            animate: false
+            animate: false,
         };
     }
 
@@ -215,13 +222,13 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
             // the cache could create this, however it is also used by the pages, so handy to create it
             // here as the settings are also passed to the pages
-            lastAccessedSequence: new NumberSequence()
+            lastAccessedSequence: new NumberSequence(),
         } as InfiniteCacheParams;
 
         this.infiniteCache = this.createBean(new InfiniteCache(this.cacheParams));
 
         this.eventService.dispatchEventOnce({
-            type: Events.EVENT_ROW_COUNT_READY
+            type: Events.EVENT_ROW_COUNT_READY,
         });
 
         const event = this.createModelUpdatedEvent();
@@ -229,7 +236,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     private updateRowHeights() {
-        this.forEachNode(node => {
+        this.forEachNode((node) => {
             node.setRowHeight(this.rowHeight);
             node.setRowTop(this.rowHeight * node.rowIndex!);
         });
@@ -250,14 +257,18 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     public getRow(rowIndex: number): RowNode | undefined {
-        if (!this.infiniteCache) { return undefined; }
-        if (rowIndex >= this.infiniteCache.getRowCount()) { return undefined; }
+        if (!this.infiniteCache) {
+            return undefined;
+        }
+        if (rowIndex >= this.infiniteCache.getRowCount()) {
+            return undefined;
+        }
         return this.infiniteCache.getRow(rowIndex);
     }
 
     public getRowNode(id: string): RowNode | undefined {
         let result: RowNode | undefined;
-        this.forEachNode(rowNode => {
+        this.forEachNode((rowNode) => {
             if (rowNode.id === id) {
                 result = rowNode;
             }
@@ -280,7 +291,8 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        if (this.rowHeight !== 0) { // avoid divide by zero error
+        if (this.rowHeight !== 0) {
+            // avoid divide by zero error
             const rowIndexForPixel = Math.floor(pixel / this.rowHeight);
             const lastRowIndex = this.getRowCount() - 1;
             if (rowIndexForPixel > lastRowIndex) {

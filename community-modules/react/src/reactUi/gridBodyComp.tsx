@@ -1,5 +1,13 @@
-import { CssClassManager, GridBodyCtrl, IGridBodyComp, RowContainerName, _setAriaColCount, _setAriaRowCount } from '@ag-grid-community/core';
+import {
+    CssClassManager,
+    GridBodyCtrl,
+    IGridBodyComp,
+    RowContainerName,
+    _setAriaColCount,
+    _setAriaRowCount,
+} from '@ag-grid-community/core';
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
+
 import { BeansContext } from './beansContext';
 import GridHeaderComp from './header/gridHeaderComp';
 import useReactCommentEffect from './reactComment';
@@ -13,7 +21,6 @@ interface SectionProperties {
 }
 
 const GridBodyComp = () => {
-
     const { context, agStackComponentsRegistry, resizeObserverService } = useContext(BeansContext);
 
     const [rowAnimationClass, setRowAnimationClass] = useState<string>('');
@@ -65,7 +72,7 @@ const GridBodyComp = () => {
         eRoot.current = e;
         if (!eRoot.current) {
             context.destroyBeans(beansToDestroy.current);
-            destroyFuncs.current.forEach(f => f());
+            destroyFuncs.current.forEach((f) => f());
 
             beansToDestroy.current = [];
             destroyFuncs.current = [];
@@ -73,7 +80,9 @@ const GridBodyComp = () => {
             return;
         }
 
-        if (!context) { return; }
+        if (!context) {
+            return;
+        }
 
         const newComp = (tag: string) => {
             const CompClass = agStackComponentsRegistry.getComponentClass(tag);
@@ -85,7 +94,7 @@ const GridBodyComp = () => {
         const attachToDom = (eParent: HTMLElement, eChild: HTMLElement | Comment) => {
             eParent.appendChild(eChild);
             destroyFuncs.current.push(() => eParent.removeChild(eChild));
-        }
+        };
 
         attachToDom(eRoot.current, document.createComment(' AG Fake Horizontal Scroll '));
         attachToDom(eRoot.current, newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
@@ -99,12 +108,12 @@ const GridBodyComp = () => {
         }
         const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
-            setColumnCount: count => {
+            setColumnCount: (count) => {
                 if (eRoot.current) {
                     _setAriaColCount(eRoot.current, count);
                 }
             },
-            setRowCount: count => {
+            setRowCount: (count) => {
                 if (eRoot.current) {
                     _setAriaRowCount(eRoot.current, count);
                 }
@@ -126,7 +135,7 @@ const GridBodyComp = () => {
                     eBodyViewport.current.style.width = width;
                 }
             },
-            registerBodyViewportResizeListener: listener => {
+            registerBodyViewportResizeListener: (listener) => {
                 if (eBodyViewport.current) {
                     const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current, listener);
                     destroyFuncs.current.push(() => unsubscribeFromResize());
@@ -146,114 +155,139 @@ const GridBodyComp = () => {
             eTop.current!,
             eBottom.current!,
             eStickyTop.current!,
-            eStickyBottom.current!,
+            eStickyBottom.current!
         );
-
     }, []);
 
-    const rootClasses = useMemo(() =>
-        classesList('ag-root', 'ag-unselectable', layoutClass),
-        [layoutClass]
-    );
-    const bodyViewportClasses = useMemo(() =>
-        classesList('ag-body-viewport', rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss), 
+    const rootClasses = useMemo(() => classesList('ag-root', 'ag-unselectable', layoutClass), [layoutClass]);
+    const bodyViewportClasses = useMemo(
+        () =>
+            classesList(
+                'ag-body-viewport',
+                rowAnimationClass,
+                layoutClass,
+                forceVerticalScrollClass,
+                cellSelectableCss
+            ),
         [rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss]
     );
-    const bodyClasses = useMemo(() =>
-        classesList('ag-body', layoutClass), 
-        [layoutClass]
-    );
-    const topClasses = useMemo(() =>
-        classesList('ag-floating-top', cellSelectableCss), 
-        [cellSelectableCss]
-    );
-    const stickyTopClasses = useMemo(() =>
-        classesList('ag-sticky-top', cellSelectableCss), 
-        [cellSelectableCss]
-    );
-    const stickyBottomClasses = useMemo(() =>
-        classesList('ag-sticky-bottom', cellSelectableCss), 
-        [cellSelectableCss]
-    );
-    const bottomClasses = useMemo(() =>
-        classesList('ag-floating-bottom', cellSelectableCss),
-        [cellSelectableCss]
+    const bodyClasses = useMemo(() => classesList('ag-body', layoutClass), [layoutClass]);
+    const topClasses = useMemo(() => classesList('ag-floating-top', cellSelectableCss), [cellSelectableCss]);
+    const stickyTopClasses = useMemo(() => classesList('ag-sticky-top', cellSelectableCss), [cellSelectableCss]);
+    const stickyBottomClasses = useMemo(() => classesList('ag-sticky-bottom', cellSelectableCss), [cellSelectableCss]);
+    const bottomClasses = useMemo(() => classesList('ag-floating-bottom', cellSelectableCss), [cellSelectableCss]);
+
+    const topStyle: React.CSSProperties = useMemo(
+        () => ({
+            height: topHeight,
+            minHeight: topHeight,
+            display: topDisplay,
+            overflowY: topAndBottomOverflowY as any,
+        }),
+        [topHeight, topDisplay, topAndBottomOverflowY]
     );
 
-    const topStyle: React.CSSProperties = useMemo(() => ({
-        height: topHeight,
-        minHeight: topHeight,
-        display: topDisplay,
-        overflowY: (topAndBottomOverflowY as any)
-    }), [topHeight, topDisplay, topAndBottomOverflowY]);
+    const stickyTopStyle: React.CSSProperties = useMemo(
+        () => ({
+            height: stickyTopHeight,
+            top: stickyTopTop,
+            width: stickyTopWidth,
+        }),
+        [stickyTopHeight, stickyTopTop, stickyTopWidth]
+    );
 
-    const stickyTopStyle: React.CSSProperties = useMemo(() => ({
-        height: stickyTopHeight,
-        top: stickyTopTop,
-        width: stickyTopWidth
-    }), [stickyTopHeight, stickyTopTop, stickyTopWidth]);
+    const stickyBottomStyle: React.CSSProperties = useMemo(
+        () => ({
+            height: stickyBottomHeight,
+            bottom: stickyBottomBottom,
+            width: stickyBottomWidth,
+        }),
+        [stickyBottomHeight, stickyBottomBottom, stickyBottomWidth]
+    );
 
-    const stickyBottomStyle: React.CSSProperties = useMemo(() => ({
-        height: stickyBottomHeight,
-        bottom: stickyBottomBottom,
-        width: stickyBottomWidth,
-    }), [stickyBottomHeight, stickyBottomBottom, stickyBottomWidth]);
+    const bottomStyle: React.CSSProperties = useMemo(
+        () => ({
+            height: bottomHeight,
+            minHeight: bottomHeight,
+            display: bottomDisplay,
+            overflowY: topAndBottomOverflowY as any,
+        }),
+        [bottomHeight, bottomDisplay, topAndBottomOverflowY]
+    );
 
-    const bottomStyle: React.CSSProperties = useMemo(()=> ({
-        height: bottomHeight,
-        minHeight: bottomHeight,
-        display: bottomDisplay,
-        overflowY: (topAndBottomOverflowY as any)
-    }), [bottomHeight, bottomDisplay, topAndBottomOverflowY]);
-
-    const createRowContainer = (container: RowContainerName) => <RowContainerComp name={ container } key={`${container}-container`} />;
+    const createRowContainer = (container: RowContainerName) => (
+        <RowContainerComp name={container} key={`${container}-container`} />
+    );
     const createSection = ({
         section,
         children,
         className,
-        style
+        style,
     }: SectionProperties & { children: RowContainerName[] }) => (
-        <div ref={ section } className={ className } role="presentation" style={ style }>
-            { children.map(createRowContainer) }
+        <div ref={section} className={className} role="presentation" style={style}>
+            {children.map(createRowContainer)}
         </div>
     );
 
     return (
         <div ref={setRef} className={rootClasses} role="treegrid">
-            <GridHeaderComp/>
-            { createSection({ section: eTop, className: topClasses, style: topStyle, children: [
-                RowContainerName.TOP_LEFT,
-                RowContainerName.TOP_CENTER,
-                RowContainerName.TOP_RIGHT,
-                RowContainerName.TOP_FULL_WIDTH,
-            ]}) }
+            <GridHeaderComp />
+            {createSection({
+                section: eTop,
+                className: topClasses,
+                style: topStyle,
+                children: [
+                    RowContainerName.TOP_LEFT,
+                    RowContainerName.TOP_CENTER,
+                    RowContainerName.TOP_RIGHT,
+                    RowContainerName.TOP_FULL_WIDTH,
+                ],
+            })}
             <div className={bodyClasses} ref={eBody} role="presentation">
-                { createSection({ section: eBodyViewport, className: bodyViewportClasses, 
+                {createSection({
+                    section: eBodyViewport,
+                    className: bodyViewportClasses,
                     children: [
-                    RowContainerName.LEFT,
-                    RowContainerName.CENTER,
-                    RowContainerName.RIGHT,
-                    RowContainerName.FULL_WIDTH,
-                ]}) }
+                        RowContainerName.LEFT,
+                        RowContainerName.CENTER,
+                        RowContainerName.RIGHT,
+                        RowContainerName.FULL_WIDTH,
+                    ],
+                })}
             </div>
-            { createSection({ section: eStickyTop, className: stickyTopClasses, style: stickyTopStyle, children: [
-                RowContainerName.STICKY_TOP_LEFT,
-                RowContainerName.STICKY_TOP_CENTER,
-                RowContainerName.STICKY_TOP_RIGHT,
-                RowContainerName.STICKY_TOP_FULL_WIDTH,
-            ]}) }
-            { createSection({ section: eStickyBottom, className: stickyBottomClasses, style: stickyBottomStyle, children: [
-                RowContainerName.STICKY_BOTTOM_LEFT,
-                RowContainerName.STICKY_BOTTOM_CENTER,
-                RowContainerName.STICKY_BOTTOM_RIGHT,
-                RowContainerName.STICKY_BOTTOM_FULL_WIDTH,
-            ]}) }
-            { createSection({ section: eBottom, className: bottomClasses, style: bottomStyle, children: [
-                RowContainerName.BOTTOM_LEFT,
-                RowContainerName.BOTTOM_CENTER,
-                RowContainerName.BOTTOM_RIGHT,
-                RowContainerName.BOTTOM_FULL_WIDTH,
-            ]}) }
+            {createSection({
+                section: eStickyTop,
+                className: stickyTopClasses,
+                style: stickyTopStyle,
+                children: [
+                    RowContainerName.STICKY_TOP_LEFT,
+                    RowContainerName.STICKY_TOP_CENTER,
+                    RowContainerName.STICKY_TOP_RIGHT,
+                    RowContainerName.STICKY_TOP_FULL_WIDTH,
+                ],
+            })}
+            {createSection({
+                section: eStickyBottom,
+                className: stickyBottomClasses,
+                style: stickyBottomStyle,
+                children: [
+                    RowContainerName.STICKY_BOTTOM_LEFT,
+                    RowContainerName.STICKY_BOTTOM_CENTER,
+                    RowContainerName.STICKY_BOTTOM_RIGHT,
+                    RowContainerName.STICKY_BOTTOM_FULL_WIDTH,
+                ],
+            })}
+            {createSection({
+                section: eBottom,
+                className: bottomClasses,
+                style: bottomStyle,
+                children: [
+                    RowContainerName.BOTTOM_LEFT,
+                    RowContainerName.BOTTOM_CENTER,
+                    RowContainerName.BOTTOM_RIGHT,
+                    RowContainerName.BOTTOM_FULL_WIDTH,
+                ],
+            })}
         </div>
     );
 };

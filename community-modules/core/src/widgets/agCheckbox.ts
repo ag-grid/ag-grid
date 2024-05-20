@@ -1,4 +1,4 @@
-import { Events, CheckboxChangedEvent } from "../events";
+import { CheckboxChangedEvent, Events } from '../events';
 import { AgAbstractInputField, AgInputFieldParams } from './agAbstractInputField';
 import { LabelAlignment } from './agAbstractLabel';
 
@@ -7,8 +7,11 @@ export interface AgCheckboxParams extends AgInputFieldParams {
     passive?: boolean;
 }
 
-export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> extends AgAbstractInputField<HTMLInputElement, boolean, TConfig> {
-
+export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> extends AgAbstractInputField<
+    HTMLInputElement,
+    boolean,
+    TConfig
+> {
     protected labelAlignment: LabelAlignment = 'right';
 
     private selected?: boolean = false;
@@ -57,7 +60,9 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
     }
 
     public toggle(): void {
-        if (this.eInput.disabled) { return; }
+        if (this.eInput.disabled) {
+            return;
+        }
 
         const previousValue = this.isSelected();
         const nextValue = this.getNextValue();
@@ -116,16 +121,18 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
             id: input.id,
             name: input.name,
             selected,
-            previousValue
+            previousValue,
         };
 
         this.eventService.dispatchEvent(checkboxChangedEvent);
     }
 
     private onCheckboxClick(e: MouseEvent) {
-        if (this.passive || this.eInput.disabled) { return; }
+        if (this.passive || this.eInput.disabled) {
+            return;
+        }
         const previousValue = this.isSelected();
-        const selected = this.selected = (e.target as HTMLInputElement).checked;
+        const selected = (this.selected = (e.target as HTMLInputElement).checked);
         this.refreshSelectedClass(selected);
         this.dispatchChange(selected, previousValue, e);
     }
@@ -134,5 +141,4 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
         this.eWrapper.classList.toggle('ag-checked', value === true);
         this.eWrapper.classList.toggle('ag-indeterminate', value == null);
     }
-
 }

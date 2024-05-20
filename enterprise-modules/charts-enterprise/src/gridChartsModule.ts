@@ -1,2 +1,1 @@
-export {GridChartsModule} from "@ag-grid-enterprise/charts";
-
+export { GridChartsModule } from '@ag-grid-enterprise/charts';

@@ -1,12 +1,11 @@
-import { DraggingEvent, DragAndDropService } from "../../dragAndDrop/dragAndDropService";
-import { Column, ColumnPinnedType } from "../../entities/column";
-import { Autowired } from "../../context/context";
-import { GridOptionsService } from "../../gridOptionsService";
-import { DropListener } from "./bodyDropTarget";
-import { FuncColsService } from "../../columns/funcColsService";
+import { FuncColsService } from '../../columns/funcColsService';
+import { Autowired } from '../../context/context';
+import { DragAndDropService, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
+import { Column, ColumnPinnedType } from '../../entities/column';
+import { GridOptionsService } from '../../gridOptionsService';
+import { DropListener } from './bodyDropTarget';
 
 export class BodyDropPivotTarget implements DropListener {
-
     @Autowired('gridOptionsService') private gos: GridOptionsService;
     @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
 
@@ -25,17 +24,25 @@ export class BodyDropPivotTarget implements DropListener {
         this.clearColumnsList();
 
         // in pivot mode, we don't accept any drops if functions are read only
-        if (this.gos.get('functionsReadOnly')) { return; }
+        if (this.gos.get('functionsReadOnly')) {
+            return;
+        }
 
         const dragColumns: Column[] | undefined = draggingEvent.dragItem.columns;
 
-        if (!dragColumns) { return; }
+        if (!dragColumns) {
+            return;
+        }
 
-        dragColumns.forEach(column => {
+        dragColumns.forEach((column) => {
             // we don't allow adding secondary columns
-            if (!column.isPrimary()) { return; }
+            if (!column.isPrimary()) {
+                return;
+            }
 
-            if (column.isAnyFunctionActive()) { return; }
+            if (column.isAnyFunctionActive()) {
+                return;
+            }
 
             if (column.isAllowValue()) {
                 this.columnsToAggregate.push(column);
@@ -44,7 +51,6 @@ export class BodyDropPivotTarget implements DropListener {
             } else if (column.isAllowPivot()) {
                 this.columnsToPivot.push(column);
             }
-
         });
     }
 
@@ -70,19 +76,18 @@ export class BodyDropPivotTarget implements DropListener {
     }
 
     /** Callback for when dragging */
-    public onDragging(draggingEvent: DraggingEvent): void {
-    }
+    public onDragging(draggingEvent: DraggingEvent): void {}
 
     /** Callback for when drag stops */
     public onDragStop(draggingEvent: DraggingEvent): void {
         if (this.columnsToAggregate.length > 0) {
-            this.funcColsService.addValueColumns(this.columnsToAggregate, "toolPanelDragAndDrop");
+            this.funcColsService.addValueColumns(this.columnsToAggregate, 'toolPanelDragAndDrop');
         }
         if (this.columnsToGroup.length > 0) {
-            this.funcColsService.addRowGroupColumns(this.columnsToGroup, "toolPanelDragAndDrop");
+            this.funcColsService.addRowGroupColumns(this.columnsToGroup, 'toolPanelDragAndDrop');
         }
         if (this.columnsToPivot.length > 0) {
-            this.funcColsService.addPivotColumns(this.columnsToPivot, "toolPanelDragAndDrop");
+            this.funcColsService.addPivotColumns(this.columnsToPivot, 'toolPanelDragAndDrop');
         }
     }
 }

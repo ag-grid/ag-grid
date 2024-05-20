@@ -1,22 +1,21 @@
-import { Component } from "../../widgets/component";
-import { Autowired, PostConstruct } from "../../context/context";
-import { AgSelect } from "../../widgets/agSelect";
-import { Events } from "../../eventKeys";
-import { PaginationChangedEvent } from "../../events";
-import { PaginationProxy } from "../../pagination/paginationProxy";
-import { WithoutGridCommon } from "../../interfaces/iCommon";
-import { _clearElement } from "../../utils/dom";
-import { _warnOnce } from "../../utils/function";
+import { Autowired, PostConstruct } from '../../context/context';
+import { Events } from '../../eventKeys';
+import { PaginationChangedEvent } from '../../events';
+import { WithoutGridCommon } from '../../interfaces/iCommon';
+import { PaginationProxy } from '../../pagination/paginationProxy';
+import { _clearElement } from '../../utils/dom';
+import { _warnOnce } from '../../utils/function';
+import { AgSelect } from '../../widgets/agSelect';
+import { Component } from '../../widgets/component';
 
 export class PageSizeSelectorComp extends Component {
-
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     private selectPageSizeComp: AgSelect | undefined;
     private hasEmptyOption = false;
 
     constructor() {
-        super(/* html */`<span class="ag-paging-page-size"></span>`);
+        super(/* html */ `<span class="ag-paging-page-size"></span>`);
     }
 
     @PostConstruct
@@ -25,19 +24,21 @@ export class PageSizeSelectorComp extends Component {
             this.onPageSizeSelectorValuesChange();
         });
 
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_PAGINATION_CHANGED,
-            (event) => this.handlePaginationChanged(event),
+        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, (event) =>
+            this.handlePaginationChanged(event)
         );
     }
 
     private handlePageSizeItemSelected = (): void => {
-        if (!this.selectPageSizeComp) { return; }
+        if (!this.selectPageSizeComp) {
+            return;
+        }
 
         const newValue = this.selectPageSizeComp.getValue();
 
-        if (!newValue) { return; }
+        if (!newValue) {
+            return;
+        }
 
         const paginationPageSize = Number(newValue);
 
@@ -45,7 +46,9 @@ export class PageSizeSelectorComp extends Component {
             isNaN(paginationPageSize) ||
             paginationPageSize < 1 ||
             paginationPageSize === this.paginationProxy.getPageSize()
-        ) { return; }
+        ) {
+            return;
+        }
 
         this.paginationProxy.setPageSize(paginationPageSize, 'pageSizeSelector');
 
@@ -59,7 +62,9 @@ export class PageSizeSelectorComp extends Component {
     };
 
     private handlePaginationChanged(paginationChangedEvent?: WithoutGridCommon<PaginationChangedEvent>): void {
-        if (!this.selectPageSizeComp || !paginationChangedEvent?.newPageSize) { return; }
+        if (!this.selectPageSizeComp || !paginationChangedEvent?.newPageSize) {
+            return;
+        }
 
         const paginationPageSize = this.paginationProxy.getPageSize();
         if (this.getPageSizeSelectorValues().includes(paginationPageSize)) {
@@ -78,11 +83,15 @@ export class PageSizeSelectorComp extends Component {
             this.reset();
         }
 
-        if (!show) { return; }
+        if (!show) {
+            return;
+        }
 
         this.reloadPageSizesSelector();
 
-        if (!this.selectPageSizeComp) { return; }
+        if (!this.selectPageSizeComp) {
+            return;
+        }
 
         this.appendChild(this.selectPageSizeComp);
     }
@@ -90,14 +99,18 @@ export class PageSizeSelectorComp extends Component {
     private reset(): void {
         _clearElement(this.getGui());
 
-        if (!this.selectPageSizeComp) { return; }
+        if (!this.selectPageSizeComp) {
+            return;
+        }
 
         this.destroyBean(this.selectPageSizeComp);
         this.selectPageSizeComp = undefined;
     }
 
     private onPageSizeSelectorValuesChange(): void {
-        if (!this.selectPageSizeComp) { return; }
+        if (!this.selectPageSizeComp) {
+            return;
+        }
 
         if (this.shouldShowPageSizeSelector()) {
             this.reloadPageSizesSelector();
@@ -116,7 +129,8 @@ export class PageSizeSelectorComp extends Component {
     private reloadPageSizesSelector(): void {
         const pageSizeOptions: (number | string)[] = this.getPageSizeSelectorValues();
         const paginationPageSizeOption: number = this.paginationProxy.getPageSize();
-        const shouldAddAndSelectEmptyOption = !paginationPageSizeOption || !pageSizeOptions.includes(paginationPageSizeOption)
+        const shouldAddAndSelectEmptyOption =
+            !paginationPageSizeOption || !pageSizeOptions.includes(paginationPageSizeOption);
         if (shouldAddAndSelectEmptyOption) {
             // When the paginationPageSize option is set to a value that is
             // not in the list of page size options.
@@ -137,9 +151,9 @@ export class PageSizeSelectorComp extends Component {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const localisedLabel = localeTextFunc('pageSizeSelectorLabel', 'Page Size:');
 
-        const options = pageSizeOptions.map(value => ({
+        const options = pageSizeOptions.map((value) => ({
             value: String(value),
-            text: String(value)
+            text: String(value),
         }));
 
         const localisedAriaLabel = localeTextFunc('ariaPageSizeSelectorLabel', 'Page Size');

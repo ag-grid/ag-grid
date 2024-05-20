@@ -1,5 +1,5 @@
-@use "ag";
-@use "sass:meta";
+@use 'ag';
+@use 'sass:meta';
 
 @mixin -check-button-base {
     @include ag.icon();
@@ -7,7 +7,8 @@
     width: var(--ag-icon-size);
     height: var(--ag-icon-size);
 
-    & input, input {
+    & input,
+    input {
         -webkit-appearance: none;
         opacity: 0;
         width: 100%;
@@ -20,7 +21,8 @@
     vertical-align: middle;
     flex: none;
 
-    &:focus-within, &:active {
+    &:focus-within,
+    &:active {
         outline: none;
         box-shadow: var(--ag-input-focus-box-shadow);
     }
@@ -73,7 +75,7 @@
 
         // ::before used for icon images
         &::before {
-            content: "";
+            content: '';
             background: transparent center/contain no-repeat;
             position: absolute;
             inset: 0;
@@ -94,7 +96,6 @@
             opacity: var(--ag-icon-image-opacity-checkbox-indeterminate, var(--ag-icon-image-opacity, 0.9));
         }
     }
-
 
     .ag-toggle-button-input-wrapper {
         box-sizing: border-box;
@@ -151,7 +152,6 @@
         }
     }
 
-
     .ag-radio-button-input-wrapper {
         @include -check-button-base();
 
@@ -181,7 +181,7 @@
 
         // ::before used for icon images
         &::before {
-            content: "";
+            content: '';
             background: transparent center/contain no-repeat;
             position: absolute;
             inset: 0;
@@ -282,12 +282,10 @@
     }
 }
 
-
 @mixin -ag-range-track {
     @if meta.mixin-exists(ag-range-track) {
-        @include ag.range-track
-    }
-    @else {
+        @include ag.range-track;
+    } @else {
         margin: 0;
         padding: 0;
         width: 100%;
@@ -300,24 +298,22 @@
 
 @mixin -ag-focus-range-track {
     @if meta.mixin-exists(ag-focus-range-track) {
-        @include ag.focus-range-track
+        @include ag.focus-range-track;
     }
 }
 
 @mixin -ag-active-range-track {
     @if meta.mixin-exists(ag-focus-range-track) {
-        @include ag.focus-range-track
-    }
-    @else {
+        @include ag.focus-range-track;
+    } @else {
         background-color: var(--ag-input-focus-border-color);
     }
 }
 
 @mixin -ag-range-thumb {
     @if meta.mixin-exists(ag-range-thumb) {
-        @include ag.range-thumb
-    }
-    @else {
+        @include ag.range-thumb;
+    } @else {
         margin: 0;
         padding: 0;
         -webkit-appearance: none;
@@ -333,15 +329,14 @@
 @mixin -ag-focus-range-thumb {
     box-shadow: var(--ag-input-focus-box-shadow);
     @if meta.mixin-exists(ag-focus-range-thumb) {
-        @include ag.focus-range-thumb
-    }
-    @else {
+        @include ag.focus-range-thumb;
+    } @else {
         border-color: var(--ag-checkbox-checked-color);
     }
 }
 
 @mixin -ag-active-range-thumb {
     @if meta.mixin-exists(ag-active-range-thumb) {
-        @include ag.active-range-thumb
+        @include ag.active-range-thumb;
     }
 }

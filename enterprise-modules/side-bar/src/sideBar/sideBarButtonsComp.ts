@@ -1,25 +1,24 @@
 import {
-    Autowired,
     AgEvent,
+    Autowired,
     Component,
-    PostConstruct,
-    ToolPanelDef,
-    PreDestroy,
     FocusService,
     KeyCode,
+    PostConstruct,
+    PreDestroy,
+    ToolPanelDef,
     VisibleColsService,
+    _clearElement,
     _last,
-    _clearElement
-} from "@ag-grid-community/core";
+} from '@ag-grid-community/core';
 
-import { SideBarButtonComp } from "./sideBarButtonComp";
+import { SideBarButtonComp } from './sideBarButtonComp';
 
 export interface SideBarButtonClickedEvent extends AgEvent {
     toolPanelId: string;
 }
 
 export class SideBarButtonsComp extends Component {
-
     public static EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
     private static readonly TEMPLATE: string = /* html */ `<div class="ag-side-buttons" role="tablist"></div>`;
     private buttonComps: SideBarButtonComp[] = [];
@@ -37,7 +36,9 @@ export class SideBarButtonsComp extends Component {
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
-        if (e.key !== KeyCode.TAB || !e.shiftKey) { return; }
+        if (e.key !== KeyCode.TAB || !e.shiftKey) {
+            return;
+        }
 
         const lastColumn = _last(this.visibleColsService.getAllCols());
 
@@ -47,7 +48,7 @@ export class SideBarButtonsComp extends Component {
     }
 
     public setActiveButton(id: string | undefined): void {
-        this.buttonComps.forEach(comp => {
+        this.buttonComps.forEach((comp) => {
             comp.setSelected(id === comp.getToolPanelId());
         });
     }
@@ -60,7 +61,7 @@ export class SideBarButtonsComp extends Component {
         buttonComp.addEventListener(SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED, () => {
             this.dispatchEvent({
                 type: SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED,
-                toolPanelId: def.id
+                toolPanelId: def.id,
             });
         });
 
@@ -72,5 +73,4 @@ export class SideBarButtonsComp extends Component {
         this.buttonComps = this.destroyBeans(this.buttonComps);
         _clearElement(this.getGui());
     }
-
 }

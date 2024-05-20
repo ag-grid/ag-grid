@@ -1,10 +1,10 @@
-![AG Grid HTML5 Grid trusted by the community, built for enterprise](./github-banner.png "AG Grid")
+![AG Grid HTML5 Grid trusted by the community, built for enterprise](./github-banner.png 'AG Grid')
 
 [![CDNJS](https://img.shields.io/cdnjs/v/ag-grid.svg)](https://cdnjs.com/libraries/ag-grid)
 [![npm](https://img.shields.io/npm/dm/@ag-grid-community/client-side-row-model.svg)](https://www.npmjs.com/package/@ag-grid-community/client-side-row-model)
 [![npm](https://img.shields.io/npm/dt/@ag-grid-community/client-side-row-model.svg)](https://www.npmjs.com/package/@ag-grid-community/client-side-row-model)
 
-# AG Grid 
+# AG Grid
 
 AG Grid is a fully-featured and highly customizable JavaScript data grid.
 It delivers [outstanding performance](https://www.ag-grid.com/example?utm_source=@ag-grid-community/client-side-row-model-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/javascript-data-grid/?utm_source=@ag-grid-community/client-side-row-model-readme&utm_medium=repository&utm_campaign=github).
@@ -13,7 +13,7 @@ Check out the [developer documentation](https://www.ag-grid.com/documentation/?u
 
 ## Client Side Row Model Module
 
-This package is the feature module for the [Client Side Row Model](https://ag-grid.com/javascript-data-grid/row-models/#client-side/) to be used when working with AG Grid module setup in order to minimise your bundle size.  
+This package is the feature module for the [Client Side Row Model](https://ag-grid.com/javascript-data-grid/row-models/#client-side/) to be used when working with AG Grid module setup in order to minimise your bundle size.
 
 For more details on working with AG Grid modules visit our [modules documentation](https://ag-grid.com/javascript-data-grid/modules/).
 

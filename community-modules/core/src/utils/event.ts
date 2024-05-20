@@ -4,7 +4,7 @@ import { _includes } from './array';
 
 const AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
 const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel', 'scroll'];
-const supports: { [key: string]: boolean; } = {};
+const supports: { [key: string]: boolean } = {};
 
 /**
  * a user once raised an issue - they said that when you opened a popup (eg context menu)
@@ -31,7 +31,7 @@ export const _isEventSupported = (() => {
         reset: 'form',
         error: 'img',
         load: 'img',
-        abort: 'img'
+        abort: 'img',
     } as any;
 
     const eventChecker = (eventName: any) => {
@@ -42,13 +42,17 @@ export const _isEventSupported = (() => {
         const el = document.createElement(tags[eventName] || 'div');
         eventName = 'on' + eventName;
 
-        return supports[eventName] = (eventName in el);
+        return (supports[eventName] = eventName in el);
     };
 
     return eventChecker;
 })();
 
-export function _getCtrlForEventTarget<T>(gos: GridOptionsService, eventTarget: EventTarget | null, type: string): T | null {
+export function _getCtrlForEventTarget<T>(
+    gos: GridOptionsService,
+    eventTarget: EventTarget | null,
+    type: string
+): T | null {
     let sourceElement = eventTarget as HTMLElement;
 
     while (sourceElement) {
@@ -109,10 +113,11 @@ export function _getEventPath(event: Event | { target: EventTarget }): EventTarg
 export function _addSafePassiveEventListener(
     frameworkOverrides: IFrameworkOverrides,
     eElement: HTMLElement,
-    event: string, listener: (event?: any) => void
+    event: string,
+    listener: (event?: any) => void
 ) {
     const isPassive = _includes(PASSIVE_EVENTS, event);
-    const options = isPassive ? {passive: true} : undefined;
+    const options = isPassive ? { passive: true } : undefined;
 
     // this check is here for certain scenarios where I believe the user must be destroying
     // the grid somehow but continuing for it to be used

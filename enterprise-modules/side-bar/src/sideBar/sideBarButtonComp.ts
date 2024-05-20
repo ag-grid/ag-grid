@@ -5,10 +5,9 @@ import {
     ToolPanelDef,
     _createIconNoSpan,
     _setAriaExpanded,
-} from "@ag-grid-community/core";
+} from '@ag-grid-community/core';
 
 export class SideBarButtonComp extends Component {
-
     public static EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';
 
     @RefSelector('eToggleButton') private readonly eToggleButton: HTMLButtonElement;
@@ -37,7 +36,8 @@ export class SideBarButtonComp extends Component {
     }
 
     private createTemplate(): string {
-        const res = /* html */
+        const res =
+            /* html */
             `<div class="ag-side-button" role="presentation">
                 <button type="button" ref="eToggleButton" tabindex="-1" role="tab" aria-expanded="false" class="ag-button ag-side-button-button">
                     <div ref="eIconWrapper" class="ag-side-button-icon-wrapper" aria-hidden="true"></div>
@@ -46,7 +46,7 @@ export class SideBarButtonComp extends Component {
             </div>`;
         return res;
     }
-    
+
     private setLabel(): void {
         const translate = this.localeService.getLocaleTextFunc();
         const def = this.toolPanelDef;

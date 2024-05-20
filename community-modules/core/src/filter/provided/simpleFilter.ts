@@ -1,40 +1,39 @@
+import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import { IDoesFilterPassParams, IFilterOptionDef, IFilterParams, ProvidedFilterModel } from '../../interfaces/iFilter';
+import { LocaleService } from '../../localeService';
+import { _areEqual } from '../../utils/array';
+import { _removeFromParent, _setDisabled, _setDisplayed } from '../../utils/dom';
+import { _isFunction, _warnOnce } from '../../utils/function';
+import { AgPromise } from '../../utils/promise';
+import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
+import { AgInputTextField } from '../../widgets/agInputTextField';
+import { ListOption } from '../../widgets/agList';
+import { AgRadioButton } from '../../widgets/agRadioButton';
+import { AgSelect } from '../../widgets/agSelect';
+import { Component } from '../../widgets/component';
+import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
+import { IFloatingFilterParent } from '../floating/floatingFilter';
 import { OptionsFactory } from './optionsFactory';
 import { IProvidedFilter, IProvidedFilterParams, ProvidedFilter } from './providedFilter';
-import { AgPromise } from '../../utils/promise';
-import { AgSelect } from '../../widgets/agSelect';
-import { AgRadioButton } from '../../widgets/agRadioButton';
-import { _areEqual } from '../../utils/array';
-import { _setDisplayed, _setDisabled, _removeFromParent } from '../../utils/dom';
-import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
-import { AgInputTextField } from '../../widgets/agInputTextField';
-import { Component } from '../../widgets/component';
-import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
-import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import { ListOption } from '../../widgets/agList';
-import { IFloatingFilterParent } from '../floating/floatingFilter';
-import { _warnOnce, _isFunction } from '../../utils/function';
-import { LocaleService } from '../../localeService';
 
 export type JoinOperator = 'AND' | 'OR';
 
 /** Interface contract for the public aspects of the SimpleFilter implementation(s). */
-export interface ISimpleFilter extends IProvidedFilter, IFloatingFilterParent {
-}
+export interface ISimpleFilter extends IProvidedFilter, IFloatingFilterParent {}
 
 export interface IFilterPlaceholderFunctionParams {
     /**
      * The filter option key
      */
-    filterOptionKey: ISimpleFilterModelType,
+    filterOptionKey: ISimpleFilterModelType;
     /**
      * The filter option name as localised text
      */
-    filterOption: string,
+    filterOption: string;
     /**
      * The default placeholder text
      */
-    placeholder: string
+    placeholder: string;
 }
 export type FilterPlaceholderFunction = (params: IFilterPlaceholderFunctionParams) => string;
 
@@ -91,7 +90,7 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
 }
 
 export type ISimpleFilterModelType =
-    'empty'
+    | 'empty'
     | 'equals'
     | 'notEqual'
     | 'lessThan'
@@ -116,7 +115,7 @@ export interface ISimpleFilterModel extends ProvidedFilterModel {
  * When supplying combined models to the grid:
  * - `conditions` will be used if present.
  * - If `conditions` is not present, `condition1` and `condition2` will be used (deprecated).
- * 
+ *
  * When receiving combined models from the grid:
  * - `conditions` will be populated with all the conditions (including the first and second conditions).
  * - `condition1` and `condition2` will be populated with the first and second conditions (deprecated).
@@ -156,9 +155,11 @@ export abstract class SimpleFilterModelFormatter<TValue = any> {
                 const { condition1, condition2 } = combinedModel;
                 conditions = [condition1, condition2];
             }
-            const customOptions = conditions.map(condition => this.getModelAsString(condition));
+            const customOptions = conditions.map((condition) => this.getModelAsString(condition));
             const joinOperatorTranslateKey = combinedModel.operator === 'AND' ? 'andCondition' : 'orCondition';
-            return customOptions.join(` ${translate(joinOperatorTranslateKey, FILTER_LOCALE_TEXT[joinOperatorTranslateKey])} `);
+            return customOptions.join(
+                ` ${translate(joinOperatorTranslateKey, FILTER_LOCALE_TEXT[joinOperatorTranslateKey])} `
+            );
         } else if (model.type === SimpleFilter.BLANK || model.type === SimpleFilter.NOT_BLANK) {
             return translate(model.type, model.type);
         } else {
@@ -184,7 +185,7 @@ export abstract class SimpleFilterModelFormatter<TValue = any> {
     }
 
     protected formatValue(value?: TValue | null): string {
-        return this.valueFormatter ? (this.valueFormatter(value ?? null) ?? '') : String(value);
+        return this.valueFormatter ? this.valueFormatter(value ?? null) ?? '' : String(value);
     }
 }
 
@@ -195,8 +196,10 @@ export abstract class SimpleFilterModelFormatter<TValue = any> {
  * @param V type of value managed by the concrete sub-class that extends this type
  * @param E type of UI element used for collecting user-input
  */
-export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputTextField> extends ProvidedFilter<M | ICombinedSimpleModel<M>, V> implements ISimpleFilter {
-
+export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputTextField>
+    extends ProvidedFilter<M | ICombinedSimpleModel<M>, V>
+    implements ISimpleFilter
+{
     public static EMPTY: ISimpleFilterModelType = 'empty';
     public static BLANK: ISimpleFilterModelType = 'blank';
     public static NOT_BLANK: ISimpleFilterModelType = 'notBlank';
@@ -249,7 +252,12 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     protected abstract evaluateNullValue(filterType?: ISimpleFilterModelType | null): boolean;
 
     // allow value-type specific handling of non-null cell values.
-    protected abstract evaluateNonNullValue(range: Tuple<V>, cellValue: V, filterModel: M, params: IDoesFilterPassParams): boolean;
+    protected abstract evaluateNonNullValue(
+        range: Tuple<V>,
+        cellValue: V,
+        filterModel: M,
+        params: IDoesFilterPassParams
+    ): boolean;
 
     // allow iteration of all condition inputs managed by sub-classes.
     protected abstract getInputs(position: number): Tuple<E>;
@@ -264,9 +272,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             return numberOfInputs != null ? numberOfInputs : 1;
         }
 
-        const zeroInputTypes = [
-            SimpleFilter.EMPTY, SimpleFilter.NOT_BLANK, SimpleFilter.BLANK,
-        ];
+        const zeroInputTypes = [SimpleFilter.EMPTY, SimpleFilter.NOT_BLANK, SimpleFilter.BLANK];
 
         if (type && zeroInputTypes.indexOf(type) >= 0) {
             return 0;
@@ -306,7 +312,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
                 operator: this.getJoinOperator(),
                 condition1: conditions[0],
                 condition2: conditions[1],
-                conditions
+                conditions,
             };
         }
 
@@ -314,7 +320,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     protected getConditionTypes(): (ISimpleFilterModelType | null)[] {
-        return this.eTypes.map(eType => eType.getValue() as ISimpleFilterModelType);
+        return this.eTypes.map((eType) => eType.getValue() as ISimpleFilterModelType);
     }
 
     protected getConditionType(position: number): ISimpleFilterModelType | null {
@@ -330,16 +336,22 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     protected areModelsEqual(a: M | ICombinedSimpleModel<M>, b: M | ICombinedSimpleModel<M>): boolean {
         // both are missing
-        if (!a && !b) { return true; }
+        if (!a && !b) {
+            return true;
+        }
 
         // one is missing, other present
-        if ((!a && b) || (a && !b)) { return false; }
+        if ((!a && b) || (a && !b)) {
+            return false;
+        }
 
         // one is combined, the other is not
         const aIsSimple = !(a as any).operator;
         const bIsSimple = !(b as any).operator;
         const oneSimpleOneCombined = (!aIsSimple && bIsSimple) || (aIsSimple && !bIsSimple);
-        if (oneSimpleOneCombined) { return false; }
+        if (oneSimpleOneCombined) {
+            return false;
+        }
 
         let res: boolean;
 
@@ -353,8 +365,11 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             const aCombined = a as ICombinedSimpleModel<M>;
             const bCombined = b as ICombinedSimpleModel<M>;
 
-            res = aCombined.operator === bCombined.operator
-                && _areEqual(aCombined.conditions, bCombined.conditions, (aModel, bModel) => this.areSimpleModelsEqual(aModel, bModel));
+            res =
+                aCombined.operator === bCombined.operator &&
+                _areEqual(aCombined.conditions, bCombined.conditions, (aModel, bModel) =>
+                    this.areSimpleModelsEqual(aModel, bModel)
+                );
         }
 
         return res;
@@ -362,21 +377,26 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     private shouldRefresh(newParams: SimpleFilterParams): boolean {
         const model = this.getModel();
-        const conditions: ISimpleFilterModel[] | null = model ? ((<any>model).conditions ?? [model]) : null;
+        const conditions: ISimpleFilterModel[] | null = model ? (<any>model).conditions ?? [model] : null;
 
         // Do Not refresh when one of the existing condition options is not in new options list
-        const newOptionsList = newParams.filterOptions?.map(
-            option => typeof option === 'string' ? option : option.displayKey
-        ) ?? this.getDefaultFilterOptions();
+        const newOptionsList =
+            newParams.filterOptions?.map((option) => (typeof option === 'string' ? option : option.displayKey)) ??
+            this.getDefaultFilterOptions();
 
-        const allConditionsExistInNewOptionsList = !conditions || conditions.every(condition =>
-            newOptionsList.find(option => option === condition.type) !== undefined);
+        const allConditionsExistInNewOptionsList =
+            !conditions ||
+            conditions.every((condition) => newOptionsList.find((option) => option === condition.type) !== undefined);
         if (!allConditionsExistInNewOptionsList) {
             return false;
         }
 
         // Check number of conditions vs maxNumConditions
-        if (typeof newParams.maxNumConditions === 'number' && conditions && conditions.length > newParams.maxNumConditions) {
+        if (
+            typeof newParams.maxNumConditions === 'number' &&
+            conditions &&
+            conditions.length > newParams.maxNumConditions
+        ) {
             return false;
         }
 
@@ -407,10 +427,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<M>;
             if (!combinedModel.conditions) {
-                combinedModel.conditions = [
-                    combinedModel.condition1,
-                    combinedModel.condition2
-                ];
+                combinedModel.conditions = [combinedModel.condition1, combinedModel.condition2];
             }
 
             const numConditions = this.validateAndUpdateConditions(combinedModel.conditions);
@@ -425,8 +442,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             }
 
             const orChecked = combinedModel.operator === 'OR';
-            this.eJoinOperatorsAnd.forEach(eJoinOperatorAnd => eJoinOperatorAnd.setValue(!orChecked, true));
-            this.eJoinOperatorsOr.forEach(eJoinOperatorOr => eJoinOperatorOr.setValue(orChecked, true));
+            this.eJoinOperatorsAnd.forEach((eJoinOperatorAnd) => eJoinOperatorAnd.setValue(!orChecked, true));
+            this.eJoinOperatorsOr.forEach((eJoinOperatorOr) => eJoinOperatorOr.setValue(orChecked, true));
 
             combinedModel.conditions.forEach((condition, position) => {
                 this.eTypes[position].setValue(condition.type, true);
@@ -456,7 +473,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         let numConditions = conditions.length;
         if (numConditions > this.maxNumConditions) {
             conditions.splice(this.maxNumConditions);
-            _warnOnce('Filter Model contains more conditions than "filterParams.maxNumConditions". Additional conditions have been ignored.');
+            _warnOnce(
+                'Filter Model contains more conditions than "filterParams.maxNumConditions". Additional conditions have been ignored.'
+            );
             numConditions = this.maxNumConditions;
         }
         return numConditions;
@@ -465,7 +484,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
         const model = this.getModel();
 
-        if (model == null) { return true; }
+        if (model == null) {
+            return true;
+        }
 
         const { operator } = model as ICombinedSimpleModel<M>;
         const models: M[] = [];
@@ -480,7 +501,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
         const combineFunction = operator && operator === 'OR' ? 'some' : 'every';
 
-        return models[combineFunction](m => this.individualConditionPasses(params, m));
+        return models[combineFunction]((m) => this.individualConditionPasses(params, m));
     }
 
     protected setParams(params: SimpleFilterParams): void {
@@ -507,23 +528,30 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     private setNumConditions(params: SimpleFilterParams): void {
         if (params.suppressAndOrCondition != null) {
-            _warnOnce('Since v29.2 "filterParams.suppressAndOrCondition" is deprecated. Use "filterParams.maxNumConditions = 1" instead.');
+            _warnOnce(
+                'Since v29.2 "filterParams.suppressAndOrCondition" is deprecated. Use "filterParams.maxNumConditions = 1" instead.'
+            );
         }
         if (params.alwaysShowBothConditions != null) {
-            _warnOnce('Since v29.2 "filterParams.alwaysShowBothConditions" is deprecated. Use "filterParams.numAlwaysVisibleConditions = 2" instead.');
+            _warnOnce(
+                'Since v29.2 "filterParams.alwaysShowBothConditions" is deprecated. Use "filterParams.numAlwaysVisibleConditions = 2" instead.'
+            );
         }
         this.maxNumConditions = params.maxNumConditions ?? (params.suppressAndOrCondition ? 1 : 2);
         if (this.maxNumConditions < 1) {
             _warnOnce('"filterParams.maxNumConditions" must be greater than or equal to zero.');
             this.maxNumConditions = 1;
         }
-        this.numAlwaysVisibleConditions = params.numAlwaysVisibleConditions ?? (params.alwaysShowBothConditions ? 2 : 1);
+        this.numAlwaysVisibleConditions =
+            params.numAlwaysVisibleConditions ?? (params.alwaysShowBothConditions ? 2 : 1);
         if (this.numAlwaysVisibleConditions < 1) {
             _warnOnce('"filterParams.numAlwaysVisibleConditions" must be greater than or equal to zero.');
             this.numAlwaysVisibleConditions = 1;
         }
         if (this.numAlwaysVisibleConditions > this.maxNumConditions) {
-            _warnOnce('"filterParams.numAlwaysVisibleConditions" cannot be greater than "filterParams.maxNumConditions".');
+            _warnOnce(
+                '"filterParams.numAlwaysVisibleConditions" cannot be greater than "filterParams.maxNumConditions".'
+            );
             this.numAlwaysVisibleConditions = this.maxNumConditions;
         }
     }
@@ -550,7 +578,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         this.eJoinOperatorPanels.push(eJoinOperatorPanel);
         eJoinOperatorPanel.classList.add('ag-filter-condition');
 
-        const eJoinOperatorAnd =  this.createJoinOperator(this.eJoinOperatorsAnd, eJoinOperatorPanel, 'and');
+        const eJoinOperatorAnd = this.createJoinOperator(this.eJoinOperatorsAnd, eJoinOperatorPanel, 'and');
         const eJoinOperatorOr = this.createJoinOperator(this.eJoinOperatorsOr, eJoinOperatorPanel, 'or');
 
         this.eFilterBody.appendChild(eJoinOperatorPanel);
@@ -566,7 +594,11 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         }
     }
 
-    private createJoinOperator(eJoinOperators: AgRadioButton[], eJoinOperatorPanel: HTMLElement, andOr: string): AgRadioButton {
+    private createJoinOperator(
+        eJoinOperators: AgRadioButton[],
+        eJoinOperatorPanel: HTMLElement,
+        andOr: string
+    ): AgRadioButton {
         const eJoinOperator = this.createManagedBean(new AgRadioButton());
         eJoinOperators.push(eJoinOperator);
         eJoinOperator.addCssClass('ag-filter-condition-operator');
@@ -582,16 +614,14 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     private createFilterListOptions(): void {
         const filterOptions = this.optionsFactory.getFilterOptions();
 
-        this.filterListOptions = filterOptions.map(option => 
-            typeof option === 'string' ?
-                this.createBoilerplateListOption(option) :
-                this.createCustomListOption(option)
+        this.filterListOptions = filterOptions.map((option) =>
+            typeof option === 'string' ? this.createBoilerplateListOption(option) : this.createCustomListOption(option)
         );
     }
 
     private putOptionsIntoDropdown(eType: AgSelect): void {
         // Add specified options to condition drop-down.
-        this.filterListOptions.forEach(listOption => {
+        this.filterListOptions.forEach((listOption) => {
             eType.addOption(listOption);
         });
 
@@ -608,9 +638,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         const customOption = this.optionsFactory.getCustomOption(option.displayKey);
         return {
             value: displayKey,
-            text: customOption ?
-                this.localeService.getLocaleTextFunc()(customOption.displayKey, customOption.displayName) :
-                this.translate(displayKey as keyof typeof FILTER_LOCALE_TEXT),
+            text: customOption
+                ? this.localeService.getLocaleTextFunc()(customOption.displayKey, customOption.displayName)
+                : this.translate(displayKey as keyof typeof FILTER_LOCALE_TEXT),
         };
     }
 
@@ -644,7 +674,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         let areAllConditionsUiComplete = true;
         for (let position = 0; position < this.getNumConditions(); position++) {
             if (this.isConditionUiComplete(position)) {
-                lastUiCompletePosition = position
+                lastUiCompletePosition = position;
             } else {
                 areAllConditionsUiComplete = false;
             }
@@ -719,12 +749,12 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     private removeElements(elements: HTMLElement[], startPosition: number, deleteCount?: number): void {
         const removedElements = this.removeItems(elements, startPosition, deleteCount);
-        removedElements.forEach(element => _removeFromParent(element));
+        removedElements.forEach((element) => _removeFromParent(element));
     }
 
     protected removeComponents(components: Component[], startPosition: number, deleteCount?: number): void {
         const removedComponents = this.removeItems(components, startPosition, deleteCount);
-        removedComponents.forEach(comp => {
+        removedComponents.forEach((comp) => {
             _removeFromParent(comp.getGui());
             this.destroyBean(comp);
         });
@@ -745,7 +775,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
                 this.eFilterBody.focus();
             } else {
                 const firstInput = this.getInputs(0)[0];
-                if (!firstInput) { return; }
+                if (!firstInput) {
+                    return;
+                }
 
                 if (firstInput instanceof AgAbstractInputField) {
                     firstInput.getInputElement().focus();
@@ -775,7 +807,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
                     updatedLastUiCompletePosition = position;
                 }
             } else {
-                const shouldRemovePositionAtEnd = position >= this.numAlwaysVisibleConditions && !this.isConditionUiComplete(position - 1);
+                const shouldRemovePositionAtEnd =
+                    position >= this.numAlwaysVisibleConditions && !this.isConditionUiComplete(position - 1);
                 const positionBeforeLastUiCompletePosition = position < lastUiCompletePosition;
                 if (shouldRemovePositionAtEnd || positionBeforeLastUiCompletePosition) {
                     this.removeConditionsAndOperators(position, 1);
@@ -815,7 +848,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             placeholder = filterPlaceholderFn({
                 filterOptionKey,
                 filterOption,
-                placeholder
+                placeholder,
             });
         } else if (typeof this.filterPlaceholder === 'string') {
             placeholder = this.filterPlaceholder;
@@ -834,13 +867,13 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             }
 
             const placeholder =
-                index === 0 && numberOfInputs > 1 ? 'inRangeStart' :
-                index === 0 ? 'filterOoo' :
-                'inRangeEnd';
+                index === 0 && numberOfInputs > 1 ? 'inRangeStart' : index === 0 ? 'filterOoo' : 'inRangeEnd';
             const ariaLabel =
-                index === 0 && numberOfInputs > 1 ? globalTranslate('ariaFilterFromValue', 'Filter from value') :
-                index === 0 ? globalTranslate('ariaFilterValue', 'Filter Value') :
-                globalTranslate('ariaFilterToValue', 'Filter to Value');
+                index === 0 && numberOfInputs > 1
+                    ? globalTranslate('ariaFilterFromValue', 'Filter from value')
+                    : index === 0
+                      ? globalTranslate('ariaFilterValue', 'Filter Value')
+                      : globalTranslate('ariaFilterToValue', 'Filter to Value');
 
             element.setInputPlaceholder(this.getPlaceholderText(placeholder, position));
             element.setInputAriaLabel(ariaLabel);
@@ -877,12 +910,19 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         });
     }
 
-    protected forEachPositionInput(position: number, cb: (element: E, index: number, position: number, numberOfInputs: number) => void): void {
+    protected forEachPositionInput(
+        position: number,
+        cb: (element: E, index: number, position: number, numberOfInputs: number) => void
+    ): void {
         const type = this.getConditionType(position);
         this.forEachPositionTypeInput(position, type, cb);
     }
 
-    private forEachPositionTypeInput(position: number, type: ISimpleFilterModelType | null, cb: (element: E, index: number, position: number, numberOfInputs: number) => void): void {
+    private forEachPositionTypeInput(
+        position: number,
+        type: ISimpleFilterModelType | null,
+        cb: (element: E, index: number, position: number, numberOfInputs: number) => void
+    ): void {
         const numberOfInputs = this.getNumberOfInputs(type);
         const inputs = this.getInputs(position);
         for (let index = 0; index < inputs.length; index++) {
@@ -894,8 +934,12 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     private isConditionDisabled(position: number, lastUiCompletePosition: number): boolean {
-        if (this.isReadOnly()) { return true; } // Read-only mode trumps everything.
-        if (position === 0) { return false; } // Position 0 should typically be editable.
+        if (this.isReadOnly()) {
+            return true;
+        } // Read-only mode trumps everything.
+        if (position === 0) {
+            return false;
+        } // Position 0 should typically be editable.
 
         // Only allow editing of a 2nd or later condition if the previous condition is complete and no subsequent conditions are complete.
         return position > lastUiCompletePosition + 1;
@@ -911,13 +955,17 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     // returns true if the UI represents a working filter, eg all parts are filled out.
     // eg if text filter and textfield blank then returns false.
     protected isConditionUiComplete(position: number): boolean {
-        if (position >= this.getNumConditions()) { return false; } // Condition doesn't exist.
+        if (position >= this.getNumConditions()) {
+            return false;
+        } // Condition doesn't exist.
 
         const type = this.getConditionType(position);
 
-        if (type === SimpleFilter.EMPTY) { return false; }
+        if (type === SimpleFilter.EMPTY) {
+            return false;
+        }
 
-        if (this.getValues(position).some(v => v == null)) {
+        if (this.getValues(position).some((v) => v == null)) {
             return false;
         }
 
@@ -939,7 +987,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     private createMissingConditionsAndOperators(): void {
-        if (this.isReadOnly()) { return; } // don't show incomplete conditions when read only
+        if (this.isReadOnly()) {
+            return;
+        } // don't show incomplete conditions when read only
         for (let i = this.getNumConditions(); i < this.numAlwaysVisibleConditions; i++) {
             this.createJoinOperatorPanel();
             this.createOption();
@@ -949,11 +999,15 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     protected resetUiToDefaults(silent?: boolean): AgPromise<void> {
         this.removeConditionsAndOperators(this.isReadOnly() ? 1 : this.numAlwaysVisibleConditions);
 
-        this.eTypes.forEach(eType => this.resetType(eType));
+        this.eTypes.forEach((eType) => this.resetType(eType));
 
-        this.eJoinOperatorsAnd.forEach((eJoinOperatorAnd, index) => this.resetJoinOperatorAnd(eJoinOperatorAnd, index, this.joinOperatorId + index));
-        this.eJoinOperatorsOr.forEach((eJoinOperatorOr, index) => this.resetJoinOperatorOr(eJoinOperatorOr, index, this.joinOperatorId + index));
-        this.joinOperatorId++
+        this.eJoinOperatorsAnd.forEach((eJoinOperatorAnd, index) =>
+            this.resetJoinOperatorAnd(eJoinOperatorAnd, index, this.joinOperatorId + index)
+        );
+        this.eJoinOperatorsOr.forEach((eJoinOperatorOr, index) =>
+            this.resetJoinOperatorOr(eJoinOperatorOr, index, this.joinOperatorId + index)
+        );
+        this.joinOperatorId++;
 
         this.forEachInput((element) => this.resetInput(element));
 
@@ -980,14 +1034,32 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     private resetJoinOperatorAnd(eJoinOperatorAnd: AgRadioButton, index: number, uniqueGroupId: number): void {
-        this.resetJoinOperator(eJoinOperatorAnd, index, this.isDefaultOperator('AND'), this.translate('andCondition'), uniqueGroupId);
-    }
-   
-    private resetJoinOperatorOr(eJoinOperatorOr: AgRadioButton, index: number, uniqueGroupId: number): void {
-        this.resetJoinOperator(eJoinOperatorOr, index, this.isDefaultOperator('OR'), this.translate('orCondition'), uniqueGroupId);
+        this.resetJoinOperator(
+            eJoinOperatorAnd,
+            index,
+            this.isDefaultOperator('AND'),
+            this.translate('andCondition'),
+            uniqueGroupId
+        );
     }
 
-    private resetJoinOperator(eJoinOperator: AgRadioButton, index: number, value: boolean, label: string, uniqueGroupId: number): void {
+    private resetJoinOperatorOr(eJoinOperatorOr: AgRadioButton, index: number, uniqueGroupId: number): void {
+        this.resetJoinOperator(
+            eJoinOperatorOr,
+            index,
+            this.isDefaultOperator('OR'),
+            this.translate('orCondition'),
+            uniqueGroupId
+        );
+    }
+
+    private resetJoinOperator(
+        eJoinOperator: AgRadioButton,
+        index: number,
+        value: boolean,
+        label: string,
+        uniqueGroupId: number
+    ): void {
         this.updateJoinOperatorDisabled(
             eJoinOperator
                 .setValue(value, true)
@@ -1015,7 +1087,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     private setConditionIntoUi(model: M | null, position: number): void {
         const values = this.mapValuesFromModel(model);
         this.forEachInput((element, index, elPosition, _) => {
-            if (elPosition !== position) { return; }
+            if (elPosition !== position) {
+                return;
+            }
 
             this.setElementValue(element, values[index] != null ? values[index] : null);
         });
@@ -1066,7 +1140,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     protected evaluateCustomFilter(
         customFilterOption: IFilterOptionDef | undefined,
         values: Tuple<V>,
-        cellValue: V | null | undefined,
+        cellValue: V | null | undefined
     ): boolean | undefined {
         if (customFilterOption == null) {
             return;
@@ -1074,7 +1148,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
         const { predicate } = customFilterOption;
         // only execute the custom filter if a value exists or a value isn't required, i.e. input is hidden
-        if (predicate != null && !values.some(v => v == null)) {
+        if (predicate != null && !values.some((v) => v == null)) {
             return predicate(values, cellValue);
         }
 
@@ -1083,8 +1157,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     protected isBlank(cellValue: V) {
-        return cellValue == null ||
-            (typeof cellValue === 'string' && cellValue.trim().length === 0);
+        return cellValue == null || (typeof cellValue === 'string' && cellValue.trim().length === 0);
     }
 
     protected hasInvalidInputs(): boolean {

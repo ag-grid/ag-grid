@@ -9,9 +9,9 @@ import {
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
+    CellEditRequestEvent,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
-    CellEditRequestEvent,
     CellFocusedEvent,
     CellKeyDownEvent,
     CellMouseDownEvent,
@@ -24,6 +24,11 @@ import {
     ChartRangeSelectionChanged,
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
+    ColumnHeaderClickedEvent,
+    ColumnHeaderContextMenuEvent,
+    ColumnHeaderMouseLeaveEvent,
+    ColumnHeaderMouseOverEvent,
+    ColumnMenuVisibleChangedEvent,
     ColumnMovedEvent,
     ColumnPinnedEvent,
     ColumnPivotChangedEvent,
@@ -40,14 +45,16 @@ import {
     DragStartedEvent,
     DragStoppedEvent,
     ExpandCollapseAllEvent,
+    FillEndEvent,
+    FillStartEvent,
     FilterChangedEvent,
     FilterModifiedEvent,
     FilterOpenedEvent,
     FirstDataRenderedEvent,
     FullWidthCellKeyDownEvent,
     GridColumnsChangedEvent,
-    GridReadyEvent,
     GridPreDestroyedEvent,
+    GridReadyEvent,
     GridSizeChangedEvent,
     ModelUpdatedEvent,
     NewColumnsLoadedEvent,
@@ -55,6 +62,7 @@ import {
     PasteEndEvent,
     PasteStartEvent,
     PinnedRowDataChangedEvent,
+    PivotMaxColumnsExceededEvent,
     RangeDeleteEndEvent,
     RangeDeleteStartEvent,
     RangeSelectionChangedEvent,
@@ -71,6 +79,7 @@ import {
     RowValueChangedEvent,
     SelectionChangedEvent,
     SortChangedEvent,
+    StateUpdatedEvent,
     StoreRefreshedEvent,
     ToolPanelSizeChangedEvent,
     ToolPanelVisibleChangedEvent,
@@ -81,40 +90,32 @@ import {
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
-    StateUpdatedEvent,
-    ColumnHeaderMouseOverEvent,
-    ColumnHeaderMouseLeaveEvent,
-    ColumnHeaderClickedEvent,
-    ColumnHeaderContextMenuEvent,
-    PivotMaxColumnsExceededEvent,
-    ColumnMenuVisibleChangedEvent,
-    FillStartEvent,
-    FillEndEvent,
-} from "../events";
-import { HeaderPosition } from "../headerRendering/common/headerPosition";
+} from '../events';
+import { HeaderPosition } from '../headerRendering/common/headerPosition';
+import { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
+import {
+    SizeColumnsToContentStrategy,
+    SizeColumnsToFitGridStrategy,
+    SizeColumnsToFitProvidedWidthStrategy,
+} from '../interfaces/autoSizeStrategy';
 import {
     CsvExportParams,
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
     ProcessHeaderForExportParams,
-} from "../interfaces/exportParams";
-import { AgChartTheme, AgChartThemeOverrides } from "../interfaces/iAgChartOptions";
-import { ChartToolbarMenuItemOptions, ChartToolPanelsDef } from "../interfaces/iChartOptions";
-import { AgGridCommon } from "../interfaces/iCommon";
-import { IDatasource } from "../interfaces/iDatasource";
-import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
-import { RowModelType } from "../interfaces/iRowModel";
-import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
-import { StatusPanelDef } from "../interfaces/iStatusPanel";
-import { IViewportDatasource } from "../interfaces/iViewportDatasource";
-import { IRowDragItem } from "../rendering/row/rowDragComp";
-import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
-import { CellPosition } from "./cellPositionUtils";
-import { ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from "./colDef";
+} from '../interfaces/exportParams';
+import { GridState } from '../interfaces/gridState';
+import { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
+import { AgChartTheme, AgChartThemeOverrides } from '../interfaces/iAgChartOptions';
+import { AlignedGrid } from '../interfaces/iAlignedGrid';
 import {
     FillOperationParams,
+    GetChartMenuItemsParams,
     GetChartToolbarItemsParams,
     GetContextMenuItemsParams,
+    GetGroupAggFilteringParams,
+    GetGroupIncludeFooterParams,
+    GetGroupIncludeTotalRowParams,
     GetGroupRowAggParams,
     GetLocaleTextParams,
     GetMainMenuItemsParams,
@@ -133,30 +134,31 @@ import {
     PostSortRowsParams,
     ProcessDataFromClipboardParams,
     ProcessRowParams,
+    ProcessUnpinnedColumnsParams,
     RowHeightParams,
     SendToClipboardParams,
     TabToNextCellParams,
     TabToNextHeaderParams,
-    GetGroupAggFilteringParams,
-    GetGroupIncludeFooterParams,
-    ProcessUnpinnedColumnsParams,
-    GetChartMenuItemsParams,
-    GetGroupIncludeTotalRowParams
-} from "../interfaces/iCallbackParams";
-
-import { SideBarDef } from "../interfaces/iSideBar";
-import { IRowNode } from "../interfaces/iRowNode";
-import { DataTypeDefinition } from "./dataType";
-import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
-import { IAdvancedFilterBuilderParams } from "../interfaces/iAdvancedFilterBuilderParams";
-import { AlignedGrid } from "../interfaces/iAlignedGrid";
-import { GridState } from "../interfaces/gridState";
-import { SizeColumnsToContentStrategy, SizeColumnsToFitProvidedWidthStrategy, SizeColumnsToFitGridStrategy } from "../interfaces/autoSizeStrategy";
-import { Column } from "./column";
-import { MenuItemDef } from "../interfaces/menuItem";
+} from '../interfaces/iCallbackParams';
+import { ChartToolPanelsDef, ChartToolbarMenuItemOptions } from '../interfaces/iChartOptions';
+import { AgGridCommon } from '../interfaces/iCommon';
+import { IDatasource } from '../interfaces/iDatasource';
+import { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
+import { RowModelType } from '../interfaces/iRowModel';
+import { IRowNode } from '../interfaces/iRowNode';
+import { IServerSideDatasource } from '../interfaces/iServerSideDatasource';
+import { SideBarDef } from '../interfaces/iSideBar';
+import { StatusPanelDef } from '../interfaces/iStatusPanel';
+import { IViewportDatasource } from '../interfaces/iViewportDatasource';
+import { MenuItemDef } from '../interfaces/menuItem';
+import { ILoadingCellRendererParams } from '../rendering/cellRenderers/loadingCellRenderer';
+import { IRowDragItem } from '../rendering/row/rowDragComp';
+import { CellPosition } from './cellPositionUtils';
+import { ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
+import { Column } from './column';
+import { DataTypeDefinition } from './dataType';
 
 export interface GridOptions<TData = any> {
-
     // ******************************************************************************************************
     // If you change the properties on this interface, you must also update PropertyKeys to be consistent. *
     // ******************************************************************************************************
@@ -165,7 +167,7 @@ export interface GridOptions<TData = any> {
     /**
      * Specifies the status bar components to use in the status bar.
      */
-    statusBar?: { statusPanels: StatusPanelDef[]; };
+    statusBar?: { statusPanels: StatusPanelDef[] };
     /**
      * Specifies the side bar components.
      */
@@ -237,7 +239,7 @@ export interface GridOptions<TData = any> {
      * - `whenTruncated` - The tooltip will only be displayed when the items hovered have truncated (showing ellipsis) values. This property does not work when `enableBrowserTooltips={true}`.
      * @default `standard`
      */
-    tooltipShowMode?: 'standard' | 'whenTruncated'
+    tooltipShowMode?: 'standard' | 'whenTruncated';
     /**
      * Set to `true` to enable tooltip interaction. When this option is enabled, the tooltip will not hide while the
      * tooltip itself it being hovered or has focus.
@@ -264,7 +266,7 @@ export interface GridOptions<TData = any> {
     /**
      * Specify the delimiter to use when copying to clipboard.
      * @default '\t'
-    */
+     */
     clipboardDelimiter?: string;
     /**
      * Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows.
@@ -314,7 +316,7 @@ export interface GridOptions<TData = any> {
     /**
      * An object map of custom column types which contain groups of properties that column definitions can reuse by referencing in their `type` property.
      */
-    columnTypes?: { [key: string]: ColTypeDef<TData>; };
+    columnTypes?: { [key: string]: ColTypeDef<TData> };
     /**
      * An object map of cell data types to their definitions.
      * Cell data types can either override/update the pre-defined data types
@@ -323,7 +325,7 @@ export interface GridOptions<TData = any> {
      */
     dataTypeDefinitions?: {
         [cellDataType: string]: DataTypeDefinition<TData>;
-    }
+    };
     /**
      * Keeps the order of Columns maintained after new Column Definitions are updated.
      * @default false
@@ -411,14 +413,17 @@ export interface GridOptions<TData = any> {
      * Auto-size the columns when the grid is loaded. Can size to fit the grid width, fit a provided width, or fit the cell contents.
      * @initial
      */
-    autoSizeStrategy?: SizeColumnsToFitGridStrategy | SizeColumnsToFitProvidedWidthStrategy | SizeColumnsToContentStrategy;
+    autoSizeStrategy?:
+        | SizeColumnsToFitGridStrategy
+        | SizeColumnsToFitProvidedWidthStrategy
+        | SizeColumnsToContentStrategy;
 
     // *** Components *** //
     /**
      * A map of component names to components.
      * @initial
      */
-    components?: { [p: string]: any; };
+    components?: { [p: string]: any };
 
     // *** Editing *** //
     /**
@@ -890,7 +895,7 @@ export interface GridOptions<TData = any> {
      * A map of 'function name' to 'function' for custom aggregation functions.
      * @initial
      */
-    aggFuncs?: { [key: string]: IAggFunc<TData>; };
+    aggFuncs?: { [key: string]: IAggFunc<TData> };
     /**
      * When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
      * @default false
@@ -1102,20 +1107,20 @@ export interface GridOptions<TData = any> {
      * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.
      * If a callback function is provided, it can used to select which groups will have a footer added.
      * @default false
-     * 
+     *
      * @deprecated v31.3 - use `groupTotalRow` instead.
      */
     groupIncludeFooter?: boolean | UseGroupFooter<TData>;
     /**
      * Set to `true` to show a 'grand total' group footer across all groups.
      * @default false
-     * 
+     *
      * @deprecated v31.3 - use `grandTotalRow` instead.
      */
     groupIncludeTotalFooter?: boolean;
 
     /**
-     * When provided, an extra row group total row will be inserted into row groups at the specified position, to display 
+     * When provided, an extra row group total row will be inserted into row groups at the specified position, to display
      * when the group is expanded. This row will contain the aggregate values for the group. If a callback function is
      * provided, it can be used to selectively determine which groups will have a total row added.
      */
@@ -1447,7 +1452,7 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     suppressHeaderFocus?: boolean;
-    
+
     /**
      * If `true`, only a single range can be selected.
      * @default false
@@ -1491,7 +1496,7 @@ export interface GridOptions<TData = any> {
      * Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.
      * @default [null, 'asc', 'desc']
      */
-    sortingOrder?: (SortDirection)[];
+    sortingOrder?: SortDirection[];
     /**
      * Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower.
      * @default false
@@ -1527,7 +1532,7 @@ export interface GridOptions<TData = any> {
      * Icons to use inside the grid instead of the grid's default icons.
      * @initial
      */
-    icons?: { [key: string]: Function | string; };
+    icons?: { [key: string]: Function | string };
     /**
      * Default row height in pixels.
      * @default 25
@@ -1591,7 +1596,7 @@ export interface GridOptions<TData = any> {
 
     /**
      * **React only**.
-     * 
+     *
      * If enabled, makes it easier to set up custom components.
      * If disabled, custom components will either need to have methods declared imperatively,
      * or the component props will not update reactively. The behaviour with this disabled is deprecated,
@@ -1680,25 +1685,25 @@ export interface GridOptions<TData = any> {
     /**
      * Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.
      */
-    navigateToNextHeader?: (params: NavigateToNextHeaderParams<TData>) => (HeaderPosition | null);
+    navigateToNextHeader?: (params: NavigateToNextHeaderParams<TData>) => HeaderPosition | null;
     /**
      * Allows overriding the default behaviour for when user hits `Tab` key when a header is focused.
      * Return the next header position to navigate to, `true` to stay on the current header,
      * or `false` to let the browser handle the tab behaviour.
      * As of v31.3, returning `null` is deprecated.
      */
-    tabToNextHeader?: (params: TabToNextHeaderParams<TData>) => (HeaderPosition | boolean | null);
+    tabToNextHeader?: (params: TabToNextHeaderParams<TData>) => HeaderPosition | boolean | null;
     /**
      * Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.
      */
-    navigateToNextCell?: (params: NavigateToNextCellParams<TData>) => (CellPosition | null);
+    navigateToNextCell?: (params: NavigateToNextCellParams<TData>) => CellPosition | null;
     /**
      * Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused.
      * Return the next cell position to navigate to, `true` to stay on the current cell,
      * or `false` to let the browser handle the tab behaviour.
      * As of v31.3, returning `null` is deprecated.
      */
-    tabToNextCell?: (params: TabToNextCellParams<TData>) => (CellPosition | boolean | null);
+    tabToNextCell?: (params: TabToNextCellParams<TData>) => CellPosition | boolean | null;
 
     // *** Localisation *** //
     /**
@@ -1961,7 +1966,7 @@ export interface GridOptions<TData = any> {
      * Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or
      *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),
      * fill handle, copy range down, undo and redo.
-    */
+     */
     onCellValueChanged?(event: CellValueChangedEvent<TData>): void;
     /**
      * Value has changed after editing. Only fires when `readOnlyEdit=true`.
@@ -2288,10 +2293,12 @@ export interface IsRowSelectable<TData = any> {
 }
 
 export interface RowClassRules<TData = any> {
-    [cssClassName: string]: (((params: RowClassParams<TData>) => boolean) | string);
+    [cssClassName: string]: ((params: RowClassParams<TData>) => boolean) | string;
 }
 
-export interface RowStyle { [cssProperty: string]: string | number; }
+export interface RowStyle {
+    [cssProperty: string]: string | number;
+}
 
 export interface RowClassParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /**
@@ -2348,7 +2355,7 @@ export interface ChartRef {
     destroyChart: () => void;
 }
 
-export interface ChartRefParams<TData = any> extends AgGridCommon<TData, any>, ChartRef { }
+export interface ChartRefParams<TData = any> extends AgGridCommon<TData, any>, ChartRef {}
 
 export interface ServerSideGroupLevelParams {
     /**
@@ -2370,8 +2377,8 @@ export interface ServerSideGroupLevelParams {
 }
 
 /**
-     * @deprecated use ServerSideGroupLevelParams instead */
-export interface ServerSideStoreParams extends ServerSideGroupLevelParams { }
+ * @deprecated use ServerSideGroupLevelParams instead */
+export interface ServerSideStoreParams extends ServerSideGroupLevelParams {}
 
 export interface LoadingCellRendererSelectorFunc<TData = any> {
     (params: ILoadingCellRendererParams<TData>): LoadingCellRendererSelectorResult | undefined;

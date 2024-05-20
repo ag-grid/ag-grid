@@ -1,4 +1,3 @@
-
 import {
     AgGroupComponent,
     Autowired,
@@ -6,10 +5,11 @@ import {
     ChartType,
     Component,
     PostConstruct,
-    _warnOnce
-} from "@ag-grid-community/core";
-import { ChartController } from "../../chartController";
-import { ChartTranslationService } from "../../services/chartTranslationService";
+    _warnOnce,
+} from '@ag-grid-community/core';
+
+import { ChartController } from '../../chartController';
+import { ChartTranslationService } from '../../services/chartTranslationService';
 import {
     MiniArea,
     MiniAreaColumnCombo,
@@ -32,16 +32,17 @@ import {
     MiniRadarLine,
     MiniRadialBar,
     MiniRadialColumn,
-    MiniRangeBar,
     MiniRangeArea,
-    MiniWaterfall,
+    MiniRangeBar,
     MiniScatter,
     MiniStackedArea,
     MiniStackedBar,
     MiniStackedColumn,
     MiniSunburst,
     MiniTreemap,
-} from "./miniCharts/index"; // please leave this as is - we want it to be explicit for build reasons
+    MiniWaterfall,
+} from './miniCharts/index';
+// please leave this as is - we want it to be explicit for build reasons
 import { MiniChart } from './miniCharts/miniChart';
 
 // import {enterprise} from "../../../../main";
@@ -57,7 +58,7 @@ type MiniChartMenuMapping = {
 
 type MiniChartMenuGroup<K extends keyof ChartGroupsDef> = {
     [T in NonNullable<ChartGroupsDef[K]>[number]]: MiniChartMenuItem;
-}
+};
 
 interface MiniChartMenuItem {
     range: boolean;
@@ -126,58 +127,17 @@ const miniChartMapping: MiniChartMenuMapping = {
 };
 
 const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
-    columnGroup: [
-        'column',
-        'stackedColumn',
-        'normalizedColumn',
-    ],
-    barGroup: [
-        'bar',
-        'stackedBar',
-        'normalizedBar'
-    ],
-    pieGroup: [
-        'pie',
-        'donut',
-    ],
-    lineGroup: [
-        'line',
-    ],
-    scatterGroup: [
-        'scatter',
-        'bubble',
-    ],
-    areaGroup: [
-        'area',
-        'stackedArea',
-        'normalizedArea',
-    ],
-    polarGroup: [
-        'radarLine',
-        'radarArea',
-        'nightingale',
-        'radialColumn',
-        'radialBar',
-    ],
-    statisticalGroup: [
-        'boxPlot',
-        'histogram',
-        'rangeBar',
-        'rangeArea',
-    ],
-    hierarchicalGroup: [
-        'treemap',
-        'sunburst',
-    ],
-    specializedGroup: [
-        'heatmap',
-        'waterfall',
-    ],
-    combinationGroup: [
-        'columnLineCombo',
-        'areaColumnCombo',
-        'customCombo',
-    ]
+    columnGroup: ['column', 'stackedColumn', 'normalizedColumn'],
+    barGroup: ['bar', 'stackedBar', 'normalizedBar'],
+    pieGroup: ['pie', 'donut'],
+    lineGroup: ['line'],
+    scatterGroup: ['scatter', 'bubble'],
+    areaGroup: ['area', 'stackedArea', 'normalizedArea'],
+    polarGroup: ['radarLine', 'radarArea', 'nightingale', 'radialColumn', 'radialBar'],
+    statisticalGroup: ['boxPlot', 'histogram', 'rangeBar', 'rangeArea'],
+    hierarchicalGroup: ['treemap', 'sunburst'],
+    specializedGroup: ['heatmap', 'waterfall'],
+    combinationGroup: ['columnLineCombo', 'areaColumnCombo', 'customCombo'],
 };
 
 export class MiniChartsContainer extends Component {
@@ -194,7 +154,14 @@ export class MiniChartsContainer extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    constructor(chartController: ChartController, fills: string[], strokes: string[], themeTemplateParameters: ThemeTemplateParameters, isCustomTheme: boolean, chartGroups: ChartGroupsDef = DEFAULT_CHART_GROUPS) {
+    constructor(
+        chartController: ChartController,
+        fills: string[],
+        strokes: string[],
+        themeTemplateParameters: ThemeTemplateParameters,
+        isCustomTheme: boolean,
+        chartGroups: ChartGroupsDef = DEFAULT_CHART_GROUPS
+    ) {
         super(MiniChartsContainer.TEMPLATE);
 
         this.chartController = chartController;
@@ -202,14 +169,16 @@ export class MiniChartsContainer extends Component {
         this.strokes = strokes;
         this.themeTemplateParameters = themeTemplateParameters;
         this.isCustomTheme = isCustomTheme;
-        this.chartGroups = {...chartGroups};
+        this.chartGroups = { ...chartGroups };
     }
 
     @PostConstruct
     private init() {
         // hide MiniCustomCombo if no custom combo exists
         if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
-            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(chartType => chartType !== 'customCombo');
+            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(
+                (chartType) => chartType !== 'customCombo'
+            );
         }
 
         const eGui = this.getGui();
@@ -219,47 +188,49 @@ export class MiniChartsContainer extends Component {
 
         // Determine the set of chart types that are specified by the chartGroupsDef config, filtering out any entries
         // that are invalid for the current chart configuration (pivot/range) and license type
-        const displayedMenuGroups = Object.keys(this.chartGroups).map((group: keyof ChartGroupsDef) => {
-            const menuGroup = group in miniChartMapping
-                ? miniChartMapping[group as keyof typeof miniChartMapping]
-                : undefined;
-            if (!menuGroup) {
-                // User has specified an invalid chart group in the chartGroupsDef config
-                _warnOnce(`invalid chartGroupsDef config '${group}'`);
-                return null;
-            }
-
-            // Determine the valid chart types within this group, based on the chartGroupsDef config
-            const chartGroupValues = this.chartGroups[group as keyof ChartGroupsDef] ?? [];
-            const menuItems = chartGroupValues.map((chartType) => {
-                const menuItem = chartType in menuGroup
-                        ? (menuGroup as Record<typeof chartType, MiniChartMenuItem>)[chartType]
-                        : undefined;
-
-                if (!menuItem) {
-                     // User has specified an invalid chart type in the chartGroupsDef config
-                    _warnOnce(`invalid chartGroupsDef config '${group}.${chartType}'`);
+        const displayedMenuGroups = Object.keys(this.chartGroups)
+            .map((group: keyof ChartGroupsDef) => {
+                const menuGroup =
+                    group in miniChartMapping ? miniChartMapping[group as keyof typeof miniChartMapping] : undefined;
+                if (!menuGroup) {
+                    // User has specified an invalid chart group in the chartGroupsDef config
+                    _warnOnce(`invalid chartGroupsDef config '${group}'`);
                     return null;
                 }
 
-                if (!isEnterprise && menuItem.enterprise) {
-                    return null; // skip enterprise charts if community
-                }
-                // Only show the chart if it is valid for the current chart configuration (pivot/range)
-                if (isRangeChart && menuItem.range) return menuItem;
-                if (isPivotChart && menuItem.pivot) return menuItem;
-                return null;
+                // Determine the valid chart types within this group, based on the chartGroupsDef config
+                const chartGroupValues = this.chartGroups[group as keyof ChartGroupsDef] ?? [];
+                const menuItems = chartGroupValues
+                    .map((chartType) => {
+                        const menuItem =
+                            chartType in menuGroup
+                                ? (menuGroup as Record<typeof chartType, MiniChartMenuItem>)[chartType]
+                                : undefined;
+
+                        if (!menuItem) {
+                            // User has specified an invalid chart type in the chartGroupsDef config
+                            _warnOnce(`invalid chartGroupsDef config '${group}.${chartType}'`);
+                            return null;
+                        }
+
+                        if (!isEnterprise && menuItem.enterprise) {
+                            return null; // skip enterprise charts if community
+                        }
+                        // Only show the chart if it is valid for the current chart configuration (pivot/range)
+                        if (isRangeChart && menuItem.range) return menuItem;
+                        if (isPivotChart && menuItem.pivot) return menuItem;
+                        return null;
+                    })
+                    .filter((menuItem): menuItem is NonNullable<typeof menuItem> => menuItem != null);
+
+                if (menuItems.length === 0) return null; // don't render empty chart groups
+
+                return {
+                    label: this.chartTranslationService.translate(group),
+                    items: menuItems,
+                };
             })
-            .filter((menuItem): menuItem is NonNullable<typeof menuItem> => menuItem != null);
-
-            if (menuItems.length === 0) return null; // don't render empty chart groups
-
-            return {
-                label: this.chartTranslationService.translate(group),
-                items: menuItems
-            };
-        })
-        .filter((menuGroup): menuGroup is NonNullable<typeof menuGroup> => menuGroup != null);
+            .filter((menuGroup): menuGroup is NonNullable<typeof menuGroup> => menuGroup != null);
 
         // Render the filtered menu items
         for (const { label, items } of displayedMenuGroups) {
@@ -287,7 +258,15 @@ export class MiniChartsContainer extends Component {
 
                 this.wrappers[miniClassChartType] = miniWrapper;
 
-                this.createBean(new MiniClass(miniWrapper, this.fills, this.strokes, this.themeTemplateParameters, this.isCustomTheme));
+                this.createBean(
+                    new MiniClass(
+                        miniWrapper,
+                        this.fills,
+                        this.strokes,
+                        this.themeTemplateParameters,
+                        this.isCustomTheme
+                    )
+                );
                 groupComponent.addItem(miniWrapper);
             }
 

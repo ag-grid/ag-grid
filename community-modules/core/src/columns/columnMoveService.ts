@@ -1,18 +1,17 @@
-import { Autowired, Bean } from "../context/context";
-import { ColDef } from "../entities/colDef";
-import { Column } from "../entities/column";
-import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
-import { ColumnEventType } from "../events";
-import { GridOptionsService } from "../gridOptionsService";
-import { ColumnAnimationService } from "../rendering/columnAnimationService";
-import { _moveInArray } from "../utils/array";
-import { ColumnEventDispatcher } from "./columnEventDispatcher";
-import { depthFirstOriginalTreeSearch } from "./columnFactory";
-import { ColKey, ColumnModel } from "./columnModel";
+import { Autowired, Bean } from '../context/context';
+import { ColDef } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
+import { ColumnEventType } from '../events';
+import { GridOptionsService } from '../gridOptionsService';
+import { ColumnAnimationService } from '../rendering/columnAnimationService';
+import { _moveInArray } from '../utils/array';
+import { ColumnEventDispatcher } from './columnEventDispatcher';
+import { depthFirstOriginalTreeSearch } from './columnFactory';
+import { ColKey, ColumnModel } from './columnModel';
 
 @Bean('columnMoveService')
 export class ColumnMoveService {
-
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
@@ -20,21 +19,32 @@ export class ColumnMoveService {
 
     public moveColumnByIndex(fromIndex: number, toIndex: number, source: ColumnEventType): void {
         const gridColumns = this.columnModel.getCols();
-        if (!gridColumns) { return; }
+        if (!gridColumns) {
+            return;
+        }
 
         const column = gridColumns[fromIndex];
         this.moveColumns([column], toIndex, source);
     }
 
-    public moveColumns(columnsToMoveKeys: ColKey[], toIndex: number, source: ColumnEventType, finished: boolean = true): void {
+    public moveColumns(
+        columnsToMoveKeys: ColKey[],
+        toIndex: number,
+        source: ColumnEventType,
+        finished: boolean = true
+    ): void {
         const gridColumns = this.columnModel.getCols();
-        if (!gridColumns) { return; }
+        if (!gridColumns) {
+            return;
+        }
 
         this.columnAnimationService.start();
 
         if (toIndex > gridColumns.length - columnsToMoveKeys.length) {
             console.warn('AG Grid: tried to insert columns in invalid location, toIndex = ' + toIndex);
-            console.warn('AG Grid: remember that you should not count the moving columns when calculating the new index');
+            console.warn(
+                'AG Grid: remember that you should not count the moving columns when calculating the new index'
+            );
             return;
         }
 
@@ -42,7 +52,9 @@ export class ColumnMoveService {
         const movedColumns = this.columnModel.getColsForKeys(columnsToMoveKeys);
         const failedRules = !this.doesMovePassRules(movedColumns, toIndex);
 
-        if (failedRules) { return; }
+        if (failedRules) {
+            return;
+        }
 
         this.columnModel.moveInCols(movedColumns, toIndex, source);
 
@@ -72,47 +84,53 @@ export class ColumnMoveService {
         _moveInArray(proposedColumnOrder, columnsToMove, toIndex);
         return proposedColumnOrder;
     }
-    
+
     private doesMovePassLockedPositions(proposedColumnOrder: Column[]): boolean {
         // Placement is a number indicating 'left' 'center' or 'right' as 0 1 2
-       let lastPlacement = 0;
-       let rulePassed = true;
-       const lockPositionToPlacement = (position: ColDef['lockPosition']) => {
-           if (!position) { // false or undefined
-               return 1;
-           }
-           if (position === true) {
-               return 0;
-           }
-           return position === 'left' ? 0 : 2; // Otherwise 'right'
-       };
+        let lastPlacement = 0;
+        let rulePassed = true;
+        const lockPositionToPlacement = (position: ColDef['lockPosition']) => {
+            if (!position) {
+                // false or undefined
+                return 1;
+            }
+            if (position === true) {
+                return 0;
+            }
+            return position === 'left' ? 0 : 2; // Otherwise 'right'
+        };
 
-       proposedColumnOrder.forEach(col => {
-           const placement = lockPositionToPlacement(col.getColDef().lockPosition);
-           if (placement < lastPlacement) { // If placement goes down, we're not in the correct order
-               rulePassed = false;
-           }
-           lastPlacement = placement;
-       });
+        proposedColumnOrder.forEach((col) => {
+            const placement = lockPositionToPlacement(col.getColDef().lockPosition);
+            if (placement < lastPlacement) {
+                // If placement goes down, we're not in the correct order
+                rulePassed = false;
+            }
+            lastPlacement = placement;
+        });
 
-       return rulePassed;
+        return rulePassed;
     }
 
     public doesMovePassMarryChildren(allColumnsCopy: Column[]): boolean {
         let rulePassed = true;
         const gridBalancedTree = this.columnModel.getColTree();
 
-        depthFirstOriginalTreeSearch(null, gridBalancedTree, child => {
-            if (!(child instanceof ProvidedColumnGroup)) { return; }
+        depthFirstOriginalTreeSearch(null, gridBalancedTree, (child) => {
+            if (!(child instanceof ProvidedColumnGroup)) {
+                return;
+            }
 
             const columnGroup = child;
             const colGroupDef = columnGroup.getColGroupDef();
             const marryChildren = colGroupDef && colGroupDef.marryChildren;
 
-            if (!marryChildren) { return; }
+            if (!marryChildren) {
+                return;
+            }
 
             const newIndexes: number[] = [];
-            columnGroup.getLeafColumns().forEach(col => {
+            columnGroup.getLeafColumns().forEach((col) => {
                 const newColIndex = allColumnsCopy.indexOf(col);
                 newIndexes.push(newColIndex);
             });

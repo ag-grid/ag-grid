@@ -1,33 +1,31 @@
-import { AgCheckbox } from '../widgets/agCheckbox';
 import { PostConstruct } from '../context/context';
-import { Column } from '../entities/column';
-import { Component } from '../widgets/component';
-import { Events } from '../events';
-import { RefSelector } from '../widgets/componentAnnotations';
-import { RowNode } from '../entities/rowNode';
-import { _stopPropagationForAgGrid } from '../utils/event';
 import { CheckboxSelectionCallback } from '../entities/colDef';
-import { GroupCheckboxSelectionCallback } from './cellRenderers/groupCellRendererCtrl';
+import { Column } from '../entities/column';
+import { RowNode } from '../entities/rowNode';
+import { Events } from '../events';
 import { _getAriaCheckboxStateName } from '../utils/aria';
+import { _stopPropagationForAgGrid } from '../utils/event';
+import { AgCheckbox } from '../widgets/agCheckbox';
+import { Component } from '../widgets/component';
+import { RefSelector } from '../widgets/componentAnnotations';
+import { GroupCheckboxSelectionCallback } from './cellRenderers/groupCellRendererCtrl';
 
 export class CheckboxSelectionComponent extends Component {
-
     @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
 
     private rowNode: RowNode;
     private column: Column | undefined;
     private overrides?: {
-        isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined,
-        callbackParams: any,
+        isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined;
+        callbackParams: any;
         removeHidden: boolean;
     };
 
     constructor() {
-        super(/* html*/`
+        super(/* html*/ `
             <div class="ag-selection-checkbox" role="presentation">
                 <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
-            </div>`
-        );
+            </div>`);
     }
 
     @PostConstruct
@@ -53,7 +51,9 @@ export class CheckboxSelectionComponent extends Component {
         const translate = this.localeService.getLocaleTextFunc();
         const state = this.rowNode.isSelected();
         const stateName = _getAriaCheckboxStateName(translate, state);
-        const [ariaKey, ariaLabel] = this.rowNode.selectable ? ['ariaRowToggleSelection', 'Press Space to toggle row selection'] : ['ariaRowSelectionDisabled', 'Row Selection is disabled for this row'];
+        const [ariaKey, ariaLabel] = this.rowNode.selectable
+            ? ['ariaRowToggleSelection', 'Press Space to toggle row selection']
+            : ['ariaRowSelectionDisabled', 'Row Selection is disabled for this row'];
         const translatedLabel = translate(ariaKey, ariaLabel);
 
         this.eCheckbox.setValue(state, true);
@@ -61,17 +61,23 @@ export class CheckboxSelectionComponent extends Component {
     }
 
     private onClicked(newValue: boolean, groupSelectsFiltered: boolean | undefined, event: MouseEvent): number {
-        return this.rowNode.setSelectedParams({ newValue, rangeSelect: event.shiftKey, groupSelectsFiltered, event, source: 'checkboxSelected' });
+        return this.rowNode.setSelectedParams({
+            newValue,
+            rangeSelect: event.shiftKey,
+            groupSelectsFiltered,
+            event,
+            source: 'checkboxSelected',
+        });
     }
 
     public init(params: {
-        rowNode: RowNode,
-        column?: Column,
+        rowNode: RowNode;
+        column?: Column;
         overrides?: {
-            isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined,
-            callbackParams: any,
+            isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined;
+            callbackParams: any;
             removeHidden: boolean;
-        },
+        };
     }): void {
         this.rowNode = params.rowNode;
         this.column = params.column;
@@ -114,7 +120,11 @@ export class CheckboxSelectionComponent extends Component {
 
         if (checkboxVisibleIsDynamic) {
             const showOrHideSelectListener = this.showOrHideSelect.bind(this);
-            this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, showOrHideSelectListener);
+            this.addManagedListener(
+                this.eventService,
+                Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
+                showOrHideSelectListener
+            );
             this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, showOrHideSelectListener);
             this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, showOrHideSelectListener);
             this.showOrHideSelect();
@@ -126,9 +136,11 @@ export class CheckboxSelectionComponent extends Component {
     private shouldHandleIndeterminateState(isSelected: boolean | undefined, groupSelectsFiltered: boolean): boolean {
         // for CSRM groupSelectsFiltered, we can get an indeterminate state where all filtered children are selected,
         // and we would expect clicking to deselect all rather than select all
-        return groupSelectsFiltered &&
+        return (
+            groupSelectsFiltered &&
             (this.eCheckbox.getPreviousValue() === undefined || isSelected === undefined) &&
-            this.gos.isRowModelType('clientSide');
+            this.gos.isRowModelType('clientSide')
+        );
     }
 
     private showOrHideSelect(): void {

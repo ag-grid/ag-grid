@@ -1,10 +1,10 @@
-import { Component } from "./component";
-import { PostConstruct } from "../context/context";
 import { KeyCode } from '../constants/keyCode';
+import { PostConstruct } from '../context/context';
+import { Events } from '../eventKeys';
 import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/aria';
-import { Events } from "../eventKeys";
-import { _isVisible, _removeFromParent } from "../utils/dom";
-import { TooltipFeature } from "./tooltipFeature";
+import { _isVisible, _removeFromParent } from '../utils/dom';
+import { Component } from './component';
+import { TooltipFeature } from './tooltipFeature';
 
 export interface ListOption<TValue = string> {
     value: TValue;
@@ -21,15 +21,20 @@ export class AgList<TValue = string> extends Component {
     private value: TValue | null;
     private displayValue: string | null;
 
-    constructor(private readonly cssIdentifier = 'default', private readonly unFocusable: boolean = false) {
-        super(/* html */`<div class="ag-list ag-${cssIdentifier}-list" role="listbox"></div>`);
+    constructor(
+        private readonly cssIdentifier = 'default',
+        private readonly unFocusable: boolean = false
+    ) {
+        super(/* html */ `<div class="ag-list ag-${cssIdentifier}-list" role="listbox"></div>`);
     }
 
     @PostConstruct
     private init(): void {
         const eGui = this.getGui();
         this.addManagedListener(eGui, 'mouseleave', () => this.clearHighlighted());
-        if (this.unFocusable) { return; }
+        if (this.unFocusable) {
+            return;
+        }
         this.addManagedListener(eGui, 'keydown', this.handleKeyDown.bind(this));
     }
 
@@ -93,7 +98,7 @@ export class AgList<TValue = string> extends Component {
         } else if (key === KeyCode.PAGE_DOWN) {
             newIndex = Math.min(currentIdx + pageSize, rowCount);
         } else if (key === KeyCode.PAGE_UP) {
-            newIndex = Math.max(currentIdx - pageSize, 0)
+            newIndex = Math.max(currentIdx - pageSize, 0);
         }
 
         if (newIndex === -1) {
@@ -104,13 +109,13 @@ export class AgList<TValue = string> extends Component {
     }
 
     public addOptions(listOptions: ListOption<TValue>[]): this {
-        listOptions.forEach(listOption => this.addOption(listOption));
+        listOptions.forEach((listOption) => this.addOption(listOption));
         return this;
     }
 
     public addOption(listOption: ListOption<TValue>): this {
         const { value, text } = listOption;
-        const valueToRender = text || value as any;
+        const valueToRender = text || (value as any);
 
         this.options.push({ value, text: valueToRender });
         this.renderOption(value, valueToRender);
@@ -123,7 +128,7 @@ export class AgList<TValue = string> extends Component {
     public clearOptions(): void {
         this.options = [];
         this.reset(true);
-        this.itemEls.forEach(itemEl => {
+        this.itemEls.forEach((itemEl) => {
             _removeFromParent(itemEl);
         });
         this.itemEls = [];
@@ -154,14 +159,19 @@ export class AgList<TValue = string> extends Component {
         this.itemEls.push(itemEl);
 
         this.addManagedListener(itemEl, 'mousemove', () => this.highlightItem(itemEl));
-        this.addManagedListener(itemEl, 'mousedown', (e) => { e.preventDefault(); this.setValue(value) });
-        this.createManagedBean(new TooltipFeature({
-            getTooltipValue: () => text,
-            getGui:  () => itemEl,
-            getLocation: () => 'UNKNOWN',
-            // only show tooltips for items where the text cannot be fully displayed
-            shouldDisplayTooltip: () => span.scrollWidth > span.clientWidth
-        }));
+        this.addManagedListener(itemEl, 'mousedown', (e) => {
+            e.preventDefault();
+            this.setValue(value);
+        });
+        this.createManagedBean(
+            new TooltipFeature({
+                getTooltipValue: () => text,
+                getGui: () => itemEl,
+                getLocation: () => 'UNKNOWN',
+                // only show tooltips for items where the text cannot be fully displayed
+                shouldDisplayTooltip: () => span.scrollWidth > span.clientWidth,
+            })
+        );
 
         this.getGui().appendChild(itemEl);
     }
@@ -177,7 +187,7 @@ export class AgList<TValue = string> extends Component {
             return this;
         }
 
-        const idx = this.options.findIndex(option => option.value === value);
+        const idx = this.options.findIndex((option) => option.value === value);
 
         if (idx !== -1) {
             const option = this.options[idx];
@@ -208,7 +218,7 @@ export class AgList<TValue = string> extends Component {
 
     public refreshHighlighted(): void {
         this.clearHighlighted();
-        const idx = this.options.findIndex(option => option.value === this.value);
+        const idx = this.options.findIndex((option) => option.value === this.value);
 
         if (idx !== -1) {
             this.highlightItem(this.itemEls[idx]);
@@ -225,7 +235,9 @@ export class AgList<TValue = string> extends Component {
     }
 
     private highlightItem(el: HTMLElement): void {
-        if (!_isVisible(el)) { return; }
+        if (!_isVisible(el)) {
+            return;
+        }
 
         this.clearHighlighted();
         this.highlightedEl = el;
@@ -238,8 +250,8 @@ export class AgList<TValue = string> extends Component {
         const { scrollTop, clientHeight } = eGui;
         const { offsetTop, offsetHeight } = el;
 
-        if (((offsetTop + offsetHeight) > scrollTop + clientHeight) || (offsetTop < scrollTop)) {
-            this.highlightedEl.scrollIntoView({ block: 'nearest' })
+        if (offsetTop + offsetHeight > scrollTop + clientHeight || offsetTop < scrollTop) {
+            this.highlightedEl.scrollIntoView({ block: 'nearest' });
         }
 
         if (!this.unFocusable) {
@@ -248,7 +260,9 @@ export class AgList<TValue = string> extends Component {
     }
 
     private clearHighlighted(): void {
-        if (!this.highlightedEl || !_isVisible(this.highlightedEl)) { return; }
+        if (!this.highlightedEl || !_isVisible(this.highlightedEl)) {
+            return;
+        }
 
         this.highlightedEl.classList.remove(AgList.ACTIVE_CLASS);
         _setAriaSelected(this.highlightedEl, false);

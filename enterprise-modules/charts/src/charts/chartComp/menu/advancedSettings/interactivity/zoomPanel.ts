@@ -6,6 +6,7 @@ import {
     PostConstruct,
     RefSelector,
 } from '@ag-grid-community/core';
+
 import { ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -34,7 +35,7 @@ export class ZoomPanel extends Component {
             suppressOpenCloseIcons: true,
             title: this.chartTranslationService.translate('zoom'),
             suppressEnabledCheckbox: true,
-            useToggle: true
+            useToggle: true,
         });
         const zoomScrollingCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'zoom.enableScrolling',
@@ -43,7 +44,7 @@ export class ZoomPanel extends Component {
         const zoomScrollingStepSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams(
             'zoom.scrollingStep',
             'scrollingStep',
-            1,
+            1
         );
         zoomScrollingStepSliderParams.step = 0.01;
         zoomScrollingStepSliderParams.minValue = zoomScrollingStepSliderParams.step;

@@ -1,7 +1,7 @@
-import { AgEvent, AgEventListener } from "../events";
-import { EventService } from "../eventService";
-import { IEventEmitter } from "../interfaces/iEventEmitter";
-import { _areEventsNear } from "../utils/mouse";
+import { EventService } from '../eventService';
+import { AgEvent, AgEventListener } from '../events';
+import { IEventEmitter } from '../interfaces/iEventEmitter';
+import { _areEventsNear } from '../utils/mouse';
 
 export interface TapEvent extends AgEvent {
     touchStart: Touch;
@@ -13,10 +13,9 @@ export interface LongTapEvent extends AgEvent {
 }
 
 export class TouchListener implements IEventEmitter {
-
-    public static EVENT_TAP = "tap";
-    public static EVENT_DOUBLE_TAP = "doubleTap";
-    public static EVENT_LONG_TAP = "longTap";
+    public static EVENT_TAP = 'tap';
+    public static EVENT_DOUBLE_TAP = 'doubleTap';
+    public static EVENT_LONG_TAP = 'longTap';
 
     private static DOUBLE_TAP_MILLIS = 500;
 
@@ -45,15 +44,15 @@ export class TouchListener implements IEventEmitter {
         const moveListener = this.onTouchMove.bind(this);
         const endListener = this.onTouchEnd.bind(this);
 
-        this.eElement.addEventListener("touchstart", startListener, { passive: true } as any);
-        this.eElement.addEventListener("touchmove", moveListener, { passive: true } as any);
+        this.eElement.addEventListener('touchstart', startListener, { passive: true } as any);
+        this.eElement.addEventListener('touchmove', moveListener, { passive: true } as any);
         // we set passive=false, as we want to prevent default on this event
-        this.eElement.addEventListener("touchend", endListener, { passive: false } as any);
+        this.eElement.addEventListener('touchend', endListener, { passive: false } as any);
 
         this.destroyFuncs.push(() => {
-            this.eElement.removeEventListener("touchstart", startListener, { passive: true } as any);
-            this.eElement.removeEventListener("touchmove", moveListener, { passive: true } as any);
-            this.eElement.removeEventListener("touchend", endListener, { passive: false } as any);
+            this.eElement.removeEventListener('touchstart', startListener, { passive: true } as any);
+            this.eElement.removeEventListener('touchmove', moveListener, { passive: true } as any);
+            this.eElement.removeEventListener('touchend', endListener, { passive: false } as any);
         });
     }
 
@@ -97,7 +96,7 @@ export class TouchListener implements IEventEmitter {
                 const event: LongTapEvent = {
                     type: TouchListener.EVENT_LONG_TAP,
                     touchStart: this.touchStart,
-                    touchEvent: touchEvent
+                    touchEvent: touchEvent,
                 };
                 this.eventService.dispatchEvent(event);
             }
@@ -128,7 +127,7 @@ export class TouchListener implements IEventEmitter {
         if (!this.moved) {
             const event: TapEvent = {
                 type: TouchListener.EVENT_TAP,
-                touchStart: this.touchStart
+                touchStart: this.touchStart,
             };
             this.eventService.dispatchEvent(event);
             this.checkForDoubleTap();
@@ -152,7 +151,7 @@ export class TouchListener implements IEventEmitter {
                 // dispatch double tap event
                 const event: TapEvent = {
                     type: TouchListener.EVENT_DOUBLE_TAP,
-                    touchStart: this.touchStart
+                    touchStart: this.touchStart,
                 };
                 this.eventService.dispatchEvent(event);
 
@@ -167,6 +166,6 @@ export class TouchListener implements IEventEmitter {
     }
 
     public destroy(): void {
-        this.destroyFuncs.forEach(func => func());
+        this.destroyFuncs.forEach((func) => func());
     }
 }

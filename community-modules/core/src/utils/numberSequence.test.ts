@@ -1,4 +1,4 @@
-import { NumberSequence } from "./numberSequence";
+import { NumberSequence } from './numberSequence';
 
 describe('NumberSequence', () => {
     it('returns default incrementing sequence', () => {

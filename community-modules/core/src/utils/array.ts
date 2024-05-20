@@ -5,7 +5,9 @@ export function _existsAndNotEmpty<T>(value?: T[]): boolean {
 export function _last<T>(arr: T[]): T;
 export function _last<T extends Node>(arr: NodeListOf<T>): T;
 export function _last(arr: any): any {
-    if (!arr || !arr.length) { return; }
+    if (!arr || !arr.length) {
+        return;
+    }
 
     return arr[arr.length - 1];
 }
@@ -15,10 +17,12 @@ export function _areEqual<T>(a?: T[] | null, b?: T[] | null, comparator?: (a: T,
         return true;
     }
 
-    return a != null &&
+    return (
+        a != null &&
         b != null &&
         a.length === b.length &&
-        a.every((value, index) => comparator ? comparator(value, b[index]) : b[index] === value);
+        a.every((value, index) => (comparator ? comparator(value, b[index]) : b[index] === value))
+    );
 }
 
 export function _shallowCompare(arr1: any[], arr2: any[]): boolean {
@@ -30,7 +34,9 @@ export function _sortNumerically(array: number[]): number[] {
 }
 
 export function _removeRepeatsFromArray<T>(array: T[], object: T) {
-    if (!array) { return; }
+    if (!array) {
+        return;
+    }
 
     for (let index = array.length - 2; index >= 0; index--) {
         const thisOneMatches = array[index] === object;
@@ -77,7 +83,9 @@ export function _insertIntoArray<T>(array: T[], object: T, toIndex: number) {
 }
 
 export function _insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number) {
-    if (dest == null || src == null) { return; }
+    if (dest == null || src == null) {
+        return;
+    }
 
     // put items in backwards, otherwise inserted items end up in reverse order
     for (let i = src.length - 1; i >= 0; i--) {
@@ -92,7 +100,10 @@ export function _moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number)
 
     // now add the objects, in same order as provided to us, that means we start at the end
     // as the objects will be pushed to the right as they are inserted
-    objectsToMove.slice().reverse().forEach(obj => _insertIntoArray(array, obj, toIndex));
+    objectsToMove
+        .slice()
+        .reverse()
+        .forEach((obj) => _insertIntoArray(array, obj, toIndex));
 }
 
 export function _includes<T>(array: T[], value: T): boolean {
@@ -104,9 +115,11 @@ export function _flatten<T>(arrayOfArrays: (T | T[])[]): T[] {
 }
 
 export function _pushAll<T>(target: T[], source: T[]): void {
-    if (source == null || target == null) { return; }
+    if (source == null || target == null) {
+        return;
+    }
 
-    source.forEach(value => target.push(value));
+    source.forEach((value) => target.push(value));
 }
 
 export function _forEachReverse<T>(list: T[], action: (value: T, index: number) => void): void {

@@ -1,10 +1,7 @@
-import {
-    Beans, Context,
-    FocusService,
-    GridCtrl,
-    IGridComp
-} from 'ag-grid-community';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import { Beans, Context, FocusService, GridCtrl, IGridComp } from 'ag-grid-community';
+
 import { BeansContext } from './beansContext';
 import GridBodyComp from './gridBodyComp';
 import useReactCommentEffect from './reactComment';
@@ -16,7 +13,6 @@ interface GridCompProps {
 }
 
 const GridComp = ({ context }: GridCompProps) => {
-
     const [rtlClass, setRtlClass] = useState<string>('');
     const [keyboardFocusClass, setKeyboardFocusClass] = useState<string>('');
     const [layoutClass, setLayoutClass] = useState<string>('');
@@ -29,14 +25,16 @@ const GridComp = ({ context }: GridCompProps) => {
     const eRootWrapperRef = useRef<HTMLDivElement | null>(null);
     const tabGuardRef = useRef<TabGuardCompCallback>();
     // eGridBodyParent is state as we use it in render
-    const [eGridBodyParent,setGridBodyParent] = useState<HTMLDivElement | null>(null);
+    const [eGridBodyParent, setGridBodyParent] = useState<HTMLDivElement | null>(null);
 
-    const focusInnerElementRef = useRef<((fromBottom?: boolean) => void)>(() => undefined);
+    const focusInnerElementRef = useRef<(fromBottom?: boolean) => void>(() => undefined);
 
     const onTabKeyDown = useCallback(() => undefined, []);
 
     const beans = useMemo(() => {
-        if (context.isDestroyed()) { return null; }
+        if (context.isDestroyed()) {
+            return null;
+        }
         return context.getBean('beans') as Beans;
     }, [context]);
 
@@ -61,8 +59,7 @@ const GridComp = ({ context }: GridCompProps) => {
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
 
         const compProxy: IGridComp = {
-            destroyGridUi:
-                () => {}, // do nothing, as framework users destroy grid by removing the comp
+            destroyGridUi: () => {}, // do nothing, as framework users destroy grid by removing the comp
             setRtlClass: setRtlClass,
             forceFocusOutOfContainer: (up?: boolean) => {
                 tabGuardRef.current?.forceFocusOutOfContainer(up);
@@ -85,22 +82,23 @@ const GridComp = ({ context }: GridCompProps) => {
                 return els;
             },
             setCursor,
-            setUserSelect
+            setUserSelect,
         };
 
         gridCtrl.setComp(compProxy, eRootWrapperRef.current, eRootWrapperRef.current);
 
         setInitialised(true);
-
     }, []);
 
     // initialise the extra components
     useEffect(() => {
-        if (!tabGuardReady || !beans || !gridCtrlRef.current || !eGridBodyParent || !eRootWrapperRef.current) { return; }
+        if (!tabGuardReady || !beans || !gridCtrlRef.current || !eGridBodyParent || !eRootWrapperRef.current) {
+            return;
+        }
 
         const gridCtrl = gridCtrlRef.current;
         const beansToDestroy: any[] = [];
-        const {agStackComponentsRegistry} = beans;
+        const { agStackComponentsRegistry } = beans;
 
         const HeaderDropZonesClass = agStackComponentsRegistry.getComponentClass('AG-GRID-HEADER-DROP-ZONES');
         const SideBarClass = agStackComponentsRegistry.getComponentClass('AG-SIDE-BAR');
@@ -156,50 +154,60 @@ const GridComp = ({ context }: GridCompProps) => {
 
         return () => {
             context.destroyBeans(beansToDestroy);
-            additionalEls.forEach(el => {
+            additionalEls.forEach((el) => {
                 if (el.parentElement) {
                     el.parentElement.removeChild(el);
                 }
             });
-        }
-    }, [tabGuardReady, eGridBodyParent, beans])
+        };
+    }, [tabGuardReady, eGridBodyParent, beans]);
 
-    const rootWrapperClasses = useMemo(()=> classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass), [rtlClass, keyboardFocusClass, layoutClass]);
-    const rootWrapperBodyClasses = useMemo(() => classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass), [layoutClass]);
+    const rootWrapperClasses = useMemo(
+        () => classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass),
+        [rtlClass, keyboardFocusClass, layoutClass]
+    );
+    const rootWrapperBodyClasses = useMemo(
+        () => classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass),
+        [layoutClass]
+    );
 
-    const topStyle: React.CSSProperties = useMemo(() => ({
-        userSelect: userSelect != null ? (userSelect as any) : '',
-        WebkitUserSelect: userSelect != null ? (userSelect as any) : '',
-        cursor: cursor != null ? cursor : ''
-    }), [userSelect, cursor]);
-
+    const topStyle: React.CSSProperties = useMemo(
+        () => ({
+            userSelect: userSelect != null ? (userSelect as any) : '',
+            WebkitUserSelect: userSelect != null ? (userSelect as any) : '',
+            cursor: cursor != null ? cursor : '',
+        }),
+        [userSelect, cursor]
+    );
 
     const setTabGuardCompRef = useCallback((ref: TabGuardCompCallback) => {
         tabGuardRef.current = ref;
         setTabGuardReady(ref !== null);
     }, []);
-    
+
     return (
         <div ref={setRef} className={rootWrapperClasses} style={topStyle} role="presentation">
-            <div className={ rootWrapperBodyClasses } ref={ setGridBodyParent } role="presentation">
-                {initialised && eGridBodyParent && beans &&
+            <div className={rootWrapperBodyClasses} ref={setGridBodyParent} role="presentation">
+                {initialised && eGridBodyParent && beans && (
                     <BeansContext.Provider value={beans}>
                         <TabGuardComp
-                            ref={ setTabGuardCompRef }
-                            eFocusableElement= { eGridBodyParent }
-                            onTabKeyDown={ onTabKeyDown }
-                            gridCtrl={ gridCtrlRef.current! }
-                            forceFocusOutWhenTabGuardsAreEmpty={ true }>
-                        { // we wait for initialised before rending the children, so GridComp has created and registered with it's
-                        // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,
-                        // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
-                        // doesn't have it's height specified, which would result if all the rows getting rendered (and if many rows,
-                        // hangs the UI)
-                            <GridBodyComp/>
-                        }
+                            ref={setTabGuardCompRef}
+                            eFocusableElement={eGridBodyParent}
+                            onTabKeyDown={onTabKeyDown}
+                            gridCtrl={gridCtrlRef.current!}
+                            forceFocusOutWhenTabGuardsAreEmpty={true}
+                        >
+                            {
+                                // we wait for initialised before rending the children, so GridComp has created and registered with it's
+                                // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,
+                                // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
+                                // doesn't have it's height specified, which would result if all the rows getting rendered (and if many rows,
+                                // hangs the UI)
+                                <GridBodyComp />
+                            }
                         </TabGuardComp>
                     </BeansContext.Provider>
-                }
+                )}
             </div>
         </div>
     );

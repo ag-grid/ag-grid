@@ -3,6 +3,8 @@ import {
     AgPromise,
     Autowired,
     Column,
+    ColumnEvent,
+    ColumnNameService,
     Component,
     FilterChangedEvent,
     FilterManager,
@@ -10,19 +12,17 @@ import {
     IFloatingFilterParams,
     RefSelector,
     UserCompDetails,
-    ColumnEvent,
     _clearElement,
-    ColumnNameService,
 } from '@ag-grid-community/core';
+
 import { GroupFilter } from './groupFilter';
 
 export class GroupFloatingFilterComp extends Component implements IFloatingFilterComp<GroupFilter> {
-
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
 
     @RefSelector('eFloatingFilter') private readonly eFloatingFilter: HTMLElement;
-    
+
     private params: IFloatingFilterParams<GroupFilter>;
     private eFloatingFilterText: AgInputTextField;
     private parentFilterInstance: GroupFilter;
@@ -30,7 +30,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     private showingUnderlyingFloatingFilter: boolean;
     private compDetails: UserCompDetails;
     private haveAddedColumnListeners: boolean = false;
-    
+
     constructor() {
         super(/* html */ `
             <div ref="eFloatingFilter" class="ag-group-floating-filter ag-floating-filter-input" role="presentation"></div>
@@ -43,8 +43,8 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         // we only support showing the underlying floating filter for multiple group columns
         const canShowUnderlyingFloatingFilter = this.gos.get('groupDisplayType') === 'multipleColumns';
 
-        return new AgPromise<void>(resolve => {
-            this.params.parentFilterInstance(parentFilterInstance => {
+        return new AgPromise<void>((resolve) => {
+            this.params.parentFilterInstance((parentFilterInstance) => {
                 this.parentFilterInstance = parentFilterInstance;
 
                 if (canShowUnderlyingFloatingFilter) {
@@ -55,8 +55,12 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
                 }
             });
         }).then(() => {
-            this.addManagedListener(this.parentFilterInstance, GroupFilter.EVENT_SELECTED_COLUMN_CHANGED, () => this.onSelectedColumnChanged());
-            this.addManagedListener(this.parentFilterInstance, GroupFilter.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.onColumnRowGroupChanged());
+            this.addManagedListener(this.parentFilterInstance, GroupFilter.EVENT_SELECTED_COLUMN_CHANGED, () =>
+                this.onSelectedColumnChanged()
+            );
+            this.addManagedListener(this.parentFilterInstance, GroupFilter.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>
+                this.onColumnRowGroupChanged()
+            );
         });
     }
 
@@ -78,7 +82,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     private setupReadOnlyFloatingFilterElement(): void {
         if (!this.eFloatingFilterText) {
             this.eFloatingFilterText = this.createManagedBean(new AgInputTextField());
-            
+
             this.eFloatingFilterText
                 .setDisabled(true)
                 .addGuiEventListener('click', () => this.params.showParentFilter());
@@ -103,12 +107,18 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
                 this.compDetails = compDetails;
                 if (!this.haveAddedColumnListeners) {
                     this.haveAddedColumnListeners = true;
-                    this.addManagedListener(column, Column.EVENT_VISIBLE_CHANGED, this.onColumnVisibleChanged.bind(this));
+                    this.addManagedListener(
+                        column,
+                        Column.EVENT_VISIBLE_CHANGED,
+                        this.onColumnVisibleChanged.bind(this)
+                    );
                     this.addManagedListener(column, Column.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
                 }
-                return compDetails.newAgStackInstance().then(floatingFilter => {
+                return compDetails.newAgStackInstance().then((floatingFilter) => {
                     this.underlyingFloatingFilter = floatingFilter;
-                    this.underlyingFloatingFilter?.onParentModelChanged(this.parentFilterInstance.getSelectedFilter()?.getModel());
+                    this.underlyingFloatingFilter?.onParentModelChanged(
+                        this.parentFilterInstance.getSelectedFilter()?.getModel()
+                    );
                     this.appendChild(floatingFilter.getGui());
                     this.showingUnderlyingFloatingFilter = true;
                 });
@@ -124,7 +134,9 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     }
 
     private onColDefChanged(event: ColumnEvent): void {
-        if (!event.column) { return; }
+        if (!event.column) {
+            return;
+        }
         const compDetails = this.filterManager.getFloatingFilterCompDetails(event.column, this.params.showParentFilter);
         if (compDetails) {
             if (this.underlyingFloatingFilter?.refresh) {
@@ -137,11 +149,13 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
 
     public onParentModelChanged(_model: null, event: FilterChangedEvent): void {
         if (this.showingUnderlyingFloatingFilter) {
-            this.underlyingFloatingFilter?.onParentModelChanged(this.parentFilterInstance.getSelectedFilter()?.getModel(), event);
+            this.underlyingFloatingFilter?.onParentModelChanged(
+                this.parentFilterInstance.getSelectedFilter()?.getModel(),
+                event
+            );
         } else {
             this.updateDisplayedValue();
         }
-
     }
 
     private updateDisplayedValue(): void {

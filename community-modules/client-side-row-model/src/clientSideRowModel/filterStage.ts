@@ -1,13 +1,6 @@
-import {
-    Autowired,
-    Bean,
-    IRowNodeStage,
-    StageExecuteParams,
-    BeanStub,
-    GridOptions
-} from "@ag-grid-community/core";
+import { Autowired, Bean, BeanStub, GridOptions, IRowNodeStage, StageExecuteParams } from '@ag-grid-community/core';
 
-import { FilterService } from "./filterService";
+import { FilterService } from './filterService';
 
 @Bean('filterStage')
 export class FilterStage extends BeanStub implements IRowNodeStage {

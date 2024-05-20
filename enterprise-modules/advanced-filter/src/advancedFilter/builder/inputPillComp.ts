@@ -15,18 +15,27 @@ import {
     _setAriaLabel,
     _setDisplayed,
     _stopPropagationForAgGrid,
-} from "@ag-grid-community/core";
-import { AdvancedFilterExpressionService } from "../advancedFilterExpressionService";
+} from '@ag-grid-community/core';
+
+import { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 
 export class InputPillComp extends Component {
     @RefSelector('ePill') private ePill: HTMLElement;
     @RefSelector('eLabel') private eLabel: HTMLElement;
-    @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
+    @Autowired('advancedFilterExpressionService')
+    private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     private eEditor: AgInputTextField | undefined;
     private value: string;
 
-    constructor(private readonly params: { value: string, cssClass: string, type: 'text' | 'number' | 'date', ariaLabel: string }) {
+    constructor(
+        private readonly params: {
+            value: string;
+            cssClass: string;
+            type: 'text' | 'number' | 'date';
+            ariaLabel: string;
+        }
+    ) {
         super(/* html */ `
             <div class="ag-advanced-filter-builder-pill-wrapper" role="presentation">
                 <div ref="ePill" class="ag-advanced-filter-builder-pill" role="button">
@@ -39,7 +48,7 @@ export class InputPillComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        const{ cssClass, ariaLabel } = this.params;
+        const { cssClass, ariaLabel } = this.params;
 
         this.ePill.classList.add(cssClass);
         this.activateTabIndex([this.ePill]);
@@ -71,7 +80,9 @@ export class InputPillComp extends Component {
     }
 
     private showEditor(): void {
-        if (this.eEditor) { return; }
+        if (this.eEditor) {
+            return;
+        }
         _setDisplayed(this.ePill, false);
         this.eEditor = this.createEditorComp(this.params.type);
         this.eEditor.setValue(this.value);
@@ -97,7 +108,9 @@ export class InputPillComp extends Component {
         this.eEditor.getFocusableElement().focus();
     }
 
-    private createEditorComp(type: 'text' | 'number' | 'date'): AgInputTextField | AgInputNumberField | AgInputDateField {
+    private createEditorComp(
+        type: 'text' | 'number' | 'date'
+    ): AgInputTextField | AgInputNumberField | AgInputDateField {
         let comp;
         switch (type) {
             case 'text':
@@ -115,7 +128,9 @@ export class InputPillComp extends Component {
 
     private hideEditor(keepFocus: boolean): void {
         const { eEditor } = this;
-        if (!eEditor) { return; }
+        if (!eEditor) {
+            return;
+        }
         this.eEditor = undefined;
         this.getGui().removeChild(eEditor.getGui());
         this.destroyBean(eEditor);
@@ -146,12 +161,14 @@ export class InputPillComp extends Component {
     }
 
     private updateValue(keepFocus: boolean): void {
-        if (!this.eEditor) { return; }
+        if (!this.eEditor) {
+            return;
+        }
         const value = this.eEditor!.getValue() ?? '';
         this.dispatchEvent<WithoutGridCommon<FieldValueEvent>>({
             type: Events.EVENT_FIELD_VALUE_CHANGED,
-            value
-        })
+            value,
+        });
         this.value = value;
         this.renderValue();
         this.hideEditor(keepFocus);

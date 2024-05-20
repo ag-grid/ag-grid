@@ -1,30 +1,32 @@
-import { PopupComponent } from "../../widgets/popupComponent";
-import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
-import { AgInputTextField } from "../../widgets/agInputTextField";
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { _isBrowserSafari } from "../../utils/browser";
 import { KeyCode } from '../../constants/keyCode';
+import { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import { _isBrowserSafari } from '../../utils/browser';
+import { AgInputTextField } from '../../widgets/agInputTextField';
+import { RefSelector } from '../../widgets/componentAnnotations';
+import { PopupComponent } from '../../widgets/popupComponent';
 
 export interface CellEditorInput<TValue, P extends ICellEditorParams, I extends AgInputTextField> {
     getTemplate(): string;
     init(eInput: I, params: P): void;
     getValue(): TValue | null | undefined;
     getStartValue(): string | null | undefined;
-    setCaret?(): void
+    setCaret?(): void;
 }
 
-export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgInputTextField> extends PopupComponent implements ICellEditorComp {
+export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgInputTextField>
+    extends PopupComponent
+    implements ICellEditorComp
+{
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
     protected params: ICellEditorParams;
     @RefSelector('eInput') protected eInput: I;
 
     constructor(protected cellEditorInput: CellEditorInput<TValue, P, I>) {
-        super(/* html */`
+        super(/* html */ `
             <div class="ag-cell-edit-wrapper">
                 ${cellEditorInput.getTemplate()}
-            </div>`
-        );
+            </div>`);
     }
 
     public init(params: P): void {
@@ -50,7 +52,6 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
                     this.highlightAllOnFocus = true;
                 }
             }
-
         } else {
             this.focusAfterAttached = false;
             startValue = this.cellEditorInput.getStartValue();
@@ -75,7 +76,9 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
 
         eInput.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
 
-        if (!this.focusAfterAttached) { return; }
+        if (!this.focusAfterAttached) {
+            return;
+        }
         // Added for AG-3238. We can't remove this explicit focus() because Chrome requires an input
         // to be focused before setSelectionRange will work. But it triggers a bug in Safari where
         // explicitly focusing then blurring an empty field will cause the parent container to scroll.

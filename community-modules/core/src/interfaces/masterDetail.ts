@@ -1,7 +1,7 @@
-import { GridOptions } from "../entities/gridOptions";
-import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
-import { GridApi } from "../gridApi";
-import { IRowNode } from "./iRowNode";
+import { GridOptions } from '../entities/gridOptions';
+import { GridApi } from '../gridApi';
+import { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
+import { IRowNode } from './iRowNode';
 
 export interface IDetailCellRenderer<TData = any> {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -25,7 +25,7 @@ export interface IDetailCellRendererParams<TData = any, TDetail = any> extends I
 
     agGridReact: any;
     frameworkComponentWrapper: any;
-    pinned: "left" | "right" | null | undefined;
+    pinned: 'left' | 'right' | null | undefined;
 }
 
 export interface GetDetailRowData<TData = any, TDetail = any> {

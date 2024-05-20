@@ -1,12 +1,11 @@
-import { CellClassParams, ColDef } from "../entities/colDef";
-import { Autowired, Bean } from "../context/context";
-import { ExpressionService } from "../valueService/expressionService";
-import { BeanStub } from "../context/beanStub";
-import { RowClassParams } from "../entities/gridOptions";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean } from '../context/context';
+import { CellClassParams, ColDef } from '../entities/colDef';
+import { RowClassParams } from '../entities/gridOptions';
+import { ExpressionService } from '../valueService/expressionService';
 
 @Bean('stylingService')
 export class StylingService extends BeanStub {
-
     @Autowired('expressionService') private expressionService: ExpressionService;
 
     public processAllCellClasses(
@@ -20,8 +19,8 @@ export class StylingService extends BeanStub {
     }
 
     public processClassRules(
-        previousClassRules: { [cssClassName: string]: (Function | string) } | undefined,
-        classRules: { [cssClassName: string]: (Function | string) } | undefined,
+        previousClassRules: { [cssClassName: string]: Function | string } | undefined,
+        classRules: { [cssClassName: string]: Function | string } | undefined,
         params: RowClassParams | CellClassParams,
         onApplicableClass: (className: string) => void,
         onNotApplicableClass?: (className: string) => void
@@ -29,13 +28,13 @@ export class StylingService extends BeanStub {
         if (classRules == null && previousClassRules == null) {
             return;
         }
-        
-        const classesToApply: {[name: string]: boolean} = {};
-        const classesToRemove: {[name: string]: boolean} = {};
+
+        const classesToApply: { [name: string]: boolean } = {};
+        const classesToRemove: { [name: string]: boolean } = {};
 
         const forEachSingleClass = (className: string, callback: (singleClass: string) => void) => {
             // in case className = 'my-class1 my-class2', we need to split into individual class names
-            className.split(' ').forEach(singleClass => {
+            className.split(' ').forEach((singleClass) => {
                 if (singleClass.trim() == '') return;
                 callback(singleClass);
             });
@@ -55,18 +54,20 @@ export class StylingService extends BeanStub {
                     resultOfRule = rule(params);
                 }
 
-                forEachSingleClass(className, singleClass => {
-                    resultOfRule ? classesToApply[singleClass] = true : classesToRemove[singleClass] = true;
-                })
+                forEachSingleClass(className, (singleClass) => {
+                    resultOfRule ? (classesToApply[singleClass] = true) : (classesToRemove[singleClass] = true);
+                });
             }
         }
         if (previousClassRules && onNotApplicableClass) {
-            Object.keys(previousClassRules).forEach(className => forEachSingleClass(className, singleClass => {
-                if (!classesToApply[singleClass]) {
-                    // if we're not applying a previous class now, make sure we remove it
-                    classesToRemove[singleClass] = true;
-                }
-            }));
+            Object.keys(previousClassRules).forEach((className) =>
+                forEachSingleClass(className, (singleClass) => {
+                    if (!classesToApply[singleClass]) {
+                        // if we're not applying a previous class now, make sure we remove it
+                        classesToRemove[singleClass] = true;
+                    }
+                })
+            );
         }
 
         // we remove all classes first, then add all classes second,
@@ -81,7 +82,9 @@ export class StylingService extends BeanStub {
     public getStaticCellClasses(colDef: ColDef, params: CellClassParams): string[] {
         const { cellClass } = colDef;
 
-        if (!cellClass) { return []; }
+        if (!cellClass) {
+            return [];
+        }
 
         let classOrClasses: string | string[] | null | undefined;
 
@@ -110,5 +113,4 @@ export class StylingService extends BeanStub {
             onApplicableClass(cssClassItem);
         });
     }
-
 }

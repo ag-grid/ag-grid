@@ -1,5 +1,6 @@
 import { join } from 'path';
-import { type Part, type ParamType, getParamType } from '../../src/theme-types';
+
+import { type ParamType, type Part, getParamType } from '../../src/theme-types';
 import { DEV_MODE, fatalError, getProjectDir, writeTsFile } from './utils';
 
 export const generateDocsFile = async () => {
@@ -105,9 +106,7 @@ const paramExtraDocs: Record<ParamType, string[]> = {
         '- `4` -> "4px"',
         // TODO add {ref: 'paramName'} when implemented as well as length extensions
     ],
-    scale: [
-        'A number without units to multiply the original value by.'
-    ],
+    scale: ['A number without units to multiply the original value by.'],
     duration: ['A CSS time value with second or millisecond units e.g. `"0.3s"` or `"300ms"`.'],
     shadow: [
         'A CSS box shadow value e.g. "10px 5px 5px red;". See https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow',

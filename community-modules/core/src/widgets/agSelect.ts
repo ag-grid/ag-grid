@@ -1,10 +1,11 @@
-import { AgPickerField, AgPickerFieldParams } from "./agPickerField";
-import { ListOption, AgList } from "./agList";
-import { Events } from "../eventKeys";
-import { KeyCode } from "../constants/keyCode";
-import { _setAriaControls } from "../utils/aria";
+import { KeyCode } from '../constants/keyCode';
+import { Events } from '../eventKeys';
+import { _setAriaControls } from '../utils/aria';
+import { AgList, ListOption } from './agList';
+import { AgPickerField, AgPickerFieldParams } from './agPickerField';
 
-export interface AgSelectParams<TValue = string> extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
+export interface AgSelectParams<TValue = string>
+    extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
     options?: ListOption<TValue>[];
     pickerType?: string;
     pickerAriaLabelKey?: string;
@@ -12,7 +13,11 @@ export interface AgSelectParams<TValue = string> extends Omit<AgPickerFieldParam
     placeholder?: string;
 }
 
-export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSelectParams<TValue> & AgPickerFieldParams, AgList<TValue>> {
+export class AgSelect<TValue = string | null> extends AgPickerField<
+    TValue,
+    AgSelectParams<TValue> & AgPickerFieldParams,
+    AgList<TValue>
+> {
     public static EVENT_ITEM_SELECTED = 'selectedItem';
     protected listComponent: AgList<TValue> | undefined;
 
@@ -24,7 +29,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
             className: 'ag-select',
             pickerIcon: 'smallDown',
             ariaRole: 'combobox',
-            ...config
+            ...config,
         });
     }
 
@@ -64,24 +69,18 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
         eListAriaEl.setAttribute('id', listId);
         _setAriaControls(this.getAriaElement(), eListAriaEl);
 
-        this.listComponent.addManagedListener(
-            this.listComponent,
-            AgList.EVENT_ITEM_SELECTED,
-            () => {
-                this.hidePicker();
-                this.dispatchEvent({ type: AgSelect.EVENT_ITEM_SELECTED });
-            }
-        );
+        this.listComponent.addManagedListener(this.listComponent, AgList.EVENT_ITEM_SELECTED, () => {
+            this.hidePicker();
+            this.dispatchEvent({ type: AgSelect.EVENT_ITEM_SELECTED });
+        });
 
-        this.listComponent.addManagedListener(
-            this.listComponent,
-            Events.EVENT_FIELD_VALUE_CHANGED,
-            () => {
-                if (!this.listComponent) { return; }
-                this.setValue(this.listComponent.getValue()!, false, true);
-                this.hidePicker();
+        this.listComponent.addManagedListener(this.listComponent, Events.EVENT_FIELD_VALUE_CHANGED, () => {
+            if (!this.listComponent) {
+                return;
             }
-        );
+            this.setValue(this.listComponent.getValue()!, false, true);
+            this.hidePicker();
+        });
     }
 
     protected createPickerComponent() {
@@ -91,7 +90,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
 
     protected onKeyDown(e: KeyboardEvent): void {
         const { key } = e;
-        
+
         if (key === KeyCode.TAB) {
             this.hidePicker();
         }
@@ -118,7 +117,9 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
     }
 
     public showPicker() {
-        if (!this.listComponent) { return; }
+        if (!this.listComponent) {
+            return;
+        }
 
         super.showPicker();
 
@@ -126,7 +127,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
     }
 
     public addOptions(options: ListOption<TValue>[]): this {
-        options.forEach(option => this.addOption(option));
+        options.forEach((option) => this.addOption(option));
 
         return this;
     }
@@ -144,7 +145,9 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
     }
 
     public setValue(value?: TValue, silent?: boolean, fromPicker?: boolean): this {
-        if (this.value === value || !this.listComponent) { return this; }
+        if (this.value === value || !this.listComponent) {
+            return this;
+        }
 
         if (!fromPicker) {
             this.listComponent.setValue(value, true);
@@ -152,7 +155,9 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
 
         const newValue = this.listComponent.getValue();
 
-        if (newValue === this.getValue()) { return this; }
+        if (newValue === this.getValue()) {
+            return this;
+        }
 
         let displayValue = this.listComponent.getDisplayValue();
         if (displayValue == null && this.config.placeholder) {
@@ -163,7 +168,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
 
         this.setTooltip({
             newTooltipText: displayValue ?? null,
-            shouldDisplayTooltip: () => this.eDisplayField.scrollWidth > this.eDisplayField.clientWidth
+            shouldDisplayTooltip: () => this.eDisplayField.scrollWidth > this.eDisplayField.clientWidth,
         });
 
         return super.setValue(value, silent);

@@ -1,22 +1,23 @@
 import {
+    AsyncTransactionsFlushed,
     Autowired,
     Bean,
     BeanStub,
     Events,
     IServerSideTransactionManager,
     PostConstruct,
+    RowNode,
     RowNodeBlockLoader,
+    RowRenderer,
     ServerSideTransaction,
     ServerSideTransactionResult,
     ServerSideTransactionResultStatus,
     ValueCache,
-    AsyncTransactionsFlushed,
-    RowRenderer,
     WithoutGridCommon,
-    RowNode
-} from "@ag-grid-community/core";
-import { ServerSideRowModel } from "./serverSideRowModel";
-import { ServerSideSelectionService } from "./services/serverSideSelectionService";
+} from '@ag-grid-community/core';
+
+import { ServerSideRowModel } from './serverSideRowModel';
+import { ServerSideSelectionService } from './services/serverSideSelectionService';
 
 interface AsyncTransactionWrapper {
     transaction: ServerSideTransaction;
@@ -25,7 +26,6 @@ interface AsyncTransactionWrapper {
 
 @Bean('ssrmTransactionManager')
 export class TransactionManager extends BeanStub implements IServerSideTransactionManager {
-
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
@@ -38,10 +38,15 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     @PostConstruct
     private postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
-        if (!this.gos.isRowModelType('serverSide')) { return; }
+        if (!this.gos.isRowModelType('serverSide')) {
+            return;
+        }
     }
 
-    public applyTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
+    public applyTransactionAsync(
+        transaction: ServerSideTransaction,
+        callback?: (res: ServerSideTransactionResult) => void
+    ): void {
         if (this.asyncTransactionsTimeout == null) {
             this.scheduleExecuteAsync();
         }
@@ -56,7 +61,9 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     }
 
     private executeAsyncTransactions(): void {
-        if (!this.asyncTransactions) { return; }
+        if (!this.asyncTransactions) {
+            return;
+        }
 
         const resultFuncs: (() => void)[] = [];
         const resultsForEvent: ServerSideTransactionResult[] = [];
@@ -64,16 +71,16 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
         const transactionsToRetry: AsyncTransactionWrapper[] = [];
         let atLeastOneTransactionApplied = false;
 
-        this.asyncTransactions.forEach(txWrapper => {
+        this.asyncTransactions.forEach((txWrapper) => {
             let result: ServerSideTransactionResult | undefined;
-            const hasStarted = this.serverSideRowModel.executeOnStore(txWrapper.transaction.route!, cache => {
+            const hasStarted = this.serverSideRowModel.executeOnStore(txWrapper.transaction.route!, (cache) => {
                 result = cache.applyTransaction(txWrapper.transaction);
             });
 
             if (!hasStarted) {
-                result = {status: ServerSideTransactionResultStatus.StoreNotStarted};
+                result = { status: ServerSideTransactionResultStatus.StoreNotStarted };
             } else if (result == undefined) {
-                result = {status: ServerSideTransactionResultStatus.StoreNotFound};
+                result = { status: ServerSideTransactionResultStatus.StoreNotFound };
             }
 
             resultsForEvent.push(result);
@@ -96,7 +103,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
         // do callbacks in next VM turn so it's async
         if (resultFuncs.length > 0) {
             window.setTimeout(() => {
-                resultFuncs.forEach(func => func());
+                resultFuncs.forEach((func) => func());
             }, 0);
         }
 
@@ -107,13 +114,13 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
 
         if (atLeastOneTransactionApplied) {
             this.valueCache.onDataChanged();
-            this.eventService.dispatchEvent({type: Events.EVENT_STORE_UPDATED});
+            this.eventService.dispatchEvent({ type: Events.EVENT_STORE_UPDATED });
         }
 
         if (resultsForEvent.length > 0) {
-            const event: WithoutGridCommon<AsyncTransactionsFlushed> = {                
+            const event: WithoutGridCommon<AsyncTransactionsFlushed> = {
                 type: Events.EVENT_ASYNC_TRANSACTIONS_FLUSHED,
-                results: resultsForEvent
+                results: resultsForEvent,
             };
             this.eventService.dispatchEvent(event);
         }
@@ -130,7 +137,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {
         let res: ServerSideTransactionResult | undefined;
 
-        const hasStarted = this.serverSideRowModel.executeOnStore(transaction.route!, store => {
+        const hasStarted = this.serverSideRowModel.executeOnStore(transaction.route!, (store) => {
             res = store.applyTransaction(transaction);
         });
 
@@ -139,11 +146,11 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
         } else if (res) {
             this.valueCache.onDataChanged();
             if (res.remove) {
-                const removedRowIds = res.remove.map(row => row.id!);
+                const removedRowIds = res.remove.map((row) => row.id!);
                 this.selectionService.deleteSelectionStateFromParent(transaction.route || [], removedRowIds);
             }
 
-            this.eventService.dispatchEvent({type: Events.EVENT_STORE_UPDATED});
+            this.eventService.dispatchEvent({ type: Events.EVENT_STORE_UPDATED });
             return res;
         } else {
             return { status: ServerSideTransactionResultStatus.StoreNotFound };

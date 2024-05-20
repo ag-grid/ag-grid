@@ -1,26 +1,26 @@
-import { UserCompDetails } from "../../../components/framework/userComponentFactory";
+import { UserCompDetails } from '../../../components/framework/userComponentFactory';
+import { HorizontalDirection } from '../../../constants/direction';
 import { KeyCode } from '../../../constants/keyCode';
-import { DragAndDropService, DragItem, DragSourceType } from "../../../dragAndDrop/dragAndDropService";
-import { Column } from "../../../entities/column";
-import { Events } from "../../../eventKeys";
-import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
-import { ColumnSortState, _getAriaSortState } from "../../../utils/aria";
-import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
-import { ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
-import { HeaderRowCtrl } from "../../row/headerRowCtrl";
-import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
-import { CssClassApplier } from "../cssClassApplier";
-import { HoverFeature } from "../hoverFeature";
-import { HeaderComp, IHeader, IHeaderParams } from "./headerComp";
-import { ResizeFeature } from "./resizeFeature";
-import { SelectAllFeature } from "./selectAllFeature";
-import { _getElementSize } from "../../../utils/dom";
-import { SortDirection } from "../../../entities/colDef";
-import { ColumnMoveHelper } from "../../columnMoveHelper";
-import { HorizontalDirection } from "../../../constants/direction";
-import { WithoutGridCommon } from "../../../interfaces/iCommon";
-import { ColumnHeaderMouseOverEvent, ColumnHeaderMouseLeaveEvent } from "../../../events";
-import { Beans } from "../../../rendering/beans";
+import { DragAndDropService, DragItem, DragSourceType } from '../../../dragAndDrop/dragAndDropService';
+import { SortDirection } from '../../../entities/colDef';
+import { Column } from '../../../entities/column';
+import { Events } from '../../../eventKeys';
+import { ColumnHeaderMouseLeaveEvent, ColumnHeaderMouseOverEvent } from '../../../events';
+import { WithoutGridCommon } from '../../../interfaces/iCommon';
+import { Beans } from '../../../rendering/beans';
+import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
+import { ColumnSortState, _getAriaSortState } from '../../../utils/aria';
+import { _getElementSize } from '../../../utils/dom';
+import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
+import { ITooltipFeatureCtrl, TooltipFeature } from '../../../widgets/tooltipFeature';
+import { ColumnMoveHelper } from '../../columnMoveHelper';
+import { HeaderRowCtrl } from '../../row/headerRowCtrl';
+import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
+import { CssClassApplier } from '../cssClassApplier';
+import { HoverFeature } from '../hoverFeature';
+import { HeaderComp, IHeader, IHeaderParams } from './headerComp';
+import { ResizeFeature } from './resizeFeature';
+import { SelectAllFeature } from './selectAllFeature';
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
@@ -32,7 +32,6 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
 type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort' | 'selectAll' | 'filterButton';
 
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Column, ResizeFeature> {
-
     private refreshFunctions: (() => void)[] = [];
     private selectAllFeature: SelectAllFeature;
 
@@ -54,7 +53,12 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         this.column = column;
     }
 
-    public setComp(comp: IHeaderCellComp, eGui: HTMLElement, eResize: HTMLElement, eHeaderCompWrapper: HTMLElement): void {
+    public setComp(
+        comp: IHeaderCellComp,
+        eGui: HTMLElement,
+        eResize: HTMLElement,
+        eHeaderCompWrapper: HTMLElement
+    ): void {
         this.comp = comp;
 
         this.setGui(eGui);
@@ -75,40 +79,67 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         this.setupUserComp();
         this.refreshAria();
 
-        this.resizeFeature = this.createManagedBean(new ResizeFeature(this.getPinned(), this.column, eResize, comp, this));
+        this.resizeFeature = this.createManagedBean(
+            new ResizeFeature(this.getPinned(), this.column, eResize, comp, this)
+        );
         this.createManagedBean(new HoverFeature([this.column], eGui));
         this.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
-        this.createManagedBean(new ManagedFocusFeature(
-            eGui,
-            {
-                shouldStopEventPropagation: e => this.shouldStopEventPropagation(e),
+        this.createManagedBean(
+            new ManagedFocusFeature(eGui, {
+                shouldStopEventPropagation: (e) => this.shouldStopEventPropagation(e),
                 onTabKeyDown: () => null,
                 handleKeyDown: this.handleKeyDown.bind(this),
                 onFocusIn: this.onFocusIn.bind(this),
-                onFocusOut: this.onFocusOut.bind(this)
-            }
-        ));
+                onFocusOut: this.onFocusOut.bind(this),
+            })
+        );
 
         this.addResizeAndMoveKeyboardListeners();
 
-        this.addManagedPropertyListeners(['suppressMovableColumns', 'suppressMenuHide', 'suppressAggFuncInHeader'], this.refresh.bind(this));
+        this.addManagedPropertyListeners(
+            ['suppressMovableColumns', 'suppressMenuHide', 'suppressAggFuncInHeader'],
+            this.refresh.bind(this)
+        );
         this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.refresh.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_COLUMN_VALUE_CHANGED,
+            this.onColumnValueChanged.bind(this)
+        );
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
+            this.onColumnRowGroupChanged.bind(this)
+        );
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_COLUMN_PIVOT_CHANGED,
+            this.onColumnPivotChanged.bind(this)
+        );
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_HEADER_HEIGHT_CHANGED,
+            this.onHeaderHeightChanged.bind(this)
+        );
     }
 
     protected resizeHeader(delta: number, shiftKey: boolean): void {
-        if (!this.column.isResizable()) { return; }
+        if (!this.column.isResizable()) {
+            return;
+        }
 
         const actualWidth = this.column.getActualWidth();
         const minWidth = this.column.getMinWidth() ?? 0;
         const maxWidth = this.column.getMaxWidth() ?? Number.MAX_SAFE_INTEGER;
-    
+
         const newWidth = Math.min(Math.max(actualWidth + delta, minWidth), maxWidth);
 
-        this.beans.columnSizeService.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true, 'uiColumnResized');
+        this.beans.columnSizeService.setColumnWidths(
+            [{ key: this.column, newWidth }],
+            shiftKey,
+            true,
+            'uiColumnResized'
+        );
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {
@@ -117,10 +148,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         const left = eGui.getBoundingClientRect().left;
         const width = column.getActualWidth();
         const isRtl = gos.get('enableRtl');
-        const isLeft = hDirection === HorizontalDirection.Left !== isRtl;
+        const isLeft = (hDirection === HorizontalDirection.Left) !== isRtl;
 
         const xPosition = ColumnMoveHelper.normaliseX(
-            isLeft ? (left - 20) : (left + width + 20),
+            isLeft ? left - 20 : left + width + 20,
             pinned,
             true,
             gos,
@@ -138,7 +169,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             gos,
             columnModel: this.beans.columnModel,
             columnMoveService: this.beans.columnMoveService,
-            presentedColsService: this.beans.visibleColsService
+            presentedColsService: this.beans.visibleColsService,
         });
 
         ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
@@ -161,7 +192,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     private createParams(): IHeaderParams {
-
         const params: IHeaderParams = this.gos.addGridCommonParams({
             column: this.column,
             displayName: this.displayName!,
@@ -173,14 +203,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
                 this.menuService.showColumnMenu({
                     column: this.column,
                     buttonElement,
-                    positionBy: 'button'
+                    positionBy: 'button',
                 });
             },
             showColumnMenuAfterMouseClick: (mouseEvent: MouseEvent | Touch) => {
                 this.menuService.showColumnMenu({
                     column: this.column,
                     mouseEvent,
-                    positionBy: 'mouse'
+                    positionBy: 'mouse',
                 });
             },
             showFilter: (buttonElement: HTMLElement) => {
@@ -188,19 +218,19 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
                     column: this.column,
                     buttonElement: buttonElement,
                     containerType: 'columnFilter',
-                    positionBy: 'button'
-                })
+                    positionBy: 'button',
+                });
             },
             progressSort: (multiSort?: boolean) => {
-                this.beans.sortController.progressSort(this.column, !!multiSort, "uiColumnSorted");
+                this.beans.sortController.progressSort(this.column, !!multiSort, 'uiColumnSorted');
             },
             setSort: (sort: SortDirection, multiSort?: boolean) => {
-                this.beans.sortController.setSortForColumn(this.column, sort, !!multiSort, "uiColumnSorted");
+                this.beans.sortController.setSortForColumn(this.column, sort, !!multiSort, 'uiColumnSorted');
             },
             eGridHeader: this.getGui(),
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
                 this.setupTooltip(value, shouldDisplayTooltip);
-            }
+            },
         });
 
         return params;
@@ -234,13 +264,15 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             this.showMenuOnKeyPress(e, true);
         } else if (this.sortable) {
             const multiSort = e.shiftKey;
-            this.beans.sortController.progressSort(this.column, multiSort, "uiColumnSorted");
+            this.beans.sortController.progressSort(this.column, multiSort, 'uiColumnSorted');
         }
     }
 
     private showMenuOnKeyPress(e: KeyboardEvent, isFilterShortcut: boolean): void {
         const headerComp = this.comp.getUserCompInstance();
-        if (!headerComp || !(headerComp instanceof HeaderComp)) { return; }
+        if (!headerComp || !(headerComp instanceof HeaderComp)) {
+            return;
+        }
 
         // the header comp knows what features are enabled, so let it handle the shortcut
         if (headerComp.onMenuKeyboardShortcut(isFilterShortcut)) {
@@ -261,9 +293,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     private onFocusOut(e: FocusEvent) {
-        if (
-            this.getGui().contains(e.relatedTarget as HTMLElement)
-        ) { return; }
+        if (this.getGui().contains(e.relatedTarget as HTMLElement)) {
+            return;
+        }
 
         this.setActiveHeader(false);
     }
@@ -280,10 +312,12 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         if (!shouldDisplayTooltip && isTooltipWhenTruncated && !colDef.headerComponent) {
             shouldDisplayTooltip = () => {
                 const textEl = eGui.querySelector('.ag-header-cell-text');
-                if (!textEl) { return true; }
+                if (!textEl) {
+                    return true;
+                }
 
                 return textEl.scrollWidth > textEl.clientWidth;
-            }
+            };
         }
 
         const tooltipCtrl: ITooltipFeatureCtrl = {
@@ -299,7 +333,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
                 const res = this.column.getColDef().headerTooltip;
                 return res;
             },
-            shouldDisplayTooltip
+            shouldDisplayTooltip,
         };
 
         const tooltipFeature = this.createManagedBean(new TooltipFeature(tooltipCtrl));
@@ -314,7 +348,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             const oldClasses = this.userHeaderClasses;
             this.userHeaderClasses = new Set(classes);
 
-            classes.forEach(c => {
+            classes.forEach((c) => {
                 if (oldClasses.has(c)) {
                     // class already added, no need to apply it, but remove from old set
                     oldClasses.delete(c);
@@ -325,7 +359,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             });
 
             // now old set only has classes that were applied last time, but not this time, so remove them
-            oldClasses.forEach(c => this.comp.addOrRemoveCssClass(c, false));
+            oldClasses.forEach((c) => this.comp.addOrRemoveCssClass(c, false));
         };
 
         this.refreshFunctions.push(refreshHeaderClasses);
@@ -336,47 +370,50 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         this.dragSourceElement = eSource;
         this.removeDragSource();
 
-        if (!eSource || !this.draggable) { return; }
+        if (!eSource || !this.draggable) {
+            return;
+        }
 
         const { column, beans, displayName, dragAndDropService, gos } = this;
         const { columnModel } = beans;
 
         let hideColumnOnExit = !this.gos.get('suppressDragLeaveHidesColumns');
-        const dragSource = this.dragSource = {
+        const dragSource = (this.dragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eSource,
-            getDefaultIconName: () => hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: () =>
+                hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => this.createDragItem(column),
             dragItemName: displayName,
             onDragStarted: () => {
                 hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
-                column.setMoving(true, "uiColumnMoved");
+                column.setMoving(true, 'uiColumnMoved');
             },
-            onDragStopped: () => column.setMoving(false, "uiColumnMoved"),
+            onDragStopped: () => column.setMoving(false, 'uiColumnMoved'),
             onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
-                    const unlockedColumns = dragItem?.columns?.filter(col => !col.getColDef().lockVisible) || [];
-                    columnModel.setColsVisible(unlockedColumns, true, "uiColumnMoved");
+                    const unlockedColumns = dragItem?.columns?.filter((col) => !col.getColDef().lockVisible) || [];
+                    columnModel.setColsVisible(unlockedColumns, true, 'uiColumnMoved');
                 }
             },
             onGridExit: (dragItem) => {
                 if (hideColumnOnExit) {
-                    const unlockedColumns = dragItem?.columns?.filter(col => !col.getColDef().lockVisible) || [];
-                    columnModel.setColsVisible(unlockedColumns, false, "uiColumnMoved");
+                    const unlockedColumns = dragItem?.columns?.filter((col) => !col.getColDef().lockVisible) || [];
+                    columnModel.setColsVisible(unlockedColumns, false, 'uiColumnMoved');
                 }
             },
-        };
+        });
 
         dragAndDropService.addDragSource(dragSource, true);
     }
 
     private createDragItem(column: Column): DragItem {
-        const visibleState: { [key: string]: boolean; } = {};
+        const visibleState: { [key: string]: boolean } = {};
         visibleState[column.getId()] = column.isVisible();
 
         return {
             columns: [column],
-            visibleState: visibleState
+            visibleState: visibleState,
         };
     }
 
@@ -396,7 +433,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         this.updateState();
         this.refreshHeaderComp();
         this.refreshAria();
-        this.refreshFunctions.forEach(f => f());
+        this.refreshFunctions.forEach((f) => f());
     }
 
     private refreshHeaderComp(): void {
@@ -405,7 +442,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         const compInstance = this.comp.getUserCompInstance();
 
         // only try refresh if old comp exists adn it is the correct type
-        const attemptRefresh = compInstance != null && this.userCompDetails.componentClass == newCompDetails.componentClass;
+        const attemptRefresh =
+            compInstance != null && this.userCompDetails.componentClass == newCompDetails.componentClass;
 
         const headerCompRefreshed = attemptRefresh ? this.attemptHeaderCompRefresh(newCompDetails.params) : false;
 
@@ -421,10 +459,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     public attemptHeaderCompRefresh(params: IHeaderParams): boolean {
         const headerComp = this.comp.getUserCompInstance();
-        if (!headerComp) { return false; }
+        if (!headerComp) {
+            return false;
+        }
 
         // if no refresh method, then we want to replace the headerComp
-        if (!headerComp.refresh) { return false; }
+        if (!headerComp.refresh) {
+            return false;
+        }
 
         const res = headerComp.refresh(params);
 
@@ -528,7 +570,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     protected onDisplayedColumnsChanged(): void {
         super.onDisplayedColumnsChanged();
-        if (!this.isAlive()) { return; }
+        if (!this.isAlive()) {
+            return;
+        }
         this.onHeaderHeightChanged();
     }
 
@@ -577,7 +621,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     private setupAutoHeight(wrapperElement: HTMLElement) {
         const { columnModel, resizeObserverService } = this.beans;
         const measureHeight = (timesCalled: number) => {
-            if (!this.isAlive()) { return; }
+            if (!this.isAlive()) {
+                return;
+            }
 
             const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = _getElementSize(this.getGui());
             const extraHeight = paddingTop + paddingBottom + borderBottomWidth + borderTopWidth;
@@ -675,7 +721,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     private refreshAriaFilterButton(): void {
         if (this.openFilterEnabled && !this.menuService.isLegacyMenuEnabled()) {
             const translate = this.localeService.getLocaleTextFunc();
-            this.setAriaDescriptionProperty('filterButton', translate('ariaFilterColumn', 'Press CTRL ENTER to open filter'));
+            this.setAriaDescriptionProperty(
+                'filterButton',
+                translate('ariaFilterColumn', 'Press CTRL ENTER to open filter')
+            );
         } else {
             this.setAriaDescriptionProperty('filterButton', null);
         }
@@ -700,13 +749,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     public announceAriaDescription(): void {
-        if (!this.eGui.contains(this.beans.gos.getActiveDomElement())) { return; }
-        const ariaDescription = 
-            Array.from(this.ariaDescriptionProperties.keys())
-                // always announce the filter description first
-                .sort((a: string, b: string) => a === 'filter' ? - 1 : (b.charCodeAt(0) - a.charCodeAt(0)))
-                .map((key: HeaderAriaDescriptionKey) => this.ariaDescriptionProperties.get(key))
-                .join('. ');
+        if (!this.eGui.contains(this.beans.gos.getActiveDomElement())) {
+            return;
+        }
+        const ariaDescription = Array.from(this.ariaDescriptionProperties.keys())
+            // always announce the filter description first
+            .sort((a: string, b: string) => (a === 'filter' ? -1 : b.charCodeAt(0) - a.charCodeAt(0)))
+            .map((key: HeaderAriaDescriptionKey) => this.ariaDescriptionProperties.get(key))
+            .join('. ');
 
         this.beans.ariaAnnouncementService.announceValue(ariaDescription);
     }
@@ -720,7 +770,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     private addColumnHoverListener(): void {
         const listener = () => {
-            if (!this.gos.get('columnHoverHighlight')) { return; }
+            if (!this.gos.get('columnHoverHighlight')) {
+                return;
+            }
             const isHovered = this.beans.columnHoverService.isHovered(this.column);
             this.comp.addOrRemoveCssClass('ag-column-hover', isHovered);
         };
@@ -736,7 +788,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     private addActiveHeaderMouseListeners(): void {
         const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
         const clickListener = () => this.dispatchColumnMouseEvent(Events.EVENT_COLUMN_HEADER_CLICKED, this.column);
-        const contextMenuListener = (event: MouseEvent) => this.handleContextMenuMouseEvent(event, undefined, this.column);
+        const contextMenuListener = (event: MouseEvent) =>
+            this.handleContextMenuMouseEvent(event, undefined, this.column);
 
         this.addManagedListener(this.getGui(), 'mouseenter', listener);
         this.addManagedListener(this.getGui(), 'mouseleave', listener);
@@ -746,9 +799,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     private handleMouseOverChange(isMouseOver: boolean): void {
         this.setActiveHeader(isMouseOver);
-        const eventType = isMouseOver ?
-            Events.EVENT_COLUMN_HEADER_MOUSE_OVER :
-            Events.EVENT_COLUMN_HEADER_MOUSE_LEAVE;
+        const eventType = isMouseOver ? Events.EVENT_COLUMN_HEADER_MOUSE_OVER : Events.EVENT_COLUMN_HEADER_MOUSE_LEAVE;
 
         const event: WithoutGridCommon<ColumnHeaderMouseOverEvent> | WithoutGridCommon<ColumnHeaderMouseLeaveEvent> = {
             type: eventType,

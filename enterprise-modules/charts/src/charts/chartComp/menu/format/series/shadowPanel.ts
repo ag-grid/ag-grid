@@ -1,17 +1,10 @@
-import {
-    AgGroupComponentParams,
-    AgSliderParams,
-    Autowired,
-    Component,
-    PostConstruct,
-} from "@ag-grid-community/core";
-import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import { AgGroupComponentParams, AgSliderParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+
+import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class ShadowPanel extends Component {
-
-    public static TEMPLATE = /* html */
-        `<div>
+    public static TEMPLATE /* html */ = `<div>
             <ag-group-component ref="shadowGroup">
                 <ag-color-picker ref="shadowColorPicker"></ag-color-picker>
                 <ag-slider ref="shadowBlurSlider"></ag-slider>
@@ -22,8 +15,10 @@ export class ShadowPanel extends Component {
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    constructor(private readonly chartMenuUtils: ChartMenuParamsFactory,
-                private propertyKey: string = "shadow") {
+    constructor(
+        private readonly chartMenuUtils: ChartMenuParamsFactory,
+        private propertyKey: string = 'shadow'
+    ) {
         super();
     }
 
@@ -37,28 +32,24 @@ export class ShadowPanel extends Component {
                 cssIdentifier: 'charts-format-sub-level',
                 direction: 'vertical',
                 suppressOpenCloseIcons: true,
-                title: this.chartTranslationService.translate("shadow"),
+                title: this.chartTranslationService.translate('shadow'),
                 suppressEnabledCheckbox: true,
-                useToggle: true
+                useToggle: true,
             }
         );
         const shadowColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(`${propertyNamespace}.color`);
         this.setTemplate(ShadowPanel.TEMPLATE, {
             shadowGroup: shadowGroupParams,
             shadowColorPicker: shadowColorPickerParams,
-            shadowBlurSlider: this.getSliderParams("blur", 0, 20),
-            shadowXOffsetSlider: this.getSliderParams("xOffset", -10, 10),
-            shadowYOffsetSlider: this.getSliderParams("yOffset", -10, 10)
+            shadowBlurSlider: this.getSliderParams('blur', 0, 20),
+            shadowXOffsetSlider: this.getSliderParams('xOffset', -10, 10),
+            shadowYOffsetSlider: this.getSliderParams('yOffset', -10, 10),
         });
     }
 
     private getSliderParams(property: ChartTranslationKey, minValue: number, defaultMaxValue: number): AgSliderParams {
-        const expression = `${this.propertyKey}.${property}`
-        const params = this.chartMenuUtils.getDefaultSliderParams(
-            expression,
-            property,
-            defaultMaxValue
-        );
+        const expression = `${this.propertyKey}.${property}`;
+        const params = this.chartMenuUtils.getDefaultSliderParams(expression, property, defaultMaxValue);
         params.minValue = minValue;
         return params;
     }

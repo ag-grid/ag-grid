@@ -1,11 +1,10 @@
-import { BeanStub } from "../../context/beanStub";
-import { Autowired, PostConstruct } from "../../context/context";
-import { Events } from "../../eventKeys";
-import { _setDisplayed, _setFixedWidth } from "../../utils/dom";
-import { PinnedWidthService } from "../pinnedWidthService";
+import { BeanStub } from '../../context/beanStub';
+import { Autowired, PostConstruct } from '../../context/context';
+import { Events } from '../../eventKeys';
+import { _setDisplayed, _setFixedWidth } from '../../utils/dom';
+import { PinnedWidthService } from '../pinnedWidthService';
 
 export class SetPinnedLeftWidthFeature extends BeanStub {
-
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
 
     private element: HTMLElement;
@@ -17,7 +16,11 @@ export class SetPinnedLeftWidthFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, this.onPinnedLeftWidthChanged.bind(this));
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_LEFT_PINNED_WIDTH_CHANGED,
+            this.onPinnedLeftWidthChanged.bind(this)
+        );
     }
 
     private onPinnedLeftWidthChanged(): void {
@@ -30,5 +33,4 @@ export class SetPinnedLeftWidthFeature extends BeanStub {
     public getWidth(): number {
         return this.pinnedWidthService.getPinnedLeftWidth();
     }
-
 }

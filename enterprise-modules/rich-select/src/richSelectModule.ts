@@ -1,7 +1,8 @@
-import { Module, ModuleNames } from "@ag-grid-community/core";
-import { EnterpriseCoreModule } from "@ag-grid-enterprise/core";
-import { RichSelectCellEditor } from "./richSelect/richSelectCellEditor";
-import { VERSION } from "./version";
+import { Module, ModuleNames } from '@ag-grid-community/core';
+import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
+
+import { RichSelectCellEditor } from './richSelect/richSelectCellEditor';
+import { VERSION } from './version';
 
 export const RichSelectModule: Module = {
     version: VERSION,
@@ -9,9 +10,7 @@ export const RichSelectModule: Module = {
     beans: [],
     userComponents: [
         { componentName: 'agRichSelect', componentClass: RichSelectCellEditor },
-        { componentName: 'agRichSelectCellEditor', componentClass: RichSelectCellEditor }
+        { componentName: 'agRichSelectCellEditor', componentClass: RichSelectCellEditor },
     ],
-    dependantModules: [
-        EnterpriseCoreModule
-    ]
+    dependantModules: [EnterpriseCoreModule],
 };

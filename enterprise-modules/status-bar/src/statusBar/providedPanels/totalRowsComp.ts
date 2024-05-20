@@ -1,8 +1,17 @@
-import { Autowired, Events, IClientSideRowModel, IRowModel, IStatusPanelComp, PostConstruct, _formatNumberCommas, _warnOnce } from '@ag-grid-community/core';
-import { NameValueComp } from "./nameValueComp";
+import {
+    Autowired,
+    Events,
+    IClientSideRowModel,
+    IRowModel,
+    IStatusPanelComp,
+    PostConstruct,
+    _formatNumberCommas,
+    _warnOnce,
+} from '@ag-grid-community/core';
+
+import { NameValueComp } from './nameValueComp';
 
 export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
-
     @Autowired('rowModel') private rowModel: IRowModel;
 
     @PostConstruct
@@ -33,12 +42,11 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
 
     private getRowCountValue(): number {
         let totalRowCount = 0;
-        (this.rowModel as IClientSideRowModel).forEachLeafNode((node) => totalRowCount += 1);
+        (this.rowModel as IClientSideRowModel).forEachLeafNode((node) => (totalRowCount += 1));
         return totalRowCount;
     }
 
-    public init() {
-    }
+    public init() {}
 
     public refresh(): boolean {
         return true;
@@ -49,5 +57,4 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
     public destroy(): void {
         super.destroy();
     }
-
 }

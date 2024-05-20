@@ -1,5 +1,18 @@
-import { Autowired, BeanStub, Events, IRowModel, PostConstruct, RowNode, SelectionChangedEvent, SelectionEventSourceType, WithoutGridCommon, ISetNodesSelectedParams, IServerSideSelectionState } from "@ag-grid-community/core";
-import { ISelectionStrategy } from "./iSelectionStrategy";
+import {
+    Autowired,
+    BeanStub,
+    Events,
+    IRowModel,
+    IServerSideSelectionState,
+    ISetNodesSelectedParams,
+    PostConstruct,
+    RowNode,
+    SelectionChangedEvent,
+    SelectionEventSourceType,
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
+
+import { ISelectionStrategy } from './iSelectionStrategy';
 
 interface SelectedState {
     selectAll: boolean;
@@ -24,7 +37,6 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         this.addManagedPropertyListener('rowSelection', (propChange) => {
             this.rowSelection = propChange.currentValue;
         });
-
     }
 
     public getSelectedState(): IServerSideSelectionState {
@@ -48,7 +60,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
         if ('selectAll' in state && typeof state.selectAll === 'boolean') {
             newState.selectAll = state.selectAll;
-        }  else {
+        } else {
             console.error('AG Grid: Select all status should be of boolean type.');
             return;
         }
@@ -76,7 +88,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
         let anyNodesToggled = false;
 
-        removedNodeIds.forEach(id => {
+        removedNodeIds.forEach((id) => {
             if (this.selectedState.toggledNodes.delete(id)) {
                 anyNodesToggled = true;
             }
@@ -91,7 +103,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         const onlyThisNode = params.clearSelection && params.newValue && !params.rangeSelect;
         if (this.rowSelection !== 'multiple' || onlyThisNode) {
             if (params.nodes.length > 1) {
-                throw new Error('AG Grid: cannot select multiple rows when rowSelection is set to \'single\'');
+                throw new Error("AG Grid: cannot select multiple rows when rowSelection is set to 'single'");
             }
             const node = params.nodes[0];
             if (params.newValue) {
@@ -105,7 +117,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 this.selectedState = {
                     selectAll: false,
                     toggledNodes: new Set(),
-                }
+                };
             }
             this.lastSelected = node.id!;
             return 1;
@@ -125,7 +137,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 return;
             }
             this.selectedState.toggledNodes.add(node.id!);
-        }
+        };
 
         if (params.rangeSelect && this.lastSelected) {
             if (params.nodes.length > 1) {
@@ -165,7 +177,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     }
 
     public getSelectedRows(): any[] {
-        return this.getSelectedNodes().map(node => node.data);
+        return this.getSelectedNodes().map((node) => node.data);
     }
 
     public getSelectionCount(): number {
@@ -180,9 +192,9 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         this.selectedState = {
             selectAll: false,
             toggledNodes: new Set([rowNodeToKeepSelected.id!]),
-        }
+        };
 
-        this.rowModel.forEachNode(node => {
+        this.rowModel.forEachNode((node) => {
             if (node !== rowNodeToKeepSelected) {
                 node.selectThisNode(false, undefined, source);
             }
@@ -200,14 +212,22 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     public isEmpty(): boolean {
         return !this.selectedState.selectAll && !this.selectedState.toggledNodes?.size;
     }
-    
-    public selectAllRowNodes(params: { source: SelectionEventSourceType; justFiltered?: boolean | undefined; justCurrentPage?: boolean | undefined; }): void {
+
+    public selectAllRowNodes(params: {
+        source: SelectionEventSourceType;
+        justFiltered?: boolean | undefined;
+        justCurrentPage?: boolean | undefined;
+    }): void {
         this.selectedState = { selectAll: true, toggledNodes: new Set() };
         this.selectedNodes = {};
         this.selectAllUsed = true;
     }
 
-    public deselectAllRowNodes(params: { source: SelectionEventSourceType; justFiltered?: boolean | undefined; justCurrentPage?: boolean | undefined; }): void {
+    public deselectAllRowNodes(params: {
+        source: SelectionEventSourceType;
+        justFiltered?: boolean | undefined;
+        justCurrentPage?: boolean | undefined;
+    }): void {
         this.selectedState = { selectAll: false, toggledNodes: new Set() };
         this.selectedNodes = {};
     }

@@ -1,13 +1,13 @@
 // we pass a VO of the column and not the column itself,
 // so the data is read to be be converted to JSON and thrown
 // over the wire
-import { ColumnVO } from "./iColumnVO";
-import { LoadSuccessParams } from "../rowNodeCache/rowNodeBlock";
-import { SortModelItem } from "../sortController";
-import { AgGridCommon } from "./iCommon";
-import { IRowNode } from "./iRowNode";
-import { FilterModel } from "./iFilter";
-import { AdvancedFilterModel } from "./advancedFilterModel";
+import { LoadSuccessParams } from '../rowNodeCache/rowNodeBlock';
+import { SortModelItem } from '../sortController';
+import { AdvancedFilterModel } from './advancedFilterModel';
+import { ColumnVO } from './iColumnVO';
+import { AgGridCommon } from './iCommon';
+import { FilterModel } from './iFilter';
+import { IRowNode } from './iRowNode';
 
 export interface IServerSideGetRowsRequest {
     /** First row requested or undefined for all rows. */
@@ -55,7 +55,6 @@ export interface IServerSideGetRowsParams<TData = any, TContext = any> extends A
      * Fail callback, tell the grid the call failed so it can adjust it's state.
      */
     fail(): void;
-
 }
 
 // datasource for Server Side Row Model

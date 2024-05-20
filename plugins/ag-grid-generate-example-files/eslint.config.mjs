@@ -12,7 +12,7 @@ export default [
             '@typescript-eslint/ban-ts-comment': 'warn',
             'prefer-const': 'warn',
             'no-useless-escape': 'warn',
-            'prefer-spread': 'warn'
+            'prefer-spread': 'warn',
         },
     },
 ];

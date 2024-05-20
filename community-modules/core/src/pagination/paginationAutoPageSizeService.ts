@@ -1,14 +1,13 @@
-import { BeanStub } from "../context/beanStub";
-import { Events } from "../events";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { CtrlsService } from "../ctrlsService";
-import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
-import { _debounce } from "../utils/function";
-import { PaginationProxy } from "./paginationProxy";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, PostConstruct } from '../context/context';
+import { CtrlsService } from '../ctrlsService';
+import { Events } from '../events';
+import { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
+import { _debounce } from '../utils/function';
+import { PaginationProxy } from './paginationProxy';
 
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
-
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
@@ -20,11 +19,15 @@ export class PaginationAutoPageSizeService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.ctrlsService.whenReady(p => {
+        this.ctrlsService.whenReady((p) => {
             this.centerRowsCtrl = p.center;
 
             this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.checkPageSize.bind(this));
-            this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.checkPageSize.bind(this));
+            this.addManagedListener(
+                this.eventService,
+                Events.EVENT_SCROLL_VISIBILITY_CHANGED,
+                this.checkPageSize.bind(this)
+            );
             this.addManagedPropertyListener('paginationAutoPageSize', this.onPaginationAutoSizeChanged.bind(this));
 
             this.checkPageSize();
@@ -44,7 +47,9 @@ export class PaginationAutoPageSizeService extends BeanStub {
     }
 
     private checkPageSize(): void {
-        if (this.notActive()) { return; }
+        if (this.notActive()) {
+            return;
+        }
 
         const bodyHeight = this.centerRowsCtrl.getViewportSizeFeature()!.getBodyHeight();
 
@@ -53,7 +58,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
                 const rowHeight = Math.max(this.gos.getRowHeightAsNumber(), 1); // prevent divide by zero error if row height is 0
                 const newPageSize = Math.floor(bodyHeight / rowHeight);
                 this.paginationProxy.setPageSize(newPageSize, 'autoCalculated');
-            }
+            };
 
             if (!this.isBodyRendered) {
                 update();

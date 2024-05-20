@@ -1,6 +1,7 @@
-import { AgInputTextFieldParams, AgSliderParams, Autowired } from "@ag-grid-community/core";
-import { ChartMenuService } from "../../../services/chartMenuService";
-import { TitlePanel } from "./titlePanel";
+import { AgInputTextFieldParams, AgSliderParams, Autowired } from '@ag-grid-community/core';
+
+import { ChartMenuService } from '../../../services/chartMenuService';
+import { TitlePanel } from './titlePanel';
 
 export class ChartTitlePanel extends TitlePanel {
     @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;

@@ -1,15 +1,23 @@
-import { AgFieldParams, AgCheckboxParams, AgInputNumberFieldParams, AgSelectParams, AgSliderParams, Autowired, BeanStub, ListOption } from "@ag-grid-community/core";
-import { AgColorPickerParams } from "../../../widgets/agColorPicker";
-import { ChartOptionsProxy } from "../services/chartOptionsService";
-import { ChartTranslationKey, ChartTranslationService } from "../services/chartTranslationService";
-import { FontPanelParams } from "./format/fontPanel";
+import {
+    AgCheckboxParams,
+    AgFieldParams,
+    AgInputNumberFieldParams,
+    AgSelectParams,
+    AgSliderParams,
+    Autowired,
+    BeanStub,
+    ListOption,
+} from '@ag-grid-community/core';
+
+import { AgColorPickerParams } from '../../../widgets/agColorPicker';
+import { ChartOptionsProxy } from '../services/chartOptionsService';
+import { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
+import { FontPanelParams } from './format/fontPanel';
 
 export class ChartMenuParamsFactory extends BeanStub {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    constructor(
-        private readonly chartOptionsProxy: ChartOptionsProxy,
-    ) {
+    constructor(private readonly chartOptionsProxy: ChartOptionsProxy) {
         super();
     }
 
@@ -19,7 +27,7 @@ export class ChartMenuParamsFactory extends BeanStub {
         options?: {
             parseInputValue: (value: any) => any;
             formatInputValue: (value: any) => any;
-        },
+        }
     ): AgColorPickerParams {
         return this.addValueParams(
             expression,
@@ -28,9 +36,9 @@ export class ChartMenuParamsFactory extends BeanStub {
                 labelWidth: 'flex',
                 inputWidth: 'flex',
                 labelAlignment: 'top',
-                pickerGap: 6
+                pickerGap: 6,
             },
-            options,
+            options
         );
     }
 
@@ -38,10 +46,10 @@ export class ChartMenuParamsFactory extends BeanStub {
         expression: string,
         labelKey: ChartTranslationKey,
         options?: {
-            precision?: number,
-            step?: number,
-            min?: number,
-            max?: number,
+            precision?: number;
+            step?: number;
+            min?: number;
+            max?: number;
         }
     ): AgInputNumberFieldParams {
         return this.addValueParams<AgInputNumberFieldParams>(
@@ -57,11 +65,11 @@ export class ChartMenuParamsFactory extends BeanStub {
                 max: options?.max,
             },
             {
-                parseInputValue: value => {
+                parseInputValue: (value) => {
                     const numberValue = Number(value);
                     return isNaN(numberValue) ? undefined : numberValue;
                 },
-                formatInputValue: value => {
+                formatInputValue: (value) => {
                     return value == null ? '' : `${value}`;
                 },
             }
@@ -79,7 +87,7 @@ export class ChartMenuParamsFactory extends BeanStub {
             value = value[0];
         }
         const params = this.getDefaultSliderParamsWithoutValueParams(value, labelKey, defaultMaxValue);
-        params.onValueChange = value => this.chartOptionsProxy.setValue(expression, isArray ? [value] : value);
+        params.onValueChange = (value) => this.chartOptionsProxy.setValue(expression, isArray ? [value] : value);
         return params;
     }
 
@@ -93,7 +101,7 @@ export class ChartMenuParamsFactory extends BeanStub {
             minValue: 0,
             maxValue: Math.max(value, defaultMaxValue),
             textFieldWidth: 45,
-            value: `${value}`
+            value: `${value}`,
         };
     }
 
@@ -101,9 +109,9 @@ export class ChartMenuParamsFactory extends BeanStub {
         expression: string,
         labelKey: ChartTranslationKey,
         options?: {
-            readOnly?: boolean,
-            passive?: boolean,
-        },
+            readOnly?: boolean;
+            passive?: boolean;
+        }
     ): AgCheckboxParams {
         const value = this.chartOptionsProxy.getValue<boolean>(expression);
         const params: AgCheckboxParams = {
@@ -145,45 +153,45 @@ export class ChartMenuParamsFactory extends BeanStub {
             options,
             pickerGap: 6,
             value,
-            onValueChange
-        }
+            onValueChange,
+        };
     }
 
-    public getDefaultFontPanelParams(
-        expression: string,
-        labelKey: ChartTranslationKey
-    ): FontPanelParams {
+    public getDefaultFontPanelParams(expression: string, labelKey: ChartTranslationKey): FontPanelParams {
         const keyMapper = (key: string) => `${expression}.${key}`;
-        return this.addEnableParams<FontPanelParams>(
-            keyMapper('enabled'),
-            {
-                name: this.chartTranslationService.translate(labelKey),
-                suppressEnabledCheckbox: false,
-                chartMenuParamsFactory: this,
-                keyMapper
-            } as any
-        );
+        return this.addEnableParams<FontPanelParams>(keyMapper('enabled'), {
+            name: this.chartTranslationService.translate(labelKey),
+            suppressEnabledCheckbox: false,
+            chartMenuParamsFactory: this,
+            keyMapper,
+        } as any);
     }
 
-    public addValueParams<P extends AgFieldParams>(expression: string, params: P, options?: {
-        parseInputValue: (value: any) => any;
-        formatInputValue: (value: any) => any;
-    }): P {
+    public addValueParams<P extends AgFieldParams>(
+        expression: string,
+        params: P,
+        options?: {
+            parseInputValue: (value: any) => any;
+            formatInputValue: (value: any) => any;
+        }
+    ): P {
         const optionsValue = this.chartOptionsProxy.getValue(expression);
         params.value = options?.formatInputValue ? options.formatInputValue(optionsValue) : optionsValue;
-        params.onValueChange = value => {
+        params.onValueChange = (value) => {
             const optionsValue = options?.parseInputValue ? options.parseInputValue(value) : value;
             this.chartOptionsProxy.setValue(expression, optionsValue);
         };
         return params;
     }
 
-    public addEnableParams<P extends {
-        enabled?: boolean;
-        onEnableChange?: (value: boolean) => void;
-    }>(expression: string, params: P): P {
-        params.enabled =  this.chartOptionsProxy.getValue(expression) ?? false;
-        params.onEnableChange = value => this.chartOptionsProxy.setValue(expression, value);
+    public addEnableParams<
+        P extends {
+            enabled?: boolean;
+            onEnableChange?: (value: boolean) => void;
+        },
+    >(expression: string, params: P): P {
+        params.enabled = this.chartOptionsProxy.getValue(expression) ?? false;
+        params.onEnableChange = (value) => this.chartOptionsProxy.setValue(expression, value);
         return params;
     }
 

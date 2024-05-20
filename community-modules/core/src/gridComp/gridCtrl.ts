@@ -1,18 +1,18 @@
-import { Autowired } from "../context/context";
-import { FocusService } from "../focusService";
-import { BeanStub } from "../context/beanStub";
-import { ModuleRegistry } from "../modules/moduleRegistry";
-import { ModuleNames } from "../modules/moduleNames";
-import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
-import { Events } from "../eventKeys";
-import { ResizeObserverService } from "../misc/resizeObserverService";
-import { GridSizeChangedEvent } from "../events";
-import { CtrlsService } from "../ctrlsService";
-import { MouseEventService } from "../gridBodyComp/mouseEventService";
-import { _last } from "../utils/array";
-import { DragAndDropService, DragSourceType } from "../dragAndDrop/dragAndDropService";
-import { WithoutGridCommon } from "../interfaces/iCommon";
-import { VisibleColsService } from "../columns/visibleColsService";
+import { VisibleColsService } from '../columns/visibleColsService';
+import { BeanStub } from '../context/beanStub';
+import { Autowired } from '../context/context';
+import { CtrlsService } from '../ctrlsService';
+import { DragAndDropService, DragSourceType } from '../dragAndDrop/dragAndDropService';
+import { Events } from '../eventKeys';
+import { GridSizeChangedEvent } from '../events';
+import { FocusService } from '../focusService';
+import { MouseEventService } from '../gridBodyComp/mouseEventService';
+import { WithoutGridCommon } from '../interfaces/iCommon';
+import { ResizeObserverService } from '../misc/resizeObserverService';
+import { ModuleNames } from '../modules/moduleNames';
+import { ModuleRegistry } from '../modules/moduleRegistry';
+import { LayoutFeature, LayoutView } from '../styling/layoutFeature';
+import { _last } from '../utils/array';
 
 export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
@@ -24,7 +24,6 @@ export interface IGridComp extends LayoutView {
 }
 
 export class GridCtrl extends BeanStub {
-
     @Autowired('focusService') protected readonly focusService: FocusService;
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
@@ -57,10 +56,12 @@ export class GridCtrl extends BeanStub {
         this.addRtlSupport();
 
         const unsubscribeFromResize = this.resizeObserverService.observeResize(
-            this.eGridHostDiv, this.onGridSizeChanged.bind(this));
+            this.eGridHostDiv,
+            this.onGridSizeChanged.bind(this)
+        );
         this.addDestroyFunc(() => unsubscribeFromResize());
 
-        this.ctrlsService.register('gridCtrl',this);
+        this.ctrlsService.register('gridCtrl', this);
     }
 
     public isDetailGrid(): boolean {
@@ -89,7 +90,7 @@ export class GridCtrl extends BeanStub {
         const event: WithoutGridCommon<GridSizeChangedEvent> = {
             type: Events.EVENT_GRID_SIZE_CHANGED,
             clientWidth: this.eGridHostDiv.clientWidth,
-            clientHeight: this.eGridHostDiv.clientHeight
+            clientHeight: this.eGridHostDiv.clientHeight,
         };
         this.eventService.dispatchEvent(event);
     }
@@ -118,7 +119,7 @@ export class GridCtrl extends BeanStub {
     public focusNextInnerContainer(backwards: boolean): boolean {
         const focusableContainers = this.view.getFocusableContainers();
         const activeEl = this.gos.getActiveDomElement();
-        const idxWithFocus = focusableContainers.findIndex(container => container.contains(activeEl));
+        const idxWithFocus = focusableContainers.findIndex((container) => container.contains(activeEl));
         const nextIdx = idxWithFocus + (backwards ? -1 : 1);
 
         if (nextIdx <= 0 || nextIdx >= focusableContainers.length) {
@@ -138,7 +139,9 @@ export class GridCtrl extends BeanStub {
             }
 
             const lastColumn = _last(allColumns);
-            if (this.focusService.focusGridView(lastColumn, true)) { return true; }
+            if (this.focusService.focusGridView(lastColumn, true)) {
+                return true;
+            }
         }
 
         if (this.gos.get('headerHeight') === 0 || this.gos.get('suppressHeaderFocus')) {

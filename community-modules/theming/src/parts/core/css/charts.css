@@ -475,7 +475,8 @@
     margin-bottom: calc(var(--ag-grid-size) * 2);
 }
 
-.ag-charts-format-sub-level-group-title-bar, .ag-charts-advanced-settings-top-level-group-title-bar {
+.ag-charts-format-sub-level-group-title-bar,
+.ag-charts-advanced-settings-top-level-group-title-bar {
     padding-top: 0;
     padding-bottom: 0;
     background: none;

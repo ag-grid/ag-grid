@@ -6,11 +6,11 @@ const mergeCellFactory: ExcelOOXMLTemplate = {
             name: 'mergeCell',
             properties: {
                 rawMap: {
-                    ref: ref
-                }
-            }
+                    ref: ref,
+                },
+            },
         };
-    }
+    },
 };
 
 export default mergeCellFactory;

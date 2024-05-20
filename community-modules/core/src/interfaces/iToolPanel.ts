@@ -1,15 +1,16 @@
-import { ColDef, ColGroupDef } from "../entities/colDef";
-import { ColumnEventType } from "../events";
-import { IComponent } from "./iComponent";
-import { AgGridCommon } from "./iCommon";
-import { ColumnToolPanelState } from "./gridState";
+import { ColDef, ColGroupDef } from '../entities/colDef';
+import { ColumnEventType } from '../events';
+import { ColumnToolPanelState } from './gridState';
+import { AgGridCommon } from './iCommon';
+import { IComponent } from './iComponent';
 
 export interface BaseToolPanelParams<TData = any, TContext = any, TState = any> extends AgGridCommon<TData, TContext> {
     /** The tool-panel-specific initial state as provided in grid options if applicable */
     initialState?: TState | undefined;
 }
 
-export interface IToolPanelParams<TData = any, TContext = any, TState = any> extends BaseToolPanelParams<TData, TContext, TState> {
+export interface IToolPanelParams<TData = any, TContext = any, TState = any>
+    extends BaseToolPanelParams<TData, TContext, TState> {
     /** If tool panel is saving and restoring state, this should be called after the state is updated */
     onStateUpdated: () => void;
 }
@@ -29,13 +30,15 @@ export interface IToolPanel<TData = any, TContext = any, TState = any> {
 }
 
 export interface IToolPanelComp<TData = any, TContext = any, TState = any>
-    extends IToolPanel<TData, TContext, TState>, IComponent<IToolPanelParams<TData, TContext, TState>> { }
+    extends IToolPanel<TData, TContext, TState>,
+        IComponent<IToolPanelParams<TData, TContext, TState>> {}
 
 /**
  * @deprecated v31.3 - Use `IToolPanelColumnCompParams` instead.
  */
-export interface ToolPanelColumnCompParams<TData = any, TContext = any> extends IToolPanelParams<TData, TContext, ColumnToolPanelState>, IToolPanelColumnCompParams {
-}
+export interface ToolPanelColumnCompParams<TData = any, TContext = any>
+    extends IToolPanelParams<TData, TContext, ColumnToolPanelState>,
+        IToolPanelColumnCompParams {}
 
 export interface IToolPanelColumnCompParams {
     /** Suppress Column Move */

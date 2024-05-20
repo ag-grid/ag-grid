@@ -1,7 +1,8 @@
 import { ChartType } from '@ag-grid-community/core';
 import { _Scene, _Theme, _Util } from 'ag-charts-community';
-import { MiniChartWithAxes } from '../miniChartWithAxes';
+
 import { ThemeTemplateParameters } from '../../miniChartsContainer';
+import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export class MiniBoxPlot extends MiniChartWithAxes {
     static chartType: ChartType = 'boxPlot';

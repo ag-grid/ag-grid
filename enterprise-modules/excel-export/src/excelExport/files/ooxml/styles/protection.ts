@@ -9,11 +9,11 @@ const protectionFactory: ExcelOOXMLTemplate = {
             properties: {
                 rawMap: {
                     hidden,
-                    locked
-                }
-            }
+                    locked,
+                },
+            },
         };
-    }
+    },
 };
 
 export default protectionFactory;

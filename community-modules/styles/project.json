@@ -6,9 +6,7 @@
   "targets": {
     "build": {
       "executor": "nx:noop",
-      "dependsOn": [
-        "build:styles"
-      ],
+      "dependsOn": ["build:styles"],
       "inputs": [],
       "outputs": []
     },
@@ -80,10 +78,5 @@
       }
     }
   },
-  "tags": [
-    "module:community",
-    "module",
-    "community",
-    "styles"
-  ]
+  "tags": ["module:community", "module", "community", "styles"]
 }

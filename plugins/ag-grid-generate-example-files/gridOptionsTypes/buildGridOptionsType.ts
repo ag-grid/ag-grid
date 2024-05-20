@@ -1,4 +1,5 @@
 import ts from 'typescript';
+
 import { writeJSONFile } from '../src/executors-utils';
 import { PropertyKeys } from '../src/executors/generate/generator/_copiedFromCore/propertyKeys';
 
@@ -22,7 +23,7 @@ function getTypes(node: ts.Node) {
 }
 
 function getTypeLookupFunc(fileName) {
-    console.log('Generating gridOptions types');    
+    console.log('Generating gridOptions types');
     let lookupType = (propName: string) => undefined;
     const program = ts.createProgram([fileName], {});
     program.getTypeChecker(); // does something important to make types work below

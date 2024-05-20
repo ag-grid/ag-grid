@@ -5,8 +5,9 @@ import {
     RefSelector,
     _clearElement,
     _createIconNoSpan,
-} from "@ag-grid-community/core";
-import { ChartTranslationKey, ChartTranslationService } from "../services/chartTranslationService";
+} from '@ag-grid-community/core';
+
+import { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
 
 interface ChartToolbarButton {
     buttonName: ChartToolbarMenuItemOptions;
@@ -16,33 +17,33 @@ interface ChartToolbarButton {
 
 export class ChartToolbar extends Component {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @RefSelector("eMenu") private eMenu: HTMLButtonElement;
+    @RefSelector('eMenu') private eMenu: HTMLButtonElement;
 
     private buttonListenersDestroyFuncs: ((() => null) | undefined)[] = [];
 
     constructor() {
-        super(/* html */`<div class="ag-chart-menu" ref="eMenu"></div>`);
+        super(/* html */ `<div class="ag-chart-menu" ref="eMenu"></div>`);
     }
 
-    public updateParams(params: {
-        buttons: ChartToolbarButton[]
-    }): void {
+    public updateParams(params: { buttons: ChartToolbarButton[] }): void {
         const { buttons } = params;
         this.createButtons(buttons);
     }
 
     private createButtons(buttons: ChartToolbarButton[]): void {
-        this.buttonListenersDestroyFuncs.forEach(func => func?.());
+        this.buttonListenersDestroyFuncs.forEach((func) => func?.());
         this.buttonListenersDestroyFuncs = [];
 
         const menuEl = this.eMenu;
         _clearElement(menuEl);
 
-        buttons.forEach(buttonConfig => {
+        buttons.forEach((buttonConfig) => {
             const { buttonName, iconName, callback } = buttonConfig;
             const buttonEl = this.createButton(iconName);
 
-            const tooltipTitle = this.chartTranslationService.translate(buttonName + 'ToolbarTooltip' as ChartTranslationKey);
+            const tooltipTitle = this.chartTranslationService.translate(
+                (buttonName + 'ToolbarTooltip') as ChartTranslationKey
+            );
             if (tooltipTitle && buttonEl instanceof HTMLElement) {
                 buttonEl.title = tooltipTitle;
             }
@@ -56,12 +57,7 @@ export class ChartToolbar extends Component {
     }
 
     private createButton(iconName: string): Element {
-        let buttonEl = _createIconNoSpan(
-            iconName,
-            this.gos,
-            undefined,
-            true
-        )!;
+        let buttonEl = _createIconNoSpan(iconName, this.gos, undefined, true)!;
         buttonEl.classList.add('ag-chart-menu-icon');
 
         const wrapperEl = this.gos.getDocument().createElement('button');

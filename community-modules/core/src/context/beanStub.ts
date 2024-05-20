@@ -1,17 +1,22 @@
-import { IEventEmitter } from "../interfaces/iEventEmitter";
-import { EventService } from "../eventService";
-import { AgEvent, AgEventListener } from "../events";
-import { Autowired, Context, PreDestroy } from "./context";
-import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
-import { Component } from "../widgets/component";
-import { _addSafePassiveEventListener } from "../utils/event";
-import { GridOptionsService, PropertyChangedEvent, PropertyChangedListener, PropertyValueChangedEvent, PropertyValueChangedListener } from "../gridOptionsService";
-import { GridOptions } from "../entities/gridOptions";
-import { LocaleService } from "../localeService";
-import { Environment } from "../environment";
+import { GridOptions } from '../entities/gridOptions';
+import { Environment } from '../environment';
+import { EventService } from '../eventService';
+import { AgEvent, AgEventListener } from '../events';
+import {
+    GridOptionsService,
+    PropertyChangedEvent,
+    PropertyChangedListener,
+    PropertyValueChangedEvent,
+    PropertyValueChangedListener,
+} from '../gridOptionsService';
+import { IEventEmitter } from '../interfaces/iEventEmitter';
+import { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import { LocaleService } from '../localeService';
+import { _addSafePassiveEventListener } from '../utils/event';
+import { Component } from '../widgets/component';
+import { Autowired, Context, PreDestroy } from './context';
 
 export class BeanStub implements IEventEmitter {
-
     public static EVENT_DESTROYED = 'destroyed';
 
     protected localEventService: EventService;
@@ -119,7 +124,7 @@ export class BeanStub implements IEventEmitter {
         return () => {
             destroyFunc();
             // Only remove if manually called before bean is destroyed
-            this.destroyFunctions = this.destroyFunctions.filter(fn => fn !== destroyFunc);
+            this.destroyFunctions = this.destroyFunctions.filter((fn) => fn !== destroyFunc);
             return null;
         };
     }
@@ -127,7 +132,7 @@ export class BeanStub implements IEventEmitter {
     private setupGridOptionListener<K extends keyof GridOptions>(
         event: keyof GridOptions,
         listener: PropertyValueChangedListener<K>
-    ): (() => null) {
+    ): () => null {
         this.gos.addEventListener(event, listener);
         const destroyFunc: () => null = () => {
             this.gos.removeEventListener(event, listener);
@@ -140,7 +145,7 @@ export class BeanStub implements IEventEmitter {
             // Only remove if manually called before bean is destroyed
             this.destroyFunctions = this.destroyFunctions.filter((fn) => fn !== destroyFunc);
             return null;
-        }
+        };
     }
 
     /**
@@ -151,7 +156,7 @@ export class BeanStub implements IEventEmitter {
     public addManagedPropertyListener<K extends keyof GridOptions>(
         event: K,
         listener: PropertyValueChangedListener<K>
-    ): (() => null) {
+    ): () => null {
         if (this.destroyed) {
             return () => null;
         }
@@ -168,10 +173,7 @@ export class BeanStub implements IEventEmitter {
      * @param events Array of GridOption properties to listen for changes too.
      * @param listener Shared listener to run if any of the properties change
      */
-    public addManagedPropertyListeners(
-        events: (keyof GridOptions)[],
-        listener: PropertyChangedListener
-    ): void {
+    public addManagedPropertyListeners(events: (keyof GridOptions)[], listener: PropertyChangedListener): void {
         if (this.destroyed) {
             return;
         }
@@ -182,7 +184,7 @@ export class BeanStub implements IEventEmitter {
         const wrappedListener = (event: PropertyValueChangedEvent<any>) => {
             if (event.changeSet) {
                 // ChangeSet is only set when the property change is part of a group of changes from ComponentUtils
-                // Direct api calls should always be run as 
+                // Direct api calls should always be run as
                 if (event.changeSet && event.changeSet.id === this.lastChangeSetIdLookup[eventsKey]) {
                     // Already run the listener for this set of prop changes so don't run again
                     return;
@@ -193,7 +195,7 @@ export class BeanStub implements IEventEmitter {
             const propertiesChangeEvent: PropertyChangedEvent = {
                 type: 'gridPropertyChanged',
                 changeSet: event.changeSet,
-                source: event.source
+                source: event.source,
             };
             listener(propertiesChangeEvent);
         };

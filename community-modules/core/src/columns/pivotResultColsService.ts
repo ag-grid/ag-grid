@@ -1,19 +1,18 @@
-import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct, PreDestroy } from "../context/context";
-import { AbstractColDef, ColDef, ColGroupDef } from "../entities/colDef";
-import { Column } from "../entities/column";
-import { ColumnEventType } from "../events";
-import { IProvidedColumn } from "../interfaces/iProvidedColumn";
-import { _areEqual } from "../utils/array";
-import { _exists } from "../utils/generic";
-import { ColumnFactory } from "./columnFactory";
-import { ColKey, ColumnCollections, ColumnModel } from "./columnModel";
-import { destroyColumnTree, getColumnsFromTree } from "./columnUtils";
-import { VisibleColsService } from "./visibleColsService";
+import { BeanStub } from '../context/beanStub';
+import { Autowired, Bean, PostConstruct, PreDestroy } from '../context/context';
+import { AbstractColDef, ColDef, ColGroupDef } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { ColumnEventType } from '../events';
+import { IProvidedColumn } from '../interfaces/iProvidedColumn';
+import { _areEqual } from '../utils/array';
+import { _exists } from '../utils/generic';
+import { ColumnFactory } from './columnFactory';
+import { ColKey, ColumnCollections, ColumnModel } from './columnModel';
+import { destroyColumnTree, getColumnsFromTree } from './columnUtils';
+import { VisibleColsService } from './visibleColsService';
 
 @Bean('pivotResultColsService')
 export class PivotResultColsService extends BeanStub {
-
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnFactory') private readonly columnFactory: ColumnFactory;
     @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
@@ -39,13 +38,15 @@ export class PivotResultColsService extends BeanStub {
     }
 
     public lookupPivotResultCol(pivotKeys: string[], valueColKey: ColKey): Column | null {
-        if (this.pivotResultCols == null) { return null; }
+        if (this.pivotResultCols == null) {
+            return null;
+        }
 
         const valueColumnToFind = this.columnModel.getColDefCol(valueColKey);
 
         let foundColumn: Column | null = null;
 
-        this.pivotResultCols.list.forEach(column => {
+        this.pivotResultCols.list.forEach((column) => {
             const thisPivotKeys = column.getColDef().pivotKeys;
             const pivotValueColumn = column.getColDef().pivotValueColumn;
 
@@ -65,15 +66,21 @@ export class PivotResultColsService extends BeanStub {
     }
 
     public getPivotResultCol(key: ColKey): Column | null {
-        if (!this.pivotResultCols) { return null; }
+        if (!this.pivotResultCols) {
+            return null;
+        }
         return this.columnModel.getColFromCollection(key, this.pivotResultCols);
     }
 
     public setPivotResultCols(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void {
-        if (!this.columnModel.isReady()) { return; }
+        if (!this.columnModel.isReady()) {
+            return;
+        }
 
         // if no cols passed, and we had no cols anyway, then do nothing
-        if (colDefs==null && this.pivotResultCols==null) { return; }
+        if (colDefs == null && this.pivotResultCols == null) {
+            return;
+        }
 
         if (colDefs) {
             this.processPivotResultColDef(colDefs);
@@ -91,7 +98,7 @@ export class PivotResultColsService extends BeanStub {
             const map = {};
 
             this.pivotResultCols = { tree, treeDepth, list, map };
-            this.pivotResultCols.list.forEach(col => this.pivotResultCols!.map[col.getId()] = col);
+            this.pivotResultCols.list.forEach((col) => (this.pivotResultCols!.map[col.getId()] = col));
             this.previousPivotResultCols = null;
         } else {
             this.previousPivotResultCols = this.pivotResultCols ? this.pivotResultCols.tree : null;
@@ -106,7 +113,9 @@ export class PivotResultColsService extends BeanStub {
         const columnCallback = this.gos.get('processPivotResultColDef');
         const groupCallback = this.gos.get('processPivotResultColGroupDef');
 
-        if (!columnCallback && !groupCallback) { return undefined; }
+        if (!columnCallback && !groupCallback) {
+            return undefined;
+        }
 
         const searchForColDefs = (colDefs2: (ColDef | ColGroupDef)[]): void => {
             colDefs2.forEach((abstractColDef: AbstractColDef) => {

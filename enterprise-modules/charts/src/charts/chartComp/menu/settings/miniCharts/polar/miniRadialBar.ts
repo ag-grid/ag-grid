@@ -1,7 +1,8 @@
-import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
-import { _Scene } from 'ag-charts-community';
 import { ChartType } from '@ag-grid-community/core';
+import { _Scene } from 'ag-charts-community';
+
 import { accumulateData } from '../miniChartHelpers';
+import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
 
 export class MiniRadialBar extends MiniChartWithPolarAxes {
     static chartType: ChartType = 'radialBar';

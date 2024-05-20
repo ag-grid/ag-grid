@@ -1,8 +1,8 @@
 import { Column } from '../../entities/column';
 import { FilterChangedEvent } from '../../events';
+import { AgGridCommon } from '../../interfaces/iCommon';
 import { IComponent } from '../../interfaces/iComponent';
 import { IFilter, IFilterParams, ProvidedFilterModel } from '../../interfaces/iFilter';
-import { AgGridCommon } from '../../interfaces/iCommon';
 
 export interface IFloatingFilterParent {
     /**
@@ -16,7 +16,8 @@ export interface IFloatingFilterParent {
 type InbuiltParentType = IFloatingFilterParent & IFilter;
 export type IFloatingFilterParentCallback<P = InbuiltParentType> = (parentFilterInstance: P) => void;
 
-export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TContext = any>
+    extends AgGridCommon<TData, TContext> {
     /** The column this filter is for. */
     column: Column;
     /**
@@ -80,8 +81,7 @@ export interface IFloatingFilter<P = any> extends BaseFloatingFilter {
     refresh?(params: IFloatingFilterParams<P>): void;
 }
 
-export interface IFloatingFilterComp<P = any> extends IFloatingFilter<P>, IComponent<IFloatingFilterParams<P>> {
-}
+export interface IFloatingFilterComp<P = any> extends IFloatingFilter<P>, IComponent<IFloatingFilterParams<P>> {}
 
 export interface BaseFloatingFilterChange {
     model: ProvidedFilterModel;

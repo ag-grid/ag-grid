@@ -1,8 +1,8 @@
+import { hideBin } from 'yargs/helpers';
+import yargs from 'yargs/yargs';
+
 import { type SubrepoCommandParams, runSubRepoCommand } from './lib/runSubRepoCommand';
 import { TERMINAL_COLORS as tc } from './lib/terminal-colors';
-
-import yargs from 'yargs/yargs';
-import { hideBin } from 'yargs/helpers';
 
 const SUBREPO_FOLDER = 'external/ag-website-shared';
 

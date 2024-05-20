@@ -1,6 +1,6 @@
-import { AgCheckbox, AgCheckboxParams } from './agCheckbox';
 import { Events } from '../eventKeys';
 import { CheckboxChangedEvent } from '../events';
+import { AgCheckbox, AgCheckboxParams } from './agCheckbox';
 
 export interface AgRadioButtonParams extends AgCheckboxParams {}
 
@@ -14,7 +14,9 @@ export class AgRadioButton extends AgCheckbox<AgRadioButtonParams> {
     }
 
     public toggle(): void {
-        if (this.eInput.disabled) { return; }
+        if (this.eInput.disabled) {
+            return;
+        }
 
         // do not allow an active radio button to be deselected
         if (!this.isSelected()) {
@@ -35,12 +37,14 @@ export class AgRadioButton extends AgCheckbox<AgRadioButtonParams> {
      * not deselected, so we need to use our own event.
      */
     private onChange(event: CheckboxChangedEvent) {
-        if (event.selected &&
+        if (
+            event.selected &&
             event.name &&
             this.eInput.name &&
             this.eInput.name === event.name &&
             event.id &&
-            this.eInput.id !== event.id) {
+            this.eInput.id !== event.id
+        ) {
             this.setValue(false, true);
         }
     }

@@ -1,14 +1,13 @@
 import { GridOptions } from '../entities/gridOptions';
-import { GridApi } from '../gridApi';
 import { ComponentStateChangedEvent, Events } from '../events';
+import { GridApi } from '../gridApi';
+import { WithoutGridCommon } from '../interfaces/iCommon';
 import { PropertyKeys } from '../propertyKeys';
-import { _iterateObject } from '../utils/object';
 import { _includes } from '../utils/array';
 import { _values } from '../utils/generic';
-import { WithoutGridCommon } from '../interfaces/iCommon';
+import { _iterateObject } from '../utils/object';
 
 export class ComponentUtil {
-
     // all events
     public static EVENTS: string[] = _values<any>(Events);
 
@@ -56,7 +55,9 @@ export class ComponentUtil {
 
     // events that are available for use by users of AG Grid and so should be documented
     /** EVENTS that should be exposed via code generation for the framework components.  */
-    public static PUBLIC_EVENTS: string[] = ComponentUtil.EVENTS.filter(e => !_includes(ComponentUtil.EXCLUDED_INTERNAL_EVENTS, e));
+    public static PUBLIC_EVENTS: string[] = ComponentUtil.EVENTS.filter(
+        (e) => !_includes(ComponentUtil.EXCLUDED_INTERNAL_EVENTS, e)
+    );
 
     public static getCallbackForEvent(eventName: string): string {
         if (!eventName || eventName.length < 2) {
@@ -65,7 +66,9 @@ export class ComponentUtil {
         return 'on' + eventName[0].toUpperCase() + eventName.substring(1);
     }
     // onXXX methods, based on the above events
-    public static EVENT_CALLBACKS: string[] = ComponentUtil.EVENTS.map(event => ComponentUtil.getCallbackForEvent(event));
+    public static EVENT_CALLBACKS: string[] = ComponentUtil.EVENTS.map((event) =>
+        ComponentUtil.getCallbackForEvent(event)
+    );
 
     public static BOOLEAN_PROPERTIES = PropertyKeys.BOOLEAN_PROPERTIES;
     public static ALL_PROPERTIES = PropertyKeys.ALL_PROPERTIES;
@@ -74,28 +77,27 @@ export class ComponentUtil {
     public static ALL_PROPERTIES_AND_CALLBACKS_SET = new Set(ComponentUtil.ALL_PROPERTIES_AND_CALLBACKS);
 
     private static getGridOptionKeys() {
-        // Vue does not have keys in prod so instead need to run through all the 
+        // Vue does not have keys in prod so instead need to run through all the
         // gridOptions checking for presence of a gridOption key.
         return this.ALL_PROPERTIES_AND_CALLBACKS;
     }
 
     /** Combines component props / attributes with the provided gridOptions returning a new combined gridOptions object */
     public static combineAttributesAndGridOptions(gridOptions: GridOptions | undefined, component: any): GridOptions {
-
         // create empty grid options if none were passed
         if (typeof gridOptions !== 'object') {
             gridOptions = {} as GridOptions;
         }
         // shallow copy (so we don't change the provided object)
-        const mergedOptions = {...gridOptions} as any;
+        const mergedOptions = { ...gridOptions } as any;
         const keys = ComponentUtil.getGridOptionKeys();
         // Loop through component props, if they are not undefined and a valid gridOption copy to gridOptions
-        keys.forEach(key => {
+        keys.forEach((key) => {
             const value = component[key];
             if (typeof value !== 'undefined' && value !== ComponentUtil.VUE_OMITTED_PROPERTY) {
                 mergedOptions[key] = value;
             }
-        })
+        });
         return mergedOptions;
     }
 
@@ -103,14 +105,14 @@ export class ComponentUtil {
         if (!changes) {
             return;
         }
-        
+
         // Only process changes to properties that are part of the gridOptions
         const gridChanges: any = {};
         let hasChanges = false;
         Object.keys(changes)
             .filter((key) => ComponentUtil.ALL_PROPERTIES_AND_CALLBACKS_SET.has(key))
             .forEach((key) => {
-                gridChanges[key] = changes[key]
+                gridChanges[key] = changes[key];
                 hasChanges = true;
             });
 
@@ -122,7 +124,7 @@ export class ComponentUtil {
 
         // copy gridChanges into an event for dispatch
         const event: WithoutGridCommon<ComponentStateChangedEvent> = {
-            type: Events.EVENT_COMPONENT_STATE_CHANGED
+            type: Events.EVENT_COMPONENT_STATE_CHANGED,
         };
 
         _iterateObject(gridChanges, (key: string, value: any) => {

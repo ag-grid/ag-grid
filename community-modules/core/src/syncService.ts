@@ -1,16 +1,16 @@
-import { BeanStub } from "./context/beanStub";
-import { Autowired, Bean, PostConstruct } from "./context/context";
-import { CtrlsService } from "./ctrlsService";
-import { Logger } from "./logger";
-import { ColumnModel, convertSourceType } from "./columns/columnModel";
-import { ModuleNames } from "./modules/moduleNames";
-import { ModuleRegistry } from "./modules/moduleRegistry";
-import { IRowModel } from "./interfaces/iRowModel";
-import { WithoutGridCommon } from "./interfaces/iCommon";
-import { GridReadyEvent } from "./events";
-import { Events } from "./eventKeys";
-import { PropertyValueChangedEvent } from "./gridOptionsService";
-import { ColDef, ColGroupDef } from "./entities/colDef";
+import { ColumnModel, convertSourceType } from './columns/columnModel';
+import { BeanStub } from './context/beanStub';
+import { Autowired, Bean, PostConstruct } from './context/context';
+import { CtrlsService } from './ctrlsService';
+import { ColDef, ColGroupDef } from './entities/colDef';
+import { Events } from './eventKeys';
+import { GridReadyEvent } from './events';
+import { PropertyValueChangedEvent } from './gridOptionsService';
+import { WithoutGridCommon } from './interfaces/iCommon';
+import { IRowModel } from './interfaces/iRowModel';
+import { Logger } from './logger';
+import { ModuleNames } from './modules/moduleNames';
+import { ModuleRegistry } from './modules/moduleRegistry';
 
 @Bean('syncService')
 export class SyncService extends BeanStub {
@@ -38,11 +38,11 @@ export class SyncService extends BeanStub {
         });
     }
 
-    private setColumnsAndData(columnDefs:  (ColDef | ColGroupDef)[]): void {
-        this.columnModel.setColumnDefs(columnDefs ?? [], "gridInitializing");
+    private setColumnsAndData(columnDefs: (ColDef | ColGroupDef)[]): void {
+        this.columnModel.setColumnDefs(columnDefs ?? [], 'gridInitializing');
         this.rowModel.start();
     }
-    
+
     private gridReady(): void {
         this.dispatchGridReadyEvent();
         const isEnterprise = ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.context.getGridId());
@@ -59,7 +59,9 @@ export class SyncService extends BeanStub {
 
     private setColumnDefs(event: PropertyValueChangedEvent<'columnDefs'>): void {
         const columnDefs = this.gos.get('columnDefs');
-        if (!columnDefs) { return; }
+        if (!columnDefs) {
+            return;
+        }
 
         if (this.waitingForColumns) {
             this.waitingForColumns = false;

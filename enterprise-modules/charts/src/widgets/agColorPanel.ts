@@ -1,8 +1,9 @@
-import { Component, PostConstruct, RefSelector, _exists, _setDisplayed } from "@ag-grid-community/core";
-import { AgColorPicker } from "./agColorPicker";
+import { Component, PostConstruct, RefSelector, _exists, _setDisplayed } from '@ag-grid-community/core';
+import { KeyCode } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
-import { KeyCode } from "@ag-grid-community/core";
-import { AgColorInput } from "./agColorInput";
+
+import { AgColorInput } from './agColorInput';
+import { AgColorPicker } from './agColorPicker';
 
 export class AgColorPanel extends Component {
     private H = 1; // in the [0, 1] range
@@ -26,8 +27,7 @@ export class AgColorPanel extends Component {
     private static recentColors: string[] = [];
     private tabIndex: string;
 
-    private static TEMPLATE = /* html */
-        `<div class="ag-color-panel" tabindex="-1">
+    private static TEMPLATE /* html */ = `<div class="ag-color-panel" tabindex="-1">
             <div ref="spectrumColor" class="ag-spectrum-color">
                 <div class="ag-spectrum-sat ag-spectrum-fill">
                     <div ref="spectrumVal" class="ag-spectrum-val ag-spectrum-fill">
@@ -76,9 +76,9 @@ export class AgColorPanel extends Component {
             }
         });
 
-        this.addManagedListener(this.spectrumColor, 'keydown', e => this.moveDragger(e));
-        this.addManagedListener(this.spectrumAlphaSlider, 'keydown', e => this.moveAlphaSlider(e));
-        this.addManagedListener(this.spectrumHueSlider, 'keydown', e => this.moveHueSlider(e));
+        this.addManagedListener(this.spectrumColor, 'keydown', (e) => this.moveDragger(e));
+        this.addManagedListener(this.spectrumAlphaSlider, 'keydown', (e) => this.moveAlphaSlider(e));
+        this.addManagedListener(this.spectrumHueSlider, 'keydown', (e) => this.moveHueSlider(e));
 
         this.addManagedListener(this.spectrumVal, 'mousedown', this.onSpectrumDraggerDown.bind(this));
         this.addManagedListener(this.spectrumHue, 'mousedown', this.onSpectrumHueDown.bind(this));
@@ -103,11 +103,11 @@ export class AgColorPanel extends Component {
                 e.preventDefault();
                 this.onRecentColorClick(e);
             }
-        })
+        });
     }
 
     private initTabIndex(): void {
-        const tabIndex = this.tabIndex = (this.gos.get('tabIndex')).toString();
+        const tabIndex = (this.tabIndex = this.gos.get('tabIndex').toString());
 
         this.spectrumColor.setAttribute('tabindex', tabIndex);
         this.spectrumHueSlider.setAttribute('tabindex', tabIndex);
@@ -115,15 +115,15 @@ export class AgColorPanel extends Component {
     }
 
     private refreshSpectrumRect() {
-        return this.spectrumValRect = this.spectrumVal.getBoundingClientRect();
+        return (this.spectrumValRect = this.spectrumVal.getBoundingClientRect());
     }
 
     private refreshHueRect() {
-        return this.spectrumHueRect = this.spectrumHue.getBoundingClientRect();
+        return (this.spectrumHueRect = this.spectrumHue.getBoundingClientRect());
     }
 
     private refreshAlphaRect() {
-        return this.spectrumAlphaRect = this.spectrumAlpha.getBoundingClientRect();
+        return (this.spectrumAlphaRect = this.spectrumAlpha.getBoundingClientRect());
     }
 
     private onSpectrumDraggerDown(e: MouseEvent) {
@@ -173,7 +173,9 @@ export class AgColorPanel extends Component {
 
     private moveDragger(e: MouseEvent | KeyboardEvent) {
         const valRect = this.spectrumValRect;
-        if (!valRect) { return; }
+        if (!valRect) {
+            return;
+        }
 
         let x: number;
         let y: number;
@@ -189,7 +191,9 @@ export class AgColorPanel extends Component {
             const isVertical = isUp || isDown;
             const isHorizontal = isLeft || isRight;
 
-            if (!isVertical && !isHorizontal) { return; }
+            if (!isVertical && !isHorizontal) {
+                return;
+            }
             e.preventDefault();
 
             const { x: currentX, y: currentY } = this.getSpectrumValue();
@@ -208,11 +212,15 @@ export class AgColorPanel extends Component {
     private moveHueSlider(e: MouseEvent | KeyboardEvent) {
         const rect = this.spectrumHueRect;
 
-        if (!rect) { return; }
+        if (!rect) {
+            return;
+        }
 
         const x = this.moveSlider(this.spectrumHueSlider, e);
 
-        if (x == null) { return; }
+        if (x == null) {
+            return;
+        }
 
         this.H = 1 - x / rect.width;
         this.update();
@@ -221,11 +229,15 @@ export class AgColorPanel extends Component {
     private moveAlphaSlider(e: MouseEvent | KeyboardEvent) {
         const rect = this.spectrumAlphaRect;
 
-        if (!rect) { return; }
+        if (!rect) {
+            return;
+        }
 
         const x = this.moveSlider(this.spectrumAlphaSlider, e);
 
-        if (x == null) { return; }
+        if (x == null) {
+            return;
+        }
 
         this.A = x / rect.width;
         this.update();
@@ -235,8 +247,9 @@ export class AgColorPanel extends Component {
         const sliderRect = slider.getBoundingClientRect();
         const parentRect = slider.parentElement?.getBoundingClientRect();
 
-        if (!slider || !parentRect) { return null; }
-
+        if (!slider || !parentRect) {
+            return null;
+        }
 
         let x: number;
         if (e instanceof MouseEvent) {
@@ -244,16 +257,18 @@ export class AgColorPanel extends Component {
         } else {
             const isLeft = e.key === KeyCode.LEFT;
             const isRight = e.key === KeyCode.RIGHT;
-            if (!isLeft && !isRight) { return null; }
+            if (!isLeft && !isRight) {
+                return null;
+            }
             e.preventDefault();
             const diff = isLeft ? -5 : 5;
-            x = (parseFloat(slider.style.left) - sliderRect.width / 2) + diff;
+            x = parseFloat(slider.style.left) - sliderRect.width / 2 + diff;
         }
 
         x = Math.max(x, 0);
         x = Math.min(x, parentRect.width);
 
-        slider.style.left = (x + sliderRect.width / 2) + 'px';
+        slider.style.left = x + sliderRect.width / 2 + 'px';
 
         return x;
     }
@@ -288,7 +303,9 @@ export class AgColorPanel extends Component {
     public setSpectrumValue(saturation: number, brightness: number, suppressColorInputUpdate?: boolean) {
         const valRect = this.spectrumValRect || this.refreshSpectrumRect();
 
-        if (valRect == null) { return; }
+        if (valRect == null) {
+            return;
+        }
 
         const dragger = this.spectrumDragger;
         const draggerRect = dragger.getBoundingClientRect();
@@ -301,18 +318,18 @@ export class AgColorPanel extends Component {
         this.S = saturation;
         this.B = brightness;
 
-        dragger.style.left = (saturation * valRect.width - draggerRect.width / 2) + 'px';
-        dragger.style.top = ((1 - brightness) * valRect.height - draggerRect.height / 2) + 'px';
+        dragger.style.left = saturation * valRect.width - draggerRect.width / 2 + 'px';
+        dragger.style.top = (1 - brightness) * valRect.height - draggerRect.height / 2 + 'px';
 
         this.update(suppressColorInputUpdate);
     }
 
-    private getSpectrumValue(): { x: number, y: number } {
+    private getSpectrumValue(): { x: number; y: number } {
         const dragger = this.spectrumDragger;
         const draggerRect = dragger.getBoundingClientRect();
 
         const x = parseFloat(dragger.style.left) + draggerRect.width / 2;
-        const y = parseFloat(dragger.style.top) + draggerRect.height / 2; 
+        const y = parseFloat(dragger.style.top) + draggerRect.height / 2;
 
         return { x, y };
     }
@@ -320,7 +337,7 @@ export class AgColorPanel extends Component {
     private initRecentColors() {
         const recentColors = AgColorPanel.recentColors;
         const innerHtml = recentColors.map((color: string, index: number) => {
-            return (/* html */`<div class="ag-recent-color" id=${index} style="background-color: ${color}; width: 15px; height: 15px;" recent-color="${color}" tabIndex="${this.tabIndex}"></div>`);
+            return /* html */ `<div class="ag-recent-color" id=${index} style="background-color: ${color}; width: 15px; height: 15px;" recent-color="${color}" tabIndex="${this.tabIndex}"></div>`;
         });
 
         this.recentColors.innerHTML = innerHtml.join('');
@@ -341,8 +358,8 @@ export class AgColorPanel extends Component {
         const spectrumHueRect = this.spectrumHueRect || this.refreshHueRect();
         const spectrumAlphaRect = this.spectrumAlphaRect || this.refreshAlphaRect();
 
-        this.spectrumHueSlider.style.left = `${((this.H - 1) * -spectrumHueRect.width)}px`;
-        this.spectrumAlphaSlider.style.left = `${(this.A * spectrumAlphaRect.width)}px`;
+        this.spectrumHueSlider.style.left = `${(this.H - 1) * -spectrumHueRect.width}px`;
+        this.spectrumAlphaSlider.style.left = `${this.A * spectrumAlphaRect.width}px`;
 
         this.setSpectrumValue(s, b, !updateColorInput);
     }
@@ -371,7 +388,7 @@ export class AgColorPanel extends Component {
         }
 
         // remove duplicate color
-        recentColors = recentColors.filter(currentColor => currentColor != rgbaColor);
+        recentColors = recentColors.filter((currentColor) => currentColor != rgbaColor);
 
         // add color to head
         recentColors = [rgbaColor].concat(recentColors);

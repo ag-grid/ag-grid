@@ -1,8 +1,9 @@
 import * as cheerio from 'cheerio';
 import ts from 'typescript';
-import { GridOptionsType, InlineGridStyles, ParsedBindings } from '../types';
+
 import { Events } from '../_copiedFromCore/eventKeys';
 import { PropertyKeys } from '../_copiedFromCore/propertyKeys';
+import { GridOptionsType, InlineGridStyles, ParsedBindings } from '../types';
 import {
     extractClassDeclarations,
     extractEventHandlers,
@@ -71,7 +72,7 @@ function processColDefsForFunctionalReactOrVue(propertyName: string, providedExa
 
 function processComponentsForVue(propertyName: string, providedExamples) {
     if (propertyName === 'components') {
-        return !(providedExamples['vue3']);
+        return !providedExamples['vue3'];
     }
 
     return false;
@@ -79,7 +80,7 @@ function processComponentsForVue(propertyName: string, providedExamples) {
 
 function processVueProperties(propertyName: string, providedExamples) {
     if (propertyName === 'statusBar' || propertyName === 'sideBar') {
-        return !(providedExamples['vue3']);
+        return !providedExamples['vue3'];
     }
 
     return false;
@@ -87,7 +88,7 @@ function processVueProperties(propertyName: string, providedExamples) {
 
 function processDefaultColumnDefForVue(propertyName: string, providedExamples) {
     if (propertyName === 'defaultColDef') {
-        return !(providedExamples['vue3']);
+        return !providedExamples['vue3'];
     }
 
     return false;
@@ -97,7 +98,7 @@ const GLOBAL_COMPONENTS = ['dateComponent', 'loadingCellRenderer', 'loadingOverl
 
 function processGlobalComponentsForVue(propertyName: string, providedExamples) {
     if (GLOBAL_COMPONENTS.indexOf(propertyName) !== -1) {
-        return !(providedExamples['vue3']);
+        return !providedExamples['vue3'];
     }
 
     return false;
@@ -443,10 +444,7 @@ function internalParser(
                     bindings.defaultColDef = tsGenerate(node.initializer, tsTree);
                 }
 
-                if (
-                    processGlobalComponentsForVue(propertyName, providedExamples) &&
-                    ts.isIdentifier(node)
-                ) {
+                if (processGlobalComponentsForVue(propertyName, providedExamples) && ts.isIdentifier(node)) {
                     bindings.globalComponents.push(tsGenerate(node, tsTree));
                 }
 
@@ -555,14 +553,7 @@ export function parser(
     providedExamples,
     gridOptionsTypes: Record<string, GridOptionsType>
 ) {
-    const typedBindings = internalParser(
-        examplePath,
-        srcFile,
-        true,
-        gridOptionsTypes,
-        html,
-        providedExamples
-    );
+    const typedBindings = internalParser(examplePath, srcFile, true, gridOptionsTypes, html, providedExamples);
     const bindings = internalParser(examplePath, srcFile, false, gridOptionsTypes, html, providedExamples);
     // We need to copy the imports from the typed bindings to the non-typed bindings
     bindings.imports = typedBindings.imports;

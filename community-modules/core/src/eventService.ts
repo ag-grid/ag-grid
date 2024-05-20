@@ -1,12 +1,11 @@
-import { Bean, Qualifier } from "./context/context";
-import { AgEvent, AgEventListener, AgGlobalEventListener, AgGridEvent } from "./events";
-import { GridOptionsService } from "./gridOptionsService";
-import { IEventEmitter } from "./interfaces/iEventEmitter";
-import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
+import { Bean, Qualifier } from './context/context';
+import { AgEvent, AgEventListener, AgGlobalEventListener, AgGridEvent } from './events';
+import { GridOptionsService } from './gridOptionsService';
+import { IEventEmitter } from './interfaces/iEventEmitter';
+import { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 
 @Bean('eventService')
 export class EventService implements IEventEmitter {
-
     private allSyncListeners = new Map<string, Set<AgEventListener>>();
     private allAsyncListeners = new Map<string, Set<AgEventListener>>();
 
@@ -20,7 +19,7 @@ export class EventService implements IEventEmitter {
     private scheduled = false;
 
     // using an object performs better than a Set for the number of different events we have
-    private firedEvents: { [key: string]: boolean; } = {};
+    private firedEvents: { [key: string]: boolean } = {};
 
     // because this class is used both inside the context and outside the context, we do not
     // use autowired attributes, as that would be confusing, as sometimes the attributes
@@ -54,7 +53,11 @@ export class EventService implements IEventEmitter {
         this.frameworkOverrides = frameworkOverrides;
     }
 
-    private getListeners(eventType: string, async: boolean, autoCreateListenerCollection: boolean): Set<AgEventListener> | undefined {
+    private getListeners(
+        eventType: string,
+        async: boolean,
+        autoCreateListenerCollection: boolean
+    ): Set<AgEventListener> | undefined {
         const listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
         let listeners = listenerMap.get(eventType);
 
@@ -71,8 +74,12 @@ export class EventService implements IEventEmitter {
     }
 
     public noRegisteredListenersExist(): boolean {
-        return this.allSyncListeners.size === 0 && this.allAsyncListeners.size === 0 &&
-            this.globalSyncListeners.size === 0 && this.globalAsyncListeners.size === 0;
+        return (
+            this.allSyncListeners.size === 0 &&
+            this.allAsyncListeners.size === 0 &&
+            this.globalSyncListeners.size === 0 &&
+            this.globalAsyncListeners.size === 0
+        );
     }
 
     public addEventListener(eventType: string, listener: AgEventListener, async = false): void {
@@ -81,7 +88,9 @@ export class EventService implements IEventEmitter {
 
     public removeEventListener(eventType: string, listener: AgEventListener, async = false): void {
         const listeners = this.getListeners(eventType, async, false);
-        if (!listeners) { return; }
+        if (!listeners) {
+            return;
+        }
 
         listeners.delete(listener);
 
@@ -131,21 +140,22 @@ export class EventService implements IEventEmitter {
             }
         }
 
-        const processEventListeners = (listeners: Set<AgEventListener>, originalListeners: Set<AgEventListener>) => listeners.forEach(listener => {
-            if (!originalListeners.has(listener)) {
-                // A listener could have been removed by a previously processed listener. In this case we don't want to call 
-                return;
-            }
-            const callback = this.frameworkOverrides
-                ? () => this.frameworkOverrides.wrapIncoming(() => listener(event))
-                : () => listener(event);
+        const processEventListeners = (listeners: Set<AgEventListener>, originalListeners: Set<AgEventListener>) =>
+            listeners.forEach((listener) => {
+                if (!originalListeners.has(listener)) {
+                    // A listener could have been removed by a previously processed listener. In this case we don't want to call
+                    return;
+                }
+                const callback = this.frameworkOverrides
+                    ? () => this.frameworkOverrides.wrapIncoming(() => listener(event))
+                    : () => listener(event);
 
-            if (async) {
-                this.dispatchAsync(callback)
-            } else {
-                callback();
-            }
-        });
+                if (async) {
+                    this.dispatchAsync(callback);
+                } else {
+                    callback();
+                }
+            });
 
         const originalListeners = this.getListeners(eventType, async, false) ?? new Set<AgEventListener>();
         // create a shallow copy to prevent listeners cyclically adding more listeners to capture this event
@@ -160,11 +170,11 @@ export class EventService implements IEventEmitter {
             const callback = this.frameworkOverrides
                 ? () => this.frameworkOverrides.wrapIncoming(() => listener(eventType, event))
                 : () => listener(eventType, event);
-           
+
             if (async) {
                 this.dispatchAsync(callback);
             } else {
-                callback()
+                callback();
             }
         });
     }
@@ -204,6 +214,6 @@ export class EventService implements IEventEmitter {
         this.asyncFunctionsQueue = [];
 
         // execute the queue
-        queueCopy.forEach(func => func());
+        queueCopy.forEach((func) => func());
     }
 }

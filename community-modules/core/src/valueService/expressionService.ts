@@ -1,11 +1,10 @@
-import { Logger, LoggerFactory } from "../logger";
-import { Bean } from "../context/context";
-import { Qualifier } from "../context/context";
-import { BeanStub } from "../context/beanStub";
+import { BeanStub } from '../context/beanStub';
+import { Bean } from '../context/context';
+import { Qualifier } from '../context/context';
+import { Logger, LoggerFactory } from '../logger';
 
 @Bean('expressionService')
 export class ExpressionService extends BeanStub {
-
     private expressionToFunctionCache = {} as any;
     private logger: Logger;
 
@@ -27,10 +26,21 @@ export class ExpressionService extends BeanStub {
             const javaScriptFunction = this.createExpressionFunction(expression);
             // the params don't have all these values, rather we add every possible
             // value a params can have, which makes whatever is in the params available.
-            const result = javaScriptFunction(params.value, params.context,
-                params.oldValue, params.newValue, params.value, params.node,
-                params.data, params.colDef, params.rowIndex, params.api,
-                params.getValue, params.column, params.columnGroup);
+            const result = javaScriptFunction(
+                params.value,
+                params.context,
+                params.oldValue,
+                params.newValue,
+                params.value,
+                params.node,
+                params.data,
+                params.colDef,
+                params.rowIndex,
+                params.api,
+                params.getValue,
+                params.column,
+                params.columnGroup
+            );
             return result;
         } catch (e) {
             // the expression failed, which can happen, as it's the client that
@@ -54,7 +64,10 @@ export class ExpressionService extends BeanStub {
         }
         // if not found in cache, return the function
         const functionBody = this.createFunctionBody(expression);
-        const theFunction = new Function('x, ctx, oldValue, newValue, value, node, data, colDef, rowIndex, api, getValue, column, columnGroup', functionBody);
+        const theFunction = new Function(
+            'x, ctx, oldValue, newValue, value, node, data, colDef, rowIndex, api, getValue, column, columnGroup',
+            functionBody
+        );
 
         // store in cache
         this.expressionToFunctionCache[expression] = theFunction;

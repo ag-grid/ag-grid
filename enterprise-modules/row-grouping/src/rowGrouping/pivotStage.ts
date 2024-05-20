@@ -7,23 +7,23 @@ import {
     Column,
     ColumnModel,
     Events,
-    PivotMaxColumnsExceededEvent,
+    FuncColsService,
     GridOptions,
     IRowNodeStage,
+    PivotMaxColumnsExceededEvent,
+    PivotResultColsService,
     RowNode,
     StageExecuteParams,
     ValueService,
     WithoutGridCommon,
-    _missing,
     _iterateObject,
-    PivotResultColsService,
-    FuncColsService
-} from "@ag-grid-community/core";
-import { PivotColDefService } from "./pivotColDefService";
+    _missing,
+} from '@ag-grid-community/core';
+
+import { PivotColDefService } from './pivotColDefService';
 
 @Bean('pivotStage')
 export class PivotStage extends BeanStub implements IRowNodeStage {
-
     // these should go into the pivot column creator
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
@@ -63,7 +63,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         this.aggregationColumnsHashLastTime = null;
         this.uniqueValues = {};
         if (this.pivotResultColsService.isPivotResultColsPresent()) {
-            this.pivotResultColsService.setPivotResultCols(null, "rowModelUpdated");
+            this.pivotResultColsService.setPivotResultCols(null, 'rowModelUpdated');
             if (changedPath) {
                 changedPath.setInactive();
             }
@@ -81,10 +81,10 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         try {
             // try catch is used to force execution to stop when the max count is exceeded.
             uniqueValues = this.bucketUpRowNodes(changedPath);
-        } catch(e) {
+        } catch (e) {
             // message is checked rather than inheritance as the build seems to break instanceof
             if (e.message === PivotStage.EXCEEDED_MAX_UNIQUE_VALUES) {
-                this.pivotResultColsService.setPivotResultCols([], "rowModelUpdated");
+                this.pivotResultColsService.setPivotResultCols([], 'rowModelUpdated');
                 const event: WithoutGridCommon<PivotMaxColumnsExceededEvent> = {
                     type: Events.EVENT_PIVOT_MAX_COLUMNS_EXCEEDED,
                     message: e.message,
@@ -99,7 +99,9 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         const uniqueValuesChanged = this.setUniqueValues(uniqueValues);
 
         const aggregationColumns = this.funcColsService.getValueColumns();
-        const aggregationColumnsHash = aggregationColumns.map((column) => `${column.getId()}-${column.getColDef().headerName}`).join('#');
+        const aggregationColumnsHash = aggregationColumns
+            .map((column) => `${column.getId()}-${column.getColDef().headerName}`)
+            .join('#');
         const aggregationFuncsHash = aggregationColumns.map((column) => column.getAggFunc()!.toString()).join('#');
 
         const aggregationColumnsChanged = this.aggregationColumnsHashLastTime !== aggregationColumnsHash;
@@ -107,7 +109,10 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         this.aggregationColumnsHashLastTime = aggregationColumnsHash;
         this.aggregationFuncsHashLastTime = aggregationFuncsHash;
 
-        const groupColumnsHash = this.funcColsService.getRowGroupColumns().map((column) => column.getId()).join('#');
+        const groupColumnsHash = this.funcColsService
+            .getRowGroupColumns()
+            .map((column) => column.getId())
+            .join('#');
         const groupColumnsChanged = groupColumnsHash !== this.groupColumnsHashLastTime;
         this.groupColumnsHashLastTime = groupColumnsHash;
 
@@ -116,20 +121,30 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         const suppressExpandablePivotGroups = this.gos.get('suppressExpandablePivotGroups');
         const removePivotHeaderRowWhenSingleValueColumn = this.gos.get('removePivotHeaderRowWhenSingleValueColumn');
 
-        const anyGridOptionsChanged = (
-            pivotRowTotals !== this.pivotRowTotalsLastTime || pivotColumnGroupTotals !== this.pivotColumnGroupTotalsLastTime ||
-            suppressExpandablePivotGroups !== this.suppressExpandablePivotGroupsLastTime || removePivotHeaderRowWhenSingleValueColumn !== this.removePivotHeaderRowWhenSingleValueColumnLastTime
-        );
+        const anyGridOptionsChanged =
+            pivotRowTotals !== this.pivotRowTotalsLastTime ||
+            pivotColumnGroupTotals !== this.pivotColumnGroupTotalsLastTime ||
+            suppressExpandablePivotGroups !== this.suppressExpandablePivotGroupsLastTime ||
+            removePivotHeaderRowWhenSingleValueColumn !== this.removePivotHeaderRowWhenSingleValueColumnLastTime;
 
         this.pivotRowTotalsLastTime = pivotRowTotals;
         this.pivotColumnGroupTotalsLastTime = pivotColumnGroupTotals;
         this.suppressExpandablePivotGroupsLastTime = suppressExpandablePivotGroups;
         this.removePivotHeaderRowWhenSingleValueColumnLastTime = removePivotHeaderRowWhenSingleValueColumn;
 
-        if (this.lastTimeFailed || uniqueValuesChanged || aggregationColumnsChanged || groupColumnsChanged || aggregationFuncsChanged || anyGridOptionsChanged) {
-            const {pivotColumnGroupDefs, pivotColumnDefs} = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
+        if (
+            this.lastTimeFailed ||
+            uniqueValuesChanged ||
+            aggregationColumnsChanged ||
+            groupColumnsChanged ||
+            aggregationFuncsChanged ||
+            anyGridOptionsChanged
+        ) {
+            const { pivotColumnGroupDefs, pivotColumnDefs } = this.pivotColDefService.createPivotColumnDefs(
+                this.uniqueValues
+            );
             this.pivotColumnDefs = pivotColumnDefs;
-            this.pivotResultColsService.setPivotResultCols(pivotColumnGroupDefs, "rowModelUpdated");
+            this.pivotResultColsService.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
             // because the secondary columns have changed, then the aggregation needs to visit the whole
             // tree again, so we make the changedPath not active, to force aggregation to visit all paths.
             if (changedPath) {
@@ -162,7 +177,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         const uniqueValues: any = {};
 
         // ensure childrenMapped is cleared, as if a node has been filtered out it should not have mapped children.
-        changedPath.forEachChangedNodeDepthFirst(node => {
+        changedPath.forEachChangedNodeDepthFirst((node) => {
             if (node.leafGroup) {
                 node.childrenMapped = null;
             }
@@ -174,7 +189,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
             } else {
                 node.childrenAfterFilter?.forEach(recursivelyBucketFilteredChildren);
             }
-        }
+        };
 
         changedPath.executeFromRootNode(recursivelyBucketFilteredChildren);
 
@@ -182,7 +197,6 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
     }
 
     private bucketRowNode(rowNode: RowNode, uniqueValues: any): void {
-
         const pivotColumns = this.funcColsService.getPivotColumns();
 
         if (pivotColumns.length === 0) {
@@ -197,7 +211,6 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
     }
 
     private bucketChildren(children: RowNode[], pivotColumns: Column[], pivotIndex: number, uniqueValues: any): any {
-
         const mappedChildren: any = {};
         const pivotColumn = pivotColumns[pivotIndex];
 
@@ -244,5 +257,4 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
     public getPivotColumnDefs(): ColDef[] {
         return this.pivotColumnDefs;
     }
-
 }

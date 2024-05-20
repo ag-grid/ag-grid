@@ -1,16 +1,17 @@
 import {
+    AgInputTextField,
+    AgInputTextFieldParams,
     AgSlider,
+    AgSliderParams,
     Autowired,
     Component,
     PostConstruct,
-    AgSliderParams,
-    AgInputTextFieldParams,
-    AgInputTextField
-} from "@ag-grid-community/core";
-import { FontPanel, FontPanelParams } from "../fontPanel";
-import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
+} from '@ag-grid-community/core';
+
 import { ChartOptionsProxy } from '../../../services/chartOptionsService';
-import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import { FontPanel, FontPanelParams } from '../fontPanel';
 
 export class TitlePanel extends Component {
     public static TEMPLATE = /* html */ `<div></div>`;
@@ -25,7 +26,6 @@ export class TitlePanel extends Component {
         private readonly chartMenuUtils: ChartMenuParamsFactory,
         private readonly name: ChartTranslationKey,
         protected readonly key: string
-
     ) {
         super(TitlePanel.TEMPLATE);
         this.chartOptions = chartMenuUtils.getChartOptions();
@@ -49,8 +49,8 @@ export class TitlePanel extends Component {
             enabled: hasTitle,
             suppressEnabledCheckbox: false,
             chartMenuParamsFactory: this.chartMenuUtils,
-            keyMapper: key => `${this.key}.${key}`,
-            onEnableChange: (enabled) => this.onEnableChange(enabled)
+            keyMapper: (key) => `${this.key}.${key}`,
+            onEnableChange: (enabled) => this.onEnableChange(enabled),
         };
 
         this.fontPanel = this.createManagedBean(new FontPanel(fontPanelParams));
@@ -64,7 +64,7 @@ export class TitlePanel extends Component {
     protected getTextInputParams(): AgInputTextFieldParams {
         return this.chartMenuUtils.addValueParams(`${this.key}.text`, {
             label: this.chartTranslationService.translate('title'),
-            labelAlignment: 'top'
+            labelAlignment: 'top',
         });
     }
 

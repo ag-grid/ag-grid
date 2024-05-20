@@ -1,12 +1,12 @@
-import { _exists } from "../../utils/generic";
-import { RowNode } from "../../entities/rowNode";
-import { _pushAll } from "../../utils/array";
-import { GridOptionsService } from "../../gridOptionsService";
-import { Autowired, Bean } from "../../context/context";
-import { StylingService } from "../../styling/stylingService";
-import { RowClassParams } from "../../entities/gridOptions";
-import { WithoutGridCommon } from "../../interfaces/iCommon";
-import { ColumnPinnedType } from "../../entities/column";
+import { Autowired, Bean } from '../../context/context';
+import { ColumnPinnedType } from '../../entities/column';
+import { RowClassParams } from '../../entities/gridOptions';
+import { RowNode } from '../../entities/rowNode';
+import { GridOptionsService } from '../../gridOptionsService';
+import { WithoutGridCommon } from '../../interfaces/iCommon';
+import { StylingService } from '../../styling/stylingService';
+import { _pushAll } from '../../utils/array';
+import { _exists } from '../../utils/generic';
 
 export interface RowCssClassCalculatorParams {
     rowNode: RowNode;
@@ -26,12 +26,10 @@ export interface RowCssClassCalculatorParams {
 
 @Bean('rowCssClassCalculator')
 export class RowCssClassCalculator {
-
     @Autowired('stylingService') public stylingService: StylingService;
     @Autowired('gridOptionsService') gos: GridOptionsService;
 
     public getInitialRowClasses(params: RowCssClassCalculatorParams): string[] {
-
         const classes: string[] = [];
 
         if (_exists(params.extraCssClass)) {
@@ -111,7 +109,7 @@ export class RowCssClassCalculator {
             if (typeof rowCls === 'string') {
                 res.push(rowCls);
             } else if (Array.isArray(rowCls)) {
-                rowCls.forEach(e => res.push(e));
+                rowCls.forEach((e) => res.push(e));
             }
         };
 
@@ -132,7 +130,7 @@ export class RowCssClassCalculator {
             const params: WithoutGridCommon<RowClassParams> = {
                 data: rowNode.data,
                 node: rowNode,
-                rowIndex: rowNode.rowIndex!
+                rowIndex: rowNode.rowIndex!,
             };
             const rowClassFuncResult = rowClassFunc(params);
             process(rowClassFuncResult);
@@ -144,7 +142,9 @@ export class RowCssClassCalculator {
     private preProcessRowClassRules(rowNode: RowNode): string[] {
         const res: string[] = [];
 
-        this.processRowClassRules(rowNode, (className: string) => {
+        this.processRowClassRules(
+            rowNode,
+            (className: string) => {
                 res.push(className);
             },
             (className: string) => {
@@ -156,11 +156,15 @@ export class RowCssClassCalculator {
         return res;
     }
 
-    public processRowClassRules(rowNode: RowNode, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void {
+    public processRowClassRules(
+        rowNode: RowNode,
+        onApplicableClass: (className: string) => void,
+        onNotApplicableClass?: (className: string) => void
+    ): void {
         const rowClassParams: RowClassParams = this.gos.addGridCommonParams({
             data: rowNode.data,
             node: rowNode,
-            rowIndex: rowNode.rowIndex!
+            rowIndex: rowNode.rowIndex!,
         });
 
         this.stylingService.processClassRules(
@@ -178,7 +182,6 @@ export class RowCssClassCalculator {
         }
 
         // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
-        return rowNode.parent ? (rowNode.parent.level + 1) : 0;
+        return rowNode.parent ? rowNode.parent.level + 1 : 0;
     }
-
 }

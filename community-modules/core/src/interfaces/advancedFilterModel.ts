@@ -10,7 +10,7 @@ export interface JoinAdvancedFilterModel {
 }
 
 /** Represents a single filter condition on a column */
-export type ColumnAdvancedFilterModel = 
+export type ColumnAdvancedFilterModel =
     | TextAdvancedFilterModel
     | NumberAdvancedFilterModel
     | BooleanAdvancedFilterModel
@@ -18,7 +18,7 @@ export type ColumnAdvancedFilterModel =
     | DateStringAdvancedFilterModel
     | ObjectAdvancedFilterModel;
 
-export type TextAdvancedFilterModelType = 
+export type TextAdvancedFilterModelType =
     | 'equals'
     | 'notEqual'
     | 'contains'
@@ -28,7 +28,7 @@ export type TextAdvancedFilterModelType =
     | 'blank'
     | 'notBlank';
 
-export type ScalarAdvancedFilterModelType = 
+export type ScalarAdvancedFilterModelType =
     | 'equals'
     | 'notEqual'
     | 'lessThan'
@@ -38,9 +38,7 @@ export type ScalarAdvancedFilterModelType =
     | 'blank'
     | 'notBlank';
 
-export type BooleanAdvancedFilterModelType =
-    | 'true'
-    | 'false';
+export type BooleanAdvancedFilterModelType = 'true' | 'false';
 
 /** Represents a single filter condition for a text column */
 export interface TextAdvancedFilterModel {

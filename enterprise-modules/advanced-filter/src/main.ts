@@ -1,1 +1,1 @@
-export { AdvancedFilterModule } from "./advancedFilterModule";
+export { AdvancedFilterModule } from './advancedFilterModule';
