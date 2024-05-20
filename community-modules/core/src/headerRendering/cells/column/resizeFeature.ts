@@ -1,5 +1,4 @@
-import { ColumnSizeService } from "@ag-grid-community/core";
-import { ColumnAutosizeService } from "community-modules/core/src/columns/columnAutosizeService";
+import { ColumnAutosizeService } from "../../../columns/columnAutosizeService";
 import { ColumnModel } from "../../../columns/columnModel";
 import { BeanStub } from "../../../context/beanStub";
 import { Autowired, PostConstruct } from "../../../context/context";
@@ -11,6 +10,7 @@ import { TouchListener } from "../../../widgets/touchListener";
 import { HorizontalResizeService } from "../../common/horizontalResizeService";
 import { IHeaderResizeFeature } from "../abstractCell/abstractHeaderCellCtrl";
 import { HeaderCellCtrl, IHeaderCellComp } from "./headerCellCtrl";
+import { ColumnSizeService } from "../../../columns/columnSizeService";
 
 
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {

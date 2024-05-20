@@ -8,7 +8,7 @@ import { ScalarFilterParams } from '../../provided/scalarFilter';
 import { FilterChangedEvent } from '../../../events';
 import { ProvidedFilterParams } from '../../provided/providedFilter';
 import { Autowired } from '../../../context/context';
-import { ColumnNameService } from '@ag-grid-community/core';
+import { ColumnNameService } from '../../../columns/columnNameService';
 
 export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp<ISimpleFilter> {
 
