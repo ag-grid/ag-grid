@@ -199,6 +199,7 @@ export {Qualifier} from "@ag-grid-community/core";
 export {RefSelector} from "@ag-grid-community/core";
 export {ResizeObserverService} from "@ag-grid-community/core";
 export {RowAnimationCssClasses} from "@ag-grid-community/core";
+export {RowContainerComp} from "@ag-grid-community/core";
 export {RowContainerCtrl} from "@ag-grid-community/core";
 export {RowContainerName} from "@ag-grid-community/core";
 export {RowContainerType} from "@ag-grid-community/core";
