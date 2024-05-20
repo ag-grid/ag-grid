@@ -849,6 +849,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             dataPath = dataPath.map(treeKey => _toStringOrNull(_makeNull(treeKey))) as any;
         }
         if (dataPath?.some(treeKey => treeKey == null)) {
+            if (this.gos.get('groupAllowUnbalanced') && _last(dataPath) != null) {
+                return dataPath.filter(treeKey => treeKey != null);
+            }
             return null;
         }
         return dataPath;

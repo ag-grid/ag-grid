@@ -583,6 +583,7 @@ const ExampleInner = ({ darkMode }) => {
     const [showMessage, setShowMessage] = useState(false);
     const [rowCols, setRowCols] = useState([]);
     const [dataSize, setDataSize] = useState();
+    const [initialLoad, setInitialLoad] = useState(true);
 
     const modules = useMemo(
         () => [
@@ -895,8 +896,9 @@ const ExampleInner = ({ darkMode }) => {
 
         let row = 0;
         const data = [];
-
-        setShowMessage(true);
+        
+        // Don't show message on initial load as it causes a spike in CLS
+        setShowMessage(!initialLoad); 
         setMessage(` Generating rows`);
 
         const loopCount = rowCount > 10000 ? 10000 : 1000;
@@ -1053,6 +1055,7 @@ const ExampleInner = ({ darkMode }) => {
     useEffect(() => {
         if (dataSize) {
             createData();
+            setInitialLoad(false);
         }
     }, [dataSize]);
 
