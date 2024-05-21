@@ -51,6 +51,7 @@ export class ComponentUtil {
         Events.EVENT_SUPPRESS_FIELD_DOT_NOTATION,
         Events.EVENT_ROW_COUNT_READY,
         Events.EVENT_SIDE_BAR_UPDATED,
+        Events.EVENT_PINNED_HEIGHT_CHANGED,
     ];
 
     // events that are available for use by users of AG Grid and so should be documented

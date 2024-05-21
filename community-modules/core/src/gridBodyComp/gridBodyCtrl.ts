@@ -152,7 +152,12 @@ export class GridBodyCtrl extends BeanStub {
         this.addManagedListener(
             this.eventService,
             Events.EVENT_PINNED_ROW_DATA_CHANGED,
-            this.onPinnedRowDataChanged.bind(this)
+            this.setFloatingHeights.bind(this)
+        );
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_PINNED_HEIGHT_CHANGED,
+            this.setFloatingHeights.bind(this)
         );
         this.addManagedListener(
             this.eventService,
@@ -427,10 +432,6 @@ export class GridBodyCtrl extends BeanStub {
 
     public getRowDragFeature(): RowDragFeature {
         return this.rowDragFeature;
-    }
-
-    private onPinnedRowDataChanged(): void {
-        this.setFloatingHeights();
     }
 
     private setFloatingHeights(): void {

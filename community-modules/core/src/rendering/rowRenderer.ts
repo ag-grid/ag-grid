@@ -1380,15 +1380,19 @@ export class RowRenderer extends BeanStub {
     }
 
     private ensureAllRowsInRangeHaveHeightsCalculated(topPixel: number, bottomPixel: number): boolean {
+        const pinnedRowHeightsChanged = this.pinnedRowModel?.ensureRowHeightsValid();
+
+        // ensure sticky rows heights are all updated
+        const stickyHeightsChanged = this.stickyRowFeature?.ensureRowHeightsValid();
         // ensureRowHeightsVisible only works with CSRM, as it's the only row model that allows lazy row height calcs.
         // all the other row models just hard code so the method just returns back false
-        const res = this.paginationProxy.ensureRowHeightsValid(topPixel, bottomPixel, -1, -1);
+        const rowModelHeightsChanged = this.paginationProxy.ensureRowHeightsValid(topPixel, bottomPixel, -1, -1, stickyHeightsChanged);
 
-        if (res) {
+        if (stickyHeightsChanged || rowModelHeightsChanged || pinnedRowHeightsChanged) {
             this.updateContainerHeights();
+            return true;
         }
-
-        return res;
+        return false;
     }
 
     public getFirstVisibleVerticalPixel(): number {
