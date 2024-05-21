@@ -1,17 +1,15 @@
 .wrapper {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: 1fr 375px;
     height: 100%;
 }
 
 #myGrid {
-    flex: 1 1 auto;
-    height: 57.5%;
+    grid-row: 1 / 2;
 }
 
-.my-chart {
-    flex: 1 1 auto;
-    height: 42.5%;
+#myChart {
+    grid-row: 2 / 3;
 }
 
 .ag-theme-quartz,
