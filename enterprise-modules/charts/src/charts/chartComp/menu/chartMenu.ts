@@ -1,5 +1,4 @@
 import {
-    AgPanel,
     AgPromise,
     Autowired,
     ChartCreated,
@@ -9,6 +8,7 @@ import {
     Events,
     PostConstruct,
 } from '@ag-grid-community/core';
+import { AgPanel } from '@ag-grid-enterprise/core';
 
 import { ChartController } from '../chartController';
 import { ExtraPaddingDirection } from '../chartProxies/chartProxy';

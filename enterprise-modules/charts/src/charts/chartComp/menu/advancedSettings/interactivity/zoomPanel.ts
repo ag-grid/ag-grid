@@ -1,12 +1,7 @@
-import {
-    AgGroupComponentParams,
-    AgSlider,
-    Autowired,
-    Component,
-    PostConstruct,
-    RefSelector,
-} from '@ag-grid-community/core';
+import { AgCheckbox, Autowired, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
+import { AgSlider } from '../../../../../widgets/agSlider';
 import { ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -60,7 +55,7 @@ export class ZoomPanel extends Component {
             this.zoomScrollingStepInput.setDisabled(!value);
         })(zoomScrollingCheckboxParams.onValueChange);
 
-        this.setTemplate(ZoomPanel.TEMPLATE, {
+        this.setTemplate(ZoomPanel.TEMPLATE, [AgGroupComponent, AgCheckbox, AgSlider], {
             zoomGroup: zoomGroupParams,
             zoomScrollingCheckbox: zoomScrollingCheckboxParams,
             zoomScrollingStepInput: zoomScrollingStepSliderParams,

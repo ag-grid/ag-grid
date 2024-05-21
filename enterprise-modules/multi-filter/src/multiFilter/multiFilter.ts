@@ -1,6 +1,4 @@
 import {
-    AgGroupComponent,
-    AgMenuItemComponent,
     AgMenuItemRenderer,
     AgPromise,
     Autowired,
@@ -16,7 +14,6 @@ import {
     IMultiFilterDef,
     IMultiFilterModel,
     KeyCode,
-    MenuItemActivatedEvent,
     MultiFilterParams,
     PostConstruct,
     ProvidedFilter,
@@ -28,6 +25,7 @@ import {
     _loadTemplate,
     _removeFromArray,
 } from '@ag-grid-community/core';
+import { AgGroupComponent, AgMenuItemComponent, MenuItemActivatedEvent } from '@ag-grid-enterprise/core';
 
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
     @Autowired('filterManager') private readonly filterManager: FilterManager;

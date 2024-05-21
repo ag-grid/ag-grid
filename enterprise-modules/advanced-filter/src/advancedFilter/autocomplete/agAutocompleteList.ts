@@ -1,13 +1,16 @@
-import { KeyCode } from '../constants/keyCode';
-import { PostConstruct } from '../context/context';
-import { _fuzzySuggestions } from '../utils/fuzzyMatch';
-import { _exists } from '../utils/generic';
+import {
+    Component,
+    KeyCode,
+    PopupComponent,
+    PostConstruct,
+    RefSelector,
+    VirtualList,
+    _exists,
+    _fuzzySuggestions,
+} from '@ag-grid-community/core';
+
 import { AgAutocompleteRow } from './agAutocompleteRow';
 import { AutocompleteEntry } from './autocompleteParams';
-import { Component } from './component';
-import { RefSelector } from './componentAnnotations';
-import { PopupComponent } from './popupComponent';
-import { VirtualList } from './virtualList';
 
 export class AgAutocompleteList extends PopupComponent {
     private static TEMPLATE /* html */ = `<div class="ag-autocomplete-list-popup">

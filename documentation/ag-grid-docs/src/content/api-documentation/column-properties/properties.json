@@ -8,7 +8,9 @@
         },
         "field": {
             "interfaceHierarchyOverrides": {
-                "exclude": ["ColDefField"]
+                "exclude": [
+                    "ColDefField"
+                ]
             },
             "more": {
                 "name": "Accessing Row Data Values",
@@ -99,7 +101,9 @@
         },
         "tooltipField": {
             "interfaceHierarchyOverrides": {
-                "exclude": ["ColDefField"]
+                "exclude": [
+                    "ColDefField"
+                ]
             }
         },
         "tooltipValueGetter": {
@@ -499,7 +503,9 @@
             }
         },
         "rowDrag": {},
-        "rowDragText": {}
+        "rowDragText": {},
+        "dndSource": {},
+        "dndSourceOnRowDrag": {}
     },
     "events": {
         "meta": {

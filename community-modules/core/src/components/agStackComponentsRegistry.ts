@@ -1,28 +1,26 @@
-import { BeanStub } from '../context/beanStub';
-import { Bean, ComponentMeta } from '../context/context';
+import { Bean } from '../context/context';
+import { _warnOnce } from '../utils/function';
+import { AgComponentSelector, ComponentClass } from '../widgets/component';
 
 @Bean('agStackComponentsRegistry')
-export class AgStackComponentsRegistry extends BeanStub {
-    private componentsMappedByName: { [key: string]: any } = {};
+export class AgStackComponentsRegistry {
+    private componentToNodeName: Map<string, ComponentClass> = new Map();
 
-    public setupComponents(components: ComponentMeta[]): void {
-        if (components) {
-            components.forEach((componentMeta) => this.addComponent(componentMeta));
+    public ensureRegistered(comps: ComponentClass[]): void {
+        for (let i = 0; i < comps.length; i++) {
+            const comp = comps[i];
+            if (this.componentToNodeName.has(comp.selector)) {
+                continue;
+            }
+            this.componentToNodeName.set(comp.selector, comp);
         }
     }
 
-    private addComponent(componentMeta: ComponentMeta): void {
-        // get name of the class as a string
-        // insert a dash after every capital letter
-        // let classEscaped = className.replace(/([A-Z])/g, "-$1").toLowerCase();
-        const classEscaped = componentMeta.componentName.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-        // put all to upper case
-        const classUpperCase = classEscaped.toUpperCase();
-        // finally store
-        this.componentsMappedByName[classUpperCase] = componentMeta.componentClass;
-    }
-
-    public getComponentClass(htmlTag: string): any {
-        return this.componentsMappedByName[htmlTag];
+    public getComponent(name: AgComponentSelector, optional: boolean = false): ComponentClass | undefined {
+        const comp = this.componentToNodeName.get(name);
+        if (!comp && !optional && name.startsWith('AG-')) {
+            _warnOnce(`(${name}) missing!`);
+        }
+        return comp;
     }
 }

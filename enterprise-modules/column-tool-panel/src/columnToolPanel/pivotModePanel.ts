@@ -1,5 +1,6 @@
 import {
     AgCheckbox,
+    AgToggleButton,
     Autowired,
     ColumnModel,
     Component,
@@ -23,7 +24,7 @@ export class PivotModePanel extends Component {
 
     @PreConstruct
     public init(): void {
-        this.setTemplate(this.createTemplate());
+        this.setTemplate(this.createTemplate(), [AgToggleButton]);
 
         this.cbPivotMode.setValue(this.columnModel.isPivotMode());
         const localeTextFunc = this.localeService.getLocaleTextFunc();

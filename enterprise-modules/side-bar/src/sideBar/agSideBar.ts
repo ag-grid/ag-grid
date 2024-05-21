@@ -1,4 +1,5 @@
 import {
+    AgComponentSelector,
     Autowired,
     Component,
     Events,
@@ -23,16 +24,18 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import { SideBarButtonClickedEvent, SideBarButtonsComp } from './sideBarButtonsComp';
+import { AgSideBarButtons, SideBarButtonClickedEvent } from './agSideBarButtons';
 import { SideBarDefParser } from './sideBarDefParser';
 import { SideBarService } from './sideBarService';
 import { ToolPanelWrapper } from './toolPanelWrapper';
 
-export class SideBarComp extends Component implements ISideBar {
+export class AgSideBar extends Component implements ISideBar {
+    static readonly selector: AgComponentSelector = 'AG-SIDE-BAR';
+
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sideBarService') private sideBarService: SideBarService;
-    @RefSelector('sideBarButtons') private sideBarButtonsComp: SideBarButtonsComp;
+    @RefSelector('sideBarButtons') private sideBarButtonsComp: AgSideBarButtons;
 
     private toolPanelWrappers: ToolPanelWrapper[] = [];
     private sideBar: SideBarDef | undefined;
@@ -43,13 +46,13 @@ export class SideBarComp extends Component implements ISideBar {
         </div>`;
 
     constructor() {
-        super(SideBarComp.TEMPLATE);
+        super(AgSideBar.TEMPLATE, [AgSideBarButtons]);
     }
 
     @PostConstruct
     private postConstruct(): void {
         this.sideBarButtonsComp.addEventListener(
-            SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED,
+            AgSideBarButtons.EVENT_SIDE_BAR_BUTTON_CLICKED,
             this.onToolPanelButtonClicked.bind(this)
         );
         const { sideBar: sideBarState } = this.gos.get('initialState') ?? {};

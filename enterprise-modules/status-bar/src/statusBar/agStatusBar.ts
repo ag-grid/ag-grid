@@ -1,4 +1,5 @@
 import {
+    AgComponentSelector,
     AgPromise,
     Autowired,
     Component,
@@ -15,7 +16,8 @@ import {
 
 import { StatusBarService } from './statusBarService';
 
-export class StatusBar extends Component {
+export class AgStatusBar extends Component {
+    static readonly selector: AgComponentSelector = 'AG-STATUS-BAR';
     private static TEMPLATE /* html */ = `<div class="ag-status-bar">
             <div ref="eStatusBarLeft" class="ag-status-bar-left" role="status"></div>
             <div ref="eStatusBarCenter" class="ag-status-bar-center" role="status"></div>
@@ -32,7 +34,7 @@ export class StatusBar extends Component {
     private compDestroyFunctions: { [key: string]: () => void } = {};
 
     constructor() {
-        super(StatusBar.TEMPLATE);
+        super(AgStatusBar.TEMPLATE);
     }
 
     @PostConstruct

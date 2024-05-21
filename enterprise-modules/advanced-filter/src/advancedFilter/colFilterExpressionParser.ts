@@ -1,12 +1,7 @@
-import {
-    AdvancedFilterModel,
-    AutocompleteEntry,
-    AutocompleteListParams,
-    BaseCellDataType,
-    Column,
-} from '@ag-grid-community/core';
+import { AdvancedFilterModel, BaseCellDataType, Column } from '@ag-grid-community/core';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
+import { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 import {
     AutocompleteUpdate,
     FilterExpressionFunction,

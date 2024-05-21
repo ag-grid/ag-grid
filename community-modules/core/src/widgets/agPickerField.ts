@@ -1,34 +1,14 @@
 import { KeyCode } from '../constants/keyCode';
 import { Autowired } from '../context/context';
 import { Events } from '../eventKeys';
+import { AgPickerFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaExpanded, _setAriaRole } from '../utils/aria';
 import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
-import { AgAbstractField, AgFieldParams } from './agAbstractField';
+import { AgAbstractField } from './agAbstractField';
 import { Component } from './component';
 import { RefSelector } from './componentAnnotations';
 import { AddPopupParams, PopupService } from './popupService';
-
-export interface AgPickerFieldParams extends AgFieldParams {
-    pickerType: string;
-    pickerGap?: number;
-    /**
-     * If true, will set min-width and max-width (if present), and will set width to wrapper element width.
-     * If false, will set min-width, max-width and width to maxPickerWidth or wrapper element width.
-     */
-    variableWidth?: boolean;
-    minPickerWidth?: number | string;
-    maxPickerWidth?: number | string;
-    maxPickerHeight?: number | string;
-    pickerAriaLabelKey: string;
-    pickerAriaLabelValue: string;
-    template?: string;
-    className?: string;
-    pickerIcon?: string;
-    ariaRole?: string;
-    modalPicker?: boolean;
-    inputWidth?: number | 'flex';
-}
 
 const TEMPLATE = /* html */ `
     <div class="ag-picker-field" role="presentation">
@@ -70,7 +50,7 @@ export abstract class AgPickerField<
     @RefSelector('eIcon') private readonly eIcon: HTMLButtonElement;
 
     constructor(config?: TConfig) {
-        super(config, config?.template || TEMPLATE, config?.className);
+        super(config, config?.template || TEMPLATE, config?.agComponents || [], config?.className);
 
         this.ariaRole = config?.ariaRole;
         this.onPickerFocusIn = this.onPickerFocusIn.bind(this);

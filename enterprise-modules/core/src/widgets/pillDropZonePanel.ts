@@ -1,20 +1,28 @@
-import { KeyCode } from '../constants/keyCode';
-import { Autowired } from '../context/context';
 import {
+    Autowired,
+    Component,
     DragAndDropService,
     DragItem,
     DragSourceType,
     DraggingEvent,
     DropTarget,
-} from '../dragAndDrop/dragAndDropService';
-import { FocusService } from '../focusService';
-import { PositionableFeature } from '../rendering/features/positionableFeature';
-import { _setAriaHidden, _setAriaLabel, _setAriaPosInSet, _setAriaRole, _setAriaSetSize } from '../utils/aria';
-import { _areEqual, _existsAndNotEmpty, _includes, _insertArrayIntoArray } from '../utils/array';
-import { _clearElement } from '../utils/dom';
-import { _createIconNoSpan } from '../utils/icon';
-import { Component } from './component';
-import { ManagedFocusFeature } from './managedFocusFeature';
+    FocusService,
+    KeyCode,
+    ManagedFocusFeature,
+    PositionableFeature,
+    _areEqual,
+    _clearElement,
+    _createIconNoSpan,
+    _existsAndNotEmpty,
+    _includes,
+    _insertArrayIntoArray,
+    _setAriaHidden,
+    _setAriaLabel,
+    _setAriaPosInSet,
+    _setAriaRole,
+    _setAriaSetSize,
+} from '@ag-grid-community/core';
+
 import { PillDragComp } from './pillDragComp';
 
 export interface PillDropZonePanelParams {

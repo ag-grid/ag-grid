@@ -1,4 +1,5 @@
-import { AgDialog, AgPickerField, AgPickerFieldParams } from '@ag-grid-community/core';
+import { AgComponentSelector, AgPickerField, AgPickerFieldParams } from '@ag-grid-community/core';
+import { AgDialog } from '@ag-grid-enterprise/core';
 import { _Util } from 'ag-charts-community';
 
 import { AgColorPanel } from './agColorPanel';
@@ -11,6 +12,8 @@ export interface AgColorPickerParams
 }
 
 export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & AgPickerFieldParams, AgDialog> {
+    static readonly selector: AgComponentSelector = 'AG-COLOR-PICKER';
+
     private isDestroyingPicker: boolean;
     private eDisplayFieldColor: HTMLElement;
     private eDisplayFieldText: HTMLElement;

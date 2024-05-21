@@ -1,5 +1,4 @@
 import {
-    AgRichSelect,
     Events,
     FieldPickerValueSelectedEvent,
     ICellEditor,
@@ -12,6 +11,7 @@ import {
     _missing,
     _warnOnce,
 } from '@ag-grid-community/core';
+import { AgRichSelect } from '@ag-grid-enterprise/core';
 
 export class RichSelectCellEditor<TData = any, TValue = any> extends PopupComponent implements ICellEditor<TValue> {
     private params: RichCellEditorParams<TData, TValue>;

@@ -1,15 +1,8 @@
-import {
-    AgGroupComponentParams,
-    AgSlider,
-    Autowired,
-    ChartOptionsChanged,
-    Component,
-    Events,
-    PostConstruct,
-    RefSelector,
-} from '@ag-grid-community/core';
+import { Autowired, ChartOptionsChanged, Component, Events, PostConstruct, RefSelector } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgChartPaddingOptions, AgChartThemeOverrides } from 'ag-charts-community';
 
+import { AgSlider } from '../../../../../widgets/agSlider';
 import { ChartController } from '../../../chartController';
 import { ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartThemeOverridesSeriesType } from '../../../utils/seriesTypeMapper';
@@ -48,7 +41,7 @@ export class PaddingPanel extends Component {
         const getSliderParams = (property: keyof AgChartPaddingOptions) =>
             this.chartMenuUtils.getDefaultSliderParams('padding.' + property, property, 200);
 
-        this.setTemplate(PaddingPanel.TEMPLATE, {
+        this.setTemplate(PaddingPanel.TEMPLATE, [AgGroupComponent, AgSlider], {
             chartPaddingGroup: chartPaddingGroupParams,
             paddingTopSlider: getSliderParams('top'),
             paddingRightSlider: getSliderParams('right'),

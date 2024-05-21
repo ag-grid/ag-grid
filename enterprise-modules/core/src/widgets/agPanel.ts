@@ -1,13 +1,16 @@
-import { PostConstruct } from '../context/context';
 import {
+    Component,
     PositionableFeature,
     PositionableOptions,
+    PostConstruct,
+    RefSelector,
     ResizableStructure,
-} from '../rendering/features/positionableFeature';
-import { _getInnerHeight, _getInnerWidth, _isVisible, _setDisplayed } from '../utils/dom';
-import { _createIconNoSpan } from '../utils/icon';
-import { Component } from './component';
-import { RefSelector } from './componentAnnotations';
+    _createIconNoSpan,
+    _getInnerHeight,
+    _getInnerWidth,
+    _isVisible,
+    _setDisplayed,
+} from '@ag-grid-community/core';
 
 export interface PanelOptions extends PositionableOptions {
     component?: Component;

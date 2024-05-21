@@ -1,6 +1,5 @@
 import {
-    AgGroupComponent,
-    AgGroupComponentParams,
+    AgSelect,
     AgSelectParams,
     Autowired,
     Component,
@@ -10,7 +9,9 @@ import {
     _includes,
     _removeFromParent,
 } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
+import { AgColorPicker } from '../../../../widgets/agColorPicker';
 import { ChartOptionsProxy } from '../../services/chartOptionsService';
 import { ChartTranslationService } from '../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
@@ -72,7 +73,7 @@ export class FontPanel extends Component {
             },
             useToggle: !this.params.suppressEnabledCheckbox,
         };
-        this.setTemplate(FontPanel.TEMPLATE, {
+        this.setTemplate(FontPanel.TEMPLATE, [AgGroupComponent, AgSelect, AgColorPicker], {
             fontGroup: fontGroupParams,
             familySelect: this.getFamilySelectParams(),
             weightStyleSelect: this.getWeightStyleSelectParams(),

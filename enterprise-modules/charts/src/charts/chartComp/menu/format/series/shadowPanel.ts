@@ -1,5 +1,8 @@
-import { AgGroupComponentParams, AgSliderParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
+import { AgColorPicker } from '../../../../../widgets/agColorPicker';
+import { AgSlider, AgSliderParams } from '../../../../../widgets/agSlider';
 import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -38,7 +41,7 @@ export class ShadowPanel extends Component {
             }
         );
         const shadowColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(`${propertyNamespace}.color`);
-        this.setTemplate(ShadowPanel.TEMPLATE, {
+        this.setTemplate(ShadowPanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
             shadowGroup: shadowGroupParams,
             shadowColorPicker: shadowColorPickerParams,
             shadowBlurSlider: this.getSliderParams('blur', 0, 20),

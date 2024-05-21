@@ -1,20 +1,28 @@
-import { UserComponentFactory } from '../components/framework/userComponentFactory';
-import { KeyCode } from '../constants/keyCode';
-import { BeanStub } from '../context/beanStub';
-import { Autowired } from '../context/context';
-import { AgEvent } from '../events';
-import { IMenuActionParams } from '../interfaces/iCallbackParams';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { IComponent } from '../interfaces/iComponent';
-import { IMenuConfigParams, IMenuItemComp, MenuItemDef } from '../interfaces/menuItem';
-import { _setAriaDisabled, _setAriaExpanded, _setAriaLevel, _setAriaRole } from '../utils/aria';
-import { _loadTemplate } from '../utils/dom';
-import { AgPromise } from '../utils/promise';
+import {
+    AgEvent,
+    AgPromise,
+    Autowired,
+    BeanStub,
+    Component,
+    IComponent,
+    IMenuActionParams,
+    IMenuConfigParams,
+    IMenuItemComp,
+    KeyCode,
+    MenuItemDef,
+    PopupService,
+    TooltipFeature,
+    UserComponentFactory,
+    WithoutGridCommon,
+    _loadTemplate,
+    _setAriaDisabled,
+    _setAriaExpanded,
+    _setAriaLevel,
+    _setAriaRole,
+} from '@ag-grid-community/core';
+
 import { AgMenuList } from './agMenuList';
 import { AgMenuPanel } from './agMenuPanel';
-import { Component } from './component';
-import { PopupService } from './popupService';
-import { TooltipFeature } from './tooltipFeature';
 
 export interface CloseMenuEvent extends AgEvent {
     mouseEvent?: MouseEvent;

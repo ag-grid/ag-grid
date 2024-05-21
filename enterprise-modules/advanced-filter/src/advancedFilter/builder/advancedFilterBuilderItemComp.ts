@@ -1,5 +1,4 @@
 import {
-    AutocompleteEntry,
     Autowired,
     BaseCellDataType,
     Beans,
@@ -26,6 +25,7 @@ import {
 } from '@ag-grid-community/core';
 
 import { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
+import { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 import { AddDropdownComp } from './addDropdownComp';
 import {
     AdvancedFilterBuilderDragFeature,

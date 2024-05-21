@@ -1,4 +1,5 @@
-import { AgGroupComponent, AgSelect, AgSelectParams, Autowired, Component, ListOption } from '@ag-grid-community/core';
+import { AgSelect, AgSelectParams, Autowired, Component, ListOption } from '@ag-grid-community/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import { AgPillSelect, AgPillSelectChangeParams } from '../../../../widgets/agPillSelect';
 import { ChartController } from '../../chartController';

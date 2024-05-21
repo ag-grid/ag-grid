@@ -26,12 +26,14 @@ export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
 
+export type ComponentClass = { new (params?: any): Component; selector: AgComponentSelector };
+
 export class Component extends BeanStub {
     public static elementGettingCreated: any;
 
     public static EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     private eGui: HTMLElement;
-
+    private components: ComponentClass[] = [];
     @Autowired('agStackComponentsRegistry') protected readonly agStackComponentsRegistry: AgStackComponentsRegistry;
 
     // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
@@ -53,19 +55,27 @@ export class Component extends BeanStub {
     private tooltipText: string | null | undefined;
     private tooltipFeature: TooltipFeature | undefined;
 
-    constructor(template?: string) {
+    constructor(template?: string, components?: ComponentClass[]) {
         super();
 
         this.cssClassManager = new CssClassManager(() => this.eGui);
 
         if (template) {
-            this.setTemplate(template);
+            this.components = components || [];
+            this.setTemplate(template, [], undefined);
         }
     }
 
     @PreConstruct
-    private preConstructOnComponent(): void {
+    private componentPreConstruct(): void {
         this.usingBrowserTooltips = this.gos.get('enableBrowserTooltips');
+
+        // ui exists if user sets template in constructor. when this happens, we have to wait for the context
+        // to be autoWired first before we can create child components.
+        if (this.getGui()) {
+            this.agStackComponentsRegistry.ensureRegistered(this.components);
+            this.createChildComponentsFromTags(this.getGui());
+        }
     }
 
     public getCompId(): number {
@@ -157,25 +167,31 @@ export class Component extends BeanStub {
         });
     }
 
+    private browserElements = new Set<string>(['DIV', 'SPAN', 'INPUT', 'TEXTAREA', 'BUTTON']);
+
     private createComponentFromElement(
         element: HTMLElement,
         afterPreCreateCallback?: (comp: Component) => void,
         paramsMap?: { [key: string]: any }
     ): Component | null {
         const key = element.nodeName;
-        const componentParams = paramsMap ? paramsMap[element.getAttribute('ref')!] : undefined;
-        const ComponentClass = this.agStackComponentsRegistry.getComponentClass(key);
 
+        const elementRef = element.getAttribute('ref');
+
+        const ComponentClass = this.browserElements.has(key)
+            ? null
+            : this.agStackComponentsRegistry.getComponent(key as Uppercase<AgComponentSelector>);
+        let newComponent: Component | null = null;
         if (ComponentClass) {
             Component.elementGettingCreated = element;
-            const newComponent = new ComponentClass(componentParams) as Component;
+            const componentParams = paramsMap ? paramsMap[elementRef!] : undefined;
+            newComponent = new ComponentClass(componentParams);
             newComponent.setParentComponent(this);
 
             this.createBean(newComponent, null, afterPreCreateCallback);
-
-            return newComponent;
         }
-        return null;
+
+        return newComponent;
     }
 
     private copyAttributesFromNode(source: Element, dest: Element): void {
@@ -229,28 +245,28 @@ export class Component extends BeanStub {
         elements.forEach((el) => el.setAttribute('tabindex', tabIndex.toString()));
     }
 
-    public setTemplate(template: string | null | undefined, paramsMap?: { [key: string]: any }): void {
+    public setTemplate(
+        template: string | null | undefined,
+        components?: ComponentClass[],
+        paramsMap?: { [key: string]: any }
+    ): void {
         const eGui = _loadTemplate(template as string);
-        this.setTemplateFromElement(eGui, paramsMap);
+        this.setTemplateFromElement(eGui, components, paramsMap);
     }
 
-    public setTemplateFromElement(element: HTMLElement, paramsMap?: { [key: string]: any }): void {
+    public setTemplateFromElement(
+        element: HTMLElement,
+        components?: ComponentClass[],
+        paramsMap?: { [key: string]: any }
+    ): void {
         this.eGui = element;
         (this.eGui as any).__agComponent = this;
         this.wireQuerySelectors();
+        this.agStackComponentsRegistry?.ensureRegistered(components ?? this.components);
 
         // context will not be available when user sets template in constructor
         if (this.getContext()) {
             this.createChildComponentsFromTags(this.getGui(), paramsMap);
-        }
-    }
-
-    @PreConstruct
-    private createChildComponentsPreConstruct(): void {
-        // ui exists if user sets template in constructor. when this happens, we have to wait for the context
-        // to be autoWired first before we can create child components.
-        if (this.getGui()) {
-            this.createChildComponentsFromTags(this.getGui());
         }
     }
 
@@ -407,3 +423,43 @@ export class Component extends BeanStub {
         return this.queryForHtmlElement(`[ref="${refName}"]`);
     }
 }
+
+export type AgComponentSelector =
+    | 'AG-ADVANCED-FILTER'
+    | 'AG-ANGLE-SELECT'
+    | 'AG-AUTOCOMPLETE'
+    | 'AG-CHECKBOX'
+    | 'AG-COLOR-PICKER'
+    | 'AG-FAKE-HORIZONTAL-SCROLL'
+    | 'AG-FAKE-VERTICAL-SCROLL'
+    | 'AG-FILL-HANDLE'
+    | 'AG-FILTERS-TOOL-PANEL-HEADER'
+    | 'AG-FILTERS-TOOL-PANEL-LIST'
+    | 'AG-GRID-BODY'
+    | 'AG-GRID-HEADER-DROP-ZONES'
+    | 'AG-GROUP-COMPONENT'
+    | 'AG-HEADER-ROOT'
+    | 'AG-HORIZONTAL-RESIZE'
+    | 'AG-INPUT-DATE-FIELD'
+    | 'AG-INPUT-NUMBER-FIELD'
+    | 'AG-INPUT-RANGE'
+    | 'AG-INPUT-TEXT-AREA'
+    | 'AG-INPUT-TEXT-FIELD'
+    | 'AG-NAME-VALUE'
+    | 'AG-OVERLAY-WRAPPER'
+    | 'AG-PAGE-SIZE-SELECTOR'
+    | 'AG-PAGINATION'
+    | 'AG-PRIMARY-COLS-HEADER'
+    | 'AG-PRIMARY-COLS-LIST'
+    | 'AG-PRIMARY-COLS'
+    | 'AG-RADIO-BUTTON'
+    | 'AG-RANGE-HANDLE'
+    | 'AG-ROW-CONTAINER'
+    | 'AG-SELECT'
+    | 'AG-SIDE-BAR'
+    | 'AG-SIDE-BAR-BUTTONS'
+    | 'AG-SLIDER'
+    | 'AG-SORT-INDICATOR'
+    | 'AG-STATUS-BAR'
+    | 'AG-TOGGLE-BUTTON'
+    | 'AG-WATERMARK';

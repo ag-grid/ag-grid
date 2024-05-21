@@ -26,6 +26,9 @@ class TextCellEditorInput<TValue = any>
     public getTemplate() {
         return /* html */ `<ag-input-text-field class="ag-cell-editor" ref="eInput"></ag-input-text-field>`;
     }
+    public getAgComponents() {
+        return [AgInputTextField];
+    }
 
     public init(eInput: AgInputTextField, params: ITextCellEditorParams<any, TValue>): void {
         this.eInput = eInput;

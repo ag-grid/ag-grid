@@ -1,4 +1,5 @@
-import { AgGroupComponentParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { AgInputNumberField, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
 import { ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
@@ -36,7 +37,7 @@ export class AnimationPanel extends Component {
                 min: 0,
             }
         );
-        this.setTemplate(AnimationPanel.TEMPLATE, {
+        this.setTemplate(AnimationPanel.TEMPLATE, [AgGroupComponent, AgInputNumberField], {
             animationGroup: animationGroupParams,
             animationHeightInput: animationHeightInputParams,
         });

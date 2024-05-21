@@ -2,11 +2,13 @@ import { KeyCode } from '../../constants/keyCode';
 import { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _isBrowserSafari } from '../../utils/browser';
 import { AgInputTextField } from '../../widgets/agInputTextField';
+import { ComponentClass } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { PopupComponent } from '../../widgets/popupComponent';
 
 export interface CellEditorInput<TValue, P extends ICellEditorParams, I extends AgInputTextField> {
     getTemplate(): string;
+    getAgComponents(): ComponentClass[];
     init(eInput: I, params: P): void;
     getValue(): TValue | null | undefined;
     getStartValue(): string | null | undefined;
@@ -23,10 +25,13 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
     @RefSelector('eInput') protected eInput: I;
 
     constructor(protected cellEditorInput: CellEditorInput<TValue, P, I>) {
-        super(/* html */ `
+        super(
+            /* html */ `
             <div class="ag-cell-edit-wrapper">
                 ${cellEditorInput.getTemplate()}
-            </div>`);
+            </div>`,
+            cellEditorInput.getAgComponents()
+        );
     }
 
     public init(params: P): void {

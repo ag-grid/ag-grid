@@ -47,7 +47,6 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
-
 interface RowCallback {
     (
         gridRow: RowPosition,

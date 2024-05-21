@@ -1,16 +1,20 @@
-import { KeyCode } from '../constants/keyCode';
-import { BeanStub } from '../context/beanStub';
-import { Autowired, PostConstruct } from '../context/context';
-import { FocusService } from '../focusService';
-import { IMenuActionParams } from '../interfaces/iCallbackParams';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { MenuItemDef } from '../interfaces/menuItem';
-import { _last } from '../utils/array';
-import { _loadTemplate } from '../utils/dom';
-import { _stopPropagationForAgGrid } from '../utils/event';
-import { AgPromise } from '../utils/promise';
+import {
+    AgPromise,
+    Autowired,
+    BeanStub,
+    FocusService,
+    IMenuActionParams,
+    KeyCode,
+    MenuItemDef,
+    PostConstruct,
+    TabGuardComp,
+    WithoutGridCommon,
+    _last,
+    _loadTemplate,
+    _stopPropagationForAgGrid,
+} from '@ag-grid-community/core';
+
 import { AgMenuItemComponent, CloseMenuEvent, MenuItemActivatedEvent } from './agMenuItemComponent';
-import { TabGuardComp } from './tabGuardComp';
 
 export class AgMenuList extends TabGuardComp {
     @Autowired('focusService') private readonly focusService: FocusService;

@@ -1,5 +1,7 @@
-import { AgGroupComponentParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
+import { AgSlider } from '../../../../../widgets/agSlider';
 import { ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -28,7 +30,7 @@ export class CalloutPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(CalloutPanel.TEMPLATE, {
+        this.setTemplate(CalloutPanel.TEMPLATE, [AgGroupComponent, AgSlider], {
             calloutGroup: calloutGroupParams,
             calloutLengthSlider: this.chartMenuUtils.getDefaultSliderParams('calloutLine.length', 'length', 40),
             calloutStrokeWidthSlider: this.chartMenuUtils.getDefaultSliderParams(

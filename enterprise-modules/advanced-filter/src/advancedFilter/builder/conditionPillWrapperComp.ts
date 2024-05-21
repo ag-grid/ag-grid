@@ -1,5 +1,4 @@
 import {
-    AutocompleteEntry,
     Autowired,
     BaseCellDataType,
     Column,
@@ -11,6 +10,7 @@ import {
 } from '@ag-grid-community/core';
 
 import { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
+import { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 import { AdvancedFilterBuilderEvents, AdvancedFilterBuilderItem, CreatePillParams } from './iAdvancedFilterBuilder';
 import { InputPillComp } from './inputPillComp';
 import { SelectPillComp } from './selectPillComp';

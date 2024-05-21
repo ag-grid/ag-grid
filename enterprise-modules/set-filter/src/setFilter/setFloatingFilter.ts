@@ -24,10 +24,13 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     private readonly filterModelFormatter = new SetFilterModelFormatter();
 
     constructor() {
-        super(/* html */ `
+        super(
+            /* html */ `
             <div class="ag-floating-filter-input ag-set-floating-filter-input" role="presentation">
                 <ag-input-text-field ref="eFloatingFilterText"></ag-input-text-field>
-            </div>`);
+            </div>`,
+            [AgInputTextField]
+        );
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.

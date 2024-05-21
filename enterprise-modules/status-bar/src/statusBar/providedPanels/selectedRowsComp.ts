@@ -8,9 +8,9 @@ import {
     _formatNumberCommas,
 } from '@ag-grid-community/core';
 
-import { NameValueComp } from './nameValueComp';
+import { AgNameValue } from './agNameValue';
 
-export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp {
+export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('selectionService') private selectionService: ISelectionService;
 

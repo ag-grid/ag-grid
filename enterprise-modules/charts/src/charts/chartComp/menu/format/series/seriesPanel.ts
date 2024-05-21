@@ -1,9 +1,6 @@
 import {
-    AgGroupComponent,
-    AgGroupComponentParams,
     AgSelect,
     AgSelectParams,
-    AgSlider,
     AgToggleButton,
     AgToggleButtonParams,
     Autowired,
@@ -13,9 +10,11 @@ import {
     RefSelector,
     _removeFromParent,
 } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
 
 import { AgColorPicker } from '../../../../../widgets/agColorPicker';
+import { AgSlider } from '../../../../../widgets/agSlider';
 import { ChartController } from '../../../chartController';
 import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartSeriesType, getSeriesType, isPieChartSeries } from '../../../utils/seriesTypeMapper';
@@ -117,7 +116,7 @@ export class SeriesPanel extends Component {
             expanded,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(SeriesPanel.TEMPLATE, { seriesGroup: seriesGroupParams });
+        this.setTemplate(SeriesPanel.TEMPLATE, [AgGroupComponent], { seriesGroup: seriesGroupParams });
 
         registerGroupComponent(this.seriesGroup);
 

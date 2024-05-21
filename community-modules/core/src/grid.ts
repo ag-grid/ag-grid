@@ -23,7 +23,7 @@ import { AgComponentUtils } from './components/framework/agComponentUtils';
 import { ComponentMetadataProvider } from './components/framework/componentMetadataProvider';
 import { UserComponentFactory } from './components/framework/userComponentFactory';
 import { UserComponentRegistry } from './components/framework/userComponentRegistry';
-import { ComponentMeta, Context, ContextParams } from './context/context';
+import { Context, ContextParams } from './context/context';
 import { CtrlsFactory } from './ctrlsFactory';
 import { CtrlsService } from './ctrlsService';
 import { DragAndDropService } from './dragAndDrop/dragAndDropService';
@@ -38,22 +38,16 @@ import { FilterManager } from './filter/filterManager';
 import { QuickFilterService } from './filter/quickFilterService';
 import { FocusService } from './focusService';
 import { GridApi } from './gridApi';
-import { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
-import { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
-import { GridBodyComp } from './gridBodyComp/gridBodyComp';
 import { MouseEventService } from './gridBodyComp/mouseEventService';
 import { NavigationService } from './gridBodyComp/navigationService';
 import { PinnedWidthService } from './gridBodyComp/pinnedWidthService';
-import { RowContainerComp } from './gridBodyComp/rowContainer/rowContainerComp';
 import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridComp } from './gridComp/gridComp';
 import { GridOptionsService } from './gridOptionsService';
-import { SortIndicatorComp } from './headerRendering/cells/column/sortIndicatorComp';
 import { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 import { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
 import { HeaderPositionUtils } from './headerRendering/common/headerPosition';
 import { HorizontalResizeService } from './headerRendering/common/horizontalResizeService';
-import { GridHeaderComp } from './headerRendering/gridHeaderComp';
 import { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import { Module } from './interfaces/iModule';
 import { RowModelType } from './interfaces/iRowModel';
@@ -67,9 +61,7 @@ import { ResizeObserverService } from './misc/resizeObserverService';
 import { StateService } from './misc/stateService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
-import { PageSizeSelectorComp } from './pagination/pageSizeSelector/pageSizeSelectorComp';
 import { PaginationAutoPageSizeService } from './pagination/paginationAutoPageSizeService';
-import { PaginationComp } from './pagination/paginationComp';
 import { PaginationProxy } from './pagination/paginationProxy';
 import { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 import { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
@@ -78,7 +70,6 @@ import { Beans } from './rendering/beans';
 import { ColumnAnimationService } from './rendering/columnAnimationService';
 import { ColumnHoverService } from './rendering/columnHoverService';
 import { OverlayService } from './rendering/overlays/overlayService';
-import { OverlayWrapperComponent } from './rendering/overlays/overlayWrapperComponent';
 import { RowCssClassCalculator } from './rendering/row/rowCssClassCalculator';
 import { RowContainerHeightService } from './rendering/rowContainerHeightService';
 import { RowRenderer } from './rendering/rowRenderer';
@@ -99,19 +90,6 @@ import { ExpressionService } from './valueService/expressionService';
 import { ValueCache } from './valueService/valueCache';
 import { ValueService } from './valueService/valueService';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
-import { AgAutocomplete } from './widgets/agAutocomplete';
-import { AgCheckbox } from './widgets/agCheckbox';
-import { AgGroupComponent } from './widgets/agGroupComponent';
-import { AgInputDateField } from './widgets/agInputDateField';
-import { AgInputNumberField } from './widgets/agInputNumberField';
-import { AgInputRange } from './widgets/agInputRange';
-import { AgInputTextArea } from './widgets/agInputTextArea';
-import { AgInputTextField } from './widgets/agInputTextField';
-import { AgRadioButton } from './widgets/agRadioButton';
-import { AgRichSelect } from './widgets/agRichSelect';
-import { AgSelect } from './widgets/agSelect';
-import { AgSlider } from './widgets/agSlider';
-import { AgToggleButton } from './widgets/agToggleButton';
 import { PopupService } from './widgets/popupService';
 
 export interface GridParams {
@@ -292,7 +270,7 @@ export class GridCoreCreator {
         const beans = context.getBean('beans') as Beans;
 
         this.registerModuleUserComponents(beans, registeredModules);
-        this.registerStackComponents(beans, registeredModules);
+        this.registerModuleStackComponents(beans, registeredModules);
         this.registerControllers(beans, registeredModules);
 
         createUi(context);
@@ -315,9 +293,11 @@ export class GridCoreCreator {
         });
     }
 
-    private registerStackComponents(beans: Beans, registeredModules: Module[]): void {
-        const agStackComponents = this.createAgStackComponentsList(registeredModules);
-        beans.agStackComponentsRegistry.setupComponents(agStackComponents);
+    private registerModuleStackComponents(beans: Beans, registeredModules: Module[]): void {
+        const agStackComponents = registeredModules.flatMap((module) =>
+            module.agStackComponents ? module.agStackComponents : []
+        );
+        beans.agStackComponentsRegistry.ensureRegistered(agStackComponents);
     }
 
     private getRegisteredModules(params: GridParams | undefined, gridId: string): Module[] {
@@ -383,41 +363,6 @@ export class GridCoreCreator {
         }
 
         return seed;
-    }
-
-    private createAgStackComponentsList(registeredModules: Module[]): any[] {
-        let components: ComponentMeta[] = [
-            { componentName: 'AgCheckbox', componentClass: AgCheckbox },
-            { componentName: 'AgRadioButton', componentClass: AgRadioButton },
-            { componentName: 'AgToggleButton', componentClass: AgToggleButton },
-            { componentName: 'AgInputTextField', componentClass: AgInputTextField },
-            { componentName: 'AgInputTextArea', componentClass: AgInputTextArea },
-            { componentName: 'AgInputNumberField', componentClass: AgInputNumberField },
-            { componentName: 'AgInputDateField', componentClass: AgInputDateField },
-            { componentName: 'AgInputRange', componentClass: AgInputRange },
-            { componentName: 'AgRichSelect', componentClass: AgRichSelect },
-            { componentName: 'AgSelect', componentClass: AgSelect },
-            { componentName: 'AgSlider', componentClass: AgSlider },
-            { componentName: 'AgGridBody', componentClass: GridBodyComp },
-            { componentName: 'AgHeaderRoot', componentClass: GridHeaderComp },
-            { componentName: 'AgSortIndicator', componentClass: SortIndicatorComp },
-            { componentName: 'AgPagination', componentClass: PaginationComp },
-            { componentName: 'AgPageSizeSelector', componentClass: PageSizeSelectorComp },
-            { componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent },
-            { componentName: 'AgGroupComponent', componentClass: AgGroupComponent },
-            { componentName: 'AgRowContainer', componentClass: RowContainerComp },
-            { componentName: 'AgFakeHorizontalScroll', componentClass: FakeHScrollComp },
-            { componentName: 'AgFakeVerticalScroll', componentClass: FakeVScrollComp },
-            { componentName: 'AgAutocomplete', componentClass: AgAutocomplete },
-        ];
-
-        const moduleAgStackComps = this.extractModuleEntity(registeredModules, (module) =>
-            module.agStackComponents ? module.agStackComponents : []
-        );
-
-        components = components.concat(moduleAgStackComps);
-
-        return components;
     }
 
     private createBeansList(

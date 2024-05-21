@@ -2,6 +2,7 @@ import { Autowired, PostConstruct } from '../context/context';
 import { GridBodyComp } from '../gridBodyComp/gridBodyComp';
 import { ISideBar } from '../interfaces/iSideBar';
 import { Logger, LoggerFactory } from '../logger';
+import { PaginationComp } from '../pagination/paginationComp';
 import { LayoutCssClasses, UpdateLayoutClassesParams } from '../styling/layoutFeature';
 import { _isVisible } from '../utils/dom';
 import { Component } from '../widgets/component';
@@ -47,7 +48,7 @@ export class GridComp extends TabGuardComp {
         this.ctrl = this.createManagedBean(new GridCtrl());
 
         const template = this.createTemplate();
-        this.setTemplate(template);
+        this.setTemplate(template, [GridBodyComp, PaginationComp]);
 
         this.ctrl.setComp(compProxy, this.eGridDiv, this.getGui());
 

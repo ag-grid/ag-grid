@@ -28,7 +28,7 @@ export class SideBarButtonComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         const template = this.createTemplate();
-        this.setTemplate(template);
+        this.setTemplate(template, []);
         this.setLabel();
         this.setIcon();
         this.addManagedListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));

@@ -10,7 +10,7 @@ import { AgInputTextField } from '../../widgets/agInputTextField';
 import { ListOption } from '../../widgets/agList';
 import { AgRadioButton } from '../../widgets/agRadioButton';
 import { AgSelect } from '../../widgets/agSelect';
-import { Component } from '../../widgets/component';
+import { Component, ComponentClass } from '../../widgets/component';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import { IFloatingFilterParent } from '../floating/floatingFilter';
 import { OptionsFactory } from './optionsFactory';
@@ -603,6 +603,10 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     protected createBodyTemplate(): string {
         // created dynamically
         return '';
+    }
+    protected getAgComponents(): ComponentClass[] {
+        // created dynamically
+        return [];
     }
 
     protected getCssIdentifier() {

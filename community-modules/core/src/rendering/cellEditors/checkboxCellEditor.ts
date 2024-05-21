@@ -7,10 +7,13 @@ import { PopupComponent } from '../../widgets/popupComponent';
 
 export class CheckboxCellEditor extends PopupComponent implements ICellEditorComp {
     constructor() {
-        super(/* html */ `
+        super(
+            /* html */ `
             <div class="ag-cell-wrapper ag-cell-edit-wrapper ag-checkbox-edit">
                 <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
-            </div>`);
+            </div>`,
+            [AgCheckbox]
+        );
     }
 
     @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;

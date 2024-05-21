@@ -1,13 +1,6 @@
-import {
-    AgInputTextField,
-    AgInputTextFieldParams,
-    AgSlider,
-    AgSliderParams,
-    Autowired,
-    Component,
-    PostConstruct,
-} from '@ag-grid-community/core';
+import { AgInputTextField, AgInputTextFieldParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
 
+import { AgSlider, AgSliderParams } from '../../../../../widgets/agSlider';
 import { ChartOptionsProxy } from '../../../services/chartOptionsService';
 import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';

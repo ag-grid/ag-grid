@@ -7,10 +7,11 @@ dist
 
 # Website
 .astro
+*.mdoc
 
 # Generated grid options json
 plugins/ag-grid-generate-example-files/gridOptionsTypes/_gridOptions_Types.json
 
 # Generated scss files
 _icon-font-codes.scss
-styles/src/internal/ag/generated
+community-modules/styles/src/internal/ag/generated/*

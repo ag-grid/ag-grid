@@ -1,5 +1,7 @@
-import { AgGroupComponentParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { AgCheckbox, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
+import { AgSlider } from '../../../../../widgets/agSlider';
 import { ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -41,7 +43,7 @@ export class NavigatorPanel extends Component {
             'miniChart'
         );
 
-        this.setTemplate(NavigatorPanel.TEMPLATE, {
+        this.setTemplate(NavigatorPanel.TEMPLATE, [AgGroupComponent, AgSlider, AgCheckbox], {
             navigatorGroup: navigatorGroupParams,
             navigatorHeightSlider: navigatorHeightSliderParams,
             navigatorMiniChartCheckbox: navigatorMiniChartCheckboxParams,

@@ -1,5 +1,7 @@
-import { AgGroupComponentParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
+import { AgSlider } from '../../../../../widgets/agSlider';
 import { ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -33,7 +35,7 @@ export class CapsPanel extends Component {
         );
         capLengthRatioSliderParams.step = 0.05;
 
-        this.setTemplate(CapsPanel.TEMPLATE, {
+        this.setTemplate(CapsPanel.TEMPLATE, [AgGroupComponent, AgSlider], {
             capsGroup: capsGroupParams,
             capLengthRatioSlider: capLengthRatioSliderParams,
         });

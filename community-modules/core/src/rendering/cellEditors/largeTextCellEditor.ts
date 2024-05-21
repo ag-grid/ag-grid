@@ -33,7 +33,7 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
     private focusAfterAttached: boolean;
 
     constructor() {
-        super(LargeTextCellEditor.TEMPLATE);
+        super(LargeTextCellEditor.TEMPLATE, [AgInputTextArea]);
     }
 
     public init(params: ILargeTextEditorParams): void {

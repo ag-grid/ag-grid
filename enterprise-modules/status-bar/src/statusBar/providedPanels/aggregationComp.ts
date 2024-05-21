@@ -21,7 +21,7 @@ import {
     _missingOrEmpty,
 } from '@ag-grid-community/core';
 
-import { NameValueComp } from './nameValueComp';
+import { AgNameValue } from './agNameValue';
 
 export class AggregationComp extends Component implements IStatusPanelComp {
     private static TEMPLATE /* html */ = `<div class="ag-status-panel ag-status-panel-aggregations">
@@ -39,16 +39,16 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
 
-    @RefSelector('sumAggregationComp') private sumAggregationComp: NameValueComp;
-    @RefSelector('countAggregationComp') private countAggregationComp: NameValueComp;
-    @RefSelector('minAggregationComp') private minAggregationComp: NameValueComp;
-    @RefSelector('maxAggregationComp') private maxAggregationComp: NameValueComp;
-    @RefSelector('avgAggregationComp') private avgAggregationComp: NameValueComp;
+    @RefSelector('sumAggregationComp') private sumAggregationComp: AgNameValue;
+    @RefSelector('countAggregationComp') private countAggregationComp: AgNameValue;
+    @RefSelector('minAggregationComp') private minAggregationComp: AgNameValue;
+    @RefSelector('maxAggregationComp') private maxAggregationComp: AgNameValue;
+    @RefSelector('avgAggregationComp') private avgAggregationComp: AgNameValue;
 
     private params!: AggregationStatusPanelParams;
 
     constructor() {
-        super(AggregationComp.TEMPLATE);
+        super(AggregationComp.TEMPLATE, [AgNameValue]);
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
@@ -117,7 +117,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         }
     }
 
-    private getAllowedAggregationValueComponent(aggFuncName: AggregationStatusPanelAggFunc): NameValueComp | null {
+    private getAllowedAggregationValueComponent(aggFuncName: AggregationStatusPanelAggFunc): AgNameValue | null {
         // if the user has specified the agAggregationPanelComp but no aggFuncs we show the all
         // if the user has specified the agAggregationPanelComp and aggFuncs, then we only show the aggFuncs listed
         const { aggFuncs } = this.params;
@@ -130,7 +130,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         return null;
     }
 
-    private getAggregationValueComponent(aggFuncName: AggregationStatusPanelAggFunc): NameValueComp {
+    private getAggregationValueComponent(aggFuncName: AggregationStatusPanelAggFunc): AgNameValue {
         // converts user supplied agg name to our reference - eg: sum => sumAggregationComp
         const refComponentName = `${aggFuncName}AggregationComp`;
         return (this as any)[refComponentName];

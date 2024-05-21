@@ -1,4 +1,5 @@
 import {
+    AgComponentSelector,
     Autowired,
     Component,
     Events,
@@ -8,7 +9,9 @@ import {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 
-export class HorizontalResizeComp extends Component {
+export class AgHorizontalResize extends Component {
+    static readonly selector: AgComponentSelector = 'AG-HORIZONTAL-RESIZE';
+
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
 
     private startingWidth: number;

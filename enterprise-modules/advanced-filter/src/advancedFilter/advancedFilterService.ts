@@ -1,7 +1,6 @@
 import {
     AdvancedFilterEnabledChangedEvent,
     AdvancedFilterModel,
-    AutocompleteEntry,
     Autowired,
     Bean,
     BeanStub,
@@ -21,6 +20,7 @@ import {
 
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
 import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
+import { AutocompleteEntry } from './autocomplete/autocompleteParams';
 import { FilterExpressionParser } from './filterExpressionParser';
 import { ExpressionProxy, FilterExpressionFunction, FilterExpressionFunctionParams } from './filterExpressionUtils';
 

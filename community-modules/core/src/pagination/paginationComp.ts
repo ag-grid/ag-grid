@@ -1,18 +1,20 @@
 import { KeyCode } from '../constants/keyCode';
 import { Autowired, PostConstruct } from '../context/context';
-import { Events, PaginationChangedEvent } from '../events';
+import { Events } from '../events';
 import { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
 import { _setAriaDisabled } from '../utils/aria';
 import { _createIconNoSpan } from '../utils/icon';
 import { _formatNumberCommas } from '../utils/number';
-import { Component } from '../widgets/component';
+import { AgComponentSelector, Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
 import { PaginationProxy } from './paginationProxy';
 
 export class PaginationComp extends Component {
+    static readonly selector: AgComponentSelector = 'AG-PAGINATION';
+
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
 
@@ -41,7 +43,7 @@ export class PaginationComp extends Component {
     @PostConstruct
     protected postConstruct(): void {
         const isRtl = this.gos.get('enableRtl');
-        this.setTemplate(this.getTemplate());
+        this.setTemplate(this.getTemplate(), [PageSizeSelectorComp]);
 
         const { btFirst, btPrevious, btNext, btLast, pageSizeComp } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast]);

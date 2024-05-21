@@ -1,5 +1,7 @@
-import { AgGroupComponentParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { AgCheckbox, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
+import { AgColorPicker } from '../../../../../widgets/agColorPicker';
 import { ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -43,7 +45,7 @@ export class CrosshairPanel extends Component {
             'crosshair.stroke',
             'color'
         );
-        this.setTemplate(CrosshairPanel.TEMPLATE, {
+        this.setTemplate(CrosshairPanel.TEMPLATE, [AgGroupComponent, AgCheckbox, AgColorPicker], {
             crosshairGroup: crosshairGroupParams,
             crosshairLabelCheckbox: crosshairLabelCheckboxParams,
             crosshairSnapCheckbox: crosshairSnapCheckboxParams,

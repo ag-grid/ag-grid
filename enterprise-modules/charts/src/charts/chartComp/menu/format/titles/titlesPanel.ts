@@ -1,11 +1,5 @@
-import {
-    AgGroupComponent,
-    AgGroupComponentParams,
-    Autowired,
-    Component,
-    PostConstruct,
-    RefSelector,
-} from '@ag-grid-community/core';
+import { Autowired, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
 import { ChartTranslationService } from '../../../services/chartTranslationService';
 import { isCartesian, isPolar } from '../../../utils/seriesTypeMapper';
@@ -65,7 +59,7 @@ export class TitlesPanel extends Component {
                 ...axisTitlePanels,
             ],
         };
-        this.setTemplate(TitlesPanel.TEMPLATE, { titleGroup: titleGroupParams });
+        this.setTemplate(TitlesPanel.TEMPLATE, [AgGroupComponent], { titleGroup: titleGroupParams });
         registerGroupComponent(this.titleGroup);
     }
 }

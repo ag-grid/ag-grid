@@ -12,7 +12,6 @@ import {
     IAggFuncService,
     KeyCode,
     Optional,
-    PillDragComp,
     PopupService,
     RefSelector,
     SortController,
@@ -20,6 +19,7 @@ import {
     VirtualList,
     _loadTemplate,
 } from '@ag-grid-community/core';
+import { PillDragComp } from '@ag-grid-enterprise/core';
 
 import { TDropZone } from './baseDropZonePanel';
 
@@ -55,7 +55,8 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
                     <ag-sort-indicator ref="eSortIndicator"></ag-sort-indicator>
                     <span ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
                 </span>
-            `
+            `,
+            [SortIndicatorComp]
         );
     }
 

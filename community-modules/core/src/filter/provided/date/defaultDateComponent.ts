@@ -11,10 +11,13 @@ export class DefaultDateComponent extends Component implements IDateComp {
     @RefSelector('eDateInput') private readonly eDateInput: AgInputTextField;
 
     constructor() {
-        super(/* html */ `
+        super(
+            /* html */ `
             <div class="ag-filter-filter">
                 <ag-input-text-field class="ag-date-filter" ref="eDateInput"></ag-input-text-field>
-            </div>`);
+            </div>`,
+            [AgInputTextField]
+        );
     }
 
     private params: IDateParams;

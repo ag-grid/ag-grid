@@ -180,7 +180,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.params = params;
 
         this.currentTemplate = this.workOutTemplate();
-        this.setTemplate(this.currentTemplate);
+        this.setTemplate(this.currentTemplate, [SortIndicatorComp]);
         this.setupTap();
         this.setMenu();
         this.setupSort();

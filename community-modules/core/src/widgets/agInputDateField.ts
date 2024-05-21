@@ -2,8 +2,10 @@ import { _isBrowserSafari } from '../utils/browser';
 import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
 import { _addOrRemoveAttribute } from '../utils/dom';
 import { AgInputTextField, AgInputTextFieldParams } from './agInputTextField';
+import { AgComponentSelector } from './component';
 
 export class AgInputDateField extends AgInputTextField {
+    static readonly selector: AgComponentSelector = 'AG-INPUT-DATE-FIELD';
     private min?: string;
     private max?: string;
     private step?: number;

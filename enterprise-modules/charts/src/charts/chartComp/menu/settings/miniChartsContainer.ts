@@ -1,5 +1,4 @@
 import {
-    AgGroupComponent,
     Autowired,
     ChartGroupsDef,
     ChartType,
@@ -9,6 +8,7 @@ import {
     _setAriaLabel,
     _warnOnce,
 } from '@ag-grid-community/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import { ChartController } from '../../chartController';
 import { ChartTranslationService } from '../../services/chartTranslationService';
@@ -47,8 +47,6 @@ import {
 } from './miniCharts/index';
 // please leave this as is - we want it to be explicit for build reasons
 import { MiniChart } from './miniCharts/miniChart';
-
-// import {enterprise} from "../../../../main";
 
 export type ThemeTemplateParameters = {
     extensions: Map<any, any>;

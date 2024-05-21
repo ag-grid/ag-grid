@@ -3,13 +3,13 @@ import {
     AgFieldParams,
     AgInputNumberFieldParams,
     AgSelectParams,
-    AgSliderParams,
     Autowired,
     BeanStub,
     ListOption,
 } from '@ag-grid-community/core';
 
 import { AgColorPickerParams } from '../../../widgets/agColorPicker';
+import { AgSliderParams } from '../../../widgets/agSlider';
 import { ChartOptionsProxy } from '../services/chartOptionsService';
 import { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
 import { FontPanelParams } from './format/fontPanel';

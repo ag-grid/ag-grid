@@ -1,9 +1,15 @@
-import { PostConstruct } from '../context/context';
-import { Events } from '../eventKeys';
-import { AgAbstractLabel, AgLabelParams, LabelAlignment } from './agAbstractLabel';
-import { AgInputNumberField } from './agInputNumberField';
+import {
+    AgAbstractLabel,
+    AgComponentSelector,
+    AgInputNumberField,
+    AgLabelParams,
+    Events,
+    LabelAlignment,
+    PostConstruct,
+    RefSelector,
+} from '@ag-grid-community/core';
+
 import { AgInputRange } from './agInputRange';
-import { RefSelector } from './componentAnnotations';
 
 export interface AgSliderParams extends AgLabelParams {
     minValue?: number;
@@ -15,6 +21,8 @@ export interface AgSliderParams extends AgLabelParams {
 }
 
 export class AgSlider extends AgAbstractLabel<AgSliderParams> {
+    static readonly selector: AgComponentSelector = 'AG-SLIDER';
+
     private static TEMPLATE /* html */ = `<div class="ag-slider">
             <label ref="eLabel"></label>
             <div class="ag-wrapper ag-slider-wrapper">
@@ -30,7 +38,7 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams> {
     protected labelAlignment: LabelAlignment = 'top';
 
     constructor(config?: AgSliderParams) {
-        super(config, AgSlider.TEMPLATE);
+        super(config, AgSlider.TEMPLATE, [AgInputRange, AgInputNumberField]);
     }
 
     @PostConstruct

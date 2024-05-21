@@ -1,6 +1,4 @@
 import {
-    AgMenuItemComponent,
-    AgMenuList,
     Autowired,
     Bean,
     BeanStub,
@@ -13,6 +11,7 @@ import {
     RefSelector,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
+import { AgMenuItemComponent, AgMenuList } from '@ag-grid-enterprise/core';
 
 import { ChartController } from '../chartController';
 import { ChartMenuService } from '../services/chartMenuService';

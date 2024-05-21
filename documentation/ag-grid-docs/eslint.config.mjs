@@ -34,7 +34,6 @@ export default [
         rules: {
             'no-console': 'off',
             '@typescript-eslint/no-var-requires': 'off',
-            '@typescript-eslint/no-explicit-any': 'off',
         },
     },
 ];

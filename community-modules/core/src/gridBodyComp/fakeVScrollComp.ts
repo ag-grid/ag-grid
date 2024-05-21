@@ -1,10 +1,13 @@
 import { PostConstruct } from '../context/context';
 import { Events } from '../eventKeys';
 import { _isVisible, _setFixedWidth } from '../utils/dom';
+import { AgComponentSelector } from '../widgets/component';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { SetHeightFeature } from './rowContainer/setHeightFeature';
 
 export class FakeVScrollComp extends AbstractFakeScrollComp {
+    static readonly selector: AgComponentSelector = 'AG-FAKE-VERTICAL-SCROLL';
+
     private static TEMPLATE /* html */ = `<div class="ag-body-vertical-scroll" aria-hidden="true">
             <div class="ag-body-vertical-scroll-viewport" ref="eViewport">
                 <div class="ag-body-vertical-scroll-container" ref="eContainer"></div>

@@ -1,6 +1,7 @@
-import { AdvancedFilterModel, AutocompleteEntry, AutocompleteListParams } from '@ag-grid-community/core';
+import { AdvancedFilterModel } from '@ag-grid-community/core';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
+import { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 import { ColFilterExpressionParser } from './colFilterExpressionParser';
 import { findMatch } from './filterExpressionOperators';
 import {

@@ -1,17 +1,15 @@
 import { CheckboxChangedEvent, Events } from '../events';
-import { AgAbstractInputField, AgInputFieldParams } from './agAbstractInputField';
-import { LabelAlignment } from './agAbstractLabel';
-
-export interface AgCheckboxParams extends AgInputFieldParams {
-    readOnly?: boolean;
-    passive?: boolean;
-}
+import { AgCheckboxParams, LabelAlignment } from '../interfaces/agFieldParams';
+import { AgAbstractInputField } from './agAbstractInputField';
+import { AgComponentSelector } from './component';
 
 export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> extends AgAbstractInputField<
     HTMLInputElement,
     boolean,
     TConfig
 > {
+    static readonly selector: AgComponentSelector = 'AG-CHECKBOX';
+
     protected labelAlignment: LabelAlignment = 'right';
 
     private selected?: boolean = false;

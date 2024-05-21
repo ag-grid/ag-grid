@@ -1,13 +1,19 @@
-import { KeyCode } from '../constants/keyCode';
-import { Autowired, PostConstruct } from '../context/context';
-import { AgEvent } from '../events';
-import { _makeNull } from '../utils/generic';
+import {
+    AgComponentSelector,
+    AgEvent,
+    AgInputTextField,
+    Autowired,
+    Component,
+    KeyCode,
+    PopupPositionParams,
+    PopupService,
+    PostConstruct,
+    RefSelector,
+    _makeNull,
+} from '@ag-grid-community/core';
+
 import { AgAutocompleteList } from './agAutocompleteList';
-import { AgInputTextField } from './agInputTextField';
 import { AutocompleteEntry, AutocompleteListParams } from './autocompleteParams';
-import { Component } from './component';
-import { RefSelector } from './componentAnnotations';
-import { PopupPositionParams, PopupService } from './popupService';
 
 export interface AutocompleteValueChangedEvent extends AgEvent {
     value: string | null;
@@ -29,6 +35,8 @@ export interface AutocompleteValidChangedEvent extends AgEvent {
 }
 
 export class AgAutocomplete extends Component {
+    static readonly selector: AgComponentSelector = 'AG-AUTOCOMPLETE';
+
     public static EVENT_VALUE_CHANGED = 'eventValueChanged';
     public static EVENT_VALUE_CONFIRMED = 'eventValueConfirmed';
     public static EVENT_OPTION_SELECTED = 'eventOptionSelected';
@@ -51,10 +59,13 @@ export class AgAutocomplete extends Component {
     private forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
 
     constructor() {
-        super(/* html */ `
+        super(
+            /* html */ `
             <div class="ag-autocomplete" role="presentation">
                 <ag-input-text-field ref="eAutocompleteInput"></ag-input-text-field>
-            </div>`);
+            </div>`,
+            [AgInputTextField]
+        );
     }
 
     @PostConstruct
