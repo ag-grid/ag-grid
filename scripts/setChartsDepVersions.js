@@ -1,5 +1,5 @@
 const fs = require('fs');
-const os = require("os");
+const os = require('os');
 
 const chartsVersion = process.argv[2];
 
