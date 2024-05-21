@@ -38,7 +38,8 @@ export const Header: FunctionComponent<Props> = ({
                                 <span className={styles.headerFramework}>
                                     {`${getFrameworkDisplayText(framework)} Data Grid`}
                                 </span>
-                            )}{title}
+                            )}
+                            {title}
                         </h1>
                     </div>
 
