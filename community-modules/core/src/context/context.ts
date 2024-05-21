@@ -67,7 +67,7 @@ export class Context {
         return _values(this.beanWrappers).map((beanEntry) => beanEntry.beanInstance);
     }
 
-    public createBean<T extends any>(bean: T, afterPreCreateCallback?: (comp: Component) => void): T {
+    public createBean<T>(bean: T, afterPreCreateCallback?: (comp: Component) => void): T {
         if (!bean) {
             throw Error(`Can't wire to bean since it is null`);
         }
@@ -79,7 +79,7 @@ export class Context {
         this.autoWireBeans(beanInstances);
         this.methodWireBeans(beanInstances);
 
-        this.callLifeCycleMethods(beanInstances, 'preConstructMethods');
+        beanInstances.forEach((bean) => bean.preConstruct?.());
 
         // the callback sets the attributes, so the component has access to attributes
         // before postConstruct methods in the component are executed
@@ -87,7 +87,7 @@ export class Context {
             beanInstances.forEach(afterPreCreateCallback);
         }
 
-        this.callLifeCycleMethods(beanInstances, 'postConstructMethods');
+        beanInstances.forEach((bean) => bean.postConstruct?.());
     }
 
     private createBeans(): void {
@@ -298,8 +298,6 @@ export class Context {
         }
 
         beans.forEach((bean) => {
-            this.callLifeCycleMethodsOnBean(bean, 'preDestroyMethods', 'destroy');
-
             // call destroy() explicitly if it exists
             const beanAny = bean as any;
 
@@ -318,30 +316,6 @@ export class Context {
     public getGridId(): string {
         return this.contextParams.gridId;
     }
-}
-
-export function PreConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {
-    const props = getOrCreateProps(target.constructor);
-    if (!props.preConstructMethods) {
-        props.preConstructMethods = [];
-    }
-    props.preConstructMethods.push(methodName);
-}
-
-export function PostConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {
-    const props = getOrCreateProps(target.constructor);
-    if (!props.postConstructMethods) {
-        props.postConstructMethods = [];
-    }
-    props.postConstructMethods.push(methodName);
-}
-
-export function PreDestroy(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {
-    const props = getOrCreateProps(target.constructor);
-    if (!props.preDestroyMethods) {
-        props.preDestroyMethods = [];
-    }
-    props.preDestroyMethods.push(methodName);
 }
 
 export function Bean(beanName: BeanName): Function {

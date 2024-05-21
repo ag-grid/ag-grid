@@ -1,4 +1,4 @@
-import { Component, PostConstruct, RefSelector, _exists, _setDisplayed } from '@ag-grid-community/core';
+import { Component, RefSelector, _exists, _setDisplayed } from '@ag-grid-community/core';
 import { KeyCode } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
 
@@ -64,8 +64,8 @@ export class AgColorPanel extends Component {
         this.picker = config.picker;
     }
 
-    @PostConstruct
-    private postConstruct() {
+    protected override postConstruct() {
+        super.postConstruct();
         this.initTabIndex();
         this.initRecentColors();
 

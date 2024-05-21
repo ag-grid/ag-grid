@@ -1,4 +1,4 @@
-import { Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { Autowired, Component } from '@ag-grid-community/core';
 import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
 import { AgSlider, AgSliderParams } from '../../../../../widgets/agSlider';
@@ -23,8 +23,8 @@ export class TileSpacingPanel extends Component {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    protected override postConstruct() {
+        super.postConstruct();
         const groupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',

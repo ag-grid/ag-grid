@@ -1,4 +1,3 @@
-import { PostConstruct } from '@ag-grid-community/core';
 import { _Scene } from 'ag-charts-community';
 
 import { ChartTranslationKey } from '../../../services/chartTranslationService';
@@ -14,8 +13,8 @@ export abstract class MiniChartWithPolarAxes extends MiniChart {
         super(container, tooltipName);
     }
 
-    @PostConstruct
-    private addAxes() {
+    protected override postConstruct() {
+        super.postConstruct();
         const size = this.size;
         const padding = this.padding;
         const combinedPadding = padding * 2;

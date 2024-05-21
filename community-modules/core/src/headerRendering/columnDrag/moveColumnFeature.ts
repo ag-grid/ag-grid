@@ -2,23 +2,22 @@ import { ColumnModel } from '../../columns/columnModel';
 import { ColumnMoveService } from '../../columns/columnMoveService';
 import { VisibleColsService } from '../../columns/visibleColsService';
 import { HorizontalDirection } from '../../constants/direction';
-import { Autowired, PostConstruct } from '../../context/context';
+import { BeanStub } from '../../context/beanStub';
+import { Autowired } from '../../context/context';
 import { CtrlsService } from '../../ctrlsService';
 import { DragAndDropService, DragSourceType, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import { Column, ColumnPinnedType } from '../../entities/column';
 import { ColumnEventType } from '../../events';
 import { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
-import { GridOptionsService } from '../../gridOptionsService';
 import { _exists, _missing } from '../../utils/generic';
 import { ColumnMoveHelper } from '../columnMoveHelper';
 import { DropListener } from './bodyDropTarget';
 
-export class MoveColumnFeature implements DropListener {
+export class MoveColumnFeature extends BeanStub implements DropListener {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('columnMoveService') private columnMoveService: ColumnMoveService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('gridOptionsService') private gos: GridOptionsService;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
 
     private gridBodyCon: GridBodyCtrl;
@@ -40,12 +39,13 @@ export class MoveColumnFeature implements DropListener {
     private failedMoveAttempts: number;
 
     constructor(pinned: ColumnPinnedType) {
+        super();
         this.pinned = pinned;
         this.isCenterContainer = !_exists(pinned);
     }
 
-    @PostConstruct
-    public init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.ctrlsService.whenReady((p) => {
             this.gridBodyCon = p.gridBodyCtrl;
         });

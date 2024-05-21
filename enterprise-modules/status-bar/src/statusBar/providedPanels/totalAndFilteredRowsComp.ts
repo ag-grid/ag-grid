@@ -4,7 +4,6 @@ import {
     IClientSideRowModel,
     IRowModel,
     IStatusPanelComp,
-    PostConstruct,
     _formatNumberCommas,
     _warnOnce,
 } from '@ag-grid-community/core';
@@ -14,8 +13,8 @@ import { AgNameValue } from './agNameValue';
 export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPanelComp {
     @Autowired('rowModel') private rowModel: IRowModel;
 
-    @PostConstruct
-    protected postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         // this component is only really useful with client side row model
         if (this.rowModel.getType() !== 'clientSide') {
             _warnOnce(`agTotalAndFilteredRowCountComponent should only be used with the client side row model.`);

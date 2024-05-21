@@ -8,8 +8,6 @@ import {
     FilterOpenedEvent,
     IProvidedColumn,
     ITooltipParams,
-    PostConstruct,
-    PreConstruct,
     ProvidedColumnGroup,
     RefSelector,
     WithoutGridCommon,
@@ -54,8 +52,8 @@ export class ToolPanelFilterGroupComp extends Component {
         this.showingColumn = showingColumn;
     }
 
-    @PreConstruct
-    private preConstruct(): void {
+    protected override preConstruct(): void {
+        super.preConstruct();
         const groupParams: AgGroupComponentParams = {
             cssIdentifier: 'filter-toolpanel',
             direction: 'vertical',
@@ -63,8 +61,8 @@ export class ToolPanelFilterGroupComp extends Component {
         this.setTemplate(ToolPanelFilterGroupComp.TEMPLATE, [AgGroupComponent], { filterGroupComp: groupParams });
     }
 
-    @PostConstruct
-    public init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.setGroupTitle();
         this.filterGroupComp.setAlignItems('stretch');
 

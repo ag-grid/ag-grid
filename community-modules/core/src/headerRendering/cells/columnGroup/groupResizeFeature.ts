@@ -2,7 +2,7 @@ import { ColumnAutosizeService } from '../../../columns/columnAutosizeService';
 import { ColumnResizeSet, ColumnSizeService } from '../../../columns/columnSizeService';
 import { VisibleColsService } from '../../../columns/visibleColsService';
 import { BeanStub } from '../../../context/beanStub';
-import { Autowired, PostConstruct } from '../../../context/context';
+import { Autowired } from '../../../context/context';
 import { Column, ColumnPinnedType } from '../../../entities/column';
 import { ColumnGroup } from '../../../entities/columnGroup';
 import { ColumnEventType } from '../../../events';
@@ -48,8 +48,8 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         this.columnGroup = columnGroup;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         if (!this.columnGroup.isResizable()) {
             this.comp.setResizableDisplayed(false);
             return;

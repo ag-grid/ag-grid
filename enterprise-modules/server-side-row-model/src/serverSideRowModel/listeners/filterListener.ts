@@ -6,7 +6,6 @@ import {
     Events,
     FilterManager,
     FilterModel,
-    PostConstruct,
     StoreRefreshAfterParams,
 } from '@ag-grid-community/core';
 
@@ -19,8 +18,8 @@ export class FilterListener extends BeanStub {
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('ssrmListenerUtils') private listenerUtils: ListenerUtils;
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         // only want to be active if SSRM active, otherwise would be interfering with other row models
         if (!this.gos.isRowModelType('serverSide')) {
             return;

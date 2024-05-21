@@ -8,7 +8,6 @@ import {
     IAggFunc,
     IRangeService,
     PartialCellRange,
-    PostConstruct,
     SeriesChartType,
     SeriesGroupType,
     _includes,
@@ -121,8 +120,8 @@ export class ChartDataModel extends BeanStub {
         this.seriesGroupType = seriesGroupType;
     }
 
-    @PostConstruct
-    private init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.datasource = this.createManagedBean(new ChartDatasource());
         this.chartColumnService = this.createManagedBean(new ChartColumnService());
         this.comboChartModel = this.createManagedBean(new ComboChartModel(this));

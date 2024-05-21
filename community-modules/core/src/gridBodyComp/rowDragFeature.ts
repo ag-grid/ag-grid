@@ -3,7 +3,7 @@ import { ColumnModel } from '../columns/columnModel';
 import { FuncColsService } from '../columns/funcColsService';
 import { VerticalDirection } from '../constants/direction';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Optional, PostConstruct } from '../context/context';
+import { Autowired, Optional } from '../context/context';
 import { CtrlsService } from '../ctrlsService';
 import { DragAndDropService, DragSourceType, DraggingEvent, DropTarget } from '../dragAndDrop/dragAndDropService';
 import { RowNode } from '../entities/rowNode';
@@ -68,8 +68,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.eContainer = eContainer;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         if (this.gos.isRowModelType('clientSide')) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }

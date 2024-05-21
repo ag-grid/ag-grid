@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import { Column } from '../entities/column';
 import { RowNode } from '../entities/rowNode';
 import { CellValueChangedEvent, Events } from '../events';
@@ -17,8 +17,8 @@ export class ChangeDetectionService extends BeanStub {
 
     private clientSideRowModel: IClientSideRowModel;
 
-    @PostConstruct
-    private init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         if (this.rowModel.getType() === 'clientSide') {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }

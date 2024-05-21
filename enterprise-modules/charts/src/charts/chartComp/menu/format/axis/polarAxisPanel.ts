@@ -1,12 +1,4 @@
-import {
-    AgSelect,
-    AgSelectParams,
-    Autowired,
-    Component,
-    ListOption,
-    PostConstruct,
-    RefSelector,
-} from '@ag-grid-community/core';
+import { AgSelect, AgSelectParams, Autowired, Component, ListOption, RefSelector } from '@ag-grid-community/core';
 import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
 import { AgColorPicker } from '../../../../../widgets/agColorPicker';
@@ -32,8 +24,8 @@ export class PolarAxisPanel extends Component {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    protected override postConstruct() {
+        super.postConstruct();
         const { isExpandedOnInit: expanded, chartAxisMenuParamsFactory, registerGroupComponent } = this.options;
         const axisGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-top-level',

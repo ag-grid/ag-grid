@@ -14,7 +14,6 @@ import {
     Events,
     ITooltipParams,
     KeyCode,
-    PostConstruct,
     RefSelector,
     WithoutGridCommon,
     _createIconNoSpan,
@@ -59,8 +58,8 @@ export class ToolPanelColumnComp extends Component {
         this.displayName = modelItem.getDisplayName();
     }
 
-    @PostConstruct
-    public init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.setTemplate(ToolPanelColumnComp.TEMPLATE, [AgCheckbox]);
         this.eDragHandle = _createIconNoSpan('columnDrag', this.gos)!;
         this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-drag-handle');

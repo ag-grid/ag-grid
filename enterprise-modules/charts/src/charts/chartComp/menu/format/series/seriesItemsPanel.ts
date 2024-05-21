@@ -4,7 +4,6 @@ import {
     Autowired,
     Component,
     ListOption,
-    PostConstruct,
     RefSelector,
     _removeFromParent,
 } from '@ag-grid-community/core';
@@ -34,8 +33,8 @@ export class SeriesItemsPanel extends Component {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    protected override postConstruct() {
+        super.postConstruct();
         const seriesItemsGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',

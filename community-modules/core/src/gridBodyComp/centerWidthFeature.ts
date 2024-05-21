@@ -1,6 +1,6 @@
 import { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, PostConstruct } from '../context/context';
+import { Autowired } from '../context/context';
 import { Events } from '../eventKeys';
 import { ScrollVisibleService } from './scrollVisibleService';
 
@@ -15,8 +15,8 @@ export class CenterWidthFeature extends BeanStub {
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const listener = this.setWidth.bind(this);
         this.addManagedPropertyListener('domLayout', listener);
 

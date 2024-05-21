@@ -30,7 +30,6 @@ import {
     Optional,
     PasteEndEvent,
     PasteStartEvent,
-    PostConstruct,
     ProcessCellForExportParams,
     ProcessRowGroupForExportParams,
     RowNode,
@@ -107,8 +106,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
     private navigatorApiFailed = false;
 
-    @PostConstruct
-    private init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.logger = this.loggerFactory.create('ClipboardService');
 
         if (this.rowModel.getType() === 'clientSide') {

@@ -5,7 +5,6 @@ import {
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
     LoadSuccessParams,
-    PostConstruct,
     RowNode,
     RowNodeBlockLoader,
     RowRenderer,
@@ -33,8 +32,8 @@ export class LazyBlockLoadingService extends BeanStub {
     private nextBlockToLoad?: { cache: LazyCache; index: number } = undefined;
     private loaderTimeout?: number;
 
-    @PostConstruct
-    private init() {
+    protected override postConstruct() {
+        super.postConstruct();
         // after a block is loaded, check if we have a block to load now that
         // `maxConcurrentDatasourceRequests` has changed
         this.addManagedListener(this.rowNodeBlockLoader, RowNodeBlockLoader.BLOCK_LOADED_EVENT, () =>

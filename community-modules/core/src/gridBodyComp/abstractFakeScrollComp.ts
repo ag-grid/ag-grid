@@ -69,7 +69,7 @@ export abstract class AbstractFakeScrollComp extends Component {
 
     protected onScrollVisibilityChanged(): void {
         // initialiseInvisibleScrollbar should only be called once, but the reason
-        // this can't be inside `setComp` or `PostConstruct` is the DOM might not
+        // this can't be inside `setComp` or `postConstruct` is the DOM might not
         // be ready, so we call it until eventually, it gets calculated.
         if (this.invisibleScrollbar === undefined) {
             this.initialiseInvisibleScrollbar();

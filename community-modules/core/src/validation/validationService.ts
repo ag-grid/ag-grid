@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import { ColDef, ColGroupDef } from '../entities/colDef';
 import { GridOptions } from '../entities/gridOptions';
 import { ModuleRegistry } from '../modules/moduleRegistry';
@@ -14,8 +14,8 @@ import { DependencyValidator, OptionsValidation, OptionsValidator } from './vali
 export class ValidationService extends BeanStub {
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
 
-    @PostConstruct
-    public init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.processGridOptions(this.gridOptions);
     }
 

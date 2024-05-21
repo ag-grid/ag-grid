@@ -2,7 +2,6 @@ import {
     Component,
     PositionableFeature,
     PositionableOptions,
-    PostConstruct,
     RefSelector,
     ResizableStructure,
     _createIconNoSpan,
@@ -49,8 +48,8 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         </div>`;
     }
 
-    @PostConstruct
-    protected postConstruct() {
+    protected override postConstruct() {
+        super.postConstruct();
         const {
             component,
             closable,

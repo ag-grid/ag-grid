@@ -11,7 +11,6 @@ import {
     IRowModel,
     IRowNode,
     NewColumnsLoadedEvent,
-    PostConstruct,
     ValueService,
     WithoutGridCommon,
     _exists,
@@ -44,8 +43,8 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     private expressionParams: FilterExpressionFunctionParams | null;
     private isValid: boolean = true;
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.setEnabled(this.gos.get('enableAdvancedFilter'), true);
 
         this.ctrl = this.createManagedBean(new AdvancedFilterCtrl(this.enabled));

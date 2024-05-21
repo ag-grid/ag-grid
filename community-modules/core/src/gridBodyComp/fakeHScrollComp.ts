@@ -1,5 +1,5 @@
 import { VisibleColsService } from '../columns/visibleColsService';
-import { Autowired, PostConstruct } from '../context/context';
+import { Autowired } from '../context/context';
 import { Events } from '../eventKeys';
 import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from '../utils/dom';
@@ -31,8 +31,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         super(FakeHScrollComp.TEMPLATE, 'horizontal');
     }
 
-    @PostConstruct
-    protected postConstruct(): void {
+    protected override postConstruct(): void {
         super.postConstruct();
 
         // When doing printing, this changes whether cols are pinned or not

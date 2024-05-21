@@ -5,8 +5,6 @@ import {
     Component,
     IStatusPanelComp,
     IStatusPanelParams,
-    PostConstruct,
-    PreDestroy,
     RefSelector,
     StatusPanelDef,
     UserComponentFactory,
@@ -37,8 +35,8 @@ export class AgStatusBar extends Component {
         super(AgStatusBar.TEMPLATE);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.processStatusPanels(new Map());
         this.addManagedPropertyListeners(['statusBar'], this.handleStatusBarChanged.bind(this));
     }
@@ -111,7 +109,11 @@ export class AgStatusBar extends Component {
         this.statusBarService.unregisterAllComponents();
     }
 
-    @PreDestroy
+    protected override destroy(): void {
+        super.destroy();
+        this.destroyComponents();
+    }
+
     private destroyComponents() {
         Object.values(this.compDestroyFunctions).forEach((func) => func());
         this.compDestroyFunctions = {};

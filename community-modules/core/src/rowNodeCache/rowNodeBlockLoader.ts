@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct, Qualifier } from '../context/context';
+import { Autowired, Bean, Qualifier } from '../context/context';
 import { IRowModel } from '../interfaces/iRowModel';
 import { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
 import { Logger, LoggerFactory } from '../logger';
@@ -22,8 +22,8 @@ export class RowNodeBlockLoader extends BeanStub {
     private logger: Logger;
     private active = true;
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.maxConcurrentRequests = this.getMaxConcurrentDatasourceRequests();
         const blockLoadDebounceMillis = this.gos.get('blockLoadDebounceMillis');
 

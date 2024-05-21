@@ -1,7 +1,7 @@
 import { ColumnModel } from '../../columns/columnModel';
 import { UserCompDetails, UserComponentFactory } from '../../components/framework/userComponentFactory';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../../context/context';
+import { Autowired, Bean } from '../../context/context';
 import { GridOptions } from '../../entities/gridOptions';
 import { Events } from '../../eventKeys';
 import { WithoutGridCommon } from '../../interfaces/iCommon';
@@ -19,8 +19,8 @@ export class OverlayService extends BeanStub {
     private overlayWrapperComp: OverlayWrapperComponent;
     private manuallyDisplayed: boolean = false;
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, () => this.onRowDataUpdated());
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onNewColumnsLoaded());
     }

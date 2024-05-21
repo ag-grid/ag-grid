@@ -4,7 +4,6 @@ import {
     Component,
     FilterManager,
     ITooltipParams,
-    PostConstruct,
     RefSelector,
     WithoutGridCommon,
     _createIconNoSpan,
@@ -58,8 +57,8 @@ export class AdvancedFilterComp extends Component {
         );
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.eAutocomplete
             .setListGenerator((_value, position) => this.generateAutocompleteListParams(position))
             .setValidator(() => this.validateValue())

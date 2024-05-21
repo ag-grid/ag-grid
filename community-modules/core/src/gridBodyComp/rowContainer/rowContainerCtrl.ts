@@ -1,7 +1,7 @@
 import { ColumnModel } from '../../columns/columnModel';
 import { ColumnViewportService } from '../../columns/columnViewportService';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, PostConstruct } from '../../context/context';
+import { Autowired } from '../../context/context';
 import { CtrlsService } from '../../ctrlsService';
 import { DragService } from '../../dragAndDrop/dragService';
 import { ColumnPinnedType } from '../../entities/column';
@@ -183,8 +183,8 @@ export class RowContainerCtrl extends BeanStub {
             this.name === RowContainerName.FULL_WIDTH;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.enableRtl = this.gos.get('enableRtl');
 
         this.forContainers(

@@ -1,6 +1,6 @@
 import { AutoScrollService } from '../autoScrollService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, PostConstruct } from '../context/context';
+import { Autowired } from '../context/context';
 import { AgEvent } from '../events';
 import { IEventEmitter } from '../interfaces/iEventEmitter';
 import { _radioCssClass } from '../utils/dom';
@@ -43,8 +43,8 @@ export class VirtualListDragFeature<C extends Component, R extends Component, V,
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.addManagedListener(
             this.params.eventSource,
             this.params.listItemDragStartEvent,

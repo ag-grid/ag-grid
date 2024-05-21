@@ -2,7 +2,6 @@ import {
     AgEvent,
     BeanStub,
     DragSourceType,
-    PostConstruct,
     VirtualList,
     VirtualListDragFeature,
     VirtualListDragItem,
@@ -27,8 +26,8 @@ export class AdvancedFilterBuilderDragFeature extends BeanStub {
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.createManagedBean(
             new VirtualListDragFeature<
                 AdvancedFilterBuilderComp,

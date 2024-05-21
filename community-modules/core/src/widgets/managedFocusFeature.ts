@@ -1,6 +1,6 @@
 import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, PostConstruct } from '../context/context';
+import { Autowired } from '../context/context';
 import { FocusService } from '../focusService';
 import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../utils/event';
 
@@ -42,8 +42,8 @@ export class ManagedFocusFeature extends BeanStub {
         };
     }
 
-    @PostConstruct
-    protected postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.eFocusableElement.classList.add(ManagedFocusFeature.FOCUS_MANAGED_CLASS);
 
         this.addKeyDownListeners(this.eFocusableElement);

@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, PostConstruct } from '../context/context';
+import { Autowired } from '../context/context';
 import { FocusService } from '../focusService';
 import { ManagedFocusFeature } from './managedFocusFeature';
 
@@ -82,8 +82,8 @@ export class TabGuardCtrl extends BeanStub {
         this.providedHandleKeyDown = handleKeyDown;
     }
 
-    @PostConstruct
-    private postConstruct() {
+    protected override postConstruct() {
+        super.postConstruct();
         this.createManagedBean(
             new ManagedFocusFeature(this.eFocusableElement, {
                 shouldStopEventPropagation: () => this.shouldStopEventPropagation(),

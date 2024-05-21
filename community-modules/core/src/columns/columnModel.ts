@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct, PreDestroy } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import { CtrlsService } from '../ctrlsService';
 import { ColDef, ColGroupDef, IAggFunc } from '../entities/colDef';
 import { Column, ColumnPinnedType } from '../entities/column';
@@ -99,8 +99,8 @@ export class ColumnModel extends BeanStub {
     private shouldQueueResizeOperations: boolean = false;
     private resizeOperationQueue: (() => void)[] = [];
 
-    @PostConstruct
-    public init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const pivotMode = this.gos.get('pivotMode');
 
         if (this.isPivotSettingAllowed(pivotMode)) {
@@ -800,8 +800,8 @@ export class ColumnModel extends BeanStub {
         this.createColsFromColDefs(colsPreviouslyExisted, source);
     }
 
-    @PreDestroy
-    private destroyColumns(): void {
+    protected override destroy(): void {
+        super.destroy();
         destroyColumnTree(this.getContext(), this.colDefCols?.tree);
         destroyColumnTree(this.getContext(), this.autoCols?.tree);
     }

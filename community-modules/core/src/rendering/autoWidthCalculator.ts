@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import { CtrlsService } from '../ctrlsService';
 import { Column } from '../entities/column';
 import { ColumnGroup } from '../entities/columnGroup';
@@ -15,8 +15,8 @@ export class AutoWidthCalculator extends BeanStub {
 
     private centerRowContainerCtrl: RowContainerCtrl;
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.ctrlsService.whenReady((p) => {
             this.centerRowContainerCtrl = p.center;
         });

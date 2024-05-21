@@ -12,7 +12,6 @@ import {
     ManagedFocusFeature,
     ModuleNames,
     ModuleRegistry,
-    PostConstruct,
     RefSelector,
     SideBarDef,
     SideBarState,
@@ -49,8 +48,8 @@ export class AgSideBar extends Component implements ISideBar {
         super(AgSideBar.TEMPLATE, [AgSideBarButtons]);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.sideBarButtonsComp.addEventListener(
             AgSideBarButtons.EVENT_SIDE_BAR_BUTTON_CLICKED,
             this.onToolPanelButtonClicked.bind(this)

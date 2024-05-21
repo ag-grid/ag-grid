@@ -10,7 +10,6 @@ import {
     IRowModel,
     IStatusPanelComp,
     Optional,
-    PostConstruct,
     RefSelector,
     RowPosition,
     RowPositionUtils,
@@ -57,8 +56,8 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         super.destroy();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         if (!this.isValidRowModel()) {
             console.warn(
                 `AG Grid: agAggregationComponent should only be used with the client and server side row model.`

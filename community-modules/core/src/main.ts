@@ -45,17 +45,7 @@ export { ComponentType } from './components/framework/componentTypes';
 
 // context
 export { BeanStub } from './context/beanStub';
-export {
-    Context,
-    ComponentMeta,
-    Autowired,
-    PostConstruct,
-    PreConstruct,
-    Optional,
-    Bean,
-    Qualifier,
-    PreDestroy,
-} from './context/context';
+export { Context, ComponentMeta, Autowired, Optional, Bean, Qualifier } from './context/context';
 export { RefSelector } from './widgets/componentAnnotations';
 
 // excel

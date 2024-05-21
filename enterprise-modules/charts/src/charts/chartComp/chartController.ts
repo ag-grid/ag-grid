@@ -13,7 +13,6 @@ import {
     IAggFunc,
     IRangeService,
     PartialCellRange,
-    PostConstruct,
     SeriesChartType,
     SeriesGroupType,
     UpdateChartParams,
@@ -53,8 +52,8 @@ export class ChartController extends BeanStub {
         super();
     }
 
-    @PostConstruct
-    private init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.setChartRange();
 
         this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, (event) => {

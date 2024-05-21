@@ -8,7 +8,6 @@ import {
     FuncColsService,
     MenuItemDef,
     PopupService,
-    PostConstruct,
     ProvidedColumnGroup,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
@@ -49,8 +48,8 @@ export class ToolPanelContextMenu extends Component {
         super(/* html */ `<div class="ag-menu"></div>`);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.initializeProperties(this.column);
         this.buildMenuItemMap();
 

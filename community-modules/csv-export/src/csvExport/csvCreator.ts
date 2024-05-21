@@ -8,7 +8,6 @@ import {
     FuncColsService,
     GridOptionsService,
     ICsvCreator,
-    PostConstruct,
     ValueService,
 } from '@ag-grid-community/core';
 
@@ -29,8 +28,8 @@ export class CsvCreator
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
     @Autowired('gridOptionsService') gos: GridOptionsService;
 
-    @PostConstruct
-    public postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.setBeans({
             gridSerializer: this.gridSerializer,
             gos: this.gos,

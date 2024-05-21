@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import { ClientSideRowModelSteps, IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { IExpansionService } from '../interfaces/iExpansionService';
 import { IRowModel } from '../interfaces/iRowModel';
@@ -11,8 +11,8 @@ export class ExpansionService extends BeanStub implements IExpansionService {
 
     private isClientSideRowModel: boolean;
 
-    @PostConstruct
-    protected postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.isClientSideRowModel = this.rowModel.getType() === 'clientSide';
     }
 

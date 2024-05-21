@@ -1,6 +1,6 @@
 import { ColumnModel, convertSourceType } from './columns/columnModel';
 import { BeanStub } from './context/beanStub';
-import { Autowired, Bean, PostConstruct } from './context/context';
+import { Autowired, Bean } from './context/context';
 import { CtrlsService } from './ctrlsService';
 import { ColDef, ColGroupDef } from './entities/colDef';
 import { Events } from './eventKeys';
@@ -20,8 +20,8 @@ export class SyncService extends BeanStub {
 
     private waitingForColumns: boolean = false;
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.addManagedPropertyListener('columnDefs', (event) => this.setColumnDefs(event));
     }
 

@@ -1,4 +1,3 @@
-import { PostConstruct } from '../context/context';
 import { DndSourceOnRowDragParams } from '../entities/colDef';
 import { Column } from '../entities/column';
 import { RowNode } from '../entities/rowNode';
@@ -17,8 +16,8 @@ export class DndSourceComp extends Component {
         this.eCell = eCell;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const eGui = this.getGui();
         eGui.appendChild(_createIconNoSpan('rowDrag', this.gos, null)!);
         // we need to stop the event propagation here to avoid starting a range selection while dragging

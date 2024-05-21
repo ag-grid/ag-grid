@@ -5,7 +5,6 @@ import {
     AgLabelParams,
     Events,
     LabelAlignment,
-    PostConstruct,
     RefSelector,
 } from '@ag-grid-community/core';
 
@@ -41,8 +40,8 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams> {
         super(config, AgSlider.TEMPLATE, [AgInputRange, AgInputNumberField]);
     }
 
-    @PostConstruct
-    private init() {
+    protected override postConstruct() {
+        super.postConstruct();
         this.eSlider.addCssClass('ag-slider-field');
         const { minValue, maxValue, textFieldWidth, step, value, onValueChange } = this.config;
         if (minValue != null) {

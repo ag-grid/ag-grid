@@ -1,6 +1,6 @@
 import { HorizontalDirection, VerticalDirection } from '../constants/direction';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct, PreDestroy } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import { IAggFunc } from '../entities/colDef';
 import { Column } from '../entities/column';
 import { GridApi } from '../gridApi';
@@ -190,8 +190,8 @@ export class DragAndDropService extends BeanStub {
     private ePivotIcon: Element;
     private eDropNotAllowedIcon: Element;
 
-    @PostConstruct
-    private init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.ePinnedIcon = _createIcon('columnMovePin', this.gos, null);
         this.eHideIcon = _createIcon('columnMoveHide', this.gos, null);
         this.eMoveIcon = _createIcon('columnMoveMove', this.gos, null);
@@ -227,7 +227,6 @@ export class DragAndDropService extends BeanStub {
         }
     }
 
-    @PreDestroy
     private clearDragSourceParamsList(): void {
         this.dragSourceAndParamsList.forEach((sourceAndParams) =>
             this.dragService.removeDragSource(sourceAndParams.params)

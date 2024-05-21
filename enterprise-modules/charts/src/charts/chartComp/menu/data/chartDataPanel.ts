@@ -4,7 +4,6 @@ import {
     ChartDataPanel as ChartDataPanelType,
     ChartType,
     Component,
-    PostConstruct,
     _setDisplayed,
     _warnOnce,
 } from '@ag-grid-community/core';
@@ -52,8 +51,8 @@ export class ChartDataPanel extends Component {
         this.chartController = chartMenuContext.chartController;
     }
 
-    @PostConstruct
-    public init() {
+    protected override postConstruct() {
+        super.postConstruct();
         this.createSwitchCategorySeriesToggle();
         this.isSwitchCategorySeriesToggled = this.chartController.isCategorySeriesSwitched();
 

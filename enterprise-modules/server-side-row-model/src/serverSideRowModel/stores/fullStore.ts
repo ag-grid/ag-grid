@@ -11,9 +11,7 @@ import {
     IsApplyServerSideTransactionParams,
     LoadSuccessParams,
     NumberSequence,
-    PostConstruct,
     PostSortRowsParams,
-    PreDestroy,
     RowBounds,
     RowNode,
     RowNodeBlock,
@@ -96,8 +94,8 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.leafGroup = ssrmParams.rowGroupCols ? this.level === ssrmParams.rowGroupCols.length - 1 : false;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.usingTreeData = this.gos.get('treeData');
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
 
@@ -127,7 +125,11 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         }
     }
 
-    @PreDestroy
+    protected override destroy(): void {
+        super.destroy();
+        this.destroyRowNodes();
+    }
+
     private destroyRowNodes(): void {
         this.blockUtils.destroyRowNodes(this.allRowNodes);
 

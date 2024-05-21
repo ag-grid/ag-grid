@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import { CtrlsService } from '../ctrlsService';
 import { PaginationProxy } from '../pagination/paginationProxy';
 
@@ -56,8 +56,8 @@ export class AnimationFrameService extends BeanStub {
         this.lastScrollTop = scrollTop;
     }
 
-    @PostConstruct
-    private init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.useAnimationFrame = !this.gos.get('suppressAnimationFrame');
     }
 

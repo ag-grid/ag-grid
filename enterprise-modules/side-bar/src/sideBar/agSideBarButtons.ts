@@ -5,8 +5,6 @@ import {
     Component,
     FocusService,
     KeyCode,
-    PostConstruct,
-    PreDestroy,
     ToolPanelDef,
     VisibleColsService,
     _clearElement,
@@ -33,8 +31,8 @@ export class AgSideBarButtons extends Component {
         super(AgSideBarButtons.TEMPLATE);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.addManagedListener(this.getFocusableElement(), 'keydown', this.handleKeyDown.bind(this));
     }
 
@@ -71,9 +69,13 @@ export class AgSideBarButtons extends Component {
         return buttonComp;
     }
 
-    @PreDestroy
     public clearButtons(): void {
         this.buttonComps = this.destroyBeans(this.buttonComps);
         _clearElement(this.getGui());
+    }
+
+    protected override destroy(): void {
+        super.destroy();
+        this.clearButtons();
     }
 }

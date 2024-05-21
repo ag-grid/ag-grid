@@ -1,4 +1,3 @@
-import { PostConstruct, PreDestroy } from '../../context/context';
 import { ColumnPinnedType } from '../../entities/column';
 import { _ensureDomOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
@@ -31,8 +30,8 @@ export class HeaderRowContainerComp extends Component {
         this.pinned = pinned;
     }
 
-    @PostConstruct
-    private init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.selectAndSetTemplate();
 
         const compProxy: IHeaderRowContainerComp = {
@@ -73,8 +72,8 @@ export class HeaderRowContainerComp extends Component {
         this.eRowContainer = this.eCenterContainer ? this.eCenterContainer : this.getGui();
     }
 
-    @PreDestroy
-    private destroyRowComps(): void {
+    protected override destroy(): void {
+        super.destroy();
         this.setCtrls([]);
     }
 

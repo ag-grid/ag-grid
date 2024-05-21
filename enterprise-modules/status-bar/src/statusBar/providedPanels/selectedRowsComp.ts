@@ -4,7 +4,6 @@ import {
     IRowModel,
     ISelectionService,
     IStatusPanelComp,
-    PostConstruct,
     _formatNumberCommas,
 } from '@ag-grid-community/core';
 
@@ -14,8 +13,8 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('selectionService') private selectionService: ISelectionService;
 
-    @PostConstruct
-    protected postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         if (!this.isValidRowModel()) {
             console.warn(
                 `AG Grid: agSelectedRowCountComponent should only be used with the client and server side row model.`

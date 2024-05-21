@@ -1,5 +1,5 @@
 import { ComponentUtil } from './components/componentUtil';
-import { Autowired, Bean, PostConstruct, PreDestroy } from './context/context';
+import { Autowired, Bean } from './context/context';
 import { DomLayoutType, GridOptions } from './entities/gridOptions';
 import { Environment } from './environment';
 import { EventService } from './eventService';
@@ -95,8 +95,7 @@ export class GridOptionsService {
 
     private propertyEventService: EventService = new EventService();
 
-    @PostConstruct
-    public init(): void {
+    private postConstruct(): void {
         const async = !this.get('suppressAsyncEvents');
         this.eventService.addGlobalListener(this.globalEventHandlerFactory().bind(this), async);
         this.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
@@ -106,7 +105,7 @@ export class GridOptionsService {
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
     }
-    @PreDestroy
+
     private destroy(): void {
         this.destroyed = true;
     }

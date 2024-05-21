@@ -1,7 +1,7 @@
 import { ColumnModel } from '../columns/columnModel';
 import { DataTypeService } from '../columns/dataTypeService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import {
     KeyCreatorParams,
     ValueFormatterParams,
@@ -34,8 +34,14 @@ export class ValueService extends BeanStub {
 
     private isSsrm = false;
 
-    @PostConstruct
-    public init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
+        if (!this.initialised) {
+            this.init();
+        }
+    }
+
+    private init(): void {
         this.isSsrm = this.gos.isRowModelType('serverSide');
         this.cellExpressions = this.gos.get('enableCellExpressions');
         this.isTreeData = this.gos.get('treeData');

@@ -1,7 +1,7 @@
 import { ColumnModel } from './columns/columnModel';
 import { VisibleColsService } from './columns/visibleColsService';
 import { BeanStub } from './context/beanStub';
-import { Autowired, Bean, Optional, PostConstruct } from './context/context';
+import { Autowired, Bean, Optional } from './context/context';
 import { CtrlsService } from './ctrlsService';
 import { CellPosition, CellPositionUtils } from './entities/cellPositionUtils';
 import { Column } from './entities/column';
@@ -93,8 +93,8 @@ export class FocusService extends BeanStub {
         FocusService.removeKeyboardModeEvents(doc);
     }
 
-    @PostConstruct
-    private init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const clearFocusedCellListener = this.clearFocusedCell.bind(this);
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener);

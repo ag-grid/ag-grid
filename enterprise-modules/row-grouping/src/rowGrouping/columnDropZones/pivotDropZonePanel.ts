@@ -4,7 +4,6 @@ import {
     DraggingEvent,
     Events,
     ITooltipParams,
-    PostConstruct,
     WithoutGridCommon,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
@@ -16,8 +15,8 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
         super(horizontal, 'pivot');
     }
 
-    @PostConstruct
-    private passBeansUp(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to set column labels');
         const title = localeTextFunc('pivots', 'Column Labels');

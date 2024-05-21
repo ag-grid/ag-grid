@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import { Column, ColumnPinnedType } from '../entities/column';
 import { ColumnGroup } from '../entities/columnGroup';
 import { RowNode } from '../entities/rowNode';
@@ -37,8 +37,8 @@ export class ColumnViewportService extends BeanStub {
 
     private suppressColumnVirtualisation: boolean;
 
-    @PostConstruct
-    public init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.suppressColumnVirtualisation = this.gos.get('suppressColumnVirtualisation');
     }
 

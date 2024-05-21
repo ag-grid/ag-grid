@@ -1,6 +1,6 @@
 import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import { CtrlsService } from '../ctrlsService';
 import { Column } from '../entities/column';
 import { CssVariablesChanged, Events } from '../events';
@@ -104,8 +104,8 @@ export class PopupService extends BeanStub {
 
     private static WAIT_FOR_POPUP_CONTENT_RESIZE: number = 200;
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.ctrlsService.whenReady((p) => {
             this.gridCtrl = p.gridCtrl;
         });

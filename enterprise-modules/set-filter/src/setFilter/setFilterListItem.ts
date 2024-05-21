@@ -9,7 +9,6 @@ import {
     ISetFilterCellRendererParams,
     ISetFilterTreeListTooltipParams,
     ITooltipParams,
-    PostConstruct,
     RefSelector,
     SetFilterParams,
     UserComponentFactory,
@@ -128,8 +127,8 @@ export class SetFilterListItem<V> extends Component {
         this.hasIndeterminateExpandState = params.hasIndeterminateExpandState;
     }
 
-    @PostConstruct
-    private init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.addDestroyFunc(() => this.destroyCellRendererComponent?.());
 
         this.render();

@@ -5,7 +5,6 @@ import {
     Events,
     FieldPickerValueSelectedEvent,
     ICellRendererParams,
-    PostConstruct,
     RichSelectParams,
     UserCompDetails,
     UserComponentFactory,
@@ -31,8 +30,8 @@ export class RichSelectRow<TValue> extends Component {
         super(/* html */ `<div class="ag-rich-select-row" role="presentation"></div>`);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.addManagedListener(this.getGui(), 'click', this.onClick.bind(this));
     }
 

@@ -4,7 +4,6 @@ import {
     DraggingEvent,
     Events,
     ITooltipParams,
-    PostConstruct,
     WithoutGridCommon,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
@@ -16,8 +15,8 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
         super(horizontal, 'aggregation');
     }
 
-    @PostConstruct
-    private passBeansUp(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag here to aggregate');
         const title = localeTextFunc('values', 'Values');

@@ -1,5 +1,4 @@
 import { BeanStub } from '../context/beanStub';
-import { PostConstruct } from '../context/context';
 import { DomLayoutType } from '../entities/gridOptions';
 import { _warnOnce } from '../utils/function';
 
@@ -27,8 +26,8 @@ export class LayoutFeature extends BeanStub {
         this.view = view;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.addManagedPropertyListener('domLayout', this.updateLayoutClasses.bind(this));
         this.updateLayoutClasses();
     }

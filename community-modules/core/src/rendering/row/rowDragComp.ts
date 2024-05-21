@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, PostConstruct, PreDestroy } from '../../context/context';
+import { Autowired } from '../../context/context';
 import { DragItem, DragSource, DragSourceType } from '../../dragAndDrop/dragAndDropService';
 import { Column } from '../../entities/column';
 import { RowNode } from '../../entities/rowNode';
@@ -34,8 +34,8 @@ export class RowDragComp extends Component {
         return this.customGui != null;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         if (!this.customGui) {
             this.setTemplate(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`);
             this.getGui().appendChild(_createIconNoSpan('rowDrag', this.gos, null)!);
@@ -132,7 +132,11 @@ export class RowDragComp extends Component {
         this.beans.dragAndDropService.addDragSource(this.dragSource, true);
     }
 
-    @PreDestroy
+    protected override destroy(): void {
+        super.destroy();
+        this.removeDragSource();
+    }
+
     private removeDragSource() {
         if (this.dragSource) {
             this.beans.dragAndDropService.removeDragSource(this.dragSource);
@@ -189,8 +193,8 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
         this.beans = beans;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.addManagedPropertyListener('suppressRowDrag', this.onSuppressRowDrag.bind(this));
 
         // in case data changes, then we need to update visibility of drag item
@@ -226,8 +230,8 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         this.beans = beans;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         // we do not show the component if sort, filter or grouping is active
 
         this.addManagedListener(this.beans.eventService, Events.EVENT_SORT_CHANGED, this.workOutVisibility.bind(this));

@@ -3,7 +3,6 @@ import {
     AgSelectParams,
     Autowired,
     Component,
-    PostConstruct,
     RefSelector,
     _capitalise,
     _includes,
@@ -57,8 +56,8 @@ export class FontPanel extends Component {
         this.chartOptions = params.chartMenuParamsFactory.getChartOptions();
     }
 
-    @PostConstruct
-    private init() {
+    protected override postConstruct() {
+        super.postConstruct();
         const fontGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',

@@ -1,4 +1,3 @@
-import { PostConstruct } from '../../context/context';
 import { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
 import { PopupComponent } from '../../widgets/popupComponent';
@@ -10,8 +9,8 @@ export class PopupEditorWrapper extends PopupComponent {
         super(/* html */ `<div class="ag-popup-editor" tabindex="-1"/>`);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.gos.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
         this.addKeyDownListener();
     }

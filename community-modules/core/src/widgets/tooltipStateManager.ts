@@ -1,6 +1,6 @@
 import { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, PostConstruct } from '../context/context';
+import { Autowired } from '../context/context';
 import { Events } from '../eventKeys';
 import { TooltipHideEvent, TooltipShowEvent } from '../events';
 import { WithoutGridCommon } from '../interfaces/iCommon';
@@ -75,8 +75,8 @@ export class TooltipStateManager extends BeanStub {
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         if (this.gos.get('tooltipInteraction')) {
             this.interactionEnabled = true;
         }

@@ -7,7 +7,6 @@ import {
     Events,
     IAdvancedFilterCtrl,
     PopupService,
-    PostConstruct,
     WithoutGridCommon,
     _getAbsoluteHeight,
     _getAbsoluteWidth,
@@ -39,8 +38,8 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.hasAdvancedFilterParent = !!this.gos.get('advancedFilterParent');
 
         this.ctrlsService.whenReady(() => this.setAdvancedFilterComp());

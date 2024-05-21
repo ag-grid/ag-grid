@@ -1,4 +1,4 @@
-import { AgComponentSelector, Autowired, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
+import { AgComponentSelector, Autowired, Component, RefSelector } from '@ag-grid-community/core';
 
 import { GridLicenseManager as LicenseManager } from './gridLicenseManager';
 
@@ -16,8 +16,8 @@ export class AgWatermark extends Component {
         );
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const show = this.shouldDisplayWatermark();
         this.setDisplayed(show);
 

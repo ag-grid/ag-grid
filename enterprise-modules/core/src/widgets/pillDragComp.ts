@@ -10,7 +10,6 @@ import {
     DropTarget,
     Events,
     KeyCode,
-    PostConstruct,
     RefSelector,
     TouchListener,
     _createIconNoSpan,
@@ -51,8 +50,8 @@ export abstract class PillDragComp<TItem> extends Component {
         super();
     }
 
-    @PostConstruct
-    public init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.setTemplate(this.template ?? PillDragComp.TEMPLATE, this.agComponents);
         const eGui = this.getGui();
 

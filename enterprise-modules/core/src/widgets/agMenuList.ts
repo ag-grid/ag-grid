@@ -6,7 +6,6 @@ import {
     IMenuActionParams,
     KeyCode,
     MenuItemDef,
-    PostConstruct,
     TabGuardComp,
     WithoutGridCommon,
     _last,
@@ -35,8 +34,8 @@ export class AgMenuList extends TabGuardComp {
         };
     }
 
-    @PostConstruct
-    private postConstruct() {
+    protected override postConstruct() {
+        super.postConstruct();
         this.initialiseTabGuard({
             onTabKeyDown: (e) => this.onTabKeyDown(e),
             handleKeyDown: (e) => this.handleKeyDown(e),

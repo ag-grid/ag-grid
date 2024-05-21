@@ -7,7 +7,6 @@ import {
     DraggingEvent,
     DropTarget,
     ListOption,
-    PostConstruct,
     _escapeString,
     _removeFromParent,
 } from '@ag-grid-community/core';
@@ -53,8 +52,8 @@ export class AgPillSelect<TValue = string | null> extends Component {
         this.valueFormatter = valueFormatter ?? ((value) => _escapeString(value as any)!);
     }
 
-    @PostConstruct
-    private init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const { ariaLabel, onValuesChange, dragSourceId } = this.config;
         this.dropZonePanel = this.createManagedBean(
             new PillSelectDropZonePanel(
@@ -244,8 +243,8 @@ class PillSelectDropZonePanel<TValue> extends PillDropZonePanel<PillSelectDragCo
         super(false);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         super.init();
     }
 

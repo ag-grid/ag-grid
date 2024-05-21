@@ -9,7 +9,6 @@ import {
     ColumnNameService,
     DataTypeService,
     JoinAdvancedFilterModel,
-    PostConstruct,
     ValueService,
     _exists,
     _parseDateTimeFromString,
@@ -43,8 +42,8 @@ export class AdvancedFilterExpressionService extends BeanStub {
     private expressionJoinOperators: { AND: string; OR: string };
     private expressionEvaluatorParams: { [colId: string]: FilterExpressionEvaluatorParams<any> } = {};
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.expressionJoinOperators = this.generateExpressionJoinOperators();
         this.expressionOperators = this.generateExpressionOperators();
     }

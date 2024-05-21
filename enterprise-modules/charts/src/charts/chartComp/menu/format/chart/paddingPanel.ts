@@ -1,4 +1,4 @@
-import { Autowired, ChartOptionsChanged, Component, Events, PostConstruct, RefSelector } from '@ag-grid-community/core';
+import { Autowired, ChartOptionsChanged, Component, Events, RefSelector } from '@ag-grid-community/core';
 import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgChartPaddingOptions, AgChartThemeOverrides } from 'ag-charts-community';
 
@@ -29,8 +29,8 @@ export class PaddingPanel extends Component {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    protected override postConstruct() {
+        super.postConstruct();
         const chartPaddingGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',

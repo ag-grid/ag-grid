@@ -1,7 +1,7 @@
 import { ColumnModel } from '../columns/columnModel';
 import { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, PostConstruct } from '../context/context';
+import { Autowired } from '../context/context';
 import { CtrlsService } from '../ctrlsService';
 import { Column } from '../entities/column';
 import { Events } from '../eventKeys';
@@ -70,8 +70,8 @@ export class GridBodyScrollFeature extends BeanStub {
         this.resetLastVScrollDebounced = _debounce(() => (this.lastScrollSource[ScrollDirection.Vertical] = null), 500);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.enableRtl = this.gos.get('enableRtl');
         this.addManagedListener(
             this.eventService,

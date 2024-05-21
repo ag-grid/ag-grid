@@ -1,5 +1,5 @@
 import { ColumnModel } from '../columns/columnModel';
-import { Autowired, PostConstruct } from '../context/context';
+import { Autowired } from '../context/context';
 import { Column } from '../entities/column';
 import { Events } from '../eventKeys';
 import { FilterDestroyedEvent, FilterOpenedEvent } from '../events';
@@ -25,8 +25,8 @@ export class FilterWrapperComp extends Component {
         super(/* html */ `<div class="ag-filter"></div>`);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.createFilter(true);
 
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_DESTROYED, this.onFilterDestroyed.bind(this));

@@ -1,6 +1,5 @@
 import {
     Component,
-    PostConstruct,
     RefSelector,
     _clearElement,
     _createIconNoSpan,
@@ -50,8 +49,8 @@ export class ChartSettingsPanel extends Component {
         super(ChartSettingsPanel.TEMPLATE);
     }
 
-    @PostConstruct
-    private postConstruct() {
+    protected override postConstruct() {
+        super.postConstruct();
         this.resetPalettes();
 
         this.ePrevBtn.insertAdjacentElement('afterbegin', _createIconNoSpan('previous', this.gos)!);

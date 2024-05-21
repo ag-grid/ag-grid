@@ -9,9 +9,9 @@ export class ChartTitlePanel extends TitlePanel {
 
     private titlePlaceholder: string;
 
-    protected init(): void {
+    protected override postConstruct(): void {
         this.titlePlaceholder = this.chartTranslationService.translate('titlePlaceholder');
-        super.init();
+        super.postConstruct();
         // edits to the title can disable it, so keep the checkbox in sync:
         this.addManagedListener(this.eventService, 'chartTitleEdit', () => {
             this.fontPanel.setEnabled(this.hasTitle());

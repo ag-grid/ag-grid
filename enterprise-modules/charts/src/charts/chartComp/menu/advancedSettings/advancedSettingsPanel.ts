@@ -1,4 +1,4 @@
-import { ChartType, Component, PostConstruct } from '@ag-grid-community/core';
+import { ChartType, Component } from '@ag-grid-community/core';
 
 import { ChartSeriesType, isCartesian } from '../../utils/seriesTypeMapper';
 import { ChartMenuContext } from '../chartMenuContext';
@@ -21,8 +21,8 @@ export class AdvancedSettingsPanel extends Component {
         super(AdvancedSettingsPanel.TEMPLATE);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.chartPanelFeature = this.createManagedBean(
             new ChartPanelFeature(
                 this.chartMenuContext.chartController,

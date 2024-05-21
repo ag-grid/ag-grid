@@ -1,5 +1,4 @@
 import { BeanStub } from '../../context/beanStub';
-import { PostConstruct } from '../../context/context';
 import { Column } from '../../entities/column';
 import { ColumnGroup } from '../../entities/columnGroup';
 import { Events } from '../../eventKeys';
@@ -43,8 +42,8 @@ export class SetLeftFeature extends BeanStub {
         return this.columnOrGroup;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.addManagedListener(this.columnOrGroup, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.setLeftFirstTime();
 

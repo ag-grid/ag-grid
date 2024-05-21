@@ -1,4 +1,4 @@
-import { Autowired, Optional, PostConstruct } from '../context/context';
+import { Autowired, Optional } from '../context/context';
 import { GridHeaderComp } from '../headerRendering/gridHeaderComp';
 import { IRangeService } from '../interfaces/IRangeService';
 import { ResizeObserverService } from '../misc/resizeObserverService';
@@ -81,8 +81,8 @@ export class GridBodyComp extends Component {
         ]);
     }
 
-    @PostConstruct
-    private init() {
+    protected override postConstruct() {
+        super.postConstruct();
         const setHeight = (height: number, element: HTMLElement) => {
             const heightString = `${height}px`;
             element.style.minHeight = heightString;

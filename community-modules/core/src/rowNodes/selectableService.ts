@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import { RowNode } from '../entities/rowNode';
 import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { IRowModel } from '../interfaces/iRowModel';
@@ -12,8 +12,8 @@ export class SelectableService extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('selectionService') private selectionService: ISelectionService;
 
-    @PostConstruct
-    private init() {
+    protected override postConstruct() {
+        super.postConstruct();
         this.addManagedPropertyListener('isRowSelectable', () => this.updateSelectable());
     }
 

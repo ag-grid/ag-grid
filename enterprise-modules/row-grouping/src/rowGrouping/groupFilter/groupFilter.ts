@@ -11,7 +11,6 @@ import {
     IAfterGuiAttachedParams,
     IFilterComp,
     IFilterParams,
-    PostConstruct,
     RefSelector,
     TabGuardComp,
     _clearElement,
@@ -54,8 +53,8 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         `);
     }
 
-    @PostConstruct
-    private postConstruct() {
+    protected override postConstruct() {
+        super.postConstruct();
         this.initialiseTabGuard({});
     }
 

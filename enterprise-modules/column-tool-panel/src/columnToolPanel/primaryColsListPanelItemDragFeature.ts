@@ -7,7 +7,6 @@ import {
     ColumnPanelItemDragStartEvent,
     DragSourceType,
     Events,
-    PostConstruct,
     ProvidedColumnGroup,
     VirtualList,
     VirtualListDragFeature,
@@ -29,8 +28,8 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.createManagedBean(
             new VirtualListDragFeature<
                 AgPrimaryColsList,

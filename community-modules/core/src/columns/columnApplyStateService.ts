@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import { IAggFunc } from '../entities/colDef';
 import { Column, ColumnPinnedType } from '../entities/column';
 import { ColumnEvent, ColumnEventType, Events } from '../events';

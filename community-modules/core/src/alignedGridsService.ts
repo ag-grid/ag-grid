@@ -5,7 +5,6 @@ import { BeanStub } from './context/beanStub';
 import { Bean } from './context/context';
 import { Qualifier } from './context/context';
 import { Autowired } from './context/context';
-import { PostConstruct } from './context/context';
 import { CtrlsService } from './ctrlsService';
 import { Column } from './entities/column';
 import { ProvidedColumnGroup } from './entities/providedColumnGroup';
@@ -82,8 +81,8 @@ export class AlignedGridsService extends BeanStub {
         return apis as GridApi[];
     }
 
-    @PostConstruct
-    private init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));

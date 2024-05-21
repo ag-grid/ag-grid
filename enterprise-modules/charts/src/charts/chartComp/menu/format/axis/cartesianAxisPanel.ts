@@ -6,7 +6,6 @@ import {
     Component,
     Events,
     ListOption,
-    PostConstruct,
     RefSelector,
     _removeFromParent,
     _setDisplayed,
@@ -63,8 +62,8 @@ export class CartesianAxisPanel extends Component {
         this.chartOptionsSeriesProxy = chartOptionsService.getSeriesOptionsProxy(() => seriesType);
     }
 
-    @PostConstruct
-    private init() {
+    protected override postConstruct() {
+        super.postConstruct();
         const {
             isExpandedOnInit: expanded,
             chartOptionsService,

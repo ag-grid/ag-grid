@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, PostConstruct } from '../../context/context';
+import { Autowired } from '../../context/context';
 import { Events } from '../../eventKeys';
 import { _setDisplayed, _setFixedWidth } from '../../utils/dom';
 import { PinnedWidthService } from '../pinnedWidthService';
@@ -14,8 +14,8 @@ export class SetPinnedRightWidthFeature extends BeanStub {
         this.element = element;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.addManagedListener(
             this.eventService,
             Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED,

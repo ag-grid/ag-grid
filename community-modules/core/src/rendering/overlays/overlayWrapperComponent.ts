@@ -1,4 +1,4 @@
-import { Autowired, PostConstruct } from '../../context/context';
+import { Autowired } from '../../context/context';
 import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { _clearElement } from '../../utils/dom';
 import { AgPromise } from '../../utils/promise';
@@ -38,8 +38,8 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         overlayWrapperClassList.toggle(LayoutCssClasses.PRINT, params.print);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.createManagedBean(new LayoutFeature(this));
         this.setDisplayed(false, { skipAriaHidden: true });
 

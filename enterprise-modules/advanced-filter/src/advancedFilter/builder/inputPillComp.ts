@@ -7,7 +7,6 @@ import {
     Events,
     FieldValueEvent,
     KeyCode,
-    PostConstruct,
     RefSelector,
     WithoutGridCommon,
     _exists,
@@ -46,8 +45,8 @@ export class InputPillComp extends Component {
         this.value = params.value;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const { cssClass, ariaLabel } = this.params;
 
         this.ePill.classList.add(cssClass);

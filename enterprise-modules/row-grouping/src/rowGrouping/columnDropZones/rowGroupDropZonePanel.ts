@@ -4,7 +4,6 @@ import {
     DraggingEvent,
     Events,
     ITooltipParams,
-    PostConstruct,
     WithoutGridCommon,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
@@ -16,8 +15,8 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
         super(horizontal, 'rowGroup');
     }
 
-    @PostConstruct
-    private passBeansUp(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag here to set row groups');
         const title = localeTextFunc('groups', 'Row Groups');

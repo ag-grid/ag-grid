@@ -5,7 +5,6 @@ import {
     Component,
     Events,
     FuncColsService,
-    PostConstruct,
     _setAriaRole,
 } from '@ag-grid-community/core';
 
@@ -25,8 +24,8 @@ export class AgGridHeaderDropZones extends Component {
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.setGui(this.createNorthPanel());
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>

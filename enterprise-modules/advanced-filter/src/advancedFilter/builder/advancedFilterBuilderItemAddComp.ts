@@ -4,7 +4,6 @@ import {
     Component,
     Events,
     FieldPickerValueSelectedEvent,
-    PostConstruct,
     RefSelector,
     TooltipFeature,
     _setAriaLabel,
@@ -42,8 +41,8 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
         `);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         _setAriaLevel(this.focusWrapper, 2);
 
         const addButtonParams = getAdvancedFilterBuilderAddButtonParams(

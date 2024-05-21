@@ -5,7 +5,6 @@ import {
     AgToggleButton,
     Component,
     KeyCode,
-    PostConstruct,
     RefSelector,
     _createIcon,
     _setAriaExpanded,
@@ -109,8 +108,8 @@ export class AgGroupComponent extends Component {
         `;
     }
 
-    @PostConstruct
-    private postConstruct() {
+    protected override postConstruct() {
+        super.postConstruct();
         this.setupTitleBar();
 
         if (this.items.length) {
@@ -390,8 +389,8 @@ class DefaultTitleBar extends Component {
         `;
     }
 
-    @PostConstruct
-    private postConstruct() {
+    protected override postConstruct() {
+        super.postConstruct();
         this.setTitle(this.title);
 
         this.hideOpenCloseIcons(this.suppressOpenCloseIcons);

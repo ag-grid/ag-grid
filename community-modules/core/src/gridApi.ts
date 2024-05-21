@@ -11,7 +11,7 @@ import { ColumnViewportService } from './columns/columnViewportService';
 import { FuncColsService } from './columns/funcColsService';
 import { PivotResultColsService } from './columns/pivotResultColsService';
 import { VisibleColsService } from './columns/visibleColsService';
-import { Autowired, Bean, Context, Optional, PostConstruct } from './context/context';
+import { Autowired, Bean, Context, Optional } from './context/context';
 import { CtrlsService } from './ctrlsService';
 import { DragAndDropService } from './dragAndDrop/dragAndDropService';
 import { CellPosition } from './entities/cellPositionUtils';
@@ -218,8 +218,7 @@ export class GridApi<TData = any> {
 
     private destroyCalled = false;
 
-    @PostConstruct
-    private init(): void {
+    private postConstruct(): void {
         switch (this.rowModel.getType()) {
             case 'clientSide':
                 this.clientSideRowModel = this.rowModel as IClientSideRowModel;

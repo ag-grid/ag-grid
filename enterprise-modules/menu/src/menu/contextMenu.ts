@@ -20,7 +20,6 @@ import {
     ModuleRegistry,
     Optional,
     PopupService,
-    PostConstruct,
     RowNode,
     WithoutGridCommon,
     _exists,
@@ -260,8 +259,8 @@ class ContextMenu extends Component {
         super(/* html */ `<div class="${CSS_MENU}" role="presentation"></div>`);
     }
 
-    @PostConstruct
-    private addMenuItems(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const menuList = this.createManagedBean(
             new AgMenuList(0, {
                 column: this.column,

@@ -9,8 +9,6 @@ import {
     ISelectionService,
     ModelUpdatedEvent,
     NumberSequence,
-    PostConstruct,
-    PreDestroy,
     RowBounds,
     RowModelType,
     RowNode,
@@ -54,8 +52,8 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         return false;
     }
 
-    @PostConstruct
-    public init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         if (!this.gos.isRowModelType('infinite')) {
             return;
         }
@@ -81,7 +79,11 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         this.setDatasource(this.gos.get('datasource'));
     }
 
-    @PreDestroy
+    protected override destroy(): void {
+        super.destroy();
+        this.destroyDatasource();
+    }
+
     private destroyDatasource(): void {
         if (this.datasource) {
             this.getContext().destroyBean(this.datasource);

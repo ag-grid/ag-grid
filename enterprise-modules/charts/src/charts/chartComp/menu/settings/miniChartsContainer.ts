@@ -4,7 +4,6 @@ import {
     ChartType,
     Component,
     KeyCode,
-    PostConstruct,
     _setAriaLabel,
     _warnOnce,
 } from '@ag-grid-community/core';
@@ -173,8 +172,8 @@ export class MiniChartsContainer extends Component {
         this.chartGroups = { ...chartGroups };
     }
 
-    @PostConstruct
-    private init() {
+    protected override postConstruct() {
+        super.postConstruct();
         // hide MiniCustomCombo if no custom combo exists
         if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
             this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(

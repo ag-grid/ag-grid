@@ -1,5 +1,5 @@
 import { ColumnState } from '../columns/columnApplyStateService';
-import { Autowired, PostConstruct } from '../context/context';
+import { Autowired } from '../context/context';
 import { Environment } from '../environment';
 import { EventService } from '../eventService';
 import { AgEvent, AgEventListener, ColumnEvent, ColumnEventType } from '../events';
@@ -273,8 +273,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     // this is done after constructor as it uses gridOptionsService
-    @PostConstruct
-    private initialise(): void {
+    private postConstruct(): void {
         this.initMinAndMaxWidths();
 
         this.resetActualWidth('gridInitializing');

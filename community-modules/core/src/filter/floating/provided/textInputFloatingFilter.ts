@@ -1,6 +1,5 @@
 import { KeyCode } from '../../../constants/keyCode';
 import { BeanStub } from '../../../context/beanStub';
-import { PostConstruct } from '../../../context/context';
 import { FilterChangedEvent } from '../../../events';
 import { _clearElement } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
@@ -99,8 +98,8 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         params: ITextInputFloatingFilterParams
     ): FloatingFilterInputService;
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.setTemplate(/* html */ `
             <div class="ag-floating-filter-input" role="presentation" ref="eFloatingFilterInputContainer"></div>
         `);

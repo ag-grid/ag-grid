@@ -6,7 +6,6 @@ import {
     Component,
     FilterManager,
     JoinAdvancedFilterModel,
-    PostConstruct,
     RefSelector,
     TooltipFeature,
     VirtualList,
@@ -58,8 +57,8 @@ export class AdvancedFilterBuilderComp extends Component {
             </div>`);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const { showMoveButtons } = this.gos.get('advancedFilterBuilderParams') ?? {};
         this.showMove = !!showMoveButtons;
         this.addManagedPropertyListener('advancedFilterBuilderParams', ({ currentValue }) => {

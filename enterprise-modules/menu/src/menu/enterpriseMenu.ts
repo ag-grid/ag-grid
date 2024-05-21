@@ -22,7 +22,6 @@ import {
     ModuleRegistry,
     PopupEventParams,
     PopupService,
-    PostConstruct,
     RefSelector,
     TabbedItem,
     TabbedLayout,
@@ -360,8 +359,8 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
         this.includeChecks[TabbedColumnMenu.TAB_COLUMNS] = () => true;
     }
 
-    @PostConstruct
-    public init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const tabs = this.getTabsToCreate().map((name) => this.createTab(name));
 
         this.tabbedLayout = new TabbedLayout({
@@ -572,8 +571,8 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
         `);
     }
 
-    @PostConstruct
-    private init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.mainMenuList = this.columnMenuFactory.createMenu(
             this,
             this.column,

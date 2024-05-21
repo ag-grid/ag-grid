@@ -1,4 +1,4 @@
-import { BeanStub, ChartType, PostConstruct, SeriesChartType } from '@ag-grid-community/core';
+import { BeanStub, ChartType, SeriesChartType } from '@ag-grid-community/core';
 
 import { ChartDataModel, ColState } from './chartDataModel';
 
@@ -18,8 +18,8 @@ export class ComboChartModel extends BeanStub {
         this.seriesChartTypes = chartDataModel.params.seriesChartTypes ?? [];
     }
 
-    @PostConstruct
-    private init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.initComboCharts();
     }
 

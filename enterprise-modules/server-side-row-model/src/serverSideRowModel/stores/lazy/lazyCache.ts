@@ -7,8 +7,6 @@ import {
     IRowNode,
     LoadSuccessParams,
     NumberSequence,
-    PostConstruct,
-    PreDestroy,
     RowNode,
     ServerSideGroupLevelParams,
     WithoutGridCommon,
@@ -97,8 +95,8 @@ export class LazyCache extends BeanStub {
         this.storeParams = storeParams;
     }
 
-    @PostConstruct
-    private init() {
+    protected override postConstruct() {
+        super.postConstruct();
         this.lazyBlockLoadingService.subscribe(this);
         // initiate the node map to be indexed at 'index', 'id' and 'node' for quick look-up.
         // it's important id isn't first, as stub nodes overwrite each-other, and the first index is
@@ -113,8 +111,8 @@ export class LazyCache extends BeanStub {
         this.isMasterDetail = this.gos.get('masterDetail');
     }
 
-    @PreDestroy
-    private destroyRowNodes() {
+    protected override destroy() {
+        super.destroy();
         this.lazyBlockLoadingService.unsubscribe(this);
         this.numberOfRows = 0;
         this.nodeMap.forEach((node) => this.blockUtils.destroyRowNode(node.node));

@@ -19,7 +19,6 @@ import {
     ISelectionService,
     ModelUpdatedEvent,
     Optional,
-    PostConstruct,
     RefreshModelParams,
     RowBounds,
     RowDataTransaction,
@@ -99,8 +98,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private isRefreshingModel: boolean = false;
     private rowCountReady: boolean = false;
 
-    @PostConstruct
-    public init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const refreshEverythingFunc = this.refreshModel.bind(this, { step: ClientSideRowModelSteps.EVERYTHING });
         const animate = !this.gos.get('suppressAnimationFrame');
         const refreshEverythingAfterColsChangedFunc = this.refreshModel.bind(this, {

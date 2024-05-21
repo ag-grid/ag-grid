@@ -3,7 +3,6 @@ import {
     Autowired,
     ChartToolPanelMenuOptions,
     Component,
-    PostConstruct,
     TabbedItem,
     TabbedLayout,
 } from '@ag-grid-community/core';
@@ -32,8 +31,8 @@ export class TabbedChartMenu extends Component {
         super();
     }
 
-    @PostConstruct
-    public init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.panels.forEach((panel) => {
             const panelType = panel.replace('chart', '').toLowerCase() as 'settings' | 'data' | 'format';
             const panelComp = this.createPanel(panelType);

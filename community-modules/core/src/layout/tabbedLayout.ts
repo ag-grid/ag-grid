@@ -1,5 +1,5 @@
 import { KeyCode } from '../constants/keyCode';
-import { Autowired, PostConstruct } from '../context/context';
+import { Autowired } from '../context/context';
 import { FocusService } from '../focusService';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import { _setAriaLabel, _setAriaRole } from '../utils/aria';
@@ -30,8 +30,8 @@ export class TabbedLayout extends TabGuardComp {
         this.params = params;
     }
 
-    @PostConstruct
-    private postConstruct() {
+    protected override postConstruct() {
+        super.postConstruct();
         this.setupHeader();
 
         if (this.params.items) {

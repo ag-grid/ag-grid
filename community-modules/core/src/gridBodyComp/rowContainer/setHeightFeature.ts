@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, PostConstruct } from '../../context/context';
+import { Autowired } from '../../context/context';
 import { Events } from '../../eventKeys';
 import { RowContainerHeightService } from '../../rendering/rowContainerHeightService';
 
@@ -15,8 +15,8 @@ export class SetHeightFeature extends BeanStub {
         this.eViewport = eViewport;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.addManagedListener(
             this.eventService,
             Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED,

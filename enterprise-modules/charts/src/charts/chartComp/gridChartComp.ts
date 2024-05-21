@@ -11,7 +11,6 @@ import {
     IAggFunc,
     PartialCellRange,
     PopupService,
-    PostConstruct,
     RefSelector,
     SeriesChartType,
     UpdateChartParams,
@@ -118,8 +117,8 @@ export class GridChartComp extends Component {
         this.params = params;
     }
 
-    @PostConstruct
-    public init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const modelParams: ChartModelParams = {
             ...this.params,
             chartType: getCanonicalChartType(this.params.chartType),

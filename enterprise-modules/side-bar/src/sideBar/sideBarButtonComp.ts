@@ -1,11 +1,4 @@
-import {
-    Component,
-    PostConstruct,
-    RefSelector,
-    ToolPanelDef,
-    _createIconNoSpan,
-    _setAriaExpanded,
-} from '@ag-grid-community/core';
+import { Component, RefSelector, ToolPanelDef, _createIconNoSpan, _setAriaExpanded } from '@ag-grid-community/core';
 
 export class SideBarButtonComp extends Component {
     public static EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';
@@ -25,8 +18,8 @@ export class SideBarButtonComp extends Component {
         return this.toolPanelDef.id;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const template = this.createTemplate();
         this.setTemplate(template, []);
         this.setLabel();

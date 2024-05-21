@@ -1,4 +1,4 @@
-import { Autowired, Bean, BeanStub, FocusService, PostConstruct, TabGuardComp } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, FocusService, TabGuardComp } from '@ag-grid-community/core';
 import { AgDialog } from '@ag-grid-enterprise/core';
 
 import { ChartTranslationService } from '../../services/chartTranslationService';
@@ -66,8 +66,8 @@ class AdvancedSettingsMenu extends TabGuardComp {
         super(AdvancedSettingsMenu.TEMPLATE);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.advancedSettingsPanel = this.createManagedBean(new AdvancedSettingsPanel(this.chartMenuContext));
         this.getGui().appendChild(this.advancedSettingsPanel.getGui());
         this.initialiseTabGuard({

@@ -1,4 +1,4 @@
-import { BeanStub, ChartType, Component, PostConstruct, _removeFromParent } from '@ag-grid-community/core';
+import { BeanStub, ChartType, Component, _removeFromParent } from '@ag-grid-community/core';
 
 import { ChartController } from '../chartController';
 import { ChartSeriesType, getSeriesType } from '../utils/seriesTypeMapper';
@@ -17,8 +17,8 @@ export class ChartPanelFeature extends BeanStub {
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, () =>
             this.refreshPanels(true)
         );

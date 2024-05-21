@@ -1,4 +1,4 @@
-import { AgInputTextField, AgInputTextFieldParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { AgInputTextField, AgInputTextFieldParams, Autowired, Component } from '@ag-grid-community/core';
 
 import { AgSlider, AgSliderParams } from '../../../../../widgets/agSlider';
 import { ChartOptionsProxy } from '../../../services/chartOptionsService';
@@ -24,8 +24,8 @@ export class TitlePanel extends Component {
         this.chartOptions = chartMenuUtils.getChartOptions();
     }
 
-    @PostConstruct
-    protected init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.initFontPanel();
     }
 

@@ -7,7 +7,6 @@ import {
     KeyCode,
     PopupPositionParams,
     PopupService,
-    PostConstruct,
     RefSelector,
     _makeNull,
 } from '@ag-grid-community/core';
@@ -68,8 +67,8 @@ export class AgAutocomplete extends Component {
         );
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.eAutocompleteInput.onValueChange((value) => this.onValueChanged(value));
         this.eAutocompleteInput.getInputElement().setAttribute('autocomplete', 'off');
 

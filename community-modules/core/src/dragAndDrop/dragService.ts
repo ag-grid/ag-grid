@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PreDestroy } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import { DragStartedEvent, DragStoppedEvent, Events } from '../events';
 import { MouseEventService } from '../gridBodyComp/mouseEventService';
 import { WithoutGridCommon } from '../interfaces/iCommon';
@@ -26,8 +26,8 @@ export class DragService extends BeanStub {
 
     private dragSources: DragSourceAndListener[] = [];
 
-    @PreDestroy
-    private removeAllListeners(): void {
+    protected override destroy(): void {
+        super.destroy();
         this.dragSources.forEach(this.removeListener.bind(this));
         this.dragSources.length = 0;
     }

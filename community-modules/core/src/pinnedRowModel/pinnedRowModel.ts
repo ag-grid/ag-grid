@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import { RowNode } from '../entities/rowNode';
 import { Events, PinnedRowDataChangedEvent } from '../events';
 import { WithoutGridCommon } from '../interfaces/iCommon';
@@ -15,8 +15,8 @@ export class PinnedRowModel extends BeanStub {
     private pinnedTopRows: RowNode[];
     private pinnedBottomRows: RowNode[];
 
-    @PostConstruct
-    public init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.setPinnedTopRowData();
         this.setPinnedBottomRowData();
         this.addManagedPropertyListener('pinnedTopRowData', () => this.setPinnedTopRowData());

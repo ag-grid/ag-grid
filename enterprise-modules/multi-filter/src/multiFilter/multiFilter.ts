@@ -15,7 +15,6 @@ import {
     IMultiFilterModel,
     KeyCode,
     MultiFilterParams,
-    PostConstruct,
     ProvidedFilter,
     ProvidedFilterModel,
     RowNode,
@@ -50,8 +49,8 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         super(/* html */ `<div class="ag-multi-filter ag-menu-list-compact"></div>`);
     }
 
-    @PostConstruct
-    private postConstruct() {
+    protected override postConstruct() {
+        super.postConstruct();
         this.initialiseTabGuard({
             onFocusIn: (e) => this.onFocusIn(e),
         });

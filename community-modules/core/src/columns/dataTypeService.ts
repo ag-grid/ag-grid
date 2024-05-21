@@ -1,6 +1,6 @@
 import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import {
     ColDef,
     KeyCreatorParams,
@@ -93,8 +93,8 @@ export class DataTypeService extends BeanStub {
     private columnStateUpdatesPendingInference: { [colId: string]: Set<keyof ColumnStateParams> } = {};
     private columnStateUpdateListenerDestroyFuncs: (() => void)[] = [];
 
-    @PostConstruct
-    public init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.groupHideOpenParents = this.gos.get('groupHideOpenParents');
         this.addManagedPropertyListener('groupHideOpenParents', () => {
             this.groupHideOpenParents = this.gos.get('groupHideOpenParents');

@@ -3,7 +3,7 @@ import { ColumnSizeService } from '../columns/columnSizeService';
 import { ColumnViewportService } from '../columns/columnViewportService';
 import { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, PostConstruct } from '../context/context';
+import { Autowired } from '../context/context';
 import { CtrlsService } from '../ctrlsService';
 import { Column } from '../entities/column';
 import { BodyHeightChangedEvent, Events } from '../events';
@@ -38,8 +38,8 @@ export class ViewportSizeFeature extends BeanStub {
         this.centerContainerCtrl = centerContainerCtrl;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.ctrlsService.whenReady((p) => {
             this.gridBodyCtrl = p.gridBodyCtrl;
             this.listenForResize();

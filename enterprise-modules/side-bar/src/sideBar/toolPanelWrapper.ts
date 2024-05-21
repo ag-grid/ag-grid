@@ -3,7 +3,6 @@ import {
     Component,
     IToolPanelComp,
     IToolPanelParams,
-    PostConstruct,
     ToolPanelDef,
     UserComponentFactory,
     WithoutGridCommon,
@@ -26,8 +25,8 @@ export class ToolPanelWrapper extends Component {
         super(ToolPanelWrapper.TEMPLATE);
     }
 
-    @PostConstruct
-    private setupResize(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const eGui = this.getGui();
         const resizeBar = (this.resizeBar = this.createManagedBean(new AgHorizontalResize()));
 

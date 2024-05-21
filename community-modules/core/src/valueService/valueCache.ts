@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Bean, PostConstruct } from '../context/context';
+import { Bean } from '../context/context';
 import { RowNode } from '../entities/rowNode';
 
 @Bean('valueCache')
@@ -8,8 +8,8 @@ export class ValueCache extends BeanStub {
     private active: boolean;
     private neverExpires: boolean;
 
-    @PostConstruct
-    public init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.active = this.gos.get('valueCache');
         this.neverExpires = this.gos.get('valueCacheNeverExpires');
     }

@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, PostConstruct } from '../../context/context';
+import { Autowired } from '../../context/context';
 import { Column, ColumnPinnedType } from '../../entities/column';
 import { ColumnGroup } from '../../entities/columnGroup';
 import { Events } from '../../eventKeys';
@@ -55,8 +55,8 @@ export class HeaderRowCtrl extends BeanStub {
         this.headerRowClass = `ag-header-row ${typeClass}`;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.isPrintLayout = this.gos.isDomLayout('print');
         this.isEnsureDomOrder = this.gos.get('ensureDomOrder');
     }

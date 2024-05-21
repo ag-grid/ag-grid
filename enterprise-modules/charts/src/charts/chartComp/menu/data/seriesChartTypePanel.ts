@@ -4,7 +4,6 @@ import {
     Autowired,
     ChartType,
     Component,
-    PostConstruct,
     SeriesChartType,
     _areEqual,
     _clearElement,
@@ -33,8 +32,8 @@ export class SeriesChartTypePanel extends Component {
         super(SeriesChartTypePanel.TEMPLATE);
     }
 
-    @PostConstruct
-    private init() {
+    protected override postConstruct() {
+        super.postConstruct();
         this.createSeriesChartTypeGroup(this.columns);
     }
 
@@ -53,7 +52,7 @@ export class SeriesChartTypePanel extends Component {
         this.columns = columns;
         this.selectedColIds = [];
         this.clearComps();
-        this.init();
+        this.postConstruct();
     }
 
     private getValidColIds(columns: ColState[]): string[] {

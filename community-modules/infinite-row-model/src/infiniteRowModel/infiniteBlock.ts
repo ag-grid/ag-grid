@@ -4,8 +4,6 @@ import {
     IGetRowsParams,
     LoadSuccessParams,
     NumberSequence,
-    PostConstruct,
-    PreDestroy,
     RowNode,
     RowNodeBlock,
     _exists,
@@ -39,8 +37,8 @@ export class InfiniteBlock extends RowNodeBlock {
         this.endRow = this.startRow + params.blockSize!;
     }
 
-    @PostConstruct
-    protected postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.createRowNodes();
     }
 
@@ -174,8 +172,8 @@ export class InfiniteBlock extends RowNodeBlock {
         this.parentCache.pageLoaded(this, finalRowCount);
     }
 
-    @PreDestroy
-    private destroyRowNodes(): void {
+    protected override destroy(): void {
+        super.destroy();
         this.rowNodes.forEach((rowNode) => {
             // this is needed, so row render knows to fade out the row, otherwise it
             // sees row top is present, and thinks the row should be shown.

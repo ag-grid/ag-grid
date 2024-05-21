@@ -19,7 +19,6 @@ import {
     OpenChartToolPanelParams,
     Optional,
     PartialCellRange,
-    PreDestroy,
     SeriesChartType,
     SeriesGroupType,
     UpdateChartParams,
@@ -344,8 +343,8 @@ export class ChartService extends BeanStub implements IChartService {
         return cellRange;
     }
 
-    @PreDestroy
-    private destroyAllActiveCharts(): void {
+    protected override destroy(): void {
+        super.destroy();
         this.activeCharts.forEach((chart) => chart.destroyChart());
     }
 }

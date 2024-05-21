@@ -7,7 +7,6 @@ import {
     Logger,
     LoggerFactory,
     NumberSequence,
-    PreDestroy,
     Qualifier,
     RowNode,
     RowNodeBlockLoader,
@@ -110,8 +109,8 @@ export class InfiniteCache extends BeanStub {
         this.params.rowNodeBlockLoader!.checkBlockToLoad();
     }
 
-    @PreDestroy
-    private destroyAllBlocks(): void {
+    protected override destroy(): void {
+        super.destroy();
         this.getBlocksInOrder().forEach((block) => this.destroyBlock(block));
     }
 

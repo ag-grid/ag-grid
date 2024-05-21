@@ -1,6 +1,6 @@
 import { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import { Events } from '../eventKeys';
 
 @Bean('pinnedWidthService')
@@ -10,8 +10,8 @@ export class PinnedWidthService extends BeanStub {
     private leftWidth: number;
     private rightWidth: number;
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const listener = this.checkContainerWidths.bind(this);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, listener);

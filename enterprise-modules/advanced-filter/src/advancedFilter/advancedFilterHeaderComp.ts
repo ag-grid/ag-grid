@@ -6,7 +6,6 @@ import {
     FocusService,
     HeaderNavigationService,
     KeyCode,
-    PostConstruct,
     _clearElement,
     _setAriaColIndex,
     _setAriaColSpan,
@@ -31,8 +30,8 @@ export class AdvancedFilterHeaderComp extends Component {
             </div>`);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.setupAdvancedFilter(this.enabled);
 
         this.addDestroyFunc(() => this.destroyBean(this.eAdvancedFilter));

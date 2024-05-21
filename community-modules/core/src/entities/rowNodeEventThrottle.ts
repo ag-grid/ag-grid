@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import { RowGroupOpenedEvent } from '../events';
 import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { IRowModel } from '../interfaces/iRowModel';
@@ -16,8 +16,8 @@ export class RowNodeEventThrottle extends BeanStub {
 
     private dispatchExpandedDebounced: () => void;
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         if (this.rowModel.getType() == 'clientSide') {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }

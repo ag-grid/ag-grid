@@ -5,7 +5,6 @@ import {
     IRowModel,
     IServerSideSelectionState,
     ISetNodesSelectedParams,
-    PostConstruct,
     RowNode,
     SelectionChangedEvent,
     SelectionEventSourceType,
@@ -31,8 +30,8 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
     private rowSelection?: 'single' | 'multiple';
 
-    @PostConstruct
-    private init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.rowSelection = this.gos.get('rowSelection');
         this.addManagedPropertyListener('rowSelection', (propChange) => {
             this.rowSelection = propChange.currentValue;

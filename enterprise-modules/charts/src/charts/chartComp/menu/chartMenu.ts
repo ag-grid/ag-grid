@@ -6,7 +6,6 @@ import {
     ChartToolbarMenuItemOptions,
     Component,
     Events,
-    PostConstruct,
 } from '@ag-grid-community/core';
 import { AgPanel } from '@ag-grid-enterprise/core';
 
@@ -61,8 +60,8 @@ export class ChartMenu extends Component {
         this.chartController = chartMenuContext.chartController;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.chartToolbar = this.createManagedBean(new ChartToolbar());
         this.getGui().appendChild(this.chartToolbar.getGui());
 

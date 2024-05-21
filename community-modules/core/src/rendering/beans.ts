@@ -7,7 +7,7 @@ import { VisibleColsService } from '../columns/visibleColsService';
 import { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
 import { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { UserComponentRegistry } from '../components/framework/userComponentRegistry';
-import { Autowired, Bean, Context, Optional, PostConstruct } from '../context/context';
+import { Autowired, Bean, Context, Optional } from '../context/context';
 import { CtrlsFactory } from '../ctrlsFactory';
 import { CtrlsService } from '../ctrlsService';
 import { DragAndDropService } from '../dragAndDrop/dragAndDropService';
@@ -102,7 +102,6 @@ export class Beans {
     public clientSideRowModel: IClientSideRowModel;
     public serverSideRowModel: IServerSideRowModel;
 
-    @PostConstruct
     private postConstruct(): void {
         if (this.gos.isRowModelType('clientSide')) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;

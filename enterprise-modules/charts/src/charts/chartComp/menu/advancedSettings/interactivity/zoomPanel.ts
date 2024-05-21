@@ -1,4 +1,4 @@
-import { AgCheckbox, Autowired, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
+import { AgCheckbox, Autowired, Component, RefSelector } from '@ag-grid-community/core';
 import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
 import { AgSlider } from '../../../../../widgets/agSlider';
@@ -22,8 +22,8 @@ export class ZoomPanel extends Component {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    protected override postConstruct() {
+        super.postConstruct();
         const zoomGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>('zoom.enabled', {
             cssIdentifier: 'charts-advanced-settings-top-level',
             direction: 'vertical',

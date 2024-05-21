@@ -1,7 +1,7 @@
 import { ColumnModel } from '../columns/columnModel';
 import { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import { CtrlsService } from '../ctrlsService';
 import { CellPosition } from '../entities/cellPositionUtils';
 import { Column } from '../entities/column';
@@ -130,8 +130,8 @@ export class RowRenderer extends BeanStub {
 
     private dataFirstRenderedFired = false;
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.ctrlsService.whenReady((p) => {
             this.gridBodyCtrl = p.gridBodyCtrl;
             this.initialise();

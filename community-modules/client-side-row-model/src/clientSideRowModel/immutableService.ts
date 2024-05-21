@@ -5,7 +5,6 @@ import {
     IImmutableService,
     IRowModel,
     ISelectionService,
-    PostConstruct,
     RowDataTransaction,
     RowNode,
     RowRenderer,
@@ -24,8 +23,8 @@ export class ImmutableService extends BeanStub implements IImmutableService {
 
     private clientSideRowModel: ClientSideRowModel;
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         if (this.rowModel.getType() === 'clientSide') {
             this.clientSideRowModel = this.rowModel as ClientSideRowModel;
 

@@ -3,7 +3,7 @@ import { DataTypeService } from '../columns/dataTypeService';
 import { FilterComponent } from '../components/framework/componentTypes';
 import { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
+import { Autowired, Bean, Optional } from '../context/context';
 import { ColDef } from '../entities/colDef';
 import { Column } from '../entities/column';
 import { RowNode } from '../entities/rowNode';
@@ -70,8 +70,8 @@ export class FilterManager extends BeanStub {
 
     private initialFilterModel: FilterModel;
 
-    @PostConstruct
-    public init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, () =>
             this.refreshFiltersForAggregations()

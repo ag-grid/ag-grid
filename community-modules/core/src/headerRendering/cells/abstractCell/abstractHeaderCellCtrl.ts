@@ -1,7 +1,7 @@
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
 import { BeanStub } from '../../../context/beanStub';
-import { Autowired, PostConstruct } from '../../../context/context';
+import { Autowired } from '../../../context/context';
 import { CtrlsService } from '../../../ctrlsService';
 import { DragAndDropService, DragSource } from '../../../dragAndDrop/dragAndDropService';
 import { Column, ColumnPinnedType } from '../../../entities/column';
@@ -81,8 +81,8 @@ export abstract class AbstractHeaderCellCtrl<
         this.instanceId = (columnGroupChild.getUniqueId() + '-' + instanceIdSequence++) as HeaderCellCtrlInstanceId;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.addManagedPropertyListeners(['suppressHeaderFocus'], () => this.refreshTabIndex());
     }
 

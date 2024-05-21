@@ -1,5 +1,5 @@
 import { KeyCode } from '../constants/keyCode';
-import { Autowired, PostConstruct } from '../context/context';
+import { Autowired } from '../context/context';
 import { Events } from '../events';
 import { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
 import { WithoutGridCommon } from '../interfaces/iCommon';
@@ -40,8 +40,8 @@ export class PaginationComp extends Component {
         super();
     }
 
-    @PostConstruct
-    protected postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const isRtl = this.gos.get('enableRtl');
         this.setTemplate(this.getTemplate(), [PageSizeSelectorComp]);
 

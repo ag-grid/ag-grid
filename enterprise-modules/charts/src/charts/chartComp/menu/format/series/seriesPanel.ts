@@ -6,7 +6,6 @@ import {
     Autowired,
     Component,
     ListOption,
-    PostConstruct,
     RefSelector,
     _removeFromParent,
 } from '@ag-grid-community/core';
@@ -101,8 +100,8 @@ export class SeriesPanel extends Component {
         this.seriesType = options.seriesType;
     }
 
-    @PostConstruct
-    private init() {
+    protected override postConstruct() {
+        super.postConstruct();
         const {
             isExpandedOnInit: expanded,
             chartOptionsService,

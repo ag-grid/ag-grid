@@ -1,4 +1,3 @@
-import { PreDestroy } from '../context/context';
 import { EventService } from '../eventService';
 import { AgEvent, AgEventListener } from '../events';
 import { IEventEmitter } from '../interfaces/iEventEmitter';
@@ -39,7 +38,6 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
         this.level = level;
     }
 
-    @PreDestroy
     private destroy() {
         if (this.expandableListenerRemoveCallback) {
             this.reset(null, undefined);

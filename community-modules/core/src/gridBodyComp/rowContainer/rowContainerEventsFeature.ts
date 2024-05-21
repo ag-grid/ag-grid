@@ -1,7 +1,7 @@
 import { VisibleColsService } from '../../columns/visibleColsService';
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, Optional, PostConstruct } from '../../context/context';
+import { Autowired, Optional } from '../../context/context';
 import { CtrlsService } from '../../ctrlsService';
 import { Column } from '../../entities/column';
 import { CellKeyDownEvent, Events, FullWidthCellKeyDownEvent } from '../../events';
@@ -48,8 +48,8 @@ export class RowContainerEventsFeature extends BeanStub {
         this.element = element;
     }
 
-    @PostConstruct
-    public postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.addKeyboardListeners();
         this.addMouseListeners();
         this.mockContextMenuForIPad();

@@ -1,5 +1,5 @@
 import { BeanStub } from './context/beanStub';
-import { Autowired, Bean, PostConstruct } from './context/context';
+import { Autowired, Bean } from './context/context';
 import { Events } from './eventKeys';
 import { CssVariablesChanged } from './events';
 import { WithoutGridCommon } from './interfaces/iCommon';
@@ -49,8 +49,8 @@ export class Environment extends BeanStub {
 
     private id = ++idCounter;
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeightVariable());
         this.themeClasses = this.getAncestorThemeClasses();
         this.setUpThemeClassObservers();

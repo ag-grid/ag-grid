@@ -23,8 +23,6 @@ import {
     NumberSequence,
     Optional,
     PivotResultColsService,
-    PostConstruct,
-    PreDestroy,
     RefreshServerSideParams,
     RowBounds,
     RowModelType,
@@ -96,7 +94,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.updateDatasource();
     }
 
-    @PreDestroy
     private destroyDatasource(): void {
         if (!this.datasource) {
             return;
@@ -110,8 +107,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.datasource = undefined;
     }
 
-    @PostConstruct
-    private addEventListeners(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onStoreUpdated.bind(this));
 
@@ -261,7 +258,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
     }
 
-    @PreDestroy
     private destroyRootStore(): void {
         if (!this.rootNode || !this.rootNode.childStore) {
             return;
@@ -714,5 +710,11 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             }
             console.error('AG Grid: Infinite scrolling must be enabled in order to set the row count.');
         }
+    }
+
+    protected override destroy(): void {
+        super.destroy();
+        this.destroyDatasource();
+        this.destroyRootStore();
     }
 }

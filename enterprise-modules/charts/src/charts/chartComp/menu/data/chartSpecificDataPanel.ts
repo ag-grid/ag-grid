@@ -1,4 +1,4 @@
-import { AgSelect, Autowired, ChartMappings, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
+import { AgSelect, Autowired, ChartMappings, Component, RefSelector } from '@ag-grid-community/core';
 import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
 import { ChartService } from '../../../chartService';
@@ -28,8 +28,8 @@ export class ChartSpecificDataPanel extends Component {
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const title = this.getTitle();
         const chartSpecificGroupParams: AgGroupComponentParams = {
             title,

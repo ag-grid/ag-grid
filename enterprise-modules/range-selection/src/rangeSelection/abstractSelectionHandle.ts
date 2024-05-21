@@ -12,7 +12,6 @@ import {
     ISelectionHandle,
     MouseEventService,
     NavigationService,
-    PostConstruct,
     RowPosition,
     RowPositionUtils,
     RowRenderer,
@@ -52,8 +51,8 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     protected abstract type: SelectionHandleType;
     protected shouldDestroyOnEndDragging: boolean = false;
 
-    @PostConstruct
-    private init() {
+    protected override postConstruct() {
+        super.postConstruct();
         this.dragService.addDragSource({
             dragStartPixels: 0,
             eElement: this.getGui(),

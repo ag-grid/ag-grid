@@ -11,8 +11,6 @@ import {
     IsApplyServerSideTransactionParams,
     LoadSuccessParams,
     NumberSequence,
-    PostConstruct,
-    PreDestroy,
     RowBounds,
     RowNode,
     ServerSideGroupLevelParams,
@@ -72,8 +70,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.info = {};
     }
 
-    @PostConstruct
-    private init() {
+    protected override postConstruct() {
+        super.postConstruct();
         let numberOfRows = 1;
         if (this.level === 0) {
             numberOfRows = this.storeUtils.getServerSideInitialRowCount() ?? 1;
@@ -93,8 +91,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
     }
 
-    @PreDestroy
-    private destroyRowNodes(): void {
+    protected override destroy(): void {
+        super.destroy();
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
         this.destroyBean(this.cache);

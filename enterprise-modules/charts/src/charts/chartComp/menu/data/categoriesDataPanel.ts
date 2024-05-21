@@ -1,4 +1,4 @@
-import { AgSelect, AgToggleButton, IAggFunc, PostConstruct, _clearElement } from '@ag-grid-community/core';
+import { AgSelect, AgToggleButton, IAggFunc, _clearElement } from '@ag-grid-community/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import { ChartController } from '../../chartController';
@@ -26,8 +26,8 @@ export class CategoriesDataPanel extends DragDataPanel {
         super(chartController, allowMultipleSelection, maxSelection, CategoriesDataPanel.TEMPLATE);
     }
 
-    @PostConstruct
-    private init() {
+    protected override postConstruct() {
+        super.postConstruct();
         this.groupComp = this.createBean(
             new AgGroupComponent({
                 title: this.title,

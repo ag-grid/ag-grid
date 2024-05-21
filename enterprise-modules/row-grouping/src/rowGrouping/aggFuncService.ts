@@ -5,7 +5,6 @@ import {
     IAggFunc,
     IAggFuncParams,
     IAggFuncService,
-    PostConstruct,
     _exists,
     _existsAndNotEmpty,
     _includes,
@@ -36,7 +35,11 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
     private aggFuncsMap: { [key: string]: IAggFunc } = {};
     private initialised = false;
 
-    @PostConstruct
+    protected override postConstruct(): void {
+        super.postConstruct();
+        this.init();
+    }
+
     private init() {
         if (this.initialised) {
             return;

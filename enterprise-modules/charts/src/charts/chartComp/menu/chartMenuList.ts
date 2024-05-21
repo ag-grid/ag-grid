@@ -7,7 +7,6 @@ import {
     IAfterGuiAttachedParams,
     MenuItemDef,
     PopupService,
-    PostConstruct,
     RefSelector,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
@@ -230,8 +229,8 @@ class ChartMenuList extends Component {
         `);
     }
 
-    @PostConstruct
-    private init(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.mainMenuList = this.createManagedBean(new AgMenuList(0));
         this.mainMenuList.addMenuItems(this.menuItems);
         this.mainMenuList.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, this.onHidePopup.bind(this));
