@@ -1,9 +1,10 @@
-import { AgInputTextField, Autowired, RefSelector } from '@ag-grid-community/core';
+import { AgComponentSelector, AgInputTextField, Autowired, RefSelector } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
 
 import { ChartTranslationService } from '../charts/chartComp/services/chartTranslationService';
 
 export class AgColorInput extends AgInputTextField {
+    static readonly selector: AgComponentSelector = 'AG-COLOR-INPUT';
     private static TEMPLATE = /* html */ `
         <div role="presentation" class="ag-color-input">
             <div ref="eLabel" class="ag-input-field-label"></div>
