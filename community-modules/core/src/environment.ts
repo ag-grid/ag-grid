@@ -5,15 +5,49 @@ import { CssVariablesChanged } from './events';
 import { WithoutGridCommon } from './interfaces/iCommon';
 import { ResizeObserverService } from './misc/resizeObserverService';
 
+const ROW_HEIGHT: Variable = {
+    cssName: '--ag-row-height',
+    changeKey: 'rowHeightChanged',
+    // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
+    defaultValue: 20,
+    // defaultValue: 42,
+};
+const HEADER_HEIGHT: Variable = {
+    cssName: '--ag-header-height',
+    changeKey: 'headerHeightChanged',
+    // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
+    defaultValue: 30,
+    // defaultValue: 48,
+};
+const LIST_ITEM_HEIGHT: Variable = {
+    cssName: '--ag-list-item-height',
+    changeKey: 'listItemHeightChanged',
+    // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
+    defaultValue: 10,
+    // defaultValue: 24,
+};
+const CHART_MENU_PANEL_WIDTH: Variable = {
+    cssName: '--ag-chart-menu-panel-width',
+    changeKey: 'chartMenuPanelWidthChanged',
+    // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
+    defaultValue: 100,
+    // defaultValue: 260,
+};
+
+let idCounter = 0;
+
 @Bean('environment')
 export class Environment extends BeanStub {
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
-    private calculatedVariableValues = new Map<string, number>();
+    private sizeEls = new Map<Variable, HTMLElement>();
+    private lastKnownValues = new Map<Variable, number>();
     private themeClasses: readonly string[] = [];
     private eThemeAncestor: HTMLElement | null = null;
     private eMeasurementContainer: HTMLElement | null = null;
+
+    private id = ++idCounter;
 
     @PostConstruct
     private postConstruct(): void {
@@ -22,28 +56,20 @@ export class Environment extends BeanStub {
         this.setUpThemeClassObservers();
     }
 
-    public getDefaultChartMenuPanelWidth(): number {
-        // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
-        return this.readCSSVariablePixelValue('--ag-chart-menu-panel-width', 'chartMenuPanelWidthChanged', 100);
-        // return this.readCSSVariablePixelValue('--ag-chart-menu-panel-width', 'chartMenuPanelWidthChanged', 260);
+    public getDefaultRowHeight(): number {
+        return this.getCSSVariablePixelValue(ROW_HEIGHT);
     }
 
     public getDefaultHeaderHeight(): number {
-        // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
-        return this.readCSSVariablePixelValue('--ag-header-height', 'headerHeightChanged', 30);
-        // return this.readCSSVariablePixelValue('--ag-header-height', 'headerHeightChanged', 48);
-    }
-
-    public getDefaultRowHeight(): number {
-        // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
-        return this.readCSSVariablePixelValue('--ag-row-height', 'rowHeightChanged', 20);
-        // return this.readCSSVariablePixelValue('--ag-row-height', 'rowHeightChanged', 42);
+        return this.getCSSVariablePixelValue(HEADER_HEIGHT);
     }
 
     public getDefaultListItemHeight() {
-        // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
-        return this.readCSSVariablePixelValue('--ag-list-item-height', 'listItemHeightChanged', 10);
-        // return this.readCSSVariablePixelValue('--ag-list-item-height', 'listItemHeightChanged', 24);
+        return this.getCSSVariablePixelValue(LIST_ITEM_HEIGHT);
+    }
+
+    public getDefaultChartMenuPanelWidth(): number {
+        return this.getCSSVariablePixelValue(CHART_MENU_PANEL_WIDTH);
     }
 
     public getThemeClasses(): readonly string[] {
@@ -88,47 +114,75 @@ export class Environment extends BeanStub {
         return oldRowHeight != '' ? parseFloat(oldRowHeight) : -1;
     }
 
-    private readCSSVariablePixelValue(variable: string, change: ChangeKey, defaultValue: number): number {
+    private getCSSVariablePixelValue(variable: Variable): number {
+        const cached = this.lastKnownValues.get(variable);
+        if (cached != null) {
+            return cached;
+        }
+        const measurement = this.measureSizeEl(variable);
+        if (measurement === 'detached') {
+            // TODO grid detached and never properly measured, handle this better
+            return variable.defaultValue;
+        }
+        if (measurement === 'no-styles') {
+            return variable.defaultValue;
+        }
+        this.lastKnownValues.set(variable, measurement);
+        return measurement;
+    }
+
+    private measureSizeEl(variable: Variable): number | 'detached' | 'no-styles' {
+        const sizeEl = this.getSizeEl(variable)!;
+        if (sizeEl.offsetParent == null) {
+            return 'detached';
+        }
+        const newSize = sizeEl.offsetWidth;
+        return newSize === NO_VALUE_SENTINEL ? 'no-styles' : newSize;
+    }
+
+    private getSizeEl(variable: Variable): HTMLElement {
+        let sizeEl = this.sizeEls.get(variable);
+        if (sizeEl) {
+            return sizeEl;
+        }
         let container = this.eMeasurementContainer;
         if (!container) {
             container = this.eMeasurementContainer = document.createElement('div');
             container.className = 'ag-measurement-container';
+            container.style.width = '0';
+            container.style.overflow = 'hidden';
+            container.style.visibility = 'hidden';
             this.eGridDiv.appendChild(container);
         }
 
-        const existingValue = this.calculatedVariableValues.get(variable);
-        if (existingValue != null) {
-            return existingValue;
+        sizeEl = document.createElement('div');
+        sizeEl.style.position = 'absolute';
+        sizeEl.style.width = `var(${variable.cssName}, ${NO_VALUE_SENTINEL}px)`;
+        container.appendChild(sizeEl);
+        this.sizeEls.set(variable, sizeEl);
+
+        let lastMeasurement = this.measureSizeEl(variable);
+
+        if (lastMeasurement === 'no-styles') {
+            console.warn(
+                `AG Grid: no value for ${variable.cssName}. This usually means that the grid has been initialised before styles have been loaded. The default value of ${variable.defaultValue} will be used and updated when styles load.`
+            );
         }
 
-        const sizeDiv = document.createElement('div');
-        sizeDiv.style.width = `var(${variable}, ${defaultValue}px)`;
-        sizeDiv.style.visibility = 'hidden';
-        sizeDiv.style.position = 'absolute';
-        container.appendChild(sizeDiv);
-
-        const measureSizeDiv = () => {
-            let newSize = sizeDiv.offsetWidth;
-            if (newSize === 0) {
-                console.warn(
-                    `AG Grid: no value for ${variable}. This usually means that the grid has been initialised before styles have been loaded. The default value of ${defaultValue} will be used, and updated when styles load.`
-                );
-                newSize = defaultValue;
+        const unsubscribe = this.resizeObserverService.observeResize(sizeEl, () => {
+            const newMeasurement = this.measureSizeEl(variable);
+            if (newMeasurement === 'detached' || newMeasurement === 'no-styles') {
+                return;
             }
-            this.calculatedVariableValues.set(variable, newSize);
-            return newSize;
-        };
-
-        const unsubscribe = this.resizeObserverService.observeResize(sizeDiv, () => {
-            const oldSize = this.calculatedVariableValues.get(variable);
-            const newSize = measureSizeDiv();
-            if (oldSize !== newSize) {
-                this.fireGridStylesChangedEvent(change);
+            this.lastKnownValues.set(variable, newMeasurement);
+            if (newMeasurement !== lastMeasurement) {
+                lastMeasurement = newMeasurement;
+                this.fireGridStylesChangedEvent(variable.changeKey);
             }
         });
         this.addDestroyFunc(() => unsubscribe());
 
-        return measureSizeDiv();
+        return sizeEl;
     }
 
     private fireGridStylesChangedEvent(change: ChangeKey): void {
@@ -179,9 +233,17 @@ export class Environment extends BeanStub {
 const arraysEqual = <T>(a: readonly T[], b: readonly T[]): boolean =>
     a.length === b.length && a.findIndex((_, i) => a[i] !== b[i]) === -1;
 
+type Variable = {
+    cssName: string;
+    changeKey: ChangeKey;
+    defaultValue: number;
+};
+
 type ChangeKey =
     | 'themeChanged'
     | 'headerHeightChanged'
     | 'rowHeightChanged'
     | 'listItemHeightChanged'
     | 'chartMenuPanelWidthChanged';
+
+const NO_VALUE_SENTINEL = 15538;
