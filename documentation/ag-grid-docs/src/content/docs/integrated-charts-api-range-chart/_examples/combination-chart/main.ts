@@ -54,7 +54,6 @@ const gridOptions: GridOptions = {
         floatingFilter: true,
     },
     enableRangeSelection: true,
-    columnMenu: 'new',
     enableCharts: true,
     popupParent: document.body,
     chartThemeOverrides: {

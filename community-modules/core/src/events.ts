@@ -595,11 +595,11 @@ export interface ColumnMenuVisibleChangedEvent<TData = any, TContext = any> exte
     /**
      * Currently displayed menu/tab.
      * If filter launched from floating filter, will be `'floatingFilter'`.
+     * If using `columnMenu = 'new'` (default behaviour), will be `'columnMenu'` for the column menu,
+     * `'columnFilter'` for the column filter, and `'columnChooser'` for the column chooser.
      * If using AG Grid Enterprise and `columnMenu = 'legacy'`,
      * will be the tab `'generalMenuTab'`, `'filterMenuTab'` or `'columnsMenuTab'`.
      * If using AG Grid Community and `columnMenu = 'legacy'`, will be `'columnMenu'`.
-     * If using `columnMenu = 'new'`, will be `'columnMenu'` for the column menu,
-     * `'columnFilter'` for the column filter, and `'columnChooser'` for the column chooser.
      */
     key:
         | 'generalMenuTab'
