@@ -13,6 +13,7 @@ export class AgStackComponentsRegistry {
                 continue;
             }
             // each component must have a unique selector
+            // Uppercase as we use the nodeName from the Element https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeName
             let name = comp.selector.toUpperCase();
             this.componentToNodeName.set(name, comp);
         }
