@@ -23,7 +23,7 @@ export enum ExpandState {
 }
 
 export class AgPrimaryColsHeader extends Component {
-    static readonly selector: AgComponentSelector = 'ag-primary-cols-header';
+    static readonly selector: AgComponentSelector = 'AG-PRIMARY-COLS-HEADER';
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
 

@@ -13,7 +13,7 @@ import { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
 import { PaginationProxy } from './paginationProxy';
 
 export class PaginationComp extends Component {
-    static readonly selector: AgComponentSelector = 'ag-pagination';
+    static readonly selector: AgComponentSelector = 'AG-PAGINATION';
 
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;

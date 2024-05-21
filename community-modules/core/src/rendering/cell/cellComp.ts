@@ -19,7 +19,6 @@ import { RowCtrl } from './../row/rowCtrl';
 import { RowDragComp } from './../row/rowDragComp';
 import { CellCtrl, ICellComp } from './cellCtrl';
 
-
 export class CellComp extends Component implements TooltipParentComp {
     private eCellWrapper: HTMLElement | undefined;
     private eCellValue: HTMLElement | undefined;

@@ -55,7 +55,7 @@ const GRID_BODY_TEMPLATE =
     </div>`;
 
 export class GridBodyComp extends Component {
-    static readonly selector: AgComponentSelector = 'ag-grid-body';
+    static readonly selector: AgComponentSelector = 'AG-GRID-BODY';
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 

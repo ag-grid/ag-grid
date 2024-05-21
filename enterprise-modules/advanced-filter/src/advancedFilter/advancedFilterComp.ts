@@ -27,7 +27,7 @@ import { FilterExpressionParser } from './filterExpressionParser';
 import { AutocompleteUpdate } from './filterExpressionUtils';
 
 export class AdvancedFilterComp extends Component {
-    static readonly selector: AgComponentSelector = 'ag-advanced-filter';
+    static readonly selector: AgComponentSelector = 'AG-ADVANCED-FILTER';
 
     @RefSelector('eAutocomplete') private eAutocomplete: AgAutocomplete;
     @RefSelector('eApplyFilterButton') private eApplyFilterButton: HTMLElement;

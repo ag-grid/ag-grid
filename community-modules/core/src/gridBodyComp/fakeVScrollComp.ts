@@ -6,7 +6,7 @@ import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { SetHeightFeature } from './rowContainer/setHeightFeature';
 
 export class FakeVScrollComp extends AbstractFakeScrollComp {
-    static readonly selector: AgComponentSelector = 'ag-fake-vertical-scroll';
+    static readonly selector: AgComponentSelector = 'AG-FAKE-VERTICAL-SCROLL';
 
     private static TEMPLATE /* html */ = `<div class="ag-body-vertical-scroll" aria-hidden="true">
             <div class="ag-body-vertical-scroll-viewport" ref="eViewport">

@@ -2,7 +2,6 @@ import { AgGridCommon } from '../../interfaces/iCommon';
 import { IComponent } from '../../interfaces/iComponent';
 import { Component } from '../../widgets/component';
 
-
 export interface INoRowsOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
 
 export interface INoRowsOverlay<TData = any, TContext = any> {

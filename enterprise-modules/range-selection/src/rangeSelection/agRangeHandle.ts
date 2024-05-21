@@ -10,7 +10,7 @@ import {
 import { AbstractSelectionHandle } from './abstractSelectionHandle';
 
 export class AgRangeHandle extends AbstractSelectionHandle {
-    static readonly selector: AgComponentSelector = 'ag-range-handle';
+    static readonly selector: AgComponentSelector = 'AG-RANGE-HANDLE';
 
     static TEMPLATE = /* html */ `<div class="ag-range-handle"></div>`;
 

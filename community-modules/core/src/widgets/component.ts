@@ -8,11 +8,17 @@ import { AgEvent } from '../events';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { CssClassManager } from '../rendering/cssClassManager';
 import { ITooltipParams, TooltipLocation } from '../rendering/tooltipComponent';
-import { _copyNodeList, _isNodeOrElement, _iterateNamedNodeMap, _loadTemplate, _setDisplayed, _setVisible } from '../utils/dom';
+import {
+    _copyNodeList,
+    _isNodeOrElement,
+    _iterateNamedNodeMap,
+    _loadTemplate,
+    _setDisplayed,
+    _setVisible,
+} from '../utils/dom';
 import { _getFunctionName } from '../utils/function';
 import { NumberSequence } from '../utils/numberSequence';
 import { TooltipFeature } from './tooltipFeature';
-
 
 const compIdSequence = new NumberSequence();
 
@@ -419,41 +425,39 @@ export class Component extends BeanStub {
 }
 
 export type AgComponentSelector =
-    | 'ag-checkbox'
-    | 'ag-grid-body'
-    | 'ag-grid-header-drop-zones'
-    | 'ag-watermark'
-    | 'ag-input-text-area'
-    | 'ag-input-text-field'
-    | 'ag-input-date-field'
-    | 'ag-input-number-field'
-    | 'ag-sort-indicator'
-    | 'ag-pagination'
-    | 'ag-page-size-selector'
-    | 'ag-select'
-    | 'ag-slider'
-    | 'ag-side-bar'
-    | 'ag-fake-horizontal-scroll'
-    | 'ag-fake-vertical-scroll'
-    | 'ag-header-root'
-    | 'ag-side-bar-buttons'
-    | 'ag-row-container'
-    | 'ag-watermark'
-    | 'ag-fill-handle'
-    | 'ag-range-handle'
-    | 'ag-color-picker'
-    | 'ag-input-range'
-    | 'ag-slider'
-    | 'ag-horizontal-resize'
-    | 'ag-angle-select'
-    | 'ag-group-component'
-    | 'ag-filters-tool-panel-header'
-    | 'ag-filters-tool-panel-list'
-    | 'ag-primary-cols-header'
-    | 'ag-primary-cols-list'
-    | 'ag-primary-cols'
-    | 'ag-status-bar'
-    | 'ag-name-value'
-    | 'ag-autocomplete'
-    | 'ag-advanced-filter'
-    | 'ag-overlay-wrapper';
+    | 'AG-ADVANCED-FILTER'
+    | 'AG-ANGLE-SELECT'
+    | 'AG-AUTOCOMPLETE'
+    | 'AG-CHECKBOX'
+    | 'AG-COLOR-PICKER'
+    | 'AG-FAKE-HORIZONTAL-SCROLL'
+    | 'AG-FAKE-VERTICAL-SCROLL'
+    | 'AG-FILL-HANDLE'
+    | 'AG-FILTERS-TOOL-PANEL-HEADER'
+    | 'AG-FILTERS-TOOL-PANEL-LIST'
+    | 'AG-GRID-BODY'
+    | 'AG-GRID-HEADER-DROP-ZONES'
+    | 'AG-GROUP-COMPONENT'
+    | 'AG-HEADER-ROOT'
+    | 'AG-HORIZONTAL-RESIZE'
+    | 'AG-INPUT-DATE-FIELD'
+    | 'AG-INPUT-NUMBER-FIELD'
+    | 'AG-INPUT-RANGE'
+    | 'AG-INPUT-TEXT-AREA'
+    | 'AG-INPUT-TEXT-FIELD'
+    | 'AG-NAME-VALUE'
+    | 'AG-OVERLAY-WRAPPER'
+    | 'AG-PAGE-SIZE-SELECTOR'
+    | 'AG-PAGINATION'
+    | 'AG-PRIMARY-COLS-HEADER'
+    | 'AG-PRIMARY-COLS-LIST'
+    | 'AG-PRIMARY-COLS'
+    | 'AG-RANGE-HANDLE'
+    | 'AG-ROW-CONTAINER'
+    | 'AG-SELECT'
+    | 'AG-SIDE-BAR'
+    | 'AG-SIDE-BAR-BUTTONS'
+    | 'AG-SLIDER'
+    | 'AG-SORT-INDICATOR'
+    | 'AG-STATUS-BAR'
+    | 'AG-WATERMARK';

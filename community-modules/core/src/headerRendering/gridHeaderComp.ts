@@ -4,7 +4,7 @@ import { GridHeaderCtrl, IGridHeaderComp } from './gridHeaderCtrl';
 import { HeaderRowContainerComp } from './rowContainer/headerRowContainerComp';
 
 export class GridHeaderComp extends Component {
-    static readonly selector: AgComponentSelector = 'ag-header-root';
+    static readonly selector: AgComponentSelector = 'AG-HEADER-ROOT';
     private static TEMPLATE /* html */ = `<div class="ag-header" role="presentation"/>`;
 
     constructor() {

@@ -49,7 +49,7 @@ class UIColumnModel implements VirtualListModel {
 const PRIMARY_COLS_LIST_PANEL_CLASS = 'ag-column-select-list';
 
 export class AgPrimaryColsList extends Component {
-    static readonly selector: AgComponentSelector = 'ag-primary-cols-list';
+    static readonly selector: AgComponentSelector = 'AG-PRIMARY-COLS-LIST';
 
     public static TEMPLATE = /* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="presentation"></div>`;
 

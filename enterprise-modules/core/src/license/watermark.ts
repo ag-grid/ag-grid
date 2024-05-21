@@ -3,7 +3,7 @@ import { AgComponentSelector, Autowired, Component, PostConstruct, RefSelector }
 import { GridLicenseManager as LicenseManager } from './gridLicenseManager';
 
 export class AgWatermark extends Component {
-    static readonly selector: AgComponentSelector = 'ag-watermark';
+    static readonly selector: AgComponentSelector = 'AG-WATERMARK';
     @Autowired('licenseManager') licenseManager: LicenseManager;
     @RefSelector('eLicenseTextRef') private eLicenseTextRef: HTMLElement;
 

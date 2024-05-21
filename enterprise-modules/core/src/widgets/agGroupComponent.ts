@@ -42,7 +42,7 @@ interface EnableChangeEvent extends AgEvent {
 }
 
 export class AgGroupComponent extends Component {
-    static readonly selector: AgComponentSelector = 'ag-group-component';
+    static readonly selector: AgComponentSelector = 'AG-GROUP-COMPONENT';
 
     public static EVENT_EXPANDED = 'expanded';
     public static EVENT_COLLAPSED = 'collapsed';

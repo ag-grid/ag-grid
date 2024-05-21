@@ -7,7 +7,7 @@ import { RefSelector } from '../../widgets/componentAnnotations';
 import { OverlayService } from './overlayService';
 
 export class OverlayWrapperComponent extends Component implements LayoutView {
-    static readonly selector: AgComponentSelector = 'ag-overlay-wrapper';
+    static readonly selector: AgComponentSelector = 'AG-OVERLAY-WRAPPER';
 
     // wrapping in outer div, and wrapper, is needed to center the loading icon
     private static TEMPLATE = /* html */ `

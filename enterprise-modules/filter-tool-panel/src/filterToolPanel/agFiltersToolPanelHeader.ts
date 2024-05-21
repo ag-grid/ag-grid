@@ -23,7 +23,7 @@ export enum EXPAND_STATE {
 }
 
 export class AgFiltersToolPanelHeader extends Component {
-    static readonly selector: AgComponentSelector = 'ag-filters-tool-panel-header';
+    static readonly selector: AgComponentSelector = 'AG-FILTERS-TOOL-PANEL-HEADER';
 
     @Autowired('columnModel') private columnModel: ColumnModel;
 

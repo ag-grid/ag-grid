@@ -10,7 +10,7 @@ import {
 } from '@ag-grid-community/core';
 
 export class AgHorizontalResize extends Component {
-    static readonly selector: AgComponentSelector = 'ag-horizontal-resize';
+    static readonly selector: AgComponentSelector = 'AG-HORIZONTAL-RESIZE';
 
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
 

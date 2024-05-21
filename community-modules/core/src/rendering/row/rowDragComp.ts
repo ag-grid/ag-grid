@@ -9,7 +9,6 @@ import { _createIconNoSpan } from '../../utils/icon';
 import { Component } from '../../widgets/component';
 import { Beans } from '../beans';
 
-
 export interface IRowDragItem extends DragItem {
     /** The default text that would be applied to this Drag Element */
     defaultTextValue: string;

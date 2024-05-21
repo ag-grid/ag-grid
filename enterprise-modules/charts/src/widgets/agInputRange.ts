@@ -7,7 +7,7 @@ interface IInputRange extends AgInputFieldParams {
 }
 
 export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string, IInputRange> {
-    static readonly selector: AgComponentSelector = 'ag-input-range';
+    static readonly selector: AgComponentSelector = 'AG-INPUT-RANGE';
     private min: number;
     private max: number;
 

@@ -5,7 +5,6 @@ import { _exists } from '../../utils/generic';
 import { Component } from '../../widgets/component';
 import { ICellRenderer } from './iCellRenderer';
 
-
 const ARROW_UP = '\u2191';
 const ARROW_DOWN = '\u2193';
 

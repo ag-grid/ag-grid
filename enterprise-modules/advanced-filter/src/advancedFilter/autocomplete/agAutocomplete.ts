@@ -35,7 +35,7 @@ export interface AutocompleteValidChangedEvent extends AgEvent {
 }
 
 export class AgAutocomplete extends Component {
-    static readonly selector: AgComponentSelector = 'ag-autocomplete';
+    static readonly selector: AgComponentSelector = 'AG-AUTOCOMPLETE';
 
     public static EVENT_VALUE_CHANGED = 'eventValueChanged';
     public static EVENT_VALUE_CONFIRMED = 'eventValueConfirmed';

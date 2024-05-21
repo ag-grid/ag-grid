@@ -20,7 +20,7 @@ export interface SideBarButtonClickedEvent extends AgEvent {
 }
 
 export class AgSideBarButtons extends Component {
-    static readonly selector: AgComponentSelector = 'ag-side-bar-buttons';
+    static readonly selector: AgComponentSelector = 'AG-SIDE-BAR-BUTTONS';
 
     public static EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
     private static readonly TEMPLATE: string = /* html */ `<div class="ag-side-buttons" role="tablist"></div>`;

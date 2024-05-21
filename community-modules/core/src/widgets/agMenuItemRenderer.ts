@@ -4,7 +4,6 @@ import { _isNodeOrElement, _loadTemplate } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
 import { Component } from './component';
 
-
 interface AgMenuItemRendererParams {
     cssClassPrefix?: string;
     isCompact?: boolean;

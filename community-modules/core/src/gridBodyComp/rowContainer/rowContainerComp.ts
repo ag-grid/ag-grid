@@ -43,7 +43,7 @@ function templateFactory(): string {
 }
 
 export class RowContainerComp extends Component {
-    static readonly selector: AgComponentSelector = 'ag-row-container';
+    static readonly selector: AgComponentSelector = 'AG-ROW-CONTAINER';
     @Autowired('beans') private beans: Beans;
 
     @RefSelector('eViewport') private eViewport: HTMLElement;

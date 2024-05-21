@@ -12,7 +12,7 @@ export interface AgColorPickerParams
 }
 
 export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & AgPickerFieldParams, AgDialog> {
-    static readonly selector: AgComponentSelector = 'ag-color-picker';
+    static readonly selector: AgComponentSelector = 'AG-COLOR-PICKER';
 
     private isDestroyingPicker: boolean;
     private eDisplayFieldColor: HTMLElement;

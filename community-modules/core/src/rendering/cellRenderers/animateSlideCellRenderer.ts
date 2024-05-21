@@ -5,7 +5,6 @@ import { _exists, _missing } from '../../utils/generic';
 import { Component } from '../../widgets/component';
 import { ICellRenderer } from './iCellRenderer';
 
-
 export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
     private eCurrent: HTMLElement;
     private ePrevious: HTMLElement | null;

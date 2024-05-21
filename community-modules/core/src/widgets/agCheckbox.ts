@@ -8,7 +8,7 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
     boolean,
     TConfig
 > {
-    static readonly selector: AgComponentSelector = 'ag-checkbox';
+    static readonly selector: AgComponentSelector = 'AG-CHECKBOX';
 
     protected labelAlignment: LabelAlignment = 'right';
 

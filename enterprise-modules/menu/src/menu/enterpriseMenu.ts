@@ -32,12 +32,9 @@ import {
 } from '@ag-grid-community/core';
 import { AgMenuItemComponent, AgMenuList, CloseMenuEvent } from '@ag-grid-enterprise/core';
 
-
-
 import { ColumnChooserFactory } from './columnChooserFactory';
 import { ColumnMenuFactory } from './columnMenuFactory';
 import { MenuRestoreFocusParams, MenuUtils } from './menuUtils';
-
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;

@@ -17,7 +17,7 @@ import {
 import { StatusBarService } from './statusBarService';
 
 export class AgStatusBar extends Component {
-    static readonly selector: AgComponentSelector = 'ag-status-bar';
+    static readonly selector: AgComponentSelector = 'AG-STATUS-BAR';
     private static TEMPLATE /* html */ = `<div class="ag-status-bar">
             <div ref="eStatusBarLeft" class="ag-status-bar-left" role="status"></div>
             <div ref="eStatusBarCenter" class="ag-status-bar-center" role="status"></div>

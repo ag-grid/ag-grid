@@ -18,7 +18,7 @@ export interface AgAngleSelectParams extends AgLabelParams {
 }
 
 export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
-    static readonly selector: AgComponentSelector = 'ag-angle-select';
+    static readonly selector: AgComponentSelector = 'AG-ANGLE-SELECT';
 
     private static TEMPLATE /* html */ = `<div class="ag-angle-select">
             <div ref="eLabel"></div>

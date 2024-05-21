@@ -8,7 +8,6 @@ import { HeaderRowComp } from '../row/headerRowComp';
 import { HeaderRowCtrl, HeaderRowCtrlInstanceId } from '../row/headerRowCtrl';
 import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRowContainerCtrl';
 
-
 export class HeaderRowContainerComp extends Component {
     private static PINNED_LEFT_TEMPLATE = /* html */ `<div class="ag-pinned-left-header" role="rowgroup"></div>`;
 

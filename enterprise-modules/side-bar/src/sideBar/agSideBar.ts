@@ -30,7 +30,7 @@ import { SideBarService } from './sideBarService';
 import { ToolPanelWrapper } from './toolPanelWrapper';
 
 export class AgSideBar extends Component implements ISideBar {
-    static readonly selector: AgComponentSelector = 'ag-side-bar';
+    static readonly selector: AgComponentSelector = 'AG-SIDE-BAR';
 
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('filterManager') private filterManager: FilterManager;

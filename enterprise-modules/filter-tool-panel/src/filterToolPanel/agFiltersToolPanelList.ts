@@ -24,7 +24,7 @@ import { ToolPanelFilterComp } from './toolPanelFilterComp';
 import { ToolPanelFilterGroupComp, ToolPanelFilterItem } from './toolPanelFilterGroupComp';
 
 export class AgFiltersToolPanelList extends Component {
-    static readonly selector: AgComponentSelector = 'ag-filters-tool-panel-list';
+    static readonly selector: AgComponentSelector = 'AG-FILTERS-TOOL-PANEL-LIST';
 
     private static TEMPLATE = /* html */ `<div class="ag-filter-list-panel"></div>`;
 

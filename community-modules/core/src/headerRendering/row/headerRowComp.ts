@@ -13,7 +13,6 @@ import { HeaderFilterCellComp } from '../cells/floatingFilter/headerFilterCellCo
 import { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
 import { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 
-
 export enum HeaderRowType {
     COLUMN_GROUP = 'group',
     COLUMN = 'column',

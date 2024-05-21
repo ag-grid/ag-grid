@@ -12,14 +12,11 @@ export class AgStackComponentsRegistry {
             if (this.componentToNodeName.has(comp.selector)) {
                 continue;
             }
-            // each component must have a unique selector
-            // Uppercase as we use the nodeName from the Element https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeName
-            let name = comp.selector.toUpperCase();
-            this.componentToNodeName.set(name, comp);
+            this.componentToNodeName.set(comp.selector, comp);
         }
     }
 
-    public getComponent(name: Uppercase<AgComponentSelector>, optional: boolean = false): ComponentClass | undefined {
+    public getComponent(name: AgComponentSelector, optional: boolean = false): ComponentClass | undefined {
         const comp = this.componentToNodeName.get(name);
         if (!comp && !optional && name.startsWith('AG-')) {
             _warnOnce(`(${name}) missing!`);

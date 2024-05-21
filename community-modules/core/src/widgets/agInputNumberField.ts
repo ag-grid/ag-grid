@@ -11,7 +11,7 @@ export interface AgInputNumberFieldParams extends AgInputTextFieldParams {
 }
 
 export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParams> {
-    static readonly selector: AgComponentSelector = 'ag-input-number-field';
+    static readonly selector: AgComponentSelector = 'AG-INPUT-NUMBER-FIELD';
 
     private precision?: number;
     private step?: number;

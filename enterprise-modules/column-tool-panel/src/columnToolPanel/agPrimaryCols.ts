@@ -13,7 +13,7 @@ import { AgPrimaryColsHeader } from './agPrimaryColsHeader';
 import { AgPrimaryColsList } from './agPrimaryColsList';
 
 export class AgPrimaryCols extends Component {
-    static readonly selector: AgComponentSelector = 'ag-primary-cols';
+    static readonly selector: AgComponentSelector = 'AG-PRIMARY-COLS';
     private static TEMPLATE /* html */ = `<div class="ag-column-select">
             <ag-primary-cols-header ref="primaryColsHeaderPanel"></ag-primary-cols-header>
             <ag-primary-cols-list ref="primaryColsListPanel"></ag-primary-cols-list>

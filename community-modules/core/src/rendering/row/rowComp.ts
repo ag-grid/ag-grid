@@ -11,7 +11,6 @@ import { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
 import { ICellRendererComp, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import { IRowComp, RowCtrl } from './rowCtrl';
 
-
 export class RowComp extends Component {
     private fullWidthCellRenderer: ICellRendererComp | null | undefined;
 

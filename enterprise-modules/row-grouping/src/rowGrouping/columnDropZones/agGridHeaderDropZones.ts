@@ -13,7 +13,7 @@ import { PivotDropZonePanel } from './pivotDropZonePanel';
 import { RowGroupDropZonePanel } from './rowGroupDropZonePanel';
 
 export class AgGridHeaderDropZones extends Component {
-    static readonly selector: AgComponentSelector = 'ag-grid-header-drop-zones';
+    static readonly selector: AgComponentSelector = 'AG-GRID-HEADER-DROP-ZONES';
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('funcColsService') private funcColsService: FuncColsService;

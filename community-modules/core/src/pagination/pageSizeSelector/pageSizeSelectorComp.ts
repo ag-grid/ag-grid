@@ -9,7 +9,7 @@ import { AgSelect } from '../../widgets/agSelect';
 import { AgComponentSelector, Component } from '../../widgets/component';
 
 export class PageSizeSelectorComp extends Component {
-    static readonly selector: AgComponentSelector = 'ag-page-size-selector';
+    static readonly selector: AgComponentSelector = 'AG-PAGE-SIZE-SELECTOR';
 
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 

@@ -5,7 +5,7 @@ import { AgInputTextField, AgInputTextFieldParams } from './agInputTextField';
 import { AgComponentSelector } from './component';
 
 export class AgInputDateField extends AgInputTextField {
-    static readonly selector: AgComponentSelector = 'ag-input-date-field';
+    static readonly selector: AgComponentSelector = 'AG-INPUT-DATE-FIELD';
     private min?: string;
     private max?: string;
     private step?: number;

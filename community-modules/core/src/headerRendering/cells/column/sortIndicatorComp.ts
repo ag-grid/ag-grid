@@ -8,9 +8,8 @@ import { _createIconNoSpan } from '../../../utils/icon';
 import { AgComponentSelector, Component } from '../../../widgets/component';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 
-
 export class SortIndicatorComp extends Component {
-    static readonly selector: AgComponentSelector = 'ag-sort-indicator';
+    static readonly selector: AgComponentSelector = 'AG-SORT-INDICATOR';
 
     private static TEMPLATE /* html */ = `<span class="ag-sort-indicator-container">
             <span ref="eSortOrder" class="ag-sort-indicator-icon ag-sort-order ag-hidden" aria-hidden="true"></span>

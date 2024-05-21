@@ -36,7 +36,7 @@ interface ValueContext {
 type Direction = 'x' | 'y';
 
 export class AgFillHandle extends AbstractSelectionHandle {
-    static readonly selector: AgComponentSelector = 'ag-fill-handle';
+    static readonly selector: AgComponentSelector = 'AG-FILL-HANDLE';
 
     @Autowired('valueService') private valueService: ValueService;
 

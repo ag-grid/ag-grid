@@ -9,7 +9,7 @@ import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { CenterWidthFeature } from './centerWidthFeature';
 
 export class FakeHScrollComp extends AbstractFakeScrollComp {
-    static readonly selector: AgComponentSelector = 'ag-fake-horizontal-scroll';
+    static readonly selector: AgComponentSelector = 'AG-FAKE-HORIZONTAL-SCROLL';
 
     private static TEMPLATE /* html */ = `<div class="ag-body-horizontal-scroll" aria-hidden="true">
             <div class="ag-horizontal-left-spacer" ref="eLeftSpacer"></div>

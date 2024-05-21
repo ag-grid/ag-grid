@@ -20,7 +20,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
     AgSelectParams<TValue> & AgPickerFieldParams,
     AgList<TValue>
 > {
-    static readonly selector: AgComponentSelector = 'ag-select';
+    static readonly selector: AgComponentSelector = 'AG-SELECT';
 
     public static EVENT_ITEM_SELECTED = 'selectedItem';
     protected listComponent: AgList<TValue> | undefined;

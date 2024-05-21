@@ -21,7 +21,7 @@ export interface AgSliderParams extends AgLabelParams {
 }
 
 export class AgSlider extends AgAbstractLabel<AgSliderParams> {
-    static readonly selector: AgComponentSelector = 'ag-slider';
+    static readonly selector: AgComponentSelector = 'AG-SLIDER';
 
     private static TEMPLATE /* html */ = `<div class="ag-slider">
             <label ref="eLabel"></label>
