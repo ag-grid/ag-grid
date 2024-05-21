@@ -511,75 +511,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         return noFurtherProcessingNeeded;
     }
 
-    private ensureRowNodeFields(rowNode: RowNode, key?: string): RowNode {
-        if (key !== undefined) {
-            rowNode.key = key;
-        }
-        rowNode.childrenMapped ??= {};
-        rowNode.allLeafChildren ??= [];
-        rowNode.childrenAfterGroup ??= [];
-        return rowNode;
-    }
-
-    /**
-     * Directly re-initialises the `TreeDataNodeCache`
-     */
-    private buildNodeCacheFromRows(rowNodes: RowNode[], details: GroupingDetails): void {
-        let width = 0;
-        const paths = rowNodes.map((node) => {
-            const info = this.getGroupInfo(node, details);
-            width = Math.max(width, info.length);
-            return info;
-        });
-
-        this.treeNodeCache.clear();
-
-        // Iterate through the paths level-by-level, populating the cache with RowNode
-        // instances for all leaves of the hierarchy, and nulls otherwise (to be backfilled
-        // with filler nodes in the subsequent step)
-        for (let level = 0; level < width; level++) {
-            for (const [rowIdx, path] of paths.entries()) {
-                const isDefined = path[level] !== undefined;
-                const isLeaf = path[level + 1] === undefined;
-
-                if (!isDefined) {
-                    continue;
-                }
-
-                const info = path[level];
-
-                const currentValue = this.treeNodeCache.get(path, level, info.key);
-                if (currentValue != null) {
-                    continue;
-                }
-
-                this.treeNodeCache.set(
-                    path,
-                    level,
-                    info.key,
-                    isLeaf ? this.ensureRowNodeFields(rowNodes[rowIdx], info.key) : null
-                );
-            }
-        }
-
-        this.backFillNulls(this.treeNodeCache.inner(), details.rootNode, 0, details);
-    }
-
-    /** Walks the TreeDataNodeCache recursively and backfills `null` entries with filler group nodes */
-    private backFillNulls(
-        cache: InnerTreeDataNodeCache,
-        parent: RowNode,
-        level: number,
-        details: GroupingDetails
-    ): void {
-        for (const [key, value] of Object.entries(cache)) {
-            if (value.node === null) {
-                value.node = this.createGroup({ key, rowGroupColumn: null, field: null }, parent, level, details);
-            }
-            this.backFillNulls(value.subtree, value.node, level + 1, details);
-        }
-    }
-
     private insertNodes(newRowNodes: RowNode[], details: GroupingDetails, isMove: boolean): void {
         if (details.usingTreeData) {
             this.buildNodeCacheFromRows(newRowNodes, details);
@@ -683,6 +614,75 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
 
         return nextNode;
+    }
+
+    /**
+     * Directly re-initialises the `TreeDataNodeCache`
+     */
+    private buildNodeCacheFromRows(rowNodes: RowNode[], details: GroupingDetails): void {
+        let width = 0;
+        const paths = rowNodes.map((node) => {
+            const info = this.getGroupInfo(node, details);
+            width = Math.max(width, info.length);
+            return info;
+        });
+
+        this.treeNodeCache.clear();
+
+        // Iterate through the paths level-by-level, populating the cache with RowNode
+        // instances for all leaves of the hierarchy, and nulls otherwise (to be backfilled
+        // with filler nodes in the subsequent step)
+        for (let level = 0; level < width; level++) {
+            for (const [rowIdx, path] of paths.entries()) {
+                const isDefined = path[level] !== undefined;
+                const isLeaf = path[level + 1] === undefined;
+
+                if (!isDefined) {
+                    continue;
+                }
+
+                const info = path[level];
+
+                const currentValue = this.treeNodeCache.get(path, level, info.key);
+                if (currentValue != null) {
+                    continue;
+                }
+
+                this.treeNodeCache.set(
+                    path,
+                    level,
+                    info.key,
+                    isLeaf ? this.ensureRowNodeFields(rowNodes[rowIdx], info.key) : null
+                );
+            }
+        }
+
+        this.backFillNulls(this.treeNodeCache.inner(), details.rootNode, 0, details);
+    }
+
+    private ensureRowNodeFields(rowNode: RowNode, key?: string): RowNode {
+        if (key !== undefined) {
+            rowNode.key = key;
+        }
+        rowNode.childrenMapped ??= {};
+        rowNode.allLeafChildren ??= [];
+        rowNode.childrenAfterGroup ??= [];
+        return rowNode;
+    }
+
+    /** Walks the TreeDataNodeCache recursively and backfills `null` entries with filler group nodes */
+    private backFillNulls(
+        cache: InnerTreeDataNodeCache,
+        parent: RowNode,
+        level: number,
+        details: GroupingDetails
+    ): void {
+        for (const [key, value] of Object.entries(cache)) {
+            if (value.node === null) {
+                value.node = this.createGroup({ key, rowGroupColumn: null, field: null }, parent, level, details);
+            }
+            this.backFillNulls(value.subtree, value.node, level + 1, details);
+        }
     }
 
     private createGroup(groupInfo: GroupInfo, parent: RowNode, level: number, details: GroupingDetails): RowNode {
@@ -856,6 +856,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 }
 
+/** Hierarchical cache of RowNode or sentinel value indicating a filler group node is necessary */
 type InnerTreeDataNodeCache = Record<string, { node: null | RowNode; subtree: InnerTreeDataNodeCache }>;
 
 class TreeDataNodeCache {
