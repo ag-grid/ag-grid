@@ -138,7 +138,7 @@ export class MenuItemMapper extends BeanStub {
                 }
             case 'autoSizeThis':
                 return {
-                    name: localeTextFunc('autosizeThiscolumn', 'Autosize This Column'),
+                    name: localeTextFunc('autosizeThisColumn', 'Autosize This Column'),
                     action: () =>
                         this.columnAutosizeService.autoSizeColumn(column, 'contextMenu', skipHeaderOnAutoSize),
                 };
