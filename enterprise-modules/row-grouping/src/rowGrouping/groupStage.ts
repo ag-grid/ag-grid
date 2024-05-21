@@ -657,7 +657,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             }
         }
 
-        this.backFillNulls(this.treeNodeCache.inner(), details.rootNode, 0, details);
+        this.backfillGroups(this.treeNodeCache.inner(), details.rootNode, 0, details);
     }
 
     private ensureRowNodeFields(rowNode: RowNode, key?: string): RowNode {
@@ -671,7 +671,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 
     /** Walks the TreeDataNodeCache recursively and backfills `null` entries with filler group nodes */
-    private backFillNulls(
+    private backfillGroups(
         cache: InnerTreeDataNodeCache,
         parent: RowNode,
         level: number,
@@ -681,7 +681,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             if (value.node === null) {
                 value.node = this.createGroup({ key, rowGroupColumn: null, field: null }, parent, level, details);
             }
-            this.backFillNulls(value.subtree, value.node, level + 1, details);
+            this.backfillGroups(value.subtree, value.node, level + 1, details);
         }
     }
 
