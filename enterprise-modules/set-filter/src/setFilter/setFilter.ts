@@ -3,7 +3,6 @@ import {
     AgPromise,
     Autowired,
     CellValueChangedEvent,
-    ColumnModel,
     ComponentClass,
     DataTypeService,
     Events,
@@ -51,7 +50,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     @RefSelector('eSetFilterList') private readonly eSetFilterList: HTMLElement;
     @RefSelector('eFilterNoMatches') private readonly eNoMatches: HTMLElement;
 
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('dataTypeService') private readonly dataTypeService: DataTypeService;
@@ -60,7 +58,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private setFilterParams: SetFilterParams<any, V> | null = null;
     private virtualList: VirtualList | null = null;
     private caseSensitive: boolean = false;
-    private convertValuesToStrings: boolean = false;
     private treeDataTreeList = false;
     private getDataPath?: GetDataPath<any>;
     private groupingTreeList = false;
@@ -201,7 +198,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             'treeList',
             'treeListFormatter',
             'treeListPathGetter',
-            'convertValuesToStrings',
             'caseSensitive',
             'comparator',
             'suppressSelectAll',
@@ -300,26 +296,15 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     private updateSetFilterOnParamsChange = (newParams: SetFilterParams<any, V>) => {
         this.setFilterParams = newParams;
-        this.convertValuesToStrings = !!newParams.convertValuesToStrings;
         this.caseSensitive = !!newParams.caseSensitive;
         const keyCreator = newParams.keyCreator ?? newParams.colDef.keyCreator;
-        this.setValueFormatter(
-            newParams.valueFormatter,
-            keyCreator,
-            this.convertValuesToStrings,
-            !!newParams.treeList,
-            !!newParams.colDef.refData
-        );
+        this.setValueFormatter(newParams.valueFormatter, keyCreator, !!newParams.treeList, !!newParams.colDef.refData);
         const isGroupCol = newParams.column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
         this.treeDataTreeList = this.gos.get('treeData') && !!newParams.treeList && isGroupCol;
         this.getDataPath = this.gos.get('getDataPath');
         this.groupingTreeList =
             !!this.funcColsService.getRowGroupColumns().length && !!newParams.treeList && isGroupCol;
-        this.createKey = this.generateCreateKey(
-            keyCreator,
-            this.convertValuesToStrings,
-            this.treeDataTreeList || this.groupingTreeList
-        );
+        this.createKey = this.generateCreateKey(keyCreator, this.treeDataTreeList || this.groupingTreeList);
     };
 
     public setParams(params: SetFilterParams<any, V>): void {
@@ -340,7 +325,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             valueFormatter: this.valueFormatter,
             usingComplexObjects: !!keyCreator,
             gos: this.gos,
-            columnModel: this.columnModel,
             funcColsService: this.funcColsService,
             valueService: this.valueService,
             treeDataTreeList: this.treeDataTreeList,
@@ -363,16 +347,13 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private setValueFormatter(
         providedValueFormatter: ((params: ValueFormatterParams) => string) | undefined,
         keyCreator: ((params: KeyCreatorParams<any, any>) => string) | undefined,
-        convertValuesToStrings: boolean,
         treeList: boolean,
         isRefData: boolean
     ) {
         let valueFormatter = providedValueFormatter;
         if (!valueFormatter) {
-            if (keyCreator && !convertValuesToStrings && !treeList) {
-                throw new Error(
-                    'AG Grid: Must supply a Value Formatter in Set Filter params when using a Key Creator unless convertValuesToStrings is enabled'
-                );
+            if (keyCreator && !treeList) {
+                throw new Error('AG Grid: Must supply a Value Formatter in Set Filter params when using a Key Creator');
             }
             this.noValueFormatterSupplied = true;
             // ref data is handled by ValueService
@@ -385,7 +366,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     private generateCreateKey(
         keyCreator: ((params: KeyCreatorParams<any, any>) => string) | undefined,
-        convertValuesToStrings: boolean,
         treeDataOrGrouping: boolean
     ): (value: V | null | undefined, node?: IRowNode | null) => string | null {
         if (treeDataOrGrouping && !keyCreator) {
@@ -399,12 +379,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
                 return _makeNull(keyCreator!(params));
             };
         }
-        if (convertValuesToStrings) {
-            // for backwards compatibility - keeping separate as it will eventually be removed
-            return (value) => (Array.isArray(value) ? (value as any) : _makeNull(_toStringOrNull(value)));
-        } else {
-            return (value) => _makeNull(_toStringOrNull(value));
-        }
+        return (value) => _makeNull(_toStringOrNull(value));
     }
 
     public getFormattedValue(key: string | null): string | null {
@@ -941,11 +916,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         let value = this.getValueFromNode(node);
 
-        if (this.convertValuesToStrings) {
-            // for backwards compatibility - keeping separate as it will eventually be removed
-            return this.doesFilterPassForConvertValuesToString(node, value);
-        }
-
         if (value != null && Array.isArray(value)) {
             if (value.length === 0) {
                 return this.valueModel!.hasAppliedModelKey(null);
@@ -954,18 +924,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
 
         return this.isInAppliedModel(this.createKey(value, node));
-    }
-
-    private doesFilterPassForConvertValuesToString(node: IRowNode, value: V | null | undefined) {
-        const key = this.createKey(value, node);
-        if (key != null && Array.isArray(key)) {
-            if (key.length === 0) {
-                return this.valueModel!.hasAppliedModelKey(null);
-            }
-            return key.some((v) => this.isInAppliedModel(v));
-        }
-
-        return this.isInAppliedModel(key as any);
     }
 
     private doesFilterPassForTreeData(node: IRowNode, data: any): boolean {
