@@ -143,7 +143,7 @@ export const AG_GRID_LOCALE_EN: Record<string, string> = {
     noPin: 'No Pin',
     valueAggregation: 'Value Aggregation',
     noAggregation: 'None',
-    autosizeThiscolumn: 'Autosize This Column',
+    autosizeThisColumn: 'Autosize This Column',
     autosizeAllColumns: 'Autosize All Columns',
     groupBy: 'Group by',
     ungroupBy: 'Un-Group by',
