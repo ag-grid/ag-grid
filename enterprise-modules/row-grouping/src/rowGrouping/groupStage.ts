@@ -76,6 +76,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private oldGroupingDetails: GroupingDetails;
     private oldGroupDisplayColIds: string;
+    /** Hierarchical node cache to speed up tree data node insertion */
     private treeNodeCache = new TreeDataNodeCache();
 
     public execute(params: StageExecuteParams): void {
@@ -345,29 +346,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private postRemoveCreateFillerNodes(nodesToRemove: RowNode[], details: GroupingDetails): void {
-        nodesToRemove.forEach((nodeToRemove) => {
-            // if not group, and children are present, need to move children to a group.
-            // otherwise if no children, we can just remove without replacing.
-            const replaceWithGroup = nodeToRemove.hasChildren();
-            if (replaceWithGroup) {
-                const oldPath = this.getExistingPathForNode(nodeToRemove, details);
-                // because we just removed the userGroup, this will always return new support group
-                const newGroupNode = this.findParentForNode(nodeToRemove, oldPath, details);
-
-                // these properties are the ones that will be incorrect in the newly created group,
-                // so copy them from the old childNode
-                newGroupNode.expanded = nodeToRemove.expanded;
-                newGroupNode.allLeafChildren = nodeToRemove.allLeafChildren;
-                newGroupNode.childrenAfterGroup = nodeToRemove.childrenAfterGroup;
-                newGroupNode.childrenMapped = nodeToRemove.childrenMapped;
-                newGroupNode.updateHasChildren();
-
-                newGroupNode.childrenAfterGroup!.forEach((rowNode) => (rowNode.parent = newGroupNode));
-            }
-        });
-    }
-
     private removeEmptyGroups(possibleEmptyGroups: RowNode[], details: GroupingDetails): void {
         // we do this multiple times, as when we remove groups, that means the parent of just removed
         // group can then be empty. to get around this, if we remove, then we check everything again for
@@ -544,7 +522,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 
     /**
-     * Directly re-initialises this.treeNodeCache
+     * Directly re-initialises the `TreeDataNodeCache`
      */
     private buildNodeCacheFromRows(rowNodes: RowNode[], details: GroupingDetails): void {
         let width = 0;
@@ -556,6 +534,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
         this.treeNodeCache.clear();
 
+        // Iterate through the paths level-by-level, populating the cache with RowNode
+        // instances for all leaves of the hierarchy, and nulls otherwise (to be backfilled
+        // with filler nodes in the subsequent step)
         for (let level = 0; level < width; level++) {
             for (const [rowIdx, path] of paths.entries()) {
                 const isDefined = path[level] !== undefined;
@@ -581,11 +562,10 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             }
         }
 
-        // backfill nulls
-        const inner = this.treeNodeCache.inner();
-        this.backFillNulls(inner, details.rootNode, 0, details);
+        this.backFillNulls(this.treeNodeCache.inner(), details.rootNode, 0, details);
     }
 
+    /** Walks the TreeDataNodeCache recursively and backfills `null` entries with filler group nodes */
     private backFillNulls(
         cache: InnerTreeDataNodeCache,
         parent: RowNode,
@@ -661,6 +641,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         let nextNode: RowNode = details.rootNode;
 
         path.forEach((groupInfo, level) => {
+            // in some cases (i.e. tree data) the given path includes the child node, so we need to exclude it
             if (stopLevel !== undefined && level >= stopLevel) {
                 return;
             }
