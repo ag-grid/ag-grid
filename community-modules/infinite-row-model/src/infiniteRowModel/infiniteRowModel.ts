@@ -80,8 +80,8 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     protected override destroy(): void {
-        super.destroy();
         this.destroyDatasource();
+        super.destroy();
     }
 
     private destroyDatasource(): void {

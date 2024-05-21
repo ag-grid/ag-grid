@@ -75,7 +75,7 @@ export class AgSideBarButtons extends Component {
     }
 
     protected override destroy(): void {
-        super.destroy();
         this.clearButtons();
+        super.destroy();
     }
 }

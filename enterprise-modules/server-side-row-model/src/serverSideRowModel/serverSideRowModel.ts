@@ -713,8 +713,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     protected override destroy(): void {
-        super.destroy();
         this.destroyDatasource();
         this.destroyRootStore();
+        super.destroy();
     }
 }

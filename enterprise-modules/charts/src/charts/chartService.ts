@@ -344,7 +344,7 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     protected override destroy(): void {
-        super.destroy();
         this.activeCharts.forEach((chart) => chart.destroyChart());
+        super.destroy();
     }
 }

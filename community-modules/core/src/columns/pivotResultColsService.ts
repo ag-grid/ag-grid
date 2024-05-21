@@ -29,8 +29,8 @@ export class PivotResultColsService extends BeanStub {
     private previousPivotResultCols: IProvidedColumn[] | null;
 
     protected override destroy(): void {
-        super.destroy();
         destroyColumnTree(this.getContext(), this.pivotResultCols?.tree);
+        super.destroy();
     }
 
     public isPivotResultColsPresent(): boolean {

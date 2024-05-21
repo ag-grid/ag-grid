@@ -27,9 +27,9 @@ export class DragService extends BeanStub {
     private dragSources: DragSourceAndListener[] = [];
 
     protected override destroy(): void {
-        super.destroy();
         this.dragSources.forEach(this.removeListener.bind(this));
         this.dragSources.length = 0;
+        super.destroy();
     }
 
     private removeListener(dragSourceAndListener: DragSourceAndListener): void {

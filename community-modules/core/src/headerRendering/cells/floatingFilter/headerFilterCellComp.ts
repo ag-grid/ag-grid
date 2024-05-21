@@ -54,8 +54,8 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
     }
 
     protected override destroy(): void {
-        super.destroy();
         this.destroyFloatingFilterComp();
+        super.destroy();
     }
 
     private destroyFloatingFilterComp(): void {

@@ -57,8 +57,8 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
     }
 
     protected override destroy(): void {
-        super.destroy();
         this.destroyHeaderComp();
+        super.destroy();
     }
 
     private destroyHeaderComp(): void {

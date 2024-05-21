@@ -801,9 +801,9 @@ export class ColumnModel extends BeanStub {
     }
 
     protected override destroy(): void {
-        super.destroy();
         destroyColumnTree(this.getContext(), this.colDefCols?.tree);
         destroyColumnTree(this.getContext(), this.autoCols?.tree);
+        super.destroy();
     }
 
     public getColTree(): IProvidedColumn[] {

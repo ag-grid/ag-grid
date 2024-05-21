@@ -78,8 +78,8 @@ export class AgPrimaryColsList extends Component {
     }
 
     protected override destroy(): void {
-        super.destroy();
         this.destroyColumnTree();
+        super.destroy();
     }
 
     private destroyColumnTree(): void {

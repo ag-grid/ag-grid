@@ -63,8 +63,8 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     }
 
     protected override destroy(): void {
-        super.destroy();
         this.destroyDatasource();
+        super.destroy();
     }
 
     private destroyDatasource(): void {

@@ -19,9 +19,9 @@ export class SparklineTooltipSingleton extends BeanStub {
     }
 
     protected override destroy(): void {
-        super.destroy();
         if (this.tooltip) {
             this.tooltip.destroy();
         }
+        super.destroy();
     }
 }

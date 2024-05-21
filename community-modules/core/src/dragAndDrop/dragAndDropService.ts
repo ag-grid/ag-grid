@@ -227,12 +227,13 @@ export class DragAndDropService extends BeanStub {
         }
     }
 
-    private clearDragSourceParamsList(): void {
+    protected override destroy(): void {
         this.dragSourceAndParamsList.forEach((sourceAndParams) =>
             this.dragService.removeDragSource(sourceAndParams.params)
         );
         this.dragSourceAndParamsList.length = 0;
         this.dropTargets.length = 0;
+        super.destroy();
     }
 
     public nudge(): void {

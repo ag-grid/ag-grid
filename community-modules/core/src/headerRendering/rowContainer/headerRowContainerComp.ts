@@ -73,8 +73,8 @@ export class HeaderRowContainerComp extends Component {
     }
 
     protected override destroy(): void {
-        super.destroy();
         this.setCtrls([]);
+        super.destroy();
     }
 
     private destroyRowComp(rowComp: HeaderRowComp): void {

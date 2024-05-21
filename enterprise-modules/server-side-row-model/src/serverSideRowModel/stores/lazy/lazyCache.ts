@@ -112,7 +112,6 @@ export class LazyCache extends BeanStub {
     }
 
     protected override destroy() {
-        super.destroy();
         this.lazyBlockLoadingService.unsubscribe(this);
         this.numberOfRows = 0;
         this.nodeMap.forEach((node) => this.blockUtils.destroyRowNode(node.node));
@@ -120,6 +119,7 @@ export class LazyCache extends BeanStub {
         this.nodeDisplayIndexMap.clear();
         this.nodesToRefresh.clear();
         this.live = false;
+        super.destroy();
     }
 
     /**

@@ -126,8 +126,8 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     protected override destroy(): void {
-        super.destroy();
         this.destroyRowNodes();
+        super.destroy();
     }
 
     private destroyRowNodes(): void {

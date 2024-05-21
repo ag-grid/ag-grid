@@ -45,8 +45,8 @@ export class HeaderRowComp extends Component {
     }
 
     protected override destroy(): void {
-        super.destroy();
         this.setHeaderCtrls([], false);
+        super.destroy();
     }
 
     private setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean): void {

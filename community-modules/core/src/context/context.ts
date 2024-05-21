@@ -235,30 +235,6 @@ export class Context {
         return null;
     }
 
-    private callLifeCycleMethods(beanInstances: any[], lifeCycleMethod: string): void {
-        beanInstances.forEach((beanInstance) => this.callLifeCycleMethodsOnBean(beanInstance, lifeCycleMethod));
-    }
-
-    private callLifeCycleMethodsOnBean(beanInstance: any, lifeCycleMethod: string, methodToIgnore?: string): void {
-        // putting all methods into a map removes duplicates
-        const allMethods: { [methodName: string]: boolean } = {};
-
-        // dump methods from each level of the metadata hierarchy
-        this.forEachMetaDataInHierarchy(beanInstance, (metaData: any) => {
-            const methods = metaData[lifeCycleMethod] as string[];
-            if (methods) {
-                methods.forEach((methodName) => {
-                    if (methodName != methodToIgnore) {
-                        allMethods[methodName] = true;
-                    }
-                });
-            }
-        });
-
-        const allMethodsList = Object.keys(allMethods);
-        allMethodsList.forEach((methodName) => beanInstance[methodName]());
-    }
-
     public getBean(name: BeanName): any {
         return this.lookupBeanInstance('getBean', name, true);
     }

@@ -110,8 +110,8 @@ export class AgStatusBar extends Component {
     }
 
     protected override destroy(): void {
-        super.destroy();
         this.destroyComponents();
+        super.destroy();
     }
 
     private destroyComponents() {

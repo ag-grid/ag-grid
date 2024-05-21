@@ -92,10 +92,10 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     }
 
     protected override destroy(): void {
-        super.destroy();
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
         this.destroyBean(this.cache);
+        super.destroy();
     }
 
     /**

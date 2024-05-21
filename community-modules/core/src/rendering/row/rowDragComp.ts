@@ -133,8 +133,8 @@ export class RowDragComp extends Component {
     }
 
     protected override destroy(): void {
-        super.destroy();
         this.removeDragSource();
+        super.destroy();
     }
 
     private removeDragSource() {

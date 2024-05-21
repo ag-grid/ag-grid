@@ -81,9 +81,9 @@ export class RowContainerComp extends Component {
     }
 
     protected override destroy(): void {
-        super.destroy();
         // destroys all row comps
         this.setRowCtrls([]);
+        super.destroy();
     }
 
     private setRowCtrls(rowCtrls: RowCtrl[]): void {

@@ -110,8 +110,8 @@ export class InfiniteCache extends BeanStub {
     }
 
     protected override destroy(): void {
-        super.destroy();
         this.getBlocksInOrder().forEach((block) => this.destroyBlock(block));
+        super.destroy();
     }
 
     public getRowCount(): number {

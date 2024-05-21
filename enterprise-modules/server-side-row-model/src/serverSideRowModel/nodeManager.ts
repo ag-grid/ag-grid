@@ -25,8 +25,8 @@ export class NodeManager extends BeanStub {
     }
 
     protected override destroy(): void {
-        super.destroy();
         this.clear();
+        super.destroy();
     }
 
     public clear(): void {
