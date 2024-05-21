@@ -1,7 +1,6 @@
 import {
     AgPromise,
     Column,
-    ColumnModel,
     Events,
     FuncColsService,
     GetDataPath,
@@ -85,13 +84,7 @@ export class ClientSideValuesExtractor<V> {
                 return;
             }
 
-            let value = this.getValue(node);
-
-            if (this.filterParams.convertValuesToStrings) {
-                // for backwards compatibility - keeping separate as it will eventually be removed
-                this.addValueForConvertValuesToString(node, value, addValue);
-                return;
-            }
+            const value = this.getValue(node);
 
             if (value != null && Array.isArray(value)) {
                 value.forEach((x) => {
@@ -106,25 +99,6 @@ export class ClientSideValuesExtractor<V> {
         });
 
         return values;
-    }
-
-    private addValueForConvertValuesToString(
-        node: RowNode,
-        value: V | null | undefined,
-        addValue: (unformattedKey: string | null, value: V | null) => void
-    ): void {
-        const key = this.createKey(value, node);
-        if (key != null && Array.isArray(key)) {
-            key.forEach((part) => {
-                const processedPart = _toStringOrNull(_makeNull(part));
-                addValue(processedPart, processedPart as any);
-            });
-            if (key.length === 0) {
-                addValue(null, null);
-            }
-        } else {
-            addValue(key, key as any);
-        }
     }
 
     private addValueForTreeDataOrGrouping(

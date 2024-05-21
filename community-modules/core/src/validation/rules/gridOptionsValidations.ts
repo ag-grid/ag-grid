@@ -35,7 +35,7 @@ export const GRID_OPTION_DEFAULTS = {
     suppressContextMenu: false,
     preventDefaultOnContextMenu: false,
     allowContextMenuWithControlKey: false,
-    suppressMenuHide: false,
+    suppressMenuHide: true,
     enableBrowserTooltips: false,
     tooltipTrigger: 'hover',
     tooltipShowDelay: 2000,
@@ -205,6 +205,7 @@ export const GRID_OPTION_DEFAULTS = {
     serverSideEnableClientSideSort: false,
     suppressServerSideFullWidthLoadingRow: false,
     pivotMaxGeneratedColumns: -1,
+    columnMenu: 'new',
 } as const;
 /**
  * Used simply to type check the default grid options.

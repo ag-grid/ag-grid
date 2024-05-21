@@ -237,7 +237,7 @@ export class MenuService extends BeanStub {
     }
 
     private getColumnMenuType(): 'legacy' | 'new' {
-        return this.gos.get('columnMenu') ?? 'legacy';
+        return this.gos.get('columnMenu');
     }
 
     private isFloatingFilterButtonDisplayed(column: Column): boolean {

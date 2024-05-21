@@ -1,3 +1,5 @@
+import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+
 import {
     ColumnSortState,
     CssClassManager,
@@ -8,7 +10,6 @@ import {
     _removeAriaSort,
     _setAriaSort,
 } from 'ag-grid-community';
-import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';

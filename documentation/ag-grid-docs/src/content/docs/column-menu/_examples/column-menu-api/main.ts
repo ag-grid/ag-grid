@@ -27,7 +27,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
         filter: true,
     },
-    columnMenu: 'new',
     onColumnMenuVisibleChanged: (event: ColumnMenuVisibleChangedEvent) => {
         console.log('columnMenuVisibleChanged', event);
     },

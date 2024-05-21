@@ -113,7 +113,7 @@ export const INITIAL_GRID_OPTION_KEYS = {
     getLocaleText: true,
     getRowId: true,
     reactiveCustomComponents: true,
-    columnMenu: true,
+    columnMenu: 'new',
 };
 
 type InitialGridOptionKey = keyof typeof INITIAL_GRID_OPTION_KEYS;

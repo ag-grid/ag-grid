@@ -1,3 +1,5 @@
+import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
+
 import {
     ComponentClass,
     CssClassManager,
@@ -10,7 +12,6 @@ import {
     _setAriaColCount,
     _setAriaRowCount,
 } from 'ag-grid-community';
-import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import { BeansContext } from './beansContext';
 import GridHeaderComp from './header/gridHeaderComp';

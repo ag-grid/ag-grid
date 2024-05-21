@@ -33,12 +33,14 @@ export const Header: FunctionComponent<Props> = ({
             <div id="top" className={styles.docsPageTitle}>
                 <div className={styles.pageTitleContainer}>
                     <div className={styles.pageTitleGroup}>
-                        {!suppressFrameworkHeader && (
-                            <span className={styles.headerFramework}>
-                                {`${getFrameworkDisplayText(framework)} Data Grid`}
-                            </span>
-                        )}
-                        <h1>{title}</h1>
+                        <h1>
+                            {!suppressFrameworkHeader && (
+                                <span className={styles.headerFramework}>
+                                    {`${getFrameworkDisplayText(framework)} Data Grid`}
+                                </span>
+                            )}
+                            {title}
+                        </h1>
                     </div>
 
                     <FrameworkSelectorInsideDocs path={path} currentFramework={framework} menuItems={menuItems} />

@@ -381,6 +381,7 @@ export type AgComponentSelector =
     | 'AG-ANGLE-SELECT'
     | 'AG-AUTOCOMPLETE'
     | 'AG-CHECKBOX'
+    | 'AG-COLOR-INPUT'
     | 'AG-COLOR-PICKER'
     | 'AG-FAKE-HORIZONTAL-SCROLL'
     | 'AG-FAKE-VERTICAL-SCROLL'

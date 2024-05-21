@@ -25,7 +25,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 150,
         filter: true,
     },
-    columnMenu: 'new',
 };
 
 function openCountryFilter() {

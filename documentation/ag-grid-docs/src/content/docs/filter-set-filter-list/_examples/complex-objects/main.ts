@@ -27,23 +27,13 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         {
-            headerName: 'Country (Complex Object as Value)',
+            headerName: 'Country',
             field: 'country',
             valueFormatter: countryValueFormatter,
             filter: 'agSetColumnFilter',
             filterParams: {
                 valueFormatter: countryValueFormatter,
                 keyCreator: countryCodeKeyCreator,
-            } as ISetFilterParams,
-        },
-        {
-            headerName: 'Country (Complex Object as String)',
-            field: 'country',
-            valueFormatter: countryValueFormatter,
-            filter: 'agSetColumnFilter',
-            filterParams: {
-                keyCreator: countryNameKeyCreator,
-                convertValuesToStrings: true,
             } as ISetFilterParams,
         },
     ],
@@ -59,11 +49,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 function countryCodeKeyCreator(params: KeyCreatorParams) {
     var countryObject = params.value;
     return countryObject.code;
-}
-
-function countryNameKeyCreator(params: KeyCreatorParams) {
-    var countryObject = params.value;
-    return countryObject.name;
 }
 
 function countryValueFormatter(params: ValueFormatterParams) {

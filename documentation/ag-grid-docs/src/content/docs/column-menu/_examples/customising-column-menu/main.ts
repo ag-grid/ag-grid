@@ -38,7 +38,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    columnMenu: 'new',
 };
 
 // setup the grid after the page has finished loading

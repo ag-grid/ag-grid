@@ -43,10 +43,10 @@ function addPackageJson(isEnterprise, framework, importType) {
     };
 
     if (framework === 'angular') {
-        addDependency('@angular/core', '^14');
-        addDependency('@angular/common', '^14');
-        addDependency('@angular/forms', '^14');
-        addDependency('@angular/platform-browser', '^14');
+        addDependency('@angular/core', '^17');
+        addDependency('@angular/common', '^17');
+        addDependency('@angular/forms', '^17');
+        addDependency('@angular/platform-browser', '^17');
     }
 
     function isFrameworkReact() {

@@ -26,7 +26,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    columnMenu: 'new',
     postProcessPopup: (params: PostProcessPopupParams) => {
         // check callback is for menu
         if (params.type !== 'columnMenu') {

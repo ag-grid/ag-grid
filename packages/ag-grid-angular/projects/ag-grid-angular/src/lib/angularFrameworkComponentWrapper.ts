@@ -1,10 +1,11 @@
+import { ComponentRef, Injectable, ViewContainerRef } from '@angular/core';
+
 import {
     BaseComponentWrapper,
     FrameworkComponentWrapper,
     WrappableInterface,
     _removeFromParent,
 } from 'ag-grid-community';
-import { ComponentRef, Injectable, ViewContainerRef } from '@angular/core';
 
 import { AngularFrameworkOverrides } from './angularFrameworkOverrides';
 import { AgFrameworkComponent } from './interfaces';

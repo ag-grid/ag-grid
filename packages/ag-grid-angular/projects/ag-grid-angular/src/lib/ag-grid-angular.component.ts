@@ -1,5 +1,18 @@
 // @START_IMPORTS@
 import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnDestroy,
+    Output,
+    ViewContainerRef,
+    ViewEncapsulation,
+} from '@angular/core';
+
+import {
     AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterModel,
     AgChartTheme,
@@ -168,27 +181,7 @@ import {
     VirtualRowRemovedEvent,
 } from 'ag-grid-community';
 // @END_IMPORTS@
-import {
-    AgPromise,
-    ComponentUtil,
-    GridApi,
-    GridOptions,
-    GridParams,
-    Module,
-    createGrid,
-} from 'ag-grid-community';
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnDestroy,
-    Output,
-    ViewContainerRef,
-    ViewEncapsulation,
-} from '@angular/core';
+import { AgPromise, ComponentUtil, GridApi, GridOptions, GridParams, Module, createGrid } from 'ag-grid-community';
 
 import { AngularFrameworkComponentWrapper } from './angularFrameworkComponentWrapper';
 import { AngularFrameworkOverrides } from './angularFrameworkOverrides';
@@ -346,13 +339,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public allowContextMenuWithControlKey: boolean | undefined = undefined;
     /** Changes the display type of the column menu.
      * `'new'` just displays the main list of menu items. `'legacy'` displays a tabbed menu.
-     * @default 'legacy'
+     * @default 'new'
      * @initial
      */
     @Input() public columnMenu: 'legacy' | 'new' | undefined = undefined;
-    /** Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header.
-     * If `columnMenu = 'new'`, this will default to `true` instead of `false`.
-     * @default false
+    /** When `true`, the column menu button will always be shown.
+     * When `false, the column menu button will only show when the mouse is over the column header.
+     * If `columnMenu = 'legacy'`, this will default to `false` instead of `true`.
+     * @default true
      */
     @Input() public suppressMenuHide: boolean | undefined = undefined;
     /** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component.
