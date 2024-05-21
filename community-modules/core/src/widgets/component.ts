@@ -16,7 +16,6 @@ import {
     _setDisplayed,
     _setVisible,
 } from '../utils/dom';
-import { _getFunctionName } from '../utils/function';
 import { NumberSequence } from '../utils/numberSequence';
 import { TooltipFeature } from './tooltipFeature';
 
@@ -191,6 +190,13 @@ export class Component extends BeanStub {
             this.createBean(newComponent, null, afterPreCreateCallback);
         }
 
+        if (elementRef) {
+            const current = (this as any)[elementRef];
+            if (!current) {
+                (this as any)[elementRef] = newComponent ?? element;
+            }
+        }
+
         return newComponent;
     }
 
@@ -203,32 +209,6 @@ export class Component extends BeanStub {
         parentNode.replaceChild(eComponent, childNode);
         parentNode.insertBefore(document.createComment(childNode.nodeName), eComponent);
         this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
-        this.swapInComponentForQuerySelectors(newComponent, childNode);
-    }
-
-    private swapInComponentForQuerySelectors(newComponent: Component, childNode: Node): void {
-        const thisNoType = this as any;
-
-        this.iterateOverQuerySelectors((querySelector: any) => {
-            if (thisNoType[querySelector.attributeName] === childNode) {
-                thisNoType[querySelector.attributeName] = newComponent;
-            }
-        });
-    }
-
-    private iterateOverQuerySelectors(action: (querySelector: any) => void): void {
-        let thisPrototype: any = Object.getPrototypeOf(this);
-
-        while (thisPrototype != null) {
-            const metaData = thisPrototype.__agComponentMetaData;
-            const currentProtoName = _getFunctionName(thisPrototype.constructor);
-
-            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
-                metaData[currentProtoName].querySelectors.forEach((querySelector: any) => action(querySelector));
-            }
-
-            thisPrototype = Object.getPrototypeOf(thisPrototype);
-        }
     }
 
     protected activateTabIndex(elements?: Element[]): void {
@@ -261,40 +241,12 @@ export class Component extends BeanStub {
     ): void {
         this.eGui = element;
         (this.eGui as any).__agComponent = this;
-        this.wireQuerySelectors();
         this.agStackComponentsRegistry?.ensureRegistered(components ?? this.components);
 
         // context will not be available when user sets template in constructor
         if (this.getContext()) {
             this.createChildComponentsFromTags(this.getGui(), paramsMap);
         }
-    }
-
-    protected wireQuerySelectors(): void {
-        if (!this.eGui) {
-            return;
-        }
-
-        const thisNoType = this as any;
-
-        this.iterateOverQuerySelectors((querySelector: any) => {
-            const setResult = (result: any) => (thisNoType[querySelector.attributeName] = result);
-
-            // if it's a ref selector, and match is on top level component, we return
-            // the element. otherwise no way of components putting ref=xxx on the top
-            // level element as querySelector only looks at children.
-            const topLevelRefMatch =
-                querySelector.refSelector && this.getAttribute('ref') === querySelector.refSelector;
-            if (topLevelRefMatch) {
-                setResult(this.eGui);
-            } else {
-                // otherwise use querySelector, which looks at children
-                const resultOfQuery = this.eGui.querySelector(querySelector.querySelector);
-                if (resultOfQuery) {
-                    setResult(resultOfQuery.__agComponent || resultOfQuery);
-                }
-            }
-        });
     }
 
     public getGui(): HTMLElement {
