@@ -6,7 +6,7 @@ import { FilterDestroyedEvent, FilterOpenedEvent } from '../events';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { IFilterComp } from '../interfaces/iFilter';
-import { _clearElement, _loadTemplate } from '../utils/dom';
+import { _clearElement } from '../utils/dom';
 import { _exists } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { Component } from '../widgets/component';
