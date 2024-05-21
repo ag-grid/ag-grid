@@ -191,14 +191,15 @@ export interface GridOptions<TData = any> {
     /**
      * Changes the display type of the column menu.
      * `'new'` just displays the main list of menu items. `'legacy'` displays a tabbed menu.
-     * @default 'legacy'
+     * @default 'new'
      * @initial
      */
     columnMenu?: 'legacy' | 'new';
     /**
-     * Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header.
-     * If `columnMenu = 'new'`, this will default to `true` instead of `false`.
-     * @default false
+     * When `true`, the column menu button will always be shown.
+     * When `false, the column menu button will only show when the mouse is over the column header.
+     * If `columnMenu = 'legacy'`, this will default to `false` instead of `true`.
+     * @default true
      */
     suppressMenuHide?: boolean;
     /**

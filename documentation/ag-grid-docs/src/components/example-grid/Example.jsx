@@ -680,7 +680,6 @@ const ExampleInner = ({ darkMode }) => {
                 defaultToolPanel: 'columns',
                 hiddenByDefault: isSmall,
             },
-            columnMenu: 'new',
             dataTypeDefinitions: {
                 currency: {
                     extendsDataType: 'number',

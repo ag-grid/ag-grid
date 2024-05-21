@@ -9,7 +9,7 @@ The column menu is launched from the grid header, and displays a list of menu it
 AG Grid Community does not have a menu, but can launch [Column Filters](./filtering) if enabled (see [Launching Filters](./filter-api/#launching-filters) for configuration details).
 {% /note %}
 
-The following example shows the new-format column menu:
+The following example shows the column menu:
 
 * The **Athlete** column does not have filtering enabled, and only shows the main menu.
 * The **Age** column has filtering enabled, and shows an additional filter icon. Open and apply a filter to see the behaviour.
@@ -18,8 +18,6 @@ The following example shows the new-format column menu:
 * Right-clicking in the empty space to the right of the column headers will display the column menu with options to choose/reset the columns.
 
 {% gridExampleRunner title="Column Menu" name="column-menu" /%}
-
-The new-format column menu is enabled by setting `columnMenu = 'new'`.
 
 ## Customising the Column Menu
 
@@ -45,9 +43,9 @@ The following example demonstrates different ways of customising the column menu
 
 {% gridExampleRunner title="Customising the Column Menu" name="customising-column-menu" /%}
 
-## Default Tabbed Column Menu
+## Legacy Tabbed Column Menu
 
-The menu can also be displayed in a tabbed format with three panels. This is currently the default behaviour, but will be switched in the next major release. If you want to change the order or what panels are shown, or hide them, you can specify the property `menuTabs` in the `colDef`.
+The menu can also be displayed in the legacy tabbed format with three panels. If you want to change the order or what panels are shown, or hide them, you can specify the property `menuTabs` in the `colDef`.
 
 The property `menuTabs` is an array of strings. The valid values are: `'filterMenuTab'`, `'generalMenuTab'` and `'columnsMenuTab'`.
 
@@ -88,11 +86,11 @@ The menu item list should be a list with each item either a) a string or b) a `M
 
 The following is a list of all the default built-in menu items with the rules about when they are shown.
 
-* `sortAscending`: Sort the column in ascending order. Shown when `columnMenu = 'new'` and the column is not already sorted in ascending order.
-* `sortDescending`: Sort the column in descending order. Shown when `columnMenu = 'new'` and the column is not already sorted in descending order.
-* `sortUnSort`: Clear the sort on the column. Shown when `columnMenu = 'new'` and the column is already sorted.
-* `columnFilter`: Show the column filter. Shown when `columnMenu = 'new'`, a filter is enabled, and the header filter button and floating filter button are not displayed.
-* `columnChooser`: Show the column chooser. Shown when `columnMenu = 'new'`.
+* `sortAscending`: Sort the column in ascending order. Not shown when `columnMenu = 'legacy'` or the column is already sorted in ascending order.
+* `sortDescending`: Sort the column in descending order. Not shown when `columnMenu = 'legacy'` or the column is already sorted in descending order.
+* `sortUnSort`: Clear the sort on the column. Not shown when `columnMenu = 'legacy'` or the column is not sorted.
+* `columnFilter`: Show the column filter. Not shown when `columnMenu = 'legacy'`, a filter is not enabled, or the header filter button or floating filter button are displayed.
+* `columnChooser`: Show the column chooser. Not shown when `columnMenu = 'legacy'`.
 * `pinSubMenu`: Sub-menu for pinning. Always shown.
 * `pinSubMenu`: Sub-menu for pinning. Always shown.
 * `valueAggSubMenu`: Sub-menu for value aggregation. Always shown.

@@ -8,9 +8,7 @@
         },
         "field": {
             "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ColDefField"
-                ]
+                "exclude": ["ColDefField"]
             },
             "more": {
                 "name": "Accessing Row Data Values",
@@ -101,9 +99,7 @@
         },
         "tooltipField": {
             "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ColDefField"
-                ]
+                "exclude": ["ColDefField"]
             }
         },
         "tooltipValueGetter": {
@@ -152,8 +148,8 @@
         },
         "menuTabs": {
             "more": {
-                "name": "Default Column Menu",
-                "url": "./column-menu/#default-tabbed-column-menu"
+                "name": "Legacy Tabbed Column Menu",
+                "url": "./column-menu/#legacy-tabbed-column-menu"
             }
         },
         "columnChooserParams": {
