@@ -6,7 +6,7 @@ import { FilterDestroyedEvent, FilterOpenedEvent } from '../events';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { IFilterComp } from '../interfaces/iFilter';
-import { _clearElement, _loadTemplate } from '../utils/dom';
+import { _clearElement } from '../utils/dom';
 import { _exists } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { Component } from '../widgets/component';
@@ -63,20 +63,12 @@ export class FilterWrapperComp extends Component {
             return;
         }
         this.filterWrapper.filterPromise.then((filter) => {
-            let guiFromFilter = filter!.getGui();
+            const guiFromFilter = filter!.getGui();
 
             if (!_exists(guiFromFilter)) {
                 console.warn(
-                    `AG Grid: getGui method from filter returned ${guiFromFilter}, it should be a DOM element or an HTML template string.`
+                    `AG Grid: getGui method from filter returned ${guiFromFilter}; it should be a DOM element.`
                 );
-            }
-
-            // for backwards compatibility with Angular 1 - we
-            // used to allow providing back HTML from getGui().
-            // once we move away from supporting Angular 1
-            // directly, we can change this.
-            if (typeof guiFromFilter === 'string') {
-                guiFromFilter = _loadTemplate(guiFromFilter as string);
             }
 
             this.appendChild(guiFromFilter);

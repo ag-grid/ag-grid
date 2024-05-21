@@ -4,7 +4,6 @@ export default [
     ...rootESLint,
     {
         rules: {
-            '@typescript-eslint/no-explicit-any': 'off',
             'no-fallthrough': 'warn',
             'no-case-declarations': 'warn',
             'no-prototype-builtins': 'warn',

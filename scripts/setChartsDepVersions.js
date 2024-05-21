@@ -1,4 +1,5 @@
 const fs = require('fs');
+const os = require("os");
 
 const chartsVersion = process.argv[2];
 
@@ -35,7 +36,7 @@ const processPackageFile = (packageJsonFilename) => {
         updated |= updateDependency(packageJson, 'peerDependencies', chartsVersion);
 
         if (updated) {
-            fs.writeFileSync(packageJsonFilename, JSON.stringify(packageJson, null, 2), 'utf-8');
+            fs.writeFileSync(packageJsonFilename, JSON.stringify(packageJson, null, 2) + os.EOL, 'utf-8');
         }
     }
 };

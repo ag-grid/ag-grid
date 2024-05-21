@@ -35,7 +35,7 @@ const copyFromModuleSource = () => {
             '!**/__tests__*/**/*',
             '!**/*Test*',
         ])
-        .pipe(replace('export * from "./interfaces/iAgChartOptions";', ''))
+        .pipe(replace('export * from \'./interfaces/iAgChartOptions\';', ''))
         .pipe(replace('@ag-grid-community/core', 'ag-grid-community'))
         .pipe(replace('@ag-grid-community/client-side-row-model', 'ag-grid-community'))
         .pipe(replace('@ag-grid-community/csv-export', 'ag-grid-community'))
