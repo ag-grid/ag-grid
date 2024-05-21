@@ -63,20 +63,12 @@ export class FilterWrapperComp extends Component {
             return;
         }
         this.filterWrapper.filterPromise.then((filter) => {
-            let guiFromFilter = filter!.getGui();
+            const guiFromFilter = filter!.getGui();
 
             if (!_exists(guiFromFilter)) {
                 console.warn(
-                    `AG Grid: getGui method from filter returned ${guiFromFilter}, it should be a DOM element or an HTML template string.`
+                    `AG Grid: getGui method from filter returned ${guiFromFilter}; it should be a DOM element.`
                 );
-            }
-
-            // for backwards compatibility with Angular 1 - we
-            // used to allow providing back HTML from getGui().
-            // once we move away from supporting Angular 1
-            // directly, we can change this.
-            if (typeof guiFromFilter === 'string') {
-                guiFromFilter = _loadTemplate(guiFromFilter as string);
             }
 
             this.appendChild(guiFromFilter);
