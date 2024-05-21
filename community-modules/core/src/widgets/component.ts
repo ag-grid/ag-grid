@@ -175,7 +175,7 @@ export class Component extends BeanStub {
     ): Component | null {
         const key = element.nodeName;
 
-        const elementRef = element.getAttribute('ref');
+        const elementRef = element.getAttribute('data-ref');
 
         const ComponentClass = this.browserElements.has(key)
             ? null
@@ -243,6 +243,11 @@ export class Component extends BeanStub {
         (this.eGui as any).__agComponent = this;
         this.agStackComponentsRegistry?.ensureRegistered(components ?? this.components);
 
+        // Ensure parent elements are also attached
+        const elementRef = element.getAttribute('data-ref');
+        if (elementRef) {
+            (this as any)[elementRef] = element;
+        }
         // context will not be available when user sets template in constructor
         if (this.getContext()) {
             this.createChildComponentsFromTags(this.getGui(), paramsMap);
@@ -277,10 +282,6 @@ export class Component extends BeanStub {
 
     protected queryForHtmlElement(cssSelector: string): HTMLElement {
         return this.eGui.querySelector(cssSelector) as HTMLElement;
-    }
-
-    protected queryForHtmlInputElement(cssSelector: string): HTMLInputElement {
-        return this.eGui.querySelector(cssSelector) as HTMLInputElement;
     }
 
     public appendChild(newChild: HTMLElement | Component, container?: HTMLElement): void {
@@ -364,15 +365,6 @@ export class Component extends BeanStub {
 
     public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
         this.cssClassManager.addOrRemoveCssClass(className, addOrRemove);
-    }
-
-    public getAttribute(key: string): string | null {
-        const { eGui } = this;
-        return eGui ? eGui.getAttribute(key) : null;
-    }
-
-    public getRefElement(refName: string): HTMLElement {
-        return this.queryForHtmlElement(`[ref="${refName}"]`);
     }
 }
 
