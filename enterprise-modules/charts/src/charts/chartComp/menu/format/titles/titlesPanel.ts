@@ -1,4 +1,4 @@
-import { Autowired, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
+import { Autowired, Component, PostConstruct } from '@ag-grid-community/core';
 import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
 import { ChartTranslationService } from '../../../services/chartTranslationService';
@@ -10,11 +10,11 @@ import { TitlePanel } from './titlePanel';
 
 export class TitlesPanel extends Component {
     private static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="titleGroup"></ag-group-component>
+            <ag-group-component data-ref="titleGroup"></ag-group-component>
         </div>`;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @RefSelector('titleGroup') private readonly titleGroup: AgGroupComponent;
+    private readonly titleGroup: AgGroupComponent;
 
     constructor(private readonly options: FormatPanelOptions) {
         super();

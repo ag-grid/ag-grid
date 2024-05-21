@@ -6,14 +6,13 @@ import { _setAriaLabel, _setAriaRole } from '../utils/aria';
 import { _clearElement } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
 import { AgPromise } from '../utils/promise';
-import { RefSelector } from '../widgets/componentAnnotations';
 import { TabGuardComp } from '../widgets/tabGuardComp';
 
 export class TabbedLayout extends TabGuardComp {
     @Autowired('focusService') private focusService: FocusService;
 
-    @RefSelector('eHeader') private readonly eHeader: HTMLElement;
-    @RefSelector('eBody') private readonly eBody: HTMLElement;
+    private readonly eHeader: HTMLElement;
+    private readonly eBody: HTMLElement;
 
     private eTabHeader: HTMLElement;
     private eCloseButton?: HTMLElement;
@@ -50,8 +49,8 @@ export class TabbedLayout extends TabGuardComp {
 
     private static getTemplate(cssClass?: string) {
         return /* html */ `<div class="ag-tabs ${cssClass}">
-            <div ref="eHeader"></div>
-            <div ref="eBody" role="presentation" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
+            <div data-ref="eHeader"></div>
+            <div data-ref="eBody" role="presentation" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
         </div>`;
     }
 

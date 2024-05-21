@@ -5,7 +5,6 @@ import {
     Component,
     ListOption,
     PostConstruct,
-    RefSelector,
     _removeFromParent,
 } from '@ag-grid-community/core';
 import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
@@ -19,12 +18,12 @@ type SeriesItemType = 'positive' | 'negative';
 
 export class SeriesItemsPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="seriesItemsGroup">
-                <ag-select ref="seriesItemSelect"></ag-select>
+            <ag-group-component data-ref="seriesItemsGroup">
+                <ag-select data-ref="seriesItemSelect"></ag-select>
             </ag-group-component>
         </div>`;
 
-    @RefSelector('seriesItemsGroup') private seriesItemsGroup: AgGroupComponent;
+    private readonly seriesItemsGroup: AgGroupComponent;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 

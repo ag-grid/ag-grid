@@ -7,8 +7,8 @@ import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class BackgroundPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="chartBackgroundGroup">
-                <ag-color-picker ref="colorPicker"></ag-color-picker>
+            <ag-group-component data-ref="chartBackgroundGroup">
+                <ag-color-picker data-ref="colorPicker"></ag-color-picker>
             </ag-group-component>
         <div>`;
 

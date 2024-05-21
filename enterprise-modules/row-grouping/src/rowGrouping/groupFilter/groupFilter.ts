@@ -12,7 +12,6 @@ import {
     IFilterComp,
     IFilterParams,
     PostConstruct,
-    RefSelector,
     TabGuardComp,
     _clearElement,
     _loadTemplate,
@@ -33,8 +32,8 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
 
-    @RefSelector('eGroupField') private readonly eGroupField: HTMLElement;
-    @RefSelector('eUnderlyingFilter') private readonly eUnderlyingFilter: HTMLElement;
+    private readonly eGroupField: HTMLElement;
+    private readonly eUnderlyingFilter: HTMLElement;
 
     private params: IFilterParams;
     private groupColumn: Column;
@@ -48,8 +47,8 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
     constructor() {
         super(/* html */ `
             <div class="ag-group-filter">
-                <div ref="eGroupField"></div>
-                <div ref="eUnderlyingFilter"></div>
+                <div data-ref="eGroupField"></div>
+                <div data-ref="eUnderlyingFilter"></div>
             </div>
         `);
     }

@@ -11,7 +11,6 @@ import {
     IStatusPanelComp,
     Optional,
     PostConstruct,
-    RefSelector,
     RowPosition,
     RowPositionUtils,
     ValueService,
@@ -25,11 +24,11 @@ import { AgNameValue } from './agNameValue';
 
 export class AggregationComp extends Component implements IStatusPanelComp {
     private static TEMPLATE /* html */ = `<div class="ag-status-panel ag-status-panel-aggregations">
-            <ag-name-value ref="avgAggregationComp"></ag-name-value>
-            <ag-name-value ref="countAggregationComp"></ag-name-value>
-            <ag-name-value ref="minAggregationComp"></ag-name-value>
-            <ag-name-value ref="maxAggregationComp"></ag-name-value>
-            <ag-name-value ref="sumAggregationComp"></ag-name-value>
+            <ag-name-value data-ref="avgAggregationComp"></ag-name-value>
+            <ag-name-value data-ref="countAggregationComp"></ag-name-value>
+            <ag-name-value data-ref="minAggregationComp"></ag-name-value>
+            <ag-name-value data-ref="maxAggregationComp"></ag-name-value>
+            <ag-name-value data-ref="sumAggregationComp"></ag-name-value>
         </div>`;
 
     @Optional('rangeService') private rangeService?: IRangeService;
@@ -39,11 +38,11 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
 
-    @RefSelector('sumAggregationComp') private sumAggregationComp: AgNameValue;
-    @RefSelector('countAggregationComp') private countAggregationComp: AgNameValue;
-    @RefSelector('minAggregationComp') private minAggregationComp: AgNameValue;
-    @RefSelector('maxAggregationComp') private maxAggregationComp: AgNameValue;
-    @RefSelector('avgAggregationComp') private avgAggregationComp: AgNameValue;
+    private readonly sumAggregationComp: AgNameValue;
+    private readonly countAggregationComp: AgNameValue;
+    private readonly minAggregationComp: AgNameValue;
+    private readonly maxAggregationComp: AgNameValue;
+    private readonly avgAggregationComp: AgNameValue;
 
     private params!: AggregationStatusPanelParams;
 

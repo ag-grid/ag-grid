@@ -3,7 +3,6 @@ import { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor
 import { _isBrowserSafari } from '../../utils/browser';
 import { AgInputTextField } from '../../widgets/agInputTextField';
 import { ComponentClass } from '../../widgets/component';
-import { RefSelector } from '../../widgets/componentAnnotations';
 import { PopupComponent } from '../../widgets/popupComponent';
 
 export interface CellEditorInput<TValue, P extends ICellEditorParams, I extends AgInputTextField> {
@@ -22,7 +21,7 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
     protected params: ICellEditorParams;
-    @RefSelector('eInput') protected eInput: I;
+    protected readonly eInput: I;
 
     constructor(protected cellEditorInput: CellEditorInput<TValue, P, I>) {
         super(

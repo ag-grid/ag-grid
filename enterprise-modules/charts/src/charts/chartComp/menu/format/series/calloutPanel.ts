@@ -7,10 +7,10 @@ import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class CalloutPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="calloutGroup">
-                <ag-slider ref="calloutLengthSlider"></ag-slider>
-                <ag-slider ref="calloutStrokeWidthSlider"></ag-slider>
-                <ag-slider ref="labelOffsetSlider"></ag-slider>
+            <ag-group-component data-ref="calloutGroup">
+                <ag-slider data-ref="calloutLengthSlider"></ag-slider>
+                <ag-slider data-ref="calloutStrokeWidthSlider"></ag-slider>
+                <ag-slider data-ref="labelOffsetSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 

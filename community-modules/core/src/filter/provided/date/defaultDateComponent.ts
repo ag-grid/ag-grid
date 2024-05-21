@@ -5,16 +5,15 @@ import { _dateToFormattedString, _parseDateTimeFromString, _serialiseDate } from
 import { _warnOnce } from '../../../utils/function';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { Component } from '../../../widgets/component';
-import { RefSelector } from '../../../widgets/componentAnnotations';
 
 export class DefaultDateComponent extends Component implements IDateComp {
-    @RefSelector('eDateInput') private readonly eDateInput: AgInputTextField;
+    private readonly eDateInput: AgInputTextField;
 
     constructor() {
         super(
             /* html */ `
             <div class="ag-filter-filter">
-                <ag-input-text-field class="ag-date-filter" ref="eDateInput"></ag-input-text-field>
+                <ag-input-text-field class="ag-date-filter" data-ref="eDateInput"></ag-input-text-field>
             </div>`,
             [AgInputTextField]
         );

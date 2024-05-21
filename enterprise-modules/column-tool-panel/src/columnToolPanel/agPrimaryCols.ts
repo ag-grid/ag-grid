@@ -5,7 +5,6 @@ import {
     ColumnEventType,
     Component,
     PositionableFeature,
-    RefSelector,
     ToolPanelColumnCompParams,
 } from '@ag-grid-community/core';
 
@@ -15,12 +14,12 @@ import { AgPrimaryColsList } from './agPrimaryColsList';
 export class AgPrimaryCols extends Component {
     static readonly selector: AgComponentSelector = 'AG-PRIMARY-COLS';
     private static TEMPLATE /* html */ = `<div class="ag-column-select">
-            <ag-primary-cols-header ref="primaryColsHeaderPanel"></ag-primary-cols-header>
-            <ag-primary-cols-list ref="primaryColsListPanel"></ag-primary-cols-list>
+            <ag-primary-cols-header data-ref="primaryColsHeaderPanel"></ag-primary-cols-header>
+            <ag-primary-cols-list data-ref="primaryColsListPanel"></ag-primary-cols-list>
         </div>`;
 
-    @RefSelector('primaryColsHeaderPanel') private readonly primaryColsHeaderPanel: AgPrimaryColsHeader;
-    @RefSelector('primaryColsListPanel') private readonly primaryColsListPanel: AgPrimaryColsList;
+    private readonly primaryColsHeaderPanel: AgPrimaryColsHeader;
+    private readonly primaryColsListPanel: AgPrimaryColsList;
 
     private allowDragging: boolean;
     private params: ToolPanelColumnCompParams;

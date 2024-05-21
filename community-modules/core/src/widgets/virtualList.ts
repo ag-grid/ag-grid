@@ -8,7 +8,6 @@ import { _getAriaPosInSet, _setAriaLabel, _setAriaPosInSet, _setAriaRole, _setAr
 import { _stopPropagationForAgGrid } from '../utils/event';
 import { _waitUntil } from '../utils/function';
 import { Component } from './component';
-import { RefSelector } from './componentAnnotations';
 import { TabGuardComp } from './tabGuardComp';
 
 export interface VirtualListModel {
@@ -41,7 +40,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
 
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
-    @RefSelector('eContainer') private readonly eContainer: HTMLElement;
+    private readonly eContainer: HTMLElement;
 
     constructor(params?: VirtualListParams) {
         super(VirtualList.getTemplate(params?.cssIdentifier || 'default'));
@@ -238,7 +237,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         return (
             /* html */
             `<div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
-                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" ref="eContainer"></div>
+                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" data-ref="eContainer"></div>
             </div>`
         );
     }

@@ -3,7 +3,6 @@ import {
     KeyCode,
     PopupComponent,
     PostConstruct,
-    RefSelector,
     VirtualList,
     _exists,
     _fuzzySuggestions,
@@ -14,10 +13,10 @@ import { AutocompleteEntry } from './autocompleteParams';
 
 export class AgAutocompleteList extends PopupComponent {
     private static TEMPLATE /* html */ = `<div class="ag-autocomplete-list-popup">
-            <div ref="eList" class="ag-autocomplete-list"></div>
+            <div data-ref="eList" class="ag-autocomplete-list"></div>
         <div>`;
 
-    @RefSelector('eList') private eList: HTMLElement;
+    private readonly eList: HTMLElement;
 
     private virtualList: VirtualList;
 

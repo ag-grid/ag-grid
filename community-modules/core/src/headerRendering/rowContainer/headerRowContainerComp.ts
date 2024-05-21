@@ -3,7 +3,6 @@ import { ColumnPinnedType } from '../../entities/column';
 import { _ensureDomOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
-import { RefSelector } from '../../widgets/componentAnnotations';
 import { HeaderRowComp } from '../row/headerRowComp';
 import { HeaderRowCtrl, HeaderRowCtrlInstanceId } from '../row/headerRowCtrl';
 import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRowContainerCtrl';
@@ -14,10 +13,10 @@ export class HeaderRowContainerComp extends Component {
     private static PINNED_RIGHT_TEMPLATE = /* html */ `<div class="ag-pinned-right-header" role="rowgroup"></div>`;
 
     private static CENTER_TEMPLATE /* html */ = `<div class="ag-header-viewport" role="presentation">
-            <div class="ag-header-container" ref="eCenterContainer" role="rowgroup"></div>
+            <div class="ag-header-container" data-ref="eCenterContainer" role="rowgroup"></div>
         </div>`;
 
-    @RefSelector('eCenterContainer') private eCenterContainer: HTMLElement;
+    private eCenterContainer: HTMLElement;
 
     private eRowContainer: HTMLElement;
 

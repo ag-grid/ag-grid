@@ -2,7 +2,6 @@ import {
     Autowired,
     ChartToolbarMenuItemOptions,
     Component,
-    RefSelector,
     _clearElement,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
@@ -17,12 +16,12 @@ interface ChartToolbarButton {
 
 export class ChartToolbar extends Component {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @RefSelector('eMenu') private eMenu: HTMLButtonElement;
+    private readonly eMenu: HTMLButtonElement;
 
     private buttonListenersDestroyFuncs: ((() => null) | undefined)[] = [];
 
     constructor() {
-        super(/* html */ `<div class="ag-chart-menu" ref="eMenu"></div>`);
+        super(/* html */ `<div class="ag-chart-menu" data-ref="eMenu"></div>`);
     }
 
     public updateParams(params: { buttons: ChartToolbarButton[] }): void {
@@ -57,7 +56,7 @@ export class ChartToolbar extends Component {
     }
 
     private createButton(iconName: string): Element {
-        let buttonEl = _createIconNoSpan(iconName, this.gos, undefined, true)!;
+        const buttonEl = _createIconNoSpan(iconName, this.gos, undefined, true)!;
         buttonEl.classList.add('ag-chart-menu-icon');
 
         const wrapperEl = this.gos.getDocument().createElement('button');

@@ -1,4 +1,3 @@
-import { ColumnModel } from '../../../columns/columnModel';
 import { Autowired } from '../../../context/context';
 import { Column } from '../../../entities/column';
 import { Events } from '../../../eventKeys';
@@ -6,26 +5,24 @@ import { SortController } from '../../../sortController';
 import { _clearElement, _setDisplayed } from '../../../utils/dom';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { AgComponentSelector, Component } from '../../../widgets/component';
-import { RefSelector } from '../../../widgets/componentAnnotations';
 
 export class SortIndicatorComp extends Component {
     static readonly selector: AgComponentSelector = 'AG-SORT-INDICATOR';
 
     private static TEMPLATE /* html */ = `<span class="ag-sort-indicator-container">
-            <span ref="eSortOrder" class="ag-sort-indicator-icon ag-sort-order ag-hidden" aria-hidden="true"></span>
-            <span ref="eSortAsc" class="ag-sort-indicator-icon ag-sort-ascending-icon ag-hidden" aria-hidden="true"></span>
-            <span ref="eSortDesc" class="ag-sort-indicator-icon ag-sort-descending-icon ag-hidden" aria-hidden="true"></span>
-            <span ref="eSortMixed" class="ag-sort-indicator-icon ag-sort-mixed-icon ag-hidden" aria-hidden="true"></span>
-            <span ref="eSortNone" class="ag-sort-indicator-icon ag-sort-none-icon ag-hidden" aria-hidden="true"></span>
+            <span data-ref="eSortOrder" class="ag-sort-indicator-icon ag-sort-order ag-hidden" aria-hidden="true"></span>
+            <span data-ref="eSortAsc" class="ag-sort-indicator-icon ag-sort-ascending-icon ag-hidden" aria-hidden="true"></span>
+            <span data-ref="eSortDesc" class="ag-sort-indicator-icon ag-sort-descending-icon ag-hidden" aria-hidden="true"></span>
+            <span data-ref="eSortMixed" class="ag-sort-indicator-icon ag-sort-mixed-icon ag-hidden" aria-hidden="true"></span>
+            <span data-ref="eSortNone" class="ag-sort-indicator-icon ag-sort-none-icon ag-hidden" aria-hidden="true"></span>
         </span>`;
 
-    @RefSelector('eSortOrder') private eSortOrder: HTMLElement;
-    @RefSelector('eSortAsc') private eSortAsc: HTMLElement;
-    @RefSelector('eSortDesc') private eSortDesc: HTMLElement;
-    @RefSelector('eSortMixed') private eSortMixed: HTMLElement;
-    @RefSelector('eSortNone') private eSortNone: HTMLElement;
+    private eSortOrder: HTMLElement;
+    private eSortAsc: HTMLElement;
+    private eSortDesc: HTMLElement;
+    private eSortMixed: HTMLElement;
+    private eSortNone: HTMLElement;
 
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('sortController') private readonly sortController: SortController;
 
     private column: Column;

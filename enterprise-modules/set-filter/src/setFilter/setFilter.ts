@@ -17,7 +17,6 @@ import {
     KeyCode,
     KeyCreatorParams,
     ProvidedFilter,
-    RefSelector,
     SetFilterModel,
     SetFilterModelValue,
     SetFilterParams,
@@ -46,10 +45,10 @@ import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> implements ISetFilter<V> {
-    @RefSelector('eMiniFilter') private readonly eMiniFilter: AgInputTextField;
-    @RefSelector('eFilterLoading') private readonly eFilterLoading: HTMLElement;
-    @RefSelector('eSetFilterList') private readonly eSetFilterList: HTMLElement;
-    @RefSelector('eFilterNoMatches') private readonly eNoMatches: HTMLElement;
+    private readonly eMiniFilter: AgInputTextField;
+    private readonly eFilterLoading: HTMLElement;
+    private readonly eSetFilterList: HTMLElement;
+    private readonly eFilterNoMatches: HTMLElement;
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
@@ -87,10 +86,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     protected createBodyTemplate(): string {
         return /* html */ `
             <div class="ag-set-filter">
-                <div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${this.translateForSetFilter('loadingOoo')}</div>
-                <ag-input-text-field class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
-                <div ref="eFilterNoMatches" class="ag-filter-no-matches ag-hidden">${this.translateForSetFilter('noMatches')}</div>
-                <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
+                <div data-ref="eFilterLoading" class="ag-filter-loading ag-hidden">${this.translateForSetFilter('loadingOoo')}</div>
+                <ag-input-text-field class="ag-mini-filter" data-ref="eMiniFilter"></ag-input-text-field>
+                <div data-ref="eFilterNoMatches" class="ag-filter-no-matches ag-hidden">${this.translateForSetFilter('noMatches')}</div>
+                <div data-ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
             </div>`;
     }
     protected getAgComponents(): ComponentClass[] {
@@ -480,7 +479,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             throw new Error('Value model has not been created.');
         }
 
-        let promise = this.valueModel.refreshValues();
+        const promise = this.valueModel.refreshValues();
 
         return promise.then(() => {
             this.checkAndRefreshVirtualList();
@@ -520,7 +519,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
                 listName: filterListName,
             })
         ));
-        const eSetFilterList = this.getRefElement('eSetFilterList');
+        const eSetFilterList = this.eSetFilterList;
 
         if (isTree) {
             eSetFilterList.classList.add('ag-set-filter-tree-list');
@@ -1147,7 +1146,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         const hideResults = this.valueModel.getMiniFilter() != null && this.valueModel.getDisplayedValueCount() < 1;
 
-        _setDisplayed(this.eNoMatches, hideResults);
+        _setDisplayed(this.eFilterNoMatches, hideResults);
         _setDisplayed(this.eSetFilterList, !hideResults);
     }
 
@@ -1183,7 +1182,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         if (!this.valueModel) {
             throw new Error('Value model has not been created.');
         }
-        if (!!readOnly) {
+        if (readOnly) {
             throw new Error('Unable to filter in readOnly mode.');
         }
 

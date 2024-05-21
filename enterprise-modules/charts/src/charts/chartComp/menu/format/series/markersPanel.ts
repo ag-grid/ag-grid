@@ -1,12 +1,4 @@
-import {
-    AgSelect,
-    AgSelectParams,
-    Autowired,
-    Component,
-    PostConstruct,
-    RefSelector,
-    _includes,
-} from '@ag-grid-community/core';
+import { AgSelect, AgSelectParams, Autowired, Component, PostConstruct, _includes } from '@ag-grid-community/core';
 import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
 import { AgSlider, AgSliderParams } from '../../../../../widgets/agSlider';
@@ -16,15 +8,15 @@ import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class MarkersPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="seriesMarkersGroup">
-                <ag-select ref="seriesMarkerShapeSelect"></ag-select>
-                <ag-slider ref="seriesMarkerMinSizeSlider"></ag-slider>
-                <ag-slider ref="seriesMarkerSizeSlider"></ag-slider>
-                <ag-slider ref="seriesMarkerStrokeWidthSlider"></ag-slider>
+            <ag-group-component data-ref="seriesMarkersGroup">
+                <ag-select data-ref="seriesMarkerShapeSelect"></ag-select>
+                <ag-slider data-ref="seriesMarkerMinSizeSlider"></ag-slider>
+                <ag-slider data-ref="seriesMarkerSizeSlider"></ag-slider>
+                <ag-slider data-ref="seriesMarkerStrokeWidthSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
-    @RefSelector('seriesMarkerMinSizeSlider') private seriesMarkerMinSizeSlider: AgSlider;
+    private readonly seriesMarkerMinSizeSlider: AgSlider;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 

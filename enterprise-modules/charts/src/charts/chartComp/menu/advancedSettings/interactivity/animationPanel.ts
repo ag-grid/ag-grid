@@ -6,8 +6,8 @@ import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class AnimationPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="animationGroup">
-                <ag-input-number-field ref="animationHeightInput"></ag-input>
+            <ag-group-component data-ref="animationGroup">
+                <ag-input-number-field data-ref="animationHeightInput"></ag-input>
             </ag-group-component>
         </div>`;
 

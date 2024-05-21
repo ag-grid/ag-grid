@@ -9,7 +9,6 @@ import {
     FieldPickerValueSelectedEvent,
     ICellRendererParams,
     KeyCode,
-    RefSelector,
     RichSelectParams,
     UserCompDetails,
     UserComponentFactory,
@@ -33,11 +32,11 @@ import { RichSelectRow } from './agRichSelectRow';
 
 const TEMPLATE = /* html */ `
     <div class="ag-picker-field" role="presentation">
-        <div ref="eLabel"></div>
-            <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-rich-select-value ag-picker-collapsed">
-            <div ref="eDisplayField" class="ag-picker-field-display"></div>
-            <ag-input-text-field ref="eInput" class="ag-rich-select-field-input"></ag-input-text-field>
-            <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
+        <div data-ref="eLabel"></div>
+            <div data-ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-rich-select-value ag-picker-collapsed">
+            <div data-ref="eDisplayField" class="ag-picker-field-display"></div>
+            <ag-input-text-field data-ref="eInput" class="ag-rich-select-field-input"></ag-input-text-field>
+            <div data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
         </div>
     </div>`;
 
@@ -54,7 +53,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @RefSelector('eInput') private eInput: AgInputTextField;
+    private readonly eInput: AgInputTextField;
 
     constructor(config?: RichSelectParams<TValue>) {
         super({

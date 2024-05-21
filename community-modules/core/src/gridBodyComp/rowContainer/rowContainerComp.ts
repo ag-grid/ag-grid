@@ -6,7 +6,6 @@ import { _setAriaRole } from '../../utils/aria';
 import { _ensureDomOrder, _insertWithDomOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
 import { AgComponentSelector, Component } from '../../widgets/component';
-import { RefSelector } from '../../widgets/componentAnnotations';
 import {
     IRowContainerComp,
     RowContainerCtrl,
@@ -32,11 +31,11 @@ function templateFactory(): string {
     if (centerTemplate) {
         res =
             /* html */
-            `<div class="${cssClasses.viewport}" ref="eViewport" role="presentation">
-                <div class="${cssClasses.container}" ref="eContainer"></div>
+            `<div class="${cssClasses.viewport}" data-ref="eViewport" role="presentation">
+                <div class="${cssClasses.container}" data-ref="eContainer"></div>
             </div>`;
     } else {
-        res = /* html */ `<div class="${cssClasses.container}" ref="eContainer"></div>`;
+        res = /* html */ `<div class="${cssClasses.container}" data-ref="eContainer"></div>`;
     }
 
     return res;
@@ -46,8 +45,8 @@ export class RowContainerComp extends Component {
     static readonly selector: AgComponentSelector = 'AG-ROW-CONTAINER';
     @Autowired('beans') private beans: Beans;
 
-    @RefSelector('eViewport') private eViewport: HTMLElement;
-    @RefSelector('eContainer') private eContainer: HTMLElement;
+    private readonly eViewport: HTMLElement;
+    private readonly eContainer: HTMLElement;
 
     private readonly name: RowContainerName;
     private readonly type: RowContainerType;

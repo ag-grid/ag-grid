@@ -10,7 +10,6 @@ import {
     ISetFilterTreeListTooltipParams,
     ITooltipParams,
     PostConstruct,
-    RefSelector,
     SetFilterParams,
     UserComponentFactory,
     ValueFormatterParams,
@@ -72,23 +71,23 @@ export class SetFilterListItem<V> extends Component {
     private static GROUP_TEMPLATE = /* html */ `
         <div class="ag-set-filter-item" aria-hidden="true">
             <span class="ag-set-filter-group-icons">
-                <span class="ag-set-filter-group-closed-icon" ref="eGroupClosedIcon"></span>
-                <span class="ag-set-filter-group-opened-icon" ref="eGroupOpenedIcon"></span>
-                <span class="ag-set-filter-group-indeterminate-icon" ref="eGroupIndeterminateIcon"></span>
+                <span class="ag-set-filter-group-closed-icon" data-ref="eGroupClosedIcon"></span>
+                <span class="ag-set-filter-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
+                <span class="ag-set-filter-group-indeterminate-icon" data-ref="eGroupIndeterminateIcon"></span>
             </span>
-            <ag-checkbox ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
+            <ag-checkbox data-ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
         </div>`;
 
     private static TEMPLATE = /* html */ `
         <div class="ag-set-filter-item">
-            <ag-checkbox ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
+            <ag-checkbox data-ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
         </div>`;
 
-    @RefSelector('eCheckbox') private readonly eCheckbox: AgCheckbox;
+    private readonly eCheckbox: AgCheckbox;
 
-    @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
-    @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
-    @RefSelector('eGroupIndeterminateIcon') private eGroupIndeterminateIcon: HTMLElement;
+    private readonly eGroupOpenedIcon: HTMLElement;
+    private readonly eGroupClosedIcon: HTMLElement;
+    private readonly eGroupIndeterminateIcon: HTMLElement;
 
     private readonly focusWrapper: HTMLElement;
     private readonly value: V | null | (() => string);
@@ -161,7 +160,7 @@ export class SetFilterListItem<V> extends Component {
 
         this.refreshAriaChecked();
 
-        if (!!this.params.readOnly) {
+        if (this.params.readOnly) {
             // Don't add event listeners if we're read-only.
             return;
         }
@@ -237,7 +236,7 @@ export class SetFilterListItem<V> extends Component {
     }
 
     public toggleSelected(): void {
-        if (!!this.params.readOnly) {
+        if (this.params.readOnly) {
             return;
         }
 

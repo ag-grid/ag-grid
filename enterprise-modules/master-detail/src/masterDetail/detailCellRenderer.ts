@@ -7,7 +7,6 @@ import {
     IDetailCellRenderer,
     IDetailCellRendererParams,
     ModuleRegistry,
-    RefSelector,
     _cloneObject,
     _missing,
     _warnOnce,
@@ -18,10 +17,10 @@ import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
 
 export class DetailCellRenderer extends Component implements ICellRenderer {
     private static TEMPLATE /* html */ = `<div class="ag-details-row" role="gridcell">
-            <div ref="eDetailGrid" class="ag-details-grid" role="presentation"></div>
+            <div data-ref="eDetailGrid" class="ag-details-grid" role="presentation"></div>
         </div>`;
 
-    @RefSelector('eDetailGrid') private eDetailGrid: HTMLElement;
+    private eDetailGrid: HTMLElement;
 
     private detailApi: GridApi;
 
@@ -86,7 +85,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         if (this.eDetailGrid == null) {
             _warnOnce(
                 'Reference to eDetailGrid was missing from the details template. ' +
-                    'Please add ref="eDetailGrid" to the template.'
+                    'Please add data-ref="eDetailGrid" to the template.'
             );
         }
     }

@@ -1,7 +1,6 @@
 import {
     Autowired,
     Column,
-    ColumnModel,
     ColumnNameService,
     Component,
     Events,
@@ -11,7 +10,6 @@ import {
     PostConstruct,
     PreConstruct,
     ProvidedColumnGroup,
-    RefSelector,
     WithoutGridCommon,
     _clearElement,
     _createIconNoSpan,
@@ -24,12 +22,11 @@ export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp
 
 export class ToolPanelFilterGroupComp extends Component {
     private static TEMPLATE /* html */ = `<div class="ag-filter-toolpanel-group-wrapper">
-            <ag-group-component ref="filterGroupComp"></ag-group-component>
+            <ag-group-component data-ref="filterGroupComp"></ag-group-component>
         </div>`;
 
-    @RefSelector('filterGroupComp') private filterGroupComp: AgGroupComponent;
+    private filterGroupComp: AgGroupComponent;
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
 
     private readonly depth: number;

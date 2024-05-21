@@ -6,7 +6,6 @@ import {
     Component,
     KeyCode,
     PostConstruct,
-    RefSelector,
     _createIcon,
     _setAriaExpanded,
     _setDisplayed,
@@ -60,9 +59,9 @@ export class AgGroupComponent extends Component {
     private eToggle?: AgToggleButton;
     private eTitleBar?: DefaultTitleBar;
 
-    @RefSelector('eToolbar') private eToolbar: HTMLElement;
-    @RefSelector('cbGroupEnabled') private cbGroupEnabled: AgCheckbox;
-    @RefSelector('eContainer') private eContainer: HTMLElement;
+    private readonly eToolbar: HTMLElement;
+    private readonly cbGroupEnabled: AgCheckbox;
+    private readonly eContainer: HTMLElement;
 
     constructor(private readonly params: AgGroupComponentParams = {}) {
         super(AgGroupComponent.getTemplate(params), [AgCheckbox]);
@@ -101,10 +100,10 @@ export class AgGroupComponent extends Component {
 
         return /* html */ `
             <div class="ag-group ag-${cssIdentifier}-group" role="presentation">
-                <div ref="eToolbar" class="ag-group-toolbar ag-${cssIdentifier}-group-toolbar">
-                    <ag-checkbox ref="cbGroupEnabled"></ag-checkbox>
+                <div data-ref="eToolbar" class="ag-group-toolbar ag-${cssIdentifier}-group-toolbar">
+                    <ag-checkbox data-ref="cbGroupEnabled"></ag-checkbox>
                 </div>
-                <div ref="eContainer" class="ag-group-container ag-group-container-${direction} ag-${cssIdentifier}-group-container"></div>
+                <div data-ref="eContainer" class="ag-group-container ag-group-container-${direction} ag-${cssIdentifier}-group-container"></div>
             </div>
         `;
     }
@@ -356,9 +355,9 @@ class DefaultTitleBar extends Component {
     private suppressOpenCloseIcons: boolean = false;
     private suppressKeyboardNavigation: boolean = false;
 
-    @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
-    @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
-    @RefSelector('eTitle') private eTitle: HTMLElement;
+    private readonly eGroupOpenedIcon: HTMLElement;
+    private readonly eGroupClosedIcon: HTMLElement;
+    private readonly eTitle: HTMLElement;
 
     constructor(params: AgGroupComponentParams = {}) {
         super(DefaultTitleBar.getTemplate(params));
@@ -383,9 +382,9 @@ class DefaultTitleBar extends Component {
 
         return /* html */ `
             <div class="ag-group-title-bar ag-${cssIdentifier}-group-title-bar ag-unselectable" role="${role}">
-                <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupOpenedIcon" role="presentation"></span>
-                <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupClosedIcon" role="presentation"></span>
-                <span ref="eTitle" class="ag-group-title ag-${cssIdentifier}-group-title"></span>
+                <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" data-ref="eGroupOpenedIcon" role="presentation"></span>
+                <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" data-ref="eGroupClosedIcon" role="presentation"></span>
+                <span data-ref="eTitle" class="ag-group-title ag-${cssIdentifier}-group-title"></span>
             </div>
         `;
     }

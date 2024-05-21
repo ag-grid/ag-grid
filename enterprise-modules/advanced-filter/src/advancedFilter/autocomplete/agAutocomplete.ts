@@ -8,7 +8,6 @@ import {
     PopupPositionParams,
     PopupService,
     PostConstruct,
-    RefSelector,
     _makeNull,
 } from '@ag-grid-community/core';
 
@@ -44,7 +43,7 @@ export class AgAutocomplete extends Component {
 
     @Autowired('popupService') private popupService: PopupService;
 
-    @RefSelector('eAutocompleteInput') private eAutocompleteInput: AgInputTextField;
+    private eAutocompleteInput: AgInputTextField;
 
     private isListOpen = false;
     private autocompleteList: AgAutocompleteList | null;
@@ -62,7 +61,7 @@ export class AgAutocomplete extends Component {
         super(
             /* html */ `
             <div class="ag-autocomplete" role="presentation">
-                <ag-input-text-field ref="eAutocompleteInput"></ag-input-text-field>
+                <ag-input-text-field data-ref="eAutocompleteInput"></ag-input-text-field>
             </div>`,
             [AgInputTextField]
         );

@@ -56,7 +56,6 @@ export {
     Qualifier,
     PreDestroy,
 } from './context/context';
-export { RefSelector } from './widgets/componentAnnotations';
 
 // excel
 export {

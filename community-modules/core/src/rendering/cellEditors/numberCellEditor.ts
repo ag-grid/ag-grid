@@ -36,7 +36,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
     private params: INumberCellEditorParams;
 
     public getTemplate() {
-        return /* html */ `<ag-input-number-field class="ag-cell-editor" ref="eInput"></ag-input-number-field>`;
+        return /* html */ `<ag-input-number-field class="ag-cell-editor" data-ref="eInput"></ag-input-number-field>`;
     }
     public getAgComponents() {
         return [AgInputNumberField];

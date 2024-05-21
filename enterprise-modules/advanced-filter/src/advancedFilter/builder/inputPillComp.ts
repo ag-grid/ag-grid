@@ -8,7 +8,6 @@ import {
     FieldValueEvent,
     KeyCode,
     PostConstruct,
-    RefSelector,
     WithoutGridCommon,
     _exists,
     _setAriaDescribedBy,
@@ -20,8 +19,8 @@ import {
 import { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 
 export class InputPillComp extends Component {
-    @RefSelector('ePill') private ePill: HTMLElement;
-    @RefSelector('eLabel') private eLabel: HTMLElement;
+    private readonly ePill: HTMLElement;
+    private readonly eLabel: HTMLElement;
     @Autowired('advancedFilterExpressionService')
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
@@ -38,8 +37,8 @@ export class InputPillComp extends Component {
     ) {
         super(/* html */ `
             <div class="ag-advanced-filter-builder-pill-wrapper" role="presentation">
-                <div ref="ePill" class="ag-advanced-filter-builder-pill" role="button">
-                    <span ref="eLabel" class="ag-advanced-filter-builder-pill-display"></span>
+                <div data-ref="ePill" class="ag-advanced-filter-builder-pill" role="button">
+                    <span data-ref="eLabel" class="ag-advanced-filter-builder-pill-display"></span>
                 </div>
             </div>
         `);

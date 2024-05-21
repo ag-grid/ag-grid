@@ -1,12 +1,10 @@
 import {
     AgInputTextField,
     Autowired,
-    ColumnModel,
     ColumnNameService,
     Component,
     IFloatingFilter,
     IFloatingFilterParams,
-    RefSelector,
     SetFilterModel,
 } from '@ag-grid-community/core';
 
@@ -15,8 +13,7 @@ import { SetFilterModelFormatter } from './setFilterModelFormatter';
 import { SetValueModel } from './setValueModel';
 
 export class SetFloatingFilterComp<V = string> extends Component implements IFloatingFilter {
-    @RefSelector('eFloatingFilterText') private readonly eFloatingFilterText: AgInputTextField;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    private readonly eFloatingFilterText: AgInputTextField;
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
 
     private params: IFloatingFilterParams;
@@ -27,7 +24,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
         super(
             /* html */ `
             <div class="ag-floating-filter-input ag-set-floating-filter-input" role="presentation">
-                <ag-input-text-field ref="eFloatingFilterText"></ag-input-text-field>
+                <ag-input-text-field data-ref="eFloatingFilterText"></ag-input-text-field>
             </div>`,
             [AgInputTextField]
         );

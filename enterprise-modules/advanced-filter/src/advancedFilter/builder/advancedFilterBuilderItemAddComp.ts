@@ -1,11 +1,9 @@
 import {
     Autowired,
-    Beans,
     Component,
     Events,
     FieldPickerValueSelectedEvent,
     PostConstruct,
-    RefSelector,
     TooltipFeature,
     _setAriaLabel,
     _setAriaLevel,
@@ -22,10 +20,9 @@ import {
 } from './iAdvancedFilterBuilder';
 
 export class AdvancedFilterBuilderItemAddComp extends Component {
-    @Autowired('beans') private readonly beans: Beans;
     @Autowired('advancedFilterExpressionService')
     private readonly advancedFilterExpressionService: AdvancedFilterExpressionService;
-    @RefSelector('eItem') private readonly eItem: HTMLElement;
+    private readonly eItem: HTMLElement;
 
     constructor(
         private readonly item: AdvancedFilterBuilderItem,
@@ -33,7 +30,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
     ) {
         super(/* html */ `
             <div class="ag-advanced-filter-builder-item-wrapper" role="presentation">
-                <div ref="eItem" class="ag-advanced-filter-builder-item" role="presentation">
+                <div data-ref="eItem" class="ag-advanced-filter-builder-item" role="presentation">
                     <div class="ag-advanced-filter-builder-item-tree-lines" aria-hidden="true">
                         <div class="ag-advanced-filter-builder-item-tree-line-vertical-top ag-advanced-filter-builder-item-tree-line-horizontal"></div>
                     </div>

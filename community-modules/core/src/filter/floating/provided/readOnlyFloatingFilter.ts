@@ -1,18 +1,16 @@
-import { ColumnModel } from '../../../columns/columnModel';
 import { ColumnNameService } from '../../../columns/columnNameService';
 import { Autowired } from '../../../context/context';
 import { IFilter } from '../../../interfaces/iFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { Component } from '../../../widgets/component';
-import { RefSelector } from '../../../widgets/componentAnnotations';
 import { IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParent } from '../floatingFilter';
 
 // optional floating filter for user provided filters - instead of providing a floating filter,
 // they can provide a getModelAsString() method on the filter instead. this class just displays
 // the string returned from getModelAsString()
 export class ReadOnlyFloatingFilter extends Component implements IFloatingFilterComp<IFilter & IFloatingFilterParent> {
-    @RefSelector('eFloatingFilterText') private eFloatingFilterText: AgInputTextField;
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    private readonly eFloatingFilterText: AgInputTextField;
+
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
 
     private params: IFloatingFilterParams;
@@ -21,7 +19,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
         super(
             /* html */ `
             <div class="ag-floating-filter-input" role="presentation">
-                <ag-input-text-field ref="eFloatingFilterText"></ag-input-text-field>
+                <ag-input-text-field data-ref="eFloatingFilterText"></ag-input-text-field>
             </div>`,
             [AgInputTextField]
         );

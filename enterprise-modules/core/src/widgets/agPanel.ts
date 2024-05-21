@@ -3,7 +3,6 @@ import {
     PositionableFeature,
     PositionableOptions,
     PostConstruct,
-    RefSelector,
     ResizableStructure,
     _createIconNoSpan,
     _getInnerHeight,
@@ -29,10 +28,10 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
     protected positionableFeature: PositionableFeature;
     public close: () => void;
 
-    @RefSelector('eContentWrapper') protected readonly eContentWrapper: HTMLElement;
-    @RefSelector('eTitleBar') protected readonly eTitleBar: HTMLElement;
-    @RefSelector('eTitleBarButtons') protected readonly eTitleBarButtons: HTMLElement;
-    @RefSelector('eTitle') protected readonly eTitle: HTMLElement;
+    protected readonly eContentWrapper: HTMLElement;
+    protected readonly eTitleBar: HTMLElement;
+    protected readonly eTitleBarButtons: HTMLElement;
+    protected readonly eTitle: HTMLElement;
 
     constructor(protected readonly config: TConfig) {
         super(AgPanel.getTemplate(config));
@@ -41,11 +40,11 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
     private static getTemplate(config: PanelOptions) {
         const cssIdentifier = config.cssIdentifier || 'default';
         return /* html */ `<div class="ag-panel ag-${cssIdentifier}-panel" tabindex="-1">
-            <div ref="eTitleBar" class="ag-panel-title-bar ag-${cssIdentifier}-panel-title-bar ag-unselectable">
-                <span ref="eTitle" class="ag-panel-title-bar-title ag-${cssIdentifier}-panel-title-bar-title"></span>
-                <div ref="eTitleBarButtons" class="ag-panel-title-bar-buttons ag-${cssIdentifier}-panel-title-bar-buttons"></div>
+            <div data-ref="eTitleBar" class="ag-panel-title-bar ag-${cssIdentifier}-panel-title-bar ag-unselectable">
+                <span data-ref="eTitle" class="ag-panel-title-bar-title ag-${cssIdentifier}-panel-title-bar-title"></span>
+                <div data-ref="eTitleBarButtons" class="ag-panel-title-bar-buttons ag-${cssIdentifier}-panel-title-bar-buttons"></div>
             </div>
-            <div ref="eContentWrapper" class="ag-panel-content-wrapper ag-${cssIdentifier}-panel-content-wrapper"></div>
+            <div data-ref="eContentWrapper" class="ag-panel-content-wrapper ag-${cssIdentifier}-panel-content-wrapper"></div>
         </div>`;
     }
 

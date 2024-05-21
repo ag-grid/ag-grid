@@ -1,15 +1,15 @@
-import { AgComponentSelector, Component, RefSelector } from '@ag-grid-community/core';
+import { AgComponentSelector, Component } from '@ag-grid-community/core';
 
 export class AgNameValue extends Component {
     static readonly selector: AgComponentSelector = 'AG-NAME-VALUE';
 
     private static TEMPLATE /* html */ = `<div class="ag-status-name-value">
-            <span ref="eLabel"></span>:&nbsp;
-            <span ref="eValue" class="ag-status-name-value-value"></span>
+            <span data-ref="eLabel"></span>:&nbsp;
+            <span data-ref="eValue" class="ag-status-name-value-value"></span>
         </div>`;
 
-    @RefSelector('eLabel') private eLabel: HTMLElement;
-    @RefSelector('eValue') private eValue: HTMLElement;
+    private readonly eLabel: HTMLElement;
+    private readonly eValue: HTMLElement;
 
     constructor() {
         super(AgNameValue.TEMPLATE);

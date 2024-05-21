@@ -7,11 +7,10 @@ import { _getAriaCheckboxStateName } from '../utils/aria';
 import { _stopPropagationForAgGrid } from '../utils/event';
 import { AgCheckbox } from '../widgets/agCheckbox';
 import { Component } from '../widgets/component';
-import { RefSelector } from '../widgets/componentAnnotations';
 import { GroupCheckboxSelectionCallback } from './cellRenderers/groupCellRendererCtrl';
 
 export class CheckboxSelectionComponent extends Component {
-    @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
+    private readonly eCheckbox: AgCheckbox;
 
     private rowNode: RowNode;
     private column: Column | undefined;
@@ -25,7 +24,7 @@ export class CheckboxSelectionComponent extends Component {
         super(
             /* html*/ `
             <div class="ag-selection-checkbox" role="presentation">
-                <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
+                <ag-checkbox role="presentation" data-ref="eCheckbox"></ag-checkbox>
             </div>`,
             [AgCheckbox]
         );

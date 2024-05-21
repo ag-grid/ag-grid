@@ -1,7 +1,6 @@
 import { IComponent } from '../../interfaces/iComponent';
 import { _createIconNoSpan } from '../../utils/icon';
 import { Component } from '../../widgets/component';
-import { RefSelector } from '../../widgets/componentAnnotations';
 import { ICellRendererParams } from './iCellRenderer';
 
 export interface ILoadingCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<TData, TContext> {}
@@ -10,12 +9,12 @@ export interface ILoadingCellRendererComp extends ILoadingCellRenderer, ICompone
 
 export class LoadingCellRenderer extends Component implements ILoadingCellRendererComp {
     private static TEMPLATE = `<div class="ag-loading">
-            <span class="ag-loading-icon" ref="eLoadingIcon"></span>
-            <span class="ag-loading-text" ref="eLoadingText"></span>
+            <span class="ag-loading-icon" data-ref="eLoadingIcon"></span>
+            <span class="ag-loading-text" data-ref="eLoadingText"></span>
         </div>`;
 
-    @RefSelector('eLoadingIcon') private eLoadingIcon: HTMLElement;
-    @RefSelector('eLoadingText') private eLoadingText: HTMLElement;
+    private readonly eLoadingIcon: HTMLElement;
+    private readonly eLoadingText: HTMLElement;
 
     constructor() {
         super(LoadingCellRenderer.TEMPLATE);

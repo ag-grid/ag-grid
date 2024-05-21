@@ -10,8 +10,6 @@ import {
     FilterManager,
     IFloatingFilterComp,
     IFloatingFilterParams,
-    RefSelector,
-    UserCompDetails,
     _clearElement,
 } from '@ag-grid-community/core';
 
@@ -21,19 +19,18 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
 
-    @RefSelector('eFloatingFilter') private readonly eFloatingFilter: HTMLElement;
+    private readonly eFloatingFilter: HTMLElement;
 
     private params: IFloatingFilterParams<GroupFilter>;
     private eFloatingFilterText: AgInputTextField;
     private parentFilterInstance: GroupFilter;
     private underlyingFloatingFilter: IFloatingFilterComp | undefined;
     private showingUnderlyingFloatingFilter: boolean;
-    private compDetails: UserCompDetails;
     private haveAddedColumnListeners: boolean = false;
 
     constructor() {
         super(/* html */ `
-            <div ref="eFloatingFilter" class="ag-group-floating-filter ag-floating-filter-input" role="presentation"></div>
+            <div data-ref="eFloatingFilter" class="ag-group-floating-filter ag-floating-filter-input" role="presentation"></div>
         `);
     }
 
@@ -104,7 +101,6 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         if (column && !column.isVisible()) {
             const compDetails = this.filterManager.getFloatingFilterCompDetails(column, this.params.showParentFilter);
             if (compDetails) {
-                this.compDetails = compDetails;
                 if (!this.haveAddedColumnListeners) {
                     this.haveAddedColumnListeners = true;
                     this.addManagedListener(

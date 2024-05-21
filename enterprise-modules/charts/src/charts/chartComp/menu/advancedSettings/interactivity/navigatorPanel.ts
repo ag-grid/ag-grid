@@ -7,9 +7,9 @@ import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class NavigatorPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="navigatorGroup">
-                <ag-slider ref="navigatorHeightSlider"></ag-slider>
-                <ag-checkbox ref="navigatorMiniChartCheckbox"></ag-checkbox>
+            <ag-group-component data-ref="navigatorGroup">
+                <ag-slider data-ref="navigatorHeightSlider"></ag-slider>
+                <ag-checkbox data-ref="navigatorMiniChartCheckbox"></ag-checkbox>
             </ag-group-component>
         </div>`;
 

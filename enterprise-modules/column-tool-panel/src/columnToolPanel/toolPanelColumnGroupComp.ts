@@ -18,7 +18,6 @@ import {
     KeyCode,
     PostConstruct,
     ProvidedColumnGroup,
-    RefSelector,
     TouchListener,
     WithoutGridCommon,
     _createIcon,
@@ -35,24 +34,24 @@ import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
 export class ToolPanelColumnGroupComp extends Component {
     private static TEMPLATE /* html */ = `<div class="ag-column-select-column-group" aria-hidden="true">
-            <span class="ag-column-group-icons" ref="eColumnGroupIcons" >
-                <span class="ag-column-group-closed-icon" ref="eGroupClosedIcon"></span>
-                <span class="ag-column-group-opened-icon" ref="eGroupOpenedIcon"></span>
+            <span class="ag-column-group-icons" data-ref="eColumnGroupIcons" >
+                <span class="ag-column-group-closed-icon" data-ref="eGroupClosedIcon"></span>
+                <span class="ag-column-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
             </span>
-            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-select-column-label" ref="eLabel"></span>
+            <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
+            <span class="ag-column-select-column-label" data-ref="eLabel"></span>
         </div>`;
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
 
-    @RefSelector('cbSelect') private cbSelect: AgCheckbox;
-    @RefSelector('eLabel') private eLabel: HTMLElement;
+    private readonly cbSelect: AgCheckbox;
+    private readonly eLabel: HTMLElement;
 
-    @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: Element;
-    @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: Element;
-    @RefSelector('eColumnGroupIcons') private eColumnGroupIcons: Element;
+    private readonly eGroupOpenedIcon: Element;
+    private readonly eGroupClosedIcon: Element;
+    private readonly eColumnGroupIcons: Element;
 
     private eDragHandle: Element;
 

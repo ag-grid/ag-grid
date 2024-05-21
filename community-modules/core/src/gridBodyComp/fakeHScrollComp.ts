@@ -4,7 +4,6 @@ import { Events } from '../eventKeys';
 import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from '../utils/dom';
 import { AgComponentSelector } from '../widgets/component';
-import { RefSelector } from '../widgets/componentAnnotations';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { CenterWidthFeature } from './centerWidthFeature';
 
@@ -12,15 +11,15 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     static readonly selector: AgComponentSelector = 'AG-FAKE-HORIZONTAL-SCROLL';
 
     private static TEMPLATE /* html */ = `<div class="ag-body-horizontal-scroll" aria-hidden="true">
-            <div class="ag-horizontal-left-spacer" ref="eLeftSpacer"></div>
-            <div class="ag-body-horizontal-scroll-viewport" ref="eViewport">
-                <div class="ag-body-horizontal-scroll-container" ref="eContainer"></div>
+            <div class="ag-horizontal-left-spacer" data-ref="eLeftSpacer"></div>
+            <div class="ag-body-horizontal-scroll-viewport" data-ref="eViewport">
+                <div class="ag-body-horizontal-scroll-container" data-ref="eContainer"></div>
             </div>
-            <div class="ag-horizontal-right-spacer" ref="eRightSpacer"></div>
+            <div class="ag-horizontal-right-spacer" data-ref="eRightSpacer"></div>
         </div>`;
 
-    @RefSelector('eLeftSpacer') private eLeftSpacer: HTMLElement;
-    @RefSelector('eRightSpacer') private eRightSpacer: HTMLElement;
+    private readonly eLeftSpacer: HTMLElement;
+    private readonly eRightSpacer: HTMLElement;
 
     @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;

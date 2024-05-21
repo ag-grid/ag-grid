@@ -7,7 +7,6 @@ import {
     DragListenerParams,
     DragService,
     Events,
-    RefSelector,
     _exists,
     _setFixedWidth,
 } from '@ag-grid-community/core';
@@ -21,21 +20,21 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     static readonly selector: AgComponentSelector = 'AG-ANGLE-SELECT';
 
     private static TEMPLATE /* html */ = `<div class="ag-angle-select">
-            <div ref="eLabel"></div>
+            <div data-ref="eLabel"></div>
             <div class="ag-wrapper ag-angle-select-wrapper">
-                <div ref="eAngleSelectField" class="ag-angle-select-field">
-                    <div ref="eParentCircle" class="ag-angle-select-parent-circle">
-                        <div ref="eChildCircle" class="ag-angle-select-child-circle"></div>
+                <div data-ref="eAngleSelectField" class="ag-angle-select-field">
+                    <div data-ref="eParentCircle" class="ag-angle-select-parent-circle">
+                        <div data-ref="eChildCircle" class="ag-angle-select-child-circle"></div>
                     </div>
                 </div>
-                <ag-input-number-field ref="eAngleValue"></ag-input-number-field>
+                <ag-input-number-field data-ref="eAngleValue"></ag-input-number-field>
             </div>
         </div>`;
 
-    @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
-    @RefSelector('eParentCircle') private readonly eParentCircle: HTMLElement;
-    @RefSelector('eChildCircle') private readonly eChildCircle: HTMLElement;
-    @RefSelector('eAngleValue') private readonly eAngleValue: AgInputNumberField;
+    protected readonly eLabel: HTMLElement;
+    private readonly eParentCircle: HTMLElement;
+    private readonly eChildCircle: HTMLElement;
+    private readonly eAngleValue: AgInputNumberField;
 
     @Autowired('dragService') protected readonly dragService: DragService;
 

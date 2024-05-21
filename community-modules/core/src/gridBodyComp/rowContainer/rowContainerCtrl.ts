@@ -1,4 +1,3 @@
-import { ColumnModel } from '../../columns/columnModel';
 import { ColumnViewportService } from '../../columns/columnViewportService';
 import { BeanStub } from '../../context/beanStub';
 import { Autowired, PostConstruct } from '../../context/context';

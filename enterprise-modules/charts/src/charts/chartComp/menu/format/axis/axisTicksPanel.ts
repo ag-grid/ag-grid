@@ -8,10 +8,10 @@ import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class AxisTicksPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="axisTicksGroup">
-                <ag-color-picker ref="axisTicksColorPicker"></ag-color-picker>
-                <ag-slider ref="axisTicksWidthSlider"></ag-slider>
-                <ag-slider ref="axisTicksSizeSlider"></ag-slider>
+            <ag-group-component data-ref="axisTicksGroup">
+                <ag-color-picker data-ref="axisTicksColorPicker"></ag-color-picker>
+                <ag-slider data-ref="axisTicksWidthSlider"></ag-slider>
+                <ag-slider data-ref="axisTicksSizeSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 

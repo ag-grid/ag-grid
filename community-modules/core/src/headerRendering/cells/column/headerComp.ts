@@ -12,7 +12,6 @@ import { _exists } from '../../../utils/generic';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _escapeString } from '../../../utils/string';
 import { Component } from '../../../widgets/component';
-import { RefSelector } from '../../../widgets/componentAnnotations';
 import { LongTapEvent, TapEvent, TouchListener } from '../../../widgets/touchListener';
 import { SortIndicatorComp } from './sortIndicatorComp';
 
@@ -100,12 +99,12 @@ export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {}
 
 export class HeaderComp extends Component implements IHeaderComp {
     private static TEMPLATE /* html */ = `<div class="ag-cell-label-container" role="presentation">
-            <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
-            <span ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button" aria-hidden="true"></span>
-            <div ref="eLabel" class="ag-header-cell-label" role="presentation">
-                <span ref="eText" class="ag-header-cell-text"></span>
-                <span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
-                <ag-sort-indicator ref="eSortIndicator"></ag-sort-indicator>
+            <span data-ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
+            <span data-ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button" aria-hidden="true"></span>
+            <div data-ref="eLabel" class="ag-header-cell-label" role="presentation">
+                <span data-ref="eText" class="ag-header-cell-text"></span>
+                <span data-ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
+                <ag-sort-indicator data-ref="eSortIndicator"></ag-sort-indicator>
             </div>
         </div>`;
 
@@ -113,21 +112,21 @@ export class HeaderComp extends Component implements IHeaderComp {
     @Autowired('menuService') private menuService: MenuService;
     @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
 
-    @RefSelector('eFilter') private eFilter: HTMLElement;
-    @RefSelector('eFilterButton') private eFilterButton?: HTMLElement;
-    @RefSelector('eSortIndicator') private eSortIndicator: SortIndicatorComp;
-    @RefSelector('eMenu') private eMenu?: HTMLElement;
-    @RefSelector('eLabel') private eLabel: HTMLElement;
-    @RefSelector('eText') private eText: HTMLElement;
+    private eFilter: HTMLElement;
+    private eFilterButton?: HTMLElement;
+    private eSortIndicator: SortIndicatorComp;
+    private eMenu?: HTMLElement;
+    private eLabel: HTMLElement;
+    private eText: HTMLElement;
 
     /**
      * Selectors for custom headers templates
      */
-    @RefSelector('eSortOrder') private eSortOrder: HTMLElement;
-    @RefSelector('eSortAsc') private eSortAsc: HTMLElement;
-    @RefSelector('eSortDesc') private eSortDesc: HTMLElement;
-    @RefSelector('eSortMixed') private eSortMixed: HTMLElement;
-    @RefSelector('eSortNone') private eSortNone: HTMLElement;
+    private readonly eSortOrder: HTMLElement;
+    private readonly eSortAsc: HTMLElement;
+    private readonly eSortDesc: HTMLElement;
+    private readonly eSortMixed: HTMLElement;
+    private readonly eSortNone: HTMLElement;
 
     private params: IHeaderParams;
 

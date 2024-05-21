@@ -7,7 +7,6 @@ import {
     Component,
     ListOption,
     PostConstruct,
-    RefSelector,
     _removeFromParent,
 } from '@ag-grid-community/core';
 import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
@@ -32,11 +31,11 @@ import { WhiskersPanel } from './whiskersPanel';
 
 export class SeriesPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="seriesGroup">
+            <ag-group-component data-ref="seriesGroup">
             </ag-group-component>
         </div>`;
 
-    @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
+    private readonly seriesGroup: AgGroupComponent;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 

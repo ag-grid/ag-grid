@@ -5,7 +5,6 @@ import {
     FilterManager,
     ITooltipParams,
     PostConstruct,
-    RefSelector,
     WithoutGridCommon,
     _createIconNoSpan,
     _makeNull,
@@ -29,11 +28,11 @@ import { AutocompleteUpdate } from './filterExpressionUtils';
 export class AdvancedFilterComp extends Component {
     static readonly selector: AgComponentSelector = 'AG-ADVANCED-FILTER';
 
-    @RefSelector('eAutocomplete') private eAutocomplete: AgAutocomplete;
-    @RefSelector('eApplyFilterButton') private eApplyFilterButton: HTMLElement;
-    @RefSelector('eBuilderFilterButton') private eBuilderFilterButton: HTMLElement;
-    @RefSelector('eBuilderFilterButtonIcon') private eBuilderFilterButtonIcon: HTMLElement;
-    @RefSelector('eBuilderFilterButtonLabel') private eBuilderFilterButtonLabel: HTMLElement;
+    private readonly eAutocomplete: AgAutocomplete;
+    private readonly eApplyFilterButton: HTMLElement;
+    private readonly eBuilderFilterButton: HTMLElement;
+    private readonly eBuilderFilterButtonIcon: HTMLElement;
+    private readonly eBuilderFilterButtonLabel: HTMLElement;
     @Autowired('advancedFilterService') private advancedFilterService: AdvancedFilterService;
     @Autowired('advancedFilterExpressionService')
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
@@ -47,11 +46,11 @@ export class AdvancedFilterComp extends Component {
         super(
             /* html */ `
             <div class="ag-advanced-filter" role="presentation" tabindex="-1">
-                <ag-autocomplete ref="eAutocomplete"></ag-autocomplete>
-                <button class="ag-button ag-standard-button ag-advanced-filter-apply-button" ref="eApplyFilterButton"></button>
-                <button class="ag-advanced-filter-builder-button" ref="eBuilderFilterButton">
-                    <span ref="eBuilderFilterButtonIcon" aria-hidden="true"></span>
-                    <span class="ag-advanced-filter-builder-button-label" ref="eBuilderFilterButtonLabel"></span>
+                <ag-autocomplete data-ref="autocomplete"></ag-autocomplete>
+                <button class="ag-button ag-standard-button ag-advanced-filter-apply-button" data-ref="eApplyFilterButton"></button>
+                <button class="ag-advanced-filter-builder-button" data-ref="eBuilderFilterButton">
+                    <span data-ref="eBuilderFilterButtonIcon" aria-hidden="true"></span>
+                    <span class="ag-advanced-filter-builder-button-label" data-ref="eBuilderFilterButtonLabel"></span>
                 </button>
             </div>`,
             [AgAutocomplete]

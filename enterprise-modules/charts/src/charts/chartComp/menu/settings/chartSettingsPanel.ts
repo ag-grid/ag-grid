@@ -1,7 +1,6 @@
 import {
     Component,
     PostConstruct,
-    RefSelector,
     _clearElement,
     _createIconNoSpan,
     _getAbsoluteWidth,
@@ -19,23 +18,23 @@ type AnimationDirection = 'left' | 'right';
 
 export class ChartSettingsPanel extends Component {
     public static TEMPLATE /* html */ = `<div class="ag-chart-settings-wrapper">
-            <div ref="eMiniChartsContainer" class="ag-chart-settings-mini-charts-container ag-scrollable-container"></div>
-            <div ref="eNavBar" class="ag-chart-settings-nav-bar">
-                <div ref="ePrevBtn" class="ag-chart-settings-prev">
+            <div data-ref="eMiniChartsContainer" class="ag-chart-settings-mini-charts-container ag-scrollable-container"></div>
+            <div data-ref="eNavBar" class="ag-chart-settings-nav-bar">
+                <div data-ref="ePrevBtn" class="ag-chart-settings-prev">
                     <button type="button" class="ag-button ag-chart-settings-prev-button"></button>
                 </div>
-                <div ref="eCardSelector" class="ag-chart-settings-card-selector"></div>
-                <div ref="eNextBtn" class="ag-chart-settings-next">
+                <div data-ref="eCardSelector" class="ag-chart-settings-card-selector"></div>
+                <div data-ref="eNextBtn" class="ag-chart-settings-next">
                     <button type="button" class="ag-button ag-chart-settings-next-button"></button>
                 </div>
             </div>
         </div>`;
 
-    @RefSelector('eMiniChartsContainer') private readonly eMiniChartsContainer: HTMLElement;
-    @RefSelector('eNavBar') private readonly eNavBar: HTMLElement;
-    @RefSelector('eCardSelector') private readonly eCardSelector: HTMLElement;
-    @RefSelector('ePrevBtn') private readonly ePrevBtn: HTMLElement;
-    @RefSelector('eNextBtn') private readonly eNextBtn: HTMLElement;
+    private readonly eMiniChartsContainer: HTMLElement;
+    private readonly eNavBar: HTMLElement;
+    private readonly eCardSelector: HTMLElement;
+    private readonly ePrevBtn: HTMLElement;
+    private readonly eNextBtn: HTMLElement;
 
     private miniChartsContainers: MiniChartsContainer[] = [];
     private cardItems: HTMLElement[] = [];

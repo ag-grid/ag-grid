@@ -8,7 +8,6 @@ import {
     Events,
     PostConstruct,
     PreConstruct,
-    RefSelector,
     _createIconNoSpan,
     _debounce,
     _setDisplayed,
@@ -27,8 +26,8 @@ export class AgFiltersToolPanelHeader extends Component {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
 
-    @RefSelector('eExpand') private eExpand: Element;
-    @RefSelector('eFilterTextField') private eFilterTextField: AgInputTextField;
+    private readonly eExpand: Element;
+    private readonly eFilterTextField: AgInputTextField;
 
     private eExpandChecked: Element;
     private eExpandUnchecked: Element;
@@ -45,8 +44,8 @@ export class AgFiltersToolPanelHeader extends Component {
         this.setTemplate(
             /* html */
             `<div class="ag-filter-toolpanel-search" role="presentation">
-                <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
-                <ag-input-text-field ref="eFilterTextField" class="ag-filter-toolpanel-search-input"></ag-input-text-field>
+                <div data-ref="eExpand" class="ag-filter-toolpanel-expand"></div>
+                <ag-input-text-field data-ref="eFilterTextField" class="ag-filter-toolpanel-search-input"></ag-input-text-field>
             </div>`,
             [AgInputTextField]
         );

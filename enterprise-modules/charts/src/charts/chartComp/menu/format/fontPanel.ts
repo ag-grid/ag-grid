@@ -4,7 +4,6 @@ import {
     Autowired,
     Component,
     PostConstruct,
-    RefSelector,
     _capitalise,
     _includes,
     _removeFromParent,
@@ -35,17 +34,17 @@ export interface FontPanelParams {
 
 export class FontPanel extends Component {
     public static TEMPLATE /* html */ = `<div class="ag-font-panel">
-            <ag-group-component ref="fontGroup">
-                <ag-select ref="familySelect"></ag-select>
-                <ag-select ref="weightStyleSelect"></ag-select>
+            <ag-group-component data-ref="fontGroup">
+                <ag-select data-ref="familySelect"></ag-select>
+                <ag-select data-ref="weightStyleSelect"></ag-select>
                 <div class="ag-charts-font-size-color">
-                    <ag-select ref="sizeSelect"></ag-select>
-                    <ag-color-picker ref="colorPicker"></ag-color-picker>
+                    <ag-select data-ref="sizeSelect"></ag-select>
+                    <ag-color-picker data-ref="colorPicker"></ag-color-picker>
                 </div>
             </ag-group-component>
         </div>`;
 
-    @RefSelector('fontGroup') private fontGroup: AgGroupComponent;
+    private readonly fontGroup: AgGroupComponent;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 

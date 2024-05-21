@@ -23,7 +23,7 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
     private params: IDateCellEditorParams;
 
     public getTemplate() {
-        return /* html */ `<ag-input-date-field class="ag-cell-editor" ref="eInput"></ag-input-date-field>`;
+        return /* html */ `<ag-input-date-field class="ag-cell-editor" data-ref="eInput"></ag-input-date-field>`;
     }
     public getAgComponents() {
         return [AgInputDateField];

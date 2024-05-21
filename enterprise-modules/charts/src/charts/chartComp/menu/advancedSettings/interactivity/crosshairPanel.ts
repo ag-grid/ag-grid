@@ -7,10 +7,10 @@ import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class CrosshairPanel extends Component {
     public static TEMPLATE = /* html */ `<div>
-            <ag-group-component ref="crosshairGroup">
-                <ag-checkbox ref="crosshairLabelCheckbox"></ag-checkbox>
-                <ag-checkbox ref="crosshairSnapCheckbox"></ag-checkbox>
-                <ag-color-picker ref="crosshairStrokeColorPicker"></ag-color-picker>
+            <ag-group-component data-ref="crosshairGroup">
+                <ag-checkbox data-ref="crosshairLabelCheckbox"></ag-checkbox>
+                <ag-checkbox data-ref="crosshairSnapCheckbox"></ag-checkbox>
+                <ag-color-picker data-ref="crosshairStrokeColorPicker"></ag-color-picker>
             </ag-group-component>
         </div>`;
 

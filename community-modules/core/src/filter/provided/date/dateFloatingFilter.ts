@@ -7,7 +7,6 @@ import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import { _setDisplayed } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { RefSelector } from '../../../widgets/componentAnnotations';
 import { IFloatingFilterParams } from '../../floating/floatingFilter';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import { ProvidedFilter } from '../providedFilter';
@@ -18,8 +17,8 @@ import { DateFilter, DateFilterModel, DateFilterModelFormatter, DateFilterParams
 export class DateFloatingFilter extends SimpleFloatingFilter {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
-    @RefSelector('eReadOnlyText') private readonly eReadOnlyText: AgInputTextField;
-    @RefSelector('eDateWrapper') private readonly eDateWrapper: HTMLInputElement;
+    private readonly eReadOnlyText: AgInputTextField;
+    private readonly eDateWrapper: HTMLInputElement;
 
     private dateComp: DateCompWrapper;
     private params: IFloatingFilterParams<DateFilter>;
@@ -30,8 +29,8 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         super(
             /* html */ `
             <div class="ag-floating-filter-input" role="presentation">
-                <ag-input-text-field ref="eReadOnlyText"></ag-input-text-field>
-                <div ref="eDateWrapper" style="display: flex;"></div>
+                <ag-input-text-field data-ref="eReadOnlyText"></ag-input-text-field>
+                <div data-ref="eDateWrapper" style="display: flex;"></div>
             </div>`,
             [AgInputTextField]
         );

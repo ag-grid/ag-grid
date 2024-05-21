@@ -23,7 +23,6 @@ import {
     PopupEventParams,
     PopupService,
     PostConstruct,
-    RefSelector,
     TabbedItem,
     TabbedLayout,
     VisibleColsService,
@@ -113,8 +112,8 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         const restrictToTabs = defaultTab ? [defaultTab] : undefined;
 
         const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
-        let nudgeX = (isLegacyMenuEnabled ? 9 : 4) * multiplier;
-        let nudgeY = isLegacyMenuEnabled ? -23 : 4;
+        const nudgeX = (isLegacyMenuEnabled ? 9 : 4) * multiplier;
+        const nudgeY = isLegacyMenuEnabled ? -23 : 4;
 
         this.showMenu(
             column,
@@ -187,7 +186,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 menu.afterGuiAttached(Object.assign({}, { container: containerType }, params)),
             // if defaultTab is not present, positionCallback will be called
             // after `showTabBasedOnPreviousSelection` is called.
-            positionCallback: !!defaultTab ? () => positionCallback(menu) : undefined,
+            positionCallback: defaultTab ? () => positionCallback(menu) : undefined,
             ariaLabel: translate('ariaLabelColumnMenu', 'Column Menu'),
         });
 
@@ -317,9 +316,9 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
 class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
     public static EVENT_TAB_SELECTED = 'tabSelected';
-    public static TAB_FILTER: 'filterMenuTab' = 'filterMenuTab';
-    public static TAB_GENERAL: 'generalMenuTab' = 'generalMenuTab';
-    public static TAB_COLUMNS: 'columnsMenuTab' = 'columnsMenuTab';
+    public static TAB_FILTER = 'filterMenuTab' as const;
+    public static TAB_GENERAL = 'generalMenuTab' as const;
+    public static TAB_COLUMNS = 'columnsMenuTab' as const;
     public static TABS_DEFAULT: ColumnMenuTab[] = [
         TabbedColumnMenu.TAB_GENERAL,
         TabbedColumnMenu.TAB_FILTER,
@@ -557,7 +556,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
     @Autowired('menuUtils') private readonly menuUtils: MenuUtils;
     @Autowired('focusService') private readonly focusService: FocusService;
 
-    @RefSelector('eColumnMenu') private readonly eColumnMenu: HTMLElement;
+    private readonly eColumnMenu: HTMLElement;
 
     private hidePopupFunc: (popupParams?: PopupEventParams) => void;
     private mainMenuList: AgMenuList;
@@ -568,7 +567,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
         private readonly sourceElement?: HTMLElement
     ) {
         super(/* html */ `
-            <div ref="eColumnMenu" role="presentation" class="ag-menu ag-column-menu"></div>
+            <div data-ref="eColumnMenu" role="presentation" class="ag-menu ag-column-menu"></div>
         `);
     }
 
