@@ -452,6 +452,7 @@ export type AgComponentSelector =
     | 'AG-PRIMARY-COLS-HEADER'
     | 'AG-PRIMARY-COLS-LIST'
     | 'AG-PRIMARY-COLS'
+    | 'AG-RADIO-BUTTON'
     | 'AG-RANGE-HANDLE'
     | 'AG-ROW-CONTAINER'
     | 'AG-SELECT'
@@ -460,4 +461,5 @@ export type AgComponentSelector =
     | 'AG-SLIDER'
     | 'AG-SORT-INDICATOR'
     | 'AG-STATUS-BAR'
+    | 'AG-TOGGLE-BUTTON'
     | 'AG-WATERMARK';
