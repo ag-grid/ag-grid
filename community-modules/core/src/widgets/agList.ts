@@ -159,8 +159,11 @@ export class AgList<TValue = string> extends Component {
         this.itemEls.push(itemEl);
 
         this.addManagedListener(itemEl, 'mousemove', () => this.highlightItem(itemEl));
-        this.addManagedListener(itemEl, 'mousedown', (e) => {
+        this.addManagedListener(itemEl, 'mousedown', (e: MouseEvent) => {
             e.preventDefault();
+            // `setValue` will already close the list popup, without stopPropagation
+            // the mousedown event will close popups that own AgSelect
+            e.stopPropagation();
             this.setValue(value);
         });
         this.createManagedBean(
