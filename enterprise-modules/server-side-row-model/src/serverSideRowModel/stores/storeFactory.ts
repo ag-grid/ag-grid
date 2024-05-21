@@ -1,5 +1,6 @@
 import {
     Autowired,
+    BaseBean,
     Bean,
     ColumnModel,
     FuncColsService,
@@ -17,7 +18,7 @@ import { FullStore } from './fullStore';
 import { LazyStore } from './lazy/lazyStore';
 
 @Bean('ssrmStoreFactory')
-export class StoreFactory {
+export class StoreFactory extends BaseBean {
     @Autowired('gridOptionsService') private gos: GridOptionsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('funcColsService') private funcColsService: FuncColsService;

@@ -1,3 +1,4 @@
+import { BaseBean } from '../context/bean';
 import { Bean } from '../context/context';
 import { ColDef, ColGroupDef } from '../entities/colDef';
 import { Column } from '../entities/column';
@@ -5,7 +6,7 @@ import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import { _deepCloneDefinition } from '../utils/object';
 
 @Bean('columnDefFactory')
-export class ColumnDefFactory {
+export class ColumnDefFactory extends BaseBean {
     public buildColumnDefs(
         cols: Column[],
         rowGroupColumns: Column[],

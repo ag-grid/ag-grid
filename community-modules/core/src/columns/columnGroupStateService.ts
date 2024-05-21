@@ -1,3 +1,4 @@
+import { BaseBean } from '../context/bean';
 import { Autowired, Bean, Qualifier } from '../context/context';
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import { ColumnEventType } from '../events';
@@ -9,7 +10,7 @@ import { ColumnModel } from './columnModel';
 import { VisibleColsService } from './visibleColsService';
 
 @Bean('columnGroupStateService')
-export class ColumnGroupStateService {
+export class ColumnGroupStateService extends BaseBean {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;

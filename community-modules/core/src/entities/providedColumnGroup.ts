@@ -1,3 +1,4 @@
+import { BaseBean } from '../context/bean';
 import { EventService } from '../eventService';
 import { AgEvent, AgEventListener } from '../events';
 import { IEventEmitter } from '../interfaces/iEventEmitter';
@@ -6,7 +7,7 @@ import { ColGroupDef } from './colDef';
 import { Column, ColumnInstanceId, getNextColInstanceId } from './column';
 import { ColumnGroupShowType } from './columnGroup';
 
-export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
+export class ProvidedColumnGroup extends BaseBean implements IProvidedColumn, IEventEmitter {
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
     public static EVENT_EXPANDABLE_CHANGED = 'expandableChanged';
 
@@ -31,6 +32,7 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
     private expandableListenerRemoveCallback: (() => void) | null = null;
 
     constructor(colGroupDef: ColGroupDef | null, groupId: string, padding: boolean, level: number) {
+        super();
         this.colGroupDef = colGroupDef;
         this.groupId = groupId;
         this.expanded = !!colGroupDef && !!colGroupDef.openByDefault;
@@ -38,10 +40,11 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
         this.level = level;
     }
 
-    private destroy() {
+    protected override destroy() {
         if (this.expandableListenerRemoveCallback) {
             this.reset(null, undefined);
         }
+        super.destroy();
     }
 
     public reset(colGroupDef: ColGroupDef | null, level: number | undefined): void {

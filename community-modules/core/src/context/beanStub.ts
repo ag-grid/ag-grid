@@ -14,9 +14,10 @@ import { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import { LocaleService } from '../localeService';
 import { _addSafePassiveEventListener } from '../utils/event';
 import { Component } from '../widgets/component';
+import { BaseBean } from './bean';
 import { Autowired, Context } from './context';
 
-export class BeanStub implements IEventEmitter {
+export abstract class BeanStub extends BaseBean implements IEventEmitter {
     public static EVENT_DESTROYED = 'destroyed';
 
     protected localEventService: EventService;
@@ -63,15 +64,8 @@ export class BeanStub implements IEventEmitter {
         return this.context;
     }
 
-    protected preConstruct(): void {
-        // used by children
-    }
-
-    protected postConstruct(): void {
-        // used by children
-    }
-
-    protected destroy(): void {
+    protected override destroy(): void {
+        super.destroy();
         for (let i = 0; i < this.destroyFunctions.length; i++) {
             this.destroyFunctions[i]();
         }

@@ -1,3 +1,4 @@
+import { BaseBean } from '../context/bean';
 import { Autowired } from '../context/context';
 import { EventService } from '../eventService';
 import { AgEvent, AgEventListener } from '../events';
@@ -11,7 +12,7 @@ import { ProvidedColumnGroup } from './providedColumnGroup';
 
 export type ColumnGroupShowType = 'open' | 'closed';
 
-export class ColumnGroup implements IHeaderColumn {
+export class ColumnGroup extends BaseBean implements IHeaderColumn {
     public static EVENT_LEFT_CHANGED = 'leftChanged';
     public static EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
 
@@ -40,6 +41,7 @@ export class ColumnGroup implements IHeaderColumn {
     private parent: ColumnGroup | null;
 
     constructor(providedColumnGroup: ProvidedColumnGroup, groupId: string, partId: number, pinned: ColumnPinnedType) {
+        super();
         this.groupId = groupId;
         this.partId = partId;
         this.providedColumnGroup = providedColumnGroup;

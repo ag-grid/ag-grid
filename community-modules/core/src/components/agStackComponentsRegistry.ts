@@ -1,9 +1,10 @@
+import { BaseBean } from '../context/bean';
 import { Bean } from '../context/context';
 import { _warnOnce } from '../utils/function';
 import { AgComponentSelector, ComponentClass } from '../widgets/component';
 
 @Bean('agStackComponentsRegistry')
-export class AgStackComponentsRegistry {
+export class AgStackComponentsRegistry extends BaseBean {
     private componentToNodeName: Map<string, ComponentClass> = new Map();
 
     public ensureRegistered(comps: ComponentClass[]): void {

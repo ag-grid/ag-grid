@@ -258,7 +258,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             tooltipCtrl.getColDef = () => colGroupDef;
         }
 
-        this.createBean(new TooltipFeature(tooltipCtrl));
+        this.createManagedBean(new TooltipFeature(tooltipCtrl));
     }
 
     private setupExpandable(): void {

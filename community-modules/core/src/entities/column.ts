@@ -1,4 +1,5 @@
 import { ColumnState } from '../columns/columnApplyStateService';
+import { BaseBean } from '../context/bean';
 import { Autowired } from '../context/context';
 import { Environment } from '../environment';
 import { EventService } from '../eventService';
@@ -64,7 +65,7 @@ export function getNextColInstanceId(): ColumnInstanceId {
 // appear as a child of either the original tree or the displayed tree. However the relevant group classes
 // for each type only implements one, as each group can only appear in it's associated tree (eg ProvidedColumnGroup
 // can only appear in OriginalColumn tree).
-export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedColumn, IEventEmitter {
+export class Column<TValue = any> extends BaseBean implements IHeaderColumn<TValue>, IProvidedColumn, IEventEmitter {
     public static DEFAULT_MIN_WIDTH = 20;
 
     // + renderedHeaderCell - for making header cell transparent when moving
@@ -163,6 +164,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         colId: string,
         primary: boolean
     ) {
+        super();
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.colId = colId;
@@ -273,7 +275,8 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     // this is done after constructor as it uses gridOptionsService
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         this.initMinAndMaxWidths();
 
         this.resetActualWidth('gridInitializing');

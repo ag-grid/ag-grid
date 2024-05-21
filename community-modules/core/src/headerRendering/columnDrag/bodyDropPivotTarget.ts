@@ -1,11 +1,12 @@
 import { FuncColsService } from '../../columns/funcColsService';
+import { BaseBean } from '../../context/bean';
 import { Autowired } from '../../context/context';
 import { DragAndDropService, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import { Column, ColumnPinnedType } from '../../entities/column';
 import { GridOptionsService } from '../../gridOptionsService';
 import { DropListener } from './bodyDropTarget';
 
-export class BodyDropPivotTarget implements DropListener {
+export class BodyDropPivotTarget extends BaseBean implements DropListener {
     @Autowired('gridOptionsService') private gos: GridOptionsService;
     @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
 
@@ -16,6 +17,7 @@ export class BodyDropPivotTarget implements DropListener {
     private pinned: ColumnPinnedType;
 
     constructor(pinned: ColumnPinnedType) {
+        super();
         this.pinned = pinned;
     }
 

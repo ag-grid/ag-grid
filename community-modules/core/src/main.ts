@@ -45,6 +45,7 @@ export { ComponentType } from './components/framework/componentTypes';
 
 // context
 export { BeanStub } from './context/beanStub';
+export { BaseBean } from './context/bean';
 export { Context, ComponentMeta, Autowired, Optional, Bean, Qualifier } from './context/context';
 export { RefSelector } from './widgets/componentAnnotations';
 

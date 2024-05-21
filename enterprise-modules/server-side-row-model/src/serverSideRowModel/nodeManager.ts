@@ -1,7 +1,7 @@
-import { Bean, BeanStub, RowNode } from '@ag-grid-community/core';
+import { BaseBean, Bean, RowNode } from '@ag-grid-community/core';
 
 @Bean('ssrmNodeManager')
-export class NodeManager extends BeanStub {
+export class NodeManager extends BaseBean {
     private rowNodes: { [id: string]: RowNode | undefined } = {};
 
     public addRowNode(rowNode: RowNode): void {

@@ -11,6 +11,7 @@ import { ColumnViewportService } from './columns/columnViewportService';
 import { FuncColsService } from './columns/funcColsService';
 import { PivotResultColsService } from './columns/pivotResultColsService';
 import { VisibleColsService } from './columns/visibleColsService';
+import { BaseBean } from './context/bean';
 import { Autowired, Bean, Context, Optional } from './context/context';
 import { CtrlsService } from './ctrlsService';
 import { DragAndDropService } from './dragAndDrop/dragAndDropService';
@@ -157,7 +158,7 @@ export function unwrapUserComp<T>(comp: T): T {
 }
 
 @Bean('gridApi')
-export class GridApi<TData = any> {
+export class GridApi<TData = any> extends BaseBean {
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('navigationService') private readonly navigationService: NavigationService;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
@@ -218,7 +219,8 @@ export class GridApi<TData = any> {
 
     private destroyCalled = false;
 
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         switch (this.rowModel.getType()) {
             case 'clientSide':
                 this.clientSideRowModel = this.rowModel as IClientSideRowModel;

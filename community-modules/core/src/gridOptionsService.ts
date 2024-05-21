@@ -1,4 +1,5 @@
 import { ComponentUtil } from './components/componentUtil';
+import { BaseBean } from './context/bean';
 import { Autowired, Bean } from './context/context';
 import { DomLayoutType, GridOptions } from './entities/gridOptions';
 import { Environment } from './environment';
@@ -73,7 +74,7 @@ export type PropertyChangedListener = (event: PropertyChangedEvent) => void;
 export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: PropertyValueChangedEvent<K>) => void;
 
 @Bean('gridOptionsService')
-export class GridOptionsService {
+export class GridOptionsService extends BaseBean {
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('eventService') private readonly eventService: EventService;
     @Autowired('environment') private readonly environment: Environment;
@@ -95,7 +96,8 @@ export class GridOptionsService {
 
     private propertyEventService: EventService = new EventService();
 
-    private postConstruct(): void {
+    protected override postConstruct(): void {
+        super.postConstruct();
         const async = !this.get('suppressAsyncEvents');
         this.eventService.addGlobalListener(this.globalEventHandlerFactory().bind(this), async);
         this.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
@@ -106,7 +108,8 @@ export class GridOptionsService {
         this.getScrollbarWidth();
     }
 
-    private destroy(): void {
+    protected override destroy(): void {
+        super.destroy();
         this.destroyed = true;
     }
 

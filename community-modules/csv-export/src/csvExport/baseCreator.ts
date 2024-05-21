@@ -1,8 +1,8 @@
-import { BeanStub, ExportParams } from '@ag-grid-community/core';
+import { BaseBean, ExportParams } from '@ag-grid-community/core';
 
 import { BaseCreatorBeans, GridSerializingSession } from './interfaces';
 
-export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P extends ExportParams<T>> extends BeanStub {
+export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P extends ExportParams<T>> extends BaseBean {
     private beans: BaseCreatorBeans;
 
     protected setBeans(beans: BaseCreatorBeans) {

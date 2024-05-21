@@ -1,3 +1,4 @@
+import { BaseBean } from '../context/bean';
 import { Autowired, Bean } from '../context/context';
 import { ColDef } from '../entities/colDef';
 import { Column } from '../entities/column';
@@ -11,7 +12,7 @@ import { depthFirstOriginalTreeSearch } from './columnFactory';
 import { ColKey, ColumnModel } from './columnModel';
 
 @Bean('columnMoveService')
-export class ColumnMoveService {
+export class ColumnMoveService extends BaseBean {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;

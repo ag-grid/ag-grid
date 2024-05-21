@@ -1,3 +1,4 @@
+import { BaseBean } from './context/bean';
 import { Bean, Qualifier } from './context/context';
 import { AgEvent, AgEventListener, AgGlobalEventListener, AgGridEvent } from './events';
 import { GridOptionsService } from './gridOptionsService';
@@ -5,7 +6,7 @@ import { IEventEmitter } from './interfaces/iEventEmitter';
 import { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 
 @Bean('eventService')
-export class EventService implements IEventEmitter {
+export class EventService extends BaseBean implements IEventEmitter {
     private allSyncListeners = new Map<string, Set<AgEventListener>>();
     private allAsyncListeners = new Map<string, Set<AgEventListener>>();
 
