@@ -91,7 +91,7 @@ export class GridComp extends TabGuardComp {
             /* html */
             `<div class="ag-root-wrapper" role="presentation">
                 ${dropZones}
-                <div class="ag-root-wrapper-body" data-ref="eRootWrapperBody" role="presentation">
+                <div class="ag-root-wrapper-body" data-ref="rootWrapperBody" role="presentation">
                     <ag-grid-body data-ref="gridBody"></ag-grid-body>
                     ${sideBar}
                 </div>
