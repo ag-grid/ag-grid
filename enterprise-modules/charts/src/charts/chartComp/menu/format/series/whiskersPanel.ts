@@ -1,5 +1,8 @@
-import { AgGroupComponentParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
+import { AgColorPicker } from '../../../../../widgets/agColorPicker';
+import { AgSlider } from '../../../../../widgets/agSlider';
 import { ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -30,7 +33,7 @@ export class WhiskersPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(WhiskersPanel.TEMPLATE, {
+        this.setTemplate(WhiskersPanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
             whiskersGroup: whiskersGroupParams,
             whiskerColorPicker: this.chartMenuUtils.getDefaultColorPickerParams('whisker.stroke'),
             whiskerThicknessSlider: this.chartMenuUtils.getDefaultSliderParams(

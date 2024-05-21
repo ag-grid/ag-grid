@@ -1,6 +1,5 @@
 import {
     ColumnModel,
-    FuncColsService,
     GridOptionsService,
     IClientSideRowModel,
     RowNode,

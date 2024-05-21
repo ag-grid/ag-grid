@@ -1,6 +1,4 @@
-import { _exists } from '../utils/generic';
-import { _escapeString } from '../utils/string';
-import { Component } from './component';
+import { Component, _escapeString, _exists } from '@ag-grid-community/core';
 
 export class AgAutocompleteRow extends Component {
     private value: string;

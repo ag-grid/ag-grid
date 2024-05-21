@@ -1,5 +1,6 @@
 import {
     AbstractColDef,
+    AgComponentSelector,
     Autowired,
     Column,
     ColumnModel,
@@ -17,12 +18,14 @@ import {
 } from '@ag-grid-community/core';
 import { ToolPanelColDefService } from '@ag-grid-enterprise/side-bar';
 
+import { EXPAND_STATE } from './agFiltersToolPanelHeader';
 import { ToolPanelFiltersCompParams } from './filtersToolPanel';
-import { EXPAND_STATE } from './filtersToolPanelHeaderPanel';
 import { ToolPanelFilterComp } from './toolPanelFilterComp';
 import { ToolPanelFilterGroupComp, ToolPanelFilterItem } from './toolPanelFilterGroupComp';
 
-export class FiltersToolPanelListPanel extends Component {
+export class AgFiltersToolPanelList extends Component {
+    static readonly selector: AgComponentSelector = 'AG-FILTERS-TOOL-PANEL-LIST';
+
     private static TEMPLATE = /* html */ `<div class="ag-filter-list-panel"></div>`;
 
     @Autowired('toolPanelColDefService') private toolPanelColDefService: ToolPanelColDefService;
@@ -43,7 +46,7 @@ export class FiltersToolPanelListPanel extends Component {
     private onColumnsChangedPending: boolean = false;
 
     constructor() {
-        super(FiltersToolPanelListPanel.TEMPLATE);
+        super(AgFiltersToolPanelList.TEMPLATE);
     }
 
     public init(params: ToolPanelFiltersCompParams): void {

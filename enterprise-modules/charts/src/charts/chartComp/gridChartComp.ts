@@ -1,5 +1,4 @@
 import {
-    AgDialog,
     Autowired,
     ChartCreated,
     ChartDestroyed,
@@ -24,6 +23,7 @@ import {
     _removeFromParent,
     _setDisplayed,
 } from '@ag-grid-community/core';
+import { AgDialog } from '@ag-grid-enterprise/core';
 import { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
 
 import { CrossFilteringContext } from '../chartService';

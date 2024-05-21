@@ -1,12 +1,5 @@
-import {
-    AgDialog,
-    Autowired,
-    Bean,
-    BeanStub,
-    FocusService,
-    PostConstruct,
-    TabGuardComp,
-} from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, FocusService, PostConstruct, TabGuardComp } from '@ag-grid-community/core';
+import { AgDialog } from '@ag-grid-enterprise/core';
 
 import { ChartTranslationService } from '../../services/chartTranslationService';
 import { ChartMenuContext } from '../chartMenuContext';

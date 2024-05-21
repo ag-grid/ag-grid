@@ -112,7 +112,7 @@ export class SetFilterListItem<V> extends Component {
     private destroyCellRendererComponent?: () => void;
 
     constructor(params: SetFilterListItemParams<V>) {
-        super(params.isGroup ? SetFilterListItem.GROUP_TEMPLATE : SetFilterListItem.TEMPLATE);
+        super(params.isGroup ? SetFilterListItem.GROUP_TEMPLATE : SetFilterListItem.TEMPLATE, [AgCheckbox]);
         this.focusWrapper = params.focusWrapper;
         this.value = params.value;
         this.params = params.params;

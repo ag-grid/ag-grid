@@ -1,4 +1,5 @@
 import { ComponentMeta, ControllerMeta } from '../context/context';
+import { ComponentClass } from '../widgets/component';
 import { RowModelType } from './iRowModel';
 
 export type ModuleValidationValidResult = {
@@ -22,7 +23,7 @@ export interface Module {
     validate?: () => ModuleValidationResult;
     moduleName: string;
     beans?: any[];
-    agStackComponents?: ComponentMeta[];
+    agStackComponents?: ComponentClass[];
     controllers?: ControllerMeta[];
     userComponents?: { componentName: string; componentClass: any }[];
     rowModel?: RowModelType;

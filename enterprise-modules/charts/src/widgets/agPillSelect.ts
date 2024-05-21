@@ -7,12 +7,11 @@ import {
     DraggingEvent,
     DropTarget,
     ListOption,
-    PillDragComp,
-    PillDropZonePanel,
     PostConstruct,
     _escapeString,
     _removeFromParent,
 } from '@ag-grid-community/core';
+import { PillDragComp, PillDropZonePanel } from '@ag-grid-enterprise/core';
 
 export interface AgPillSelectParams<TValue = string | null> {
     valueList?: TValue[];

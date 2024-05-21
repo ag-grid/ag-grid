@@ -78,7 +78,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
     @PostConstruct
     public init(): void {
-        this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE);
+        this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE, [AgCheckbox]);
 
         this.eDragHandle = _createIconNoSpan('columnDrag', this.gos)!;
         this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-group-drag-handle');

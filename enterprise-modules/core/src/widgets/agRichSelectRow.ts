@@ -1,17 +1,22 @@
-import { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
-import { Autowired, PostConstruct } from '../context/context';
-import { Events } from '../eventKeys';
-import { FieldPickerValueSelectedEvent } from '../events';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
-import { _setAriaActiveDescendant, _setAriaSelected } from '../utils/aria';
-import { _bindCellRendererToHtmlElement, _getInnerWidth } from '../utils/dom';
-import { _exists } from '../utils/generic';
-import { AgPromise } from '../utils/promise';
-import { _escapeString } from '../utils/string';
-import { RichSelectParams } from './agRichSelect';
-import { Component } from './component';
-import { VirtualList } from './virtualList';
+import {
+    AgPromise,
+    Autowired,
+    Component,
+    Events,
+    FieldPickerValueSelectedEvent,
+    ICellRendererParams,
+    PostConstruct,
+    RichSelectParams,
+    UserCompDetails,
+    UserComponentFactory,
+    VirtualList,
+    WithoutGridCommon,
+    _bindCellRendererToHtmlElement,
+    _escapeString,
+    _exists,
+    _setAriaActiveDescendant,
+    _setAriaSelected,
+} from '@ag-grid-community/core';
 
 export class RichSelectRow<TValue> extends Component {
     private value: TValue;

@@ -1,6 +1,5 @@
-import { ColumnNameService } from '@ag-grid-community/core';
-
 import { ColumnModel } from '../../../columns/columnModel';
+import { ColumnNameService } from '../../../columns/columnNameService';
 import { Autowired } from '../../../context/context';
 import { IFilter } from '../../../interfaces/iFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
@@ -19,10 +18,13 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
     private params: IFloatingFilterParams;
 
     constructor() {
-        super(/* html */ `
+        super(
+            /* html */ `
             <div class="ag-floating-filter-input" role="presentation">
                 <ag-input-text-field ref="eFloatingFilterText"></ag-input-text-field>
-            </div>`);
+            </div>`,
+            [AgInputTextField]
+        );
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.

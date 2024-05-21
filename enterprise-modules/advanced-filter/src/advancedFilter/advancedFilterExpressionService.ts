@@ -1,6 +1,4 @@
 import {
-    AutocompleteEntry,
-    AutocompleteListParams,
     Autowired,
     BaseCellDataType,
     Bean,
@@ -20,6 +18,7 @@ import {
 } from '@ag-grid-community/core';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
+import { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 import { ColFilterExpressionParser } from './colFilterExpressionParser';
 import {
     BooleanFilterExpressionOperators,

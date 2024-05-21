@@ -1,12 +1,10 @@
 import {
     AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterEnabledChangedEvent,
-    AgDialog,
     Autowired,
     BeanStub,
     CtrlsService,
     Events,
-    FocusService,
     IAdvancedFilterCtrl,
     PopupService,
     PostConstruct,
@@ -15,6 +13,7 @@ import {
     _getAbsoluteWidth,
     _removeFromParent,
 } from '@ag-grid-community/core';
+import { AgDialog } from '@ag-grid-enterprise/core';
 
 import { AdvancedFilterComp } from './advancedFilterComp';
 import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
@@ -22,7 +21,6 @@ import { AdvancedFilterHeaderComp } from './advancedFilterHeaderComp';
 import { AdvancedFilterBuilderComp } from './builder/advancedFilterBuilderComp';
 
 export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl {
-    @Autowired('focusService') private focusService: FocusService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('advancedFilterExpressionService')

@@ -1,21 +1,23 @@
-import { KeyCode } from '../constants/keyCode';
-import { Autowired, PostConstruct } from '../context/context';
 import {
+    AgEvent,
+    Autowired,
+    Component,
+    ComponentClass,
     DragAndDropService,
     DragItem,
     DragSource,
     DragSourceType,
     DropTarget,
-} from '../dragAndDrop/dragAndDropService';
-import { Events } from '../eventKeys';
-import { AgEvent } from '../events';
-import { _setAriaLabel } from '../utils/aria';
-import { _setDisplayed } from '../utils/dom';
-import { _createIconNoSpan } from '../utils/icon';
-import { _escapeString } from '../utils/string';
-import { Component } from './component';
-import { RefSelector } from './componentAnnotations';
-import { TouchListener } from './touchListener';
+    Events,
+    KeyCode,
+    PostConstruct,
+    RefSelector,
+    TouchListener,
+    _createIconNoSpan,
+    _escapeString,
+    _setAriaLabel,
+    _setDisplayed,
+} from '@ag-grid-community/core';
 
 export abstract class PillDragComp<TItem> extends Component {
     public static EVENT_COLUMN_REMOVE = 'columnRemove';
@@ -43,14 +45,15 @@ export abstract class PillDragComp<TItem> extends Component {
         private dragSourceDropTarget: DropTarget,
         private ghost: boolean,
         private horizontal: boolean,
-        private template?: string
+        private template?: string,
+        private agComponents?: ComponentClass[]
     ) {
         super();
     }
 
     @PostConstruct
     public init(): void {
-        this.setTemplate(this.template ?? PillDragComp.TEMPLATE);
+        this.setTemplate(this.template ?? PillDragComp.TEMPLATE, this.agComponents);
         const eGui = this.getGui();
 
         this.addElementClasses(eGui);

@@ -1,5 +1,6 @@
 import {
     AbstractColDef,
+    AgComponentSelector,
     Autowired,
     ColGroupDef,
     Column,
@@ -21,10 +22,10 @@ import {
 } from '@ag-grid-community/core';
 import { ToolPanelColDefService } from '@ag-grid-enterprise/side-bar';
 
+import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';
 import { ToolPanelColumnCompParams } from './columnToolPanel';
 import { ModelItemUtils } from './modelItemUtils';
-import { ExpandState } from './primaryColsHeaderPanel';
 import { PrimaryColsListPanelItemDragFeature } from './primaryColsListPanelItemDragFeature';
 import { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
@@ -47,7 +48,9 @@ class UIColumnModel implements VirtualListModel {
 
 const PRIMARY_COLS_LIST_PANEL_CLASS = 'ag-column-select-list';
 
-export class PrimaryColsListPanel extends Component {
+export class AgPrimaryColsList extends Component {
+    static readonly selector: AgComponentSelector = 'AG-PRIMARY-COLS-LIST';
+
     public static TEMPLATE = /* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="presentation"></div>`;
 
     @Autowired('columnModel') private columnModel: ColumnModel;
@@ -72,7 +75,7 @@ export class PrimaryColsListPanel extends Component {
     private isInitialState: boolean = false;
 
     constructor() {
-        super(PrimaryColsListPanel.TEMPLATE);
+        super(AgPrimaryColsList.TEMPLATE);
     }
 
     @PreDestroy

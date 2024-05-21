@@ -1,8 +1,9 @@
-import { Autowired, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
+import { AgComponentSelector, Autowired, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
 
 import { GridLicenseManager as LicenseManager } from './gridLicenseManager';
 
-export class WatermarkComp extends Component {
+export class AgWatermark extends Component {
+    static readonly selector: AgComponentSelector = 'AG-WATERMARK';
     @Autowired('licenseManager') licenseManager: LicenseManager;
     @RefSelector('eLicenseTextRef') private eLicenseTextRef: HTMLElement;
 

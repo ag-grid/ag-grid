@@ -16,6 +16,7 @@ import { IDateParams } from '../../interfaces/dateComponent';
 import { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { AgGridCommon, WithoutGridCommon } from '../../interfaces/iCommon';
 import { IFilterDef, IFilterParams } from '../../interfaces/iFilter';
+import { RichSelectParams } from '../../interfaces/iRichCellEditorParams';
 import { SetFilterParams } from '../../interfaces/iSetFilter';
 import { ToolPanelDef } from '../../interfaces/iSideBar';
 import { IStatusPanelParams, StatusPanelDef } from '../../interfaces/iStatusPanel';
@@ -28,7 +29,6 @@ import { INoRowsOverlayParams } from '../../rendering/overlays/noRowsOverlayComp
 import { ITooltipParams } from '../../rendering/tooltipComponent';
 import { _mergeDeep } from '../../utils/object';
 import { AgPromise } from '../../utils/promise';
-import { RichSelectParams } from '../../widgets/agRichSelect';
 import { AgComponentUtils } from './agComponentUtils';
 import { ComponentMetadata, ComponentMetadataProvider } from './componentMetadataProvider';
 import {

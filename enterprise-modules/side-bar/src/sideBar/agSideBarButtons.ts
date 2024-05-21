@@ -1,4 +1,5 @@
 import {
+    AgComponentSelector,
     AgEvent,
     Autowired,
     Component,
@@ -18,7 +19,9 @@ export interface SideBarButtonClickedEvent extends AgEvent {
     toolPanelId: string;
 }
 
-export class SideBarButtonsComp extends Component {
+export class AgSideBarButtons extends Component {
+    static readonly selector: AgComponentSelector = 'AG-SIDE-BAR-BUTTONS';
+
     public static EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
     private static readonly TEMPLATE: string = /* html */ `<div class="ag-side-buttons" role="tablist"></div>`;
     private buttonComps: SideBarButtonComp[] = [];
@@ -27,7 +30,7 @@ export class SideBarButtonsComp extends Component {
     @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
 
     constructor() {
-        super(SideBarButtonsComp.TEMPLATE);
+        super(AgSideBarButtons.TEMPLATE);
     }
 
     @PostConstruct
@@ -60,7 +63,7 @@ export class SideBarButtonsComp extends Component {
 
         buttonComp.addEventListener(SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED, () => {
             this.dispatchEvent({
-                type: SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED,
+                type: AgSideBarButtons.EVENT_SIDE_BAR_BUTTON_CLICKED,
                 toolPanelId: def.id,
             });
         });

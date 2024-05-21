@@ -22,10 +22,13 @@ export class CheckboxSelectionComponent extends Component {
     };
 
     constructor() {
-        super(/* html*/ `
+        super(
+            /* html*/ `
             <div class="ag-selection-checkbox" role="presentation">
                 <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
-            </div>`);
+            </div>`,
+            [AgCheckbox]
+        );
     }
 
     @PostConstruct

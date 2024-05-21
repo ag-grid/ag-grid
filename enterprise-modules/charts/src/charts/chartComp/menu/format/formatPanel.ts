@@ -1,11 +1,5 @@
-import {
-    AgGroupComponent,
-    ChartFormatPanel,
-    ChartFormatPanelGroup,
-    Component,
-    PostConstruct,
-    _warnOnce,
-} from '@ag-grid-community/core';
+import { ChartFormatPanel, ChartFormatPanelGroup, Component, PostConstruct, _warnOnce } from '@ag-grid-community/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import { ChartSeriesType, isCartesian, isPolar } from '../../utils/seriesTypeMapper';
 import { ChartMenuContext } from '../chartMenuContext';

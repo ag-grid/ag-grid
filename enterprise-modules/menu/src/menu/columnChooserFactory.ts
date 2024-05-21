@@ -1,5 +1,4 @@
 import {
-    AgDialog,
     Autowired,
     Bean,
     BeanStub,
@@ -13,7 +12,8 @@ import {
     VisibleColsService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { PrimaryColsPanel } from '@ag-grid-enterprise/column-tool-panel';
+import { AgPrimaryCols } from '@ag-grid-enterprise/column-tool-panel';
+import { AgDialog } from '@ag-grid-enterprise/core';
 
 import { MenuUtils } from './menuUtils';
 
@@ -23,7 +23,7 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
     @Autowired('menuUtils') private readonly menuUtils: MenuUtils;
     @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
 
-    private activeColumnChooser: PrimaryColsPanel | undefined;
+    private activeColumnChooser: AgPrimaryCols | undefined;
     private activeColumnChooserDialog: AgDialog | undefined;
 
     public createColumnSelectPanel(
@@ -31,8 +31,8 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
         column?: Column | null,
         draggable?: boolean,
         params?: ColumnChooserParams
-    ): PrimaryColsPanel {
-        const columnSelectPanel = parent.createManagedBean(new PrimaryColsPanel());
+    ): AgPrimaryCols {
+        const columnSelectPanel = parent.createManagedBean(new AgPrimaryCols());
 
         const columnChooserParams =
             params ?? column?.getColDef().columnChooserParams ?? column?.getColDef().columnsMenuParams ?? {};

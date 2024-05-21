@@ -9,9 +9,8 @@ import {
     DropTarget,
     Events,
     FuncColsService,
-    PillDropZonePanel,
-    PillDropZonePanelParams,
 } from '@ag-grid-community/core';
+import { PillDropZonePanel, PillDropZonePanelParams } from '@ag-grid-enterprise/core';
 
 import { DropZoneColumnComp } from './dropZoneColumnComp';
 

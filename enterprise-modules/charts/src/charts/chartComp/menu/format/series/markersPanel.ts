@@ -1,15 +1,15 @@
 import {
-    AgGroupComponentParams,
+    AgSelect,
     AgSelectParams,
-    AgSlider,
-    AgSliderParams,
     Autowired,
     Component,
     PostConstruct,
     RefSelector,
     _includes,
 } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
+import { AgSlider, AgSliderParams } from '../../../../../widgets/agSlider';
 import { ChartOptionsService } from '../../../services/chartOptionsService';
 import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
@@ -60,7 +60,7 @@ export class MarkersPanel extends Component {
             seriesMarkerSizeSliderParams = this.getSliderParams('marker.size', 'size', 60);
         }
 
-        this.setTemplate(MarkersPanel.TEMPLATE, {
+        this.setTemplate(MarkersPanel.TEMPLATE, [AgGroupComponent, AgSelect, AgSlider], {
             seriesMarkersGroup: seriesMarkersGroupParams,
             seriesMarkerShapeSelect: this.getMarkerShapeSelectParams(),
             seriesMarkerMinSizeSlider: seriesMarkerMinSizeSliderParams,

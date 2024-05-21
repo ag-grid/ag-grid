@@ -1,13 +1,5 @@
-import {
-    AgGroupComponent,
-    AgGroupComponentParams,
-    AgSelect,
-    Autowired,
-    ChartMappings,
-    Component,
-    PostConstruct,
-    RefSelector,
-} from '@ag-grid-community/core';
+import { AgSelect, Autowired, ChartMappings, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
 import { ChartService } from '../../../chartService';
 import { ChartTranslationService } from '../../services/chartTranslationService';
@@ -48,7 +40,7 @@ export class ChartSpecificDataPanel extends Component {
             expanded: this.isOpen,
             items: [...this.createDirectionSelect(), this.createGroupTypeSelect()],
         };
-        this.setTemplate(ChartSpecificDataPanel.TEMPLATE, {
+        this.setTemplate(ChartSpecificDataPanel.TEMPLATE, [AgGroupComponent], {
             chartSpecificGroup: chartSpecificGroupParams,
         });
         this.setDisplayed(this.hasContent);

@@ -1,11 +1,5 @@
-import {
-    AgGroupComponent,
-    AgGroupComponentParams,
-    Autowired,
-    Component,
-    PostConstruct,
-    RefSelector,
-} from '@ag-grid-community/core';
+import { AgSelect, Autowired, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
 import { ChartTranslationService } from '../../../services/chartTranslationService';
 import { FormatPanelOptions } from '../formatPanel';
@@ -44,7 +38,7 @@ export class ChartPanel extends Component {
                 this.createManagedBean(new BackgroundPanel(chartMenuParamsFactory)),
             ],
         };
-        this.setTemplate(ChartPanel.TEMPLATE, { chartGroup: chartGroupParams });
+        this.setTemplate(ChartPanel.TEMPLATE, [AgGroupComponent], { chartGroup: chartGroupParams });
         registerGroupComponent(this.chartGroup);
     }
 }

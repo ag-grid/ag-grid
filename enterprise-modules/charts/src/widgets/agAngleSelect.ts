@@ -1,5 +1,6 @@
 import {
     AgAbstractLabel,
+    AgComponentSelector,
     AgInputNumberField,
     AgLabelParams,
     Autowired,
@@ -17,6 +18,8 @@ export interface AgAngleSelectParams extends AgLabelParams {
 }
 
 export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
+    static readonly selector: AgComponentSelector = 'AG-ANGLE-SELECT';
+
     private static TEMPLATE /* html */ = `<div class="ag-angle-select">
             <div ref="eLabel"></div>
             <div class="ag-wrapper ag-angle-select-wrapper">
@@ -44,7 +47,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     private dragListener: DragListenerParams;
 
     constructor(config?: AgAngleSelectParams) {
-        super(config, AgAngleSelect.TEMPLATE);
+        super(config, AgAngleSelect.TEMPLATE, [AgInputNumberField]);
     }
 
     postConstruct() {

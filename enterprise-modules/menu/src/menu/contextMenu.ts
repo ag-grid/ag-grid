@@ -1,13 +1,10 @@
 import {
     AgEvent,
-    AgMenuItemComponent,
-    AgMenuList,
     Autowired,
     Bean,
     BeanStub,
     CellPosition,
     CellPositionUtils,
-    CloseMenuEvent,
     Column,
     ColumnModel,
     Component,
@@ -30,6 +27,7 @@ import {
     _isIOSUserAgent,
     _missingOrEmpty,
 } from '@ag-grid-community/core';
+import { AgMenuItemComponent, AgMenuList, CloseMenuEvent } from '@ag-grid-enterprise/core';
 
 import { MenuItemMapper } from './menuItemMapper';
 import { MenuUtils } from './menuUtils';

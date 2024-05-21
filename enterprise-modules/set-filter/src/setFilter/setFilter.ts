@@ -4,6 +4,7 @@ import {
     Autowired,
     CellValueChangedEvent,
     ColumnModel,
+    ComponentClass,
     DataTypeService,
     Events,
     FuncColsService,
@@ -91,6 +92,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
                 <div ref="eFilterNoMatches" class="ag-filter-no-matches ag-hidden">${this.translateForSetFilter('noMatches')}</div>
                 <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
             </div>`;
+    }
+    protected getAgComponents(): ComponentClass[] {
+        return [AgInputTextField];
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {

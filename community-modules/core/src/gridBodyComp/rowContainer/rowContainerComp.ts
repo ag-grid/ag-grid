@@ -5,7 +5,7 @@ import { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
 import { _setAriaRole } from '../../utils/aria';
 import { _ensureDomOrder, _insertWithDomOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
-import { Component } from '../../widgets/component';
+import { AgComponentSelector, Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import {
     IRowContainerComp,
@@ -43,6 +43,7 @@ function templateFactory(): string {
 }
 
 export class RowContainerComp extends Component {
+    static readonly selector: AgComponentSelector = 'AG-ROW-CONTAINER';
     @Autowired('beans') private beans: Beans;
 
     @RefSelector('eViewport') private eViewport: HTMLElement;

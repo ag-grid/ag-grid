@@ -14,7 +14,7 @@ import {
     VirtualListDragItem,
 } from '@ag-grid-community/core';
 
-import { PrimaryColsListPanel } from './primaryColsListPanel';
+import { AgPrimaryColsList } from './agPrimaryColsList';
 import { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
 
@@ -23,7 +23,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     @Autowired('columnMoveService') private columnMoveService: ColumnMoveService;
 
     constructor(
-        private readonly comp: PrimaryColsListPanel,
+        private readonly comp: AgPrimaryColsList,
         private readonly virtualList: VirtualList
     ) {
         super();
@@ -33,7 +33,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     private postConstruct(): void {
         this.createManagedBean(
             new VirtualListDragFeature<
-                PrimaryColsListPanel,
+                AgPrimaryColsList,
                 ToolPanelColumnGroupComp | ToolPanelColumnComp,
                 Column | ProvidedColumnGroup,
                 ColumnPanelItemDragStartEvent
@@ -46,7 +46,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
                     this.getCurrentDragValue(listItemDragStartEvent),
                 isMoveBlocked: (currentDragValue: Column | ProvidedColumnGroup | null) =>
                     this.isMoveBlocked(currentDragValue),
-                getNumRows: (comp: PrimaryColsListPanel) => comp.getDisplayedColsList().length,
+                getNumRows: (comp: AgPrimaryColsList) => comp.getDisplayedColsList().length,
                 moveItem: (
                     currentDragValue: Column | ProvidedColumnGroup | null,
                     lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null

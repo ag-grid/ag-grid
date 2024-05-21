@@ -1,4 +1,5 @@
 import {
+    AgComponentSelector,
     Autowired,
     CellCtrl,
     CellPosition,
@@ -34,7 +35,9 @@ interface ValueContext {
 
 type Direction = 'x' | 'y';
 
-export class FillHandle extends AbstractSelectionHandle {
+export class AgFillHandle extends AbstractSelectionHandle {
+    static readonly selector: AgComponentSelector = 'AG-FILL-HANDLE';
+
     @Autowired('valueService') private valueService: ValueService;
 
     static TEMPLATE = /* html */ `<div class="ag-fill-handle"></div>`;
@@ -53,7 +56,7 @@ export class FillHandle extends AbstractSelectionHandle {
     protected type = SelectionHandleType.FILL;
 
     constructor() {
-        super(FillHandle.TEMPLATE);
+        super(AgFillHandle.TEMPLATE);
     }
 
     protected updateValuesOnMove(e: MouseEvent) {

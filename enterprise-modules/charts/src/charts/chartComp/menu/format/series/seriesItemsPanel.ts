@@ -1,8 +1,6 @@
 import {
-    AgGroupComponent,
-    AgGroupComponentParams,
+    AgSelect,
     AgSelectParams,
-    AgSlider,
     Autowired,
     Component,
     ListOption,
@@ -10,7 +8,9 @@ import {
     RefSelector,
     _removeFromParent,
 } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
+import { AgSlider } from '../../../../../widgets/agSlider';
 import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import { FontPanel } from '../fontPanel';
@@ -44,7 +44,7 @@ export class SeriesItemsPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(SeriesItemsPanel.TEMPLATE, {
+        this.setTemplate(SeriesItemsPanel.TEMPLATE, [AgGroupComponent, AgSelect], {
             seriesItemsGroup: seriesItemsGroupParams,
             seriesItemSelect: this.getSeriesItemsParams(),
         });

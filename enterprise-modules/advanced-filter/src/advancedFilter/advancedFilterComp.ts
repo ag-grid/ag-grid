@@ -1,11 +1,5 @@
 import {
-    AgAutocomplete,
-    AutocompleteEntry,
-    AutocompleteListParams,
-    AutocompleteOptionSelectedEvent,
-    AutocompleteValidChangedEvent,
-    AutocompleteValueChangedEvent,
-    AutocompleteValueConfirmedEvent,
+    AgComponentSelector,
     Autowired,
     Component,
     FilterManager,
@@ -21,10 +15,20 @@ import {
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
 import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import { AdvancedFilterService } from './advancedFilterService';
+import {
+    AgAutocomplete,
+    AutocompleteOptionSelectedEvent,
+    AutocompleteValidChangedEvent,
+    AutocompleteValueChangedEvent,
+    AutocompleteValueConfirmedEvent,
+} from './autocomplete/agAutocomplete';
+import { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 import { FilterExpressionParser } from './filterExpressionParser';
 import { AutocompleteUpdate } from './filterExpressionUtils';
 
 export class AdvancedFilterComp extends Component {
+    static readonly selector: AgComponentSelector = 'AG-ADVANCED-FILTER';
+
     @RefSelector('eAutocomplete') private eAutocomplete: AgAutocomplete;
     @RefSelector('eApplyFilterButton') private eApplyFilterButton: HTMLElement;
     @RefSelector('eBuilderFilterButton') private eBuilderFilterButton: HTMLElement;
@@ -40,7 +44,8 @@ export class AdvancedFilterComp extends Component {
     private builderOpen = false;
 
     constructor() {
-        super(/* html */ `
+        super(
+            /* html */ `
             <div class="ag-advanced-filter" role="presentation" tabindex="-1">
                 <ag-autocomplete ref="eAutocomplete"></ag-autocomplete>
                 <button class="ag-button ag-standard-button ag-advanced-filter-apply-button" ref="eApplyFilterButton"></button>
@@ -48,7 +53,9 @@ export class AdvancedFilterComp extends Component {
                     <span ref="eBuilderFilterButtonIcon" aria-hidden="true"></span>
                     <span class="ag-advanced-filter-builder-button-label" ref="eBuilderFilterButtonLabel"></span>
                 </button>
-            </div>`);
+            </div>`,
+            [AgAutocomplete]
+        );
     }
 
     @PostConstruct

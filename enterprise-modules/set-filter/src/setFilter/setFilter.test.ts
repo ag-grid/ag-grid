@@ -2,7 +2,7 @@ import {
     AgCheckbox,
     AgInputTextField,
     ColDef,
-    FuncColsService,
+    ColumnModel,
     Context,
     EventService,
     GridOptionsService,

@@ -3,11 +3,14 @@ import { Autowired, PostConstruct } from '../context/context';
 import { Events } from '../eventKeys';
 import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from '../utils/dom';
+import { AgComponentSelector } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { CenterWidthFeature } from './centerWidthFeature';
 
 export class FakeHScrollComp extends AbstractFakeScrollComp {
+    static readonly selector: AgComponentSelector = 'AG-FAKE-HORIZONTAL-SCROLL';
+
     private static TEMPLATE /* html */ = `<div class="ag-body-horizontal-scroll" aria-hidden="true">
             <div class="ag-horizontal-left-spacer" ref="eLeftSpacer"></div>
             <div class="ag-body-horizontal-scroll-viewport" ref="eViewport">

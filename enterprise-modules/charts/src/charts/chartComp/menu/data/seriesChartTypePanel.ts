@@ -1,6 +1,5 @@
 import {
     AgCheckbox,
-    AgGroupComponent,
     AgSelect,
     Autowired,
     ChartType,
@@ -10,6 +9,7 @@ import {
     _areEqual,
     _clearElement,
 } from '@ag-grid-community/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import { ChartController } from '../../chartController';
 import { ColState } from '../../model/chartDataModel';

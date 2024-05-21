@@ -6,9 +6,11 @@ import { PaginationProxy } from '../../pagination/paginationProxy';
 import { _clearElement } from '../../utils/dom';
 import { _warnOnce } from '../../utils/function';
 import { AgSelect } from '../../widgets/agSelect';
-import { Component } from '../../widgets/component';
+import { AgComponentSelector, Component } from '../../widgets/component';
 
 export class PageSizeSelectorComp extends Component {
+    static readonly selector: AgComponentSelector = 'AG-PAGE-SIZE-SELECTOR';
+
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     private selectPageSizeComp: AgSelect | undefined;

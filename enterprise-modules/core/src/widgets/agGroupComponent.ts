@@ -1,13 +1,16 @@
-import { KeyCode } from '../constants/keyCode';
-import { PostConstruct } from '../context/context';
-import { AgEvent } from '../events';
-import { _setAriaExpanded } from '../utils/aria';
-import { _setDisplayed } from '../utils/dom';
-import { _createIcon } from '../utils/icon';
-import { AgCheckbox } from './agCheckbox';
-import { AgToggleButton } from './agToggleButton';
-import { Component } from './component';
-import { RefSelector } from './componentAnnotations';
+import {
+    AgCheckbox,
+    AgComponentSelector,
+    AgEvent,
+    AgToggleButton,
+    Component,
+    KeyCode,
+    PostConstruct,
+    RefSelector,
+    _createIcon,
+    _setAriaExpanded,
+    _setDisplayed,
+} from '@ag-grid-community/core';
 
 type GroupItem = Component | HTMLElement;
 type Align = 'start' | 'end' | 'center' | 'stretch';
@@ -39,6 +42,8 @@ interface EnableChangeEvent extends AgEvent {
 }
 
 export class AgGroupComponent extends Component {
+    static readonly selector: AgComponentSelector = 'AG-GROUP-COMPONENT';
+
     public static EVENT_EXPANDED = 'expanded';
     public static EVENT_COLLAPSED = 'collapsed';
     public static EVENT_ENABLE_CHANGE = 'enableChange';
@@ -60,7 +65,7 @@ export class AgGroupComponent extends Component {
     @RefSelector('eContainer') private eContainer: HTMLElement;
 
     constructor(private readonly params: AgGroupComponentParams = {}) {
-        super(AgGroupComponent.getTemplate(params));
+        super(AgGroupComponent.getTemplate(params), [AgCheckbox]);
 
         const {
             enabled,

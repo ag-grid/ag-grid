@@ -1,44 +1,35 @@
-import { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
-import { KeyCode } from '../constants/keyCode';
-import { Autowired } from '../context/context';
-import { Events } from '../eventKeys';
-import { FieldPickerValueSelectedEvent } from '../events';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { AnimationFrameService } from '../misc/animationFrameService';
-import { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
-import { _setAriaActiveDescendant, _setAriaControls, _setAriaLabel } from '../utils/aria';
-import { _bindCellRendererToHtmlElement, _clearElement, _isVisible } from '../utils/dom';
-import { _stopPropagationForAgGrid } from '../utils/event';
-import { _debounce } from '../utils/function';
-import { _fuzzySuggestions } from '../utils/fuzzyMatch';
-import { _exists } from '../utils/generic';
-import { _isEventFromPrintableCharacter } from '../utils/keyboard';
-import { AgPromise } from '../utils/promise';
-import { _escapeString } from '../utils/string';
-import { AgInputTextField } from './agInputTextField';
-import { AgPickerField, AgPickerFieldParams } from './agPickerField';
+import {
+    AgInputTextField,
+    AgPickerField,
+    AgPromise,
+    AnimationFrameService,
+    Autowired,
+    Component,
+    Events,
+    FieldPickerValueSelectedEvent,
+    ICellRendererParams,
+    KeyCode,
+    RefSelector,
+    RichSelectParams,
+    UserCompDetails,
+    UserComponentFactory,
+    VirtualList,
+    WithoutGridCommon,
+    _bindCellRendererToHtmlElement,
+    _clearElement,
+    _debounce,
+    _escapeString,
+    _exists,
+    _fuzzySuggestions,
+    _isEventFromPrintableCharacter,
+    _isVisible,
+    _setAriaActiveDescendant,
+    _setAriaControls,
+    _setAriaLabel,
+    _stopPropagationForAgGrid,
+} from '@ag-grid-community/core';
+
 import { RichSelectRow } from './agRichSelectRow';
-import { Component } from './component';
-import { RefSelector } from './componentAnnotations';
-import { VirtualList } from './virtualList';
-
-export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
-    value?: TValue;
-    valueList?: TValue[];
-    allowTyping?: boolean;
-    cellRenderer?: any;
-    cellRowHeight?: number;
-    searchDebounceDelay?: number;
-
-    filterList?: boolean;
-    searchType?: 'match' | 'matchAny' | 'fuzzy';
-    highlightMatch?: boolean;
-    placeholder?: string;
-    initialInputValue?: string;
-
-    valueFormatter?: (value: TValue) => any;
-    searchStringCreator?: (values: TValue[]) => string[];
-}
 
 const TEMPLATE = /* html */ `
     <div class="ag-picker-field" role="presentation">
@@ -74,6 +65,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             pickerIcon: 'smallDown',
             ariaRole: 'combobox',
             template: config?.template ?? TEMPLATE,
+            agComponents: [AgInputTextField],
             modalPicker: false,
             ...config,
             // maxPickerHeight needs to be set after expanding `config`

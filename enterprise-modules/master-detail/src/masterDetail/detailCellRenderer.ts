@@ -10,6 +10,7 @@ import {
     RefSelector,
     _cloneObject,
     _missing,
+    _warnOnce,
     createGrid,
 } from '@ag-grid-community/core';
 
@@ -57,12 +58,12 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
     private selectAndSetTemplate(): void {
         if (this.params.pinned) {
-            this.setTemplate('<div class="ag-details-row"></div>');
+            this.setTemplate('<div class="ag-details-row"></div>', []);
             return;
         }
 
         const setDefaultTemplate = () => {
-            this.setTemplate(DetailCellRenderer.TEMPLATE);
+            this.setTemplate(DetailCellRenderer.TEMPLATE, []);
         };
 
         if (_missing(this.params.template)) {
@@ -71,20 +72,20 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         } else {
             // use user provided template
             if (typeof this.params.template === 'string') {
-                this.setTemplate(this.params.template);
+                this.setTemplate(this.params.template, []);
             } else if (typeof this.params.template === 'function') {
                 const templateFunc = this.params.template;
                 const template = templateFunc(this.params);
-                this.setTemplate(template);
+                this.setTemplate(template, []);
             } else {
-                console.warn('AG Grid: detailCellRendererParams.template should be function or string');
+                _warnOnce('detailCellRendererParams.template should be function or string');
                 setDefaultTemplate();
             }
         }
 
         if (this.eDetailGrid == null) {
-            console.warn(
-                'AG Grid: reference to eDetailGrid was missing from the details template. ' +
+            _warnOnce(
+                'Reference to eDetailGrid was missing from the details template. ' +
                     'Please add ref="eDetailGrid" to the template.'
             );
         }

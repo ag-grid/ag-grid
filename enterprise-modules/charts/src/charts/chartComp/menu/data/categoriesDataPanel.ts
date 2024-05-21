@@ -1,11 +1,5 @@
-import {
-    AgGroupComponent,
-    AgSelect,
-    AgToggleButton,
-    IAggFunc,
-    PostConstruct,
-    _clearElement,
-} from '@ag-grid-community/core';
+import { AgSelect, AgToggleButton, IAggFunc, PostConstruct, _clearElement } from '@ag-grid-community/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import { ChartController } from '../../chartController';
 import { ChartDataModel, ColState } from '../../model/chartDataModel';

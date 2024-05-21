@@ -1,16 +1,16 @@
 import {
-    AgGroupComponent,
-    AgGroupComponentParams,
     AgSelect,
     AgSelectParams,
-    AgSlider,
     Autowired,
     Component,
     ListOption,
     PostConstruct,
     RefSelector,
 } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
+import { AgColorPicker } from '../../../../../widgets/agColorPicker';
+import { AgSlider } from '../../../../../widgets/agSlider';
 import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { getSeriesType, isRadial } from '../../../utils/seriesTypeMapper';
 import { FontPanel, FontPanelParams } from '../fontPanel';
@@ -48,7 +48,7 @@ export class PolarAxisPanel extends Component {
             'thickness',
             10
         );
-        this.setTemplate(PolarAxisPanel.TEMPLATE, {
+        this.setTemplate(PolarAxisPanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
             axisGroup: axisGroupParams,
             axisColorInput: axisColorInputParams,
             axisLineWidthSlider: axisLineWidthSliderParams,

@@ -1,11 +1,7 @@
 import {
     AgCheckbox,
-    AgGroupComponent,
-    AgGroupComponentParams,
     AgSelect,
     AgSelectParams,
-    AgSlider,
-    AgSliderParams,
     Autowired,
     Component,
     Events,
@@ -15,10 +11,12 @@ import {
     _removeFromParent,
     _setDisplayed,
 } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import type { AgCartesianAxisOptions } from 'ag-charts-community';
 
 import { AgAngleSelect } from '../../../../../widgets/agAngleSelect';
-import { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
+import { AgColorPicker, AgColorPickerParams } from '../../../../../widgets/agColorPicker';
+import { AgSlider, AgSliderParams } from '../../../../../widgets/agSlider';
 import { ChartController } from '../../../chartController';
 import { ChartOptionsProxy } from '../../../services/chartOptionsService';
 import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
@@ -97,7 +95,7 @@ export class CartesianAxisPanel extends Component {
         const axisColorInputParams = this.getAxisColorInputParams(chartAxisThemeOverrides);
         const axisLineWidthSliderParams = this.getAxisLineWidthSliderParams(chartAxisThemeOverrides);
 
-        this.setTemplate(CartesianAxisPanel.TEMPLATE, {
+        this.setTemplate(CartesianAxisPanel.TEMPLATE, [AgGroupComponent, AgSelect, AgColorPicker, AgSlider], {
             axisGroup: axisGroupParams,
             axisTypeSelect: axisTypeSelectParams ?? undefined,
             axisPositionSelect: axisPositionSelectParams ?? undefined,

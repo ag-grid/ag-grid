@@ -1,4 +1,5 @@
 import {
+    AgComponentSelector,
     AgInputTextField,
     Autowired,
     Column,
@@ -21,7 +22,9 @@ export enum EXPAND_STATE {
     INDETERMINATE,
 }
 
-export class FiltersToolPanelHeaderPanel extends Component {
+export class AgFiltersToolPanelHeader extends Component {
+    static readonly selector: AgComponentSelector = 'AG-FILTERS-TOOL-PANEL-HEADER';
+
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     @RefSelector('eExpand') private eExpand: Element;
@@ -44,7 +47,8 @@ export class FiltersToolPanelHeaderPanel extends Component {
             `<div class="ag-filter-toolpanel-search" role="presentation">
                 <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
                 <ag-input-text-field ref="eFilterTextField" class="ag-filter-toolpanel-search-input"></ag-input-text-field>
-            </div>`
+            </div>`,
+            [AgInputTextField]
         );
     }
 

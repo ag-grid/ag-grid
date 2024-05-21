@@ -1,8 +1,17 @@
-import { CellPosition, CellRange, CellRangeType, SelectionHandleType, _last } from '@ag-grid-community/core';
+import {
+    AgComponentSelector,
+    CellPosition,
+    CellRange,
+    CellRangeType,
+    SelectionHandleType,
+    _last,
+} from '@ag-grid-community/core';
 
 import { AbstractSelectionHandle } from './abstractSelectionHandle';
 
-export class RangeHandle extends AbstractSelectionHandle {
+export class AgRangeHandle extends AbstractSelectionHandle {
+    static readonly selector: AgComponentSelector = 'AG-RANGE-HANDLE';
+
     static TEMPLATE = /* html */ `<div class="ag-range-handle"></div>`;
 
     protected type = SelectionHandleType.RANGE;
@@ -10,7 +19,7 @@ export class RangeHandle extends AbstractSelectionHandle {
     private rangeFixed: boolean = false;
 
     constructor() {
-        super(RangeHandle.TEMPLATE);
+        super(AgRangeHandle.TEMPLATE);
     }
 
     protected onDrag(e: MouseEvent) {

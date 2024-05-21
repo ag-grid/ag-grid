@@ -9,7 +9,7 @@ import {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 
-import { HorizontalResizeComp } from './horizontalResizeComp';
+import { AgHorizontalResize } from './agHorizontalResize';
 
 export class ToolPanelWrapper extends Component {
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
@@ -18,7 +18,7 @@ export class ToolPanelWrapper extends Component {
 
     private toolPanelCompInstance: IToolPanelComp | undefined;
     private toolPanelId: string;
-    private resizeBar: HorizontalResizeComp;
+    private resizeBar: AgHorizontalResize;
     private width: number | undefined;
     private params: IToolPanelParams;
 
@@ -29,7 +29,7 @@ export class ToolPanelWrapper extends Component {
     @PostConstruct
     private setupResize(): void {
         const eGui = this.getGui();
-        const resizeBar = (this.resizeBar = this.createManagedBean(new HorizontalResizeComp()));
+        const resizeBar = (this.resizeBar = this.createManagedBean(new AgHorizontalResize()));
 
         eGui.setAttribute('id', `ag-${this.getCompId()}`);
 

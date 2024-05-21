@@ -1,5 +1,6 @@
-import { AgInputTextFieldParams, AgSliderParams, Autowired } from '@ag-grid-community/core';
+import { AgInputTextFieldParams, Autowired } from '@ag-grid-community/core';
 
+import { AgSliderParams } from '../../../../../widgets/agSlider';
 import { ChartMenuService } from '../../../services/chartMenuService';
 import { TitlePanel } from './titlePanel';
 

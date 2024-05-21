@@ -5,10 +5,12 @@ import { Events } from '../../../eventKeys';
 import { SortController } from '../../../sortController';
 import { _clearElement, _setDisplayed } from '../../../utils/dom';
 import { _createIconNoSpan } from '../../../utils/icon';
-import { Component } from '../../../widgets/component';
+import { AgComponentSelector, Component } from '../../../widgets/component';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 
 export class SortIndicatorComp extends Component {
+    static readonly selector: AgComponentSelector = 'AG-SORT-INDICATOR';
+
     private static TEMPLATE /* html */ = `<span class="ag-sort-indicator-container">
             <span ref="eSortOrder" class="ag-sort-indicator-icon ag-sort-order ag-hidden" aria-hidden="true"></span>
             <span ref="eSortAsc" class="ag-sort-indicator-icon ag-sort-ascending-icon ag-hidden" aria-hidden="true"></span>

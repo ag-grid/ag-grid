@@ -10,8 +10,8 @@ import {
     RefSelector,
 } from '@ag-grid-community/core';
 
-import { FiltersToolPanelHeaderPanel } from './filtersToolPanelHeaderPanel';
-import { FiltersToolPanelListPanel } from './filtersToolPanelListPanel';
+import { AgFiltersToolPanelHeader } from './agFiltersToolPanelHeader';
+import { AgFiltersToolPanelList } from './agFiltersToolPanelList';
 
 export interface ToolPanelFiltersCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, FiltersToolPanelState>,
@@ -23,16 +23,16 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
             <ag-filters-tool-panel-list ref="filtersToolPanelListPanel"></ag-filters-tool-panel-list>
          </div>`;
 
-    @RefSelector('filtersToolPanelHeaderPanel') private filtersToolPanelHeaderPanel: FiltersToolPanelHeaderPanel;
+    @RefSelector('filtersToolPanelHeaderPanel') private filtersToolPanelHeaderPanel: AgFiltersToolPanelHeader;
 
-    @RefSelector('filtersToolPanelListPanel') private filtersToolPanelListPanel: FiltersToolPanelListPanel;
+    @RefSelector('filtersToolPanelListPanel') private filtersToolPanelListPanel: AgFiltersToolPanelList;
 
     private initialised = false;
     private params: ToolPanelFiltersCompParams;
     private listenerDestroyFuncs: (() => void)[] = [];
 
     constructor() {
-        super(FiltersToolPanel.TEMPLATE);
+        super(FiltersToolPanel.TEMPLATE, [AgFiltersToolPanelHeader, AgFiltersToolPanelList]);
     }
 
     public init(params: ToolPanelFiltersCompParams): void {

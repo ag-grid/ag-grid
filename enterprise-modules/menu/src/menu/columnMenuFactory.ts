@@ -1,5 +1,4 @@
 import {
-    AgMenuList,
     Autowired,
     Bean,
     BeanStub,
@@ -12,6 +11,7 @@ import {
     MenuService,
     _removeRepeatsFromArray,
 } from '@ag-grid-community/core';
+import { AgMenuList } from '@ag-grid-enterprise/core';
 
 import { MenuItemMapper } from './menuItemMapper';
 

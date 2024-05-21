@@ -1,8 +1,6 @@
-import { KeyCode } from '../constants/keyCode';
-import { PostConstruct } from '../context/context';
-import { IComponent } from '../interfaces/iComponent';
+import { IComponent, KeyCode, PostConstruct, TabGuardComp } from '@ag-grid-community/core';
+
 import { AgMenuItemComponent } from './agMenuItemComponent';
-import { TabGuardComp } from './tabGuardComp';
 
 export class AgMenuPanel extends TabGuardComp {
     constructor(private readonly wrappedComponent: IComponent<any>) {

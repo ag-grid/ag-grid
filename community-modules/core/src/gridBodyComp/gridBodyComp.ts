@@ -2,11 +2,15 @@ import { Autowired, Optional, PostConstruct } from '../context/context';
 import { GridHeaderComp } from '../headerRendering/gridHeaderComp';
 import { IRangeService } from '../interfaces/IRangeService';
 import { ResizeObserverService } from '../misc/resizeObserverService';
+import { OverlayWrapperComponent } from '../rendering/overlays/overlayWrapperComponent';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRowCount } from '../utils/aria';
-import { Component } from '../widgets/component';
+import { AgComponentSelector, Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
+import { FakeHScrollComp } from './fakeHScrollComp';
+import { FakeVScrollComp } from './fakeVScrollComp';
 import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from './gridBodyCtrl';
+import { RowContainerComp } from './rowContainer/rowContainerComp';
 import { RowContainerName } from './rowContainer/rowContainerCtrl';
 
 const GRID_BODY_TEMPLATE =
@@ -51,6 +55,8 @@ const GRID_BODY_TEMPLATE =
     </div>`;
 
 export class GridBodyComp extends Component {
+    static readonly selector: AgComponentSelector = 'AG-GRID-BODY';
+
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
     @Optional('rangeService') private rangeService?: IRangeService;
@@ -66,7 +72,13 @@ export class GridBodyComp extends Component {
     private ctrl: GridBodyCtrl;
 
     constructor() {
-        super(GRID_BODY_TEMPLATE);
+        super(GRID_BODY_TEMPLATE, [
+            OverlayWrapperComponent,
+            FakeHScrollComp,
+            FakeVScrollComp,
+            GridHeaderComp,
+            RowContainerComp,
+        ]);
     }
 
     @PostConstruct

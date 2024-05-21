@@ -1,13 +1,8 @@
+import { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaLabel } from '../utils/aria';
 import { _addOrRemoveAttribute, _setDisabled, _setElementWidth } from '../utils/dom';
-import { AgAbstractField, AgFieldParams, FieldElement } from './agAbstractField';
+import { AgAbstractField, FieldElement } from './agAbstractField';
 import { RefSelector } from './componentAnnotations';
-
-export interface AgInputFieldParams extends AgFieldParams {
-    inputName?: string;
-    inputWidth?: number | 'flex';
-    template?: string;
-}
 
 export abstract class AgAbstractInputField<
     TElement extends FieldElement,
@@ -34,6 +29,7 @@ export abstract class AgAbstractInputField<
                     <${displayFieldTag} ref="eInput" class="ag-input-field-input"></${displayFieldTag}>
                 </div>
             </div>`,
+            [],
             className
         );
     }

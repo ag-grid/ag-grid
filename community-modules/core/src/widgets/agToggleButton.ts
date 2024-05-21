@@ -1,8 +1,12 @@
-import { AgCheckbox, AgCheckboxParams } from './agCheckbox';
+import { AgCheckboxParams } from '../interfaces/agFieldParams';
+import { AgCheckbox } from './agCheckbox';
+import { AgComponentSelector } from './component';
 
 export interface AgToggleButtonParams extends AgCheckboxParams {}
 
 export class AgToggleButton extends AgCheckbox<AgToggleButtonParams> {
+    static selector: AgComponentSelector = 'AG-TOGGLE-BUTTON';
+
     constructor(config?: AgToggleButtonParams) {
         super(config, 'ag-toggle-button');
     }

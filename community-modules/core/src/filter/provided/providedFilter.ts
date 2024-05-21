@@ -8,7 +8,7 @@ import { PositionableFeature } from '../../rendering/features/positionableFeatur
 import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
 import { _debounce } from '../../utils/function';
 import { AgPromise } from '../../utils/promise';
-import { Component } from '../../widgets/component';
+import { Component, ComponentClass } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import { PopupEventParams } from '../../widgets/popupService';
@@ -117,6 +117,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     protected abstract updateUiVisibility(): void;
 
     protected abstract createBodyTemplate(): string;
+    protected abstract getAgComponents(): ComponentClass[];
     protected abstract getCssIdentifier(): string;
     protected abstract resetUiToDefaults(silent?: boolean): AgPromise<void>;
 
@@ -169,7 +170,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                 </div>
             </form>`;
 
-        this.setTemplate(templateString, paramsMap);
+        this.setTemplate(templateString, this.getAgComponents(), paramsMap);
 
         eGui = this.getGui();
         if (eGui) {

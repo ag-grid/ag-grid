@@ -1,13 +1,10 @@
 import {
     AgEvent,
     AgGridEvent,
-    AgMenuItemComponent,
-    AgMenuList,
     AgPromise,
     Autowired,
     Bean,
     BeanStub,
-    CloseMenuEvent,
     Column,
     ColumnMenuTab,
     ColumnMenuVisibleChangedEvent,
@@ -33,6 +30,7 @@ import {
     WithoutGridCommon,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
+import { AgMenuItemComponent, AgMenuList, CloseMenuEvent } from '@ag-grid-enterprise/core';
 
 import { ColumnChooserFactory } from './columnChooserFactory';
 import { ColumnMenuFactory } from './columnMenuFactory';

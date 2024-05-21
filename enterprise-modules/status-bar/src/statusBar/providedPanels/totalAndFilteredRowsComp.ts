@@ -9,9 +9,9 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import { NameValueComp } from './nameValueComp';
+import { AgNameValue } from './agNameValue';
 
-export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPanelComp {
+export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPanelComp {
     @Autowired('rowModel') private rowModel: IRowModel;
 
     @PostConstruct
