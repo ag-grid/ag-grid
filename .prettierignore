@@ -7,6 +7,7 @@ dist
 
 # Website
 .astro
+*.mdoc
 
 # Generated grid options json
 plugins/ag-grid-generate-example-files/gridOptionsTypes/_gridOptions_Types.json
