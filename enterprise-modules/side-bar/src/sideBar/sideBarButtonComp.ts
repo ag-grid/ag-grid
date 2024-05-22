@@ -41,7 +41,7 @@ export class SideBarButtonComp extends Component {
             `<div class="ag-side-button" role="presentation">
                 <button type="button" data-ref="eToggleButton" tabindex="-1" role="tab" aria-expanded="false" class="ag-button ag-side-button-button">
                     <div data-ref="eIconWrapper" class="ag-side-button-icon-wrapper" aria-hidden="true"></div>
-                    <span ref ="eLabel" class="ag-side-button-label"></span>
+                    <span data-ref="eLabel" class="ag-side-button-label"></span>
                 </button>
             </div>`;
         return res;
