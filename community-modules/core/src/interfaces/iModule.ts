@@ -1,5 +1,4 @@
-import type { ControllerMeta } from '../context/context';
-import { ComponentMeta } from '../context/context';
+import type { ControllerMeta, SingletonBean } from '../context/context';
 import type { ComponentClass } from '../widgets/component';
 import type { RowModelType } from './iRowModel';
 
@@ -23,7 +22,7 @@ export interface Module {
      */
     validate?: () => ModuleValidationResult;
     moduleName: string;
-    beans?: any[];
+    beans?: SingletonBean[];
     agStackComponents?: ComponentClass[];
     controllers?: ControllerMeta[];
     userComponents?: { componentName: string; componentClass: any }[];

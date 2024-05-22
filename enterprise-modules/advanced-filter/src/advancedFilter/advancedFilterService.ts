@@ -1,6 +1,8 @@
 import type {
     AdvancedFilterEnabledChangedEvent,
     AdvancedFilterModel,
+    BeanCollection,
+    BeanName,
     ColumnModel,
     DataTypeService,
     IAdvancedFilterService,
@@ -10,7 +12,7 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, Events, _exists, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, Events, _exists, _warnOnce } from '@ag-grid-community/core';
 
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
@@ -22,14 +24,23 @@ import type {
     FilterExpressionFunctionParams,
 } from './filterExpressionUtils';
 
-@Bean('advancedFilterService')
 export class AdvancedFilterService extends BeanStub implements IAdvancedFilterService {
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('advancedFilterExpressionService')
+    static BeanName: BeanName = 'advancedFilterService';
+
+    private valueService: ValueService;
+    private columnModel: ColumnModel;
+    private dataTypeService: DataTypeService;
+    private rowModel: IRowModel;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.valueService = beans.valueService;
+        this.columnModel = beans.columnModel;
+        this.dataTypeService = beans.dataTypeService;
+        this.rowModel = beans.rowModel;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+    }
 
     private enabled: boolean;
     private ctrl: AdvancedFilterCtrl;

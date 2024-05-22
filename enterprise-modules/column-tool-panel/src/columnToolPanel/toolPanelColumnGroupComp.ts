@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     ColumnEventType,
     ColumnModel,
     ColumnPanelItemDragEndEvent,
@@ -12,7 +13,6 @@ import type {
 } from '@ag-grid-community/core';
 import {
     AgCheckbox,
-    Autowired,
     Column,
     Component,
     CssClassApplier,
@@ -44,9 +44,16 @@ export class ToolPanelColumnGroupComp extends Component {
             <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
+    private columnModel: ColumnModel;
+    private dragAndDropService: DragAndDropService;
+    private modelItemUtils: ModelItemUtils;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.dragAndDropService = beans.dragAndDropService;
+        this.modelItemUtils = beans.modelItemUtils;
+    }
 
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
     @RefSelector('eLabel') private eLabel: HTMLElement;

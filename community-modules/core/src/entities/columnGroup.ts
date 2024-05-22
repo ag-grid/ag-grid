@@ -1,7 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired } from '../context/context';
 import type { AgEvent, AgEventListener } from '../events';
-import type { GridOptionsService } from '../gridOptionsService';
 import type { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
 import { _last } from '../utils/array';
 import type { ColGroupDef } from './colDef';
@@ -20,8 +18,6 @@ export class ColumnGroup extends BeanStub implements IHeaderColumn {
     public static createUniqueId(groupId: string, instanceId: number): HeaderColumnId {
         return (groupId + '_' + instanceId) as HeaderColumnId;
     }
-
-    @Autowired('gridOptionsService') gos: GridOptionsService;
 
     // all the children of this group, regardless of whether they are opened or closed
     private children: IHeaderColumn[] | null;

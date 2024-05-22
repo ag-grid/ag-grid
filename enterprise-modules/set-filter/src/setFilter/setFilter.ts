@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     CellValueChangedEvent,
     ComponentClass,
     DataTypeService,
@@ -19,7 +20,6 @@ import type {
 import {
     AgInputTextField,
     AgPromise,
-    Autowired,
     Events,
     GROUP_AUTO_COLUMN_ID,
     KeyCode,
@@ -49,14 +49,21 @@ import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> implements ISetFilter<V> {
+    private funcColsService: FuncColsService;
+    private valueService: ValueService;
+    private dataTypeService: DataTypeService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.funcColsService = beans.funcColsService;
+        this.valueService = beans.valueService;
+        this.dataTypeService = beans.dataTypeService;
+    }
+
     @RefSelector('eMiniFilter') private readonly eMiniFilter: AgInputTextField;
     @RefSelector('eFilterLoading') private readonly eFilterLoading: HTMLElement;
     @RefSelector('eSetFilterList') private readonly eSetFilterList: HTMLElement;
     @RefSelector('eFilterNoMatches') private readonly eNoMatches: HTMLElement;
-
-    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
-    @Autowired('valueService') private readonly valueService: ValueService;
-    @Autowired('dataTypeService') private readonly dataTypeService: DataTypeService;
 
     private valueModel: SetValueModel<V> | null = null;
     private setFilterParams: SetFilterParams<any, V> | null = null;

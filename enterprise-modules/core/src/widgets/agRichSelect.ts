@@ -1,6 +1,7 @@
 import type {
     AgPromise,
     AnimationFrameService,
+    BeanCollection,
     Component,
     FieldPickerValueSelectedEvent,
     ICellRendererParams,
@@ -12,7 +13,6 @@ import type {
 import {
     AgInputTextField,
     AgPickerField,
-    Autowired,
     Events,
     KeyCode,
     RefSelector,
@@ -44,6 +44,15 @@ const TEMPLATE = /* html */ `
     </div>`;
 
 export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelectParams<TValue>, VirtualList> {
+    private userComponentFactory: UserComponentFactory;
+    private animationFrameService: AnimationFrameService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.animationFrameService = beans.animationFrameService;
+        this.userComponentFactory = beans.userComponentFactory;
+    }
+
     private searchString = '';
     private listComponent: VirtualList | undefined;
     protected values: TValue[];
@@ -53,9 +62,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     private lastRowHovered: number = -1;
     private searchStringCreator: ((values: TValue[]) => string[]) | null = null;
     private eLoading: HTMLElement | undefined;
-
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @RefSelector('eInput') private eInput: AgInputTextField;
 
     constructor(config?: RichSelectParams<TValue>) {

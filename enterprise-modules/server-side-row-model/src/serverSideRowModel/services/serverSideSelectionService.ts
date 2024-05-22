@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    BeanName,
     ChangedPath,
     IRowModel,
     ISelectionService,
@@ -10,15 +12,22 @@ import type {
     ServerSideRowSelectionState,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, Events } from '@ag-grid-community/core';
+import { BeanStub, Events } from '@ag-grid-community/core';
 
 import { DefaultStrategy } from './selection/strategies/defaultStrategy';
 import { GroupSelectsChildrenStrategy } from './selection/strategies/groupSelectsChildrenStrategy';
 import type { ISelectionStrategy } from './selection/strategies/iSelectionStrategy';
 
-@Bean('selectionService')
 export class ServerSideSelectionService extends BeanStub implements ISelectionService {
-    @Autowired('rowModel') private rowModel: IRowModel;
+    static BeanName: BeanName = 'selectionService';
+
+    private rowModel: IRowModel;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.rowModel = beans.rowModel;
+    }
+
     private selectionStrategy: ISelectionStrategy;
 
     public postConstruct(): void {

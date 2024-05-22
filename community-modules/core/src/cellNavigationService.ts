@@ -1,7 +1,7 @@
 import type { VisibleColsService } from './columns/visibleColsService';
 import { KeyCode } from './constants/keyCode';
 import { BeanStub } from './context/beanStub';
-import { Autowired, Bean } from './context/context';
+import type { BeanCollection, BeanName } from './context/context';
 import type { CellPosition } from './entities/cellPositionUtils';
 import type { Column } from './entities/column';
 import type { RowNode } from './entities/rowNode';
@@ -14,13 +14,23 @@ import type { RowRenderer } from './rendering/rowRenderer';
 import { _last } from './utils/array';
 import { _missing } from './utils/generic';
 
-@Bean('cellNavigationService')
 export class CellNavigationService extends BeanStub {
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+    static BeanName: BeanName = 'cellNavigationService';
+
+    private visibleColsService: VisibleColsService;
+    private rowModel: IRowModel;
+    private rowRenderer: RowRenderer;
+    private pinnedRowModel: PinnedRowModel;
+    private paginationProxy: PaginationProxy;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.visibleColsService = beans.visibleColsService;
+        this.rowModel = beans.rowModel;
+        this.rowRenderer = beans.rowRenderer;
+        this.pinnedRowModel = beans.pinnedRowModel;
+        this.paginationProxy = beans.paginationProxy;
+    }
 
     // returns null if no cell to focus on, ie at the end of the grid
     public getNextCellToFocus(

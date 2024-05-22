@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    BeanName,
     Column,
     ColumnApplyStateService,
     ColumnEventType,
@@ -7,15 +9,23 @@ import type {
     IAggFunc,
     IAggFuncService,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
 import type { ColumnModelItem } from './columnModelItem';
 
-@Bean('modelItemUtils')
 export class ModelItemUtils extends BeanStub {
-    @Autowired('aggFuncService') aggFuncService: IAggFuncService;
-    @Autowired('columnModel') columnModel: ColumnModel;
-    @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
+    static BeanName: BeanName = 'modelItemUtils';
+
+    private aggFuncService: IAggFuncService;
+    private columnModel: ColumnModel;
+    private columnApplyStateService: ColumnApplyStateService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.aggFuncService = beans.aggFuncService;
+        this.columnModel = beans.columnModel;
+        this.columnApplyStateService = beans.columnApplyStateService;
+    }
 
     public selectAllChildren(colTree: ColumnModelItem[], selectAllChecked: boolean, eventType: ColumnEventType): void {
         const cols = this.extractAllLeafColumns(colTree);

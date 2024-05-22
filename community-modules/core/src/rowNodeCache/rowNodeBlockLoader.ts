@@ -1,15 +1,25 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Qualifier } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
-import type { Logger, LoggerFactory } from '../logger';
+import type { Logger} from '../logger';
+import { LoggerFactory } from '../logger';
 import { _removeFromArray } from '../utils/array';
 import { _debounce } from '../utils/function';
 import { RowNodeBlock } from './rowNodeBlock';
 
-@Bean('rowNodeBlockLoader')
 export class RowNodeBlockLoader extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
+    static BeanName: BeanName = 'rowNodeBlockLoader';
+
+    private rowModel: IRowModel;
+
+    private logger: Logger;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.rowModel = beans.rowModel;
+        this.logger = beans.loggerFactory.create('RowNodeBlockLoader');
+    }
 
     public static BLOCK_LOADED_EVENT = 'blockLoaded';
     public static BLOCK_LOADER_FINISHED_EVENT = 'blockLoaderFinished';
@@ -19,7 +29,6 @@ export class RowNodeBlockLoader extends BeanStub {
 
     private activeBlockLoadsCount = 0;
     private blocks: RowNodeBlock[] = [];
-    private logger: Logger;
     private active = true;
 
     public postConstruct(): void {
@@ -32,10 +41,6 @@ export class RowNodeBlockLoader extends BeanStub {
                 blockLoadDebounceMillis
             );
         }
-    }
-
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('RowNodeBlockLoader');
     }
 
     private getMaxConcurrentDatasourceRequests(): number | undefined {

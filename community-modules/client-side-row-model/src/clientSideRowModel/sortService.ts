@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    BeanName,
     ChangedPath,
     ColumnModel,
     FuncColsService,
@@ -12,14 +14,23 @@ import type {
     SortedRowNode,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, _missing, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, _missing, _warnOnce } from '@ag-grid-community/core';
 
-@Bean('sortService')
 export class SortService extends BeanStub {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
-    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
+    static BeanName: BeanName = 'sortService';
+
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+    private rowNodeSorter: RowNodeSorter;
+    private showRowGroupColsService: ShowRowGroupColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+        this.rowNodeSorter = beans.rowNodeSorter;
+        this.showRowGroupColsService = beans.showRowGroupColsService;
+    }
 
     public sort(
         sortOptions: SortOption[],

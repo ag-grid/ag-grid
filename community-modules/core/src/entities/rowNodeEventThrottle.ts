@@ -1,14 +1,21 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { RowGroupOpenedEvent } from '../events';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 
-@Bean('rowNodeEventThrottle')
 export class RowNodeEventThrottle extends BeanStub {
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('rowModel') private rowModel: IRowModel;
+    static BeanName: BeanName = 'rowNodeEventThrottle';
+
+    private animationFrameService: AnimationFrameService;
+    private rowModel: IRowModel;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.animationFrameService = beans.animationFrameService;
+        this.rowModel = beans.rowModel;
+    }
 
     private clientSideRowModel: IClientSideRowModel;
 

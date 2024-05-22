@@ -1,5 +1,6 @@
 import type {
     AgComponentSelector,
+    BeanCollection,
     FilterManager,
     FocusService,
     ISideBar,
@@ -12,7 +13,6 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
     Component,
     Events,
     KeyCode,
@@ -32,11 +32,18 @@ import type { SideBarService } from './sideBarService';
 import { ToolPanelWrapper } from './toolPanelWrapper';
 
 export class AgSideBar extends Component implements ISideBar {
-    static readonly selector: AgComponentSelector = 'AG-SIDE-BAR';
+    private focusService: FocusService;
+    private filterManager: FilterManager;
+    private sideBarService: SideBarService;
 
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('sideBarService') private sideBarService: SideBarService;
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.focusService = beans.focusService;
+        this.filterManager = beans.filterManager;
+        this.sideBarService = beans.sideBarService;
+    }
+
+    static readonly selector: AgComponentSelector = 'AG-SIDE-BAR';
     @RefSelector('sideBarButtons') private sideBarButtonsComp: AgSideBarButtons;
 
     private toolPanelWrappers: ToolPanelWrapper[] = [];

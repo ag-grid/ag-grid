@@ -1,11 +1,17 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 
-@Bean('columnAnimationService')
 export class ColumnAnimationService extends BeanStub {
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    static BeanName: BeanName = 'columnAnimationService';
+
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private gridBodyCtrl: GridBodyCtrl;
 

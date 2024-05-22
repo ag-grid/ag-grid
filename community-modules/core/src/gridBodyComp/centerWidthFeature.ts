@@ -1,12 +1,18 @@
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { Events } from '../eventKeys';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 export class CenterWidthFeature extends BeanStub {
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
+    private visibleColsService: VisibleColsService;
+    private scrollVisibleService: ScrollVisibleService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.visibleColsService = beans.visibleColsService;
+        this.scrollVisibleService = beans.scrollVisibleService;
+    }
 
     constructor(
         private readonly callback: (width: number) => void,

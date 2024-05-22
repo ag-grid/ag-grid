@@ -1,9 +1,9 @@
-import type { FieldValueEvent, WithoutGridCommon } from '@ag-grid-community/core';
+import type { FieldValueEvent, WithoutGridCommon ,
+    BeanCollection} from '@ag-grid-community/core';
 import {
     AgInputDateField,
     AgInputNumberField,
     AgInputTextField,
-    Autowired,
     Component,
     Events,
     KeyCode,
@@ -18,10 +18,15 @@ import {
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 
 export class InputPillComp extends Component {
+    private advancedFilterExpressionService: AdvancedFilterExpressionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+    }
+
     @RefSelector('ePill') private ePill: HTMLElement;
     @RefSelector('eLabel') private eLabel: HTMLElement;
-    @Autowired('advancedFilterExpressionService')
-    private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     private eEditor: AgInputTextField | undefined;
     private value: string;

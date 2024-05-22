@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { ColumnPinnedType } from '../entities/column';
 import { Column } from '../entities/column';
 import type { ColumnGroup } from '../entities/columnGroup';
@@ -10,11 +10,19 @@ import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColumnModel } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
 
-@Bean('columnViewportService')
 export class ColumnViewportService extends BeanStub {
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
+    static BeanName: BeanName = 'columnViewportService';
+
+    private visibleColsService: VisibleColsService;
+    private columnModel: ColumnModel;
+    private eventDispatcher: ColumnEventDispatcher;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.visibleColsService = beans.visibleColsService;
+        this.columnModel = beans.columnModel;
+        this.eventDispatcher = beans.columnEventDispatcher;
+    }
 
     // cols in center that are in the viewport
     private colsWithinViewport: Column[] = [];

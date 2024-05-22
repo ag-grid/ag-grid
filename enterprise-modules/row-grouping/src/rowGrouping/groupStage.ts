@@ -1,5 +1,6 @@
 import type {
-    Beans,
+    BeanCollection,
+    BeanName,
     ChangedPath,
     Column,
     ColumnModel,
@@ -18,8 +19,6 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
-    Bean,
     BeanStub,
     RowNode,
     _areEqual,
@@ -60,15 +59,27 @@ interface GroupingDetails {
     keyCreators: (((params: KeyCreatorParams) => string) | undefined)[];
 }
 
-@Bean('groupStage')
 export class GroupStage extends BeanStub implements IRowNodeStage {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('selectableService') private selectableService: SelectableService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('beans') private beans: Beans;
-    @Autowired('selectionService') private selectionService: ISelectionService;
-    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
+    static BeanName: BeanName = 'groupStage';
+
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+    private selectableService: SelectableService;
+    private valueService: ValueService;
+    private beans: BeanCollection;
+    private selectionService: ISelectionService;
+    private showRowGroupColsService: ShowRowGroupColsService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.beans = beans;
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+        this.selectableService = beans.selectableService;
+        this.valueService = beans.valueService;
+        this.selectionService = beans.selectionService;
+        this.showRowGroupColsService = beans.showRowGroupColsService;
+    }
 
     // when grouping, these items are of note:
     // rowNode.parent: RowNode: set to the parent

@@ -1,13 +1,5 @@
-import type { AgSelectParams } from '@ag-grid-community/core';
-import {
-    AgSelect,
-    Autowired,
-    Component,
-    RefSelector,
-    _capitalise,
-    _includes,
-    _removeFromParent,
-} from '@ag-grid-community/core';
+import type { AgSelectParams, BeanCollection } from '@ag-grid-community/core';
+import { AgSelect, Component, RefSelector, _capitalise, _includes, _removeFromParent } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -34,6 +26,13 @@ export interface FontPanelParams {
 }
 
 export class FontPanel extends Component {
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.chartTranslationService = beans.chartTranslationService;
+    }
+
     public static TEMPLATE /* html */ = `<div class="ag-font-panel">
             <ag-group-component ref="fontGroup">
                 <ag-select ref="familySelect"></ag-select>
@@ -46,8 +45,6 @@ export class FontPanel extends Component {
         </div>`;
 
     @RefSelector('fontGroup') private fontGroup: AgGroupComponent;
-
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
     private readonly chartOptions: ChartOptionsProxy;
     private activeComps: Component[] = [];

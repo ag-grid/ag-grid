@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     Column,
     ColumnNameService,
     FilterManager,
@@ -10,7 +11,6 @@ import type {
 import {
     AgPromise,
     AgSelect,
-    Autowired,
     Events,
     FilterWrapperComp,
     RefSelector,
@@ -27,12 +27,19 @@ interface FilterColumnPair {
 }
 
 export class GroupFilter extends TabGuardComp implements IFilterComp {
+    private filterManager: FilterManager;
+    private columnNameService: ColumnNameService;
+    private funcColsService: FuncColsService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.filterManager = beans.filterManager;
+        this.columnNameService = beans.columnNameService;
+        this.funcColsService = beans.funcColsService;
+    }
+
     public static EVENT_COLUMN_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
     public static EVENT_SELECTED_COLUMN_CHANGED = 'selectedColumnChanged';
-
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
 
     @RefSelector('eGroupField') private readonly eGroupField: HTMLElement;
     @RefSelector('eUnderlyingFilter') private readonly eUnderlyingFilter: HTMLElement;

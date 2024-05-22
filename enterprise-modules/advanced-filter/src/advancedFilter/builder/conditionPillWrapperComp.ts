@@ -1,5 +1,13 @@
-import type { BaseCellDataType, Column, ColumnAdvancedFilterModel, ValueService } from '@ag-grid-community/core';
-import { Autowired, Component, _exists, _removeFromParent } from '@ag-grid-community/core';
+import type {
+    BaseCellDataType,
+    BeanCollection,
+    Column,
+    ColumnAdvancedFilterModel} from '@ag-grid-community/core';
+import {
+    Component,
+    _exists,
+    _removeFromParent,
+} from '@ag-grid-community/core';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
@@ -9,9 +17,12 @@ import type { InputPillComp } from './inputPillComp';
 import type { SelectPillComp } from './selectPillComp';
 
 export class ConditionPillWrapperComp extends Component {
-    @Autowired('advancedFilterExpressionService')
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
-    @Autowired('valueService') private valueService: ValueService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+    }
 
     private item: AdvancedFilterBuilderItem;
     private createPill: (params: CreatePillParams) => SelectPillComp | InputPillComp;

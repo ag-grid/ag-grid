@@ -61,7 +61,8 @@ export class DateCompWrapper {
 
     public destroy(): void {
         this.alive = false;
-        this.dateComp = this.context.destroyBean(this.dateComp);
+        this.context.destroyBean(this.dateComp);
+        this.dateComp = undefined;
     }
 
     public getDate(): Date | null {

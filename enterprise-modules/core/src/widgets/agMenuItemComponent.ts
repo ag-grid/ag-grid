@@ -1,6 +1,7 @@
 import type {
     AgEvent,
     AgPromise,
+    BeanCollection,
     Component,
     IComponent,
     IMenuActionParams,
@@ -12,7 +13,6 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
     BeanStub,
     KeyCode,
     TooltipFeature,
@@ -44,8 +44,14 @@ interface AgMenuItemComponentParams {
 }
 
 export class AgMenuItemComponent extends BeanStub {
-    @Autowired('popupService') private readonly popupService: PopupService;
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
+    private popupService: PopupService;
+    private userComponentFactory: UserComponentFactory;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.popupService = beans.popupService;
+        this.userComponentFactory = beans.userComponentFactory;
+    }
 
     public static EVENT_CLOSE_MENU = 'closeMenu';
     public static EVENT_MENU_ITEM_ACTIVATED = 'menuItemActivated';
@@ -434,7 +440,8 @@ export class AgMenuItemComponent extends BeanStub {
         this.tooltip = tooltip;
 
         if (this.tooltipFeature) {
-            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
+            this.destroyBean(this.tooltipFeature);
+            this.tooltipFeature = undefined;
         }
 
         if (!tooltip || !this.menuItemComp) {
@@ -453,7 +460,8 @@ export class AgMenuItemComponent extends BeanStub {
 
     public override destroy(): void {
         if (this.tooltipFeature) {
-            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
+            this.destroyBean(this.tooltipFeature);
+            this.tooltipFeature = undefined;
         }
         super.destroy();
     }

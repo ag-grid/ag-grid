@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     Column,
     ColumnGroup,
     ColumnModel,
@@ -13,16 +14,7 @@ import type {
     SortController,
     ValueService,
 } from '@ag-grid-community/core';
-import {
-    Autowired,
-    BeanStub,
-    ModuleNames,
-    ModuleRegistry,
-    Optional,
-    _includes,
-    _last,
-    _values,
-} from '@ag-grid-community/core';
+import { BeanStub, ModuleNames, ModuleRegistry, _includes, _last, _values } from '@ag-grid-community/core';
 
 import type { ColState } from '../model/chartDataModel';
 import { ChartDataModel } from '../model/chartDataModel';
@@ -47,14 +39,18 @@ interface IData {
 }
 
 export class ChartDatasource extends BeanStub {
-    @Autowired('rowModel') private readonly gridRowModel: IRowModel;
-    @Autowired('pivotResultColsService') private readonly pivotResultColsService: PivotResultColsService;
-    @Autowired('valueService') private readonly valueService: ValueService;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('rowNodeSorter') private readonly rowNodeSorter: RowNodeSorter;
-    @Autowired('sortController') private sortController: SortController;
+    private gridRowModel: IRowModel;
+    private pivotResultColsService: PivotResultColsService;
+    private valueService: ValueService;
+    private columnModel: ColumnModel;
+    private rowNodeSorter: RowNodeSorter;
+    private sortController: SortController;
+    private aggregationStage?: IAggregationStage;
 
-    @Optional('aggregationStage') private readonly aggregationStage?: IAggregationStage;
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.sortController = beans.sortController;
+    }
 
     public getData(params: ChartDatasourceParams): IData {
         if (params.crossFiltering) {

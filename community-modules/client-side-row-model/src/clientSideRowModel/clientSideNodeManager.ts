@@ -1,5 +1,5 @@
 import type {
-    Beans,
+    BeanCollection,
     EventService,
     FuncColsService,
     GridOptionsService,
@@ -29,7 +29,7 @@ export class ClientSideNodeManager {
     private eventService: EventService;
     private funcColsService: FuncColsService;
     private selectionService: ISelectionService;
-    private beans: Beans;
+    private beans: BeanCollection;
 
     private nextId = 0;
 
@@ -47,7 +47,7 @@ export class ClientSideNodeManager {
         eventService: EventService,
         funcColsService: FuncColsService,
         selectionService: ISelectionService,
-        beans: Beans
+        beans: BeanCollection
     ) {
         this.rootNode = rootNode;
         this.gos = gos;

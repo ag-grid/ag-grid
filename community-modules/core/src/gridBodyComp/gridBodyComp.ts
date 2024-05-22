@@ -1,4 +1,4 @@
-import { Autowired, Optional } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { GridHeaderComp } from '../headerRendering/gridHeaderComp';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { ResizeObserverService } from '../misc/resizeObserverService';
@@ -59,9 +59,14 @@ const GRID_BODY_TEMPLATE =
 export class GridBodyComp extends Component {
     static readonly selector: AgComponentSelector = 'AG-GRID-BODY';
 
-    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
+    private resizeObserverService: ResizeObserverService;
+    private rangeService?: IRangeService;
 
-    @Optional('rangeService') private rangeService?: IRangeService;
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.resizeObserverService = beans.resizeObserverService;
+        this.rangeService = beans.rangeService;
+    }
 
     @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
     @RefSelector('eStickyTop') private eStickyTop: HTMLElement;

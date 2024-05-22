@@ -1,22 +1,22 @@
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
 import type { Column } from '../../entities/column';
 import type { RowNode } from '../../entities/rowNode';
 import { Events } from '../../eventKeys';
 import { _isDeleteKey } from '../../utils/keyboard';
-import type { Beans } from '../beans';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellCtrl } from './cellCtrl';
 
 export class CellKeyboardListenerFeature extends BeanStub {
     private readonly cellCtrl: CellCtrl;
-    private readonly beans: Beans;
+    private readonly beans: BeanCollection;
     private readonly rowNode: RowNode;
     private readonly rowCtrl: RowCtrl;
 
     private eGui: HTMLElement;
 
-    constructor(ctrl: CellCtrl, beans: Beans, column: Column, rowNode: RowNode, rowCtrl: RowCtrl) {
+    constructor(ctrl: CellCtrl, beans: BeanCollection, column: Column, rowNode: RowNode, rowCtrl: RowCtrl) {
         super();
         this.cellCtrl = ctrl;
         this.beans = beans;

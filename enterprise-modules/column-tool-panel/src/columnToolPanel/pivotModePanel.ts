@@ -1,9 +1,24 @@
-import type { AgCheckbox, ColumnModel, GridApi } from '@ag-grid-community/core';
-import { AgToggleButton, Autowired, Component, Events, RefSelector } from '@ag-grid-community/core';
+import type {
+    AgCheckbox,
+    BeanCollection,
+    ColumnModel,
+    GridApi} from '@ag-grid-community/core';
+import {
+    AgToggleButton,
+    Component,
+    Events,
+    RefSelector,
+} from '@ag-grid-community/core';
 
 export class PivotModePanel extends Component {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('gridApi') private api: GridApi;
+    private columnModel: ColumnModel;
+    private api: GridApi;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.api = beans.gridApi;
+    }
 
     @RefSelector('cbPivotMode') private cbPivotMode: AgCheckbox;
 

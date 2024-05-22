@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { ColDef } from '../entities/colDef';
 import { Column } from '../entities/column';
 import type { ColumnEventType } from '../events';
@@ -10,11 +10,19 @@ import type { ColumnModel } from './columnModel';
 import type { ColumnNameService } from './columnNameService';
 
 export const GROUP_AUTO_COLUMN_ID: 'ag-Grid-AutoColumn' = 'ag-Grid-AutoColumn';
-@Bean('autoColService')
 export class AutoColService extends BeanStub {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('columnFactory') private columnFactory: ColumnFactory;
+    static BeanName: BeanName = 'autoColService';
+
+    private columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    private columnFactory: ColumnFactory;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.columnNameService = beans.columnNameService;
+        this.columnFactory = beans.columnFactory;
+    }
 
     public createAutoCols(rowGroupCols: Column[]): Column[] {
         const autoCols: Column[] = [];

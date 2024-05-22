@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    BeanName,
     Column,
     ColumnGroup,
     ColumnModel,
@@ -9,12 +11,11 @@ import type {
     ExcelRow,
     ExcelStyle,
     FuncColsService,
-    GridOptionsService,
     IExcelCreator,
     StylingService,
     ValueService,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, CssClassApplier } from '@ag-grid-community/core';
+import { CssClassApplier } from '@ag-grid-community/core';
 import type { GridSerializer } from '@ag-grid-community/csv-export';
 import { BaseCreator, Downloader, RowType, ZipContainer } from '@ag-grid-community/csv-export';
 
@@ -216,19 +217,30 @@ export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetPara
     });
 };
 
-@Bean('excelCreator')
 export class ExcelCreator
     extends BaseCreator<ExcelRow[], ExcelSerializingSession, ExcelExportParams>
     implements IExcelCreator
 {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('stylingService') private stylingService: StylingService;
+    static BeanName: BeanName = 'excelCreator';
 
-    @Autowired('gridSerializer') private gridSerializer: GridSerializer;
-    @Autowired('gridOptionsService') gos: GridOptionsService;
+    private columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    private funcColsService: FuncColsService;
+    private valueService: ValueService;
+    private stylingService: StylingService;
+
+    private gridSerializer: GridSerializer;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.columnNameService = beans.columnNameService;
+        this.funcColsService = beans.funcColsService;
+        this.valueService = beans.valueService;
+        this.stylingService = beans.stylingService;
+        this.gridSerializer = beans.gridSerializer;
+        this.gos = beans.gos;
+    }
 
     public postConstruct(): void {
         this.setBeans({

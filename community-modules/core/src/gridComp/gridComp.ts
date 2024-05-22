@@ -1,4 +1,4 @@
-import { Autowired } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { GridBodyComp } from '../gridBodyComp/gridBodyComp';
 import type { ISideBar } from '../interfaces/iSideBar';
 import type { Logger, LoggerFactory } from '../logger';
@@ -13,7 +13,12 @@ import type { IGridComp } from './gridCtrl';
 import { GridCtrl } from './gridCtrl';
 
 export class GridComp extends TabGuardComp {
-    @Autowired('loggerFactory') private readonly loggerFactory: LoggerFactory;
+    private loggerFactory: LoggerFactory;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.loggerFactory = beans.loggerFactory;
+    }
 
     @RefSelector('gridBody') private readonly gridBodyComp: GridBodyComp;
     @RefSelector('sideBar') private readonly sideBarComp: ISideBar & Component;

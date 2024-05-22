@@ -2,7 +2,7 @@ import type { ColumnModel } from './columns/columnModel';
 import type { FuncColsService } from './columns/funcColsService';
 import type { ShowRowGroupColsService } from './columns/showRowGroupColsService';
 import { BeanStub } from './context/beanStub';
-import { Autowired, Bean } from './context/context';
+import type { BeanCollection, BeanName } from './context/context';
 import type { SortDirection } from './entities/colDef';
 import type { Column } from './entities/column';
 import type { ColumnEventType, SortChangedEvent } from './events';
@@ -17,13 +17,21 @@ export interface SortModelItem {
     sort: 'asc' | 'desc';
 }
 
-@Bean('sortController')
 export class SortController extends BeanStub {
+    static BeanName: BeanName = 'sortController';
+
     private static DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+    private showRowGroupColsService: ShowRowGroupColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+        this.showRowGroupColsService = beans.showRowGroupColsService;
+    }
 
     public progressSort(column: Column, multiSort: boolean, source: ColumnEventType): void {
         const nextDirection = this.getNextSortDirection(column);

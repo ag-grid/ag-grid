@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    BeanName,
     Column,
     ColumnModel,
     ColumnNameService,
@@ -9,17 +11,29 @@ import type {
     ValueService,
     VisibleColsService,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, Events } from '@ag-grid-community/core';
+import { BeanStub, Events } from '@ag-grid-community/core';
 
-@Bean('chartColumnService')
 export class ChartColumnService extends BeanStub {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
+    static BeanName: BeanName = 'chartColumnService';
+
+    private columnModel: ColumnModel;
+    private showRowGroupColsService: ShowRowGroupColsService;
+    private columnNameService: ColumnNameService;
+    private visibleColsService: VisibleColsService;
+    private funcColsService: FuncColsService;
+    private valueService: ValueService;
+    private rowPositionUtils: RowPositionUtils;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.showRowGroupColsService = beans.showRowGroupColsService;
+        this.columnNameService = beans.columnNameService;
+        this.visibleColsService = beans.visibleColsService;
+        this.funcColsService = beans.funcColsService;
+        this.valueService = beans.valueService;
+        this.rowPositionUtils = beans.rowPositionUtils;
+    }
 
     private valueColsWithoutSeriesType: Set<string> = new Set();
 

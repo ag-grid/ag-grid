@@ -1,19 +1,13 @@
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterEnabledChangedEvent,
+    BeanCollection,
     CtrlsService,
     IAdvancedFilterCtrl,
     PopupService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import {
-    Autowired,
-    BeanStub,
-    Events,
-    _getAbsoluteHeight,
-    _getAbsoluteWidth,
-    _removeFromParent,
-} from '@ag-grid-community/core';
+import { BeanStub, Events, _getAbsoluteHeight, _getAbsoluteWidth, _removeFromParent } from '@ag-grid-community/core';
 import { AgDialog } from '@ag-grid-enterprise/core';
 
 import { AdvancedFilterComp } from './advancedFilterComp';
@@ -22,10 +16,16 @@ import { AdvancedFilterHeaderComp } from './advancedFilterHeaderComp';
 import { AdvancedFilterBuilderComp } from './builder/advancedFilterBuilderComp';
 
 export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl {
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('popupService') private popupService: PopupService;
-    @Autowired('advancedFilterExpressionService')
+    private ctrlsService: CtrlsService;
+    private popupService: PopupService;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.ctrlsService = beans.ctrlsService;
+        this.popupService = beans.popupService;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+    }
 
     public static readonly EVENT_BUILDER_CLOSED = 'advancedFilterBuilderClosed';
 

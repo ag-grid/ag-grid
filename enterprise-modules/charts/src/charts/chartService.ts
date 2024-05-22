@@ -1,5 +1,7 @@
 import type {
     BaseCreateChartParams,
+    BeanCollection,
+    BeanName,
     CellRangeParams,
     ChartDownloadParams,
     ChartModel,
@@ -20,7 +22,7 @@ import type {
     UpdateChartParams,
     VisibleColsService,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, Optional } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
 import { VERSION as CHARTS_VERSION, _ModuleSupport } from 'ag-charts-community';
 
@@ -48,10 +50,17 @@ export interface CommonCreateChartParams extends BaseCreateChartParams {
     seriesGroupType?: SeriesGroupType;
 }
 
-@Bean('chartService')
 export class ChartService extends BeanStub implements IChartService {
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Optional('rangeService') private rangeService?: IRangeService;
+    static BeanName: BeanName = 'chartService';
+
+    private visibleColsService: VisibleColsService;
+    private rangeService?: IRangeService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.visibleColsService = beans.visibleColsService;
+        this.rangeService = beans.rangeService;
+    }
 
     public static CHARTS_VERSION = CHARTS_VERSION;
 

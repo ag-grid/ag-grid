@@ -1,5 +1,5 @@
 import { KeyCode } from '../constants/keyCode';
-import { Autowired } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { FocusService } from '../focusService';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import { _setAriaLabel, _setAriaRole } from '../utils/aria';
@@ -10,7 +10,12 @@ import { RefSelector } from '../widgets/componentAnnotations';
 import { TabGuardComp } from '../widgets/tabGuardComp';
 
 export class TabbedLayout extends TabGuardComp {
-    @Autowired('focusService') private focusService: FocusService;
+    private focusService: FocusService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.focusService = beans.focusService;
+    }
 
     @RefSelector('eHeader') private readonly eHeader: HTMLElement;
     @RefSelector('eBody') private readonly eBody: HTMLElement;

@@ -1,11 +1,18 @@
-import type { AgComponentSelector } from '@ag-grid-community/core';
-import { Autowired, Component, RefSelector } from '@ag-grid-community/core';
+import type { AgComponentSelector, BeanCollection} from '@ag-grid-community/core';
+import { Component, RefSelector } from '@ag-grid-community/core';
 
 import type { GridLicenseManager as LicenseManager } from './gridLicenseManager';
 
 export class AgWatermark extends Component {
     static readonly selector: AgComponentSelector = 'AG-WATERMARK';
-    @Autowired('licenseManager') licenseManager: LicenseManager;
+
+    licenseManager: LicenseManager;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.licenseManager = beans.licenseManager;
+    }
+
     @RefSelector('eLicenseTextRef') private eLicenseTextRef: HTMLElement;
 
     constructor() {

@@ -1,5 +1,5 @@
 import { BeanStub } from '../../../context/beanStub';
-import { Autowired } from '../../../context/context';
+import type { BeanCollection } from '../../../context/context';
 import type { HeaderCheckboxSelectionCallbackParams } from '../../../entities/colDef';
 import type { Column } from '../../../entities/column';
 import type { SelectionEventSourceType } from '../../../events';
@@ -11,8 +11,14 @@ import { AgCheckbox } from '../../../widgets/agCheckbox';
 import type { HeaderCellCtrl } from './headerCellCtrl';
 
 export class SelectAllFeature extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
+    private rowModel: IRowModel;
+    private selectionService: ISelectionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.rowModel = beans.rowModel;
+        this.selectionService = beans.selectionService;
+    }
 
     private cbSelectAllVisible = false;
     private processingEventFromCheckbox = false;

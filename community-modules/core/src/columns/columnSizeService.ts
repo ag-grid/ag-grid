@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { Column } from '../entities/column';
 import type { ColumnEventType } from '../events';
@@ -35,13 +35,23 @@ export interface ISizeColumnsToFitParams {
     columnLimits?: IColumnLimit[];
 }
 
-@Bean('columnSizeService')
 export class ColumnSizeService extends BeanStub {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('columnViewportService') private readonly columnViewportService: ColumnViewportService;
-    @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    static BeanName: BeanName = 'columnSizeService';
+
+    private columnModel: ColumnModel;
+    private columnViewportService: ColumnViewportService;
+    private eventDispatcher: ColumnEventDispatcher;
+    private visibleColsService: VisibleColsService;
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.columnViewportService = beans.columnViewportService;
+        this.eventDispatcher = beans.columnEventDispatcher;
+        this.visibleColsService = beans.visibleColsService;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private flexViewportWidth: number;
 

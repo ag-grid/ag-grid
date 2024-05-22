@@ -1,8 +1,7 @@
-import type { AgComponentSelector, ColumnModel } from '@ag-grid-community/core';
+import type { AgComponentSelector, BeanCollection, ColumnModel } from '@ag-grid-community/core';
 import {
     AgCheckbox,
     AgInputTextField,
-    Autowired,
     Component,
     Events,
     KeyCode,
@@ -23,7 +22,12 @@ export enum ExpandState {
 export class AgPrimaryColsHeader extends Component {
     static readonly selector: AgComponentSelector = 'AG-PRIMARY-COLS-HEADER';
 
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    private columnModel: ColumnModel;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+    }
 
     @RefSelector('eExpand') private readonly eExpand: Element;
     @RefSelector('eSelect') private readonly eSelect: AgCheckbox;

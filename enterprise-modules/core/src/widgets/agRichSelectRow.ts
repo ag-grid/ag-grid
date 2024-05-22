@@ -1,5 +1,6 @@
 import type {
     AgPromise,
+    BeanCollection,
     FieldPickerValueSelectedEvent,
     ICellRendererParams,
     RichSelectParams,
@@ -9,7 +10,6 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
     Component,
     Events,
     _bindCellRendererToHtmlElement,
@@ -20,10 +20,15 @@ import {
 } from '@ag-grid-community/core';
 
 export class RichSelectRow<TValue> extends Component {
+    private userComponentFactory: UserComponentFactory;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.userComponentFactory = beans.userComponentFactory;
+    }
+
     private value: TValue;
     private parsedValue: string | null;
-
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     constructor(
         private readonly params: RichSelectParams<TValue>,

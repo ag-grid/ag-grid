@@ -1,5 +1,7 @@
 import type {
     AgEvent,
+    BeanCollection,
+    BeanName,
     CellPosition,
     CellPositionUtils,
     Column,
@@ -16,14 +18,11 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
-    Bean,
     BeanStub,
     Component,
     Events,
     ModuleNames,
     ModuleRegistry,
-    Optional,
     _exists,
     _isIOSUserAgent,
     _missingOrEmpty,
@@ -37,14 +36,23 @@ import type { MenuUtils } from './menuUtils';
 const CSS_MENU = 'ag-menu';
 const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
 
-@Bean('contextMenuFactory')
 export class ContextMenuFactory extends BeanStub implements IContextMenuFactory {
-    @Autowired('popupService') private popupService: PopupService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('menuUtils') private menuUtils: MenuUtils;
+    static BeanName: BeanName = 'contextMenuFactory';
 
-    @Optional('rangeService') private rangeService?: IRangeService;
+    private popupService: PopupService;
+    private ctrlsService: CtrlsService;
+    private columnModel: ColumnModel;
+    private menuUtils: MenuUtils;
+    private rangeService?: IRangeService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.popupService = beans.popupService;
+        this.ctrlsService = beans.ctrlsService;
+        this.columnModel = beans.columnModel;
+        this.menuUtils = beans.menuUtils;
+        this.rangeService = beans.rangeService;
+    }
 
     private activeMenu: ContextMenu | null;
 
@@ -246,9 +254,9 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 }
 
 class ContextMenu extends Component {
-    @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('cellPositionUtils') private cellPositionUtils: CellPositionUtils;
+    private menuItemMapper: MenuItemMapper;
+    private focusService: FocusService;
+    private cellPositionUtils: CellPositionUtils;
 
     private menuList: AgMenuList | null = null;
     private focusedCell: CellPosition | null = null;

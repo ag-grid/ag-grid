@@ -1,6 +1,6 @@
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import { DragAndDropService, DragSourceType } from '../dragAndDrop/dragAndDropService';
 import { Events } from '../eventKeys';
@@ -25,12 +25,22 @@ export interface IGridComp extends LayoutView {
 }
 
 export class GridCtrl extends BeanStub {
-    @Autowired('focusService') protected readonly focusService: FocusService;
-    @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
-    @Autowired('mouseEventService') private readonly mouseEventService: MouseEventService;
-    @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
+    private focusService: FocusService;
+    private resizeObserverService: ResizeObserverService;
+    private visibleColsService: VisibleColsService;
+    private ctrlsService: CtrlsService;
+    private mouseEventService: MouseEventService;
+    private dragAndDropService: DragAndDropService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.focusService = beans.focusService;
+        this.resizeObserverService = beans.resizeObserverService;
+        this.visibleColsService = beans.visibleColsService;
+        this.ctrlsService = beans.ctrlsService;
+        this.mouseEventService = beans.mouseEventService;
+        this.dragAndDropService = beans.dragAndDropService;
+    }
 
     private view: IGridComp;
     private eGridHostDiv: HTMLElement;

@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    BeanName,
     ColDef,
     ColGroupDef,
     Column,
@@ -7,20 +9,28 @@ import type {
     FuncColsService,
     IPivotColDefService,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, _cloneObject, _iterateObject } from '@ag-grid-community/core';
+import { BeanStub, _cloneObject, _iterateObject } from '@ag-grid-community/core';
 
 export interface PivotColDefServiceResult {
     pivotColumnGroupDefs: (ColDef | ColGroupDef)[];
     pivotColumnDefs: ColDef[];
 }
 
-@Bean('pivotColDefService')
 export class PivotColDefService extends BeanStub implements IPivotColDefService {
+    static BeanName: BeanName = 'pivotColDefService';
+
     public static PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+    private columnNameService: ColumnNameService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+        this.columnNameService = beans.columnNameService;
+    }
 
     private fieldSeparator: string;
     private pivotDefaultExpanded: number;

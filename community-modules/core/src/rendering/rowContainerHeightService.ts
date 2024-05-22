@@ -1,8 +1,8 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Qualifier } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import { Events } from '../eventKeys';
-import type { Logger, LoggerFactory } from '../logger';
+import type { Logger } from '../logger';
 import { _getMaxDivHeight } from '../utils/browser';
 
 /**
@@ -10,9 +10,18 @@ import { _getMaxDivHeight } from '../utils/browser';
  * the max div height actually allows.
  */
 
-@Bean('rowContainerHeightService')
 export class RowContainerHeightService extends BeanStub {
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    static BeanName: BeanName = 'rowContainerHeightService';
+
+    private ctrlsService: CtrlsService;
+
+    private logger: Logger;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.ctrlsService = beans.ctrlsService;
+        this.logger = beans.loggerFactory.create('RowContainerHeightService');
+    }
 
     private maxDivHeight: number;
 
@@ -35,12 +44,6 @@ export class RowContainerHeightService extends BeanStub {
 
     // the max scroll position
     private maxScrollY: number;
-
-    private logger: Logger;
-
-    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('RowContainerHeightService');
-    }
 
     public postConstruct(): void {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));

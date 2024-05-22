@@ -1,10 +1,17 @@
-import type { FuncColsService, PivotResultColsService } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub } from '@ag-grid-community/core';
+import type { BeanCollection, BeanName, FuncColsService, PivotResultColsService } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
-@Bean('ssrmListenerUtils')
 export class ListenerUtils extends BeanStub {
-    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
+    static BeanName: BeanName = 'ssrmListenerUtils';
+
+    private pivotResultColsService: PivotResultColsService;
+    private funcColsService: FuncColsService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.pivotResultColsService = beans.pivotResultColsService;
+        this.funcColsService = beans.funcColsService;
+    }
 
     public isSortingWithValueColumn(changedColumnsInSort: string[]): boolean {
         const valueColIds = this.funcColsService.getValueColumns().map((col) => col.getColId());

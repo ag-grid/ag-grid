@@ -1,9 +1,10 @@
 import { BeanStub } from '../context/beanStub';
-import { Bean } from '../context/context';
+import type { BeanName } from '../context/context';
 
 const DEBOUNCE_DELAY = 50;
-@Bean('resizeObserverService')
 export class ResizeObserverService extends BeanStub {
+    static BeanName: BeanName = 'resizeObserverService';
+
     private polyfillFunctions: (() => void)[] = [];
     private polyfillScheduled: boolean;
 

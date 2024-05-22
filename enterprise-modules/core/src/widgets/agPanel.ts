@@ -167,7 +167,8 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
             const eGui = this.closeButtonComp.getGui();
             eGui.parentElement!.removeChild(eGui);
 
-            this.closeButtonComp = this.destroyBean(this.closeButtonComp);
+            this.destroyBean(this.closeButtonComp);
+            this.closeButtonComp = undefined;
         }
     }
 
@@ -221,7 +222,8 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
 
     public override destroy(): void {
         if (this.closeButtonComp) {
-            this.closeButtonComp = this.destroyBean(this.closeButtonComp);
+            this.destroyBean(this.closeButtonComp);
+            this.closeButtonComp = undefined;
         }
 
         const eGui = this.getGui();

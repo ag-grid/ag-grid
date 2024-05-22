@@ -1,6 +1,6 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired } from '../../context/context';
-import type { DragItem, DragSource } from '../../dragAndDrop/dragAndDropService';
+import type { BeanCollection } from '../../context/context';
+import type { DragItem, DragSource} from '../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
 import type { Column } from '../../entities/column';
 import { RowNode } from '../../entities/rowNode';
@@ -8,7 +8,6 @@ import { Events } from '../../eventKeys';
 import { _isFunction, _warnOnce } from '../../utils/function';
 import { _createIconNoSpan } from '../../utils/icon';
 import { Component } from '../../widgets/component';
-import type { Beans } from '../beans';
 
 export interface IRowDragItem extends DragItem {
     /** The default text that would be applied to this Drag Element */
@@ -18,7 +17,12 @@ export interface IRowDragItem extends DragItem {
 export class RowDragComp extends Component {
     private dragSource: DragSource | null = null;
 
-    @Autowired('beans') private readonly beans: Beans;
+    private beans: BeanCollection;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.beans = beans;
+    }
 
     constructor(
         private readonly cellValueFn: () => string,
@@ -186,9 +190,9 @@ class VisibilityStrategy extends BeanStub {
 
 // when non managed, the visibility depends on suppressRowDrag property only
 class NonManagedVisibilityStrategy extends VisibilityStrategy {
-    private readonly beans: Beans;
+    private readonly beans: BeanCollection;
 
-    constructor(parent: RowDragComp, beans: Beans, rowNode: RowNode, column?: Column) {
+    constructor(parent: RowDragComp, beans: BeanCollection, rowNode: RowNode, column?: Column) {
         super(parent, rowNode, column);
         this.beans = beans;
     }
@@ -222,9 +226,9 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
 
 // when managed, the visibility depends on sort, filter and row group, as well as suppressRowDrag property
 class ManagedVisibilityStrategy extends VisibilityStrategy {
-    private readonly beans: Beans;
+    private readonly beans: BeanCollection;
 
-    constructor(parent: RowDragComp, beans: Beans, rowNode: RowNode, column?: Column) {
+    constructor(parent: RowDragComp, beans: BeanCollection, rowNode: RowNode, column?: Column) {
         super(parent, rowNode, column);
         this.beans = beans;
     }

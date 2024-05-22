@@ -1,5 +1,16 @@
-import type { AgComponentSelector, AgEvent, PopupPositionParams, PopupService } from '@ag-grid-community/core';
-import { AgInputTextField, Autowired, Component, KeyCode, RefSelector, _makeNull } from '@ag-grid-community/core';
+import type {
+    AgComponentSelector,
+    AgEvent,
+    BeanCollection,
+    PopupPositionParams,
+    PopupService} from '@ag-grid-community/core';
+import {
+    AgInputTextField,
+    Component,
+    KeyCode,
+    RefSelector,
+    _makeNull,
+} from '@ag-grid-community/core';
 
 import { AgAutocompleteList } from './agAutocompleteList';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocompleteParams';
@@ -24,14 +35,19 @@ export interface AutocompleteValidChangedEvent extends AgEvent {
 }
 
 export class AgAutocomplete extends Component {
+    private popupService: PopupService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.popupService = beans.popupService;
+    }
+
     static readonly selector: AgComponentSelector = 'AG-AUTOCOMPLETE';
 
     public static EVENT_VALUE_CHANGED = 'eventValueChanged';
     public static EVENT_VALUE_CONFIRMED = 'eventValueConfirmed';
     public static EVENT_OPTION_SELECTED = 'eventOptionSelected';
     public static EVENT_VALID_CHANGED = 'eventValidChanged';
-
-    @Autowired('popupService') private popupService: PopupService;
 
     @RefSelector('eAutocompleteInput') private eAutocompleteInput: AgInputTextField;
 

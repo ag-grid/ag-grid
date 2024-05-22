@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    BeanName,
     Column,
     ColumnChooserParams,
     ColumnMenuVisibleChangedEvent,
@@ -8,17 +10,25 @@ import type {
     VisibleColsService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, Events } from '@ag-grid-community/core';
+import { BeanStub, Events } from '@ag-grid-community/core';
 import { AgPrimaryCols } from '@ag-grid-enterprise/column-tool-panel';
 import { AgDialog } from '@ag-grid-enterprise/core';
 
 import type { MenuUtils } from './menuUtils';
 
-@Bean('columnChooserFactory')
 export class ColumnChooserFactory extends BeanStub implements IColumnChooserFactory {
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('menuUtils') private readonly menuUtils: MenuUtils;
-    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
+    static BeanName: BeanName = 'columnChooserFactory';
+
+    private focusService: FocusService;
+    private menuUtils: MenuUtils;
+    private visibleColsService: VisibleColsService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.focusService = beans.focusService;
+        this.menuUtils = beans.menuUtils;
+        this.visibleColsService = beans.visibleColsService;
+    }
 
     private activeColumnChooser: AgPrimaryCols | undefined;
     private activeColumnChooserDialog: AgDialog | undefined;

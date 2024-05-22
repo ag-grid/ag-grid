@@ -16,8 +16,7 @@ import type { LocaleService } from '../localeService';
 import { _addSafePassiveEventListener } from '../utils/event';
 import type { Component } from '../widgets/component';
 import type { BaseBean } from './bean';
-import type { Context } from './context';
-import { Autowired } from './context';
+import type { BeanCollection, Context } from './context';
 
 export abstract class BeanStub implements BaseBean, IEventEmitter {
     public static EVENT_DESTROYED = 'destroyed';
@@ -31,12 +30,21 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
     // prevents vue from creating proxies for created objects and prevents identity related issues
     public __v_skip = true;
 
-    @Autowired('frameworkOverrides') protected readonly frameworkOverrides: IFrameworkOverrides;
-    @Autowired('context') protected readonly context: Context;
-    @Autowired('eventService') protected readonly eventService: EventService;
-    @Autowired('gridOptionsService') protected readonly gos: GridOptionsService;
-    @Autowired('localeService') protected readonly localeService: LocaleService;
-    @Autowired('environment') protected readonly environment: Environment;
+    protected frameworkOverrides: IFrameworkOverrides;
+    protected context: Context;
+    protected eventService: EventService;
+    protected gos: GridOptionsService;
+    protected localeService: LocaleService;
+    protected environment: Environment;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.frameworkOverrides = beans.frameworkOverrides;
+        this.context = beans.context;
+        this.eventService = beans.eventService;
+        this.gos = beans.gos;
+        this.localeService = beans.localeService;
+        this.environment = beans.environment;
+    }
 
     // this was a test constructor niall built, when active, it prints after 5 seconds all beans/components that are
     // not destroyed. to use, create a new grid, then api.destroy() before 5 seconds. then anything that gets printed
@@ -211,13 +219,13 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
         }
     }
 
-    public createManagedBean<T extends BaseBean | null | undefined>(bean: T, context?: Context): T {
+    public createManagedBean<T extends BeanStub>(bean: T, context?: Context): T {
         const res = this.createBean(bean, context);
         this.addDestroyFunc(this.destroyBean.bind(this, bean, context));
         return res;
     }
 
-    protected createBean<T extends BaseBean | null | undefined>(
+    protected createBean<T extends BaseBean>(
         bean: T,
         context?: Context | null,
         afterPreCreateCallback?: (comp: Component) => void
@@ -225,17 +233,15 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
         return (context || this.getContext()).createBean(bean, afterPreCreateCallback);
     }
 
-    protected destroyBean<T extends BaseBean | null | undefined>(bean: T, context?: Context): undefined {
-        return (context || this.getContext()).destroyBean(bean);
+    protected destroyBean(bean: BaseBean | null | undefined, context?: Context): void {
+        (context || this.getContext()).destroyBean(bean);
     }
 
-    protected destroyBeans<T extends BaseBean | null | undefined>(beans: T[], context?: Context): T[] {
+    protected destroyBeans(beans: (BaseBean | null | undefined)[], context?: Context): void {
         if (beans) {
             for (let i = 0; i < beans.length; i++) {
                 this.destroyBean(beans[i], context);
             }
         }
-
-        return [];
     }
 }

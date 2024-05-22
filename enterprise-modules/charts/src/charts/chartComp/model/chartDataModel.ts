@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     CellRange,
     ChartType,
     Column,
@@ -8,7 +9,7 @@ import type {
     SeriesChartType,
     SeriesGroupType,
 } from '@ag-grid-community/core';
-import { Autowired, BeanStub, CellRangeType, _includes } from '@ag-grid-community/core';
+import { BeanStub, CellRangeType, _includes } from '@ag-grid-community/core';
 import type { AgCartesianAxisType } from 'ag-charts-community';
 
 import type { ChartDatasourceParams } from '../datasource/chartDatasource';
@@ -44,9 +45,14 @@ export interface ChartModelParams {
 export class ChartDataModel extends BeanStub {
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 
-    @Autowired('rangeService') private readonly rangeService: IRangeService;
+    private rangeService: IRangeService;
+    private chartTranslationService: ChartTranslationService;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.rangeService = beans.rangeService;
+        this.chartTranslationService = beans.chartTranslationService;
+    }
 
     public readonly params: ChartModelParams;
 

@@ -1,3 +1,4 @@
+import type { BeanCollection } from '../context/context';
 import type { AgEvent, AgEventListener, RowEvent, RowSelectedEvent, SelectionEventSourceType } from '../events';
 import { Events } from '../events';
 import type { CellEditRequestEvent } from '../events';
@@ -18,7 +19,6 @@ import type {
 import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
 import { LocalEventService } from '../localEventService';
 import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
-import type { Beans } from '../rendering/beans';
 import { _debounce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
 import type { Column } from './column';
@@ -236,11 +236,11 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     private localEventService: LocalEventService | null;
     private frameworkEventListenerService: FrameworkEventListenerService | null;
 
-    private beans: Beans;
+    private beans: BeanCollection;
 
     private checkAutoHeightsDebounced: () => void;
 
-    constructor(beans: Beans) {
+    constructor(beans: BeanCollection) {
         this.beans = beans;
     }
 

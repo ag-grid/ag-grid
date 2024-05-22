@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     Column,
     ColumnModel,
     ColumnMoveService,
@@ -6,22 +7,21 @@ import type {
     VirtualList,
     VirtualListDragItem,
 } from '@ag-grid-community/core';
-import {
-    Autowired,
-    BeanStub,
-    DragSourceType,
-    Events,
-    ProvidedColumnGroup,
-    VirtualListDragFeature,
-} from '@ag-grid-community/core';
+import { BeanStub, DragSourceType, Events, ProvidedColumnGroup, VirtualListDragFeature } from '@ag-grid-community/core';
 
 import type { AgPrimaryColsList } from './agPrimaryColsList';
 import type { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
 
 export class PrimaryColsListPanelItemDragFeature extends BeanStub {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnMoveService') private columnMoveService: ColumnMoveService;
+    private columnModel: ColumnModel;
+    private columnMoveService: ColumnMoveService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.columnMoveService = beans.columnMoveService;
+    }
 
     constructor(
         private readonly comp: AgPrimaryColsList,

@@ -1,6 +1,7 @@
 import type {
     AsyncTransactionsFlushed,
-    Beans,
+    BeanCollection,
+    BeanName,
     ClientSideRowModelStep,
     ColumnModel,
     CssVariablesChanged,
@@ -23,13 +24,10 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
-    Bean,
     BeanStub,
     ChangedPath,
     ClientSideRowModelSteps,
     Events,
-    Optional,
     RowHighlightPosition,
     RowNode,
     _debounce,
@@ -59,24 +57,45 @@ export interface RowNodeMap {
     [id: string]: RowNode;
 }
 
-@Bean('rowModel')
 export class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('selectionService') private selectionService: ISelectionService;
-    @Autowired('valueCache') private valueCache: ValueCache;
-    @Autowired('beans') private beans: Beans;
+    static BeanName: BeanName = 'rowModel';
+
+    private beans: BeanCollection;
+
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+    private selectionService: ISelectionService;
+    private valueCache: ValueCache;
 
     // standard stages
-    @Autowired('filterStage') private filterStage: IRowNodeStage;
-    @Autowired('sortStage') private sortStage: IRowNodeStage;
-    @Autowired('flattenStage') private flattenStage: IRowNodeStage;
+    private filterStage: IRowNodeStage;
+    private sortStage: IRowNodeStage;
+    private flattenStage: IRowNodeStage;
 
     // enterprise stages
-    @Optional('groupStage') private groupStage?: IRowNodeStage;
-    @Optional('aggregationStage') private aggregationStage?: IRowNodeStage;
-    @Optional('pivotStage') private pivotStage?: IRowNodeStage;
-    @Optional('filterAggregatesStage') private filterAggregatesStage?: IRowNodeStage;
+    private groupStage?: IRowNodeStage;
+    private aggregationStage?: IRowNodeStage;
+    private pivotStage?: IRowNodeStage;
+    private filterAggregatesStage?: IRowNodeStage;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.beans = beans;
+
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+        this.selectionService = beans.selectionService;
+        this.valueCache = beans.valueCache;
+
+        this.filterStage = beans.filterStage;
+        this.sortStage = beans.sortStage;
+        this.flattenStage = beans.flattenStage;
+
+        this.groupStage = beans.groupStage;
+        this.aggregationStage = beans.aggregationStage;
+        this.pivotStage = beans.pivotStage;
+        this.filterAggregatesStage = beans.filterAggregatesStage;
+    }
 
     private onRowHeightChanged_debounced = _debounce(this.onRowHeightChanged.bind(this), 100);
 

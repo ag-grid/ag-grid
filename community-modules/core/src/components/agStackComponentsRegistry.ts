@@ -1,10 +1,11 @@
 import { BeanStub } from '../context/beanStub';
-import { Bean } from '../context/context';
+import type { BeanName } from '../context/context';
 import { _warnOnce } from '../utils/function';
 import type { AgComponentSelector, ComponentClass } from '../widgets/component';
 
-@Bean('agStackComponentsRegistry')
 export class AgStackComponentsRegistry extends BeanStub {
+    static BeanName: BeanName = 'agStackComponentsRegistry';
+
     private componentToNodeName: Map<string, ComponentClass> = new Map();
 
     public ensureRegistered(comps: ComponentClass[]): void {

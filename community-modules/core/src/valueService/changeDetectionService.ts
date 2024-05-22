@@ -1,8 +1,8 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { Column } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
-import type { CellValueChangedEvent } from '../events';
+import type { CellValueChangedEvent} from '../events';
 import { Events } from '../events';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -11,10 +11,17 @@ import { ChangedPath } from '../utils/changedPath';
 
 // Matches value in clipboard module
 const SOURCE_PASTE = 'paste';
-@Bean('changeDetectionService')
 export class ChangeDetectionService extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    static BeanName: BeanName = 'changeDetectionService';
+
+    private rowModel: IRowModel;
+    private rowRenderer: RowRenderer;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.rowModel = beans.rowModel;
+        this.rowRenderer = beans.rowRenderer;
+    }
 
     private clientSideRowModel: IClientSideRowModel;
 

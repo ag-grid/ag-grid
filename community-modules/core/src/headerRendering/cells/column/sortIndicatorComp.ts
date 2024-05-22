@@ -1,5 +1,4 @@
-import type { ColumnModel } from '../../../columns/columnModel';
-import { Autowired } from '../../../context/context';
+import type { BeanCollection } from '../../../context/context';
 import type { Column } from '../../../entities/column';
 import { Events } from '../../../eventKeys';
 import type { SortController } from '../../../sortController';
@@ -10,6 +9,13 @@ import { Component } from '../../../widgets/component';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 
 export class SortIndicatorComp extends Component {
+    private sortController: SortController;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.sortController = beans.sortController;
+    }
+
     static readonly selector: AgComponentSelector = 'AG-SORT-INDICATOR';
 
     private static TEMPLATE /* html */ = `<span class="ag-sort-indicator-container">
@@ -25,9 +31,6 @@ export class SortIndicatorComp extends Component {
     @RefSelector('eSortDesc') private eSortDesc: HTMLElement;
     @RefSelector('eSortMixed') private eSortMixed: HTMLElement;
     @RefSelector('eSortNone') private eSortNone: HTMLElement;
-
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('sortController') private readonly sortController: SortController;
 
     private column: Column;
     private suppressOrder: boolean;

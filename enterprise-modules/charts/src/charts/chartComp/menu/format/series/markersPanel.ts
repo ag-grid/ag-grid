@@ -1,5 +1,5 @@
-import type { AgSelectParams } from '@ag-grid-community/core';
-import { AgSelect, Autowired, Component, RefSelector, _includes } from '@ag-grid-community/core';
+import type { AgSelectParams, BeanCollection} from '@ag-grid-community/core';
+import { AgSelect, Component, RefSelector, _includes } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -21,8 +21,12 @@ export class MarkersPanel extends Component {
 
     @RefSelector('seriesMarkerMinSizeSlider') private seriesMarkerMinSizeSlider: AgSlider;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
 
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.chartTranslationService = beans.chartTranslationService;
+    }
     constructor(
         private readonly chartOptionsService: ChartOptionsService,
         private readonly chartMenuUtils: ChartMenuParamsFactory

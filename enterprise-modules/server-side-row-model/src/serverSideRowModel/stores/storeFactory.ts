@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    BeanName,
     ColumnModel,
     FuncColsService,
     GetServerSideGroupLevelParamsParams,
@@ -7,16 +9,23 @@ import type {
     ServerSideGroupLevelParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 
 import type { SSRMParams } from '../serverSideRowModel';
 import { FullStore } from './fullStore';
 import { LazyStore } from './lazy/lazyStore';
 
-@Bean('ssrmStoreFactory')
 export class StoreFactory extends BeanStub {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
+    static BeanName: BeanName = 'ssrmStoreFactory';
+
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+    }
 
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
         const storeParams = this.getStoreParams(ssrmParams, parentNode);

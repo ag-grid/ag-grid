@@ -1,15 +1,22 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { Column } from '../entities/column';
 import { _missing } from '../utils/generic';
 import type { ColumnState } from './columnApplyStateService';
 import type { ColumnModel } from './columnModel';
 import type { FuncColsService } from './funcColsService';
 
-@Bean('columnGetStateService')
 export class ColumnGetStateService extends BeanStub {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
+    static BeanName: BeanName = 'columnGetStateService';
+
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+    }
 
     public getColumnState(): ColumnState[] {
         const primaryCols = this.columnModel.getColDefCols();

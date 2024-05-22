@@ -1,9 +1,9 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, Bean } from '../../context/context';
+import type { BeanCollection, BeanName } from '../../context/context';
 import type { ColumnPinnedType } from '../../entities/column';
 import type { RowClassParams } from '../../entities/gridOptions';
 import type { RowNode } from '../../entities/rowNode';
-import type { GridOptionsService } from '../../gridOptionsService';
+import { GridOptionsService } from '../../gridOptionsService';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { StylingService } from '../../styling/stylingService';
 import { _pushAll } from '../../utils/array';
@@ -25,10 +25,15 @@ export interface RowCssClassCalculatorParams {
     fadeRowIn?: boolean;
 }
 
-@Bean('rowCssClassCalculator')
 export class RowCssClassCalculator extends BeanStub {
-    @Autowired('stylingService') public stylingService: StylingService;
-    @Autowired('gridOptionsService') gos: GridOptionsService;
+    static BeanName: BeanName = 'rowCssClassCalculator';
+
+    private stylingService: StylingService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.stylingService = beans.stylingService;
+    }
 
     public getInitialRowClasses(params: RowCssClassCalculatorParams): string[] {
         const classes: string[] = [];

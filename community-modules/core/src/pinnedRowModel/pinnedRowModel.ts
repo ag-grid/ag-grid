@@ -1,17 +1,22 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import { RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged, PinnedRowDataChangedEvent } from '../events';
 import { Events } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { RowPinnedType } from '../interfaces/iRowNode';
-import type { Beans } from '../rendering/beans';
 import { _last } from '../utils/array';
 import { _missingOrEmpty } from '../utils/generic';
 
-@Bean('pinnedRowModel')
 export class PinnedRowModel extends BeanStub {
-    @Autowired('beans') private beans: Beans;
+    static BeanName: BeanName = 'pinnedRowModel';
+
+    private beans: BeanCollection;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.beans = beans;
+    }
 
     private pinnedTopRows: RowNode[];
     private pinnedBottomRows: RowNode[];

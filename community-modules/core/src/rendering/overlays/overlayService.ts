@@ -1,7 +1,7 @@
 import type { ColumnModel } from '../../columns/columnModel';
 import type { UserCompDetails, UserComponentFactory } from '../../components/framework/userComponentFactory';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, Bean } from '../../context/context';
+import type { BeanCollection, BeanName } from '../../context/context';
 import type { GridOptions } from '../../entities/gridOptions';
 import { Events } from '../../eventKeys';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
@@ -10,11 +10,19 @@ import type { ILoadingOverlayParams } from './loadingOverlayComponent';
 import type { INoRowsOverlayParams } from './noRowsOverlayComponent';
 import type { OverlayWrapperComponent } from './overlayWrapperComponent';
 
-@Bean('overlayService')
 export class OverlayService extends BeanStub {
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
-    @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    static BeanName: BeanName = 'overlayService';
+
+    private userComponentFactory: UserComponentFactory;
+    private paginationProxy: PaginationProxy;
+    private columnModel: ColumnModel;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.userComponentFactory = beans.userComponentFactory;
+        this.paginationProxy = beans.paginationProxy;
+        this.columnModel = beans.columnModel;
+    }
 
     private overlayWrapperComp: OverlayWrapperComponent;
     private manuallyDisplayed: boolean = false;

@@ -1,5 +1,6 @@
 import type { VisibleColsService } from '../columns/visibleColsService';
-import { Autowired } from '../context/context';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
 import { Events } from '../eventKeys';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from '../utils/dom';
@@ -7,6 +8,7 @@ import type { AgComponentSelector } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { CenterWidthFeature } from './centerWidthFeature';
+import type { ScrollVisibleService } from './scrollVisibleService';
 
 export class FakeHScrollComp extends AbstractFakeScrollComp {
     static readonly selector: AgComponentSelector = 'AG-FAKE-HORIZONTAL-SCROLL';
@@ -19,11 +21,21 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
             <div class="ag-horizontal-right-spacer" ref="eRightSpacer"></div>
         </div>`;
 
+    private visibleColsService: VisibleColsService;
+    private pinnedRowModel: PinnedRowModel;
+    private ctrlsService: CtrlsService;
+    private scrollVisibleService: ScrollVisibleService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.visibleColsService = beans.visibleColsService;
+        this.pinnedRowModel = beans.pinnedRowModel;
+        this.ctrlsService = beans.ctrlsService;
+        this.scrollVisibleService = beans.scrollVisibleService;
+    }
+
     @RefSelector('eLeftSpacer') private eLeftSpacer: HTMLElement;
     @RefSelector('eRightSpacer') private eRightSpacer: HTMLElement;
-
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
 
     private enableRtl: boolean;
 

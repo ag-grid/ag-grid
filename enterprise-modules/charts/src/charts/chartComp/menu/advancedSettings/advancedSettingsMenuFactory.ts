@@ -1,15 +1,22 @@
-import type { FocusService } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, TabGuardComp } from '@ag-grid-community/core';
+import type { BeanCollection, BeanName, FocusService} from '@ag-grid-community/core';
+import { BeanStub, TabGuardComp } from '@ag-grid-community/core';
 import { AgDialog } from '@ag-grid-enterprise/core';
 
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import type { ChartMenuContext } from '../chartMenuContext';
 import { AdvancedSettingsPanel } from './advancedSettingsPanel';
 
-@Bean('advancedSettingsMenuFactory')
 export class AdvancedSettingsMenuFactory extends BeanStub {
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    static BeanName: BeanName = 'advancedSettingsMenuFactory';
+
+    private focusService: FocusService;
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.focusService = beans.focusService;
+        this.chartTranslationService = beans.chartTranslationService;
+    }
 
     private activeMenu?: AdvancedSettingsMenu;
     private activeDialog?: AgDialog;
@@ -33,7 +40,8 @@ export class AdvancedSettingsMenuFactory extends BeanStub {
                     this.focusService.findFocusableElements(menu.getGui())[0]?.focus();
                 },
                 closedCallback: () => {
-                    this.activeMenu = this.destroyBean(this.activeMenu);
+                    this.destroyBean(this.activeMenu);
+                    this.activeMenu = undefined;
                     this.activeDialog = undefined;
                     eventSource?.focus({ preventScroll: true });
                 },
@@ -50,14 +58,16 @@ export class AdvancedSettingsMenuFactory extends BeanStub {
     }
 
     public override destroy(): void {
-        this.activeMenu = this.destroyBean(this.activeMenu);
-        this.activeDialog = this.destroyBean(this.activeDialog);
+        this.destroyBean(this.activeMenu);
+        this.activeMenu = undefined;
+        this.destroyBean(this.activeDialog);
+        this.activeDialog = undefined;
         super.destroy();
     }
 }
 
 class AdvancedSettingsMenu extends TabGuardComp {
-    @Autowired('focusService') private readonly focusService: FocusService;
+    private readonly focusService: FocusService;
 
     private static TEMPLATE = /* html */ `<div class="ag-chart-advanced-settings"></div>`;
 

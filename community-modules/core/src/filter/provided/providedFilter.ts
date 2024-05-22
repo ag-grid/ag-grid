@@ -1,4 +1,4 @@
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { FilterChangedEventSourceType } from '../../events';
 import type { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import type { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
@@ -102,7 +102,11 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     private positionableFeature: PositionableFeature | undefined;
 
-    @Autowired('rowModel') protected readonly rowModel: IRowModel;
+    protected rowModel: IRowModel;
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.rowModel = beans.rowModel;
+    }
 
     @RefSelector('eFilterBody') protected readonly eFilterBody: HTMLElement;
 
@@ -525,7 +529,8 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         this.hidePopup = null;
 
         if (this.positionableFeature) {
-            this.positionableFeature = this.destroyBean(this.positionableFeature);
+            this.destroyBean(this.positionableFeature);
+            this.positionableFeature = undefined;
         }
 
         this.appliedModel = null;

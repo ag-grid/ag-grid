@@ -23,7 +23,7 @@ import { AgComponentUtils } from './components/framework/agComponentUtils';
 import { ComponentMetadataProvider } from './components/framework/componentMetadataProvider';
 import { UserComponentFactory } from './components/framework/userComponentFactory';
 import { UserComponentRegistry } from './components/framework/userComponentRegistry';
-import type { ContextParams } from './context/context';
+import type { ContextParams, SingletonBean } from './context/context';
 import { Context } from './context/context';
 import { CtrlsFactory } from './ctrlsFactory';
 import { CtrlsService } from './ctrlsService';
@@ -53,7 +53,8 @@ import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { Module } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
 import { LocaleService } from './localeService';
-import { Logger, LoggerFactory } from './logger';
+import type { Logger} from './logger';
+import { LoggerFactory } from './logger';
 import { AnimationFrameService } from './misc/animationFrameService';
 import { ApiEventService } from './misc/apiEventService';
 import { ExpansionService } from './misc/expansionService';
@@ -67,7 +68,6 @@ import { PaginationProxy } from './pagination/paginationProxy';
 import { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 import { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
 import { AutoWidthCalculator } from './rendering/autoWidthCalculator';
-import { Beans } from './rendering/beans';
 import { ColumnAnimationService } from './rendering/columnAnimationService';
 import { ColumnHoverService } from './rendering/columnHoverService';
 import { OverlayService } from './rendering/overlays/overlayService';
@@ -244,7 +244,6 @@ export class GridCoreCreator {
         }
         const gridOptions = GridOptionsService.getCoercedGridOptions(mergedGridOps);
 
-        const debug = !!gridOptions.debug;
         const gridId = gridOptions.gridId ?? String(nextGridId++);
 
         const registeredModules = this.getRegisteredModules(params, gridId);
@@ -262,21 +261,17 @@ export class GridCoreCreator {
         const contextParams: ContextParams = {
             providedBeanInstances: providedBeanInstances,
             beanClasses: beanClasses,
-            debug: debug,
             gridId: gridId,
         };
 
-        const contextLogger = new Logger('Context', () => contextParams.debug);
-        const context = new Context(contextParams, contextLogger);
-        const beans = context.getBean('beans') as Beans;
-
-        this.registerModuleUserComponents(beans, registeredModules);
-        this.registerModuleStackComponents(beans, registeredModules);
-        this.registerControllers(beans, registeredModules);
+        const context = new Context(contextParams);
+        this.registerModuleUserComponents(context, registeredModules);
+        this.registerModuleStackComponents(context, registeredModules);
+        this.registerControllers(context, registeredModules);
 
         createUi(context);
 
-        beans.syncService.start();
+        context.getBean('syncService').start();
 
         if (acceptChanges) {
             acceptChanges(context);
@@ -286,19 +281,21 @@ export class GridCoreCreator {
         return gridApi;
     }
 
-    private registerControllers(beans: Beans, registeredModules: Module[]): void {
+    private registerControllers(context: Context, registeredModules: Module[]): void {
+        const factory = context.getBean('ctrlsFactory');
         registeredModules.forEach((module) => {
             if (module.controllers) {
-                module.controllers.forEach((meta) => beans.ctrlsFactory.register(meta));
+                module.controllers.forEach((meta) => factory.register(meta));
             }
         });
     }
 
-    private registerModuleStackComponents(beans: Beans, registeredModules: Module[]): void {
+    private registerModuleStackComponents(context: Context, registeredModules: Module[]): void {
+        const registry = context.getBean('agStackComponentsRegistry');
         const agStackComponents = registeredModules.flatMap((module) =>
             module.agStackComponents ? module.agStackComponents : []
         );
-        beans.agStackComponentsRegistry.ensureRegistered(agStackComponents);
+        registry.ensureRegistered(agStackComponents);
     }
 
     private getRegisteredModules(params: GridParams | undefined, gridId: string): Module[] {
@@ -335,14 +332,15 @@ export class GridCoreCreator {
         return allModules;
     }
 
-    private registerModuleUserComponents(beans: Beans, registeredModules: Module[]): void {
+    private registerModuleUserComponents(context: Context, registeredModules: Module[]): void {
         const moduleUserComps: { componentName: string; componentClass: any }[] = this.extractModuleEntity(
             registeredModules,
             (module) => (module.userComponents ? module.userComponents : [])
         );
 
+        const registry = context.getBean('userComponentRegistry');
         moduleUserComps.forEach((compMeta) => {
-            beans.userComponentRegistry.registerDefaultComponent(compMeta.componentName, compMeta.componentClass);
+            registry.registerDefaultComponent(compMeta.componentName, compMeta.componentClass);
         });
     }
 
@@ -370,7 +368,7 @@ export class GridCoreCreator {
         rowModelType: RowModelType | undefined = 'clientSide',
         registeredModules: Module[],
         gridId: string
-    ): any[] | undefined {
+    ): SingletonBean[] | undefined {
         // only load beans matching the required row model
         const rowModelModules = registeredModules.filter(
             (module) => !module.rowModel || module.rowModel === rowModelType
@@ -400,8 +398,7 @@ export class GridCoreCreator {
         }
 
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS
-        const beans = [
-            Beans,
+        const beans: SingletonBean[] = [
             RowPositionUtils,
             CellPositionUtils,
             HeaderPositionUtils,
@@ -489,7 +486,7 @@ export class GridCoreCreator {
 
         // check for duplicates, as different modules could include the same beans that
         // they depend on, eg ClientSideRowModel in enterprise, and ClientSideRowModel in community
-        const beansNoDuplicates: any[] = [];
+        const beansNoDuplicates: SingletonBean[] = [];
         beans.forEach((bean) => {
             if (beansNoDuplicates.indexOf(bean) < 0) {
                 beansNoDuplicates.push(bean);
@@ -499,7 +496,7 @@ export class GridCoreCreator {
         return beansNoDuplicates;
     }
 
-    private extractModuleEntity(moduleEntities: any[], extractor: (module: any) => any) {
-        return [].concat(...moduleEntities.map(extractor));
+    private extractModuleEntity<T>(moduleEntities: Module[], extractor: (module: Module) => T[]) {
+        return ([] as T[]).concat(...moduleEntities.map(extractor));
     }
 }

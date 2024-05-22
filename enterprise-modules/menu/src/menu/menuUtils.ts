@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    BeanName,
     Column,
     FocusService,
     HeaderNavigationService,
@@ -6,7 +8,7 @@ import type {
     PopupEventParams,
     VisibleColsService,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, _isVisible, _last } from '@ag-grid-community/core';
+import { BeanStub, _isVisible, _last } from '@ag-grid-community/core';
 import type { CloseMenuEvent } from '@ag-grid-enterprise/core';
 
 export interface MenuRestoreFocusParams {
@@ -16,11 +18,19 @@ export interface MenuRestoreFocusParams {
     eventSource?: HTMLElement;
 }
 
-@Bean('menuUtils')
 export class MenuUtils extends BeanStub {
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
-    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
+    static BeanName: BeanName = 'menuUtils';
+
+    private focusService: FocusService;
+    private headerNavigationService: HeaderNavigationService;
+    private visibleColsService: VisibleColsService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.focusService = beans.focusService;
+        this.headerNavigationService = beans.headerNavigationService;
+        this.visibleColsService = beans.visibleColsService;
+    }
 
     public restoreFocusOnClose(
         restoreFocusParams: MenuRestoreFocusParams,

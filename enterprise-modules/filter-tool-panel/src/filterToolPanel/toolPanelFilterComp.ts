@@ -1,6 +1,6 @@
-import type { ColumnNameService, FilterManager, FilterOpenedEvent, IFilterComp } from '@ag-grid-community/core';
+import type { ColumnNameService, FilterManager, FilterOpenedEvent, IFilterComp ,
+    BeanCollection} from '@ag-grid-community/core';
 import {
-    Autowired,
     Column,
     Component,
     Events,
@@ -15,6 +15,15 @@ import {
 } from '@ag-grid-community/core';
 
 export class ToolPanelFilterComp extends Component {
+    private filterManager: FilterManager;
+    private columnNameService: ColumnNameService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.filterManager = beans.filterManager;
+        this.columnNameService = beans.columnNameService;
+    }
+
     private static TEMPLATE = /* html */ `
         <div class="ag-filter-toolpanel-instance">
             <div class="ag-filter-toolpanel-header ag-filter-toolpanel-instance-header" ref="eFilterToolPanelHeader" role="button" aria-expanded="false">
@@ -30,9 +39,6 @@ export class ToolPanelFilterComp extends Component {
     @RefSelector('agFilterToolPanelBody') private agFilterToolPanelBody: HTMLElement;
     @RefSelector('eFilterIcon') private eFilterIcon: Element;
     @RefSelector('eExpand') private eExpand: Element;
-
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
 
     private eExpandChecked: Element;
     private eExpandUnchecked: Element;

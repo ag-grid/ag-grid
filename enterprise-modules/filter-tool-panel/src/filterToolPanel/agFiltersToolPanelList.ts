@@ -1,13 +1,13 @@
 import type {
     AbstractColDef,
     AgComponentSelector,
+    BeanCollection,
     Column,
     ColumnModel,
     FiltersToolPanelState,
     IProvidedColumn,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
     Component,
     Events,
     ProvidedColumnGroup,
@@ -27,12 +27,18 @@ import type { ToolPanelFilterItem } from './toolPanelFilterGroupComp';
 import { ToolPanelFilterGroupComp } from './toolPanelFilterGroupComp';
 
 export class AgFiltersToolPanelList extends Component {
+    private toolPanelColDefService: ToolPanelColDefService;
+    private columnModel: ColumnModel;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.toolPanelColDefService = beans.toolPanelColDefService;
+        this.columnModel = beans.columnModel;
+    }
+
     static readonly selector: AgComponentSelector = 'AG-FILTERS-TOOL-PANEL-LIST';
 
     private static TEMPLATE = /* html */ `<div class="ag-filter-list-panel"></div>`;
-
-    @Autowired('toolPanelColDefService') private toolPanelColDefService: ToolPanelColDefService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private initialised = false;
     private hasLoadedInitialState = false;
@@ -547,7 +553,8 @@ export class AgFiltersToolPanelList extends Component {
     }
 
     private destroyFilters() {
-        this.filterGroupComps = this.destroyBeans(this.filterGroupComps);
+        this.destroyBeans(this.filterGroupComps);
+        this.filterGroupComps = [];
         _clearElement(this.getGui());
     }
 

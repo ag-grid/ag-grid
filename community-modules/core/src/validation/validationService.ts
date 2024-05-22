@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import { ModuleRegistry } from '../modules/moduleRegistry';
@@ -7,12 +7,18 @@ import { _warnOnce } from '../utils/function';
 import { _fuzzyCheckStrings } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
-import { GRID_OPTIONS_VALIDATORS, GRID_OPTION_DEFAULTS } from './rules/gridOptionsValidations';
+import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import type { DependencyValidator, OptionsValidation, OptionsValidator } from './validationTypes';
 
-@Bean('validationService')
 export class ValidationService extends BeanStub {
-    @Autowired('gridOptions') private readonly gridOptions: GridOptions;
+    static BeanName: BeanName = 'validationService';
+
+    private gridOptions: GridOptions;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.gridOptions = beans.gridOptions;
+    }
 
     public postConstruct(): void {
         this.processGridOptions(this.gridOptions);

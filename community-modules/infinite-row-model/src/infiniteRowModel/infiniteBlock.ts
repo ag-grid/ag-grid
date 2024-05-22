@@ -1,10 +1,24 @@
-import type { Beans, IGetRowsParams, LoadSuccessParams, NumberSequence } from '@ag-grid-community/core';
-import { Autowired, RowNode, RowNodeBlock, _exists, _missing } from '@ag-grid-community/core';
+import type {
+    BeanCollection,
+    IGetRowsParams,
+    LoadSuccessParams,
+    NumberSequence} from '@ag-grid-community/core';
+import {
+    RowNode,
+    RowNodeBlock,
+    _exists,
+    _missing,
+} from '@ag-grid-community/core';
 
 import type { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
 
 export class InfiniteBlock extends RowNodeBlock {
-    @Autowired('beans') private beans: Beans;
+    private beans: BeanCollection;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.beans = beans;
+    }
 
     private readonly startRow: number;
     private readonly endRow: number;

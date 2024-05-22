@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     Column,
     ColumnEventType,
     ColumnModel,
@@ -7,7 +8,7 @@ import type {
     DropTarget,
     FuncColsService,
 } from '@ag-grid-community/core';
-import { Autowired, DragSourceType, Events } from '@ag-grid-community/core';
+import { DragSourceType, Events } from '@ag-grid-community/core';
 import type { PillDropZonePanelParams } from '@ag-grid-enterprise/core';
 import { PillDropZonePanel } from '@ag-grid-enterprise/core';
 
@@ -16,8 +17,14 @@ import { DropZoneColumnComp } from './dropZoneColumnComp';
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, Column> {
-    @Autowired('columnModel') protected readonly columnModel: ColumnModel;
-    @Autowired('funcColsService') protected readonly funcColsService: FuncColsService;
+    protected columnModel: ColumnModel;
+    protected funcColsService: FuncColsService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+    }
 
     constructor(
         horizontal: boolean,

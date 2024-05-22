@@ -1,13 +1,12 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import type { ColumnGroup } from '../entities/columnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import type { Beans } from '../rendering/beans';
 import type { ITooltipParams, TooltipLocation } from '../rendering/tooltipComponent';
-import type { TooltipParentComp } from './tooltipStateManager';
+import type { TooltipParentComp} from './tooltipStateManager';
 import { TooltipStateManager } from './tooltipStateManager';
 
 export interface ITooltipFeatureCtrl {
@@ -28,16 +27,21 @@ export interface ITooltipFeatureCtrl {
 }
 
 export class TooltipFeature extends BeanStub {
+    private beans: BeanCollection;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.beans = beans;
+    }
+
     private tooltip: any;
 
     private tooltipManager: TooltipStateManager | undefined;
     private browserTooltips: boolean;
 
-    @Autowired('beans') private beans: Beans;
-
     constructor(
         private readonly ctrl: ITooltipFeatureCtrl,
-        beans?: Beans
+        beans?: BeanCollection
     ) {
         super();
 
@@ -97,7 +101,8 @@ export class TooltipFeature extends BeanStub {
         if (this.browserTooltips) {
             this.setBrowserTooltip(this.tooltip);
             if (this.tooltipManager) {
-                this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
+                this.destroyBean(this.tooltipManager, this.beans.context);
+                this.tooltipManager = undefined;
             }
         } else {
             this.setBrowserTooltip(null);
@@ -131,7 +136,8 @@ export class TooltipFeature extends BeanStub {
     // overriding to make public, as we don't dispose this bean via context
     public destroy() {
         if (this.tooltipManager) {
-            this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
+            this.destroyBean(this.tooltipManager, this.beans.context);
+            this.tooltipManager = undefined;
         }
         super.destroy();
     }

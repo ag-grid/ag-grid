@@ -1,11 +1,10 @@
 import { KeyCode } from '../../../constants/keyCode';
 import { BeanStub } from '../../../context/beanStub';
-import { Autowired, Bean } from '../../../context/context';
+import type { BeanCollection, BeanName } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
 import type { Column } from '../../../entities/column';
 import { Events } from '../../../eventKeys';
 import type { ColumnMenuVisibleChangedEvent } from '../../../events';
-import type { FilterManager } from '../../../filter/filterManager';
 import { FilterWrapperComp } from '../../../filter/filterWrapperComp';
 import type { FocusService } from '../../../focusService';
 import type { ContainerType } from '../../../interfaces/iAfterGuiAttachedParams';
@@ -16,13 +15,21 @@ import { _setAriaRole } from '../../../utils/aria';
 import { _isVisible } from '../../../utils/dom';
 import type { PopupService } from '../../../widgets/popupService';
 
-@Bean('filterMenuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('popupService') private popupService: PopupService;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('menuService') private menuService: MenuService;
+    static BeanName: BeanName = 'filterMenuFactory';
+
+    private popupService: PopupService;
+    private focusService: FocusService;
+    private ctrlsService: CtrlsService;
+    private menuService: MenuService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.popupService = beans.popupService;
+        this.focusService = beans.focusService;
+        this.ctrlsService = beans.ctrlsService;
+        this.menuService = beans.menuService;
+    }
 
     private hidePopup: () => void;
     private tabListener: () => null;

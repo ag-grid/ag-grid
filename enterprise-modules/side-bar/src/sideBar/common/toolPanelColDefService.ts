@@ -1,16 +1,24 @@
 import type {
     AbstractColDef,
+    BeanCollection,
+    BeanName,
     ColDef,
     ColGroupDef,
     Column,
     ColumnModel,
     IProvidedColumn,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, ProvidedColumnGroup, _includes, _last } from '@ag-grid-community/core';
+import { BeanStub, ProvidedColumnGroup, _includes, _last } from '@ag-grid-community/core';
 
-@Bean('toolPanelColDefService')
 export class ToolPanelColDefService extends BeanStub {
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    static BeanName: BeanName = 'toolPanelColDefService';
+
+    private columnModel: ColumnModel;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+    }
 
     public createColumnTree(colDefs: AbstractColDef[]): IProvidedColumn[] {
         const invalidColIds: AbstractColDef[] = [];

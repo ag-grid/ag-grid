@@ -1,5 +1,5 @@
 import { KeyCode } from '../constants/keyCode';
-import { Autowired } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { Events } from '../eventKeys';
 import type { CssVariablesChanged } from '../events';
 import type { AnimationFrameService } from '../misc/animationFrameService';
@@ -25,6 +25,15 @@ interface VirtualListParams {
 }
 
 export class VirtualList<C extends Component = Component> extends TabGuardComp {
+    private resizeObserverService: ResizeObserverService;
+    private animationFrameService: AnimationFrameService;
+    
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.resizeObserverService = beans.resizeObserverService;
+        this.animationFrameService = beans.animationFrameService;
+    }
+
     private readonly cssIdentifier: string;
     private readonly ariaRole: string;
     private listName?: string;
@@ -38,9 +47,6 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     private isScrolling = false;
     private lastFocusedRowIndex: number | null;
     private isHeightFromTheme: boolean = true;
-
-    @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
-    @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
     @RefSelector('eContainer') private readonly eContainer: HTMLElement;
 
     constructor(params?: VirtualListParams) {

@@ -1,7 +1,7 @@
 import type { VisibleColsService } from '../../columns/visibleColsService';
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, Optional } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { Column } from '../../entities/column';
 import type { CellKeyDownEvent, FullWidthCellKeyDownEvent } from '../../events';
@@ -29,19 +29,34 @@ import type { MouseEventService } from './../mouseEventService';
 import type { NavigationService } from './../navigationService';
 
 export class RowContainerEventsFeature extends BeanStub {
-    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('menuService') private menuService: MenuService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('navigationService') private navigationService: NavigationService;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('undoRedoService') private undoRedoService: UndoRedoService;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
+    private mouseEventService: MouseEventService;
+    private valueService: ValueService;
+    private menuService: MenuService;
+    private ctrlsService: CtrlsService;
+    private navigationService: NavigationService;
+    private focusService: FocusService;
+    private undoRedoService: UndoRedoService;
+    private visibleColsService: VisibleColsService;
+    private paginationProxy: PaginationProxy;
+    private pinnedRowModel: PinnedRowModel;
+    private rangeService?: IRangeService;
+    private clipboardService?: IClipboardService;
 
-    @Optional('rangeService') private rangeService?: IRangeService;
-    @Optional('clipboardService') private clipboardService?: IClipboardService;
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.mouseEventService = beans.mouseEventService;
+        this.valueService = beans.valueService;
+        this.menuService = beans.menuService;
+        this.ctrlsService = beans.ctrlsService;
+        this.navigationService = beans.navigationService;
+        this.focusService = beans.focusService;
+        this.undoRedoService = beans.undoRedoService;
+        this.visibleColsService = beans.visibleColsService;
+        this.paginationProxy = beans.paginationProxy;
+        this.pinnedRowModel = beans.pinnedRowModel;
+        this.rangeService = beans.rangeService;
+        this.clipboardService = beans.clipboardService;
+    }
 
     private element: HTMLElement;
 

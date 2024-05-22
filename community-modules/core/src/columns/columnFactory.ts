@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Qualifier } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import { Column } from '../entities/column';
 import { DefaultColumnTypes } from '../entities/defaultColumnTypes';
@@ -14,14 +14,17 @@ import { ColumnKeyCreator } from './columnKeyCreator';
 import type { DataTypeService } from './dataTypeService';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
-@Bean('columnFactory')
 export class ColumnFactory extends BeanStub {
-    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
+    static BeanName: BeanName = 'columnFactory';
+
+    private dataTypeService: DataTypeService;
 
     private logger: Logger;
 
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('ColumnFactory');
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.dataTypeService = beans.dataTypeService;
+        this.logger = beans.loggerFactory.create('ColumnFactory');
     }
 
     public createColumnTree(

@@ -1,11 +1,12 @@
 import type {
     AgComponentSelector,
     AgEvent,
+    BeanCollection,
     FocusService,
     ToolPanelDef,
     VisibleColsService,
 } from '@ag-grid-community/core';
-import { Autowired, Component, KeyCode, _clearElement, _last } from '@ag-grid-community/core';
+import { Component, KeyCode, _clearElement, _last } from '@ag-grid-community/core';
 
 import { SideBarButtonComp } from './sideBarButtonComp';
 
@@ -14,14 +15,20 @@ export interface SideBarButtonClickedEvent extends AgEvent {
 }
 
 export class AgSideBarButtons extends Component {
+    private focusService: FocusService;
+    private visibleColsService: VisibleColsService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.focusService = beans.focusService;
+        this.visibleColsService = beans.visibleColsService;
+    }
+
     static readonly selector: AgComponentSelector = 'AG-SIDE-BAR-BUTTONS';
 
     public static EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
     private static readonly TEMPLATE: string = /* html */ `<div class="ag-side-buttons" role="tablist"></div>`;
     private buttonComps: SideBarButtonComp[] = [];
-
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
 
     constructor() {
         super(AgSideBarButtons.TEMPLATE);
@@ -65,8 +72,10 @@ export class AgSideBarButtons extends Component {
     }
 
     public clearButtons(): void {
-        this.buttonComps = this.destroyBeans(this.buttonComps);
+        this.destroyBeans(this.buttonComps);
+        this.buttonComps = [];
         _clearElement(this.getGui());
+        super.destroy();
     }
 
     public override destroy(): void {

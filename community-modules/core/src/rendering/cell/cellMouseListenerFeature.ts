@@ -1,20 +1,21 @@
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
 import type { Column } from '../../entities/column';
-import type { CellClickedEvent, CellDoubleClickedEvent, CellMouseOutEvent, CellMouseOverEvent } from '../../events';
+import type { CellClickedEvent, CellDoubleClickedEvent, CellMouseOutEvent, CellMouseOverEvent} from '../../events';
 import { Events } from '../../events';
 import { _isBrowserSafari, _isIOSUserAgent } from '../../utils/browser';
 import { _isElementChildOfClass, _isFocusableFormField } from '../../utils/dom';
 import { _isEventSupported, _isStopPropagationForAgGrid } from '../../utils/event';
-import { Beans } from '../beans';
 import type { CellCtrl } from './cellCtrl';
 
-export class CellMouseListenerFeature extends Beans {
+export class CellMouseListenerFeature extends BeanStub {
     private readonly cellCtrl: CellCtrl;
-    private readonly beans: Beans;
+    private readonly beans: BeanCollection;
     private readonly column: Column;
 
     private lastIPadMouseClickEvent: number;
 
-    constructor(ctrl: CellCtrl, beans: Beans, column: Column) {
+    constructor(ctrl: CellCtrl, beans: BeanCollection, column: Column) {
         super();
         this.cellCtrl = ctrl;
         this.beans = beans;

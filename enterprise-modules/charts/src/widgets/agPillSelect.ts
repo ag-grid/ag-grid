@@ -165,7 +165,8 @@ export class AgPillSelect<TValue = string | null> extends Component {
         const options = this.createSelectOptions();
         if (!options.length) {
             _removeFromParent(this.eSelect.getGui());
-            this.eSelect = this.destroyBean(this.eSelect);
+            this.destroyBean(this.eSelect);
+            this.eSelect = undefined;
             return false;
         }
         this.eSelect.clearOptions().addOptions(options).setValue(undefined, true);

@@ -1,6 +1,6 @@
-import { AgEvent, AgEventListener, AgGlobalEventListener, AgGridEvent } from './events';
-import { IEventEmitter } from './interfaces/iEventEmitter';
-import { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
+import type { AgEvent, AgEventListener, AgGlobalEventListener, AgGridEvent } from './events';
+import type { IEventEmitter } from './interfaces/iEventEmitter';
+import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 
 export class LocalEventService implements IEventEmitter {
     private allSyncListeners = new Map<string, Set<AgEventListener>>();

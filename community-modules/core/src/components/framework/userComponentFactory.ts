@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, Bean, Optional } from '../../context/context';
+import type { BeanCollection, BeanName } from '../../context/context';
 import type {
     CellEditorSelectorFunc,
     CellEditorSelectorResult,
@@ -77,13 +77,22 @@ export interface UserCompDetails {
     newAgStackInstance: () => AgPromise<any>;
 }
 
-@Bean('userComponentFactory')
 export class UserComponentFactory extends BeanStub {
-    @Autowired('gridOptions') private readonly gridOptions: GridOptions;
-    @Autowired('agComponentUtils') private readonly agComponentUtils: AgComponentUtils;
-    @Autowired('componentMetadataProvider') private readonly componentMetadataProvider: ComponentMetadataProvider;
-    @Autowired('userComponentRegistry') private readonly userComponentRegistry: UserComponentRegistry;
-    @Optional('frameworkComponentWrapper') private readonly frameworkComponentWrapper?: FrameworkComponentWrapper;
+    static BeanName: BeanName = 'userComponentFactory';
+
+    private gridOptions: GridOptions;
+    private agComponentUtils: AgComponentUtils;
+    private componentMetadataProvider: ComponentMetadataProvider;
+    private userComponentRegistry: UserComponentRegistry;
+    private frameworkComponentWrapper?: FrameworkComponentWrapper;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.agComponentUtils = beans.agComponentUtils;
+        this.componentMetadataProvider = beans.componentMetadataProvider;
+        this.userComponentRegistry = beans.userComponentRegistry;
+        this.frameworkComponentWrapper = beans.frameworkComponentWrapper;
+    }
 
     public getHeaderCompDetails(colDef: ColDef, params: WithoutGridCommon<IHeaderParams>): UserCompDetails | undefined {
         return this.getCompDetails(colDef, HeaderComponent, 'agColumnHeader', params);

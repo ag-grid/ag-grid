@@ -1,6 +1,6 @@
 import type { ColumnViewportService } from '../../columns/columnViewportService';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { DragService } from '../../dragAndDrop/dragService';
 import type { ColumnPinnedType } from '../../entities/column';
@@ -126,6 +126,21 @@ export interface IRowContainerComp {
 }
 
 export class RowContainerCtrl extends BeanStub {
+    private dragService: DragService;
+    private ctrlsService: CtrlsService;
+    private columnViewportService: ColumnViewportService;
+    private resizeObserverService: ResizeObserverService;
+    private rowRenderer: RowRenderer;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.dragService = beans.dragService;
+        this.ctrlsService = beans.ctrlsService;
+        this.columnViewportService = beans.columnViewportService;
+        this.resizeObserverService = beans.resizeObserverService;
+        this.rowRenderer = beans.rowRenderer;
+    }
+
     public static getRowContainerCssClasses(name: RowContainerName): { container?: string; viewport?: string } {
         const containerClass = ContainerCssClasses.get(name);
         const viewportClass = ViewportCssClasses.get(name);
@@ -150,12 +165,6 @@ export class RowContainerCtrl extends BeanStub {
                 return null;
         }
     }
-
-    @Autowired('dragService') private dragService: DragService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('columnViewportService') private columnViewportService: ColumnViewportService;
-    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private readonly name: RowContainerName;
     private readonly isFullWithContainer: boolean;
@@ -263,11 +272,11 @@ export class RowContainerCtrl extends BeanStub {
         ];
 
         const allCenter = [
+            RowContainerName.STICKY_TOP_CENTER,
+            RowContainerName.STICKY_BOTTOM_CENTER,
             RowContainerName.CENTER,
             RowContainerName.TOP_CENTER,
-            RowContainerName.STICKY_TOP_CENTER,
             RowContainerName.BOTTOM_CENTER,
-            RowContainerName.STICKY_BOTTOM_CENTER,
         ];
         const allLeft = [
             RowContainerName.LEFT,

@@ -65,7 +65,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
     }
 
     private createListComponent(): void {
-        this.listComponent = this.createBean(new AgList('select', true));
+        this.listComponent = this.createBean(new AgList<TValue>('select', true));
         this.listComponent.setParentComponent(this);
 
         const eListAriaEl = this.listComponent.getAriaElement();

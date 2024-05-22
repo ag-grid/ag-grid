@@ -3,10 +3,10 @@ import type { ColumnSizeService } from '../columns/columnSizeService';
 import type { ColumnViewportService } from '../columns/columnViewportService';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { Column } from '../entities/column';
-import type { BodyHeightChangedEvent } from '../events';
+import type { BodyHeightChangedEvent} from '../events';
 import { Events } from '../events';
 import type { ScrollVisibleService, SetScrollsVisibleParams } from '../gridBodyComp/scrollVisibleService';
 import type { ProcessUnpinnedColumnsParams } from '../interfaces/iCallbackParams';
@@ -20,13 +20,24 @@ import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 // and adjusts grid as necessary. there are two viewports, one for horizontal and one for
 // vertical scrolling.
 export class ViewportSizeFeature extends BeanStub {
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
-    @Autowired('columnViewportService') public columnViewportService: ColumnViewportService;
+    private ctrlsService: CtrlsService;
+    private pinnedWidthService: PinnedWidthService;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private columnSizeService: ColumnSizeService;
+    private scrollVisibleService: ScrollVisibleService;
+    private columnViewportService: ColumnViewportService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.ctrlsService = beans.ctrlsService;
+        this.pinnedWidthService = beans.pinnedWidthService;
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.columnSizeService = beans.columnSizeService;
+        this.scrollVisibleService = beans.scrollVisibleService;
+        this.columnViewportService = beans.columnViewportService;
+    }
 
     private centerContainerCtrl: RowContainerCtrl;
     private gridBodyCtrl: GridBodyCtrl;

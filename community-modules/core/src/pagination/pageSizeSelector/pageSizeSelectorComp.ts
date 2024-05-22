@@ -1,4 +1,4 @@
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import { Events } from '../../eventKeys';
 import type { PaginationChangedEvent } from '../../events';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
@@ -12,7 +12,12 @@ import { Component } from '../../widgets/component';
 export class PageSizeSelectorComp extends Component {
     static readonly selector: AgComponentSelector = 'AG-PAGE-SIZE-SELECTOR';
 
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+    private paginationProxy: PaginationProxy;
+    
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.paginationProxy = beans.paginationProxy;
+    }
 
     private selectPageSizeComp: AgSelect | undefined;
     private hasEmptyOption = false;

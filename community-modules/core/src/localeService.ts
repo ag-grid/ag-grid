@@ -1,10 +1,11 @@
 import { BeanStub } from './context/beanStub';
-import { Bean } from './context/context';
+import type { BeanName } from './context/context';
 import type { GetLocaleTextParams } from './interfaces/iCallbackParams';
 import type { WithoutGridCommon } from './interfaces/iCommon';
 
-@Bean('localeService')
 export class LocaleService extends BeanStub {
+    static BeanName: BeanName = 'localeService';
+
     public getLocaleTextFunc(): (key: string, defaultValue: string, variableValues?: string[]) => string {
         const getLocaleText = this.gos.getCallback('getLocaleText');
         if (getLocaleText) {

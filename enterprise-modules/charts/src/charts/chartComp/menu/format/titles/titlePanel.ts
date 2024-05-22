@@ -1,5 +1,5 @@
-import type { AgInputTextFieldParams } from '@ag-grid-community/core';
-import { AgInputTextField, Autowired, Component } from '@ag-grid-community/core';
+import type { AgInputTextFieldParams, BeanCollection} from '@ag-grid-community/core';
+import { AgInputTextField, Component } from '@ag-grid-community/core';
 
 import type { AgSliderParams } from '../../../../../widgets/agSlider';
 import { AgSlider } from '../../../../../widgets/agSlider';
@@ -12,7 +12,12 @@ import { FontPanel } from '../fontPanel';
 export class TitlePanel extends Component {
     public static TEMPLATE = /* html */ `<div></div>`;
 
-    @Autowired('chartTranslationService') protected readonly chartTranslationService: ChartTranslationService;
+    protected chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.chartTranslationService = beans.chartTranslationService;
+    }
 
     protected readonly chartOptions: ChartOptionsProxy;
 

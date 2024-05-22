@@ -108,7 +108,8 @@ export class SeriesDataPanel extends DragDataPanel {
     }
 
     public override destroy(): void {
-        this.groupComp = this.destroyBean(this.groupComp)!;
+        this.destroyBean(this.groupComp);
+        this.groupComp = undefined!;
         super.destroy();
     }
 }

@@ -1,4 +1,5 @@
 import type { UserCompDetails } from '../../components/framework/userComponentFactory';
+import type { BeanCollection } from '../../context/context';
 import type { CellStyle } from '../../entities/colDef';
 import type { Column } from '../../entities/column';
 import type { RowNode } from '../../entities/rowNode';
@@ -10,7 +11,6 @@ import { _missing } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import { Component } from '../../widgets/component';
 import type { TooltipParentComp } from '../../widgets/tooltipStateManager';
-import type { Beans } from './../beans';
 import { PopupEditorWrapper } from './../cellEditors/popupEditorWrapper';
 import type { ICellRendererComp } from './../cellRenderers/iCellRenderer';
 import type { CheckboxSelectionComponent } from './../checkboxSelectionComponent';
@@ -23,7 +23,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private eCellWrapper: HTMLElement | undefined;
     private eCellValue: HTMLElement | undefined;
 
-    private beans: Beans;
+    private beans: BeanCollection;
     private column: Column;
     private rowNode: RowNode;
     private eRow: HTMLElement;
@@ -62,7 +62,13 @@ export class CellComp extends Component implements TooltipParentComp {
     private rendererVersion = 0;
     private editorVersion = 0;
 
-    constructor(beans: Beans, cellCtrl: CellCtrl, printLayout: boolean, eRow: HTMLElement, editingRow: boolean) {
+    constructor(
+        beans: BeanCollection,
+        cellCtrl: CellCtrl,
+        printLayout: boolean,
+        eRow: HTMLElement,
+        editingRow: boolean
+    ) {
         super();
         this.beans = beans;
         this.column = cellCtrl.getColumn();
@@ -176,9 +182,12 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private removeControls(): void {
-        this.checkboxSelectionComp = this.beans.context.destroyBean(this.checkboxSelectionComp);
-        this.dndSourceComp = this.beans.context.destroyBean(this.dndSourceComp);
-        this.rowDraggingComp = this.beans.context.destroyBean(this.rowDraggingComp);
+        this.beans.context.destroyBean(this.checkboxSelectionComp);
+        this.checkboxSelectionComp = undefined;
+        this.beans.context.destroyBean(this.dndSourceComp);
+        this.dndSourceComp = undefined;
+        this.beans.context.destroyBean(this.rowDraggingComp);
+        this.rowDraggingComp = undefined;
     }
 
     // returns true if wrapper was changed
@@ -296,7 +305,8 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private destroyRenderer(): void {
         const { context } = this.beans;
-        this.cellRenderer = context.destroyBean(this.cellRenderer);
+        this.cellRenderer = undefined;
+        context.destroyBean(this.cellRenderer);
         _removeFromParent(this.cellRendererGui);
         this.cellRendererGui = null;
         this.rendererVersion++;
@@ -310,8 +320,10 @@ export class CellComp extends Component implements TooltipParentComp {
         }
         this.hideEditorPopup = undefined;
 
-        this.cellEditor = context.destroyBean(this.cellEditor);
-        this.cellEditorPopupWrapper = context.destroyBean(this.cellEditorPopupWrapper);
+        this.cellEditor = undefined;
+        context.destroyBean(this.cellEditor);
+        this.cellEditorPopupWrapper = undefined;
+        context.destroyBean(this.cellEditorPopupWrapper);
 
         _removeFromParent(this.cellEditorGui);
         this.cellEditorGui = null;

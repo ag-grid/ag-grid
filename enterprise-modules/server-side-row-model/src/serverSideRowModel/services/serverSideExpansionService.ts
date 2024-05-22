@@ -1,16 +1,26 @@
 import type {
+    BeanCollection,
+    BeanName,
     IExpansionService,
     IsServerSideGroupOpenByDefaultParams,
     RowNode,
-    WithoutGridCommon,
+    WithoutGridCommon} from '@ag-grid-community/core';
+import {
+    Events,
+    ExpansionService,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, Events, ExpansionService } from '@ag-grid-community/core';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 
-@Bean('expansionService')
 export class ServerSideExpansionService extends ExpansionService implements IExpansionService {
-    @Autowired('rowModel') private readonly serverSideRowModel: ServerSideRowModel;
+    static BeanName: BeanName = 'expansionService';
+
+    private serverSideRowModel: ServerSideRowModel;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+    }
 
     private queuedRowIds: Set<string> = new Set();
 

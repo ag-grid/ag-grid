@@ -1,5 +1,5 @@
 import { KeyCode } from '../constants/keyCode';
-import { Autowired } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { Events } from '../events';
 import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -14,10 +14,16 @@ import { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
 import type { PaginationProxy } from './paginationProxy';
 
 export class PaginationComp extends Component {
-    static readonly selector: AgComponentSelector = 'AG-PAGINATION';
+    private paginationProxy: PaginationProxy;
+    private rowNodeBlockLoader: RowNodeBlockLoader;
 
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.paginationProxy = beans.paginationProxy;
+        this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
+    }
+
+    static readonly selector: AgComponentSelector = 'AG-PAGINATION';
 
     @RefSelector('btFirst') private btFirst: HTMLElement;
     @RefSelector('btPrevious') private btPrevious: HTMLElement;

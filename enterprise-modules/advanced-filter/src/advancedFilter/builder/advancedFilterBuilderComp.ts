@@ -1,20 +1,12 @@
 import type {
     AdvancedFilterModel,
-    Beans,
+    BeanCollection,
     ColumnAdvancedFilterModel,
     FilterManager,
     JoinAdvancedFilterModel,
     VirtualListDragItem,
 } from '@ag-grid-community/core';
-import {
-    Autowired,
-    Component,
-    RefSelector,
-    TooltipFeature,
-    VirtualList,
-    _exists,
-    _setDisabled,
-} from '@ag-grid-community/core';
+import { Component, RefSelector, TooltipFeature, VirtualList, _exists, _setDisabled } from '@ag-grid-community/core';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AdvancedFilterService } from '../advancedFilterService';
@@ -30,14 +22,20 @@ import type {
 import { AdvancedFilterBuilderEvents } from './iAdvancedFilterBuilder';
 
 export class AdvancedFilterBuilderComp extends Component {
+    private filterManager: FilterManager;
+    private advancedFilterService: AdvancedFilterService;
+    private advancedFilterExpressionService: AdvancedFilterExpressionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.filterManager = beans.filterManager;
+        this.advancedFilterService = beans.advancedFilterService;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+    }
+
     @RefSelector('eList') private eList: HTMLElement;
     @RefSelector('eApplyFilterButton') private eApplyFilterButton: HTMLElement;
     @RefSelector('eCancelFilterButton') private eCancelFilterButton: HTMLElement;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('advancedFilterService') private advancedFilterService: AdvancedFilterService;
-    @Autowired('advancedFilterExpressionService')
-    private advancedFilterExpressionService: AdvancedFilterExpressionService;
-    @Autowired('beans') private beans: Beans;
 
     private virtualList: VirtualList<AdvancedFilterBuilderItemComp | AdvancedFilterBuilderItemAddComp>;
     private filterModel: AdvancedFilterModel;

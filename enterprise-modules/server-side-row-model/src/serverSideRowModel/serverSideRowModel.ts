@@ -1,6 +1,7 @@
 import type {
     AdvancedFilterModel,
-    Beans,
+    BeanCollection,
+    BeanName,
     Column,
     ColumnModel,
     ColumnNameService,
@@ -26,14 +27,11 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
-    Bean,
     BeanStub,
     Events,
     ModuleNames,
     ModuleRegistry,
     NumberSequence,
-    Optional,
     RowNode,
     _debounce,
     _exists,
@@ -58,20 +56,35 @@ export interface SSRMParams {
     datasource?: IServerSideDatasource;
 }
 
-@Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
-    @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
-    @Autowired('beans') private beans: Beans;
+    static BeanName: BeanName = 'rowModel';
 
-    @Optional('pivotColDefService') private pivotColDefService?: IPivotColDefService;
+    private columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    private pivotResultColsService: PivotResultColsService;
+    private funcColsService: FuncColsService;
+    private filterManager: FilterManager;
+    private sortController: SortController;
+    private rowRenderer: RowRenderer;
+    private nodeManager: NodeManager;
+    private storeFactory: StoreFactory;
+    private beans: BeanCollection;
+    private pivotColDefService?: IPivotColDefService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.columnNameService = beans.columnNameService;
+        this.pivotResultColsService = beans.pivotResultColsService;
+        this.funcColsService = beans.funcColsService;
+        this.filterManager = beans.filterManager;
+        this.sortController = beans.sortController;
+        this.rowRenderer = beans.rowRenderer;
+        this.nodeManager = beans.ssrmNodeManager;
+        this.storeFactory = beans.ssrmStoreFactory;
+        this.beans = beans;
+        this.pivotColDefService = beans.pivotColDefService;
+    }
 
     private onRowHeightChanged_debounced = _debounce(this.onRowHeightChanged.bind(this), 100);
 
@@ -263,7 +276,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         if (!this.rootNode || !this.rootNode.childStore) {
             return;
         }
-        this.rootNode.childStore = this.destroyBean(this.rootNode.childStore)!;
+        this.destroyBean(this.rootNode.childStore);
+        this.rootNode.childStore = undefined!;
         this.nodeManager.clear();
     }
 

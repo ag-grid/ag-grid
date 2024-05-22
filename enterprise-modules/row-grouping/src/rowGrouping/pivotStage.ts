@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    BeanName,
     ChangedPath,
     ColDef,
     Column,
@@ -13,18 +15,27 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, Events, _iterateObject, _missing } from '@ag-grid-community/core';
+import { BeanStub, Events, _iterateObject, _missing } from '@ag-grid-community/core';
 
 import type { PivotColDefService } from './pivotColDefService';
 
-@Bean('pivotStage')
 export class PivotStage extends BeanStub implements IRowNodeStage {
-    // these should go into the pivot column creator
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('pivotColDefService') private pivotColDefService: PivotColDefService;
+    static BeanName: BeanName = 'pivotStage';
+
+    private valueService: ValueService;
+    private columnModel: ColumnModel;
+    private pivotResultColsService: PivotResultColsService;
+    private funcColsService: FuncColsService;
+    private pivotColDefService: PivotColDefService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.valueService = beans.valueService;
+        this.columnModel = beans.columnModel;
+        this.pivotResultColsService = beans.pivotResultColsService;
+        this.funcColsService = beans.funcColsService;
+        this.pivotColDefService = beans.pivotColDefService;
+    }
 
     private uniqueValues: any = {};
 

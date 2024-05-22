@@ -46,7 +46,13 @@ export { ComponentType } from './components/framework/componentTypes';
 // context
 export { BeanStub } from './context/beanStub';
 export { BaseBean } from './context/bean';
-export { Context, ComponentMeta, Autowired, Optional, Bean, Qualifier } from './context/context';
+export {
+    Context,
+    ComponentMeta,
+    SingletonBean,
+    BeanName,
+    BeanCollection,
+} from './context/context';
 export { RefSelector } from './widgets/componentAnnotations';
 
 // excel
@@ -291,7 +297,6 @@ export {
 export { CheckboxCellEditor } from './rendering/cellEditors/checkboxCellEditor';
 
 // rendering / cellRenderers
-export { Beans } from './rendering/beans';
 export {
     ICellRenderer,
     ICellRendererFunc,

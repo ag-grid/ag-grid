@@ -1,6 +1,6 @@
 import type { ColumnModel } from '../../columns/columnModel';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { DragAndDropService, DraggingEvent, DropTarget } from '../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
@@ -17,9 +17,16 @@ export interface DropListener {
 }
 
 export class BodyDropTarget extends BeanStub implements DropTarget {
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    private dragAndDropService: DragAndDropService;
+    private columnModel: ColumnModel;
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.dragAndDropService = beans.dragAndDropService;
+        this.columnModel = beans.columnModel;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private pinned: ColumnPinnedType;
     // public because it's part of the DropTarget interface

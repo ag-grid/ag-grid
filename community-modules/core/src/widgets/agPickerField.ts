@@ -1,5 +1,5 @@
 import { KeyCode } from '../constants/keyCode';
-import { Autowired } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { Events } from '../eventKeys';
 import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaExpanded, _setAriaRole } from '../utils/aria';
@@ -24,6 +24,13 @@ export abstract class AgPickerField<
     TConfig extends AgPickerFieldParams = AgPickerFieldParams,
     TComponent extends Component = Component,
 > extends AgAbstractField<TValue, TConfig> {
+    protected popupService: PopupService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.popupService = beans.popupService;    
+    }
+
     protected abstract createPickerComponent(): TComponent;
 
     protected pickerComponent: TComponent | undefined;
@@ -41,8 +48,6 @@ export abstract class AgPickerField<
     private hideCurrentPicker: (() => void) | null = null;
     private destroyMouseWheelFunc: (() => null) | undefined;
     private ariaRole?: string;
-
-    @Autowired('popupService') protected popupService: PopupService;
 
     @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
     @RefSelector('eWrapper') protected readonly eWrapper: HTMLElement;

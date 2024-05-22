@@ -1,5 +1,13 @@
-import type { ChartDataPanel as ChartDataPanelType, ChartType } from '@ag-grid-community/core';
-import { AgToggleButton, Autowired, Component, _setDisplayed, _warnOnce } from '@ag-grid-community/core';
+import type {
+    BeanCollection,
+    ChartDataPanel as ChartDataPanelType,
+    ChartType} from '@ag-grid-community/core';
+import {
+    AgToggleButton,
+    Component,
+    _setDisplayed,
+    _warnOnce,
+} from '@ag-grid-community/core';
 
 import type { ChartService } from '../../../chartService';
 import { ChartController } from '../../chartController';
@@ -24,8 +32,14 @@ const DefaultDataPanelDef: ChartDataPanelType = {
 export class ChartDataPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper ag-scrollable-container"></div>`;
 
-    @Autowired('chartTranslationService') protected readonly chartTranslationService: ChartTranslationService;
-    @Autowired('chartService') private chartService: ChartService;
+    protected chartTranslationService: ChartTranslationService;
+    private chartService: ChartService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.chartTranslationService = beans.chartTranslationService;
+        this.chartService = beans.chartService;
+    }
 
     private readonly chartController: ChartController;
     private chartType?: ChartType;

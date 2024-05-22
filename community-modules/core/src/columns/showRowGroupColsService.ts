@@ -1,13 +1,20 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { Column } from '../entities/column';
 import type { ColumnModel } from './columnModel';
 import type { FuncColsService } from './funcColsService';
 
-@Bean('showRowGroupColsService')
 export class ShowRowGroupColsService extends BeanStub {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
+    static BeanName: BeanName = 'showRowGroupColsService';
+
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+    }
 
     private showRowGroupCols: Column[];
     private showRowGroupColsMap: { [originalColumnId: string]: Column };

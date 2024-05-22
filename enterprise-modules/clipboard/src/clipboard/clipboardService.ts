@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    BeanName,
     CellNavigationService,
     CellPosition,
     CellPositionUtils,
@@ -35,18 +37,7 @@ import type {
     VisibleColsService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    ChangedPath,
-    Events,
-    Optional,
-    _exists,
-    _last,
-    _removeFromArray,
-    _warnOnce,
-} from '@ag-grid-community/core';
+import { BeanStub, ChangedPath, Events, _exists, _last, _removeFromArray, _warnOnce } from '@ag-grid-community/core';
 
 interface RowCallback {
     (
@@ -83,23 +74,41 @@ const apiError = (method: string) =>
     'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
     'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API.';
 
-@Bean('clipboardService')
 export class ClipboardService extends BeanStub implements IClipboardService {
-    @Autowired('csvCreator') private csvCreator: ICsvCreator;
-    @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
-    @Autowired('selectionService') private selectionService: ISelectionService;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
-    @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
-    @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
+    static BeanName: BeanName = 'clipboardService';
 
-    @Optional('rangeService') private rangeService?: IRangeService;
+    private csvCreator: ICsvCreator;
+    private loggerFactory: LoggerFactory;
+    private selectionService: ISelectionService;
+    private rowModel: IRowModel;
+    private ctrlsService: CtrlsService;
+    private valueService: ValueService;
+    private focusService: FocusService;
+    private rowRenderer: RowRenderer;
+    private visibleColsService: VisibleColsService;
+    private funcColsService: FuncColsService;
+    private cellNavigationService: CellNavigationService;
+    private cellPositionUtils: CellPositionUtils;
+    public rowPositionUtils: RowPositionUtils;
+    private rangeService?: IRangeService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.csvCreator = beans.csvCreator;
+        this.loggerFactory = beans.loggerFactory;
+        this.selectionService = beans.selectionService;
+        this.rowModel = beans.rowModel;
+        this.ctrlsService = beans.ctrlsService;
+        this.valueService = beans.valueService;
+        this.focusService = beans.focusService;
+        this.rowRenderer = beans.rowRenderer;
+        this.visibleColsService = beans.visibleColsService;
+        this.funcColsService = beans.funcColsService;
+        this.cellNavigationService = beans.cellNavigationService;
+        this.cellPositionUtils = beans.cellPositionUtils;
+        this.rowPositionUtils = beans.rowPositionUtils;
+        this.rangeService = beans.rangeService;
+    }
 
     private clientSideRowModel: IClientSideRowModel;
     private logger: Logger;

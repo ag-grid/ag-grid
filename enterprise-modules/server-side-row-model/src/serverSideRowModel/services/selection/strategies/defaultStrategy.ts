@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     IRowModel,
     IServerSideSelectionState,
     ISetNodesSelectedParams,
@@ -7,7 +8,7 @@ import type {
     SelectionEventSourceType,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, BeanStub, Events } from '@ag-grid-community/core';
+import { BeanStub, Events } from '@ag-grid-community/core';
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
@@ -17,7 +18,12 @@ interface SelectedState {
 }
 
 export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
-    @Autowired('rowModel') private rowModel: IRowModel;
+    private rowModel: IRowModel;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.rowModel = beans.rowModel;
+    }
 
     private selectedState: SelectedState = { selectAll: false, toggledNodes: new Set() };
     private lastSelected: string | null = null;

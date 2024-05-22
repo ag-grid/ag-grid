@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    BeanName,
     FilterManager,
     IDatasource,
     IInfiniteRowModel,
@@ -12,18 +14,28 @@ import type {
     SortController,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, Events, NumberSequence, _jsonEquals, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, Events, NumberSequence, _jsonEquals, _warnOnce } from '@ag-grid-community/core';
 
 import type { InfiniteCacheParams } from './infiniteCache';
 import { InfiniteCache } from './infiniteCache';
 
-@Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('sortController') private readonly sortController: SortController;
-    @Autowired('selectionService') private readonly selectionService: ISelectionService;
-    @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
-    @Autowired('rowNodeBlockLoader') private readonly rowNodeBlockLoader: RowNodeBlockLoader;
+    static BeanName: BeanName = 'rowModel';
+
+    private filterManager: FilterManager;
+    private sortController: SortController;
+    private selectionService: ISelectionService;
+    private rowRenderer: RowRenderer;
+    private rowNodeBlockLoader: RowNodeBlockLoader;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.filterManager = beans.filterManager;
+        this.sortController = beans.sortController;
+        this.selectionService = beans.selectionService;
+        this.rowRenderer = beans.rowRenderer;
+        this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
+    }
 
     private infiniteCache: InfiniteCache | null | undefined;
     private datasource: IDatasource | null | undefined;
@@ -243,7 +255,8 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     private destroyCache(): void {
         if (this.infiniteCache) {
-            this.infiniteCache = this.destroyBean(this.infiniteCache);
+            this.destroyBean(this.infiniteCache);
+            this.infiniteCache = undefined;
         }
     }
 

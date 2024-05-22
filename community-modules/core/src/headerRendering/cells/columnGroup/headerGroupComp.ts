@@ -1,5 +1,5 @@
 import type { ColumnModel } from '../../../columns/columnModel';
-import { Autowired } from '../../../context/context';
+import type { BeanCollection } from '../../../context/context';
 import type { ColumnGroup } from '../../../entities/columnGroup';
 import { ProvidedColumnGroup } from '../../../entities/providedColumnGroup';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
@@ -37,7 +37,12 @@ export interface IHeaderGroup {}
 export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams> {}
 
 export class HeaderGroupComp extends Component implements IHeaderGroupComp {
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    private columnModel: ColumnModel;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+    }
 
     static TEMPLATE /* html */ = `<div class="ag-header-group-cell-label" ref="agContainer" role="presentation">
             <span ref="agLabel" class="ag-header-group-text" role="presentation"></span>

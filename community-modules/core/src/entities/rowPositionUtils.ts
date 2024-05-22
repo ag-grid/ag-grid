@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 import type { PaginationProxy } from '../pagination/paginationProxy';
@@ -16,11 +16,19 @@ export interface RowPosition {
     rowPinned: RowPinnedType;
 }
 
-@Bean('rowPositionUtils')
 export class RowPositionUtils extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+    static BeanName: BeanName = 'rowPositionUtils';
+
+    private rowModel: IRowModel;
+    private pinnedRowModel: PinnedRowModel;
+    private paginationProxy: PaginationProxy;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.rowModel = beans.rowModel;
+        this.pinnedRowModel = beans.pinnedRowModel;
+        this.paginationProxy = beans.paginationProxy;
+    }
 
     public getFirstRow(): RowPosition | null {
         let rowIndex = 0;

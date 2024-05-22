@@ -1,5 +1,6 @@
 import type {
     AgEvent,
+    BeanCollection,
     ComponentClass,
     DragItem,
     DragSource,
@@ -7,7 +8,6 @@ import type {
     DropTarget,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
     Component,
     DragAndDropService,
     Events,
@@ -21,6 +21,13 @@ import {
 } from '@ag-grid-community/core';
 
 export abstract class PillDragComp<TItem> extends Component {
+    private dragAndDropService: DragAndDropService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.dragAndDropService = beans.dragAndDropService;
+    }
+
     public static EVENT_COLUMN_REMOVE = 'columnRemove';
 
     private static TEMPLATE /* html */ = `<span role="option">
@@ -28,8 +35,6 @@ export abstract class PillDragComp<TItem> extends Component {
           <span ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
           <span ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
         </span>`;
-
-    @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
 
     @RefSelector('eText') private eText: HTMLElement;
     @RefSelector('eDragHandle') private eDragHandle: HTMLElement;

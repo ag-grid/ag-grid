@@ -1,7 +1,7 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { PivotResultColsService } from '../columns/pivotResultColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
@@ -10,12 +10,21 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import { _exists } from '../utils/generic';
 import type { ValueService } from '../valueService/valueService';
 
-@Bean('quickFilterService')
 export class QuickFilterService extends BeanStub {
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
+    static BeanName: BeanName = 'quickFilterService';
+
+    private valueService: ValueService;
+    private columnModel: ColumnModel;
+    private rowModel: IRowModel;
+    private pivotResultColsService: PivotResultColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.valueService = beans.valueService;
+        this.columnModel = beans.columnModel;
+        this.rowModel = beans.rowModel;
+        this.pivotResultColsService = beans.pivotResultColsService;
+    }
 
     public static readonly EVENT_QUICK_FILTER_CHANGED = 'quickFilterChanged';
     private static readonly QUICK_FILTER_SEPARATOR = '\n';

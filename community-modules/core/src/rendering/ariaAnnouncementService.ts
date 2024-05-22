@@ -1,12 +1,18 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import { _setAriaAtomic, _setAriaLive, _setAriaRelevant } from '../utils/aria';
 import { _clearElement } from '../utils/dom';
 import { _debounce } from '../utils/function';
 
-@Bean('ariaAnnouncementService')
 export class AriaAnnouncementService extends BeanStub {
-    @Autowired('eGridDiv') private eGridDiv: HTMLElement;
+    static BeanName: BeanName = 'ariaAnnouncementService';
+
+    private eGridDiv: HTMLElement;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.eGridDiv = beans.eGridDiv;
+    }
 
     private descriptionContainer: HTMLElement | null = null;
 

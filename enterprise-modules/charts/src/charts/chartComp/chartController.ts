@@ -1,5 +1,6 @@
 import type {
     AgChartThemeOverrides,
+    BeanCollection,
     CellRange,
     CellRangeParams,
     ChartModel,
@@ -17,7 +18,7 @@ import type {
     UpdateRangeChartParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, BeanStub, Events } from '@ag-grid-community/core';
+import { BeanStub, Events } from '@ag-grid-community/core';
 import type { AgCartesianAxisType, AgChartThemePalette } from 'ag-charts-community';
 import { _ModuleSupport, _Theme } from 'ag-charts-community';
 
@@ -37,14 +38,19 @@ import {
 export const DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
 
 export class ChartController extends BeanStub {
+    private rangeService: IRangeService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.rangeService = beans.rangeService;
+    }
+
     public static EVENT_CHART_UPDATED = 'chartUpdated';
     public static EVENT_CHART_API_UPDATE = 'chartApiUpdate';
     public static EVENT_CHART_MODEL_UPDATE = 'chartModelUpdate';
     public static EVENT_CHART_TYPE_CHANGED = 'chartTypeChanged';
     public static EVENT_CHART_SERIES_CHART_TYPE_CHANGED = 'chartSeriesChartTypeChanged';
     public static EVENT_CHART_LINKED_CHANGED = 'chartLinkedChanged';
-
-    @Autowired('rangeService') private readonly rangeService: IRangeService;
 
     private chartProxy: ChartProxy;
 

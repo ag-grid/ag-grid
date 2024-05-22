@@ -1,11 +1,17 @@
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import { Events } from '../eventKeys';
 
-@Bean('pinnedWidthService')
 export class PinnedWidthService extends BeanStub {
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
+    static BeanName: BeanName = 'pinnedWidthService';
+
+    private visibleColsService: VisibleColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.visibleColsService = beans.visibleColsService;
+    }
 
     private leftWidth: number;
     private rightWidth: number;

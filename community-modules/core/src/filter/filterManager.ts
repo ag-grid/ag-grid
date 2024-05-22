@@ -3,7 +3,7 @@ import type { DataTypeService } from '../columns/dataTypeService';
 import { FilterComponent } from '../components/framework/componentTypes';
 import type { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Optional } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { ColDef } from '../entities/colDef';
 import { Column } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
@@ -35,16 +35,29 @@ import { QuickFilterService } from './quickFilterService';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
-@Bean('filterManager')
 export class FilterManager extends BeanStub {
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
-    @Autowired('quickFilterService') private quickFilterService: QuickFilterService;
-    @Optional('advancedFilterService') private advancedFilterService: IAdvancedFilterService;
+    static BeanName: BeanName = 'filterManager';
+
+    private valueService: ValueService;
+    private columnModel: ColumnModel;
+    private rowModel: IRowModel;
+    private userComponentFactory: UserComponentFactory;
+    private rowRenderer: RowRenderer;
+    private dataTypeService: DataTypeService;
+    private quickFilterService: QuickFilterService;
+    private advancedFilterService: IAdvancedFilterService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.valueService = beans.valueService;
+        this.columnModel = beans.columnModel;
+        this.rowModel = beans.rowModel;
+        this.userComponentFactory = beans.userComponentFactory;
+        this.rowRenderer = beans.rowRenderer;
+        this.dataTypeService = beans.dataTypeService;
+        this.quickFilterService = beans.quickFilterService;
+        this.advancedFilterService = beans.advancedFilterService;
+    }
 
     private allColumnFilters = new Map<string, FilterWrapper>();
     private allColumnListeners = new Map<string, (() => null) | undefined>();

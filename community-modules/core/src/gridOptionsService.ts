@@ -1,15 +1,11 @@
 import { ComponentUtil } from './components/componentUtil';
 import { BeanStub } from './context/beanStub';
-import { Autowired, Bean } from './context/context';
+import type { BeanCollection, BeanName } from './context/context';
 import type { DomLayoutType, GridOptions } from './entities/gridOptions';
-import type { AgEvent } from './events';
+import type { AgEvent} from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS, Events } from './events';
 import type { GridApi } from './gridApi';
-import type {
-    GetGroupAggFilteringParams,
-    GetGroupIncludeFooterParams,
-    RowHeightParams,
-} from './interfaces/iCallbackParams';
+import type { GetGroupAggFilteringParams, GetGroupIncludeFooterParams, RowHeightParams } from './interfaces/iCallbackParams';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
@@ -77,22 +73,25 @@ export interface PropertyValueChangedEvent<K extends keyof GridOptions> extends 
 export type PropertyChangedListener = (event: PropertyChangedEvent) => void;
 export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: PropertyValueChangedEvent<K>) => void;
 
-@Bean('gridOptionsService')
 export class GridOptionsService extends BeanStub {
-    @Autowired('gridOptions') private readonly gridOptions: GridOptions;
-    @Autowired('eGridDiv') private eGridDiv: HTMLElement;
-    @Autowired('validationService') private validationService: ValidationService;
+    static BeanName: BeanName = 'gos';
+
+    private gridOptions: GridOptions;
+    private eGridDiv: HTMLElement;
+    private validationService: ValidationService;
+    private api: GridApi;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.gridOptions = beans.gridOptions;
+        this.eGridDiv = beans.eGridDiv;
+        this.validationService = beans.validationService;
+        this.api = beans.gridApi;
+    }
 
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
     private scrollbarWidth: number;
     private domDataKey = '__AG_' + Math.random().toString();
-
-    // Store locally to avoid retrieving many times as these are requested for every callback
-    @Autowired('gridApi') private readonly api: GridApi;
-    // This is quicker then having code call gridOptionsService.get('context')
-    private get gridOptionsContext() {
-        return this.gridOptions['context'];
-    }
 
     private propertyEventService: LocalEventService = new LocalEventService();
 
@@ -148,7 +147,7 @@ export class GridOptionsService extends BeanStub {
             const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
                 const mergedParams = callbackParams as P;
                 mergedParams.api = this.api;
-                mergedParams.context = this.gridOptionsContext;
+                mergedParams.context = this.gridOptions['context'];
 
                 return callback(mergedParams);
             };
@@ -599,7 +598,7 @@ export class GridOptionsService extends BeanStub {
     public getGridCommonParams<TData = any, TContext = any>(): AgGridCommon<TData, TContext> {
         return {
             api: this.api,
-            context: this.gridOptionsContext,
+            context: this.gridOptions.context,
         };
     }
 
@@ -608,7 +607,7 @@ export class GridOptionsService extends BeanStub {
     ): T {
         const updatedParams = params as T;
         updatedParams.api = this.api;
-        updatedParams.context = this.gridOptionsContext;
+        updatedParams.context = this.gridOptions.context;
         return updatedParams;
     }
 }

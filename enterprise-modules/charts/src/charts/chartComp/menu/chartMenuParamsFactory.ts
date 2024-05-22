@@ -3,9 +3,10 @@ import type {
     AgFieldParams,
     AgInputNumberFieldParams,
     AgSelectParams,
+    BeanCollection,
     ListOption,
 } from '@ag-grid-community/core';
-import { Autowired, BeanStub } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
 import type { AgColorPickerParams } from '../../../widgets/agColorPicker';
 import type { AgSliderParams } from '../../../widgets/agSlider';
@@ -14,7 +15,12 @@ import type { ChartTranslationKey, ChartTranslationService } from '../services/c
 import type { FontPanelParams } from './format/fontPanel';
 
 export class ChartMenuParamsFactory extends BeanStub {
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.chartTranslationService = beans.chartTranslationService;
+    }
 
     constructor(private readonly chartOptionsProxy: ChartOptionsProxy) {
         super();

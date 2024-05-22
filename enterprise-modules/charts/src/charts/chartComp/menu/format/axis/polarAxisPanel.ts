@@ -1,5 +1,5 @@
-import type { ListOption } from '@ag-grid-community/core';
-import { AgSelect, Autowired, Component, RefSelector } from '@ag-grid-community/core';
+import type { BeanCollection, ListOption} from '@ag-grid-community/core';
+import { AgSelect, Component, RefSelector } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -21,8 +21,12 @@ export class PolarAxisPanel extends Component {
 
     @RefSelector('axisGroup') private axisGroup: AgGroupComponent;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
 
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.chartTranslationService = beans.chartTranslationService;
+    }
     constructor(private readonly options: FormatPanelOptions) {
         super();
     }

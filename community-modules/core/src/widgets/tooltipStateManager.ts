@@ -1,6 +1,6 @@
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
-import { Autowired } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { Events } from '../eventKeys';
 import type { TooltipHideEvent, TooltipShowEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -26,6 +26,15 @@ enum TooltipTrigger {
 }
 
 export class TooltipStateManager extends BeanStub {
+    private popupService: PopupService;
+    private userComponentFactory: UserComponentFactory;
+    
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.popupService = beans.popupService;
+        this.userComponentFactory = beans.userComponentFactory;
+    }
+
     private readonly SHOW_QUICK_TOOLTIP_DIFF = 1000;
     private readonly FADE_OUT_TOOLTIP_TIMEOUT = 1000;
     private readonly INTERACTIVE_HIDE_DELAY = 100;
@@ -35,8 +44,6 @@ export class TooltipStateManager extends BeanStub {
     private static lastTooltipHideTime: number;
     private static isLocked = false;
 
-    @Autowired('popupService') private popupService: PopupService;
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     private showTooltipTimeoutId: number | undefined;
     private hideTooltipTimeoutId: number | undefined;

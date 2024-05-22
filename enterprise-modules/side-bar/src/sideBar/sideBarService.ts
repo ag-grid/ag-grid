@@ -1,8 +1,9 @@
-import type { ISideBar, ISideBarService } from '@ag-grid-community/core';
-import { Bean, BeanStub } from '@ag-grid-community/core';
+import type { BeanName, ISideBar, ISideBarService } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
-@Bean('sideBarService')
 export class SideBarService extends BeanStub implements ISideBarService {
+    static BeanName: BeanName = 'sideBarService';
+
     private sideBarComp: ISideBar;
 
     public registerSideBarComp(sideBarComp: ISideBar): void {

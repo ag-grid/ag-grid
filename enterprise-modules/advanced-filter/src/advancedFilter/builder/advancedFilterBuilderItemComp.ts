@@ -1,12 +1,11 @@
 import type {
     BaseCellDataType,
-    Beans,
+    BeanCollection,
     DragSource,
     FieldPickerValueSelectedEvent,
     FieldValueEvent,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
     DragAndDropService,
     DragSourceType,
     Events,
@@ -46,6 +45,15 @@ import { JoinPillWrapperComp } from './joinPillWrapperComp';
 import { SelectPillComp } from './selectPillComp';
 
 export class AdvancedFilterBuilderItemComp extends TabGuardComp {
+    private dragAndDropService: DragAndDropService;
+    private advancedFilterExpressionService: AdvancedFilterExpressionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.dragAndDropService = beans.dragAndDropService;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+    }
+
     @RefSelector('eTreeLines') private eTreeLines: HTMLElement;
     @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
     @RefSelector('eItem') private eItem: HTMLElement;
@@ -55,10 +63,6 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     @RefSelector('eMoveDownButton') private eMoveDownButton: HTMLElement;
     @RefSelector('eAddButton') private eAddButton: HTMLElement;
     @RefSelector('eRemoveButton') private eRemoveButton: HTMLElement;
-    @Autowired('beans') private readonly beans: Beans;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('advancedFilterExpressionService')
-    private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     private ePillWrapper: JoinPillWrapperComp | ConditionPillWrapperComp;
     private validationTooltipFeature: TooltipFeature;

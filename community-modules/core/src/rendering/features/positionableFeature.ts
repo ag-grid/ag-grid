@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
 import type { ResizeObserverService } from '../../misc/resizeObserverService';
 import { _getAbsoluteHeight, _getAbsoluteWidth, _isVisible, _setFixedHeight, _setFixedWidth } from '../../utils/dom';
@@ -58,9 +58,16 @@ interface MappedResizer {
 }
 
 export class PositionableFeature extends BeanStub {
-    @Autowired('popupService') protected readonly popupService: PopupService;
-    @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
-    @Autowired('dragService') private readonly dragService: DragService;
+    protected popupService: PopupService;
+    private resizeObserverService: ResizeObserverService;
+    private dragService: DragService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.popupService = beans.popupService;
+        this.resizeObserverService = beans.resizeObserverService;
+        this.dragService = beans.dragService;
+    }
 
     private dragStartPosition = {
         x: 0,

@@ -1,13 +1,11 @@
 import type {
-    ColumnModel,
+    BeanCollection,
     ColumnNameService,
     FilterOpenedEvent,
     IProvidedColumn,
     ITooltipParams,
-    WithoutGridCommon,
-} from '@ag-grid-community/core';
+    WithoutGridCommon} from '@ag-grid-community/core';
 import {
-    Autowired,
     Column,
     Component,
     Events,
@@ -24,14 +22,18 @@ import { ToolPanelFilterComp } from './toolPanelFilterComp';
 export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;
 
 export class ToolPanelFilterGroupComp extends Component {
+    private columnNameService: ColumnNameService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnNameService = beans.columnNameService;
+    }
+
     private static TEMPLATE /* html */ = `<div class="ag-filter-toolpanel-group-wrapper">
             <ag-group-component ref="filterGroupComp"></ag-group-component>
         </div>`;
 
     @RefSelector('filterGroupComp') private filterGroupComp: AgGroupComponent;
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
 
     private readonly depth: number;
     private readonly columnGroup: IProvidedColumn;
@@ -261,7 +263,8 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private destroyFilters() {
-        this.childFilterComps = this.destroyBeans(this.childFilterComps);
+        this.destroyBeans(this.childFilterComps);
+        this.childFilterComps = [];
         _clearElement(this.getGui());
     }
 

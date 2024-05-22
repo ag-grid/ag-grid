@@ -3,7 +3,7 @@ import type { ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Optional } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { CellPosition } from '../entities/cellPositionUtils';
 import type { Column } from '../entities/column';
@@ -40,22 +40,39 @@ interface NavigateParams {
     isAsync?: boolean;
 }
 
-@Bean('navigationService')
 export class NavigationService extends BeanStub {
-    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
-    @Autowired('rowRenderer') public rowRenderer: RowRenderer;
-    @Autowired('headerNavigationService') public headerNavigationService: HeaderNavigationService;
-    @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
-    @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
+    static BeanName: BeanName = 'navigationService';
 
-    @Optional('rangeService') private rangeService?: IRangeService;
+    private mouseEventService: MouseEventService;
+    private paginationProxy: PaginationProxy;
+    private focusService: FocusService;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private rowModel: IRowModel;
+    private ctrlsService: CtrlsService;
+    private rowRenderer: RowRenderer;
+    private headerNavigationService: HeaderNavigationService;
+    private rowPositionUtils: RowPositionUtils;
+    private cellNavigationService: CellNavigationService;
+    private pinnedRowModel: PinnedRowModel;
+    private rangeService?: IRangeService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.mouseEventService = beans.mouseEventService;
+        this.paginationProxy = beans.paginationProxy;
+        this.focusService = beans.focusService;
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.rowModel = beans.rowModel;
+        this.ctrlsService = beans.ctrlsService;
+        this.rowRenderer = beans.rowRenderer;
+        this.headerNavigationService = beans.headerNavigationService;
+        this.rowPositionUtils = beans.rowPositionUtils;
+        this.cellNavigationService = beans.cellNavigationService;
+        this.pinnedRowModel = beans.pinnedRowModel;
+        this.rangeService = beans.rangeService;
+    }
 
     private gridBodyCon: GridBodyCtrl;
 

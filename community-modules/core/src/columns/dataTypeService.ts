@@ -1,6 +1,6 @@
 import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type {
     ColDef,
     SuppressKeyboardEventParams,
@@ -70,13 +70,23 @@ const MONTH_KEYS: (keyof typeof MONTH_LOCALE_TEXT)[] = [
     'december',
 ];
 
-@Bean('dataTypeService')
 export class DataTypeService extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnApplyStateService') private columnApplyStateService: ColumnApplyStateService;
+    static BeanName: BeanName = 'dataTypeService';
+
+    private rowModel: IRowModel;
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+    private valueService: ValueService;
+    private columnApplyStateService: ColumnApplyStateService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.rowModel = beans.rowModel;
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+        this.valueService = beans.valueService;
+        this.columnApplyStateService = beans.columnApplyStateService;
+    }
 
     private dataTypeDefinitions: {
         [cellDataType: string]: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter;

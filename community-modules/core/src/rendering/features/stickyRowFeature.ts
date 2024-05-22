@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { RowNode } from '../../entities/rowNode';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
@@ -9,9 +9,16 @@ import type { RowCtrl } from '../row/rowCtrl';
 import type { RowCtrlByRowNodeIdMap, RowRenderer } from '../rowRenderer';
 
 export class StickyRowFeature extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    private rowModel: IRowModel;
+    private rowRenderer: RowRenderer;
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.rowModel = beans.rowModel;
+        this.rowRenderer = beans.rowRenderer;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private stickyTopRowCtrls: RowCtrl[] = [];
     private stickyBottomRowCtrls: RowCtrl[] = [];

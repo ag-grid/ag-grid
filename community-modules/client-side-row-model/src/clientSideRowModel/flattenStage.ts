@@ -1,11 +1,13 @@
 import type {
-    Beans,
+    BeanCollection,
+    BeanName,
+    ColumnModel,
     GetGroupIncludeFooterParams,
     IRowNodeStage,
     StageExecuteParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, RowNode, _exists, _missingOrEmpty } from '@ag-grid-community/core';
+import { BeanStub, RowNode, _exists, _missingOrEmpty } from '@ag-grid-community/core';
 
 interface FlattenDetails {
     hideOpenParents: boolean;
@@ -16,9 +18,17 @@ interface FlattenDetails {
     groupTotalRow: (params: WithoutGridCommon<GetGroupIncludeFooterParams<any, any>>) => 'top' | 'bottom' | undefined;
 }
 
-@Bean('flattenStage')
 export class FlattenStage extends BeanStub implements IRowNodeStage {
-    @Autowired('beans') private beans: Beans;
+    static BeanName: BeanName = 'flattenStage';
+
+    private beans: BeanCollection;
+    private columnModel: ColumnModel;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.beans = beans;
+        this.columnModel = beans.columnModel;
+    }
 
     public execute(params: StageExecuteParams): RowNode[] {
         const rootNode = params.rowNode;
@@ -26,7 +36,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         // even if not doing grouping, we do the mapping, as the client might
         // of passed in data that already has a grouping in it somewhere
         const result: RowNode[] = [];
-        const skipLeafNodes = this.beans.columnModel.isPivotMode();
+        const skipLeafNodes = this.columnModel.isPivotMode();
         // if we are reducing, and not grouping, then we want to show the root node, as that
         // is where the pivot values are
         const showRootNode = skipLeafNodes && rootNode.leafGroup;

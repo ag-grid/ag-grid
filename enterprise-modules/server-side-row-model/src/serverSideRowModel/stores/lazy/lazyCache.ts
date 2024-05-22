@@ -1,4 +1,6 @@
+import { BeanStub } from '@ag-grid-community/core';
 import type {
+    BeanCollection,
     FocusService,
     GetRowIdParams,
     GridApi,
@@ -6,11 +8,10 @@ import type {
     LoadSuccessParams,
     NumberSequence,
     RowNode,
+    RowNodeSorter,
     ServerSideGroupLevelParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, BeanStub } from '@ag-grid-community/core';
-import type { RowNodeSorter } from '@ag-grid-community/core';
 import type { SortController } from '@ag-grid-community/core';
 
 import type { BlockUtils } from '../../blocks/blockUtils';
@@ -27,14 +28,26 @@ interface LazyStoreNode {
 }
 
 export class LazyCache extends BeanStub {
-    @Autowired('gridApi') private api: GridApi;
-    @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
-    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
-    @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('lazyBlockLoadingService') private lazyBlockLoadingService: LazyBlockLoadingService;
+    private api: GridApi;
+    private blockUtils: BlockUtils;
+    private focusService: FocusService;
+    private nodeManager: NodeManager;
+    private serverSideRowModel: ServerSideRowModel;
+    private rowNodeSorter: RowNodeSorter;
+    private sortController: SortController;
+    private lazyBlockLoadingService: LazyBlockLoadingService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.api = beans.gridOptions.api;
+        this.blockUtils = beans.ssrmBlockUtils;
+        this.focusService = beans.focusService;
+        this.nodeManager = beans.ssrmNodeManager;
+        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+        this.rowNodeSorter = beans.rowNodeSorter;
+        this.sortController = beans.sortController;
+        this.lazyBlockLoadingService = beans.lazyBlockLoadingService;
+    }
 
     /**
      * Indicates whether this is still the live dataset for this store (used for ignoring old requests after purge)

@@ -1,8 +1,6 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import { IAggFunc } from '../entities/colDef';
 import type { Column, ColumnPinnedType } from '../entities/column';
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import type { ColumnEventType } from '../events';
@@ -46,25 +44,47 @@ export interface ColumnCollections {
     map: { [id: string]: Column };
 }
 
-@Bean('columnModel')
 export class ColumnModel extends BeanStub {
-    @Autowired('columnFactory') private columnFactory: ColumnFactory;
-    @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('columnViewportService') private columnViewportService: ColumnViewportService;
-    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
-    @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
-    @Autowired('autoColService') private autoColService: AutoColService;
-    @Autowired('valueCache') private valueCache: ValueCache;
-    @Autowired('columnDefFactory') private columnDefFactory: ColumnDefFactory;
-    @Autowired('columnApplyStateService') private columnApplyStateService: ColumnApplyStateService;
-    @Autowired('columnGroupStateService') private columnGroupStateService: ColumnGroupStateService;
-    @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
-    @Autowired('columnMoveService') private columnMoveService: ColumnMoveService;
-    @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('quickFilterService') private quickFilterService: QuickFilterService;
-    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
+    static BeanName: BeanName = 'columnModel';
+
+    private columnFactory: ColumnFactory;
+    private columnSizeService: ColumnSizeService;
+    private visibleColsService: VisibleColsService;
+    private columnViewportService: ColumnViewportService;
+    private pivotResultColsService: PivotResultColsService;
+    private columnAnimationService: ColumnAnimationService;
+    private autoColService: AutoColService;
+    private valueCache: ValueCache;
+    private columnDefFactory: ColumnDefFactory;
+    private columnApplyStateService: ColumnApplyStateService;
+    private columnGroupStateService: ColumnGroupStateService;
+    private eventDispatcher: ColumnEventDispatcher;
+    private columnMoveService: ColumnMoveService;
+    private columnAutosizeService: ColumnAutosizeService;
+    private funcColsService: FuncColsService;
+    private quickFilterService: QuickFilterService;
+    private showRowGroupColsService: ShowRowGroupColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnFactory = beans.columnFactory;
+        this.columnSizeService = beans.columnSizeService;
+        this.visibleColsService = beans.visibleColsService;
+        this.columnViewportService = beans.columnViewportService;
+        this.pivotResultColsService = beans.pivotResultColsService;
+        this.columnAnimationService = beans.columnAnimationService;
+        this.autoColService = beans.autoColService;
+        this.valueCache = beans.valueCache;
+        this.columnDefFactory = beans.columnDefFactory;
+        this.columnApplyStateService = beans.columnApplyStateService;
+        this.columnGroupStateService = beans.columnGroupStateService;
+        this.eventDispatcher = beans.columnEventDispatcher;
+        this.columnMoveService = beans.columnMoveService;
+        this.columnAutosizeService = beans.columnAutosizeService;
+        this.funcColsService = beans.funcColsService;
+        this.quickFilterService = beans.quickFilterService;
+        this.showRowGroupColsService = beans.showRowGroupColsService;
+    }
 
     // as provided by gridProp columnsDefs
     private colDefs: (ColDef | ColGroupDef)[];

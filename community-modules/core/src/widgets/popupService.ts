@@ -1,11 +1,10 @@
 import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { Column } from '../entities/column';
-import type { CssVariablesChanged } from '../events';
+import type { CssVariablesChanged} from '../events';
 import { Events } from '../events';
-import type { FocusService } from '../focusService';
 import type { GridCtrl } from '../gridComp/gridCtrl';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { PostProcessPopupParams } from '../interfaces/iCallbackParams';
@@ -91,13 +90,17 @@ export interface AddPopupResult {
     hideFunc: (params?: PopupEventParams) => void;
 }
 
-@Bean('popupService')
 export class PopupService extends BeanStub {
-    // really this should be using eGridDiv, not sure why it's not working.
-    // maybe popups in the future should be parent to the body??
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
-    @Autowired('resizeObserverService') public resizeObserverService: ResizeObserverService;
+    static BeanName: BeanName = 'popupService';
+
+    private ctrlsService: CtrlsService;
+    private resizeObserverService: ResizeObserverService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.ctrlsService = beans.ctrlsService;
+        this.resizeObserverService = beans.resizeObserverService;
+    }
 
     private gridCtrl: GridCtrl;
 

@@ -1,4 +1,5 @@
-import { Autowired, Component, RefSelector } from '@ag-grid-community/core';
+import type { BeanCollection} from '@ag-grid-community/core';
+import { Component, RefSelector } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -12,7 +13,12 @@ export class ChartPanel extends Component {
             <ag-group-component ref="chartGroup"></ag-group-component>
         </div>`;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.chartTranslationService = beans.chartTranslationService;
+    }
     @RefSelector('chartGroup') private readonly chartGroup: AgGroupComponent;
 
     constructor(private readonly options: FormatPanelOptions) {

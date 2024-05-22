@@ -1,5 +1,14 @@
-import type { ChartType, SeriesChartType } from '@ag-grid-community/core';
-import { AgCheckbox, AgSelect, Autowired, Component, _areEqual, _clearElement } from '@ag-grid-community/core';
+import type {
+    BeanCollection,
+    ChartType,
+    SeriesChartType} from '@ag-grid-community/core';
+import {
+    AgCheckbox,
+    AgSelect,
+    Component,
+    _areEqual,
+    _clearElement,
+} from '@ag-grid-community/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import type { ChartController } from '../../chartController';
@@ -9,7 +18,12 @@ import type { ChartTranslationService } from '../../services/chartTranslationSer
 export class SeriesChartTypePanel extends Component {
     private static TEMPLATE = /* html */ `<div id="seriesChartTypeGroup"></div>`;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.chartTranslationService = beans.chartTranslationService;
+    }
 
     private seriesChartTypeGroupComp: AgGroupComponent;
     private selectedColIds: string[] = [];
@@ -156,7 +170,8 @@ export class SeriesChartTypePanel extends Component {
 
     public override destroy(): void {
         this.clearComps();
-        this.seriesChartTypeGroupComp = this.destroyBean(this.seriesChartTypeGroupComp)!;
+        this.destroyBean(this.seriesChartTypeGroupComp);
+        this.seriesChartTypeGroupComp = undefined!;
         super.destroy();
     }
 }

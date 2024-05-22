@@ -1,5 +1,13 @@
-import type { ChartGroupsDef, ChartType } from '@ag-grid-community/core';
-import { Autowired, Component, KeyCode, _setAriaLabel, _warnOnce } from '@ag-grid-community/core';
+import type {
+    BeanCollection,
+    ChartGroupsDef,
+    ChartType} from '@ag-grid-community/core';
+import {
+    Component,
+    KeyCode,
+    _setAriaLabel,
+    _warnOnce,
+} from '@ag-grid-community/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import type { ChartController } from '../../chartController';
@@ -134,6 +142,13 @@ const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
 };
 
 export class MiniChartsContainer extends Component {
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.chartTranslationService = beans.chartTranslationService;
+    }
+
     static TEMPLATE = /* html */ `<div class="ag-chart-settings-mini-wrapper"></div>`;
 
     private readonly fills: string[];
@@ -144,8 +159,6 @@ export class MiniChartsContainer extends Component {
     private chartController: ChartController;
 
     private chartGroups: ChartGroupsDef;
-
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     constructor(
         chartController: ChartController,

@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { AbstractColDef, ColDef, HeaderLocation, HeaderValueGetterParams, IAggFunc } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import type { ColumnGroup } from '../entities/columnGroup';
@@ -10,11 +10,19 @@ import type { ExpressionService } from '../valueService/expressionService';
 import type { ColumnModel } from './columnModel';
 import type { FuncColsService } from './funcColsService';
 
-@Bean('columnNameService')
 export class ColumnNameService extends BeanStub {
-    @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    static BeanName: BeanName = 'columnNameService';
+
+    private expressionService: ExpressionService;
+    private funcColsService: FuncColsService;
+    private columnModel: ColumnModel;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.expressionService = beans.expressionService;
+        this.funcColsService = beans.funcColsService;
+        this.columnModel = beans.columnModel;
+    }
 
     public getDisplayNameForColumn(
         column: Column | null,

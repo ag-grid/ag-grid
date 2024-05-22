@@ -112,13 +112,16 @@ export class CategoriesDataPanel extends DragDataPanel {
     }
 
     private clearAggFuncControls(): void {
-        this.aggFuncToggle = this.aggFuncToggle && this.destroyBean(this.aggFuncToggle);
-        this.aggFuncSelect = this.aggFuncSelect && this.destroyBean(this.aggFuncSelect);
+        this.destroyBean(this.aggFuncToggle);
+        this.aggFuncToggle = undefined;
+        this.destroyBean(this.aggFuncSelect)
+        this.aggFuncSelect = undefined;
     }
 
     public override destroy(): void {
         this.clearAggFuncControls();
-        this.groupComp = this.destroyBean(this.groupComp)!;
+        this.destroyBean(this.groupComp);
+        this.groupComp = undefined!;
         super.destroy();
     }
 }

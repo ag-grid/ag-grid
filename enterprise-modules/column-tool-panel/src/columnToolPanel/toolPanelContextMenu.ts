@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     ColumnModel,
     ColumnNameService,
     FocusService,
@@ -6,7 +7,7 @@ import type {
     MenuItemDef,
     PopupService,
 } from '@ag-grid-community/core';
-import { Autowired, Column, Component, ProvidedColumnGroup, _createIconNoSpan } from '@ag-grid-community/core';
+import { Column, Component, ProvidedColumnGroup, _createIconNoSpan } from '@ag-grid-community/core';
 import { AgMenuItemComponent, AgMenuList } from '@ag-grid-enterprise/core';
 
 type MenuItemName = 'rowGroup' | 'value' | 'pivot';
@@ -23,18 +24,27 @@ type MenuItemProperty = {
 };
 
 export class ToolPanelContextMenu extends Component {
+    private columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    private funcColsService: FuncColsService;
+    private popupService: PopupService;
+    private focusService: FocusService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.columnNameService = beans.columnNameService;
+        this.funcColsService = beans.funcColsService;
+        this.popupService = beans.popupService;
+        this.focusService = beans.focusService;
+    }
+
     private columns: Column[];
     private allowGrouping: boolean;
     private allowValues: boolean;
     private allowPivoting: boolean;
     private menuItemMap: Map<MenuItemName, MenuItemProperty>;
     private displayName: string | null = null;
-
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('popupService') private readonly popupService: PopupService;
-    @Autowired('focusService') private readonly focusService: FocusService;
 
     constructor(
         private readonly column: Column | ProvidedColumnGroup,

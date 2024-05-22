@@ -1,5 +1,5 @@
-import type { AgSelectParams, ListOption } from '@ag-grid-community/core';
-import { AgSelect, Autowired, Component } from '@ag-grid-community/core';
+import type { AgSelectParams, BeanCollection, ListOption } from '@ag-grid-community/core';
+import { AgSelect, Component } from '@ag-grid-community/core';
 import type { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import type { AgPillSelectChangeParams } from '../../../../widgets/agPillSelect';
@@ -10,7 +10,12 @@ import { ChartDataModel } from '../../model/chartDataModel';
 import type { ChartTranslationKey, ChartTranslationService } from '../../services/chartTranslationService';
 
 export abstract class DragDataPanel extends Component {
-    @Autowired('chartTranslationService') protected readonly chartTranslationService: ChartTranslationService;
+    protected chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.chartTranslationService = beans.chartTranslationService;
+    }
 
     protected groupComp: AgGroupComponent;
     protected valuePillSelect?: AgPillSelect<ColState>;
