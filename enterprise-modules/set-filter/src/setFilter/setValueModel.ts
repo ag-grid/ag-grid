@@ -1,11 +1,11 @@
 import {
     AgEventListener,
     AgPromise,
-    EventService,
     FuncColsService,
     GridOptionsService,
     IClientSideRowModel,
     IEventEmitter,
+    LocalEventService,
     RowNode,
     SetFilterModelValue,
     SetFilterParams,
@@ -57,7 +57,7 @@ export class SetValueModel<V> implements IEventEmitter {
     public static EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
 
     private readonly gos: GridOptionsService;
-    private readonly localEventService = new EventService();
+    private readonly localEventService = new LocalEventService();
     private formatter: TextFormatter;
     private suppressSorting: boolean;
     private readonly clientSideValuesExtractor: ClientSideValuesExtractor<V>;

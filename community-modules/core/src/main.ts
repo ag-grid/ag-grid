@@ -526,6 +526,7 @@ export { GridApi, DetailGridInfo, StartEditingCellParams, GetCellValueParams } f
 export { Events } from './eventKeys';
 export { FocusService } from './focusService';
 export { GridOptionsService, PropertyChangedEvent } from './gridOptionsService';
+export { LocalEventService } from './localEventService';
 export { EventService } from './eventService';
 export { SelectableService } from './rowNodes/selectableService';
 export { RowNodeSorter, SortedRowNode, SortOption } from './rowNodes/rowNodeSorter';

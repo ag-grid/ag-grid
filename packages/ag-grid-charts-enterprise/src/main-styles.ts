@@ -177,6 +177,7 @@ export { HorizontalResizeService } from '@ag-grid-community/core';
 export { KeyCode } from '@ag-grid-community/core';
 export { LargeTextCellEditor } from '@ag-grid-community/core';
 export { LayoutCssClasses } from '@ag-grid-community/core';
+export { LocalEventService } from '@ag-grid-community/core';
 export { LocaleService } from '@ag-grid-community/core';
 export { Logger } from '@ag-grid-community/core';
 export { LoggerFactory } from '@ag-grid-community/core';

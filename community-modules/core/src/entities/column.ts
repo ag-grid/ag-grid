@@ -1,13 +1,13 @@
 import { ColumnState } from '../columns/columnApplyStateService';
 import { BeanStub } from '../context/beanStub';
 import { Autowired } from '../context/context';
-import { EventService } from '../eventService';
 import { AgEvent, AgEventListener, ColumnEvent, ColumnEventType } from '../events';
 import { BrandedType } from '../interfaces/brandedType';
 import { IEventEmitter } from '../interfaces/iEventEmitter';
 import { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
 import { IProvidedColumn } from '../interfaces/iProvidedColumn';
 import { IRowNode } from '../interfaces/iRowNode';
+import { LocalEventService } from '../localEventService';
 import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
 import { ColumnHoverService } from '../rendering/columnHoverService';
 import { _warnOnce } from '../utils/function';
@@ -136,7 +136,7 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
 
     private filterActive = false;
 
-    private columnEventService: EventService = new EventService();
+    private columnEventService: LocalEventService = new LocalEventService();
 
     private fieldContainsDots: boolean;
     private tooltipFieldContainsDots: boolean;

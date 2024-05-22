@@ -2,13 +2,13 @@ import { ComponentUtil } from './components/componentUtil';
 import { BeanStub } from './context/beanStub';
 import { Autowired, Bean } from './context/context';
 import { DomLayoutType, GridOptions } from './entities/gridOptions';
-import { EventService } from './eventService';
 import { ALWAYS_SYNC_GLOBAL_EVENTS, AgEvent, Events } from './events';
 import { GridApi } from './gridApi';
 import { GetGroupAggFilteringParams, GetGroupIncludeFooterParams, RowHeightParams } from './interfaces/iCallbackParams';
 import { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import { RowModelType } from './interfaces/iRowModel';
 import { IRowNode } from './interfaces/iRowNode';
+import { LocalEventService } from './localEventService';
 import { AnyGridOptions, INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
 import { _getScrollbarWidth } from './utils/browser';
 import { _warnOnce } from './utils/function';
@@ -88,7 +88,7 @@ export class GridOptionsService extends BeanStub {
         return this.gridOptions['context'];
     }
 
-    private propertyEventService: EventService = new EventService();
+    private propertyEventService: LocalEventService = new LocalEventService();
 
     public postConstruct(): void {
         const async = !this.get('suppressAsyncEvents');

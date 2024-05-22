@@ -1,4 +1,3 @@
-import { EventService } from '../eventService';
 import { AgEvent, AgEventListener, Events, RowEvent, RowSelectedEvent, SelectionEventSourceType } from '../events';
 import { CellEditRequestEvent } from '../events';
 import { DetailGridInfo } from '../gridApi';
@@ -16,6 +15,7 @@ import {
     SetSelectedParams,
 } from '../interfaces/iRowNode';
 import { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
+import { LocalEventService } from '../localEventService';
 import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
 import { Beans } from '../rendering/beans';
 import { _debounce } from '../utils/function';
@@ -232,7 +232,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     private hovered: boolean = false;
 
     private selected: boolean | undefined = false;
-    private eventService: EventService | null;
+    private eventService: LocalEventService | null;
     private frameworkEventListenerService: FrameworkEventListenerService | null;
 
     private beans: Beans;
@@ -1171,7 +1171,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     /** Add an event listener. */
     public addEventListener(eventType: RowNodeEventType, userListener: Function): void {
         if (!this.eventService) {
-            this.eventService = new EventService();
+            this.eventService = new LocalEventService();
         }
         if (this.beans.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
             this.eventService.setFrameworkOverrides(this.beans.frameworkOverrides);

@@ -1,6 +1,6 @@
-import { EventService } from '../eventService';
 import { AgEvent, AgEventListener } from '../events';
 import { IEventEmitter } from '../interfaces/iEventEmitter';
+import { LocalEventService } from '../localEventService';
 import { _areEventsNear } from '../utils/mouse';
 
 export interface TapEvent extends AgEvent {
@@ -30,7 +30,7 @@ export class TouchListener implements IEventEmitter {
 
     private lastTapTime: number | null;
 
-    private eventService: EventService = new EventService();
+    private eventService: LocalEventService = new LocalEventService();
 
     // private mostRecentTouch: Touch;
 

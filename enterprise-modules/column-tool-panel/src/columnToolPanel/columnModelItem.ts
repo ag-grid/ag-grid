@@ -1,7 +1,13 @@
-import { AgEventListener, Column, EventService, IEventEmitter, ProvidedColumnGroup } from '@ag-grid-community/core';
+import {
+    AgEventListener,
+    Column,
+    IEventEmitter,
+    LocalEventService,
+    ProvidedColumnGroup,
+} from '@ag-grid-community/core';
 
 export class ColumnModelItem implements IEventEmitter {
-    private eventService: EventService = new EventService();
+    private eventService: LocalEventService = new LocalEventService();
 
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
 

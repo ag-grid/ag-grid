@@ -7,8 +7,6 @@ import {
     ColumnEventType,
     ColumnModel,
     ColumnState,
-    EventService,
-    GridOptionsService,
     IAggFunc,
     IAggFuncService,
 } from '@ag-grid-community/core';

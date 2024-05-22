@@ -11,6 +11,7 @@ import {
 } from '../gridOptionsService';
 import { IEventEmitter } from '../interfaces/iEventEmitter';
 import { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import { LocalEventService } from '../localEventService';
 import { LocaleService } from '../localeService';
 import { _addSafePassiveEventListener } from '../utils/event';
 import { Component } from '../widgets/component';
@@ -20,7 +21,7 @@ import { Autowired, Context } from './context';
 export abstract class BeanStub implements BaseBean, IEventEmitter {
     public static EVENT_DESTROYED = 'destroyed';
 
-    protected localEventService: EventService;
+    protected localEventService: LocalEventService;
 
     private destroyFunctions: (() => void)[] = [];
     private destroyed = false;
@@ -76,7 +77,7 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
 
     public addEventListener(eventType: string, listener: AgEventListener): void {
         if (!this.localEventService) {
-            this.localEventService = new EventService();
+            this.localEventService = new LocalEventService();
         }
 
         this.localEventService.addEventListener(eventType, listener);
