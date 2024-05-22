@@ -129,9 +129,9 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
         event: keyof GridOptions,
         listener: PropertyValueChangedListener<K>
     ): () => null {
-        this.gos.addGridOptionListener(event, listener);
+        this.gos.addPropertyEventListener(event, listener);
         const destroyFunc: () => null = () => {
-            this.gos.removeGridOptionListener(event, listener);
+            this.gos.removePropertyEventListener(event, listener);
             return null;
         };
         this.destroyFunctions.push(destroyFunc);

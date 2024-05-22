@@ -282,10 +282,10 @@ export class GridOptionsService extends BeanStub {
         });
     }
 
-    addGridOptionListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
+    addPropertyEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
         this.propertyEventService.addEventListener(key, listener as any);
     }
-    removeGridOptionListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
+    removePropertyEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
         this.propertyEventService.removeEventListener(key, listener as any);
     }
 
