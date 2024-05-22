@@ -83,7 +83,8 @@ export class Context {
         this.autoWireBeans(beanInstances);
         this.methodWireBeans(beanInstances);
 
-        beanInstances.forEach((bean) => bean.preConstruct?.());
+        // only exists on `Component`
+        beanInstances.forEach((bean) => (bean as any).preConstruct?.());
 
         // the callback sets the attributes, so the component has access to attributes
         // before postConstruct methods in the component are executed

@@ -21,8 +21,7 @@ export class PivotModePanel extends Component {
             </div>`;
     }
 
-    public override preConstruct(): void {
-        super.preConstruct();
+    public postConstruct(): void {
         this.setTemplate(this.createTemplate(), [AgToggleButton]);
 
         this.cbPivotMode.setValue(this.columnModel.isPivotMode());

@@ -64,10 +64,6 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
         return this.context;
     }
 
-    public preConstruct(): void {
-        // do nothing
-    }
-
     public destroy(): void {
         for (let i = 0; i < this.destroyFunctions.length; i++) {
             this.destroyFunctions[i]();

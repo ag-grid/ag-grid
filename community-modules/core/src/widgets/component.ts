@@ -66,8 +66,7 @@ export class Component extends BeanStub {
         }
     }
 
-    public override preConstruct(): void {
-        super.preConstruct();
+    public preConstruct(): void {
         this.usingBrowserTooltips = this.gos.get('enableBrowserTooltips');
 
         // ui exists if user sets template in constructor. when this happens, we have to wait for the context

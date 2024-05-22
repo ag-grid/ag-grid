@@ -52,16 +52,13 @@ export class ToolPanelFilterGroupComp extends Component {
         this.showingColumn = showingColumn;
     }
 
-    public override preConstruct(): void {
-        super.preConstruct();
+    public postConstruct(): void {
         const groupParams: AgGroupComponentParams = {
             cssIdentifier: 'filter-toolpanel',
             direction: 'vertical',
         };
         this.setTemplate(ToolPanelFilterGroupComp.TEMPLATE, [AgGroupComponent], { filterGroupComp: groupParams });
-    }
 
-    public postConstruct(): void {
         this.setGroupTitle();
         this.filterGroupComp.setAlignItems('stretch');
 

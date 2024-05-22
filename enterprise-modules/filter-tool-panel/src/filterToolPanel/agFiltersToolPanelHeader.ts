@@ -38,8 +38,7 @@ export class AgFiltersToolPanelHeader extends Component {
 
     private params: ToolPanelFiltersCompParams;
 
-    public override preConstruct(): void {
-        super.preConstruct();
+    public postConstruct(): void {
         this.setTemplate(
             /* html */
             `<div class="ag-filter-toolpanel-search" role="presentation">
@@ -48,9 +47,7 @@ export class AgFiltersToolPanelHeader extends Component {
             </div>`,
             [AgInputTextField]
         );
-    }
 
-    public postConstruct(): void {
         const translate = this.localeService.getLocaleTextFunc();
 
         this.eFilterTextField
