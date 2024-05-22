@@ -1,7 +1,8 @@
+import type {
+    ChartGroupsDef,
+    ChartType} from '@ag-grid-community/core';
 import {
     Autowired,
-    ChartGroupsDef,
-    ChartType,
     Component,
     KeyCode,
     PostConstruct,
@@ -10,8 +11,8 @@ import {
 } from '@ag-grid-community/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartController } from '../../chartController';
-import { ChartTranslationService } from '../../services/chartTranslationService';
+import type { ChartController } from '../../chartController';
+import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { getFullChartNameTranslationKey } from '../../utils/seriesTypeMapper';
 import {
     MiniArea,
@@ -46,7 +47,7 @@ import {
     MiniWaterfall,
 } from './miniCharts/index';
 // please leave this as is - we want it to be explicit for build reasons
-import { MiniChart } from './miniCharts/miniChart';
+import type { MiniChart } from './miniCharts/miniChart';
 
 export type ThemeTemplateParameters = {
     extensions: Map<any, any>;

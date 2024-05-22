@@ -1,36 +1,38 @@
-import {
+import type {
     AgEvent,
-    Autowired,
-    Bean,
-    BeanStub,
     CellPosition,
     CellPositionUtils,
     Column,
     ColumnModel,
-    Component,
     ContextMenuVisibleChangedEvent,
     CtrlsService,
-    Events,
     FocusService,
     IAfterGuiAttachedParams,
     IContextMenuFactory,
     IRangeService,
     MenuItemDef,
+    PopupService,
+    RowNode,
+    WithoutGridCommon} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Bean,
+    BeanStub,
+    Component,
+    Events,
     ModuleNames,
     ModuleRegistry,
     Optional,
-    PopupService,
     PostConstruct,
-    RowNode,
-    WithoutGridCommon,
     _exists,
     _isIOSUserAgent,
     _missingOrEmpty,
 } from '@ag-grid-community/core';
-import { AgMenuItemComponent, AgMenuList, CloseMenuEvent } from '@ag-grid-enterprise/core';
+import type { CloseMenuEvent } from '@ag-grid-enterprise/core';
+import { AgMenuItemComponent, AgMenuList } from '@ag-grid-enterprise/core';
 
-import { MenuItemMapper } from './menuItemMapper';
-import { MenuUtils } from './menuUtils';
+import type { MenuItemMapper } from './menuItemMapper';
+import type { MenuUtils } from './menuUtils';
 
 const CSS_MENU = 'ag-menu';
 const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';

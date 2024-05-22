@@ -1,10 +1,10 @@
 import { Autowired, Bean } from '../../context/context';
-import { ColumnPinnedType } from '../../entities/column';
-import { RowClassParams } from '../../entities/gridOptions';
-import { RowNode } from '../../entities/rowNode';
-import { GridOptionsService } from '../../gridOptionsService';
-import { WithoutGridCommon } from '../../interfaces/iCommon';
-import { StylingService } from '../../styling/stylingService';
+import type { ColumnPinnedType } from '../../entities/column';
+import type { RowClassParams } from '../../entities/gridOptions';
+import type { RowNode } from '../../entities/rowNode';
+import type { GridOptionsService } from '../../gridOptionsService';
+import type { WithoutGridCommon } from '../../interfaces/iCommon';
+import type { StylingService } from '../../styling/stylingService';
 import { _pushAll } from '../../utils/array';
 import { _exists } from '../../utils/generic';
 

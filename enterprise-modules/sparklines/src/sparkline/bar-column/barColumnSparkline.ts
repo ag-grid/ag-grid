@@ -1,8 +1,10 @@
-import { ColumnFormat, ColumnFormatterParams } from '@ag-grid-community/core';
-import { FontStyle, FontWeight, _Scene, _Util } from 'ag-charts-community';
+import type { ColumnFormat, ColumnFormatterParams } from '@ag-grid-community/core';
+import type { FontStyle, FontWeight} from 'ag-charts-community';
+import { _Scene, _Util } from 'ag-charts-community';
 
 import { Label } from '../label/label';
-import { SeriesNodeDatum, Sparkline, ZINDICIES } from '../sparkline';
+import type { SeriesNodeDatum} from '../sparkline';
+import { Sparkline, ZINDICIES } from '../sparkline';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 
 const { extent } = _Util;
@@ -125,8 +127,8 @@ export abstract class BarColumnSparkline extends Sparkline {
         const { xScale, paddingInner, paddingOuter, smallestInterval } = this;
 
         // calculate step
-        let domainLength = xScale.domain[1] - xScale.domain[0];
-        let intervals = domainLength / (smallestInterval?.x ?? 1) + 1;
+        const domainLength = xScale.domain[1] - xScale.domain[0];
+        const intervals = domainLength / (smallestInterval?.x ?? 1) + 1;
 
         // The number of intervals/bands is used to determine the width of individual bands by dividing the available range.
         // Allow a maximum of 50 bands to ensure the step (width of individual bands + padding) does not fall below a certain number of pixels.

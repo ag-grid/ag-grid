@@ -1,36 +1,37 @@
-import { ColumnModel } from '../columns/columnModel';
-import { DataTypeService } from '../columns/dataTypeService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { DataTypeService } from '../columns/dataTypeService';
 import { FilterComponent } from '../components/framework/componentTypes';
-import { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
+import type { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
-import { ColDef } from '../entities/colDef';
+import type { ColDef } from '../entities/colDef';
 import { Column } from '../entities/column';
-import { RowNode } from '../entities/rowNode';
-import {
+import type { RowNode } from '../entities/rowNode';
+import type {
     AdvancedFilterEnabledChangedEvent,
     ColumnEventType,
-    Events,
     FilterChangedEvent,
     FilterChangedEventSourceType,
     FilterDestroyedEvent,
-    FilterModifiedEvent,
+    FilterModifiedEvent} from '../events';
+import {
+    Events
 } from '../events';
 import { unwrapUserComp } from '../gridApi';
-import { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
-import { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
-import { IRowModel } from '../interfaces/iRowModel';
+import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
+import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
+import type { IRowModel } from '../interfaces/iRowModel';
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
-import { RowRenderer } from '../rendering/rowRenderer';
+import type { RowRenderer } from '../rendering/rowRenderer';
 import { _warnOnce } from '../utils/function';
 import { _exists, _jsonEquals } from '../utils/generic';
 import { _cloneObject, _mergeDeep } from '../utils/object';
 import { AgPromise } from '../utils/promise';
-import { ValueService } from '../valueService/valueService';
-import { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
+import type { ValueService } from '../valueService/valueService';
+import type { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
 import { QuickFilterService } from './quickFilterService';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';

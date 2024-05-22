@@ -1,13 +1,13 @@
-import { ColumnModel } from '../columns/columnModel';
-import { ColumnMoveService } from '../columns/columnMoveService';
-import { VisibleColsService } from '../columns/visibleColsService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { ColumnMoveService } from '../columns/columnMoveService';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { HorizontalDirection } from '../constants/direction';
-import { CtrlsService } from '../ctrlsService';
-import { Column, ColumnPinnedType } from '../entities/column';
-import { ColumnGroup } from '../entities/columnGroup';
-import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
-import { ColumnEventType } from '../events';
-import { GridOptionsService } from '../gridOptionsService';
+import type { CtrlsService } from '../ctrlsService';
+import type { Column, ColumnPinnedType } from '../entities/column';
+import type { ColumnGroup } from '../entities/columnGroup';
+import type { ProvidedColumnGroup } from '../entities/providedColumnGroup';
+import type { ColumnEventType } from '../events';
+import type { GridOptionsService } from '../gridOptionsService';
 import { _areEqual, _includes, _last, _sortNumerically } from '../utils/array';
 
 export class ColumnMoveHelper {

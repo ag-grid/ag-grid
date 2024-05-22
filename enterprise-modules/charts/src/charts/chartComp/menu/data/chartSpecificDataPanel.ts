@@ -1,10 +1,11 @@
 import { AgSelect, Autowired, ChartMappings, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
-import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartService } from '../../../chartService';
-import { ChartTranslationService } from '../../services/chartTranslationService';
+import type { ChartService } from '../../../chartService';
+import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { canSwitchDirection, getFullChartNameTranslationKey, getSeriesType } from '../../utils/seriesTypeMapper';
-import { ChartMenuContext } from '../chartMenuContext';
+import type { ChartMenuContext } from '../chartMenuContext';
 import { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
 
 export class ChartSpecificDataPanel extends Component {

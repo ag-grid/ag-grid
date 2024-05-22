@@ -1,22 +1,23 @@
+import type {
+    FocusService,
+    IAfterGuiAttachedParams,
+    MenuItemDef,
+    PopupService} from '@ag-grid-community/core';
 import {
     Autowired,
     Bean,
     BeanStub,
     Component,
-    FocusService,
-    IAfterGuiAttachedParams,
-    MenuItemDef,
-    PopupService,
     PostConstruct,
     RefSelector,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
 import { AgMenuItemComponent, AgMenuList } from '@ag-grid-enterprise/core';
 
-import { ChartController } from '../chartController';
-import { ChartMenuService } from '../services/chartMenuService';
-import { ChartTranslationService } from '../services/chartTranslationService';
-import { ChartMenuContext } from './chartMenuContext';
+import type { ChartController } from '../chartController';
+import type { ChartMenuService } from '../services/chartMenuService';
+import type { ChartTranslationService } from '../services/chartTranslationService';
+import type { ChartMenuContext } from './chartMenuContext';
 
 @Bean('chartMenuListFactory')
 export class ChartMenuListFactory extends BeanStub {

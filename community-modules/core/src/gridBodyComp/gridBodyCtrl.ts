@@ -1,27 +1,29 @@
-import { ColumnModel } from '../columns/columnModel';
-import { ColumnSizeService, ISizeColumnsToFitParams } from '../columns/columnSizeService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { ColumnSizeService, ISizeColumnsToFitParams } from '../columns/columnSizeService';
 import { BeanStub } from '../context/beanStub';
 import { Autowired } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { DragAndDropService } from '../dragAndDrop/dragAndDropService';
+import type { CtrlsService } from '../ctrlsService';
+import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
 import { Events } from '../eventKeys';
-import { FilterManager } from '../filter/filterManager';
-import { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
-import { IRowModel } from '../interfaces/iRowModel';
-import { AnimationFrameService } from '../misc/animationFrameService';
-import { EventShowContextMenuParams, MenuService } from '../misc/menuService';
-import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
-import { RowContainerHeightService } from '../rendering/rowContainerHeightService';
-import { RowRenderer } from '../rendering/rowRenderer';
-import { LayoutFeature, LayoutView } from '../styling/layoutFeature';
+import type { FilterManager } from '../filter/filterManager';
+import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { AnimationFrameService } from '../misc/animationFrameService';
+import type { EventShowContextMenuParams, MenuService } from '../misc/menuService';
+import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
+import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
+import type { RowRenderer } from '../rendering/rowRenderer';
+import type { LayoutView } from '../styling/layoutFeature';
+import { LayoutFeature } from '../styling/layoutFeature';
 import { _getTabIndex, _isIOSUserAgent, _isInvisibleScrollbar } from '../utils/browser';
 import { _getInnerWidth, _isElementChildOfClass, _isVerticalScrollShowing } from '../utils/dom';
-import { PopupService } from '../widgets/popupService';
-import { LongTapEvent, TouchListener } from '../widgets/touchListener';
+import type { PopupService } from '../widgets/popupService';
+import type { LongTapEvent} from '../widgets/touchListener';
+import { TouchListener } from '../widgets/touchListener';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
-import { MouseEventService } from './mouseEventService';
+import type { MouseEventService } from './mouseEventService';
 import { RowDragFeature } from './rowDragFeature';
-import { ScrollVisibleService } from './scrollVisibleService';
+import type { ScrollVisibleService } from './scrollVisibleService';
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',

@@ -1,12 +1,13 @@
 import { Autowired, PostConstruct } from '../../context/context';
 import { Events } from '../../eventKeys';
-import { PaginationChangedEvent } from '../../events';
-import { WithoutGridCommon } from '../../interfaces/iCommon';
-import { PaginationProxy } from '../../pagination/paginationProxy';
+import type { PaginationChangedEvent } from '../../events';
+import type { WithoutGridCommon } from '../../interfaces/iCommon';
+import type { PaginationProxy } from '../../pagination/paginationProxy';
 import { _clearElement } from '../../utils/dom';
 import { _warnOnce } from '../../utils/function';
 import { AgSelect } from '../../widgets/agSelect';
-import { AgComponentSelector, Component } from '../../widgets/component';
+import type { AgComponentSelector} from '../../widgets/component';
+import { Component } from '../../widgets/component';
 
 export class PageSizeSelectorComp extends Component {
     static readonly selector: AgComponentSelector = 'AG-PAGE-SIZE-SELECTOR';

@@ -1,7 +1,4 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
     Beans,
     ChangedPath,
     Column,
@@ -13,13 +10,17 @@ import {
     InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
     KeyCreatorParams,
-    RowNode,
     RowNodeTransaction,
     SelectableService,
     ShowRowGroupColsService,
     StageExecuteParams,
     ValueService,
-    WithoutGridCommon,
+    WithoutGridCommon} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Bean,
+    BeanStub,
+    RowNode,
     _areEqual,
     _exists,
     _existsAndNotEmpty,

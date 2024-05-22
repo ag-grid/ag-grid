@@ -2,7 +2,7 @@ import { BeanStub } from '../../../context/beanStub';
 import { PostConstruct } from '../../../context/context';
 import { Column } from '../../../entities/column';
 import { ColumnGroup } from '../../../entities/columnGroup';
-import { IHeaderGroupCellComp } from './headerGroupCellCtrl';
+import type { IHeaderGroupCellComp } from './headerGroupCellCtrl';
 
 export class GroupWidthFeature extends BeanStub {
     private columnGroup: ColumnGroup;

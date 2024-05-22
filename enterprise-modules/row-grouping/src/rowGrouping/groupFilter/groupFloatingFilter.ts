@@ -1,17 +1,18 @@
+import type {
+    ColumnEvent,
+    ColumnNameService,
+    FilterChangedEvent,
+    FilterManager,
+    IFloatingFilterComp,
+    IFloatingFilterParams,
+    UserCompDetails} from '@ag-grid-community/core';
 import {
     AgInputTextField,
     AgPromise,
     Autowired,
     Column,
-    ColumnEvent,
-    ColumnNameService,
     Component,
-    FilterChangedEvent,
-    FilterManager,
-    IFloatingFilterComp,
-    IFloatingFilterParams,
     RefSelector,
-    UserCompDetails,
     _clearElement,
 } from '@ag-grid-community/core';
 

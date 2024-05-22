@@ -3,15 +3,15 @@ import { _setAriaRowIndex } from '../../utils/aria';
 import { _setDomChildOrder } from '../../utils/dom';
 import { _getAllValuesInObject, _iterateObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
-import { AbstractHeaderCellComp } from '../cells/abstractCell/abstractHeaderCellComp';
-import { AbstractHeaderCellCtrl, HeaderCellCtrlInstanceId } from '../cells/abstractCell/abstractHeaderCellCtrl';
+import type { AbstractHeaderCellComp } from '../cells/abstractCell/abstractHeaderCellComp';
+import type { AbstractHeaderCellCtrl, HeaderCellCtrlInstanceId } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import { HeaderCellComp } from '../cells/column/headerCellComp';
-import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
+import type { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
 import { HeaderGroupCellComp } from '../cells/columnGroup/headerGroupCellComp';
-import { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
+import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
 import { HeaderFilterCellComp } from '../cells/floatingFilter/headerFilterCellComp';
-import { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
-import { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
+import type { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
+import type { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 
 export enum HeaderRowType {
     COLUMN_GROUP = 'group',

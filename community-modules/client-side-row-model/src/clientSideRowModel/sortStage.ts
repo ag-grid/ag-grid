@@ -1,15 +1,16 @@
+import type {
+    IRowNodeStage,
+    SortController,
+    SortOption,
+    StageExecuteParams} from '@ag-grid-community/core';
 import {
     Autowired,
     Bean,
     BeanStub,
-    IRowNodeStage,
-    SortController,
-    SortOption,
-    StageExecuteParams,
     _exists,
 } from '@ag-grid-community/core';
 
-import { SortService } from './sortService';
+import type { SortService } from './sortService';
 
 @Bean('sortStage')
 export class SortStage extends BeanStub implements IRowNodeStage {

@@ -1,5 +1,5 @@
 import { KeyCode } from '../../constants/keyCode';
-import { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _exists } from '../../utils/generic';
 import { AgInputTextArea } from '../../widgets/agInputTextArea';
 import { RefSelector } from '../../widgets/componentAnnotations';

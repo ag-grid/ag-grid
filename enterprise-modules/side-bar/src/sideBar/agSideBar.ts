@@ -1,32 +1,34 @@
-import {
+import type {
     AgComponentSelector,
-    Autowired,
-    Component,
-    Events,
     FilterManager,
     FocusService,
     ISideBar,
     IToolPanel,
     IToolPanelParams,
+    SideBarDef,
+    SideBarState,
+    ToolPanelDef,
+    ToolPanelVisibleChangedEvent,
+    WithoutGridCommon} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Component,
+    Events,
     KeyCode,
     ManagedFocusFeature,
     ModuleNames,
     ModuleRegistry,
     PostConstruct,
     RefSelector,
-    SideBarDef,
-    SideBarState,
-    ToolPanelDef,
-    ToolPanelVisibleChangedEvent,
-    WithoutGridCommon,
     _removeFromParent,
     _setAriaControls,
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import { AgSideBarButtons, SideBarButtonClickedEvent } from './agSideBarButtons';
+import type { SideBarButtonClickedEvent } from './agSideBarButtons';
+import { AgSideBarButtons } from './agSideBarButtons';
 import { SideBarDefParser } from './sideBarDefParser';
-import { SideBarService } from './sideBarService';
+import type { SideBarService } from './sideBarService';
 import { ToolPanelWrapper } from './toolPanelWrapper';
 
 export class AgSideBar extends Component implements ISideBar {
@@ -424,7 +426,7 @@ export class AgSideBar extends Component implements ISideBar {
     private onSideBarUpdated(): void {
         const sideBarDef = SideBarDefParser.parse(this.gos.get('sideBar'));
 
-        let existingToolPanelWrappers: { [id: string]: ToolPanelWrapper } = {};
+        const existingToolPanelWrappers: { [id: string]: ToolPanelWrapper } = {};
         if (sideBarDef && this.sideBar) {
             sideBarDef.toolPanels?.forEach((toolPanelDef: ToolPanelDef) => {
                 const { id } = toolPanelDef;

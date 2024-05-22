@@ -1,11 +1,8 @@
-import {
-    Autowired,
-    Bean,
+import type {
     Column,
     ColumnGroup,
     ColumnModel,
     ColumnNameService,
-    CssClassApplier,
     ExcelExportMultipleSheetParams,
     ExcelExportParams,
     ExcelFactoryMode,
@@ -14,13 +11,19 @@ import {
     FuncColsService,
     GridOptionsService,
     IExcelCreator,
-    PostConstruct,
     StylingService,
-    ValueService,
+    ValueService} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Bean,
+    CssClassApplier,
+    PostConstruct
 } from '@ag-grid-community/core';
-import { BaseCreator, Downloader, GridSerializer, RowType, ZipContainer } from '@ag-grid-community/csv-export';
+import type { GridSerializer} from '@ag-grid-community/csv-export';
+import { BaseCreator, Downloader, RowType, ZipContainer } from '@ag-grid-community/csv-export';
 
-import { ExcelGridSerializingParams, ExcelSerializingSession, StyleLinkerInterface } from './excelSerializingSession';
+import type { ExcelGridSerializingParams, StyleLinkerInterface } from './excelSerializingSession';
+import { ExcelSerializingSession } from './excelSerializingSession';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
 
 const createExcelXMLCoreFolderStructure = (): void => {

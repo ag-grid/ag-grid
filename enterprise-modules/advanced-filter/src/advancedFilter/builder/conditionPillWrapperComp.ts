@@ -1,19 +1,21 @@
-import {
-    Autowired,
+import type {
     BaseCellDataType,
     Column,
     ColumnAdvancedFilterModel,
+    ValueService} from '@ag-grid-community/core';
+import {
+    Autowired,
     Component,
-    ValueService,
     _exists,
     _removeFromParent,
 } from '@ag-grid-community/core';
 
-import { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
-import { AutocompleteEntry } from '../autocomplete/autocompleteParams';
-import { AdvancedFilterBuilderEvents, AdvancedFilterBuilderItem, CreatePillParams } from './iAdvancedFilterBuilder';
-import { InputPillComp } from './inputPillComp';
-import { SelectPillComp } from './selectPillComp';
+import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
+import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
+import type { AdvancedFilterBuilderItem, CreatePillParams } from './iAdvancedFilterBuilder';
+import { AdvancedFilterBuilderEvents } from './iAdvancedFilterBuilder';
+import type { InputPillComp } from './inputPillComp';
+import type { SelectPillComp } from './selectPillComp';
 
 export class ConditionPillWrapperComp extends Component {
     @Autowired('advancedFilterExpressionService')

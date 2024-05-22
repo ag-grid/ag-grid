@@ -1,28 +1,30 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Events,
+import type {
     FilterManager,
     IDatasource,
     IInfiniteRowModel,
     ISelectionService,
     ModelUpdatedEvent,
-    NumberSequence,
-    PostConstruct,
-    PreDestroy,
     RowBounds,
     RowModelType,
     RowNode,
     RowNodeBlockLoader,
     RowRenderer,
     SortController,
-    WithoutGridCommon,
+    WithoutGridCommon} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Bean,
+    BeanStub,
+    Events,
+    NumberSequence,
+    PostConstruct,
+    PreDestroy,
     _jsonEquals,
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
+import type { InfiniteCacheParams } from './infiniteCache';
+import { InfiniteCache } from './infiniteCache';
 
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {

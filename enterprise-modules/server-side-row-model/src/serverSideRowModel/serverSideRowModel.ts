@@ -1,14 +1,10 @@
-import {
+import type {
     AdvancedFilterModel,
-    Autowired,
-    Bean,
-    BeanStub,
     Beans,
     Column,
     ColumnModel,
     ColumnNameService,
     ColumnVO,
-    Events,
     FilterManager,
     FilterModel,
     FuncColsService,
@@ -18,33 +14,38 @@ import {
     IServerSideStore,
     LoadSuccessParams,
     ModelUpdatedEvent,
-    ModuleNames,
-    ModuleRegistry,
-    NumberSequence,
-    Optional,
     PivotResultColsService,
-    PostConstruct,
-    PreDestroy,
     RefreshServerSideParams,
     RowBounds,
     RowModelType,
-    RowNode,
     RowRenderer,
     ServerSideGroupLevelState,
     SortController,
     SortModelItem,
     StoreRefreshAfterParams,
-    WithoutGridCommon,
+    WithoutGridCommon} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Bean,
+    BeanStub,
+    Events,
+    ModuleNames,
+    ModuleRegistry,
+    NumberSequence,
+    Optional,
+    PostConstruct,
+    PreDestroy,
+    RowNode,
     _debounce,
     _exists,
     _jsonEquals,
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import { NodeManager } from './nodeManager';
+import type { NodeManager } from './nodeManager';
 import { FullStore } from './stores/fullStore';
 import { LazyStore } from './stores/lazy/lazyStore';
-import { StoreFactory } from './stores/storeFactory';
+import type { StoreFactory } from './stores/storeFactory';
 
 export interface SSRMParams {
     sortModel: SortModelItem[];

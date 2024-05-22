@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { ParamModel } from '../../model/ParamModel';
+import type { ParamModel } from '../../model/ParamModel';
 
 export type ValueEditorProps = {
     param: ParamModel;

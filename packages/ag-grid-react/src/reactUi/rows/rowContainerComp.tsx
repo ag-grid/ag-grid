@@ -1,12 +1,7 @@
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
-import {
-    IRowContainerComp,
-    RowContainerCtrl,
-    RowContainerName,
-    RowCtrl,
-    getRowContainerTypeForName,
-} from 'ag-grid-community';
+import type { IRowContainerComp, RowCtrl } from 'ag-grid-community';
+import { RowContainerCtrl, RowContainerName, getRowContainerTypeForName } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import useReactCommentEffect from '../reactComment';

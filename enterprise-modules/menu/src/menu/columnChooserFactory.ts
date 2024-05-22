@@ -1,21 +1,22 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
     Column,
     ColumnChooserParams,
     ColumnMenuVisibleChangedEvent,
-    Events,
     FocusService,
     IColumnChooserFactory,
     ShowColumnChooserParams,
     VisibleColsService,
-    WithoutGridCommon,
+    WithoutGridCommon} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Bean,
+    BeanStub,
+    Events
 } from '@ag-grid-community/core';
 import { AgPrimaryCols } from '@ag-grid-enterprise/column-tool-panel';
 import { AgDialog } from '@ag-grid-enterprise/core';
 
-import { MenuUtils } from './menuUtils';
+import type { MenuUtils } from './menuUtils';
 
 @Bean('columnChooserFactory')
 export class ColumnChooserFactory extends BeanStub implements IColumnChooserFactory {

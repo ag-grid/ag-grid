@@ -17,10 +17,10 @@ export class VueFrameworkOverrides extends VanillaFrameworkOverrides {
      * Note: This is only really used/necessary with cellRendererSelectors
      */
     public frameworkComponent(name: string, components?: any): any {
-        let result = !!VueComponentFactory.searchForComponentInstance(this.parent, name, 10, true) ? name : null;
+        let result = VueComponentFactory.searchForComponentInstance(this.parent, name, 10, true) ? name : null;
         if (!result && components && components[name]) {
             const indirectName = components[name];
-            result = !!VueComponentFactory.searchForComponentInstance(this.parent, indirectName, 10, true)
+            result = VueComponentFactory.searchForComponentInstance(this.parent, indirectName, 10, true)
                 ? indirectName
                 : null;
         }

@@ -1,11 +1,11 @@
-import { ColumnModel } from '../../../columns/columnModel';
-import { ColumnNameService } from '../../../columns/columnNameService';
+import type { ColumnModel } from '../../../columns/columnModel';
+import type { ColumnNameService } from '../../../columns/columnNameService';
 import { Autowired } from '../../../context/context';
-import { IFilter } from '../../../interfaces/iFilter';
+import type { IFilter } from '../../../interfaces/iFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { Component } from '../../../widgets/component';
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import { IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParent } from '../floatingFilter';
+import type { IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParent } from '../floatingFilter';
 
 // optional floating filter for user provided filters - instead of providing a floating filter,
 // they can provide a getModelAsString() method on the filter instead. this class just displays

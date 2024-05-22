@@ -1,20 +1,21 @@
-import {
+import type {
     AggregationStatusPanelAggFunc,
     AggregationStatusPanelParams,
-    Autowired,
     CellNavigationService,
     CellPositionUtils,
-    Component,
-    Events,
     IRangeService,
     IRowModel,
     IStatusPanelComp,
+    RowPosition,
+    RowPositionUtils,
+    ValueService} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Component,
+    Events,
     Optional,
     PostConstruct,
     RefSelector,
-    RowPosition,
-    RowPositionUtils,
-    ValueService,
     _exists,
     _formatNumberTwoDecimalPlacesAndCommas,
     _missing,

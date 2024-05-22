@@ -1,8 +1,8 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct, Qualifier } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
+import type { CtrlsService } from '../ctrlsService';
 import { Events } from '../eventKeys';
-import { Logger, LoggerFactory } from '../logger';
+import type { Logger, LoggerFactory } from '../logger';
 import { _getMaxDivHeight } from '../utils/browser';
 
 /**

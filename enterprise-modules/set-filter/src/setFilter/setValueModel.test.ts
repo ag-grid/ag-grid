@@ -1,11 +1,12 @@
-import {
+import type {
     FuncColsService,
     GridOptionsService,
     IClientSideRowModel,
     RowNode,
     SetFilterParams,
     ValueFormatterFunc,
-    ValueService,
+    ValueService} from '@ag-grid-community/core';
+import {
     _makeNull,
     _toStringOrNull,
 } from '@ag-grid-community/core';

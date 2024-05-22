@@ -1,4 +1,4 @@
-import {
+import type {
     ExcelCell,
     ExcelColumn,
     ExcelFont,
@@ -9,15 +9,16 @@ import {
     ExcelSheetMargin,
     ExcelSheetPageSetup,
     ExcelWorksheet,
-    XmlElement,
+    XmlElement} from '@ag-grid-community/core';
+import {
     _compose,
     _escapeString,
     _iterateObject,
 } from '@ag-grid-community/core';
 
-import { ExcelDataTable, ExcelHeaderFooterPosition } from '../../assets/excelInterfaces';
+import type { ExcelDataTable, ExcelHeaderFooterPosition } from '../../assets/excelInterfaces';
 import { getExcelColumnName } from '../../assets/excelUtils';
-import { ExcelGridSerializingParams } from '../../excelSerializingSession';
+import type { ExcelGridSerializingParams } from '../../excelSerializingSession';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 import columnFactory from './column';
 import mergeCellFactory from './mergeCell';

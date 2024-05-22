@@ -1,19 +1,20 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
     Column,
     ColumnModel,
     FilterManager,
     FuncColsService,
     IRowModel,
     MenuItemDef,
-    MenuService,
+    MenuService} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Bean,
+    BeanStub,
     _removeRepeatsFromArray,
 } from '@ag-grid-community/core';
 import { AgMenuList } from '@ag-grid-enterprise/core';
 
-import { MenuItemMapper } from './menuItemMapper';
+import type { MenuItemMapper } from './menuItemMapper';
 
 @Bean('columnMenuFactory')
 export class ColumnMenuFactory extends BeanStub {

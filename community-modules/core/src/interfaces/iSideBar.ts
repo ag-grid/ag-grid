@@ -1,5 +1,5 @@
-import { SideBarState } from './gridState';
-import { IToolPanel } from './iToolPanel';
+import type { SideBarState } from './gridState';
+import type { IToolPanel } from './iToolPanel';
 
 export interface ISideBarService {
     getSideBarComp(): ISideBar;

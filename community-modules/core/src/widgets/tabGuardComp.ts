@@ -1,7 +1,8 @@
 import { _setAriaRole } from '../utils/aria';
 import { _clearElement, _isNodeOrElement } from '../utils/dom';
 import { Component } from './component';
-import { ITabGuard, TabGuardClassNames, TabGuardCtrl } from './tabGuardCtrl';
+import type { ITabGuard} from './tabGuardCtrl';
+import { TabGuardClassNames, TabGuardCtrl } from './tabGuardCtrl';
 
 export class TabGuardComp extends Component {
     private eTopGuard: HTMLElement;

@@ -1,23 +1,24 @@
-import {
+import type {
     AsyncTransactionsFlushed,
-    Autowired,
-    Bean,
-    BeanStub,
-    Events,
     IServerSideTransactionManager,
-    PostConstruct,
-    RowNode,
     RowNodeBlockLoader,
     RowRenderer,
     ServerSideTransaction,
     ServerSideTransactionResult,
-    ServerSideTransactionResultStatus,
     ValueCache,
-    WithoutGridCommon,
+    WithoutGridCommon} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Bean,
+    BeanStub,
+    Events,
+    PostConstruct,
+    RowNode,
+    ServerSideTransactionResultStatus
 } from '@ag-grid-community/core';
 
-import { ServerSideRowModel } from './serverSideRowModel';
-import { ServerSideSelectionService } from './services/serverSideSelectionService';
+import type { ServerSideRowModel } from './serverSideRowModel';
+import type { ServerSideSelectionService } from './services/serverSideSelectionService';
 
 interface AsyncTransactionWrapper {
     transaction: ServerSideTransaction;

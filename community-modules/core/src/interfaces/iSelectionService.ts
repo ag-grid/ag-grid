@@ -1,7 +1,7 @@
-import { RowNode } from '../entities/rowNode';
-import { SelectionEventSourceType } from '../events';
-import { ChangedPath } from '../utils/changedPath';
-import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './selectionState';
+import type { RowNode } from '../entities/rowNode';
+import type { SelectionEventSourceType } from '../events';
+import type { ChangedPath } from '../utils/changedPath';
+import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './selectionState';
 
 export interface ISelectionService {
     getSelectionState(): string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | null;

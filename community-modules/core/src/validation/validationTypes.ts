@@ -1,6 +1,6 @@
-import { GridOptions } from '../entities/gridOptions';
-import { RowModelType } from '../interfaces/iRowModel';
-import { ModuleNames } from '../modules/moduleNames';
+import type { GridOptions } from '../entities/gridOptions';
+import type { RowModelType } from '../interfaces/iRowModel';
+import type { ModuleNames } from '../modules/moduleNames';
 
 export interface OptionsValidator<T extends {}> {
     objectName: string;

@@ -1,4 +1,5 @@
-import { AgComponentSelector, AgPickerField, AgPickerFieldParams } from '@ag-grid-community/core';
+import type { AgComponentSelector, AgPickerFieldParams } from '@ag-grid-community/core';
+import { AgPickerField } from '@ag-grid-community/core';
 import { AgDialog } from '@ag-grid-enterprise/core';
 import { _Util } from 'ag-charts-community';
 

@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 export default {
     displayName: 'plugins-ag-grid-generate-example-files',
     preset: '../../jest.preset.js',

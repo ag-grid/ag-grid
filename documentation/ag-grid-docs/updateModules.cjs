@@ -257,7 +257,7 @@ function appendTextAfterLastImport(filePath, textToAppend) {
     });
 
     let lastImportLine = -1;
-    let lines = [];
+    const lines = [];
     let lineNumber = 0;
 
     rl.on('line', (line) => {

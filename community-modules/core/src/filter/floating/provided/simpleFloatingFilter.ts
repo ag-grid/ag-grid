@@ -1,19 +1,20 @@
-import { ColumnNameService } from '../../../columns/columnNameService';
+import type { ColumnNameService } from '../../../columns/columnNameService';
 import { Autowired } from '../../../context/context';
-import { FilterChangedEvent } from '../../../events';
-import { ProvidedFilterModel } from '../../../interfaces/iFilter';
+import type { FilterChangedEvent } from '../../../events';
+import type { ProvidedFilterModel } from '../../../interfaces/iFilter';
 import { Component } from '../../../widgets/component';
 import { OptionsFactory } from '../../provided/optionsFactory';
-import { ProvidedFilterParams } from '../../provided/providedFilter';
-import { ScalarFilterParams } from '../../provided/scalarFilter';
-import {
+import type { ProvidedFilterParams } from '../../provided/providedFilter';
+import type { ScalarFilterParams } from '../../provided/scalarFilter';
+import type {
     ICombinedSimpleModel,
     ISimpleFilter,
     ISimpleFilterModel,
-    SimpleFilter,
-    SimpleFilterModelFormatter,
+    SimpleFilterModelFormatter} from '../../provided/simpleFilter';
+import {
+    SimpleFilter
 } from '../../provided/simpleFilter';
-import { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
+import type { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
 
 export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp<ISimpleFilter> {
     @Autowired('columnNameService') private columnNameService: ColumnNameService;

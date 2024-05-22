@@ -1,13 +1,15 @@
+import type {
+    PopupService,
+    ResizableStructure} from '@ag-grid-community/core';
 import {
     Autowired,
     Component,
-    PopupService,
-    ResizableStructure,
     _createIconNoSpan,
     _setDisplayed,
 } from '@ag-grid-community/core';
 
-import { AgPanel, PanelOptions } from './agPanel';
+import type { PanelOptions } from './agPanel';
+import { AgPanel } from './agPanel';
 
 export type ResizableSides =
     | 'topLeft'

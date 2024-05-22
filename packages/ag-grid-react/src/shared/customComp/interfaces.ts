@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import {
+import type {
     BaseCellEditor,
     BaseDate,
     BaseDateParams,

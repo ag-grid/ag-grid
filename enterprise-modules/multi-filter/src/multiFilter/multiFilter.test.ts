@@ -1,22 +1,23 @@
-import {
-    AgPromise,
+import type {
     ColDef,
     Column,
     Context,
     FilterManager,
     FocusService,
+    IFilterComp,
+    IRowModel,
+    TabGuardCtrl,
+    UserComponentFactory} from '@ag-grid-community/core';
+import {
+    AgPromise,
     IAfterGuiAttachedParams,
     IClientSideRowModel,
     IDoesFilterPassParams,
-    IFilterComp,
     IMultiFilterModel,
-    IRowModel,
     MultiFilterParams,
     ProvidedFilter,
     ProvidedFilterModel,
-    ProvidedFilterParams,
-    TabGuardCtrl,
-    UserComponentFactory,
+    ProvidedFilterParams
 } from '@ag-grid-community/core';
 
 import { mock } from '../test-utils/mock';

@@ -1,8 +1,8 @@
-import { VisibleColsService } from '../columns/visibleColsService';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import { Autowired, PostConstruct } from '../context/context';
 import { Events } from '../eventKeys';
-import { ScrollVisibleService } from './scrollVisibleService';
+import type { ScrollVisibleService } from './scrollVisibleService';
 
 export class CenterWidthFeature extends BeanStub {
     @Autowired('visibleColsService') private visibleColsService: VisibleColsService;

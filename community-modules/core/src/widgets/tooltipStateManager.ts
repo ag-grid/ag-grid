@@ -1,14 +1,14 @@
-import { UserComponentFactory } from '../components/framework/userComponentFactory';
+import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
 import { Autowired, PostConstruct } from '../context/context';
 import { Events } from '../eventKeys';
-import { TooltipHideEvent, TooltipShowEvent } from '../events';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { ITooltipComp, ITooltipParams } from '../rendering/tooltipComponent';
+import type { TooltipHideEvent, TooltipShowEvent } from '../events';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { ITooltipComp, ITooltipParams } from '../rendering/tooltipComponent';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
-import { PopupService } from './popupService';
+import type { PopupService } from './popupService';
 
 export interface TooltipParentComp {
     getTooltipParams(): WithoutGridCommon<ITooltipParams>;

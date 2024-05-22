@@ -1,8 +1,8 @@
 import { KeyCode } from '../../constants/keyCode';
-import { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _isBrowserSafari } from '../../utils/browser';
-import { AgInputTextField } from '../../widgets/agInputTextField';
-import { ComponentClass } from '../../widgets/component';
+import type { AgInputTextField } from '../../widgets/agInputTextField';
+import type { ComponentClass } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { PopupComponent } from '../../widgets/popupComponent';
 

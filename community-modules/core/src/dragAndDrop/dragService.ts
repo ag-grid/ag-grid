@@ -1,8 +1,9 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PreDestroy } from '../context/context';
-import { DragStartedEvent, DragStoppedEvent, Events } from '../events';
-import { MouseEventService } from '../gridBodyComp/mouseEventService';
-import { WithoutGridCommon } from '../interfaces/iCommon';
+import type { DragStartedEvent, DragStoppedEvent} from '../events';
+import { Events } from '../events';
+import type { MouseEventService } from '../gridBodyComp/mouseEventService';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _removeFromArray } from '../utils/array';
 import { _isBrowserSafari } from '../utils/browser';
 import { _isFocusableFormField } from '../utils/dom';

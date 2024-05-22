@@ -1,14 +1,14 @@
 import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 
-import {
+import type {
     AbstractHeaderCellCtrl,
     HeaderCellCtrl,
     HeaderFilterCellCtrl,
     HeaderGroupCellCtrl,
     HeaderRowCtrl,
-    HeaderRowType,
     IHeaderRowComp,
 } from 'ag-grid-community';
+import { HeaderRowType } from 'ag-grid-community';
 
 import { agFlushSync, getNextValueIfDifferent } from '../utils';
 import HeaderCellComp from './headerCellComp';

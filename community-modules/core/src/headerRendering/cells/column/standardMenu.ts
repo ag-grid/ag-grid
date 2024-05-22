@@ -1,20 +1,20 @@
 import { KeyCode } from '../../../constants/keyCode';
 import { BeanStub } from '../../../context/beanStub';
 import { Autowired, Bean } from '../../../context/context';
-import { CtrlsService } from '../../../ctrlsService';
-import { Column } from '../../../entities/column';
+import type { CtrlsService } from '../../../ctrlsService';
+import type { Column } from '../../../entities/column';
 import { Events } from '../../../eventKeys';
-import { ColumnMenuVisibleChangedEvent } from '../../../events';
-import { FilterManager } from '../../../filter/filterManager';
+import type { ColumnMenuVisibleChangedEvent } from '../../../events';
+import type { FilterManager } from '../../../filter/filterManager';
 import { FilterWrapperComp } from '../../../filter/filterWrapperComp';
-import { FocusService } from '../../../focusService';
-import { ContainerType } from '../../../interfaces/iAfterGuiAttachedParams';
-import { WithoutGridCommon } from '../../../interfaces/iCommon';
-import { IMenuFactory } from '../../../interfaces/iMenuFactory';
-import { MenuService } from '../../../misc/menuService';
+import type { FocusService } from '../../../focusService';
+import type { ContainerType } from '../../../interfaces/iAfterGuiAttachedParams';
+import type { WithoutGridCommon } from '../../../interfaces/iCommon';
+import type { IMenuFactory } from '../../../interfaces/iMenuFactory';
+import type { MenuService } from '../../../misc/menuService';
 import { _setAriaRole } from '../../../utils/aria';
 import { _isVisible } from '../../../utils/dom';
-import { PopupService } from '../../../widgets/popupService';
+import type { PopupService } from '../../../widgets/popupService';
 
 @Bean('filterMenuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {

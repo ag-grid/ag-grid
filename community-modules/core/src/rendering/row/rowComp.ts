@@ -1,15 +1,15 @@
-import { UserCompDetails } from '../../components/framework/userComponentFactory';
-import { RowStyle } from '../../entities/gridOptions';
-import { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
+import type { UserCompDetails } from '../../components/framework/userComponentFactory';
+import type { RowStyle } from '../../entities/gridOptions';
+import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import { _setAriaRole } from '../../utils/aria';
 import { _addStylesToElement, _setDomChildOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
-import { Beans } from '../beans';
+import type { Beans } from '../beans';
 import { CellComp } from '../cell/cellComp';
-import { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
-import { ICellRendererComp, ICellRendererParams } from '../cellRenderers/iCellRenderer';
-import { IRowComp, RowCtrl } from './rowCtrl';
+import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
+import type { ICellRendererComp, ICellRendererParams } from '../cellRenderers/iCellRenderer';
+import type { IRowComp, RowCtrl } from './rowCtrl';
 
 export class RowComp extends Component {
     private fullWidthCellRenderer: ICellRendererComp | null | undefined;

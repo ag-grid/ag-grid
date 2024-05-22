@@ -1,4 +1,5 @@
-import { ExcelCell, ExcelOOXMLTemplate, _escapeString } from '@ag-grid-community/core';
+import type { ExcelCell, ExcelOOXMLTemplate} from '@ag-grid-community/core';
+import { _escapeString } from '@ag-grid-community/core';
 
 import { getStyleId } from './styles/stylesheet';
 
