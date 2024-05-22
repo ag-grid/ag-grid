@@ -14,4 +14,10 @@ export default [
             'no-undef': 'warn',
         },
     },
+    {
+        files: ['projects/ag-grid-angular/src/**'],
+        rules: {
+            '@typescript-eslint/consistent-type-imports': 'off',
+        },
+    },
 ];
