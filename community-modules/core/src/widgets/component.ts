@@ -21,6 +21,13 @@ import { TooltipFeature } from './tooltipFeature';
 
 const compIdSequence = new NumberSequence();
 
+/** The RefPlaceholder is used to control when data-ref attribute should be applied to the component
+ * There are hanging data-refs in the DOM that are not being used internally by the component which we don't want to apply to the component.
+ * There is also the case where data-refs are solely used for passing parameters to the component and should not be applied to the component.
+ * It also enables validation to catch typo errors in the data-ref attribute vs component name.
+ */
+export const RefPlaceholder: any = 'REF';
+
 export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
@@ -32,7 +39,7 @@ export class Component extends BeanStub {
 
     public static EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     private eGui: HTMLElement;
-    private components: ComponentClass[] = [];
+    private components: ComponentClass[];
     @Autowired('agStackComponentsRegistry') protected readonly agStackComponentsRegistry: AgStackComponentsRegistry;
 
     // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
@@ -59,9 +66,9 @@ export class Component extends BeanStub {
 
         this.cssClassManager = new CssClassManager(() => this.eGui);
 
+        this.components = components ?? [];
         if (template) {
-            this.components = components || [];
-            this.setTemplate(template, [], undefined);
+            this.setTemplate(template);
         }
     }
 
@@ -69,11 +76,16 @@ export class Component extends BeanStub {
     private componentPreConstruct(): void {
         this.usingBrowserTooltips = this.gos.get('enableBrowserTooltips');
 
-        // ui exists if user sets template in constructor. when this happens, we have to wait for the context
-        // to be autoWired first before we can create child components.
-        if (this.getGui()) {
-            this.agStackComponentsRegistry.ensureRegistered(this.components);
-            this.createChildComponentsFromTags(this.getGui());
+        this.wireTemplate(this.eGui);
+    }
+
+    private wireTemplate(element: HTMLElement | undefined, paramsMap?: { [key: string]: any }): void {
+        // ui exists if user sets template in constructor. when this happens,
+        // We have to wait for the context to be autoWired first before we can create child components.
+        this.agStackComponentsRegistry?.ensureRegistered(this.components);
+        if (element && this.getContext()) {
+            this.applyElementsToComponent(element);
+            this.createChildComponentsFromTags(element, paramsMap);
         }
     }
 
@@ -113,7 +125,7 @@ export class Component extends BeanStub {
             this.tooltipFeature = this.createBean(
                 new TooltipFeature({
                     getTooltipValue,
-                    getGui: () => this.getGui(),
+                    getGui: () => this.eGui,
                     getLocation: () => location ?? 'UNKNOWN',
                     getColDef: params?.getColDef,
                     getColumn: params?.getColumn,
@@ -122,6 +134,26 @@ export class Component extends BeanStub {
                     shouldDisplayTooltip,
                 })
             );
+        }
+    }
+
+    private applyElementsToComponent(
+        element: Element,
+        elementRef?: string | null,
+        newComponent: Component | null = null
+    ) {
+        if (elementRef === undefined) {
+            elementRef = element.getAttribute('data-ref');
+        }
+        if (elementRef) {
+            // We store the reference to the element in the parent component under that same name
+            // if there is a placeholder property with the same name.
+            const current = (this as any)[elementRef];
+            if (current === RefPlaceholder) {
+                (this as any)[elementRef] = newComponent ?? element;
+            } else {
+                console.warn(`Unused ref: ${elementRef} on ${this.constructor.name} with ${current}`);
+            }
         }
     }
 
@@ -166,8 +198,6 @@ export class Component extends BeanStub {
         });
     }
 
-    private browserElements = new Set<string>(['DIV', 'SPAN', 'INPUT', 'TEXTAREA', 'BUTTON']);
-
     private createComponentFromElement(
         element: HTMLElement,
         afterPreCreateCallback?: (comp: Component) => void,
@@ -177,25 +207,20 @@ export class Component extends BeanStub {
 
         const elementRef = element.getAttribute('data-ref');
 
-        const ComponentClass = this.browserElements.has(key)
-            ? null
-            : this.agStackComponentsRegistry.getComponent(key as Uppercase<AgComponentSelector>);
+        const ComponentClass = key.startsWith('AG-')
+            ? this.agStackComponentsRegistry.getComponent(key as Uppercase<AgComponentSelector>)
+            : null;
         let newComponent: Component | null = null;
         if (ComponentClass) {
             Component.elementGettingCreated = element;
-            const componentParams = paramsMap ? paramsMap[elementRef!] : undefined;
+            const componentParams = paramsMap && elementRef ? paramsMap[elementRef] : undefined;
             newComponent = new ComponentClass(componentParams);
             newComponent.setParentComponent(this);
 
             this.createBean(newComponent, null, afterPreCreateCallback);
         }
 
-        if (elementRef) {
-            const current = (this as any)[elementRef];
-            if (!current) {
-                (this as any)[elementRef] = newComponent ?? element;
-            }
-        }
+        this.applyElementsToComponent(element, elementRef, newComponent);
 
         return newComponent;
     }
@@ -219,7 +244,7 @@ export class Component extends BeanStub {
         }
 
         if (!elements.length) {
-            elements.push(this.getGui());
+            elements.push(this.eGui);
         }
 
         elements.forEach((el) => el.setAttribute('tabindex', tabIndex.toString()));
@@ -240,18 +265,10 @@ export class Component extends BeanStub {
         paramsMap?: { [key: string]: any }
     ): void {
         this.eGui = element;
-        (this.eGui as any).__agComponent = this;
-        this.agStackComponentsRegistry?.ensureRegistered(components ?? this.components);
-
-        // Ensure parent elements are also attached
-        const elementRef = element.getAttribute('data-ref');
-        if (elementRef) {
-            (this as any)[elementRef] = element;
+        if (components) {
+            this.components = [...this.components, ...components];
         }
-        // context will not be available when user sets template in constructor
-        if (this.getContext()) {
-            this.createChildComponentsFromTags(this.getGui(), paramsMap);
-        }
+        this.wireTemplate(element, paramsMap);
     }
 
     public getGui(): HTMLElement {
@@ -335,12 +352,6 @@ export class Component extends BeanStub {
 
         if (this.tooltipFeature) {
             this.tooltipFeature = this.destroyBean(this.tooltipFeature);
-        }
-
-        const eGui = this.eGui as any;
-
-        if (eGui && eGui.__agComponent) {
-            eGui.__agComponent = undefined;
         }
 
         super.destroy();
