@@ -1,7 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../context/context';
 import { RowNode } from '../entities/rowNode';
-import { Events, PinnedRowDataChangedEvent } from '../events';
+import { CssVariablesChanged, Events, PinnedRowDataChangedEvent } from '../events';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { RowPinnedType } from '../interfaces/iRowNode';
 import { Beans } from '../rendering/beans';
@@ -21,6 +21,7 @@ export class PinnedRowModel extends BeanStub {
         this.setPinnedBottomRowData();
         this.addManagedPropertyListener('pinnedTopRowData', () => this.setPinnedTopRowData());
         this.addManagedPropertyListener('pinnedBottomRowData', () => this.setPinnedBottomRowData());
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onGridStylesChanges.bind(this));
     }
 
     public isEmpty(floating: RowPinnedType): boolean {
@@ -47,6 +48,40 @@ export class PinnedRowModel extends BeanStub {
             }
         }
         return rows.length - 1;
+    }
+
+    private onGridStylesChanges(e: CssVariablesChanged) {
+        if (e.rowHeightChanged) {
+            const estimateRowHeight = (rowNode: RowNode) => {
+                rowNode.setRowHeight(rowNode.rowHeight, true);
+            };
+            this.pinnedBottomRows.forEach(estimateRowHeight);
+            this.pinnedTopRows.forEach(estimateRowHeight);
+        }
+    }
+
+    public ensureRowHeightsValid(): boolean {
+        let anyChange = false;
+        let rowTop = 0;
+        const updateRowHeight = (rowNode: RowNode) => {
+            if (rowNode.rowHeightEstimated) {
+                const rowHeight = this.gos.getRowHeightForNode(rowNode);
+                rowNode.setRowTop(rowTop);
+                rowNode.setRowHeight(rowHeight.height);
+                rowTop += rowHeight.height;
+                anyChange = true;
+            }
+        }
+        this.pinnedBottomRows?.forEach(updateRowHeight);
+        rowTop = 0;
+        this.pinnedTopRows?.forEach(updateRowHeight);
+
+        const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
+            type: Events.EVENT_PINNED_HEIGHT_CHANGED,
+        };
+        this.eventService.dispatchEvent(event);
+
+        return anyChange;
     }
 
     private setPinnedTopRowData(): void {

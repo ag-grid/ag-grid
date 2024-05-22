@@ -53,7 +53,8 @@ export class PaginationProxy extends BeanStub {
         startPixel: number,
         endPixel: number,
         startLimitIndex: number,
-        endLimitIndex: number
+        endLimitIndex: number,
+        force = false,
     ): boolean {
         const res = this.rowModel.ensureRowHeightsValid(
             startPixel,
@@ -61,7 +62,7 @@ export class PaginationProxy extends BeanStub {
             this.getPageFirstRow(),
             this.getPageLastRow()
         );
-        if (res) {
+        if (res || force) {
             this.calculatePages();
         }
         return res;
