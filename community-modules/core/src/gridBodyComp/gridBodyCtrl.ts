@@ -300,20 +300,32 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private setupRowAnimationCssClass(): void {
-        const listener = () => {
+        let initialSizeMeasurementComplete = false;
+
+        const updateAnimationClass = () => {
             // we don't want to use row animation if scaling, as rows jump strangely as you scroll,
             // when scaling and doing row animation.
-            const animateRows = this.gos.isAnimateRows() && !this.rowContainerHeightService.isStretching();
+            const animateRows =
+                initialSizeMeasurementComplete &&
+                this.gos.isAnimateRows() &&
+                !this.rowContainerHeightService.isStretching();
             const animateRowsCssClass = animateRows
                 ? RowAnimationCssClasses.ANIMATION_ON
                 : RowAnimationCssClasses.ANIMATION_OFF;
             this.comp.setRowAnimationCssOnBodyViewport(animateRowsCssClass, animateRows);
         };
 
-        listener();
+        updateAnimationClass();
 
-        this.addManagedListener(this.eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, listener);
-        this.addManagedPropertyListener('animateRows', listener);
+        this.addManagedListener(this.eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, updateAnimationClass);
+        this.addManagedPropertyListener('animateRows', updateAnimationClass);
+
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, () => {
+            if (!initialSizeMeasurementComplete && this.environment.hasMeasuredSizes()) {
+                initialSizeMeasurementComplete = true;
+                updateAnimationClass();
+            }
+        });
     }
 
     public getGridBodyElement(): HTMLElement {

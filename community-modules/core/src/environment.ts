@@ -34,8 +34,6 @@ const CHART_MENU_PANEL_WIDTH: Variable = {
     // defaultValue: 260,
 };
 
-let idCounter = 0;
-
 @Bean('environment')
 export class Environment extends BeanStub {
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
@@ -46,14 +44,17 @@ export class Environment extends BeanStub {
     private themeClasses: readonly string[] = [];
     private eThemeAncestor: HTMLElement | null = null;
     private eMeasurementContainer: HTMLElement | null = null;
-
-    private id = ++idCounter;
+    private sizesMeasured = false;
 
     @PostConstruct
     private postConstruct(): void {
         this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeightVariable());
         this.themeClasses = this.getAncestorThemeClasses();
         this.setUpThemeClassObservers();
+        this.getSizeEl(ROW_HEIGHT);
+        this.getSizeEl(HEADER_HEIGHT);
+        this.getSizeEl(LIST_ITEM_HEIGHT);
+        this.getSizeEl(CHART_MENU_PANEL_WIDTH);
     }
 
     public getDefaultRowHeight(): number {
@@ -70,6 +71,10 @@ export class Environment extends BeanStub {
 
     public getDefaultChartMenuPanelWidth(): number {
         return this.getCSSVariablePixelValue(CHART_MENU_PANEL_WIDTH);
+    }
+
+    public hasMeasuredSizes(): boolean {
+        return this.sizesMeasured;
     }
 
     public getThemeClasses(): readonly string[] {
@@ -120,11 +125,7 @@ export class Environment extends BeanStub {
             return cached;
         }
         const measurement = this.measureSizeEl(variable);
-        if (measurement === 'detached') {
-            // TODO grid detached and never properly measured, handle this better
-            return variable.defaultValue;
-        }
-        if (measurement === 'no-styles') {
+        if (measurement === 'detached' || measurement === 'no-styles') {
             return variable.defaultValue;
         }
         this.lastKnownValues.set(variable, measurement);
@@ -137,7 +138,9 @@ export class Environment extends BeanStub {
             return 'detached';
         }
         const newSize = sizeEl.offsetWidth;
-        return newSize === NO_VALUE_SENTINEL ? 'no-styles' : newSize;
+        if (newSize === NO_VALUE_SENTINEL) return 'no-styles';
+        this.sizesMeasured = true;
+        return newSize;
     }
 
     private getSizeEl(variable: Variable): HTMLElement {
