@@ -36,8 +36,15 @@ const apiMenuSections: MenuSection[] = getFilteredMenuSections({
     framework: currentFramework,
 });
 
-const appendSeoToDescription = `Download AG Grid today: The best ${getFrameworkDisplayText(currentFramework)} Data Table in the world.`;
-const description = page.data.description || `${getFirstParagraphText(page.body, currentFramework)} ${appendSeoToDescription}`;
+const { data: versionsData } = await getEntry('versions', 'ag-grid-versions');
+const version = versionsData[0]?.version;
+const frameworkDisplayText = getFrameworkDisplayText(currentFramework);
+const seoTagline = `Download AG Grid v${version} today: The best ${frameworkDisplayText} Table & ${frameworkDisplayText} Data Grid in the world.`;
+const description = page.data.description
+    ? page.data.description.replaceAll('$framework', frameworkDisplayText) // Use front-matter description
+    : getFirstParagraphText(page.body, currentFramework); // Default to 1st paragraph text
+const descriptionWithSeoTagline = `${description} ${seoTagline}`;
+
 const isApiPage = isApiMenuPath({
     pageName,
     menuData: menu,
@@ -86,7 +93,7 @@ if (error?.message.includes('Custom Markdoc tags not loaded')) {
 
 <Layout
     title={`${getFrameworkDisplayText(currentFramework)} Grid: ${title} | AG Grid`}
-    description={description}
+    description={descriptionWithSeoTagline}
     showSearchBar={true}
     showDocsNav={true}
 >
