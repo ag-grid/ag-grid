@@ -10,8 +10,7 @@ export class GridHeaderComp extends Component {
         super(GridHeaderComp.TEMPLATE);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const compProxy: IGridHeaderComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setHeightAndMinHeight: (height) => {

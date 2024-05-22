@@ -183,8 +183,7 @@ export class RowContainerCtrl extends BeanStub {
             this.name === RowContainerName.FULL_WIDTH;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.enableRtl = this.gos.get('enableRtl');
 
         this.forContainers(

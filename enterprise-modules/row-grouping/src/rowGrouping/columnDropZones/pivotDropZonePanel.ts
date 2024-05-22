@@ -15,8 +15,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
         super(horizontal, 'pivot');
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to set column labels');
         const title = localeTextFunc('pivots', 'Column Labels');

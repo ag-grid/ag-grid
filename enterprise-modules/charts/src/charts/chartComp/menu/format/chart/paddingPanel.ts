@@ -29,8 +29,7 @@ export class PaddingPanel extends Component {
         super();
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         const chartPaddingGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',

@@ -22,8 +22,7 @@ export class ZoomPanel extends Component {
         super();
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         const zoomGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>('zoom.enabled', {
             cssIdentifier: 'charts-advanced-settings-top-level',
             direction: 'vertical',

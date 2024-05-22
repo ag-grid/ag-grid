@@ -50,8 +50,7 @@ export abstract class PillDragComp<TItem> extends Component {
         super();
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.setTemplate(this.template ?? PillDragComp.TEMPLATE, this.agComponents);
         const eGui = this.getGui();
 

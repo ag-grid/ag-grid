@@ -15,8 +15,7 @@ export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
         super();
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.addManagedListener(this.eGui, 'keydown', (event: KeyboardEvent) => {
             switch (event.key) {
                 case KeyCode.TAB:

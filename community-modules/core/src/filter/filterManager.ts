@@ -70,8 +70,7 @@ export class FilterManager extends BeanStub {
 
     private initialFilterModel: FilterModel;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, () =>
             this.refreshFiltersForAggregations()

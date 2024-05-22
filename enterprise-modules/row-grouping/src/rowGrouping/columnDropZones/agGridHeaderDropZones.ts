@@ -24,8 +24,7 @@ export class AgGridHeaderDropZones extends Component {
         super();
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.setGui(this.createNorthPanel());
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>

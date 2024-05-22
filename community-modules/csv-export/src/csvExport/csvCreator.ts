@@ -28,8 +28,7 @@ export class CsvCreator
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
     @Autowired('gridOptionsService') gos: GridOptionsService;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.setBeans({
             gridSerializer: this.gridSerializer,
             gos: this.gos,

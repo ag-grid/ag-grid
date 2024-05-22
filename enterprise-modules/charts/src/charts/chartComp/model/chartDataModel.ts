@@ -120,8 +120,7 @@ export class ChartDataModel extends BeanStub {
         this.seriesGroupType = seriesGroupType;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.datasource = this.createManagedBean(new ChartDatasource());
         this.chartColumnService = this.createManagedBean(new ChartColumnService());
         this.comboChartModel = this.createManagedBean(new ComboChartModel(this));

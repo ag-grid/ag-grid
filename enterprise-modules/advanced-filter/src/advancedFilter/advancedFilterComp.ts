@@ -57,8 +57,7 @@ export class AdvancedFilterComp extends Component {
         );
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.eAutocomplete
             .setListGenerator((_value, position) => this.generateAutocompleteListParams(position))
             .setValidator(() => this.validateValue())

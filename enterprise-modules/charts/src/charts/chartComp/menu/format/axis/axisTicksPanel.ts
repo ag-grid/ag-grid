@@ -21,8 +21,7 @@ export class AxisTicksPanel extends Component {
         super();
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         const axisTicksGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>('tick.enabled', {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',

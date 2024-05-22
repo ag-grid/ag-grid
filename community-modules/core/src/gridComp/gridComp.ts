@@ -26,8 +26,7 @@ export class GridComp extends TabGuardComp {
         this.eGridDiv = eGridDiv;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.logger = this.loggerFactory.create('GridComp');
 
         const compProxy: IGridComp = {

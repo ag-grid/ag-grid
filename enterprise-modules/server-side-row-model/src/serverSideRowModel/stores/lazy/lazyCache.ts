@@ -95,8 +95,7 @@ export class LazyCache extends BeanStub {
         this.storeParams = storeParams;
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         this.lazyBlockLoadingService.subscribe(this);
         // initiate the node map to be indexed at 'index', 'id' and 'node' for quick look-up.
         // it's important id isn't first, as stub nodes overwrite each-other, and the first index is

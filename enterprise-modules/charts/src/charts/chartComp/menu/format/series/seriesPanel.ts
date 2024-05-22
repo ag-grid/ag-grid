@@ -100,8 +100,7 @@ export class SeriesPanel extends Component {
         this.seriesType = options.seriesType;
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         const {
             isExpandedOnInit: expanded,
             chartOptionsService,

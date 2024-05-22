@@ -50,8 +50,7 @@ export class AgFiltersToolPanelHeader extends Component {
         );
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const translate = this.localeService.getLocaleTextFunc();
 
         this.eFilterTextField

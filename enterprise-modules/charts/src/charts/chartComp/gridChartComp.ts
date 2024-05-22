@@ -117,8 +117,7 @@ export class GridChartComp extends Component {
         this.params = params;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const modelParams: ChartModelParams = {
             ...this.params,
             chartType: getCanonicalChartType(this.params.chartType),

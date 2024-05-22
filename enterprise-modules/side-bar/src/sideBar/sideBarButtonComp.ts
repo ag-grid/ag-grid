@@ -18,8 +18,7 @@ export class SideBarButtonComp extends Component {
         return this.toolPanelDef.id;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const template = this.createTemplate();
         this.setTemplate(template, []);
         this.setLabel();

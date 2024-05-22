@@ -48,8 +48,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         </div>`;
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         const {
             component,
             closable,

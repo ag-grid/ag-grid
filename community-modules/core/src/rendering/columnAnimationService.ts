@@ -17,8 +17,7 @@ export class ColumnAnimationService extends BeanStub {
 
     private animationThreadCount = 0;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.ctrlsService.whenReady((p) => (this.gridBodyCtrl = p.gridBodyCtrl));
     }
 

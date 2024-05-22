@@ -17,8 +17,7 @@ export class ChangeDetectionService extends BeanStub {
 
     private clientSideRowModel: IClientSideRowModel;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         if (this.rowModel.getType() === 'clientSide') {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }

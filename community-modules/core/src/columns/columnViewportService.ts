@@ -37,8 +37,7 @@ export class ColumnViewportService extends BeanStub {
 
     private suppressColumnVirtualisation: boolean;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.suppressColumnVirtualisation = this.gos.get('suppressColumnVirtualisation');
     }
 

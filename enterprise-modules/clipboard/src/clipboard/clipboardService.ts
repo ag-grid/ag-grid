@@ -106,8 +106,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
     private navigatorApiFailed = false;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.logger = this.loggerFactory.create('ClipboardService');
 
         if (this.rowModel.getType() === 'clientSide') {

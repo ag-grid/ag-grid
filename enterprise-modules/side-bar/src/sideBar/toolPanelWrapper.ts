@@ -25,8 +25,7 @@ export class ToolPanelWrapper extends Component {
         super(ToolPanelWrapper.TEMPLATE);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const eGui = this.getGui();
         const resizeBar = (this.resizeBar = this.createManagedBean(new AgHorizontalResize()));
 

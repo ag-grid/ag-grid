@@ -51,8 +51,7 @@ export class ChartDataPanel extends Component {
         this.chartController = chartMenuContext.chartController;
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         this.createSwitchCategorySeriesToggle();
         this.isSwitchCategorySeriesToggled = this.chartController.isCategorySeriesSwitched();
 

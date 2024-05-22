@@ -65,8 +65,7 @@ export class RowContainerComp extends Component {
         this.type = getRowContainerTypeForName(this.name);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const compProxy: IRowContainerComp = {
             setViewportHeight: (height) => (this.eViewport.style.height = height),
             setRowCtrls: ({ rowCtrls }) => this.setRowCtrls(rowCtrls),

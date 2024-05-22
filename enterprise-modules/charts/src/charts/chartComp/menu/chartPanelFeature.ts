@@ -17,8 +17,7 @@ export class ChartPanelFeature extends BeanStub {
         super();
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, () =>
             this.refreshPanels(true)
         );

@@ -25,8 +25,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         super(HeaderFilterCellComp.TEMPLATE, ctrl);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const eGui = this.getGui();
 
         const compProxy: IHeaderFilterCellComp = {

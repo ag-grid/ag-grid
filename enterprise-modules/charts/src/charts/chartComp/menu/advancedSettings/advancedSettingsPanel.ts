@@ -21,8 +21,7 @@ export class AdvancedSettingsPanel extends Component {
         super(AdvancedSettingsPanel.TEMPLATE);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.chartPanelFeature = this.createManagedBean(
             new ChartPanelFeature(
                 this.chartMenuContext.chartController,

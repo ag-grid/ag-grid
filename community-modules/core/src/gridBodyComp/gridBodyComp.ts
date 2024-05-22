@@ -81,8 +81,7 @@ export class GridBodyComp extends Component {
         ]);
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         const setHeight = (height: number, element: HTMLElement) => {
             const heightString = `${height}px`;
             element.style.minHeight = heightString;

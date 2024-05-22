@@ -27,8 +27,7 @@ export class AgHorizontalResize extends Component {
         this.elementToResize = elementToResize;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
             eResizeBar: this.getGui(),
             dragStartPixels: 1,

@@ -18,8 +18,7 @@ export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelPar
         this.config = config || ({} as any);
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         this.addCssClass('ag-labeled');
         this.eLabel.classList.add('ag-label');
 

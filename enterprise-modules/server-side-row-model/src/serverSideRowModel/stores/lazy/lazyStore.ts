@@ -70,8 +70,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.info = {};
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         let numberOfRows = 1;
         if (this.level === 0) {
             numberOfRows = this.storeUtils.getServerSideInitialRowCount() ?? 1;

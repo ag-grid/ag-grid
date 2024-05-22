@@ -46,8 +46,7 @@ export class UndoRedoService extends BeanStub {
     private isPasting = false;
     private isRangeInAction = false;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         if (!this.gos.get('undoRedoCellEditing')) {
             return;
         }

@@ -33,8 +33,7 @@ export class SeriesItemsPanel extends Component {
         super();
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         const seriesItemsGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',

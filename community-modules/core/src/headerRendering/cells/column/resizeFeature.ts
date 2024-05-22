@@ -46,8 +46,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         this.ctrl = ctrl;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const destroyResizeFuncs: (() => void)[] = [];
 
         let canResize: boolean;

@@ -34,8 +34,7 @@ export class ValueService extends BeanStub {
 
     private isSsrm = false;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         if (!this.initialised) {
             this.init();
         }

@@ -30,8 +30,7 @@ export class HeaderRowComp extends Component {
         this.setTemplate(/* html */ `<div class="${this.ctrl.getHeaderRowClass()}" role="row"></div>`);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         _setAriaRowIndex(this.getGui(), this.ctrl.getAriaRowIndex());
 
         const compProxy: IHeaderRowComp = {

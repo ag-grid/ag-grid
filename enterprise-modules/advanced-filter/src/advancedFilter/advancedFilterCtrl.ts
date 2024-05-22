@@ -38,8 +38,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
         super();
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.hasAdvancedFilterParent = !!this.gos.get('advancedFilterParent');
 
         this.ctrlsService.whenReady(() => this.setAdvancedFilterComp());

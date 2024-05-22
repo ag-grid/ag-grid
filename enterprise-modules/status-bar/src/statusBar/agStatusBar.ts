@@ -35,8 +35,7 @@ export class AgStatusBar extends Component {
         super(AgStatusBar.TEMPLATE);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.processStatusPanels(new Map());
         this.addManagedPropertyListeners(['statusBar'], this.handleStatusBarChanged.bind(this));
     }

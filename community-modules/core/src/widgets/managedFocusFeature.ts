@@ -42,8 +42,7 @@ export class ManagedFocusFeature extends BeanStub {
         };
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.eFocusableElement.classList.add(ManagedFocusFeature.FOCUS_MANAGED_CLASS);
 
         this.addKeyDownListeners(this.eFocusableElement);

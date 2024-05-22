@@ -48,8 +48,7 @@ export class RowContainerEventsFeature extends BeanStub {
         this.element = element;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.addKeyboardListeners();
         this.addMouseListeners();
         this.mockContextMenuForIPad();

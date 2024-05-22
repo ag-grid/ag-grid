@@ -103,8 +103,7 @@ export class Beans extends BeanStub {
     public clientSideRowModel: IClientSideRowModel;
     public serverSideRowModel: IServerSideRowModel;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         if (this.gos.isRowModelType('clientSide')) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }

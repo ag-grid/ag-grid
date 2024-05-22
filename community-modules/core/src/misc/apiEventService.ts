@@ -14,8 +14,7 @@ export class ApiEventService extends BeanStub {
     >();
     private frameworkEventWrappingService: FrameworkEventListenerService;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.frameworkEventWrappingService = new FrameworkEventListenerService(this.getFrameworkOverrides());
     }
 

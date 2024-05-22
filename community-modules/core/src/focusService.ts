@@ -93,8 +93,7 @@ export class FocusService extends BeanStub {
         FocusService.removeKeyboardModeEvents(doc);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const clearFocusedCellListener = this.clearFocusedCell.bind(this);
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener);

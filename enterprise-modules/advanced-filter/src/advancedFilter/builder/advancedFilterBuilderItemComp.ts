@@ -89,8 +89,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
         `);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const { filterModel, level, showMove } = this.item;
 
         const isJoin = filterModel!.filterType === 'join';

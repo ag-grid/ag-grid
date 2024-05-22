@@ -99,8 +99,7 @@ export class ColumnModel extends BeanStub {
     private shouldQueueResizeOperations: boolean = false;
     private resizeOperationQueue: (() => void)[] = [];
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const pivotMode = this.gos.get('pivotMode');
 
         if (this.isPivotSettingAllowed(pivotMode)) {

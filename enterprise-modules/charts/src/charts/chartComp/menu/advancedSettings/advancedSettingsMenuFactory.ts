@@ -66,8 +66,7 @@ class AdvancedSettingsMenu extends TabGuardComp {
         super(AdvancedSettingsMenu.TEMPLATE);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.advancedSettingsPanel = this.createManagedBean(new AdvancedSettingsPanel(this.chartMenuContext));
         this.getGui().appendChild(this.advancedSettingsPanel.getGui());
         this.initialiseTabGuard({

@@ -38,8 +38,7 @@ export class ViewportSizeFeature extends BeanStub {
         this.centerContainerCtrl = centerContainerCtrl;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.ctrlsService.whenReady((p) => {
             this.gridBodyCtrl = p.gridBodyCtrl;
             this.listenForResize();

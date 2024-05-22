@@ -49,8 +49,7 @@ export class ChartSettingsPanel extends Component {
         super(ChartSettingsPanel.TEMPLATE);
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         this.resetPalettes();
 
         this.ePrevBtn.insertAdjacentElement('afterbegin', _createIconNoSpan('previous', this.gos)!);

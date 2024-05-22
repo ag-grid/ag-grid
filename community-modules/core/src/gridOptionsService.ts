@@ -90,8 +90,7 @@ export class GridOptionsService extends BeanStub {
 
     private propertyEventService: EventService = new EventService();
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const async = !this.get('suppressAsyncEvents');
         this.eventService.addGlobalListener(this.globalEventHandlerFactory().bind(this), async);
         this.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);

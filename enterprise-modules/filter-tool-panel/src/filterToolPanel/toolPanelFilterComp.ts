@@ -53,8 +53,7 @@ export class ToolPanelFilterComp extends Component {
         this.hideHeader = hideHeader;
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         this.eExpandChecked = _createIconNoSpan('columnSelectOpen', this.gos)!;
         this.eExpandUnchecked = _createIconNoSpan('columnSelectClosed', this.gos)!;
         this.eExpand.appendChild(this.eExpandChecked);

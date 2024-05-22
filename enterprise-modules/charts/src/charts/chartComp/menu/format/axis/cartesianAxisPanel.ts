@@ -62,8 +62,7 @@ export class CartesianAxisPanel extends Component {
         this.chartOptionsSeriesProxy = chartOptionsService.getSeriesOptionsProxy(() => seriesType);
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         const {
             isExpandedOnInit: expanded,
             chartOptionsService,

@@ -12,8 +12,7 @@ export class SelectableService extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('selectionService') private selectionService: ISelectionService;
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         this.addManagedPropertyListener('isRowSelectable', () => this.updateSelectable());
     }
 

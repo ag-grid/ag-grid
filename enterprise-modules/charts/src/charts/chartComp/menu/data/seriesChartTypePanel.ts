@@ -32,8 +32,7 @@ export class SeriesChartTypePanel extends Component {
         super(SeriesChartTypePanel.TEMPLATE);
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         this.createSeriesChartTypeGroup(this.columns);
     }
 

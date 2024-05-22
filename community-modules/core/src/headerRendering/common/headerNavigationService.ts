@@ -24,8 +24,7 @@ export class HeaderNavigationService extends BeanStub {
     private gridBodyCon: GridBodyCtrl;
     private currentHeaderRowWithoutSpan: number = -1;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.ctrlsService.whenReady((p) => {
             this.gridBodyCon = p.gridBodyCtrl;
         });

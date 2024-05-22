@@ -104,8 +104,7 @@ export class PopupService extends BeanStub {
 
     private static WAIT_FOR_POPUP_CONTENT_RESIZE: number = 200;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.ctrlsService.whenReady((p) => {
             this.gridCtrl = p.gridCtrl;
         });

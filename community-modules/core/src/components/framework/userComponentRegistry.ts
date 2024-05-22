@@ -102,8 +102,7 @@ export class UserComponentRegistry extends BeanStub {
 
     private jsComps: { [key: string]: any } = {};
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const comps = this.gos.get('components');
         if (comps != null) {
             _iterateObject(comps, (key, component) => this.registerJsComponent(key, component));

@@ -16,8 +16,7 @@ export class ComponentMetadataProvider extends BeanStub {
     @Autowired('agComponentUtils')
     private agComponentUtils: AgComponentUtils;
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         this.componentMetaData = {
             dateComponent: {
                 mandatoryMethodList: ['getDate', 'setDate'],

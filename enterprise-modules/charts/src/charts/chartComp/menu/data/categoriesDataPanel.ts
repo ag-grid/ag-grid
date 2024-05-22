@@ -26,8 +26,7 @@ export class CategoriesDataPanel extends DragDataPanel {
         super(chartController, allowMultipleSelection, maxSelection, CategoriesDataPanel.TEMPLATE);
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         this.groupComp = this.createBean(
             new AgGroupComponent({
                 title: this.title,

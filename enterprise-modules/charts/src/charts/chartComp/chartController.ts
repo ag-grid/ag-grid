@@ -52,8 +52,7 @@ export class ChartController extends BeanStub {
         super();
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.setChartRange();
 
         this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, (event) => {

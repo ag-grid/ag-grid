@@ -24,8 +24,7 @@ export class TitlePanel extends Component {
         this.chartOptions = chartMenuUtils.getChartOptions();
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.initFontPanel();
     }
 

@@ -55,8 +55,7 @@ export class HeaderRowCtrl extends BeanStub {
         this.headerRowClass = `ag-header-row ${typeClass}`;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.isPrintLayout = this.gos.isDomLayout('print');
         this.isEnsureDomOrder = this.gos.get('ensureDomOrder');
     }

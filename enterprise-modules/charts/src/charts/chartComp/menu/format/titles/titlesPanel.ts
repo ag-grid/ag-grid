@@ -20,8 +20,7 @@ export class TitlesPanel extends Component {
         super();
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         const {
             chartMenuParamsFactory,
             chartAxisMenuParamsFactory,

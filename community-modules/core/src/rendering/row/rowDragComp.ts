@@ -34,8 +34,7 @@ export class RowDragComp extends Component {
         return this.customGui != null;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         if (!this.customGui) {
             this.setTemplate(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`);
             this.getGui().appendChild(_createIconNoSpan('rowDrag', this.gos, null)!);
@@ -193,8 +192,7 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
         this.beans = beans;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.addManagedPropertyListener('suppressRowDrag', this.onSuppressRowDrag.bind(this));
 
         // in case data changes, then we need to update visibility of drag item
@@ -230,8 +228,7 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         this.beans = beans;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         // we do not show the component if sort, filter or grouping is active
 
         this.addManagedListener(this.beans.eventService, Events.EVENT_SORT_CHANGED, this.workOutVisibility.bind(this));

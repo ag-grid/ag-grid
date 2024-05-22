@@ -68,8 +68,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.eContainer = eContainer;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         if (this.gos.isRowModelType('clientSide')) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }

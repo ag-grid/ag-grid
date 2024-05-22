@@ -48,8 +48,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         this.columnGroup = columnGroup;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         if (!this.columnGroup.isResizable()) {
             this.comp.setResizableDisplayed(false);
             return;

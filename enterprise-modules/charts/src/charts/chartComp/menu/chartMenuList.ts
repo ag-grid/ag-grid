@@ -229,8 +229,7 @@ class ChartMenuList extends Component {
         `);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.mainMenuList = this.createManagedBean(new AgMenuList(0));
         this.mainMenuList.addMenuItems(this.menuItems);
         this.mainMenuList.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, this.onHidePopup.bind(this));

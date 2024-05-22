@@ -24,8 +24,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
     private groupSelectsChildren: boolean;
     private rowSelection?: 'single' | 'multiple';
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.rowSelection = this.gos.get('rowSelection');
         this.groupSelectsChildren = this.gos.get('groupSelectsChildren');
         this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection'], () => {

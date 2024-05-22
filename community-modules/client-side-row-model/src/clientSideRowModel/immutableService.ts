@@ -23,8 +23,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
 
     private clientSideRowModel: ClientSideRowModel;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         if (this.rowModel.getType() === 'clientSide') {
             this.clientSideRowModel = this.rowModel as ClientSideRowModel;
 

@@ -16,8 +16,7 @@ export class GroupWidthFeature extends BeanStub {
         this.comp = comp;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         // we need to listen to changes in child columns, as they impact our width
         this.addListenersToChildrenColumns();
 

@@ -30,8 +30,7 @@ export class CheckboxSelectionComponent extends Component {
         );
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.eCheckbox.setPassive(true);
     }
 

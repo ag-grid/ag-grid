@@ -26,8 +26,7 @@ export class LegendPanel extends Component {
         this.key = this.isGradient ? 'gradientLegend' : 'legend';
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         const { chartMenuParamsFactory, isExpandedOnInit: expanded, registerGroupComponent } = this.options;
         const positionSelect = this.createManagedBean(
             new AgSelect(

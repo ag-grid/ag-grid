@@ -32,8 +32,7 @@ export class LazyBlockLoadingService extends BeanStub {
     private nextBlockToLoad?: { cache: LazyCache; index: number } = undefined;
     private loaderTimeout?: number;
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         // after a block is loaded, check if we have a block to load now that
         // `maxConcurrentDatasourceRequests` has changed
         this.addManagedListener(this.rowNodeBlockLoader, RowNodeBlockLoader.BLOCK_LOADED_EVENT, () =>

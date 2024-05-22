@@ -25,8 +25,7 @@ export class ShadowPanel extends Component {
         super();
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         // Determine the path within the series options object to get/set the individual shadow options
         const propertyNamespace = this.propertyKey;
         const shadowGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(

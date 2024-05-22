@@ -27,8 +27,7 @@ export class AgList<TValue = string> extends Component {
         super(/* html */ `<div class="ag-list ag-${cssIdentifier}-list" role="listbox"></div>`);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const eGui = this.getGui();
         this.addManagedListener(eGui, 'mouseleave', () => this.clearHighlighted());
         if (this.unFocusable) {

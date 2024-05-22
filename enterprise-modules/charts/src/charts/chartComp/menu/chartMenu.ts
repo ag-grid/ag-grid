@@ -60,8 +60,7 @@ export class ChartMenu extends Component {
         this.chartController = chartMenuContext.chartController;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.chartToolbar = this.createManagedBean(new ChartToolbar());
         this.getGui().appendChild(this.chartToolbar.getGui());
 

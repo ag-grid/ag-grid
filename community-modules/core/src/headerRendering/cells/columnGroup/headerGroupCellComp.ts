@@ -18,8 +18,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         super(HeaderGroupCellComp.TEMPLATE, ctrl);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const eGui = this.getGui();
 
         const setAttribute = (key: string, value: string | undefined) =>

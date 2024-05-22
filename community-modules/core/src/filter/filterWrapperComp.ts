@@ -25,8 +25,7 @@ export class FilterWrapperComp extends Component {
         super(/* html */ `<div class="ag-filter"></div>`);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.createFilter(true);
 
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_DESTROYED, this.onFilterDestroyed.bind(this));

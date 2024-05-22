@@ -9,8 +9,7 @@ export class PopupEditorWrapper extends PopupComponent {
         super(/* html */ `<div class="ag-popup-editor" tabindex="-1"/>`);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.gos.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
         this.addKeyDownListener();
     }

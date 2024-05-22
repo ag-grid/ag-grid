@@ -43,8 +43,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         return false;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.rowHeight = this.gos.getRowHeightAsNumber();
         this.addManagedListener(this.eventService, Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
         this.addManagedPropertyListener('viewportDatasource', () => this.updateDatasource());

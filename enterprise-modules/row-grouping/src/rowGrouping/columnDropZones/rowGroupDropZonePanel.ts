@@ -15,8 +15,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
         super(horizontal, 'rowGroup');
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag here to set row groups');
         const title = localeTextFunc('groups', 'Row Groups');

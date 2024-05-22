@@ -56,8 +56,7 @@ export class FontPanel extends Component {
         this.chartOptions = params.chartMenuParamsFactory.getChartOptions();
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         const fontGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',

@@ -28,8 +28,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         this.pinned = ctrl.getPinned();
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const eGui = this.getGui();
 
         const setAttribute = (name: string, value: string | null | undefined) => {

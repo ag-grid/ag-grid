@@ -108,8 +108,7 @@ export class AgGroupComponent extends Component {
         `;
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         this.setupTitleBar();
 
         if (this.items.length) {
@@ -389,8 +388,7 @@ class DefaultTitleBar extends Component {
         `;
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         this.setTitle(this.title);
 
         this.hideOpenCloseIcons(this.suppressOpenCloseIcons);

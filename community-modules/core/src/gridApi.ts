@@ -212,8 +212,7 @@ export class GridApi<TData = any> extends BeanStub {
 
     private destroyCalled = false;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         switch (this.rowModel.getType()) {
             case 'clientSide':
                 this.clientSideRowModel = this.rowModel as IClientSideRowModel;

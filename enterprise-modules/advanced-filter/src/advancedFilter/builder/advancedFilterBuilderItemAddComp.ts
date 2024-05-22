@@ -41,8 +41,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
         `);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         _setAriaLevel(this.focusWrapper, 2);
 
         const addButtonParams = getAdvancedFilterBuilderAddButtonParams(

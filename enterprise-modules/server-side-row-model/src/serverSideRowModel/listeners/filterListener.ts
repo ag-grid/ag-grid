@@ -18,8 +18,7 @@ export class FilterListener extends BeanStub {
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('ssrmListenerUtils') private listenerUtils: ListenerUtils;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
         if (!this.gos.isRowModelType('serverSide')) {
             return;

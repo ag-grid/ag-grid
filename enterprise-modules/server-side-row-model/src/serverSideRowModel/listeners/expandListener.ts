@@ -21,8 +21,7 @@ export class ExpandListener extends BeanStub {
     @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
     @Autowired('beans') private beans: Beans;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
         if (!this.gos.isRowModelType('serverSide')) {
             return;

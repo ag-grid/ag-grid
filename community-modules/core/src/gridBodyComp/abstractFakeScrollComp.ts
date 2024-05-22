@@ -31,7 +31,7 @@ export abstract class AbstractFakeScrollComp extends Component {
         super(template);
     }
 
-    public override postConstruct(): void {
+    public postConstruct(): void {
         this.addManagedListener(
             this.eventService,
             Events.EVENT_SCROLL_VISIBILITY_CHANGED,

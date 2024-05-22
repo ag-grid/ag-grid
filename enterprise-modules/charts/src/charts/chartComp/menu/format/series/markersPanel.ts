@@ -27,8 +27,7 @@ export class MarkersPanel extends Component {
         super();
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         // scatter charts should always show markers
         const chartType = this.chartOptionsService.getChartType();
         const shouldHideEnabledCheckbox = _includes(['scatter', 'bubble'], chartType);

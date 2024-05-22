@@ -9,8 +9,7 @@ import { SparklineTooltip } from '../sparkline/tooltip/sparklineTooltip';
 export class SparklineTooltipSingleton extends BeanStub {
     private tooltip!: SparklineTooltip;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.tooltip = new SparklineTooltip();
     }
 

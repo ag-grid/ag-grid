@@ -50,7 +50,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
         super(config, AgAngleSelect.TEMPLATE, [AgInputNumberField]);
     }
 
-    postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
 
         const { value, onValueChange } = this.config;

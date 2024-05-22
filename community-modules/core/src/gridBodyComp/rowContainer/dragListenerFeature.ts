@@ -16,8 +16,7 @@ export class DragListenerFeature extends BeanStub {
 
     private params: DragListenerParams;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         if (!this.rangeService) {
             return;
         }

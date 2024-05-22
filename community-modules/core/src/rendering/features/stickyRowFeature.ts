@@ -30,8 +30,7 @@ export class StickyRowFeature extends BeanStub {
         super();
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.isClientSide = this.rowModel.getType() === 'clientSide';
 
         this.ctrlsService.whenReady((params) => {

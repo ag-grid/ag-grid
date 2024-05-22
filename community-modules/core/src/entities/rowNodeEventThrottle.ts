@@ -16,8 +16,7 @@ export class RowNodeEventThrottle extends BeanStub {
 
     private dispatchExpandedDebounced: () => void;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         if (this.rowModel.getType() == 'clientSide') {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }

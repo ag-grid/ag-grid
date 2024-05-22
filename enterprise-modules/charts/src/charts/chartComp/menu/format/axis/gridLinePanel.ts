@@ -26,8 +26,7 @@ export class GridLinePanel extends Component {
         this.chartOptions = chartMenuUtils.getChartOptions();
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         const gridLineGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>('gridLine.enabled', {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',

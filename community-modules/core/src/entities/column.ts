@@ -1,6 +1,7 @@
 import { ColumnState } from '../columns/columnApplyStateService';
 import { BeanStub } from '../context/beanStub';
 import { Autowired } from '../context/context';
+import { EventService } from '../eventService';
 import { AgEvent, AgEventListener, ColumnEvent, ColumnEventType } from '../events';
 import { BrandedType } from '../interfaces/brandedType';
 import { IEventEmitter } from '../interfaces/iEventEmitter';
@@ -135,6 +136,8 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
 
     private filterActive = false;
 
+    private columnEventService: EventService = new EventService();
+
     private fieldContainsDots: boolean;
     private tooltipFieldContainsDots: boolean;
     private tooltipEnabled = false;
@@ -231,7 +234,7 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
         this.initMinAndMaxWidths();
         this.initDotNotation();
         this.initTooltip();
-        this.eventService.dispatchEvent(this.createColumnEvent('colDefChanged', source));
+        this.columnEventService.dispatchEvent(this.createColumnEvent('colDefChanged', source));
     }
 
     /**
@@ -266,8 +269,7 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
     }
 
     // this is done after constructor as it uses gridOptionsService
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.initMinAndMaxWidths();
 
         this.resetActualWidth('gridInitializing');
@@ -367,18 +369,18 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
     public addEventListener(eventType: ColumnEventName, userListener: Function): void {
         if (this.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
             // Only construct if we need it, as it's an overhead for column construction
-            this.eventService.setFrameworkOverrides(this.frameworkOverrides);
+            this.columnEventService.setFrameworkOverrides(this.frameworkOverrides);
             this.frameworkEventListenerService = new FrameworkEventListenerService(this.frameworkOverrides);
         }
         const listener = this.frameworkEventListenerService?.wrap(userListener as AgEventListener) ?? userListener;
 
-        this.eventService.addEventListener(eventType, listener as AgEventListener);
+        this.columnEventService.addEventListener(eventType, listener as AgEventListener);
     }
 
     /** Remove event listener from the column. */
     public removeEventListener(eventType: ColumnEventName, userListener: Function): void {
         const listener = this.frameworkEventListenerService?.unwrap(userListener as AgEventListener) ?? userListener;
-        this.eventService.removeEventListener(eventType, listener as AgEventListener);
+        this.columnEventService.removeEventListener(eventType, listener as AgEventListener);
     }
 
     public createColumnFunctionCallbackParams(rowNode: IRowNode): ColumnFunctionCallbackParams {
@@ -476,7 +478,7 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
 
     public setMoving(moving: boolean, source: ColumnEventType): void {
         this.moving = moving;
-        this.eventService.dispatchEvent(this.createColumnEvent('movingChanged', source));
+        this.columnEventService.dispatchEvent(this.createColumnEvent('movingChanged', source));
     }
 
     private createColumnEvent(type: ColumnEventName, source: ColumnEventType): ColumnEvent {
@@ -500,7 +502,7 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
     public setSort(sort: SortDirection | undefined, source: ColumnEventType): void {
         if (this.sort !== sort) {
             this.sort = sort;
-            this.eventService.dispatchEvent(this.createColumnEvent('sortChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('sortChanged', source));
         }
         this.dispatchStateUpdatedEvent('sort');
     }
@@ -508,7 +510,7 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
     public setMenuVisible(visible: boolean, source: ColumnEventType): void {
         if (this.menuVisible !== visible) {
             this.menuVisible = visible;
-            this.eventService.dispatchEvent(this.createColumnEvent('menuVisibleChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('menuVisibleChanged', source));
         }
     }
 
@@ -571,7 +573,7 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
         this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
-            this.eventService.dispatchEvent(this.createColumnEvent('leftChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('leftChanged', source));
         }
     }
 
@@ -584,13 +586,13 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
     public setFilterActive(active: boolean, source: ColumnEventType, additionalEventAttributes?: any): void {
         if (this.filterActive !== active) {
             this.filterActive = active;
-            this.eventService.dispatchEvent(this.createColumnEvent('filterActiveChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('filterActiveChanged', source));
         }
         const filterChangedEvent = this.createColumnEvent('filterChanged', source);
         if (additionalEventAttributes) {
             _mergeDeep(filterChangedEvent, additionalEventAttributes);
         }
-        this.eventService.dispatchEvent(filterChangedEvent);
+        this.columnEventService.dispatchEvent(filterChangedEvent);
     }
 
     /** Returns `true` when this `Column` is hovered, otherwise `false` */
@@ -612,14 +614,14 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
     public setFirstRightPinned(firstRightPinned: boolean, source: ColumnEventType): void {
         if (this.firstRightPinned !== firstRightPinned) {
             this.firstRightPinned = firstRightPinned;
-            this.eventService.dispatchEvent(this.createColumnEvent('firstRightPinnedChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('firstRightPinnedChanged', source));
         }
     }
 
     public setLastLeftPinned(lastLeftPinned: boolean, source: ColumnEventType): void {
         if (this.lastLeftPinned !== lastLeftPinned) {
             this.lastLeftPinned = lastLeftPinned;
-            this.eventService.dispatchEvent(this.createColumnEvent('lastLeftPinnedChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('lastLeftPinnedChanged', source));
         }
     }
 
@@ -651,7 +653,7 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
         const newValue = visible === true;
         if (this.visible !== newValue) {
             this.visible = newValue;
-            this.eventService.dispatchEvent(this.createColumnEvent('visibleChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('visibleChanged', source));
         }
         this.dispatchStateUpdatedEvent('hide');
     }
@@ -794,7 +796,7 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
     }
 
     public fireColumnWidthChangedEvent(source: ColumnEventType): void {
-        this.eventService.dispatchEvent(this.createColumnEvent('widthChanged', source));
+        this.columnEventService.dispatchEvent(this.createColumnEvent('widthChanged', source));
     }
 
     public isGreaterThanMax(width: number): boolean {
@@ -834,7 +836,7 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
     public setRowGroupActive(rowGroup: boolean, source: ColumnEventType): void {
         if (this.rowGroupActive !== rowGroup) {
             this.rowGroupActive = rowGroup;
-            this.eventService.dispatchEvent(this.createColumnEvent('columnRowGroupChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('columnRowGroupChanged', source));
         }
         this.dispatchStateUpdatedEvent('rowGroup');
     }
@@ -847,7 +849,7 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
     public setPivotActive(pivot: boolean, source: ColumnEventType): void {
         if (this.pivotActive !== pivot) {
             this.pivotActive = pivot;
-            this.eventService.dispatchEvent(this.createColumnEvent('columnPivotChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('columnPivotChanged', source));
         }
         this.dispatchStateUpdatedEvent('pivot');
     }
@@ -868,7 +870,7 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
     public setValueActive(value: boolean, source: ColumnEventType): void {
         if (this.aggregationActive !== value) {
             this.aggregationActive = value;
-            this.eventService.dispatchEvent(this.createColumnEvent('columnValueChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('columnValueChanged', source));
         }
     }
 
@@ -904,7 +906,7 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
     }
 
     private dispatchStateUpdatedEvent(key: keyof ColumnState): void {
-        this.eventService.dispatchEvent({
+        this.columnEventService.dispatchEvent({
             type: Column.EVENT_STATE_UPDATED,
             key,
         } as AgEvent);

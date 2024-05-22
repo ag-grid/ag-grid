@@ -93,8 +93,7 @@ export class StateService extends BeanStub {
     private columnGroupStates?: { groupId: string; open: boolean | undefined }[];
     private staleStateKeys: Set<keyof GridState> = new Set();
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.isClientSideRowModel = this.rowModel.getType() === 'clientSide';
 
         this.cachedState = this.gos.get('initialState') ?? {};

@@ -37,8 +37,7 @@ export class InfiniteBlock extends RowNodeBlock {
         this.endRow = this.startRow + params.blockSize!;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.createRowNodes();
     }
 

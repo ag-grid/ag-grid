@@ -15,8 +15,7 @@ export class SetHeightFeature extends BeanStub {
         this.eViewport = eViewport;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.addManagedListener(
             this.eventService,
             Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED,

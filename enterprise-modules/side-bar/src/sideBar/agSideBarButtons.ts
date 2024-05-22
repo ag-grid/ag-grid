@@ -31,8 +31,7 @@ export class AgSideBarButtons extends Component {
         super(AgSideBarButtons.TEMPLATE);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.addManagedListener(this.getFocusableElement(), 'keydown', this.handleKeyDown.bind(this));
     }
 

@@ -52,8 +52,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
         this.valueFormatter = valueFormatter ?? ((value) => _escapeString(value as any)!);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const { ariaLabel, onValuesChange, dragSourceId } = this.config;
         this.dropZonePanel = this.createManagedBean(
             new PillSelectDropZonePanel(
@@ -243,8 +242,7 @@ class PillSelectDropZonePanel<TValue> extends PillDropZonePanel<PillSelectDragCo
         super(false);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         super.init();
     }
 

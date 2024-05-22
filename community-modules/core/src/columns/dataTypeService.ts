@@ -93,8 +93,7 @@ export class DataTypeService extends BeanStub {
     private columnStateUpdatesPendingInference: { [colId: string]: Set<keyof ColumnStateParams> } = {};
     private columnStateUpdateListenerDestroyFuncs: (() => void)[] = [];
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.groupHideOpenParents = this.gos.get('groupHideOpenParents');
         this.addManagedPropertyListener('groupHideOpenParents', () => {
             this.groupHideOpenParents = this.gos.get('groupHideOpenParents');

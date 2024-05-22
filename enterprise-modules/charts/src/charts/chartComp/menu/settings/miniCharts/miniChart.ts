@@ -33,8 +33,7 @@ export abstract class MiniChart extends Component {
         this.scene = scene;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.scene.canvas.element.title = this.chartTranslationService.translate(this.tooltipName);
 
         // Necessary to force scene graph render as we are not using the standalone factory.

@@ -49,8 +49,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         super(/* html */ `<div class="ag-multi-filter ag-menu-list-compact"></div>`);
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         this.initialiseTabGuard({
             onFocusIn: (e) => this.onFocusIn(e),
         });

@@ -16,8 +16,7 @@ export class DndSourceComp extends Component {
         this.eCell = eCell;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const eGui = this.getGui();
         eGui.appendChild(_createIconNoSpan('rowDrag', this.gos, null)!);
         // we need to stop the event propagation here to avoid starting a range selection while dragging

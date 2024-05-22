@@ -31,8 +31,7 @@ export class TabbedChartMenu extends Component {
         super();
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.panels.forEach((panel) => {
             const panelType = panel.replace('chart', '').toLowerCase() as 'settings' | 'data' | 'format';
             const panelComp = this.createPanel(panelType);

@@ -56,8 +56,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         super.destroy();
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         if (!this.isValidRowModel()) {
             console.warn(
                 `AG Grid: agAggregationComponent should only be used with the client and server side row model.`

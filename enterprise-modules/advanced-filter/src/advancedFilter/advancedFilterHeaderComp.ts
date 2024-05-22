@@ -30,8 +30,7 @@ export class AdvancedFilterHeaderComp extends Component {
             </div>`);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.setupAdvancedFilter(this.enabled);
 
         this.addDestroyFunc(() => this.destroyBean(this.eAdvancedFilter));

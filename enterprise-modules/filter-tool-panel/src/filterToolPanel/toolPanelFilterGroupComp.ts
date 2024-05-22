@@ -61,8 +61,7 @@ export class ToolPanelFilterGroupComp extends Component {
         this.setTemplate(ToolPanelFilterGroupComp.TEMPLATE, [AgGroupComponent], { filterGroupComp: groupParams });
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.setGroupTitle();
         this.filterGroupComp.setAlignItems('stretch');
 

@@ -53,8 +53,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         `);
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         this.initialiseTabGuard({});
     }
 

@@ -259,8 +259,7 @@ class ContextMenu extends Component {
         super(/* html */ `<div class="${CSS_MENU}" role="presentation"></div>`);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const menuList = this.createManagedBean(
             new AgMenuList(0, {
                 column: this.column,

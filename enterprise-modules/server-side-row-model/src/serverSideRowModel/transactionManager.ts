@@ -34,8 +34,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     private asyncTransactionsTimeout: number | undefined;
     private asyncTransactions: AsyncTransactionWrapper[] = [];
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
         if (!this.gos.isRowModelType('serverSide')) {
             return;

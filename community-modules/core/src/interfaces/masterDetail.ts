@@ -1,3 +1,4 @@
+import { BaseBean } from '../context/bean';
 import { GridOptions } from '../entities/gridOptions';
 import { GridApi } from '../gridApi';
 import { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
@@ -45,7 +46,7 @@ interface TemplateFunc<TData = any> {
     (params: ICellRendererParams<TData>): string;
 }
 
-export interface IDetailCellRendererCtrl {
+export interface IDetailCellRendererCtrl extends BaseBean {
     init(comp: IDetailCellRenderer, params: IDetailCellRendererParams): void;
     registerDetailWithMaster(api: GridApi): void;
     refresh(): boolean;

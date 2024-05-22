@@ -34,8 +34,7 @@ export class AgMenuList extends TabGuardComp {
         };
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         this.initialiseTabGuard({
             onTabKeyDown: (e) => this.onTabKeyDown(e),
             handleKeyDown: (e) => this.handleKeyDown(e),

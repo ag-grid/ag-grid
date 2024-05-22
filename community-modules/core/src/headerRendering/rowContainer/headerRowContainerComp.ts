@@ -30,8 +30,7 @@ export class HeaderRowContainerComp extends Component {
         this.pinned = pinned;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.selectAndSetTemplate();
 
         const compProxy: IHeaderRowContainerComp = {

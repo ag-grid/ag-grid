@@ -9,8 +9,7 @@ export class AgMenuPanel extends TabGuardComp {
         this.setTemplateFromElement(wrappedComponent.getGui());
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         this.initialiseTabGuard({
             onTabKeyDown: (e) => this.onTabKeyDown(e),
             handleKeyDown: (e) => this.handleKeyDown(e),

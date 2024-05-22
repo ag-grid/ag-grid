@@ -81,8 +81,7 @@ export abstract class AbstractHeaderCellCtrl<
         this.instanceId = (columnGroupChild.getUniqueId() + '-' + instanceIdSequence++) as HeaderCellCtrlInstanceId;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.addManagedPropertyListeners(['suppressHeaderFocus'], () => this.refreshTabIndex());
     }
 

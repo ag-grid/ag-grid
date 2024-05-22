@@ -15,8 +15,7 @@ export class PinnedRowModel extends BeanStub {
     private pinnedTopRows: RowNode[];
     private pinnedBottomRows: RowNode[];
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.setPinnedTopRowData();
         this.setPinnedBottomRowData();
         this.addManagedPropertyListener('pinnedTopRowData', () => this.setPinnedTopRowData());

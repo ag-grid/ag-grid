@@ -57,8 +57,7 @@ export class AdvancedFilterBuilderComp extends Component {
             </div>`);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const { showMoveButtons } = this.gos.get('advancedFilterBuilderParams') ?? {};
         this.showMove = !!showMoveButtons;
         this.addManagedPropertyListener('advancedFilterBuilderParams', ({ currentValue }) => {

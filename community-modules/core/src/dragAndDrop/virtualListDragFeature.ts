@@ -43,8 +43,7 @@ export class VirtualListDragFeature<C extends Component, R extends Component, V,
         super();
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.addManagedListener(
             this.params.eventSource,
             this.params.listItemDragStartEvent,

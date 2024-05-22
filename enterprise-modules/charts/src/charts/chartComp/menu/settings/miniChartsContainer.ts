@@ -172,8 +172,7 @@ export class MiniChartsContainer extends Component {
         this.chartGroups = { ...chartGroups };
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         // hide MiniCustomCombo if no custom combo exists
         if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
             this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(

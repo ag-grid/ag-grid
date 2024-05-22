@@ -22,8 +22,7 @@ export class RowNodeBlockLoader extends BeanStub {
     private logger: Logger;
     private active = true;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.maxConcurrentRequests = this.getMaxConcurrentDatasourceRequests();
         const blockLoadDebounceMillis = this.gos.get('blockLoadDebounceMillis');
 

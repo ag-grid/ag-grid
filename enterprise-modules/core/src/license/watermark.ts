@@ -16,8 +16,7 @@ export class AgWatermark extends Component {
         );
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const show = this.shouldDisplayWatermark();
         this.setDisplayed(show);
 

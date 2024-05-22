@@ -20,8 +20,7 @@ export class PageSizeSelectorComp extends Component {
         super(/* html */ `<span class="ag-paging-page-size"></span>`);
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         this.addManagedPropertyListener('paginationPageSizeSelector', () => {
             this.onPageSizeSelectorValuesChange();
         });

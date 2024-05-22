@@ -26,8 +26,7 @@ export class AdvancedFilterBuilderDragFeature extends BeanStub {
         super();
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.createManagedBean(
             new VirtualListDragFeature<
                 AdvancedFilterBuilderComp,

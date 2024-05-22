@@ -30,8 +30,7 @@ export class TabbedLayout extends TabGuardComp {
         this.params = params;
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         this.setupHeader();
 
         if (this.params.items) {

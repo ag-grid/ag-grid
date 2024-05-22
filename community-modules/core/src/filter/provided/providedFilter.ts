@@ -127,8 +127,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     /** Used to get the filter type for filter models. */
     protected abstract getFilterType(): string;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.resetTemplate(); // do this first to create the DOM
         this.createManagedBean(
             new ManagedFocusFeature(this.getFocusableElement(), {

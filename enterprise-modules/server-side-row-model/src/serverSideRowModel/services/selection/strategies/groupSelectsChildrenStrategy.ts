@@ -31,8 +31,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     private selectedState: SelectionState = { selectAllChildren: false, toggledNodes: new Map() };
     private lastSelected: RowNode | null = null;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         // if model has updated, a store may now be fully loaded to clean up indeterminate states
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, () => this.removeRedundantState());
 

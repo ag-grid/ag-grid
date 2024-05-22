@@ -52,8 +52,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         return false;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         if (!this.gos.isRowModelType('infinite')) {
             return;
         }

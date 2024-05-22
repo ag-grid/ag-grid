@@ -99,8 +99,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         params: ITextInputFloatingFilterParams
     ): FloatingFilterInputService;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.setTemplate(/* html */ `
             <div class="ag-floating-filter-input" role="presentation" ref="eFloatingFilterInputContainer"></div>
         `);

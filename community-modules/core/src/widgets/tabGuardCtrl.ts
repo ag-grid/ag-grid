@@ -82,8 +82,7 @@ export class TabGuardCtrl extends BeanStub {
         this.providedHandleKeyDown = handleKeyDown;
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         this.createManagedBean(
             new ManagedFocusFeature(this.eFocusableElement, {
                 shouldStopEventPropagation: () => this.shouldStopEventPropagation(),

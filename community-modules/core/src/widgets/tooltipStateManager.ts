@@ -75,8 +75,7 @@ export class TooltipStateManager extends BeanStub {
         super();
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         if (this.gos.get('tooltipInteraction')) {
             this.interactionEnabled = true;
         }

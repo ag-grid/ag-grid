@@ -20,8 +20,7 @@ export class SyncService extends BeanStub {
 
     private waitingForColumns: boolean = false;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.addManagedPropertyListener('columnDefs', (event) => this.setColumnDefs(event));
     }
 

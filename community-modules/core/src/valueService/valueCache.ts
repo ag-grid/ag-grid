@@ -8,8 +8,7 @@ export class ValueCache extends BeanStub {
     private active: boolean;
     private neverExpires: boolean;
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.active = this.gos.get('valueCache');
         this.neverExpires = this.gos.get('valueCacheNeverExpires');
     }

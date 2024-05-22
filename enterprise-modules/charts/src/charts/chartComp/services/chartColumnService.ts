@@ -26,8 +26,7 @@ export class ChartColumnService extends BeanStub {
 
     private valueColsWithoutSeriesType: Set<string> = new Set();
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const clearValueCols = () => this.valueColsWithoutSeriesType.clear();
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, clearValueCols);
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, clearValueCols);

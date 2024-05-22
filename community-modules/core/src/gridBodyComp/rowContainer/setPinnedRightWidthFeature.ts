@@ -14,8 +14,7 @@ export class SetPinnedRightWidthFeature extends BeanStub {
         this.element = element;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.addManagedListener(
             this.eventService,
             Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED,

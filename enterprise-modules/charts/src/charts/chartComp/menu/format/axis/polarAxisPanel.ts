@@ -24,8 +24,7 @@ export class PolarAxisPanel extends Component {
         super();
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         const { isExpandedOnInit: expanded, chartAxisMenuParamsFactory, registerGroupComponent } = this.options;
         const axisGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-top-level',

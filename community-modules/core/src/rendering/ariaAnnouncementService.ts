@@ -16,8 +16,7 @@ export class AriaAnnouncementService extends BeanStub {
         this.announceValue = _debounce(this.announceValue.bind(this), 200);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const eDocument = this.gos.getDocument();
         const div = (this.descriptionContainer = eDocument.createElement('div'));
         div.classList.add('ag-aria-description-container');

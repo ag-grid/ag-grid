@@ -48,8 +48,7 @@ export class AgSideBar extends Component implements ISideBar {
         super(AgSideBar.TEMPLATE, [AgSideBarButtons]);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.sideBarButtonsComp.addEventListener(
             AgSideBarButtons.EVENT_SIDE_BAR_BUTTON_CLICKED,
             this.onToolPanelButtonClicked.bind(this)

@@ -26,8 +26,7 @@ export class LayoutFeature extends BeanStub {
         this.view = view;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.addManagedPropertyListener('domLayout', this.updateLayoutClasses.bind(this));
         this.updateLayoutClasses();
     }

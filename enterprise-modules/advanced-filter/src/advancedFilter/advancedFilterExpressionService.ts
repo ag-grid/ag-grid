@@ -42,8 +42,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
     private expressionJoinOperators: { AND: string; OR: string };
     private expressionEvaluatorParams: { [colId: string]: FilterExpressionEvaluatorParams<any> } = {};
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.expressionJoinOperators = this.generateExpressionJoinOperators();
         this.expressionOperators = this.generateExpressionOperators();
     }

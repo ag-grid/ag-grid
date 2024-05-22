@@ -360,8 +360,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
         this.includeChecks[TabbedColumnMenu.TAB_COLUMNS] = () => true;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         const tabs = this.getTabsToCreate().map((name) => this.createTab(name));
 
         this.tabbedLayout = new TabbedLayout({
@@ -572,8 +571,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
         `);
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.mainMenuList = this.columnMenuFactory.createMenu(
             this,
             this.column,

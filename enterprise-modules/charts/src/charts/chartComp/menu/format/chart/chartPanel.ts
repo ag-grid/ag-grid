@@ -18,8 +18,7 @@ export class ChartPanel extends Component {
         super();
     }
 
-    public override postConstruct() {
-        super.postConstruct();
+    public postConstruct() {
         const {
             chartController,
             chartMenuParamsFactory,

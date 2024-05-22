@@ -53,8 +53,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         this.listName = listName;
     }
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.addScrollListener();
         this.rowHeight = this.getItemHeight();
         this.addResizeObserver();
