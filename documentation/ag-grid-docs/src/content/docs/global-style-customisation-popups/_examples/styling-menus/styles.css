@@ -3,7 +3,7 @@
     --ag-card-radius: 10px;
     --ag-card-shadow: 0 10px 40px rgb(83, 0, 106);
     --ag-popup-shadow: var(--ag-card-shadow);
-    --ag-tab-min-width: 350px;
+    --ag-menu-min-width: 350px;
 }
 
 .ag-theme-quartz .ag-menu,

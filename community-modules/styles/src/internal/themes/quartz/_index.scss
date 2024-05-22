@@ -69,11 +69,6 @@
 
     .ag-menu {
         color: color-mix(in srgb, transparent, var(--ag-foreground-color) 95%);
-
-        &.ag-tabs {
-            // min width only on top-level popup menu to stop it switching as we change tab
-            min-width: 290px;
-        }
     }
 
     .ag-panel-content-wrapper .ag-column-select {
