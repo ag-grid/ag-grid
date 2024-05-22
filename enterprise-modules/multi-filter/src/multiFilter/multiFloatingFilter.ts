@@ -1,7 +1,4 @@
-import {
-    AgPromise,
-    Autowired,
-    Component,
+import type {
     FilterChangedEvent,
     FilterManager,
     IFilter,
@@ -11,7 +8,11 @@ import {
     IMultiFilterModel,
     MultiFilterParams,
     UserCompDetails,
-    UserComponentFactory,
+    UserComponentFactory} from '@ag-grid-community/core';
+import {
+    AgPromise,
+    Autowired,
+    Component,
     _clearElement,
     _mergeDeep,
     _setDisplayed,
@@ -176,7 +177,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     }
 
     private getCompDetails(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): UserCompDetails | undefined {
-        let defaultComponentName =
+        const defaultComponentName =
             this.userComponentFactory.getDefaultFloatingFilterType(filterDef, () =>
                 this.filterManager.getDefaultFloatingFilter(this.params.column)
             ) ?? 'agReadOnlyFloatingFilter';

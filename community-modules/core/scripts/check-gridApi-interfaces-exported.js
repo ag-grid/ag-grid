@@ -8,7 +8,7 @@ function checkGridOptionPropertyKeys() {
     const matches = [
         ...communityMainFileContents.split('/* COMMUNITY_EXPORTS_START_DO_NOT_DELETE */')[1].matchAll(/(\w)*/g),
     ];
-    let mainExports = new Set();
+    const mainExports = new Set();
     matches.forEach((m) => {
         const split = m[0]
             .split(/\W/)
@@ -19,8 +19,8 @@ function checkGridOptionPropertyKeys() {
         });
     });
 
-    let publicGridApiTypes = getPublicTypes(gridApiContents);
-    let missingPropertyKeys = new Set();
+    const publicGridApiTypes = getPublicTypes(gridApiContents);
+    const missingPropertyKeys = new Set();
 
     const excludedTypescriptExports = new Set([
         'Partial',

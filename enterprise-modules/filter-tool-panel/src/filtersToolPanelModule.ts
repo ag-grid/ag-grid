@@ -1,4 +1,5 @@
-import { Module, ModuleNames } from '@ag-grid-community/core';
+import type { Module} from '@ag-grid-community/core';
+import { ModuleNames } from '@ag-grid-community/core';
 import { AgGroupComponent, EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 

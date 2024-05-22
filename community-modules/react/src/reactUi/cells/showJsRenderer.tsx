@@ -1,8 +1,9 @@
-import { ICellRendererComp } from '@ag-grid-community/core';
-import { MutableRefObject, useCallback, useContext, useEffect } from 'react';
+import type { ICellRendererComp } from '@ag-grid-community/core';
+import type { MutableRefObject} from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 
 import { BeansContext } from '../beansContext';
-import { RenderDetails } from './cellComp';
+import type { RenderDetails } from './cellComp';
 
 const useJsCellRenderer = (
     showDetails: RenderDetails | undefined,

@@ -1,6 +1,6 @@
-import { RowNode } from '../entities/rowNode';
-import { ChangedPath } from '../utils/changedPath';
-import { RowNodeTransaction } from './rowNodeTransaction';
+import type { RowNode } from '../entities/rowNode';
+import type { ChangedPath } from '../utils/changedPath';
+import type { RowNodeTransaction } from './rowNodeTransaction';
 
 export interface StageExecuteParams<TData = any> {
     rowNode: RowNode<TData>;

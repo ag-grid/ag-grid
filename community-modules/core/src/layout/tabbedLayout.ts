@@ -1,11 +1,11 @@
 import { KeyCode } from '../constants/keyCode';
 import { Autowired, PostConstruct } from '../context/context';
-import { FocusService } from '../focusService';
-import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
+import type { FocusService } from '../focusService';
+import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import { _setAriaLabel, _setAriaRole } from '../utils/aria';
 import { _clearElement } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
-import { AgPromise } from '../utils/promise';
+import type { AgPromise } from '../utils/promise';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { TabGuardComp } from '../widgets/tabGuardComp';
 

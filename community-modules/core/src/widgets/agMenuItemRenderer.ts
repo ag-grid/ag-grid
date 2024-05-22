@@ -1,4 +1,4 @@
-import { IMenuItemComp, IMenuItemParams } from '../interfaces/menuItem';
+import type { IMenuItemComp, IMenuItemParams } from '../interfaces/menuItem';
 import { _setAriaExpanded } from '../utils/aria';
 import { _isNodeOrElement, _loadTemplate } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';

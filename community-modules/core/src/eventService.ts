@@ -1,8 +1,8 @@
 import { Bean, Qualifier } from './context/context';
-import { AgEvent, AgEventListener, AgGlobalEventListener, AgGridEvent } from './events';
-import { GridOptionsService } from './gridOptionsService';
-import { IEventEmitter } from './interfaces/iEventEmitter';
-import { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
+import type { AgEvent, AgEventListener, AgGlobalEventListener, AgGridEvent } from './events';
+import type { GridOptionsService } from './gridOptionsService';
+import type { IEventEmitter } from './interfaces/iEventEmitter';
+import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 
 @Bean('eventService')
 export class EventService implements IEventEmitter {

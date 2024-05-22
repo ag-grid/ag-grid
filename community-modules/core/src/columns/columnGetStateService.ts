@@ -1,9 +1,9 @@
 import { Autowired, Bean } from '../context/context';
-import { Column } from '../entities/column';
+import type { Column } from '../entities/column';
 import { _missing } from '../utils/generic';
-import { ColumnState } from './columnApplyStateService';
-import { ColumnModel } from './columnModel';
-import { FuncColsService } from './funcColsService';
+import type { ColumnState } from './columnApplyStateService';
+import type { ColumnModel } from './columnModel';
+import type { FuncColsService } from './funcColsService';
 
 @Bean('columnGetStateService')
 export class ColumnGetStateService {

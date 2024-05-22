@@ -1,13 +1,13 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean } from '../context/context';
-import { ColDef } from '../entities/colDef';
+import type { ColDef } from '../entities/colDef';
 import { Column } from '../entities/column';
-import { ColumnEventType } from '../events';
+import type { ColumnEventType } from '../events';
 import { _missing } from '../utils/generic';
 import { _mergeDeep } from '../utils/object';
-import { ColumnFactory } from './columnFactory';
-import { ColumnModel } from './columnModel';
-import { ColumnNameService } from './columnNameService';
+import type { ColumnFactory } from './columnFactory';
+import type { ColumnModel } from './columnModel';
+import type { ColumnNameService } from './columnNameService';
 
 export const GROUP_AUTO_COLUMN_ID: 'ag-Grid-AutoColumn' = 'ag-Grid-AutoColumn';
 @Bean('autoColService')

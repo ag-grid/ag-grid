@@ -1,9 +1,10 @@
-import { FuncColsService } from '../../columns/funcColsService';
+import type { FuncColsService } from '../../columns/funcColsService';
 import { Autowired } from '../../context/context';
-import { DragAndDropService, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
-import { Column, ColumnPinnedType } from '../../entities/column';
-import { GridOptionsService } from '../../gridOptionsService';
-import { DropListener } from './bodyDropTarget';
+import type { DraggingEvent } from '../../dragAndDrop/dragAndDropService';
+import { DragAndDropService } from '../../dragAndDrop/dragAndDropService';
+import type { Column, ColumnPinnedType } from '../../entities/column';
+import type { GridOptionsService } from '../../gridOptionsService';
+import type { DropListener } from './bodyDropTarget';
 
 export class BodyDropPivotTarget implements DropListener {
     @Autowired('gridOptionsService') private gos: GridOptionsService;

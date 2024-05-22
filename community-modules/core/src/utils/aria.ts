@@ -1,4 +1,4 @@
-import { SortDirection } from '../entities/colDef';
+import type { SortDirection } from '../entities/colDef';
 
 export type ColumnSortState = 'ascending' | 'descending' | 'other' | 'none';
 

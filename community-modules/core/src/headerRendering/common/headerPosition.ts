@@ -1,8 +1,8 @@
-import { VisibleColsService } from '../../columns/visibleColsService';
+import type { VisibleColsService } from '../../columns/visibleColsService';
 import { BeanStub } from '../../context/beanStub';
 import { Autowired, Bean } from '../../context/context';
-import { CtrlsService } from '../../ctrlsService';
-import { Column } from '../../entities/column';
+import type { CtrlsService } from '../../ctrlsService';
+import type { Column } from '../../entities/column';
 import { ColumnGroup } from '../../entities/columnGroup';
 import { _last } from '../../utils/array';
 import { HeaderRowType } from '../row/headerRowComp';

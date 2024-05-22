@@ -1,6 +1,6 @@
-import { IProvidedFilter } from '../filter/provided/providedFilter';
-import { AgPromise } from '../utils/promise';
-import {
+import type { IProvidedFilter } from '../filter/provided/providedFilter';
+import type { AgPromise } from '../utils/promise';
+import type {
     IFilter,
     IFilterComp,
     IFilterDef,

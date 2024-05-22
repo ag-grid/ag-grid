@@ -1,11 +1,12 @@
-import {
+import type {
     AgCheckbox,
+    ColumnModel,
+    GridApi} from '@ag-grid-community/core';
+import {
     AgToggleButton,
     Autowired,
-    ColumnModel,
     Component,
     Events,
-    GridApi,
     PreConstruct,
     RefSelector,
 } from '@ag-grid-community/core';

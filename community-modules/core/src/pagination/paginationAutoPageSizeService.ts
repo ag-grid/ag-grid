@@ -1,10 +1,10 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
+import type { CtrlsService } from '../ctrlsService';
 import { Events } from '../events';
-import { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
+import type { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
 import { _debounce } from '../utils/function';
-import { PaginationProxy } from './paginationProxy';
+import type { PaginationProxy } from './paginationProxy';
 
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {

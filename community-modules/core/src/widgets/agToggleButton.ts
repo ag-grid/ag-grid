@@ -1,6 +1,6 @@
-import { AgCheckboxParams } from '../interfaces/agFieldParams';
+import type { AgCheckboxParams } from '../interfaces/agFieldParams';
 import { AgCheckbox } from './agCheckbox';
-import { AgComponentSelector } from './component';
+import type { AgComponentSelector } from './component';
 
 export interface AgToggleButtonParams extends AgCheckboxParams {}
 

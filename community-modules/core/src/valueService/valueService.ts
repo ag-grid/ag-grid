@@ -1,23 +1,24 @@
-import { ColumnModel } from '../columns/columnModel';
-import { DataTypeService } from '../columns/dataTypeService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { DataTypeService } from '../columns/dataTypeService';
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../context/context';
-import {
+import type {
     KeyCreatorParams,
     ValueFormatterParams,
     ValueGetterParams,
     ValueParserParams,
     ValueSetterParams,
 } from '../entities/colDef';
-import { Column } from '../entities/column';
-import { RowNode } from '../entities/rowNode';
-import { CellValueChangedEvent, Events } from '../events';
-import { IRowNode } from '../interfaces/iRowNode';
+import type { Column } from '../entities/column';
+import type { RowNode } from '../entities/rowNode';
+import type { CellValueChangedEvent} from '../events';
+import { Events } from '../events';
+import type { IRowNode } from '../interfaces/iRowNode';
 import { _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
-import { ExpressionService } from './expressionService';
-import { ValueCache } from './valueCache';
+import type { ExpressionService } from './expressionService';
+import type { ValueCache } from './valueCache';
 
 @Bean('valueService')
 export class ValueService extends BeanStub {

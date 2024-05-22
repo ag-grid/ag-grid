@@ -1,6 +1,6 @@
-import { ADVANCED_FILTER_LOCALE_TEXT } from '../advancedFilterLocaleText';
-import { AutocompleteEntry } from '../autocomplete/autocompleteParams';
-import { AddDropdownCompParams } from './addDropdownComp';
+import type { ADVANCED_FILTER_LOCALE_TEXT } from '../advancedFilterLocaleText';
+import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
+import type { AddDropdownCompParams } from './addDropdownComp';
 
 export function getAdvancedFilterBuilderAddButtonParams(
     translate: (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT) => string,

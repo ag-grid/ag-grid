@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
+import type { ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
 
 type GsType = [string, string, string, string?, string?, string?];
 type LinType = [string, string];

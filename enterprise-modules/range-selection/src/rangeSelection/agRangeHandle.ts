@@ -1,7 +1,8 @@
-import {
+import type {
     AgComponentSelector,
     CellPosition,
-    CellRange,
+    CellRange} from '@ag-grid-community/core';
+import {
     CellRangeType,
     SelectionHandleType,
     _last,

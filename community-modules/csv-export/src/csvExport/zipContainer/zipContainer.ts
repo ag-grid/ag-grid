@@ -1,6 +1,7 @@
 import { Downloader } from '../downloader';
+import type {
+    ProcessedZipFile} from './zipContainerHelper';
 import {
-    ProcessedZipFile,
     buildCentralDirectoryEnd,
     getDeflatedHeaderAndContent,
     getHeaderAndContent,

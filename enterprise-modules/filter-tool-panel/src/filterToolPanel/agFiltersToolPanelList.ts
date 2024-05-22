@@ -1,13 +1,14 @@
-import {
+import type {
     AbstractColDef,
     AgComponentSelector,
-    Autowired,
     Column,
     ColumnModel,
+    FiltersToolPanelState,
+    IProvidedColumn} from '@ag-grid-community/core';
+import {
+    Autowired,
     Component,
     Events,
-    FiltersToolPanelState,
-    IProvidedColumn,
     ProvidedColumnGroup,
     _clearElement,
     _exists,
@@ -16,12 +17,13 @@ import {
     _mergeDeep,
     _setAriaLabel,
 } from '@ag-grid-community/core';
-import { ToolPanelColDefService } from '@ag-grid-enterprise/side-bar';
+import type { ToolPanelColDefService } from '@ag-grid-enterprise/side-bar';
 
 import { EXPAND_STATE } from './agFiltersToolPanelHeader';
-import { ToolPanelFiltersCompParams } from './filtersToolPanel';
+import type { ToolPanelFiltersCompParams } from './filtersToolPanel';
 import { ToolPanelFilterComp } from './toolPanelFilterComp';
-import { ToolPanelFilterGroupComp, ToolPanelFilterItem } from './toolPanelFilterGroupComp';
+import type { ToolPanelFilterItem } from './toolPanelFilterGroupComp';
+import { ToolPanelFilterGroupComp } from './toolPanelFilterGroupComp';
 
 export class AgFiltersToolPanelList extends Component {
     static readonly selector: AgComponentSelector = 'AG-FILTERS-TOOL-PANEL-LIST';

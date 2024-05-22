@@ -1,5 +1,5 @@
-import { CoreParam } from './main';
-import { InferParams, ParamDefaults, Part, PartId } from './theme-types';
+import type { CoreParam } from './main';
+import type { InferParams, ParamDefaults, Part, PartId } from './theme-types';
 
 /**
  * Version of Object.entries typed to allow easy iteration over objects. Callers
@@ -23,10 +23,10 @@ export const clamp = (value: number, min: number, max: number) => Math.max(min, 
 
 export const logErrorMessage = (message: unknown, error?: unknown) => {
     if (error) {
-        // eslint-disable-next-line no-console
+         
         console.error(message, error);
     } else {
-        // eslint-disable-next-line no-console
+         
         console.error(message);
     }
 };

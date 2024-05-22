@@ -1,6 +1,6 @@
-import { ChartType } from '@ag-grid-community/core';
+import type { ChartType } from '@ag-grid-community/core';
 
-import { ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniStackedArea } from './miniStackedArea';
 
 export class MiniNormalizedArea extends MiniStackedArea {

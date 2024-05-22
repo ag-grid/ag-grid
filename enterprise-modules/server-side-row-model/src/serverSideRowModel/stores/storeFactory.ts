@@ -1,6 +1,4 @@
-import {
-    Autowired,
-    Bean,
+import type {
     ColumnModel,
     FuncColsService,
     GetServerSideGroupLevelParamsParams,
@@ -8,11 +6,14 @@ import {
     IServerSideStore,
     RowNode,
     ServerSideGroupLevelParams,
-    WithoutGridCommon,
+    WithoutGridCommon} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Bean,
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import { SSRMParams } from '../serverSideRowModel';
+import type { SSRMParams } from '../serverSideRowModel';
 import { FullStore } from './fullStore';
 import { LazyStore } from './lazy/lazyStore';
 

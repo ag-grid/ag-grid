@@ -1,17 +1,19 @@
 import { Autowired, PostConstruct, PreDestroy } from '../../context/context';
-import { Beans } from '../../rendering/beans';
+import type { Beans } from '../../rendering/beans';
 import { RowComp } from '../../rendering/row/rowComp';
-import { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
+import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
 import { _setAriaRole } from '../../utils/aria';
 import { _ensureDomOrder, _insertWithDomOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
-import { AgComponentSelector, Component } from '../../widgets/component';
+import type { AgComponentSelector} from '../../widgets/component';
+import { Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
-import {
+import type {
     IRowContainerComp,
+    RowContainerType} from './rowContainerCtrl';
+import {
     RowContainerCtrl,
     RowContainerName,
-    RowContainerType,
     getRowContainerTypeForName,
 } from './rowContainerCtrl';
 

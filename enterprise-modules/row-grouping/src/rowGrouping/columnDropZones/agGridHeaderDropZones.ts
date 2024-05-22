@@ -1,10 +1,11 @@
-import {
+import type {
     AgComponentSelector,
-    Autowired,
     ColumnModel,
+    FuncColsService} from '@ag-grid-community/core';
+import {
+    Autowired,
     Component,
     Events,
-    FuncColsService,
     PostConstruct,
     _setAriaRole,
 } from '@ag-grid-community/core';

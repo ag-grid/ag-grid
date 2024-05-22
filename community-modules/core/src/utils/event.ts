@@ -1,5 +1,5 @@
-import { GridOptionsService } from '../gridOptionsService';
-import { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import type { GridOptionsService } from '../gridOptionsService';
+import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import { _includes } from './array';
 
 const AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';

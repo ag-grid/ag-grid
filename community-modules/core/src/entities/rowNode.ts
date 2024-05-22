@@ -1,11 +1,12 @@
 import { EventService } from '../eventService';
-import { AgEvent, AgEventListener, Events, RowEvent, RowSelectedEvent, SelectionEventSourceType } from '../events';
-import { CellEditRequestEvent } from '../events';
-import { DetailGridInfo } from '../gridApi';
-import { IServerSideStore } from '../interfaces/IServerSideStore';
-import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import { IEventEmitter } from '../interfaces/iEventEmitter';
-import {
+import type { AgEvent, AgEventListener, RowEvent, RowSelectedEvent, SelectionEventSourceType } from '../events';
+import { Events } from '../events';
+import type { CellEditRequestEvent } from '../events';
+import type { DetailGridInfo } from '../gridApi';
+import type { IServerSideStore } from '../interfaces/IServerSideStore';
+import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { IEventEmitter } from '../interfaces/iEventEmitter';
+import type {
     CellChangedEvent,
     DataChangedEvent,
     IRowNode,
@@ -15,12 +16,12 @@ import {
     RowPinnedType,
     SetSelectedParams,
 } from '../interfaces/iRowNode';
-import { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
+import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
 import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
-import { Beans } from '../rendering/beans';
+import type { Beans } from '../rendering/beans';
 import { _debounce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
-import { Column } from './column';
+import type { Column } from './column';
 
 export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     public static ID_PREFIX_ROW_GROUP = 'row-group-';

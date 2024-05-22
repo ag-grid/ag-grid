@@ -1,4 +1,4 @@
-import { AgEventListener } from '../events';
+import type { AgEventListener } from '../events';
 
 export interface IEventEmitter {
     addEventListener(

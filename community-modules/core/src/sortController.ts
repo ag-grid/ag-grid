@@ -1,13 +1,14 @@
-import { ColumnModel } from './columns/columnModel';
-import { FuncColsService } from './columns/funcColsService';
-import { ShowRowGroupColsService } from './columns/showRowGroupColsService';
+import type { ColumnModel } from './columns/columnModel';
+import type { FuncColsService } from './columns/funcColsService';
+import type { ShowRowGroupColsService } from './columns/showRowGroupColsService';
 import { BeanStub } from './context/beanStub';
 import { Autowired, Bean } from './context/context';
-import { SortDirection } from './entities/colDef';
-import { Column } from './entities/column';
-import { ColumnEventType, Events, SortChangedEvent } from './events';
-import { WithoutGridCommon } from './interfaces/iCommon';
-import { SortOption } from './rowNodes/rowNodeSorter';
+import type { SortDirection } from './entities/colDef';
+import type { Column } from './entities/column';
+import type { ColumnEventType, SortChangedEvent } from './events';
+import { Events } from './events';
+import type { WithoutGridCommon } from './interfaces/iCommon';
+import type { SortOption } from './rowNodes/rowNodeSorter';
 
 export interface SortModelItem {
     /** Column Id to apply the sort to. */

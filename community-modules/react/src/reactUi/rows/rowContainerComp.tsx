@@ -1,8 +1,9 @@
-import {
+import type {
     IRowContainerComp,
+    RowCtrl} from '@ag-grid-community/core';
+import {
     RowContainerCtrl,
     RowContainerName,
-    RowCtrl,
     getRowContainerTypeForName,
 } from '@ag-grid-community/core';
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';

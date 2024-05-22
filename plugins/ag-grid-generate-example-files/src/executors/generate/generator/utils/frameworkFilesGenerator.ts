@@ -12,7 +12,7 @@ import {
     readAsJsFile,
     removeModuleRegistration,
 } from '../transformation-scripts/parser-utils';
-import { InternalFramework, ParsedBindings } from '../types';
+import type { InternalFramework, ParsedBindings } from '../types';
 import type { ExampleConfig, FileContents } from '../types';
 import { deepCloneObject } from './deepCloneObject';
 import { getBoilerPlateFiles, getEntryFileName, getMainFileName } from './fileUtils';

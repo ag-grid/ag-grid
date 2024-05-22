@@ -1,10 +1,11 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../context/context';
 import { RowNode } from '../entities/rowNode';
-import { CssVariablesChanged, Events, PinnedRowDataChangedEvent } from '../events';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { RowPinnedType } from '../interfaces/iRowNode';
-import { Beans } from '../rendering/beans';
+import type { CssVariablesChanged, PinnedRowDataChangedEvent } from '../events';
+import { Events } from '../events';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { RowPinnedType } from '../interfaces/iRowNode';
+import type { Beans } from '../rendering/beans';
 import { _last } from '../utils/array';
 import { _missingOrEmpty } from '../utils/generic';
 

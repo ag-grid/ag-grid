@@ -1,10 +1,11 @@
-import {
+import type {
     ComponentClass,
+    IGridBodyComp} from '@ag-grid-community/core';
+import {
     CssClassManager,
     FakeHScrollComp,
     FakeVScrollComp,
     GridBodyCtrl,
-    IGridBodyComp,
     OverlayWrapperComponent,
     RowContainerName,
     _setAriaColCount,
@@ -50,7 +51,7 @@ const GridBodyComp = () => {
     // problem as the UI will finish initialising before we set data.
     const [layoutClass, setLayoutClass] = useState<string>('ag-layout-normal');
 
-    let cssClassManager = useRef<CssClassManager>();
+    const cssClassManager = useRef<CssClassManager>();
     if (!cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eRoot.current);
     }

@@ -1,19 +1,20 @@
+import type {
+    ChartType,
+    SeriesChartType} from '@ag-grid-community/core';
 import {
     AgCheckbox,
     AgSelect,
     Autowired,
-    ChartType,
     Component,
     PostConstruct,
-    SeriesChartType,
     _areEqual,
     _clearElement,
 } from '@ag-grid-community/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartController } from '../../chartController';
-import { ColState } from '../../model/chartDataModel';
-import { ChartTranslationService } from '../../services/chartTranslationService';
+import type { ChartController } from '../../chartController';
+import type { ColState } from '../../model/chartDataModel';
+import type { ChartTranslationService } from '../../services/chartTranslationService';
 
 export class SeriesChartTypePanel extends Component {
     private static TEMPLATE = /* html */ `<div id="seriesChartTypeGroup"></div>`;

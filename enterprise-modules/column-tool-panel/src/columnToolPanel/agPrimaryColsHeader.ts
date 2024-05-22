@@ -1,9 +1,10 @@
+import type {
+    AgComponentSelector,
+    ColumnModel} from '@ag-grid-community/core';
 import {
     AgCheckbox,
-    AgComponentSelector,
     AgInputTextField,
     Autowired,
-    ColumnModel,
     Component,
     Events,
     KeyCode,
@@ -14,7 +15,7 @@ import {
     _setDisplayed,
 } from '@ag-grid-community/core';
 
-import { ToolPanelColumnCompParams } from './columnToolPanel';
+import type { ToolPanelColumnCompParams } from './columnToolPanel';
 
 export enum ExpandState {
     EXPANDED,

@@ -1,12 +1,13 @@
 import { AutoScrollService } from '../autoScrollService';
 import { BeanStub } from '../context/beanStub';
 import { Autowired, PostConstruct } from '../context/context';
-import { AgEvent } from '../events';
-import { IEventEmitter } from '../interfaces/iEventEmitter';
+import type { AgEvent } from '../events';
+import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import { _radioCssClass } from '../utils/dom';
-import { Component } from '../widgets/component';
-import { VirtualList } from '../widgets/virtualList';
-import { DragAndDropService, DragSourceType, DraggingEvent, DropTarget } from './dragAndDropService';
+import type { Component } from '../widgets/component';
+import type { VirtualList } from '../widgets/virtualList';
+import type { DragSourceType, DraggingEvent, DropTarget } from './dragAndDropService';
+import { DragAndDropService } from './dragAndDropService';
 
 const LIST_ITEM_HOVERED = 'ag-list-item-hovered';
 

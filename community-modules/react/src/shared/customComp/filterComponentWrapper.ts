@@ -1,7 +1,7 @@
-import { AgPromise, IDoesFilterPassParams, IFilter, IFilterParams } from '@ag-grid-community/core';
+import type { AgPromise, IDoesFilterPassParams, IFilter, IFilterParams } from '@ag-grid-community/core';
 
 import { CustomComponentWrapper } from './customComponentWrapper';
-import { CustomFilterCallbacks, CustomFilterProps } from './interfaces';
+import type { CustomFilterCallbacks, CustomFilterProps } from './interfaces';
 
 export class FilterComponentWrapper
     extends CustomComponentWrapper<IFilterParams, CustomFilterProps, CustomFilterCallbacks>

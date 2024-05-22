@@ -1,13 +1,14 @@
-import {
-    Autowired,
+import type {
     BaseCellDataType,
     Beans,
-    DragAndDropService,
     DragSource,
+    FieldPickerValueSelectedEvent,
+    FieldValueEvent} from '@ag-grid-community/core';
+import {
+    Autowired,
+    DragAndDropService,
     DragSourceType,
     Events,
-    FieldPickerValueSelectedEvent,
-    FieldValueEvent,
     KeyCode,
     PostConstruct,
     RefSelector,
@@ -24,23 +25,25 @@ import {
     _stopPropagationForAgGrid,
 } from '@ag-grid-community/core';
 
-import { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
-import { AutocompleteEntry } from '../autocomplete/autocompleteParams';
+import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
+import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 import { AddDropdownComp } from './addDropdownComp';
+import type {
+    AdvancedFilterBuilderDragStartedEvent} from './advancedFilterBuilderDragFeature';
 import {
-    AdvancedFilterBuilderDragFeature,
-    AdvancedFilterBuilderDragStartedEvent,
+    AdvancedFilterBuilderDragFeature
 } from './advancedFilterBuilderDragFeature';
 import { AdvancedFilterBuilderItemNavigationFeature } from './advancedFilterBuilderItemNavigationFeature';
 import { getAdvancedFilterBuilderAddButtonParams } from './advancedFilterBuilderUtils';
 import { ConditionPillWrapperComp } from './conditionPillWrapperComp';
-import {
+import type {
     AdvancedFilterBuilderAddEvent,
-    AdvancedFilterBuilderEvents,
     AdvancedFilterBuilderItem,
     AdvancedFilterBuilderMoveEvent,
     AdvancedFilterBuilderRemoveEvent,
-    CreatePillParams,
+    CreatePillParams} from './iAdvancedFilterBuilder';
+import {
+    AdvancedFilterBuilderEvents
 } from './iAdvancedFilterBuilder';
 import { InputPillComp } from './inputPillComp';
 import { JoinPillWrapperComp } from './joinPillWrapperComp';

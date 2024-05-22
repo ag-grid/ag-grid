@@ -1,16 +1,16 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { Column } from '../entities/column';
-import { ColumnGroup } from '../entities/columnGroup';
-import { ColumnEventType } from '../events';
-import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
-import { AnimationFrameService } from '../misc/animationFrameService';
-import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
+import type { CtrlsService } from '../ctrlsService';
+import type { Column } from '../entities/column';
+import type { ColumnGroup } from '../entities/columnGroup';
+import type { ColumnEventType } from '../events';
+import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
+import type { AnimationFrameService } from '../misc/animationFrameService';
+import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import { _exists } from '../utils/generic';
-import { ColumnEventDispatcher } from './columnEventDispatcher';
-import { ColKey, ColumnModel, Maybe } from './columnModel';
-import { VisibleColsService } from './visibleColsService';
+import type { ColumnEventDispatcher } from './columnEventDispatcher';
+import type { ColKey, ColumnModel, Maybe } from './columnModel';
+import type { VisibleColsService } from './visibleColsService';
 
 @Bean('columnAutosizeService')
 export class ColumnAutosizeService extends BeanStub {

@@ -1,6 +1,4 @@
-import {
-    Autowired,
-    Bean,
+import type {
     ColumnModel,
     ColumnNameService,
     CsvCustomContent,
@@ -8,13 +6,16 @@ import {
     FuncColsService,
     GridOptionsService,
     ICsvCreator,
-    PostConstruct,
-    ValueService,
+    ValueService} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Bean,
+    PostConstruct
 } from '@ag-grid-community/core';
 
 import { BaseCreator } from './baseCreator';
 import { Downloader } from './downloader';
-import { GridSerializer } from './gridSerializer';
+import type { GridSerializer } from './gridSerializer';
 import { CsvSerializingSession } from './sessions/csvSerializingSession';
 
 @Bean('csvCreator')

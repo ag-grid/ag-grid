@@ -1,7 +1,7 @@
 import { BeanStub } from '../../context/beanStub';
 import { Autowired, Bean } from '../../context/context';
-import { CtrlsService } from '../../ctrlsService';
-import { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
+import type { CtrlsService } from '../../ctrlsService';
+import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
 
 export interface HorizontalResizeParams {
     eResizeBar: HTMLElement;

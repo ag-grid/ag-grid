@@ -1,4 +1,5 @@
-import { ColDef, ColGroupDef, GridOptions, GridReadyEvent, createGrid } from '@ag-grid-community/core';
+import type { ColDef, ColGroupDef, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
+import { createGrid } from '@ag-grid-community/core';
 import { afterEach, beforeEach, describe, expect, it, jest, test, xit, xtest } from '@jest/globals';
 
 import { ClientSideRowModelModule } from './clientSideRowModelModule';

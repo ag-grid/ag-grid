@@ -1,16 +1,16 @@
-import { ColumnModel } from '../columns/columnModel';
+import type { ColumnModel } from '../columns/columnModel';
 import { Autowired, PostConstruct } from '../context/context';
-import { Column } from '../entities/column';
+import type { Column } from '../entities/column';
 import { Events } from '../eventKeys';
-import { FilterDestroyedEvent, FilterOpenedEvent } from '../events';
-import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { IFilterComp } from '../interfaces/iFilter';
+import type { FilterDestroyedEvent, FilterOpenedEvent } from '../events';
+import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IFilterComp } from '../interfaces/iFilter';
 import { _clearElement } from '../utils/dom';
 import { _exists } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { Component } from '../widgets/component';
-import { FilterManager, FilterRequestSource, FilterWrapper } from './filterManager';
+import type { FilterManager, FilterRequestSource, FilterWrapper } from './filterManager';
 
 export class FilterWrapperComp extends Component {
     @Autowired('filterManager') private readonly filterManager: FilterManager;

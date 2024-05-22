@@ -1,20 +1,22 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../context/context';
-import { Column, ColumnPinnedType } from '../entities/column';
+import type { ColumnPinnedType } from '../entities/column';
+import { Column } from '../entities/column';
 import { ColumnGroup } from '../entities/columnGroup';
-import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
-import { RowNode } from '../entities/rowNode';
-import { ColumnContainerWidthChanged, ColumnEventType, DisplayedColumnsWidthChangedEvent, Events } from '../events';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
+import type { ProvidedColumnGroup } from '../entities/providedColumnGroup';
+import type { RowNode } from '../entities/rowNode';
+import type { ColumnContainerWidthChanged, ColumnEventType, DisplayedColumnsWidthChangedEvent} from '../events';
+import { Events } from '../events';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
 import { _last, _removeAllFromUnorderedArray } from '../utils/array';
 import { _exists } from '../utils/generic';
-import { ColumnEventDispatcher } from './columnEventDispatcher';
-import { ColumnModel } from './columnModel';
-import { ColumnSizeService } from './columnSizeService';
+import type { ColumnEventDispatcher } from './columnEventDispatcher';
+import type { ColumnModel } from './columnModel';
+import type { ColumnSizeService } from './columnSizeService';
 import { getWidthOfColsInList } from './columnUtils';
-import { ColumnViewportService } from './columnViewportService';
-import { FuncColsService } from './funcColsService';
+import type { ColumnViewportService } from './columnViewportService';
+import type { FuncColsService } from './funcColsService';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups

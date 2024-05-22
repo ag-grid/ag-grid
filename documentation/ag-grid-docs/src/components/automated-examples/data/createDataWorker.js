@@ -90,7 +90,7 @@ export function createDataWorker() {
         return itemsToUpdate;
     }
 
-    let latestUpdateId = 0;
+    const latestUpdateId = 0;
     let intervalId;
     function startUpdates(thisUpdateId) {
         if (messageFrequency <= 0) {

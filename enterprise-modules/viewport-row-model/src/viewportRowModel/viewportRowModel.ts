@@ -1,20 +1,21 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
     Beans,
-    Events,
     FocusService,
     IRowModel,
     IViewportDatasource,
     ModelUpdatedEvent,
-    PostConstruct,
-    PreDestroy,
     RowBounds,
     RowModelType,
-    RowNode,
     RowRenderer,
-    WithoutGridCommon,
+    WithoutGridCommon} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Bean,
+    BeanStub,
+    Events,
+    PostConstruct,
+    PreDestroy,
+    RowNode,
     _iterateObject,
     _missing,
 } from '@ag-grid-community/core';

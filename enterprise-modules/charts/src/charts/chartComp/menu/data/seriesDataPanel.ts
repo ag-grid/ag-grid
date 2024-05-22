@@ -1,9 +1,9 @@
 import { AgCheckbox, AgToggleButton, PostConstruct, _clearElement } from '@ag-grid-community/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartController } from '../../chartController';
-import { ColState } from '../../model/chartDataModel';
-import { ChartOptionsService } from '../../services/chartOptionsService';
+import type { ChartController } from '../../chartController';
+import type { ColState } from '../../model/chartDataModel';
+import type { ChartOptionsService } from '../../services/chartOptionsService';
 import { DragDataPanel } from './dragDataPanel';
 
 export class SeriesDataPanel extends DragDataPanel {

@@ -1,15 +1,16 @@
-import { AdvancedFilterModel } from '@ag-grid-community/core';
+import type { AdvancedFilterModel } from '@ag-grid-community/core';
 
-import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
-import { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
+import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
+import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 import { ColFilterExpressionParser } from './colFilterExpressionParser';
 import { findMatch } from './filterExpressionOperators';
-import {
+import type {
     AutocompleteUpdate,
     FilterExpressionFunction,
     FilterExpressionFunctionParams,
     FilterExpressionParserParams,
-    FilterExpressionValidationError,
+    FilterExpressionValidationError} from './filterExpressionUtils';
+import {
     checkAndUpdateExpression,
     findEndPosition,
     getSearchString,

@@ -1,8 +1,9 @@
-import {
+import type {
     ColumnPinnedType,
-    HeaderRowContainerCtrl,
     HeaderRowCtrl,
-    IHeaderRowContainerComp,
+    IHeaderRowContainerComp} from '@ag-grid-community/core';
+import {
+    HeaderRowContainerCtrl
 } from '@ag-grid-community/core';
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 

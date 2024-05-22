@@ -1,5 +1,5 @@
 // @START_IMPORTS@
-import {
+import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterModel,
     AgChartTheme,
@@ -78,7 +78,6 @@ import {
     GetServerSideGroupKey,
     GetServerSideGroupLevelParamsParams,
     GridColumnsChangedEvent,
-    GridPreDestroyedEvent,
     GridReadyEvent,
     GridSizeChangedEvent,
     GridState,
@@ -165,28 +164,32 @@ import {
     UseGroupTotalRow,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
-    VirtualRowRemovedEvent,
+    VirtualRowRemovedEvent} from '@ag-grid-community/core';
+import {
+    GridPreDestroyedEvent
 } from '@ag-grid-community/core';
 // @END_IMPORTS@
-import {
-    AgPromise,
-    ComponentUtil,
+import type {
     GridApi,
     GridOptions,
     GridParams,
-    Module,
+    Module} from '@ag-grid-community/core';
+import {
+    AgPromise,
+    ComponentUtil,
     createGrid,
 } from '@ag-grid-community/core';
-import {
+import type {
     AfterViewInit,
-    Component,
     ElementRef,
-    EventEmitter,
-    Input,
     OnChanges,
     OnDestroy,
+    ViewContainerRef} from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
     Output,
-    ViewContainerRef,
     ViewEncapsulation,
 } from '@angular/core';
 

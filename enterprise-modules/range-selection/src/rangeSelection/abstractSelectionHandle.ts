@@ -1,29 +1,30 @@
-import {
-    Autowired,
+import type {
     CellCtrl,
     CellNavigationService,
     CellPosition,
     CellPositionUtils,
     CellRange,
     ColumnModel,
-    Component,
     CtrlsService,
     DragService,
     ISelectionHandle,
     MouseEventService,
     NavigationService,
-    PostConstruct,
     RowPosition,
     RowPositionUtils,
     RowRenderer,
+    VisibleColsService} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Component,
+    PostConstruct,
     SelectionHandleType,
-    VisibleColsService,
     _isVisible,
     _last,
     _setDisplayed,
 } from '@ag-grid-community/core';
 
-import { RangeService } from './rangeService';
+import type { RangeService } from './rangeService';
 
 export abstract class AbstractSelectionHandle extends Component implements ISelectionHandle {
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;

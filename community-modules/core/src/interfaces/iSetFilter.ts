@@ -1,10 +1,10 @@
-import { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
-import { Column } from '../entities/column';
-import { IProvidedFilter, IProvidedFilterParams } from '../filter/provided/providedFilter';
-import { GridApi } from '../gridApi';
-import { ITooltipParams } from '../rendering/tooltipComponent';
-import { AgPromise } from '../utils/promise';
-import { IFilterParams, ProvidedFilterModel } from './iFilter';
+import type { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
+import type { Column } from '../entities/column';
+import type { IProvidedFilter, IProvidedFilterParams } from '../filter/provided/providedFilter';
+import type { GridApi } from '../gridApi';
+import type { ITooltipParams } from '../rendering/tooltipComponent';
+import type { AgPromise } from '../utils/promise';
+import type { IFilterParams, ProvidedFilterModel } from './iFilter';
 
 export type SetFilterModelValue = (string | null)[];
 export interface SetFilterModel extends ProvidedFilterModel {

@@ -1,12 +1,12 @@
 import { BeanStub } from '../../context/beanStub';
 import { Autowired, PostConstruct } from '../../context/context';
-import { CtrlsService } from '../../ctrlsService';
-import { RowNode } from '../../entities/rowNode';
-import { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
-import { IRowModel } from '../../interfaces/iRowModel';
+import type { CtrlsService } from '../../ctrlsService';
+import type { RowNode } from '../../entities/rowNode';
+import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
+import type { IRowModel } from '../../interfaces/iRowModel';
 import { _last } from '../../utils/array';
-import { RowCtrl } from '../row/rowCtrl';
-import { RowCtrlByRowNodeIdMap, RowRenderer } from '../rowRenderer';
+import type { RowCtrl } from '../row/rowCtrl';
+import type { RowCtrlByRowNodeIdMap, RowRenderer } from '../rowRenderer';
 
 export class StickyRowFeature extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;

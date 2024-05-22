@@ -1,14 +1,14 @@
 import { ColumnModel } from '../../columns/columnModel';
-import { VisibleColsService } from '../../columns/visibleColsService';
-import { AbstractColDef, HeaderClassParams, ToolPanelClassParams } from '../../entities/colDef';
-import { Column } from '../../entities/column';
-import { ColumnGroup } from '../../entities/columnGroup';
-import { ProvidedColumnGroup } from '../../entities/providedColumnGroup';
-import { GridOptionsService } from '../../gridOptionsService';
-import { WithoutGridCommon } from '../../interfaces/iCommon';
-import { ICellComp } from '../../rendering/cell/cellCtrl';
+import type { VisibleColsService } from '../../columns/visibleColsService';
+import type { AbstractColDef, HeaderClassParams, ToolPanelClassParams } from '../../entities/colDef';
+import type { Column } from '../../entities/column';
+import type { ColumnGroup } from '../../entities/columnGroup';
+import type { ProvidedColumnGroup } from '../../entities/providedColumnGroup';
+import type { GridOptionsService } from '../../gridOptionsService';
+import type { WithoutGridCommon } from '../../interfaces/iCommon';
+import type { ICellComp } from '../../rendering/cell/cellCtrl';
 import { _missing } from '../../utils/generic';
-import { IAbstractHeaderCellComp } from './abstractCell/abstractHeaderCellCtrl';
+import type { IAbstractHeaderCellComp } from './abstractCell/abstractHeaderCellCtrl';
 
 const CSS_FIRST_COLUMN = 'ag-column-first';
 const CSS_LAST_COLUMN = 'ag-column-last';

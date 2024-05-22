@@ -1,4 +1,5 @@
-import { AgPromise, ICellEditor, IFilter, IStatusPanel, IToolPanel, _warnOnce } from '@ag-grid-community/core';
+import type { ICellEditor, IFilter, IStatusPanel, IToolPanel} from '@ag-grid-community/core';
+import { AgPromise, _warnOnce } from '@ag-grid-community/core';
 
 /**
  * Function to retrieve the React component from an instance returned by the grid.
