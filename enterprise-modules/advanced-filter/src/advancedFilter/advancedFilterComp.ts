@@ -47,7 +47,7 @@ export class AdvancedFilterComp extends Component {
         super(
             /* html */ `
             <div class="ag-advanced-filter" role="presentation" tabindex="-1">
-                <ag-autocomplete data-ref="autocomplete"></ag-autocomplete>
+                <ag-autocomplete data-ref="eAutocomplete"></ag-autocomplete>
                 <button class="ag-button ag-standard-button ag-advanced-filter-apply-button" data-ref="eApplyFilterButton"></button>
                 <button class="ag-advanced-filter-builder-button" data-ref="eBuilderFilterButton">
                     <span data-ref="eBuilderFilterButtonIcon" aria-hidden="true"></span>

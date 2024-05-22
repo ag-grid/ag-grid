@@ -38,7 +38,7 @@ export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupP
 export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     @Autowired('columnModel') private columnModel: ColumnModel;
 
-    static TEMPLATE /* html */ = `<div class="ag-header-group-cell-label" data-ref="agContainer" role="presentation">
+    static TEMPLATE /* html */ = `<div class="ag-header-group-cell-label" role="presentation">
             <span data-ref="agLabel" class="ag-header-group-text" role="presentation"></span>
             <span data-ref="agOpened" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded"></span>
             <span data-ref="agClosed" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed"></span>

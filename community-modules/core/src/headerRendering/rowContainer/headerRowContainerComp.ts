@@ -69,7 +69,7 @@ export class HeaderRowContainerComp extends Component {
 
         // for left and right, we add rows directly to the root element,
         // but for center container we add elements to the child container.
-        this.eRowContainer = this.eCenterContainer ? this.eCenterContainer : this.getGui();
+        this.eRowContainer = this.eCenterContainer !== RefPlaceholder ? this.eCenterContainer : this.getGui();
     }
 
     @PreDestroy

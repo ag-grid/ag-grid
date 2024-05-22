@@ -84,7 +84,7 @@ export class GridComp extends TabGuardComp {
     private createTemplate(): string {
         const dropZones = this.ctrl.showDropZones() ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
         const sideBar = this.ctrl.showSideBar() ? '<ag-side-bar data-ref="sideBar"></ag-side-bar>' : '';
-        const statusBar = this.ctrl.showStatusBar() ? '<ag-status-bar data-ref="statusBar"></ag-status-bar>' : '';
+        const statusBar = this.ctrl.showStatusBar() ? '<ag-status-bar></ag-status-bar>' : '';
         const watermark = this.ctrl.showWatermark() ? '<ag-watermark></ag-watermark>' : '';
 
         const template =
