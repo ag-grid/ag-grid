@@ -432,7 +432,8 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             if (parent?.childrenMapped?.[mapKey] !== child) {
                 parent.childrenMapped[mapKey] = child;
                 parent.childrenAfterGroup!.push(child);
-                parent?.updateHasChildren();
+                parent.group = true;
+                parent.updateHasChildren();
             }
         }
     }
