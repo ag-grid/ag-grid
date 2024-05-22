@@ -56,7 +56,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         super.destroy();
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         if (!this.isValidRowModel()) {
             console.warn(

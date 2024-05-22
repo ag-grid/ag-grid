@@ -33,7 +33,7 @@ export class TitleEdit extends Component {
         super(TitleEdit.TEMPLATE);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.addManagedListener(this.getGui(), 'keydown', (e: KeyboardEvent) => {
             if (this.editing && e.key === 'Enter' && !e.shiftKey) {

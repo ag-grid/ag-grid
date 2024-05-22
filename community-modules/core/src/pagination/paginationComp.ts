@@ -40,7 +40,7 @@ export class PaginationComp extends Component {
         super();
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const isRtl = this.gos.get('enableRtl');
         this.setTemplate(this.getTemplate(), [PageSizeSelectorComp]);

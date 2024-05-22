@@ -25,7 +25,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         super(HeaderFilterCellComp.TEMPLATE, ctrl);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const eGui = this.getGui();
 
@@ -53,7 +53,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         this.compPromise.then((comp) => this.afterCompCreated(comp));
     }
 
-    protected override destroy(): void {
+    public override destroy(): void {
         this.destroyFloatingFilterComp();
         super.destroy();
     }

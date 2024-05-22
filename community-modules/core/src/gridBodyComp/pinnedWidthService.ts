@@ -10,7 +10,7 @@ export class PinnedWidthService extends BeanStub {
     private leftWidth: number;
     private rightWidth: number;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const listener = this.checkContainerWidths.bind(this);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);

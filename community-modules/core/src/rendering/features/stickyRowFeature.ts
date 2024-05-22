@@ -30,7 +30,7 @@ export class StickyRowFeature extends BeanStub {
         super();
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.isClientSide = this.rowModel.getType() === 'clientSide';
 

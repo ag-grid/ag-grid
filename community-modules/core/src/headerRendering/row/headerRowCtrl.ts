@@ -55,7 +55,7 @@ export class HeaderRowCtrl extends BeanStub {
         this.headerRowClass = `ag-header-row ${typeClass}`;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.isPrintLayout = this.gos.isDomLayout('print');
         this.isEnsureDomOrder = this.gos.get('ensureDomOrder');
@@ -371,7 +371,7 @@ export class HeaderRowCtrl extends BeanStub {
         return ctrl.focus(event);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         if (this.headerCellCtrls) {
             this.headerCellCtrls.forEach((ctrl) => {
                 this.destroyBean(ctrl);

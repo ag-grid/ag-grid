@@ -27,7 +27,7 @@ export class MarkersPanel extends Component {
         super();
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         // scatter charts should always show markers
         const chartType = this.chartOptionsService.getChartType();

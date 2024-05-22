@@ -28,7 +28,7 @@ export class QuickFilterService extends BeanStub {
     private parser?: (quickFilter: string) => string[];
     private matcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () =>
             this.resetQuickFilterCache()

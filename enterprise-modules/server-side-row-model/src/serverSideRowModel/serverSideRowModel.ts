@@ -107,7 +107,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.datasource = undefined;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onStoreUpdated.bind(this));
@@ -712,7 +712,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
     }
 
-    protected override destroy(): void {
+    public override destroy(): void {
         this.destroyDatasource();
         this.destroyRootStore();
         super.destroy();

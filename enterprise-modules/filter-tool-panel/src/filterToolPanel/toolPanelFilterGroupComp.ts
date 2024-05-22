@@ -52,7 +52,7 @@ export class ToolPanelFilterGroupComp extends Component {
         this.showingColumn = showingColumn;
     }
 
-    protected override preConstruct(): void {
+    public override preConstruct(): void {
         super.preConstruct();
         const groupParams: AgGroupComponentParams = {
             cssIdentifier: 'filter-toolpanel',
@@ -61,7 +61,7 @@ export class ToolPanelFilterGroupComp extends Component {
         this.setTemplate(ToolPanelFilterGroupComp.TEMPLATE, [AgGroupComponent], { filterGroupComp: groupParams });
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.setGroupTitle();
         this.filterGroupComp.setAlignItems('stretch');
@@ -266,7 +266,7 @@ export class ToolPanelFilterGroupComp extends Component {
         _clearElement(this.getGui());
     }
 
-    protected destroy() {
+    public override destroy() {
         this.destroyFilters();
         super.destroy();
     }

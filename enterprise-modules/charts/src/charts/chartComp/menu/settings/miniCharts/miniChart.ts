@@ -33,7 +33,7 @@ export abstract class MiniChart extends Component {
         this.scene = scene;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.scene.canvas.element.title = this.chartTranslationService.translate(this.tooltipName);
 

@@ -77,7 +77,7 @@ export class AgPrimaryColsList extends Component {
         super(AgPrimaryColsList.TEMPLATE);
     }
 
-    protected override destroy(): void {
+    public override destroy(): void {
         this.destroyColumnTree();
         super.destroy();
     }

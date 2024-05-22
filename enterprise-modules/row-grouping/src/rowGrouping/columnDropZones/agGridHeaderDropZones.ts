@@ -24,7 +24,7 @@ export class AgGridHeaderDropZones extends Component {
         super();
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.setGui(this.createNorthPanel());
 

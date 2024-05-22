@@ -28,7 +28,7 @@ export class RowNodeSorter extends BeanStub {
     private isAccentedSort: boolean;
     private primaryColumnsSortGroups: boolean;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.isAccentedSort = this.gos.get('accentedSort');
         this.primaryColumnsSortGroups = this.gos.isColumnsSortingCoupledToGroup();

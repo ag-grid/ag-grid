@@ -7,7 +7,7 @@ import { VisibleColsService } from '../columns/visibleColsService';
 import { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
 import { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { UserComponentRegistry } from '../components/framework/userComponentRegistry';
-import { BaseBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, Context, Optional } from '../context/context';
 import { CtrlsFactory } from '../ctrlsFactory';
 import { CtrlsService } from '../ctrlsService';
@@ -52,7 +52,7 @@ import { RowRenderer } from './rowRenderer';
  * with the IoC. Instead they get passed this object which is all the beans the RowComp
  * and CellComp need. Not autowiring all the cells gives performance improvement. */
 @Bean('beans')
-export class Beans extends BaseBean {
+export class Beans extends BeanStub {
     @Autowired('resizeObserverService') public readonly resizeObserverService: ResizeObserverService;
     @Autowired('paginationProxy') public readonly paginationProxy: PaginationProxy;
     @Autowired('context') public readonly context: Context;
@@ -103,7 +103,7 @@ export class Beans extends BaseBean {
     public clientSideRowModel: IClientSideRowModel;
     public serverSideRowModel: IServerSideRowModel;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         if (this.gos.isRowModelType('clientSide')) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;

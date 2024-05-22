@@ -1,6 +1,5 @@
-import { BaseBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
 import { Autowired } from '../context/context';
-import { EventService } from '../eventService';
 import { AgEvent, AgEventListener } from '../events';
 import { GridOptionsService } from '../gridOptionsService';
 import { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
@@ -12,7 +11,7 @@ import { ProvidedColumnGroup } from './providedColumnGroup';
 
 export type ColumnGroupShowType = 'open' | 'closed';
 
-export class ColumnGroup extends BaseBean implements IHeaderColumn {
+export class ColumnGroup extends BeanStub implements IHeaderColumn {
     public static EVENT_LEFT_CHANGED = 'leftChanged';
     public static EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
 
@@ -36,7 +35,6 @@ export class ColumnGroup extends BaseBean implements IHeaderColumn {
     // private moving = false
     private left: number | null;
     private oldLeft: number | null;
-    private localEventService: EventService = new EventService();
 
     private parent: ColumnGroup | null;
 

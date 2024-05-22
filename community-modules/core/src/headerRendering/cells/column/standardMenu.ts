@@ -212,7 +212,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         // not supported in standard menu
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyBean(this.activeMenu);
         super.destroy();
     }

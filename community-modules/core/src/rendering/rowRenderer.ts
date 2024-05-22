@@ -130,7 +130,7 @@ export class RowRenderer extends BeanStub {
 
     private dataFirstRenderedFired = false;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.ctrlsService.whenReady((p) => {
             this.gridBodyCtrl = p.gridBodyCtrl;
@@ -912,7 +912,7 @@ export class RowRenderer extends BeanStub {
         return res;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.removeAllRowComps();
         super.destroy();
     }

@@ -49,7 +49,7 @@ export class ChartSettingsPanel extends Component {
         super(ChartSettingsPanel.TEMPLATE);
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.resetPalettes();
 
@@ -221,7 +221,7 @@ export class ChartSettingsPanel extends Component {
         this.miniChartsContainers = this.destroyBeans(this.miniChartsContainers);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyMiniCharts();
         super.destroy();
     }

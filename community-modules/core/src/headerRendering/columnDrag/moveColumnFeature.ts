@@ -44,7 +44,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         this.isCenterContainer = !_exists(pinned);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.ctrlsService.whenReady((p) => {
             this.gridBodyCon = p.gridBodyCtrl;

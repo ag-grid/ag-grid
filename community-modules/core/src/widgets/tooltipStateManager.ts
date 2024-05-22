@@ -75,7 +75,7 @@ export class TooltipStateManager extends BeanStub {
         super();
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         if (this.gos.get('tooltipInteraction')) {
             this.interactionEnabled = true;
@@ -120,7 +120,7 @@ export class TooltipStateManager extends BeanStub {
         return this.tooltipHideDelayOverride ?? this.getGridOptionsTooltipDelay('tooltipHideDelay')!;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         // if this component gets destroyed while tooltip is showing, need to make sure
         // we don't end with no mouseLeave event resulting in zombie tooltip
         this.setToDoNothing();

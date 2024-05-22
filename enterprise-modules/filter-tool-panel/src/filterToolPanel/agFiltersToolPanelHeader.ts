@@ -38,7 +38,7 @@ export class AgFiltersToolPanelHeader extends Component {
 
     private params: ToolPanelFiltersCompParams;
 
-    protected override preConstruct(): void {
+    public override preConstruct(): void {
         super.preConstruct();
         this.setTemplate(
             /* html */
@@ -50,7 +50,7 @@ export class AgFiltersToolPanelHeader extends Component {
         );
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const translate = this.localeService.getLocaleTextFunc();
 

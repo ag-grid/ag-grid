@@ -78,7 +78,6 @@ export { AutoScrollService } from '@ag-grid-community/core';
 export { AutoWidthCalculator } from '@ag-grid-community/core';
 export { Autowired } from '@ag-grid-community/core';
 export { BarColumnLabelPlacement } from '@ag-grid-community/core';
-export { BaseBean } from '@ag-grid-community/core';
 export { BaseComponentWrapper } from '@ag-grid-community/core';
 export { Bean } from '@ag-grid-community/core';
 export { BeanStub } from '@ag-grid-community/core';

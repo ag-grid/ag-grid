@@ -51,7 +51,7 @@ export class AgDialog extends AgPanel<DialogOptions> {
         super({ ...config, popup: true });
     }
 
-    protected postConstruct() {
+    public override postConstruct() {
         const eGui = this.getGui();
         const { movable, resizable, maximizable } = this.config;
 
@@ -137,7 +137,7 @@ export class AgDialog extends AgPanel<DialogOptions> {
         }
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.maximizeButtonComp = this.destroyBean(this.maximizeButtonComp);
 
         this.clearMaximizebleListeners();

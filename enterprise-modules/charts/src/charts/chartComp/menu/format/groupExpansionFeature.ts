@@ -43,7 +43,7 @@ export class GroupExpansionFeature extends BeanStub {
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.groupComponents.clear();
         super.destroy();
     }

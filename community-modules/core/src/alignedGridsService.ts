@@ -81,7 +81,7 @@ export class AlignedGridsService extends BeanStub {
         return apis as GridApi[];
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));

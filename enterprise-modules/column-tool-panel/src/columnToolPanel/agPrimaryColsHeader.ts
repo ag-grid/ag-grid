@@ -53,7 +53,7 @@ export class AgPrimaryColsHeader extends Component {
         super(AgPrimaryColsHeader.TEMPLATE, [AgCheckbox, AgInputTextField]);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.createExpandIcons();
 

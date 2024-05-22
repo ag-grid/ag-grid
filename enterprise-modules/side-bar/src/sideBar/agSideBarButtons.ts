@@ -31,7 +31,7 @@ export class AgSideBarButtons extends Component {
         super(AgSideBarButtons.TEMPLATE);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.addManagedListener(this.getFocusableElement(), 'keydown', this.handleKeyDown.bind(this));
     }
@@ -74,7 +74,7 @@ export class AgSideBarButtons extends Component {
         _clearElement(this.getGui());
     }
 
-    protected override destroy(): void {
+    public override destroy(): void {
         this.clearButtons();
         super.destroy();
     }

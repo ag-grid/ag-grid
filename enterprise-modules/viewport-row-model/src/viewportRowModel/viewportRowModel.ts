@@ -43,7 +43,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         return false;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.rowHeight = this.gos.getRowHeightAsNumber();
         this.addManagedListener(this.eventService, Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
@@ -62,7 +62,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         return true;
     }
 
-    protected override destroy(): void {
+    public override destroy(): void {
         this.destroyDatasource();
         super.destroy();
     }

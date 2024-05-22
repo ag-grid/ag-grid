@@ -22,7 +22,7 @@ export class ConnectorLinePanel extends Component {
         super();
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         const lineGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',

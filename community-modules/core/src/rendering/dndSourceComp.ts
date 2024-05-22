@@ -16,7 +16,7 @@ export class DndSourceComp extends Component {
         this.eCell = eCell;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const eGui = this.getGui();
         eGui.appendChild(_createIconNoSpan('rowDrag', this.gos, null)!);

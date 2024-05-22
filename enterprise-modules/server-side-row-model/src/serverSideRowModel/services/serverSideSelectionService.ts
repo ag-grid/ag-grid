@@ -24,7 +24,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
     @Autowired('rowModel') private rowModel: IRowModel;
     private selectionStrategy: ISelectionStrategy;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const groupSelectsChildren = this.gos.get('groupSelectsChildren');
         this.addManagedPropertyListener('groupSelectsChildren', (propChange) => {

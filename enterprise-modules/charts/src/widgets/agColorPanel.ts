@@ -64,7 +64,7 @@ export class AgColorPanel extends Component {
         this.picker = config.picker;
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.initTabIndex();
         this.initRecentColors();
@@ -401,7 +401,7 @@ export class AgColorPanel extends Component {
         AgColorPanel.recentColors = recentColors;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.addRecentColor();
         super.destroy();
     }

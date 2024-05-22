@@ -25,7 +25,7 @@ export class ShadowPanel extends Component {
         super();
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         // Determine the path within the series options object to get/set the individual shadow options
         const propertyNamespace = this.propertyKey;

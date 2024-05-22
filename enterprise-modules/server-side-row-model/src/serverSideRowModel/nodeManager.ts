@@ -1,7 +1,7 @@
-import { BaseBean, Bean, RowNode } from '@ag-grid-community/core';
+import { Bean, BeanStub, RowNode } from '@ag-grid-community/core';
 
 @Bean('ssrmNodeManager')
-export class NodeManager extends BaseBean {
+export class NodeManager extends BeanStub {
     private rowNodes: { [id: string]: RowNode | undefined } = {};
 
     public addRowNode(rowNode: RowNode): void {
@@ -24,7 +24,7 @@ export class NodeManager extends BaseBean {
         }
     }
 
-    protected override destroy(): void {
+    public override destroy(): void {
         this.clear();
         super.destroy();
     }

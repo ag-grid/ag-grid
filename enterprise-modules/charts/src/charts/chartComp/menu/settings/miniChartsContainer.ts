@@ -172,7 +172,7 @@ export class MiniChartsContainer extends Component {
         this.chartGroups = { ...chartGroups };
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         // hide MiniCustomCombo if no custom combo exists
         if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
@@ -300,7 +300,7 @@ export class MiniChartsContainer extends Component {
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.wrappers.clear();
         super.destroy();
     }

@@ -62,7 +62,7 @@ export class CartesianAxisPanel extends Component {
         this.chartOptionsSeriesProxy = chartOptionsService.getSeriesOptionsProxy(() => seriesType);
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         const {
             isExpandedOnInit: expanded,
@@ -451,7 +451,7 @@ export class CartesianAxisPanel extends Component {
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

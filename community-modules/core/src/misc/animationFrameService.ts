@@ -56,7 +56,7 @@ export class AnimationFrameService extends BeanStub {
         this.lastScrollTop = scrollTop;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.useAnimationFrame = !this.gos.get('suppressAnimationFrame');
     }

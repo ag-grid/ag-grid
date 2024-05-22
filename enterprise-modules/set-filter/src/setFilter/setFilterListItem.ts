@@ -127,7 +127,7 @@ export class SetFilterListItem<V> extends Component {
         this.hasIndeterminateExpandState = params.hasIndeterminateExpandState;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.addDestroyFunc(() => this.destroyCellRendererComponent?.());
 

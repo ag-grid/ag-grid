@@ -17,7 +17,7 @@ export class SortListener extends BeanStub {
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
     @Autowired('ssrmListenerUtils') private listenerUtils: ListenerUtils;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         // only want to be active if SSRM active, otherwise would be interfering with other row models
         if (!this.gos.isRowModelType('serverSide')) {

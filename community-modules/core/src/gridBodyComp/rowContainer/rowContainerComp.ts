@@ -65,7 +65,7 @@ export class RowContainerComp extends Component {
         this.type = getRowContainerTypeForName(this.name);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const compProxy: IRowContainerComp = {
             setViewportHeight: (height) => (this.eViewport.style.height = height),
@@ -80,7 +80,7 @@ export class RowContainerComp extends Component {
         ctrl.setComp(compProxy, this.eContainer, this.eViewport);
     }
 
-    protected override destroy(): void {
+    public override destroy(): void {
         // destroys all row comps
         this.setRowCtrls([]);
         super.destroy();

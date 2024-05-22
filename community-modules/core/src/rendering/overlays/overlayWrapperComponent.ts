@@ -38,7 +38,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         overlayWrapperClassList.toggle(LayoutCssClasses.PRINT, params.print);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.createManagedBean(new LayoutFeature(this));
         this.setDisplayed(false, { skipAriaHidden: true });

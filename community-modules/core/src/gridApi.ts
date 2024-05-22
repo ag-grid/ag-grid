@@ -11,8 +11,8 @@ import { ColumnViewportService } from './columns/columnViewportService';
 import { FuncColsService } from './columns/funcColsService';
 import { PivotResultColsService } from './columns/pivotResultColsService';
 import { VisibleColsService } from './columns/visibleColsService';
-import { BaseBean } from './context/bean';
-import { Autowired, Bean, Context, Optional } from './context/context';
+import { BeanStub } from './context/beanStub';
+import { Autowired, Bean, Optional } from './context/context';
 import { CtrlsService } from './ctrlsService';
 import { DragAndDropService } from './dragAndDrop/dragAndDropService';
 import { CellPosition } from './entities/cellPositionUtils';
@@ -23,7 +23,6 @@ import { ChartRef, GridOptions } from './entities/gridOptions';
 import { ProvidedColumnGroup } from './entities/providedColumnGroup';
 import { RowNode } from './entities/rowNode';
 import { Events } from './eventKeys';
-import { EventService } from './eventService';
 import {
     AgEvent,
     AgEventListener,
@@ -38,7 +37,6 @@ import { FocusService } from './focusService';
 import { GridBodyCtrl } from './gridBodyComp/gridBodyCtrl';
 import { NavigationService } from './gridBodyComp/navigationService';
 import { RowDropZoneEvents, RowDropZoneParams } from './gridBodyComp/rowDragFeature';
-import { GridOptionsService } from './gridOptionsService';
 import {
     ChartDownloadParams,
     ChartModel,
@@ -72,7 +70,6 @@ import {
 import { IExpansionService } from './interfaces/iExpansionService';
 import { FilterModel, IFilter } from './interfaces/iFilter';
 import { IFiltersToolPanel } from './interfaces/iFiltersToolPanel';
-import { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import { IHeaderColumn } from './interfaces/iHeaderColumn';
 import { IInfiniteRowModel } from './interfaces/iInfiniteRowModel';
 import { IRowModel, RowModelType } from './interfaces/iRowModel';
@@ -158,7 +155,7 @@ export function unwrapUserComp<T>(comp: T): T {
 }
 
 @Bean('gridApi')
-export class GridApi<TData = any> extends BaseBean {
+export class GridApi<TData = any> extends BeanStub {
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('navigationService') private readonly navigationService: NavigationService;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
@@ -175,12 +172,9 @@ export class GridApi<TData = any> extends BaseBean {
     @Autowired('columnMoveService') private readonly columnMoveService: ColumnMoveService;
     @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
     @Autowired('selectionService') private readonly selectionService: ISelectionService;
-    @Autowired('gridOptionsService') private readonly gos: GridOptionsService;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('alignedGridsService') private readonly alignedGridsService: AlignedGridsService;
-    @Autowired('eventService') private readonly eventService: EventService;
     @Autowired('pinnedRowModel') private readonly pinnedRowModel: PinnedRowModel;
-    @Autowired('context') private readonly context: Context;
     @Autowired('rowModel') private readonly rowModel: IRowModel;
     @Autowired('sortController') private readonly sortController: SortController;
     @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;
@@ -194,7 +188,6 @@ export class GridApi<TData = any> extends BaseBean {
     @Autowired('stateService') private readonly stateService: StateService;
     @Autowired('expansionService') private readonly expansionService: IExpansionService;
     @Autowired('apiEventService') private readonly apiEventService: ApiEventService;
-    @Autowired('frameworkOverrides') private readonly frameworkOverrides: IFrameworkOverrides;
     @Autowired('undoRedoService') private readonly undoRedoService: UndoRedoService;
     @Autowired('rowNodeBlockLoader') private readonly rowNodeBlockLoader: RowNodeBlockLoader;
 
@@ -219,7 +212,7 @@ export class GridApi<TData = any> extends BaseBean {
 
     private destroyCalled = false;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         switch (this.rowModel.getType()) {
             case 'clientSide':

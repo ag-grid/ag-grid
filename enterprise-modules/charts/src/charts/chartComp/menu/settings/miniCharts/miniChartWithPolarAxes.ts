@@ -13,7 +13,7 @@ export abstract class MiniChartWithPolarAxes extends MiniChart {
         super(container, tooltipName);
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         const size = this.size;
         const padding = this.padding;

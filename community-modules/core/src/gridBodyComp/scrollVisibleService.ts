@@ -18,7 +18,7 @@ export class ScrollVisibleService extends BeanStub {
     private horizontalScrollShowing: boolean;
     private verticalScrollShowing: boolean;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.addManagedListener(
             this.eventService,

@@ -30,7 +30,7 @@ export class AdvancedFilterHeaderComp extends Component {
             </div>`);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.setupAdvancedFilter(this.enabled);
 

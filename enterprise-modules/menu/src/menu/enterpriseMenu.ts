@@ -3,6 +3,7 @@ import {
     AgGridEvent,
     AgPromise,
     Autowired,
+    BaseBean,
     Bean,
     BeanStub,
     Column,
@@ -39,7 +40,7 @@ export interface TabSelectedEvent extends AgEvent {
     key: string;
 }
 
-interface EnterpriseColumnMenu {
+interface EnterpriseColumnMenu extends BaseBean {
     getGui(): HTMLElement;
     showTab?(tab: string): void;
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;
@@ -359,7 +360,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
         this.includeChecks[TabbedColumnMenu.TAB_COLUMNS] = () => true;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const tabs = this.getTabsToCreate().map((name) => this.createTab(name));
 
@@ -571,7 +572,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
         `);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.mainMenuList = this.columnMenuFactory.createMenu(
             this,

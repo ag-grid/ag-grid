@@ -32,7 +32,7 @@ export class SeriesChartTypePanel extends Component {
         super(SeriesChartTypePanel.TEMPLATE);
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.createSeriesChartTypeGroup(this.columns);
     }
@@ -163,7 +163,7 @@ export class SeriesChartTypePanel extends Component {
         return ['groupedColumn', 'stackedColumn', 'stackedArea'].includes(chartType);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.clearComps();
         this.seriesChartTypeGroupComp = this.destroyBean(this.seriesChartTypeGroupComp)!;
         super.destroy();

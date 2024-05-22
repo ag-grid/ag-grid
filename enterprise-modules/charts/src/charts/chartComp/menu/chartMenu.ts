@@ -60,7 +60,7 @@ export class ChartMenu extends Component {
         this.chartController = chartMenuContext.chartController;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.chartToolbar = this.createManagedBean(new ChartToolbar());
         this.getGui().appendChild(this.chartToolbar.getGui());
@@ -217,7 +217,7 @@ export class ChartMenu extends Component {
         });
     }
 
-    protected destroy() {
+    public override destroy() {
         super.destroy();
 
         if (this.menuPanel && this.menuPanel.isAlive()) {

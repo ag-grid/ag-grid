@@ -70,7 +70,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.info = {};
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         let numberOfRows = 1;
         if (this.level === 0) {
@@ -91,7 +91,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
     }
 
-    protected override destroy(): void {
+    public override destroy(): void {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
         this.destroyBean(this.cache);

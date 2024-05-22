@@ -52,7 +52,7 @@ export class ChartController extends BeanStub {
         super();
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.setChartRange();
 
@@ -688,7 +688,7 @@ export class ChartController extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
 
         if (this.rangeService) {

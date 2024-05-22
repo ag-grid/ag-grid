@@ -17,7 +17,7 @@ export class ChartPanelFeature extends BeanStub {
         super();
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, () =>
             this.refreshPanels(true)
@@ -60,7 +60,7 @@ export class ChartPanelFeature extends BeanStub {
         this.panels = [];
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyPanels();
         super.destroy();
     }

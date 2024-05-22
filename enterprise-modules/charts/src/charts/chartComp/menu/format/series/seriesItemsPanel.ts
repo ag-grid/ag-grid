@@ -33,7 +33,7 @@ export class SeriesItemsPanel extends Component {
         super();
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         const seriesItemsGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
@@ -112,7 +112,7 @@ export class SeriesItemsPanel extends Component {
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

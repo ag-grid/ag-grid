@@ -9,7 +9,7 @@ import { SparklineTooltip } from '../sparkline/tooltip/sparklineTooltip';
 export class SparklineTooltipSingleton extends BeanStub {
     private tooltip!: SparklineTooltip;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.tooltip = new SparklineTooltip();
     }
@@ -18,7 +18,7 @@ export class SparklineTooltipSingleton extends BeanStub {
         return this.tooltip;
     }
 
-    protected override destroy(): void {
+    public override destroy(): void {
         if (this.tooltip) {
             this.tooltip.destroy();
         }

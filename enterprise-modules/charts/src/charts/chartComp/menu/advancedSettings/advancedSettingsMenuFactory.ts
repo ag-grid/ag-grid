@@ -48,7 +48,7 @@ export class AdvancedSettingsMenuFactory extends BeanStub {
         }
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.activeMenu = this.destroyBean(this.activeMenu);
         this.activeDialog = this.destroyBean(this.activeDialog);
         super.destroy();
@@ -66,7 +66,7 @@ class AdvancedSettingsMenu extends TabGuardComp {
         super(AdvancedSettingsMenu.TEMPLATE);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.advancedSettingsPanel = this.createManagedBean(new AdvancedSettingsPanel(this.chartMenuContext));
         this.getGui().appendChild(this.advancedSettingsPanel.getGui());

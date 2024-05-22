@@ -17,7 +17,7 @@ export class AnimationPanel extends Component {
         super();
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         const animationGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(
             'animation.enabled',

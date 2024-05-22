@@ -31,7 +31,7 @@ export class TabbedChartMenu extends Component {
         super();
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.panels.forEach((panel) => {
             const panelType = panel.replace('chart', '').toLowerCase() as 'settings' | 'data' | 'format';
@@ -98,7 +98,7 @@ export class TabbedChartMenu extends Component {
         }
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         if (this.parentComponent && this.parentComponent.isAlive()) {
             this.destroyBean(this.parentComponent);
         }

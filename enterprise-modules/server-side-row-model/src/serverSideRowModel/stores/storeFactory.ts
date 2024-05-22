@@ -1,11 +1,10 @@
 import {
     Autowired,
-    BaseBean,
     Bean,
+    BeanStub,
     ColumnModel,
     FuncColsService,
     GetServerSideGroupLevelParamsParams,
-    GridOptionsService,
     IServerSideStore,
     RowNode,
     ServerSideGroupLevelParams,
@@ -18,8 +17,7 @@ import { FullStore } from './fullStore';
 import { LazyStore } from './lazy/lazyStore';
 
 @Bean('ssrmStoreFactory')
-export class StoreFactory extends BaseBean {
-    @Autowired('gridOptionsService') private gos: GridOptionsService;
+export class StoreFactory extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('funcColsService') private funcColsService: FuncColsService;
 

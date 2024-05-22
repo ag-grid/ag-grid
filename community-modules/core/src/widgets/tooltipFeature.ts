@@ -45,7 +45,7 @@ export class TooltipFeature extends BeanStub {
         }
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.refreshToolTip();
     }

@@ -15,7 +15,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
         super(horizontal, 'aggregation');
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag here to aggregate');

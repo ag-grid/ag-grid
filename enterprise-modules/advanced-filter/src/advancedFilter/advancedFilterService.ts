@@ -43,7 +43,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     private expressionParams: FilterExpressionFunctionParams | null;
     private isValid: boolean = true;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.setEnabled(this.gos.get('enableAdvancedFilter'), true);
 

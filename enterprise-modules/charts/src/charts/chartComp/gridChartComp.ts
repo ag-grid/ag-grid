@@ -117,7 +117,7 @@ export class GridChartComp extends Component {
         this.params = params;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const modelParams: ChartModelParams = {
             ...this.params,
@@ -607,7 +607,7 @@ export class GridChartComp extends Component {
         this.eventService.dispatchEvent(event);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
 
         if (this.chartProxy) {

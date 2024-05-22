@@ -34,7 +34,7 @@ export class RowDragComp extends Component {
         return this.customGui != null;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         if (!this.customGui) {
             this.setTemplate(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`);
@@ -132,7 +132,7 @@ export class RowDragComp extends Component {
         this.beans.dragAndDropService.addDragSource(this.dragSource, true);
     }
 
-    protected override destroy(): void {
+    public override destroy(): void {
         this.removeDragSource();
         super.destroy();
     }
@@ -193,7 +193,7 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
         this.beans = beans;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.addManagedPropertyListener('suppressRowDrag', this.onSuppressRowDrag.bind(this));
 
@@ -230,7 +230,7 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         this.beans = beans;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         // we do not show the component if sort, filter or grouping is active
 

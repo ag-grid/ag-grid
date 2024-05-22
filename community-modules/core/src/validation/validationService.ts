@@ -14,7 +14,7 @@ import { DependencyValidator, OptionsValidation, OptionsValidator } from './vali
 export class ValidationService extends BeanStub {
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.processGridOptions(this.gridOptions);
     }

@@ -14,7 +14,7 @@ export class ApiEventService extends BeanStub {
     >();
     private frameworkEventWrappingService: FrameworkEventListenerService;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.frameworkEventWrappingService = new FrameworkEventListenerService(this.getFrameworkOverrides());
     }
@@ -95,7 +95,7 @@ export class ApiEventService extends BeanStub {
         set.clear();
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
 
         this.destroyEventListeners(this.syncEventListeners, false);

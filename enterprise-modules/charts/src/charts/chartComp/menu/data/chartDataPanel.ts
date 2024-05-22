@@ -51,7 +51,7 @@ export class ChartDataPanel extends Component {
         this.chartController = chartMenuContext.chartController;
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.createSwitchCategorySeriesToggle();
         this.isSwitchCategorySeriesToggled = this.chartController.isCategorySeriesSwitched();
@@ -69,7 +69,7 @@ export class ChartDataPanel extends Component {
         );
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.clearPanelComponents();
         super.destroy();
     }

@@ -75,7 +75,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.allowDragging = allowDragging;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE, [AgCheckbox]);
 

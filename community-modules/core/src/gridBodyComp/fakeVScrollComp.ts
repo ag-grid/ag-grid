@@ -17,7 +17,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         super(FakeVScrollComp.TEMPLATE, 'vertical');
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
 
         this.createManagedBean(new SetHeightFeature(this.eContainer));

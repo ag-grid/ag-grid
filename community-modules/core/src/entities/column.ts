@@ -1,13 +1,9 @@
 import { ColumnState } from '../columns/columnApplyStateService';
-import { BaseBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
 import { Autowired } from '../context/context';
-import { Environment } from '../environment';
-import { EventService } from '../eventService';
 import { AgEvent, AgEventListener, ColumnEvent, ColumnEventType } from '../events';
-import { GridOptionsService } from '../gridOptionsService';
 import { BrandedType } from '../interfaces/brandedType';
 import { IEventEmitter } from '../interfaces/iEventEmitter';
-import { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
 import { IProvidedColumn } from '../interfaces/iProvidedColumn';
 import { IRowNode } from '../interfaces/iRowNode';
@@ -65,7 +61,7 @@ export function getNextColInstanceId(): ColumnInstanceId {
 // appear as a child of either the original tree or the displayed tree. However the relevant group classes
 // for each type only implements one, as each group can only appear in it's associated tree (eg ProvidedColumnGroup
 // can only appear in OriginalColumn tree).
-export class Column<TValue = any> extends BaseBean implements IHeaderColumn<TValue>, IProvidedColumn, IEventEmitter {
+export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TValue>, IProvidedColumn, IEventEmitter {
     public static DEFAULT_MIN_WIDTH = 20;
 
     // + renderedHeaderCell - for making header cell transparent when moving
@@ -99,11 +95,8 @@ export class Column<TValue = any> extends BaseBean implements IHeaderColumn<TVal
     // + dataTypeService - when waiting to infer cell data types
     public static EVENT_STATE_UPDATED: ColumnEventName = 'columnStateUpdated';
 
-    @Autowired('gridOptionsService') private readonly gos: GridOptionsService;
-    @Autowired('environment') protected readonly environment: Environment;
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
 
-    @Autowired('frameworkOverrides') private readonly frameworkOverrides: IFrameworkOverrides;
     private frameworkEventListenerService: FrameworkEventListenerService | null;
 
     private readonly colId: any;
@@ -141,8 +134,6 @@ export class Column<TValue = any> extends BaseBean implements IHeaderColumn<TVal
     private maxWidth: number | null | undefined;
 
     private filterActive = false;
-
-    private eventService: EventService = new EventService();
 
     private fieldContainsDots: boolean;
     private tooltipFieldContainsDots: boolean;
@@ -275,7 +266,7 @@ export class Column<TValue = any> extends BaseBean implements IHeaderColumn<TVal
     }
 
     // this is done after constructor as it uses gridOptionsService
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.initMinAndMaxWidths();
 

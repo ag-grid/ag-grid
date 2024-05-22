@@ -20,7 +20,7 @@ export class CalloutPanel extends Component {
         super();
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         const calloutGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',

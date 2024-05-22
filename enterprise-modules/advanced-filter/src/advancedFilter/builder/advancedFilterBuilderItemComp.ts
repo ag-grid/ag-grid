@@ -89,7 +89,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
         `);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const { filterModel, level, showMove } = this.item;
 

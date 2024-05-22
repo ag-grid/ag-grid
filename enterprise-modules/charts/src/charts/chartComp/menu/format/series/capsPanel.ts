@@ -18,7 +18,7 @@ export class CapsPanel extends Component {
         super();
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         const capsGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',

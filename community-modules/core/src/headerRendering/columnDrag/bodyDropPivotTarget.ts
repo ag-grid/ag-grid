@@ -1,13 +1,11 @@
 import { FuncColsService } from '../../columns/funcColsService';
-import { BaseBean } from '../../context/bean';
+import { BeanStub } from '../../context/beanStub';
 import { Autowired } from '../../context/context';
 import { DragAndDropService, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import { Column, ColumnPinnedType } from '../../entities/column';
-import { GridOptionsService } from '../../gridOptionsService';
 import { DropListener } from './bodyDropTarget';
 
-export class BodyDropPivotTarget extends BaseBean implements DropListener {
-    @Autowired('gridOptionsService') private gos: GridOptionsService;
+export class BodyDropPivotTarget extends BeanStub implements DropListener {
     @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
 
     private columnsToAggregate: Column[] = [];

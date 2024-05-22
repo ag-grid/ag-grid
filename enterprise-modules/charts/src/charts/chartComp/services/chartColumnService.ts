@@ -26,7 +26,7 @@ export class ChartColumnService extends BeanStub {
 
     private valueColsWithoutSeriesType: Set<string> = new Set();
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const clearValueCols = () => this.valueColsWithoutSeriesType.clear();
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, clearValueCols);
@@ -156,7 +156,7 @@ export class ChartColumnService extends BeanStub {
         return null;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.valueColsWithoutSeriesType.clear();
         super.destroy();
     }

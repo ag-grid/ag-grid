@@ -99,7 +99,7 @@ export class ColumnModel extends BeanStub {
     private shouldQueueResizeOperations: boolean = false;
     private resizeOperationQueue: (() => void)[] = [];
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const pivotMode = this.gos.get('pivotMode');
 
@@ -800,7 +800,7 @@ export class ColumnModel extends BeanStub {
         this.createColsFromColDefs(colsPreviouslyExisted, source);
     }
 
-    protected override destroy(): void {
+    public override destroy(): void {
         destroyColumnTree(this.getContext(), this.colDefCols?.tree);
         destroyColumnTree(this.getContext(), this.autoCols?.tree);
         super.destroy();

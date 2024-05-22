@@ -17,7 +17,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
     // but we do not want to debounce the first time the body is rendered.
     private isBodyRendered: boolean;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.ctrlsService.whenReady((p) => {
             this.centerRowsCtrl = p.center;

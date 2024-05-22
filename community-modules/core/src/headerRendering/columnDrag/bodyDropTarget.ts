@@ -36,7 +36,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         this.eContainer = eContainer;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.ctrlsService.whenReady((p) => {
             switch (this.pinned) {

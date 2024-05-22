@@ -42,7 +42,7 @@ export class AgAutocompleteList extends PopupComponent {
         super.destroy();
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.autocompleteEntries = this.params.autocompleteEntries;
         this.virtualList = this.createManagedBean(new VirtualList({ cssIdentifier: 'autocomplete' }));

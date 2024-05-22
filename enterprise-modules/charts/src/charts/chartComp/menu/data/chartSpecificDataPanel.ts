@@ -28,7 +28,7 @@ export class ChartSpecificDataPanel extends Component {
         super();
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const title = this.getTitle();
         const chartSpecificGroupParams: AgGroupComponentParams = {

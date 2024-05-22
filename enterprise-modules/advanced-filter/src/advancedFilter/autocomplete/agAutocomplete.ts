@@ -67,7 +67,7 @@ export class AgAutocomplete extends Component {
         );
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.eAutocompleteInput.onValueChange((value) => this.onValueChanged(value));
         this.eAutocompleteInput.getInputElement().setAttribute('autocomplete', 'off');

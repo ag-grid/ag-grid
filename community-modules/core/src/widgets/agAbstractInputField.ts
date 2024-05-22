@@ -34,7 +34,7 @@ export abstract class AgAbstractInputField<
         );
     }
 
-    protected postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.setInputType();
 

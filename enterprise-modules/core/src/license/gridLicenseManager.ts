@@ -6,7 +6,7 @@ import { ILicenseManager, LicenseManager } from './shared/licenseManager';
 export class GridLicenseManager extends BeanStub {
     private licenseManager: LicenseManager;
 
-    protected override preConstruct(): void {
+    public override preConstruct(): void {
         super.preConstruct();
         this.validateLicense();
     }

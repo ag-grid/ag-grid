@@ -15,7 +15,7 @@ export class AutoWidthCalculator extends BeanStub {
 
     private centerRowContainerCtrl: RowContainerCtrl;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.ctrlsService.whenReady((p) => {
             this.centerRowContainerCtrl = p.center;

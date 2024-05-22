@@ -28,7 +28,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         super();
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.createManagedBean(
             new VirtualListDragFeature<

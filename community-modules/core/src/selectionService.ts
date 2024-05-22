@@ -24,7 +24,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
     private groupSelectsChildren: boolean;
     private rowSelection?: 'single' | 'multiple';
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.rowSelection = this.gos.get('rowSelection');
         this.groupSelectsChildren = this.gos.get('groupSelectsChildren');
@@ -37,7 +37,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
         this.resetNodes();
         this.lastRowNode = null;

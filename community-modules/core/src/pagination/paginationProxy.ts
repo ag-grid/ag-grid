@@ -36,7 +36,7 @@ export class PaginationProxy extends BeanStub {
 
     private masterRowCount: number = 0;
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.active = this.gos.get('pagination');
         this.pageSizeFromGridOptions = this.gos.get('paginationPageSize');

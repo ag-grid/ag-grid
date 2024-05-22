@@ -48,7 +48,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         </div>`;
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         const {
             component,
@@ -221,7 +221,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         this.close();
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         if (this.closeButtonComp) {
             this.closeButtonComp = this.destroyBean(this.closeButtonComp);
         }

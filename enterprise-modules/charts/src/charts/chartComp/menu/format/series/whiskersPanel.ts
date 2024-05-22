@@ -23,7 +23,7 @@ export class WhiskersPanel extends Component {
         super();
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         const whiskersGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',

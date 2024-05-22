@@ -30,7 +30,7 @@ export class HeaderRowContainerComp extends Component {
         this.pinned = pinned;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.selectAndSetTemplate();
 
@@ -72,7 +72,7 @@ export class HeaderRowContainerComp extends Component {
         this.eRowContainer = this.eCenterContainer ? this.eCenterContainer : this.getGui();
     }
 
-    protected override destroy(): void {
+    public override destroy(): void {
         this.setCtrls([]);
         super.destroy();
     }

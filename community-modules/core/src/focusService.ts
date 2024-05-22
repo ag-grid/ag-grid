@@ -93,7 +93,7 @@ export class FocusService extends BeanStub {
         FocusService.removeKeyboardModeEvents(doc);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const clearFocusedCellListener = this.clearFocusedCell.bind(this);
 

@@ -15,7 +15,7 @@ export class SetHeightFeature extends BeanStub {
         this.eViewport = eViewport;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.addManagedListener(
             this.eventService,

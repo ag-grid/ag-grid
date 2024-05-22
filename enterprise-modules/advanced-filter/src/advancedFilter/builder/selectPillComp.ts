@@ -47,7 +47,7 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
         setTimeout(() => super.hidePicker());
     }
 
-    protected postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
 
         const { wrapperClassName, ariaLabel } = this.params;

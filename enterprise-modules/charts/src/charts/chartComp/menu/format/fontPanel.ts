@@ -56,7 +56,7 @@ export class FontPanel extends Component {
         this.chartOptions = params.chartMenuParamsFactory.getChartOptions();
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         const fontGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
@@ -212,7 +212,7 @@ export class FontPanel extends Component {
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyActiveComps();
         super.destroy();
     }

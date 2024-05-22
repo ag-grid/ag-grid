@@ -28,7 +28,7 @@ export class PivotResultColsService extends BeanStub {
     // Saved when pivot is disabled, available to re-use when pivot is restored
     private previousPivotResultCols: IProvidedColumn[] | null;
 
-    protected override destroy(): void {
+    public override destroy(): void {
         destroyColumnTree(this.getContext(), this.pivotResultCols?.tree);
         super.destroy();
     }

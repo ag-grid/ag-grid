@@ -49,7 +49,7 @@ export class Environment extends BeanStub {
 
     private id = ++idCounter;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeightVariable());
         this.themeClasses = this.getAncestorThemeClasses();

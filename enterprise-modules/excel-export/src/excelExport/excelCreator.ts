@@ -230,7 +230,7 @@ export class ExcelCreator
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
     @Autowired('gridOptionsService') gos: GridOptionsService;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.setBeans({
             gridSerializer: this.gridSerializer,

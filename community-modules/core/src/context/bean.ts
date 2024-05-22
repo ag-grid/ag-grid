@@ -1,14 +1,8 @@
 // to be renamed `Bean` once the annotation is removed
-export abstract class BaseBean {
-    protected preConstruct(): void {
-        // implemented by child classes
-    }
+export interface BaseBean {
+    preConstruct?(): void;
 
-    protected postConstruct(): void {
-        // implemented by child classes
-    }
+    postConstruct?(): void;
 
-    protected destroy(): void {
-        // implemented by child classes
-    }
+    destroy?(): void;
 }

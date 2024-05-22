@@ -100,7 +100,7 @@ export class SeriesPanel extends Component {
         this.seriesType = options.seriesType;
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         const {
             isExpandedOnInit: expanded,
@@ -376,7 +376,7 @@ export class SeriesPanel extends Component {
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

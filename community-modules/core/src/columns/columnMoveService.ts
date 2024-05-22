@@ -1,10 +1,9 @@
-import { BaseBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean } from '../context/context';
 import { ColDef } from '../entities/colDef';
 import { Column } from '../entities/column';
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import { ColumnEventType } from '../events';
-import { GridOptionsService } from '../gridOptionsService';
 import { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { _moveInArray } from '../utils/array';
 import { ColumnEventDispatcher } from './columnEventDispatcher';
@@ -12,11 +11,10 @@ import { depthFirstOriginalTreeSearch } from './columnFactory';
 import { ColKey, ColumnModel } from './columnModel';
 
 @Bean('columnMoveService')
-export class ColumnMoveService extends BaseBean {
+export class ColumnMoveService extends BeanStub {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
-    @Autowired('gridOptionsService') private gos: GridOptionsService;
 
     public moveColumnByIndex(fromIndex: number, toIndex: number, source: ColumnEventType): void {
         const gridColumns = this.columnModel.getCols();

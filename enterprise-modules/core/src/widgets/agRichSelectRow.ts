@@ -30,7 +30,7 @@ export class RichSelectRow<TValue> extends Component {
         super(/* html */ `<div class="ag-rich-select-row" role="presentation"></div>`);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.addManagedListener(this.getGui(), 'click', this.onClick.bind(this));
     }

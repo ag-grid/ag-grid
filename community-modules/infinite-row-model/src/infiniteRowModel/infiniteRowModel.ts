@@ -52,7 +52,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         return false;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         if (!this.gos.isRowModelType('infinite')) {
             return;
@@ -79,7 +79,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         this.setDatasource(this.gos.get('datasource'));
     }
 
-    protected override destroy(): void {
+    public override destroy(): void {
         this.destroyDatasource();
         super.destroy();
     }

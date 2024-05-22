@@ -1,4 +1,4 @@
-import { BaseBean } from '../../context/bean';
+import { BeanStub } from '../../context/beanStub';
 import { Autowired, Bean } from '../../context/context';
 import { ColumnPinnedType } from '../../entities/column';
 import { RowClassParams } from '../../entities/gridOptions';
@@ -26,7 +26,7 @@ export interface RowCssClassCalculatorParams {
 }
 
 @Bean('rowCssClassCalculator')
-export class RowCssClassCalculator extends BaseBean {
+export class RowCssClassCalculator extends BeanStub {
     @Autowired('stylingService') public stylingService: StylingService;
     @Autowired('gridOptionsService') gos: GridOptionsService;
 

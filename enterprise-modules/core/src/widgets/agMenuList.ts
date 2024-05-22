@@ -34,7 +34,7 @@ export class AgMenuList extends TabGuardComp {
         };
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.initialiseTabGuard({
             onTabKeyDown: (e) => this.onTabKeyDown(e),
@@ -282,7 +282,7 @@ export class AgMenuList extends TabGuardComp {
         return nextItem! || this.activeMenuItem;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.clearActiveItem();
         super.destroy();
     }

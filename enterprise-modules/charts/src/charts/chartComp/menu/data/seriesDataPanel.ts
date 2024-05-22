@@ -21,7 +21,7 @@ export class SeriesDataPanel extends DragDataPanel {
         super(chartController, allowMultipleSelect, maxSelection, SeriesDataPanel.TEMPLATE);
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.groupComp = this.createBean(
             new AgGroupComponent({
@@ -108,7 +108,7 @@ export class SeriesDataPanel extends DragDataPanel {
         };
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.groupComp = this.destroyBean(this.groupComp)!;
         super.destroy();
     }

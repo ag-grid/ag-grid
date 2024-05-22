@@ -35,7 +35,7 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
     private aggFuncsMap: { [key: string]: IAggFunc } = {};
     private initialised = false;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.init();
     }

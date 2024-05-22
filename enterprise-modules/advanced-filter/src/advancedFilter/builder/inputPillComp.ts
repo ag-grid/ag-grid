@@ -45,7 +45,7 @@ export class InputPillComp extends Component {
         this.value = params.value;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const { cssClass, ariaLabel } = this.params;
 

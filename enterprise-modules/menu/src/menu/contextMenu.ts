@@ -259,7 +259,7 @@ class ContextMenu extends Component {
         super(/* html */ `<div class="${CSS_MENU}" role="presentation"></div>`);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const menuList = this.createManagedBean(
             new AgMenuList(0, {
@@ -314,7 +314,7 @@ class ContextMenu extends Component {
         }
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.restoreFocusedCell();
         super.destroy();
     }

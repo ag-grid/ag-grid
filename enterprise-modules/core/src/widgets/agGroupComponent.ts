@@ -108,7 +108,7 @@ export class AgGroupComponent extends Component {
         `;
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.setupTitleBar();
 
@@ -389,7 +389,7 @@ class DefaultTitleBar extends Component {
         `;
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.setTitle(this.title);
 

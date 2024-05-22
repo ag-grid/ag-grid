@@ -70,7 +70,7 @@ export class FilterManager extends BeanStub {
 
     private initialFilterModel: FilterModel;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, () =>
@@ -1144,7 +1144,7 @@ export class FilterManager extends BeanStub {
         return column ? this.cachedFilter(column) ?? null : null;
     }
 
-    protected destroy() {
+    public override destroy() {
         super.destroy();
         this.allColumnFilters.forEach((filterWrapper) => this.disposeFilterWrapper(filterWrapper, 'gridDestroyed'));
         // don't need to destroy the listeners as they are managed listeners

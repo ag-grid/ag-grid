@@ -22,7 +22,7 @@ export class RowNodeBlockLoader extends BeanStub {
     private logger: Logger;
     private active = true;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.maxConcurrentRequests = this.getMaxConcurrentDatasourceRequests();
         const blockLoadDebounceMillis = this.gos.get('blockLoadDebounceMillis');
@@ -65,7 +65,7 @@ export class RowNodeBlockLoader extends BeanStub {
         _removeFromArray(this.blocks, block);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
         this.active = false;
     }

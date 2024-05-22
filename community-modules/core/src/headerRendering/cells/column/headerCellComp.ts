@@ -28,7 +28,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         this.pinned = ctrl.getPinned();
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const eGui = this.getGui();
 
@@ -56,7 +56,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         this.eResize.insertAdjacentElement('afterend', selectAllGui);
     }
 
-    protected override destroy(): void {
+    public override destroy(): void {
         this.destroyHeaderComp();
         super.destroy();
     }

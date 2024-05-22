@@ -22,7 +22,7 @@ export abstract class AgAbstractField<
         super(config, template, components);
     }
 
-    protected postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
 
         const { width, value, onValueChange } = this.config;

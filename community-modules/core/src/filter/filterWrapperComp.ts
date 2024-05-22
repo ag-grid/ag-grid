@@ -25,7 +25,7 @@ export class FilterWrapperComp extends Component {
         super(/* html */ `<div class="ag-filter"></div>`);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.createFilter(true);
 
@@ -96,7 +96,7 @@ export class FilterWrapperComp extends Component {
         }
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.filterWrapper = null;
         super.destroy();
     }

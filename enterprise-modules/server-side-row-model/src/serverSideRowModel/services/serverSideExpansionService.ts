@@ -17,7 +17,7 @@ export class ServerSideExpansionService extends ExpansionService implements IExp
 
     private queuedRowIds: Set<string> = new Set();
 
-    protected postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => {
             this.queuedRowIds.clear();

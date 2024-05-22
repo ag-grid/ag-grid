@@ -30,7 +30,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
     private rowSelection?: 'single' | 'multiple';
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.rowSelection = this.gos.get('rowSelection');
         this.addManagedPropertyListener('rowSelection', (propChange) => {

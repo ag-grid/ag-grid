@@ -23,7 +23,7 @@ export class TileSpacingPanel extends Component {
         super();
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         const groupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',

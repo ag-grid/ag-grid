@@ -1,7 +1,7 @@
-import { Autowired, BaseBean, Bean, FuncColsService, PivotResultColsService } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, FuncColsService, PivotResultColsService } from '@ag-grid-community/core';
 
 @Bean('ssrmListenerUtils')
-export class ListenerUtils extends BaseBean {
+export class ListenerUtils extends BeanStub {
     @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
     @Autowired('funcColsService') private funcColsService: FuncColsService;
 

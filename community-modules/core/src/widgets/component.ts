@@ -66,7 +66,7 @@ export class Component extends BeanStub {
         }
     }
 
-    protected override preConstruct(): void {
+    public override preConstruct(): void {
         super.preConstruct();
         this.usingBrowserTooltips = this.gos.get('enableBrowserTooltips');
 
@@ -375,7 +375,7 @@ export class Component extends BeanStub {
         }
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         if (this.parentComponent) {
             this.parentComponent = undefined;
         }

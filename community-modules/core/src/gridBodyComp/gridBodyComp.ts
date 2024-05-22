@@ -81,7 +81,7 @@ export class GridBodyComp extends Component {
         ]);
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         const setHeight = (height: number, element: HTMLElement) => {
             const heightString = `${height}px`;

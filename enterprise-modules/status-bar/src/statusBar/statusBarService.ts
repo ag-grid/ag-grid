@@ -25,7 +25,7 @@ export class StatusBarService extends BeanStub implements IStatusBarService {
         return this.allComponents.get(key)!;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.unregisterAllComponents();
         super.destroy();
     }

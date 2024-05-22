@@ -21,7 +21,7 @@ export class PivotModePanel extends Component {
             </div>`;
     }
 
-    protected override preConstruct(): void {
+    public override preConstruct(): void {
         super.preConstruct();
         this.setTemplate(this.createTemplate(), [AgToggleButton]);
 

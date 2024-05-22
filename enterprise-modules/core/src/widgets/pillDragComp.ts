@@ -50,7 +50,7 @@ export abstract class PillDragComp<TItem> extends Component {
         super();
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.setTemplate(this.template ?? PillDragComp.TEMPLATE, this.agComponents);
         const eGui = this.getGui();
@@ -206,7 +206,7 @@ export abstract class PillDragComp<TItem> extends Component {
         el.classList.add(`ag-column-drop-cell${suffix}`, `ag-column-drop-${direction}-cell${suffix}`);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
         (this.dragSourceDropTarget as any) = null;
     }

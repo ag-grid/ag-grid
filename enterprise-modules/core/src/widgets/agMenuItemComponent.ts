@@ -449,7 +449,7 @@ export class AgMenuItemComponent extends BeanStub {
         );
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         if (this.tooltipFeature) {
             this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }

@@ -26,7 +26,7 @@ export class CategoriesDataPanel extends DragDataPanel {
         super(chartController, allowMultipleSelection, maxSelection, CategoriesDataPanel.TEMPLATE);
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.groupComp = this.createBean(
             new AgGroupComponent({
@@ -115,7 +115,7 @@ export class CategoriesDataPanel extends DragDataPanel {
         this.aggFuncSelect = this.aggFuncSelect && this.destroyBean(this.aggFuncSelect);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.clearAggFuncControls();
         this.groupComp = this.destroyBean(this.groupComp)!;
         super.destroy();

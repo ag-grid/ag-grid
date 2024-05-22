@@ -18,7 +18,7 @@ export class ComboChartModel extends BeanStub {
         this.seriesChartTypes = chartDataModel.params.seriesChartTypes ?? [];
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.initComboCharts();
     }

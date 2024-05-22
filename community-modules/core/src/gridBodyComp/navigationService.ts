@@ -65,7 +65,7 @@ export class NavigationService extends BeanStub {
         this.onPageUp = _throttle(this.onPageUp, 100);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.ctrlsService.whenReady((p) => {
             this.gridBodyCon = p.gridBodyCtrl;

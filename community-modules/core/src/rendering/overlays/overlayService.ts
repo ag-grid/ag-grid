@@ -19,7 +19,7 @@ export class OverlayService extends BeanStub {
     private overlayWrapperComp: OverlayWrapperComponent;
     private manuallyDisplayed: boolean = false;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, () => this.onRowDataUpdated());
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onNewColumnsLoaded());

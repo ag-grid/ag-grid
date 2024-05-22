@@ -1,7 +1,7 @@
 import {
     Autowired,
-    BaseBean,
     Bean,
+    BeanStub,
     Column,
     ColumnApplyStateService,
     ColumnEventType,
@@ -16,7 +16,7 @@ import {
 import { ColumnModelItem } from './columnModelItem';
 
 @Bean('modelItemUtils')
-export class ModelItemUtils extends BaseBean {
+export class ModelItemUtils extends BeanStub {
     @Autowired('aggFuncService') aggFuncService: IAggFuncService;
     @Autowired('columnModel') columnModel: ColumnModel;
     @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;

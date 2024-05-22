@@ -40,7 +40,7 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams> {
         super(config, AgSlider.TEMPLATE, [AgInputRange, AgInputNumberField]);
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.eSlider.addCssClass('ag-slider-field');
         const { minValue, maxValue, textFieldWidth, step, value, onValueChange } = this.config;

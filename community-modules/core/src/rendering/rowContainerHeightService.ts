@@ -42,7 +42,7 @@ export class RowContainerHeightService extends BeanStub {
         this.logger = loggerFactory.create('RowContainerHeightService');
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));
         this.maxDivHeight = _getMaxDivHeight();

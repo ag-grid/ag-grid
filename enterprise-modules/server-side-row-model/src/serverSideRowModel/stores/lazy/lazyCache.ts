@@ -95,7 +95,7 @@ export class LazyCache extends BeanStub {
         this.storeParams = storeParams;
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.lazyBlockLoadingService.subscribe(this);
         // initiate the node map to be indexed at 'index', 'id' and 'node' for quick look-up.
@@ -111,7 +111,7 @@ export class LazyCache extends BeanStub {
         this.isMasterDetail = this.gos.get('masterDetail');
     }
 
-    protected override destroy() {
+    public override destroy() {
         this.lazyBlockLoadingService.unsubscribe(this);
         this.numberOfRows = 0;
         this.nodeMap.forEach((node) => this.blockUtils.destroyRowNode(node.node));

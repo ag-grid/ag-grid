@@ -17,7 +17,7 @@ import { Component } from '../widgets/component';
 import { BaseBean } from './bean';
 import { Autowired, Context } from './context';
 
-export abstract class BeanStub extends BaseBean implements IEventEmitter {
+export abstract class BeanStub implements BaseBean, IEventEmitter {
     public static EVENT_DESTROYED = 'destroyed';
 
     protected localEventService: EventService;
@@ -29,7 +29,7 @@ export abstract class BeanStub extends BaseBean implements IEventEmitter {
     // prevents vue from creating proxies for created objects and prevents identity related issues
     public __v_skip = true;
 
-    @Autowired('frameworkOverrides') private readonly frameworkOverrides: IFrameworkOverrides;
+    @Autowired('frameworkOverrides') protected readonly frameworkOverrides: IFrameworkOverrides;
     @Autowired('context') protected readonly context: Context;
     @Autowired('eventService') protected readonly eventService: EventService;
     @Autowired('gridOptionsService') protected readonly gos: GridOptionsService;
@@ -64,8 +64,15 @@ export abstract class BeanStub extends BaseBean implements IEventEmitter {
         return this.context;
     }
 
-    protected override destroy(): void {
-        super.destroy();
+    public preConstruct(): void {
+        // do nothing
+    }
+
+    public postConstruct(): void {
+        // do nothing
+    }
+
+    public destroy(): void {
         for (let i = 0; i < this.destroyFunctions.length; i++) {
             this.destroyFunctions[i]();
         }
@@ -129,9 +136,9 @@ export abstract class BeanStub extends BaseBean implements IEventEmitter {
         event: keyof GridOptions,
         listener: PropertyValueChangedListener<K>
     ): () => null {
-        this.gos.addEventListener(event, listener);
+        this.gos.addGridOptionListener(event, listener);
         const destroyFunc: () => null = () => {
-            this.gos.removeEventListener(event, listener);
+            this.gos.removeGridOptionListener(event, listener);
             return null;
         };
         this.destroyFunctions.push(destroyFunc);
@@ -210,21 +217,25 @@ export abstract class BeanStub extends BaseBean implements IEventEmitter {
         }
     }
 
-    public createManagedBean<T>(bean: T, context?: Context): T {
+    public createManagedBean<T extends BaseBean | null | undefined>(bean: T, context?: Context): T {
         const res = this.createBean(bean, context);
         this.addDestroyFunc(this.destroyBean.bind(this, bean, context));
         return res;
     }
 
-    protected createBean<T>(bean: T, context?: Context | null, afterPreCreateCallback?: (comp: Component) => void): T {
+    protected createBean<T extends BaseBean | null | undefined>(
+        bean: T,
+        context?: Context | null,
+        afterPreCreateCallback?: (comp: Component) => void
+    ): T {
         return (context || this.getContext()).createBean(bean, afterPreCreateCallback);
     }
 
-    protected destroyBean<T>(bean: T, context?: Context): undefined {
+    protected destroyBean<T extends BaseBean | null | undefined>(bean: T, context?: Context): undefined {
         return (context || this.getContext()).destroyBean(bean);
     }
 
-    protected destroyBeans<T>(beans: T[], context?: Context): T[] {
+    protected destroyBeans<T extends BaseBean | null | undefined>(beans: T[], context?: Context): T[] {
         if (beans) {
             for (let i = 0; i < beans.length; i++) {
                 this.destroyBean(beans[i], context);

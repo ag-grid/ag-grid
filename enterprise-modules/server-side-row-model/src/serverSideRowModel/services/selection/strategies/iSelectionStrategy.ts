@@ -1,6 +1,6 @@
-import { ISetNodesSelectedParams, RowNode, SelectionEventSourceType } from '@ag-grid-community/core';
+import { BaseBean, ISetNodesSelectedParams, RowNode, SelectionEventSourceType } from '@ag-grid-community/core';
 
-export interface ISelectionStrategy {
+export interface ISelectionStrategy extends BaseBean {
     getSelectedState(): any;
     setSelectedState(state: any): void;
     setNodesSelected(params: ISetNodesSelectedParams): number;

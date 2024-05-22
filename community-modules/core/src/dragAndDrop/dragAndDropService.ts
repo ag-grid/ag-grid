@@ -190,7 +190,7 @@ export class DragAndDropService extends BeanStub {
     private ePivotIcon: Element;
     private eDropNotAllowedIcon: Element;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.ePinnedIcon = _createIcon('columnMovePin', this.gos, null);
         this.eHideIcon = _createIcon('columnMoveHide', this.gos, null);
@@ -227,7 +227,7 @@ export class DragAndDropService extends BeanStub {
         }
     }
 
-    protected override destroy(): void {
+    public override destroy(): void {
         this.dragSourceAndParamsList.forEach((sourceAndParams) =>
             this.dragService.removeDragSource(sourceAndParams.params)
         );

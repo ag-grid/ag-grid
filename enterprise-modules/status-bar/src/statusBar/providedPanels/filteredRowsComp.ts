@@ -13,7 +13,7 @@ import { AgNameValue } from './agNameValue';
 export class FilteredRowsComp extends AgNameValue implements IStatusPanelComp {
     @Autowired('rowModel') private rowModel: IRowModel;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.setLabel('filteredRows', 'Filtered');
 

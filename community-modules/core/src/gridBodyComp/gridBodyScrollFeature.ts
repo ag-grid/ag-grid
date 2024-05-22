@@ -70,7 +70,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.resetLastVScrollDebounced = _debounce(() => (this.lastScrollSource[ScrollDirection.Vertical] = null), 500);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.enableRtl = this.gos.get('enableRtl');
         this.addManagedListener(

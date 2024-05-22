@@ -52,7 +52,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
         this.valueFormatter = valueFormatter ?? ((value) => _escapeString(value as any)!);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const { ariaLabel, onValuesChange, dragSourceId } = this.config;
         this.dropZonePanel = this.createManagedBean(
@@ -176,7 +176,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
         return true;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyBean(this.eSelect);
         super.destroy();
     }
@@ -243,7 +243,7 @@ class PillSelectDropZonePanel<TValue> extends PillDropZonePanel<PillSelectDragCo
         super(false);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         super.init();
     }

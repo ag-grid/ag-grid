@@ -209,7 +209,7 @@ export class ChartMenuListFactory extends BeanStub {
         };
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyBean(this.activeChartMenuList);
         super.destroy();
     }
@@ -229,7 +229,7 @@ class ChartMenuList extends Component {
         `);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.mainMenuList = this.createManagedBean(new AgMenuList(0));
         this.mainMenuList.addMenuItems(this.menuItems);

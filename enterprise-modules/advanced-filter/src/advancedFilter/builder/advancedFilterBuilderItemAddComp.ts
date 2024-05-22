@@ -41,7 +41,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
         `);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         _setAriaLevel(this.focusWrapper, 2);
 

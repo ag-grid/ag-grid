@@ -15,7 +15,7 @@ export class CenterWidthFeature extends BeanStub {
         super();
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         const listener = this.setWidth.bind(this);
         this.addManagedPropertyListener('domLayout', listener);

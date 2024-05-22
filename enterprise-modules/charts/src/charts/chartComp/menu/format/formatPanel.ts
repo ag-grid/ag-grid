@@ -32,7 +32,7 @@ export class FormatPanel extends Component {
         super(FormatPanel.TEMPLATE);
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.groupExpansionFeature = this.createManagedBean(new GroupExpansionFeature(this.getGui()));
         this.chartPanelFeature = this.createManagedBean(

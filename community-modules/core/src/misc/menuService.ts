@@ -83,7 +83,7 @@ export class MenuService extends BeanStub {
 
     private activeMenuFactory: IMenuFactory;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.activeMenuFactory = this.enterpriseMenuFactory ?? this.filterMenuFactory;
     }

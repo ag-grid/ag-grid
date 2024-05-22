@@ -31,7 +31,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         super(FakeHScrollComp.TEMPLATE, 'horizontal');
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
 
         // When doing printing, this changes whether cols are pinned or not

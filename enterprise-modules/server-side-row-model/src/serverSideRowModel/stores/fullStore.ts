@@ -94,7 +94,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.leafGroup = ssrmParams.rowGroupCols ? this.level === ssrmParams.rowGroupCols.length - 1 : false;
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.usingTreeData = this.gos.get('treeData');
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
@@ -125,7 +125,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         }
     }
 
-    protected override destroy(): void {
+    public override destroy(): void {
         this.destroyRowNodes();
         super.destroy();
     }

@@ -51,7 +51,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     protected abstract type: SelectionHandleType;
     protected shouldDestroyOnEndDragging: boolean = false;
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.dragService.addDragSource({
             dragStartPixels: 0,
@@ -205,7 +205,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         }
     }
 
-    protected destroy() {
+    public override destroy() {
         if (!this.shouldDestroyOnEndDragging && this.isDragging()) {
             _setDisplayed(this.getGui(), false);
             this.shouldDestroyOnEndDragging = true;

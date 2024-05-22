@@ -119,7 +119,7 @@ export abstract class DragDataPanel extends Component {
         }
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.valuePillSelect = undefined;
         this.valueSelect = undefined;
         super.destroy();

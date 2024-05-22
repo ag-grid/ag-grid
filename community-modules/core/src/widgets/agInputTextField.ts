@@ -17,7 +17,7 @@ export class AgInputTextField<
         super(config, className, inputType);
     }
 
-    protected postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
 
         if (this.config.allowedCharPattern) {

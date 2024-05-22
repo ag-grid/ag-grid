@@ -4,6 +4,7 @@ import { _getFunctionName } from '../utils/function';
 import { _exists, _values } from '../utils/generic';
 import { _iterateObject } from '../utils/object';
 import { Component } from '../widgets/component';
+import { BaseBean } from './bean';
 
 // steps in booting up:
 // 1. create all beans
@@ -33,7 +34,7 @@ export interface ControllerMeta {
 
 interface BeanWrapper {
     bean: any;
-    beanInstance: any;
+    beanInstance: BaseBean;
     beanName: BeanName;
 }
 
@@ -63,11 +64,14 @@ export class Context {
         this.logger.log('>> ag-Application Context ready - component is alive');
     }
 
-    private getBeanInstances(): any[] {
+    private getBeanInstances(): BaseBean[] {
         return _values(this.beanWrappers).map((beanEntry) => beanEntry.beanInstance);
     }
 
-    public createBean<T>(bean: T, afterPreCreateCallback?: (comp: Component) => void): T {
+    public createBean<T extends BaseBean | null | undefined>(
+        bean: T,
+        afterPreCreateCallback?: (comp: Component) => void
+    ): T {
         if (!bean) {
             throw Error(`Can't wire to bean since it is null`);
         }
@@ -75,7 +79,7 @@ export class Context {
         return bean;
     }
 
-    private wireBeans(beanInstances: any[], afterPreCreateCallback?: (comp: Component) => void): void {
+    private wireBeans(beanInstances: BaseBean[], afterPreCreateCallback?: (comp: Component) => void): void {
         this.autoWireBeans(beanInstances);
         this.methodWireBeans(beanInstances);
 
@@ -260,7 +264,7 @@ export class Context {
         this.logger.log('>> ag-Application Context shut down - component is dead');
     }
 
-    public destroyBean<T>(bean: T): undefined {
+    public destroyBean<T extends BaseBean | null | undefined>(bean: T): undefined {
         if (!bean) {
             return;
         }
@@ -268,19 +272,12 @@ export class Context {
         this.destroyBeans([bean]);
     }
 
-    public destroyBeans<T>(beans: T[]): T[] {
+    public destroyBeans<T extends BaseBean | null | undefined>(beans: T[]): T[] {
         if (!beans) {
             return [];
         }
 
-        beans.forEach((bean) => {
-            // call destroy() explicitly if it exists
-            const beanAny = bean as any;
-
-            if (typeof beanAny.destroy === 'function') {
-                beanAny.destroy();
-            }
-        });
+        beans.forEach((bean) => bean?.destroy?.());
 
         return [];
     }

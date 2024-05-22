@@ -109,7 +109,7 @@ export class InfiniteCache extends BeanStub {
         this.params.rowNodeBlockLoader!.checkBlockToLoad();
     }
 
-    protected override destroy(): void {
+    public override destroy(): void {
         this.getBlocksInOrder().forEach((block) => this.destroyBlock(block));
         super.destroy();
     }

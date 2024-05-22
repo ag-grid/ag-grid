@@ -11,7 +11,7 @@ export class ExpansionService extends BeanStub implements IExpansionService {
 
     private isClientSideRowModel: boolean;
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.isClientSideRowModel = this.rowModel.getType() === 'clientSide';
     }

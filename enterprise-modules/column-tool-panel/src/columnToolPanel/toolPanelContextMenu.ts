@@ -48,7 +48,7 @@ export class ToolPanelContextMenu extends Component {
         super(/* html */ `<div class="ag-menu"></div>`);
     }
 
-    protected override postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.initializeProperties(this.column);
         this.buildMenuItemMap();
