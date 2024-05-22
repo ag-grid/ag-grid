@@ -1,11 +1,11 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../context/context';
-import type { CtrlsService } from '../ctrlsService';
-import type { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
-import type { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
-import type { RowCssClassCalculator } from './row/rowCssClassCalculator';
-import type { RowRenderer } from './rowRenderer';
+import { CtrlsService } from '../ctrlsService';
+import { Column } from '../entities/column';
+import { ColumnGroup } from '../entities/columnGroup';
+import { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
+import { RowCssClassCalculator } from './row/rowCssClassCalculator';
+import { RowRenderer } from './rowRenderer';
 
 @Bean('autoWidthCalculator')
 export class AutoWidthCalculator extends BeanStub {

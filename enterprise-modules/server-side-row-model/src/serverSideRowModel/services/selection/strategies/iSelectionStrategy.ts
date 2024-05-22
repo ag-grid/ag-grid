@@ -1,4 +1,4 @@
-import type { ISetNodesSelectedParams, RowNode, SelectionEventSourceType } from '@ag-grid-community/core';
+import { ISetNodesSelectedParams, RowNode, SelectionEventSourceType } from '@ag-grid-community/core';
 
 export interface ISelectionStrategy {
     getSelectedState(): any;

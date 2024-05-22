@@ -1,17 +1,15 @@
 import { Autowired, Optional, PostConstruct } from '../context/context';
 import { GridHeaderComp } from '../headerRendering/gridHeaderComp';
-import type { IRangeService } from '../interfaces/IRangeService';
-import type { ResizeObserverService } from '../misc/resizeObserverService';
+import { IRangeService } from '../interfaces/IRangeService';
+import { ResizeObserverService } from '../misc/resizeObserverService';
 import { OverlayWrapperComponent } from '../rendering/overlays/overlayWrapperComponent';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRowCount } from '../utils/aria';
-import type { AgComponentSelector} from '../widgets/component';
-import { Component } from '../widgets/component';
+import { AgComponentSelector, Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { FakeHScrollComp } from './fakeHScrollComp';
 import { FakeVScrollComp } from './fakeVScrollComp';
-import type { IGridBodyComp} from './gridBodyCtrl';
-import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl, RowAnimationCssClasses } from './gridBodyCtrl';
+import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from './gridBodyCtrl';
 import { RowContainerComp } from './rowContainer/rowContainerComp';
 import { RowContainerName } from './rowContainer/rowContainerCtrl';
 

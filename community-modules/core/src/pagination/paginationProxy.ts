@@ -1,11 +1,10 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../context/context';
-import type { RowNode } from '../entities/rowNode';
-import type { RowPosition } from '../entities/rowPositionUtils';
-import type { ModelUpdatedEvent, PaginationChangedEvent } from '../events';
-import { Events } from '../events';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
-import type { IRowModel, RowBounds, RowModelType } from '../interfaces/iRowModel';
+import { RowNode } from '../entities/rowNode';
+import { RowPosition } from '../entities/rowPositionUtils';
+import { Events, ModelUpdatedEvent, PaginationChangedEvent } from '../events';
+import { WithoutGridCommon } from '../interfaces/iCommon';
+import { IRowModel, RowBounds, RowModelType } from '../interfaces/iRowModel';
 import { _exists, _missing } from '../utils/generic';
 
 @Bean('paginationProxy')

@@ -1,8 +1,8 @@
-import type { AbstractColDef } from '../entities/colDef';
-import type { ColumnPinnedType } from '../entities/column';
-import type { ColumnGroup, ColumnGroupShowType } from '../entities/columnGroup';
-import type { BrandedType } from '../interfaces/brandedType';
-import type { IEventEmitter } from './iEventEmitter';
+import { AbstractColDef } from '../entities/colDef';
+import { ColumnPinnedType } from '../entities/column';
+import { ColumnGroup, ColumnGroupShowType } from '../entities/columnGroup';
+import { BrandedType } from '../interfaces/brandedType';
+import { IEventEmitter } from './iEventEmitter';
 
 export type HeaderColumnId = BrandedType<string, 'HeaderColumnId'>;
 

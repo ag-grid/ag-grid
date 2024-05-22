@@ -1,7 +1,7 @@
-import type { IToolPanel, IToolPanelParams } from '@ag-grid-community/core';
+import { IToolPanel, IToolPanelParams } from '@ag-grid-community/core';
 
 import { CustomComponentWrapper } from './customComponentWrapper';
-import type { CustomToolPanelProps } from './interfaces';
+import { CustomToolPanelProps } from './interfaces';
 
 export class ToolPanelComponentWrapper
     extends CustomComponentWrapper<IToolPanelParams, CustomToolPanelProps, {}>

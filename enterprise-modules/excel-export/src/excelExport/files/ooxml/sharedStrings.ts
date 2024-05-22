@@ -1,5 +1,4 @@
-import type { ExcelOOXMLTemplate, XmlElement} from '@ag-grid-community/core';
-import { _escapeString } from '@ag-grid-community/core';
+import { ExcelOOXMLTemplate, XmlElement, _escapeString } from '@ag-grid-community/core';
 
 const buildSharedString = (strMap: Map<string, number>): XmlElement[] => {
     const ret: XmlElement[] = [];

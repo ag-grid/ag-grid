@@ -1,5 +1,7 @@
-import type {
+import {
     AgChartThemeOverrides,
+    Autowired,
+    BeanStub,
     CellRange,
     CellRangeParams,
     ChartModel,
@@ -7,32 +9,26 @@ import type {
     ChartOptionsChanged,
     ChartRangeSelectionChanged,
     ChartType,
+    Events,
     IAggFunc,
     IRangeService,
     PartialCellRange,
+    PostConstruct,
     SeriesChartType,
     SeriesGroupType,
     UpdateChartParams,
     UpdateCrossFilterChartParams,
     UpdateRangeChartParams,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    Autowired,
-    BeanStub,
-    Events,
-    PostConstruct
+    WithoutGridCommon,
 } from '@ag-grid-community/core';
-import type { AgCartesianAxisType, AgChartThemePalette} from 'ag-charts-community';
-import { _ModuleSupport, _Theme } from 'ag-charts-community';
+import { AgCartesianAxisType, AgChartThemePalette, _ModuleSupport, _Theme } from 'ag-charts-community';
 
-import type { ChartProxy, FieldDefinition, UpdateParams } from './chartProxies/chartProxy';
+import { ChartProxy, FieldDefinition, UpdateParams } from './chartProxies/chartProxy';
 import { isStockTheme } from './chartProxies/chartTheme';
-import type { ChartModelParams, ColState } from './model/chartDataModel';
-import { ChartDataModel } from './model/chartDataModel';
+import { ChartDataModel, ChartModelParams, ColState } from './model/chartDataModel';
 import { ChartParamsValidator } from './utils/chartParamsValidator';
-import type {
-    ChartSeriesType} from './utils/seriesTypeMapper';
 import {
+    ChartSeriesType,
     getMaxNumCategories,
     getMaxNumSeries,
     getSeriesType,
@@ -117,7 +113,7 @@ export class ChartController extends BeanStub {
             crossFiltering: false,
         };
 
-        const chartModelParams: ChartModelParams = { ...common };
+        let chartModelParams: ChartModelParams = { ...common };
 
         // modify the chart model properties based on the type of update
         switch (params.type) {

@@ -1,8 +1,8 @@
-import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import type { Context } from '../../../context/context';
-import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
-import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
-import type { WithoutGridCommon } from '../../../interfaces/iCommon';
+import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
+import { Context } from '../../../context/context';
+import { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
+import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
+import { WithoutGridCommon } from '../../../interfaces/iCommon';
 import { _setDisplayed } from '../../../utils/dom';
 import { _warnOnce } from '../../../utils/function';
 

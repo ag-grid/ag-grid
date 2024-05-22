@@ -1,7 +1,7 @@
-import type { ChartType } from '@ag-grid-community/core';
+import { ChartType } from '@ag-grid-community/core';
 import { _Scene, _Theme, _Util } from 'ag-charts-community';
 
-import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniChart } from '../miniChart';
 
 export class MiniHeatmap extends MiniChart {

@@ -1,11 +1,11 @@
-import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
+import { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { PostConstruct, PreDestroy } from '../../../context/context';
-import type { IFloatingFilterComp } from '../../../filter/floating/floatingFilter';
+import { IFloatingFilterComp } from '../../../filter/floating/floatingFilter';
 import { _setDisplayed } from '../../../utils/dom';
-import type { AgPromise } from '../../../utils/promise';
+import { AgPromise } from '../../../utils/promise';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
-import type { HeaderFilterCellCtrl, IHeaderFilterCellComp } from './headerFilterCellCtrl';
+import { HeaderFilterCellCtrl, IHeaderFilterCellComp } from './headerFilterCellCtrl';
 
 export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCellCtrl> {
     private static TEMPLATE /* html */ = `<div class="ag-header-cell ag-floating-filter" role="gridcell">

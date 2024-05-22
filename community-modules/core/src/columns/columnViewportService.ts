@@ -1,14 +1,13 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../context/context';
-import type { ColumnPinnedType } from '../entities/column';
-import { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
-import type { RowNode } from '../entities/rowNode';
-import type { IHeaderColumn } from '../interfaces/iHeaderColumn';
+import { Column, ColumnPinnedType } from '../entities/column';
+import { ColumnGroup } from '../entities/columnGroup';
+import { RowNode } from '../entities/rowNode';
+import { IHeaderColumn } from '../interfaces/iHeaderColumn';
 import { _exists } from '../utils/generic';
-import type { ColumnEventDispatcher } from './columnEventDispatcher';
-import type { ColumnModel } from './columnModel';
-import type { VisibleColsService } from './visibleColsService';
+import { ColumnEventDispatcher } from './columnEventDispatcher';
+import { ColumnModel } from './columnModel';
+import { VisibleColsService } from './visibleColsService';
 
 @Bean('columnViewportService')
 export class ColumnViewportService extends BeanStub {

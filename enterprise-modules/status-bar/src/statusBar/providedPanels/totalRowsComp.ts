@@ -1,10 +1,9 @@
-import type {
-    IClientSideRowModel,
-    IRowModel,
-    IStatusPanelComp} from '@ag-grid-community/core';
 import {
     Autowired,
     Events,
+    IClientSideRowModel,
+    IRowModel,
+    IStatusPanelComp,
     PostConstruct,
     _formatNumberCommas,
     _warnOnce,

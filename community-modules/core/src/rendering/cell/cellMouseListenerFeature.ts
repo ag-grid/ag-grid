@@ -1,11 +1,10 @@
-import type { Column } from '../../entities/column';
-import type { CellClickedEvent, CellDoubleClickedEvent, CellMouseOutEvent, CellMouseOverEvent} from '../../events';
-import { Events } from '../../events';
+import { Column } from '../../entities/column';
+import { CellClickedEvent, CellDoubleClickedEvent, CellMouseOutEvent, CellMouseOverEvent, Events } from '../../events';
 import { _isBrowserSafari, _isIOSUserAgent } from '../../utils/browser';
 import { _isElementChildOfClass, _isFocusableFormField } from '../../utils/dom';
 import { _isEventSupported, _isStopPropagationForAgGrid } from '../../utils/event';
 import { Beans } from '../beans';
-import type { CellCtrl } from './cellCtrl';
+import { CellCtrl } from './cellCtrl';
 
 export class CellMouseListenerFeature extends Beans {
     private readonly cellCtrl: CellCtrl;

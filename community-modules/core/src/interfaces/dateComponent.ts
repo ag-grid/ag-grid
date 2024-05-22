@@ -1,7 +1,7 @@
-import type { DateFilterParams } from '../filter/provided/date/dateFilter';
-import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
-import type { AgGridCommon } from '../interfaces/iCommon';
-import type { IComponent } from '../interfaces/iComponent';
+import { DateFilterParams } from '../filter/provided/date/dateFilter';
+import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
+import { AgGridCommon } from '../interfaces/iCommon';
+import { IComponent } from '../interfaces/iComponent';
 
 export interface BaseDate {
     /** Optional: Sets the disabled state of this component */

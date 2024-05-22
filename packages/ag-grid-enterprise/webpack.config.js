@@ -31,7 +31,7 @@ module.exports = ({ production = false, minify = false, styles = true, entry = '
         rules.push({
             test: /\.css$/,
             use: ['style-loader', 'css-loader'].concat(
-                minify
+                !!minify
                     ? {
                           loader: 'postcss-loader',
                           options: {
@@ -66,7 +66,7 @@ module.exports = ({ production = false, minify = false, styles = true, entry = '
             rules,
         },
         optimization: {
-            minimizer: minify
+            minimizer: !!minify
                 ? [
                       new TerserPlugin({
                           terserOptions: {

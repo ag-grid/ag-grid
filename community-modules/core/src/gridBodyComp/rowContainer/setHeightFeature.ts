@@ -1,7 +1,7 @@
 import { BeanStub } from '../../context/beanStub';
 import { Autowired, PostConstruct } from '../../context/context';
 import { Events } from '../../eventKeys';
-import type { RowContainerHeightService } from '../../rendering/rowContainerHeightService';
+import { RowContainerHeightService } from '../../rendering/rowContainerHeightService';
 
 export class SetHeightFeature extends BeanStub {
     @Autowired('rowContainerHeightService') private maxDivHeightScaler: RowContainerHeightService;

@@ -1,4 +1,4 @@
-import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
+import { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import {
     addBindingImports,
     addGenericInterfaceImport,
@@ -25,7 +25,7 @@ function getPropertyInterfaces(properties) {
 function getModuleImports(bindings: ParsedBindings): string[] {
     const { inlineGridStyles, imports: bindingImports, properties } = bindings;
 
-    const imports = [];
+    let imports = [];
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
     // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
@@ -33,7 +33,7 @@ function getModuleImports(bindings: ParsedBindings): string[] {
     const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
 
-    const propertyInterfaces = getPropertyInterfaces(properties);
+    let propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
     bImports.push({
         module: `'@ag-grid-community/core'`,
@@ -62,7 +62,7 @@ function getPackageImports(bindings: ParsedBindings): string[] {
     const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import "ag-grid-community/styles/${theme}.css";`);
 
-    const propertyInterfaces = getPropertyInterfaces(properties);
+    let propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
     bImports.push({
         module: `'ag-grid-community'`,
@@ -98,7 +98,7 @@ export function vanillaToTypescript(
     // attach external handlers to window
     let toAttach = '';
     if (externalEventHandlers?.length > 0) {
-        const externalBindings = externalEventHandlers.map((e) => ` (<any>window).${e.name} = ${e.name};`);
+        let externalBindings = externalEventHandlers.map((e) => ` (<any>window).${e.name} = ${e.name};`);
         toAttach = [
             '\n',
             "if (typeof window !== 'undefined') {",

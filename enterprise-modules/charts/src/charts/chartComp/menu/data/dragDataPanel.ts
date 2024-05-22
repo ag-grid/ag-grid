@@ -1,13 +1,10 @@
-import type { AgSelectParams, ListOption } from '@ag-grid-community/core';
-import { AgSelect, Autowired, Component } from '@ag-grid-community/core';
-import type { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgSelect, AgSelectParams, Autowired, Component, ListOption } from '@ag-grid-community/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import type { AgPillSelectChangeParams } from '../../../../widgets/agPillSelect';
-import { AgPillSelect } from '../../../../widgets/agPillSelect';
-import type { ChartController } from '../../chartController';
-import type { ColState } from '../../model/chartDataModel';
-import { ChartDataModel } from '../../model/chartDataModel';
-import type { ChartTranslationKey, ChartTranslationService } from '../../services/chartTranslationService';
+import { AgPillSelect, AgPillSelectChangeParams } from '../../../../widgets/agPillSelect';
+import { ChartController } from '../../chartController';
+import { ChartDataModel, ColState } from '../../model/chartDataModel';
+import { ChartTranslationKey, ChartTranslationService } from '../../services/chartTranslationService';
 
 export abstract class DragDataPanel extends Component {
     @Autowired('chartTranslationService') protected readonly chartTranslationService: ChartTranslationService;

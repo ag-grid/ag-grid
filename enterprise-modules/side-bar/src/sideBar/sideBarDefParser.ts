@@ -1,4 +1,4 @@
-import type { SideBarDef, ToolPanelDef } from '@ag-grid-community/core';
+import { SideBarDef, ToolPanelDef } from '@ag-grid-community/core';
 
 export class SideBarDefParser {
     static readonly DEFAULT_COLUMN_COMP: ToolPanelDef = {

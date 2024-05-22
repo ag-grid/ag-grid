@@ -1,4 +1,4 @@
-import type { BaseColDefOptionalDataParams, ValueFormatterParams, ValueParserParams } from './colDef';
+import { BaseColDefOptionalDataParams, ValueFormatterParams, ValueParserParams } from './colDef';
 
 export type ValueParserLiteParams<TData, TValue> = Omit<ValueParserParams<TData, TValue>, 'data' | 'node' | 'oldValue'>;
 

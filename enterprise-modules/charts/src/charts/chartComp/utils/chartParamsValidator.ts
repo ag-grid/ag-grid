@@ -1,4 +1,4 @@
-import type {
+import {
     AgChartThemeOverrides,
     ChartParamsCellRange,
     ChartType,
@@ -6,13 +6,12 @@ import type {
     UpdateChartParams,
     UpdateCrossFilterChartParams,
     UpdatePivotChartParams,
-    UpdateRangeChartParams} from '@ag-grid-community/core';
-import {
+    UpdateRangeChartParams,
     _warnOnce,
 } from '@ag-grid-community/core';
 import { _ModuleSupport } from 'ag-charts-community';
 
-import type { CommonCreateChartParams } from '../../chartService';
+import { CommonCreateChartParams } from '../../chartService';
 import { getCanonicalChartType, getSeriesTypeIfExists, isComboChart, isEnterpriseChartType } from './seriesTypeMapper';
 
 const validateIfDefined = <I, O = never>(validationFn: (value: NonNullable<I>) => boolean | O) => {
@@ -154,7 +153,7 @@ export class ChartParamsValidator {
     ];
 
     public static validateUpdateParams(params: UpdateChartParams): boolean | UpdateChartParams {
-        const paramsToValidate = params as UpdateChartParams;
+        let paramsToValidate = params as UpdateChartParams;
         switch (paramsToValidate.type) {
             case 'rangeChartUpdate':
                 return ChartParamsValidator.validateUpdateRangeChartParams(params as UpdateRangeChartParams);

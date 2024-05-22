@@ -1,19 +1,17 @@
 import { _includes } from '@ag-grid-community/core';
-import type {
+import {
     AgChartLegendClickEvent,
     AgChartTheme,
     AgChartThemeName,
     AgChartThemeOverrides,
-    AgChartThemePalette} from 'ag-charts-community';
-import {
+    AgChartThemePalette,
     _Theme,
 } from 'ag-charts-community';
 
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
 import { get } from '../utils/object';
-import type { ChartSeriesType} from '../utils/seriesTypeMapper';
-import { getSeriesType } from '../utils/seriesTypeMapper';
-import type { ChartProxy, ChartProxyParams } from './chartProxy';
+import { ChartSeriesType, getSeriesType } from '../utils/seriesTypeMapper';
+import { ChartProxy, ChartProxyParams } from './chartProxy';
 
 export function createAgChartTheme(
     chartProxyParams: ChartProxyParams,

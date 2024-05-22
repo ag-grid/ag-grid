@@ -1,15 +1,15 @@
-import type { ColumnApplyStateService } from './columns/columnApplyStateService';
-import type { ColumnModel } from './columns/columnModel';
-import type { ColumnSizeService } from './columns/columnSizeService';
+import { ColumnApplyStateService } from './columns/columnApplyStateService';
+import { ColumnModel } from './columns/columnModel';
+import { ColumnSizeService } from './columns/columnSizeService';
 import { BeanStub } from './context/beanStub';
 import { Bean } from './context/context';
 import { Qualifier } from './context/context';
 import { Autowired } from './context/context';
 import { PostConstruct } from './context/context';
-import type { CtrlsService } from './ctrlsService';
-import type { Column } from './entities/column';
-import type { ProvidedColumnGroup } from './entities/providedColumnGroup';
-import type {
+import { CtrlsService } from './ctrlsService';
+import { Column } from './entities/column';
+import { ProvidedColumnGroup } from './entities/providedColumnGroup';
+import {
     AgEvent,
     BodyScrollEvent,
     ColumnEvent,
@@ -17,13 +17,12 @@ import type {
     ColumnMovedEvent,
     ColumnPinnedEvent,
     ColumnResizedEvent,
-    ColumnVisibleEvent} from './events';
-import {
+    ColumnVisibleEvent,
     Events,
 } from './events';
 import { GridApi } from './gridApi';
-import type { Logger } from './logger';
-import type { LoggerFactory } from './logger';
+import { Logger } from './logger';
+import { LoggerFactory } from './logger';
 import { _errorOnce } from './utils/function';
 
 @Bean('alignedGridsService')

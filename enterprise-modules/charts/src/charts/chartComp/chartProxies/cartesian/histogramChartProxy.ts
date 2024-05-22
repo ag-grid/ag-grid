@@ -1,6 +1,6 @@
-import type { AgCartesianAxisOptions, AgHistogramSeriesOptions } from 'ag-charts-community';
+import { AgCartesianAxisOptions, AgHistogramSeriesOptions } from 'ag-charts-community';
 
-import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
 
 export class HistogramChartProxy extends CartesianChartProxy<'histogram'> {

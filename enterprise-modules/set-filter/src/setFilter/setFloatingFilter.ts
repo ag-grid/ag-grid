@@ -1,14 +1,13 @@
-import type {
-    ColumnModel,
-    ColumnNameService,
-    IFloatingFilter,
-    IFloatingFilterParams,
-    SetFilterModel} from '@ag-grid-community/core';
 import {
     AgInputTextField,
     Autowired,
+    ColumnModel,
+    ColumnNameService,
     Component,
-    RefSelector
+    IFloatingFilter,
+    IFloatingFilterParams,
+    RefSelector,
+    SetFilterModel,
 } from '@ag-grid-community/core';
 
 import { SetFilter } from './setFilter';

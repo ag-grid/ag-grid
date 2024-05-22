@@ -1,10 +1,9 @@
-import type {
-    ChartCreated,
-    ChartToolPanelMenuOptions,
-    ChartToolbarMenuItemOptions} from '@ag-grid-community/core';
 import {
     AgPromise,
     Autowired,
+    ChartCreated,
+    ChartToolPanelMenuOptions,
+    ChartToolbarMenuItemOptions,
     Component,
     Events,
     PostConstruct,
@@ -12,10 +11,10 @@ import {
 import { AgPanel } from '@ag-grid-enterprise/core';
 
 import { ChartController } from '../chartController';
-import type { ExtraPaddingDirection } from '../chartProxies/chartProxy';
-import type { ChartMenuService } from '../services/chartMenuService';
-import type { ChartMenuContext } from './chartMenuContext';
-import type { ChartMenuListFactory } from './chartMenuList';
+import { ExtraPaddingDirection } from '../chartProxies/chartProxy';
+import { ChartMenuService } from '../services/chartMenuService';
+import { ChartMenuContext } from './chartMenuContext';
+import { ChartMenuListFactory } from './chartMenuList';
 import { ChartToolbar } from './chartToolbar';
 import { TabbedChartMenu } from './tabbedChartMenu';
 

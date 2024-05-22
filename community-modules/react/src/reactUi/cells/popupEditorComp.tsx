@@ -1,11 +1,10 @@
-import type { CellCtrl} from '@ag-grid-community/core';
-import { PopupEditorWrapper } from '@ag-grid-community/core';
+import { CellCtrl, PopupEditorWrapper } from '@ag-grid-community/core';
 import React, { memo, useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { BeansContext } from '../beansContext';
 import { useEffectOnce } from '../useEffectOnce';
-import type { EditDetails } from './cellComp';
+import { EditDetails } from './cellComp';
 
 const PopupEditorComp = (props: {
     editDetails: EditDetails;

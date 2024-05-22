@@ -1,7 +1,7 @@
-import type { GridOptions } from '../entities/gridOptions';
-import type { GridApi } from '../gridApi';
-import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
-import type { IRowNode } from './iRowNode';
+import { GridOptions } from '../entities/gridOptions';
+import { GridApi } from '../gridApi';
+import { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
+import { IRowNode } from './iRowNode';
 
 export interface IDetailCellRenderer<TData = any> {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;

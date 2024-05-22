@@ -1,9 +1,8 @@
 import { BeanStub } from '../context/beanStub';
 import { Bean } from '../context/context';
-import type { Column } from '../entities/column';
-import type { ColumnHoverChangedEvent} from '../events';
-import { Events } from '../events';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
+import { Column } from '../entities/column';
+import { ColumnHoverChangedEvent, Events } from '../events';
+import { WithoutGridCommon } from '../interfaces/iCommon';
 
 @Bean('columnHoverService')
 export class ColumnHoverService extends BeanStub {

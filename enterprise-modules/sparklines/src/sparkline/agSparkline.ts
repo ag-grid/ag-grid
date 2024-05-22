@@ -1,4 +1,4 @@
-import type {
+import {
     CrosshairLineOptions,
     HighlightStyleOptions,
     PaddingOptions,
@@ -10,12 +10,12 @@ import type {
 import { _Util } from 'ag-charts-community';
 
 import { AreaSparkline } from './area/areaSparkline';
-import type { BarColumnLabel } from './bar-column/barColumnSparkline';
+import { BarColumnLabel } from './bar-column/barColumnSparkline';
 import { BarSparkline } from './bar-column/barSparkline';
 import { ColumnSparkline } from './bar-column/columnSparkline';
 import { LineSparkline } from './line/lineSparkline';
-import type { SparklineAxis } from './sparkline';
-import type { SparklineTooltip } from './tooltip/sparklineTooltip';
+import { SparklineAxis } from './sparkline';
+import { SparklineTooltip } from './tooltip/sparklineTooltip';
 
 const { isNumber } = _Util;
 

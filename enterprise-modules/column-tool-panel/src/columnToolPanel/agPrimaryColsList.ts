@@ -1,32 +1,31 @@
-import type {
+import {
     AbstractColDef,
     AgComponentSelector,
+    Autowired,
     ColGroupDef,
     Column,
     ColumnEventType,
     ColumnModel,
     ColumnNameService,
     ColumnToolPanelState,
-    IProvidedColumn,
-    VirtualListModel} from '@ag-grid-community/core';
-import {
-    Autowired,
     Component,
     Events,
+    IProvidedColumn,
     PreDestroy,
     ProvidedColumnGroup,
     VirtualList,
+    VirtualListModel,
     _exists,
     _includes,
     _setAriaLabel,
     _setAriaLevel,
 } from '@ag-grid-community/core';
-import type { ToolPanelColDefService } from '@ag-grid-enterprise/side-bar';
+import { ToolPanelColDefService } from '@ag-grid-enterprise/side-bar';
 
 import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';
-import type { ToolPanelColumnCompParams } from './columnToolPanel';
-import type { ModelItemUtils } from './modelItemUtils';
+import { ToolPanelColumnCompParams } from './columnToolPanel';
+import { ModelItemUtils } from './modelItemUtils';
 import { PrimaryColsListPanelItemDragFeature } from './primaryColsListPanelItemDragFeature';
 import { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';

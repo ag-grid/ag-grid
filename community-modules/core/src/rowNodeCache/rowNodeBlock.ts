@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import type { AgEvent } from '../events';
+import { AgEvent } from '../events';
 
 export interface LoadCompleteEvent extends AgEvent {
     success: boolean;

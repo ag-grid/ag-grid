@@ -1,6 +1,6 @@
-import type { AgBoxPlotSeriesOptions } from 'ag-charts-community';
+import { AgBoxPlotSeriesOptions } from 'ag-charts-community';
 
-import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { StatisticalChartProxy } from './statisticalChartProxy';
 
 export class BoxPlotChartProxy extends StatisticalChartProxy<'box-plot'> {

@@ -1,5 +1,4 @@
-import type { FrameworkOverridesIncomingSource} from '@ag-grid-community/core';
-import { VanillaFrameworkOverrides } from '@ag-grid-community/core';
+import { FrameworkOverridesIncomingSource, VanillaFrameworkOverrides } from '@ag-grid-community/core';
 import { Injectable, NgZone } from '@angular/core';
 
 @Injectable()

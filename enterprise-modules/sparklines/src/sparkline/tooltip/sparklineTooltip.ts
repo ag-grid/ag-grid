@@ -1,4 +1,4 @@
-import type { TooltipRendererResult } from '@ag-grid-community/core';
+import { TooltipRendererResult } from '@ag-grid-community/core';
 
 export interface SparklineTooltipMeta {
     pageX: number;

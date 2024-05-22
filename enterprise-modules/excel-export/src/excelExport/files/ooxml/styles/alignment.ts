@@ -1,4 +1,4 @@
-import type { ExcelAlignment, ExcelOOXMLTemplate } from '@ag-grid-community/core';
+import { ExcelAlignment, ExcelOOXMLTemplate } from '@ag-grid-community/core';
 
 import { convertLegacyHorizontalAlignment, convertLegacyVerticalAlignment } from '../../../assets/excelLegacyConvert';
 

@@ -1,6 +1,6 @@
 import { EventService } from '../eventService';
-import type { AgEvent, AgEventListener } from '../events';
-import type { IEventEmitter } from '../interfaces/iEventEmitter';
+import { AgEvent, AgEventListener } from '../events';
+import { IEventEmitter } from '../interfaces/iEventEmitter';
 import { _areEventsNear } from '../utils/mouse';
 
 export interface TapEvent extends AgEvent {

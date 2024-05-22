@@ -1,14 +1,13 @@
-import type {
-    Beans,
-    GetGroupIncludeFooterParams,
-    IRowNodeStage,
-    StageExecuteParams,
-    WithoutGridCommon} from '@ag-grid-community/core';
 import {
     Autowired,
     Bean,
     BeanStub,
+    Beans,
+    GetGroupIncludeFooterParams,
+    IRowNodeStage,
     RowNode,
+    StageExecuteParams,
+    WithoutGridCommon,
     _exists,
     _missingOrEmpty,
 } from '@ag-grid-community/core';

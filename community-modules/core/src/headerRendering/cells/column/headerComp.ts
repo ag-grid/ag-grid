@@ -1,20 +1,19 @@
-import type { FuncColsService } from '../../../columns/funcColsService';
+import { FuncColsService } from '../../../columns/funcColsService';
 import { Autowired } from '../../../context/context';
-import type { SortDirection } from '../../../entities/colDef';
+import { SortDirection } from '../../../entities/colDef';
 import { Column } from '../../../entities/column';
 import { Events } from '../../../eventKeys';
-import type { AgGridCommon } from '../../../interfaces/iCommon';
-import type { IComponent } from '../../../interfaces/iComponent';
-import type { MenuService } from '../../../misc/menuService';
-import type { SortController } from '../../../sortController';
+import { AgGridCommon } from '../../../interfaces/iCommon';
+import { IComponent } from '../../../interfaces/iComponent';
+import { MenuService } from '../../../misc/menuService';
+import { SortController } from '../../../sortController';
 import { _removeFromParent, _setDisplayed } from '../../../utils/dom';
 import { _exists } from '../../../utils/generic';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _escapeString } from '../../../utils/string';
 import { Component } from '../../../widgets/component';
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import type { LongTapEvent, TapEvent} from '../../../widgets/touchListener';
-import { TouchListener } from '../../../widgets/touchListener';
+import { LongTapEvent, TapEvent, TouchListener } from '../../../widgets/touchListener';
 import { SortIndicatorComp } from './sortIndicatorComp';
 
 export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

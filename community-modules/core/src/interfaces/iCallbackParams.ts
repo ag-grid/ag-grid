@@ -1,10 +1,10 @@
-import type { CellPosition } from '../entities/cellPositionUtils';
-import type { Column } from '../entities/column';
-import type { HeaderPosition } from '../headerRendering/common/headerPosition';
-import type { ChartToolbarMenuItemOptions } from './iChartOptions';
-import type { AgGridCommon } from './iCommon';
-import type { IRowNode } from './iRowNode';
-import type { ServerSideTransaction } from './serverSideTransaction';
+import { CellPosition } from '../entities/cellPositionUtils';
+import { Column } from '../entities/column';
+import { HeaderPosition } from '../headerRendering/common/headerPosition';
+import { ChartToolbarMenuItemOptions } from './iChartOptions';
+import { AgGridCommon } from './iCommon';
+import { IRowNode } from './iRowNode';
+import { ServerSideTransaction } from './serverSideTransaction';
 
 export interface GetContextMenuItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Names of the items that would be provided by default. */

@@ -1,8 +1,8 @@
-import type { IComponent } from '../../interfaces/iComponent';
+import { IComponent } from '../../interfaces/iComponent';
 import { _createIconNoSpan } from '../../utils/icon';
 import { Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
-import type { ICellRendererParams } from './iCellRenderer';
+import { ICellRendererParams } from './iCellRenderer';
 
 export interface ILoadingCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<TData, TContext> {}
 export interface ILoadingCellRenderer {}

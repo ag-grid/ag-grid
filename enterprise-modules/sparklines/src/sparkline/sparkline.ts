@@ -1,9 +1,9 @@
-import type { HighlightStyleOptions } from '@ag-grid-community/core';
+import { HighlightStyleOptions } from '@ag-grid-community/core';
 import { _Scale, _Scene, _Util } from 'ag-charts-community';
 
-import type { SparklineFactoryOptions } from './agSparkline';
+import { SparklineFactoryOptions } from './agSparkline';
 import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
-import type { SparklineTooltip, SparklineTooltipMeta } from './tooltip/sparklineTooltip';
+import { SparklineTooltip, SparklineTooltipMeta } from './tooltip/sparklineTooltip';
 
 const { extent, isNumber, isString, isStringObject, isDate, createId, Padding } = _Util;
 const { LinearScale, BandScale, TimeScale } = _Scale;

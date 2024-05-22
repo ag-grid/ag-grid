@@ -1,19 +1,18 @@
-import type {
-    IServerSideGetRowsParams,
-    IServerSideGetRowsRequest,
-    LoadSuccessParams,
-    RowNode,
-    RowRenderer} from '@ag-grid-community/core';
 import {
     Autowired,
     Bean,
     BeanStub,
+    IServerSideGetRowsParams,
+    IServerSideGetRowsRequest,
+    LoadSuccessParams,
     PostConstruct,
-    RowNodeBlockLoader
+    RowNode,
+    RowNodeBlockLoader,
+    RowRenderer,
 } from '@ag-grid-community/core';
 
-import type { ServerSideRowModel } from '../../serverSideRowModel';
-import type { LazyCache } from './lazyCache';
+import { ServerSideRowModel } from '../../serverSideRowModel';
+import { LazyCache } from './lazyCache';
 import { LazyStore } from './lazyStore';
 
 @Bean('lazyBlockLoadingService')

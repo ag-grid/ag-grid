@@ -1,14 +1,13 @@
-import type {
+import {
+    AgPromise,
     Column,
+    Events,
     FuncColsService,
     GetDataPath,
     IClientSideRowModel,
     RowNode,
     SetFilterParams,
-    ValueService} from '@ag-grid-community/core';
-import {
-    AgPromise,
-    Events,
+    ValueService,
     _makeNull,
     _toStringOrNull,
 } from '@ag-grid-community/core';

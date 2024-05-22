@@ -1,8 +1,14 @@
-import type {
+import {
+    Autowired,
+    Bean,
+    BeanStub,
     Column,
+    ColumnGroup,
     ColumnModel,
     ColumnNameService,
     ExportParams,
+    GROUP_AUTO_COLUMN_ID,
+    GroupInstanceIdCreator,
     IClientSideRowModel,
     IHeaderColumn,
     IRowModel,
@@ -14,19 +20,12 @@ import type {
     RowNodeSorter,
     ShouldRowBeSkippedParams,
     SortController,
-    VisibleColsService} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    ColumnGroup,
-    GROUP_AUTO_COLUMN_ID,
-    GroupInstanceIdCreator,
+    VisibleColsService,
     _compose,
     _last,
 } from '@ag-grid-community/core';
 
-import type { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from './interfaces';
+import { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from './interfaces';
 
 type ProcessGroupHeaderCallback = (params: ProcessGroupHeaderForExportParams) => string;
 

@@ -1,9 +1,15 @@
-import type {
+import {
     AsyncTransactionsFlushed,
+    Autowired,
+    Bean,
+    BeanStub,
     Beans,
+    ChangedPath,
     ClientSideRowModelStep,
+    ClientSideRowModelSteps,
     ColumnModel,
     CssVariablesChanged,
+    Events,
     ExpandCollapseAllEvent,
     FilterChangedEvent,
     FuncColsService,
@@ -12,26 +18,19 @@ import type {
     IRowNodeStage,
     ISelectionService,
     ModelUpdatedEvent,
+    Optional,
+    PostConstruct,
     RefreshModelParams,
     RowBounds,
     RowDataTransaction,
     RowDataUpdatedEvent,
+    RowHighlightPosition,
     RowModelType,
+    RowNode,
     RowNodeTransaction,
     SelectionChangedEvent,
     ValueCache,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    ChangedPath,
-    ClientSideRowModelSteps,
-    Events,
-    Optional,
-    PostConstruct,
-    RowHighlightPosition,
-    RowNode,
+    WithoutGridCommon,
     _debounce,
     _exists,
     _insertIntoArray,
@@ -641,7 +640,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             return;
         }
 
-        const params =
+        let params =
             typeof paramsOrStep === 'object' && 'step' in paramsOrStep
                 ? paramsOrStep
                 : this.buildRefreshModelParams(paramsOrStep);

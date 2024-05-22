@@ -1,4 +1,4 @@
-import type {
+import {
     Column,
     ColumnModel,
     ColumnNameService,
@@ -12,7 +12,7 @@ import type {
     ValueService,
 } from '@ag-grid-community/core';
 
-import type { GridSerializingParams, GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from '../interfaces';
+import { GridSerializingParams, GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from '../interfaces';
 
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public columnModel: ColumnModel;

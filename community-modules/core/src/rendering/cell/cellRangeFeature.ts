@@ -1,17 +1,16 @@
-import type { Column } from '../../entities/column';
-import type {
-    IRangeService,
-    ISelectionHandle,
-    ISelectionHandleFactory} from '../../interfaces/IRangeService';
+import { Column } from '../../entities/column';
 import {
     CellRangeType,
+    IRangeService,
+    ISelectionHandle,
+    ISelectionHandleFactory,
     SelectionHandleType,
 } from '../../interfaces/IRangeService';
 import { _setAriaSelected } from '../../utils/aria';
 import { _includes, _last } from '../../utils/array';
 import { _missing } from '../../utils/generic';
-import type { Beans } from '../beans';
-import type { CellCtrl, ICellComp } from './cellCtrl';
+import { Beans } from '../beans';
+import { CellCtrl, ICellComp } from './cellCtrl';
 
 const CSS_CELL_RANGE_SELECTED = 'ag-cell-range-selected';
 const CSS_CELL_RANGE_CHART = 'ag-cell-range-chart';

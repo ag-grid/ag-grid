@@ -1,4 +1,7 @@
-import type {
+import {
+    Autowired,
+    Bean,
+    BeanStub,
     ChangedPath,
     ColumnModel,
     FuncColsService,
@@ -10,11 +13,7 @@ import type {
     ShowRowGroupColsService,
     SortOption,
     SortedRowNode,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+    WithoutGridCommon,
     _missing,
     _warnOnce,
 } from '@ag-grid-community/core';
@@ -55,7 +54,7 @@ export class SortService extends BeanStub {
             // Javascript sort is non deterministic when all the array items are equals, ie Comparator always returns 0,
             // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
             // are going to inspect the original array position. This is what sortedRowNodes is for.
-            const skipSortingGroups =
+            let skipSortingGroups =
                 groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
             if (skipSortingGroups) {
                 const nextGroup = this.funcColsService.getRowGroupColumns()?.[rowNode.level + 1];

@@ -1,4 +1,4 @@
-import type { RowNode } from '../entities/rowNode';
+import { RowNode } from '../entities/rowNode';
 
 /**
  * Gets called by: a) ClientSideNodeManager and b) GroupStage to do sorting.

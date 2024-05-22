@@ -1,4 +1,4 @@
-import type { ColDef } from './colDef';
+import { ColDef } from './colDef';
 
 export const DefaultColumnTypes: { [key: string]: ColDef } = {
     numericColumn: {

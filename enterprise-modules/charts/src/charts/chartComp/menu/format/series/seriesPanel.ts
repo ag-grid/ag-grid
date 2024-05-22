@@ -1,29 +1,26 @@
-import type {
-    AgSelectParams,
-    AgToggleButtonParams,
-    ListOption} from '@ag-grid-community/core';
 import {
     AgSelect,
+    AgSelectParams,
     AgToggleButton,
+    AgToggleButtonParams,
     Autowired,
     Component,
+    ListOption,
     PostConstruct,
     RefSelector,
     _removeFromParent,
 } from '@ag-grid-community/core';
-import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
 
 import { AgColorPicker } from '../../../../../widgets/agColorPicker';
 import { AgSlider } from '../../../../../widgets/agSlider';
 import { ChartController } from '../../../chartController';
-import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
-import type { ChartSeriesType} from '../../../utils/seriesTypeMapper';
-import { getSeriesType, isPieChartSeries } from '../../../utils/seriesTypeMapper';
+import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import { ChartSeriesType, getSeriesType, isPieChartSeries } from '../../../utils/seriesTypeMapper';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import { FontPanel } from '../fontPanel';
-import type { FormatPanelOptions } from '../formatPanel';
+import { FormatPanelOptions } from '../formatPanel';
 import { CalloutPanel } from './calloutPanel';
 import { CapsPanel } from './capsPanel';
 import { ConnectorLinePanel } from './connectorLinePanel';

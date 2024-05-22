@@ -1,9 +1,8 @@
-import type {
-    GroupCellRendererParams,
-    IGroupCellRenderer,
-    UserCompDetails} from '@ag-grid-community/core';
 import {
     GroupCellRendererCtrl,
+    GroupCellRendererParams,
+    IGroupCellRenderer,
+    UserCompDetails,
     _escapeString,
 } from '@ag-grid-community/core';
 import React, {

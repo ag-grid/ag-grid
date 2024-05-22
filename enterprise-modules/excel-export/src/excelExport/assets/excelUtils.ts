@@ -1,8 +1,8 @@
-import type { Column, RowHeightCallbackParams, XmlElement } from '@ag-grid-community/core';
+import { Column, RowHeightCallbackParams, XmlElement } from '@ag-grid-community/core';
 import { XmlFactory } from '@ag-grid-community/csv-export';
 
 import { INCH_TO_EMU } from './excelConstants';
-import type { ExcelCalculatedImage } from './excelInterfaces';
+import { ExcelCalculatedImage } from './excelInterfaces';
 
 export const pixelsToPoint = (pixels: number): number => {
     return Math.round((pixels * 72) / 96);

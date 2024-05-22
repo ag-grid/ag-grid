@@ -1,7 +1,7 @@
 import { BeanStub } from '../../context/beanStub';
 import { Autowired, PostConstruct } from '../../context/context';
-import type { Column } from '../../entities/column';
-import type { ColumnHoverService } from '../../rendering/columnHoverService';
+import { Column } from '../../entities/column';
+import { ColumnHoverService } from '../../rendering/columnHoverService';
 
 export class HoverFeature extends BeanStub {
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;

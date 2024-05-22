@@ -1,7 +1,7 @@
 import { Bean } from '../context/context';
-import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { Column } from '../entities/column';
-import type { ProvidedColumnGroup } from '../entities/providedColumnGroup';
+import { ColDef, ColGroupDef } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import { _deepCloneDefinition } from '../utils/object';
 
 @Bean('columnDefFactory')

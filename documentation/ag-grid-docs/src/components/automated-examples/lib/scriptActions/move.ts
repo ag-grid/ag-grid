@@ -1,4 +1,4 @@
-import type { Group } from '@tweenjs/tween.js';
+import { Group } from '@tweenjs/tween.js';
 
 import { AG_ROW_HOVER_CLASSNAME, AG_ROW_SELECTOR } from '../constants';
 import { type Mouse } from '../createMouse';

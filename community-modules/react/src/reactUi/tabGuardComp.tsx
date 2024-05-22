@@ -1,8 +1,6 @@
-import type { GridCtrl, ITabGuard} from '@ag-grid-community/core';
-import { TabGuardClassNames, TabGuardCtrl } from '@ag-grid-community/core';
-import type {
-    ForwardRefRenderFunction} from 'react';
+import { GridCtrl, ITabGuard, TabGuardClassNames, TabGuardCtrl } from '@ag-grid-community/core';
 import React, {
+    ForwardRefRenderFunction,
     forwardRef,
     memo,
     useCallback,

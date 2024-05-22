@@ -1,33 +1,31 @@
-import type {
+import {
     AdvancedFilterModel,
+    Autowired,
     Beans,
     ColumnAdvancedFilterModel,
+    Component,
     FilterManager,
     JoinAdvancedFilterModel,
-    VirtualListDragItem} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Component,
     PostConstruct,
     RefSelector,
     TooltipFeature,
     VirtualList,
+    VirtualListDragItem,
     _exists,
     _setDisabled,
 } from '@ag-grid-community/core';
 
-import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
-import type { AdvancedFilterService } from '../advancedFilterService';
+import { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
+import { AdvancedFilterService } from '../advancedFilterService';
 import { AdvancedFilterBuilderDragFeature } from './advancedFilterBuilderDragFeature';
 import { AdvancedFilterBuilderItemAddComp } from './advancedFilterBuilderItemAddComp';
 import { AdvancedFilterBuilderItemComp } from './advancedFilterBuilderItemComp';
-import type {
+import {
     AdvancedFilterBuilderAddEvent,
+    AdvancedFilterBuilderEvents,
     AdvancedFilterBuilderItem,
     AdvancedFilterBuilderMoveEvent,
-    AdvancedFilterBuilderRemoveEvent} from './iAdvancedFilterBuilder';
-import {
-    AdvancedFilterBuilderEvents
+    AdvancedFilterBuilderRemoveEvent,
 } from './iAdvancedFilterBuilder';
 
 export class AdvancedFilterBuilderComp extends Component {

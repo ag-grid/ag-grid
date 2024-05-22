@@ -1,8 +1,8 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean } from '../context/context';
-import type { Column } from '../entities/column';
-import type { ColumnModel } from './columnModel';
-import type { FuncColsService } from './funcColsService';
+import { Column } from '../entities/column';
+import { ColumnModel } from './columnModel';
+import { FuncColsService } from './funcColsService';
 
 @Bean('showRowGroupColsService')
 export class ShowRowGroupColsService extends BeanStub {

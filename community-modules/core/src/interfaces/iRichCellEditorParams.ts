@@ -1,5 +1,5 @@
-import type { AgPickerFieldParams } from './agFieldParams';
-import type { ICellEditorParams } from './iCellEditor';
+import { AgPickerFieldParams } from './agFieldParams';
+import { ICellEditorParams } from './iCellEditor';
 
 export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
     value?: TValue;

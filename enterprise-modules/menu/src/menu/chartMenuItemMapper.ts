@@ -1,13 +1,12 @@
-import type {
+import {
+    Bean,
+    BeanStub,
     ChartGroupsDef,
     ChartType,
     GridOptionsService,
     IChartService,
     LocaleService,
-    MenuItemDef} from '@ag-grid-community/core';
-import {
-    Bean,
-    BeanStub,
+    MenuItemDef,
     ModuleNames,
     ModuleRegistry,
     Optional,
@@ -75,7 +74,7 @@ export class ChartMenuItemMapper extends BeanStub {
     }
 
     private static buildLookup<T extends MenuItemDefWithKey<any>>(menuItem: T) {
-        const itemLookup: Record<any, T> = {} as any;
+        let itemLookup: Record<any, T> = {} as any;
         const addItem = (item: T) => {
             itemLookup[item._key] = item;
             if (item.subMenu) {
@@ -95,7 +94,7 @@ export class ChartMenuItemMapper extends BeanStub {
         configLookup: ChartDefToMenuItems<TKeys>
     ): MenuItemDefWithKey<TKeys> | undefined {
         const menuItemLookup = this.buildLookup(topLevelMenuItem);
-        const orderedAndFiltered: MenuItemDefWithKey = { ...topLevelMenuItem, subMenu: [] };
+        let orderedAndFiltered: MenuItemDefWithKey = { ...topLevelMenuItem, subMenu: [] };
 
         Object.entries(chartGroupsDef).forEach(([group, chartTypes]: [keyof ChartGroupsDef, ChartType[]]) => {
             const chartConfigGroup = configLookup[group];

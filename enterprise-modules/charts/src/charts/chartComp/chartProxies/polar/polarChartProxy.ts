@@ -1,13 +1,12 @@
-import type { SeriesGroupType } from '@ag-grid-community/core';
-import type {
+import { SeriesGroupType } from '@ag-grid-community/core';
+import {
     AgPolarAxisOptions,
     AgPolarChartOptions,
     AgPolarSeriesOptions,
     AgRadarAreaSeriesOptions,
 } from 'ag-charts-community';
 
-import type { ChartProxyParams, UpdateParams } from '../chartProxy';
-import { ChartProxy } from '../chartProxy';
+import { ChartProxy, ChartProxyParams, UpdateParams } from '../chartProxy';
 
 export class PolarChartProxy extends ChartProxy<
     AgPolarChartOptions,

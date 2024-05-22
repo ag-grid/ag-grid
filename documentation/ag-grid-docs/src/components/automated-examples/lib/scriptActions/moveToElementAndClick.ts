@@ -1,4 +1,4 @@
-import type { Group } from '@tweenjs/tween.js';
+import { Group } from '@tweenjs/tween.js';
 
 import { type AgElementFinder } from '../agElements';
 import { type AgElementName } from '../agElements/agElementsConfig';

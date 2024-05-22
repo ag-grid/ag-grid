@@ -1,5 +1,4 @@
-import type { Module} from '@ag-grid-community/core';
-import { AgCheckbox, AgInputNumberField, AgSelect, ModuleNames } from '@ag-grid-community/core';
+import { AgCheckbox, AgInputNumberField, AgSelect, Module, ModuleNames } from '@ag-grid-community/core';
 import { AgGroupComponent, EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 

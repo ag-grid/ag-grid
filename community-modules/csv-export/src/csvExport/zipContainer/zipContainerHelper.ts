@@ -3,7 +3,7 @@ import { _utf8_encode } from '@ag-grid-community/core';
 import { deflateLocalFile } from './compress';
 import { convertDate, convertDecToHex, convertTime } from './convert';
 import { getCrcFromCrc32Table } from './crcTable';
-import type { ZipFile } from './zipContainer';
+import { ZipFile } from './zipContainer';
 
 interface ZipFileHeader {
     localFileHeader: Uint8Array;

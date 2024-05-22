@@ -1,6 +1,6 @@
-import type { AdvancedFilterModel } from './advancedFilterModel';
-import type { IAdvancedFilterCtrl } from './iAdvancedFilterCtrl';
-import type { IRowNode } from './iRowNode';
+import { AdvancedFilterModel } from './advancedFilterModel';
+import { IAdvancedFilterCtrl } from './iAdvancedFilterCtrl';
+import { IRowNode } from './iRowNode';
 
 export interface IAdvancedFilterService {
     isEnabled(): boolean;

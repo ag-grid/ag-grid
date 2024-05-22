@@ -1,11 +1,11 @@
 import { BeanStub } from '../../context/beanStub';
-import type { Column } from '../../entities/column';
-import type { RowNode } from '../../entities/rowNode';
+import { Column } from '../../entities/column';
+import { RowNode } from '../../entities/rowNode';
 import { Events } from '../../eventKeys';
 import { _areEqual, _last } from '../../utils/array';
 import { _missing } from '../../utils/generic';
-import type { Beans } from '../beans';
-import type { CellCtrl } from './cellCtrl';
+import { Beans } from '../beans';
+import { CellCtrl } from './cellCtrl';
 
 /**
  * Takes care of:

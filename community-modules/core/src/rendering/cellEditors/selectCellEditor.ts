@@ -1,9 +1,9 @@
 import { KeyCode } from '../../constants/keyCode';
 import { Autowired } from '../../context/context';
-import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _missing } from '../../utils/generic';
-import type { ValueService } from '../../valueService/valueService';
-import type { ListOption } from '../../widgets/agList';
+import { ValueService } from '../../valueService/valueService';
+import { ListOption } from '../../widgets/agList';
 import { AgSelect } from '../../widgets/agSelect';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { PopupComponent } from '../../widgets/popupComponent';

@@ -1,9 +1,9 @@
 import { KeyCode } from '../constants/keyCode';
-import type { SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams } from '../entities/colDef';
-import type { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
-import type { GridOptionsService } from '../gridOptionsService';
-import type { IRowNode } from '../interfaces/iRowNode';
+import { SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { ColumnGroup } from '../entities/columnGroup';
+import { GridOptionsService } from '../gridOptionsService';
+import { IRowNode } from '../interfaces/iRowNode';
 import { _isMacOsUserAgent } from './browser';
 import { _exists } from './generic';
 

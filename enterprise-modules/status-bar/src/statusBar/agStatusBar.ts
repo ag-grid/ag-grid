@@ -1,21 +1,20 @@
-import type {
-    AgComponentSelector,
-    IStatusPanelComp,
-    IStatusPanelParams,
-    StatusPanelDef,
-    UserComponentFactory,
-    WithoutGridCommon} from '@ag-grid-community/core';
 import {
+    AgComponentSelector,
     AgPromise,
     Autowired,
     Component,
+    IStatusPanelComp,
+    IStatusPanelParams,
     PostConstruct,
     PreDestroy,
     RefSelector,
+    StatusPanelDef,
+    UserComponentFactory,
+    WithoutGridCommon,
     _removeFromParent,
 } from '@ag-grid-community/core';
 
-import type { StatusBarService } from './statusBarService';
+import { StatusBarService } from './statusBarService';
 
 export class AgStatusBar extends Component {
     static readonly selector: AgComponentSelector = 'AG-STATUS-BAR';

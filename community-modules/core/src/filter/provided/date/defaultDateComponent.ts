@@ -1,5 +1,5 @@
-import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
-import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
+import { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
+import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { _getSafariVersion, _isBrowserChrome, _isBrowserFirefox, _isBrowserSafari } from '../../../utils/browser';
 import { _dateToFormattedString, _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import { _warnOnce } from '../../../utils/function';

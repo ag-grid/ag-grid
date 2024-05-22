@@ -1,12 +1,11 @@
-import type {
-    Column,
-    DraggingEvent,
-    ITooltipParams,
-    WithoutGridCommon} from '@ag-grid-community/core';
 import {
+    Column,
     DragAndDropService,
+    DraggingEvent,
     Events,
+    ITooltipParams,
     PostConstruct,
+    WithoutGridCommon,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
 

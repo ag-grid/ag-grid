@@ -1,19 +1,18 @@
-import type {
+import {
     Beans,
+    ColumnModel,
     EventService,
+    Events,
     FuncColsService,
     GridOptionsService,
     ISelectionService,
     RowDataTransaction,
     RowDataUpdateStartedEvent,
+    RowNode,
     RowNodeTransaction,
     SelectionChangedEvent,
     SelectionEventSourceType,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    ColumnModel,
-    Events,
-    RowNode,
+    WithoutGridCommon,
     _cloneObject,
     _missingOrEmpty,
     _sortRowNodesByOrder,

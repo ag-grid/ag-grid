@@ -1,9 +1,9 @@
-import type { ColDef, ValueFormatterParams } from '../entities/colDef';
-import type { Column } from '../entities/column';
+import { ColDef, ValueFormatterParams } from '../entities/colDef';
+import { Column } from '../entities/column';
 import { RowNode } from '../entities/rowNode';
-import type { GridOptionsService } from '../gridOptionsService';
+import { GridOptionsService } from '../gridOptionsService';
 import { mock } from '../test-utils/mock';
-import type { ExpressionService } from './expressionService';
+import { ExpressionService } from './expressionService';
 import { ValueService } from './valueService';
 
 let colDef: ColDef;

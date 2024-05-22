@@ -1,6 +1,6 @@
-import type { ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
+import { ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
 
-import type { ExcelThemeFont } from '../../../assets/excelInterfaces';
+import { ExcelThemeFont } from '../../../assets/excelInterfaces';
 
 const fontFactory: ExcelOOXMLTemplate = {
     getTemplate(font: ExcelThemeFont) {

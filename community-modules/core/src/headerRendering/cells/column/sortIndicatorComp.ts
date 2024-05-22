@@ -1,12 +1,11 @@
-import type { ColumnModel } from '../../../columns/columnModel';
+import { ColumnModel } from '../../../columns/columnModel';
 import { Autowired } from '../../../context/context';
-import type { Column } from '../../../entities/column';
+import { Column } from '../../../entities/column';
 import { Events } from '../../../eventKeys';
-import type { SortController } from '../../../sortController';
+import { SortController } from '../../../sortController';
 import { _clearElement, _setDisplayed } from '../../../utils/dom';
 import { _createIconNoSpan } from '../../../utils/icon';
-import type { AgComponentSelector} from '../../../widgets/component';
-import { Component } from '../../../widgets/component';
+import { AgComponentSelector, Component } from '../../../widgets/component';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 
 export class SortIndicatorComp extends Component {

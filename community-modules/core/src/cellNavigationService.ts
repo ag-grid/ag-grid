@@ -1,16 +1,16 @@
-import type { VisibleColsService } from './columns/visibleColsService';
+import { VisibleColsService } from './columns/visibleColsService';
 import { KeyCode } from './constants/keyCode';
 import { BeanStub } from './context/beanStub';
 import { Autowired, Bean } from './context/context';
-import type { CellPosition } from './entities/cellPositionUtils';
-import type { Column } from './entities/column';
-import type { RowNode } from './entities/rowNode';
-import type { RowPosition } from './entities/rowPositionUtils';
-import type { IRowModel } from './interfaces/iRowModel';
-import type { PaginationProxy } from './pagination/paginationProxy';
-import type { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
-import type { RowCtrl } from './rendering/row/rowCtrl';
-import type { RowRenderer } from './rendering/rowRenderer';
+import { CellPosition } from './entities/cellPositionUtils';
+import { Column } from './entities/column';
+import { RowNode } from './entities/rowNode';
+import { RowPosition } from './entities/rowPositionUtils';
+import { IRowModel } from './interfaces/iRowModel';
+import { PaginationProxy } from './pagination/paginationProxy';
+import { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
+import { RowCtrl } from './rendering/row/rowCtrl';
+import { RowRenderer } from './rendering/rowRenderer';
 import { _last } from './utils/array';
 import { _missing } from './utils/generic';
 

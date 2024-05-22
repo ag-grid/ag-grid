@@ -3,7 +3,7 @@ import { KeyCode } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
 
 import { AgColorInput } from './agColorInput';
-import type { AgColorPicker } from './agColorPicker';
+import { AgColorPicker } from './agColorPicker';
 
 export class AgColorPanel extends Component {
     private H = 1; // in the [0, 1] range

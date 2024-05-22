@@ -1,11 +1,10 @@
-import type {
+import {
     ColumnSortState,
+    CssClassManager,
     HeaderCellCtrl,
     IHeader,
     IHeaderCellComp,
-    UserCompDetails} from '@ag-grid-community/core';
-import {
-    CssClassManager,
+    UserCompDetails,
     _removeAriaSort,
     _setAriaSort,
 } from '@ag-grid-community/core';
@@ -28,7 +27,7 @@ const HeaderCellComp = (props: { ctrl: HeaderCellCtrl }) => {
     const eHeaderCompWrapper = useRef<HTMLDivElement>(null);
     const userCompRef = useRef<IHeader>();
 
-    const cssClassManager = useRef<CssClassManager>();
+    let cssClassManager = useRef<CssClassManager>();
     if (isAlive && !cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eGui.current);
     }

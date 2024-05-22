@@ -1,6 +1,6 @@
 import { basename } from 'path';
 
-import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
+import { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
     addBindingImports,
@@ -28,7 +28,7 @@ function getModuleImports(
     componentFilenames: string[],
     allStylesheets: string[]
 ): string[] {
-    const imports = [
+    let imports = [
         "import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';",
         "import { createRoot } from 'react-dom/client';",
         "import { AgGridReact } from '@ag-grid-community/react';",

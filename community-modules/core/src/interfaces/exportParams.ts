@@ -1,8 +1,8 @@
-import type { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
-import type { RowPosition } from '../entities/rowPositionUtils';
-import type { AgGridCommon } from './iCommon';
-import type { IRowNode } from './iRowNode';
+import { Column } from '../entities/column';
+import { ColumnGroup } from '../entities/columnGroup';
+import { RowPosition } from '../entities/rowPositionUtils';
+import { AgGridCommon } from './iCommon';
+import { IRowNode } from './iRowNode';
 
 export interface ExportFileNameGetterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
 

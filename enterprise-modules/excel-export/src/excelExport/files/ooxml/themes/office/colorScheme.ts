@@ -1,4 +1,4 @@
-import type { ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
+import { ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
 
 const getColorChildren = (props: [string, string, string, string?]): XmlElement => {
     const [type, innerType, val, lastClr] = props;

@@ -1,7 +1,6 @@
-import type { ExcelOOXMLTemplate} from '@ag-grid-community/core';
-import { _escapeString } from '@ag-grid-community/core';
+import { ExcelOOXMLTemplate, _escapeString } from '@ag-grid-community/core';
 
-import type { NumberFormat } from '../../../assets/excelInterfaces';
+import { NumberFormat } from '../../../assets/excelInterfaces';
 
 function prepareString(str: string): string {
     const split = str.split(/(\[[^\]]*\])/);

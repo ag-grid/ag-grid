@@ -1,5 +1,4 @@
-import type { Module} from '@ag-grid-community/core';
-import { ModuleNames } from '@ag-grid-community/core';
+import { Module, ModuleNames } from '@ag-grid-community/core';
 import { CsvCreator, GridSerializer } from '@ag-grid-community/csv-export';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';

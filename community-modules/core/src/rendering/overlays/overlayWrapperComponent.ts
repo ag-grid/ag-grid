@@ -1,12 +1,10 @@
 import { Autowired, PostConstruct } from '../../context/context';
-import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
-import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
+import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { _clearElement } from '../../utils/dom';
-import type { AgPromise } from '../../utils/promise';
-import type { AgComponentSelector} from '../../widgets/component';
-import { Component } from '../../widgets/component';
+import { AgPromise } from '../../utils/promise';
+import { AgComponentSelector, Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
-import type { OverlayService } from './overlayService';
+import { OverlayService } from './overlayService';
 
 export class OverlayWrapperComponent extends Component implements LayoutView {
     static readonly selector: AgComponentSelector = 'AG-OVERLAY-WRAPPER';

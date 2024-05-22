@@ -1,12 +1,12 @@
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
-import type { Column } from '../../entities/column';
-import type { RowNode } from '../../entities/rowNode';
+import { Column } from '../../entities/column';
+import { RowNode } from '../../entities/rowNode';
 import { Events } from '../../eventKeys';
 import { _isDeleteKey } from '../../utils/keyboard';
-import type { Beans } from '../beans';
-import type { RowCtrl } from '../row/rowCtrl';
-import type { CellCtrl } from './cellCtrl';
+import { Beans } from '../beans';
+import { RowCtrl } from '../row/rowCtrl';
+import { CellCtrl } from './cellCtrl';
 
 export class CellKeyboardListenerFeature extends BeanStub {
     private readonly cellCtrl: CellCtrl;

@@ -1,6 +1,6 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, PostConstruct } from '../context/context';
-import type { FocusService } from '../focusService';
+import { FocusService } from '../focusService';
 import { ManagedFocusFeature } from './managedFocusFeature';
 
 export enum TabGuardClassNames {

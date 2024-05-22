@@ -1,10 +1,9 @@
-import type {
-    Beans,
-    FieldPickerValueSelectedEvent} from '@ag-grid-community/core';
 import {
     Autowired,
+    Beans,
     Component,
     Events,
+    FieldPickerValueSelectedEvent,
     PostConstruct,
     RefSelector,
     TooltipFeature,
@@ -12,15 +11,14 @@ import {
     _setAriaLevel,
 } from '@ag-grid-community/core';
 
-import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
+import { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import { AddDropdownComp } from './addDropdownComp';
 import { AdvancedFilterBuilderItemNavigationFeature } from './advancedFilterBuilderItemNavigationFeature';
 import { getAdvancedFilterBuilderAddButtonParams } from './advancedFilterBuilderUtils';
-import type {
-    AdvancedFilterBuilderAddEvent,
-    AdvancedFilterBuilderItem} from './iAdvancedFilterBuilder';
 import {
-    AdvancedFilterBuilderEvents
+    AdvancedFilterBuilderAddEvent,
+    AdvancedFilterBuilderEvents,
+    AdvancedFilterBuilderItem,
 } from './iAdvancedFilterBuilder';
 
 export class AdvancedFilterBuilderItemAddComp extends Component {

@@ -1,14 +1,13 @@
-import type { AdvancedFilterModel, BaseCellDataType, Column } from '@ag-grid-community/core';
+import { AdvancedFilterModel, BaseCellDataType, Column } from '@ag-grid-community/core';
 
-import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
-import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
-import type {
+import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
+import { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
+import {
     AutocompleteUpdate,
     FilterExpressionFunction,
     FilterExpressionFunctionParams,
     FilterExpressionParserParams,
-    FilterExpressionValidationError} from './filterExpressionUtils';
-import {
+    FilterExpressionValidationError,
     checkAndUpdateExpression,
     escapeQuotes,
     findEndPosition,

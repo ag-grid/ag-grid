@@ -1,22 +1,21 @@
-import type {
+import {
+    Autowired,
+    BeanStub,
     Column,
     ColumnModel,
     ColumnMoveService,
     ColumnPanelItemDragStartEvent,
-    VirtualList,
-    VirtualListDragItem} from '@ag-grid-community/core';
-import {
-    Autowired,
-    BeanStub,
     DragSourceType,
     Events,
     PostConstruct,
     ProvidedColumnGroup,
-    VirtualListDragFeature
+    VirtualList,
+    VirtualListDragFeature,
+    VirtualListDragItem,
 } from '@ag-grid-community/core';
 
-import type { AgPrimaryColsList } from './agPrimaryColsList';
-import type { ToolPanelColumnComp } from './toolPanelColumnComp';
+import { AgPrimaryColsList } from './agPrimaryColsList';
+import { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
 
 export class PrimaryColsListPanelItemDragFeature extends BeanStub {

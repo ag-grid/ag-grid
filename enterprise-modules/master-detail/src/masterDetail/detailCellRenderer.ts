@@ -1,12 +1,11 @@
-import type {
+import {
+    Component,
     GridApi,
     GridOptions,
     GridParams,
     ICellRenderer,
     IDetailCellRenderer,
-    IDetailCellRendererParams} from '@ag-grid-community/core';
-import {
-    Component,
+    IDetailCellRendererParams,
     ModuleRegistry,
     RefSelector,
     _cloneObject,

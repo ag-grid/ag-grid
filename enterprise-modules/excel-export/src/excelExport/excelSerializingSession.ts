@@ -1,4 +1,4 @@
-import type {
+import {
     Column,
     ColumnGroup,
     ColumnWidthCallbackParams,
@@ -14,17 +14,15 @@ import type {
     ExcelTableConfig,
     ExcelWorksheet,
     RowHeightCallbackParams,
-    RowNode} from '@ag-grid-community/core';
-import {
+    RowNode,
     _last,
     _mergeDeep,
 } from '@ag-grid-community/core';
-import type {
-    GridSerializingParams,
-    RowAccumulator,
-    RowSpanningAccumulator} from '@ag-grid-community/csv-export';
 import {
     BaseGridSerializingSession,
+    GridSerializingParams,
+    RowAccumulator,
+    RowSpanningAccumulator,
     RowType,
 } from '@ag-grid-community/csv-export';
 
@@ -484,7 +482,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     ): ExcelCell {
         const valueToUse = value == null ? '' : value;
         return {
-            styleId: this.getStyleById(styleId) ? styleId! : undefined,
+            styleId: !!this.getStyleById(styleId) ? styleId! : undefined,
             data: {
                 type: type,
                 value: type === 's' ? ExcelXlsxFactory.getStringPosition(valueToUse).toString() : value,

@@ -1,4 +1,4 @@
-import type {
+import {
     AgDonutSeriesOptions,
     AgPieSeriesOptions,
     AgPolarChartOptions,
@@ -7,8 +7,7 @@ import type {
 
 import { changeOpacity } from '../../utils/color';
 import { deepMerge } from '../../utils/object';
-import type { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
-import { ChartProxy } from '../chartProxy';
+import { ChartProxy, ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 
 interface DonutOffset {
     offsetAmount: number;

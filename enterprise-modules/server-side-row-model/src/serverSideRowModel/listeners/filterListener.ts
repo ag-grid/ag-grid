@@ -1,18 +1,17 @@
-import type {
-    AdvancedFilterModel,
-    FilterManager,
-    FilterModel,
-    StoreRefreshAfterParams} from '@ag-grid-community/core';
 import {
+    AdvancedFilterModel,
     Autowired,
     Bean,
     BeanStub,
     Events,
-    PostConstruct
+    FilterManager,
+    FilterModel,
+    PostConstruct,
+    StoreRefreshAfterParams,
 } from '@ag-grid-community/core';
 
-import type { ServerSideRowModel } from '../serverSideRowModel';
-import type { ListenerUtils } from './listenerUtils';
+import { ServerSideRowModel } from '../serverSideRowModel';
+import { ListenerUtils } from './listenerUtils';
 
 @Bean('ssrmFilterListener')
 export class FilterListener extends BeanStub {

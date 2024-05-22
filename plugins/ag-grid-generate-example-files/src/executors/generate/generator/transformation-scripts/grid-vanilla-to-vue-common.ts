@@ -1,6 +1,6 @@
 import * as JSON5 from 'json5';
 
-import type { ExampleConfig, ParsedBindings } from '../types';
+import { ExampleConfig, ParsedBindings } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import { getFunctionName, removeFunctionKeyword } from './parser-utils';
 import { convertTemplate } from './vue-utils';

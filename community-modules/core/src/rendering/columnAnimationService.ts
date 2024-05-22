@@ -1,7 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../context/context';
-import type { CtrlsService } from '../ctrlsService';
-import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
+import { CtrlsService } from '../ctrlsService';
+import { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 
 @Bean('columnAnimationService')
 export class ColumnAnimationService extends BeanStub {

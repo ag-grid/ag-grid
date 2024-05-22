@@ -1,9 +1,8 @@
 import { PostConstruct } from '../context/context';
-import type { AgLabelParams, LabelAlignment } from '../interfaces/agFieldParams';
+import { AgLabelParams, LabelAlignment } from '../interfaces/agFieldParams';
 import { _setAriaRole } from '../utils/aria';
 import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from '../utils/dom';
-import type { ComponentClass } from './component';
-import { Component } from './component';
+import { Component, ComponentClass } from './component';
 
 export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelParams> extends Component {
     protected abstract eLabel: HTMLElement;

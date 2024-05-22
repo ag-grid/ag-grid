@@ -1,4 +1,4 @@
-import type { FrameworkOverridesIncomingSource, IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
+import { FrameworkOverridesIncomingSource, IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import { _includes } from './utils/array';
 import { AgPromise } from './utils/promise';
 

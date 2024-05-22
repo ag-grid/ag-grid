@@ -1,7 +1,7 @@
-import type { AdvancedFilterModel } from '@ag-grid-community/core';
+import { AdvancedFilterModel } from '@ag-grid-community/core';
 
-import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
-import type {
+import { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
+import {
     AutocompleteUpdate,
     FilterExpressionFunction,
     FilterExpressionFunctionParams,

@@ -1,4 +1,4 @@
-import type { IRowNode } from './iRowNode';
+import { IRowNode } from './iRowNode';
 
 export interface IExpansionService {
     expandRows(rowIds: string[]): void;

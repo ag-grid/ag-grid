@@ -1,5 +1,4 @@
-import type { IAggFuncParams } from '@ag-grid-community/core';
-import { GridOptionsService } from '@ag-grid-community/core';
+import { GridOptionsService, IAggFuncParams } from '@ag-grid-community/core';
 
 import { AggFuncService } from './aggFuncService';
 

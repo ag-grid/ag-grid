@@ -1,18 +1,18 @@
-import type { ExcelBorders, ExcelFont, ExcelInterior, ExcelOOXMLTemplate, ExcelStyle } from '@ag-grid-community/core';
+import { ExcelBorders, ExcelFont, ExcelInterior, ExcelOOXMLTemplate, ExcelStyle } from '@ag-grid-community/core';
 
 import { numberFormatMap } from '../../../assets/excelConstants';
-import type { Border, BorderProperty, BorderSet, ExcelThemeFont, Fill, NumberFormat } from '../../../assets/excelInterfaces';
+import { Border, BorderProperty, BorderSet, ExcelThemeFont, Fill, NumberFormat } from '../../../assets/excelInterfaces';
 import { convertLegacyBorder, convertLegacyColor, convertLegacyPattern } from '../../../assets/excelLegacyConvert';
 import { getFontFamilyId } from '../../../assets/excelUtils';
 import bordersFactory from './borders';
-import type { CellStyle } from './cellStyle';
+import { CellStyle } from './cellStyle';
 import cellStylesXfsFactory from './cellStyleXfs';
 import cellStylesFactory from './cellStyles';
 import cellXfsFactory from './cellXfs';
 import fillsFactory from './fills';
 import fontsFactory from './fonts';
 import numberFormatsFactory from './numberFormats';
-import type { Xf } from './xf';
+import { Xf } from './xf';
 
 let stylesMap: { [key: string]: number };
 let registeredNumberFmts: NumberFormat[];

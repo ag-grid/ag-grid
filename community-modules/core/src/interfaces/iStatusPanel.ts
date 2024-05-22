@@ -1,5 +1,5 @@
-import type { AgGridCommon } from './iCommon';
-import type { IComponent } from './iComponent';
+import { AgGridCommon } from './iCommon';
+import { IComponent } from './iComponent';
 
 export interface StatusPanelDef {
     statusPanel?: any;

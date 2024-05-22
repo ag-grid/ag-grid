@@ -1,7 +1,7 @@
-import type { AgBubbleSeriesOptions, AgCartesianAxisOptions, AgScatterSeriesOptions } from 'ag-charts-community';
+import { AgBubbleSeriesOptions, AgCartesianAxisOptions, AgScatterSeriesOptions } from 'ag-charts-community';
 
 import { ChartDataModel } from '../../model/chartDataModel';
-import type { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
+import { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
 
 interface SeriesDefinition {
@@ -126,7 +126,7 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
         };
 
         const updateFilteredOutSeries = <T extends AgScatterSeriesOptions | AgBubbleSeriesOptions>(series: T): T => {
-            const { yKey, xKey } = series;
+            let { yKey, xKey } = series;
 
             let alteredSizeKey = {};
             if (series.type === 'bubble') {

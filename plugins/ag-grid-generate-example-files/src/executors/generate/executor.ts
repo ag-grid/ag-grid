@@ -1,4 +1,4 @@
- 
+/* eslint-disable no-console */
 import fs from 'fs/promises';
 import path from 'path';
 import prettier from 'prettier';
@@ -7,13 +7,12 @@ import { readFile, readJSONFile, writeFile } from '../../executors-utils';
 import { SOURCE_ENTRY_FILE_NAME, getEnterprisePackageName } from './generator/constants';
 import gridVanillaSrcParser from './generator/transformation-scripts/grid-vanilla-src-parser';
 import { getInterfaceFileContents, removeModuleRegistration } from './generator/transformation-scripts/parser-utils';
-import type {
+import {
     ExampleConfig,
+    FRAMEWORKS,
     GeneratedContents,
     ImportType,
-    InternalFramework} from './generator/types';
-import {
-    FRAMEWORKS,
+    InternalFramework,
     TYPESCRIPT_INTERNAL_FRAMEWORKS,
 } from './generator/types';
 import {
@@ -74,7 +73,7 @@ async function getProvidedFiles(folderPath: string) {
             });
             const providedExampleEntries = await Promise.all(
                 files.map(async (fileName) => {
-                    const contents = (await fs.readFile(path.join(providedExampleBasePath, fileName))).toString('utf-8');
+                    let contents = (await fs.readFile(path.join(providedExampleBasePath, fileName))).toString('utf-8');
                     return [fileName, contents];
                 })
             );
@@ -159,7 +158,7 @@ export async function generateFiles(options: ExecutorOptions) {
                 importType,
             });
 
-            const frameworkExampleConfig = {
+            let frameworkExampleConfig = {
                 ...exampleConfig,
                 ...(provideFrameworkFiles ? provideFrameworkFiles['exampleConfig.json'] : {}),
             };
@@ -174,7 +173,7 @@ export async function generateFiles(options: ExecutorOptions) {
 
             let files = {};
             let scriptFiles = [];
-            const mergedStyleFiles = { ...styleFiles };
+            let mergedStyleFiles = { ...styleFiles };
             if (provideFrameworkFiles === undefined) {
                 const result = await getFrameworkFiles({
                     entryFile,
@@ -215,7 +214,7 @@ export async function generateFiles(options: ExecutorOptions) {
             }
 
             let styleFilesKeys = [];
-            const mergedFiles = { ...mergedStyleFiles, ...files, ...provideFrameworkFiles, ...interfaceContents };
+            let mergedFiles = { ...mergedStyleFiles, ...files, ...provideFrameworkFiles, ...interfaceContents };
             if ((['typescript', 'vanilla'] as InternalFramework[]).includes(internalFramework)) {
                 styleFilesKeys = Object.keys(mergedStyleFiles);
             }

@@ -1,4 +1,4 @@
-import type { HeaderElement, PrefixedXmlAttributes, XmlElement } from '@ag-grid-community/core';
+import { HeaderElement, PrefixedXmlAttributes, XmlElement } from '@ag-grid-community/core';
 
 const LINE_SEPARATOR = '\r\n';
 

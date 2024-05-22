@@ -1,8 +1,7 @@
-import type { AgInputTextFieldParams} from '@ag-grid-community/core';
-import { Autowired } from '@ag-grid-community/core';
+import { AgInputTextFieldParams, Autowired } from '@ag-grid-community/core';
 
-import type { AgSliderParams } from '../../../../../widgets/agSlider';
-import type { ChartMenuService } from '../../../services/chartMenuService';
+import { AgSliderParams } from '../../../../../widgets/agSlider';
+import { ChartMenuService } from '../../../services/chartMenuService';
 import { TitlePanel } from './titlePanel';
 
 export class ChartTitlePanel extends TitlePanel {

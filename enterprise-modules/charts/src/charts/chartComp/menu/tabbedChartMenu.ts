@@ -1,16 +1,15 @@
-import type {
-    ChartToolPanelMenuOptions,
-    TabbedItem} from '@ag-grid-community/core';
 import {
     AgPromise,
     Autowired,
+    ChartToolPanelMenuOptions,
     Component,
     PostConstruct,
+    TabbedItem,
     TabbedLayout,
 } from '@ag-grid-community/core';
 
-import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
-import type { ChartMenuContext } from './chartMenuContext';
+import { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
+import { ChartMenuContext } from './chartMenuContext';
 import { ChartDataPanel } from './data/chartDataPanel';
 import { FormatPanel } from './format/formatPanel';
 import { ChartSettingsPanel } from './settings/chartSettingsPanel';

@@ -1,7 +1,6 @@
-import type { Column, TextFormatter, ValueFormatterParams, ValueService } from '@ag-grid-community/core';
+import { Column, TextFormatter, ValueFormatterParams, ValueService } from '@ag-grid-community/core';
 
-import type { ISetDisplayValueModel} from './iSetDisplayValueModel';
-import { SetFilterDisplayValue } from './iSetDisplayValueModel';
+import { ISetDisplayValueModel, SetFilterDisplayValue } from './iSetDisplayValueModel';
 
 export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     /** All keys that are currently displayed, after the mini-filter has been applied. */
@@ -31,7 +30,7 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     ): void {
         this.displayedKeys = [];
 
-        for (const key of availableKeys) {
+        for (let key of availableKeys) {
             if (key == null) {
                 if (nullMatchesFilter) {
                     this.displayedKeys.push(key);

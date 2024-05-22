@@ -1,6 +1,6 @@
-import type { AgRangeAreaSeriesOptions } from 'ag-charts-community';
+import { AgRangeAreaSeriesOptions } from 'ag-charts-community';
 
-import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { StatisticalChartProxy } from './statisticalChartProxy';
 
 export class RangeChartProxy extends StatisticalChartProxy<'range-bar' | 'range-area'> {

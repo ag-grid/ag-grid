@@ -1,14 +1,13 @@
-import type {
-    ColumnModel,
-    FilterManager,
-    IRowNodeStage,
-    RowNode,
-    StageExecuteParams} from '@ag-grid-community/core';
 import {
     Autowired,
     Bean,
     BeanStub,
-    GridOptions
+    ColumnModel,
+    FilterManager,
+    GridOptions,
+    IRowNodeStage,
+    RowNode,
+    StageExecuteParams,
 } from '@ag-grid-community/core';
 
 @Bean('filterAggregatesStage')

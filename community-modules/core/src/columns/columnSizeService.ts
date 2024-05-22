@@ -1,15 +1,15 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../context/context';
-import type { CtrlsService } from '../ctrlsService';
-import type { Column } from '../entities/column';
-import type { ColumnEventType } from '../events';
+import { CtrlsService } from '../ctrlsService';
+import { Column } from '../entities/column';
+import { ColumnEventType } from '../events';
 import { _removeFromArray, _removeFromUnorderedArray } from '../utils/array';
 import { _exists } from '../utils/generic';
-import type { ColumnEventDispatcher } from './columnEventDispatcher';
-import type { ColKey, ColumnModel } from './columnModel';
+import { ColumnEventDispatcher } from './columnEventDispatcher';
+import { ColKey, ColumnModel } from './columnModel';
 import { getWidthOfColsInList } from './columnUtils';
-import type { ColumnViewportService } from './columnViewportService';
-import type { VisibleColsService } from './visibleColsService';
+import { ColumnViewportService } from './columnViewportService';
+import { VisibleColsService } from './visibleColsService';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -300,7 +300,7 @@ export class ColumnSizeService extends BeanStub {
         // A "flexing column" is one that has a 'flex' value set and is not currently being constrained by its
         // minWidth or maxWidth rules.
 
-        const displayedCenterCols = this.visibleColsService.getCenterCols();
+        let displayedCenterCols = this.visibleColsService.getCenterCols();
 
         let flexAfterDisplayIndex = -1;
         if (params.resizingCols) {

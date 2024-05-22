@@ -1,6 +1,6 @@
-import type { IMenuActionParams } from './iCallbackParams';
-import type { AgGridCommon } from './iCommon';
-import type { IComponent } from './iComponent';
+import { IMenuActionParams } from './iCallbackParams';
+import { AgGridCommon } from './iCommon';
+import { IComponent } from './iComponent';
 
 export interface MenuItemLeafDef<TData = any, TContext = any> {
     /** Name of the menu item. */

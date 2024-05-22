@@ -1,10 +1,9 @@
-import type {
-    IRowModel,
-    ISelectionService,
-    IStatusPanelComp} from '@ag-grid-community/core';
 import {
     Autowired,
     Events,
+    IRowModel,
+    ISelectionService,
+    IStatusPanelComp,
     PostConstruct,
     _formatNumberCommas,
 } from '@ag-grid-community/core';

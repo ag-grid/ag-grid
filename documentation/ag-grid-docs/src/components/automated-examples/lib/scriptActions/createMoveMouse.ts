@@ -1,5 +1,4 @@
-import type { Group} from '@tweenjs/tween.js';
-import { Tween } from '@tweenjs/tween.js';
+import { Group, Tween } from '@tweenjs/tween.js';
 
 import { type Mouse } from '../createMouse';
 import { getOffset } from '../dom';

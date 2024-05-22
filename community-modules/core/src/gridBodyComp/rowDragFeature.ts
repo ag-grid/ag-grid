@@ -1,28 +1,27 @@
 import { AutoScrollService } from '../autoScrollService';
-import type { ColumnModel } from '../columns/columnModel';
-import type { FuncColsService } from '../columns/funcColsService';
+import { ColumnModel } from '../columns/columnModel';
+import { FuncColsService } from '../columns/funcColsService';
 import { VerticalDirection } from '../constants/direction';
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Optional, PostConstruct } from '../context/context';
-import type { CtrlsService } from '../ctrlsService';
-import type { DraggingEvent, DropTarget } from '../dragAndDrop/dragAndDropService';
-import { DragAndDropService, DragSourceType } from '../dragAndDrop/dragAndDropService';
-import type { RowNode } from '../entities/rowNode';
+import { CtrlsService } from '../ctrlsService';
+import { DragAndDropService, DragSourceType, DraggingEvent, DropTarget } from '../dragAndDrop/dragAndDropService';
+import { RowNode } from '../entities/rowNode';
 import { Events } from '../eventKeys';
-import type { RowDragEndEvent, RowDragEnterEvent, RowDragEvent, RowDragLeaveEvent, RowDragMoveEvent } from '../events';
-import type { FilterManager } from '../filter/filterManager';
-import type { FocusService } from '../focusService';
-import type { IRangeService } from '../interfaces/IRangeService';
-import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import type { IRowModel } from '../interfaces/iRowModel';
+import { RowDragEndEvent, RowDragEnterEvent, RowDragEvent, RowDragLeaveEvent, RowDragMoveEvent } from '../events';
+import { FilterManager } from '../filter/filterManager';
+import { FocusService } from '../focusService';
+import { IRangeService } from '../interfaces/IRangeService';
+import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import { IRowModel } from '../interfaces/iRowModel';
 import { RowHighlightPosition } from '../interfaces/iRowNode';
-import type { ISelectionService } from '../interfaces/iSelectionService';
-import type { PaginationProxy } from '../pagination/paginationProxy';
-import type { SortController } from '../sortController';
+import { ISelectionService } from '../interfaces/iSelectionService';
+import { PaginationProxy } from '../pagination/paginationProxy';
+import { SortController } from '../sortController';
 import { _last } from '../utils/array';
 import { _warnOnce } from '../utils/function';
 import { _missingOrEmpty } from '../utils/generic';
-import type { MouseEventService } from './mouseEventService';
+import { MouseEventService } from './mouseEventService';
 
 export interface RowDropZoneEvents {
     /** Callback function that will be executed when the rowDrag enters the target. */

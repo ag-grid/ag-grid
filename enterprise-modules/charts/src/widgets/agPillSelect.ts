@@ -1,13 +1,12 @@
-import type {
-    DragItem,
-    DraggingEvent,
-    DropTarget,
-    ListOption} from '@ag-grid-community/core';
 import {
     AgSelect,
     Component,
     DragAndDropService,
+    DragItem,
     DragSourceType,
+    DraggingEvent,
+    DropTarget,
+    ListOption,
     PostConstruct,
     _escapeString,
     _removeFromParent,
@@ -112,7 +111,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
     }
 
     private createSelectOptions(): ListOption<TValue>[] {
-        const options: ListOption<TValue>[] = [];
+        let options: ListOption<TValue>[] = [];
         const { maxSelection } = this.config;
         if (maxSelection && this.selectedValues.length >= maxSelection) {
             return options;

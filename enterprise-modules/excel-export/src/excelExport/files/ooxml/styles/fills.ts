@@ -1,6 +1,6 @@
-import type { ExcelOOXMLTemplate } from '@ag-grid-community/core';
+import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 
-import type { Fill } from '../../../assets/excelInterfaces';
+import { Fill } from '../../../assets/excelInterfaces';
 import fillFactory from './fill';
 
 const fillsFactory: ExcelOOXMLTemplate = {
