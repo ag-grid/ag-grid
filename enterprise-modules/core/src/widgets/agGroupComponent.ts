@@ -358,7 +358,7 @@ class DefaultTitleBar extends Component {
 
     private readonly eGroupOpenedIcon: HTMLElement = RefPlaceholder;
     private readonly eGroupClosedIcon: HTMLElement = RefPlaceholder;
-    private readonly eTitle: HTMLElement;
+    private readonly eTitle: HTMLElement = RefPlaceholder;
 
     constructor(params: AgGroupComponentParams = {}) {
         super(DefaultTitleBar.getTemplate(params));

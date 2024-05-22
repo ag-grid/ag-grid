@@ -6,7 +6,7 @@ import {
     Component,
     Events,
     GridApi,
-    PreConstruct,
+    PostConstruct,
     RefPlaceholder,
 } from '@ag-grid-community/core';
 
@@ -22,7 +22,7 @@ export class PivotModePanel extends Component {
             </div>`;
     }
 
-    @PreConstruct
+    @PostConstruct
     public init(): void {
         this.setTemplate(this.createTemplate(), [AgToggleButton]);
 

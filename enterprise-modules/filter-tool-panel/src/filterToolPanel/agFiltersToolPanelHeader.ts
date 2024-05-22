@@ -7,7 +7,6 @@ import {
     Component,
     Events,
     PostConstruct,
-    PreConstruct,
     RefPlaceholder,
     _createIconNoSpan,
     _debounce,
@@ -40,8 +39,8 @@ export class AgFiltersToolPanelHeader extends Component {
 
     private params: ToolPanelFiltersCompParams;
 
-    @PreConstruct
-    private preConstruct(): void {
+    @PostConstruct
+    public postConstruct(): void {
         this.setTemplate(
             /* html */
             `<div class="ag-filter-toolpanel-search" role="presentation">
@@ -50,10 +49,6 @@ export class AgFiltersToolPanelHeader extends Component {
             </div>`,
             [AgInputTextField]
         );
-    }
-
-    @PostConstruct
-    public postConstruct(): void {
         const translate = this.localeService.getLocaleTextFunc();
 
         this.eFilterTextField
