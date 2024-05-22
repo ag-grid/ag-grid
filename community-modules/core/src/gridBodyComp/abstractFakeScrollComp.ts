@@ -27,7 +27,8 @@ export abstract class AbstractFakeScrollComp extends Component {
         template: string,
         private readonly direction: 'horizontal' | 'vertical'
     ) {
-        super(template);
+        super();
+        this.setTemplate(template);
     }
 
     protected postConstruct(): void {

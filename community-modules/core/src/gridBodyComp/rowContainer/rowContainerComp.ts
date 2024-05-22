@@ -59,7 +59,8 @@ export class RowContainerComp extends Component {
     private lastPlacedElement: HTMLElement | null;
 
     constructor() {
-        super(templateFactory());
+        super();
+        this.setTemplate(templateFactory());
         this.name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
         this.type = getRowContainerTypeForName(this.name);
     }
