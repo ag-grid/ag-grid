@@ -368,7 +368,7 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Sets an ARIA property in the grid panel (element with `role=\"grid\"`), and removes an ARIA property when the value is null.
+     * Sets an ARIA property in the grid panel (element with `role=\"treegrid\"`), and removes an ARIA property when the value is null.
      *
      * Example: `api.setGridAriaProperty('label', 'my grid')` will set `aria-label=\"my grid\"`.
      *
