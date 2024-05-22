@@ -1,7 +1,6 @@
 import { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _exists } from '../../utils/generic';
 import { AgInputTextField } from '../../widgets/agInputTextField';
-import { RefPlaceholder } from '../../widgets/component';
 import { CellEditorInput, SimpleCellEditor } from './simpleCellEditor';
 
 export interface ITextCellEditorParams<TData = any, TValue = any, TContext = any>
@@ -21,7 +20,7 @@ export interface ITextCellEditorParams<TData = any, TValue = any, TContext = any
 class TextCellEditorInput<TValue = any>
     implements CellEditorInput<TValue, ITextCellEditorParams<any, TValue>, AgInputTextField>
 {
-    private eInput: AgInputTextField = RefPlaceholder;
+    private eInput: AgInputTextField;
     private params: ITextCellEditorParams<any, TValue>;
 
     public getTemplate() {

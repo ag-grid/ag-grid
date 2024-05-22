@@ -2,7 +2,7 @@ import { KeyCode } from '../../constants/keyCode';
 import { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _isBrowserSafari } from '../../utils/browser';
 import { AgInputTextField } from '../../widgets/agInputTextField';
-import { ComponentClass } from '../../widgets/component';
+import { ComponentClass, RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
 
 export interface CellEditorInput<TValue, P extends ICellEditorParams, I extends AgInputTextField> {
@@ -21,7 +21,7 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
     protected params: ICellEditorParams;
-    protected readonly eInput: I;
+    protected readonly eInput: I = RefPlaceholder;
 
     constructor(protected cellEditorInput: CellEditorInput<TValue, P, I>) {
         super(

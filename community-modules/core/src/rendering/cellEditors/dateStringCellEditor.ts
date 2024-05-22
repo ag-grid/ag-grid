@@ -4,7 +4,6 @@ import { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _serialiseDate } from '../../utils/date';
 import { _exists } from '../../utils/generic';
 import { AgInputDateField } from '../../widgets/agInputDateField';
-import { RefPlaceholder } from '../../widgets/component';
 import { CellEditorInput, SimpleCellEditor } from './simpleCellEditor';
 
 export interface IDateStringCellEditorParams<TData = any, TContext = any>
@@ -23,7 +22,7 @@ export interface IDateStringCellEditorParams<TData = any, TContext = any>
 }
 
 class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCellEditorParams, AgInputDateField> {
-    private eInput: AgInputDateField = RefPlaceholder;
+    private eInput: AgInputDateField;
     private params: IDateStringCellEditorParams;
 
     constructor(private getDataTypeService: () => DataTypeService) {}
