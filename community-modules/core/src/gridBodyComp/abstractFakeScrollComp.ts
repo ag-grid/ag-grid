@@ -6,12 +6,12 @@ import { AnimationFrameService } from '../misc/animationFrameService';
 import { _isIOSUserAgent, _isInvisibleScrollbar, _isMacOsUserAgent } from '../utils/browser';
 import { _isVisible } from '../utils/dom';
 import { _waitUntil } from '../utils/function';
-import { Component } from '../widgets/component';
+import { Component, RefPlaceholder } from '../widgets/component';
 import { ScrollVisibleService } from './scrollVisibleService';
 
 export abstract class AbstractFakeScrollComp extends Component {
-    protected readonly eViewport: HTMLElement;
-    protected readonly eContainer: HTMLElement;
+    protected readonly eViewport: HTMLElement = RefPlaceholder;
+    protected readonly eContainer: HTMLElement = RefPlaceholder;
     @Autowired('scrollVisibleService') protected readonly scrollVisibleService: ScrollVisibleService;
     @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;

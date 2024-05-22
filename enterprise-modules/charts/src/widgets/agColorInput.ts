@@ -1,4 +1,4 @@
-import { AgComponentSelector, AgInputTextField, Autowired } from '@ag-grid-community/core';
+import { AgComponentSelector, AgInputTextField, Autowired, RefPlaceholder } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
 
 import { ChartTranslationService } from '../charts/chartComp/services/chartTranslationService';
@@ -15,7 +15,7 @@ export class AgColorInput extends AgInputTextField {
         </div>`;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    private readonly eColor: HTMLElement;
+    private readonly eColor: HTMLElement = RefPlaceholder;
 
     constructor() {
         super({ template: AgColorInput.TEMPLATE });

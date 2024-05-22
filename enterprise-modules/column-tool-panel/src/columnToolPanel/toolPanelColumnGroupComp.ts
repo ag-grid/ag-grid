@@ -18,6 +18,7 @@ import {
     KeyCode,
     PostConstruct,
     ProvidedColumnGroup,
+    RefPlaceholder,
     TouchListener,
     WithoutGridCommon,
     _createIcon,
@@ -46,12 +47,12 @@ export class ToolPanelColumnGroupComp extends Component {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
 
-    private readonly cbSelect: AgCheckbox;
-    private readonly eLabel: HTMLElement;
+    private readonly cbSelect: AgCheckbox = RefPlaceholder;
+    private readonly eLabel: HTMLElement = RefPlaceholder;
 
-    private readonly eGroupOpenedIcon: Element;
-    private readonly eGroupClosedIcon: Element;
-    private readonly eColumnGroupIcons: Element;
+    private readonly eGroupOpenedIcon: Element = RefPlaceholder;
+    private readonly eGroupClosedIcon: Element = RefPlaceholder;
+    private readonly eColumnGroupIcons: Element = RefPlaceholder;
 
     private eDragHandle: Element;
 

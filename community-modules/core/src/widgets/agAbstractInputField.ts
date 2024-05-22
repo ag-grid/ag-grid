@@ -2,15 +2,16 @@ import { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaLabel } from '../utils/aria';
 import { _addOrRemoveAttribute, _setDisabled, _setElementWidth } from '../utils/dom';
 import { AgAbstractField, FieldElement } from './agAbstractField';
+import { RefPlaceholder } from './component';
 
 export abstract class AgAbstractInputField<
     TElement extends FieldElement,
     TValue,
     TConfig extends AgInputFieldParams = AgInputFieldParams,
 > extends AgAbstractField<TValue, TConfig> {
-    protected readonly eLabel: HTMLElement;
-    protected readonly eWrapper: HTMLElement;
-    protected readonly eInput: TElement;
+    protected readonly eLabel: HTMLElement = RefPlaceholder;
+    protected readonly eWrapper: HTMLElement = RefPlaceholder;
+    protected readonly eInput: TElement = RefPlaceholder;
 
     constructor(
         config?: TConfig,

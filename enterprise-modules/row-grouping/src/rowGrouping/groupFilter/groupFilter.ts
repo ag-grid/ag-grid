@@ -12,6 +12,7 @@ import {
     IFilterComp,
     IFilterParams,
     PostConstruct,
+    RefPlaceholder,
     TabGuardComp,
     _clearElement,
     _loadTemplate,
@@ -32,8 +33,8 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
 
-    private readonly eGroupField: HTMLElement;
-    private readonly eUnderlyingFilter: HTMLElement;
+    private readonly eGroupField: HTMLElement = RefPlaceholder;
+    private readonly eUnderlyingFilter: HTMLElement = RefPlaceholder;
 
     private params: IFilterParams;
     private groupColumn: Column;

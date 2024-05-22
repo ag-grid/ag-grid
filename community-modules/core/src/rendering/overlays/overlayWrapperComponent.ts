@@ -2,7 +2,7 @@ import { Autowired, PostConstruct } from '../../context/context';
 import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { _clearElement } from '../../utils/dom';
 import { AgPromise } from '../../utils/promise';
-import { AgComponentSelector, Component } from '../../widgets/component';
+import { AgComponentSelector, Component, RefPlaceholder } from '../../widgets/component';
 import { OverlayService } from './overlayService';
 
 export class OverlayWrapperComponent extends Component implements LayoutView {
@@ -18,7 +18,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
     @Autowired('overlayService') private readonly overlayService: OverlayService;
 
-    private readonly eOverlayWrapper: HTMLElement;
+    private readonly eOverlayWrapper: HTMLElement = RefPlaceholder;
 
     private activeOverlay: Component;
     private inProgress = false;

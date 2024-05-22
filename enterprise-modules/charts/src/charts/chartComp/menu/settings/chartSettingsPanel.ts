@@ -1,6 +1,7 @@
 import {
     Component,
     PostConstruct,
+    RefPlaceholder,
     _clearElement,
     _createIconNoSpan,
     _getAbsoluteWidth,
@@ -30,11 +31,11 @@ export class ChartSettingsPanel extends Component {
             </div>
         </div>`;
 
-    private readonly eMiniChartsContainer: HTMLElement;
-    private readonly eNavBar: HTMLElement;
-    private readonly eCardSelector: HTMLElement;
-    private readonly ePrevBtn: HTMLElement;
-    private readonly eNextBtn: HTMLElement;
+    private readonly eMiniChartsContainer: HTMLElement = RefPlaceholder;
+    private readonly eNavBar: HTMLElement = RefPlaceholder;
+    private readonly eCardSelector: HTMLElement = RefPlaceholder;
+    private readonly ePrevBtn: HTMLElement = RefPlaceholder;
+    private readonly eNextBtn: HTMLElement = RefPlaceholder;
 
     private miniChartsContainers: MiniChartsContainer[] = [];
     private cardItems: HTMLElement[] = [];

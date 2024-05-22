@@ -1,4 +1,4 @@
-import { AgCheckbox, AgSelect, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { AgCheckbox, AgSelect, Autowired, Component, PostConstruct, RefPlaceholder } from '@ag-grid-community/core';
 import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
 import { AgSlider } from '../../../../../widgets/agSlider';
@@ -14,7 +14,7 @@ export class LegendPanel extends Component {
         </div>`;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    private readonly legendGroup: AgGroupComponent;
+    private readonly legendGroup: AgGroupComponent = RefPlaceholder;
 
     private readonly key: string;
     private readonly isGradient: boolean;

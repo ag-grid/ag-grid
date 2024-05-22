@@ -1,7 +1,7 @@
 import { UserCompDetails } from '../../components/framework/userComponentFactory';
 import { _setAriaRole } from '../../utils/aria';
 import { _setDisplayed } from '../../utils/dom';
-import { Component } from '../../widgets/component';
+import { Component, RefPlaceholder } from '../../widgets/component';
 import { GroupCellRendererCtrl, GroupCellRendererParams, IGroupCellRenderer } from './groupCellRendererCtrl';
 import { ICellRendererComp } from './iCellRenderer';
 
@@ -14,11 +14,11 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             <span class="ag-group-child-count" data-ref="eChildCount"></span>
         </span>`;
 
-    private readonly eExpanded: HTMLElement;
-    private readonly eContracted: HTMLElement;
-    private readonly eCheckbox: HTMLElement;
-    private readonly eValue: HTMLElement;
-    private readonly eChildCount: HTMLElement;
+    private readonly eExpanded: HTMLElement = RefPlaceholder;
+    private readonly eContracted: HTMLElement = RefPlaceholder;
+    private readonly eCheckbox: HTMLElement = RefPlaceholder;
+    private readonly eValue: HTMLElement = RefPlaceholder;
+    private readonly eChildCount: HTMLElement = RefPlaceholder;
 
     // this cell renderer
     private innerCellRenderer: ICellRendererComp;

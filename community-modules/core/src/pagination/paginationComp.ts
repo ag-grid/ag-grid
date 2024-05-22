@@ -7,7 +7,7 @@ import { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
 import { _setAriaDisabled } from '../utils/aria';
 import { _createIconNoSpan } from '../utils/icon';
 import { _formatNumberCommas } from '../utils/number';
-import { AgComponentSelector, Component } from '../widgets/component';
+import { AgComponentSelector, Component, RefPlaceholder } from '../widgets/component';
 import { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
 import { PaginationProxy } from './paginationProxy';
 
@@ -17,18 +17,18 @@ export class PaginationComp extends Component {
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
 
-    private readonly btFirst: HTMLElement;
-    private readonly btPrevious: HTMLElement;
-    private readonly btNext: HTMLElement;
-    private readonly btLast: HTMLElement;
+    private readonly btFirst: HTMLElement = RefPlaceholder;
+    private readonly btPrevious: HTMLElement = RefPlaceholder;
+    private readonly btNext: HTMLElement = RefPlaceholder;
+    private readonly btLast: HTMLElement = RefPlaceholder;
 
-    private readonly lbRecordCount: any;
-    private readonly lbFirstRowOnPage: any;
-    private readonly lbLastRowOnPage: any;
-    private readonly lbCurrent: any;
-    private readonly lbTotal: any;
+    private readonly lbRecordCount: any = RefPlaceholder;
+    private readonly lbFirstRowOnPage: any = RefPlaceholder;
+    private readonly lbLastRowOnPage: any = RefPlaceholder;
+    private readonly lbCurrent: any = RefPlaceholder;
+    private readonly lbTotal: any = RefPlaceholder;
 
-    private readonly pageSizeComp: PageSizeSelectorComp;
+    private readonly pageSizeComp: PageSizeSelectorComp = RefPlaceholder;
 
     private previousAndFirstButtonsDisabled = false;
     private nextButtonDisabled = false;

@@ -7,6 +7,7 @@ import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import { _setDisplayed } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
+import { RefPlaceholder } from '../../../widgets/component';
 import { IFloatingFilterParams } from '../../floating/floatingFilter';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import { ProvidedFilter } from '../providedFilter';
@@ -17,8 +18,8 @@ import { DateFilter, DateFilterModel, DateFilterModelFormatter, DateFilterParams
 export class DateFloatingFilter extends SimpleFloatingFilter {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
-    private readonly eReadOnlyText: AgInputTextField;
-    private readonly eDateWrapper: HTMLInputElement;
+    private readonly eReadOnlyText: AgInputTextField = RefPlaceholder;
+    private readonly eDateWrapper: HTMLInputElement = RefPlaceholder;
 
     private dateComp: DateCompWrapper;
     private params: IFloatingFilterParams<DateFilter>;

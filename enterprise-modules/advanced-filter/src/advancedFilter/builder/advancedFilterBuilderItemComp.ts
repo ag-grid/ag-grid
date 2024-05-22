@@ -9,6 +9,7 @@ import {
     FieldValueEvent,
     KeyCode,
     PostConstruct,
+    RefPlaceholder,
     TabGuardComp,
     TooltipFeature,
     _createIconNoSpan,
@@ -45,14 +46,14 @@ import { JoinPillWrapperComp } from './joinPillWrapperComp';
 import { SelectPillComp } from './selectPillComp';
 
 export class AdvancedFilterBuilderItemComp extends TabGuardComp {
-    private readonly eTreeLines: HTMLElement;
-    private readonly eDragHandle: HTMLElement;
-    private readonly eButtons: HTMLElement;
-    private readonly eValidation: HTMLElement;
-    private readonly eMoveUpButton: HTMLElement;
-    private readonly eMoveDownButton: HTMLElement;
-    private readonly eAddButton: HTMLElement;
-    private readonly eRemoveButton: HTMLElement;
+    private readonly eTreeLines: HTMLElement = RefPlaceholder;
+    private readonly eDragHandle: HTMLElement = RefPlaceholder;
+    private readonly eButtons: HTMLElement = RefPlaceholder;
+    private readonly eValidation: HTMLElement = RefPlaceholder;
+    private readonly eMoveUpButton: HTMLElement = RefPlaceholder;
+    private readonly eMoveDownButton: HTMLElement = RefPlaceholder;
+    private readonly eAddButton: HTMLElement = RefPlaceholder;
+    private readonly eRemoveButton: HTMLElement = RefPlaceholder;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('advancedFilterExpressionService')
     private advancedFilterExpressionService: AdvancedFilterExpressionService;

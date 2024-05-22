@@ -4,10 +4,10 @@ import { _getSafariVersion, _isBrowserChrome, _isBrowserFirefox, _isBrowserSafar
 import { _dateToFormattedString, _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import { _warnOnce } from '../../../utils/function';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { Component } from '../../../widgets/component';
+import { Component, RefPlaceholder } from '../../../widgets/component';
 
 export class DefaultDateComponent extends Component implements IDateComp {
-    private readonly eDateInput: AgInputTextField;
+    private readonly eDateInput: AgInputTextField = RefPlaceholder;
 
     constructor() {
         super(

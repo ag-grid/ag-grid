@@ -8,6 +8,7 @@ import {
     FieldValueEvent,
     KeyCode,
     PostConstruct,
+    RefPlaceholder,
     WithoutGridCommon,
     _exists,
     _setAriaDescribedBy,
@@ -19,8 +20,8 @@ import {
 import { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 
 export class InputPillComp extends Component {
-    private readonly ePill: HTMLElement;
-    private readonly eLabel: HTMLElement;
+    private readonly ePill: HTMLElement = RefPlaceholder;
+    private readonly eLabel: HTMLElement = RefPlaceholder;
     @Autowired('advancedFilterExpressionService')
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 

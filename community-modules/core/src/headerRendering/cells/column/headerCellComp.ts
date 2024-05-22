@@ -2,6 +2,7 @@ import { UserCompDetails } from '../../../components/framework/userComponentFact
 import { PostConstruct, PreDestroy } from '../../../context/context';
 import { Column, ColumnPinnedType } from '../../../entities/column';
 import { _removeAriaSort, _setAriaSort } from '../../../utils/aria';
+import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
 import { IHeaderComp } from './headerComp';
@@ -12,8 +13,8 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
             <div data-ref="eHeaderCompWrapper" class="ag-header-cell-comp-wrapper" role="presentation"></div>
         </div>`;
 
-    private readonly eResize: HTMLElement;
-    private readonly eHeaderCompWrapper: HTMLElement;
+    private readonly eResize: HTMLElement = RefPlaceholder;
+    private readonly eHeaderCompWrapper: HTMLElement = RefPlaceholder;
 
     protected readonly column: Column;
     protected readonly pinned: ColumnPinnedType;

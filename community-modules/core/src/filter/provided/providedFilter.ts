@@ -8,7 +8,7 @@ import { PositionableFeature } from '../../rendering/features/positionableFeatur
 import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
 import { _debounce } from '../../utils/function';
 import { AgPromise } from '../../utils/promise';
-import { Component, ComponentClass } from '../../widgets/component';
+import { Component, ComponentClass, RefPlaceholder } from '../../widgets/component';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import { PopupEventParams } from '../../widgets/popupService';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
@@ -102,7 +102,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     @Autowired('rowModel') protected readonly rowModel: IRowModel;
 
-    protected readonly eFilterBody: HTMLElement;
+    protected readonly eFilterBody: HTMLElement = RefPlaceholder;
 
     private eButtonsPanel: HTMLElement;
     private buttonListeners: ((() => null) | undefined)[] = [];

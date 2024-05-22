@@ -11,7 +11,7 @@ import { _removeFromParent, _setDisplayed } from '../../../utils/dom';
 import { _exists } from '../../../utils/generic';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _escapeString } from '../../../utils/string';
-import { Component } from '../../../widgets/component';
+import { Component, RefPlaceholder } from '../../../widgets/component';
 import { LongTapEvent, TapEvent, TouchListener } from '../../../widgets/touchListener';
 import { SortIndicatorComp } from './sortIndicatorComp';
 
@@ -112,21 +112,21 @@ export class HeaderComp extends Component implements IHeaderComp {
     @Autowired('menuService') private menuService: MenuService;
     @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
 
-    private eFilter: HTMLElement;
-    private eFilterButton?: HTMLElement;
-    private eSortIndicator: SortIndicatorComp;
-    private eMenu?: HTMLElement;
-    private eLabel: HTMLElement;
-    private eText: HTMLElement;
+    private eFilter: HTMLElement = RefPlaceholder;
+    private eFilterButton?: HTMLElement = RefPlaceholder;
+    private eSortIndicator: SortIndicatorComp = RefPlaceholder;
+    private eMenu?: HTMLElement = RefPlaceholder;
+    private eLabel: HTMLElement = RefPlaceholder;
+    private eText: HTMLElement = RefPlaceholder;
 
     /**
      * Selectors for custom headers templates
      */
-    private readonly eSortOrder: HTMLElement;
-    private readonly eSortAsc: HTMLElement;
-    private readonly eSortDesc: HTMLElement;
-    private readonly eSortMixed: HTMLElement;
-    private readonly eSortNone: HTMLElement;
+    private readonly eSortOrder: HTMLElement = RefPlaceholder;
+    private readonly eSortAsc: HTMLElement = RefPlaceholder;
+    private readonly eSortDesc: HTMLElement = RefPlaceholder;
+    private readonly eSortMixed: HTMLElement = RefPlaceholder;
+    private readonly eSortNone: HTMLElement = RefPlaceholder;
 
     private params: IHeaderParams;
 

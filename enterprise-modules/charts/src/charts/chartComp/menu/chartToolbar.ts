@@ -2,6 +2,7 @@ import {
     Autowired,
     ChartToolbarMenuItemOptions,
     Component,
+    RefPlaceholder,
     _clearElement,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
@@ -16,7 +17,7 @@ interface ChartToolbarButton {
 
 export class ChartToolbar extends Component {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    private readonly eMenu: HTMLButtonElement;
+    private readonly eMenu: HTMLButtonElement = RefPlaceholder;
 
     private buttonListenersDestroyFuncs: ((() => null) | undefined)[] = [];
 

@@ -6,7 +6,7 @@ import { _setAriaExpanded, _setAriaRole } from '../utils/aria';
 import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
 import { AgAbstractField } from './agAbstractField';
-import { Component } from './component';
+import { Component, RefPlaceholder } from './component';
 import { AddPopupParams, PopupService } from './popupService';
 
 const TEMPLATE = /* html */ `
@@ -43,10 +43,10 @@ export abstract class AgPickerField<
 
     @Autowired('popupService') protected popupService: PopupService;
 
-    protected readonly eLabel: HTMLElement;
-    protected readonly eWrapper: HTMLElement;
-    protected readonly eDisplayField: HTMLElement;
-    private readonly eIcon: HTMLButtonElement;
+    protected readonly eLabel: HTMLElement = RefPlaceholder;
+    protected readonly eWrapper: HTMLElement = RefPlaceholder;
+    protected readonly eDisplayField: HTMLElement = RefPlaceholder;
+    private readonly eIcon: HTMLButtonElement = RefPlaceholder;
 
     constructor(config?: TConfig) {
         super(config, config?.template || TEMPLATE, config?.agComponents || [], config?.className);

@@ -5,16 +5,16 @@ import { Logger, LoggerFactory } from '../logger';
 import { PaginationComp } from '../pagination/paginationComp';
 import { LayoutCssClasses, UpdateLayoutClassesParams } from '../styling/layoutFeature';
 import { _isVisible } from '../utils/dom';
-import { Component } from '../widgets/component';
+import { Component, RefPlaceholder } from '../widgets/component';
 import { TabGuardComp } from '../widgets/tabGuardComp';
 import { GridCtrl, IGridComp } from './gridCtrl';
 
 export class GridComp extends TabGuardComp {
     @Autowired('loggerFactory') private readonly loggerFactory: LoggerFactory;
 
-    private readonly gridBody: GridBodyComp;
-    private readonly sideBar: ISideBar & Component;
-    private readonly rootWrapperBody: HTMLElement;
+    private readonly gridBody: GridBodyComp = RefPlaceholder;
+    private readonly sideBar: ISideBar & Component = RefPlaceholder;
+    private readonly rootWrapperBody: HTMLElement = RefPlaceholder;
 
     private logger: Logger;
     private eGridDiv: HTMLElement;

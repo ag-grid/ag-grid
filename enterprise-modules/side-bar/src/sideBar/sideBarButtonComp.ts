@@ -1,11 +1,18 @@
-import { Component, PostConstruct, ToolPanelDef, _createIconNoSpan, _setAriaExpanded } from '@ag-grid-community/core';
+import {
+    Component,
+    PostConstruct,
+    RefPlaceholder,
+    ToolPanelDef,
+    _createIconNoSpan,
+    _setAriaExpanded,
+} from '@ag-grid-community/core';
 
 export class SideBarButtonComp extends Component {
     public static EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';
 
-    private readonly eToggleButton: HTMLButtonElement;
-    private readonly eIconWrapper: HTMLElement;
-    private readonly eLabel: HTMLElement;
+    private readonly eToggleButton: HTMLButtonElement = RefPlaceholder;
+    private readonly eIconWrapper: HTMLElement = RefPlaceholder;
+    private readonly eLabel: HTMLElement = RefPlaceholder;
 
     private readonly toolPanelDef: ToolPanelDef;
 

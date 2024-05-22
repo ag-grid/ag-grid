@@ -10,6 +10,7 @@ import {
     IFilterComp,
     KeyCode,
     PostConstruct,
+    RefPlaceholder,
     _clearElement,
     _createIconNoSpan,
     _loadTemplate,
@@ -28,11 +29,11 @@ export class ToolPanelFilterComp extends Component {
             <div class="ag-filter-toolpanel-instance-body ag-filter" data-ref="agFilterToolPanelBody"></div>
         </div>`;
 
-    private readonly eFilterToolPanelHeader: HTMLElement;
-    private readonly eFilterName: HTMLElement;
-    private readonly agFilterToolPanelBody: HTMLElement;
-    private readonly eFilterIcon: Element;
-    private readonly eExpand: Element;
+    private readonly eFilterToolPanelHeader: HTMLElement = RefPlaceholder;
+    private readonly eFilterName: HTMLElement = RefPlaceholder;
+    private readonly agFilterToolPanelBody: HTMLElement = RefPlaceholder;
+    private readonly eFilterIcon: Element = RefPlaceholder;
+    private readonly eExpand: Element = RefPlaceholder;
 
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('columnNameService') private columnNameService: ColumnNameService;

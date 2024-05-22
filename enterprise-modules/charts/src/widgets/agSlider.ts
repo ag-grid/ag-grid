@@ -6,6 +6,7 @@ import {
     Events,
     LabelAlignment,
     PostConstruct,
+    RefPlaceholder,
 } from '@ag-grid-community/core';
 
 import { AgInputRange } from './agInputRange';
@@ -30,9 +31,9 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams> {
             </div>
         </div>`;
 
-    protected readonly eLabel: HTMLElement;
-    private readonly eSlider: AgInputRange;
-    private readonly eText: AgInputNumberField;
+    protected readonly eLabel: HTMLElement = RefPlaceholder;
+    private readonly eSlider: AgInputRange = RefPlaceholder;
+    private readonly eText: AgInputNumberField = RefPlaceholder;
 
     protected labelAlignment: LabelAlignment = 'top';
 

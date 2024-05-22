@@ -3,6 +3,7 @@ import { PostConstruct, PreDestroy } from '../../../context/context';
 import { IFloatingFilterComp } from '../../../filter/floating/floatingFilter';
 import { _setDisplayed } from '../../../utils/dom';
 import { AgPromise } from '../../../utils/promise';
+import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import { HeaderFilterCellCtrl, IHeaderFilterCellComp } from './headerFilterCellCtrl';
 
@@ -14,9 +15,9 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
             </div>
         </div>`;
 
-    private readonly eFloatingFilterBody: HTMLElement;
-    private readonly eButtonWrapper: HTMLElement;
-    private readonly eButtonShowMainFilter: HTMLElement;
+    private readonly eFloatingFilterBody: HTMLElement = RefPlaceholder;
+    private readonly eButtonWrapper: HTMLElement = RefPlaceholder;
+    private readonly eButtonShowMainFilter: HTMLElement = RefPlaceholder;
 
     private floatingFilterComp: IFloatingFilterComp | undefined;
     private compPromise: AgPromise<IFloatingFilterComp> | null;

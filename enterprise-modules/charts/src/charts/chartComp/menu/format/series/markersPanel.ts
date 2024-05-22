@@ -1,4 +1,12 @@
-import { AgSelect, AgSelectParams, Autowired, Component, PostConstruct, _includes } from '@ag-grid-community/core';
+import {
+    AgSelect,
+    AgSelectParams,
+    Autowired,
+    Component,
+    PostConstruct,
+    RefPlaceholder,
+    _includes,
+} from '@ag-grid-community/core';
 import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
 import { AgSlider, AgSliderParams } from '../../../../../widgets/agSlider';
@@ -16,7 +24,7 @@ export class MarkersPanel extends Component {
             </ag-group-component>
         </div>`;
 
-    private readonly seriesMarkerMinSizeSlider: AgSlider;
+    private readonly seriesMarkerMinSizeSlider: AgSlider = RefPlaceholder;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 

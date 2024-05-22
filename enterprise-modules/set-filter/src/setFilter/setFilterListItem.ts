@@ -10,6 +10,7 @@ import {
     ISetFilterTreeListTooltipParams,
     ITooltipParams,
     PostConstruct,
+    RefPlaceholder,
     SetFilterParams,
     UserComponentFactory,
     ValueFormatterParams,
@@ -83,11 +84,11 @@ export class SetFilterListItem<V> extends Component {
             <ag-checkbox data-ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
         </div>`;
 
-    private readonly eCheckbox: AgCheckbox;
+    private readonly eCheckbox: AgCheckbox = RefPlaceholder;
 
-    private readonly eGroupOpenedIcon: HTMLElement;
-    private readonly eGroupClosedIcon: HTMLElement;
-    private readonly eGroupIndeterminateIcon: HTMLElement;
+    private readonly eGroupOpenedIcon: HTMLElement = RefPlaceholder;
+    private readonly eGroupClosedIcon: HTMLElement = RefPlaceholder;
+    private readonly eGroupIndeterminateIcon: HTMLElement = RefPlaceholder;
 
     private readonly focusWrapper: HTMLElement;
     private readonly value: V | null | (() => string);

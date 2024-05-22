@@ -7,6 +7,7 @@ import {
     DragListenerParams,
     DragService,
     Events,
+    RefPlaceholder,
     _exists,
     _setFixedWidth,
 } from '@ag-grid-community/core';
@@ -31,10 +32,10 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
             </div>
         </div>`;
 
-    protected readonly eLabel: HTMLElement;
-    private readonly eParentCircle: HTMLElement;
-    private readonly eChildCircle: HTMLElement;
-    private readonly eAngleValue: AgInputNumberField;
+    protected readonly eLabel: HTMLElement = RefPlaceholder;
+    private readonly eParentCircle: HTMLElement = RefPlaceholder;
+    private readonly eChildCircle: HTMLElement = RefPlaceholder;
+    private readonly eAngleValue: AgInputNumberField = RefPlaceholder;
 
     @Autowired('dragService') protected readonly dragService: DragService;
 

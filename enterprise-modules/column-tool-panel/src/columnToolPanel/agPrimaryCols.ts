@@ -5,6 +5,7 @@ import {
     ColumnEventType,
     Component,
     PositionableFeature,
+    RefPlaceholder,
     ToolPanelColumnCompParams,
 } from '@ag-grid-community/core';
 
@@ -18,8 +19,8 @@ export class AgPrimaryCols extends Component {
             <ag-primary-cols-list data-ref="primaryColsListPanel"></ag-primary-cols-list>
         </div>`;
 
-    private readonly primaryColsHeaderPanel: AgPrimaryColsHeader;
-    private readonly primaryColsListPanel: AgPrimaryColsList;
+    private readonly primaryColsHeaderPanel: AgPrimaryColsHeader = RefPlaceholder;
+    private readonly primaryColsListPanel: AgPrimaryColsList = RefPlaceholder;
 
     private allowDragging: boolean;
     private params: ToolPanelColumnCompParams;

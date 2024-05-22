@@ -8,6 +8,7 @@ import {
     MenuItemDef,
     PopupService,
     PostConstruct,
+    RefPlaceholder,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
 import { AgMenuItemComponent, AgMenuList } from '@ag-grid-enterprise/core';
@@ -218,7 +219,7 @@ export class ChartMenuListFactory extends BeanStub {
 class ChartMenuList extends Component {
     @Autowired('focusService') private readonly focusService: FocusService;
 
-    private readonly eChartsMenu: HTMLElement;
+    private readonly eChartsMenu: HTMLElement = RefPlaceholder;
 
     private hidePopupFunc: () => void;
     private mainMenuList: AgMenuList;

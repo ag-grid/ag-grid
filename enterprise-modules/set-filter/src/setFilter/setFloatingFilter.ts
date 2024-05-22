@@ -5,6 +5,7 @@ import {
     Component,
     IFloatingFilter,
     IFloatingFilterParams,
+    RefPlaceholder,
     SetFilterModel,
 } from '@ag-grid-community/core';
 
@@ -13,7 +14,7 @@ import { SetFilterModelFormatter } from './setFilterModelFormatter';
 import { SetValueModel } from './setValueModel';
 
 export class SetFloatingFilterComp<V = string> extends Component implements IFloatingFilter {
-    private readonly eFloatingFilterText: AgInputTextField;
+    private readonly eFloatingFilterText: AgInputTextField = RefPlaceholder;
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
 
     private params: IFloatingFilterParams;

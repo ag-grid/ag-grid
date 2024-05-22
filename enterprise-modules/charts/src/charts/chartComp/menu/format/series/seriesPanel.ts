@@ -7,6 +7,7 @@ import {
     Component,
     ListOption,
     PostConstruct,
+    RefPlaceholder,
     _removeFromParent,
 } from '@ag-grid-community/core';
 import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
@@ -35,7 +36,7 @@ export class SeriesPanel extends Component {
             </ag-group-component>
         </div>`;
 
-    private readonly seriesGroup: AgGroupComponent;
+    private readonly seriesGroup: AgGroupComponent = RefPlaceholder;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 

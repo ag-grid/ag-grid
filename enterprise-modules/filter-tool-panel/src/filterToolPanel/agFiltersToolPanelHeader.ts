@@ -8,6 +8,7 @@ import {
     Events,
     PostConstruct,
     PreConstruct,
+    RefPlaceholder,
     _createIconNoSpan,
     _debounce,
     _setDisplayed,
@@ -26,8 +27,8 @@ export class AgFiltersToolPanelHeader extends Component {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
 
-    private readonly eExpand: Element;
-    private readonly eFilterTextField: AgInputTextField;
+    private readonly eExpand: Element = RefPlaceholder;
+    private readonly eFilterTextField: AgInputTextField = RefPlaceholder;
 
     private eExpandChecked: Element;
     private eExpandUnchecked: Element;

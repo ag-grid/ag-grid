@@ -5,7 +5,7 @@ import { ResizeObserverService } from '../misc/resizeObserverService';
 import { OverlayWrapperComponent } from '../rendering/overlays/overlayWrapperComponent';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRowCount } from '../utils/aria';
-import { AgComponentSelector, Component } from '../widgets/component';
+import { AgComponentSelector, Component, RefPlaceholder } from '../widgets/component';
 import { FakeHScrollComp } from './fakeHScrollComp';
 import { FakeVScrollComp } from './fakeVScrollComp';
 import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from './gridBodyCtrl';
@@ -60,12 +60,12 @@ export class GridBodyComp extends Component {
 
     @Optional('rangeService') private rangeService?: IRangeService;
 
-    private readonly eBodyViewport: HTMLElement;
-    private readonly eStickyTop: HTMLElement;
-    private readonly eStickyBottom: HTMLElement;
-    private readonly eTop: HTMLElement;
-    private readonly eBottom: HTMLElement;
-    private readonly eBody: HTMLElement;
+    private readonly eBodyViewport: HTMLElement = RefPlaceholder;
+    private readonly eStickyTop: HTMLElement = RefPlaceholder;
+    private readonly eStickyBottom: HTMLElement = RefPlaceholder;
+    private readonly eTop: HTMLElement = RefPlaceholder;
+    private readonly eBottom: HTMLElement = RefPlaceholder;
+    private readonly eBody: HTMLElement = RefPlaceholder;
 
     private ctrl: GridBodyCtrl;
 

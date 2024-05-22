@@ -4,7 +4,7 @@ import { Events } from '../../../eventKeys';
 import { SortController } from '../../../sortController';
 import { _clearElement, _setDisplayed } from '../../../utils/dom';
 import { _createIconNoSpan } from '../../../utils/icon';
-import { AgComponentSelector, Component } from '../../../widgets/component';
+import { AgComponentSelector, Component, RefPlaceholder } from '../../../widgets/component';
 
 export class SortIndicatorComp extends Component {
     static readonly selector: AgComponentSelector = 'AG-SORT-INDICATOR';
@@ -17,11 +17,11 @@ export class SortIndicatorComp extends Component {
             <span data-ref="eSortNone" class="ag-sort-indicator-icon ag-sort-none-icon ag-hidden" aria-hidden="true"></span>
         </span>`;
 
-    private eSortOrder: HTMLElement;
-    private eSortAsc: HTMLElement;
-    private eSortDesc: HTMLElement;
-    private eSortMixed: HTMLElement;
-    private eSortNone: HTMLElement;
+    private eSortOrder: HTMLElement = RefPlaceholder;
+    private eSortAsc: HTMLElement = RefPlaceholder;
+    private eSortDesc: HTMLElement = RefPlaceholder;
+    private eSortMixed: HTMLElement = RefPlaceholder;
+    private eSortNone: HTMLElement = RefPlaceholder;
 
     @Autowired('sortController') private readonly sortController: SortController;
 

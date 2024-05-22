@@ -1,4 +1,4 @@
-import { AgSelect, Autowired, ChartMappings, Component, PostConstruct } from '@ag-grid-community/core';
+import { AgSelect, Autowired, ChartMappings, Component, PostConstruct, RefPlaceholder } from '@ag-grid-community/core';
 import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
 import { ChartService } from '../../../chartService';
@@ -15,7 +15,7 @@ export class ChartSpecificDataPanel extends Component {
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
     @Autowired('chartService') private readonly chartService: ChartService;
-    private readonly chartSpecificGroup: AgGroupComponent;
+    private readonly chartSpecificGroup: AgGroupComponent = RefPlaceholder;
 
     private directionSelect?: AgSelect;
     private groupTypeSelect?: AgSelect;

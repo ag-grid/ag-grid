@@ -6,6 +6,7 @@ import {
     Component,
     KeyCode,
     PostConstruct,
+    RefPlaceholder,
     _createIcon,
     _setAriaExpanded,
     _setDisplayed,
@@ -59,9 +60,9 @@ export class AgGroupComponent extends Component {
     private eToggle?: AgToggleButton;
     private eTitleBar?: DefaultTitleBar;
 
-    private readonly eToolbar: HTMLElement;
-    private readonly cbGroupEnabled: AgCheckbox;
-    private readonly eContainer: HTMLElement;
+    private readonly eToolbar: HTMLElement = RefPlaceholder;
+    private readonly cbGroupEnabled: AgCheckbox = RefPlaceholder;
+    private readonly eContainer: HTMLElement = RefPlaceholder;
 
     constructor(private readonly params: AgGroupComponentParams = {}) {
         super(AgGroupComponent.getTemplate(params), [AgCheckbox]);
@@ -355,8 +356,8 @@ class DefaultTitleBar extends Component {
     private suppressOpenCloseIcons: boolean = false;
     private suppressKeyboardNavigation: boolean = false;
 
-    private readonly eGroupOpenedIcon: HTMLElement;
-    private readonly eGroupClosedIcon: HTMLElement;
+    private readonly eGroupOpenedIcon: HTMLElement = RefPlaceholder;
+    private readonly eGroupClosedIcon: HTMLElement = RefPlaceholder;
     private readonly eTitle: HTMLElement;
 
     constructor(params: AgGroupComponentParams = {}) {

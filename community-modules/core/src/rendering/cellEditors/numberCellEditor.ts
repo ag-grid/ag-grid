@@ -2,6 +2,7 @@ import { KeyCode } from '../../constants/keyCode';
 import { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _exists } from '../../utils/generic';
 import { AgInputNumberField } from '../../widgets/agInputNumberField';
+import { RefPlaceholder } from '../../widgets/component';
 import { CellEditorInput, SimpleCellEditor } from './simpleCellEditor';
 
 export interface INumberCellEditorParams<TData = any, TContext = any>
@@ -32,7 +33,7 @@ export interface INumberCellEditorParams<TData = any, TContext = any>
 }
 
 class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditorParams, AgInputNumberField> {
-    private eInput: AgInputNumberField;
+    private eInput: AgInputNumberField = RefPlaceholder;
     private params: INumberCellEditorParams;
 
     public getTemplate() {

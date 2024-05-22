@@ -6,11 +6,11 @@ import { Events } from '../events';
 import { _getAriaCheckboxStateName } from '../utils/aria';
 import { _stopPropagationForAgGrid } from '../utils/event';
 import { AgCheckbox } from '../widgets/agCheckbox';
-import { Component } from '../widgets/component';
+import { Component, RefPlaceholder } from '../widgets/component';
 import { GroupCheckboxSelectionCallback } from './cellRenderers/groupCellRendererCtrl';
 
 export class CheckboxSelectionComponent extends Component {
-    private readonly eCheckbox: AgCheckbox;
+    private readonly eCheckbox: AgCheckbox = RefPlaceholder;
 
     private rowNode: RowNode;
     private column: Column | undefined;

@@ -12,6 +12,7 @@ import {
     PartialCellRange,
     PopupService,
     PostConstruct,
+    RefPlaceholder,
     SeriesChartType,
     UpdateChartParams,
     WithoutGridCommon,
@@ -83,11 +84,11 @@ export class GridChartComp extends Component {
             <div data-ref="eMenuContainer" class="ag-chart-docked-container"></div>
         </div>`;
 
-    private readonly eChart: HTMLElement;
-    private readonly eChartContainer: HTMLElement;
-    private readonly eMenuContainer: HTMLElement;
-    private readonly eEmpty: HTMLElement;
-    private readonly eTitleEditContainer: HTMLDivElement;
+    private readonly eChart: HTMLElement = RefPlaceholder;
+    private readonly eChartContainer: HTMLElement = RefPlaceholder;
+    private readonly eMenuContainer: HTMLElement = RefPlaceholder;
+    private readonly eEmpty: HTMLElement = RefPlaceholder;
+    private readonly eTitleEditContainer: HTMLDivElement = RefPlaceholder;
 
     @Autowired('chartCrossFilterService') private readonly crossFilterService: ChartCrossFilterService;
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;

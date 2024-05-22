@@ -11,6 +11,7 @@ import {
     IStatusPanelComp,
     Optional,
     PostConstruct,
+    RefPlaceholder,
     RowPosition,
     RowPositionUtils,
     ValueService,
@@ -38,11 +39,11 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
 
-    private readonly sumAggregationComp: AgNameValue;
-    private readonly countAggregationComp: AgNameValue;
-    private readonly minAggregationComp: AgNameValue;
-    private readonly maxAggregationComp: AgNameValue;
-    private readonly avgAggregationComp: AgNameValue;
+    private readonly sumAggregationComp: AgNameValue = RefPlaceholder;
+    private readonly countAggregationComp: AgNameValue = RefPlaceholder;
+    private readonly minAggregationComp: AgNameValue = RefPlaceholder;
+    private readonly maxAggregationComp: AgNameValue = RefPlaceholder;
+    private readonly avgAggregationComp: AgNameValue = RefPlaceholder;
 
     private params!: AggregationStatusPanelParams;
 

@@ -5,6 +5,7 @@ import {
     FilterManager,
     ITooltipParams,
     PostConstruct,
+    RefPlaceholder,
     WithoutGridCommon,
     _createIconNoSpan,
     _makeNull,
@@ -28,11 +29,11 @@ import { AutocompleteUpdate } from './filterExpressionUtils';
 export class AdvancedFilterComp extends Component {
     static readonly selector: AgComponentSelector = 'AG-ADVANCED-FILTER';
 
-    private readonly eAutocomplete: AgAutocomplete;
-    private readonly eApplyFilterButton: HTMLElement;
-    private readonly eBuilderFilterButton: HTMLElement;
-    private readonly eBuilderFilterButtonIcon: HTMLElement;
-    private readonly eBuilderFilterButtonLabel: HTMLElement;
+    private readonly eAutocomplete: AgAutocomplete = RefPlaceholder;
+    private readonly eApplyFilterButton: HTMLElement = RefPlaceholder;
+    private readonly eBuilderFilterButton: HTMLElement = RefPlaceholder;
+    private readonly eBuilderFilterButtonIcon: HTMLElement = RefPlaceholder;
+    private readonly eBuilderFilterButtonLabel: HTMLElement = RefPlaceholder;
     @Autowired('advancedFilterService') private advancedFilterService: AdvancedFilterService;
     @Autowired('advancedFilterExpressionService')
     private advancedFilterExpressionService: AdvancedFilterExpressionService;

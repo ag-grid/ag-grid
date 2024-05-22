@@ -37,7 +37,7 @@ export {
 
 // components
 export { ComponentUtil } from './components/componentUtil';
-export { ComponentClass, AgComponentSelector } from './widgets/component';
+export { ComponentClass, AgComponentSelector, RefPlaceholder } from './widgets/component';
 
 export { UserComponentRegistry } from './components/framework/userComponentRegistry';
 export { UserComponentFactory, UserCompDetails } from './components/framework/userComponentFactory';

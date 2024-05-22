@@ -8,6 +8,7 @@ import {
     Events,
     KeyCode,
     PostConstruct,
+    RefPlaceholder,
     _createIconNoSpan,
     _debounce,
     _setDisplayed,
@@ -26,9 +27,9 @@ export class AgPrimaryColsHeader extends Component {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
-    private readonly eExpand: Element;
-    private readonly eSelect: AgCheckbox;
-    private readonly eFilterTextField: AgInputTextField;
+    private readonly eExpand: Element = RefPlaceholder;
+    private readonly eSelect: AgCheckbox = RefPlaceholder;
+    private readonly eFilterTextField: AgInputTextField = RefPlaceholder;
 
     private static DEBOUNCE_DELAY = 300;
 

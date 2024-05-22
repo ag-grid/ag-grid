@@ -7,13 +7,14 @@ import {
     Events,
     GridApi,
     PreConstruct,
+    RefPlaceholder,
 } from '@ag-grid-community/core';
 
 export class PivotModePanel extends Component {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('gridApi') private api: GridApi;
 
-    private readonly cbPivotMode: AgCheckbox;
+    private readonly cbPivotMode: AgCheckbox = RefPlaceholder;
 
     private createTemplate(): string {
         return /* html */ `<div class="ag-pivot-mode-panel">

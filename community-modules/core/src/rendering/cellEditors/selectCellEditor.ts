@@ -5,6 +5,7 @@ import { _missing } from '../../utils/generic';
 import { ValueService } from '../../valueService/valueService';
 import { ListOption } from '../../widgets/agList';
 import { AgSelect } from '../../widgets/agSelect';
+import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
 
 export interface ISelectCellEditorParams<TValue = any> {
@@ -33,7 +34,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
     private focusAfterAttached: boolean;
 
     @Autowired('valueService') private valueService: ValueService;
-    private readonly eSelect: AgSelect;
+    private readonly eSelect: AgSelect = RefPlaceholder;
 
     private startedByEnter: boolean = false;
 

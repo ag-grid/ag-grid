@@ -5,6 +5,7 @@ import { FilterChangedEvent } from '../../../events';
 import { _clearElement } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
 import { AgInputTextField, AgInputTextFieldParams } from '../../../widgets/agInputTextField';
+import { RefPlaceholder } from '../../../widgets/component';
 import { NumberFilter, NumberFilterModel } from '../../provided/number/numberFilter';
 import { ProvidedFilter } from '../../provided/providedFilter';
 import { TextFilter, TextFilterModel, TextFilterParams } from '../../provided/text/textFilter';
@@ -21,7 +22,7 @@ export interface FloatingFilterInputService {
 }
 
 export class FloatingFilterTextInputService extends BeanStub implements FloatingFilterInputService {
-    private eFloatingFilterTextInput: AgInputTextField;
+    private eFloatingFilterTextInput: AgInputTextField = RefPlaceholder;
     private valueChangedListener: (e: KeyboardEvent) => void = () => {};
 
     constructor(private params?: { config?: AgInputTextFieldParams }) {
@@ -87,7 +88,7 @@ export interface ITextInputFloatingFilterParams extends IFloatingFilterParams<Te
 
 type ModelUnion = TextFilterModel | NumberFilterModel;
 export abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
-    private readonly eFloatingFilterInputContainer: HTMLElement;
+    private readonly eFloatingFilterInputContainer: HTMLElement = RefPlaceholder;
     private floatingFilterInputService: FloatingFilterInputService;
 
     protected params: ITextInputFloatingFilterParams;

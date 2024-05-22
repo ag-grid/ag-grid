@@ -1,6 +1,7 @@
 import { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { PostConstruct } from '../../../context/context';
 import { _setDisplayed } from '../../../utils/dom';
+import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCellCtrl';
 import { IHeaderGroupComp } from './headerGroupComp';
@@ -10,7 +11,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
             <div data-ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
         </div>`;
 
-    private eResize: HTMLElement;
+    private eResize: HTMLElement = RefPlaceholder;
 
     private headerGroupComp: IHeaderGroupComp | undefined;
 

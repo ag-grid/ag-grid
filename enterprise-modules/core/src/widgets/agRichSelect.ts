@@ -9,6 +9,7 @@ import {
     FieldPickerValueSelectedEvent,
     ICellRendererParams,
     KeyCode,
+    RefPlaceholder,
     RichSelectParams,
     UserCompDetails,
     UserComponentFactory,
@@ -53,7 +54,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    private readonly eInput: AgInputTextField;
+    private readonly eInput: AgInputTextField = RefPlaceholder;
 
     constructor(config?: RichSelectParams<TValue>) {
         super({

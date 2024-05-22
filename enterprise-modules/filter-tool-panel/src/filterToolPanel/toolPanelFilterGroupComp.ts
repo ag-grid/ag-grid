@@ -10,6 +10,7 @@ import {
     PostConstruct,
     PreConstruct,
     ProvidedColumnGroup,
+    RefPlaceholder,
     WithoutGridCommon,
     _clearElement,
     _createIconNoSpan,
@@ -25,7 +26,7 @@ export class ToolPanelFilterGroupComp extends Component {
             <ag-group-component data-ref="filterGroupComp"></ag-group-component>
         </div>`;
 
-    private filterGroupComp: AgGroupComponent;
+    private filterGroupComp: AgGroupComponent = RefPlaceholder;
 
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
 

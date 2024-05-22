@@ -7,7 +7,7 @@ import { ResizeObserverService } from '../misc/resizeObserverService';
 import { _getAriaPosInSet, _setAriaLabel, _setAriaPosInSet, _setAriaRole, _setAriaSetSize } from '../utils/aria';
 import { _stopPropagationForAgGrid } from '../utils/event';
 import { _waitUntil } from '../utils/function';
-import { Component } from './component';
+import { Component, RefPlaceholder } from './component';
 import { TabGuardComp } from './tabGuardComp';
 
 export interface VirtualListModel {
@@ -40,7 +40,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
 
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
-    private readonly eContainer: HTMLElement;
+    private readonly eContainer: HTMLElement = RefPlaceholder;
 
     constructor(params?: VirtualListParams) {
         super(VirtualList.getTemplate(params?.cssIdentifier || 'default'));

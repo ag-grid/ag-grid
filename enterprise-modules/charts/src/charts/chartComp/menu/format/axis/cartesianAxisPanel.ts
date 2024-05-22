@@ -7,6 +7,7 @@ import {
     Events,
     ListOption,
     PostConstruct,
+    RefPlaceholder,
     _removeFromParent,
     _setDisplayed,
 } from '@ag-grid-community/core';
@@ -38,10 +39,10 @@ export class CartesianAxisPanel extends Component {
             </ag-group-component>
         </div>`;
 
-    private readonly axisGroup: AgGroupComponent;
-    private readonly axisTypeSelect: AgSelect;
-    private readonly axisPositionSelect: AgSelect;
-    private readonly axisTimeFormatSelect: AgSelect;
+    private readonly axisGroup: AgGroupComponent = RefPlaceholder;
+    private readonly axisTypeSelect: AgSelect = RefPlaceholder;
+    private readonly axisPositionSelect: AgSelect = RefPlaceholder;
+    private readonly axisTimeFormatSelect: AgSelect = RefPlaceholder;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 

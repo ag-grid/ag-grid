@@ -2,6 +2,7 @@ import { Events } from '../../eventKeys';
 import { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _getAriaCheckboxStateName } from '../../utils/aria';
 import { AgCheckbox } from '../../widgets/agCheckbox';
+import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
 
 export class CheckboxCellEditor extends PopupComponent implements ICellEditorComp {
@@ -15,7 +16,7 @@ export class CheckboxCellEditor extends PopupComponent implements ICellEditorCom
         );
     }
 
-    private readonly eCheckbox: AgCheckbox;
+    private readonly eCheckbox: AgCheckbox = RefPlaceholder;
     private params: ICellEditorParams<any, boolean>;
 
     public init(params: ICellEditorParams<any, boolean>): void {

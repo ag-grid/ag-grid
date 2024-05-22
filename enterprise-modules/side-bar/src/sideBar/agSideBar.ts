@@ -13,6 +13,7 @@ import {
     ModuleNames,
     ModuleRegistry,
     PostConstruct,
+    RefPlaceholder,
     SideBarDef,
     SideBarState,
     ToolPanelDef,
@@ -34,7 +35,7 @@ export class AgSideBar extends Component implements ISideBar {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sideBarService') private sideBarService: SideBarService;
-    private readonly sideBarButtons: AgSideBarButtons;
+    private readonly sideBarButtons: AgSideBarButtons = RefPlaceholder;
 
     private toolPanelWrappers: ToolPanelWrapper[] = [];
     private sideBar: SideBarDef | undefined;

@@ -2,6 +2,7 @@ import { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _serialiseDate } from '../../utils/date';
 import { _exists } from '../../utils/generic';
 import { AgInputDateField } from '../../widgets/agInputDateField';
+import { RefPlaceholder } from '../../widgets/component';
 import { CellEditorInput, SimpleCellEditor } from './simpleCellEditor';
 
 export interface IDateCellEditorParams<TData = any, TContext = any> extends ICellEditorParams<TData, Date, TContext> {
@@ -19,7 +20,7 @@ export interface IDateCellEditorParams<TData = any, TContext = any> extends ICel
 }
 
 class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams, AgInputDateField> {
-    private eInput: AgInputDateField;
+    private eInput: AgInputDateField = RefPlaceholder;
     private params: IDateCellEditorParams;
 
     public getTemplate() {

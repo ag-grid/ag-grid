@@ -7,6 +7,7 @@ import {
     IToolPanelComp,
     IToolPanelFiltersCompParams,
     IToolPanelParams,
+    RefPlaceholder,
 } from '@ag-grid-community/core';
 
 import { AgFiltersToolPanelHeader } from './agFiltersToolPanelHeader';
@@ -22,9 +23,8 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
             <ag-filters-tool-panel-list data-ref="filtersToolPanelListPanel"></ag-filters-tool-panel-list>
          </div>`;
 
-    private readonly filtersToolPanelHeaderPanel: AgFiltersToolPanelHeader;
-
-    private readonly filtersToolPanelListPanel: AgFiltersToolPanelList;
+    private readonly filtersToolPanelHeaderPanel: AgFiltersToolPanelHeader = RefPlaceholder;
+    private readonly filtersToolPanelListPanel: AgFiltersToolPanelList = RefPlaceholder;
 
     private initialised = false;
     private params: ToolPanelFiltersCompParams;

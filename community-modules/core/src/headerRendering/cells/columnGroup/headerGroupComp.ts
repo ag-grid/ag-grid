@@ -10,7 +10,7 @@ import { _warnOnce } from '../../../utils/function';
 import { _exists } from '../../../utils/generic';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _escapeString } from '../../../utils/string';
-import { Component } from '../../../widgets/component';
+import { Component, RefPlaceholder } from '../../../widgets/component';
 import { TouchListener } from '../../../widgets/touchListener';
 
 export interface IHeaderGroupParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -46,9 +46,9 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
     private params: IHeaderGroupParams;
 
-    private agOpened: HTMLElement;
-    private agClosed: HTMLElement;
-    private agLabel: HTMLElement;
+    private readonly agOpened: HTMLElement = RefPlaceholder;
+    private readonly agClosed: HTMLElement = RefPlaceholder;
+    private readonly agLabel: HTMLElement = RefPlaceholder;
 
     constructor() {
         super(HeaderGroupComp.TEMPLATE);

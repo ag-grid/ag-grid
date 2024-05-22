@@ -7,6 +7,7 @@ import {
     IStatusPanelParams,
     PostConstruct,
     PreDestroy,
+    RefPlaceholder,
     StatusPanelDef,
     UserComponentFactory,
     WithoutGridCommon,
@@ -26,9 +27,9 @@ export class AgStatusBar extends Component {
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('statusBarService') private statusBarService: StatusBarService;
 
-    private readonly eStatusBarLeft: HTMLElement;
-    private readonly eStatusBarCenter: HTMLElement;
-    private readonly eStatusBarRight: HTMLElement;
+    private readonly eStatusBarLeft: HTMLElement = RefPlaceholder;
+    private readonly eStatusBarCenter: HTMLElement = RefPlaceholder;
+    private readonly eStatusBarRight: HTMLElement = RefPlaceholder;
 
     private compDestroyFunctions: { [key: string]: () => void } = {};
 

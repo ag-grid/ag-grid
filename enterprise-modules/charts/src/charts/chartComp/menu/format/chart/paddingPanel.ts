@@ -1,4 +1,11 @@
-import { Autowired, ChartOptionsChanged, Component, Events, PostConstruct } from '@ag-grid-community/core';
+import {
+    Autowired,
+    ChartOptionsChanged,
+    Component,
+    Events,
+    PostConstruct,
+    RefPlaceholder,
+} from '@ag-grid-community/core';
 import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgChartPaddingOptions, AgChartThemeOverrides } from 'ag-charts-community';
 
@@ -18,7 +25,7 @@ export class PaddingPanel extends Component {
             </ag-group-component>
         <div>`;
 
-    private readonly paddingTopSlider: AgSlider;
+    private readonly paddingTopSlider: AgSlider = RefPlaceholder;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 

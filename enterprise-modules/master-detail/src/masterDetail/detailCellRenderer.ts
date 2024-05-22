@@ -7,6 +7,7 @@ import {
     IDetailCellRenderer,
     IDetailCellRendererParams,
     ModuleRegistry,
+    RefPlaceholder,
     _cloneObject,
     _missing,
     _warnOnce,
@@ -20,7 +21,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             <div data-ref="eDetailGrid" class="ag-details-grid" role="presentation"></div>
         </div>`;
 
-    private eDetailGrid: HTMLElement;
+    private eDetailGrid: HTMLElement = RefPlaceholder;
 
     private detailApi: GridApi;
 

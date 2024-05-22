@@ -5,7 +5,7 @@ import { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
 import { _setAriaRole } from '../../utils/aria';
 import { _ensureDomOrder, _insertWithDomOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
-import { AgComponentSelector, Component } from '../../widgets/component';
+import { AgComponentSelector, Component, RefPlaceholder } from '../../widgets/component';
 import {
     IRowContainerComp,
     RowContainerCtrl,
@@ -45,8 +45,8 @@ export class RowContainerComp extends Component {
     static readonly selector: AgComponentSelector = 'AG-ROW-CONTAINER';
     @Autowired('beans') private beans: Beans;
 
-    private readonly eViewport: HTMLElement;
-    private readonly eContainer: HTMLElement;
+    private readonly eViewport: HTMLElement = RefPlaceholder;
+    private readonly eContainer: HTMLElement = RefPlaceholder;
 
     private readonly name: RowContainerName;
     private readonly type: RowContainerType;

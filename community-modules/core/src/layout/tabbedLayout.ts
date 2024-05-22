@@ -6,13 +6,14 @@ import { _setAriaLabel, _setAriaRole } from '../utils/aria';
 import { _clearElement } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
 import { AgPromise } from '../utils/promise';
+import { RefPlaceholder } from '../widgets/component';
 import { TabGuardComp } from '../widgets/tabGuardComp';
 
 export class TabbedLayout extends TabGuardComp {
     @Autowired('focusService') private focusService: FocusService;
 
-    private readonly eHeader: HTMLElement;
-    private readonly eBody: HTMLElement;
+    private readonly eHeader: HTMLElement = RefPlaceholder;
+    private readonly eBody: HTMLElement = RefPlaceholder;
 
     private eTabHeader: HTMLElement;
     private eCloseButton?: HTMLElement;

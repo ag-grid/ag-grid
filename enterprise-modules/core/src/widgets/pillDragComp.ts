@@ -11,6 +11,7 @@ import {
     Events,
     KeyCode,
     PostConstruct,
+    RefPlaceholder,
     TouchListener,
     _createIconNoSpan,
     _escapeString,
@@ -29,9 +30,9 @@ export abstract class PillDragComp<TItem> extends Component {
 
     @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
 
-    private readonly eText: HTMLElement;
-    private readonly eDragHandle: HTMLElement;
-    private readonly eButton: HTMLElement;
+    private readonly eText: HTMLElement = RefPlaceholder;
+    private readonly eDragHandle: HTMLElement = RefPlaceholder;
+    private readonly eButton: HTMLElement = RefPlaceholder;
 
     public abstract getItem(): TItem;
     protected abstract getDisplayName(): string;

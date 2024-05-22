@@ -23,6 +23,7 @@ import {
     PopupEventParams,
     PopupService,
     PostConstruct,
+    RefPlaceholder,
     TabbedItem,
     TabbedLayout,
     VisibleColsService,
@@ -556,7 +557,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
     @Autowired('menuUtils') private readonly menuUtils: MenuUtils;
     @Autowired('focusService') private readonly focusService: FocusService;
 
-    private readonly eColumnMenu: HTMLElement;
+    private readonly eColumnMenu: HTMLElement = RefPlaceholder;
 
     private hidePopupFunc: (popupParams?: PopupEventParams) => void;
     private mainMenuList: AgMenuList;

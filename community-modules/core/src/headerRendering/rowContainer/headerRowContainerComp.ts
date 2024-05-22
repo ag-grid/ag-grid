@@ -2,7 +2,7 @@ import { PostConstruct, PreDestroy } from '../../context/context';
 import { ColumnPinnedType } from '../../entities/column';
 import { _ensureDomOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
-import { Component } from '../../widgets/component';
+import { Component, RefPlaceholder } from '../../widgets/component';
 import { HeaderRowComp } from '../row/headerRowComp';
 import { HeaderRowCtrl, HeaderRowCtrlInstanceId } from '../row/headerRowCtrl';
 import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRowContainerCtrl';
@@ -16,7 +16,7 @@ export class HeaderRowContainerComp extends Component {
             <div class="ag-header-container" data-ref="eCenterContainer" role="rowgroup"></div>
         </div>`;
 
-    private eCenterContainer: HTMLElement;
+    private eCenterContainer: HTMLElement = RefPlaceholder;
 
     private eRowContainer: HTMLElement;
 

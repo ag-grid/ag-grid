@@ -13,6 +13,7 @@ import {
     KeyCode,
     Optional,
     PopupService,
+    RefPlaceholder,
     SortController,
     SortIndicatorComp,
     VirtualList,
@@ -31,7 +32,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     @Optional('aggFuncService') private readonly aggFuncService?: IAggFuncService;
     @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
 
-    private readonly eSortIndicator: SortIndicatorComp;
+    private readonly eSortIndicator: SortIndicatorComp = RefPlaceholder;
 
     private displayName: string | null;
     private popupShowing = false;

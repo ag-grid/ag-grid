@@ -6,6 +6,7 @@ import {
     FilterManager,
     JoinAdvancedFilterModel,
     PostConstruct,
+    RefPlaceholder,
     TooltipFeature,
     VirtualList,
     VirtualListDragItem,
@@ -27,9 +28,9 @@ import {
 } from './iAdvancedFilterBuilder';
 
 export class AdvancedFilterBuilderComp extends Component {
-    private readonly eList: HTMLElement;
-    private readonly eApplyFilterButton: HTMLElement;
-    private readonly eCancelFilterButton: HTMLElement;
+    private readonly eList: HTMLElement = RefPlaceholder;
+    private readonly eApplyFilterButton: HTMLElement = RefPlaceholder;
+    private readonly eCancelFilterButton: HTMLElement = RefPlaceholder;
 
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('advancedFilterService') private advancedFilterService: AdvancedFilterService;

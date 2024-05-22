@@ -1,4 +1,4 @@
-import { Component, KeyCode, PostConstruct, _exists, _setDisplayed } from '@ag-grid-community/core';
+import { Component, KeyCode, PostConstruct, RefPlaceholder, _exists, _setDisplayed } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
 
 import { AgColorInput } from './agColorInput';
@@ -48,15 +48,15 @@ export class AgColorPanel extends Component {
             </div>
         </div>`;
 
-    private readonly spectrumColor: HTMLElement;
-    private readonly spectrumVal: HTMLElement;
-    private readonly spectrumDragger: HTMLElement;
-    private readonly spectrumHue: HTMLElement;
-    private readonly spectrumHueSlider: HTMLElement;
-    private readonly spectrumAlpha: HTMLElement;
-    private readonly spectrumAlphaSlider: HTMLElement;
-    private readonly colorInput: AgColorInput;
-    private readonly recentColors: HTMLElement;
+    private readonly spectrumColor: HTMLElement = RefPlaceholder;
+    private readonly spectrumVal: HTMLElement = RefPlaceholder;
+    private readonly spectrumDragger: HTMLElement = RefPlaceholder;
+    private readonly spectrumHue: HTMLElement = RefPlaceholder;
+    private readonly spectrumHueSlider: HTMLElement = RefPlaceholder;
+    private readonly spectrumAlpha: HTMLElement = RefPlaceholder;
+    private readonly spectrumAlphaSlider: HTMLElement = RefPlaceholder;
+    private readonly colorInput: AgColorInput = RefPlaceholder;
+    private readonly recentColors: HTMLElement = RefPlaceholder;
 
     constructor(config: { picker: Component }) {
         super(AgColorPanel.TEMPLATE, [AgColorInput]);

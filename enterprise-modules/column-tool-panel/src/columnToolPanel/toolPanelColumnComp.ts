@@ -15,6 +15,7 @@ import {
     ITooltipParams,
     KeyCode,
     PostConstruct,
+    RefPlaceholder,
     WithoutGridCommon,
     _createIconNoSpan,
     _escapeString,
@@ -37,8 +38,8 @@ export class ToolPanelColumnComp extends Component {
     @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
     @Autowired('modelItemUtils') private readonly modelItemUtils: ModelItemUtils;
 
-    private readonly eLabel: HTMLElement;
-    private readonly cbSelect: AgCheckbox;
+    private readonly eLabel: HTMLElement = RefPlaceholder;
+    private readonly cbSelect: AgCheckbox = RefPlaceholder;
 
     private column: Column;
     private columnDept: number;

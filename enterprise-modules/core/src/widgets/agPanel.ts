@@ -3,6 +3,7 @@ import {
     PositionableFeature,
     PositionableOptions,
     PostConstruct,
+    RefPlaceholder,
     ResizableStructure,
     _createIconNoSpan,
     _getInnerHeight,
@@ -28,10 +29,10 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
     protected positionableFeature: PositionableFeature;
     public close: () => void;
 
-    protected readonly eContentWrapper: HTMLElement;
-    protected readonly eTitleBar: HTMLElement;
-    protected readonly eTitleBarButtons: HTMLElement;
-    protected readonly eTitle: HTMLElement;
+    protected readonly eContentWrapper: HTMLElement = RefPlaceholder;
+    protected readonly eTitleBar: HTMLElement = RefPlaceholder;
+    protected readonly eTitleBarButtons: HTMLElement = RefPlaceholder;
+    protected readonly eTitle: HTMLElement = RefPlaceholder;
 
     constructor(protected readonly config: TConfig) {
         super(AgPanel.getTemplate(config));

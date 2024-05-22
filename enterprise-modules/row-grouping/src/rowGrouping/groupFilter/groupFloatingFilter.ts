@@ -10,6 +10,7 @@ import {
     FilterManager,
     IFloatingFilterComp,
     IFloatingFilterParams,
+    RefPlaceholder,
     _clearElement,
 } from '@ag-grid-community/core';
 
@@ -19,7 +20,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
 
-    private readonly eFloatingFilter: HTMLElement;
+    private readonly eFloatingFilter: HTMLElement = RefPlaceholder;
 
     private params: IFloatingFilterParams<GroupFilter>;
     private eFloatingFilterText: AgInputTextField;

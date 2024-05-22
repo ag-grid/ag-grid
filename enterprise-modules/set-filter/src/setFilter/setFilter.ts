@@ -16,6 +16,7 @@ import {
     KeyCode,
     KeyCreatorParams,
     ProvidedFilter,
+    RefPlaceholder,
     SetFilterModel,
     SetFilterModelValue,
     SetFilterParams,
@@ -44,10 +45,10 @@ import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> implements ISetFilter<V> {
-    private readonly eMiniFilter: AgInputTextField;
-    private readonly eFilterLoading: HTMLElement;
-    private readonly eSetFilterList: HTMLElement;
-    private readonly eFilterNoMatches: HTMLElement;
+    private readonly eMiniFilter: AgInputTextField = RefPlaceholder;
+    private readonly eFilterLoading: HTMLElement = RefPlaceholder;
+    private readonly eSetFilterList: HTMLElement = RefPlaceholder;
+    private readonly eFilterNoMatches: HTMLElement = RefPlaceholder;
 
     @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
     @Autowired('valueService') private readonly valueService: ValueService;

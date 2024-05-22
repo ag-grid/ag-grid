@@ -3,7 +3,7 @@ import { Autowired, PostConstruct } from '../context/context';
 import { Events } from '../eventKeys';
 import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from '../utils/dom';
-import { AgComponentSelector } from '../widgets/component';
+import { AgComponentSelector, RefPlaceholder } from '../widgets/component';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { CenterWidthFeature } from './centerWidthFeature';
 
@@ -18,8 +18,8 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
             <div class="ag-horizontal-right-spacer" data-ref="eRightSpacer"></div>
         </div>`;
 
-    private readonly eLeftSpacer: HTMLElement;
-    private readonly eRightSpacer: HTMLElement;
+    private readonly eLeftSpacer: HTMLElement = RefPlaceholder;
+    private readonly eRightSpacer: HTMLElement = RefPlaceholder;
 
     @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
