@@ -1,14 +1,13 @@
-import type {
+import {
     AbstractColDef,
+    Autowired,
+    Bean,
+    BeanStub,
     ColDef,
     ColGroupDef,
     Column,
     ColumnModel,
-    IProvidedColumn} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+    IProvidedColumn,
     ProvidedColumnGroup,
     _includes,
     _last,

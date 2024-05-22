@@ -1,5 +1,4 @@
-import type { Module} from '@ag-grid-community/core';
-import { ModuleNames } from '@ag-grid-community/core';
+import { Module, ModuleNames } from '@ag-grid-community/core';
 
 import { ClientSideRowModel } from './clientSideRowModel/clientSideRowModel';
 import { FilterService } from './clientSideRowModel/filterService';

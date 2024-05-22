@@ -1,6 +1,5 @@
-import type {
-    Component} from '@ag-grid-community/core';
 import {
+    Component,
     KeyCode,
     PopupComponent,
     PostConstruct,
@@ -11,7 +10,7 @@ import {
 } from '@ag-grid-community/core';
 
 import { AgAutocompleteRow } from './agAutocompleteRow';
-import type { AutocompleteEntry } from './autocompleteParams';
+import { AutocompleteEntry } from './autocompleteParams';
 
 export class AgAutocompleteList extends PopupComponent {
     private static TEMPLATE /* html */ = `<div class="ag-autocomplete-list-popup">

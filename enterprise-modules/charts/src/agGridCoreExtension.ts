@@ -1,4 +1,4 @@
-import type * as agCharts from 'ag-charts-community';
+import * as agCharts from 'ag-charts-community';
 
 /*
  * grid-packages/ag-grid-enterprise is dependant on this file - if changes are made here (esp to it's path)

@@ -1,6 +1,6 @@
 import { _setAriaLabel, _setAriaLabelledBy } from '../../utils/aria';
 import { Component } from '../../widgets/component';
-import type { ILoadingCellRendererComp, ILoadingCellRendererParams } from './loadingCellRenderer';
+import { ILoadingCellRendererComp, ILoadingCellRendererParams } from './loadingCellRenderer';
 
 export class SkeletonCellRenderer extends Component implements ILoadingCellRendererComp {
     private static TEMPLATE = `<div class="ag-skeleton-container"></div>`;

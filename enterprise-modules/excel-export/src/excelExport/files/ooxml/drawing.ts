@@ -1,6 +1,6 @@
-import type { ExcelImage, ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
+import { ExcelImage, ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
 
-import type { ExcelCalculatedImage, ImageAnchor, ImageBoxSize, ImageColor } from '../../assets/excelInterfaces';
+import { ExcelCalculatedImage, ImageAnchor, ImageBoxSize, ImageColor } from '../../assets/excelInterfaces';
 import { pixelsToEMU } from '../../assets/excelUtils';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 

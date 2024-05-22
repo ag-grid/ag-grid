@@ -1,7 +1,7 @@
 import { BeanStub } from './context/beanStub';
 import { Bean } from './context/context';
 import { Qualifier } from './context/context';
-import type { GridOptionsService } from './gridOptionsService';
+import { GridOptionsService } from './gridOptionsService';
 
 @Bean('loggerFactory')
 export class LoggerFactory extends BeanStub {

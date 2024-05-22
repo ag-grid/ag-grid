@@ -1,4 +1,4 @@
-import type { ExcelCell, ExcelOOXMLTemplate, ExcelRow } from '@ag-grid-community/core';
+import { ExcelCell, ExcelOOXMLTemplate, ExcelRow } from '@ag-grid-community/core';
 
 import { getExcelColumnName } from '../../assets/excelUtils';
 import cellFactory from './cell';

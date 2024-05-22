@@ -1,5 +1,5 @@
-import type { ColumnChooserParams } from '../entities/colDef';
-import type { Column } from '../entities/column';
+import { ColumnChooserParams } from '../entities/colDef';
+import { Column } from '../entities/column';
 
 export interface ShowColumnChooserParams {
     column?: Column | null;

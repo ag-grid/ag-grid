@@ -1,8 +1,7 @@
-import type { AgInputFieldParams } from '../interfaces/agFieldParams';
+import { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaLabel } from '../utils/aria';
 import { _addOrRemoveAttribute, _setDisabled, _setElementWidth } from '../utils/dom';
-import type { FieldElement } from './agAbstractField';
-import { AgAbstractField } from './agAbstractField';
+import { AgAbstractField, FieldElement } from './agAbstractField';
 import { RefSelector } from './componentAnnotations';
 
 export abstract class AgAbstractInputField<

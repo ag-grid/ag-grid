@@ -1,9 +1,7 @@
-import type { ChartType} from '@ag-grid-community/core';
-import { Component, PostConstruct } from '@ag-grid-community/core';
+import { ChartType, Component, PostConstruct } from '@ag-grid-community/core';
 
-import type { ChartSeriesType} from '../../utils/seriesTypeMapper';
-import { isCartesian } from '../../utils/seriesTypeMapper';
-import type { ChartMenuContext } from '../chartMenuContext';
+import { ChartSeriesType, isCartesian } from '../../utils/seriesTypeMapper';
+import { ChartMenuContext } from '../chartMenuContext';
 import { ChartPanelFeature } from '../chartPanelFeature';
 import { AnimationPanel } from './interactivity/animationPanel';
 import { CrosshairPanel } from './interactivity/crosshairPanel';

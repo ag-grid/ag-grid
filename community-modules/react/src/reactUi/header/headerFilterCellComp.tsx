@@ -1,16 +1,15 @@
-import type {
+import {
+    AgPromise,
     HeaderFilterCellCtrl,
     IFloatingFilter,
     IHeaderFilterCellComp,
-    UserCompDetails} from '@ag-grid-community/core';
-import {
-    AgPromise
+    UserCompDetails,
 } from '@ag-grid-community/core';
 import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { CustomContext } from '../../shared/customComp/customContext';
 import { FloatingFilterComponentProxy } from '../../shared/customComp/floatingFilterComponentProxy';
-import type { CustomFloatingFilterCallbacks } from '../../shared/customComp/interfaces';
+import { CustomFloatingFilterCallbacks } from '../../shared/customComp/interfaces';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';

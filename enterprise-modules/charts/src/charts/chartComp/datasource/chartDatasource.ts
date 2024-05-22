@@ -1,4 +1,6 @@
-import type {
+import {
+    Autowired,
+    BeanStub,
     Column,
     ColumnGroup,
     ColumnModel,
@@ -6,25 +8,21 @@ import type {
     IAggregationStage,
     IClientSideRowModel,
     IRowModel,
+    ModuleNames,
+    ModuleRegistry,
+    Optional,
     PartialCellRange,
     PivotResultColsService,
     RowNode,
     RowNodeSorter,
     SortController,
-    ValueService} from '@ag-grid-community/core';
-import {
-    Autowired,
-    BeanStub,
-    ModuleNames,
-    ModuleRegistry,
-    Optional,
+    ValueService,
     _includes,
     _last,
     _values,
 } from '@ag-grid-community/core';
 
-import type { ColState } from '../model/chartDataModel';
-import { ChartDataModel } from '../model/chartDataModel';
+import { ChartDataModel, ColState } from '../model/chartDataModel';
 
 export interface ChartDatasourceParams {
     dimensionCols: ColState[];
@@ -305,7 +303,7 @@ export class ChartDatasource extends BeanStub {
                                 .filter((child: any) => typeof child[colId] !== 'undefined')
                                 .map((child: any) => child[colId]);
 
-                            const aggResult: any = aggStage.aggregateValues(dataToAgg, params.aggFunc!);
+                            let aggResult: any = aggStage.aggregateValues(dataToAgg, params.aggFunc!);
                             groupItem[valueCol.getId()] =
                                 aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
 
@@ -315,7 +313,7 @@ export class ChartDatasource extends BeanStub {
                                 .filter((child: any) => typeof child[filteredOutColId] !== 'undefined')
                                 .map((child: any) => child[filteredOutColId]);
 
-                            const aggResultFiltered: any = aggStage.aggregateValues(dataToAggFiltered, params.aggFunc!);
+                            let aggResultFiltered: any = aggStage.aggregateValues(dataToAggFiltered, params.aggFunc!);
                             groupItem[filteredOutColId] =
                                 aggResultFiltered && typeof aggResultFiltered.value !== 'undefined'
                                     ? aggResultFiltered.value
@@ -323,7 +321,7 @@ export class ChartDatasource extends BeanStub {
                         });
                     } else {
                         const dataToAgg = groupItem.__children.map((child: any) => child[col.getId()]);
-                        const aggResult = aggStage.aggregateValues(dataToAgg, params.aggFunc!);
+                        let aggResult = aggStage.aggregateValues(dataToAgg, params.aggFunc!);
 
                         groupItem[col.getId()] =
                             aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
@@ -399,7 +397,7 @@ export class ChartDatasource extends BeanStub {
     }
 
     private getAllRowNodes() {
-        const allRowNodes: RowNode[] = [];
+        let allRowNodes: RowNode[] = [];
         this.gridRowModel.forEachNode((rowNode: RowNode) => {
             allRowNodes.push(rowNode);
         });

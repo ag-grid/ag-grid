@@ -1,20 +1,19 @@
-import type {
+import {
     AgComponentSelector,
+    Autowired,
     CellCtrl,
     CellPosition,
     CellRange,
     Column,
+    Events,
     FillEndEvent,
     FillOperationParams,
     FillStartEvent,
     RowNode,
     RowPosition,
-    ValueService,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Events,
     SelectionHandleType,
+    ValueService,
+    WithoutGridCommon,
     _last,
     _toStringOrNull,
     _warnOnce,

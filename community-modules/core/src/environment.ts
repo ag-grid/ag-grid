@@ -1,9 +1,9 @@
 import { BeanStub } from './context/beanStub';
 import { Autowired, Bean, PostConstruct } from './context/context';
 import { Events } from './eventKeys';
-import type { CssVariablesChanged } from './events';
-import type { WithoutGridCommon } from './interfaces/iCommon';
-import type { ResizeObserverService } from './misc/resizeObserverService';
+import { CssVariablesChanged } from './events';
+import { WithoutGridCommon } from './interfaces/iCommon';
+import { ResizeObserverService } from './misc/resizeObserverService';
 
 const ROW_HEIGHT: Variable = {
     cssName: '--ag-row-height',

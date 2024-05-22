@@ -1,11 +1,11 @@
-import type { ColumnModel } from '../columns/columnModel';
-import type { ShowRowGroupColsService } from '../columns/showRowGroupColsService';
+import { ColumnModel } from '../columns/columnModel';
+import { ShowRowGroupColsService } from '../columns/showRowGroupColsService';
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../context/context';
-import type { Column } from '../entities/column';
-import type { RowNode } from '../entities/rowNode';
+import { Column } from '../entities/column';
+import { RowNode } from '../entities/rowNode';
 import { _defaultComparator } from '../utils/generic';
-import type { ValueService } from '../valueService/valueService';
+import { ValueService } from '../valueService/valueService';
 
 export interface SortOption {
     sort: 'asc' | 'desc';

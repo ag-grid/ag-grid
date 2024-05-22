@@ -1,4 +1,4 @@
-import type { FontStyle, FontWeight } from 'ag-charts-community';
+import { FontStyle, FontWeight } from 'ag-charts-community';
 
 export class Label {
     enabled = true;

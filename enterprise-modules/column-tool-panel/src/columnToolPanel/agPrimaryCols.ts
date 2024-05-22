@@ -1,13 +1,12 @@
-import type {
+import {
     AgComponentSelector,
     ColDef,
     ColGroupDef,
     ColumnEventType,
-    ToolPanelColumnCompParams} from '@ag-grid-community/core';
-import {
     Component,
     PositionableFeature,
-    RefSelector
+    RefSelector,
+    ToolPanelColumnCompParams,
 } from '@ag-grid-community/core';
 
 import { AgPrimaryColsHeader } from './agPrimaryColsHeader';

@@ -1,9 +1,9 @@
-import type { ChartType, SeriesChartType } from '@ag-grid-community/core';
-import type { AgCartesianAxisOptions } from 'ag-charts-community';
+import { ChartType, SeriesChartType } from '@ag-grid-community/core';
+import { AgCartesianAxisOptions } from 'ag-charts-community';
 
 import { getSeriesType } from '../../utils/seriesTypeMapper';
 import { CartesianChartProxy } from '../cartesian/cartesianChartProxy';
-import type { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
+import { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 
 export class ComboChartProxy extends CartesianChartProxy<'line' | 'bar' | 'area'> {
     public constructor(params: ChartProxyParams) {

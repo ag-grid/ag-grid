@@ -1,23 +1,22 @@
-import type {
+import {
+    Autowired,
+    BeanStub,
+    ColumnModel,
+    Events,
     FilterManager,
     FuncColsService,
     IRowModel,
     IRowNode,
     ISelectionService,
     IServerSideGroupSelectionState,
-    ISetNodesSelectedParams,
-    RowNode,
-    SelectionEventSourceType} from '@ag-grid-community/core';
-import {
-    Autowired,
-    BeanStub,
-    ColumnModel,
-    Events,
     IServerSideStore,
-    PostConstruct
+    ISetNodesSelectedParams,
+    PostConstruct,
+    RowNode,
+    SelectionEventSourceType,
 } from '@ag-grid-community/core';
 
-import type { ISelectionStrategy } from './iSelectionStrategy';
+import { ISelectionStrategy } from './iSelectionStrategy';
 
 interface SelectionState {
     selectAllChildren: boolean;

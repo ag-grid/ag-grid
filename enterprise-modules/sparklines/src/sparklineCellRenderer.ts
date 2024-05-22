@@ -1,16 +1,14 @@
-import type {
-    ICellRenderer,
-    ISparklineCellRendererParams,
-    ResizeObserverService} from '@ag-grid-community/core';
 import {
     Autowired,
     Component,
-    RefSelector
+    ICellRenderer,
+    ISparklineCellRendererParams,
+    RefSelector,
+    ResizeObserverService,
 } from '@ag-grid-community/core';
 
-import type { SparklineFactoryOptions } from './sparkline/agSparkline';
-import { AgSparkline } from './sparkline/agSparkline';
-import type { SparklineTooltipSingleton } from './tooltip/sparklineTooltipSingleton';
+import { AgSparkline, SparklineFactoryOptions } from './sparkline/agSparkline';
+import { SparklineTooltipSingleton } from './tooltip/sparklineTooltipSingleton';
 
 export class SparklineCellRenderer extends Component implements ICellRenderer {
     private static TEMPLATE /* html */ = `<div class="ag-sparkline-wrapper">

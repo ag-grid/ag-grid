@@ -2,7 +2,7 @@ import { BeanStub } from '../../context/beanStub';
 import { Autowired, PostConstruct } from '../../context/context';
 import { Events } from '../../eventKeys';
 import { _setDisplayed, _setFixedWidth } from '../../utils/dom';
-import type { PinnedWidthService } from '../pinnedWidthService';
+import { PinnedWidthService } from '../pinnedWidthService';
 
 export class SetPinnedRightWidthFeature extends BeanStub {
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;

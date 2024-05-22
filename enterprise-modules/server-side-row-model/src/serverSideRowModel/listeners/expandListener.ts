@@ -1,21 +1,20 @@
-import type {
-    Beans,
-    RowGroupOpenedEvent,
-    StoreUpdatedEvent,
-    WithoutGridCommon} from '@ag-grid-community/core';
 import {
     Autowired,
     Bean,
     BeanStub,
+    Beans,
     Events,
     PostConstruct,
+    RowGroupOpenedEvent,
     RowNode,
+    StoreUpdatedEvent,
+    WithoutGridCommon,
     _exists,
     _missing,
 } from '@ag-grid-community/core';
 
-import type { ServerSideRowModel } from '../serverSideRowModel';
-import type { StoreFactory } from '../stores/storeFactory';
+import { ServerSideRowModel } from '../serverSideRowModel';
+import { StoreFactory } from '../stores/storeFactory';
 
 @Bean('ssrmExpandListener')
 export class ExpandListener extends BeanStub {

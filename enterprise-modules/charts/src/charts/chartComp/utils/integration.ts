@@ -1,4 +1,4 @@
-import type { AgCartesianAxisType, AgChartInstance, AgPolarAxisOptions, _Scene } from 'ag-charts-community';
+import { AgCartesianAxisType, AgChartInstance, AgPolarAxisOptions, _Scene } from 'ag-charts-community';
 
 export function deproxy(chartOrProxy: AgChartInstance): AgChartActual {
     if ((chartOrProxy as any).chart != null) {

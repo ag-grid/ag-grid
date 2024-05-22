@@ -1,8 +1,7 @@
-import type { AgComponentSelector} from '@ag-grid-community/core';
-import { AgInputTextField, Autowired, RefSelector } from '@ag-grid-community/core';
+import { AgComponentSelector, AgInputTextField, Autowired, RefSelector } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
 
-import type { ChartTranslationService } from '../charts/chartComp/services/chartTranslationService';
+import { ChartTranslationService } from '../charts/chartComp/services/chartTranslationService';
 
 export class AgColorInput extends AgInputTextField {
     static readonly selector: AgComponentSelector = 'AG-COLOR-INPUT';

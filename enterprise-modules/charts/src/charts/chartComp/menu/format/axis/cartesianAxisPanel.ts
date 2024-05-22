@@ -1,33 +1,28 @@
-import type {
-    AgSelectParams,
-    ListOption} from '@ag-grid-community/core';
 import {
     AgCheckbox,
     AgSelect,
+    AgSelectParams,
     Autowired,
     Component,
     Events,
+    ListOption,
     PostConstruct,
     RefSelector,
     _removeFromParent,
     _setDisplayed,
 } from '@ag-grid-community/core';
-import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import type { AgCartesianAxisOptions } from 'ag-charts-community';
 
 import { AgAngleSelect } from '../../../../../widgets/agAngleSelect';
-import type { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
-import { AgColorPicker } from '../../../../../widgets/agColorPicker';
-import type { AgSliderParams } from '../../../../../widgets/agSlider';
-import { AgSlider } from '../../../../../widgets/agSlider';
+import { AgColorPicker, AgColorPickerParams } from '../../../../../widgets/agColorPicker';
+import { AgSlider, AgSliderParams } from '../../../../../widgets/agSlider';
 import { ChartController } from '../../../chartController';
-import type { ChartOptionsProxy } from '../../../services/chartOptionsService';
-import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import { ChartOptionsProxy } from '../../../services/chartOptionsService';
+import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
-import type { FontPanelParams } from '../fontPanel';
-import { FontPanel } from '../fontPanel';
-import type { FormatPanelOptions } from '../formatPanel';
+import { FontPanel, FontPanelParams } from '../fontPanel';
+import { FormatPanelOptions } from '../formatPanel';
 import { AxisTicksPanel } from './axisTicksPanel';
 import { GridLinePanel } from './gridLinePanel';
 

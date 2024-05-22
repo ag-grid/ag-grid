@@ -1,6 +1,6 @@
 import { BeanStub } from '../context/beanStub';
 import { Bean, PostConstruct } from '../context/context';
-import type { RowNode } from '../entities/rowNode';
+import { RowNode } from '../entities/rowNode';
 
 @Bean('valueCache')
 export class ValueCache extends BeanStub {

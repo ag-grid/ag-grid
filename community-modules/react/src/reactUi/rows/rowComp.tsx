@@ -1,13 +1,12 @@
-import type {
+import {
     CellCtrl,
+    CssClassManager,
     ICellRenderer,
     IRowComp,
     RowContainerType,
     RowCtrl,
     RowStyle,
-    UserCompDetails} from '@ag-grid-community/core';
-import {
-    CssClassManager
+    UserCompDetails,
 } from '@ag-grid-community/core';
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
@@ -78,7 +77,7 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
         }
     }, [fullWidthCompDetails, autoHeightSetupAttempt]);
 
-    const cssClassManager = useRef<CssClassManager>();
+    let cssClassManager = useRef<CssClassManager>();
     if (!cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eGui.current);
     }

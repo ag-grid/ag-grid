@@ -1,8 +1,8 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean } from '../context/context';
-import type { CellClassParams, ColDef } from '../entities/colDef';
-import type { RowClassParams } from '../entities/gridOptions';
-import type { ExpressionService } from '../valueService/expressionService';
+import { CellClassParams, ColDef } from '../entities/colDef';
+import { RowClassParams } from '../entities/gridOptions';
+import { ExpressionService } from '../valueService/expressionService';
 
 @Bean('stylingService')
 export class StylingService extends BeanStub {

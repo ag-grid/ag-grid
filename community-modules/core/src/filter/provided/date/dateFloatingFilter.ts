@@ -1,20 +1,19 @@
-import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
+import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { Autowired } from '../../../context/context';
-import type { FilterChangedEvent } from '../../../events';
-import type { IDateParams } from '../../../interfaces/dateComponent';
-import type { WithoutGridCommon } from '../../../interfaces/iCommon';
+import { FilterChangedEvent } from '../../../events';
+import { IDateParams } from '../../../interfaces/dateComponent';
+import { WithoutGridCommon } from '../../../interfaces/iCommon';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import { _setDisplayed } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import type { IFloatingFilterParams } from '../../floating/floatingFilter';
+import { IFloatingFilterParams } from '../../floating/floatingFilter';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import { ProvidedFilter } from '../providedFilter';
-import type { ISimpleFilterModel, SimpleFilterModelFormatter } from '../simpleFilter';
+import { ISimpleFilterModel, SimpleFilterModelFormatter } from '../simpleFilter';
 import { DateCompWrapper } from './dateCompWrapper';
-import type { DateFilterModel, DateFilterParams } from './dateFilter';
-import { DateFilter, DateFilterModelFormatter } from './dateFilter';
+import { DateFilter, DateFilterModel, DateFilterModelFormatter, DateFilterParams } from './dateFilter';
 
 export class DateFloatingFilter extends SimpleFloatingFilter {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;

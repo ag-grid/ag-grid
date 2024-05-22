@@ -1,13 +1,12 @@
-import type {
-    AgComponentSelector,
-    HorizontalResizeService,
-    ToolPanelSizeChangedEvent,
-    WithoutGridCommon} from '@ag-grid-community/core';
 import {
+    AgComponentSelector,
     Autowired,
     Component,
     Events,
-    PostConstruct
+    HorizontalResizeService,
+    PostConstruct,
+    ToolPanelSizeChangedEvent,
+    WithoutGridCommon,
 } from '@ag-grid-community/core';
 
 export class AgHorizontalResize extends Component {

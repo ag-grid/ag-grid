@@ -1,4 +1,7 @@
-import type {
+import {
+    Autowired,
+    Bean,
+    BeanStub,
     ChangedPath,
     Column,
     ColumnModel,
@@ -11,15 +14,11 @@ import type {
     RowNode,
     StageExecuteParams,
     ValueService,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+    WithoutGridCommon,
     _missingOrEmpty,
 } from '@ag-grid-community/core';
 
-import type { AggFuncService } from './aggFuncService';
+import { AggFuncService } from './aggFuncService';
 
 interface AggregationDetails {
     alwaysAggregateAtRootLevel: boolean;

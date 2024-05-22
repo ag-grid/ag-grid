@@ -1,15 +1,15 @@
-import type { ColumnAutosizeService } from '../../../columns/columnAutosizeService';
-import type { ColumnResizeSet, ColumnSizeService } from '../../../columns/columnSizeService';
-import type { VisibleColsService } from '../../../columns/visibleColsService';
+import { ColumnAutosizeService } from '../../../columns/columnAutosizeService';
+import { ColumnResizeSet, ColumnSizeService } from '../../../columns/columnSizeService';
+import { VisibleColsService } from '../../../columns/visibleColsService';
 import { BeanStub } from '../../../context/beanStub';
 import { Autowired, PostConstruct } from '../../../context/context';
-import type { Column, ColumnPinnedType } from '../../../entities/column';
-import type { ColumnGroup } from '../../../entities/columnGroup';
-import type { ColumnEventType } from '../../../events';
-import type { AutoWidthCalculator } from '../../../rendering/autoWidthCalculator';
-import type { HorizontalResizeService } from '../../common/horizontalResizeService';
-import type { IHeaderResizeFeature } from '../abstractCell/abstractHeaderCellCtrl';
-import type { IHeaderGroupCellComp } from './headerGroupCellCtrl';
+import { Column, ColumnPinnedType } from '../../../entities/column';
+import { ColumnGroup } from '../../../entities/columnGroup';
+import { ColumnEventType } from '../../../events';
+import { AutoWidthCalculator } from '../../../rendering/autoWidthCalculator';
+import { HorizontalResizeService } from '../../common/horizontalResizeService';
+import { IHeaderResizeFeature } from '../abstractCell/abstractHeaderCellCtrl';
+import { IHeaderGroupCellComp } from './headerGroupCellCtrl';
 
 interface ColumnSizeAndRatios {
     columnsToResize: Column[];

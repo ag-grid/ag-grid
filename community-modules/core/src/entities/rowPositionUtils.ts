@@ -1,11 +1,11 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean } from '../context/context';
-import type { IRowModel } from '../interfaces/iRowModel';
-import type { RowPinnedType } from '../interfaces/iRowNode';
-import type { PaginationProxy } from '../pagination/paginationProxy';
-import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
+import { IRowModel } from '../interfaces/iRowModel';
+import { RowPinnedType } from '../interfaces/iRowNode';
+import { PaginationProxy } from '../pagination/paginationProxy';
+import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _exists } from '../utils/generic';
-import type { RowNode } from './rowNode';
+import { RowNode } from './rowNode';
 
 export interface RowPosition {
     /** A positive number from 0 to n, where n is the last row the grid is rendering

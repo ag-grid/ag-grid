@@ -1,9 +1,8 @@
-import type {
-    ISelectionHandle,
-    ISelectionHandleFactory} from '@ag-grid-community/core';
 import {
     Bean,
     BeanStub,
+    ISelectionHandle,
+    ISelectionHandleFactory,
     SelectionHandleType,
 } from '@ag-grid-community/core';
 

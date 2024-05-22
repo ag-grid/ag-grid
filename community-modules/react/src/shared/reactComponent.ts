@@ -1,12 +1,10 @@
-import type { ComponentType, IComponent, WrappableInterface} from '@ag-grid-community/core';
-import { AgPromise, _warnOnce } from '@ag-grid-community/core';
-import type { ReactPortal} from 'react';
-import { createElement } from 'react';
+import { AgPromise, ComponentType, IComponent, WrappableInterface, _warnOnce } from '@ag-grid-community/core';
+import { ReactPortal, createElement } from 'react';
 import { createPortal } from 'react-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 import generateNewKey from './keyGenerator';
-import type { PortalManager } from './portalManager';
+import { PortalManager } from './portalManager';
 
 export class ReactComponent implements IComponent<any>, WrappableInterface {
     protected eParentElement!: HTMLElement;
@@ -145,7 +143,7 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
 
         if (this.isStatelessComponent()) {
             return this.fallbackMethod(name, !!args && args[0] ? args[0] : {});
-        } else if (!frameworkComponentInstance) {
+        } else if (!!!frameworkComponentInstance) {
             // instance not ready yet - wait for it
             setTimeout(() => this.callMethod(name, args));
             return;
@@ -153,7 +151,7 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
 
         const method = frameworkComponentInstance[name];
 
-        if (method) {
+        if (!!method) {
             return method.apply(frameworkComponentInstance, args);
         }
 

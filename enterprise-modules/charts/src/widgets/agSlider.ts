@@ -1,11 +1,10 @@
-import type {
-    AgComponentSelector,
-    AgLabelParams,
-    LabelAlignment} from '@ag-grid-community/core';
 import {
     AgAbstractLabel,
+    AgComponentSelector,
     AgInputNumberField,
+    AgLabelParams,
     Events,
+    LabelAlignment,
     PostConstruct,
     RefSelector,
 } from '@ag-grid-community/core';

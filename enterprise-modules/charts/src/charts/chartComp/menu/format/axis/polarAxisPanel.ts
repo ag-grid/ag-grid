@@ -1,23 +1,20 @@
-import type {
-    ListOption} from '@ag-grid-community/core';
 import {
     AgSelect,
     AgSelectParams,
     Autowired,
     Component,
+    ListOption,
     PostConstruct,
     RefSelector,
 } from '@ag-grid-community/core';
-import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
 import { AgColorPicker } from '../../../../../widgets/agColorPicker';
 import { AgSlider } from '../../../../../widgets/agSlider';
-import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { getSeriesType, isRadial } from '../../../utils/seriesTypeMapper';
-import type { FontPanelParams } from '../fontPanel';
-import { FontPanel } from '../fontPanel';
-import type { FormatPanelOptions } from '../formatPanel';
+import { FontPanel, FontPanelParams } from '../fontPanel';
+import { FormatPanelOptions } from '../formatPanel';
 
 export class PolarAxisPanel extends Component {
     public static TEMPLATE /* html */ = `<div>

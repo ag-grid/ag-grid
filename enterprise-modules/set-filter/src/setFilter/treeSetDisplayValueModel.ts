@@ -1,8 +1,6 @@
-import type { TextFormatter} from '@ag-grid-community/core';
-import { _warnOnce } from '@ag-grid-community/core';
+import { TextFormatter, _warnOnce } from '@ag-grid-community/core';
 
-import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
-import { SetFilterDisplayValue } from './iSetDisplayValueModel';
+import { ISetDisplayValueModel, SetFilterDisplayValue, SetFilterModelTreeItem } from './iSetDisplayValueModel';
 
 export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     private static readonly DATE_TREE_LIST_PATH_GETTER = (date: Date | null) =>
@@ -95,7 +93,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         this.groupsExist = false;
 
         const treeListPathGetter = this.getTreeListPathGetter(getValue, availableKeys);
-        for (const key of allKeys) {
+        for (let key of allKeys) {
             const value = getValue(key)!;
             const dataPath = treeListPathGetter(value) ?? [null];
             if (dataPath.length > 1) {

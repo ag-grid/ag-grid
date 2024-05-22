@@ -1,14 +1,13 @@
-import type {
-    ColumnModel,
-    ColumnNameService,
-    FocusService,
-    FuncColsService,
-    MenuItemDef,
-    PopupService} from '@ag-grid-community/core';
 import {
     Autowired,
     Column,
+    ColumnModel,
+    ColumnNameService,
     Component,
+    FocusService,
+    FuncColsService,
+    MenuItemDef,
+    PopupService,
     PostConstruct,
     ProvidedColumnGroup,
     _createIconNoSpan,

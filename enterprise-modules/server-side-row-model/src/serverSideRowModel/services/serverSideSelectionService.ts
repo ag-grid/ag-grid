@@ -1,25 +1,24 @@
-import type {
+import {
+    Autowired,
+    Bean,
+    BeanStub,
     ChangedPath,
+    Events,
     IRowModel,
     ISelectionService,
     ISetNodesSelectedParams,
+    PostConstruct,
     RowNode,
     SelectionChangedEvent,
     SelectionEventSourceType,
     ServerSideRowGroupSelectionState,
     ServerSideRowSelectionState,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Events,
-    PostConstruct
+    WithoutGridCommon,
 } from '@ag-grid-community/core';
 
 import { DefaultStrategy } from './selection/strategies/defaultStrategy';
 import { GroupSelectsChildrenStrategy } from './selection/strategies/groupSelectsChildrenStrategy';
-import type { ISelectionStrategy } from './selection/strategies/iSelectionStrategy';
+import { ISelectionStrategy } from './selection/strategies/iSelectionStrategy';
 
 @Bean('selectionService')
 export class ServerSideSelectionService extends BeanStub implements ISelectionService {

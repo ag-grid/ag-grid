@@ -1,13 +1,13 @@
-import type { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
+import { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
 import { BeanStub } from '../context/beanStub';
 import { Autowired, PreConstruct } from '../context/context';
-import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
-import type { AgEvent } from '../events';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
+import { ColDef, ColGroupDef } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { ColumnGroup } from '../entities/columnGroup';
+import { AgEvent } from '../events';
+import { WithoutGridCommon } from '../interfaces/iCommon';
 import { CssClassManager } from '../rendering/cssClassManager';
-import type { ITooltipParams, TooltipLocation } from '../rendering/tooltipComponent';
+import { ITooltipParams, TooltipLocation } from '../rendering/tooltipComponent';
 import {
     _copyNodeList,
     _isNodeOrElement,

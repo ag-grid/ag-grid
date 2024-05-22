@@ -1,7 +1,7 @@
 import { BeanStub } from '../../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../../context/context';
-import type { IComponent } from '../../interfaces/iComponent';
-import type { AgComponentUtils } from './agComponentUtils';
+import { IComponent } from '../../interfaces/iComponent';
+import { AgComponentUtils } from './agComponentUtils';
 
 export interface ComponentMetadata {
     mandatoryMethodList: string[];

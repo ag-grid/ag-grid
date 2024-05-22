@@ -1,4 +1,4 @@
-import type { ChartType } from '@ag-grid-community/core';
+import { ChartType } from '@ag-grid-community/core';
 import { _Scene } from 'ag-charts-community';
 
 import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';

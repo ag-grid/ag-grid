@@ -1,4 +1,4 @@
-import type { IStatusPanelComp } from './iStatusPanel';
+import { IStatusPanelComp } from './iStatusPanel';
 
 export interface IStatusBarService {
     registerStatusPanel(key: string, component: IStatusPanelComp): void;

@@ -1,7 +1,7 @@
 import { PostConstruct } from '../context/context';
 import { Events } from '../eventKeys';
 import { _isVisible, _setFixedWidth } from '../utils/dom';
-import type { AgComponentSelector } from '../widgets/component';
+import { AgComponentSelector } from '../widgets/component';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { SetHeightFeature } from './rowContainer/setHeightFeature';
 

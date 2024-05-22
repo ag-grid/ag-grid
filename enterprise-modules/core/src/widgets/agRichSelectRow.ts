@@ -1,17 +1,16 @@
-import type {
+import {
     AgPromise,
+    Autowired,
+    Component,
+    Events,
     FieldPickerValueSelectedEvent,
     ICellRendererParams,
+    PostConstruct,
     RichSelectParams,
     UserCompDetails,
     UserComponentFactory,
     VirtualList,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Component,
-    Events,
-    PostConstruct,
+    WithoutGridCommon,
     _bindCellRendererToHtmlElement,
     _escapeString,
     _exists,

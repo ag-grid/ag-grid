@@ -1,10 +1,10 @@
-import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
+import { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { PostConstruct } from '../../../context/context';
 import { _setDisplayed } from '../../../utils/dom';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
-import type { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCellCtrl';
-import type { IHeaderGroupComp } from './headerGroupComp';
+import { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCellCtrl';
+import { IHeaderGroupComp } from './headerGroupComp';
 
 export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellCtrl> {
     private static TEMPLATE /* html */ = `<div class="ag-header-group-cell" role="columnheader">

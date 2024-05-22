@@ -1,9 +1,8 @@
-import type {
-    ToolPanelDef} from '@ag-grid-community/core';
 import {
     Component,
     PostConstruct,
     RefSelector,
+    ToolPanelDef,
     _createIconNoSpan,
     _setAriaExpanded,
 } from '@ag-grid-community/core';

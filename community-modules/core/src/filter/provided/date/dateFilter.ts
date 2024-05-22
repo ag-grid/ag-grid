@@ -1,15 +1,13 @@
-import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
+import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { Autowired } from '../../../context/context';
-import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
-import type { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
-import type { LocaleService } from '../../../localeService';
+import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
+import { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
+import { LocaleService } from '../../../localeService';
 import { _dateToFormattedString, _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
-import type { FILTER_LOCALE_TEXT } from '../../filterLocaleText';
-import type { OptionsFactory } from '../optionsFactory';
-import type { Comparator, IScalarFilterParams} from '../scalarFilter';
-import { ScalarFilter } from '../scalarFilter';
-import type { ISimpleFilterModel, Tuple } from '../simpleFilter';
-import { SimpleFilter, SimpleFilterModelFormatter } from '../simpleFilter';
+import { FILTER_LOCALE_TEXT } from '../../filterLocaleText';
+import { OptionsFactory } from '../optionsFactory';
+import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
+import { ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
 import { DateCompWrapper } from './dateCompWrapper';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object

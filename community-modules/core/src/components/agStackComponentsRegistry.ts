@@ -1,6 +1,6 @@
 import { Bean } from '../context/context';
 import { _warnOnce } from '../utils/function';
-import type { AgComponentSelector, ComponentClass } from '../widgets/component';
+import { AgComponentSelector, ComponentClass } from '../widgets/component';
 
 @Bean('agStackComponentsRegistry')
 export class AgStackComponentsRegistry {

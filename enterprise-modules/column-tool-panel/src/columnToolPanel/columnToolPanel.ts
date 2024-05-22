@@ -1,14 +1,13 @@
-import type {
+import {
     ColDef,
     ColGroupDef,
     ColumnToolPanelState,
+    Component,
+    Events,
     IColumnToolPanel,
     IToolPanelColumnCompParams,
     IToolPanelComp,
-    IToolPanelParams} from '@ag-grid-community/core';
-import {
-    Component,
-    Events,
+    IToolPanelParams,
     ModuleNames,
     ModuleRegistry,
     _clearElement,

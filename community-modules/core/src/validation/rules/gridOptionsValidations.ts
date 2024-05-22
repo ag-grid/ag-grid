@@ -1,8 +1,8 @@
 import { ComponentUtil } from '../../components/componentUtil';
-import type { GridOptions } from '../../entities/gridOptions';
+import { GridOptions } from '../../entities/gridOptions';
 import { ModuleNames } from '../../modules/moduleNames';
 import { PropertyKeys } from '../../propertyKeys';
-import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
+import { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 import { COL_DEF_VALIDATORS } from './colDefValidations';
 
 /**

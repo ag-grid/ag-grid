@@ -1,9 +1,9 @@
-import type { CellStyle } from '../entities/colDef';
-import type { RowStyle } from '../entities/gridOptions';
-import type { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
+import { CellStyle } from '../entities/colDef';
+import { RowStyle } from '../entities/gridOptions';
+import { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
 import { _setAriaHidden } from './aria';
 import { _isBrowserChrome, _isBrowserSafari } from './browser';
-import type { AgPromise } from './promise';
+import { AgPromise } from './promise';
 import { _camelCaseToHyphenated } from './string';
 
 let rtlNegativeScroll: boolean;

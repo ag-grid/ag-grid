@@ -1,14 +1,12 @@
-import type { ChartOptionsChanged} from '@ag-grid-community/core';
-import { Autowired, Component, Events, PostConstruct, RefSelector } from '@ag-grid-community/core';
-import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
-import type { AgChartPaddingOptions, AgChartThemeOverrides } from 'ag-charts-community';
+import { Autowired, ChartOptionsChanged, Component, Events, PostConstruct, RefSelector } from '@ag-grid-community/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgChartPaddingOptions, AgChartThemeOverrides } from 'ag-charts-community';
 
 import { AgSlider } from '../../../../../widgets/agSlider';
-import type { ChartController } from '../../../chartController';
-import type { ChartTranslationService } from '../../../services/chartTranslationService';
-import type { ChartThemeOverridesSeriesType } from '../../../utils/seriesTypeMapper';
-import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import { ChartController } from '../../../chartController';
+import { ChartTranslationService } from '../../../services/chartTranslationService';
+import { ChartThemeOverridesSeriesType } from '../../../utils/seriesTypeMapper';
+import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class PaddingPanel extends Component {
     public static TEMPLATE /* html */ = `<div>

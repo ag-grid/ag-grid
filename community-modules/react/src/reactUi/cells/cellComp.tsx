@@ -1,19 +1,17 @@
-import type {
+import {
     CellCtrl,
     CellStyle,
     Component,
+    CssClassManager,
     ICellComp,
     ICellEditor,
     ICellEditorComp,
     ICellRendererComp,
-    UserCompDetails} from '@ag-grid-community/core';
-import {
-    CssClassManager,
+    UserCompDetails,
     _removeFromParent,
 } from '@ag-grid-community/core';
-import type {
-    MutableRefObject} from 'react';
 import React, {
+    MutableRefObject,
     memo,
     useCallback,
     useContext,
@@ -25,7 +23,7 @@ import React, {
 
 import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComponentProxy';
 import { CustomContext } from '../../shared/customComp/customContext';
-import type { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
+import { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
 import { createSyncJsComp } from '../jsComp';
@@ -249,7 +247,7 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
         [setCellEditorRef]
     );
 
-    const cssClassManager = useRef<CssClassManager>();
+    let cssClassManager = useRef<CssClassManager>();
 
     if (!cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eGui.current);

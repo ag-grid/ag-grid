@@ -1,6 +1,6 @@
-import type { Column, ColumnGroup, CsvCustomContent, RowNode } from '@ag-grid-community/core';
+import { Column, ColumnGroup, CsvCustomContent, RowNode } from '@ag-grid-community/core';
 
-import type { CsvSerializingParams, RowAccumulator, RowSpanningAccumulator } from '../interfaces';
+import { CsvSerializingParams, RowAccumulator, RowSpanningAccumulator } from '../interfaces';
 import { BaseGridSerializingSession } from './baseGridSerializingSession';
 
 const LINE_SEPARATOR = '\r\n';

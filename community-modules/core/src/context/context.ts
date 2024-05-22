@@ -1,9 +1,9 @@
-import type { ILogger } from '../iLogger';
+import { ILogger } from '../iLogger';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { _getFunctionName } from '../utils/function';
 import { _exists, _values } from '../utils/generic';
 import { _iterateObject } from '../utils/object';
-import type { Component } from '../widgets/component';
+import { Component } from '../widgets/component';
 
 // steps in booting up:
 // 1. create all beans

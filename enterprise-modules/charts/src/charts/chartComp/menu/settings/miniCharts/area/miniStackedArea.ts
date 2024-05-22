@@ -1,10 +1,10 @@
-import type { ChartType } from '@ag-grid-community/core';
+import { ChartType } from '@ag-grid-community/core';
 import { _Scene } from 'ag-charts-community';
 
-import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
-import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import { ChartTranslationKey } from '../../../../services/chartTranslationService';
+import { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
-import type { ICoordinate } from './miniArea';
+import { ICoordinate } from './miniArea';
 
 export class MiniStackedArea extends MiniChartWithAxes {
     static chartType: ChartType = 'stackedArea';

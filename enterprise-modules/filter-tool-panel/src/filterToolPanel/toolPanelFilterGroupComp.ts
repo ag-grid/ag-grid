@@ -1,24 +1,22 @@
-import type {
-    ColumnModel,
-    ColumnNameService,
-    FilterOpenedEvent,
-    IProvidedColumn,
-    ITooltipParams,
-    WithoutGridCommon} from '@ag-grid-community/core';
 import {
     Autowired,
     Column,
+    ColumnModel,
+    ColumnNameService,
     Component,
     Events,
+    FilterOpenedEvent,
+    IProvidedColumn,
+    ITooltipParams,
     PostConstruct,
     PreConstruct,
     ProvidedColumnGroup,
     RefSelector,
+    WithoutGridCommon,
     _clearElement,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
-import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
 import { ToolPanelFilterComp } from './toolPanelFilterComp';
 

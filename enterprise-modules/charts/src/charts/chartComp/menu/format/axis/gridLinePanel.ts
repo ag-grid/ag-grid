@@ -1,15 +1,12 @@
 import { Autowired, Component, PostConstruct } from '@ag-grid-community/core';
-import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
-import type { AgAxisGridLineOptions } from 'ag-charts-community';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgAxisGridLineOptions } from 'ag-charts-community';
 
-import type { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
-import { AgColorPicker } from '../../../../../widgets/agColorPicker';
-import type { AgSliderParams } from '../../../../../widgets/agSlider';
-import { AgSlider } from '../../../../../widgets/agSlider';
-import type { ChartOptionsProxy } from '../../../services/chartOptionsService';
-import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
-import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import { AgColorPicker, AgColorPickerParams } from '../../../../../widgets/agColorPicker';
+import { AgSlider, AgSliderParams } from '../../../../../widgets/agSlider';
+import { ChartOptionsProxy } from '../../../services/chartOptionsService';
+import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class GridLinePanel extends Component {
     public static TEMPLATE = /* html */ `<div>

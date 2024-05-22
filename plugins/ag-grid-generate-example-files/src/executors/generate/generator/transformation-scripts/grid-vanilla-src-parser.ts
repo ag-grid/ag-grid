@@ -3,7 +3,7 @@ import ts from 'typescript';
 
 import { Events } from '../_copiedFromCore/eventKeys';
 import { PropertyKeys } from '../_copiedFromCore/propertyKeys';
-import type { GridOptionsType, InlineGridStyles, ParsedBindings } from '../types';
+import { GridOptionsType, InlineGridStyles, ParsedBindings } from '../types';
 import {
     extractClassDeclarations,
     extractEventHandlers,
@@ -174,7 +174,7 @@ function internalParser(
         apply: (bindings, node: ts.SignatureDeclaration) => {
             const body = (node as any).body;
 
-            const allVariables = new Set(body ? findAllVariables(body) : []);
+            let allVariables = new Set(body ? findAllVariables(body) : []);
             if (node.parameters && node.parameters.length > 0) {
                 node.parameters.forEach((p) => {
                     allVariables.add(p.name.getText());
@@ -279,7 +279,7 @@ function internalParser(
     });
 
     const tsExtractColDefsStr = (node: any): string => {
-        const copyOfColDefs = [];
+        let copyOfColDefs = [];
 
         // for each column def
         for (let columnDefIndex = 0; columnDefIndex < node.elements.length; columnDefIndex++) {
@@ -291,7 +291,7 @@ function internalParser(
             }
 
             // for each col def property
-            const props = [];
+            let props = [];
             for (
                 let colDefPropertyIndex = 0;
                 colDefPropertyIndex < columnDef.properties.length;
@@ -307,7 +307,7 @@ function internalParser(
                 }
             }
             if (props.length > 0) {
-                const propStr = props.length === 1 ? `{ ${props.join()} }` : `{\n        ${props.join(',\n    ')} }`;
+                let propStr = props.length === 1 ? `{ ${props.join()} }` : `{\n        ${props.join(',\n    ')} }`;
                 copyOfColDefs.push(propStr);
             }
         }
@@ -315,7 +315,7 @@ function internalParser(
     };
 
     const tsArrayStr = (node: any): string => {
-        const copyOfArray = [];
+        let copyOfArray = [];
 
         // for each item in the array
         for (let index = 0; index < node.elements.length; index++) {
@@ -325,13 +325,13 @@ function internalParser(
                 copyOfArray.push(tsGenerate(item, tsTree));
             } else {
                 // for each property
-                const props = [];
+                let props = [];
                 for (let colDefPropertyIndex = 0; colDefPropertyIndex < item.properties.length; colDefPropertyIndex++) {
                     const columnDefProperty: any = item.properties[colDefPropertyIndex];
                     props.push(`${tsConvertFunctionsIntoStringsStr(columnDefProperty)}`);
                 }
                 if (props.length > 0) {
-                    const propStr = props.length === 1 ? `{ ${props.join()} }` : `{\n        ${props.join(',\n    ')} }`;
+                    let propStr = props.length === 1 ? `{ ${props.join()} }` : `{\n        ${props.join(',\n    ')} }`;
                     copyOfArray.push(propStr);
                 }
             }
@@ -347,7 +347,7 @@ function internalParser(
             const escaped = func.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
             return `${property.name.text}: "AG_FUNCTION_${escaped}"`;
         } else if (ts.isObjectLiteralExpression(property.initializer)) {
-            const objProps = [];
+            let objProps = [];
             property.initializer.properties.forEach((p) => {
                 objProps.push(tsConvertFunctionsIntoStringsStr(p));
             });
@@ -522,7 +522,7 @@ function internalParser(
     const inlineHeight = gridElement.css('height');
     const inlineWidth = gridElement.css('width');
 
-    const inlineGridStyles: InlineGridStyles = {
+    let inlineGridStyles: InlineGridStyles = {
         theme: 'ag-theme-quartz',
         width: '100%',
         height: '100%',

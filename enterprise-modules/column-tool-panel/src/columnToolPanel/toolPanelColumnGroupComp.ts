@@ -1,27 +1,26 @@
-import type {
-    ColumnEventType,
-    ColumnModel,
-    ColumnPanelItemDragEndEvent,
-    ColumnPanelItemDragStartEvent,
-    DragItem,
-    DragSource,
-    IAggFunc,
-    ITooltipParams,
-    ProvidedColumnGroup,
-    WithoutGridCommon} from '@ag-grid-community/core';
 import {
     AgCheckbox,
     Autowired,
     Column,
+    ColumnEventType,
+    ColumnModel,
+    ColumnPanelItemDragEndEvent,
+    ColumnPanelItemDragStartEvent,
     Component,
     CssClassApplier,
     DragAndDropService,
+    DragItem,
+    DragSource,
     DragSourceType,
     Events,
+    IAggFunc,
+    ITooltipParams,
     KeyCode,
     PostConstruct,
+    ProvidedColumnGroup,
     RefSelector,
     TouchListener,
+    WithoutGridCommon,
     _createIcon,
     _createIconNoSpan,
     _setAriaDescribedBy,
@@ -31,7 +30,7 @@ import {
 } from '@ag-grid-community/core';
 
 import { ColumnModelItem } from './columnModelItem';
-import type { ModelItemUtils } from './modelItemUtils';
+import { ModelItemUtils } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
 export class ToolPanelColumnGroupComp extends Component {

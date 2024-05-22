@@ -1,8 +1,8 @@
-import type { ColDef } from '../entities/colDef';
-import type { Column } from '../entities/column';
-import type { AgGridCommon } from './iCommon';
-import type { IPopupComponent } from './iPopupComponent';
-import type { IRowNode } from './iRowNode';
+import { ColDef } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { AgGridCommon } from './iCommon';
+import { IPopupComponent } from './iPopupComponent';
+import { IRowNode } from './iRowNode';
 
 export interface BaseCellEditor<TData = any, TValue = any, TContext = any> {
     /** Optional: Gets called once after initialised. If you return true, the editor will not be

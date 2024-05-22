@@ -1,4 +1,4 @@
-import type { IRowNode } from './iRowNode';
+import { IRowNode } from './iRowNode';
 
 export interface RowNodeTransaction<TData = any> {
     /** Row nodes added */

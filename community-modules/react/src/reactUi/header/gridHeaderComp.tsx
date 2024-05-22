@@ -1,5 +1,4 @@
-import type { IGridHeaderComp } from '@ag-grid-community/core';
-import { GridHeaderCtrl } from '@ag-grid-community/core';
+import { GridHeaderCtrl, IGridHeaderComp } from '@ag-grid-community/core';
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import { BeansContext } from '../beansContext';
@@ -31,7 +30,7 @@ const GridHeaderComp = () => {
     }, []);
 
     const className = useMemo(() => {
-        const res = cssClasses.toString();
+        let res = cssClasses.toString();
         return 'ag-header ' + res;
     }, [cssClasses]);
 

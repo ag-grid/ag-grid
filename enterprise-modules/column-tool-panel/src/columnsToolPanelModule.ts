@@ -1,5 +1,4 @@
-import type { Module} from '@ag-grid-community/core';
-import { ModuleNames } from '@ag-grid-community/core';
+import { Module, ModuleNames } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';

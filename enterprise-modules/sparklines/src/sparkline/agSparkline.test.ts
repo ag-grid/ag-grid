@@ -1,9 +1,8 @@
-import type { ColumnFormat, ColumnFormatterParams, MarkerFormat, MarkerFormatterParams } from '@ag-grid-community/core';
+import { ColumnFormat, ColumnFormatterParams, MarkerFormat, MarkerFormatterParams } from '@ag-grid-community/core';
 import { afterAll, beforeAll, describe, expect, jest, test } from '@jest/globals';
 import 'jest-canvas-mock';
 
-import type { SparklineFactoryOptions } from './agSparkline';
-import { AgSparkline } from './agSparkline';
+import { AgSparkline, SparklineFactoryOptions } from './agSparkline';
 import { SparklineTooltip } from './tooltip/sparklineTooltip';
 
 // mock the DOMMatrix
@@ -45,8 +44,8 @@ const data = [
 
 describe('line sparkline', () => {
     let sparkline: any;
-    const containerDiv: HTMLElement = document.createElement('div');
-    const markerFormatter = (params: MarkerFormatterParams): MarkerFormat => {
+    let containerDiv: HTMLElement = document.createElement('div');
+    let markerFormatter = (params: MarkerFormatterParams): MarkerFormat => {
         return {};
     };
 
@@ -138,8 +137,8 @@ describe('line sparkline', () => {
 
 describe('area sparkline', () => {
     let sparkline: any;
-    const containerDiv: HTMLElement = document.createElement('div');
-    const markerFormatter = (params: MarkerFormatterParams): MarkerFormat => {
+    let containerDiv: HTMLElement = document.createElement('div');
+    let markerFormatter = (params: MarkerFormatterParams): MarkerFormat => {
         return {};
     };
 
@@ -231,8 +230,8 @@ describe('area sparkline', () => {
 
 describe('column sparkline', () => {
     let sparkline: any;
-    const containerDiv: HTMLElement = document.createElement('div');
-    const columnFormatter = (params: ColumnFormatterParams): ColumnFormat => {
+    let containerDiv: HTMLElement = document.createElement('div');
+    let columnFormatter = (params: ColumnFormatterParams): ColumnFormat => {
         return {};
     };
 

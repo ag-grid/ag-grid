@@ -1,5 +1,5 @@
-import type { GridOptions } from './entities/gridOptions';
-import type { AgGridCommon } from './interfaces/iCommon';
+import { GridOptions } from './entities/gridOptions';
+import { AgGridCommon } from './interfaces/iCommon';
 
 type GridOptionKey = keyof GridOptions;
 

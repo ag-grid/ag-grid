@@ -1,5 +1,4 @@
-import type { IStatusBarService, IStatusPanelComp } from '@ag-grid-community/core';
-import { Bean, BeanStub } from '@ag-grid-community/core';
+import { Bean, BeanStub, IStatusBarService, IStatusPanelComp } from '@ag-grid-community/core';
 
 @Bean('statusBarService')
 export class StatusBarService extends BeanStub implements IStatusBarService {

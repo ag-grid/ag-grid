@@ -1,4 +1,4 @@
-import type { Group } from '@tweenjs/tween.js';
+import { Group } from '@tweenjs/tween.js';
 
 import { type AgElementFinder } from '../agElements';
 import { AG_DND_GHOST_SELECTOR, DRAG_COLUMN_GHOST_CLASS } from '../constants';

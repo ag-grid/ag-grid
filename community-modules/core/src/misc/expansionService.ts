@@ -1,10 +1,9 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../context/context';
-import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import { ClientSideRowModelSteps } from '../interfaces/iClientSideRowModel';
-import type { IExpansionService } from '../interfaces/iExpansionService';
-import type { IRowModel } from '../interfaces/iRowModel';
-import type { IRowNode } from '../interfaces/iRowNode';
+import { ClientSideRowModelSteps, IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import { IExpansionService } from '../interfaces/iExpansionService';
+import { IRowModel } from '../interfaces/iRowModel';
+import { IRowNode } from '../interfaces/iRowNode';
 
 @Bean('expansionService')
 export class ExpansionService extends BeanStub implements IExpansionService {

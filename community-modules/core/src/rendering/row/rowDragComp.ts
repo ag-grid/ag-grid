@@ -1,14 +1,13 @@
 import { BeanStub } from '../../context/beanStub';
 import { Autowired, PostConstruct, PreDestroy } from '../../context/context';
-import type { DragItem, DragSource} from '../../dragAndDrop/dragAndDropService';
-import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
-import type { Column } from '../../entities/column';
+import { DragItem, DragSource, DragSourceType } from '../../dragAndDrop/dragAndDropService';
+import { Column } from '../../entities/column';
 import { RowNode } from '../../entities/rowNode';
 import { Events } from '../../eventKeys';
 import { _isFunction, _warnOnce } from '../../utils/function';
 import { _createIconNoSpan } from '../../utils/icon';
 import { Component } from '../../widgets/component';
-import type { Beans } from '../beans';
+import { Beans } from '../beans';
 
 export interface IRowDragItem extends DragItem {
     /** The default text that would be applied to this Drag Element */

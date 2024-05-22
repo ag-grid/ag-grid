@@ -1,28 +1,27 @@
-import type {
-    ColumnModel,
-    ColumnNameService,
-    DragItem,
-    DropTarget,
-    FuncColsService,
-    IAggFuncService,
-    PopupService,
-    SortController} from '@ag-grid-community/core';
 import {
     Autowired,
     Column,
+    ColumnModel,
+    ColumnNameService,
     Component,
     DragAndDropService,
+    DragItem,
     DragSourceType,
+    DropTarget,
+    FuncColsService,
+    IAggFuncService,
     KeyCode,
     Optional,
+    PopupService,
     RefSelector,
+    SortController,
     SortIndicatorComp,
     VirtualList,
     _loadTemplate,
 } from '@ag-grid-community/core';
 import { PillDragComp } from '@ag-grid-enterprise/core';
 
-import type { TDropZone } from './baseDropZonePanel';
+import { TDropZone } from './baseDropZonePanel';
 
 export class DropZoneColumnComp extends PillDragComp<Column> {
     @Autowired('popupService') private readonly popupService: PopupService;

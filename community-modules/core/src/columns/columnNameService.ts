@@ -1,14 +1,14 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean } from '../context/context';
-import type { AbstractColDef, ColDef, HeaderLocation, HeaderValueGetterParams, IAggFunc } from '../entities/colDef';
-import type { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
-import type { ProvidedColumnGroup } from '../entities/providedColumnGroup';
+import { AbstractColDef, ColDef, HeaderLocation, HeaderValueGetterParams, IAggFunc } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { ColumnGroup } from '../entities/columnGroup';
+import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import { _exists } from '../utils/generic';
 import { _camelCaseToHumanText } from '../utils/string';
-import type { ExpressionService } from '../valueService/expressionService';
-import type { ColumnModel } from './columnModel';
-import type { FuncColsService } from './funcColsService';
+import { ExpressionService } from '../valueService/expressionService';
+import { ColumnModel } from './columnModel';
+import { FuncColsService } from './funcColsService';
 
 @Bean('columnNameService')
 export class ColumnNameService extends BeanStub {

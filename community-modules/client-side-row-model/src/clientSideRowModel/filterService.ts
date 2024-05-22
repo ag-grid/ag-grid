@@ -1,5 +1,4 @@
-import type { ChangedPath, FilterManager, RowNode } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, ChangedPath, FilterManager, RowNode } from '@ag-grid-community/core';
 
 @Bean('filterService')
 export class FilterService extends BeanStub {

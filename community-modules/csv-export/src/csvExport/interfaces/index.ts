@@ -1,4 +1,4 @@
-import type {
+import {
     Column,
     ColumnGroup,
     ColumnModel,
@@ -13,7 +13,7 @@ import type {
     ValueService,
 } from '@ag-grid-community/core';
 
-import type { GridSerializer } from '../gridSerializer';
+import { GridSerializer } from '../gridSerializer';
 
 export interface BaseCreatorBeans {
     gridSerializer: GridSerializer;

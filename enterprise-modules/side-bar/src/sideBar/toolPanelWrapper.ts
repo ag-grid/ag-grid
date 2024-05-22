@@ -1,13 +1,12 @@
-import type {
-    IToolPanelComp,
-    IToolPanelParams,
-    ToolPanelDef,
-    UserComponentFactory,
-    WithoutGridCommon} from '@ag-grid-community/core';
 import {
     Autowired,
     Component,
-    PostConstruct
+    IToolPanelComp,
+    IToolPanelParams,
+    PostConstruct,
+    ToolPanelDef,
+    UserComponentFactory,
+    WithoutGridCommon,
 } from '@ag-grid-community/core';
 
 import { AgHorizontalResize } from './agHorizontalResize';

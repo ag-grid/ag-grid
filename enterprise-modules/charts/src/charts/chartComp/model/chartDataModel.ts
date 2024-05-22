@@ -1,25 +1,23 @@
-import type {
+import {
+    Autowired,
+    BeanStub,
     CellRange,
+    CellRangeType,
     ChartType,
     Column,
     IAggFunc,
     IRangeService,
     PartialCellRange,
-    SeriesChartType,
-    SeriesGroupType} from '@ag-grid-community/core';
-import {
-    Autowired,
-    BeanStub,
-    CellRangeType,
     PostConstruct,
+    SeriesChartType,
+    SeriesGroupType,
     _includes,
 } from '@ag-grid-community/core';
-import type { AgCartesianAxisType } from 'ag-charts-community';
+import { AgCartesianAxisType } from 'ag-charts-community';
 
-import type { ChartDatasourceParams } from '../datasource/chartDatasource';
-import { ChartDatasource } from '../datasource/chartDatasource';
+import { ChartDatasource, ChartDatasourceParams } from '../datasource/chartDatasource';
 import { ChartColumnService } from '../services/chartColumnService';
-import type { ChartTranslationService } from '../services/chartTranslationService';
+import { ChartTranslationService } from '../services/chartTranslationService';
 import { getMaxNumSeries, getSeriesType, isComboChart, isHierarchical } from '../utils/seriesTypeMapper';
 import { ComboChartModel } from './comboChartModel';
 

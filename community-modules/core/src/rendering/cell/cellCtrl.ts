@@ -1,40 +1,38 @@
-import type { UserCompDetails } from '../../components/framework/userComponentFactory';
+import { UserCompDetails } from '../../components/framework/userComponentFactory';
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
-import type { CellPosition } from '../../entities/cellPositionUtils';
-import type { CellStyle } from '../../entities/colDef';
-import type { Column } from '../../entities/column';
-import type { RowNode } from '../../entities/rowNode';
-import type { RowPosition } from '../../entities/rowPositionUtils';
-import type {
+import { CellPosition } from '../../entities/cellPositionUtils';
+import { CellStyle } from '../../entities/colDef';
+import { Column } from '../../entities/column';
+import { RowNode } from '../../entities/rowNode';
+import { RowPosition } from '../../entities/rowPositionUtils';
+import {
     CellContextMenuEvent,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
     CellEvent,
     CellFocusedEvent,
-    FlashCellsEvent} from '../../events';
-import {
-    Events
+    Events,
+    FlashCellsEvent,
 } from '../../events';
 import { CssClassApplier } from '../../headerRendering/cells/cssClassApplier';
-import type { BrandedType } from '../../interfaces/brandedType';
-import type { ICellEditor, ICellEditorParams } from '../../interfaces/iCellEditor';
-import type { CellChangedEvent } from '../../interfaces/iRowNode';
+import { BrandedType } from '../../interfaces/brandedType';
+import { ICellEditor, ICellEditorParams } from '../../interfaces/iCellEditor';
+import { CellChangedEvent } from '../../interfaces/iRowNode';
 import { _setAriaColIndex } from '../../utils/aria';
 import { _getElementSize } from '../../utils/dom';
 import { _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _getValueUsingField } from '../../utils/object';
 import { _escapeString } from '../../utils/string';
-import type { ITooltipFeatureCtrl} from '../../widgets/tooltipFeature';
-import { TooltipFeature } from '../../widgets/tooltipFeature';
-import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
+import { ITooltipFeatureCtrl, TooltipFeature } from '../../widgets/tooltipFeature';
+import { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import { CheckboxSelectionComponent } from '../checkboxSelectionComponent';
 import { DndSourceComp } from '../dndSourceComp';
-import type { RowCtrl } from '../row/rowCtrl';
+import { RowCtrl } from '../row/rowCtrl';
 import { RowDragComp } from '../row/rowDragComp';
-import type { FlashCellsParams } from '../rowRenderer';
-import type { Beans } from './../beans';
+import { FlashCellsParams } from '../rowRenderer';
+import { Beans } from './../beans';
 import { CellCustomStyleFeature } from './cellCustomStyleFeature';
 import { CellKeyboardListenerFeature } from './cellKeyboardListenerFeature';
 import { CellMouseListenerFeature } from './cellMouseListenerFeature';

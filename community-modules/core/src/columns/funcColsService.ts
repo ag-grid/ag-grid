@@ -1,16 +1,15 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, Optional } from '../context/context';
-import type { ColDef, IAggFunc } from '../entities/colDef';
-import type { Column } from '../entities/column';
-import type { ColumnEventType} from '../events';
-import { Events } from '../events';
-import type { IAggFuncService } from '../interfaces/iAggFuncService';
+import { ColDef, IAggFunc } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { ColumnEventType, Events } from '../events';
+import { IAggFuncService } from '../interfaces/iAggFuncService';
 import { _removeFromArray } from '../utils/array';
 import { _attrToBoolean, _attrToNumber, _exists, _missingOrEmpty } from '../utils/generic';
-import type { ColumnState, ModifyColumnsNoEventsCallbacks } from './columnApplyStateService';
-import type { ColumnEventDispatcher } from './columnEventDispatcher';
-import type { ColKey, ColumnModel, Maybe } from './columnModel';
-import type { VisibleColsService } from './visibleColsService';
+import { ColumnState, ModifyColumnsNoEventsCallbacks } from './columnApplyStateService';
+import { ColumnEventDispatcher } from './columnEventDispatcher';
+import { ColKey, ColumnModel, Maybe } from './columnModel';
+import { VisibleColsService } from './visibleColsService';
 
 @Bean('funcColsService')
 export class FuncColsService extends BeanStub {

@@ -1,20 +1,19 @@
-import type {
-    ChartToolPanelMenuOptions,
-    ChartToolPanelName,
-    ChartToolbarMenuItemOptions,
-    GetChartToolbarItemsParams,
-    WithoutGridCommon} from '@ag-grid-community/core';
 import {
     Autowired,
     Bean,
     BeanStub,
+    ChartToolPanelMenuOptions,
+    ChartToolPanelName,
+    ChartToolbarMenuItemOptions,
+    GetChartToolbarItemsParams,
+    WithoutGridCommon,
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import type { ChartService } from '../../chartService';
-import type { ChartController } from '../chartController';
-import type { AdvancedSettingsMenuFactory } from '../menu/advancedSettings/advancedSettingsMenuFactory';
-import type { ChartMenuContext } from '../menu/chartMenuContext';
+import { ChartService } from '../../chartService';
+import { ChartController } from '../chartController';
+import { AdvancedSettingsMenuFactory } from '../menu/advancedSettings/advancedSettingsMenuFactory';
+import { ChartMenuContext } from '../menu/chartMenuContext';
 
 const CHART_TOOLBAR_ALLOW_LIST: ChartToolbarMenuItemOptions[] = [
     'chartUnlink',

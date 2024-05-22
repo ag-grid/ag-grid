@@ -1,19 +1,18 @@
-import type {
+import {
+    Autowired,
+    Bean,
     Column,
     ColumnApplyStateService,
     ColumnEventType,
     ColumnModel,
     ColumnState,
-    IAggFunc,
-    IAggFuncService} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
     EventService,
-    GridOptionsService
+    GridOptionsService,
+    IAggFunc,
+    IAggFuncService,
 } from '@ag-grid-community/core';
 
-import type { ColumnModelItem } from './columnModelItem';
+import { ColumnModelItem } from './columnModelItem';
 
 @Bean('modelItemUtils')
 export class ModelItemUtils {

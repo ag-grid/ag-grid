@@ -9,7 +9,7 @@ import {
     _setDisplayed,
     _shallowCompare,
 } from '@ag-grid-community/core';
-import type { AgChartThemePalette } from 'ag-charts-community';
+import { AgChartThemePalette } from 'ag-charts-community';
 
 import { ChartController } from '../../chartController';
 import { isStockTheme } from '../../chartProxies/chartTheme';

@@ -1,4 +1,4 @@
-import type {
+import {
     AgCheckbox,
     AgInputTextField,
     ColDef,
@@ -17,7 +17,7 @@ import type {
 
 import { mock } from '../test-utils/mock';
 import { SetFilter } from './setFilter';
-import type { SetValueModel } from './setValueModel';
+import { SetValueModel } from './setValueModel';
 
 let rowModel: jest.Mocked<IRowModel>;
 let eventService: jest.Mocked<EventService>;

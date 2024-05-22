@@ -1,42 +1,40 @@
-import type {
+import {
     AgEvent,
     AgGridEvent,
-    Column,
-    ColumnMenuTab,
-    ColumnMenuVisibleChangedEvent,
-    ContainerType,
-    CtrlsService,
-    FilterManager,
-    FocusService,
-    IAfterGuiAttachedParams,
-    IMenuFactory,
-    MenuService,
-    PopupEventParams,
-    PopupService,
-    TabbedItem,
-    VisibleColsService,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
     AgPromise,
     Autowired,
     Bean,
     BeanStub,
+    Column,
+    ColumnMenuTab,
+    ColumnMenuVisibleChangedEvent,
     Component,
+    ContainerType,
+    CtrlsService,
     Events,
+    FilterManager,
     FilterWrapperComp,
+    FocusService,
+    IAfterGuiAttachedParams,
+    IMenuFactory,
+    MenuService,
     ModuleNames,
     ModuleRegistry,
+    PopupEventParams,
+    PopupService,
     PostConstruct,
     RefSelector,
+    TabbedItem,
     TabbedLayout,
+    VisibleColsService,
+    WithoutGridCommon,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
-import type { AgMenuList, CloseMenuEvent } from '@ag-grid-enterprise/core';
-import { AgMenuItemComponent } from '@ag-grid-enterprise/core';
+import { AgMenuItemComponent, AgMenuList, CloseMenuEvent } from '@ag-grid-enterprise/core';
 
-import type { ColumnChooserFactory } from './columnChooserFactory';
-import type { ColumnMenuFactory } from './columnMenuFactory';
-import type { MenuRestoreFocusParams, MenuUtils } from './menuUtils';
+import { ColumnChooserFactory } from './columnChooserFactory';
+import { ColumnMenuFactory } from './columnMenuFactory';
+import { MenuRestoreFocusParams, MenuUtils } from './menuUtils';
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -115,8 +113,8 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         const restrictToTabs = defaultTab ? [defaultTab] : undefined;
 
         const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
-        const nudgeX = (isLegacyMenuEnabled ? 9 : 4) * multiplier;
-        const nudgeY = isLegacyMenuEnabled ? -23 : 4;
+        let nudgeX = (isLegacyMenuEnabled ? 9 : 4) * multiplier;
+        let nudgeY = isLegacyMenuEnabled ? -23 : 4;
 
         this.showMenu(
             column,
@@ -189,7 +187,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 menu.afterGuiAttached(Object.assign({}, { container: containerType }, params)),
             // if defaultTab is not present, positionCallback will be called
             // after `showTabBasedOnPreviousSelection` is called.
-            positionCallback: defaultTab ? () => positionCallback(menu) : undefined,
+            positionCallback: !!defaultTab ? () => positionCallback(menu) : undefined,
             ariaLabel: translate('ariaLabelColumnMenu', 'Column Menu'),
         });
 

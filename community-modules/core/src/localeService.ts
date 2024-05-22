@@ -1,7 +1,7 @@
 import { BeanStub } from './context/beanStub';
 import { Bean } from './context/context';
-import type { GetLocaleTextParams } from './interfaces/iCallbackParams';
-import type { WithoutGridCommon } from './interfaces/iCommon';
+import { GetLocaleTextParams } from './interfaces/iCallbackParams';
+import { WithoutGridCommon } from './interfaces/iCommon';
 
 @Bean('localeService')
 export class LocaleService extends BeanStub {

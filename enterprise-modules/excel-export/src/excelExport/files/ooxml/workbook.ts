@@ -1,4 +1,4 @@
-import type { ExcelOOXMLTemplate } from '@ag-grid-community/core';
+import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 
 import sheetsFactory from './sheets';
 

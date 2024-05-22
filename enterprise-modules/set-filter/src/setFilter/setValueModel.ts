@@ -1,5 +1,7 @@
-import type {
+import {
     AgEventListener,
+    AgPromise,
+    EventService,
     FuncColsService,
     GridOptionsService,
     IClientSideRowModel,
@@ -10,13 +12,10 @@ import type {
     SetFilterValues,
     SetFilterValuesFunc,
     SetFilterValuesFuncParams,
+    TextFilter,
     TextFormatter,
     ValueFormatterParams,
-    ValueService} from '@ag-grid-community/core';
-import {
-    AgPromise,
-    EventService,
-    TextFilter,
+    ValueService,
     _defaultComparator,
     _doOnce,
     _exists,
@@ -27,8 +26,8 @@ import {
 import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
 import { SetValueModelFilteringKeys } from './filteringKeys';
 import { FlatSetDisplayValueModel } from './flatSetDisplayValueModel';
-import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
-import type { ISetFilterLocaleText } from './localeText';
+import { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
+import { ISetFilterLocaleText } from './localeText';
 import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 
 export enum SetFilterModelValuesType {

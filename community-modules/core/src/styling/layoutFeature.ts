@@ -1,6 +1,6 @@
 import { BeanStub } from '../context/beanStub';
 import { PostConstruct } from '../context/context';
-import type { DomLayoutType } from '../entities/gridOptions';
+import { DomLayoutType } from '../entities/gridOptions';
 import { _warnOnce } from '../utils/function';
 
 export interface LayoutView {

@@ -1,8 +1,7 @@
-import type { CheckboxChangedEvent} from '../events';
-import { Events } from '../events';
-import type { AgCheckboxParams, LabelAlignment } from '../interfaces/agFieldParams';
+import { CheckboxChangedEvent, Events } from '../events';
+import { AgCheckboxParams, LabelAlignment } from '../interfaces/agFieldParams';
 import { AgAbstractInputField } from './agAbstractInputField';
-import type { AgComponentSelector } from './component';
+import { AgComponentSelector } from './component';
 
 export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> extends AgAbstractInputField<
     HTMLInputElement,

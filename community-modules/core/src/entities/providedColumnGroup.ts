@@ -1,12 +1,11 @@
 import { PreDestroy } from '../context/context';
 import { EventService } from '../eventService';
-import type { AgEvent, AgEventListener } from '../events';
-import type { IEventEmitter } from '../interfaces/iEventEmitter';
-import type { IProvidedColumn } from '../interfaces/iProvidedColumn';
-import type { ColGroupDef } from './colDef';
-import type { ColumnInstanceId} from './column';
-import { Column, getNextColInstanceId } from './column';
-import type { ColumnGroupShowType } from './columnGroup';
+import { AgEvent, AgEventListener } from '../events';
+import { IEventEmitter } from '../interfaces/iEventEmitter';
+import { IProvidedColumn } from '../interfaces/iProvidedColumn';
+import { ColGroupDef } from './colDef';
+import { Column, ColumnInstanceId, getNextColInstanceId } from './column';
+import { ColumnGroupShowType } from './columnGroup';
 
 export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';

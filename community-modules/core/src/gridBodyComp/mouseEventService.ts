@@ -1,9 +1,9 @@
 import { BeanStub } from '../context/beanStub';
 import { Bean } from '../context/context';
 import { Autowired } from '../context/context';
-import type { CtrlsService } from '../ctrlsService';
-import type { DraggingEvent } from '../dragAndDrop/dragAndDropService';
-import type { CellPosition } from '../entities/cellPositionUtils';
+import { CtrlsService } from '../ctrlsService';
+import { DraggingEvent } from '../dragAndDrop/dragAndDropService';
+import { CellPosition } from '../entities/cellPositionUtils';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import { _getCtrlForEventTarget } from '../utils/event';
 import { _exists } from '../utils/generic';

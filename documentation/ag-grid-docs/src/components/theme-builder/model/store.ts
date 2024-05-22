@@ -1,3 +1,3 @@
-import type { createStore } from 'jotai';
+import { createStore } from 'jotai';
 
 export type Store = ReturnType<typeof createStore>;

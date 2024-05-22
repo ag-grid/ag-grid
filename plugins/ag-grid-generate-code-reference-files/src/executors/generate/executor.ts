@@ -1,4 +1,4 @@
- 
+/* eslint-disable no-console */
 import ts from 'typescript';
 
 import { inputGlob, writeJSONFile } from '../../executors-utils';

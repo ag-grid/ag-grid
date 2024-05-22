@@ -1,13 +1,13 @@
 // we pass a VO of the column and not the column itself,
 // so the data is read to be be converted to JSON and thrown
 // over the wire
-import type { LoadSuccessParams } from '../rowNodeCache/rowNodeBlock';
-import type { SortModelItem } from '../sortController';
-import type { AdvancedFilterModel } from './advancedFilterModel';
-import type { ColumnVO } from './iColumnVO';
-import type { AgGridCommon } from './iCommon';
-import type { FilterModel } from './iFilter';
-import type { IRowNode } from './iRowNode';
+import { LoadSuccessParams } from '../rowNodeCache/rowNodeBlock';
+import { SortModelItem } from '../sortController';
+import { AdvancedFilterModel } from './advancedFilterModel';
+import { ColumnVO } from './iColumnVO';
+import { AgGridCommon } from './iCommon';
+import { FilterModel } from './iFilter';
+import { IRowNode } from './iRowNode';
 
 export interface IServerSideGetRowsRequest {
     /** First row requested or undefined for all rows. */

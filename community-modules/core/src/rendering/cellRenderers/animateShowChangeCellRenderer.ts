@@ -1,9 +1,9 @@
 import { Autowired } from '../../context/context';
-import type { FilterManager } from '../../filter/filterManager';
+import { FilterManager } from '../../filter/filterManager';
 import { _clearElement } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
 import { Component } from '../../widgets/component';
-import type { ICellRenderer } from './iCellRenderer';
+import { ICellRenderer } from './iCellRenderer';
 
 const ARROW_UP = '\u2191';
 const ARROW_DOWN = '\u2193';

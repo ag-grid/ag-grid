@@ -1,18 +1,18 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
-import type { CtrlsService } from '../ctrlsService';
-import type { Column } from '../entities/column';
-import type { RowNode } from '../entities/rowNode';
-import type { FilterManager } from '../filter/filterManager';
-import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
-import type { IColumnChooserFactory, ShowColumnChooserParams } from '../interfaces/iColumnChooserFactory';
-import type { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
-import type { IMenuFactory } from '../interfaces/iMenuFactory';
-import type { RowCtrl } from '../rendering/row/rowCtrl';
-import type { RowRenderer } from '../rendering/rowRenderer';
+import { CtrlsService } from '../ctrlsService';
+import { Column } from '../entities/column';
+import { RowNode } from '../entities/rowNode';
+import { FilterManager } from '../filter/filterManager';
+import { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
+import { IColumnChooserFactory, ShowColumnChooserParams } from '../interfaces/iColumnChooserFactory';
+import { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
+import { IMenuFactory } from '../interfaces/iMenuFactory';
+import { RowCtrl } from '../rendering/row/rowCtrl';
+import { RowRenderer } from '../rendering/rowRenderer';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _warnOnce } from '../utils/function';
-import type { AnimationFrameService } from './animationFrameService';
+import { AnimationFrameService } from './animationFrameService';
 
 interface BaseShowColumnMenuParams {
     column?: Column;

@@ -1,13 +1,12 @@
-import type {
+import {
     ColDef,
     ColGroupDef,
+    Component,
     FiltersToolPanelState,
     IFiltersToolPanel,
     IToolPanelComp,
     IToolPanelFiltersCompParams,
-    IToolPanelParams} from '@ag-grid-community/core';
-import {
-    Component,
+    IToolPanelParams,
     RefSelector,
 } from '@ag-grid-community/core';
 

@@ -1,20 +1,19 @@
-import type {
+import {
     AgComponentSelector,
     AgEvent,
-    PopupPositionParams,
-    PopupService} from '@ag-grid-community/core';
-import {
     AgInputTextField,
     Autowired,
     Component,
     KeyCode,
+    PopupPositionParams,
+    PopupService,
     PostConstruct,
     RefSelector,
     _makeNull,
 } from '@ag-grid-community/core';
 
 import { AgAutocompleteList } from './agAutocompleteList';
-import type { AutocompleteEntry, AutocompleteListParams } from './autocompleteParams';
+import { AutocompleteEntry, AutocompleteListParams } from './autocompleteParams';
 
 export interface AutocompleteValueChangedEvent extends AgEvent {
     value: string | null;

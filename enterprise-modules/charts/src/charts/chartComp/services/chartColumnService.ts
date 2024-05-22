@@ -1,19 +1,18 @@
-import type {
-    Column,
-    ColumnModel,
-    ColumnNameService,
-    FuncColsService,
-    RowNode,
-    RowPositionUtils,
-    ShowRowGroupColsService,
-    ValueService,
-    VisibleColsService} from '@ag-grid-community/core';
 import {
     Autowired,
     Bean,
     BeanStub,
+    Column,
+    ColumnModel,
+    ColumnNameService,
     Events,
-    PostConstruct
+    FuncColsService,
+    PostConstruct,
+    RowNode,
+    RowPositionUtils,
+    ShowRowGroupColsService,
+    ValueService,
+    VisibleColsService,
 } from '@ag-grid-community/core';
 
 @Bean('chartColumnService')

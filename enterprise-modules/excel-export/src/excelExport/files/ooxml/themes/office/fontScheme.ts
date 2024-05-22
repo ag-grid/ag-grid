@@ -1,4 +1,4 @@
-import type { ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
+import { ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
 
 const getFont = (props: [string, string, string?, string?]): XmlElement => {
     const [type, typeface, script, panose] = props;

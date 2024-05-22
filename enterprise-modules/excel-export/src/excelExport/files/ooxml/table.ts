@@ -1,6 +1,6 @@
-import type { ExcelOOXMLTemplate } from '@ag-grid-community/core';
+import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 
-import type { ExcelDataTable } from '../../assets/excelInterfaces';
+import { ExcelDataTable } from '../../assets/excelInterfaces';
 
 const tableFactory: ExcelOOXMLTemplate = {
     getTemplate(dataTable: ExcelDataTable, idx: number) {

@@ -1,20 +1,18 @@
-import type {
-    AgSelectParams,
-    ListOption} from '@ag-grid-community/core';
 import {
     AgSelect,
+    AgSelectParams,
     Autowired,
     Component,
+    ListOption,
     PostConstruct,
     RefSelector,
     _removeFromParent,
 } from '@ag-grid-community/core';
-import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
 import { AgSlider } from '../../../../../widgets/agSlider';
-import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
-import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import { FontPanel } from '../fontPanel';
 
 type SeriesItemType = 'positive' | 'negative';

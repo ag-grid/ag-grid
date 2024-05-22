@@ -1,9 +1,9 @@
-import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
-import type { AgGridCommon } from '../interfaces/iCommon';
-import type { IComponent } from '../interfaces/iComponent';
-import type { IRowNode } from '../interfaces/iRowNode';
+import { ColDef, ColGroupDef } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { ColumnGroup } from '../entities/columnGroup';
+import { AgGridCommon } from '../interfaces/iCommon';
+import { IComponent } from '../interfaces/iComponent';
+import { IRowNode } from '../interfaces/iRowNode';
 import { _escapeString } from '../utils/string';
 import { PopupComponent } from '../widgets/popupComponent';
 

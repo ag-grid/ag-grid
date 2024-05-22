@@ -1,4 +1,4 @@
-import type {
+import {
     AgAreaSeriesOptions,
     AgCartesianAxisOptions,
     AgCartesianAxisType,
@@ -10,8 +10,7 @@ import type {
     AgRangeBarSeriesThemeableOptions,
 } from 'ag-charts-community';
 
-import type { ChartProxyParams, UpdateParams } from '../chartProxy';
-import { ChartProxy } from '../chartProxy';
+import { ChartProxy, ChartProxyParams, UpdateParams } from '../chartProxy';
 
 export abstract class CartesianChartProxy<
     TSeries extends

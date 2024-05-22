@@ -1,5 +1,5 @@
-import type { Column } from '../entities/column';
-import type { ContainerType } from './iAfterGuiAttachedParams';
+import { Column } from '../entities/column';
+import { ContainerType } from './iAfterGuiAttachedParams';
 
 export interface IMenuFactory {
     showMenuAfterButtonClick(

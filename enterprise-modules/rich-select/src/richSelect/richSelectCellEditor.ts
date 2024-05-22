@@ -1,13 +1,12 @@
-import type {
+import {
+    Events,
     FieldPickerValueSelectedEvent,
     ICellEditor,
     ICellEditorParams,
     KeyCreatorParams,
-    RichCellEditorParams,
-    RichSelectParams} from '@ag-grid-community/core';
-import {
-    Events,
     PopupComponent,
+    RichCellEditorParams,
+    RichSelectParams,
     _exists,
     _missing,
     _warnOnce,

@@ -1,7 +1,7 @@
-import type { ChartType } from '@ag-grid-community/core';
+import { ChartType } from '@ag-grid-community/core';
 import { _Scene, _Theme, _Util } from 'ag-charts-community';
 
-import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export class MiniBoxPlot extends MiniChartWithAxes {
@@ -45,7 +45,7 @@ export class MiniBoxPlot extends MiniChartWithAxes {
         const halfBandWidth = Math.round(xScale.bandwidth / 2);
 
         this.boxPlotGroups = data.map((datum, i) => {
-            const [minValue, q1Value, q3Value, maxValue] = [
+            let [minValue, q1Value, q3Value, maxValue] = [
                 datum * minRatio,
                 datum * q1Ratio,
                 datum * q3Ratio,

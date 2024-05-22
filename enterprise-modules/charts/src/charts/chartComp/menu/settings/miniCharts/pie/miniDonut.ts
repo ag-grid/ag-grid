@@ -1,8 +1,8 @@
-import type { ChartType } from '@ag-grid-community/core';
+import { ChartType } from '@ag-grid-community/core';
 import { _Scene } from 'ag-charts-community';
 
-import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
-import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import { ChartTranslationKey } from '../../../../services/chartTranslationService';
+import { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniChart } from '../miniChart';
 
 const toRadians = _Scene.toRadians;

@@ -1,6 +1,5 @@
 import { BeanStub } from './context/beanStub';
-import type { ControllerMeta } from './context/context';
-import { Bean } from './context/context';
+import { Bean, ControllerMeta } from './context/context';
 
 @Bean('ctrlsFactory')
 export class CtrlsFactory extends BeanStub {

@@ -1,7 +1,6 @@
-import type { Group } from '@tweenjs/tween.js';
+import { Group } from '@tweenjs/tween.js';
 
-import type { GridApi } from 'ag-grid-community';
-import { type ColumnState } from 'ag-grid-community';
+import { type ColumnState, GridApi } from 'ag-grid-community';
 
 import { createAgElementFinder } from './agElements';
 import { type AGCreatorAction, createAGActionCreator } from './createAGActionCreator';

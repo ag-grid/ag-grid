@@ -1,4 +1,4 @@
- 
+/* eslint-disable */
 export default {
     displayName: 'ag-charts-react',
     preset: '../../jest.preset.js',

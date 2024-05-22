@@ -1,23 +1,23 @@
-import type { UserCompDetails } from '../../components/framework/userComponentFactory';
-import type { CellStyle } from '../../entities/colDef';
-import type { Column } from '../../entities/column';
-import type { RowNode } from '../../entities/rowNode';
-import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import { UserCompDetails } from '../../components/framework/userComponentFactory';
+import { CellStyle } from '../../entities/colDef';
+import { Column } from '../../entities/column';
+import { RowNode } from '../../entities/rowNode';
+import { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _setAriaRole } from '../../utils/aria';
 import { _browserSupportsPreventScroll } from '../../utils/browser';
 import { _addStylesToElement, _clearElement, _removeFromParent } from '../../utils/dom';
 import { _missing } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import { Component } from '../../widgets/component';
-import type { TooltipParentComp } from '../../widgets/tooltipStateManager';
-import type { Beans } from './../beans';
+import { TooltipParentComp } from '../../widgets/tooltipStateManager';
+import { Beans } from './../beans';
 import { PopupEditorWrapper } from './../cellEditors/popupEditorWrapper';
-import type { ICellRendererComp } from './../cellRenderers/iCellRenderer';
-import type { CheckboxSelectionComponent } from './../checkboxSelectionComponent';
-import type { DndSourceComp } from './../dndSourceComp';
-import type { RowCtrl } from './../row/rowCtrl';
-import type { RowDragComp } from './../row/rowDragComp';
-import type { CellCtrl, ICellComp } from './cellCtrl';
+import { ICellRendererComp } from './../cellRenderers/iCellRenderer';
+import { CheckboxSelectionComponent } from './../checkboxSelectionComponent';
+import { DndSourceComp } from './../dndSourceComp';
+import { RowCtrl } from './../row/rowCtrl';
+import { RowDragComp } from './../row/rowDragComp';
+import { CellCtrl, ICellComp } from './cellCtrl';
 
 export class CellComp extends Component implements TooltipParentComp {
     private eCellWrapper: HTMLElement | undefined;

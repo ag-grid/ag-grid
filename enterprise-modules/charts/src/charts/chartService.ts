@@ -1,5 +1,8 @@
-import type {
+import {
+    Autowired,
     BaseCreateChartParams,
+    Bean,
+    BeanStub,
     CellRangeParams,
     ChartDownloadParams,
     ChartModel,
@@ -14,29 +17,23 @@ import type {
     IChartService,
     IRangeService,
     OpenChartToolPanelParams,
+    Optional,
     PartialCellRange,
+    PreDestroy,
     SeriesChartType,
     SeriesGroupType,
     UpdateChartParams,
-    VisibleColsService} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Optional,
-    PreDestroy
+    VisibleColsService,
 } from '@ag-grid-community/core';
-import type {
-    AgChartThemeOverrides,
-    AgChartThemePalette} from 'ag-charts-community';
 import {
+    AgChartThemeOverrides,
+    AgChartThemePalette,
     VERSION as CHARTS_VERSION,
     _ModuleSupport,
 } from 'ag-charts-community';
 
 import { VERSION as GRID_VERSION } from '../version';
-import type { GridChartParams } from './chartComp/gridChartComp';
-import { GridChartComp } from './chartComp/gridChartComp';
+import { GridChartComp, GridChartParams } from './chartComp/gridChartComp';
 import { ChartParamsValidator } from './chartComp/utils/chartParamsValidator';
 import { getCanonicalChartType } from './chartComp/utils/seriesTypeMapper';
 import { upgradeChartModel } from './chartModelMigration';

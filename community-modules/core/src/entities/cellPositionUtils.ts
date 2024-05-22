@@ -1,7 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import { Bean } from '../context/context';
-import type { Column } from './column';
-import type { RowPosition } from './rowPositionUtils';
+import { Column } from './column';
+import { RowPosition } from './rowPositionUtils';
 
 // this is what gets pass into and out of the api, as JavaScript users
 export interface CellPosition extends RowPosition {

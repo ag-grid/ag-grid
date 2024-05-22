@@ -1,7 +1,7 @@
 import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
 import { Autowired, PostConstruct } from '../context/context';
-import type { FocusService } from '../focusService';
+import { FocusService } from '../focusService';
 import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../utils/event';
 
 export interface ManagedFocusCallbacks {

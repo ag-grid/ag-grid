@@ -1,15 +1,14 @@
-import type {
+import {
     AgComponentSelector,
     AgEvent,
-    FocusService,
-    ToolPanelDef,
-    VisibleColsService} from '@ag-grid-community/core';
-import {
     Autowired,
     Component,
+    FocusService,
     KeyCode,
     PostConstruct,
     PreDestroy,
+    ToolPanelDef,
+    VisibleColsService,
     _clearElement,
     _last,
 } from '@ag-grid-community/core';

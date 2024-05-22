@@ -1,7 +1,6 @@
-import type { ChartType, SeriesChartType } from '@ag-grid-community/core';
-import { BeanStub, PostConstruct } from '@ag-grid-community/core';
+import { BeanStub, ChartType, PostConstruct, SeriesChartType } from '@ag-grid-community/core';
 
-import type { ChartDataModel, ColState } from './chartDataModel';
+import { ChartDataModel, ColState } from './chartDataModel';
 
 export class ComboChartModel extends BeanStub {
     public static SUPPORTED_COMBO_CHART_TYPES = ['line', 'groupedColumn', 'stackedColumn', 'area', 'stackedArea'];
@@ -116,8 +115,8 @@ export class ComboChartModel extends BeanStub {
     private updateChartSeriesTypesForBuiltInCombos() {
         const { chartType, valueColState } = this.chartDataModel;
 
-        const primaryChartType: ChartType = chartType === 'columnLineCombo' ? 'groupedColumn' : 'stackedArea';
-        const secondaryChartType: ChartType = chartType === 'columnLineCombo' ? 'line' : 'groupedColumn';
+        let primaryChartType: ChartType = chartType === 'columnLineCombo' ? 'groupedColumn' : 'stackedArea';
+        let secondaryChartType: ChartType = chartType === 'columnLineCombo' ? 'line' : 'groupedColumn';
 
         const selectedCols = valueColState.filter((cs) => cs.selected);
         const lineIndex = Math.ceil(selectedCols.length / 2);

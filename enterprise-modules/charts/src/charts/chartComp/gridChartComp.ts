@@ -1,22 +1,21 @@
-import type {
+import {
+    Autowired,
     ChartCreated,
     ChartDestroyed,
     ChartModel,
     ChartToolPanelName,
     ChartType,
+    Component,
+    Events,
     FocusService,
     IAggFunc,
     PartialCellRange,
     PopupService,
-    SeriesChartType,
-    UpdateChartParams,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Component,
-    Events,
     PostConstruct,
     RefSelector,
+    SeriesChartType,
+    UpdateChartParams,
+    WithoutGridCommon,
     _clearElement,
     _getAbsoluteHeight,
     _getAbsoluteWidth,
@@ -25,9 +24,9 @@ import {
     _setDisplayed,
 } from '@ag-grid-community/core';
 import { AgDialog } from '@ag-grid-enterprise/core';
-import type { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
+import { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
 
-import type { CrossFilteringContext } from '../chartService';
+import { CrossFilteringContext } from '../chartService';
 import { ChartController, DEFAULT_THEMES } from './chartController';
 import { AreaChartProxy } from './chartProxies/cartesian/areaChartProxy';
 import { BarChartProxy } from './chartProxies/cartesian/barChartProxy';
@@ -35,7 +34,7 @@ import { HistogramChartProxy } from './chartProxies/cartesian/histogramChartProx
 import { LineChartProxy } from './chartProxies/cartesian/lineChartProxy';
 import { ScatterChartProxy } from './chartProxies/cartesian/scatterChartProxy';
 import { WaterfallChartProxy } from './chartProxies/cartesian/waterfallChartProxy';
-import type { ChartProxy, ChartProxyParams } from './chartProxies/chartProxy';
+import { ChartProxy, ChartProxyParams } from './chartProxies/chartProxy';
 import { ComboChartProxy } from './chartProxies/combo/comboChartProxy';
 import { HierarchicalChartProxy } from './chartProxies/hierarchical/hierarchicalChartProxy';
 import { PieChartProxy } from './chartProxies/pie/pieChartProxy';
@@ -45,15 +44,13 @@ import { BoxPlotChartProxy } from './chartProxies/statistical/boxPlotChartProxy'
 import { RangeChartProxy } from './chartProxies/statistical/rangeChartProxy';
 import { TitleEdit } from './chartTitle/titleEdit';
 import { ChartMenu } from './menu/chartMenu';
-import type { ChartMenuContext } from './menu/chartMenuContext';
+import { ChartMenuContext } from './menu/chartMenuContext';
 import { ChartMenuParamsFactory } from './menu/chartMenuParamsFactory';
-import type { ChartModelParams } from './model/chartDataModel';
-import { ChartDataModel } from './model/chartDataModel';
-import type { ChartCrossFilterService } from './services/chartCrossFilterService';
-import type { ChartMenuService } from './services/chartMenuService';
-import { CHART_TOOL_PANEL_MENU_OPTIONS } from './services/chartMenuService';
+import { ChartDataModel, ChartModelParams } from './model/chartDataModel';
+import { ChartCrossFilterService } from './services/chartCrossFilterService';
+import { CHART_TOOL_PANEL_MENU_OPTIONS, ChartMenuService } from './services/chartMenuService';
 import { ChartOptionsService } from './services/chartOptionsService';
-import type { ChartTranslationKey, ChartTranslationService } from './services/chartTranslationService';
+import { ChartTranslationKey, ChartTranslationService } from './services/chartTranslationService';
 import { deepMerge } from './utils/object';
 import { getCanonicalChartType, getSeriesType, isHierarchical } from './utils/seriesTypeMapper';
 
@@ -432,7 +429,7 @@ export class GridChartComp extends Component {
             return;
         }
 
-        const chartUpdateParams = this.chartController.getChartUpdateParams(updatedOverrides);
+        let chartUpdateParams = this.chartController.getChartUpdateParams(updatedOverrides);
         chartProxy.update(chartUpdateParams);
 
         this.chartProxy
