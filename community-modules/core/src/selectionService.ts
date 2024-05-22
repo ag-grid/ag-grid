@@ -111,7 +111,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             // trying to set it to true / false. this group will be calculated further on
             // down when we call calculatedSelectedForAllGroupNodes(). we need to skip it
             // here, otherwise the updatedCount would include it.
-            const skipThisNode = groupSelectsFiltered && node.group;
+            const skipThisNode = groupSelectsFiltered && (node.group || node.hasChildren());
 
             if (!skipThisNode) {
                 const thisNodeWasSelected = node.selectThisNode(newValue, event, source);
