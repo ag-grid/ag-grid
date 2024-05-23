@@ -1,7 +1,9 @@
-import { BeanStub, ChartType, Component, PostConstruct, _removeFromParent } from '@ag-grid-community/core';
+import type { ChartType, Component } from '@ag-grid-community/core';
+import { BeanStub, PostConstruct, _removeFromParent } from '@ag-grid-community/core';
 
 import { ChartController } from '../chartController';
-import { ChartSeriesType, getSeriesType } from '../utils/seriesTypeMapper';
+import type { ChartSeriesType } from '../utils/seriesTypeMapper';
+import { getSeriesType } from '../utils/seriesTypeMapper';
 
 export class ChartPanelFeature extends BeanStub {
     private chartType: ChartType;

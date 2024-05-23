@@ -1,13 +1,14 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, PostConstruct } from '../context/context';
-import { ColDef, ColGroupDef } from '../entities/colDef';
-import { Column } from '../entities/column';
-import { ColumnGroup } from '../entities/columnGroup';
-import { RowNode } from '../entities/rowNode';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { Beans } from '../rendering/beans';
-import { ITooltipParams, TooltipLocation } from '../rendering/tooltipComponent';
-import { TooltipParentComp, TooltipStateManager } from './tooltipStateManager';
+import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { Column } from '../entities/column';
+import type { ColumnGroup } from '../entities/columnGroup';
+import type { RowNode } from '../entities/rowNode';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { Beans } from '../rendering/beans';
+import type { ITooltipParams, TooltipLocation } from '../rendering/tooltipComponent';
+import type { TooltipParentComp } from './tooltipStateManager';
+import { TooltipStateManager } from './tooltipStateManager';
 
 export interface ITooltipFeatureCtrl {
     getTooltipValue(): any;

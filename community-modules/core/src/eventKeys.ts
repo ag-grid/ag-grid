@@ -80,6 +80,9 @@ export class Events {
     /** The client has set new floating data into the grid */
     public static EVENT_PINNED_ROW_DATA_CHANGED: 'pinnedRowDataChanged' = 'pinnedRowDataChanged';
 
+    /** The client has set new floating data into the grid */
+    public static EVENT_PINNED_HEIGHT_CHANGED: 'pinnedHeightChanged' = 'pinnedHeightChanged';
+
     /** Range selection has changed */
     public static EVENT_RANGE_SELECTION_CHANGED: 'rangeSelectionChanged' = 'rangeSelectionChanged';
 

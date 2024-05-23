@@ -1,6 +1,6 @@
-import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
+import type { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 
-import { NumberFormat } from '../../../assets/excelInterfaces';
+import type { NumberFormat } from '../../../assets/excelInterfaces';
 import numberFormatFactory from './numberFormat';
 
 const numberFormatsFactory: ExcelOOXMLTemplate = {

@@ -1,9 +1,10 @@
-import { UserCompDetails } from '../../components/framework/userComponentFactory';
+import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import { _setAriaRole } from '../../utils/aria';
 import { _setDisplayed } from '../../utils/dom';
 import { Component, RefPlaceholder } from '../../widgets/component';
-import { GroupCellRendererCtrl, GroupCellRendererParams, IGroupCellRenderer } from './groupCellRendererCtrl';
-import { ICellRendererComp } from './iCellRenderer';
+import type { GroupCellRendererParams, IGroupCellRenderer } from './groupCellRendererCtrl';
+import { GroupCellRendererCtrl } from './groupCellRendererCtrl';
+import type { ICellRendererComp } from './iCellRenderer';
 
 export class GroupCellRenderer extends Component implements ICellRendererComp {
     private static TEMPLATE /* html */ = `<span class="ag-cell-wrapper">

@@ -1,13 +1,15 @@
-import {
-    Autowired,
-    Column,
+import type {
     ColumnModel,
     ColumnNameService,
-    Component,
     FocusService,
     FuncColsService,
     MenuItemDef,
     PopupService,
+} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Column,
+    Component,
     PostConstruct,
     ProvidedColumnGroup,
     _createIconNoSpan,

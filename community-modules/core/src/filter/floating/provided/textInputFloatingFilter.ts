@@ -1,15 +1,17 @@
 import { KeyCode } from '../../../constants/keyCode';
 import { BeanStub } from '../../../context/beanStub';
 import { PostConstruct } from '../../../context/context';
-import { FilterChangedEvent } from '../../../events';
+import type { FilterChangedEvent } from '../../../events';
 import { _clearElement } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
-import { AgInputTextField, AgInputTextFieldParams } from '../../../widgets/agInputTextField';
+import type { AgInputTextFieldParams } from '../../../widgets/agInputTextField';
+import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { RefPlaceholder } from '../../../widgets/component';
-import { NumberFilter, NumberFilterModel } from '../../provided/number/numberFilter';
+import type { NumberFilter, NumberFilterModel } from '../../provided/number/numberFilter';
 import { ProvidedFilter } from '../../provided/providedFilter';
-import { TextFilter, TextFilterModel, TextFilterParams } from '../../provided/text/textFilter';
-import { IFloatingFilterParams } from '../floatingFilter';
+import type { TextFilterModel, TextFilterParams } from '../../provided/text/textFilter';
+import { TextFilter } from '../../provided/text/textFilter';
+import type { IFloatingFilterParams } from '../floatingFilter';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
 
 export interface FloatingFilterInputService {

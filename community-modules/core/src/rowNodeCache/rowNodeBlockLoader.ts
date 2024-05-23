@@ -1,8 +1,8 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct, Qualifier } from '../context/context';
-import { IRowModel } from '../interfaces/iRowModel';
-import { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
-import { Logger, LoggerFactory } from '../logger';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
+import type { Logger, LoggerFactory } from '../logger';
 import { _removeFromArray } from '../utils/array';
 import { _debounce } from '../utils/function';
 import { RowNodeBlock } from './rowNodeBlock';

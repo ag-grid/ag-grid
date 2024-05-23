@@ -1,11 +1,11 @@
-import { UserCompDetails } from '../../../components/framework/userComponentFactory';
+import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { PostConstruct, PreDestroy } from '../../../context/context';
-import { Column, ColumnPinnedType } from '../../../entities/column';
+import type { Column, ColumnPinnedType } from '../../../entities/column';
 import { _removeAriaSort, _setAriaSort } from '../../../utils/aria';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
-import { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
-import { IHeaderComp } from './headerComp';
+import type { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
+import type { IHeaderComp } from './headerComp';
 
 export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
     private static TEMPLATE /* html */ = `<div class="ag-header-cell" role="columnheader">

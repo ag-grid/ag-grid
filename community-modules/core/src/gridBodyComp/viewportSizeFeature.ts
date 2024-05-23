@@ -1,19 +1,20 @@
-import { ColumnModel } from '../columns/columnModel';
-import { ColumnSizeService } from '../columns/columnSizeService';
-import { ColumnViewportService } from '../columns/columnViewportService';
-import { VisibleColsService } from '../columns/visibleColsService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { ColumnSizeService } from '../columns/columnSizeService';
+import type { ColumnViewportService } from '../columns/columnViewportService';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import { Autowired, PostConstruct } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { Column } from '../entities/column';
-import { BodyHeightChangedEvent, Events } from '../events';
-import { ScrollVisibleService, SetScrollsVisibleParams } from '../gridBodyComp/scrollVisibleService';
-import { ProcessUnpinnedColumnsParams } from '../interfaces/iCallbackParams';
-import { WithoutGridCommon } from '../interfaces/iCommon';
+import type { CtrlsService } from '../ctrlsService';
+import type { Column } from '../entities/column';
+import type { BodyHeightChangedEvent } from '../events';
+import { Events } from '../events';
+import type { ScrollVisibleService, SetScrollsVisibleParams } from '../gridBodyComp/scrollVisibleService';
+import type { ProcessUnpinnedColumnsParams } from '../interfaces/iCallbackParams';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _getInnerHeight, _getInnerWidth } from '../utils/dom';
-import { GridBodyCtrl } from './gridBodyCtrl';
-import { PinnedWidthService } from './pinnedWidthService';
-import { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
+import type { GridBodyCtrl } from './gridBodyCtrl';
+import type { PinnedWidthService } from './pinnedWidthService';
+import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 
 // listens to changes in the center viewport size, for column and row virtualisation,
 // and adjusts grid as necessary. there are two viewports, one for horizontal and one for

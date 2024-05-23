@@ -1,17 +1,17 @@
-import { ColDef } from './entities/colDef';
-import { Column, ColumnPinnedType } from './entities/column';
-import { ProvidedColumnGroup } from './entities/providedColumnGroup';
+import type { ColDef } from './entities/colDef';
+import type { Column, ColumnPinnedType } from './entities/column';
+import type { ProvidedColumnGroup } from './entities/providedColumnGroup';
 import { Events } from './eventKeys';
-import { FilterRequestSource } from './filter/filterManager';
-import { CellRange, CellRangeParams } from './interfaces/IRangeService';
-import { GridState } from './interfaces/gridState';
-import { AgChartThemeOverrides } from './interfaces/iAgChartOptions';
-import { ChartType } from './interfaces/iChartOptions';
-import { AgGridCommon } from './interfaces/iCommon';
-import { IFilterComp } from './interfaces/iFilter';
-import { IRowNode, RowPinnedType } from './interfaces/iRowNode';
-import { RowNodeTransaction } from './interfaces/rowNodeTransaction';
-import { ServerSideTransactionResult } from './interfaces/serverSideTransaction';
+import type { FilterRequestSource } from './filter/filterManager';
+import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
+import type { GridState } from './interfaces/gridState';
+import type { AgChartThemeOverrides } from './interfaces/iAgChartOptions';
+import type { ChartType } from './interfaces/iChartOptions';
+import type { AgGridCommon } from './interfaces/iCommon';
+import type { IFilterComp } from './interfaces/iFilter';
+import type { IRowNode, RowPinnedType } from './interfaces/iRowNode';
+import type { RowNodeTransaction } from './interfaces/rowNodeTransaction';
+import type { ServerSideTransactionResult } from './interfaces/serverSideTransaction';
 
 export { Events } from './eventKeys';
 

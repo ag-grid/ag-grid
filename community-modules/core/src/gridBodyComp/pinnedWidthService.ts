@@ -1,4 +1,4 @@
-import { VisibleColsService } from '../columns/visibleColsService';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../context/context';
 import { Events } from '../eventKeys';

@@ -1,20 +1,12 @@
-import {
-    AgToggleButton,
-    Autowired,
-    ChartDataPanel as ChartDataPanelType,
-    ChartType,
-    Component,
-    PostConstruct,
-    _setDisplayed,
-    _warnOnce,
-} from '@ag-grid-community/core';
+import type { ChartDataPanel as ChartDataPanelType, ChartType } from '@ag-grid-community/core';
+import { AgToggleButton, Autowired, Component, PostConstruct, _setDisplayed, _warnOnce } from '@ag-grid-community/core';
 
-import { ChartService } from '../../../chartService';
+import type { ChartService } from '../../../chartService';
 import { ChartController } from '../../chartController';
-import { ColState } from '../../model/chartDataModel';
-import { ChartTranslationService } from '../../services/chartTranslationService';
+import type { ColState } from '../../model/chartDataModel';
+import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { getMaxNumCategories, getMaxNumSeries, supportsInvertedCategorySeries } from '../../utils/seriesTypeMapper';
-import { ChartMenuContext } from '../chartMenuContext';
+import type { ChartMenuContext } from '../chartMenuContext';
 import { CategoriesDataPanel } from './categoriesDataPanel';
 import { ChartSpecificDataPanel } from './chartSpecificDataPanel';
 import { SeriesChartTypePanel } from './seriesChartTypePanel';

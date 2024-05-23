@@ -1,21 +1,23 @@
-import {
-    AgCheckbox,
+import type {
     AgEvent,
-    Autowired,
     ColDef,
     Column,
-    Component,
     ICellRendererComp,
     ISetFilterCellRendererParams,
     ISetFilterTreeListTooltipParams,
     ITooltipParams,
-    PostConstruct,
-    RefPlaceholder,
     SetFilterParams,
     UserComponentFactory,
     ValueFormatterParams,
     ValueService,
     WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    AgCheckbox,
+    Autowired,
+    Component,
+    PostConstruct,
+    RefPlaceholder,
     _createIcon,
     _setAriaChecked,
     _setAriaDescribedBy,
@@ -28,8 +30,8 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import { SetFilterModelTreeItem } from './iSetDisplayValueModel';
-import { ISetFilterLocaleText } from './localeText';
+import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
+import type { ISetFilterLocaleText } from './localeText';
 
 export interface SetFilterListItemSelectionChangedEvent<
     I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null,

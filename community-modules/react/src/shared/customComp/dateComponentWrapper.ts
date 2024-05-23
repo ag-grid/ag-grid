@@ -1,7 +1,7 @@
-import { IDate, IDateParams } from '@ag-grid-community/core';
+import type { IDate, IDateParams } from '@ag-grid-community/core';
 
 import { CustomComponentWrapper } from './customComponentWrapper';
-import { CustomDateCallbacks, CustomDateProps } from './interfaces';
+import type { CustomDateCallbacks, CustomDateProps } from './interfaces';
 
 export class DateComponentWrapper
     extends CustomComponentWrapper<IDateParams, CustomDateProps, CustomDateCallbacks>

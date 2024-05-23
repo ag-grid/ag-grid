@@ -1,16 +1,18 @@
-import {
-    Autowired,
+import type {
     BaseCellDataType,
-    Bean,
-    BeanStub,
     Column,
     ColumnAdvancedFilterModel,
     ColumnModel,
     ColumnNameService,
     DataTypeService,
     JoinAdvancedFilterModel,
-    PostConstruct,
     ValueService,
+} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Bean,
+    BeanStub,
+    PostConstruct,
     _exists,
     _parseDateTimeFromString,
     _serialiseDate,
@@ -18,14 +20,16 @@ import {
 } from '@ag-grid-community/core';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
-import { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
+import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 import { ColFilterExpressionParser } from './colFilterExpressionParser';
-import {
-    BooleanFilterExpressionOperators,
+import type {
     DataTypeFilterExpressionOperators,
     FilterExpressionEvaluatorParams,
     FilterExpressionOperator,
     FilterExpressionOperators,
+} from './filterExpressionOperators';
+import {
+    BooleanFilterExpressionOperators,
     ScalarFilterExpressionOperators,
     TextFilterExpressionOperators,
 } from './filterExpressionOperators';

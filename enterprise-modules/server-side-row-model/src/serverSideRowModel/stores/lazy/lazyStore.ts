@@ -1,35 +1,37 @@
-import {
-    Autowired,
-    BeanStub,
+import type {
     Column,
     ColumnModel,
-    Events,
     FuncColsService,
     IRowNode,
     ISelectionService,
     IServerSideStore,
     IsApplyServerSideTransactionParams,
     LoadSuccessParams,
-    NumberSequence,
-    PostConstruct,
-    PreDestroy,
     RowBounds,
     RowNode,
     ServerSideGroupLevelParams,
     ServerSideGroupLevelState,
     ServerSideTransaction,
     ServerSideTransactionResult,
-    ServerSideTransactionResultStatus,
     StoreRefreshAfterParams,
     StoreRefreshedEvent,
     StoreUpdatedEvent,
     WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    Autowired,
+    BeanStub,
+    Events,
+    NumberSequence,
+    PostConstruct,
+    PreDestroy,
+    ServerSideTransactionResultStatus,
     _missing,
 } from '@ag-grid-community/core';
 
-import { BlockUtils } from '../../blocks/blockUtils';
-import { SSRMParams } from '../../serverSideRowModel';
-import { StoreUtils } from '../storeUtils';
+import type { BlockUtils } from '../../blocks/blockUtils';
+import type { SSRMParams } from '../../serverSideRowModel';
+import type { StoreUtils } from '../storeUtils';
 import { LazyCache } from './lazyCache';
 
 export class LazyStore extends BeanStub implements IServerSideStore {
@@ -352,7 +354,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
 
         const orderedNodes = this.cache.getOrderedNodeMap();
-        for (let key in orderedNodes) {
+        for (const key in orderedNodes) {
             const lazyNode = orderedNodes[key];
             callback(lazyNode.node, sequence.next());
             const childCache = lazyNode.node.childStore;

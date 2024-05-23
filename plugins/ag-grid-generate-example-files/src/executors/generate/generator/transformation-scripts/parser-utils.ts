@@ -2,7 +2,7 @@ import { transform } from 'sucrase';
 import ts from 'typescript';
 
 import { getEnterprisePackageName, integratedChartsUsesChartsEnterprise } from '../constants';
-import { BindingImport, ExampleConfig, InternalFramework, ParsedBindings } from '../types';
+import type { BindingImport, ExampleConfig, InternalFramework, ParsedBindings } from '../types';
 
 export function readAsJsFile(srcFile, internalFramework: InternalFramework) {
     let tsFile = srcFile
@@ -45,7 +45,6 @@ export function tsGenerate(node, srcFile) {
         }
         return printer.printNode(ts.EmitHint.Unspecified, node, srcFile);
     } catch (error) {
-        // eslint-disable-next-line no-console
         console.error(error);
     }
     return 'ERROR - Printing';
@@ -95,7 +94,6 @@ export function tsCollect(tsTree, tsBindings: ParsedBindings, collectors, recurs
                 try {
                     c.apply(tsBindings, node);
                 } catch (error) {
-                    // eslint-disable-next-line no-console
                     console.error(error);
                 }
             });
@@ -617,7 +615,7 @@ export function preferParamsApi(code: string): string {
 }
 
 export function getInterfaceFileContents(tsBindings: ParsedBindings, currentFile) {
-    let interfaces = [];
+    const interfaces = [];
     // If the example has an existing interface file then merge that with our globally shared interfaces
     if (currentFile) {
         interfaces.push(currentFile);

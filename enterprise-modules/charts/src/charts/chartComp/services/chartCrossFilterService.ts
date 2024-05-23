@@ -1,14 +1,5 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Column,
-    ColumnModel,
-    GridApi,
-    RowNode,
-    ValueService,
-    _includes,
-} from '@ag-grid-community/core';
+import type { Column, ColumnModel, GridApi, RowNode, ValueService } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, _includes } from '@ag-grid-community/core';
 
 @Bean('chartCrossFilterService')
 export class ChartCrossFilterService extends BeanStub {
@@ -25,7 +16,7 @@ export class ChartCrossFilterService extends BeanStub {
             return;
         }
 
-        let colId = ChartCrossFilterService.extractFilterColId(event);
+        const colId = ChartCrossFilterService.extractFilterColId(event);
         if (this.isValidColumnFilter(colId)) {
             // update filters based on current chart selections
             this.updateFilters(filterModel, event, colId);
@@ -49,13 +40,13 @@ export class ChartCrossFilterService extends BeanStub {
     }
 
     private updateFilters(filterModel: any, event: any, colId: string) {
-        let dataKey = ChartCrossFilterService.extractFilterColId(event);
-        let rawValue = event.datum[dataKey];
+        const dataKey = ChartCrossFilterService.extractFilterColId(event);
+        const rawValue = event.datum[dataKey];
         if (rawValue === undefined) {
             return;
         }
 
-        let selectedValue = rawValue.toString();
+        const selectedValue = rawValue.toString();
 
         if (event.event.metaKey || event.event.ctrlKey) {
             const existingGridValues = this.getCurrentGridValuesForCategory(colId);
@@ -79,7 +70,7 @@ export class ChartCrossFilterService extends BeanStub {
     }
 
     private getUpdatedFilterModel(colId: any, updatedValues: any[]) {
-        let columnFilterType = this.getColumnFilterType(colId);
+        const columnFilterType = this.getColumnFilterType(colId);
         if (columnFilterType === 'agMultiColumnFilter') {
             return { filterType: 'multi', filterModels: [null, { filterType: 'set', values: updatedValues }] };
         }
@@ -87,7 +78,7 @@ export class ChartCrossFilterService extends BeanStub {
     }
 
     private getCurrentGridValuesForCategory(colId: string) {
-        let filteredValues: any[] = [];
+        const filteredValues: any[] = [];
         const column = this.getColumnById(colId);
         this.gridApi.forEachNodeAfterFilter((rowNode: RowNode) => {
             if (column && !rowNode.group) {
@@ -109,7 +100,7 @@ export class ChartCrossFilterService extends BeanStub {
             colId = colId.replace('-filtered-out', '');
         }
 
-        let filterType = this.getColumnFilterType(colId);
+        const filterType = this.getColumnFilterType(colId);
         if (typeof filterType === 'boolean') {
             return filterType;
         }
@@ -118,7 +109,7 @@ export class ChartCrossFilterService extends BeanStub {
     }
 
     private getColumnFilterType(colId: any) {
-        let gridColumn = this.getColumnById(colId);
+        const gridColumn = this.getColumnById(colId);
         if (gridColumn) {
             const colDef = gridColumn.getColDef();
             return colDef.filter;

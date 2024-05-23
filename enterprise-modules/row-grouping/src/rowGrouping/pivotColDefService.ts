@@ -1,7 +1,4 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
     ColDef,
     ColGroupDef,
     Column,
@@ -9,10 +6,8 @@ import {
     ColumnNameService,
     FuncColsService,
     IPivotColDefService,
-    PostConstruct,
-    _cloneObject,
-    _iterateObject,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, PostConstruct, _cloneObject, _iterateObject } from '@ag-grid-community/core';
 
 export interface PivotColDefServiceResult {
     pivotColumnGroupDefs: (ColDef | ColGroupDef)[];
@@ -506,7 +501,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
             depth: number
         ): ColDef | ColGroupDef => {
             const children: (ColDef | ColGroupDef)[] = [];
-            for (let key in uniqueValues) {
+            for (const key in uniqueValues) {
                 const item = uniqueValues[key];
                 const child = uniqueValuesToGroups(`${id}${this.fieldSeparator}${key}`, key, item, depth + 1);
                 children.push(child);
@@ -551,7 +546,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         };
 
         const res: (ColDef | ColGroupDef)[] = [];
-        for (let key in uniqueValues) {
+        for (const key in uniqueValues) {
             const item = uniqueValues[key];
             const col = uniqueValuesToGroups(key, key, item, 0);
             res.push(col);

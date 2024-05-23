@@ -1,4 +1,4 @@
-import { ModuleValidationResult } from '@ag-grid-community/core';
+import type { ModuleValidationResult } from '@ag-grid-community/core';
 
 const VERSION_CHECKING_FIRST_GRID_MAJOR_VERSION = 28;
 const VERSION_CHECKING_FIRST_CHARTS_MAJOR_VERSION = 6;

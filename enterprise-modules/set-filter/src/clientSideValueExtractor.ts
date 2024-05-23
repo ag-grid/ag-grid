@@ -1,16 +1,13 @@
-import {
-    AgPromise,
+import type {
     Column,
-    Events,
     FuncColsService,
     GetDataPath,
     IClientSideRowModel,
     RowNode,
     SetFilterParams,
     ValueService,
-    _makeNull,
-    _toStringOrNull,
 } from '@ag-grid-community/core';
+import { AgPromise, Events, _makeNull, _toStringOrNull } from '@ag-grid-community/core';
 
 /** @param V type of value in the Set Filter */
 export class ClientSideValuesExtractor<V> {

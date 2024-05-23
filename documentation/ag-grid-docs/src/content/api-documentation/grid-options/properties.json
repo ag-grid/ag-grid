@@ -1071,7 +1071,7 @@
                 "name": "DOM Layout",
                 "url": "./grid-size/#dom-layout"
             },
-            "description": "Switch between layout options. See [Printing](./printing/) and [Auto Height](./grid-size/#grid-auto-height). Default: `normal`"
+            "description": "Switch between layout options. See [Printing](./printing/) and [Auto Height](./grid-size/#auto-height-layout). Default: `normal`"
         },
         "ensureDomOrder": {
             "more": {

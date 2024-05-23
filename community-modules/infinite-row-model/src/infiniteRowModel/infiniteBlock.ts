@@ -1,9 +1,6 @@
+import type { Beans, IGetRowsParams, LoadSuccessParams, NumberSequence } from '@ag-grid-community/core';
 import {
     Autowired,
-    Beans,
-    IGetRowsParams,
-    LoadSuccessParams,
-    NumberSequence,
     PostConstruct,
     PreDestroy,
     RowNode,
@@ -12,7 +9,7 @@ import {
     _missing,
 } from '@ag-grid-community/core';
 
-import { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
+import type { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
 
 export class InfiniteBlock extends RowNodeBlock {
     @Autowired('beans') private beans: Beans;

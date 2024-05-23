@@ -1,13 +1,10 @@
-import {
+import type {
     AgComponentSelector,
-    Autowired,
-    Component,
-    Events,
     HorizontalResizeService,
-    PostConstruct,
     ToolPanelSizeChangedEvent,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
+import { Autowired, Component, Events, PostConstruct } from '@ag-grid-community/core';
 
 export class AgHorizontalResize extends Component {
     static readonly selector: AgComponentSelector = 'AG-HORIZONTAL-RESIZE';

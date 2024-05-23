@@ -1,4 +1,4 @@
-import { ExampleConfig, ImportType, ParsedBindings } from '../types';
+import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import { convertTemplate, getImport, toConst, toInput, toMemberWithValue, toOutput } from './angular-utils';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
@@ -75,7 +75,7 @@ function addModuleImports(
         allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
-    let propertyInterfaces = getPropertyInterfaces(properties);
+    const propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
     bImports.push({
         module: `'@ag-grid-community/core'`,
@@ -119,7 +119,7 @@ function addPackageImports(
         allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
-    let propertyInterfaces = getPropertyInterfaces(properties);
+    const propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
     bImports.push({
         module: `'ag-grid-community'`,
@@ -141,7 +141,7 @@ function getImports(
     importType: ImportType,
     allStylesheets: string[]
 ): string[] {
-    let imports = ["import { Component } from '@angular/core';"];
+    const imports = ["import { Component } from '@angular/core';"];
 
     if (bindings.data) {
         imports.push("import { HttpClient, HttpClientModule } from '@angular/common/http';");
@@ -273,7 +273,7 @@ export function vanillaToAngular(
             // We do not need the non-null assertion in component code as already applied to the declaration for the apis.
             .replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi');
 
-        let standaloneImports = ['AgGridAngular'];
+        const standaloneImports = ['AgGridAngular'];
         if (bindings.data) {
             standaloneImports.push('HttpClientModule');
         }

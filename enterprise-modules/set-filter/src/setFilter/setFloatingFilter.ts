@@ -1,13 +1,10 @@
-import {
-    AgInputTextField,
-    Autowired,
+import type {
     ColumnNameService,
-    Component,
     IFloatingFilter,
     IFloatingFilterParams,
-    RefPlaceholder,
     SetFilterModel,
 } from '@ag-grid-community/core';
+import { AgInputTextField, Autowired, Component, RefPlaceholder } from '@ag-grid-community/core';
 
 import { SetFilter } from './setFilter';
 import { SetFilterModelFormatter } from './setFilterModelFormatter';

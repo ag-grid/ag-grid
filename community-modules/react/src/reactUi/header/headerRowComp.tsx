@@ -1,12 +1,12 @@
-import {
+import type {
     AbstractHeaderCellCtrl,
     HeaderCellCtrl,
     HeaderFilterCellCtrl,
     HeaderGroupCellCtrl,
     HeaderRowCtrl,
-    HeaderRowType,
     IHeaderRowComp,
 } from '@ag-grid-community/core';
+import { HeaderRowType } from '@ag-grid-community/core';
 import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 
 import { agFlushSync, getNextValueIfDifferent } from '../utils';

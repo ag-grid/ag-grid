@@ -2,7 +2,7 @@ import { Component, KeyCode, PostConstruct, RefPlaceholder, _exists, _setDisplay
 import { _Util } from 'ag-charts-community';
 
 import { AgColorInput } from './agColorInput';
-import { AgColorPicker } from './agColorPicker';
+import type { AgColorPicker } from './agColorPicker';
 
 export class AgColorPanel extends Component {
     private H = 1; // in the [0, 1] range

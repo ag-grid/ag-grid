@@ -1,15 +1,12 @@
-import {
-    Autowired,
-    Bean,
-    Events,
-    ExpansionService,
+import type {
     IExpansionService,
     IsServerSideGroupOpenByDefaultParams,
     RowNode,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, Events, ExpansionService } from '@ag-grid-community/core';
 
-import { ServerSideRowModel } from '../serverSideRowModel';
+import type { ServerSideRowModel } from '../serverSideRowModel';
 
 @Bean('expansionService')
 export class ServerSideExpansionService extends ExpansionService implements IExpansionService {

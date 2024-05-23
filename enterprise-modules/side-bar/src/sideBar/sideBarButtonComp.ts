@@ -1,11 +1,5 @@
-import {
-    Component,
-    PostConstruct,
-    RefPlaceholder,
-    ToolPanelDef,
-    _createIconNoSpan,
-    _setAriaExpanded,
-} from '@ag-grid-community/core';
+import type { ToolPanelDef } from '@ag-grid-community/core';
+import { Component, PostConstruct, RefPlaceholder, _createIconNoSpan, _setAriaExpanded } from '@ag-grid-community/core';
 
 export class SideBarButtonComp extends Component {
     public static EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';

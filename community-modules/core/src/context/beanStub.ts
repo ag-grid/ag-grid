@@ -1,20 +1,21 @@
-import { GridOptions } from '../entities/gridOptions';
-import { Environment } from '../environment';
+import type { GridOptions } from '../entities/gridOptions';
+import type { Environment } from '../environment';
 import { EventService } from '../eventService';
-import { AgEvent, AgEventListener } from '../events';
-import {
+import type { AgEvent, AgEventListener } from '../events';
+import type {
     GridOptionsService,
     PropertyChangedEvent,
     PropertyChangedListener,
     PropertyValueChangedEvent,
     PropertyValueChangedListener,
 } from '../gridOptionsService';
-import { IEventEmitter } from '../interfaces/iEventEmitter';
-import { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
-import { LocaleService } from '../localeService';
+import type { IEventEmitter } from '../interfaces/iEventEmitter';
+import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import type { LocaleService } from '../localeService';
 import { _addSafePassiveEventListener } from '../utils/event';
-import { Component } from '../widgets/component';
-import { Autowired, Context, PreDestroy } from './context';
+import type { Component } from '../widgets/component';
+import type { Context } from './context';
+import { Autowired, PreDestroy } from './context';
 
 export class BeanStub implements IEventEmitter {
     public static EVENT_DESTROYED = 'destroyed';

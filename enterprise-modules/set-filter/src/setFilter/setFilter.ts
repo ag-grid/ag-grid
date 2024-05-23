@@ -1,29 +1,31 @@
-import {
-    AgInputTextField,
-    AgPromise,
-    Autowired,
+import type {
     CellValueChangedEvent,
     ComponentClass,
     DataTypeService,
-    Events,
     FuncColsService,
-    GROUP_AUTO_COLUMN_ID,
     GetDataPath,
     IAfterGuiAttachedParams,
     IDoesFilterPassParams,
     IRowNode,
     ISetFilter,
-    KeyCode,
     KeyCreatorParams,
-    ProvidedFilter,
-    RefPlaceholder,
     SetFilterModel,
     SetFilterModelValue,
     SetFilterParams,
     ValueFormatterParams,
     ValueService,
-    VirtualList,
     VirtualListModel,
+} from '@ag-grid-community/core';
+import {
+    AgInputTextField,
+    AgPromise,
+    Autowired,
+    Events,
+    GROUP_AUTO_COLUMN_ID,
+    KeyCode,
+    ProvidedFilter,
+    RefPlaceholder,
+    VirtualList,
     _areEqual,
     _last,
     _makeNull,
@@ -32,14 +34,16 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import { SetFilterDisplayValue, SetFilterModelTreeItem } from './iSetDisplayValueModel';
-import { DEFAULT_LOCALE_TEXT, ISetFilterLocaleText } from './localeText';
-import {
-    SetFilterListItem,
+import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
+import { SetFilterDisplayValue } from './iSetDisplayValueModel';
+import type { ISetFilterLocaleText } from './localeText';
+import { DEFAULT_LOCALE_TEXT } from './localeText';
+import type {
     SetFilterListItemExpandedChangedEvent,
     SetFilterListItemParams,
     SetFilterListItemSelectionChangedEvent,
 } from './setFilterListItem';
+import { SetFilterListItem } from './setFilterListItem';
 import { SetFilterModelFormatter } from './setFilterModelFormatter';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 
@@ -168,7 +172,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         e.preventDefault();
 
         const { readOnly } = this.setFilterParams ?? {};
-        if (!!readOnly) {
+        if (readOnly) {
             return;
         }
         return component;
@@ -914,7 +918,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             return this.doesFilterPassForGrouping(node);
         }
 
-        let value = this.getValueFromNode(node);
+        const value = this.getValueFromNode(node);
 
         if (value != null && Array.isArray(value)) {
             if (value.length === 0) {

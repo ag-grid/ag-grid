@@ -1,10 +1,11 @@
 import { Autowired } from '../../../context/context';
-import { Column } from '../../../entities/column';
+import type { Column } from '../../../entities/column';
 import { Events } from '../../../eventKeys';
-import { SortController } from '../../../sortController';
+import type { SortController } from '../../../sortController';
 import { _clearElement, _setDisplayed } from '../../../utils/dom';
 import { _createIconNoSpan } from '../../../utils/icon';
-import { AgComponentSelector, Component, RefPlaceholder } from '../../../widgets/component';
+import type { AgComponentSelector } from '../../../widgets/component';
+import { Component, RefPlaceholder } from '../../../widgets/component';
 
 export class SortIndicatorComp extends Component {
     static readonly selector: AgComponentSelector = 'AG-SORT-INDICATOR';

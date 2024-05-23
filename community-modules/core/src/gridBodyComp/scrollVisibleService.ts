@@ -1,9 +1,10 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { Events, ScrollVisibilityChangedEvent } from '../events';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { ColumnAnimationService } from '../rendering/columnAnimationService';
+import type { CtrlsService } from '../ctrlsService';
+import type { ScrollVisibilityChangedEvent } from '../events';
+import { Events } from '../events';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 
 export interface SetScrollsVisibleParams {
     horizontalScrollShowing: boolean;

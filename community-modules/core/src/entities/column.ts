@@ -1,21 +1,21 @@
-import { ColumnState } from '../columns/columnApplyStateService';
+import type { ColumnState } from '../columns/columnApplyStateService';
 import { Autowired, PostConstruct } from '../context/context';
-import { Environment } from '../environment';
+import type { Environment } from '../environment';
 import { EventService } from '../eventService';
-import { AgEvent, AgEventListener, ColumnEvent, ColumnEventType } from '../events';
-import { GridOptionsService } from '../gridOptionsService';
-import { BrandedType } from '../interfaces/brandedType';
-import { IEventEmitter } from '../interfaces/iEventEmitter';
-import { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
-import { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
-import { IProvidedColumn } from '../interfaces/iProvidedColumn';
-import { IRowNode } from '../interfaces/iRowNode';
+import type { AgEvent, AgEventListener, ColumnEvent, ColumnEventType } from '../events';
+import type { GridOptionsService } from '../gridOptionsService';
+import type { BrandedType } from '../interfaces/brandedType';
+import type { IEventEmitter } from '../interfaces/iEventEmitter';
+import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import type { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
+import type { IProvidedColumn } from '../interfaces/iProvidedColumn';
+import type { IRowNode } from '../interfaces/iRowNode';
 import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
-import { ColumnHoverService } from '../rendering/columnHoverService';
+import type { ColumnHoverService } from '../rendering/columnHoverService';
 import { _warnOnce } from '../utils/function';
 import { _attrToNumber, _exists, _missing } from '../utils/generic';
 import { _mergeDeep } from '../utils/object';
-import {
+import type {
     AbstractColDef,
     BaseColDefParams,
     ColDef,
@@ -26,8 +26,8 @@ import {
     RowSpanParams,
     SortDirection,
 } from './colDef';
-import { ColumnGroup, ColumnGroupShowType } from './columnGroup';
-import { ProvidedColumnGroup } from './providedColumnGroup';
+import type { ColumnGroup, ColumnGroupShowType } from './columnGroup';
+import type { ProvidedColumnGroup } from './providedColumnGroup';
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 export type ColumnEventName =

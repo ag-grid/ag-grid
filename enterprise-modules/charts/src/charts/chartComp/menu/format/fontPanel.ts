@@ -1,6 +1,6 @@
+import type { AgSelectParams } from '@ag-grid-community/core';
 import {
     AgSelect,
-    AgSelectParams,
     Autowired,
     Component,
     PostConstruct,
@@ -8,12 +8,13 @@ import {
     _includes,
     _removeFromParent,
 } from '@ag-grid-community/core';
-import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import { AgColorPicker } from '../../../../widgets/agColorPicker';
-import { ChartOptionsProxy } from '../../services/chartOptionsService';
-import { ChartTranslationService } from '../../services/chartTranslationService';
-import { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
+import type { ChartOptionsProxy } from '../../services/chartOptionsService';
+import type { ChartTranslationService } from '../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
 
 interface Font {
     fontFamily?: string;

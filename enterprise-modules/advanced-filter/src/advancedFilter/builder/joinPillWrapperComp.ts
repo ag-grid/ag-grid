@@ -1,9 +1,10 @@
-import { Autowired, Component, JoinAdvancedFilterModel } from '@ag-grid-community/core';
+import type { JoinAdvancedFilterModel } from '@ag-grid-community/core';
+import { Autowired, Component } from '@ag-grid-community/core';
 
-import { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
-import { AdvancedFilterBuilderItem, CreatePillParams } from './iAdvancedFilterBuilder';
-import { InputPillComp } from './inputPillComp';
-import { SelectPillComp } from './selectPillComp';
+import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
+import type { AdvancedFilterBuilderItem, CreatePillParams } from './iAdvancedFilterBuilder';
+import type { InputPillComp } from './inputPillComp';
+import type { SelectPillComp } from './selectPillComp';
 
 export class JoinPillWrapperComp extends Component {
     @Autowired('advancedFilterExpressionService')

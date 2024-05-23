@@ -1,6 +1,6 @@
-import { AgAreaSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-community';
+import type { AgAreaSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-community';
 
-import { ChartProxyParams, UpdateParams } from '../chartProxy';
+import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
 
 export class AreaChartProxy extends CartesianChartProxy<'area'> {

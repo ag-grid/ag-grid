@@ -1,13 +1,14 @@
 import { BeanStub } from '../../../context/beanStub';
 import { Autowired } from '../../../context/context';
-import { HeaderCheckboxSelectionCallbackParams } from '../../../entities/colDef';
-import { Column } from '../../../entities/column';
-import { Events, SelectionEventSourceType } from '../../../events';
-import { IRowModel } from '../../../interfaces/iRowModel';
-import { ISelectionService } from '../../../interfaces/iSelectionService';
+import type { HeaderCheckboxSelectionCallbackParams } from '../../../entities/colDef';
+import type { Column } from '../../../entities/column';
+import type { SelectionEventSourceType } from '../../../events';
+import { Events } from '../../../events';
+import type { IRowModel } from '../../../interfaces/iRowModel';
+import type { ISelectionService } from '../../../interfaces/iSelectionService';
 import { _setAriaHidden, _setAriaRole } from '../../../utils/aria';
 import { AgCheckbox } from '../../../widgets/agCheckbox';
-import { HeaderCellCtrl } from './headerCellCtrl';
+import type { HeaderCellCtrl } from './headerCellCtrl';
 
 export class SelectAllFeature extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;

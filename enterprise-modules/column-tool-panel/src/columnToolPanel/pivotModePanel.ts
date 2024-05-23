@@ -1,14 +1,5 @@
-import {
-    AgCheckbox,
-    AgToggleButton,
-    Autowired,
-    ColumnModel,
-    Component,
-    Events,
-    GridApi,
-    PostConstruct,
-    RefPlaceholder,
-} from '@ag-grid-community/core';
+import type { AgCheckbox, ColumnModel, GridApi } from '@ag-grid-community/core';
+import { AgToggleButton, Autowired, Component, Events, PostConstruct, RefPlaceholder } from '@ag-grid-community/core';
 
 export class PivotModePanel extends Component {
     @Autowired('columnModel') private columnModel: ColumnModel;

@@ -1,9 +1,9 @@
-import { ColumnModel } from '../../../columns/columnModel';
+import type { ColumnModel } from '../../../columns/columnModel';
 import { Autowired } from '../../../context/context';
-import { ColumnGroup } from '../../../entities/columnGroup';
+import type { ColumnGroup } from '../../../entities/columnGroup';
 import { ProvidedColumnGroup } from '../../../entities/providedColumnGroup';
-import { AgGridCommon } from '../../../interfaces/iCommon';
-import { IComponent } from '../../../interfaces/iComponent';
+import type { AgGridCommon } from '../../../interfaces/iCommon';
+import type { IComponent } from '../../../interfaces/iComponent';
 import { _setDisplayed } from '../../../utils/dom';
 import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../../utils/event';
 import { _warnOnce } from '../../../utils/function';

@@ -1,21 +1,23 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../context/context';
-import { IAggFunc } from '../entities/colDef';
-import { Column, ColumnPinnedType } from '../entities/column';
-import { ColumnEvent, ColumnEventType, Events } from '../events';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { ColumnAnimationService } from '../rendering/columnAnimationService';
-import { SortController } from '../sortController';
+import type { IAggFunc } from '../entities/colDef';
+import type { ColumnPinnedType } from '../entities/column';
+import { Column } from '../entities/column';
+import type { ColumnEvent, ColumnEventType } from '../events';
+import { Events } from '../events';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { ColumnAnimationService } from '../rendering/columnAnimationService';
+import type { SortController } from '../sortController';
 import { _areEqual, _removeFromArray } from '../utils/array';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
 import { GROUP_AUTO_COLUMN_ID } from './autoColService';
-import { ColumnEventDispatcher } from './columnEventDispatcher';
-import { ColumnGetStateService } from './columnGetStateService';
-import { ColumnModel } from './columnModel';
+import type { ColumnEventDispatcher } from './columnEventDispatcher';
+import type { ColumnGetStateService } from './columnGetStateService';
+import type { ColumnModel } from './columnModel';
 import { getColumnsFromTree } from './columnUtils';
-import { FuncColsService } from './funcColsService';
-import { PivotResultColsService } from './pivotResultColsService';
-import { VisibleColsService } from './visibleColsService';
+import type { FuncColsService } from './funcColsService';
+import type { PivotResultColsService } from './pivotResultColsService';
+import type { VisibleColsService } from './visibleColsService';
 
 export interface ModifyColumnsNoEventsCallbacks {
     addGroupCol(col: Column): void;

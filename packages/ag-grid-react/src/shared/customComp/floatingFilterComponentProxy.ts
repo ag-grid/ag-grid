@@ -1,7 +1,8 @@
-import { AgPromise, IFloatingFilter, IFloatingFilterParams } from 'ag-grid-community';
+import type { IFloatingFilter, IFloatingFilterParams } from 'ag-grid-community';
+import { AgPromise } from 'ag-grid-community';
 
 import { addOptionalMethods } from './customComponentWrapper';
-import { CustomFloatingFilterCallbacks, CustomFloatingFilterProps } from './interfaces';
+import type { CustomFloatingFilterCallbacks, CustomFloatingFilterProps } from './interfaces';
 
 export function updateFloatingFilterParent(params: IFloatingFilterParams, model: any): void {
     params.parentFilterInstance((instance) => {

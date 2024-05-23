@@ -1,6 +1,7 @@
-import { ComponentMeta, ControllerMeta } from '../context/context';
-import { ComponentClass } from '../widgets/component';
-import { RowModelType } from './iRowModel';
+import type { ControllerMeta } from '../context/context';
+import { ComponentMeta } from '../context/context';
+import type { ComponentClass } from '../widgets/component';
+import type { RowModelType } from './iRowModel';
 
 export type ModuleValidationValidResult = {
     isValid: true;

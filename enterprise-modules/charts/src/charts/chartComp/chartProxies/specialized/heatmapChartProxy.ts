@@ -1,4 +1,4 @@
-import {
+import type {
     AgCartesianChartOptions,
     AgChartThemeOverrides,
     AgHeatmapSeriesOptions,
@@ -7,7 +7,8 @@ import {
 } from 'ag-charts-community';
 
 import { flatMap } from '../../utils/array';
-import { ChartProxy, ChartProxyParams, UpdateParams } from '../chartProxy';
+import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import { ChartProxy } from '../chartProxy';
 
 export const HEATMAP_CATEGORY_KEY = 'AG-GRID-DEFAULT-HEATMAP-CATEGORY-KEY';
 export const HEATMAP_SERIES_KEY = 'AG-GRID-DEFAULT-HEATMAP-SERIES-KEY';

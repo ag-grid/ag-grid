@@ -1,5 +1,5 @@
-import { IComponent } from '../../interfaces/iComponent';
-import { ComponentType } from './componentTypes';
+import type { IComponent } from '../../interfaces/iComponent';
+import type { ComponentType } from './componentTypes';
 
 /**
  * B the business interface (ie IHeader)

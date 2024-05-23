@@ -1,7 +1,8 @@
-import { GridOptions } from '../entities/gridOptions';
-import { ComponentStateChangedEvent, Events } from '../events';
-import { GridApi } from '../gridApi';
-import { WithoutGridCommon } from '../interfaces/iCommon';
+import type { GridOptions } from '../entities/gridOptions';
+import type { ComponentStateChangedEvent } from '../events';
+import { Events } from '../events';
+import type { GridApi } from '../gridApi';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { PropertyKeys } from '../propertyKeys';
 import { _includes } from '../utils/array';
 import { _values } from '../utils/generic';
@@ -51,6 +52,7 @@ export class ComponentUtil {
         Events.EVENT_SUPPRESS_FIELD_DOT_NOTATION,
         Events.EVENT_ROW_COUNT_READY,
         Events.EVENT_SIDE_BAR_UPDATED,
+        Events.EVENT_PINNED_HEIGHT_CHANGED,
     ];
 
     // events that are available for use by users of AG Grid and so should be documented

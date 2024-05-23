@@ -1,6 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import { Bean, PostConstruct } from '../context/context';
-import { ALWAYS_SYNC_GLOBAL_EVENTS, AgEventListener, AgGlobalEventListener } from '../events';
+import type { AgEventListener, AgGlobalEventListener } from '../events';
+import { ALWAYS_SYNC_GLOBAL_EVENTS } from '../events';
 import { FrameworkEventListenerService } from './frameworkEventListenerService';
 
 @Bean('apiEventService')

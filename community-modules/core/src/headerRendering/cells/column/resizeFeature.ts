@@ -1,16 +1,16 @@
-import { ColumnAutosizeService } from '../../../columns/columnAutosizeService';
-import { ColumnModel } from '../../../columns/columnModel';
-import { ColumnSizeService } from '../../../columns/columnSizeService';
+import type { ColumnAutosizeService } from '../../../columns/columnAutosizeService';
+import type { ColumnModel } from '../../../columns/columnModel';
+import type { ColumnSizeService } from '../../../columns/columnSizeService';
 import { BeanStub } from '../../../context/beanStub';
 import { Autowired, PostConstruct } from '../../../context/context';
-import { CtrlsService } from '../../../ctrlsService';
-import { Column, ColumnPinnedType } from '../../../entities/column';
-import { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
+import type { CtrlsService } from '../../../ctrlsService';
+import type { Column, ColumnPinnedType } from '../../../entities/column';
+import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
 import { _getInnerWidth, _setDisplayed } from '../../../utils/dom';
 import { TouchListener } from '../../../widgets/touchListener';
-import { HorizontalResizeService } from '../../common/horizontalResizeService';
-import { IHeaderResizeFeature } from '../abstractCell/abstractHeaderCellCtrl';
-import { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
+import type { HorizontalResizeService } from '../../common/horizontalResizeService';
+import type { IHeaderResizeFeature } from '../abstractCell/abstractHeaderCellCtrl';
+import type { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
 
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;

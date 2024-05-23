@@ -1,23 +1,18 @@
-import {
+import type {
     AgComponentSelector,
-    Autowired,
     CellCtrl,
     CellPosition,
     CellRange,
     Column,
-    Events,
     FillEndEvent,
     FillOperationParams,
     FillStartEvent,
     RowNode,
     RowPosition,
-    SelectionHandleType,
     ValueService,
     WithoutGridCommon,
-    _last,
-    _toStringOrNull,
-    _warnOnce,
 } from '@ag-grid-community/core';
+import { Autowired, Events, SelectionHandleType, _last, _toStringOrNull, _warnOnce } from '@ag-grid-community/core';
 
 import { AbstractSelectionHandle } from './abstractSelectionHandle';
 import { findLineByLeastSquares } from './utils';

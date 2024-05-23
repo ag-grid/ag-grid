@@ -1,12 +1,12 @@
 import { Autowired, Bean, Qualifier } from '../context/context';
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
-import { ColumnEventType } from '../events';
-import { Logger, LoggerFactory } from '../logger';
-import { ColumnAnimationService } from '../rendering/columnAnimationService';
-import { ColumnEventDispatcher } from './columnEventDispatcher';
+import type { ColumnEventType } from '../events';
+import type { Logger, LoggerFactory } from '../logger';
+import type { ColumnAnimationService } from '../rendering/columnAnimationService';
+import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
-import { ColumnModel } from './columnModel';
-import { VisibleColsService } from './visibleColsService';
+import type { ColumnModel } from './columnModel';
+import type { VisibleColsService } from './visibleColsService';
 
 @Bean('columnGroupStateService')
 export class ColumnGroupStateService {

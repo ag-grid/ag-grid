@@ -1,6 +1,6 @@
-import { AgInputFieldParams } from '../interfaces/agFieldParams';
+import type { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { AgAbstractInputField } from './agAbstractInputField';
-import { AgComponentSelector } from './component';
+import type { AgComponentSelector } from './component';
 
 export class AgInputTextArea extends AgAbstractInputField<HTMLTextAreaElement, string> {
     static readonly selector: AgComponentSelector = 'AG-INPUT-TEXT-AREA';

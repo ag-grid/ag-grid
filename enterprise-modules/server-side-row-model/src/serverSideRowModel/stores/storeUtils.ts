@@ -1,7 +1,4 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
     ColumnModel,
     ColumnVO,
     GridOptions,
@@ -11,12 +8,11 @@ import {
     RowNode,
     RowNodeBlock,
     StoreRefreshAfterParams,
-    _missingOrEmpty,
-    _warnOnce,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, _missingOrEmpty, _warnOnce } from '@ag-grid-community/core';
 
-import { SSRMParams, ServerSideRowModel } from '../serverSideRowModel';
-import { StoreFactory } from './storeFactory';
+import type { SSRMParams, ServerSideRowModel } from '../serverSideRowModel';
+import type { StoreFactory } from './storeFactory';
 
 @Bean('ssrmStoreUtils')
 export class StoreUtils extends BeanStub {

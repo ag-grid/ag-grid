@@ -1,8 +1,9 @@
-import { Autowired, Bean, BeanStub, FocusService, PostConstruct, TabGuardComp } from '@ag-grid-community/core';
+import type { FocusService } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, PostConstruct, TabGuardComp } from '@ag-grid-community/core';
 import { AgDialog } from '@ag-grid-enterprise/core';
 
-import { ChartTranslationService } from '../../services/chartTranslationService';
-import { ChartMenuContext } from '../chartMenuContext';
+import type { ChartTranslationService } from '../../services/chartTranslationService';
+import type { ChartMenuContext } from '../chartMenuContext';
 import { AdvancedSettingsPanel } from './advancedSettingsPanel';
 
 @Bean('advancedSettingsMenuFactory')

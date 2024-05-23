@@ -1,20 +1,14 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
     IImmutableService,
     IRowModel,
     ISelectionService,
-    PostConstruct,
     RowDataTransaction,
     RowNode,
     RowRenderer,
-    _exists,
-    _iterateObject,
-    _missing,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, PostConstruct, _exists, _iterateObject, _missing } from '@ag-grid-community/core';
 
-import { ClientSideRowModel } from './clientSideRowModel';
+import type { ClientSideRowModel } from './clientSideRowModel';
 
 @Bean('immutableService')
 export class ImmutableService extends BeanStub implements IImmutableService {

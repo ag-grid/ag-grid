@@ -1,18 +1,14 @@
 import { Autowired, PostConstruct, PreDestroy } from '../../context/context';
-import { Beans } from '../../rendering/beans';
+import type { Beans } from '../../rendering/beans';
 import { RowComp } from '../../rendering/row/rowComp';
-import { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
+import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
 import { _setAriaRole } from '../../utils/aria';
 import { _ensureDomOrder, _insertWithDomOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
-import { AgComponentSelector, Component, RefPlaceholder } from '../../widgets/component';
-import {
-    IRowContainerComp,
-    RowContainerCtrl,
-    RowContainerName,
-    RowContainerType,
-    getRowContainerTypeForName,
-} from './rowContainerCtrl';
+import type { AgComponentSelector } from '../../widgets/component';
+import { Component, RefPlaceholder } from '../../widgets/component';
+import type { IRowContainerComp, RowContainerType } from './rowContainerCtrl';
+import { RowContainerCtrl, RowContainerName, getRowContainerTypeForName } from './rowContainerCtrl';
 
 function templateFactory(): string {
     const name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;

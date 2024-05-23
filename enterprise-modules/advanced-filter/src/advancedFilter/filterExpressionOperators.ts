@@ -1,7 +1,7 @@
-import { IRowNode } from '@ag-grid-community/core';
+import type { IRowNode } from '@ag-grid-community/core';
 
-import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
-import { AutocompleteEntry } from './autocomplete/autocompleteParams';
+import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
+import type { AutocompleteEntry } from './autocomplete/autocompleteParams';
 
 export interface FilterExpressionEvaluatorParams<ConvertedTValue, TValue = ConvertedTValue> {
     caseSensitive?: boolean;

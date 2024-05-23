@@ -1,5 +1,5 @@
 import { Events } from '../../eventKeys';
-import { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _getAriaCheckboxStateName } from '../../utils/aria';
 import { AgCheckbox } from '../../widgets/agCheckbox';
 import { RefPlaceholder } from '../../widgets/component';

@@ -1,13 +1,15 @@
-import {
+import type {
     AgEvent,
-    Autowired,
-    Component,
     ComponentClass,
-    DragAndDropService,
     DragItem,
     DragSource,
     DragSourceType,
     DropTarget,
+} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Component,
+    DragAndDropService,
     Events,
     KeyCode,
     PostConstruct,

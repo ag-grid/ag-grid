@@ -1,9 +1,9 @@
 import { BeanStub } from '../../context/beanStub';
 import { Autowired, Bean } from '../../context/context';
-import { IComponent } from '../../interfaces/iComponent';
-import { ICellRendererComp, ICellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
+import type { IComponent } from '../../interfaces/iComponent';
+import type { ICellRendererComp, ICellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
 import { _loadTemplate } from '../../utils/dom';
-import { ComponentMetadata, ComponentMetadataProvider } from './componentMetadataProvider';
+import type { ComponentMetadata, ComponentMetadataProvider } from './componentMetadataProvider';
 
 @Bean('agComponentUtils')
 export class AgComponentUtils extends BeanStub {

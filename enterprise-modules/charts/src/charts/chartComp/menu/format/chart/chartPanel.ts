@@ -1,8 +1,9 @@
 import { Autowired, Component, PostConstruct, RefPlaceholder } from '@ag-grid-community/core';
-import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartTranslationService } from '../../../services/chartTranslationService';
-import { FormatPanelOptions } from '../formatPanel';
+import type { ChartTranslationService } from '../../../services/chartTranslationService';
+import type { FormatPanelOptions } from '../formatPanel';
 import { BackgroundPanel } from './backgroundPanel';
 import { PaddingPanel } from './paddingPanel';
 

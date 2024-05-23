@@ -1,13 +1,7 @@
-import {
-    Autowired,
-    ChartToolbarMenuItemOptions,
-    Component,
-    RefPlaceholder,
-    _clearElement,
-    _createIconNoSpan,
-} from '@ag-grid-community/core';
+import type { ChartToolbarMenuItemOptions } from '@ag-grid-community/core';
+import { Autowired, Component, RefPlaceholder, _clearElement, _createIconNoSpan } from '@ag-grid-community/core';
 
-import { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
+import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
 
 interface ChartToolbarButton {
     buttonName: ChartToolbarMenuItemOptions;

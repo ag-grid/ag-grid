@@ -1,9 +1,7 @@
+import type { AgComponentSelector, Column, ColumnModel } from '@ag-grid-community/core';
 import {
-    AgComponentSelector,
     AgInputTextField,
     Autowired,
-    Column,
-    ColumnModel,
     Component,
     Events,
     PostConstruct,
@@ -13,7 +11,7 @@ import {
     _setDisplayed,
 } from '@ag-grid-community/core';
 
-import { ToolPanelFiltersCompParams } from './filtersToolPanel';
+import type { ToolPanelFiltersCompParams } from './filtersToolPanel';
 
 export enum EXPAND_STATE {
     EXPANDED,

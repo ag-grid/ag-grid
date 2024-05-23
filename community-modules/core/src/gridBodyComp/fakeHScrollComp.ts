@@ -1,9 +1,10 @@
-import { VisibleColsService } from '../columns/visibleColsService';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { Autowired, PostConstruct } from '../context/context';
 import { Events } from '../eventKeys';
-import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
+import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from '../utils/dom';
-import { AgComponentSelector, RefPlaceholder } from '../widgets/component';
+import type { AgComponentSelector } from '../widgets/component';
+import { RefPlaceholder } from '../widgets/component';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { CenterWidthFeature } from './centerWidthFeature';
 

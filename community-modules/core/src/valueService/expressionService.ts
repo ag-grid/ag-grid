@@ -1,7 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import { Bean } from '../context/context';
 import { Qualifier } from '../context/context';
-import { Logger, LoggerFactory } from '../logger';
+import type { Logger, LoggerFactory } from '../logger';
 
 @Bean('expressionService')
 export class ExpressionService extends BeanStub {

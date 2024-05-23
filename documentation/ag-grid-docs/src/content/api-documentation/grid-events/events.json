@@ -381,7 +381,7 @@
         },
         "gridSizeChanged": {
             "more": {
-                "name": "Grid Size",
+                "name": "Grid Layout",
                 "url": "./grid-size/"
             }
         },

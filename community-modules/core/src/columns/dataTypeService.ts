@@ -1,16 +1,16 @@
 import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../context/context';
-import {
+import type {
     ColDef,
-    KeyCreatorParams,
     SuppressKeyboardEventParams,
     ValueFormatterFunc,
     ValueFormatterParams,
     ValueGetterParams,
 } from '../entities/colDef';
+import { KeyCreatorParams } from '../entities/colDef';
 import { Column } from '../entities/column';
-import {
+import type {
     BaseCellDataType,
     CoreDataTypeDefinition,
     DataTypeDefinition,
@@ -19,21 +19,22 @@ import {
     ValueParserLiteParams,
 } from '../entities/dataType';
 import { Events } from '../eventKeys';
-import { AgEventListener, AgGridEvent, DataTypesInferredEvent, RowDataUpdateStartedEvent } from '../events';
-import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { IRowModel } from '../interfaces/iRowModel';
-import { IRowNode } from '../interfaces/iRowNode';
+import type { AgEventListener, AgGridEvent, DataTypesInferredEvent, RowDataUpdateStartedEvent } from '../events';
+import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { IRowNode } from '../interfaces/iRowNode';
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
 import { _warnOnce } from '../utils/function';
 import { _exists, _toStringOrNull } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
-import { ValueService } from '../valueService/valueService';
-import { ColumnApplyStateService, ColumnState, ColumnStateParams } from './columnApplyStateService';
-import { ColumnModel, convertSourceType } from './columnModel';
-import { FuncColsService } from './funcColsService';
+import type { ValueService } from '../valueService/valueService';
+import type { ColumnApplyStateService, ColumnState, ColumnStateParams } from './columnApplyStateService';
+import type { ColumnModel } from './columnModel';
+import { convertSourceType } from './columnModel';
+import type { FuncColsService } from './funcColsService';
 
 interface GroupSafeValueFormatter {
     groupSafeValueFormatter?: ValueFormatterFunc;

@@ -1,10 +1,12 @@
-import { IDoesFilterPassParams, ProvidedFilterModel } from '../../interfaces/iFilter';
-import { IRowModel, RowModelType } from '../../interfaces/iRowModel';
-import { LocaleService } from '../../localeService';
-import { PositionableFeature } from '../../rendering/features/positionableFeature';
+import type { IDoesFilterPassParams, ProvidedFilterModel } from '../../interfaces/iFilter';
+import type { IRowModel, RowModelType } from '../../interfaces/iRowModel';
+import type { LocaleService } from '../../localeService';
+import type { PositionableFeature } from '../../rendering/features/positionableFeature';
 import { mock } from '../../test-utils/mock';
-import { AgPromise } from '../../utils/promise';
-import { ProvidedFilter, ProvidedFilterParams } from './providedFilter';
+import type { AgPromise } from '../../utils/promise';
+import type { ComponentClass } from '../../widgets/component';
+import type { ProvidedFilterParams } from './providedFilter';
+import { ProvidedFilter } from './providedFilter';
 
 class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {
     private uiModel: ProvidedFilterModel;
@@ -43,6 +45,9 @@ class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {
     }
 
     protected createBodyTemplate(): string {
+        throw new Error('Method not implemented.');
+    }
+    protected getAgComponents(): ComponentClass[] {
         throw new Error('Method not implemented.');
     }
 

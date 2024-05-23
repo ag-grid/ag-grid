@@ -1,43 +1,44 @@
-import { ColumnModel } from '../columns/columnModel';
-import { VisibleColsService } from '../columns/visibleColsService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { CellPosition } from '../entities/cellPositionUtils';
-import { Column } from '../entities/column';
-import { RowNode } from '../entities/rowNode';
-import { RowPosition } from '../entities/rowPositionUtils';
-import {
+import type { CtrlsService } from '../ctrlsService';
+import type { CellPosition } from '../entities/cellPositionUtils';
+import type { Column } from '../entities/column';
+import type { RowNode } from '../entities/rowNode';
+import type { RowPosition } from '../entities/rowPositionUtils';
+import type {
     AgEventListener,
     BodyScrollEvent,
     CellFocusedEvent,
     DisplayedRowsChangedEvent,
-    Events,
     FirstDataRenderedEvent,
     ModelUpdatedEvent,
     ViewportChangedEvent,
 } from '../events';
-import { FocusService } from '../focusService';
-import { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
-import { ICellEditor } from '../interfaces/iCellEditor';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { IRowModel } from '../interfaces/iRowModel';
-import { IRowNode } from '../interfaces/iRowNode';
-import { AnimationFrameService } from '../misc/animationFrameService';
-import { PaginationProxy } from '../pagination/paginationProxy';
-import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
+import { Events } from '../events';
+import type { FocusService } from '../focusService';
+import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
+import type { ICellEditor } from '../interfaces/iCellEditor';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { IRowNode } from '../interfaces/iRowNode';
+import type { AnimationFrameService } from '../misc/animationFrameService';
+import type { PaginationProxy } from '../pagination/paginationProxy';
+import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _removeFromArray } from '../utils/array';
 import { _browserSupportsPreventScroll } from '../utils/browser';
 import { _executeInAWhile } from '../utils/function';
 import { _exists } from '../utils/generic';
 import { _createArrayOfNumbers } from '../utils/number';
 import { _getAllValuesInObject, _iterateObject } from '../utils/object';
-import { Beans } from './beans';
+import type { Beans } from './beans';
 import { CellCtrl } from './cell/cellCtrl';
-import { ICellRenderer } from './cellRenderers/iCellRenderer';
+import type { ICellRenderer } from './cellRenderers/iCellRenderer';
 import { StickyRowFeature } from './features/stickyRowFeature';
-import { RowCtrl, RowCtrlInstanceId } from './row/rowCtrl';
-import { RowContainerHeightService } from './rowContainerHeightService';
+import type { RowCtrlInstanceId } from './row/rowCtrl';
+import { RowCtrl } from './row/rowCtrl';
+import type { RowContainerHeightService } from './rowContainerHeightService';
 
 type RowCtrlIdMap = Record<RowCtrlInstanceId, RowCtrl>;
 type RowCtrlByRowIndex = Record<number, RowCtrl>;
@@ -1380,15 +1381,25 @@ export class RowRenderer extends BeanStub {
     }
 
     private ensureAllRowsInRangeHaveHeightsCalculated(topPixel: number, bottomPixel: number): boolean {
+        const pinnedRowHeightsChanged = this.pinnedRowModel?.ensureRowHeightsValid();
+
+        // ensure sticky rows heights are all updated
+        const stickyHeightsChanged = this.stickyRowFeature?.ensureRowHeightsValid();
         // ensureRowHeightsVisible only works with CSRM, as it's the only row model that allows lazy row height calcs.
         // all the other row models just hard code so the method just returns back false
-        const res = this.paginationProxy.ensureRowHeightsValid(topPixel, bottomPixel, -1, -1);
+        const rowModelHeightsChanged = this.paginationProxy.ensureRowHeightsValid(
+            topPixel,
+            bottomPixel,
+            -1,
+            -1,
+            stickyHeightsChanged
+        );
 
-        if (res) {
+        if (stickyHeightsChanged || rowModelHeightsChanged || pinnedRowHeightsChanged) {
             this.updateContainerHeights();
+            return true;
         }
-
-        return res;
+        return false;
     }
 
     public getFirstVisibleVerticalPixel(): number {

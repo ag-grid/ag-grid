@@ -1,40 +1,43 @@
-import {
+import type {
     AgEvent,
     AgGridEvent,
-    AgPromise,
-    Autowired,
-    Bean,
-    BeanStub,
     Column,
     ColumnMenuTab,
     ColumnMenuVisibleChangedEvent,
-    Component,
     ContainerType,
     CtrlsService,
-    Events,
     FilterManager,
-    FilterWrapperComp,
     FocusService,
     IAfterGuiAttachedParams,
     IMenuFactory,
     MenuService,
-    ModuleNames,
-    ModuleRegistry,
     PopupEventParams,
     PopupService,
-    PostConstruct,
-    RefPlaceholder,
     TabbedItem,
-    TabbedLayout,
     VisibleColsService,
     WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    AgPromise,
+    Autowired,
+    Bean,
+    BeanStub,
+    Component,
+    Events,
+    FilterWrapperComp,
+    ModuleNames,
+    ModuleRegistry,
+    PostConstruct,
+    RefPlaceholder,
+    TabbedLayout,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
-import { AgMenuItemComponent, AgMenuList, CloseMenuEvent } from '@ag-grid-enterprise/core';
+import type { AgMenuList, CloseMenuEvent } from '@ag-grid-enterprise/core';
+import { AgMenuItemComponent } from '@ag-grid-enterprise/core';
 
-import { ColumnChooserFactory } from './columnChooserFactory';
-import { ColumnMenuFactory } from './columnMenuFactory';
-import { MenuRestoreFocusParams, MenuUtils } from './menuUtils';
+import type { ColumnChooserFactory } from './columnChooserFactory';
+import type { ColumnMenuFactory } from './columnMenuFactory';
+import type { MenuRestoreFocusParams, MenuUtils } from './menuUtils';
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;

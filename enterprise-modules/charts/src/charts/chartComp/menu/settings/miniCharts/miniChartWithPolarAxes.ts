@@ -1,7 +1,7 @@
 import { PostConstruct } from '@ag-grid-community/core';
 import { _Scene } from 'ag-charts-community';
 
-import { ChartTranslationKey } from '../../../services/chartTranslationService';
+import type { ChartTranslationKey } from '../../../services/chartTranslationService';
 import { MiniChart } from './miniChart';
 
 export abstract class MiniChartWithPolarAxes extends MiniChart {

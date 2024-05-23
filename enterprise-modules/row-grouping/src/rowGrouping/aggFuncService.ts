@@ -1,10 +1,7 @@
+import type { Column, IAggFunc, IAggFuncParams, IAggFuncService } from '@ag-grid-community/core';
 import {
     Bean,
     BeanStub,
-    Column,
-    IAggFunc,
-    IAggFuncParams,
-    IAggFuncService,
     PostConstruct,
     _exists,
     _existsAndNotEmpty,

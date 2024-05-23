@@ -1,13 +1,14 @@
 import { KeyCode } from '../constants/keyCode';
 import { Autowired, PostConstruct } from '../context/context';
 import { Events } from '../eventKeys';
-import { CssVariablesChanged } from '../events';
-import { AnimationFrameService } from '../misc/animationFrameService';
-import { ResizeObserverService } from '../misc/resizeObserverService';
+import type { CssVariablesChanged } from '../events';
+import type { AnimationFrameService } from '../misc/animationFrameService';
+import type { ResizeObserverService } from '../misc/resizeObserverService';
 import { _getAriaPosInSet, _setAriaLabel, _setAriaPosInSet, _setAriaRole, _setAriaSetSize } from '../utils/aria';
 import { _stopPropagationForAgGrid } from '../utils/event';
 import { _waitUntil } from '../utils/function';
-import { Component, RefPlaceholder } from './component';
+import { RefPlaceholder } from './component';
+import type { Component } from './component';
 import { TabGuardComp } from './tabGuardComp';
 
 export interface VirtualListModel {

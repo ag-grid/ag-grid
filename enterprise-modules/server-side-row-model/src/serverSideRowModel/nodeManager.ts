@@ -1,4 +1,5 @@
-import { Bean, PreDestroy, RowNode } from '@ag-grid-community/core';
+import type { RowNode } from '@ag-grid-community/core';
+import { Bean, PreDestroy } from '@ag-grid-community/core';
 
 @Bean('ssrmNodeManager')
 export class NodeManager {

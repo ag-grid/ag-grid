@@ -1,6 +1,6 @@
+import type { Component } from '@ag-grid-community/core';
 import {
     BeanStub,
-    Component,
     KeyCode,
     PostConstruct,
     _isStopPropagationForAgGrid,

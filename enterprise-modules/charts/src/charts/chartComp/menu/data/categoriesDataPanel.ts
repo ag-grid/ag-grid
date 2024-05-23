@@ -1,8 +1,10 @@
-import { AgSelect, AgToggleButton, IAggFunc, PostConstruct, _clearElement } from '@ag-grid-community/core';
+import type { IAggFunc } from '@ag-grid-community/core';
+import { AgSelect, AgToggleButton, PostConstruct, _clearElement } from '@ag-grid-community/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartController } from '../../chartController';
-import { ChartDataModel, ColState } from '../../model/chartDataModel';
+import type { ChartController } from '../../chartController';
+import type { ColState } from '../../model/chartDataModel';
+import { ChartDataModel } from '../../model/chartDataModel';
 import { DragDataPanel } from './dragDataPanel';
 
 type AggFuncPreset = 'count' | 'sum' | 'min' | 'max' | 'avg' | 'first' | 'last';

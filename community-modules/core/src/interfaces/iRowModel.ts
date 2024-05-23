@@ -1,4 +1,4 @@
-import { RowNode } from '../entities/rowNode';
+import type { RowNode } from '../entities/rowNode';
 
 export interface RowBounds {
     rowTop: number;

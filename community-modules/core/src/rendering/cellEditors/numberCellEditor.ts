@@ -1,8 +1,9 @@
 import { KeyCode } from '../../constants/keyCode';
-import { ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _exists } from '../../utils/generic';
 import { AgInputNumberField } from '../../widgets/agInputNumberField';
-import { CellEditorInput, SimpleCellEditor } from './simpleCellEditor';
+import type { CellEditorInput } from './simpleCellEditor';
+import { SimpleCellEditor } from './simpleCellEditor';
 
 export interface INumberCellEditorParams<TData = any, TContext = any>
     extends ICellEditorParams<TData, number, TContext> {

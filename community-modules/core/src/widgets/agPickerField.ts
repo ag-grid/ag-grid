@@ -1,13 +1,13 @@
 import { KeyCode } from '../constants/keyCode';
 import { Autowired } from '../context/context';
 import { Events } from '../eventKeys';
-import { AgPickerFieldParams } from '../interfaces/agFieldParams';
+import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaExpanded, _setAriaRole } from '../utils/aria';
 import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
 import { AgAbstractField } from './agAbstractField';
 import { Component, RefPlaceholder } from './component';
-import { AddPopupParams, PopupService } from './popupService';
+import type { AddPopupParams, PopupService } from './popupService';
 
 const TEMPLATE = /* html */ `
     <div class="ag-picker-field" role="presentation">

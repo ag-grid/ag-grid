@@ -1,5 +1,5 @@
-import { Column } from '../entities/column';
-import { AgEvent, SelectionEventSourceType } from '../events';
+import type { Column } from '../entities/column';
+import type { AgEvent, SelectionEventSourceType } from '../events';
 
 export type RowNodeEventType =
     | 'rowSelected'

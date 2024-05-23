@@ -1,10 +1,9 @@
+import type { PositionableOptions, ResizableStructure } from '@ag-grid-community/core';
 import {
     Component,
     PositionableFeature,
-    PositionableOptions,
     PostConstruct,
     RefPlaceholder,
-    ResizableStructure,
     _createIconNoSpan,
     _getInnerHeight,
     _getInnerWidth,

@@ -1,10 +1,10 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, jest } from '@jest/globals';
 
-import { ZipFile } from '../src/csvExport/zipContainer/zipContainer';
+import type { ZipFile } from '../src/csvExport/zipContainer/zipContainer';
 import { getDeflatedHeaderAndContent, getHeaderAndContent } from '../src/csvExport/zipContainer/zipContainerHelper';
 
 describe('getDeflatedHeaderAndContent', () => {
-    let testPath: string = 'test-path/file-name.csv';
+    const testPath: string = 'test-path/file-name.csv';
     let currentFile: ZipFile | undefined = undefined;
     let deflationPerformed: boolean = false;
 

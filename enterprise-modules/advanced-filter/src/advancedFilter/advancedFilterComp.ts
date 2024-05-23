@@ -1,30 +1,27 @@
+import type { AgComponentSelector, FilterManager, ITooltipParams, WithoutGridCommon } from '@ag-grid-community/core';
 import {
-    AgComponentSelector,
     Autowired,
     Component,
-    FilterManager,
-    ITooltipParams,
     PostConstruct,
     RefPlaceholder,
-    WithoutGridCommon,
     _createIconNoSpan,
     _makeNull,
     _setDisabled,
 } from '@ag-grid-community/core';
 
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
-import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
-import { AdvancedFilterService } from './advancedFilterService';
-import {
-    AgAutocomplete,
+import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
+import type { AdvancedFilterService } from './advancedFilterService';
+import type {
     AutocompleteOptionSelectedEvent,
     AutocompleteValidChangedEvent,
     AutocompleteValueChangedEvent,
     AutocompleteValueConfirmedEvent,
 } from './autocomplete/agAutocomplete';
-import { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
-import { FilterExpressionParser } from './filterExpressionParser';
-import { AutocompleteUpdate } from './filterExpressionUtils';
+import { AgAutocomplete } from './autocomplete/agAutocomplete';
+import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
+import type { FilterExpressionParser } from './filterExpressionParser';
+import type { AutocompleteUpdate } from './filterExpressionUtils';
 
 export class AdvancedFilterComp extends Component {
     static readonly selector: AgComponentSelector = 'AG-ADVANCED-FILTER';

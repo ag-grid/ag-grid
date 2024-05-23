@@ -1,17 +1,12 @@
-import {
+import type {
     AbstractColDef,
-    Autowired,
-    Bean,
-    BeanStub,
     ColDef,
     ColGroupDef,
     Column,
     ColumnModel,
     IProvidedColumn,
-    ProvidedColumnGroup,
-    _includes,
-    _last,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, ProvidedColumnGroup, _includes, _last } from '@ag-grid-community/core';
 
 @Bean('toolPanelColDefService')
 export class ToolPanelColDefService extends BeanStub {

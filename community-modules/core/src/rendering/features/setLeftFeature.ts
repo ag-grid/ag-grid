@@ -1,13 +1,13 @@
 import { BeanStub } from '../../context/beanStub';
 import { PostConstruct } from '../../context/context';
 import { Column } from '../../entities/column';
-import { ColumnGroup } from '../../entities/columnGroup';
+import type { ColumnGroup } from '../../entities/columnGroup';
 import { Events } from '../../eventKeys';
-import { IHeaderColumn } from '../../interfaces/iHeaderColumn';
+import type { IHeaderColumn } from '../../interfaces/iHeaderColumn';
 import { _setAriaColSpan } from '../../utils/aria';
 import { _last } from '../../utils/array';
 import { _exists } from '../../utils/generic';
-import { Beans } from '../beans';
+import type { Beans } from '../beans';
 
 export class SetLeftFeature extends BeanStub {
     private readonly columnOrGroup: IHeaderColumn;
