@@ -44,13 +44,13 @@ const gridOptions: GridOptions<IAccount> = {
             params.successCallback(params.data.callRecords);
         },
         template: (params) => {
-            var personName = params.data ? params.data.name : undefined;
+            const personName = params.data ? params.data.name : undefined;
             return (
                 '<div style="height: 100%; background-color: #2244CC44; padding: 20px; box-sizing: border-box;">' +
                 '  <div style="height: 10%; padding: 2px; font-weight: bold;">###### Name: ' +
                 personName +
                 '</div>' +
-                '  <div ref="eDetailGrid" style="height: 90%;"></div>' +
+                '  <div data-ref="eDetailGrid" style="height: 90%;"></div>' +
                 '</div>'
             );
         },

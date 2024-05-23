@@ -8,16 +8,16 @@ export class CallsCellRenderer implements ICellRendererComp {
         var eTemp = document.createElement('div');
         eTemp.innerHTML =
             '<span class="calls-cell-renderer">' +
-            '<button ref="btAdd">+</button>' +
-            '<button ref="btRemove">-</button>' +
-            '<span ref="eValue"></span>' +
+            '<button data-ref="btAdd">+</button>' +
+            '<button data-ref="btRemove">-</button>' +
+            '<span data-ref="eValue"></span>' +
             '</span>';
 
         this.eGui = eTemp.firstChild as HTMLElement;
 
-        this.eValue = this.eGui.querySelector('[ref="eValue"]');
-        var btAdd = this.eGui.querySelector('[ref="btAdd"]')!;
-        var btRemove = this.eGui.querySelector('[ref="btRemove"]')!;
+        this.eValue = this.eGui.querySelector('[data-ref="eValue"]');
+        var btAdd = this.eGui.querySelector('[data-ref="btAdd"]')!;
+        var btRemove = this.eGui.querySelector('[data-ref="btRemove"]')!;
 
         btAdd.addEventListener('click', this.onBtAdd.bind(this, params));
         btRemove.addEventListener('click', this.onBtRemove.bind(this, params));

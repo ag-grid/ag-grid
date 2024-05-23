@@ -69,20 +69,20 @@ You can provide an HTML template to the Default Header Component for simple layo
 
 ```html
 <div class="ag-cell-label-container" role="presentation">
-    <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
-    <span ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button" aria-hidden="true"></span>
-    <div ref="eLabel" class="ag-header-cell-label" role="presentation">
-        <span ref="eText" class="ag-header-cell-text"></span>
-        <span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
-        <span ref="eSortOrder" class="ag-header-icon ag-header-label-icon ag-sort-order" aria-hidden="true"></span>
-        <span ref="eSortAsc" class="ag-header-icon ag-header-label-icon ag-sort-ascending-icon" aria-hidden="true"></span>
-        <span ref="eSortDesc" class="ag-header-icon ag-header-label-icon ag-sort-descending-icon" aria-hidden="true"></span>
-        <span ref="eSortNone" class="ag-header-icon ag-header-label-icon ag-sort-none-icon" aria-hidden="true"></span>
+    <span data-ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
+    <span data-ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button" aria-hidden="true"></span>
+    <div data-ref="eLabel" class="ag-header-cell-label" role="presentation">
+        <span data-ref="eText" class="ag-header-cell-text"></span>
+        <span data-ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
+        <span data-ref="eSortOrder" class="ag-header-icon ag-header-label-icon ag-sort-order" aria-hidden="true"></span>
+        <span data-ref="eSortAsc" class="ag-header-icon ag-header-label-icon ag-sort-ascending-icon" aria-hidden="true"></span>
+        <span data-ref="eSortDesc" class="ag-header-icon ag-header-label-icon ag-sort-descending-icon" aria-hidden="true"></span>
+        <span data-ref="eSortNone" class="ag-header-icon ag-header-label-icon ag-sort-none-icon" aria-hidden="true"></span>
     </div>
 </div>
 ```
 
-When you provide your own template, everything should work as expected as long as you re-use the same `refs`.
+When you provide your own template, everything should work as expected as long as you re-use the same `data-ref` attribute names.
 
 | Ref | Description |
 |-|-|
@@ -96,7 +96,7 @@ When you provide your own template, everything should work as expected as long a
 | `eSortDesc` | In case of sorting descending the data in the column, this shows the descending icon. |
 | `eSortNone` | In case of no sort being applied, this shows the associated icon. Note this icon by default is empty. |
 
-The ref parameters are used by the grid to identify elements to add functionality to. If you leave an element out of your template, the functionality will not be added. For example if you do not specify `eLabel` then the column will not react to click events for sorting.
+The `data-ref` parameters are used by the grid to identify elements to add functionality to. If you leave an element out of your template, the functionality will not be added. For example if you do not specify `eLabel` then the column will not react to click events for sorting.
 
 {% note %}
 Templates are not meant to let you configure icons. If you are looking to change the icons, check our [icon docs](./custom-icons/).
@@ -111,15 +111,15 @@ const gridOptions = {
         headerComponentParams: {
             template:
                 `<div class="ag-cell-label-container" role="presentation">
-                  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>
-                  <span ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button"></span>
-                  <div ref="eLabel" class="ag-header-cell-label" role="presentation">
-                    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>
-                    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>
-                    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>
-                    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>
-                    ** <span ref="eText" class="ag-header-cell-text" role="columnheader"></span>
-                    <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>
+                  <span data-ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>
+                  <span data-ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button"></span>
+                  <div data-ref="eLabel" class="ag-header-cell-label" role="presentation">
+                    <span data-ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>
+                    <span data-ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>
+                    <span data-ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>
+                    <span data-ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>
+                    ** <span data-ref="eText" class="ag-header-cell-text" role="columnheader"></span>
+                    <span data-ref="eFilter" class="ag-header-icon ag-filter-icon"></span>
                   </div>
                 </div>`
         }

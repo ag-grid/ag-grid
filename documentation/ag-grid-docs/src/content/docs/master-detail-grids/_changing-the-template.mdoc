@@ -3,7 +3,7 @@
 
 By default the Detail Cell Renderer does not include any other information around the Detail Grid. It is possible to change this to allow additional details, such as header information, around the Detail Grid. This is done by providing an alternative Detail Template.
 
-If providing an alternative template, you **must** include an element with `ref="eDetailGrid"`. This tells the grid where to place the Detail Grid.
+If providing an alternative template, you **must** include an element with `data-ref="eDetailGrid"`. This tells the grid where to place the Detail Grid.
 
 For comparison, the default template is as follows. It is simplistic, only intended for allowing spacing around the Detail Grid.
 
@@ -13,12 +13,12 @@ For comparison, the default template is as follows. It is simplistic, only inten
 ```html
 <!-- for when fixed height (normal) -->
 <div class="ag-details-row ag-details-row-fixed-height">
-   <div ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/>
+   <div data-ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/>
 </div>
 
 <!-- for when auto-height (detailRowAutoHeight=true) -->
 <div class="ag-details-row ag-details-row-auto-height">
-   <div ref="eDetailGrid" class="ag-details-grid ag-details-grid-auto-height"/>
+   <div data-ref="eDetailGrid" class="ag-details-grid ag-details-grid-auto-height"/>
 </div>
 ```
 {% /if %}
@@ -37,7 +37,7 @@ To change the Detail Template, set the `template` inside the Detail Cell Rendere
        template:
        '<div style="background-color: #edf6ff;">' +
            '  <div style="height: 10%;">Call Details</div>' +
-           '  <div ref="eDetailGrid" style="height: 90%;"></div>' +
+           '  <div data-ref="eDetailGrid" style="height: 90%;"></div>' +
            '</div>'
    }
 ```
@@ -55,7 +55,7 @@ To change the Detail Template, set the `template` inside the Detail Cell Rendere
            const personName = params.data.name;
            return '<div style="height: 100%; background-color: #EDF6FF;">' +
            '  <div style="height: 10%;">Name: ' + personName + '</div>' +
-           '  <div ref="eDetailGrid" style="height: 90%;"></div>' +
+           '  <div data-ref="eDetailGrid" style="height: 90%;"></div>' +
            '</div>';
        }
    }
