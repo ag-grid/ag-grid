@@ -5,7 +5,7 @@ import type {
     ITooltipParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Component, RefSelector, _createIconNoSpan, _makeNull, _setDisabled } from '@ag-grid-community/core';
+import { Component, RefPlaceholder, _createIconNoSpan, _makeNull, _setDisabled } from '@ag-grid-community/core';
 
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';

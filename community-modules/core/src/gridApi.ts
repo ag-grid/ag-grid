@@ -258,6 +258,10 @@ export class GridApi<TData = any> extends BeanStub {
                 this.serverSideRowModel = this.rowModel as IServerSideRowModel;
                 break;
         }
+
+        this.ctrlsService.whenReady((p) => {
+            this.gridBodyCtrl = p.gridBodyCtrl;
+        });
     }
 
     private gridBodyCtrl: GridBodyCtrl;
@@ -270,12 +274,6 @@ export class GridApi<TData = any> extends BeanStub {
     private detailGridInfoMap: { [id: string]: DetailGridInfo | undefined } = {};
 
     private destroyCalled = false;
-
-    public postConstruct(): void {
-        this.ctrlsService.whenReady((p) => {
-            this.gridBodyCtrl = p.gridBodyCtrl;
-        });
-    }
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __getAlignedGridService(): AlignedGridsService {

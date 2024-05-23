@@ -1,6 +1,7 @@
 import type {
     AgEvent,
     AgGridEvent,
+    BaseBean,
     BeanCollection,
     BeanName,
     Column,

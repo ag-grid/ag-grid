@@ -233,11 +233,11 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
         return (context || this.getContext()).createBean(bean, afterPreCreateCallback);
     }
 
-    protected destroyBean<T extends BaseBean | null | undefined>(bean: T, context?: Context): undefined {
-        return (context || this.getContext()).destroyBean(bean);
+    protected destroyBean<T extends BaseBean | null | undefined>(bean: T, context?: Context): void {
+        (context || this.getContext()).destroyBean(bean);
     }
 
-    protected destroyBeans<T extends BaseBean | null | undefined>(beans: T[], context?: Context): T[] {
+    protected destroyBeans<T extends BaseBean | null | undefined>(beans: T[], context?: Context): void {
         if (beans) {
             for (let i = 0; i < beans.length; i++) {
                 this.destroyBean(beans[i], context);

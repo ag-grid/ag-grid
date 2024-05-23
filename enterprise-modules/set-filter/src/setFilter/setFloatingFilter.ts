@@ -5,7 +5,7 @@ import type {
     IFloatingFilterParams,
     SetFilterModel,
 } from '@ag-grid-community/core';
-import { AgInputTextField, Component, RefSelector } from '@ag-grid-community/core';
+import { AgInputTextField, Component, RefPlaceholder } from '@ag-grid-community/core';
 
 import { SetFilter } from './setFilter';
 import { SetFilterModelFormatter } from './setFilterModelFormatter';
@@ -20,7 +20,6 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
         this.columnNameService = beans.columnNameService;
     }
 
-    @RefSelector('eFloatingFilterText') private readonly eFloatingFilterText: AgInputTextField;
     private params: IFloatingFilterParams;
     private availableValuesListenerAdded = false;
     private readonly filterModelFormatter = new SetFilterModelFormatter();

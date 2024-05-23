@@ -5,8 +5,7 @@ import type { AnimationFrameService } from '../misc/animationFrameService';
 import { _isIOSUserAgent, _isInvisibleScrollbar, _isMacOsUserAgent } from '../utils/browser';
 import { _isVisible } from '../utils/dom';
 import { _waitUntil } from '../utils/function';
-import { Component } from '../widgets/component';
-import { RefPlaceholder } from '../widgets/componentAnnotations';
+import { Component, RefPlaceholder } from '../widgets/component';
 
 export abstract class AbstractFakeScrollComp extends Component {
     private animationFrameService: AnimationFrameService;
