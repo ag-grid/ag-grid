@@ -6,7 +6,8 @@ import { _setAriaExpanded, _setAriaRole } from '../utils/aria';
 import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
 import { AgAbstractField } from './agAbstractField';
-import type { Component, RefPlaceholder } from './component';
+import type { Component } from './component';
+import { RefPlaceholder } from './component';
 import type { AddPopupParams, PopupService } from './popupService';
 
 const TEMPLATE = /* html */ `
