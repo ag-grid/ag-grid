@@ -77,7 +77,7 @@ export class Component extends BeanStub {
     public preConstruct(): void {
         this.usingBrowserTooltips = this.gos.get('enableBrowserTooltips');
 
-        this.wireTemplate(this.eGui);
+        this.wireTemplate(this.getGui());
     }
 
     private wireTemplate(element: HTMLElement | undefined, paramsMap?: { [key: string]: any }): void {
@@ -126,7 +126,7 @@ export class Component extends BeanStub {
             this.tooltipFeature = this.createBean(
                 new TooltipFeature({
                     getTooltipValue,
-                    getGui: () => this.eGui,
+                    getGui: () => this.getGui(),
                     getLocation: () => location ?? 'UNKNOWN',
                     getColDef: params?.getColDef,
                     getColumn: params?.getColumn,
@@ -251,7 +251,7 @@ export class Component extends BeanStub {
         }
 
         if (!elements.length) {
-            elements.push(this.eGui);
+            elements.push(this.getGui());
         }
 
         elements.forEach((el) => el.setAttribute('tabindex', tabIndex.toString()));
