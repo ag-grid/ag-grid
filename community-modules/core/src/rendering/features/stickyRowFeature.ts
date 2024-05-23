@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, PostConstruct } from '../../context/context';
+import { Autowired } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { RowNode } from '../../entities/rowNode';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
@@ -30,8 +30,7 @@ export class StickyRowFeature extends BeanStub {
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.isClientSide = this.rowModel.getType() === 'clientSide';
 
         this.ctrlsService.whenReady((params) => {

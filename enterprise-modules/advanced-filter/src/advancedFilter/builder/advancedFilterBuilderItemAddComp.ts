@@ -3,7 +3,6 @@ import {
     Autowired,
     Component,
     Events,
-    PostConstruct,
     RefSelector,
     TooltipFeature,
     _setAriaLabel,
@@ -38,8 +37,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
         `);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         _setAriaLevel(this.focusWrapper, 2);
 
         const addButtonParams = getAdvancedFilterBuilderAddButtonParams(

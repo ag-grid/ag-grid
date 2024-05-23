@@ -3,7 +3,7 @@ import type { ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
+import { Autowired, Bean, Optional } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { CellPosition } from '../entities/cellPositionUtils';
 import type { Column } from '../entities/column';
@@ -65,8 +65,7 @@ export class NavigationService extends BeanStub {
         this.onPageUp = _throttle(this.onPageUp, 100);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.ctrlsService.whenReady((p) => {
             this.gridBodyCon = p.gridBodyCtrl;
         });

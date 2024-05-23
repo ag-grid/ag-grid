@@ -1,6 +1,6 @@
-import { EventService } from '../eventService';
 import type { AgEvent, AgEventListener } from '../events';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
+import { LocalEventService } from '../localEventService';
 import { _areEventsNear } from '../utils/mouse';
 
 export interface TapEvent extends AgEvent {
@@ -30,7 +30,7 @@ export class TouchListener implements IEventEmitter {
 
     private lastTapTime: number | null;
 
-    private eventService: EventService = new EventService();
+    private localEventService: LocalEventService = new LocalEventService();
 
     // private mostRecentTouch: Touch;
 
@@ -68,11 +68,11 @@ export class TouchListener implements IEventEmitter {
     }
 
     public addEventListener(eventType: string, listener: AgEventListener): void {
-        this.eventService.addEventListener(eventType, listener);
+        this.localEventService.addEventListener(eventType, listener);
     }
 
     public removeEventListener(eventType: string, listener: AgEventListener): void {
-        this.eventService.removeEventListener(eventType, listener);
+        this.localEventService.removeEventListener(eventType, listener);
     }
 
     private onTouchStart(touchEvent: TouchEvent): void {
@@ -98,7 +98,7 @@ export class TouchListener implements IEventEmitter {
                     touchStart: this.touchStart,
                     touchEvent: touchEvent,
                 };
-                this.eventService.dispatchEvent(event);
+                this.localEventService.dispatchEvent(event);
             }
         }, 500);
     }
@@ -129,7 +129,7 @@ export class TouchListener implements IEventEmitter {
                 type: TouchListener.EVENT_TAP,
                 touchStart: this.touchStart,
             };
-            this.eventService.dispatchEvent(event);
+            this.localEventService.dispatchEvent(event);
             this.checkForDoubleTap();
         }
 
@@ -153,7 +153,7 @@ export class TouchListener implements IEventEmitter {
                     type: TouchListener.EVENT_DOUBLE_TAP,
                     touchStart: this.touchStart,
                 };
-                this.eventService.dispatchEvent(event);
+                this.localEventService.dispatchEvent(event);
 
                 // this stops a tripple tap ending up as two double taps
                 this.lastTapTime = null;

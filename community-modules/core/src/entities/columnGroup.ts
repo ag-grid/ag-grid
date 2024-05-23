@@ -1,5 +1,5 @@
+import { BeanStub } from '../context/beanStub';
 import { Autowired } from '../context/context';
-import { EventService } from '../eventService';
 import type { AgEvent, AgEventListener } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
@@ -12,7 +12,7 @@ import type { ProvidedColumnGroup } from './providedColumnGroup';
 
 export type ColumnGroupShowType = 'open' | 'closed';
 
-export class ColumnGroup implements IHeaderColumn {
+export class ColumnGroup extends BeanStub implements IHeaderColumn {
     public static EVENT_LEFT_CHANGED = 'leftChanged';
     public static EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
 
@@ -36,11 +36,11 @@ export class ColumnGroup implements IHeaderColumn {
     // private moving = false
     private left: number | null;
     private oldLeft: number | null;
-    private localEventService: EventService = new EventService();
 
     private parent: ColumnGroup | null;
 
     constructor(providedColumnGroup: ProvidedColumnGroup, groupId: string, partId: number, pinned: ColumnPinnedType) {
+        super();
         this.groupId = groupId;
         this.partId = partId;
         this.providedColumnGroup = providedColumnGroup;
@@ -117,7 +117,7 @@ export class ColumnGroup implements IHeaderColumn {
         this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
-            this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_LEFT_CHANGED));
+            this.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_LEFT_CHANGED));
         }
     }
 
@@ -127,14 +127,6 @@ export class ColumnGroup implements IHeaderColumn {
 
     private createAgEvent(type: string): AgEvent {
         return { type };
-    }
-
-    public addEventListener(eventType: string, listener: Function): void {
-        this.localEventService.addEventListener(eventType, listener as AgEventListener);
-    }
-
-    public removeEventListener(eventType: string, listener: Function): void {
-        this.localEventService.removeEventListener(eventType, listener as AgEventListener);
     }
 
     public getGroupId(): string {
@@ -300,7 +292,7 @@ export class ColumnGroup implements IHeaderColumn {
         // it not expandable, everything is visible
         if (!isExpandable) {
             this.displayedChildren = this.children;
-            this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED));
+            this.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED));
             return;
         }
 
@@ -335,6 +327,6 @@ export class ColumnGroup implements IHeaderColumn {
             }
         });
 
-        this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED));
+        this.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED));
     }
 }

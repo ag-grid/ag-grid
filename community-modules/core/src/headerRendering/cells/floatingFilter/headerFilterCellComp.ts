@@ -1,5 +1,4 @@
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
-import { PostConstruct, PreDestroy } from '../../../context/context';
 import type { IFloatingFilterComp } from '../../../filter/floating/floatingFilter';
 import { _setDisplayed } from '../../../utils/dom';
 import type { AgPromise } from '../../../utils/promise';
@@ -26,8 +25,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         super(HeaderFilterCellComp.TEMPLATE, ctrl);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const eGui = this.getGui();
 
         const compProxy: IHeaderFilterCellComp = {
@@ -54,7 +52,11 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         this.compPromise.then((comp) => this.afterCompCreated(comp));
     }
 
-    @PreDestroy
+    public override destroy(): void {
+        this.destroyFloatingFilterComp();
+        super.destroy();
+    }
+
     private destroyFloatingFilterComp(): void {
         if (this.floatingFilterComp) {
             this.eFloatingFilterBody.removeChild(this.floatingFilterComp.getGui());

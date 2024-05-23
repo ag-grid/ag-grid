@@ -15,15 +15,7 @@ import type {
     RowRenderer,
     VisibleColsService,
 } from '@ag-grid-community/core';
-import {
-    Autowired,
-    Component,
-    PostConstruct,
-    SelectionHandleType,
-    _isVisible,
-    _last,
-    _setDisplayed,
-} from '@ag-grid-community/core';
+import { Autowired, Component, SelectionHandleType, _isVisible, _last, _setDisplayed } from '@ag-grid-community/core';
 
 import type { RangeService } from './rangeService';
 
@@ -54,8 +46,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     protected abstract type: SelectionHandleType;
     protected shouldDestroyOnEndDragging: boolean = false;
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         this.dragService.addDragSource({
             dragStartPixels: 0,
             eElement: this.getGui(),
@@ -208,7 +199,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         }
     }
 
-    protected destroy() {
+    public override destroy() {
         if (!this.shouldDestroyOnEndDragging && this.isDragging()) {
             _setDisplayed(this.getGui(), false);
             this.shouldDestroyOnEndDragging = true;

@@ -1,5 +1,5 @@
 import type { ChartDataPanel as ChartDataPanelType, ChartType } from '@ag-grid-community/core';
-import { AgToggleButton, Autowired, Component, PostConstruct, _setDisplayed, _warnOnce } from '@ag-grid-community/core';
+import { AgToggleButton, Autowired, Component, _setDisplayed, _warnOnce } from '@ag-grid-community/core';
 
 import type { ChartService } from '../../../chartService';
 import { ChartController } from '../../chartController';
@@ -44,8 +44,7 @@ export class ChartDataPanel extends Component {
         this.chartController = chartMenuContext.chartController;
     }
 
-    @PostConstruct
-    public init() {
+    public postConstruct() {
         this.createSwitchCategorySeriesToggle();
         this.isSwitchCategorySeriesToggled = this.chartController.isCategorySeriesSwitched();
 
@@ -62,7 +61,7 @@ export class ChartDataPanel extends Component {
         );
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.clearPanelComponents();
         super.destroy();
     }

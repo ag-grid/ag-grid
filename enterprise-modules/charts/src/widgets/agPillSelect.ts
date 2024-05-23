@@ -4,7 +4,6 @@ import {
     Component,
     DragAndDropService,
     DragSourceType,
-    PostConstruct,
     _escapeString,
     _removeFromParent,
 } from '@ag-grid-community/core';
@@ -50,8 +49,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
         this.valueFormatter = valueFormatter ?? ((value) => _escapeString(value as any)!);
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         const { ariaLabel, onValuesChange, dragSourceId } = this.config;
         this.dropZonePanel = this.createManagedBean(
             new PillSelectDropZonePanel(
@@ -174,7 +172,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
         return true;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyBean(this.eSelect);
         super.destroy();
     }
@@ -241,8 +239,7 @@ class PillSelectDropZonePanel<TValue> extends PillDropZonePanel<PillSelectDragCo
         super(false);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         super.init();
     }
 

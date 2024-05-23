@@ -93,7 +93,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         }
     }
 
-    protected postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.createLoadingElement();
         this.createListComponent();

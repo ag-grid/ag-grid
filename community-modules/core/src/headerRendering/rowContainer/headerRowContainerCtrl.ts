@@ -316,7 +316,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
         return this.groupsRowCtrls.length + (this.columnsRowCtrl ? 1 : 0) + (this.filtersRowCtrl ? 1 : 0);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         if (this.filtersRowCtrl) {
             this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
         }

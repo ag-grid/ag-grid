@@ -15,7 +15,6 @@ import {
     BeanStub,
     Events,
     NumberSequence,
-    PreDestroy,
     Qualifier,
     _exists,
     _getAllValuesInObject,
@@ -112,9 +111,9 @@ export class InfiniteCache extends BeanStub {
         this.params.rowNodeBlockLoader!.checkBlockToLoad();
     }
 
-    @PreDestroy
-    private destroyAllBlocks(): void {
+    public override destroy(): void {
         this.getBlocksInOrder().forEach((block) => this.destroyBlock(block));
+        super.destroy();
     }
 
     public getRowCount(): number {

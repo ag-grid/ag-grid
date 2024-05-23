@@ -3,7 +3,6 @@ import {
     AgSelect,
     Autowired,
     Component,
-    PostConstruct,
     RefSelector,
     _capitalise,
     _includes,
@@ -58,8 +57,7 @@ export class FontPanel extends Component {
         this.chartOptions = params.chartMenuParamsFactory.getChartOptions();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const fontGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
@@ -214,7 +212,7 @@ export class FontPanel extends Component {
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyActiveComps();
         super.destroy();
     }

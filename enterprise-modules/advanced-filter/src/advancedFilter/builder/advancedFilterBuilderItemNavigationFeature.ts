@@ -2,7 +2,6 @@ import type { Component } from '@ag-grid-community/core';
 import {
     BeanStub,
     KeyCode,
-    PostConstruct,
     _isStopPropagationForAgGrid,
     _stopPropagationForAgGrid,
 } from '@ag-grid-community/core';
@@ -16,8 +15,7 @@ export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.addManagedListener(this.eGui, 'keydown', (event: KeyboardEvent) => {
             switch (event.key) {
                 case KeyCode.TAB:

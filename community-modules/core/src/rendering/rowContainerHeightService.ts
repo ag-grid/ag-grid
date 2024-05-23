@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct, Qualifier } from '../context/context';
+import { Autowired, Bean, Qualifier } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import { Events } from '../eventKeys';
 import type { Logger, LoggerFactory } from '../logger';
@@ -42,8 +42,7 @@ export class RowContainerHeightService extends BeanStub {
         this.logger = loggerFactory.create('RowContainerHeightService');
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));
         this.maxDivHeight = _getMaxDivHeight();
         this.logger.log('maxDivHeight = ' + this.maxDivHeight);

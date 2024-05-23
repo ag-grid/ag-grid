@@ -5,7 +5,7 @@ import type {
     RowNode,
     RowRenderer,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, PostConstruct, RowNodeBlockLoader } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, RowNodeBlockLoader } from '@ag-grid-community/core';
 
 import type { ServerSideRowModel } from '../../serverSideRowModel';
 import type { LazyCache } from './lazyCache';
@@ -29,8 +29,7 @@ export class LazyBlockLoadingService extends BeanStub {
     private nextBlockToLoad?: { cache: LazyCache; index: number } = undefined;
     private loaderTimeout?: number;
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         // after a block is loaded, check if we have a block to load now that
         // `maxConcurrentDatasourceRequests` has changed
         this.addManagedListener(this.rowNodeBlockLoader, RowNodeBlockLoader.BLOCK_LOADED_EVENT, () =>

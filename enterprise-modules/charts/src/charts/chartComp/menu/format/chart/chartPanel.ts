@@ -1,4 +1,4 @@
-import { AgSelect, Autowired, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
+import { Autowired, Component, RefSelector } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -19,8 +19,7 @@ export class ChartPanel extends Component {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const {
             chartController,
             chartMenuParamsFactory,

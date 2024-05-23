@@ -21,7 +21,7 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
         super(config, className, inputType);
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
 
         const { readOnly, passive } = this.config;

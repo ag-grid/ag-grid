@@ -1,5 +1,5 @@
 import type { AgComponentSelector, ColumnModel, FuncColsService } from '@ag-grid-community/core';
-import { Autowired, Component, Events, PostConstruct, _setAriaRole } from '@ag-grid-community/core';
+import { Autowired, Component, Events, _setAriaRole } from '@ag-grid-community/core';
 
 import { PivotDropZonePanel } from './pivotDropZonePanel';
 import { RowGroupDropZonePanel } from './rowGroupDropZonePanel';
@@ -17,8 +17,7 @@ export class AgGridHeaderDropZones extends Component {
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.setGui(this.createNorthPanel());
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>

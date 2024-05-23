@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 
@@ -17,8 +17,7 @@ export class ColumnAnimationService extends BeanStub {
 
     private animationThreadCount = 0;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.ctrlsService.whenReady((p) => (this.gridBodyCtrl = p.gridBodyCtrl));
     }
 

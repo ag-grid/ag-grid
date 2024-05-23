@@ -1,3 +1,4 @@
+import { BeanStub } from '../context/beanStub';
 import { Bean } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { Column } from '../entities/column';
@@ -5,7 +6,7 @@ import type { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import { _deepCloneDefinition } from '../utils/object';
 
 @Bean('columnDefFactory')
-export class ColumnDefFactory {
+export class ColumnDefFactory extends BeanStub {
     public buildColumnDefs(
         cols: Column[],
         rowGroupColumns: Column[],

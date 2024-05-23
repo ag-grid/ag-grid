@@ -1,4 +1,3 @@
-import { PostConstruct, PreDestroy } from '../../context/context';
 import { _setAriaRowIndex } from '../../utils/aria';
 import { _setDomChildOrder } from '../../utils/dom';
 import { _getAllValuesInObject, _iterateObject } from '../../utils/object';
@@ -31,9 +30,7 @@ export class HeaderRowComp extends Component {
         this.setTemplate(/* html */ `<div class="${this.ctrl.getHeaderRowClass()}" role="row"></div>`);
     }
 
-    //noinspection JSUnusedLocalSymbols
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         _setAriaRowIndex(this.getGui(), this.ctrl.getAriaRowIndex());
 
         const compProxy: IHeaderRowComp = {
@@ -46,9 +43,9 @@ export class HeaderRowComp extends Component {
         this.ctrl.setComp(compProxy);
     }
 
-    @PreDestroy
-    private destroyHeaderCtrls(): void {
+    public override destroy(): void {
         this.setHeaderCtrls([], false);
+        super.destroy();
     }
 
     private setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean): void {

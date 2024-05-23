@@ -1,13 +1,5 @@
 import type { AgComponentSelector, FilterManager, ITooltipParams, WithoutGridCommon } from '@ag-grid-community/core';
-import {
-    Autowired,
-    Component,
-    PostConstruct,
-    RefSelector,
-    _createIconNoSpan,
-    _makeNull,
-    _setDisabled,
-} from '@ag-grid-community/core';
+import { Autowired, Component, RefSelector, _createIconNoSpan, _makeNull, _setDisabled } from '@ag-grid-community/core';
 
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
@@ -55,8 +47,7 @@ export class AdvancedFilterComp extends Component {
         );
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.eAutocomplete
             .setListGenerator((_value, position) => this.generateAutocompleteListParams(position))
             .setValidator(() => this.validateValue())

@@ -1,13 +1,5 @@
 import type { AgComponentSelector, AgEvent, PopupPositionParams, PopupService } from '@ag-grid-community/core';
-import {
-    AgInputTextField,
-    Autowired,
-    Component,
-    KeyCode,
-    PostConstruct,
-    RefSelector,
-    _makeNull,
-} from '@ag-grid-community/core';
+import { AgInputTextField, Autowired, Component, KeyCode, RefSelector, _makeNull } from '@ag-grid-community/core';
 
 import { AgAutocompleteList } from './agAutocompleteList';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocompleteParams';
@@ -65,8 +57,7 @@ export class AgAutocomplete extends Component {
         );
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.eAutocompleteInput.onValueChange((value) => this.onValueChanged(value));
         this.eAutocompleteInput.getInputElement().setAttribute('autocomplete', 'off');
 

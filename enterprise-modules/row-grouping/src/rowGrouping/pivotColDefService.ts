@@ -7,7 +7,7 @@ import type {
     FuncColsService,
     IPivotColDefService,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, PostConstruct, _cloneObject, _iterateObject } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, _cloneObject, _iterateObject } from '@ag-grid-community/core';
 
 export interface PivotColDefServiceResult {
     pivotColumnGroupDefs: (ColDef | ColGroupDef)[];
@@ -25,8 +25,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
     private fieldSeparator: string;
     private pivotDefaultExpanded: number;
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         const getFieldSeparator = () => this.gos.get('serverSidePivotResultFieldSeparator') ?? '_';
         this.fieldSeparator = getFieldSeparator();
         this.addManagedPropertyListener('serverSidePivotResultFieldSeparator', () => {

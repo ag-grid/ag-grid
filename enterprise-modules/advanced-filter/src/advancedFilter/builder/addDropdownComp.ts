@@ -42,7 +42,7 @@ export class AddDropdownComp extends AgRichSelect {
         setTimeout(() => super.hidePicker());
     }
 
-    protected postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
 
         const { wrapperClassName, ariaLabel } = this.params;

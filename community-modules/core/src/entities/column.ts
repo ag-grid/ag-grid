@@ -1,15 +1,13 @@
 import type { ColumnState } from '../columns/columnApplyStateService';
-import { Autowired, PostConstruct } from '../context/context';
-import type { Environment } from '../environment';
-import { EventService } from '../eventService';
+import { BeanStub } from '../context/beanStub';
+import { Autowired } from '../context/context';
 import type { AgEvent, AgEventListener, ColumnEvent, ColumnEventType } from '../events';
-import type { GridOptionsService } from '../gridOptionsService';
 import type { BrandedType } from '../interfaces/brandedType';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
-import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import type { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
 import type { IProvidedColumn } from '../interfaces/iProvidedColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
+import { LocalEventService } from '../localEventService';
 import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
 import type { ColumnHoverService } from '../rendering/columnHoverService';
 import { _warnOnce } from '../utils/function';
@@ -64,7 +62,7 @@ export function getNextColInstanceId(): ColumnInstanceId {
 // appear as a child of either the original tree or the displayed tree. However the relevant group classes
 // for each type only implements one, as each group can only appear in it's associated tree (eg ProvidedColumnGroup
 // can only appear in OriginalColumn tree).
-export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedColumn, IEventEmitter {
+export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TValue>, IProvidedColumn, IEventEmitter {
     public static DEFAULT_MIN_WIDTH = 20;
 
     // + renderedHeaderCell - for making header cell transparent when moving
@@ -98,11 +96,8 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     // + dataTypeService - when waiting to infer cell data types
     public static EVENT_STATE_UPDATED: ColumnEventName = 'columnStateUpdated';
 
-    @Autowired('gridOptionsService') private readonly gos: GridOptionsService;
-    @Autowired('environment') protected readonly environment: Environment;
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
 
-    @Autowired('frameworkOverrides') private readonly frameworkOverrides: IFrameworkOverrides;
     private frameworkEventListenerService: FrameworkEventListenerService | null;
 
     private readonly colId: any;
@@ -141,7 +136,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
 
     private filterActive = false;
 
-    private eventService: EventService = new EventService();
+    private columnEventService: LocalEventService = new LocalEventService();
 
     private fieldContainsDots: boolean;
     private tooltipFieldContainsDots: boolean;
@@ -163,6 +158,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         colId: string,
         primary: boolean
     ) {
+        super();
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.colId = colId;
@@ -238,7 +234,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         this.initMinAndMaxWidths();
         this.initDotNotation();
         this.initTooltip();
-        this.eventService.dispatchEvent(this.createColumnEvent('colDefChanged', source));
+        this.columnEventService.dispatchEvent(this.createColumnEvent('colDefChanged', source));
     }
 
     /**
@@ -273,8 +269,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     // this is done after constructor as it uses gridOptionsService
-    @PostConstruct
-    private initialise(): void {
+    public postConstruct(): void {
         this.initMinAndMaxWidths();
 
         this.resetActualWidth('gridInitializing');
@@ -374,18 +369,18 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     public addEventListener(eventType: ColumnEventName, userListener: Function): void {
         if (this.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
             // Only construct if we need it, as it's an overhead for column construction
-            this.eventService.setFrameworkOverrides(this.frameworkOverrides);
+            this.columnEventService.setFrameworkOverrides(this.frameworkOverrides);
             this.frameworkEventListenerService = new FrameworkEventListenerService(this.frameworkOverrides);
         }
         const listener = this.frameworkEventListenerService?.wrap(userListener as AgEventListener) ?? userListener;
 
-        this.eventService.addEventListener(eventType, listener as AgEventListener);
+        this.columnEventService.addEventListener(eventType, listener as AgEventListener);
     }
 
     /** Remove event listener from the column. */
     public removeEventListener(eventType: ColumnEventName, userListener: Function): void {
         const listener = this.frameworkEventListenerService?.unwrap(userListener as AgEventListener) ?? userListener;
-        this.eventService.removeEventListener(eventType, listener as AgEventListener);
+        this.columnEventService.removeEventListener(eventType, listener as AgEventListener);
     }
 
     public createColumnFunctionCallbackParams(rowNode: IRowNode): ColumnFunctionCallbackParams {
@@ -483,7 +478,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
 
     public setMoving(moving: boolean, source: ColumnEventType): void {
         this.moving = moving;
-        this.eventService.dispatchEvent(this.createColumnEvent('movingChanged', source));
+        this.columnEventService.dispatchEvent(this.createColumnEvent('movingChanged', source));
     }
 
     private createColumnEvent(type: ColumnEventName, source: ColumnEventType): ColumnEvent {
@@ -507,7 +502,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     public setSort(sort: SortDirection | undefined, source: ColumnEventType): void {
         if (this.sort !== sort) {
             this.sort = sort;
-            this.eventService.dispatchEvent(this.createColumnEvent('sortChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('sortChanged', source));
         }
         this.dispatchStateUpdatedEvent('sort');
     }
@@ -515,7 +510,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     public setMenuVisible(visible: boolean, source: ColumnEventType): void {
         if (this.menuVisible !== visible) {
             this.menuVisible = visible;
-            this.eventService.dispatchEvent(this.createColumnEvent('menuVisibleChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('menuVisibleChanged', source));
         }
     }
 
@@ -578,7 +573,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
-            this.eventService.dispatchEvent(this.createColumnEvent('leftChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('leftChanged', source));
         }
     }
 
@@ -591,13 +586,13 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     public setFilterActive(active: boolean, source: ColumnEventType, additionalEventAttributes?: any): void {
         if (this.filterActive !== active) {
             this.filterActive = active;
-            this.eventService.dispatchEvent(this.createColumnEvent('filterActiveChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('filterActiveChanged', source));
         }
         const filterChangedEvent = this.createColumnEvent('filterChanged', source);
         if (additionalEventAttributes) {
             _mergeDeep(filterChangedEvent, additionalEventAttributes);
         }
-        this.eventService.dispatchEvent(filterChangedEvent);
+        this.columnEventService.dispatchEvent(filterChangedEvent);
     }
 
     /** Returns `true` when this `Column` is hovered, otherwise `false` */
@@ -619,14 +614,14 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     public setFirstRightPinned(firstRightPinned: boolean, source: ColumnEventType): void {
         if (this.firstRightPinned !== firstRightPinned) {
             this.firstRightPinned = firstRightPinned;
-            this.eventService.dispatchEvent(this.createColumnEvent('firstRightPinnedChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('firstRightPinnedChanged', source));
         }
     }
 
     public setLastLeftPinned(lastLeftPinned: boolean, source: ColumnEventType): void {
         if (this.lastLeftPinned !== lastLeftPinned) {
             this.lastLeftPinned = lastLeftPinned;
-            this.eventService.dispatchEvent(this.createColumnEvent('lastLeftPinnedChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('lastLeftPinnedChanged', source));
         }
     }
 
@@ -658,7 +653,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         const newValue = visible === true;
         if (this.visible !== newValue) {
             this.visible = newValue;
-            this.eventService.dispatchEvent(this.createColumnEvent('visibleChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('visibleChanged', source));
         }
         this.dispatchStateUpdatedEvent('hide');
     }
@@ -801,7 +796,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     public fireColumnWidthChangedEvent(source: ColumnEventType): void {
-        this.eventService.dispatchEvent(this.createColumnEvent('widthChanged', source));
+        this.columnEventService.dispatchEvent(this.createColumnEvent('widthChanged', source));
     }
 
     public isGreaterThanMax(width: number): boolean {
@@ -841,7 +836,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     public setRowGroupActive(rowGroup: boolean, source: ColumnEventType): void {
         if (this.rowGroupActive !== rowGroup) {
             this.rowGroupActive = rowGroup;
-            this.eventService.dispatchEvent(this.createColumnEvent('columnRowGroupChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('columnRowGroupChanged', source));
         }
         this.dispatchStateUpdatedEvent('rowGroup');
     }
@@ -854,7 +849,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     public setPivotActive(pivot: boolean, source: ColumnEventType): void {
         if (this.pivotActive !== pivot) {
             this.pivotActive = pivot;
-            this.eventService.dispatchEvent(this.createColumnEvent('columnPivotChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('columnPivotChanged', source));
         }
         this.dispatchStateUpdatedEvent('pivot');
     }
@@ -875,7 +870,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     public setValueActive(value: boolean, source: ColumnEventType): void {
         if (this.aggregationActive !== value) {
             this.aggregationActive = value;
-            this.eventService.dispatchEvent(this.createColumnEvent('columnValueChanged', source));
+            this.columnEventService.dispatchEvent(this.createColumnEvent('columnValueChanged', source));
         }
     }
 
@@ -911,7 +906,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     private dispatchStateUpdatedEvent(key: keyof ColumnState): void {
-        this.eventService.dispatchEvent({
+        this.columnEventService.dispatchEvent({
             type: Column.EVENT_STATE_UPDATED,
             key,
         } as AgEvent);

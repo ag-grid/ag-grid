@@ -12,7 +12,6 @@ import {
     Autowired,
     Component,
     Events,
-    PostConstruct,
     _bindCellRendererToHtmlElement,
     _escapeString,
     _exists,
@@ -33,8 +32,7 @@ export class RichSelectRow<TValue> extends Component {
         super(/* html */ `<div class="ag-rich-select-row" role="presentation"></div>`);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.addManagedListener(this.getGui(), 'click', this.onClick.bind(this));
     }
 

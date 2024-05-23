@@ -6,14 +6,7 @@ import type {
     MenuItemDef,
     PopupService,
 } from '@ag-grid-community/core';
-import {
-    Autowired,
-    Column,
-    Component,
-    PostConstruct,
-    ProvidedColumnGroup,
-    _createIconNoSpan,
-} from '@ag-grid-community/core';
+import { Autowired, Column, Component, ProvidedColumnGroup, _createIconNoSpan } from '@ag-grid-community/core';
 import { AgMenuItemComponent, AgMenuList } from '@ag-grid-enterprise/core';
 
 type MenuItemName = 'rowGroup' | 'value' | 'pivot';
@@ -51,8 +44,7 @@ export class ToolPanelContextMenu extends Component {
         super(/* html */ `<div class="ag-menu"></div>`);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.initializeProperties(this.column);
         this.buildMenuItemMap();
 

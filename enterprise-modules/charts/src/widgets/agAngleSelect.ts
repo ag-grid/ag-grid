@@ -47,7 +47,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
         super(config, AgAngleSelect.TEMPLATE, [AgInputNumberField]);
     }
 
-    postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
 
         const { value, onValueChange } = this.config;
@@ -255,7 +255,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
         return this;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.dragService.removeDragSource(this.dragListener);
         super.destroy();
     }

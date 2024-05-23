@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import { Events } from '../events';
 import type { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
@@ -17,8 +17,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
     // but we do not want to debounce the first time the body is rendered.
     private isBodyRendered: boolean;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.ctrlsService.whenReady((p) => {
             this.centerRowsCtrl = p.center;
 

@@ -1,6 +1,6 @@
 import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
+import { Autowired, Bean, Optional } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { CellPosition, CellPositionUtils } from '../entities/cellPositionUtils';
 import type { Column } from '../entities/column';
@@ -47,8 +47,7 @@ export class UndoRedoService extends BeanStub {
     private isPasting = false;
     private isRangeInAction = false;
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         if (!this.gos.get('undoRedoCellEditing')) {
             return;
         }

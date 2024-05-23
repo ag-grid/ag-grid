@@ -9,17 +9,7 @@ import type {
     RowRenderer,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Events,
-    PostConstruct,
-    PreDestroy,
-    RowNode,
-    _iterateObject,
-    _missing,
-} from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, Events, RowNode, _iterateObject, _missing } from '@ag-grid-community/core';
 
 @Bean('rowModel')
 export class ViewportRowModel extends BeanStub implements IRowModel {
@@ -47,8 +37,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         return false;
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.rowHeight = this.gos.getRowHeightAsNumber();
         this.addManagedListener(this.eventService, Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
         this.addManagedPropertyListener('viewportDatasource', () => this.updateDatasource());
@@ -66,7 +55,11 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         return true;
     }
 
-    @PreDestroy
+    public override destroy(): void {
+        this.destroyDatasource();
+        super.destroy();
+    }
+
     private destroyDatasource(): void {
         if (!this.viewportDatasource) {
             return;

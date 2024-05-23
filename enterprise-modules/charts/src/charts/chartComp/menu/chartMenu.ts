@@ -1,5 +1,5 @@
 import type { ChartCreated, ChartToolPanelMenuOptions, ChartToolbarMenuItemOptions } from '@ag-grid-community/core';
-import { AgPromise, Autowired, Component, Events, PostConstruct } from '@ag-grid-community/core';
+import { AgPromise, Autowired, Component, Events } from '@ag-grid-community/core';
 import { AgPanel } from '@ag-grid-enterprise/core';
 
 import { ChartController } from '../chartController';
@@ -53,8 +53,7 @@ export class ChartMenu extends Component {
         this.chartController = chartMenuContext.chartController;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.chartToolbar = this.createManagedBean(new ChartToolbar());
         this.getGui().appendChild(this.chartToolbar.getGui());
 
@@ -210,7 +209,7 @@ export class ChartMenu extends Component {
         });
     }
 
-    protected destroy() {
+    public override destroy() {
         super.destroy();
 
         if (this.menuPanel && this.menuPanel.isAlive()) {

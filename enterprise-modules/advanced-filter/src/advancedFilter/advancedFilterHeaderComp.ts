@@ -4,7 +4,6 @@ import {
     Component,
     Events,
     KeyCode,
-    PostConstruct,
     _clearElement,
     _setAriaColIndex,
     _setAriaColSpan,
@@ -29,8 +28,7 @@ export class AdvancedFilterHeaderComp extends Component {
             </div>`);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.setupAdvancedFilter(this.enabled);
 
         this.addDestroyFunc(() => this.destroyBean(this.eAdvancedFilter));

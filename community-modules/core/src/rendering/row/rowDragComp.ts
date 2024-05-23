@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, PostConstruct, PreDestroy } from '../../context/context';
+import { Autowired } from '../../context/context';
 import type { DragItem, DragSource } from '../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
 import type { Column } from '../../entities/column';
@@ -35,8 +35,7 @@ export class RowDragComp extends Component {
         return this.customGui != null;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         if (!this.customGui) {
             this.setTemplate(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`);
             this.getGui().appendChild(_createIconNoSpan('rowDrag', this.gos, null)!);
@@ -133,7 +132,11 @@ export class RowDragComp extends Component {
         this.beans.dragAndDropService.addDragSource(this.dragSource, true);
     }
 
-    @PreDestroy
+    public override destroy(): void {
+        this.removeDragSource();
+        super.destroy();
+    }
+
     private removeDragSource() {
         if (this.dragSource) {
             this.beans.dragAndDropService.removeDragSource(this.dragSource);
@@ -190,8 +193,7 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
         this.beans = beans;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.addManagedPropertyListener('suppressRowDrag', this.onSuppressRowDrag.bind(this));
 
         // in case data changes, then we need to update visibility of drag item
@@ -227,8 +229,7 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         this.beans = beans;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         // we do not show the component if sort, filter or grouping is active
 
         this.addManagedListener(this.beans.eventService, Events.EVENT_SORT_CHANGED, this.workOutVisibility.bind(this));

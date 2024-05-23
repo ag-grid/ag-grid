@@ -1,4 +1,4 @@
-import { Autowired, PostConstruct } from '../context/context';
+import { Autowired } from '../context/context';
 import { GridBodyComp } from '../gridBodyComp/gridBodyComp';
 import type { ISideBar } from '../interfaces/iSideBar';
 import type { Logger, LoggerFactory } from '../logger';
@@ -28,8 +28,7 @@ export class GridComp extends TabGuardComp {
         this.eGridDiv = eGridDiv;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.logger = this.loggerFactory.create('GridComp');
 
         const compProxy: IGridComp = {

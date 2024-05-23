@@ -1,6 +1,5 @@
 import {
     Component,
-    PostConstruct,
     RefSelector,
     _clearElement,
     _createIconNoSpan,
@@ -50,8 +49,7 @@ export class ChartSettingsPanel extends Component {
         super(ChartSettingsPanel.TEMPLATE);
     }
 
-    @PostConstruct
-    private postConstruct() {
+    public postConstruct() {
         this.resetPalettes();
 
         this.ePrevBtn.insertAdjacentElement('afterbegin', _createIconNoSpan('previous', this.gos)!);
@@ -222,7 +220,7 @@ export class ChartSettingsPanel extends Component {
         this.miniChartsContainers = this.destroyBeans(this.miniChartsContainers);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyMiniCharts();
         super.destroy();
     }

@@ -101,7 +101,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         return dropZoneTarget.contains(dragSource.eElement);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyGui();
         super.destroy();
     }

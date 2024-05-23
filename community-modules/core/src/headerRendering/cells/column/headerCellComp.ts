@@ -1,5 +1,4 @@
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
-import { PostConstruct, PreDestroy } from '../../../context/context';
 import type { Column, ColumnPinnedType } from '../../../entities/column';
 import { _removeAriaSort, _setAriaSort } from '../../../utils/aria';
 import { RefSelector } from '../../../widgets/componentAnnotations';
@@ -29,8 +28,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         this.pinned = ctrl.getPinned();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const eGui = this.getGui();
 
         const setAttribute = (name: string, value: string | null | undefined) => {
@@ -57,7 +55,11 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         this.eResize.insertAdjacentElement('afterend', selectAllGui);
     }
 
-    @PreDestroy
+    public override destroy(): void {
+        this.destroyHeaderComp();
+        super.destroy();
+    }
+
     private destroyHeaderComp(): void {
         if (this.headerComp) {
             this.eHeaderCompWrapper.removeChild(this.headerCompGui!);

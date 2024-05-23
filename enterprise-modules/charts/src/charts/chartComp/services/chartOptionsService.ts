@@ -653,7 +653,7 @@ export class ChartOptionsService extends BeanStub {
         return isSeriesType(seriesType) && series.type === seriesType;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 }

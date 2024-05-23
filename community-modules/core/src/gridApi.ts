@@ -11,8 +11,8 @@ import type { ColumnViewportService } from './columns/columnViewportService';
 import type { FuncColsService } from './columns/funcColsService';
 import type { PivotResultColsService } from './columns/pivotResultColsService';
 import type { VisibleColsService } from './columns/visibleColsService';
-import type { Context } from './context/context';
-import { Autowired, Bean, Optional, PostConstruct } from './context/context';
+import { BeanStub } from './context/beanStub';
+import { Autowired, Bean, Optional } from './context/context';
 import type { CtrlsService } from './ctrlsService';
 import type { DragAndDropService } from './dragAndDrop/dragAndDropService';
 import type { CellPosition } from './entities/cellPositionUtils';
@@ -23,7 +23,6 @@ import type { ChartRef, GridOptions } from './entities/gridOptions';
 import type { ProvidedColumnGroup } from './entities/providedColumnGroup';
 import type { RowNode } from './entities/rowNode';
 import { Events } from './eventKeys';
-import type { EventService } from './eventService';
 import type {
     AgEvent,
     AgEventListener,
@@ -38,7 +37,6 @@ import type { FocusService } from './focusService';
 import type { GridBodyCtrl } from './gridBodyComp/gridBodyCtrl';
 import type { NavigationService } from './gridBodyComp/navigationService';
 import type { RowDropZoneEvents, RowDropZoneParams } from './gridBodyComp/rowDragFeature';
-import type { GridOptionsService } from './gridOptionsService';
 import type {
     ChartDownloadParams,
     ChartModel,
@@ -68,7 +66,6 @@ import { ExcelFactoryMode } from './interfaces/iExcelCreator';
 import type { IExpansionService } from './interfaces/iExpansionService';
 import type { FilterModel, IFilter } from './interfaces/iFilter';
 import type { IFiltersToolPanel } from './interfaces/iFiltersToolPanel';
-import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { IHeaderColumn } from './interfaces/iHeaderColumn';
 import type { IInfiniteRowModel } from './interfaces/iInfiniteRowModel';
 import type { IRowModel, RowModelType } from './interfaces/iRowModel';
@@ -154,7 +151,7 @@ export function unwrapUserComp<T>(comp: T): T {
 }
 
 @Bean('gridApi')
-export class GridApi<TData = any> {
+export class GridApi<TData = any> extends BeanStub {
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('navigationService') private readonly navigationService: NavigationService;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
@@ -171,12 +168,9 @@ export class GridApi<TData = any> {
     @Autowired('columnMoveService') private readonly columnMoveService: ColumnMoveService;
     @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
     @Autowired('selectionService') private readonly selectionService: ISelectionService;
-    @Autowired('gridOptionsService') private readonly gos: GridOptionsService;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('alignedGridsService') private readonly alignedGridsService: AlignedGridsService;
-    @Autowired('eventService') private readonly eventService: EventService;
     @Autowired('pinnedRowModel') private readonly pinnedRowModel: PinnedRowModel;
-    @Autowired('context') private readonly context: Context;
     @Autowired('rowModel') private readonly rowModel: IRowModel;
     @Autowired('sortController') private readonly sortController: SortController;
     @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;
@@ -190,7 +184,6 @@ export class GridApi<TData = any> {
     @Autowired('stateService') private readonly stateService: StateService;
     @Autowired('expansionService') private readonly expansionService: IExpansionService;
     @Autowired('apiEventService') private readonly apiEventService: ApiEventService;
-    @Autowired('frameworkOverrides') private readonly frameworkOverrides: IFrameworkOverrides;
     @Autowired('undoRedoService') private readonly undoRedoService: UndoRedoService;
     @Autowired('rowNodeBlockLoader') private readonly rowNodeBlockLoader: RowNodeBlockLoader;
 
@@ -215,8 +208,7 @@ export class GridApi<TData = any> {
 
     private destroyCalled = false;
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         switch (this.rowModel.getType()) {
             case 'clientSide':
                 this.clientSideRowModel = this.rowModel as IClientSideRowModel;

@@ -1,13 +1,5 @@
 import type { ChartType, SeriesChartType } from '@ag-grid-community/core';
-import {
-    AgCheckbox,
-    AgSelect,
-    Autowired,
-    Component,
-    PostConstruct,
-    _areEqual,
-    _clearElement,
-} from '@ag-grid-community/core';
+import { AgCheckbox, AgSelect, Autowired, Component, _areEqual, _clearElement } from '@ag-grid-community/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import type { ChartController } from '../../chartController';
@@ -32,8 +24,7 @@ export class SeriesChartTypePanel extends Component {
         super(SeriesChartTypePanel.TEMPLATE);
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         this.createSeriesChartTypeGroup(this.columns);
     }
 
@@ -52,7 +43,7 @@ export class SeriesChartTypePanel extends Component {
         this.columns = columns;
         this.selectedColIds = [];
         this.clearComps();
-        this.init();
+        this.postConstruct();
     }
 
     private getValidColIds(columns: ColState[]): string[] {
@@ -163,7 +154,7 @@ export class SeriesChartTypePanel extends Component {
         return ['groupedColumn', 'stackedColumn', 'stackedArea'].includes(chartType);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.clearComps();
         this.seriesChartTypeGroupComp = this.destroyBean(this.seriesChartTypeGroupComp)!;
         super.destroy();

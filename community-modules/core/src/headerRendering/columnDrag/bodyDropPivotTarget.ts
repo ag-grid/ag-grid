@@ -1,13 +1,12 @@
 import type { FuncColsService } from '../../columns/funcColsService';
+import { BeanStub } from '../../context/beanStub';
 import { Autowired } from '../../context/context';
 import type { DraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import { DragAndDropService } from '../../dragAndDrop/dragAndDropService';
 import type { Column, ColumnPinnedType } from '../../entities/column';
-import type { GridOptionsService } from '../../gridOptionsService';
 import type { DropListener } from './bodyDropTarget';
 
-export class BodyDropPivotTarget implements DropListener {
-    @Autowired('gridOptionsService') private gos: GridOptionsService;
+export class BodyDropPivotTarget extends BeanStub implements DropListener {
     @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
 
     private columnsToAggregate: Column[] = [];
@@ -17,6 +16,7 @@ export class BodyDropPivotTarget implements DropListener {
     private pinned: ColumnPinnedType;
 
     constructor(pinned: ColumnPinnedType) {
+        super();
         this.pinned = pinned;
     }
 

@@ -24,11 +24,8 @@ import type {
 } from '@ag-grid-community/core';
 import {
     Autowired,
-    ColumnModel,
     Events,
     NumberSequence,
-    PostConstruct,
-    PreDestroy,
     RowNodeBlock,
     ServerSideTransactionResultStatus,
     _getAllValuesInObject,
@@ -98,8 +95,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.leafGroup = ssrmParams.rowGroupCols ? this.level === ssrmParams.rowGroupCols.length - 1 : false;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.usingTreeData = this.gos.get('treeData');
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
 
@@ -129,7 +125,11 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         }
     }
 
-    @PreDestroy
+    public override destroy(): void {
+        this.destroyRowNodes();
+        super.destroy();
+    }
+
     private destroyRowNodes(): void {
         this.blockUtils.destroyRowNodes(this.allRowNodes);
 

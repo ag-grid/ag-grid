@@ -6,15 +6,7 @@ import type {
     UserComponentFactory,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import {
-    AgPromise,
-    Autowired,
-    Component,
-    PostConstruct,
-    PreDestroy,
-    RefSelector,
-    _removeFromParent,
-} from '@ag-grid-community/core';
+import { AgPromise, Autowired, Component, RefSelector, _removeFromParent } from '@ag-grid-community/core';
 
 import type { StatusBarService } from './statusBarService';
 
@@ -39,8 +31,7 @@ export class AgStatusBar extends Component {
         super(AgStatusBar.TEMPLATE);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.processStatusPanels(new Map());
         this.addManagedPropertyListeners(['statusBar'], this.handleStatusBarChanged.bind(this));
     }
@@ -113,7 +104,11 @@ export class AgStatusBar extends Component {
         this.statusBarService.unregisterAllComponents();
     }
 
-    @PreDestroy
+    public override destroy(): void {
+        this.destroyComponents();
+        super.destroy();
+    }
+
     private destroyComponents() {
         Object.values(this.compDestroyFunctions).forEach((func) => func());
         this.compDestroyFunctions = {};

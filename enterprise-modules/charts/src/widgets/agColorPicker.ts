@@ -30,7 +30,7 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
         });
     }
 
-    protected postConstruct() {
+    public override postConstruct() {
         const eDocument = this.gos.getDocument();
         this.eDisplayFieldColor = eDocument.createElement('span');
         this.eDisplayFieldColor.classList.add('ag-color-picker-color');

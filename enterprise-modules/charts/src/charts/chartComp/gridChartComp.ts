@@ -16,7 +16,6 @@ import {
     Autowired,
     Component,
     Events,
-    PostConstruct,
     RefSelector,
     _clearElement,
     _getAbsoluteHeight,
@@ -122,8 +121,7 @@ export class GridChartComp extends Component {
         this.params = params;
     }
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         const modelParams: ChartModelParams = {
             ...this.params,
             chartType: getCanonicalChartType(this.params.chartType),
@@ -612,7 +610,7 @@ export class GridChartComp extends Component {
         this.eventService.dispatchEvent(event);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
 
         if (this.chartProxy) {

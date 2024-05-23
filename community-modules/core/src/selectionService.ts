@@ -1,7 +1,6 @@
 import { BeanStub } from './context/beanStub';
 import { Bean } from './context/context';
 import { Autowired } from './context/context';
-import { PostConstruct } from './context/context';
 import type { RowNode } from './entities/rowNode';
 import type { SelectionChangedEvent, SelectionEventSourceType } from './events';
 import { Events } from './events';
@@ -26,8 +25,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
     private groupSelectsChildren: boolean;
     private rowSelection?: 'single' | 'multiple';
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.rowSelection = this.gos.get('rowSelection');
         this.groupSelectsChildren = this.gos.get('groupSelectsChildren');
         this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection'], () => {
@@ -39,7 +37,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
         this.resetNodes();
         this.lastRowNode = null;

@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, PostConstruct } from '../../context/context';
+import { Autowired } from '../../context/context';
 import type { Column } from '../../entities/column';
 import type { ColumnHoverService } from '../../rendering/columnHoverService';
 
@@ -16,8 +16,7 @@ export class HoverFeature extends BeanStub {
         this.element = element;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         if (this.gos.get('columnHoverHighlight')) {
             this.addMouseHoverListeners();
         }

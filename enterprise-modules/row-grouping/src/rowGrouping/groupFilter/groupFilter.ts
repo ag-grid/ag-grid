@@ -13,7 +13,6 @@ import {
     Autowired,
     Events,
     FilterWrapperComp,
-    PostConstruct,
     RefSelector,
     TabGuardComp,
     _clearElement,
@@ -56,8 +55,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         `);
     }
 
-    @PostConstruct
-    private postConstruct() {
+    public postConstruct() {
         this.initialiseTabGuard({});
     }
 

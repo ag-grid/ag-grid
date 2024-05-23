@@ -1,13 +1,5 @@
 import type { Beans, IGetRowsParams, LoadSuccessParams, NumberSequence } from '@ag-grid-community/core';
-import {
-    Autowired,
-    PostConstruct,
-    PreDestroy,
-    RowNode,
-    RowNodeBlock,
-    _exists,
-    _missing,
-} from '@ag-grid-community/core';
+import { Autowired, RowNode, RowNodeBlock, _exists, _missing } from '@ag-grid-community/core';
 
 import type { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
 
@@ -36,8 +28,7 @@ export class InfiniteBlock extends RowNodeBlock {
         this.endRow = this.startRow + params.blockSize!;
     }
 
-    @PostConstruct
-    protected postConstruct(): void {
+    public postConstruct(): void {
         this.createRowNodes();
     }
 
@@ -171,12 +162,12 @@ export class InfiniteBlock extends RowNodeBlock {
         this.parentCache.pageLoaded(this, finalRowCount);
     }
 
-    @PreDestroy
-    private destroyRowNodes(): void {
+    public override destroy(): void {
         this.rowNodes.forEach((rowNode) => {
             // this is needed, so row render knows to fade out the row, otherwise it
             // sees row top is present, and thinks the row should be shown.
             rowNode.clearRowTopAndRowIndex();
         });
+        super.destroy();
     }
 }

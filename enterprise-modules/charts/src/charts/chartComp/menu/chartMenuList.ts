@@ -1,13 +1,5 @@
 import type { FocusService, IAfterGuiAttachedParams, MenuItemDef, PopupService } from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Component,
-    PostConstruct,
-    RefSelector,
-    _createIconNoSpan,
-} from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, Component, RefSelector, _createIconNoSpan } from '@ag-grid-community/core';
 import { AgMenuItemComponent, AgMenuList } from '@ag-grid-enterprise/core';
 
 import type { ChartController } from '../chartController';
@@ -207,7 +199,7 @@ export class ChartMenuListFactory extends BeanStub {
         };
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyBean(this.activeChartMenuList);
         super.destroy();
     }
@@ -227,8 +219,7 @@ class ChartMenuList extends Component {
         `);
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.mainMenuList = this.createManagedBean(new AgMenuList(0));
         this.mainMenuList.addMenuItems(this.menuItems);
         this.mainMenuList.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, this.onHidePopup.bind(this));

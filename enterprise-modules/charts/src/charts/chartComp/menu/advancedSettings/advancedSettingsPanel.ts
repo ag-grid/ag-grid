@@ -1,5 +1,5 @@
 import type { ChartType } from '@ag-grid-community/core';
-import { Component, PostConstruct } from '@ag-grid-community/core';
+import { Component } from '@ag-grid-community/core';
 
 import type { ChartSeriesType } from '../../utils/seriesTypeMapper';
 import { isCartesian } from '../../utils/seriesTypeMapper';
@@ -23,8 +23,7 @@ export class AdvancedSettingsPanel extends Component {
         super(AdvancedSettingsPanel.TEMPLATE);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.chartPanelFeature = this.createManagedBean(
             new ChartPanelFeature(
                 this.chartMenuContext.chartController,

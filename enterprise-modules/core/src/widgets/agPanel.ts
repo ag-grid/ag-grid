@@ -2,7 +2,6 @@ import type { PositionableOptions, ResizableStructure } from '@ag-grid-community
 import {
     Component,
     PositionableFeature,
-    PostConstruct,
     RefSelector,
     _createIconNoSpan,
     _getInnerHeight,
@@ -48,8 +47,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         </div>`;
     }
 
-    @PostConstruct
-    protected postConstruct() {
+    public postConstruct() {
         const {
             component,
             closable,
@@ -221,7 +219,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         this.close();
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         if (this.closeButtonComp) {
             this.closeButtonComp = this.destroyBean(this.closeButtonComp);
         }

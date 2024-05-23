@@ -5,15 +5,7 @@ import type {
     ToolPanelDef,
     VisibleColsService,
 } from '@ag-grid-community/core';
-import {
-    Autowired,
-    Component,
-    KeyCode,
-    PostConstruct,
-    PreDestroy,
-    _clearElement,
-    _last,
-} from '@ag-grid-community/core';
+import { Autowired, Component, KeyCode, _clearElement, _last } from '@ag-grid-community/core';
 
 import { SideBarButtonComp } from './sideBarButtonComp';
 
@@ -35,8 +27,7 @@ export class AgSideBarButtons extends Component {
         super(AgSideBarButtons.TEMPLATE);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.addManagedListener(this.getFocusableElement(), 'keydown', this.handleKeyDown.bind(this));
     }
 
@@ -73,9 +64,13 @@ export class AgSideBarButtons extends Component {
         return buttonComp;
     }
 
-    @PreDestroy
     public clearButtons(): void {
         this.buttonComps = this.destroyBeans(this.buttonComps);
         _clearElement(this.getGui());
+    }
+
+    public override destroy(): void {
+        this.clearButtons();
+        super.destroy();
     }
 }

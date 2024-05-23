@@ -5,7 +5,7 @@ import type { ColumnModel } from '../columns/columnModel';
 import type { PivotResultColsService } from '../columns/pivotResultColsService';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
+import { Autowired, Bean, Optional } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { Column } from '../entities/column';
 import { Events } from '../eventKeys';
@@ -93,8 +93,7 @@ export class StateService extends BeanStub {
     private columnGroupStates?: { groupId: string; open: boolean | undefined }[];
     private staleStateKeys: Set<keyof GridState> = new Set();
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.isClientSideRowModel = this.rowModel.getType() === 'clientSide';
 
         this.cachedState = this.gos.get('initialState') ?? {};

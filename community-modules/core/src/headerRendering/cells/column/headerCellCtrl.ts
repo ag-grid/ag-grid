@@ -826,7 +826,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         return this.getGui();
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
 
         (this.refreshFunctions as any) = null;

@@ -1,3 +1,4 @@
+import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean } from '../context/context';
 import type { Column } from '../entities/column';
 import { _missing } from '../utils/generic';
@@ -6,7 +7,7 @@ import type { ColumnModel } from './columnModel';
 import type { FuncColsService } from './funcColsService';
 
 @Bean('columnGetStateService')
-export class ColumnGetStateService {
+export class ColumnGetStateService extends BeanStub {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('funcColsService') private funcColsService: FuncColsService;
 

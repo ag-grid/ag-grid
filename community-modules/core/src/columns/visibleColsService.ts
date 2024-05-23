@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import type { ColumnPinnedType } from '../entities/column';
 import { Column } from '../entities/column';
 import { ColumnGroup } from '../entities/columnGroup';

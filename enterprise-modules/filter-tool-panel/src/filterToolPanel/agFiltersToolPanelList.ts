@@ -551,7 +551,7 @@ export class AgFiltersToolPanelList extends Component {
         _clearElement(this.getGui());
     }
 
-    protected destroy() {
+    public override destroy() {
         this.destroyFilters();
         super.destroy();
     }

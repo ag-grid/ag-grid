@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
 import type { RowPosition } from '../entities/rowPositionUtils';
 import type { ModelUpdatedEvent, PaginationChangedEvent } from '../events';
@@ -37,8 +37,7 @@ export class PaginationProxy extends BeanStub {
 
     private masterRowCount: number = 0;
 
-    @PostConstruct
-    private postConstruct() {
+    public postConstruct() {
         this.active = this.gos.get('pagination');
         this.pageSizeFromGridOptions = this.gos.get('paginationPageSize');
         this.paginateChildRows = this.isPaginateChildRows();

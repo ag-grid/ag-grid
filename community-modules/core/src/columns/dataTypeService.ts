@@ -1,6 +1,6 @@
 import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import type {
     ColDef,
     SuppressKeyboardEventParams,
@@ -8,7 +8,6 @@ import type {
     ValueFormatterParams,
     ValueGetterParams,
 } from '../entities/colDef';
-import { KeyCreatorParams } from '../entities/colDef';
 import { Column } from '../entities/column';
 import type {
     BaseCellDataType,
@@ -94,8 +93,7 @@ export class DataTypeService extends BeanStub {
     private columnStateUpdatesPendingInference: { [colId: string]: Set<keyof ColumnStateParams> } = {};
     private columnStateUpdateListenerDestroyFuncs: (() => void)[] = [];
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         this.groupHideOpenParents = this.gos.get('groupHideOpenParents');
         this.addManagedPropertyListener('groupHideOpenParents', () => {
             this.groupHideOpenParents = this.gos.get('groupHideOpenParents');
@@ -903,7 +901,7 @@ export class DataTypeService extends BeanStub {
         this.columnStateUpdateListenerDestroyFuncs = [];
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.dataTypeDefinitions = {};
         this.dataTypeMatchers = {};
         this.formatValueFuncs = {};

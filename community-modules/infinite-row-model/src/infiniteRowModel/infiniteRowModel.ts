@@ -12,17 +12,7 @@ import type {
     SortController,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Events,
-    NumberSequence,
-    PostConstruct,
-    PreDestroy,
-    _jsonEquals,
-    _warnOnce,
-} from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, Events, NumberSequence, _jsonEquals, _warnOnce } from '@ag-grid-community/core';
 
 import type { InfiniteCacheParams } from './infiniteCache';
 import { InfiniteCache } from './infiniteCache';
@@ -57,8 +47,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         return false;
     }
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         if (!this.gos.isRowModelType('infinite')) {
             return;
         }
@@ -84,7 +73,11 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         this.setDatasource(this.gos.get('datasource'));
     }
 
-    @PreDestroy
+    public override destroy(): void {
+        this.destroyDatasource();
+        super.destroy();
+    }
+
     private destroyDatasource(): void {
         if (this.datasource) {
             this.getContext().destroyBean(this.datasource);

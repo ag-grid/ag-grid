@@ -9,7 +9,6 @@ import {
     AgPromise,
     Autowired,
     KeyCode,
-    PostConstruct,
     TabGuardComp,
     _last,
     _loadTemplate,
@@ -38,8 +37,7 @@ export class AgMenuList extends TabGuardComp {
         };
     }
 
-    @PostConstruct
-    private postConstruct() {
+    public postConstruct() {
         this.initialiseTabGuard({
             onTabKeyDown: (e) => this.onTabKeyDown(e),
             handleKeyDown: (e) => this.handleKeyDown(e),
@@ -286,7 +284,7 @@ export class AgMenuList extends TabGuardComp {
         return nextItem! || this.activeMenuItem;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.clearActiveItem();
         super.destroy();
     }

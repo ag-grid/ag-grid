@@ -2,7 +2,6 @@ import type { Component } from '@ag-grid-community/core';
 import {
     KeyCode,
     PopupComponent,
-    PostConstruct,
     RefSelector,
     VirtualList,
     _exists,
@@ -43,8 +42,7 @@ export class AgAutocompleteList extends PopupComponent {
         super.destroy();
     }
 
-    @PostConstruct
-    protected init(): void {
+    public postConstruct(): void {
         this.autocompleteEntries = this.params.autocompleteEntries;
         this.virtualList = this.createManagedBean(new VirtualList({ cssIdentifier: 'autocomplete' }));
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));

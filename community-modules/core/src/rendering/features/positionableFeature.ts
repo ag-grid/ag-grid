@@ -899,7 +899,7 @@ export class PositionableFeature extends BeanStub {
         }
     }
 
-    protected destroy() {
+    public override destroy() {
         super.destroy();
 
         if (this.moveElementDragListener) {

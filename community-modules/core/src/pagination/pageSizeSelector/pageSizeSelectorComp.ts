@@ -1,4 +1,4 @@
-import { Autowired, PostConstruct } from '../../context/context';
+import { Autowired } from '../../context/context';
 import { Events } from '../../eventKeys';
 import type { PaginationChangedEvent } from '../../events';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
@@ -21,8 +21,7 @@ export class PageSizeSelectorComp extends Component {
         super(/* html */ `<span class="ag-paging-page-size"></span>`);
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         this.addManagedPropertyListener('paginationPageSizeSelector', () => {
             this.onPageSizeSelectorValuesChange();
         });

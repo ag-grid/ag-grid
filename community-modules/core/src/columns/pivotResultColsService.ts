@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct, PreDestroy } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import type { AbstractColDef, ColDef, ColGroupDef } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import type { ColumnEventType } from '../events';
@@ -28,9 +28,9 @@ export class PivotResultColsService extends BeanStub {
     // Saved when pivot is disabled, available to re-use when pivot is restored
     private previousPivotResultCols: IProvidedColumn[] | null;
 
-    @PreDestroy
-    private destroyColumns(): void {
+    public override destroy(): void {
         destroyColumnTree(this.getContext(), this.pivotResultCols?.tree);
+        super.destroy();
     }
 
     public isPivotResultColsPresent(): boolean {

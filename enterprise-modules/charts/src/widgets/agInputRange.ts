@@ -16,7 +16,7 @@ export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string,
         super(config, 'ag-range-field', 'range');
     }
 
-    protected postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
 
         const { min, max, step } = this.config;

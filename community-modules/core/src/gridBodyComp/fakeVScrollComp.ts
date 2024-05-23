@@ -1,4 +1,3 @@
-import { PostConstruct } from '../context/context';
 import { Events } from '../eventKeys';
 import { _isVisible, _setFixedWidth } from '../utils/dom';
 import type { AgComponentSelector } from '../widgets/component';
@@ -18,8 +17,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         super(FakeVScrollComp.TEMPLATE, 'vertical');
     }
 
-    @PostConstruct
-    protected postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
 
         this.createManagedBean(new SetHeightFeature(this.eContainer));

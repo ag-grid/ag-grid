@@ -16,7 +16,6 @@ import {
     AgCheckbox,
     Autowired,
     Component,
-    PostConstruct,
     RefSelector,
     _createIcon,
     _setAriaChecked,
@@ -130,8 +129,7 @@ export class SetFilterListItem<V> extends Component {
         this.hasIndeterminateExpandState = params.hasIndeterminateExpandState;
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.addDestroyFunc(() => this.destroyCellRendererComponent?.());
 
         this.render();

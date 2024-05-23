@@ -1,6 +1,6 @@
 import type { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, PreConstruct } from '../context/context';
+import { Autowired } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import type { ColumnGroup } from '../entities/columnGroup';
@@ -66,8 +66,7 @@ export class Component extends BeanStub {
         }
     }
 
-    @PreConstruct
-    private componentPreConstruct(): void {
+    public preConstruct(): void {
         this.usingBrowserTooltips = this.gos.get('enableBrowserTooltips');
 
         // ui exists if user sets template in constructor. when this happens, we have to wait for the context
@@ -375,7 +374,7 @@ export class Component extends BeanStub {
         }
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         if (this.parentComponent) {
             this.parentComponent = undefined;
         }

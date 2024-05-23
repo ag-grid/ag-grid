@@ -9,7 +9,7 @@ import type {
     ValueService,
     VisibleColsService,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, Events, PostConstruct } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, Events } from '@ag-grid-community/core';
 
 @Bean('chartColumnService')
 export class ChartColumnService extends BeanStub {
@@ -23,8 +23,7 @@ export class ChartColumnService extends BeanStub {
 
     private valueColsWithoutSeriesType: Set<string> = new Set();
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const clearValueCols = () => this.valueColsWithoutSeriesType.clear();
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, clearValueCols);
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, clearValueCols);
@@ -153,7 +152,7 @@ export class ChartColumnService extends BeanStub {
         return null;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.valueColsWithoutSeriesType.clear();
         super.destroy();
     }

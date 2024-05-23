@@ -1,5 +1,5 @@
 import type { AgSelectParams } from '@ag-grid-community/core';
-import { AgSelect, Autowired, Component, PostConstruct, RefSelector, _includes } from '@ag-grid-community/core';
+import { AgSelect, Autowired, Component, RefSelector, _includes } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -30,8 +30,7 @@ export class MarkersPanel extends Component {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         // scatter charts should always show markers
         const chartType = this.chartOptionsService.getChartType();
         const shouldHideEnabledCheckbox = _includes(['scatter', 'bubble'], chartType);

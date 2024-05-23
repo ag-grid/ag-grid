@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import { Bean, PostConstruct } from '../../context/context';
+import { Bean } from '../../context/context';
 import { ReadOnlyFloatingFilter } from '../../filter/floating/provided/readOnlyFloatingFilter';
 import { DateFilter } from '../../filter/provided/date/dateFilter';
 import { DateFloatingFilter } from '../../filter/provided/date/dateFloatingFilter';
@@ -102,8 +102,7 @@ export class UserComponentRegistry extends BeanStub {
 
     private jsComps: { [key: string]: any } = {};
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         const comps = this.gos.get('components');
         if (comps != null) {
             _iterateObject(comps, (key, component) => this.registerJsComponent(key, component));

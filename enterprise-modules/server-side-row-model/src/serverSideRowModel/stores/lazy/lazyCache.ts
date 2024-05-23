@@ -9,7 +9,7 @@ import type {
     ServerSideGroupLevelParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, BeanStub, PostConstruct, PreDestroy } from '@ag-grid-community/core';
+import { Autowired, BeanStub } from '@ag-grid-community/core';
 import type { RowNodeSorter } from '@ag-grid-community/core';
 import type { SortController } from '@ag-grid-community/core';
 
@@ -94,8 +94,7 @@ export class LazyCache extends BeanStub {
         this.storeParams = storeParams;
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         this.lazyBlockLoadingService.subscribe(this);
         // initiate the node map to be indexed at 'index', 'id' and 'node' for quick look-up.
         // it's important id isn't first, as stub nodes overwrite each-other, and the first index is
@@ -110,8 +109,7 @@ export class LazyCache extends BeanStub {
         this.isMasterDetail = this.gos.get('masterDetail');
     }
 
-    @PreDestroy
-    private destroyRowNodes() {
+    public override destroy() {
         this.lazyBlockLoadingService.unsubscribe(this);
         this.numberOfRows = 0;
         this.nodeMap.forEach((node) => this.blockUtils.destroyRowNode(node.node));
@@ -119,6 +117,7 @@ export class LazyCache extends BeanStub {
         this.nodeDisplayIndexMap.clear();
         this.nodesToRefresh.clear();
         this.live = false;
+        super.destroy();
     }
 
     /**

@@ -1,5 +1,5 @@
 import type { ChartGroupsDef, ChartType } from '@ag-grid-community/core';
-import { Autowired, Component, KeyCode, PostConstruct, _setAriaLabel, _warnOnce } from '@ag-grid-community/core';
+import { Autowired, Component, KeyCode, _setAriaLabel, _warnOnce } from '@ag-grid-community/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import type { ChartController } from '../../chartController';
@@ -165,8 +165,7 @@ export class MiniChartsContainer extends Component {
         this.chartGroups = { ...chartGroups };
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         // hide MiniCustomCombo if no custom combo exists
         if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
             this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(
@@ -293,7 +292,7 @@ export class MiniChartsContainer extends Component {
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.wrappers.clear();
         super.destroy();
     }

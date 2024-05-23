@@ -5,7 +5,6 @@ import {
     Autowired,
     Component,
     Events,
-    PostConstruct,
     RefSelector,
     _removeFromParent,
     _setDisplayed,
@@ -66,8 +65,7 @@ export class CartesianAxisPanel extends Component {
         this.chartOptionsSeriesProxy = chartOptionsService.getSeriesOptionsProxy(() => seriesType);
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const {
             isExpandedOnInit: expanded,
             chartOptionsService,
@@ -455,7 +453,7 @@ export class CartesianAxisPanel extends Component {
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

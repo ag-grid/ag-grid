@@ -1,4 +1,4 @@
-import { AgInputNumberField, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { AgInputNumberField, Autowired, Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -18,8 +18,7 @@ export class AnimationPanel extends Component {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const animationGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(
             'animation.enabled',
             {

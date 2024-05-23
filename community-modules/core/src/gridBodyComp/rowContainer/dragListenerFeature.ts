@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, Optional, PostConstruct } from '../../context/context';
+import { Autowired, Optional } from '../../context/context';
 import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
 import type { IRangeService } from '../../interfaces/IRangeService';
 
@@ -16,8 +16,7 @@ export class DragListenerFeature extends BeanStub {
 
     private params: DragListenerParams;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         if (!this.rangeService) {
             return;
         }

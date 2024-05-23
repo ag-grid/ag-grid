@@ -1,7 +1,7 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { ShowRowGroupColsService } from '../columns/showRowGroupColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import type { Column } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
 import { _defaultComparator } from '../utils/generic';
@@ -28,8 +28,7 @@ export class RowNodeSorter extends BeanStub {
     private isAccentedSort: boolean;
     private primaryColumnsSortGroups: boolean;
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         this.isAccentedSort = this.gos.get('accentedSort');
         this.primaryColumnsSortGroups = this.gos.isColumnsSortingCoupledToGroup();
 

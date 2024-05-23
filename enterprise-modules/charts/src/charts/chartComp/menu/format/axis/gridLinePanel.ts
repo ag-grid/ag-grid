@@ -1,4 +1,4 @@
-import { Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { Autowired, Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 import type { AgAxisGridLineOptions } from 'ag-charts-community';
@@ -29,8 +29,7 @@ export class GridLinePanel extends Component {
         this.chartOptions = chartMenuUtils.getChartOptions();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const gridLineGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>('gridLine.enabled', {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',

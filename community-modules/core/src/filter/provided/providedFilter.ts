@@ -1,4 +1,4 @@
-import { Autowired, PostConstruct } from '../../context/context';
+import { Autowired } from '../../context/context';
 import type { FilterChangedEventSourceType } from '../../events';
 import type { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import type { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
@@ -128,8 +128,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     /** Used to get the filter type for filter models. */
     protected abstract getFilterType(): string;
 
-    @PostConstruct
-    protected postConstruct(): void {
+    public postConstruct(): void {
         this.resetTemplate(); // do this first to create the DOM
         this.createManagedBean(
             new ManagedFocusFeature(this.getFocusableElement(), {

@@ -12,7 +12,6 @@ import {
     DragAndDropService,
     Events,
     KeyCode,
-    PostConstruct,
     RefSelector,
     TouchListener,
     _createIconNoSpan,
@@ -53,8 +52,7 @@ export abstract class PillDragComp<TItem> extends Component {
         super();
     }
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         this.setTemplate(this.template ?? PillDragComp.TEMPLATE, this.agComponents);
         const eGui = this.getGui();
 
@@ -209,7 +207,7 @@ export abstract class PillDragComp<TItem> extends Component {
         el.classList.add(`ag-column-drop-cell${suffix}`, `ag-column-drop-${direction}-cell${suffix}`);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
         (this.dragSourceDropTarget as any) = null;
     }

@@ -1,4 +1,3 @@
-import { PostConstruct } from '../context/context';
 import type { CheckboxSelectionCallback } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import { RowNode } from '../entities/rowNode';
@@ -31,8 +30,7 @@ export class CheckboxSelectionComponent extends Component {
         );
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.eCheckbox.setPassive(true);
     }
 

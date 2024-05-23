@@ -11,7 +11,6 @@ import {
     BeanStub,
     DragSourceType,
     Events,
-    PostConstruct,
     ProvidedColumnGroup,
     VirtualListDragFeature,
 } from '@ag-grid-community/core';
@@ -31,8 +30,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.createManagedBean(
             new VirtualListDragFeature<
                 AgPrimaryColsList,
