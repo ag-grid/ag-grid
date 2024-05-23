@@ -1,5 +1,4 @@
 import { BeanStub } from '../../../context/beanStub';
-import { PostConstruct } from '../../../context/context';
 import { Column } from '../../../entities/column';
 import { ColumnGroup } from '../../../entities/columnGroup';
 import type { IHeaderGroupCellComp } from './headerGroupCellCtrl';
@@ -17,8 +16,7 @@ export class GroupWidthFeature extends BeanStub {
         this.comp = comp;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         // we need to listen to changes in child columns, as they impact our width
         this.addListenersToChildrenColumns();
 

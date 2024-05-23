@@ -42,7 +42,6 @@ import {
     ChangedPath,
     Events,
     Optional,
-    PostConstruct,
     _exists,
     _last,
     _removeFromArray,
@@ -109,8 +108,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
     private navigatorApiFailed = false;
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.logger = this.loggerFactory.create('ClipboardService');
 
         if (this.rowModel.getType() === 'clientSide') {

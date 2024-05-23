@@ -1,5 +1,5 @@
 import type { ChartOptionsChanged } from '@ag-grid-community/core';
-import { Autowired, Component, Events, PostConstruct, RefPlaceholder } from '@ag-grid-community/core';
+import { Autowired, Component, Events, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 import type { AgChartPaddingOptions, AgChartThemeOverrides } from 'ag-charts-community';
@@ -31,8 +31,7 @@ export class PaddingPanel extends Component {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const chartPaddingGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',

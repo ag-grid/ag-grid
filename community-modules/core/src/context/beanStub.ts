@@ -1,6 +1,6 @@
 import type { GridOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
-import { EventService } from '../eventService';
+import type { EventService } from '../eventService';
 import type { AgEvent, AgEventListener } from '../events';
 import type {
     GridOptionsService,
@@ -11,16 +11,18 @@ import type {
 } from '../gridOptionsService';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import { LocalEventService } from '../localEventService';
 import type { LocaleService } from '../localeService';
 import { _addSafePassiveEventListener } from '../utils/event';
 import type { Component } from '../widgets/component';
+import type { BaseBean } from './bean';
 import type { Context } from './context';
-import { Autowired, PreDestroy } from './context';
+import { Autowired } from './context';
 
-export class BeanStub implements IEventEmitter {
+export abstract class BeanStub implements BaseBean, IEventEmitter {
     public static EVENT_DESTROYED = 'destroyed';
 
-    protected localEventService: EventService;
+    protected localEventService?: LocalEventService;
 
     private destroyFunctions: (() => void)[] = [];
     private destroyed = false;
@@ -29,7 +31,7 @@ export class BeanStub implements IEventEmitter {
     // prevents vue from creating proxies for created objects and prevents identity related issues
     public __v_skip = true;
 
-    @Autowired('frameworkOverrides') private readonly frameworkOverrides: IFrameworkOverrides;
+    @Autowired('frameworkOverrides') protected readonly frameworkOverrides: IFrameworkOverrides;
     @Autowired('context') protected readonly context: Context;
     @Autowired('eventService') protected readonly eventService: EventService;
     @Autowired('gridOptionsService') protected readonly gos: GridOptionsService;
@@ -64,13 +66,7 @@ export class BeanStub implements IEventEmitter {
         return this.context;
     }
 
-    @PreDestroy
-    protected destroy(): void {
-        // let prototype: any = Object.getPrototypeOf(this);
-        // const constructor: any = prototype.constructor;
-        // const constructorString = constructor.toString();
-        // const beanName = constructorString.substring(9, constructorString.indexOf("("));
-
+    public destroy(): void {
         for (let i = 0; i < this.destroyFunctions.length; i++) {
             this.destroyFunctions[i]();
         }
@@ -82,10 +78,10 @@ export class BeanStub implements IEventEmitter {
 
     public addEventListener(eventType: string, listener: AgEventListener): void {
         if (!this.localEventService) {
-            this.localEventService = new EventService();
+            this.localEventService = new LocalEventService();
         }
 
-        this.localEventService.addEventListener(eventType, listener);
+        this.localEventService!.addEventListener(eventType, listener);
     }
 
     public removeEventListener(eventType: string, listener: AgEventListener): void {
@@ -134,9 +130,9 @@ export class BeanStub implements IEventEmitter {
         event: keyof GridOptions,
         listener: PropertyValueChangedListener<K>
     ): () => null {
-        this.gos.addEventListener(event, listener);
+        this.gos.addPropertyEventListener(event, listener);
         const destroyFunc: () => null = () => {
-            this.gos.removeEventListener(event, listener);
+            this.gos.removePropertyEventListener(event, listener);
             return null;
         };
         this.destroyFunctions.push(destroyFunc);
@@ -215,21 +211,25 @@ export class BeanStub implements IEventEmitter {
         }
     }
 
-    public createManagedBean<T>(bean: T, context?: Context): T {
+    public createManagedBean<T extends BaseBean | null | undefined>(bean: T, context?: Context): T {
         const res = this.createBean(bean, context);
         this.addDestroyFunc(this.destroyBean.bind(this, bean, context));
         return res;
     }
 
-    protected createBean<T>(bean: T, context?: Context | null, afterPreCreateCallback?: (comp: Component) => void): T {
+    protected createBean<T extends BaseBean | null | undefined>(
+        bean: T,
+        context?: Context | null,
+        afterPreCreateCallback?: (comp: Component) => void
+    ): T {
         return (context || this.getContext()).createBean(bean, afterPreCreateCallback);
     }
 
-    protected destroyBean<T>(bean: T, context?: Context): undefined {
+    protected destroyBean<T extends BaseBean | null | undefined>(bean: T, context?: Context): undefined {
         return (context || this.getContext()).destroyBean(bean);
     }
 
-    protected destroyBeans<T>(beans: T[], context?: Context): T[] {
+    protected destroyBeans<T extends BaseBean | null | undefined>(beans: T[], context?: Context): T[] {
         if (beans) {
             for (let i = 0; i < beans.length; i++) {
                 this.destroyBean(beans[i], context);

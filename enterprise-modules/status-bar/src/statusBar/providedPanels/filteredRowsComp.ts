@@ -1,13 +1,12 @@
 import type { IClientSideRowModel, IRowModel, IStatusPanelComp } from '@ag-grid-community/core';
-import { Autowired, Events, PostConstruct, _formatNumberCommas, _warnOnce } from '@ag-grid-community/core';
+import { Autowired, Events, _formatNumberCommas, _warnOnce } from '@ag-grid-community/core';
 
 import { AgNameValue } from './agNameValue';
 
 export class FilteredRowsComp extends AgNameValue implements IStatusPanelComp {
     @Autowired('rowModel') private rowModel: IRowModel;
 
-    @PostConstruct
-    protected postConstruct(): void {
+    public postConstruct(): void {
         this.setLabel('filteredRows', 'Filtered');
 
         // this component is only really useful with client side row model

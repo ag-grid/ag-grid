@@ -1,4 +1,4 @@
-import { Bean, BeanStub, PostConstruct, PreDestroy } from '@ag-grid-community/core';
+import { Bean, BeanStub } from '@ag-grid-community/core';
 
 import { SparklineTooltip } from '../sparkline/tooltip/sparklineTooltip';
 
@@ -9,8 +9,7 @@ import { SparklineTooltip } from '../sparkline/tooltip/sparklineTooltip';
 export class SparklineTooltipSingleton extends BeanStub {
     private tooltip!: SparklineTooltip;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.tooltip = new SparklineTooltip();
     }
 
@@ -18,10 +17,10 @@ export class SparklineTooltipSingleton extends BeanStub {
         return this.tooltip;
     }
 
-    @PreDestroy
-    private destroyTooltip(): void {
+    public override destroy(): void {
         if (this.tooltip) {
             this.tooltip.destroy();
         }
+        super.destroy();
     }
 }

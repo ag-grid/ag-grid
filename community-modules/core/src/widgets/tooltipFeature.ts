@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, PostConstruct } from '../context/context';
+import { Autowired } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import type { ColumnGroup } from '../entities/columnGroup';
@@ -46,8 +46,7 @@ export class TooltipFeature extends BeanStub {
         }
     }
 
-    @PostConstruct
-    private postConstruct() {
+    public postConstruct() {
         this.refreshToolTip();
     }
 

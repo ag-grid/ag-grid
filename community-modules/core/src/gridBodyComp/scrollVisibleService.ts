@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { ScrollVisibilityChangedEvent } from '../events';
 import { Events } from '../events';
@@ -19,8 +19,7 @@ export class ScrollVisibleService extends BeanStub {
     private horizontalScrollShowing: boolean;
     private verticalScrollShowing: boolean;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.addManagedListener(
             this.eventService,
             Events.EVENT_DISPLAYED_COLUMNS_CHANGED,

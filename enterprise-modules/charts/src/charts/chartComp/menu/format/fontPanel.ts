@@ -1,13 +1,5 @@
 import type { AgSelectParams } from '@ag-grid-community/core';
-import {
-    AgSelect,
-    Autowired,
-    Component,
-    PostConstruct,
-    _capitalise,
-    _includes,
-    _removeFromParent,
-} from '@ag-grid-community/core';
+import { AgSelect, Autowired, Component, _capitalise, _includes, _removeFromParent } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -57,8 +49,7 @@ export class FontPanel extends Component {
         this.chartOptions = params.chartMenuParamsFactory.getChartOptions();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const fontGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
@@ -213,7 +204,7 @@ export class FontPanel extends Component {
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyActiveComps();
         super.destroy();
     }

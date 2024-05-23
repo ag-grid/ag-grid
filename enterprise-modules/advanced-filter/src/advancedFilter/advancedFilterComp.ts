@@ -2,7 +2,6 @@ import type { AgComponentSelector, FilterManager, ITooltipParams, WithoutGridCom
 import {
     Autowired,
     Component,
-    PostConstruct,
     RefPlaceholder,
     _createIconNoSpan,
     _makeNull,
@@ -55,8 +54,7 @@ export class AdvancedFilterComp extends Component {
         );
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.eAutocomplete
             .setListGenerator((_value, position) => this.generateAutocompleteListParams(position))
             .setValidator(() => this.validateValue())

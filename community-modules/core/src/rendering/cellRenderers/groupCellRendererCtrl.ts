@@ -226,7 +226,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         return colDefAriaRole || columnColDefAriaRole || 'gridcell';
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
         // property cleanup to avoid memory leaks
         this.expandListener = null;

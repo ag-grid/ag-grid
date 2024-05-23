@@ -10,7 +10,6 @@ import {
     Autowired,
     BeanStub,
     Events,
-    PostConstruct,
     _getAbsoluteHeight,
     _getAbsoluteWidth,
     _removeFromParent,
@@ -41,8 +40,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.hasAdvancedFilterParent = !!this.gos.get('advancedFilterParent');
 
         this.ctrlsService.whenReady(() => this.setAdvancedFilterComp());

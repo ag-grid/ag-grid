@@ -1,5 +1,5 @@
 import type { Beans, RowGroupOpenedEvent, StoreUpdatedEvent, WithoutGridCommon } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, Events, PostConstruct, RowNode, _exists, _missing } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, Events, RowNode, _exists, _missing } from '@ag-grid-community/core';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { StoreFactory } from '../stores/storeFactory';
@@ -10,8 +10,7 @@ export class ExpandListener extends BeanStub {
     @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
     @Autowired('beans') private beans: Beans;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
         if (!this.gos.isRowModelType('serverSide')) {
             return;

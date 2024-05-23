@@ -38,7 +38,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
         });
     }
 
-    protected postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.createListComponent();
         this.eWrapper.tabIndex = this.gos.get('tabIndex');
@@ -179,7 +179,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
         return super.setValue(value, silent);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         if (this.listComponent) {
             this.destroyBean(this.listComponent);
             this.listComponent = undefined;

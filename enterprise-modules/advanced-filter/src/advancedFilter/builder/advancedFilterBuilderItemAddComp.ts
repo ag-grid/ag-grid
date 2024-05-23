@@ -1,13 +1,5 @@
-import type { Beans, FieldPickerValueSelectedEvent } from '@ag-grid-community/core';
-import {
-    Autowired,
-    Component,
-    Events,
-    PostConstruct,
-    TooltipFeature,
-    _setAriaLabel,
-    _setAriaLevel,
-} from '@ag-grid-community/core';
+import type { FieldPickerValueSelectedEvent } from '@ag-grid-community/core';
+import { Autowired, Component, Events, TooltipFeature, _setAriaLabel, _setAriaLevel } from '@ag-grid-community/core';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import { AddDropdownComp } from './addDropdownComp';
@@ -36,8 +28,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
         `);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         _setAriaLevel(this.focusWrapper, 2);
 
         const addButtonParams = getAdvancedFilterBuilderAddButtonParams(

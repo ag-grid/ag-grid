@@ -4,7 +4,6 @@ import {
     AgToggleButton,
     Component,
     KeyCode,
-    PostConstruct,
     RefPlaceholder,
     _createIcon,
     _setAriaExpanded,
@@ -108,8 +107,7 @@ export class AgGroupComponent extends Component {
         `;
     }
 
-    @PostConstruct
-    private postConstruct() {
+    public postConstruct() {
         this.setupTitleBar();
 
         if (this.items.length) {
@@ -389,8 +387,7 @@ class DefaultTitleBar extends Component {
         `;
     }
 
-    @PostConstruct
-    private postConstruct() {
+    public postConstruct() {
         this.setTitle(this.title);
 
         this.hideOpenCloseIcons(this.suppressOpenCloseIcons);

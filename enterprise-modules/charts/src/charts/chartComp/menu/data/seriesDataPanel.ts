@@ -1,4 +1,4 @@
-import { AgCheckbox, AgToggleButton, PostConstruct, _clearElement } from '@ag-grid-community/core';
+import { AgCheckbox, AgToggleButton, _clearElement } from '@ag-grid-community/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import type { ChartController } from '../../chartController';
@@ -21,8 +21,7 @@ export class SeriesDataPanel extends DragDataPanel {
         super(chartController, allowMultipleSelect, maxSelection, SeriesDataPanel.TEMPLATE);
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         this.groupComp = this.createBean(
             new AgGroupComponent({
                 title: this.title,
@@ -108,7 +107,7 @@ export class SeriesDataPanel extends DragDataPanel {
         };
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.groupComp = this.destroyBean(this.groupComp)!;
         super.destroy();
     }

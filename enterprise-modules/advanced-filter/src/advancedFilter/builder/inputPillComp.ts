@@ -7,7 +7,6 @@ import {
     Component,
     Events,
     KeyCode,
-    PostConstruct,
     RefPlaceholder,
     _exists,
     _setAriaDescribedBy,
@@ -45,8 +44,7 @@ export class InputPillComp extends Component {
         this.value = params.value;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const { cssClass, ariaLabel } = this.params;
 
         this.ePill.classList.add(cssClass);

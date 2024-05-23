@@ -20,7 +20,7 @@ import type {
     UpdateChartParams,
     VisibleColsService,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, Optional, PreDestroy } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, Optional } from '@ag-grid-community/core';
 import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
 import { VERSION as CHARTS_VERSION, _ModuleSupport } from 'ag-charts-community';
 
@@ -337,8 +337,8 @@ export class ChartService extends BeanStub implements IChartService {
         return cellRange;
     }
 
-    @PreDestroy
-    private destroyAllActiveCharts(): void {
+    public override destroy(): void {
         this.activeCharts.forEach((chart) => chart.destroyChart());
+        super.destroy();
     }
 }

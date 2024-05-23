@@ -5,7 +5,7 @@ import type {
     UserComponentFactory,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { Autowired, Component } from '@ag-grid-community/core';
 
 import { AgHorizontalResize } from './agHorizontalResize';
 
@@ -24,8 +24,7 @@ export class ToolPanelWrapper extends Component {
         super(ToolPanelWrapper.TEMPLATE);
     }
 
-    @PostConstruct
-    private setupResize(): void {
+    public postConstruct(): void {
         const eGui = this.getGui();
         const resizeBar = (this.resizeBar = this.createManagedBean(new AgHorizontalResize()));
 

@@ -1,7 +1,7 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { PivotResultColsService } from '../columns/pivotResultColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
@@ -28,8 +28,7 @@ export class QuickFilterService extends BeanStub {
     private parser?: (quickFilter: string) => string[];
     private matcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () =>
             this.resetQuickFilterCache()
         );

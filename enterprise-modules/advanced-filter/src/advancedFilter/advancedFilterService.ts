@@ -10,7 +10,7 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, Events, PostConstruct, _exists, _warnOnce } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, Events, _exists, _warnOnce } from '@ag-grid-community/core';
 
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
@@ -42,8 +42,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     private expressionParams: FilterExpressionFunctionParams | null;
     private isValid: boolean = true;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.setEnabled(this.gos.get('enableAdvancedFilter'), true);
 
         this.ctrl = this.createManagedBean(new AdvancedFilterCtrl(this.enabled));

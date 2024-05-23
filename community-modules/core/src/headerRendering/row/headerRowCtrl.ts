@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, PostConstruct } from '../../context/context';
+import { Autowired } from '../../context/context';
 import type { Column, ColumnPinnedType } from '../../entities/column';
 import type { ColumnGroup } from '../../entities/columnGroup';
 import { Events } from '../../eventKeys';
@@ -55,8 +55,7 @@ export class HeaderRowCtrl extends BeanStub {
         this.headerRowClass = `ag-header-row ${typeClass}`;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.isPrintLayout = this.gos.isDomLayout('print');
         this.isEnsureDomOrder = this.gos.get('ensureDomOrder');
     }
@@ -371,7 +370,7 @@ export class HeaderRowCtrl extends BeanStub {
         return ctrl.focus(event);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         if (this.headerCellCtrls) {
             this.headerCellCtrls.forEach((ctrl) => {
                 this.destroyBean(ctrl);

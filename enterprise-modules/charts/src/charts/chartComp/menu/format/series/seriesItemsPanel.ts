@@ -1,12 +1,5 @@
 import type { AgSelectParams, ListOption } from '@ag-grid-community/core';
-import {
-    AgSelect,
-    Autowired,
-    Component,
-    PostConstruct,
-    RefPlaceholder,
-    _removeFromParent,
-} from '@ag-grid-community/core';
+import { AgSelect, Autowired, Component, RefPlaceholder, _removeFromParent } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -34,8 +27,7 @@ export class SeriesItemsPanel extends Component {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const seriesItemsGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
@@ -113,7 +105,7 @@ export class SeriesItemsPanel extends Component {
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

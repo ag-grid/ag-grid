@@ -2,21 +2,19 @@ import type {
     ColumnModel,
     FuncColsService,
     GetServerSideGroupLevelParamsParams,
-    GridOptionsService,
     IServerSideStore,
     RowNode,
     ServerSideGroupLevelParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, _warnOnce } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, _warnOnce } from '@ag-grid-community/core';
 
 import type { SSRMParams } from '../serverSideRowModel';
 import { FullStore } from './fullStore';
 import { LazyStore } from './lazy/lazyStore';
 
 @Bean('ssrmStoreFactory')
-export class StoreFactory {
-    @Autowired('gridOptionsService') private gos: GridOptionsService;
+export class StoreFactory extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('funcColsService') private funcColsService: FuncColsService;
 

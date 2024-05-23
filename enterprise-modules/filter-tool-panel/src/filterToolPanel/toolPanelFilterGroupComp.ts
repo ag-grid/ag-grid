@@ -1,4 +1,5 @@
 import type {
+    ColumnModel,
     ColumnNameService,
     FilterOpenedEvent,
     IProvidedColumn,
@@ -10,7 +11,6 @@ import {
     Column,
     Component,
     Events,
-    PostConstruct,
     ProvidedColumnGroup,
     RefPlaceholder,
     _clearElement,
@@ -30,6 +30,7 @@ export class ToolPanelFilterGroupComp extends Component {
 
     private filterGroupComp: AgGroupComponent = RefPlaceholder;
 
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
 
     private readonly depth: number;
@@ -54,8 +55,7 @@ export class ToolPanelFilterGroupComp extends Component {
         this.showingColumn = showingColumn;
     }
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         const groupParams: AgGroupComponentParams = {
             cssIdentifier: 'filter-toolpanel',
             direction: 'vertical',
@@ -265,7 +265,7 @@ export class ToolPanelFilterGroupComp extends Component {
         _clearElement(this.getGui());
     }
 
-    protected destroy() {
+    public override destroy() {
         this.destroyFilters();
         super.destroy();
     }

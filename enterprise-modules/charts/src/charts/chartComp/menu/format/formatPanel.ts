@@ -1,5 +1,5 @@
 import type { ChartFormatPanel, ChartFormatPanelGroup } from '@ag-grid-community/core';
-import { Component, PostConstruct, _warnOnce } from '@ag-grid-community/core';
+import { Component, _warnOnce } from '@ag-grid-community/core';
 import type { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import type { ChartSeriesType } from '../../utils/seriesTypeMapper';
@@ -34,8 +34,7 @@ export class FormatPanel extends Component {
         super(FormatPanel.TEMPLATE);
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         this.groupExpansionFeature = this.createManagedBean(new GroupExpansionFeature(this.getGui()));
         this.chartPanelFeature = this.createManagedBean(
             new ChartPanelFeature(

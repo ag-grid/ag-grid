@@ -1,5 +1,5 @@
 import { KeyCode } from '../constants/keyCode';
-import { Autowired, PostConstruct } from '../context/context';
+import { Autowired } from '../context/context';
 import { Events } from '../eventKeys';
 import type { CssVariablesChanged } from '../events';
 import type { AnimationFrameService } from '../misc/animationFrameService';
@@ -53,8 +53,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         this.listName = listName;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.addScrollListener();
         this.rowHeight = this.getItemHeight();
         this.addResizeObserver();

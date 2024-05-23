@@ -1,5 +1,5 @@
 import type { ChartType, SeriesChartType } from '@ag-grid-community/core';
-import { BeanStub, PostConstruct } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
 import type { ChartDataModel, ColState } from './chartDataModel';
 
@@ -19,8 +19,7 @@ export class ComboChartModel extends BeanStub {
         this.seriesChartTypes = chartDataModel.params.seriesChartTypes ?? [];
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.initComboCharts();
     }
 

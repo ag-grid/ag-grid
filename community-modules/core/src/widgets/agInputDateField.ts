@@ -15,7 +15,7 @@ export class AgInputDateField extends AgInputTextField {
         super(config, 'ag-date-field', 'date');
     }
 
-    postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
 
         this.addManagedListener(this.eInput, 'wheel', this.onWheel.bind(this));

@@ -1,5 +1,5 @@
 import type { ChartToolPanelMenuOptions, TabbedItem } from '@ag-grid-community/core';
-import { AgPromise, Autowired, Component, PostConstruct, TabbedLayout } from '@ag-grid-community/core';
+import { AgPromise, Autowired, Component, TabbedLayout } from '@ag-grid-community/core';
 
 import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
 import type { ChartMenuContext } from './chartMenuContext';
@@ -25,8 +25,7 @@ export class TabbedChartMenu extends Component {
         super();
     }
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         this.panels.forEach((panel) => {
             const panelType = panel.replace('chart', '').toLowerCase() as 'settings' | 'data' | 'format';
             const panelComp = this.createPanel(panelType);
@@ -92,7 +91,7 @@ export class TabbedChartMenu extends Component {
         }
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         if (this.parentComponent && this.parentComponent.isAlive()) {
             this.destroyBean(this.parentComponent);
         }

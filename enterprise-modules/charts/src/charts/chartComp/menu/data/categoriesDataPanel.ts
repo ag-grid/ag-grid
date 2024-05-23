@@ -1,5 +1,5 @@
 import type { IAggFunc } from '@ag-grid-community/core';
-import { AgSelect, AgToggleButton, PostConstruct, _clearElement } from '@ag-grid-community/core';
+import { AgSelect, AgToggleButton } from '@ag-grid-community/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import type { ChartController } from '../../chartController';
@@ -28,8 +28,7 @@ export class CategoriesDataPanel extends DragDataPanel {
         super(chartController, allowMultipleSelection, maxSelection, CategoriesDataPanel.TEMPLATE);
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         this.groupComp = this.createBean(
             new AgGroupComponent({
                 title: this.title,
@@ -117,7 +116,7 @@ export class CategoriesDataPanel extends DragDataPanel {
         this.aggFuncSelect = this.aggFuncSelect && this.destroyBean(this.aggFuncSelect);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.clearAggFuncControls();
         this.groupComp = this.destroyBean(this.groupComp)!;
         super.destroy();

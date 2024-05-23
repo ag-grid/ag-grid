@@ -1,5 +1,5 @@
 import type { IComponent } from '@ag-grid-community/core';
-import { KeyCode, PostConstruct, TabGuardComp } from '@ag-grid-community/core';
+import { KeyCode, TabGuardComp } from '@ag-grid-community/core';
 
 import type { AgMenuItemComponent } from './agMenuItemComponent';
 
@@ -10,8 +10,7 @@ export class AgMenuPanel extends TabGuardComp {
         this.setTemplateFromElement(wrappedComponent.getGui());
     }
 
-    @PostConstruct
-    private postConstruct() {
+    public postConstruct() {
         this.initialiseTabGuard({
             onTabKeyDown: (e) => this.onTabKeyDown(e),
             handleKeyDown: (e) => this.handleKeyDown(e),

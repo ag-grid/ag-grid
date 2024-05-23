@@ -1,4 +1,4 @@
-import { AgCheckbox, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import { AgCheckbox, Autowired, Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -20,8 +20,7 @@ export class NavigatorPanel extends Component {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const navigatorGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(
             'navigator.enabled',
             {

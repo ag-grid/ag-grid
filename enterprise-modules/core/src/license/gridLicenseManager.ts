@@ -1,4 +1,4 @@
-import { Bean, BeanStub, PreConstruct } from '@ag-grid-community/core';
+import { Bean, BeanStub } from '@ag-grid-community/core';
 
 import type { ILicenseManager } from './shared/licenseManager';
 import { LicenseManager } from './shared/licenseManager';
@@ -7,7 +7,10 @@ import { LicenseManager } from './shared/licenseManager';
 export class GridLicenseManager extends BeanStub {
     private licenseManager: LicenseManager;
 
-    @PreConstruct
+    public postConstruct(): void {
+        this.validateLicense();
+    }
+
     public validateLicense(): void {
         this.licenseManager = new LicenseManager(this.gos.getDocument());
         this.licenseManager.validateLicense();

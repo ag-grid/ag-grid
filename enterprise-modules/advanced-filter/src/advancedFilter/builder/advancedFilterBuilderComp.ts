@@ -8,7 +8,6 @@ import type {
 import {
     Autowired,
     Component,
-    PostConstruct,
     RefPlaceholder,
     TooltipFeature,
     VirtualList,
@@ -58,8 +57,7 @@ export class AdvancedFilterBuilderComp extends Component {
             </div>`);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const { showMoveButtons } = this.gos.get('advancedFilterBuilderParams') ?? {};
         this.showMove = !!showMoveButtons;
         this.addManagedPropertyListener('advancedFilterBuilderParams', ({ currentValue }) => {

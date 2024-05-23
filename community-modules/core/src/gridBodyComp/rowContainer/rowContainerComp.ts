@@ -1,4 +1,4 @@
-import { Autowired, PostConstruct, PreDestroy } from '../../context/context';
+import { Autowired } from '../../context/context';
 import type { Beans } from '../../rendering/beans';
 import { RowComp } from '../../rendering/row/rowComp';
 import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
@@ -61,8 +61,7 @@ export class RowContainerComp extends Component {
         this.type = getRowContainerTypeForName(this.name);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const compProxy: IRowContainerComp = {
             setViewportHeight: (height) => (this.eViewport.style.height = height),
             setRowCtrls: ({ rowCtrls }) => this.setRowCtrls(rowCtrls),
@@ -76,10 +75,10 @@ export class RowContainerComp extends Component {
         ctrl.setComp(compProxy, this.eContainer, this.eViewport);
     }
 
-    @PreDestroy
-    private preDestroy(): void {
+    public override destroy(): void {
         // destroys all row comps
         this.setRowCtrls([]);
+        super.destroy();
     }
 
     private setRowCtrls(rowCtrls: RowCtrl[]): void {

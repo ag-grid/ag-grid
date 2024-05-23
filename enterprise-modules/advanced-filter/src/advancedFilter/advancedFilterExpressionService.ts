@@ -12,7 +12,6 @@ import {
     Autowired,
     Bean,
     BeanStub,
-    PostConstruct,
     _exists,
     _parseDateTimeFromString,
     _serialiseDate,
@@ -47,8 +46,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
     private expressionJoinOperators: { AND: string; OR: string };
     private expressionEvaluatorParams: { [colId: string]: FilterExpressionEvaluatorParams<any> } = {};
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.expressionJoinOperators = this.generateExpressionJoinOperators();
         this.expressionOperators = this.generateExpressionOperators();
     }

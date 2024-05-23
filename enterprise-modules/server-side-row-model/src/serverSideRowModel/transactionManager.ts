@@ -8,15 +8,7 @@ import type {
     ValueCache,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Events,
-    PostConstruct,
-    RowNode,
-    ServerSideTransactionResultStatus,
-} from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, Events, ServerSideTransactionResultStatus } from '@ag-grid-community/core';
 
 import type { ServerSideRowModel } from './serverSideRowModel';
 import type { ServerSideSelectionService } from './services/serverSideSelectionService';
@@ -37,8 +29,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     private asyncTransactionsTimeout: number | undefined;
     private asyncTransactions: AsyncTransactionWrapper[] = [];
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
         if (!this.gos.isRowModelType('serverSide')) {
             return;

@@ -15,7 +15,6 @@ import {
     Component,
     Events,
     Optional,
-    PostConstruct,
     RefPlaceholder,
     _exists,
     _formatNumberTwoDecimalPlacesAndCommas,
@@ -59,8 +58,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         super.destroy();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         if (!this.isValidRowModel()) {
             console.warn(
                 `AG Grid: agAggregationComponent should only be used with the client and server side row model.`

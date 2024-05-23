@@ -8,7 +8,7 @@ import type {
     SeriesChartType,
     SeriesGroupType,
 } from '@ag-grid-community/core';
-import { Autowired, BeanStub, CellRangeType, PostConstruct, _includes } from '@ag-grid-community/core';
+import { Autowired, BeanStub, CellRangeType, _includes } from '@ag-grid-community/core';
 import type { AgCartesianAxisType } from 'ag-charts-community';
 
 import type { ChartDatasourceParams } from '../datasource/chartDatasource';
@@ -118,8 +118,7 @@ export class ChartDataModel extends BeanStub {
         this.seriesGroupType = seriesGroupType;
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.datasource = this.createManagedBean(new ChartDatasource());
         this.chartColumnService = this.createManagedBean(new ChartColumnService());
         this.comboChartModel = this.createManagedBean(new ComboChartModel(this));

@@ -9,7 +9,7 @@ import type {
     RowNode,
     SelectionEventSourceType,
 } from '@ag-grid-community/core';
-import { Autowired, BeanStub, ColumnModel, Events, IServerSideStore, PostConstruct } from '@ag-grid-community/core';
+import { Autowired, BeanStub, Events } from '@ag-grid-community/core';
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
@@ -27,8 +27,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     private selectedState: SelectionState = { selectAllChildren: false, toggledNodes: new Map() };
     private lastSelected: RowNode | null = null;
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         // if model has updated, a store may now be fully loaded to clean up indeterminate states
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, () => this.removeRedundantState());
 

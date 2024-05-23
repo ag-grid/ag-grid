@@ -10,7 +10,7 @@ import type {
     ServerSideRowSelectionState,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, Events, PostConstruct } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, Events } from '@ag-grid-community/core';
 
 import { DefaultStrategy } from './selection/strategies/defaultStrategy';
 import { GroupSelectsChildrenStrategy } from './selection/strategies/groupSelectsChildrenStrategy';
@@ -21,8 +21,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
     @Autowired('rowModel') private rowModel: IRowModel;
     private selectionStrategy: ISelectionStrategy;
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         const groupSelectsChildren = this.gos.get('groupSelectsChildren');
         this.addManagedPropertyListener('groupSelectsChildren', (propChange) => {
             this.destroyBean(this.selectionStrategy);

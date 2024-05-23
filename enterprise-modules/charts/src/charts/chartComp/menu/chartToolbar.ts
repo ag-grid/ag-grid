@@ -60,7 +60,7 @@ export class ChartToolbar extends Component {
         return wrapperEl;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.buttonListenersDestroyFuncs = [];
         super.destroy();
     }

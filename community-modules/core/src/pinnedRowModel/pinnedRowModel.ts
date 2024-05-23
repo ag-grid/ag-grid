@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean } from '../context/context';
 import { RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged, PinnedRowDataChangedEvent } from '../events';
 import { Events } from '../events';
@@ -16,8 +16,7 @@ export class PinnedRowModel extends BeanStub {
     private pinnedTopRows: RowNode[];
     private pinnedBottomRows: RowNode[];
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         this.setPinnedTopRowData();
         this.setPinnedBottomRowData();
         this.addManagedPropertyListener('pinnedTopRowData', () => this.setPinnedTopRowData());

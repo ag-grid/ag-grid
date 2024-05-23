@@ -1,5 +1,4 @@
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
-import { PostConstruct } from '../../../context/context';
 import { _setDisplayed } from '../../../utils/dom';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
@@ -19,8 +18,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         super(HeaderGroupCellComp.TEMPLATE, ctrl);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const eGui = this.getGui();
 
         const setAttribute = (key: string, value: string | undefined) =>

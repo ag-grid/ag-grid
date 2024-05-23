@@ -23,7 +23,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
         super(config, 'ag-number-field', 'number');
     }
 
-    postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.addManagedListener(this.eInput, 'blur', () => {
             const floatedValue = parseFloat(this.eInput.value);

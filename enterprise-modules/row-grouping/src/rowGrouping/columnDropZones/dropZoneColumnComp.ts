@@ -62,10 +62,10 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         );
     }
 
-    public init(): void {
+    public override postConstruct(): void {
         this.displayName = this.columnNameService.getDisplayNameForColumn(this.column, 'columnDrop');
 
-        super.init();
+        super.postConstruct();
 
         this.setupSort();
 
@@ -355,7 +355,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         return DragSourceType.ToolPanel;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
         (this.column as any) = null;
     }

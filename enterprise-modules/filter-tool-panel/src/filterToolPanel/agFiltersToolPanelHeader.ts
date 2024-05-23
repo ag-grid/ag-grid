@@ -4,8 +4,6 @@ import {
     Autowired,
     Component,
     Events,
-    PostConstruct,
-    RefPlaceholder,
     _createIconNoSpan,
     _debounce,
     _setDisplayed,
@@ -37,7 +35,6 @@ export class AgFiltersToolPanelHeader extends Component {
 
     private params: ToolPanelFiltersCompParams;
 
-    @PostConstruct
     public postConstruct(): void {
         this.setTemplate(
             /* html */
@@ -47,6 +44,7 @@ export class AgFiltersToolPanelHeader extends Component {
             </div>`,
             [AgInputTextField]
         );
+
         const translate = this.localeService.getLocaleTextFunc();
 
         this.eFilterTextField

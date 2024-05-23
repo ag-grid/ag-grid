@@ -1,6 +1,6 @@
 import { KeyCode } from '../../../constants/keyCode';
+import type { BaseBean } from '../../../context/bean';
 import { BeanStub } from '../../../context/beanStub';
-import { PostConstruct } from '../../../context/context';
 import type { FilterChangedEvent } from '../../../events';
 import { _clearElement } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
@@ -14,7 +14,7 @@ import { TextFilter } from '../../provided/text/textFilter';
 import type { IFloatingFilterParams } from '../floatingFilter';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
 
-export interface FloatingFilterInputService {
+export interface FloatingFilterInputService extends BaseBean {
     setupGui(parentElement: HTMLElement): void;
     setEditable(editable: boolean): void;
     getValue(): string | null | undefined;
@@ -101,8 +101,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         params: ITextInputFloatingFilterParams
     ): FloatingFilterInputService;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.setTemplate(/* html */ `
             <div class="ag-floating-filter-input" role="presentation" data-ref="eFloatingFilterInputContainer"></div>
         `);

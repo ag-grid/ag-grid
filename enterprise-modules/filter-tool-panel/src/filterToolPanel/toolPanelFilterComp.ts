@@ -6,7 +6,6 @@ import {
     Events,
     FilterWrapperComp,
     KeyCode,
-    PostConstruct,
     RefPlaceholder,
     _clearElement,
     _createIconNoSpan,
@@ -51,8 +50,7 @@ export class ToolPanelFilterComp extends Component {
         this.hideHeader = hideHeader;
     }
 
-    @PostConstruct
-    private postConstruct() {
+    public postConstruct() {
         this.eExpandChecked = _createIconNoSpan('columnSelectOpen', this.gos)!;
         this.eExpandUnchecked = _createIconNoSpan('columnSelectClosed', this.gos)!;
         this.eExpand.appendChild(this.eExpandChecked);

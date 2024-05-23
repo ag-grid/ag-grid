@@ -80,7 +80,7 @@ export abstract class AgPickerField<
         }
     }
 
-    protected postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
 
         this.setupAria();
@@ -361,7 +361,7 @@ export abstract class AgPickerField<
         return this;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.hidePicker();
         super.destroy();
     }

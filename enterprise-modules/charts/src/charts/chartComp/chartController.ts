@@ -17,7 +17,7 @@ import type {
     UpdateRangeChartParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, BeanStub, Events, PostConstruct } from '@ag-grid-community/core';
+import { Autowired, BeanStub, Events } from '@ag-grid-community/core';
 import type { AgCartesianAxisType, AgChartThemePalette } from 'ag-charts-community';
 import { _ModuleSupport, _Theme } from 'ag-charts-community';
 
@@ -52,8 +52,7 @@ export class ChartController extends BeanStub {
         super();
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.setChartRange();
 
         this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, (event) => {
@@ -688,7 +687,7 @@ export class ChartController extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
 
         if (this.rangeService) {

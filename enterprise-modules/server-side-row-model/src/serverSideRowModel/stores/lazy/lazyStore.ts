@@ -23,8 +23,6 @@ import {
     BeanStub,
     Events,
     NumberSequence,
-    PostConstruct,
-    PreDestroy,
     ServerSideTransactionResultStatus,
     _missing,
 } from '@ag-grid-community/core';
@@ -74,8 +72,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.info = {};
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         let numberOfRows = 1;
         if (this.level === 0) {
             numberOfRows = this.storeUtils.getServerSideInitialRowCount() ?? 1;
@@ -95,11 +92,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
     }
 
-    @PreDestroy
-    private destroyRowNodes(): void {
+    public override destroy(): void {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
         this.destroyBean(this.cache);
+        super.destroy();
     }
 
     /**

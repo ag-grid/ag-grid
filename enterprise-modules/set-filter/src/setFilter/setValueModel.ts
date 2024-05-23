@@ -16,7 +16,7 @@ import type {
 } from '@ag-grid-community/core';
 import {
     AgPromise,
-    EventService,
+    LocalEventService,
     TextFilter,
     _defaultComparator,
     _doOnce,
@@ -59,7 +59,7 @@ export class SetValueModel<V> implements IEventEmitter {
     public static EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
 
     private readonly gos: GridOptionsService;
-    private readonly localEventService = new EventService();
+    private readonly localEventService = new LocalEventService();
     private formatter: TextFormatter;
     private suppressSorting: boolean;
     private readonly clientSideValuesExtractor: ClientSideValuesExtractor<V>;

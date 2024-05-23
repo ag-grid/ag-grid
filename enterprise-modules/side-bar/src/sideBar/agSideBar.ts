@@ -19,7 +19,6 @@ import {
     ManagedFocusFeature,
     ModuleNames,
     ModuleRegistry,
-    PostConstruct,
     RefPlaceholder,
     _removeFromParent,
     _setAriaControls,
@@ -52,9 +51,8 @@ export class AgSideBar extends Component implements ISideBar {
         super(AgSideBar.TEMPLATE, [AgSideBarButtons]);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.sideBarButtons.addEventListener(
+    public postConstruct(): void {
+        this.sideBarButtonsComp.addEventListener(
             AgSideBarButtons.EVENT_SIDE_BAR_BUTTON_CLICKED,
             this.onToolPanelButtonClicked.bind(this)
         );
@@ -472,7 +470,7 @@ export class AgSideBar extends Component implements ISideBar {
         this.toolPanelWrappers.length = 0;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyToolPanelWrappers();
         super.destroy();
     }

@@ -1,4 +1,3 @@
-import { PostConstruct } from '../context/context';
 import type { AgComponentSelector } from '../widgets/component';
 import { Component } from '../widgets/component';
 import type { IGridHeaderComp } from './gridHeaderCtrl';
@@ -13,8 +12,7 @@ export class GridHeaderComp extends Component {
         super(GridHeaderComp.TEMPLATE);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const compProxy: IGridHeaderComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setHeightAndMinHeight: (height) => {

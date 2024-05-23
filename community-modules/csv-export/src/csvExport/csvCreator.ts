@@ -8,7 +8,7 @@ import type {
     ICsvCreator,
     ValueService,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, PostConstruct } from '@ag-grid-community/core';
+import { Autowired, Bean } from '@ag-grid-community/core';
 
 import { BaseCreator } from './baseCreator';
 import { Downloader } from './downloader';
@@ -27,7 +27,6 @@ export class CsvCreator
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
     @Autowired('gridOptionsService') gos: GridOptionsService;
 
-    @PostConstruct
     public postConstruct(): void {
         this.setBeans({
             gridSerializer: this.gridSerializer,

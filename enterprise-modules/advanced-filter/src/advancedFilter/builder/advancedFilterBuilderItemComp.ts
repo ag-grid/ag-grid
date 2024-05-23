@@ -10,7 +10,6 @@ import {
     DragSourceType,
     Events,
     KeyCode,
-    PostConstruct,
     RefPlaceholder,
     TabGuardComp,
     TooltipFeature,
@@ -87,8 +86,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
         `);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const { filterModel, level, showMove } = this.item;
 
         const isJoin = filterModel!.filterType === 'join';

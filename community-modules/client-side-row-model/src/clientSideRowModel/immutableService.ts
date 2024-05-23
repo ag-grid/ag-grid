@@ -6,7 +6,7 @@ import type {
     RowNode,
     RowRenderer,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, PostConstruct, _exists, _iterateObject, _missing } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, _exists, _iterateObject, _missing } from '@ag-grid-community/core';
 
 import type { ClientSideRowModel } from './clientSideRowModel';
 
@@ -18,8 +18,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
 
     private clientSideRowModel: ClientSideRowModel;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         if (this.rowModel.getType() === 'clientSide') {
             this.clientSideRowModel = this.rowModel as ClientSideRowModel;
 

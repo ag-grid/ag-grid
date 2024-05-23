@@ -1,13 +1,12 @@
 import type { IClientSideRowModel, IRowModel, IStatusPanelComp } from '@ag-grid-community/core';
-import { Autowired, Events, PostConstruct, _formatNumberCommas, _warnOnce } from '@ag-grid-community/core';
+import { Autowired, Events, _formatNumberCommas, _warnOnce } from '@ag-grid-community/core';
 
 import { AgNameValue } from './agNameValue';
 
 export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPanelComp {
     @Autowired('rowModel') private rowModel: IRowModel;
 
-    @PostConstruct
-    protected postConstruct(): void {
+    public postConstruct(): void {
         // this component is only really useful with client side row model
         if (this.rowModel.getType() !== 'clientSide') {
             _warnOnce(`agTotalAndFilteredRowCountComponent should only be used with the client side row model.`);

@@ -77,7 +77,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         super('setFilter');
     }
 
-    protected postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
     }
 

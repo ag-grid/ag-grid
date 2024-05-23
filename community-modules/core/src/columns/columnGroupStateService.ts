@@ -1,3 +1,4 @@
+import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, Qualifier } from '../context/context';
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import type { ColumnEventType } from '../events';
@@ -9,7 +10,7 @@ import type { ColumnModel } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
 
 @Bean('columnGroupStateService')
-export class ColumnGroupStateService {
+export class ColumnGroupStateService extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;

@@ -24,7 +24,6 @@ import {
     ModuleNames,
     ModuleRegistry,
     Optional,
-    PostConstruct,
     _exists,
     _isIOSUserAgent,
     _missingOrEmpty,
@@ -263,8 +262,7 @@ class ContextMenu extends Component {
         super(/* html */ `<div class="${CSS_MENU}" role="presentation"></div>`);
     }
 
-    @PostConstruct
-    private addMenuItems(): void {
+    public postConstruct(): void {
         const menuList = this.createManagedBean(
             new AgMenuList(0, {
                 column: this.column,
@@ -318,7 +316,7 @@ class ContextMenu extends Component {
         }
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.restoreFocusedCell();
         super.destroy();
     }

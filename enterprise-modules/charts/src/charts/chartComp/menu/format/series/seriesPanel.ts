@@ -4,7 +4,6 @@ import {
     AgToggleButton,
     Autowired,
     Component,
-    PostConstruct,
     RefPlaceholder,
     _removeFromParent,
 } from '@ag-grid-community/core';
@@ -101,8 +100,7 @@ export class SeriesPanel extends Component {
         this.seriesType = options.seriesType;
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const {
             isExpandedOnInit: expanded,
             chartOptionsService,
@@ -377,7 +375,7 @@ export class SeriesPanel extends Component {
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

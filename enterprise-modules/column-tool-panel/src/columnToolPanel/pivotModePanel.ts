@@ -1,5 +1,5 @@
 import type { AgCheckbox, ColumnModel, GridApi } from '@ag-grid-community/core';
-import { AgToggleButton, Autowired, Component, Events, PostConstruct, RefPlaceholder } from '@ag-grid-community/core';
+import { AgToggleButton, Autowired, Component, Events } from '@ag-grid-community/core';
 
 export class PivotModePanel extends Component {
     @Autowired('columnModel') private columnModel: ColumnModel;
@@ -13,8 +13,7 @@ export class PivotModePanel extends Component {
             </div>`;
     }
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         this.setTemplate(this.createTemplate(), [AgToggleButton]);
 
         this.cbPivotMode.setValue(this.columnModel.isPivotMode());

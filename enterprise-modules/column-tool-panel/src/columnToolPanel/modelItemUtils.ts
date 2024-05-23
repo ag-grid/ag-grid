@@ -7,12 +7,12 @@ import type {
     IAggFunc,
     IAggFuncService,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, EventService, GridOptionsService } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub } from '@ag-grid-community/core';
 
 import type { ColumnModelItem } from './columnModelItem';
 
 @Bean('modelItemUtils')
-export class ModelItemUtils {
+export class ModelItemUtils extends BeanStub {
     @Autowired('aggFuncService') aggFuncService: IAggFuncService;
     @Autowired('columnModel') columnModel: ColumnModel;
     @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;

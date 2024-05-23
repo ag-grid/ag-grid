@@ -6,7 +6,6 @@ import {
     Component,
     Events,
     KeyCode,
-    PostConstruct,
     RefPlaceholder,
     _createIconNoSpan,
     _debounce,
@@ -53,8 +52,7 @@ export class AgPrimaryColsHeader extends Component {
         super(AgPrimaryColsHeader.TEMPLATE, [AgCheckbox, AgInputTextField]);
     }
 
-    @PostConstruct
-    protected postConstruct(): void {
+    public postConstruct(): void {
         this.createExpandIcons();
 
         this.addManagedListener(this.eExpand, 'click', this.onExpandClicked.bind(this));

@@ -1,9 +1,10 @@
+import type { BaseBean } from '../context/bean';
 import type { NumberSequence } from '../utils/numberSequence';
 import type { RowBounds } from './iRowModel';
 import type { IRowNode } from './iRowNode';
 import type { ServerSideTransaction, ServerSideTransactionResult } from './serverSideTransaction';
 
-export interface IServerSideStore {
+export interface IServerSideStore extends BaseBean {
     clearDisplayIndexes(): void;
     getDisplayIndexEnd(): number | undefined;
     isDisplayIndexInStore(displayIndex: number): boolean;

@@ -1,4 +1,3 @@
-import { PostConstruct } from '../context/context';
 import type { AgLabelParams, LabelAlignment } from '../interfaces/agFieldParams';
 import { _setAriaRole } from '../utils/aria';
 import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from '../utils/dom';
@@ -20,8 +19,7 @@ export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelPar
         this.config = config || ({} as any);
     }
 
-    @PostConstruct
-    protected postConstruct() {
+    public postConstruct() {
         this.addCssClass('ag-labeled');
         this.eLabel.classList.add('ag-label');
 

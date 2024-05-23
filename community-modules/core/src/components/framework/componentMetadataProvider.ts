@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../../context/context';
+import { Autowired, Bean } from '../../context/context';
 import type { IComponent } from '../../interfaces/iComponent';
 import type { AgComponentUtils } from './agComponentUtils';
 
@@ -16,7 +16,6 @@ export class ComponentMetadataProvider extends BeanStub {
     @Autowired('agComponentUtils')
     private agComponentUtils: AgComponentUtils;
 
-    @PostConstruct
     public postConstruct() {
         this.componentMetaData = {
             dateComponent: {

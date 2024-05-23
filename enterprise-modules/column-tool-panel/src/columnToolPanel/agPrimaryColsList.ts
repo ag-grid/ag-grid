@@ -14,7 +14,6 @@ import {
     Autowired,
     Component,
     Events,
-    PreDestroy,
     ProvidedColumnGroup,
     VirtualList,
     _exists,
@@ -80,7 +79,11 @@ export class AgPrimaryColsList extends Component {
         super(AgPrimaryColsList.TEMPLATE);
     }
 
-    @PreDestroy
+    public override destroy(): void {
+        this.destroyColumnTree();
+        super.destroy();
+    }
+
     private destroyColumnTree(): void {
         this.allColsTree = [];
         this.destroyColumnItemFuncs.forEach((f) => f());

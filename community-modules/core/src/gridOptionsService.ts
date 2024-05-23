@@ -1,8 +1,7 @@
 import { ComponentUtil } from './components/componentUtil';
-import { Autowired, Bean, PostConstruct, PreDestroy } from './context/context';
+import { BeanStub } from './context/beanStub';
+import { Autowired, Bean } from './context/context';
 import type { DomLayoutType, GridOptions } from './entities/gridOptions';
-import type { Environment } from './environment';
-import { EventService } from './eventService';
 import type { AgEvent } from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS, Events } from './events';
 import type { GridApi } from './gridApi';
@@ -12,9 +11,9 @@ import type {
     RowHeightParams,
 } from './interfaces/iCallbackParams';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
-import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
+import { LocalEventService } from './localEventService';
 import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
 import { _getScrollbarWidth } from './utils/browser';
@@ -79,15 +78,11 @@ export type PropertyChangedListener = (event: PropertyChangedEvent) => void;
 export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: PropertyValueChangedEvent<K>) => void;
 
 @Bean('gridOptionsService')
-export class GridOptionsService {
+export class GridOptionsService extends BeanStub {
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
-    @Autowired('eventService') private readonly eventService: EventService;
-    @Autowired('environment') private readonly environment: Environment;
-    @Autowired('frameworkOverrides') frameworkOverrides: IFrameworkOverrides;
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
     @Autowired('validationService') private validationService: ValidationService;
 
-    private destroyed = false;
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
     private scrollbarWidth: number;
     private domDataKey = '__AG_' + Math.random().toString();
@@ -95,14 +90,13 @@ export class GridOptionsService {
     // Store locally to avoid retrieving many times as these are requested for every callback
     @Autowired('gridApi') private readonly api: GridApi;
     // This is quicker then having code call gridOptionsService.get('context')
-    private get context() {
+    private get gridOptionsContext() {
         return this.gridOptions['context'];
     }
 
-    private propertyEventService: EventService = new EventService();
+    private propertyEventService: LocalEventService = new LocalEventService();
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         const async = !this.get('suppressAsyncEvents');
         this.eventService.addGlobalListener(this.globalEventHandlerFactory().bind(this), async);
         this.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
@@ -111,10 +105,6 @@ export class GridOptionsService {
         this.propertyEventService.setFrameworkOverrides(this.frameworkOverrides);
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
-    }
-    @PreDestroy
-    private destroy(): void {
-        this.destroyed = true;
     }
 
     /**
@@ -158,7 +148,7 @@ export class GridOptionsService {
             const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
                 const mergedParams = callbackParams as P;
                 mergedParams.api = this.api;
-                mergedParams.context = this.context;
+                mergedParams.context = this.gridOptionsContext;
 
                 return callback(mergedParams);
             };
@@ -298,10 +288,10 @@ export class GridOptionsService {
         });
     }
 
-    addEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
+    addPropertyEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
         this.propertyEventService.addEventListener(key, listener as any);
     }
-    removeEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
+    removePropertyEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
         this.propertyEventService.removeEventListener(key, listener as any);
     }
 
@@ -312,7 +302,7 @@ export class GridOptionsService {
     globalEventHandlerFactory = (restrictToSyncOnly?: boolean) => {
         return (eventName: string, event?: any) => {
             // prevent events from being fired _after_ the grid has been destroyed
-            if (this.destroyed) {
+            if (!this.isAlive()) {
                 return;
             }
 
@@ -609,7 +599,7 @@ export class GridOptionsService {
     public getGridCommonParams<TData = any, TContext = any>(): AgGridCommon<TData, TContext> {
         return {
             api: this.api,
-            context: this.context,
+            context: this.gridOptionsContext,
         };
     }
 
@@ -618,7 +608,7 @@ export class GridOptionsService {
     ): T {
         const updatedParams = params as T;
         updatedParams.api = this.api;
-        updatedParams.context = this.context;
+        updatedParams.context = this.gridOptionsContext;
         return updatedParams;
     }
 }

@@ -7,7 +7,7 @@ import type {
     SelectionEventSourceType,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, BeanStub, Events, PostConstruct } from '@ag-grid-community/core';
+import { Autowired, BeanStub, Events } from '@ag-grid-community/core';
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
@@ -28,8 +28,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
     private rowSelection?: 'single' | 'multiple';
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.rowSelection = this.gos.get('rowSelection');
         this.addManagedPropertyListener('rowSelection', (propChange) => {
             this.rowSelection = propChange.currentValue;

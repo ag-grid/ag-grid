@@ -14,7 +14,7 @@ import type {
     StylingService,
     ValueService,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, CssClassApplier, PostConstruct } from '@ag-grid-community/core';
+import { Autowired, Bean, CssClassApplier } from '@ag-grid-community/core';
 import type { GridSerializer } from '@ag-grid-community/csv-export';
 import { BaseCreator, Downloader, RowType, ZipContainer } from '@ag-grid-community/csv-export';
 
@@ -230,7 +230,6 @@ export class ExcelCreator
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
     @Autowired('gridOptionsService') gos: GridOptionsService;
 
-    @PostConstruct
     public postConstruct(): void {
         this.setBeans({
             gridSerializer: this.gridSerializer,

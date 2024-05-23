@@ -1,7 +1,7 @@
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
 import { BeanStub } from '../../../context/beanStub';
-import { Autowired, PostConstruct } from '../../../context/context';
+import { Autowired } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
 import type { DragAndDropService, DragSource } from '../../../dragAndDrop/dragAndDropService';
 import type { ColumnPinnedType } from '../../../entities/column';
@@ -82,8 +82,7 @@ export abstract class AbstractHeaderCellCtrl<
         this.instanceId = (columnGroupChild.getUniqueId() + '-' + instanceIdSequence++) as HeaderCellCtrlInstanceId;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.addManagedPropertyListeners(['suppressHeaderFocus'], () => this.refreshTabIndex());
     }
 
@@ -338,7 +337,7 @@ export abstract class AbstractHeaderCellCtrl<
         this.eventService.dispatchEvent(event);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
 
         this.removeDragSource();

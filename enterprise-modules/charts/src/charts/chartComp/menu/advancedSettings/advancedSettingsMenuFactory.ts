@@ -1,5 +1,5 @@
 import type { FocusService } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, PostConstruct, TabGuardComp } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, TabGuardComp } from '@ag-grid-community/core';
 import { AgDialog } from '@ag-grid-enterprise/core';
 
 import type { ChartTranslationService } from '../../services/chartTranslationService';
@@ -49,7 +49,7 @@ export class AdvancedSettingsMenuFactory extends BeanStub {
         }
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.activeMenu = this.destroyBean(this.activeMenu);
         this.activeDialog = this.destroyBean(this.activeDialog);
         super.destroy();
@@ -67,8 +67,7 @@ class AdvancedSettingsMenu extends TabGuardComp {
         super(AdvancedSettingsMenu.TEMPLATE);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.advancedSettingsPanel = this.createManagedBean(new AdvancedSettingsPanel(this.chartMenuContext));
         this.getGui().appendChild(this.advancedSettingsPanel.getGui());
         this.initialiseTabGuard({

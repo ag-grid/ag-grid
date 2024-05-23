@@ -3,7 +3,7 @@ import type { DataTypeService } from '../columns/dataTypeService';
 import { FilterComponent } from '../components/framework/componentTypes';
 import type { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
+import { Autowired, Bean, Optional } from '../context/context';
 import type { ColDef } from '../entities/colDef';
 import { Column } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
@@ -70,8 +70,7 @@ export class FilterManager extends BeanStub {
 
     private initialFilterModel: FilterModel;
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, () =>
             this.refreshFiltersForAggregations()
@@ -1144,7 +1143,7 @@ export class FilterManager extends BeanStub {
         return column ? this.cachedFilter(column) ?? null : null;
     }
 
-    protected destroy() {
+    public override destroy() {
         super.destroy();
         this.allColumnFilters.forEach((filterWrapper) => this.disposeFilterWrapper(filterWrapper, 'gridDestroyed'));
         // don't need to destroy the listeners as they are managed listeners

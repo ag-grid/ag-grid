@@ -1,4 +1,4 @@
-import { Autowired, Component, PostConstruct, RefPlaceholder } from '@ag-grid-community/core';
+import { Autowired, Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -21,8 +21,7 @@ export class TitlesPanel extends Component {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const {
             chartMenuParamsFactory,
             chartAxisMenuParamsFactory,

@@ -1,4 +1,4 @@
-import { Component, KeyCode, PostConstruct, RefPlaceholder, _exists, _setDisplayed } from '@ag-grid-community/core';
+import { Component, KeyCode, RefPlaceholder, _exists, _setDisplayed } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
 
 import { AgColorInput } from './agColorInput';
@@ -63,8 +63,7 @@ export class AgColorPanel extends Component {
         this.picker = config.picker;
     }
 
-    @PostConstruct
-    private postConstruct() {
+    public postConstruct() {
         this.initTabIndex();
         this.initRecentColors();
 
@@ -400,7 +399,7 @@ export class AgColorPanel extends Component {
         AgColorPanel.recentColors = recentColors;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.addRecentColor();
         super.destroy();
     }

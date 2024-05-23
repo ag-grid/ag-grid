@@ -429,7 +429,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
 
         (this.eButtonShowMainFilter as any) = null;

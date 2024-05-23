@@ -1,5 +1,4 @@
-import { PreDestroy } from '../context/context';
-import { EventService } from '../eventService';
+import { BeanStub } from '../context/beanStub';
 import type { AgEvent, AgEventListener } from '../events';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import type { IProvidedColumn } from '../interfaces/iProvidedColumn';
@@ -8,11 +7,9 @@ import type { ColumnInstanceId } from './column';
 import { Column, getNextColInstanceId } from './column';
 import type { ColumnGroupShowType } from './columnGroup';
 
-export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
+export class ProvidedColumnGroup extends BeanStub implements IProvidedColumn, IEventEmitter {
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
     public static EVENT_EXPANDABLE_CHANGED = 'expandableChanged';
-
-    private localEventService = new EventService();
 
     private colGroupDef: ColGroupDef | null;
     private originalParent: ProvidedColumnGroup | null;
@@ -33,6 +30,7 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
     private expandableListenerRemoveCallback: (() => void) | null = null;
 
     constructor(colGroupDef: ColGroupDef | null, groupId: string, padding: boolean, level: number) {
+        super();
         this.colGroupDef = colGroupDef;
         this.groupId = groupId;
         this.expanded = !!colGroupDef && !!colGroupDef.openByDefault;
@@ -40,11 +38,11 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
         this.level = level;
     }
 
-    @PreDestroy
-    private destroy() {
+    public override destroy() {
         if (this.expandableListenerRemoveCallback) {
             this.reset(null, undefined);
         }
+        super.destroy();
     }
 
     public reset(colGroupDef: ColGroupDef | null, level: number | undefined): void {
@@ -97,7 +95,7 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
         const event: AgEvent = {
             type: ProvidedColumnGroup.EVENT_EXPANDED_CHANGED,
         };
-        this.localEventService.dispatchEvent(event);
+        this.dispatchEvent(event);
     }
 
     public isExpandable(): boolean {
@@ -217,7 +215,7 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
             const event: AgEvent = {
                 type: ProvidedColumnGroup.EVENT_EXPANDABLE_CHANGED,
             };
-            this.localEventService.dispatchEvent(event);
+            this.dispatchEvent(event);
         }
     }
 
@@ -243,13 +241,5 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
 
     private onColumnVisibilityChanged(): void {
         this.setExpandable();
-    }
-
-    public addEventListener(eventType: string, listener: AgEventListener): void {
-        this.localEventService.addEventListener(eventType, listener);
-    }
-
-    public removeEventListener(eventType: string, listener: AgEventListener): void {
-        this.localEventService.removeEventListener(eventType, listener);
     }
 }

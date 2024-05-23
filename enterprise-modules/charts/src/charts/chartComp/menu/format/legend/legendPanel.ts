@@ -1,4 +1,4 @@
-import { AgCheckbox, AgSelect, Autowired, Component, PostConstruct, RefPlaceholder } from '@ag-grid-community/core';
+import { AgCheckbox, AgSelect, Autowired, Component, RefSelector } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -28,8 +28,7 @@ export class LegendPanel extends Component {
         this.key = this.isGradient ? 'gradientLegend' : 'legend';
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const { chartMenuParamsFactory, isExpandedOnInit: expanded, registerGroupComponent } = this.options;
         const positionSelect = this.createManagedBean(
             new AgSelect(

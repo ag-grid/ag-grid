@@ -4,7 +4,7 @@ import type {
     ToolPanelSizeChangedEvent,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, Component, Events, PostConstruct } from '@ag-grid-community/core';
+import { Autowired, Component, Events } from '@ag-grid-community/core';
 
 export class AgHorizontalResize extends Component {
     static readonly selector: AgComponentSelector = 'AG-HORIZONTAL-RESIZE';
@@ -25,8 +25,7 @@ export class AgHorizontalResize extends Component {
         this.elementToResize = elementToResize;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
             eResizeBar: this.getGui(),
             dragStartPixels: 1,

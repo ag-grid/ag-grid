@@ -2,7 +2,7 @@ import type { ColumnAutosizeService } from '../../../columns/columnAutosizeServi
 import type { ColumnModel } from '../../../columns/columnModel';
 import type { ColumnSizeService } from '../../../columns/columnSizeService';
 import { BeanStub } from '../../../context/beanStub';
-import { Autowired, PostConstruct } from '../../../context/context';
+import { Autowired } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
 import type { Column, ColumnPinnedType } from '../../../entities/column';
 import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
@@ -46,8 +46,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         this.ctrl = ctrl;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const destroyResizeFuncs: (() => void)[] = [];
 
         let canResize: boolean;

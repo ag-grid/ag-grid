@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
+import { Autowired, Bean, Optional } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { Column } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
@@ -83,8 +83,7 @@ export class MenuService extends BeanStub {
 
     private activeMenuFactory: IMenuFactory;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.activeMenuFactory = this.enterpriseMenuFactory ?? this.filterMenuFactory;
     }
 

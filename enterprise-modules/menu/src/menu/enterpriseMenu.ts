@@ -1,6 +1,7 @@
 import type {
     AgEvent,
     AgGridEvent,
+    BaseBean,
     Column,
     ColumnMenuTab,
     ColumnMenuVisibleChangedEvent,
@@ -27,8 +28,6 @@ import {
     FilterWrapperComp,
     ModuleNames,
     ModuleRegistry,
-    PostConstruct,
-    RefPlaceholder,
     TabbedLayout,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
@@ -43,7 +42,7 @@ export interface TabSelectedEvent extends AgEvent {
     key: string;
 }
 
-interface EnterpriseColumnMenu {
+interface EnterpriseColumnMenu extends BaseBean {
     getGui(): HTMLElement;
     showTab?(tab: string): void;
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;
@@ -363,8 +362,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
         this.includeChecks[TabbedColumnMenu.TAB_COLUMNS] = () => true;
     }
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         const tabs = this.getTabsToCreate().map((name) => this.createTab(name));
 
         this.tabbedLayout = new TabbedLayout({
@@ -575,8 +573,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
         `);
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.mainMenuList = this.columnMenuFactory.createMenu(
             this,
             this.column,

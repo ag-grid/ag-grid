@@ -45,17 +45,8 @@ export { ComponentType } from './components/framework/componentTypes';
 
 // context
 export { BeanStub } from './context/beanStub';
-export {
-    Context,
-    ComponentMeta,
-    Autowired,
-    PostConstruct,
-    PreConstruct,
-    Optional,
-    Bean,
-    Qualifier,
-    PreDestroy,
-} from './context/context';
+export { BaseBean } from './context/bean';
+export { Context, ComponentMeta, Autowired, Optional, Bean, Qualifier } from './context/context';
 
 // excel
 export {
@@ -534,6 +525,7 @@ export { GridApi, DetailGridInfo, StartEditingCellParams, GetCellValueParams } f
 export { Events } from './eventKeys';
 export { FocusService } from './focusService';
 export { GridOptionsService, PropertyChangedEvent } from './gridOptionsService';
+export { LocalEventService } from './localEventService';
 export { EventService } from './eventService';
 export { SelectableService } from './rowNodes/selectableService';
 export { RowNodeSorter, SortedRowNode, SortOption } from './rowNodes/rowNodeSorter';

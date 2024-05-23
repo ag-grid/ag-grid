@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../../context/context';
+import { Autowired, Bean } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { Column } from '../../entities/column';
 import { ColumnGroup } from '../../entities/columnGroup';
@@ -24,8 +24,7 @@ export class HeaderNavigationService extends BeanStub {
     private gridBodyCon: GridBodyCtrl;
     private currentHeaderRowWithoutSpan: number = -1;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.ctrlsService.whenReady((p) => {
             this.gridBodyCon = p.gridBodyCtrl;
         });

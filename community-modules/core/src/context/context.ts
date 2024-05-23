@@ -4,6 +4,7 @@ import { _getFunctionName } from '../utils/function';
 import { _exists, _values } from '../utils/generic';
 import { _iterateObject } from '../utils/object';
 import type { Component } from '../widgets/component';
+import type { BaseBean } from './bean';
 
 // steps in booting up:
 // 1. create all beans
@@ -33,7 +34,7 @@ export interface ControllerMeta {
 
 interface BeanWrapper {
     bean: any;
-    beanInstance: any;
+    beanInstance: BaseBean;
     beanName: BeanName;
 }
 
@@ -63,11 +64,14 @@ export class Context {
         this.logger.log('>> ag-Application Context ready - component is alive');
     }
 
-    private getBeanInstances(): any[] {
+    private getBeanInstances(): BaseBean[] {
         return _values(this.beanWrappers).map((beanEntry) => beanEntry.beanInstance);
     }
 
-    public createBean<T extends any>(bean: T, afterPreCreateCallback?: (comp: Component) => void): T {
+    public createBean<T extends BaseBean | null | undefined>(
+        bean: T,
+        afterPreCreateCallback?: (comp: Component) => void
+    ): T {
         if (!bean) {
             throw Error(`Can't wire to bean since it is null`);
         }
@@ -75,11 +79,12 @@ export class Context {
         return bean;
     }
 
-    private wireBeans(beanInstances: any[], afterPreCreateCallback?: (comp: Component) => void): void {
+    private wireBeans(beanInstances: BaseBean[], afterPreCreateCallback?: (comp: Component) => void): void {
         this.autoWireBeans(beanInstances);
         this.methodWireBeans(beanInstances);
 
-        this.callLifeCycleMethods(beanInstances, 'preConstructMethods');
+        // only exists on `Component`
+        beanInstances.forEach((bean) => (bean as any).preConstruct?.());
 
         // the callback sets the attributes, so the component has access to attributes
         // before postConstruct methods in the component are executed
@@ -87,7 +92,7 @@ export class Context {
             beanInstances.forEach(afterPreCreateCallback);
         }
 
-        this.callLifeCycleMethods(beanInstances, 'postConstructMethods');
+        beanInstances.forEach((bean) => bean.postConstruct?.());
     }
 
     private createBeans(): void {
@@ -235,30 +240,6 @@ export class Context {
         return null;
     }
 
-    private callLifeCycleMethods(beanInstances: any[], lifeCycleMethod: string): void {
-        beanInstances.forEach((beanInstance) => this.callLifeCycleMethodsOnBean(beanInstance, lifeCycleMethod));
-    }
-
-    private callLifeCycleMethodsOnBean(beanInstance: any, lifeCycleMethod: string, methodToIgnore?: string): void {
-        // putting all methods into a map removes duplicates
-        const allMethods: { [methodName: string]: boolean } = {};
-
-        // dump methods from each level of the metadata hierarchy
-        this.forEachMetaDataInHierarchy(beanInstance, (metaData: any) => {
-            const methods = metaData[lifeCycleMethod] as string[];
-            if (methods) {
-                methods.forEach((methodName) => {
-                    if (methodName != methodToIgnore) {
-                        allMethods[methodName] = true;
-                    }
-                });
-            }
-        });
-
-        const allMethodsList = Object.keys(allMethods);
-        allMethodsList.forEach((methodName) => beanInstance[methodName]());
-    }
-
     public getBean(name: BeanName): any {
         return this.lookupBeanInstance('getBean', name, true);
     }
@@ -284,7 +265,7 @@ export class Context {
         this.logger.log('>> ag-Application Context shut down - component is dead');
     }
 
-    public destroyBean<T>(bean: T): undefined {
+    public destroyBean<T extends BaseBean | null | undefined>(bean: T): undefined {
         if (!bean) {
             return;
         }
@@ -292,21 +273,12 @@ export class Context {
         this.destroyBeans([bean]);
     }
 
-    public destroyBeans<T>(beans: T[]): T[] {
+    public destroyBeans<T extends BaseBean | null | undefined>(beans: T[]): T[] {
         if (!beans) {
             return [];
         }
 
-        beans.forEach((bean) => {
-            this.callLifeCycleMethodsOnBean(bean, 'preDestroyMethods', 'destroy');
-
-            // call destroy() explicitly if it exists
-            const beanAny = bean as any;
-
-            if (typeof beanAny.destroy === 'function') {
-                beanAny.destroy();
-            }
-        });
+        beans.forEach((bean) => bean?.destroy?.());
 
         return [];
     }
@@ -318,30 +290,6 @@ export class Context {
     public getGridId(): string {
         return this.contextParams.gridId;
     }
-}
-
-export function PreConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {
-    const props = getOrCreateProps(target.constructor);
-    if (!props.preConstructMethods) {
-        props.preConstructMethods = [];
-    }
-    props.preConstructMethods.push(methodName);
-}
-
-export function PostConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {
-    const props = getOrCreateProps(target.constructor);
-    if (!props.postConstructMethods) {
-        props.postConstructMethods = [];
-    }
-    props.postConstructMethods.push(methodName);
-}
-
-export function PreDestroy(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {
-    const props = getOrCreateProps(target.constructor);
-    if (!props.preDestroyMethods) {
-        props.preDestroyMethods = [];
-    }
-    props.preDestroyMethods.push(methodName);
 }
 
 export function Bean(beanName: BeanName): Function {

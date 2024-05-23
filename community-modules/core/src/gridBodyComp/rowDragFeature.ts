@@ -3,7 +3,7 @@ import type { ColumnModel } from '../columns/columnModel';
 import type { FuncColsService } from '../columns/funcColsService';
 import { VerticalDirection } from '../constants/direction';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Optional, PostConstruct } from '../context/context';
+import { Autowired, Optional } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { DraggingEvent, DropTarget } from '../dragAndDrop/dragAndDropService';
 import { DragAndDropService, DragSourceType } from '../dragAndDrop/dragAndDropService';
@@ -21,7 +21,6 @@ import type { PaginationProxy } from '../pagination/paginationProxy';
 import type { SortController } from '../sortController';
 import { _last } from '../utils/array';
 import { _warnOnce } from '../utils/function';
-import { _missingOrEmpty } from '../utils/generic';
 import type { MouseEventService } from './mouseEventService';
 
 export interface RowDropZoneEvents {
@@ -69,8 +68,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.eContainer = eContainer;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         if (this.gos.isRowModelType('clientSide')) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
