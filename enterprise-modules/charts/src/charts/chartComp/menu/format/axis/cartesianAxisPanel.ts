@@ -5,7 +5,7 @@ import {
     Autowired,
     Component,
     Events,
-    RefSelector,
+    RefPlaceholder,
     _removeFromParent,
     _setDisplayed,
 } from '@ag-grid-community/core';
@@ -32,19 +32,19 @@ const DEFAULT_TIME_AXIS_FORMAT = '%d %B %Y';
 
 export class CartesianAxisPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="axisGroup">
-                <ag-select ref="axisTypeSelect"></ag-select>
-                <ag-select ref="axisTimeFormatSelect"></ag-select>
-                <ag-select ref="axisPositionSelect"></ag-select>
-                <ag-color-picker ref="axisColorInput"></ag-color-picker>
-                <ag-slider ref="axisLineWidthSlider"></ag-slider>
+            <ag-group-component data-ref="axisGroup">
+                <ag-select data-ref="axisTypeSelect"></ag-select>
+                <ag-select data-ref="axisTimeFormatSelect"></ag-select>
+                <ag-select data-ref="axisPositionSelect"></ag-select>
+                <ag-color-picker data-ref="axisColorInput"></ag-color-picker>
+                <ag-slider data-ref="axisLineWidthSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
-    @RefSelector('axisGroup') private axisGroup: AgGroupComponent;
-    @RefSelector('axisTypeSelect') private axisTypeSelect: AgSelect;
-    @RefSelector('axisPositionSelect') private axisPositionSelect: AgSelect;
-    @RefSelector('axisTimeFormatSelect') private axisTimeFormatSelect: AgSelect;
+    private readonly axisGroup: AgGroupComponent = RefPlaceholder;
+    private readonly axisTypeSelect: AgSelect = RefPlaceholder;
+    private readonly axisPositionSelect: AgSelect = RefPlaceholder;
+    private readonly axisTimeFormatSelect: AgSelect = RefPlaceholder;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 

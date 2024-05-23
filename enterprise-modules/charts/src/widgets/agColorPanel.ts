@@ -1,5 +1,4 @@
-import { Component, RefSelector, _exists, _setDisplayed } from '@ag-grid-community/core';
-import { KeyCode } from '@ag-grid-community/core';
+import { Component, KeyCode, RefPlaceholder, _exists, _setDisplayed } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
 
 import { AgColorInput } from './agColorInput';
@@ -28,36 +27,36 @@ export class AgColorPanel extends Component {
     private tabIndex: string;
 
     private static TEMPLATE /* html */ = `<div class="ag-color-panel" tabindex="-1">
-            <div ref="spectrumColor" class="ag-spectrum-color">
+            <div data-ref="spectrumColor" class="ag-spectrum-color">
                 <div class="ag-spectrum-sat ag-spectrum-fill">
-                    <div ref="spectrumVal" class="ag-spectrum-val ag-spectrum-fill">
-                        <div ref="spectrumDragger" class="ag-spectrum-dragger"></div>
+                    <div data-ref="spectrumVal" class="ag-spectrum-val ag-spectrum-fill">
+                        <div data-ref="spectrumDragger" class="ag-spectrum-dragger"></div>
                     </div>
                 </div>
             </div>
             <div class="ag-spectrum-tools">
-                <div ref="spectrumHue" class="ag-spectrum-hue ag-spectrum-tool">
+                <div data-ref="spectrumHue" class="ag-spectrum-hue ag-spectrum-tool">
                     <div class="ag-spectrum-hue-background"></div>
-                    <div ref="spectrumHueSlider" class="ag-spectrum-slider"></div>
+                    <div data-ref="spectrumHueSlider" class="ag-spectrum-slider"></div>
                 </div>
-                <div ref="spectrumAlpha" class="ag-spectrum-alpha ag-spectrum-tool">
+                <div data-ref="spectrumAlpha" class="ag-spectrum-alpha ag-spectrum-tool">
                     <div class="ag-spectrum-alpha-background"></div>
-                    <div ref="spectrumAlphaSlider" class="ag-spectrum-slider"></div>
+                    <div data-ref="spectrumAlphaSlider" class="ag-spectrum-slider"></div>
                 </div>
-                <ag-color-input ref="colorInput"></ag-color-input>
-                <div ref="recentColors" class="ag-recent-colors"></div>
+                <ag-color-input data-ref="colorInput"></ag-color-input>
+                <div data-ref="recentColors" class="ag-recent-colors"></div>
             </div>
         </div>`;
 
-    @RefSelector('spectrumColor') private readonly spectrumColor: HTMLElement;
-    @RefSelector('spectrumVal') private readonly spectrumVal: HTMLElement;
-    @RefSelector('spectrumDragger') private readonly spectrumDragger: HTMLElement;
-    @RefSelector('spectrumHue') private readonly spectrumHue: HTMLElement;
-    @RefSelector('spectrumHueSlider') private readonly spectrumHueSlider: HTMLElement;
-    @RefSelector('spectrumAlpha') private readonly spectrumAlpha: HTMLElement;
-    @RefSelector('spectrumAlphaSlider') private readonly spectrumAlphaSlider: HTMLElement;
-    @RefSelector('colorInput') private readonly colorInput: AgColorInput;
-    @RefSelector('recentColors') private readonly recentColors: HTMLElement;
+    private readonly spectrumColor: HTMLElement = RefPlaceholder;
+    private readonly spectrumVal: HTMLElement = RefPlaceholder;
+    private readonly spectrumDragger: HTMLElement = RefPlaceholder;
+    private readonly spectrumHue: HTMLElement = RefPlaceholder;
+    private readonly spectrumHueSlider: HTMLElement = RefPlaceholder;
+    private readonly spectrumAlpha: HTMLElement = RefPlaceholder;
+    private readonly spectrumAlphaSlider: HTMLElement = RefPlaceholder;
+    private readonly colorInput: AgColorInput = RefPlaceholder;
+    private readonly recentColors: HTMLElement = RefPlaceholder;
 
     constructor(config: { picker: Component }) {
         super(AgColorPanel.TEMPLATE, [AgColorInput]);

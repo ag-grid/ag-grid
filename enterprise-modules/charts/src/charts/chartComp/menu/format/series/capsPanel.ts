@@ -8,8 +8,8 @@ import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class CapsPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="capsGroup">
-                <ag-slider ref="capLengthRatioSlider"></ag-slider>
+            <ag-group-component data-ref="capsGroup">
+                <ag-slider data-ref="capLengthRatioSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 

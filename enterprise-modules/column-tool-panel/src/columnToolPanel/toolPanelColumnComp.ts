@@ -17,7 +17,7 @@ import {
     DragSourceType,
     Events,
     KeyCode,
-    RefSelector,
+    RefPlaceholder,
     _createIconNoSpan,
     _escapeString,
     _setAriaDescribedBy,
@@ -31,16 +31,16 @@ import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
 export class ToolPanelColumnComp extends Component {
     private static TEMPLATE /* html */ = `<div class="ag-column-select-column" aria-hidden="true">
-            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-select-column-label" ref="eLabel"></span>
+            <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
+            <span class="ag-column-select-column-label" data-ref="eLabel"></span>
         </div>`;
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
     @Autowired('modelItemUtils') private readonly modelItemUtils: ModelItemUtils;
 
-    @RefSelector('eLabel') private eLabel: HTMLElement;
-    @RefSelector('cbSelect') private cbSelect: AgCheckbox;
+    private readonly eLabel: HTMLElement = RefPlaceholder;
+    private readonly cbSelect: AgCheckbox = RefPlaceholder;
 
     private column: Column;
     private columnDept: number;

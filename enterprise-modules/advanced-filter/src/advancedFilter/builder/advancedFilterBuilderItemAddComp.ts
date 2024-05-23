@@ -1,9 +1,9 @@
-import type { Beans, FieldPickerValueSelectedEvent } from '@ag-grid-community/core';
+import type { FieldPickerValueSelectedEvent } from '@ag-grid-community/core';
 import {
     Autowired,
     Component,
     Events,
-    RefSelector,
+    RefPlaceholder,
     TooltipFeature,
     _setAriaLabel,
     _setAriaLevel,
@@ -17,10 +17,9 @@ import type { AdvancedFilterBuilderAddEvent, AdvancedFilterBuilderItem } from '.
 import { AdvancedFilterBuilderEvents } from './iAdvancedFilterBuilder';
 
 export class AdvancedFilterBuilderItemAddComp extends Component {
-    @Autowired('beans') private readonly beans: Beans;
     @Autowired('advancedFilterExpressionService')
     private readonly advancedFilterExpressionService: AdvancedFilterExpressionService;
-    @RefSelector('eItem') private readonly eItem: HTMLElement;
+    private readonly eItem: HTMLElement = RefPlaceholder;
 
     constructor(
         private readonly item: AdvancedFilterBuilderItem,
@@ -28,7 +27,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
     ) {
         super(/* html */ `
             <div class="ag-advanced-filter-builder-item-wrapper" role="presentation">
-                <div ref="eItem" class="ag-advanced-filter-builder-item" role="presentation">
+                <div data-ref="eItem" class="ag-advanced-filter-builder-item" role="presentation">
                     <div class="ag-advanced-filter-builder-item-tree-lines" aria-hidden="true">
                         <div class="ag-advanced-filter-builder-item-tree-line-vertical-top ag-advanced-filter-builder-item-tree-line-horizontal"></div>
                     </div>

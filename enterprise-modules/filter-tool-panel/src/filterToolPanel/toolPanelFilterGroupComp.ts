@@ -12,7 +12,7 @@ import {
     Component,
     Events,
     ProvidedColumnGroup,
-    RefSelector,
+    RefPlaceholder,
     _clearElement,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
@@ -25,10 +25,10 @@ export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp
 
 export class ToolPanelFilterGroupComp extends Component {
     private static TEMPLATE /* html */ = `<div class="ag-filter-toolpanel-group-wrapper">
-            <ag-group-component ref="filterGroupComp"></ag-group-component>
+            <ag-group-component data-ref="filterGroupComp"></ag-group-component>
         </div>`;
 
-    @RefSelector('filterGroupComp') private filterGroupComp: AgGroupComponent;
+    private filterGroupComp: AgGroupComponent = RefPlaceholder;
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnNameService') private columnNameService: ColumnNameService;

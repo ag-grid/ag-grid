@@ -2,21 +2,21 @@ import type { UserCompDetails } from '../../../components/framework/userComponen
 import type { IFloatingFilterComp } from '../../../filter/floating/floatingFilter';
 import { _setDisplayed } from '../../../utils/dom';
 import type { AgPromise } from '../../../utils/promise';
-import { RefSelector } from '../../../widgets/componentAnnotations';
+import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderFilterCellCtrl, IHeaderFilterCellComp } from './headerFilterCellCtrl';
 
 export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCellCtrl> {
     private static TEMPLATE /* html */ = `<div class="ag-header-cell ag-floating-filter" role="gridcell">
-            <div ref="eFloatingFilterBody" role="presentation"></div>
-            <div class="ag-floating-filter-button ag-hidden" ref="eButtonWrapper" role="presentation">
-                <button type="button" class="ag-button ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
+            <div data-ref="eFloatingFilterBody" role="presentation"></div>
+            <div class="ag-floating-filter-button ag-hidden" data-ref="eButtonWrapper" role="presentation">
+                <button type="button" class="ag-button ag-floating-filter-button-button" data-ref="eButtonShowMainFilter" tabindex="-1"></button>
             </div>
         </div>`;
 
-    @RefSelector('eFloatingFilterBody') private readonly eFloatingFilterBody: HTMLElement;
-    @RefSelector('eButtonWrapper') private readonly eButtonWrapper: HTMLElement;
-    @RefSelector('eButtonShowMainFilter') private readonly eButtonShowMainFilter: HTMLElement;
+    private readonly eFloatingFilterBody: HTMLElement = RefPlaceholder;
+    private readonly eButtonWrapper: HTMLElement = RefPlaceholder;
+    private readonly eButtonShowMainFilter: HTMLElement = RefPlaceholder;
 
     private floatingFilterComp: IFloatingFilterComp | undefined;
     private compPromise: AgPromise<IFloatingFilterComp> | null;

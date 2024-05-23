@@ -13,10 +13,10 @@ import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class GridLinePanel extends Component {
     public static TEMPLATE = /* html */ `<div>
-            <ag-group-component ref="gridLineGroup">
-                <ag-color-picker ref="gridLineColorPicker"></ag-color-picker>
-                <ag-slider ref="gridLineWidthSlider"></ag-slider>
-                <ag-slider ref="gridLineLineDashSlider"></ag-slider>
+            <ag-group-component data-ref="gridLineGroup">
+                <ag-color-picker data-ref="gridLineColorPicker"></ag-color-picker>
+                <ag-slider data-ref="gridLineWidthSlider"></ag-slider>
+                <ag-slider data-ref="gridLineLineDashSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 

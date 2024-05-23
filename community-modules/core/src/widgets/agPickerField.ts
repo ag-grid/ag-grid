@@ -7,15 +7,15 @@ import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } fro
 import { _createIconNoSpan } from '../utils/icon';
 import { AgAbstractField } from './agAbstractField';
 import type { Component } from './component';
-import { RefSelector } from './componentAnnotations';
+import { RefPlaceholder } from './component';
 import type { AddPopupParams, PopupService } from './popupService';
 
 const TEMPLATE = /* html */ `
     <div class="ag-picker-field" role="presentation">
-        <div ref="eLabel"></div>
-            <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-picker-collapsed">
-            <div ref="eDisplayField" class="ag-picker-field-display"></div>
-            <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
+        <div data-ref="eLabel"></div>
+            <div data-ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-picker-collapsed">
+            <div data-ref="eDisplayField" class="ag-picker-field-display"></div>
+            <div data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
         </div>
     </div>`;
 
@@ -44,10 +44,10 @@ export abstract class AgPickerField<
 
     @Autowired('popupService') protected popupService: PopupService;
 
-    @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
-    @RefSelector('eWrapper') protected readonly eWrapper: HTMLElement;
-    @RefSelector('eDisplayField') protected readonly eDisplayField: HTMLElement;
-    @RefSelector('eIcon') private readonly eIcon: HTMLButtonElement;
+    protected readonly eLabel: HTMLElement = RefPlaceholder;
+    protected readonly eWrapper: HTMLElement = RefPlaceholder;
+    protected readonly eDisplayField: HTMLElement = RefPlaceholder;
+    private readonly eIcon: HTMLButtonElement = RefPlaceholder;
 
     constructor(config?: TConfig) {
         super(config, config?.template || TEMPLATE, config?.agComponents || [], config?.className);

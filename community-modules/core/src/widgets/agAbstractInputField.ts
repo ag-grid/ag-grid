@@ -3,16 +3,16 @@ import { _setAriaLabel } from '../utils/aria';
 import { _addOrRemoveAttribute, _setDisabled, _setElementWidth } from '../utils/dom';
 import type { FieldElement } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
-import { RefSelector } from './componentAnnotations';
+import { RefPlaceholder } from './component';
 
 export abstract class AgAbstractInputField<
     TElement extends FieldElement,
     TValue,
     TConfig extends AgInputFieldParams = AgInputFieldParams,
 > extends AgAbstractField<TValue, TConfig> {
-    @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
-    @RefSelector('eWrapper') protected readonly eWrapper: HTMLElement;
-    @RefSelector('eInput') protected readonly eInput: TElement;
+    protected readonly eLabel: HTMLElement = RefPlaceholder;
+    protected readonly eWrapper: HTMLElement = RefPlaceholder;
+    protected readonly eInput: TElement = RefPlaceholder;
 
     constructor(
         config?: TConfig,
@@ -25,9 +25,9 @@ export abstract class AgAbstractInputField<
             config?.template ??
                 /* html */ `
             <div role="presentation">
-                <div ref="eLabel" class="ag-input-field-label"></div>
-                <div ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
-                    <${displayFieldTag} ref="eInput" class="ag-input-field-input"></${displayFieldTag}>
+                <div data-ref="eLabel" class="ag-input-field-label"></div>
+                <div data-ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
+                    <${displayFieldTag} data-ref="eInput" class="ag-input-field-input"></${displayFieldTag}>
                 </div>
             </div>`,
             [],

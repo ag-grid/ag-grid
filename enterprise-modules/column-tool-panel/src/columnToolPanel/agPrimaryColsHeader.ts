@@ -6,7 +6,7 @@ import {
     Component,
     Events,
     KeyCode,
-    RefSelector,
+    RefPlaceholder,
     _createIconNoSpan,
     _debounce,
     _setDisplayed,
@@ -25,9 +25,9 @@ export class AgPrimaryColsHeader extends Component {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
-    @RefSelector('eExpand') private readonly eExpand: Element;
-    @RefSelector('eSelect') private readonly eSelect: AgCheckbox;
-    @RefSelector('eFilterTextField') private eFilterTextField: AgInputTextField;
+    private readonly eExpand: Element = RefPlaceholder;
+    private readonly eSelect: AgCheckbox = RefPlaceholder;
+    private readonly eFilterTextField: AgInputTextField = RefPlaceholder;
 
     private static DEBOUNCE_DELAY = 300;
 
@@ -43,9 +43,9 @@ export class AgPrimaryColsHeader extends Component {
     private params: ToolPanelColumnCompParams;
 
     private static TEMPLATE /* html */ = `<div class="ag-column-select-header" role="presentation">
-            <div ref="eExpand" class="ag-column-select-header-icon"></div>
-            <ag-checkbox ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
-            <ag-input-text-field class="ag-column-select-header-filter-wrapper" ref="eFilterTextField"></ag-input-text-field>
+            <div data-ref="eExpand" class="ag-column-select-header-icon"></div>
+            <ag-checkbox data-ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
+            <ag-input-text-field class="ag-column-select-header-filter-wrapper" data-ref="eFilterTextField"></ag-input-text-field>
         </div>`;
 
     constructor() {

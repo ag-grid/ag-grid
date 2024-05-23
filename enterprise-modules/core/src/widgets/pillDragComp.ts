@@ -12,7 +12,7 @@ import {
     DragAndDropService,
     Events,
     KeyCode,
-    RefSelector,
+    RefPlaceholder,
     TouchListener,
     _createIconNoSpan,
     _escapeString,
@@ -24,16 +24,16 @@ export abstract class PillDragComp<TItem> extends Component {
     public static EVENT_COLUMN_REMOVE = 'columnRemove';
 
     private static TEMPLATE /* html */ = `<span role="option">
-          <span ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
-          <span ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
-          <span ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
+          <span data-ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
+          <span data-ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
+          <span data-ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
         </span>`;
 
     @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
 
-    @RefSelector('eText') private eText: HTMLElement;
-    @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
-    @RefSelector('eButton') private eButton: HTMLElement;
+    private readonly eText: HTMLElement = RefPlaceholder;
+    private readonly eDragHandle: HTMLElement = RefPlaceholder;
+    private readonly eButton: HTMLElement = RefPlaceholder;
 
     public abstract getItem(): TItem;
     protected abstract getDisplayName(): string;

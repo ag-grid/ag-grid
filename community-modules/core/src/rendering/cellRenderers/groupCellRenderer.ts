@@ -1,26 +1,25 @@
 import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import { _setAriaRole } from '../../utils/aria';
 import { _setDisplayed } from '../../utils/dom';
-import { Component } from '../../widgets/component';
-import { RefSelector } from '../../widgets/componentAnnotations';
+import { Component, RefPlaceholder } from '../../widgets/component';
 import type { GroupCellRendererParams, IGroupCellRenderer } from './groupCellRendererCtrl';
 import { GroupCellRendererCtrl } from './groupCellRendererCtrl';
 import type { ICellRendererComp } from './iCellRenderer';
 
 export class GroupCellRenderer extends Component implements ICellRendererComp {
     private static TEMPLATE /* html */ = `<span class="ag-cell-wrapper">
-            <span class="ag-group-expanded" ref="eExpanded"></span>
-            <span class="ag-group-contracted" ref="eContracted"></span>
-            <span class="ag-group-checkbox ag-invisible" ref="eCheckbox"></span>
-            <span class="ag-group-value" ref="eValue"></span>
-            <span class="ag-group-child-count" ref="eChildCount"></span>
+            <span class="ag-group-expanded" data-ref="eExpanded"></span>
+            <span class="ag-group-contracted" data-ref="eContracted"></span>
+            <span class="ag-group-checkbox ag-invisible" data-ref="eCheckbox"></span>
+            <span class="ag-group-value" data-ref="eValue"></span>
+            <span class="ag-group-child-count" data-ref="eChildCount"></span>
         </span>`;
 
-    @RefSelector('eExpanded') private eExpanded: HTMLElement;
-    @RefSelector('eContracted') private eContracted: HTMLElement;
-    @RefSelector('eCheckbox') private eCheckbox: HTMLElement;
-    @RefSelector('eValue') private eValue: HTMLElement;
-    @RefSelector('eChildCount') private eChildCount: HTMLElement;
+    private readonly eExpanded: HTMLElement = RefPlaceholder;
+    private readonly eContracted: HTMLElement = RefPlaceholder;
+    private readonly eCheckbox: HTMLElement = RefPlaceholder;
+    private readonly eValue: HTMLElement = RefPlaceholder;
+    private readonly eChildCount: HTMLElement = RefPlaceholder;
 
     // this cell renderer
     private innerCellRenderer: ICellRendererComp;

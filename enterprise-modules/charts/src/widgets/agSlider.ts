@@ -1,5 +1,5 @@
 import type { AgComponentSelector, AgLabelParams, LabelAlignment } from '@ag-grid-community/core';
-import { AgAbstractLabel, AgInputNumberField, Events, RefSelector } from '@ag-grid-community/core';
+import { AgAbstractLabel, AgInputNumberField, Events, RefPlaceholder } from '@ag-grid-community/core';
 
 import { AgInputRange } from './agInputRange';
 
@@ -16,16 +16,16 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams> {
     static readonly selector: AgComponentSelector = 'AG-SLIDER';
 
     private static TEMPLATE /* html */ = `<div class="ag-slider">
-            <label ref="eLabel"></label>
+            <label data-ref="eLabel"></label>
             <div class="ag-wrapper ag-slider-wrapper">
-                <ag-input-range ref="eSlider"></ag-input-range>
-                <ag-input-number-field ref="eText"></ag-input-number-field>
+                <ag-input-range data-ref="eSlider"></ag-input-range>
+                <ag-input-number-field data-ref="eText"></ag-input-number-field>
             </div>
         </div>`;
 
-    @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
-    @RefSelector('eSlider') private readonly eSlider: AgInputRange;
-    @RefSelector('eText') private readonly eText: AgInputNumberField;
+    protected readonly eLabel: HTMLElement = RefPlaceholder;
+    private readonly eSlider: AgInputRange = RefPlaceholder;
+    private readonly eText: AgInputNumberField = RefPlaceholder;
 
     protected labelAlignment: LabelAlignment = 'top';
 

@@ -8,8 +8,8 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
     static readonly selector: AgComponentSelector = 'AG-FAKE-VERTICAL-SCROLL';
 
     private static TEMPLATE /* html */ = `<div class="ag-body-vertical-scroll" aria-hidden="true">
-            <div class="ag-body-vertical-scroll-viewport" ref="eViewport">
-                <div class="ag-body-vertical-scroll-container" ref="eContainer"></div>
+            <div class="ag-body-vertical-scroll-viewport" data-ref="eViewport">
+                <div class="ag-body-vertical-scroll-container" data-ref="eContainer"></div>
             </div>
         </div>`;
 

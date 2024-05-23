@@ -1,19 +1,19 @@
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import type { Column, ColumnPinnedType } from '../../../entities/column';
 import { _removeAriaSort, _setAriaSort } from '../../../utils/aria';
-import { RefSelector } from '../../../widgets/componentAnnotations';
+import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
 import type { IHeaderComp } from './headerComp';
 
 export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
     private static TEMPLATE /* html */ = `<div class="ag-header-cell" role="columnheader">
-            <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
-            <div ref="eHeaderCompWrapper" class="ag-header-cell-comp-wrapper" role="presentation"></div>
+            <div data-ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
+            <div data-ref="eHeaderCompWrapper" class="ag-header-cell-comp-wrapper" role="presentation"></div>
         </div>`;
 
-    @RefSelector('eResize') private eResize: HTMLElement;
-    @RefSelector('eHeaderCompWrapper') private eHeaderCompWrapper: HTMLElement;
+    private readonly eResize: HTMLElement = RefPlaceholder;
+    private readonly eHeaderCompWrapper: HTMLElement = RefPlaceholder;
 
     protected readonly column: Column;
     protected readonly pinned: ColumnPinnedType;

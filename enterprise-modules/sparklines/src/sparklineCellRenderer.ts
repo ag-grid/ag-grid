@@ -1,5 +1,5 @@
 import type { ICellRenderer, ISparklineCellRendererParams, ResizeObserverService } from '@ag-grid-community/core';
-import { Autowired, Component, RefSelector } from '@ag-grid-community/core';
+import { Autowired, Component, RefPlaceholder } from '@ag-grid-community/core';
 
 import type { SparklineFactoryOptions } from './sparkline/agSparkline';
 import { AgSparkline } from './sparkline/agSparkline';
@@ -7,10 +7,10 @@ import type { SparklineTooltipSingleton } from './tooltip/sparklineTooltipSingle
 
 export class SparklineCellRenderer extends Component implements ICellRenderer {
     private static TEMPLATE /* html */ = `<div class="ag-sparkline-wrapper">
-            <span ref="eSparkline"></span>
+            <span data-ref="eSparkline"></span>
         </div>`;
 
-    @RefSelector('eSparkline') private eSparkline!: HTMLElement;
+    private readonly eSparkline: HTMLElement = RefPlaceholder;
 
     @Autowired('resizeObserverService') private resizeObserverService!: ResizeObserverService;
     @Autowired('sparklineTooltipSingleton') private sparklineTooltipSingleton!: SparklineTooltipSingleton;

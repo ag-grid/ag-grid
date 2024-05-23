@@ -1,18 +1,18 @@
 import type { AgComponentSelector } from '@ag-grid-community/core';
-import { Autowired, Component, RefSelector } from '@ag-grid-community/core';
+import { Autowired, Component, RefPlaceholder } from '@ag-grid-community/core';
 
 import type { GridLicenseManager as LicenseManager } from './gridLicenseManager';
 
 export class AgWatermark extends Component {
     static readonly selector: AgComponentSelector = 'AG-WATERMARK';
     @Autowired('licenseManager') licenseManager: LicenseManager;
-    @RefSelector('eLicenseTextRef') private eLicenseTextRef: HTMLElement;
+    private readonly eLicenseTextRef: HTMLElement = RefPlaceholder;
 
     constructor() {
         super(
             /* html*/
             `<div class="ag-watermark">
-                <div ref="eLicenseTextRef" class="ag-watermark-text"></div>
+                <div data-ref="eLicenseTextRef" class="ag-watermark-text"></div>
             </div>`
         );
     }

@@ -1,5 +1,5 @@
 import type { ChartOptionsChanged } from '@ag-grid-community/core';
-import { Autowired, Component, Events, RefSelector } from '@ag-grid-community/core';
+import { Autowired, Component, Events, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 import type { AgChartPaddingOptions, AgChartThemeOverrides } from 'ag-charts-community';
@@ -12,15 +12,15 @@ import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class PaddingPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="chartPaddingGroup">
-                <ag-slider ref="paddingTopSlider"></ag-slider>
-                <ag-slider ref="paddingRightSlider"></ag-slider>
-                <ag-slider ref="paddingBottomSlider"></ag-slider>
-                <ag-slider ref="paddingLeftSlider"></ag-slider>
+            <ag-group-component data-ref="chartPaddingGroup">
+                <ag-slider data-ref="paddingTopSlider"></ag-slider>
+                <ag-slider data-ref="paddingRightSlider"></ag-slider>
+                <ag-slider data-ref="paddingBottomSlider"></ag-slider>
+                <ag-slider data-ref="paddingLeftSlider"></ag-slider>
             </ag-group-component>
         <div>`;
 
-    @RefSelector('paddingTopSlider') private paddingTopSlider: AgSlider;
+    private readonly paddingTopSlider: AgSlider = RefPlaceholder;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 

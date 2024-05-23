@@ -4,7 +4,7 @@ import {
     AgToggleButton,
     Autowired,
     Component,
-    RefSelector,
+    RefPlaceholder,
     _removeFromParent,
 } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
@@ -31,11 +31,11 @@ import { WhiskersPanel } from './whiskersPanel';
 
 export class SeriesPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="seriesGroup">
+            <ag-group-component data-ref="seriesGroup">
             </ag-group-component>
         </div>`;
 
-    @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
+    private readonly seriesGroup: AgGroupComponent = RefPlaceholder;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 

@@ -39,7 +39,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
         }
         const icon = _loadTemplate(
             /* html */
-            `<span ref="eIcon" class="${this.getClassName('part')} ${this.getClassName('icon')}" role="presentation"></span>`
+            `<span data-ref="eIcon" class="${this.getClassName('part')} ${this.getClassName('icon')}" role="presentation"></span>`
         );
 
         if (this.params.checked) {
@@ -60,7 +60,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
     private addName(): void {
         const name = _loadTemplate(
             /* html */
-            `<span ref="eName" class="${this.getClassName('part')} ${this.getClassName('text')}">${this.params.name || ''}</span>`
+            `<span data-ref="eName" class="${this.getClassName('part')} ${this.getClassName('text')}">${this.params.name || ''}</span>`
         );
 
         this.getGui().appendChild(name);
@@ -72,7 +72,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
         }
         const shortcut = _loadTemplate(
             /* html */
-            `<span ref="eShortcut" class="${this.getClassName('part')} ${this.getClassName('shortcut')}">${this.params.shortcut || ''}</span>`
+            `<span data-ref="eShortcut" class="${this.getClassName('part')} ${this.getClassName('shortcut')}">${this.params.shortcut || ''}</span>`
         );
 
         this.getGui().appendChild(shortcut);
@@ -81,7 +81,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
     private addSubMenu(): void {
         const pointer = _loadTemplate(
             /* html */
-            `<span ref="ePopupPointer" class="${this.getClassName('part')} ${this.getClassName('popup-pointer')}"></span>`
+            `<span data-ref="ePopupPointer" class="${this.getClassName('part')} ${this.getClassName('popup-pointer')}"></span>`
         );
 
         const eGui = this.getGui();

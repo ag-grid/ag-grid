@@ -19,7 +19,7 @@ import {
     ManagedFocusFeature,
     ModuleNames,
     ModuleRegistry,
-    RefSelector,
+    RefPlaceholder,
     _removeFromParent,
     _setAriaControls,
     _warnOnce,
@@ -37,14 +37,14 @@ export class AgSideBar extends Component implements ISideBar {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sideBarService') private sideBarService: SideBarService;
-    @RefSelector('sideBarButtons') private sideBarButtonsComp: AgSideBarButtons;
+    private readonly sideBarButtons: AgSideBarButtons = RefPlaceholder;
 
     private toolPanelWrappers: ToolPanelWrapper[] = [];
     private sideBar: SideBarDef | undefined;
     private position: 'left' | 'right';
 
     private static readonly TEMPLATE /* html */ = `<div class="ag-side-bar ag-unselectable">
-            <ag-side-bar-buttons ref="sideBarButtons"></ag-side-bar-buttons>
+            <ag-side-bar-buttons data-ref="sideBarButtons"></ag-side-bar-buttons>
         </div>`;
 
     constructor() {
@@ -52,7 +52,7 @@ export class AgSideBar extends Component implements ISideBar {
     }
 
     public postConstruct(): void {
-        this.sideBarButtonsComp.addEventListener(
+        this.sideBarButtons.addEventListener(
             AgSideBarButtons.EVENT_SIDE_BAR_BUTTON_CLICKED,
             this.onToolPanelButtonClicked.bind(this)
         );
@@ -78,9 +78,9 @@ export class AgSideBar extends Component implements ISideBar {
             return;
         }
 
-        const { focusService, sideBarButtonsComp } = this;
+        const { focusService, sideBarButtons } = this;
         const eGui = this.getGui();
-        const sideBarGui = sideBarButtonsComp.getGui();
+        const sideBarGui = sideBarButtons.getGui();
         const activeElement = this.gos.getActiveDomElement() as HTMLElement;
         const openPanel = eGui.querySelector('.ag-tool-panel-wrapper:not(.ag-hidden)') as HTMLElement;
         const target = e.target as HTMLElement;
@@ -122,11 +122,11 @@ export class AgSideBar extends Component implements ISideBar {
     protected handleKeyDown(e: KeyboardEvent): void {
         const currentButton = this.gos.getActiveDomElement();
 
-        if (!this.sideBarButtonsComp.getGui().contains(currentButton)) {
+        if (!this.sideBarButtons.getGui().contains(currentButton)) {
             return;
         }
 
-        const sideBarGui = this.sideBarButtonsComp.getGui();
+        const sideBarGui = this.sideBarButtons.getGui();
         const buttons: HTMLElement[] = Array.prototype.slice.call(sideBarGui.querySelectorAll('.ag-side-button'));
 
         const currentPos = buttons.findIndex((button) => button.contains(currentButton));
@@ -168,7 +168,7 @@ export class AgSideBar extends Component implements ISideBar {
     }
 
     private clearDownUi(): void {
-        this.sideBarButtonsComp.clearButtons();
+        this.sideBarButtons.clearButtons();
         this.destroyToolPanelWrappers();
     }
 
@@ -317,7 +317,7 @@ export class AgSideBar extends Component implements ISideBar {
         if (!this.validateDef(def)) {
             return;
         }
-        const button = this.sideBarButtonsComp.addButtonComp(def);
+        const button = this.sideBarButtons.addButtonComp(def);
         let wrapper: ToolPanelWrapper;
         if (existingToolPanelWrapper) {
             wrapper = existingToolPanelWrapper;
@@ -360,7 +360,7 @@ export class AgSideBar extends Component implements ISideBar {
         const newlyOpenedKey = this.openedItem();
         const openToolPanelChanged = currentlyOpenedKey !== newlyOpenedKey;
         if (openToolPanelChanged) {
-            this.sideBarButtonsComp.setActiveButton(key);
+            this.sideBarButtons.setActiveButton(key);
             this.raiseToolPanelVisibleEvent(key, currentlyOpenedKey ?? undefined, source);
         }
     }

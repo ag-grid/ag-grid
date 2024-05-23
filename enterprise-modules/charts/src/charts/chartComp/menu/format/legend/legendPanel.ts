@@ -1,4 +1,4 @@
-import { AgCheckbox, AgSelect, Autowired, Component, RefSelector } from '@ag-grid-community/core';
+import { AgCheckbox, AgSelect, Autowired, Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -11,12 +11,12 @@ import type { FormatPanelOptions } from '../formatPanel';
 
 export class LegendPanel extends Component {
     private static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="legendGroup">
+            <ag-group-component data-ref="legendGroup">
             </ag-group-component>
         </div>`;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @RefSelector('legendGroup') private readonly legendGroup: AgGroupComponent;
+    private readonly legendGroup: AgGroupComponent = RefPlaceholder;
 
     private readonly key: string;
     private readonly isGradient: boolean;

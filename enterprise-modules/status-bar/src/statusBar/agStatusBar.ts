@@ -6,24 +6,24 @@ import type {
     UserComponentFactory,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { AgPromise, Autowired, Component, RefSelector, _removeFromParent } from '@ag-grid-community/core';
+import { AgPromise, Autowired, Component, RefPlaceholder, _removeFromParent } from '@ag-grid-community/core';
 
 import type { StatusBarService } from './statusBarService';
 
 export class AgStatusBar extends Component {
     static readonly selector: AgComponentSelector = 'AG-STATUS-BAR';
     private static TEMPLATE /* html */ = `<div class="ag-status-bar">
-            <div ref="eStatusBarLeft" class="ag-status-bar-left" role="status"></div>
-            <div ref="eStatusBarCenter" class="ag-status-bar-center" role="status"></div>
-            <div ref="eStatusBarRight" class="ag-status-bar-right" role="status"></div>
+            <div data-ref="eStatusBarLeft" class="ag-status-bar-left" role="status"></div>
+            <div data-ref="eStatusBarCenter" class="ag-status-bar-center" role="status"></div>
+            <div data-ref="eStatusBarRight" class="ag-status-bar-right" role="status"></div>
         </div>`;
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('statusBarService') private statusBarService: StatusBarService;
 
-    @RefSelector('eStatusBarLeft') private eStatusBarLeft: HTMLElement;
-    @RefSelector('eStatusBarCenter') private eStatusBarCenter: HTMLElement;
-    @RefSelector('eStatusBarRight') private eStatusBarRight: HTMLElement;
+    private readonly eStatusBarLeft: HTMLElement = RefPlaceholder;
+    private readonly eStatusBarCenter: HTMLElement = RefPlaceholder;
+    private readonly eStatusBarRight: HTMLElement = RefPlaceholder;
 
     private compDestroyFunctions: { [key: string]: () => void } = {};
 

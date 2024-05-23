@@ -1,4 +1,4 @@
-import { Autowired, Component, RefSelector } from '@ag-grid-community/core';
+import { Autowired, Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -9,11 +9,11 @@ import { PaddingPanel } from './paddingPanel';
 
 export class ChartPanel extends Component {
     private static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="chartGroup"></ag-group-component>
+            <ag-group-component data-ref="chartGroup"></ag-group-component>
         </div>`;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @RefSelector('chartGroup') private readonly chartGroup: AgGroupComponent;
+    private readonly chartGroup: AgGroupComponent = RefPlaceholder;
 
     constructor(private readonly options: FormatPanelOptions) {
         super();

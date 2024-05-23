@@ -16,11 +16,19 @@ import {
     _setDisplayed,
     _setVisible,
 } from '../utils/dom';
-import { _getFunctionName } from '../utils/function';
 import { NumberSequence } from '../utils/numberSequence';
 import { TooltipFeature } from './tooltipFeature';
 
 const compIdSequence = new NumberSequence();
+
+/** The RefPlaceholder is used to control when data-ref attribute should be applied to the component
+ * There are hanging data-refs in the DOM that are not being used internally by the component which we don't want to apply to the component.
+ * There is also the case where data-refs are solely used for passing parameters to the component and should not be applied to the component.
+ * It also enables validation to catch typo errors in the data-ref attribute vs component name.
+ * The value is `null` so that it can be identified in the component and distinguished from just missing with undefined.
+ * The `null` value also allows for existing falsy checks to work as expected when code can be run before the template is setup.
+ */
+export const RefPlaceholder: any = null;
 
 export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
@@ -33,7 +41,7 @@ export class Component extends BeanStub {
 
     public static EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     private eGui: HTMLElement;
-    private components: ComponentClass[] = [];
+    private components: ComponentClass[];
     @Autowired('agStackComponentsRegistry') protected readonly agStackComponentsRegistry: AgStackComponentsRegistry;
 
     // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
@@ -60,20 +68,25 @@ export class Component extends BeanStub {
 
         this.cssClassManager = new CssClassManager(() => this.eGui);
 
+        this.components = components ?? [];
         if (template) {
-            this.components = components || [];
-            this.setTemplate(template, [], undefined);
+            this.setTemplate(template);
         }
     }
 
     public preConstruct(): void {
         this.usingBrowserTooltips = this.gos.get('enableBrowserTooltips');
 
-        // ui exists if user sets template in constructor. when this happens, we have to wait for the context
-        // to be autoWired first before we can create child components.
-        if (this.getGui()) {
-            this.agStackComponentsRegistry.ensureRegistered(this.components);
-            this.createChildComponentsFromTags(this.getGui());
+        this.wireTemplate(this.getGui());
+    }
+
+    private wireTemplate(element: HTMLElement | undefined, paramsMap?: { [key: string]: any }): void {
+        // ui exists if user sets template in constructor. when this happens,
+        // We have to wait for the context to be autoWired first before we can create child components.
+        this.agStackComponentsRegistry?.ensureRegistered(this.components);
+        if (element && this.getContext()) {
+            this.applyElementsToComponent(element);
+            this.createChildComponentsFromTags(element, paramsMap);
         }
     }
 
@@ -125,6 +138,37 @@ export class Component extends BeanStub {
         }
     }
 
+    private applyElementsToComponent(
+        element: Element,
+        elementRef?: string | null,
+        paramsMap?: { [key: string]: any },
+        newComponent: Component | null = null
+    ) {
+        if (elementRef === undefined) {
+            elementRef = element.getAttribute('data-ref');
+        }
+        if (elementRef) {
+            // We store the reference to the element in the parent component under that same name
+            // if there is a placeholder property with the same name.
+            const current = (this as any)[elementRef];
+            if (current === RefPlaceholder) {
+                (this as any)[elementRef] = newComponent ?? element;
+            } else {
+                // Don't warn if the data-ref is used for passing parameters to the component
+                const usedAsParamRef = paramsMap && paramsMap[elementRef];
+                if (!usedAsParamRef) {
+                    // This can happen because of:
+                    // 1. The data-ref has a typo and doesn't match the property in the component
+                    // 2. The  property is not initialised with the RefPlaceholder and should be.
+                    // 3. The property is on a child component and not availble on the parent during construction.
+                    //    In which case you may need to pass the template via setTemplate() instead of in the super constructor.
+                    // 4. The data-ref is not used by the component and should be removed from the template.
+                    console.warn(`Issue with data-ref: ${elementRef} on ${this.constructor.name} with ${current}`);
+                }
+            }
+        }
+    }
+
     // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
     private createChildComponentsFromTags(parentNode: Element, paramsMap?: { [key: string]: any }): void {
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
@@ -166,8 +210,6 @@ export class Component extends BeanStub {
         });
     }
 
-    private browserElements = new Set<string>(['DIV', 'SPAN', 'INPUT', 'TEXTAREA', 'BUTTON']);
-
     private createComponentFromElement(
         element: HTMLElement,
         afterPreCreateCallback?: (comp: Component) => void,
@@ -175,20 +217,22 @@ export class Component extends BeanStub {
     ): Component | null {
         const key = element.nodeName;
 
-        const elementRef = element.getAttribute('ref');
+        const elementRef = element.getAttribute('data-ref');
 
-        const ComponentClass = this.browserElements.has(key)
-            ? null
-            : this.agStackComponentsRegistry.getComponent(key as Uppercase<AgComponentSelector>);
+        const ComponentClass = key.startsWith('AG-')
+            ? this.agStackComponentsRegistry.getComponent(key as Uppercase<AgComponentSelector>)
+            : null;
         let newComponent: Component | null = null;
         if (ComponentClass) {
             Component.elementGettingCreated = element;
-            const componentParams = paramsMap ? paramsMap[elementRef!] : undefined;
+            const componentParams = paramsMap && elementRef ? paramsMap[elementRef] : undefined;
             newComponent = new ComponentClass(componentParams);
             newComponent.setParentComponent(this);
 
             this.createBean(newComponent, null, afterPreCreateCallback);
         }
+
+        this.applyElementsToComponent(element, elementRef, paramsMap, newComponent);
 
         return newComponent;
     }
@@ -202,32 +246,6 @@ export class Component extends BeanStub {
         parentNode.replaceChild(eComponent, childNode);
         parentNode.insertBefore(document.createComment(childNode.nodeName), eComponent);
         this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
-        this.swapInComponentForQuerySelectors(newComponent, childNode);
-    }
-
-    private swapInComponentForQuerySelectors(newComponent: Component, childNode: Node): void {
-        const thisNoType = this as any;
-
-        this.iterateOverQuerySelectors((querySelector: any) => {
-            if (thisNoType[querySelector.attributeName] === childNode) {
-                thisNoType[querySelector.attributeName] = newComponent;
-            }
-        });
-    }
-
-    private iterateOverQuerySelectors(action: (querySelector: any) => void): void {
-        let thisPrototype: any = Object.getPrototypeOf(this);
-
-        while (thisPrototype != null) {
-            const metaData = thisPrototype.__agComponentMetaData;
-            const currentProtoName = _getFunctionName(thisPrototype.constructor);
-
-            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
-                metaData[currentProtoName].querySelectors.forEach((querySelector: any) => action(querySelector));
-            }
-
-            thisPrototype = Object.getPrototypeOf(thisPrototype);
-        }
     }
 
     protected activateTabIndex(elements?: Element[]): void {
@@ -259,41 +277,10 @@ export class Component extends BeanStub {
         paramsMap?: { [key: string]: any }
     ): void {
         this.eGui = element;
-        (this.eGui as any).__agComponent = this;
-        this.wireQuerySelectors();
-        this.agStackComponentsRegistry?.ensureRegistered(components ?? this.components);
-
-        // context will not be available when user sets template in constructor
-        if (this.getContext()) {
-            this.createChildComponentsFromTags(this.getGui(), paramsMap);
+        if (components) {
+            this.components = [...this.components, ...components];
         }
-    }
-
-    protected wireQuerySelectors(): void {
-        if (!this.eGui) {
-            return;
-        }
-
-        const thisNoType = this as any;
-
-        this.iterateOverQuerySelectors((querySelector: any) => {
-            const setResult = (result: any) => (thisNoType[querySelector.attributeName] = result);
-
-            // if it's a ref selector, and match is on top level component, we return
-            // the element. otherwise no way of components putting ref=xxx on the top
-            // level element as querySelector only looks at children.
-            const topLevelRefMatch =
-                querySelector.refSelector && this.getAttribute('ref') === querySelector.refSelector;
-            if (topLevelRefMatch) {
-                setResult(this.eGui);
-            } else {
-                // otherwise use querySelector, which looks at children
-                const resultOfQuery = this.eGui.querySelector(querySelector.querySelector);
-                if (resultOfQuery) {
-                    setResult(resultOfQuery.__agComponent || resultOfQuery);
-                }
-            }
-        });
+        this.wireTemplate(element, paramsMap);
     }
 
     public getGui(): HTMLElement {
@@ -324,10 +311,6 @@ export class Component extends BeanStub {
 
     protected queryForHtmlElement(cssSelector: string): HTMLElement {
         return this.eGui.querySelector(cssSelector) as HTMLElement;
-    }
-
-    protected queryForHtmlInputElement(cssSelector: string): HTMLInputElement {
-        return this.eGui.querySelector(cssSelector) as HTMLInputElement;
     }
 
     public appendChild(newChild: HTMLElement | Component, container?: HTMLElement): void {
@@ -383,12 +366,6 @@ export class Component extends BeanStub {
             this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
 
-        const eGui = this.eGui as any;
-
-        if (eGui && eGui.__agComponent) {
-            eGui.__agComponent = undefined;
-        }
-
         super.destroy();
     }
 
@@ -411,15 +388,6 @@ export class Component extends BeanStub {
 
     public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
         this.cssClassManager.addOrRemoveCssClass(className, addOrRemove);
-    }
-
-    public getAttribute(key: string): string | null {
-        const { eGui } = this;
-        return eGui ? eGui.getAttribute(key) : null;
-    }
-
-    public getRefElement(refName: string): HTMLElement {
-        return this.queryForHtmlElement(`[ref="${refName}"]`);
     }
 }
 

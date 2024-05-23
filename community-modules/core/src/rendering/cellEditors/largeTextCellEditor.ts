@@ -2,7 +2,7 @@ import { KeyCode } from '../../constants/keyCode';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _exists } from '../../utils/generic';
 import { AgInputTextArea } from '../../widgets/agInputTextArea';
-import { RefSelector } from '../../widgets/componentAnnotations';
+import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
 
 export interface ILargeTextEditorParams extends ICellEditorParams {
@@ -25,11 +25,11 @@ export interface ILargeTextEditorParams extends ICellEditorParams {
 
 export class LargeTextCellEditor extends PopupComponent implements ICellEditorComp {
     private static TEMPLATE /* html */ = `<div class="ag-large-text">
-            <ag-input-text-area ref="eTextArea" class="ag-large-text-input"></ag-input-text-area>
+            <ag-input-text-area data-ref="eTextArea" class="ag-large-text-input"></ag-input-text-area>
         </div>`;
 
+    private readonly eTextArea: AgInputTextArea = RefPlaceholder;
     private params: ILargeTextEditorParams;
-    @RefSelector('eTextArea') private eTextArea: AgInputTextArea;
     private focusAfterAttached: boolean;
 
     constructor() {

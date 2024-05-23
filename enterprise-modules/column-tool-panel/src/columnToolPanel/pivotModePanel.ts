@@ -1,15 +1,15 @@
 import type { AgCheckbox, ColumnModel, GridApi } from '@ag-grid-community/core';
-import { AgToggleButton, Autowired, Component, Events, RefSelector } from '@ag-grid-community/core';
+import { AgToggleButton, Autowired, Component, Events, RefPlaceholder } from '@ag-grid-community/core';
 
 export class PivotModePanel extends Component {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('gridApi') private api: GridApi;
 
-    @RefSelector('cbPivotMode') private cbPivotMode: AgCheckbox;
+    private readonly cbPivotMode: AgCheckbox = RefPlaceholder;
 
     private createTemplate(): string {
         return /* html */ `<div class="ag-pivot-mode-panel">
-                <ag-toggle-button ref="cbPivotMode" class="ag-pivot-mode-select"></ag-toggle-button>
+                <ag-toggle-button data-ref="cbPivotMode" class="ag-pivot-mode-select"></ag-toggle-button>
             </div>`;
     }
 

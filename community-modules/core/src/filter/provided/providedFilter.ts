@@ -9,8 +9,7 @@ import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '.
 import { _debounce } from '../../utils/function';
 import type { AgPromise } from '../../utils/promise';
 import type { ComponentClass } from '../../widgets/component';
-import { Component } from '../../widgets/component';
-import { RefSelector } from '../../widgets/componentAnnotations';
+import { Component, RefPlaceholder } from '../../widgets/component';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import type { PopupEventParams } from '../../widgets/popupService';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
@@ -104,7 +103,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     @Autowired('rowModel') protected readonly rowModel: IRowModel;
 
-    @RefSelector('eFilterBody') protected readonly eFilterBody: HTMLElement;
+    protected readonly eFilterBody: HTMLElement = RefPlaceholder;
 
     private eButtonsPanel: HTMLElement;
     private buttonListeners: ((() => null) | undefined)[] = [];
@@ -165,7 +164,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         }
         const templateString = /* html */ `
             <form class="ag-filter-wrapper">
-                <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper" ref="eFilterBody">
+                <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper" data-ref="eFilterBody">
                     ${this.createBodyTemplate()}
                 </div>
             </form>`;
@@ -273,7 +272,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                 /* html */
                 `<button
                     type="${buttonType}"
-                    ref="${type}FilterButton"
+                    data-ref="${type}FilterButton"
                     class="ag-button ag-standard-button ag-filter-apply-panel-button"
                 >${text}
                 </button>`
@@ -440,7 +439,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
         if (this.applyActive && !this.isReadOnly()) {
             const isValid = this.isModelValid(this.getModelFromUi()!);
-            const applyFilterButton = this.getRefElement('applyFilterButton');
+            const applyFilterButton = this.queryForHtmlElement(`[data-ref="applyFilterButton"]`);
             if (applyFilterButton) {
                 _setDisabled(applyFilterButton, !isValid);
             }

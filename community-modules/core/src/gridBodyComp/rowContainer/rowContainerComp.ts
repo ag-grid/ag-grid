@@ -6,8 +6,7 @@ import { _setAriaRole } from '../../utils/aria';
 import { _ensureDomOrder, _insertWithDomOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
 import type { AgComponentSelector } from '../../widgets/component';
-import { Component } from '../../widgets/component';
-import { RefSelector } from '../../widgets/componentAnnotations';
+import { Component, RefPlaceholder } from '../../widgets/component';
 import type { IRowContainerComp, RowContainerType } from './rowContainerCtrl';
 import { RowContainerCtrl, RowContainerName, getRowContainerTypeForName } from './rowContainerCtrl';
 
@@ -28,11 +27,11 @@ function templateFactory(): string {
     if (centerTemplate) {
         res =
             /* html */
-            `<div class="${cssClasses.viewport}" ref="eViewport" role="presentation">
-                <div class="${cssClasses.container}" ref="eContainer"></div>
+            `<div class="${cssClasses.viewport}" data-ref="eViewport" role="presentation">
+                <div class="${cssClasses.container}" data-ref="eContainer"></div>
             </div>`;
     } else {
-        res = /* html */ `<div class="${cssClasses.container}" ref="eContainer"></div>`;
+        res = /* html */ `<div class="${cssClasses.container}" data-ref="eContainer"></div>`;
     }
 
     return res;
@@ -42,8 +41,8 @@ export class RowContainerComp extends Component {
     static readonly selector: AgComponentSelector = 'AG-ROW-CONTAINER';
     @Autowired('beans') private beans: Beans;
 
-    @RefSelector('eViewport') private eViewport: HTMLElement;
-    @RefSelector('eContainer') private eContainer: HTMLElement;
+    private readonly eViewport: HTMLElement = RefPlaceholder;
+    private readonly eContainer: HTMLElement = RefPlaceholder;
 
     private readonly name: RowContainerName;
     private readonly type: RowContainerType;
@@ -56,7 +55,8 @@ export class RowContainerComp extends Component {
     private lastPlacedElement: HTMLElement | null;
 
     constructor() {
-        super(templateFactory());
+        super();
+        this.setTemplate(templateFactory());
         this.name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
         this.type = getRowContainerTypeForName(this.name);
     }

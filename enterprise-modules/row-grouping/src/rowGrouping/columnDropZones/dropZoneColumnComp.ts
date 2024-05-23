@@ -16,7 +16,7 @@ import {
     DragSourceType,
     KeyCode,
     Optional,
-    RefSelector,
+    RefPlaceholder,
     SortIndicatorComp,
     VirtualList,
     _loadTemplate,
@@ -34,7 +34,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     @Optional('aggFuncService') private readonly aggFuncService?: IAggFuncService;
     @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
 
-    @RefSelector('eSortIndicator') private eSortIndicator: SortIndicatorComp;
+    private readonly eSortIndicator: SortIndicatorComp = RefPlaceholder;
 
     private displayName: string | null;
     private popupShowing = false;
@@ -52,10 +52,10 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
             horizontal,
             /* html */ `
                 <span role="option">
-                    <span ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
-                    <span ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
-                    <ag-sort-indicator ref="eSortIndicator"></ag-sort-indicator>
-                    <span ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
+                    <span data-ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
+                    <span data-ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
+                    <ag-sort-indicator data-ref="eSortIndicator"></ag-sort-indicator>
+                    <span data-ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
                 </span>
             `,
             [SortIndicatorComp]
