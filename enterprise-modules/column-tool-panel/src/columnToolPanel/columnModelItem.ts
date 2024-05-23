@@ -7,7 +7,7 @@ import {
 } from '@ag-grid-community/core';
 
 export class ColumnModelItem implements IEventEmitter {
-    private eventService: LocalEventService = new LocalEventService();
+    private localEventService: LocalEventService = new LocalEventService();
 
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
 
@@ -71,7 +71,7 @@ export class ColumnModelItem implements IEventEmitter {
             return;
         }
         this.expanded = expanded;
-        this.eventService.dispatchEvent({ type: ColumnModelItem.EVENT_EXPANDED_CHANGED });
+        this.localEventService.dispatchEvent({ type: ColumnModelItem.EVENT_EXPANDED_CHANGED });
     }
 
     public setPassesFilter(passesFilter: boolean): void {
@@ -79,10 +79,10 @@ export class ColumnModelItem implements IEventEmitter {
     }
 
     public addEventListener(eventType: string, listener: AgEventListener): void {
-        this.eventService.addEventListener(eventType, listener);
+        this.localEventService.addEventListener(eventType, listener);
     }
 
     public removeEventListener(eventType: string, listener: AgEventListener): void {
-        this.eventService.removeEventListener(eventType, listener);
+        this.localEventService.removeEventListener(eventType, listener);
     }
 }
