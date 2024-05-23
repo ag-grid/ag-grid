@@ -20,7 +20,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     private static TEMPLATE /* html */ = `<div class="ag-angle-select">
             <div data-ref="eLabel"></div>
             <div class="ag-wrapper ag-angle-select-wrapper">
-                <div data-ref="eAngleSelectField" class="ag-angle-select-field">
+                <div class="ag-angle-select-field">
                     <div data-ref="eParentCircle" class="ag-angle-select-parent-circle">
                         <div data-ref="eChildCircle" class="ag-angle-select-child-circle"></div>
                     </div>
