@@ -4,13 +4,9 @@ import type {
     FocusService,
     IAfterGuiAttachedParams,
     MenuItemDef,
-    PopupService} from '@ag-grid-community/core';
-import {
-    BeanStub,
-    Component,
-    RefSelector,
-    _createIconNoSpan,
+    PopupService,
 } from '@ag-grid-community/core';
+import { BeanStub, Component, RefPlaceholder, _createIconNoSpan } from '@ag-grid-community/core';
 import { AgMenuItemComponent, AgMenuList } from '@ag-grid-enterprise/core';
 
 import type { ChartController } from '../chartController';
@@ -227,14 +223,14 @@ export class ChartMenuListFactory extends BeanStub {
 class ChartMenuList extends Component {
     private readonly focusService: FocusService;
 
-    @RefSelector('eChartsMenu') private readonly eChartsMenu: HTMLElement;
+    private readonly eChartsMenu: HTMLElement = RefPlaceholder;
 
     private hidePopupFunc: () => void;
     private mainMenuList: AgMenuList;
 
     constructor(private readonly menuItems: (MenuItemDef | string)[]) {
         super(/* html */ `
-            <div ref="eChartsMenu" role="presentation" class="ag-menu ag-chart-menu-popup"></div>
+            <div data-ref="eChartsMenu" role="presentation" class="ag-menu ag-chart-menu-popup"></div>
         `);
     }
 

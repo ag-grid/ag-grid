@@ -1,4 +1,4 @@
-import type { BeanCollection} from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
 import { Component } from '@ag-grid-community/core';
 import { _Scene } from 'ag-charts-community';
 

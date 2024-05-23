@@ -1,4 +1,4 @@
-import type { BeanCollection} from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
 import { Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
@@ -11,11 +11,11 @@ import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class ConnectorLinePanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="lineGroup">
-                <ag-color-picker ref="lineColorPicker"></ag-color-picker>
-                <ag-slider ref="lineStrokeWidthSlider"></ag-slider>
-                <ag-slider ref="lineOpacitySlider"></ag-slider>
-                <ag-slider ref="lineDashSlider"></ag-slider>                
+            <ag-group-component data-ref="lineGroup">
+                <ag-color-picker data-ref="lineColorPicker"></ag-color-picker>
+                <ag-slider data-ref="lineStrokeWidthSlider"></ag-slider>
+                <ag-slider data-ref="lineOpacitySlider"></ag-slider>
+                <ag-slider data-ref="lineDashSlider"></ag-slider>                
             </ag-group-component>
         </div>`;
 

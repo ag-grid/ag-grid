@@ -1,4 +1,4 @@
-import type { BeanName} from '@ag-grid-community/core';
+import type { BeanName } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
 import type { ILicenseManager } from './shared/licenseManager';

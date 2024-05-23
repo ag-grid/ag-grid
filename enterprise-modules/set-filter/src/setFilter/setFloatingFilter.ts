@@ -13,6 +13,7 @@ import { SetValueModel } from './setValueModel';
 
 export class SetFloatingFilterComp<V = string> extends Component implements IFloatingFilter {
     private columnNameService: ColumnNameService;
+    private readonly eFloatingFilterText: AgInputTextField = RefPlaceholder;
 
     public wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
@@ -28,7 +29,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
         super(
             /* html */ `
             <div class="ag-floating-filter-input ag-set-floating-filter-input" role="presentation">
-                <ag-input-text-field ref="eFloatingFilterText"></ag-input-text-field>
+                <ag-input-text-field data-ref="eFloatingFilterText"></ag-input-text-field>
             </div>`,
             [AgInputTextField]
         );

@@ -8,7 +8,7 @@ import type { Column } from './entities/column';
 import type { ColumnGroup } from './entities/columnGroup';
 import type { RowNode } from './entities/rowNode';
 import type { RowPositionUtils } from './entities/rowPositionUtils';
-import type { CellFocusClearedEvent, CellFocusedEvent, CellFocusedParams, CommonCellFocusParams} from './events';
+import type { CellFocusClearedEvent, CellFocusedEvent, CellFocusedParams, CommonCellFocusParams } from './events';
 import { Events } from './events';
 import type { FilterManager } from './filter/filterManager';
 import type { NavigationService } from './gridBodyComp/navigationService';

@@ -4,8 +4,7 @@ import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
 import { _clearElement } from '../../utils/dom';
 import type { AgPromise } from '../../utils/promise';
 import type { AgComponentSelector } from '../../widgets/component';
-import { Component } from '../../widgets/component';
-import { RefSelector } from '../../widgets/componentAnnotations';
+import { Component, RefPlaceholder } from '../../widgets/component';
 import type { OverlayService } from './overlayService';
 
 export class OverlayWrapperComponent extends Component implements LayoutView {
@@ -15,7 +14,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     private static TEMPLATE = /* html */ `
         <div class="ag-overlay" role="presentation">
             <div class="ag-overlay-panel" role="presentation">
-                <div class="ag-overlay-wrapper" ref="eOverlayWrapper" role="presentation"></div>
+                <div class="ag-overlay-wrapper" data-ref="eOverlayWrapper" role="presentation"></div>
             </div>
         </div>`;
 
@@ -26,7 +25,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.overlayService = beans.overlayService;
     }
 
-    @RefSelector('eOverlayWrapper') eOverlayWrapper: HTMLElement;
+    private readonly eOverlayWrapper: HTMLElement = RefPlaceholder;
 
     private activeOverlay: Component;
     private inProgress = false;

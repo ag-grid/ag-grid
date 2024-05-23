@@ -6,9 +6,8 @@ import type {
     FilterManager,
     IFloatingFilterComp,
     IFloatingFilterParams,
-    UserCompDetails,
 } from '@ag-grid-community/core';
-import { AgInputTextField, AgPromise, Column, Component, RefSelector, _clearElement } from '@ag-grid-community/core';
+import { AgInputTextField, AgPromise, Column, Component, RefPlaceholder, _clearElement } from '@ag-grid-community/core';
 
 import { GroupFilter } from './groupFilter';
 
@@ -22,19 +21,18 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         this.filterManager = beans.filterManager;
     }
 
-    @RefSelector('eFloatingFilter') private readonly eFloatingFilter: HTMLElement;
+    private readonly eFloatingFilter: HTMLElement = RefPlaceholder;
 
     private params: IFloatingFilterParams<GroupFilter>;
     private eFloatingFilterText: AgInputTextField;
     private parentFilterInstance: GroupFilter;
     private underlyingFloatingFilter: IFloatingFilterComp | undefined;
     private showingUnderlyingFloatingFilter: boolean;
-    private compDetails: UserCompDetails;
     private haveAddedColumnListeners: boolean = false;
 
     constructor() {
         super(/* html */ `
-            <div ref="eFloatingFilter" class="ag-group-floating-filter ag-floating-filter-input" role="presentation"></div>
+            <div data-ref="eFloatingFilter" class="ag-group-floating-filter ag-floating-filter-input" role="presentation"></div>
         `);
     }
 
@@ -105,7 +103,6 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         if (column && !column.isVisible()) {
             const compDetails = this.filterManager.getFloatingFilterCompDetails(column, this.params.showParentFilter);
             if (compDetails) {
-                this.compDetails = compDetails;
                 if (!this.haveAddedColumnListeners) {
                     this.haveAddedColumnListeners = true;
                     this.addManagedListener(

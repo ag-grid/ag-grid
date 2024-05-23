@@ -3,11 +3,9 @@ import type {
     BeanName,
     SortController,
     SortModelItem,
-    StoreRefreshAfterParams} from '@ag-grid-community/core';
-import {
-    BeanStub,
-    Events
+    StoreRefreshAfterParams,
 } from '@ag-grid-community/core';
+import { BeanStub, Events } from '@ag-grid-community/core';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { ListenerUtils } from './listenerUtils';

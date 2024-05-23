@@ -11,8 +11,7 @@ import { _removeFromParent, _setDisplayed } from '../../../utils/dom';
 import { _exists } from '../../../utils/generic';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _escapeString } from '../../../utils/string';
-import { Component } from '../../../widgets/component';
-import { RefSelector } from '../../../widgets/componentAnnotations';
+import { Component, RefPlaceholder } from '../../../widgets/component';
 import type { LongTapEvent, TapEvent } from '../../../widgets/touchListener';
 import { TouchListener } from '../../../widgets/touchListener';
 import { SortIndicatorComp } from './sortIndicatorComp';
@@ -101,12 +100,12 @@ export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {}
 
 export class HeaderComp extends Component implements IHeaderComp {
     private static TEMPLATE /* html */ = `<div class="ag-cell-label-container" role="presentation">
-            <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
-            <span ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button" aria-hidden="true"></span>
-            <div ref="eLabel" class="ag-header-cell-label" role="presentation">
-                <span ref="eText" class="ag-header-cell-text"></span>
-                <span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
-                <ag-sort-indicator ref="eSortIndicator"></ag-sort-indicator>
+            <span data-ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
+            <span data-ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button" aria-hidden="true"></span>
+            <div data-ref="eLabel" class="ag-header-cell-label" role="presentation">
+                <span data-ref="eText" class="ag-header-cell-text"></span>
+                <span data-ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
+                <ag-sort-indicator data-ref="eSortIndicator"></ag-sort-indicator>
             </div>
         </div>`;
 
@@ -121,21 +120,21 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.funcColsService = beans.funcColsService;
     }
 
-    @RefSelector('eFilter') private eFilter: HTMLElement;
-    @RefSelector('eFilterButton') private eFilterButton?: HTMLElement;
-    @RefSelector('eSortIndicator') private eSortIndicator: SortIndicatorComp;
-    @RefSelector('eMenu') private eMenu?: HTMLElement;
-    @RefSelector('eLabel') private eLabel: HTMLElement;
-    @RefSelector('eText') private eText: HTMLElement;
+    private eFilter: HTMLElement = RefPlaceholder;
+    private eFilterButton?: HTMLElement = RefPlaceholder;
+    private eSortIndicator: SortIndicatorComp = RefPlaceholder;
+    private eMenu?: HTMLElement = RefPlaceholder;
+    private eLabel: HTMLElement = RefPlaceholder;
+    private eText: HTMLElement = RefPlaceholder;
 
     /**
      * Selectors for custom headers templates
      */
-    @RefSelector('eSortOrder') private eSortOrder: HTMLElement;
-    @RefSelector('eSortAsc') private eSortAsc: HTMLElement;
-    @RefSelector('eSortDesc') private eSortDesc: HTMLElement;
-    @RefSelector('eSortMixed') private eSortMixed: HTMLElement;
-    @RefSelector('eSortNone') private eSortNone: HTMLElement;
+    private readonly eSortOrder: HTMLElement = RefPlaceholder;
+    private readonly eSortAsc: HTMLElement = RefPlaceholder;
+    private readonly eSortDesc: HTMLElement = RefPlaceholder;
+    private readonly eSortMixed: HTMLElement = RefPlaceholder;
+    private readonly eSortNone: HTMLElement = RefPlaceholder;
 
     private params: IHeaderParams;
 

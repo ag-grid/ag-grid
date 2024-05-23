@@ -1,4 +1,4 @@
-import type { BeanCollection, BeanName, FocusService} from '@ag-grid-community/core';
+import type { BeanCollection, BeanName, FocusService } from '@ag-grid-community/core';
 import { BeanStub, TabGuardComp } from '@ag-grid-community/core';
 import { AgDialog } from '@ag-grid-enterprise/core';
 

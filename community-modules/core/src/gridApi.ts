@@ -244,7 +244,9 @@ export class GridApi<TData = any> extends BeanStub {
         this.chartService = beans.chartService;
         this.serverSideTransactionManager = beans.ssrmTransactionManager;
         this.sideBarService = beans.sideBarService;
+    }
 
+    public postConstruct(): void {
         switch (this.rowModel.getType()) {
             case 'clientSide':
                 this.clientSideRowModel = this.rowModel as IClientSideRowModel;

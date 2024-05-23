@@ -2,11 +2,9 @@ import type {
     BeanCollection,
     ICellRenderer,
     ISparklineCellRendererParams,
-    ResizeObserverService} from '@ag-grid-community/core';
-import {
-    Component,
-    RefSelector
+    ResizeObserverService,
 } from '@ag-grid-community/core';
+import { Component, RefPlaceholder } from '@ag-grid-community/core';
 
 import type { SparklineFactoryOptions } from './sparkline/agSparkline';
 import { AgSparkline } from './sparkline/agSparkline';
@@ -23,10 +21,10 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     }
 
     private static TEMPLATE /* html */ = `<div class="ag-sparkline-wrapper">
-            <span ref="eSparkline"></span>
+            <span data-ref="eSparkline"></span>
         </div>`;
 
-    @RefSelector('eSparkline') private eSparkline!: HTMLElement;
+    private readonly eSparkline: HTMLElement = RefPlaceholder;
 
     private sparkline?: any;
 

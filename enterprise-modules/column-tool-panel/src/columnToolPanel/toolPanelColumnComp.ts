@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     ColumnModel,
     ColumnPanelItemDragEndEvent,
     ColumnPanelItemDragStartEvent,
@@ -6,8 +7,7 @@ import type {
     DragSource,
     ITooltipParams,
     WithoutGridCommon,
-
-    BeanCollection} from '@ag-grid-community/core';
+} from '@ag-grid-community/core';
 import {
     AgCheckbox,
     Column,
@@ -17,7 +17,7 @@ import {
     DragSourceType,
     Events,
     KeyCode,
-    RefSelector,
+    RefPlaceholder,
     _createIconNoSpan,
     _escapeString,
     _setAriaDescribedBy,
@@ -31,8 +31,8 @@ import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
 export class ToolPanelColumnComp extends Component {
     private static TEMPLATE /* html */ = `<div class="ag-column-select-column" aria-hidden="true">
-            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-select-column-label" ref="eLabel"></span>
+            <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
+            <span class="ag-column-select-column-label" data-ref="eLabel"></span>
         </div>`;
 
     private columnModel: ColumnModel;
@@ -46,8 +46,8 @@ export class ToolPanelColumnComp extends Component {
         this.modelItemUtils = beans.modelItemUtils;
     }
 
-    @RefSelector('eLabel') private eLabel: HTMLElement;
-    @RefSelector('cbSelect') private cbSelect: AgCheckbox;
+    private readonly eLabel: HTMLElement = RefPlaceholder;
+    private readonly cbSelect: AgCheckbox = RefPlaceholder;
 
     private column: Column;
     private columnDept: number;

@@ -21,7 +21,7 @@ import type { BeanCollection, Context } from './context';
 export abstract class BeanStub implements BaseBean, IEventEmitter {
     public static EVENT_DESTROYED = 'destroyed';
 
-    protected localEventService: LocalEventService;
+    protected localEventService?: LocalEventService;
 
     private destroyFunctions: (() => void)[] = [];
     private destroyed = false;
@@ -89,7 +89,7 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
             this.localEventService = new LocalEventService();
         }
 
-        this.localEventService.addEventListener(eventType, listener);
+        this.localEventService!.addEventListener(eventType, listener);
     }
 
     public removeEventListener(eventType: string, listener: AgEventListener): void {
@@ -219,13 +219,13 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
         }
     }
 
-    public createManagedBean<T extends BeanStub>(bean: T, context?: Context): T {
+    public createManagedBean<T extends BaseBean | null | undefined>(bean: T, context?: Context): T {
         const res = this.createBean(bean, context);
         this.addDestroyFunc(this.destroyBean.bind(this, bean, context));
         return res;
     }
 
-    protected createBean<T extends BaseBean>(
+    protected createBean<T extends BaseBean | null | undefined>(
         bean: T,
         context?: Context | null,
         afterPreCreateCallback?: (comp: Component) => void
@@ -233,11 +233,11 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
         return (context || this.getContext()).createBean(bean, afterPreCreateCallback);
     }
 
-    protected destroyBean(bean: BaseBean | null | undefined, context?: Context): void {
-        (context || this.getContext()).destroyBean(bean);
+    protected destroyBean<T extends BaseBean | null | undefined>(bean: T, context?: Context): undefined {
+        return (context || this.getContext()).destroyBean(bean);
     }
 
-    protected destroyBeans(beans: (BaseBean | null | undefined)[], context?: Context): void {
+    protected destroyBeans<T extends BaseBean | null | undefined>(beans: T[], context?: Context): T[] {
         if (beans) {
             for (let i = 0; i < beans.length; i++) {
                 this.destroyBean(beans[i], context);

@@ -155,11 +155,14 @@ export class Context {
         this.wireBeans(this.createdBeans);
     }
 
-    private getBeanInstances(): any[] {
+    private getBeanInstances(): BaseBean[] {
         return Object.values(this.beans);
     }
 
-    public createBean<T extends BaseBean>(bean: T, afterPreCreateCallback?: (comp: Component) => void): T {
+    public createBean<T extends BaseBean | null | undefined>(
+        bean: T,
+        afterPreCreateCallback?: (comp: Component) => void
+    ): T {
         if (!bean) {
             throw Error(`Can't wire to bean since it is null`);
         }

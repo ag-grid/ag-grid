@@ -7,7 +7,7 @@ import type {
     IToolPanelFiltersCompParams,
     IToolPanelParams,
 } from '@ag-grid-community/core';
-import { Component, RefSelector } from '@ag-grid-community/core';
+import { Component, RefPlaceholder } from '@ag-grid-community/core';
 
 import { AgFiltersToolPanelHeader } from './agFiltersToolPanelHeader';
 import { AgFiltersToolPanelList } from './agFiltersToolPanelList';
@@ -18,13 +18,12 @@ export interface ToolPanelFiltersCompParams<TData = any, TContext = any>
 
 export class FiltersToolPanel extends Component implements IFiltersToolPanel, IToolPanelComp {
     private static TEMPLATE /* html */ = `<div class="ag-filter-toolpanel">
-            <ag-filters-tool-panel-header ref="filtersToolPanelHeaderPanel"></ag-filters-tool-panel-header>
-            <ag-filters-tool-panel-list ref="filtersToolPanelListPanel"></ag-filters-tool-panel-list>
+            <ag-filters-tool-panel-header data-ref="filtersToolPanelHeaderPanel"></ag-filters-tool-panel-header>
+            <ag-filters-tool-panel-list data-ref="filtersToolPanelListPanel"></ag-filters-tool-panel-list>
          </div>`;
 
-    @RefSelector('filtersToolPanelHeaderPanel') private filtersToolPanelHeaderPanel: AgFiltersToolPanelHeader;
-
-    @RefSelector('filtersToolPanelListPanel') private filtersToolPanelListPanel: AgFiltersToolPanelList;
+    private readonly filtersToolPanelHeaderPanel: AgFiltersToolPanelHeader = RefPlaceholder;
+    private readonly filtersToolPanelListPanel: AgFiltersToolPanelList = RefPlaceholder;
 
     private initialised = false;
     private params: ToolPanelFiltersCompParams;

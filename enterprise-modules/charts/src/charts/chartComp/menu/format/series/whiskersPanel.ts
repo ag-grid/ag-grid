@@ -1,4 +1,4 @@
-import type { BeanCollection} from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
 import { Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
@@ -10,12 +10,12 @@ import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class WhiskersPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="whiskersGroup">
-                <ag-color-picker ref="whiskerColorPicker"></ag-color-picker>
-                <ag-slider ref="whiskerThicknessSlider"></ag-slider>
-                <ag-slider ref="whiskerOpacitySlider"></ag-slider>
-                <ag-slider ref="whiskerLineDashSlider"></ag-slider>
-                <ag-slider ref="whiskerLineDashOffsetSlider"></ag-slider>
+            <ag-group-component data-ref="whiskersGroup">
+                <ag-color-picker data-ref="whiskerColorPicker"></ag-color-picker>
+                <ag-slider data-ref="whiskerThicknessSlider"></ag-slider>
+                <ag-slider data-ref="whiskerOpacitySlider"></ag-slider>
+                <ag-slider data-ref="whiskerLineDashSlider"></ag-slider>
+                <ag-slider data-ref="whiskerLineDashOffsetSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 

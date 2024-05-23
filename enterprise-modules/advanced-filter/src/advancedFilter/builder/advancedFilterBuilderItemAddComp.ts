@@ -1,5 +1,12 @@
 import type { BeanCollection, FieldPickerValueSelectedEvent } from '@ag-grid-community/core';
-import { Component, Events, RefSelector, TooltipFeature, _setAriaLabel, _setAriaLevel } from '@ag-grid-community/core';
+import {
+    Component,
+    Events,
+    RefPlaceholder,
+    TooltipFeature,
+    _setAriaLabel,
+    _setAriaLevel,
+} from '@ag-grid-community/core';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import { AddDropdownComp } from './addDropdownComp';
@@ -16,7 +23,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
     }
 
-    @RefSelector('eItem') private readonly eItem: HTMLElement;
+    private readonly eItem: HTMLElement = RefPlaceholder;
 
     constructor(
         private readonly item: AdvancedFilterBuilderItem,
@@ -24,7 +31,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
     ) {
         super(/* html */ `
             <div class="ag-advanced-filter-builder-item-wrapper" role="presentation">
-                <div ref="eItem" class="ag-advanced-filter-builder-item" role="presentation">
+                <div data-ref="eItem" class="ag-advanced-filter-builder-item" role="presentation">
                     <div class="ag-advanced-filter-builder-item-tree-lines" aria-hidden="true">
                         <div class="ag-advanced-filter-builder-item-tree-line-vertical-top ag-advanced-filter-builder-item-tree-line-horizontal"></div>
                     </div>

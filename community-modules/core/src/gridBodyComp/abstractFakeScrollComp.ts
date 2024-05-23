@@ -6,7 +6,7 @@ import { _isIOSUserAgent, _isInvisibleScrollbar, _isMacOsUserAgent } from '../ut
 import { _isVisible } from '../utils/dom';
 import { _waitUntil } from '../utils/function';
 import { Component } from '../widgets/component';
-import { RefSelector } from '../widgets/componentAnnotations';
+import { RefPlaceholder } from '../widgets/componentAnnotations';
 
 export abstract class AbstractFakeScrollComp extends Component {
     private animationFrameService: AnimationFrameService;
@@ -16,8 +16,8 @@ export abstract class AbstractFakeScrollComp extends Component {
         this.animationFrameService = beans.animationFrameService;
     }
 
-    @RefSelector('eViewport') protected readonly eViewport: HTMLElement;
-    @RefSelector('eContainer') protected readonly eContainer: HTMLElement;
+    protected readonly eViewport: HTMLElement = RefPlaceholder;
+    protected readonly eContainer: HTMLElement = RefPlaceholder;
 
     protected invisibleScrollbar: boolean;
     protected hideTimeout: number | null = null;
@@ -30,7 +30,8 @@ export abstract class AbstractFakeScrollComp extends Component {
         template: string,
         private readonly direction: 'horizontal' | 'vertical'
     ) {
-        super(template);
+        super();
+        this.setTemplate(template);
     }
 
     public postConstruct(): void {

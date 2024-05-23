@@ -1,5 +1,4 @@
-import type { FieldValueEvent, WithoutGridCommon ,
-    BeanCollection} from '@ag-grid-community/core';
+import type { BeanCollection, FieldValueEvent, WithoutGridCommon } from '@ag-grid-community/core';
 import {
     AgInputDateField,
     AgInputNumberField,
@@ -7,7 +6,7 @@ import {
     Component,
     Events,
     KeyCode,
-    RefSelector,
+    RefPlaceholder,
     _exists,
     _setAriaDescribedBy,
     _setAriaLabel,
@@ -25,8 +24,8 @@ export class InputPillComp extends Component {
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
     }
 
-    @RefSelector('ePill') private ePill: HTMLElement;
-    @RefSelector('eLabel') private eLabel: HTMLElement;
+    private readonly ePill: HTMLElement = RefPlaceholder;
+    private readonly eLabel: HTMLElement = RefPlaceholder;
 
     private eEditor: AgInputTextField | undefined;
     private value: string;
@@ -41,8 +40,8 @@ export class InputPillComp extends Component {
     ) {
         super(/* html */ `
             <div class="ag-advanced-filter-builder-pill-wrapper" role="presentation">
-                <div ref="ePill" class="ag-advanced-filter-builder-pill" role="button">
-                    <span ref="eLabel" class="ag-advanced-filter-builder-pill-display"></span>
+                <div data-ref="ePill" class="ag-advanced-filter-builder-pill" role="button">
+                    <span data-ref="eLabel" class="ag-advanced-filter-builder-pill-display"></span>
                 </div>
             </div>
         `);

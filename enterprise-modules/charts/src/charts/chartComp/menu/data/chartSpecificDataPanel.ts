@@ -1,5 +1,5 @@
-import type { BeanCollection} from '@ag-grid-community/core';
-import { AgSelect, ChartMappings, Component, RefSelector } from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
+import { AgSelect, ChartMappings, Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -12,7 +12,7 @@ import { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
 export class ChartSpecificDataPanel extends Component {
     private static TEMPLATE = /* html */ `
         <div id="chartSpecificGroup">
-            <ag-group-component ref="chartSpecificGroup"></ag-group-component>
+            <ag-group-component data-ref="chartSpecificGroup"></ag-group-component>
         </div>`;
 
     private chartTranslationService: ChartTranslationService;
@@ -24,7 +24,7 @@ export class ChartSpecificDataPanel extends Component {
         this.chartService = beans.chartService;
     }
 
-    @RefSelector('chartSpecificGroup') private readonly chartSpecificGroup: AgGroupComponent;
+    private readonly chartSpecificGroup: AgGroupComponent = RefPlaceholder;
 
     private directionSelect?: AgSelect;
     private groupTypeSelect?: AgSelect;

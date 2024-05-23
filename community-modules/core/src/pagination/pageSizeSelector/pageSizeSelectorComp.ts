@@ -13,7 +13,7 @@ export class PageSizeSelectorComp extends Component {
     static readonly selector: AgComponentSelector = 'AG-PAGE-SIZE-SELECTOR';
 
     private paginationProxy: PaginationProxy;
-    
+
     public wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
         this.paginationProxy = beans.paginationProxy;

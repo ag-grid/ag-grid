@@ -10,8 +10,7 @@ import { _warnOnce } from '../../../utils/function';
 import { _exists } from '../../../utils/generic';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _escapeString } from '../../../utils/string';
-import { Component } from '../../../widgets/component';
-import { RefSelector } from '../../../widgets/componentAnnotations';
+import { Component, RefPlaceholder } from '../../../widgets/component';
 import { TouchListener } from '../../../widgets/touchListener';
 
 export interface IHeaderGroupParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -44,16 +43,17 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         this.columnModel = beans.columnModel;
     }
 
-    static TEMPLATE /* html */ = `<div class="ag-header-group-cell-label" ref="agContainer" role="presentation">
-            <span ref="agLabel" class="ag-header-group-text" role="presentation"></span>
-            <span ref="agOpened" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded"></span>
-            <span ref="agClosed" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed"></span>
+    static TEMPLATE /* html */ = `<div class="ag-header-group-cell-label" role="presentation">
+            <span data-ref="agLabel" class="ag-header-group-text" role="presentation"></span>
+            <span data-ref="agOpened" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded"></span>
+            <span data-ref="agClosed" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed"></span>
         </div>`;
 
     private params: IHeaderGroupParams;
 
-    @RefSelector('agOpened') private eOpenIcon: HTMLElement;
-    @RefSelector('agClosed') private eCloseIcon: HTMLElement;
+    private readonly agOpened: HTMLElement = RefPlaceholder;
+    private readonly agClosed: HTMLElement = RefPlaceholder;
+    private readonly agLabel: HTMLElement = RefPlaceholder;
 
     constructor() {
         super(HeaderGroupComp.TEMPLATE);
@@ -86,8 +86,8 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     }
 
     private setupExpandIcons(): void {
-        this.addInIcon('columnGroupOpened', 'agOpened');
-        this.addInIcon('columnGroupClosed', 'agClosed');
+        this.addInIcon('columnGroupOpened', this.agOpened);
+        this.addInIcon('columnGroupClosed', this.agClosed);
 
         const expandAction = (event: MouseEvent) => {
             if (_isStopPropagationForAgGrid(event)) {
@@ -102,8 +102,8 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
             );
         };
 
-        this.addTouchAndClickListeners(this.eCloseIcon, expandAction);
-        this.addTouchAndClickListeners(this.eOpenIcon, expandAction);
+        this.addTouchAndClickListeners(this.agClosed, expandAction);
+        this.addTouchAndClickListeners(this.agOpened, expandAction);
 
         const stopPropagationAction = (event: MouseEvent) => {
             _stopPropagationForAgGrid(event);
@@ -114,8 +114,8 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         // then close again straight away. if we also listened to double click, then the group would open,
         // close, then open, which is not what we want. double click should only action if the user double
         // clicks outside of the icons.
-        this.addManagedListener(this.eCloseIcon, 'dblclick', stopPropagationAction);
-        this.addManagedListener(this.eOpenIcon, 'dblclick', stopPropagationAction);
+        this.addManagedListener(this.agClosed, 'dblclick', stopPropagationAction);
+        this.addManagedListener(this.agOpened, 'dblclick', stopPropagationAction);
 
         this.addManagedListener(this.getGui(), 'dblclick', expandAction);
 
@@ -146,25 +146,25 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         const columnGroup = this.params.columnGroup;
         if (columnGroup.isExpandable()) {
             const expanded = this.params.columnGroup.isExpanded();
-            _setDisplayed(this.eOpenIcon, expanded);
-            _setDisplayed(this.eCloseIcon, !expanded);
+            _setDisplayed(this.agOpened, expanded);
+            _setDisplayed(this.agClosed, !expanded);
         } else {
-            _setDisplayed(this.eOpenIcon, false);
-            _setDisplayed(this.eCloseIcon, false);
+            _setDisplayed(this.agOpened, false);
+            _setDisplayed(this.agClosed, false);
         }
     }
 
-    private addInIcon(iconName: string, refName: string): void {
+    private addInIcon(iconName: string, element: HTMLElement): void {
         const eIcon = _createIconNoSpan(iconName, this.gos, null);
         if (eIcon) {
-            this.getRefElement(refName).appendChild(eIcon);
+            element.appendChild(eIcon);
         }
     }
 
     private addGroupExpandIcon() {
         if (!this.params.columnGroup.isExpandable()) {
-            _setDisplayed(this.eOpenIcon, false);
-            _setDisplayed(this.eCloseIcon, false);
+            _setDisplayed(this.agOpened, false);
+            _setDisplayed(this.agClosed, false);
             return;
         }
     }
@@ -175,7 +175,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
         if (_exists(displayName)) {
             const displayNameSanitised = _escapeString(displayName, true);
-            this.getRefElement('agLabel').textContent = displayNameSanitised!;
+            this.agLabel.textContent = displayNameSanitised!;
         }
 
         this.addOrRemoveCssClass('ag-sticky-label', !columnGroup.getColGroupDef()?.suppressStickyLabel);

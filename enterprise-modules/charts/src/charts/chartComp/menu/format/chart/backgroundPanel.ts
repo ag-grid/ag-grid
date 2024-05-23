@@ -1,4 +1,4 @@
-import type { BeanCollection} from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
 import { Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
@@ -9,8 +9,8 @@ import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class BackgroundPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="chartBackgroundGroup">
-                <ag-color-picker ref="colorPicker"></ag-color-picker>
+            <ag-group-component data-ref="chartBackgroundGroup">
+                <ag-color-picker data-ref="colorPicker"></ag-color-picker>
             </ag-group-component>
         <div>`;
 

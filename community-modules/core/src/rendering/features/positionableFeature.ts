@@ -10,14 +10,14 @@ const RESIZE_CONTAINER_STYLE = 'ag-resizer-wrapper';
 const RESIZE_TEMPLATE =
     /* html */
     `<div class="${RESIZE_CONTAINER_STYLE}">
-        <div ref="eTopLeftResizer" class="ag-resizer ag-resizer-topLeft"></div>
-        <div ref="eTopResizer" class="ag-resizer ag-resizer-top"></div>
-        <div ref="eTopRightResizer" class="ag-resizer ag-resizer-topRight"></div>
-        <div ref="eRightResizer" class="ag-resizer ag-resizer-right"></div>
-        <div ref="eBottomRightResizer" class="ag-resizer ag-resizer-bottomRight"></div>
-        <div ref="eBottomResizer" class="ag-resizer ag-resizer-bottom"></div>
-        <div ref="eBottomLeftResizer" class="ag-resizer ag-resizer-bottomLeft"></div>
-        <div ref="eLeftResizer" class="ag-resizer ag-resizer-left"></div>
+        <div data-ref="eTopLeftResizer" class="ag-resizer ag-resizer-topLeft"></div>
+        <div data-ref="eTopResizer" class="ag-resizer ag-resizer-top"></div>
+        <div data-ref="eTopRightResizer" class="ag-resizer ag-resizer-topRight"></div>
+        <div data-ref="eRightResizer" class="ag-resizer ag-resizer-right"></div>
+        <div data-ref="eBottomRightResizer" class="ag-resizer ag-resizer-bottomRight"></div>
+        <div data-ref="eBottomResizer" class="ag-resizer ag-resizer-bottom"></div>
+        <div data-ref="eBottomLeftResizer" class="ag-resizer ag-resizer-bottomLeft"></div>
+        <div data-ref="eLeftResizer" class="ag-resizer ag-resizer-left"></div>
     </div>`;
 
 export interface PositionableOptions {
@@ -577,14 +577,14 @@ export class PositionableFeature extends BeanStub {
         const eGui = this.element;
 
         this.resizerMap = {
-            topLeft: { element: eGui.querySelector('[ref=eTopLeftResizer]') as HTMLElement },
-            top: { element: eGui.querySelector('[ref=eTopResizer]') as HTMLElement },
-            topRight: { element: eGui.querySelector('[ref=eTopRightResizer]') as HTMLElement },
-            right: { element: eGui.querySelector('[ref=eRightResizer]') as HTMLElement },
-            bottomRight: { element: eGui.querySelector('[ref=eBottomRightResizer]') as HTMLElement },
-            bottom: { element: eGui.querySelector('[ref=eBottomResizer]') as HTMLElement },
-            bottomLeft: { element: eGui.querySelector('[ref=eBottomLeftResizer]') as HTMLElement },
-            left: { element: eGui.querySelector('[ref=eLeftResizer]') as HTMLElement },
+            topLeft: { element: eGui.querySelector('[data-ref=eTopLeftResizer]') as HTMLElement },
+            top: { element: eGui.querySelector('[data-ref=eTopResizer]') as HTMLElement },
+            topRight: { element: eGui.querySelector('[data-ref=eTopRightResizer]') as HTMLElement },
+            right: { element: eGui.querySelector('[data-ref=eRightResizer]') as HTMLElement },
+            bottomRight: { element: eGui.querySelector('[data-ref=eBottomRightResizer]') as HTMLElement },
+            bottom: { element: eGui.querySelector('[data-ref=eBottomResizer]') as HTMLElement },
+            bottomLeft: { element: eGui.querySelector('[data-ref=eBottomLeftResizer]') as HTMLElement },
+            left: { element: eGui.querySelector('[data-ref=eLeftResizer]') as HTMLElement },
         };
     }
 

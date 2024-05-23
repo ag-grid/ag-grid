@@ -1,4 +1,4 @@
-import type { BeanCollection} from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
 import { Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
@@ -9,8 +9,8 @@ import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class CapsPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="capsGroup">
-                <ag-slider ref="capLengthRatioSlider"></ag-slider>
+            <ag-group-component data-ref="capsGroup">
+                <ag-slider data-ref="capLengthRatioSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 

@@ -422,7 +422,7 @@
             "type": "CSS length (e.g. `0`, `4px` or `50%`)"
         },
         "--ag-tab-min-width": {
-            "description": "Minimum width of the legacy tabbed column menu",
+            "description": "Minimum width of the legacy tabbed column menu. Set this to the largest content you expect to be displayed in the tabbed menu to prevent the menu from changing size as you switch between tabs.",
             "type": "CSS length (e.g. `0`, `4px` or `50%`)"
         },
         "--ag-menu-min-width": {

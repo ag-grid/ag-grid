@@ -1,14 +1,5 @@
-import type {
-    BeanCollection,
-    IGetRowsParams,
-    LoadSuccessParams,
-    NumberSequence} from '@ag-grid-community/core';
-import {
-    RowNode,
-    RowNodeBlock,
-    _exists,
-    _missing,
-} from '@ag-grid-community/core';
+import type { BeanCollection, IGetRowsParams, LoadSuccessParams, NumberSequence } from '@ag-grid-community/core';
+import { RowNode, RowNodeBlock, _exists, _missing } from '@ag-grid-community/core';
 
 import type { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
 

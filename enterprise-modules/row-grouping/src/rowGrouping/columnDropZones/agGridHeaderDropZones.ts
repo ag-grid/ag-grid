@@ -1,13 +1,5 @@
-import type {
-    AgComponentSelector,
-    BeanCollection,
-    ColumnModel,
-    FuncColsService} from '@ag-grid-community/core';
-import {
-    Component,
-    Events,
-    _setAriaRole,
-} from '@ag-grid-community/core';
+import type { AgComponentSelector, BeanCollection, ColumnModel, FuncColsService } from '@ag-grid-community/core';
+import { Component, Events, _setAriaRole } from '@ag-grid-community/core';
 
 import { PivotDropZonePanel } from './pivotDropZonePanel';
 import { RowGroupDropZonePanel } from './rowGroupDropZonePanel';

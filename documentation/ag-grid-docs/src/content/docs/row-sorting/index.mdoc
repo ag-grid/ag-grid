@@ -7,7 +7,8 @@ This page describes how to sort row data in the grid and how you can customise t
 
 ## Sorting
 
-Sorting is enabled by default for all columns. You can sort a column by clicking on the column header. To enable / disable sorting per column use the `sortable` column definition attribute.
+Sorting is enabled by default for all columns. You can sort a column by clicking on the column header. To enable / disable
+sorting per column use the `sortable` column definition attribute.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -73,23 +74,6 @@ Example below shows the following:
 
 {% gridExampleRunner title="Custom Sorting" name="custom-sorting" /%}
 
-### Custom Sorting Groups Example
-
-When [Row Grouping](./grouping/) it is possible to override the sort order of the Row Group columns. If using the Auto Group Column, provide a comparator via the `autoGroupColumnDef` grid property.
-
-```{% frameworkTransform=true %}
-var gridOptions = {
-    autoGroupColumnDef: {
-        field: 'athlete',
-        comparator: function(valueA, valueB, nodeA, nodeB, isDescending) {
-            return (valueA == valueB) ? 0 : (valueA > valueB) ? 1 : -1;
-        },
-    }
-};
-```
-
-{% gridExampleRunner title="Custom Sorting Groups" name="custom-sorting-groups" /%}
-
 ## Multi Column Sorting
 
 It is possible to sort by multiple columns. The default action for multiple column sorting is for
@@ -99,7 +83,8 @@ the {% kbd "^ Ctrl" /%} key (or {% kbd "Command" /%} key on Apple) instead set t
 The example below demonstrates the following:
 
 * The grid sorts by **Country** then **Athlete** by default.
-* The property `multiSortKey='ctrl'` is set so multiple column sorting is achieved by holding down {% kbd "^ Ctrl" /%} (or {% kbd "Command" /%} on Apple) and selecting multiple columns.
+* The property `multiSortKey='ctrl'` is set so multiple column sorting is achieved by holding down {% kbd "^ Ctrl" /%}
+(or {% kbd "Command" /%} on Apple) and selecting multiple columns.
 
 {% gridExampleRunner title="Multi Column Sort" name="multi-column" /%}
 

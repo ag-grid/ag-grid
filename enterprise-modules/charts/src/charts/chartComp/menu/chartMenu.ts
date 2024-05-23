@@ -2,12 +2,9 @@ import type {
     BeanCollection,
     ChartCreated,
     ChartToolPanelMenuOptions,
-    ChartToolbarMenuItemOptions} from '@ag-grid-community/core';
-import {
-    AgPromise,
-    Component,
-    Events,
+    ChartToolbarMenuItemOptions,
 } from '@ag-grid-community/core';
+import { AgPromise, Component, Events } from '@ag-grid-community/core';
 import { AgPanel } from '@ag-grid-enterprise/core';
 
 import { ChartController } from '../chartController';

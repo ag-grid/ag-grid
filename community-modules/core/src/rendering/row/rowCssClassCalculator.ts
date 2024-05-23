@@ -3,7 +3,6 @@ import type { BeanCollection, BeanName } from '../../context/context';
 import type { ColumnPinnedType } from '../../entities/column';
 import type { RowClassParams } from '../../entities/gridOptions';
 import type { RowNode } from '../../entities/rowNode';
-import { GridOptionsService } from '../../gridOptionsService';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { StylingService } from '../../styling/stylingService';
 import { _pushAll } from '../../utils/array';

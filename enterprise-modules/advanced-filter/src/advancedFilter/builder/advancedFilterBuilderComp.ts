@@ -6,7 +6,7 @@ import type {
     JoinAdvancedFilterModel,
     VirtualListDragItem,
 } from '@ag-grid-community/core';
-import { Component, RefSelector, TooltipFeature, VirtualList, _exists, _setDisabled } from '@ag-grid-community/core';
+import { Component, RefPlaceholder, TooltipFeature, VirtualList, _exists, _setDisabled } from '@ag-grid-community/core';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AdvancedFilterService } from '../advancedFilterService';
@@ -33,9 +33,9 @@ export class AdvancedFilterBuilderComp extends Component {
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
     }
 
-    @RefSelector('eList') private eList: HTMLElement;
-    @RefSelector('eApplyFilterButton') private eApplyFilterButton: HTMLElement;
-    @RefSelector('eCancelFilterButton') private eCancelFilterButton: HTMLElement;
+    private readonly eList: HTMLElement = RefPlaceholder;
+    private readonly eApplyFilterButton: HTMLElement = RefPlaceholder;
+    private readonly eCancelFilterButton: HTMLElement = RefPlaceholder;
 
     private virtualList: VirtualList<AdvancedFilterBuilderItemComp | AdvancedFilterBuilderItemAddComp>;
     private filterModel: AdvancedFilterModel;
@@ -49,10 +49,10 @@ export class AdvancedFilterBuilderComp extends Component {
     constructor() {
         super(/* html */ `
             <div role="presentation" class="ag-advanced-filter-builder" tabindex="-1">
-                <div role="presentation" class="ag-advanced-filter-builder-list" ref="eList"></div>
+                <div role="presentation" class="ag-advanced-filter-builder-list" data-ref="eList"></div>
                 <div role="presentation" class="ag-advanced-filter-builder-button-panel">
-                    <button class="ag-button ag-standard-button ag-advanced-filter-builder-apply-button" ref="eApplyFilterButton"></button>
-                    <button class="ag-button ag-standard-button ag-advanced-filter-builder-cancel-button" ref="eCancelFilterButton"></button>
+                    <button class="ag-button ag-standard-button ag-advanced-filter-builder-apply-button" data-ref="eApplyFilterButton"></button>
+                    <button class="ag-button ag-standard-button ag-advanced-filter-builder-cancel-button" data-ref="eCancelFilterButton"></button>
                 </div>
             </div>`);
     }

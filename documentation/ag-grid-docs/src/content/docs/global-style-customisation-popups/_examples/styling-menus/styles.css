@@ -3,15 +3,10 @@
     --ag-card-radius: 10px;
     --ag-card-shadow: 0 10px 40px rgb(83, 0, 106);
     --ag-popup-shadow: var(--ag-card-shadow);
-    --ag-menu-min-width: 350px;
 }
 
 .ag-theme-quartz .ag-menu,
 .ag-theme-quartz-dark .ag-menu {
+    min-width: 350px;
     background-color: #55aa77;
-}
-
-.ag-theme-quartz .ag-tabs-header,
-.ag-theme-quartz-dark .ag-tabs-header {
-    background-color: #aa5577;
 }

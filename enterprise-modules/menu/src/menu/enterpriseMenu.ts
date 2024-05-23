@@ -27,7 +27,7 @@ import {
     FilterWrapperComp,
     ModuleNames,
     ModuleRegistry,
-    RefSelector,
+    RefPlaceholder,
     TabbedLayout,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
@@ -42,7 +42,7 @@ export interface TabSelectedEvent extends AgEvent {
     key: string;
 }
 
-interface EnterpriseColumnMenu extends BeanStub {
+interface EnterpriseColumnMenu extends BaseBean {
     getGui(): HTMLElement;
     showTab?(tab: string): void;
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;
@@ -331,9 +331,9 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
 class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
     public static EVENT_TAB_SELECTED = 'tabSelected';
-    public static TAB_FILTER: 'filterMenuTab' = 'filterMenuTab';
-    public static TAB_GENERAL: 'generalMenuTab' = 'generalMenuTab';
-    public static TAB_COLUMNS: 'columnsMenuTab' = 'columnsMenuTab';
+    public static TAB_FILTER = 'filterMenuTab' as const;
+    public static TAB_GENERAL = 'generalMenuTab' as const;
+    public static TAB_COLUMNS = 'columnsMenuTab' as const;
     public static TABS_DEFAULT: ColumnMenuTab[] = [
         TabbedColumnMenu.TAB_GENERAL,
         TabbedColumnMenu.TAB_FILTER,
@@ -570,7 +570,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
     private readonly menuUtils: MenuUtils;
     private readonly focusService: FocusService;
 
-    @RefSelector('eColumnMenu') private readonly eColumnMenu: HTMLElement;
+    private readonly eColumnMenu: HTMLElement = RefPlaceholder;
 
     private hidePopupFunc: (popupParams?: PopupEventParams) => void;
     private mainMenuList: AgMenuList;
@@ -581,7 +581,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
         private readonly sourceElement?: HTMLElement
     ) {
         super(/* html */ `
-            <div ref="eColumnMenu" role="presentation" class="ag-menu ag-column-menu"></div>
+            <div data-ref="eColumnMenu" role="presentation" class="ag-menu ag-column-menu"></div>
         `);
     }
 

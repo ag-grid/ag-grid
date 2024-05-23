@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import type { AgEvent, AgEventListener } from '../events';
+import type { AgEvent } from '../events';
 import type { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
 import { _last } from '../utils/array';
 import type { ColGroupDef } from './colDef';
@@ -113,7 +113,7 @@ export class ColumnGroup extends BeanStub implements IHeaderColumn {
         this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
-            this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_LEFT_CHANGED));
+            this.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_LEFT_CHANGED));
         }
     }
 
@@ -123,14 +123,6 @@ export class ColumnGroup extends BeanStub implements IHeaderColumn {
 
     private createAgEvent(type: string): AgEvent {
         return { type };
-    }
-
-    public addEventListener(eventType: string, listener: Function): void {
-        this.localEventService.addEventListener(eventType, listener as AgEventListener);
-    }
-
-    public removeEventListener(eventType: string, listener: Function): void {
-        this.localEventService.removeEventListener(eventType, listener as AgEventListener);
     }
 
     public getGroupId(): string {
@@ -296,7 +288,7 @@ export class ColumnGroup extends BeanStub implements IHeaderColumn {
         // it not expandable, everything is visible
         if (!isExpandable) {
             this.displayedChildren = this.children;
-            this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED));
+            this.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED));
             return;
         }
 
@@ -331,6 +323,6 @@ export class ColumnGroup extends BeanStub implements IHeaderColumn {
             }
         });
 
-        this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED));
+        this.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED));
     }
 }

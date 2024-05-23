@@ -2,10 +2,14 @@ import { ComponentUtil } from './components/componentUtil';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection, BeanName } from './context/context';
 import type { DomLayoutType, GridOptions } from './entities/gridOptions';
-import type { AgEvent} from './events';
+import type { AgEvent } from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS, Events } from './events';
 import type { GridApi } from './gridApi';
-import type { GetGroupAggFilteringParams, GetGroupIncludeFooterParams, RowHeightParams } from './interfaces/iCallbackParams';
+import type {
+    GetGroupAggFilteringParams,
+    GetGroupIncludeFooterParams,
+    RowHeightParams,
+} from './interfaces/iCallbackParams';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
@@ -93,6 +97,11 @@ export class GridOptionsService extends BeanStub {
     private scrollbarWidth: number;
     private domDataKey = '__AG_' + Math.random().toString();
 
+    // This is quicker then having code call gridOptionsService.get('context')
+    private get gridOptionsContext() {
+        return this.gridOptions['context'];
+    }
+
     private propertyEventService: LocalEventService = new LocalEventService();
 
     public postConstruct(): void {
@@ -147,7 +156,7 @@ export class GridOptionsService extends BeanStub {
             const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
                 const mergedParams = callbackParams as P;
                 mergedParams.api = this.api;
-                mergedParams.context = this.gridOptions['context'];
+                mergedParams.context = this.gridOptionsContext;
 
                 return callback(mergedParams);
             };
@@ -598,7 +607,7 @@ export class GridOptionsService extends BeanStub {
     public getGridCommonParams<TData = any, TContext = any>(): AgGridCommon<TData, TContext> {
         return {
             api: this.api,
-            context: this.gridOptions.context,
+            context: this.gridOptionsContext,
         };
     }
 
@@ -607,7 +616,7 @@ export class GridOptionsService extends BeanStub {
     ): T {
         const updatedParams = params as T;
         updatedParams.api = this.api;
-        updatedParams.context = this.gridOptions.context;
+        updatedParams.context = this.gridOptionsContext;
         return updatedParams;
     }
 }

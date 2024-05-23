@@ -1,4 +1,4 @@
-import type { BeanCollection} from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
 import { Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
@@ -10,13 +10,13 @@ import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class TileSpacingPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="groupSpacing">
-                <ag-slider ref="groupPaddingSlider"></ag-slider>
-                <ag-slider ref="groupSpacingSlider"></ag-slider>
+            <ag-group-component data-ref="groupSpacing">
+                <ag-slider data-ref="groupPaddingSlider"></ag-slider>
+                <ag-slider data-ref="groupSpacingSlider"></ag-slider>
             </ag-group-component>
-            <ag-group-component ref="tileSpacing">
-                <ag-slider ref="tilePaddingSlider"></ag-slider>
-                <ag-slider ref="tileSpacingSlider"></ag-slider>
+            <ag-group-component data-ref="tileSpacing">
+                <ag-slider data-ref="tilePaddingSlider"></ag-slider>
+                <ag-slider data-ref="tileSpacingSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 

@@ -6,7 +6,7 @@ import type { ColumnGroup } from '../entities/columnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ITooltipParams, TooltipLocation } from '../rendering/tooltipComponent';
-import type { TooltipParentComp} from './tooltipStateManager';
+import type { TooltipParentComp } from './tooltipStateManager';
 import { TooltipStateManager } from './tooltipStateManager';
 
 export interface ITooltipFeatureCtrl {

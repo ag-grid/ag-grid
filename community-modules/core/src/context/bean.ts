@@ -1,4 +1,4 @@
-import type { BeanCollection } from "./context";
+import type { BeanCollection } from './context';
 
 // to be renamed `Bean` once the annotation is removed
 export interface BaseBean {

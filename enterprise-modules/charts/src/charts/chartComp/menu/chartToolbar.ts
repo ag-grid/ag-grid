@@ -1,12 +1,5 @@
-import type {
-    BeanCollection,
-    ChartToolbarMenuItemOptions} from '@ag-grid-community/core';
-import {
-    Component,
-    RefSelector,
-    _clearElement,
-    _createIconNoSpan,
-} from '@ag-grid-community/core';
+import type { BeanCollection, ChartToolbarMenuItemOptions } from '@ag-grid-community/core';
+import { Component, RefPlaceholder, _clearElement, _createIconNoSpan } from '@ag-grid-community/core';
 
 import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
 
@@ -24,12 +17,12 @@ export class ChartToolbar extends Component {
         this.chartTranslationService = beans.chartTranslationService;
     }
 
-    @RefSelector('eMenu') private eMenu: HTMLButtonElement;
+    private readonly eMenu: HTMLButtonElement = RefPlaceholder;
 
     private buttonListenersDestroyFuncs: ((() => null) | undefined)[] = [];
 
     constructor() {
-        super(/* html */ `<div class="ag-chart-menu" ref="eMenu"></div>`);
+        super(/* html */ `<div class="ag-chart-menu" data-ref="eMenu"></div>`);
     }
 
     public updateParams(params: { buttons: ChartToolbarButton[] }): void {

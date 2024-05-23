@@ -1,12 +1,5 @@
-import type {
-    BeanCollection,
-    IRowModel,
-    ISelectionService,
-    IStatusPanelComp} from '@ag-grid-community/core';
-import {
-    Events,
-    _formatNumberCommas,
-} from '@ag-grid-community/core';
+import type { BeanCollection, IRowModel, ISelectionService, IStatusPanelComp } from '@ag-grid-community/core';
+import { Events, _formatNumberCommas } from '@ag-grid-community/core';
 
 import { AgNameValue } from './agNameValue';
 

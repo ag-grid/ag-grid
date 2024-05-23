@@ -5,7 +5,7 @@ import { _missing } from '../../utils/generic';
 import type { ValueService } from '../../valueService/valueService';
 import type { ListOption } from '../../widgets/agList';
 import { AgSelect } from '../../widgets/agSelect';
-import { RefSelector } from '../../widgets/componentAnnotations';
+import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
 
 export interface ISelectCellEditorParams<TValue = any> {
@@ -40,7 +40,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
         this.valueService = beans.valueService;
     }
 
-    @RefSelector('eSelect') private eSelect: AgSelect;
+    private readonly eSelect: AgSelect = RefPlaceholder;
 
     private startedByEnter: boolean = false;
 
@@ -48,7 +48,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
         super(
             /* html */
             `<div class="ag-cell-edit-wrapper">
-                <ag-select class="ag-cell-editor" ref="eSelect"></ag-select>
+                <ag-select class="ag-cell-editor" data-ref="eSelect"></ag-select>
             </div>`,
             [AgSelect]
         );

@@ -1,14 +1,5 @@
-import type {
-    BeanCollection,
-    ChartType,
-    SeriesChartType} from '@ag-grid-community/core';
-import {
-    AgCheckbox,
-    AgSelect,
-    Component,
-    _areEqual,
-    _clearElement,
-} from '@ag-grid-community/core';
+import type { BeanCollection, ChartType, SeriesChartType } from '@ag-grid-community/core';
+import { AgCheckbox, AgSelect, Component, _areEqual, _clearElement } from '@ag-grid-community/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import type { ChartController } from '../../chartController';

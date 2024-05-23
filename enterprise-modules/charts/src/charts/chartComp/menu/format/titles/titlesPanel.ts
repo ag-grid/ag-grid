@@ -1,5 +1,5 @@
-import type { BeanCollection} from '@ag-grid-community/core';
-import { Component, RefSelector } from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
+import { Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -12,7 +12,7 @@ import { TitlePanel } from './titlePanel';
 
 export class TitlesPanel extends Component {
     private static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="titleGroup"></ag-group-component>
+            <ag-group-component data-ref="titleGroup"></ag-group-component>
         </div>`;
 
     private chartTranslationService: ChartTranslationService;
@@ -21,7 +21,7 @@ export class TitlesPanel extends Component {
         super.wireBeans(beans);
         this.chartTranslationService = beans.chartTranslationService;
     }
-    @RefSelector('titleGroup') private readonly titleGroup: AgGroupComponent;
+    private readonly titleGroup: AgGroupComponent = RefPlaceholder;
 
     constructor(private readonly options: FormatPanelOptions) {
         super();

@@ -6,7 +6,7 @@ import { _clearElement } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
 import type { AgInputTextFieldParams } from '../../../widgets/agInputTextField';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { RefSelector } from '../../../widgets/componentAnnotations';
+import { RefPlaceholder } from '../../../widgets/component';
 import type { NumberFilter, NumberFilterModel } from '../../provided/number/numberFilter';
 import { ProvidedFilter } from '../../provided/providedFilter';
 import type { TextFilterModel, TextFilterParams } from '../../provided/text/textFilter';
@@ -24,7 +24,7 @@ export interface FloatingFilterInputService extends BaseBean {
 }
 
 export class FloatingFilterTextInputService extends BeanStub implements FloatingFilterInputService {
-    private eFloatingFilterTextInput: AgInputTextField;
+    private eFloatingFilterTextInput: AgInputTextField = RefPlaceholder;
     private valueChangedListener: (e: KeyboardEvent) => void = () => {};
 
     constructor(private params?: { config?: AgInputTextFieldParams }) {
@@ -90,7 +90,7 @@ export interface ITextInputFloatingFilterParams extends IFloatingFilterParams<Te
 
 type ModelUnion = TextFilterModel | NumberFilterModel;
 export abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
-    @RefSelector('eFloatingFilterInputContainer') private readonly eFloatingFilterInputContainer: HTMLElement;
+    private readonly eFloatingFilterInputContainer: HTMLElement = RefPlaceholder;
     private floatingFilterInputService: FloatingFilterInputService;
 
     protected params: ITextInputFloatingFilterParams;
@@ -103,7 +103,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
 
     public postConstruct(): void {
         this.setTemplate(/* html */ `
-            <div class="ag-floating-filter-input" role="presentation" ref="eFloatingFilterInputContainer"></div>
+            <div class="ag-floating-filter-input" role="presentation" data-ref="eFloatingFilterInputContainer"></div>
         `);
     }
 

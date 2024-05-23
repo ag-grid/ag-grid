@@ -9,14 +9,9 @@ import type {
     ISelectionHandle,
     MouseEventService,
     RowPosition,
-    RowPositionUtils} from '@ag-grid-community/core';
-import {
-    Component,
-    SelectionHandleType,
-    _isVisible,
-    _last,
-    _setDisplayed,
+    RowPositionUtils,
 } from '@ag-grid-community/core';
+import { Component, SelectionHandleType, _isVisible, _last, _setDisplayed } from '@ag-grid-community/core';
 
 import type { RangeService } from './rangeService';
 

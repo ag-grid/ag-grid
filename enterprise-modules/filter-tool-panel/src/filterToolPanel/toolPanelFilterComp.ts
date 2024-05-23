@@ -1,12 +1,17 @@
-import type { ColumnNameService, FilterManager, FilterOpenedEvent, IFilterComp ,
-    BeanCollection} from '@ag-grid-community/core';
+import type {
+    BeanCollection,
+    ColumnNameService,
+    FilterManager,
+    FilterOpenedEvent,
+    IFilterComp,
+} from '@ag-grid-community/core';
 import {
     Column,
     Component,
     Events,
     FilterWrapperComp,
     KeyCode,
-    RefSelector,
+    RefPlaceholder,
     _clearElement,
     _createIconNoSpan,
     _loadTemplate,
@@ -26,19 +31,19 @@ export class ToolPanelFilterComp extends Component {
 
     private static TEMPLATE = /* html */ `
         <div class="ag-filter-toolpanel-instance">
-            <div class="ag-filter-toolpanel-header ag-filter-toolpanel-instance-header" ref="eFilterToolPanelHeader" role="button" aria-expanded="false">
-                <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
-                <span ref="eFilterName" class="ag-header-cell-text"></span>
-                <span ref="eFilterIcon" class="ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon" aria-hidden="true"></span>
+            <div class="ag-filter-toolpanel-header ag-filter-toolpanel-instance-header" data-ref="eFilterToolPanelHeader" role="button" aria-expanded="false">
+                <div data-ref="eExpand" class="ag-filter-toolpanel-expand"></div>
+                <span data-ref="eFilterName" class="ag-header-cell-text"></span>
+                <span data-ref="eFilterIcon" class="ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon" aria-hidden="true"></span>
             </div>
-            <div class="ag-filter-toolpanel-instance-body ag-filter" ref="agFilterToolPanelBody"></div>
+            <div class="ag-filter-toolpanel-instance-body ag-filter" data-ref="agFilterToolPanelBody"></div>
         </div>`;
 
-    @RefSelector('eFilterToolPanelHeader') private eFilterToolPanelHeader: HTMLElement;
-    @RefSelector('eFilterName') private eFilterName: HTMLElement;
-    @RefSelector('agFilterToolPanelBody') private agFilterToolPanelBody: HTMLElement;
-    @RefSelector('eFilterIcon') private eFilterIcon: Element;
-    @RefSelector('eExpand') private eExpand: Element;
+    private readonly eFilterToolPanelHeader: HTMLElement = RefPlaceholder;
+    private readonly eFilterName: HTMLElement = RefPlaceholder;
+    private readonly agFilterToolPanelBody: HTMLElement = RefPlaceholder;
+    private readonly eFilterIcon: Element = RefPlaceholder;
+    private readonly eExpand: Element = RefPlaceholder;
 
     private eExpandChecked: Element;
     private eExpandUnchecked: Element;

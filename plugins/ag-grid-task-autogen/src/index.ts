@@ -1,5 +1,4 @@
-import type { TargetConfiguration } from '@nx/devkit';
-import type { CreateDependencies, CreateNodes } from 'nx/src/utils/nx-plugin';
+import type { CreateDependencies, CreateNodes, TargetConfiguration } from '@nx/devkit';
 import { dirname } from 'path';
 
 import * as generateExampleFiles from './generate-example-files';

@@ -1,5 +1,5 @@
-import type { BeanCollection} from '@ag-grid-community/core';
-import { AgCheckbox, AgSelect, Component, RefSelector } from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
+import { AgCheckbox, AgSelect, Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -12,7 +12,7 @@ import type { FormatPanelOptions } from '../formatPanel';
 
 export class LegendPanel extends Component {
     private static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="legendGroup">
+            <ag-group-component data-ref="legendGroup">
             </ag-group-component>
         </div>`;
 
@@ -22,7 +22,7 @@ export class LegendPanel extends Component {
         super.wireBeans(beans);
         this.chartTranslationService = beans.chartTranslationService;
     }
-    @RefSelector('legendGroup') private readonly legendGroup: AgGroupComponent;
+    private readonly legendGroup: AgGroupComponent = RefPlaceholder;
 
     private readonly key: string;
     private readonly isGradient: boolean;

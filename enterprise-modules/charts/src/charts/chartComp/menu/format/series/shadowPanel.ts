@@ -1,4 +1,4 @@
-import type { BeanCollection} from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
 import { Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
@@ -11,11 +11,11 @@ import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class ShadowPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="shadowGroup">
-                <ag-color-picker ref="shadowColorPicker"></ag-color-picker>
-                <ag-slider ref="shadowBlurSlider"></ag-slider>
-                <ag-slider ref="shadowXOffsetSlider"></ag-slider>
-                <ag-slider ref="shadowYOffsetSlider"></ag-slider>
+            <ag-group-component data-ref="shadowGroup">
+                <ag-color-picker data-ref="shadowColorPicker"></ag-color-picker>
+                <ag-slider data-ref="shadowBlurSlider"></ag-slider>
+                <ag-slider data-ref="shadowXOffsetSlider"></ag-slider>
+                <ag-slider data-ref="shadowYOffsetSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 

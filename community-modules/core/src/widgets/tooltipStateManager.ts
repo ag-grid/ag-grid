@@ -28,7 +28,7 @@ enum TooltipTrigger {
 export class TooltipStateManager extends BeanStub {
     private popupService: PopupService;
     private userComponentFactory: UserComponentFactory;
-    
+
     public wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
         this.popupService = beans.popupService;
@@ -43,7 +43,6 @@ export class TooltipStateManager extends BeanStub {
     // last tooltip was hidden.
     private static lastTooltipHideTime: number;
     private static isLocked = false;
-
 
     private showTooltipTimeoutId: number | undefined;
     private hideTooltipTimeoutId: number | undefined;

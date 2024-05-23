@@ -1,5 +1,5 @@
-import type { AgComponentSelector, BeanCollection} from '@ag-grid-community/core';
-import { Component, RefSelector } from '@ag-grid-community/core';
+import type { AgComponentSelector, BeanCollection } from '@ag-grid-community/core';
+import { Component, RefPlaceholder } from '@ag-grid-community/core';
 
 import type { GridLicenseManager as LicenseManager } from './gridLicenseManager';
 
@@ -13,13 +13,13 @@ export class AgWatermark extends Component {
         this.licenseManager = beans.licenseManager;
     }
 
-    @RefSelector('eLicenseTextRef') private eLicenseTextRef: HTMLElement;
+    private readonly eLicenseTextRef: HTMLElement = RefPlaceholder;
 
     constructor() {
         super(
             /* html*/
             `<div class="ag-watermark">
-                <div ref="eLicenseTextRef" class="ag-watermark-text"></div>
+                <div data-ref="eLicenseTextRef" class="ag-watermark-text"></div>
             </div>`
         );
     }

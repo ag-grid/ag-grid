@@ -10,7 +10,7 @@ import {
     DragSourceType,
     Events,
     KeyCode,
-    RefSelector,
+    RefPlaceholder,
     TabGuardComp,
     TooltipFeature,
     _createIconNoSpan,
@@ -54,15 +54,14 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
     }
 
-    @RefSelector('eTreeLines') private eTreeLines: HTMLElement;
-    @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
-    @RefSelector('eItem') private eItem: HTMLElement;
-    @RefSelector('eButtons') private eButtons: HTMLElement;
-    @RefSelector('eValidation') private eValidation: HTMLElement;
-    @RefSelector('eMoveUpButton') private eMoveUpButton: HTMLElement;
-    @RefSelector('eMoveDownButton') private eMoveDownButton: HTMLElement;
-    @RefSelector('eAddButton') private eAddButton: HTMLElement;
-    @RefSelector('eRemoveButton') private eRemoveButton: HTMLElement;
+    private readonly eTreeLines: HTMLElement = RefPlaceholder;
+    private readonly eDragHandle: HTMLElement = RefPlaceholder;
+    private readonly eButtons: HTMLElement = RefPlaceholder;
+    private readonly eValidation: HTMLElement = RefPlaceholder;
+    private readonly eMoveUpButton: HTMLElement = RefPlaceholder;
+    private readonly eMoveDownButton: HTMLElement = RefPlaceholder;
+    private readonly eAddButton: HTMLElement = RefPlaceholder;
+    private readonly eRemoveButton: HTMLElement = RefPlaceholder;
 
     private ePillWrapper: JoinPillWrapperComp | ConditionPillWrapperComp;
     private validationTooltipFeature: TooltipFeature;
@@ -78,16 +77,16 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     ) {
         super(/* html */ `
             <div class="ag-advanced-filter-builder-item-wrapper" role="presentation">
-                <div ref="eItem" class="ag-advanced-filter-builder-item" role="presentation">
-                    <div ref="eTreeLines" class="ag-advanced-filter-builder-item-tree-lines" aria-hidden="true"></div>
-                    <span ref="eDragHandle" class="ag-drag-handle" aria-hidden="true"></span>
-                    <span ref="eValidation" class="ag-advanced-filter-builder-item-button ag-advanced-filter-builder-invalid" aria-hidden="true"></span>
+                <div data-ref="eItem" class="ag-advanced-filter-builder-item" role="presentation">
+                    <div data-ref="eTreeLines" class="ag-advanced-filter-builder-item-tree-lines" aria-hidden="true"></div>
+                    <span data-ref="eDragHandle" class="ag-drag-handle" aria-hidden="true"></span>
+                    <span data-ref="eValidation" class="ag-advanced-filter-builder-item-button ag-advanced-filter-builder-invalid" aria-hidden="true"></span>
                 </div>
-                <div ref="eButtons" class="ag-advanced-filter-builder-item-buttons">
-                    <span ref="eMoveUpButton" class="ag-advanced-filter-builder-item-button" role="button"></span>
-                    <span ref="eMoveDownButton" class="ag-advanced-filter-builder-item-button" role="button"></span>
-                    <div ref="eAddButton" role="presentation"></div>
-                    <span ref="eRemoveButton" class="ag-advanced-filter-builder-item-button" role="button"></span>
+                <div data-ref="eButtons" class="ag-advanced-filter-builder-item-buttons">
+                    <span data-ref="eMoveUpButton" class="ag-advanced-filter-builder-item-button" role="button"></span>
+                    <span data-ref="eMoveDownButton" class="ag-advanced-filter-builder-item-button" role="button"></span>
+                    <div data-ref="eAddButton" role="presentation"></div>
+                    <span data-ref="eRemoveButton" class="ag-advanced-filter-builder-item-button" role="button"></span>
                 </div>
             </div>
         `);

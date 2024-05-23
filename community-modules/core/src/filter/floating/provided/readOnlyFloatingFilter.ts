@@ -2,8 +2,7 @@ import type { ColumnNameService } from '../../../columns/columnNameService';
 import type { BeanCollection } from '../../../context/context';
 import type { IFilter } from '../../../interfaces/iFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { Component } from '../../../widgets/component';
-import { RefSelector } from '../../../widgets/componentAnnotations';
+import { Component, RefPlaceholder } from '../../../widgets/component';
 import type { IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParent } from '../floatingFilter';
 
 // optional floating filter for user provided filters - instead of providing a floating filter,
@@ -17,7 +16,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
         this.columnNameService = beans.columnNameService;
     }
 
-    @RefSelector('eFloatingFilterText') private eFloatingFilterText: AgInputTextField;
+    private readonly eFloatingFilterText: AgInputTextField = RefPlaceholder;
 
     private params: IFloatingFilterParams;
 
@@ -25,7 +24,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
         super(
             /* html */ `
             <div class="ag-floating-filter-input" role="presentation">
-                <ag-input-text-field ref="eFloatingFilterText"></ag-input-text-field>
+                <ag-input-text-field data-ref="eFloatingFilterText"></ag-input-text-field>
             </div>`,
             [AgInputTextField]
         );

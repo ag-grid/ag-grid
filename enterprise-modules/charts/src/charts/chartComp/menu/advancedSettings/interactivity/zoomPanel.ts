@@ -1,5 +1,5 @@
-import type { BeanCollection} from '@ag-grid-community/core';
-import { AgCheckbox, Component, RefSelector } from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
+import { AgCheckbox, Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -9,10 +9,10 @@ import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class ZoomPanel extends Component {
     public static TEMPLATE = /* html */ `<div>
-            <ag-group-component ref="zoomGroup">
-                <ag-checkbox ref="zoomSelectingCheckbox"></ag-checkbox>
-                <ag-checkbox ref="zoomScrollingCheckbox"></ag-checkbox>
-                <ag-slider ref="zoomScrollingStepInput"></ag-slider>
+            <ag-group-component data-ref="zoomGroup">
+                <ag-checkbox data-ref="zoomSelectingCheckbox"></ag-checkbox>
+                <ag-checkbox data-ref="zoomScrollingCheckbox"></ag-checkbox>
+                <ag-slider data-ref="zoomScrollingStepInput"></ag-slider>
             </ag-group-component>
         </div>`;
 
@@ -23,7 +23,7 @@ export class ZoomPanel extends Component {
         this.chartTranslationService = beans.chartTranslationService;
     }
 
-    @RefSelector('zoomScrollingStepInput') private readonly zoomScrollingStepInput: AgSlider;
+    private readonly zoomScrollingStepInput: AgSlider = RefPlaceholder;
 
     constructor(private readonly chartMenuParamsFactory: ChartMenuParamsFactory) {
         super();

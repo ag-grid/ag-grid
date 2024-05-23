@@ -1,13 +1,5 @@
-import type {
-    BeanCollection,
-    ChartDataPanel as ChartDataPanelType,
-    ChartType} from '@ag-grid-community/core';
-import {
-    AgToggleButton,
-    Component,
-    _setDisplayed,
-    _warnOnce,
-} from '@ag-grid-community/core';
+import type { BeanCollection, ChartDataPanel as ChartDataPanelType, ChartType } from '@ag-grid-community/core';
+import { AgToggleButton, Component, _setDisplayed, _warnOnce } from '@ag-grid-community/core';
 
 import type { ChartService } from '../../../chartService';
 import { ChartController } from '../../chartController';
