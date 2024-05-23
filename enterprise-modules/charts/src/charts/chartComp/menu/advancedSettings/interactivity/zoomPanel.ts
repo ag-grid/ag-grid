@@ -1,4 +1,4 @@
-import { AgCheckbox, Autowired, Component } from '@ag-grid-community/core';
+import { AgCheckbox, Autowired, Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -17,7 +17,7 @@ export class ZoomPanel extends Component {
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    private readonly zoomScrollingStepInput: AgSlider;
+    private readonly zoomScrollingStepInput: AgSlider = RefPlaceholder;
 
     constructor(private readonly chartMenuParamsFactory: ChartMenuParamsFactory) {
         super();

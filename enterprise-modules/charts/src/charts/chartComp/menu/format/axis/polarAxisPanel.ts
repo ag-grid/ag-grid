@@ -1,5 +1,5 @@
 import type { ListOption } from '@ag-grid-community/core';
-import { AgSelect, Autowired, Component } from '@ag-grid-community/core';
+import { AgSelect, Autowired, Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -19,7 +19,7 @@ export class PolarAxisPanel extends Component {
             </ag-group-component>
         </div>`;
 
-    private readonly axisGroup: AgGroupComponent;
+    private readonly axisGroup: AgGroupComponent = RefPlaceholder;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 

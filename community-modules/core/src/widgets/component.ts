@@ -141,6 +141,7 @@ export class Component extends BeanStub {
     private applyElementsToComponent(
         element: Element,
         elementRef?: string | null,
+        paramsMap?: { [key: string]: any },
         newComponent: Component | null = null
     ) {
         if (elementRef === undefined) {
@@ -153,13 +154,17 @@ export class Component extends BeanStub {
             if (current === RefPlaceholder) {
                 (this as any)[elementRef] = newComponent ?? element;
             } else {
-                // This can happen because of:
-                // 1. The data-ref has a typo and doesn't match the property in the component
-                // 2. The  property is not initialised with the RefPlaceholder and should be.
-                // 3. The property is on a child component and not availble on the parent during construction.
-                //    In which case you may need to pass the template via setTemplate() instead of in the super constructor.
-                // 4. The data-ref is not used by the component and should be removed from the template.
-                console.warn(`Issue with data-ref: ${elementRef} on ${this.constructor.name} with ${current}`);
+                // Don't warn if the data-ref is used for passing parameters to the component
+                const usedAsParamRef = paramsMap && paramsMap[elementRef];
+                if (!usedAsParamRef) {
+                    // This can happen because of:
+                    // 1. The data-ref has a typo and doesn't match the property in the component
+                    // 2. The  property is not initialised with the RefPlaceholder and should be.
+                    // 3. The property is on a child component and not availble on the parent during construction.
+                    //    In which case you may need to pass the template via setTemplate() instead of in the super constructor.
+                    // 4. The data-ref is not used by the component and should be removed from the template.
+                    console.warn(`Issue with data-ref: ${elementRef} on ${this.constructor.name} with ${current}`);
+                }
             }
         }
     }
@@ -227,7 +232,7 @@ export class Component extends BeanStub {
             this.createBean(newComponent, null, afterPreCreateCallback);
         }
 
-        this.applyElementsToComponent(element, elementRef, newComponent);
+        this.applyElementsToComponent(element, elementRef, paramsMap, newComponent);
 
         return newComponent;
     }

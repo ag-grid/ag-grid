@@ -78,9 +78,9 @@ export class AgSideBar extends Component implements ISideBar {
             return;
         }
 
-        const { focusService, sideBarButtons: sideBarButtonsComp } = this;
+        const { focusService, sideBarButtons } = this;
         const eGui = this.getGui();
-        const sideBarGui = sideBarButtonsComp.getGui();
+        const sideBarGui = sideBarButtons.getGui();
         const activeElement = this.gos.getActiveDomElement() as HTMLElement;
         const openPanel = eGui.querySelector('.ag-tool-panel-wrapper:not(.ag-hidden)') as HTMLElement;
         const target = e.target as HTMLElement;

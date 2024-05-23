@@ -1,5 +1,13 @@
 import type { AgSelectParams } from '@ag-grid-community/core';
-import { AgSelect, Autowired, Component, _capitalise, _includes, _removeFromParent } from '@ag-grid-community/core';
+import {
+    AgSelect,
+    Autowired,
+    Component,
+    RefPlaceholder,
+    _capitalise,
+    _includes,
+    _removeFromParent,
+} from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -37,7 +45,7 @@ export class FontPanel extends Component {
             </ag-group-component>
         </div>`;
 
-    private readonly fontGroup: AgGroupComponent;
+    private readonly fontGroup: AgGroupComponent = RefPlaceholder;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
