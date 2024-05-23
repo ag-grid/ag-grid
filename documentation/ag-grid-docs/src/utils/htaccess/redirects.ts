@@ -2648,6 +2648,11 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/client-side-model/', to: '/react-data-grid/row-models/' },
     { from: '/vue-data-grid/client-side-model/', to: '/vue-data-grid/row-models/' },
 
+    { from: '/javascript-data-grid/grouping-footers/', to: '/javascript-data-grid/total-rows/' },
+    { from: '/angular-data-grid/grouping-footers/', to: '/angular-data-grid/total-rows/' },
+    { from: '/react-data-grid/grouping-footers/', to: '/react-data-grid/total-rows/' },
+    { from: '/vue-data-grid/grouping-footers/', to: '/vue-data-grid/total-rows/' },
+
     { from: '/angular-data-grid/angular-compatibility/', to: '/angular-data-grid/compatibility/' },
     { from: '/react-data-grid/react-compatibility/', to: '/react-data-grid/compatibility/' },
 
