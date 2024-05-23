@@ -3,7 +3,7 @@ import type { _Scene } from 'ag-charts-community';
 
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
 import type { ThemeTemplateParameters } from '../../miniChartsContainer';
-import type { CreateColumnRectsParams} from '../miniChartHelpers';
+import type { CreateColumnRectsParams } from '../miniChartHelpers';
 import { createColumnRects } from '../miniChartHelpers';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 

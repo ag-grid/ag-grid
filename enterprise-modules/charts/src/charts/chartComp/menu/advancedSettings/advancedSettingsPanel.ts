@@ -1,7 +1,7 @@
-import type { ChartType} from '@ag-grid-community/core';
+import type { ChartType } from '@ag-grid-community/core';
 import { Component, PostConstruct } from '@ag-grid-community/core';
 
-import type { ChartSeriesType} from '../../utils/seriesTypeMapper';
+import type { ChartSeriesType } from '../../utils/seriesTypeMapper';
 import { isCartesian } from '../../utils/seriesTypeMapper';
 import type { ChartMenuContext } from '../chartMenuContext';
 import { ChartPanelFeature } from '../chartPanelFeature';

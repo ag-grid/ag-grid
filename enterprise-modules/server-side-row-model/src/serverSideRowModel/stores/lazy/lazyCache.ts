@@ -7,13 +7,9 @@ import type {
     NumberSequence,
     RowNode,
     ServerSideGroupLevelParams,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    Autowired,
-    BeanStub,
-    PostConstruct,
-    PreDestroy
+    WithoutGridCommon,
 } from '@ag-grid-community/core';
+import { Autowired, BeanStub, PostConstruct, PreDestroy } from '@ag-grid-community/core';
 import type { RowNodeSorter } from '@ag-grid-community/core';
 import type { SortController } from '@ag-grid-community/core';
 

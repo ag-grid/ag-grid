@@ -1,4 +1,4 @@
-import type { AgInputTextFieldParams} from '@ag-grid-community/core';
+import type { AgInputTextFieldParams } from '@ag-grid-community/core';
 import { AgInputTextField, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
 
 import type { AgSliderParams } from '../../../../../widgets/agSlider';

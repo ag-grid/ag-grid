@@ -9,13 +9,9 @@ import type {
     FilterExpressionFunction,
     FilterExpressionFunctionParams,
     FilterExpressionParserParams,
-    FilterExpressionValidationError} from './filterExpressionUtils';
-import {
-    checkAndUpdateExpression,
-    findEndPosition,
-    getSearchString,
-    updateExpression,
+    FilterExpressionValidationError,
 } from './filterExpressionUtils';
+import { checkAndUpdateExpression, findEndPosition, getSearchString, updateExpression } from './filterExpressionUtils';
 
 class OperatorParser {
     private operators: string[] = [];

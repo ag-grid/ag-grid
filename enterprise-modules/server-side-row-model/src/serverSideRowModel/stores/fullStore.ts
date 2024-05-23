@@ -20,7 +20,8 @@ import type {
     SortController,
     StoreRefreshAfterParams,
     StoreUpdatedEvent,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     ColumnModel,

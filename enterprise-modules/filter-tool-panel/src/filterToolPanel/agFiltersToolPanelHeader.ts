@@ -1,7 +1,4 @@
-import type {
-    AgComponentSelector,
-    Column,
-    ColumnModel} from '@ag-grid-community/core';
+import type { AgComponentSelector, Column, ColumnModel } from '@ag-grid-community/core';
 import {
     AgInputTextField,
     Autowired,

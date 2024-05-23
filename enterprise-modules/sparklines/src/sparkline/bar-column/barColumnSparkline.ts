@@ -1,9 +1,9 @@
 import type { ColumnFormat, ColumnFormatterParams } from '@ag-grid-community/core';
-import type { FontStyle, FontWeight} from 'ag-charts-community';
+import type { FontStyle, FontWeight } from 'ag-charts-community';
 import { _Scene, _Util } from 'ag-charts-community';
 
 import { Label } from '../label/label';
-import type { SeriesNodeDatum} from '../sparkline';
+import type { SeriesNodeDatum } from '../sparkline';
 import { Sparkline, ZINDICIES } from '../sparkline';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 

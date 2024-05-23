@@ -1,4 +1,3 @@
- 
 export default {
     displayName: 'plugins-ag-grid-generate-code-reference-files',
     preset: '../../jest.preset.js',

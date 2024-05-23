@@ -4,7 +4,8 @@ import type {
     Column,
     ColumnModel,
     FiltersToolPanelState,
-    IProvidedColumn} from '@ag-grid-community/core';
+    IProvidedColumn,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Component,

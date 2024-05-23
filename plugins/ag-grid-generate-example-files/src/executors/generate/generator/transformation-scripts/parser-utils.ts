@@ -45,7 +45,6 @@ export function tsGenerate(node, srcFile) {
         }
         return printer.printNode(ts.EmitHint.Unspecified, node, srcFile);
     } catch (error) {
-         
         console.error(error);
     }
     return 'ERROR - Printing';
@@ -95,7 +94,6 @@ export function tsCollect(tsTree, tsBindings: ParsedBindings, collectors, recurs
                 try {
                     c.apply(tsBindings, node);
                 } catch (error) {
-                     
                     console.error(error);
                 }
             });

@@ -15,7 +15,8 @@ import type {
     ShowRowGroupColsService,
     StageExecuteParams,
     ValueService,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Bean,

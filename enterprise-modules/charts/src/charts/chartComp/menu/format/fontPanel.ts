@@ -1,5 +1,4 @@
-import type {
-    AgSelectParams} from '@ag-grid-community/core';
+import type { AgSelectParams } from '@ag-grid-community/core';
 import {
     AgSelect,
     Autowired,

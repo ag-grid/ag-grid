@@ -5,7 +5,8 @@ import type {
     DragItem,
     DragSource,
     ITooltipParams,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     AgCheckbox,
     Autowired,

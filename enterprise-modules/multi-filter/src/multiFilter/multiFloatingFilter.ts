@@ -8,15 +8,9 @@ import type {
     IMultiFilterModel,
     MultiFilterParams,
     UserCompDetails,
-    UserComponentFactory} from '@ag-grid-community/core';
-import {
-    AgPromise,
-    Autowired,
-    Component,
-    _clearElement,
-    _mergeDeep,
-    _setDisplayed,
+    UserComponentFactory,
 } from '@ag-grid-community/core';
+import { AgPromise, Autowired, Component, _clearElement, _mergeDeep, _setDisplayed } from '@ag-grid-community/core';
 
 import { MultiFilter } from './multiFilter';
 

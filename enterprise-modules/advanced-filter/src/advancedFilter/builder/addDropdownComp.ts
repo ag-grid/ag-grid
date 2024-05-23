@@ -1,5 +1,4 @@
-import type {
-    RichSelectParams} from '@ag-grid-community/core';
+import type { RichSelectParams } from '@ag-grid-community/core';
 import {
     AgInputTextField,
     _setAriaLabel,

@@ -1,8 +1,4 @@
-import type {
-    AgComponentSelector,
-    AgLabelParams,
-    DragListenerParams,
-    DragService} from '@ag-grid-community/core';
+import type { AgComponentSelector, AgLabelParams, DragListenerParams, DragService } from '@ag-grid-community/core';
 import {
     AgAbstractLabel,
     AgInputNumberField,

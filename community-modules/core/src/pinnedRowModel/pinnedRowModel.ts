@@ -22,7 +22,11 @@ export class PinnedRowModel extends BeanStub {
         this.setPinnedBottomRowData();
         this.addManagedPropertyListener('pinnedTopRowData', () => this.setPinnedTopRowData());
         this.addManagedPropertyListener('pinnedBottomRowData', () => this.setPinnedBottomRowData());
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onGridStylesChanges.bind(this));
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_GRID_STYLES_CHANGED,
+            this.onGridStylesChanges.bind(this)
+        );
     }
 
     public isEmpty(floating: RowPinnedType): boolean {
@@ -72,7 +76,7 @@ export class PinnedRowModel extends BeanStub {
                 rowTop += rowHeight.height;
                 anyChange = true;
             }
-        }
+        };
         this.pinnedBottomRows?.forEach(updateRowHeight);
         rowTop = 0;
         this.pinnedTopRows?.forEach(updateRowHeight);

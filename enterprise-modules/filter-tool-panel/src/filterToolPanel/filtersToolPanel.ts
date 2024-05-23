@@ -5,11 +5,9 @@ import type {
     IFiltersToolPanel,
     IToolPanelComp,
     IToolPanelFiltersCompParams,
-    IToolPanelParams} from '@ag-grid-community/core';
-import {
-    Component,
-    RefSelector,
+    IToolPanelParams,
 } from '@ag-grid-community/core';
+import { Component, RefSelector } from '@ag-grid-community/core';
 
 import { AgFiltersToolPanelHeader } from './agFiltersToolPanelHeader';
 import { AgFiltersToolPanelList } from './agFiltersToolPanelList';

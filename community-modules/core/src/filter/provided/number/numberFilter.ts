@@ -3,7 +3,7 @@ import { _setAriaRole } from '../../../utils/aria';
 import { _makeNull } from '../../../utils/generic';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import type { Comparator, IScalarFilterParams} from '../scalarFilter';
+import type { Comparator, IScalarFilterParams } from '../scalarFilter';
 import { ScalarFilter } from '../scalarFilter';
 import type { ISimpleFilterModel, Tuple } from '../simpleFilter';
 import { SimpleFilter, SimpleFilterModelFormatter } from '../simpleFilter';

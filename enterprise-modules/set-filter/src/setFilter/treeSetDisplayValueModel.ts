@@ -1,4 +1,4 @@
-import type { TextFormatter} from '@ag-grid-community/core';
+import type { TextFormatter } from '@ag-grid-community/core';
 import { _warnOnce } from '@ag-grid-community/core';
 
 import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';

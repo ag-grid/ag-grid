@@ -9,7 +9,8 @@ import type {
     RowNodeTransaction,
     SelectionChangedEvent,
     SelectionEventSourceType,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     ColumnModel,
     Events,

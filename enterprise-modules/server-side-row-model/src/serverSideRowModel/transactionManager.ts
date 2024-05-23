@@ -6,7 +6,8 @@ import type {
     ServerSideTransaction,
     ServerSideTransactionResult,
     ValueCache,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Bean,
@@ -14,7 +15,7 @@ import {
     Events,
     PostConstruct,
     RowNode,
-    ServerSideTransactionResultStatus
+    ServerSideTransactionResultStatus,
 } from '@ag-grid-community/core';
 
 import type { ServerSideRowModel } from './serverSideRowModel';

@@ -4,7 +4,8 @@ import type {
     ColumnMoveService,
     ColumnPanelItemDragStartEvent,
     VirtualList,
-    VirtualListDragItem} from '@ag-grid-community/core';
+    VirtualListDragItem,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     BeanStub,
@@ -12,7 +13,7 @@ import {
     Events,
     PostConstruct,
     ProvidedColumnGroup,
-    VirtualListDragFeature
+    VirtualListDragFeature,
 } from '@ag-grid-community/core';
 
 import type { AgPrimaryColsList } from './agPrimaryColsList';

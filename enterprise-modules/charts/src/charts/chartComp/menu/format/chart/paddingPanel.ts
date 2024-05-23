@@ -1,4 +1,4 @@
-import type { ChartOptionsChanged} from '@ag-grid-community/core';
+import type { ChartOptionsChanged } from '@ag-grid-community/core';
 import { Autowired, Component, Events, PostConstruct, RefSelector } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';

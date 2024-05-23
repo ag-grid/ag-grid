@@ -4,15 +4,9 @@ import type {
     ColGroupDef,
     Column,
     ColumnModel,
-    IProvidedColumn} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    ProvidedColumnGroup,
-    _includes,
-    _last,
+    IProvidedColumn,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, ProvidedColumnGroup, _includes, _last } from '@ag-grid-community/core';
 
 @Bean('toolPanelColDefService')
 export class ToolPanelColDefService extends BeanStub {

@@ -4,14 +4,9 @@ import type {
     HeaderNavigationService,
     HeaderPosition,
     PopupEventParams,
-    VisibleColsService} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    _isVisible,
-    _last,
+    VisibleColsService,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, _isVisible, _last } from '@ag-grid-community/core';
 import type { CloseMenuEvent } from '@ag-grid-enterprise/core';
 
 export interface MenuRestoreFocusParams {

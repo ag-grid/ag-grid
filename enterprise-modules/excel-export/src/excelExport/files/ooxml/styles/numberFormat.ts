@@ -1,4 +1,4 @@
-import type { ExcelOOXMLTemplate} from '@ag-grid-community/core';
+import type { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 import { _escapeString } from '@ag-grid-community/core';
 
 import type { NumberFormat } from '../../../assets/excelInterfaces';

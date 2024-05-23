@@ -13,10 +13,9 @@ import type {
     FilterChangedEvent,
     FilterChangedEventSourceType,
     FilterDestroyedEvent,
-    FilterModifiedEvent} from '../events';
-import {
-    Events
+    FilterModifiedEvent,
 } from '../events';
+import { Events } from '../events';
 import { unwrapUserComp } from '../gridApi';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';

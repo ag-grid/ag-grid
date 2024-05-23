@@ -12,7 +12,8 @@ import type {
     SetFilterValuesFuncParams,
     TextFormatter,
     ValueFormatterParams,
-    ValueService} from '@ag-grid-community/core';
+    ValueService,
+} from '@ag-grid-community/core';
 import {
     AgPromise,
     EventService,

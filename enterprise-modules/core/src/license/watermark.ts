@@ -1,4 +1,4 @@
-import type { AgComponentSelector} from '@ag-grid-community/core';
+import type { AgComponentSelector } from '@ag-grid-community/core';
 import { Autowired, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
 
 import type { GridLicenseManager as LicenseManager } from './gridLicenseManager';

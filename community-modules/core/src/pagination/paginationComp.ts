@@ -7,7 +7,7 @@ import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
 import { _setAriaDisabled } from '../utils/aria';
 import { _createIconNoSpan } from '../utils/icon';
 import { _formatNumberCommas } from '../utils/number';
-import type { AgComponentSelector} from '../widgets/component';
+import type { AgComponentSelector } from '../widgets/component';
 import { Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';

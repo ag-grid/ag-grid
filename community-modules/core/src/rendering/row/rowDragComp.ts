@@ -1,6 +1,6 @@
 import { BeanStub } from '../../context/beanStub';
 import { Autowired, PostConstruct, PreDestroy } from '../../context/context';
-import type { DragItem, DragSource} from '../../dragAndDrop/dragAndDropService';
+import type { DragItem, DragSource } from '../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
 import type { Column } from '../../entities/column';
 import { RowNode } from '../../entities/rowNode';

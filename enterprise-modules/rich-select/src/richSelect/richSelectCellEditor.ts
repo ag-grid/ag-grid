@@ -4,14 +4,9 @@ import type {
     ICellEditorParams,
     KeyCreatorParams,
     RichCellEditorParams,
-    RichSelectParams} from '@ag-grid-community/core';
-import {
-    Events,
-    PopupComponent,
-    _exists,
-    _missing,
-    _warnOnce,
+    RichSelectParams,
 } from '@ag-grid-community/core';
+import { Events, PopupComponent, _exists, _missing, _warnOnce } from '@ag-grid-community/core';
 import { AgRichSelect } from '@ag-grid-enterprise/core';
 
 export class RichSelectCellEditor<TData = any, TValue = any> extends PopupComponent implements ICellEditor<TValue> {

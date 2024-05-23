@@ -3,13 +3,9 @@ import type {
     ColumnNameService,
     IFloatingFilter,
     IFloatingFilterParams,
-    SetFilterModel} from '@ag-grid-community/core';
-import {
-    AgInputTextField,
-    Autowired,
-    Component,
-    RefSelector
+    SetFilterModel,
 } from '@ag-grid-community/core';
+import { AgInputTextField, Autowired, Component, RefSelector } from '@ag-grid-community/core';
 
 import { SetFilter } from './setFilter';
 import { SetFilterModelFormatter } from './setFilterModelFormatter';

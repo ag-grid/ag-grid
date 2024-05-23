@@ -6,7 +6,7 @@ import { BeanStub } from '../context/beanStub';
 import { Autowired, PostConstruct } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { Column } from '../entities/column';
-import type { BodyHeightChangedEvent} from '../events';
+import type { BodyHeightChangedEvent } from '../events';
 import { Events } from '../events';
 import type { ScrollVisibleService, SetScrollsVisibleParams } from '../gridBodyComp/scrollVisibleService';
 import type { ProcessUnpinnedColumnsParams } from '../interfaces/iCallbackParams';

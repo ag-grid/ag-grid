@@ -12,10 +12,9 @@ import type {
     CellEditingStoppedEvent,
     CellEvent,
     CellFocusedEvent,
-    FlashCellsEvent} from '../../events';
-import {
-    Events
+    FlashCellsEvent,
 } from '../../events';
+import { Events } from '../../events';
 import { CssClassApplier } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor, ICellEditorParams } from '../../interfaces/iCellEditor';
@@ -26,7 +25,7 @@ import { _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _getValueUsingField } from '../../utils/object';
 import { _escapeString } from '../../utils/string';
-import type { ITooltipFeatureCtrl} from '../../widgets/tooltipFeature';
+import type { ITooltipFeatureCtrl } from '../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../widgets/tooltipFeature';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import { CheckboxSelectionComponent } from '../checkboxSelectionComponent';

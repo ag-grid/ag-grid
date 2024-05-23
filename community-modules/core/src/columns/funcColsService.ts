@@ -2,7 +2,7 @@ import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, Optional } from '../context/context';
 import type { ColDef, IAggFunc } from '../entities/colDef';
 import type { Column } from '../entities/column';
-import type { ColumnEventType} from '../events';
+import type { ColumnEventType } from '../events';
 import { Events } from '../events';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import { _removeFromArray } from '../utils/array';

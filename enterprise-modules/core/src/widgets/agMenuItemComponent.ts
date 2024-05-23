@@ -9,7 +9,8 @@ import type {
     MenuItemDef,
     PopupService,
     UserComponentFactory,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     BeanStub,

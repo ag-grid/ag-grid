@@ -4,7 +4,8 @@ import type {
     DragSourceType,
     DraggingEvent,
     DropTarget,
-    FocusService} from '@ag-grid-community/core';
+    FocusService,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Component,

@@ -15,7 +15,8 @@ import type {
     PopupService,
     TabbedItem,
     VisibleColsService,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     AgPromise,
     Autowired,

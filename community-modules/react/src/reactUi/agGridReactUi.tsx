@@ -9,7 +9,8 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
-    WrappableInterface} from '@ag-grid-community/core';
+    WrappableInterface,
+} from '@ag-grid-community/core';
 import {
     BaseComponentWrapper,
     ComponentUtil,

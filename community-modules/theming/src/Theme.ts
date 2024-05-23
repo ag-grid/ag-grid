@@ -1,7 +1,7 @@
 import type { ParamTypes } from './GENERATED-param-types';
 import { getParamType } from './main';
 import { corePart } from './parts/core/core-part';
-import type { InferParams, Part} from './theme-types';
+import type { InferParams, Part } from './theme-types';
 import { getPartParams, paramValueToCss } from './theme-types';
 import { paramToVariableName } from './theme-utils';
 import { VERSION } from './version';

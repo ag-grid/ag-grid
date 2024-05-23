@@ -6,7 +6,8 @@ import type {
     ColumnNameService,
     DataTypeService,
     JoinAdvancedFilterModel,
-    ValueService} from '@ag-grid-community/core';
+    ValueService,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Bean,
@@ -25,7 +26,8 @@ import type {
     DataTypeFilterExpressionOperators,
     FilterExpressionEvaluatorParams,
     FilterExpressionOperator,
-    FilterExpressionOperators} from './filterExpressionOperators';
+    FilterExpressionOperators,
+} from './filterExpressionOperators';
 import {
     BooleanFilterExpressionOperators,
     ScalarFilterExpressionOperators,

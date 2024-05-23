@@ -3,13 +3,9 @@ import type {
     ChartToolPanelName,
     ChartToolbarMenuItemOptions,
     GetChartToolbarItemsParams,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    _warnOnce,
+    WithoutGridCommon,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, _warnOnce } from '@ag-grid-community/core';
 
 import type { ChartService } from '../../chartService';
 import type { ChartController } from '../chartController';

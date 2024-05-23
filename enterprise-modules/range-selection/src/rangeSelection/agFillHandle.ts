@@ -10,15 +10,9 @@ import type {
     RowNode,
     RowPosition,
     ValueService,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Events,
-    SelectionHandleType,
-    _last,
-    _toStringOrNull,
-    _warnOnce,
+    WithoutGridCommon,
 } from '@ag-grid-community/core';
+import { Autowired, Events, SelectionHandleType, _last, _toStringOrNull, _warnOnce } from '@ag-grid-community/core';
 
 import { AbstractSelectionHandle } from './abstractSelectionHandle';
 import { findLineByLeastSquares } from './utils';

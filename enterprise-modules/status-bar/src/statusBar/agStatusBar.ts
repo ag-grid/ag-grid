@@ -4,7 +4,8 @@ import type {
     IStatusPanelParams,
     StatusPanelDef,
     UserComponentFactory,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     AgPromise,
     Autowired,

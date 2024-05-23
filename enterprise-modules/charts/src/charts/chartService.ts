@@ -18,21 +18,11 @@ import type {
     SeriesChartType,
     SeriesGroupType,
     UpdateChartParams,
-    VisibleColsService} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Optional,
-    PreDestroy
+    VisibleColsService,
 } from '@ag-grid-community/core';
-import type {
-    AgChartThemeOverrides,
-    AgChartThemePalette} from 'ag-charts-community';
-import {
-    VERSION as CHARTS_VERSION,
-    _ModuleSupport,
-} from 'ag-charts-community';
+import { Autowired, Bean, BeanStub, Optional, PreDestroy } from '@ag-grid-community/core';
+import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
+import { VERSION as CHARTS_VERSION, _ModuleSupport } from 'ag-charts-community';
 
 import { VERSION as GRID_VERSION } from '../version';
 import type { GridChartParams } from './chartComp/gridChartComp';

@@ -1,6 +1,4 @@
-import type {
-    AgSelectParams,
-    ListOption} from '@ag-grid-community/core';
+import type { AgSelectParams, ListOption } from '@ag-grid-community/core';
 import {
     AgCheckbox,
     AgSelect,

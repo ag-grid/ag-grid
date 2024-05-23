@@ -4,7 +4,8 @@ import type {
     GridParams,
     ICellRenderer,
     IDetailCellRenderer,
-    IDetailCellRendererParams} from '@ag-grid-community/core';
+    IDetailCellRendererParams,
+} from '@ag-grid-community/core';
 import {
     Component,
     ModuleRegistry,

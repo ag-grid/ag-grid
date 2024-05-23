@@ -4,7 +4,8 @@ import type {
     FocusService,
     FuncColsService,
     MenuItemDef,
-    PopupService} from '@ag-grid-community/core';
+    PopupService,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Column,

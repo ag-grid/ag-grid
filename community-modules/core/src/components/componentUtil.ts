@@ -1,5 +1,5 @@
 import type { GridOptions } from '../entities/gridOptions';
-import type { ComponentStateChangedEvent} from '../events';
+import type { ComponentStateChangedEvent } from '../events';
 import { Events } from '../events';
 import type { GridApi } from '../gridApi';
 import type { WithoutGridCommon } from '../interfaces/iCommon';

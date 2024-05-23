@@ -9,7 +9,8 @@ import type {
     SideBarState,
     ToolPanelDef,
     ToolPanelVisibleChangedEvent,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Component,

@@ -14,7 +14,8 @@ import type {
     SetFilterParams,
     ValueFormatterParams,
     ValueService,
-    VirtualListModel} from '@ag-grid-community/core';
+    VirtualListModel,
+} from '@ag-grid-community/core';
 import {
     AgInputTextField,
     AgPromise,
@@ -40,10 +41,9 @@ import { DEFAULT_LOCALE_TEXT } from './localeText';
 import type {
     SetFilterListItemExpandedChangedEvent,
     SetFilterListItemParams,
-    SetFilterListItemSelectionChangedEvent} from './setFilterListItem';
-import {
-    SetFilterListItem
+    SetFilterListItemSelectionChangedEvent,
 } from './setFilterListItem';
+import { SetFilterListItem } from './setFilterListItem';
 import { SetFilterModelFormatter } from './setFilterModelFormatter';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 

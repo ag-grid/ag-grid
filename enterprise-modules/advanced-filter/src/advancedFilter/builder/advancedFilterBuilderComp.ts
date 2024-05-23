@@ -4,7 +4,8 @@ import type {
     ColumnAdvancedFilterModel,
     FilterManager,
     JoinAdvancedFilterModel,
-    VirtualListDragItem} from '@ag-grid-community/core';
+    VirtualListDragItem,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Component,
@@ -25,10 +26,9 @@ import type {
     AdvancedFilterBuilderAddEvent,
     AdvancedFilterBuilderItem,
     AdvancedFilterBuilderMoveEvent,
-    AdvancedFilterBuilderRemoveEvent} from './iAdvancedFilterBuilder';
-import {
-    AdvancedFilterBuilderEvents
+    AdvancedFilterBuilderRemoveEvent,
 } from './iAdvancedFilterBuilder';
+import { AdvancedFilterBuilderEvents } from './iAdvancedFilterBuilder';
 
 export class AdvancedFilterBuilderComp extends Component {
     @RefSelector('eList') private eList: HTMLElement;

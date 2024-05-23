@@ -3,7 +3,7 @@ import { Autowired, Bean, PostConstruct } from '../context/context';
 import type { IAggFunc } from '../entities/colDef';
 import type { ColumnPinnedType } from '../entities/column';
 import { Column } from '../entities/column';
-import type { ColumnEvent, ColumnEventType} from '../events';
+import type { ColumnEvent, ColumnEventType } from '../events';
 import { Events } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';

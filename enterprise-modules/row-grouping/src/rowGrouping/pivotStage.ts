@@ -11,15 +11,9 @@ import type {
     RowNode,
     StageExecuteParams,
     ValueService,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Events,
-    _iterateObject,
-    _missing,
+    WithoutGridCommon,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, Events, _iterateObject, _missing } from '@ag-grid-community/core';
 
 import type { PivotColDefService } from './pivotColDefService';
 

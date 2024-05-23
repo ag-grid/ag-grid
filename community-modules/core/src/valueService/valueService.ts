@@ -11,7 +11,7 @@ import type {
 } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
-import type { CellValueChangedEvent} from '../events';
+import type { CellValueChangedEvent } from '../events';
 import { Events } from '../events';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warnOnce } from '../utils/function';

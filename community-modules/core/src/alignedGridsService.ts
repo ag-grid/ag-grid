@@ -17,10 +17,9 @@ import type {
     ColumnMovedEvent,
     ColumnPinnedEvent,
     ColumnResizedEvent,
-    ColumnVisibleEvent} from './events';
-import {
-    Events,
+    ColumnVisibleEvent,
 } from './events';
+import { Events } from './events';
 import { GridApi } from './gridApi';
 import type { Logger } from './logger';
 import type { LoggerFactory } from './logger';

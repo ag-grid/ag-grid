@@ -3,11 +3,9 @@ import type {
     AgFieldParams,
     AgInputNumberFieldParams,
     AgSelectParams,
-    ListOption} from '@ag-grid-community/core';
-import {
-    Autowired,
-    BeanStub
+    ListOption,
 } from '@ag-grid-community/core';
+import { Autowired, BeanStub } from '@ag-grid-community/core';
 
 import type { AgColorPickerParams } from '../../../widgets/agColorPicker';
 import type { AgSliderParams } from '../../../widgets/agSlider';

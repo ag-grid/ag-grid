@@ -6,7 +6,8 @@ import type {
     UserCompDetails,
     UserComponentFactory,
     VirtualList,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Component,

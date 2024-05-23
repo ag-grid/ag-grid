@@ -5,7 +5,7 @@ import { Column } from '../entities/column';
 import { ColumnGroup } from '../entities/columnGroup';
 import type { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import type { RowNode } from '../entities/rowNode';
-import type { ColumnContainerWidthChanged, ColumnEventType, DisplayedColumnsWidthChangedEvent} from '../events';
+import type { ColumnContainerWidthChanged, ColumnEventType, DisplayedColumnsWidthChangedEvent } from '../events';
 import { Events } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';

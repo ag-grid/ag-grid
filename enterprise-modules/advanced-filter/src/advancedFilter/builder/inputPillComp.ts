@@ -1,6 +1,4 @@
-import type {
-    FieldValueEvent,
-    WithoutGridCommon} from '@ag-grid-community/core';
+import type { FieldValueEvent, WithoutGridCommon } from '@ag-grid-community/core';
 import {
     AgInputDateField,
     AgInputNumberField,

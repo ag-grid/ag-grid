@@ -1,8 +1,4 @@
-import type {
-    AgComponentSelector,
-    AgEvent,
-    PopupPositionParams,
-    PopupService} from '@ag-grid-community/core';
+import type { AgComponentSelector, AgEvent, PopupPositionParams, PopupService } from '@ag-grid-community/core';
 import {
     AgInputTextField,
     Autowired,

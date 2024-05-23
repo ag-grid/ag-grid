@@ -1,14 +1,5 @@
-import type {
-    ChartCreated,
-    ChartToolPanelMenuOptions,
-    ChartToolbarMenuItemOptions} from '@ag-grid-community/core';
-import {
-    AgPromise,
-    Autowired,
-    Component,
-    Events,
-    PostConstruct,
-} from '@ag-grid-community/core';
+import type { ChartCreated, ChartToolPanelMenuOptions, ChartToolbarMenuItemOptions } from '@ag-grid-community/core';
+import { AgPromise, Autowired, Component, Events, PostConstruct } from '@ag-grid-community/core';
 import { AgPanel } from '@ag-grid-enterprise/core';
 
 import { ChartController } from '../chartController';

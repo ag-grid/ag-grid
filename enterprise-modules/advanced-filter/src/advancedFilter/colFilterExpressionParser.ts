@@ -7,7 +7,8 @@ import type {
     FilterExpressionFunction,
     FilterExpressionFunctionParams,
     FilterExpressionParserParams,
-    FilterExpressionValidationError} from './filterExpressionUtils';
+    FilterExpressionValidationError,
+} from './filterExpressionUtils';
 import {
     checkAndUpdateExpression,
     escapeQuotes,

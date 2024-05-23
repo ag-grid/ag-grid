@@ -14,19 +14,11 @@ import type {
     ExcelTableConfig,
     ExcelWorksheet,
     RowHeightCallbackParams,
-    RowNode} from '@ag-grid-community/core';
-import {
-    _last,
-    _mergeDeep,
+    RowNode,
 } from '@ag-grid-community/core';
-import type {
-    GridSerializingParams,
-    RowAccumulator,
-    RowSpanningAccumulator} from '@ag-grid-community/csv-export';
-import {
-    BaseGridSerializingSession,
-    RowType,
-} from '@ag-grid-community/csv-export';
+import { _last, _mergeDeep } from '@ag-grid-community/core';
+import type { GridSerializingParams, RowAccumulator, RowSpanningAccumulator } from '@ag-grid-community/csv-export';
+import { BaseGridSerializingSession, RowType } from '@ag-grid-community/csv-export';
 
 import { getHeightFromProperty } from './assets/excelUtils';
 import { ExcelXlsxFactory } from './excelXlsxFactory';

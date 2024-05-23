@@ -2,7 +2,7 @@ import type { ChartType } from '@ag-grid-community/core';
 import { _Scene } from 'ag-charts-community';
 
 import { MiniChart } from '../miniChart';
-import type { CreateColumnRectsParams} from '../miniChartHelpers';
+import type { CreateColumnRectsParams } from '../miniChartHelpers';
 import { createColumnRects, createLinePaths } from '../miniChartHelpers';
 
 export class MiniCustomCombo extends MiniChart {

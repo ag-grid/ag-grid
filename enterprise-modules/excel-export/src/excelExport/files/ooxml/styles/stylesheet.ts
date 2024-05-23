@@ -1,7 +1,14 @@
 import type { ExcelBorders, ExcelFont, ExcelInterior, ExcelOOXMLTemplate, ExcelStyle } from '@ag-grid-community/core';
 
 import { numberFormatMap } from '../../../assets/excelConstants';
-import type { Border, BorderProperty, BorderSet, ExcelThemeFont, Fill, NumberFormat } from '../../../assets/excelInterfaces';
+import type {
+    Border,
+    BorderProperty,
+    BorderSet,
+    ExcelThemeFont,
+    Fill,
+    NumberFormat,
+} from '../../../assets/excelInterfaces';
 import { convertLegacyBorder, convertLegacyColor, convertLegacyPattern } from '../../../assets/excelLegacyConvert';
 import { getFontFamilyId } from '../../../assets/excelUtils';
 import bordersFactory from './borders';

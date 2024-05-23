@@ -1,5 +1,5 @@
 import { PostConstruct } from '../context/context';
-import type { AgComponentSelector} from '../widgets/component';
+import type { AgComponentSelector } from '../widgets/component';
 import { Component } from '../widgets/component';
 import type { IGridHeaderComp } from './gridHeaderCtrl';
 import { GridHeaderCtrl } from './gridHeaderCtrl';

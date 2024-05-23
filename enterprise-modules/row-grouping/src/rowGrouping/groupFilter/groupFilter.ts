@@ -5,7 +5,8 @@ import type {
     FuncColsService,
     IAfterGuiAttachedParams,
     IFilterComp,
-    IFilterParams} from '@ag-grid-community/core';
+    IFilterParams,
+} from '@ag-grid-community/core';
 import {
     AgPromise,
     AgSelect,

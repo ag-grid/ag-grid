@@ -5,7 +5,7 @@ import { Events } from '../../../eventKeys';
 import type { SortController } from '../../../sortController';
 import { _clearElement, _setDisplayed } from '../../../utils/dom';
 import { _createIconNoSpan } from '../../../utils/icon';
-import type { AgComponentSelector} from '../../../widgets/component';
+import type { AgComponentSelector } from '../../../widgets/component';
 import { Component } from '../../../widgets/component';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 

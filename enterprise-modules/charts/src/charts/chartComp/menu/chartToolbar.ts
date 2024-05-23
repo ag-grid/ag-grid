@@ -1,12 +1,5 @@
-import type {
-    ChartToolbarMenuItemOptions} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Component,
-    RefSelector,
-    _clearElement,
-    _createIconNoSpan,
-} from '@ag-grid-community/core';
+import type { ChartToolbarMenuItemOptions } from '@ag-grid-community/core';
+import { Autowired, Component, RefSelector, _clearElement, _createIconNoSpan } from '@ag-grid-community/core';
 
 import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
 

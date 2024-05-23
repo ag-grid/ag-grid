@@ -1,4 +1,4 @@
-import type { ICellEditor, IFilter, IStatusPanel, IToolPanel} from '@ag-grid-community/core';
+import type { ICellEditor, IFilter, IStatusPanel, IToolPanel } from '@ag-grid-community/core';
 import { AgPromise, _warnOnce } from '@ag-grid-community/core';
 
 /**

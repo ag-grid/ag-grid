@@ -4,7 +4,8 @@ import type {
     FilterOpenedEvent,
     IProvidedColumn,
     ITooltipParams,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Column,

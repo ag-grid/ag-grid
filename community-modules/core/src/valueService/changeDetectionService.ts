@@ -2,7 +2,7 @@ import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PostConstruct } from '../context/context';
 import type { Column } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
-import type { CellValueChangedEvent} from '../events';
+import type { CellValueChangedEvent } from '../events';
 import { Events } from '../events';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';

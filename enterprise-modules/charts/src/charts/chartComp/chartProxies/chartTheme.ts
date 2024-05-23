@@ -4,14 +4,13 @@ import type {
     AgChartTheme,
     AgChartThemeName,
     AgChartThemeOverrides,
-    AgChartThemePalette} from 'ag-charts-community';
-import {
-    _Theme,
+    AgChartThemePalette,
 } from 'ag-charts-community';
+import { _Theme } from 'ag-charts-community';
 
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
 import { get } from '../utils/object';
-import type { ChartSeriesType} from '../utils/seriesTypeMapper';
+import type { ChartSeriesType } from '../utils/seriesTypeMapper';
 import { getSeriesType } from '../utils/seriesTypeMapper';
 import type { ChartProxy, ChartProxyParams } from './chartProxy';
 

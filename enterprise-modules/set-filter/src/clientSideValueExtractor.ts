@@ -5,13 +5,9 @@ import type {
     IClientSideRowModel,
     RowNode,
     SetFilterParams,
-    ValueService} from '@ag-grid-community/core';
-import {
-    AgPromise,
-    Events,
-    _makeNull,
-    _toStringOrNull,
+    ValueService,
 } from '@ag-grid-community/core';
+import { AgPromise, Events, _makeNull, _toStringOrNull } from '@ag-grid-community/core';
 
 /** @param V type of value in the Set Filter */
 export class ClientSideValuesExtractor<V> {

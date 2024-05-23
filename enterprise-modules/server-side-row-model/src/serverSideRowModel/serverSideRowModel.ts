@@ -23,7 +23,8 @@ import type {
     SortController,
     SortModelItem,
     StoreRefreshAfterParams,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Bean,

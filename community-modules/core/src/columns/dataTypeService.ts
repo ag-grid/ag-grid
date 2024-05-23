@@ -6,10 +6,9 @@ import type {
     SuppressKeyboardEventParams,
     ValueFormatterFunc,
     ValueFormatterParams,
-    ValueGetterParams} from '../entities/colDef';
-import {
-    KeyCreatorParams
+    ValueGetterParams,
 } from '../entities/colDef';
+import { KeyCreatorParams } from '../entities/colDef';
 import { Column } from '../entities/column';
 import type {
     BaseCellDataType,
@@ -33,7 +32,7 @@ import { _exists, _toStringOrNull } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
 import type { ValueService } from '../valueService/valueService';
 import type { ColumnApplyStateService, ColumnState, ColumnStateParams } from './columnApplyStateService';
-import type { ColumnModel} from './columnModel';
+import type { ColumnModel } from './columnModel';
 import { convertSourceType } from './columnModel';
 import type { FuncColsService } from './funcColsService';
 

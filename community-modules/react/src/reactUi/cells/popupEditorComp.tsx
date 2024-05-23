@@ -1,4 +1,4 @@
-import type { CellCtrl} from '@ag-grid-community/core';
+import type { CellCtrl } from '@ag-grid-community/core';
 import { PopupEditorWrapper } from '@ag-grid-community/core';
 import React, { memo, useContext, useState } from 'react';
 import { createPortal } from 'react-dom';

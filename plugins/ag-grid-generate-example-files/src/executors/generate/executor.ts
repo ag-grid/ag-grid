@@ -1,4 +1,3 @@
- 
 import fs from 'fs/promises';
 import path from 'path';
 import prettier from 'prettier';
@@ -7,15 +6,8 @@ import { readFile, readJSONFile, writeFile } from '../../executors-utils';
 import { SOURCE_ENTRY_FILE_NAME, getEnterprisePackageName } from './generator/constants';
 import gridVanillaSrcParser from './generator/transformation-scripts/grid-vanilla-src-parser';
 import { getInterfaceFileContents, removeModuleRegistration } from './generator/transformation-scripts/parser-utils';
-import type {
-    ExampleConfig,
-    GeneratedContents,
-    ImportType,
-    InternalFramework} from './generator/types';
-import {
-    FRAMEWORKS,
-    TYPESCRIPT_INTERNAL_FRAMEWORKS,
-} from './generator/types';
+import type { ExampleConfig, GeneratedContents, ImportType, InternalFramework } from './generator/types';
+import { FRAMEWORKS, TYPESCRIPT_INTERNAL_FRAMEWORKS } from './generator/types';
 import {
     getBoilerPlateFiles,
     getEntryFileName,
@@ -74,7 +66,9 @@ async function getProvidedFiles(folderPath: string) {
             });
             const providedExampleEntries = await Promise.all(
                 files.map(async (fileName) => {
-                    const contents = (await fs.readFile(path.join(providedExampleBasePath, fileName))).toString('utf-8');
+                    const contents = (await fs.readFile(path.join(providedExampleBasePath, fileName))).toString(
+                        'utf-8'
+                    );
                     return [fileName, contents];
                 })
             );

@@ -5,15 +5,9 @@ import type {
     ColumnModel,
     ColumnNameService,
     FuncColsService,
-    IPivotColDefService} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    PostConstruct,
-    _cloneObject,
-    _iterateObject,
+    IPivotColDefService,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, PostConstruct, _cloneObject, _iterateObject } from '@ag-grid-community/core';
 
 export interface PivotColDefServiceResult {
     pivotColumnGroupDefs: (ColDef | ColGroupDef)[];

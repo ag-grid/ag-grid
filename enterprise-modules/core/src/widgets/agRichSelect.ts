@@ -7,7 +7,8 @@ import type {
     RichSelectParams,
     UserCompDetails,
     UserComponentFactory,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     AgInputTextField,
     AgPickerField,

@@ -3,12 +3,9 @@ import type {
     ColDef,
     ColGroupDef,
     ColumnEventType,
-    ToolPanelColumnCompParams} from '@ag-grid-community/core';
-import {
-    Component,
-    PositionableFeature,
-    RefSelector
+    ToolPanelColumnCompParams,
 } from '@ag-grid-community/core';
+import { Component, PositionableFeature, RefSelector } from '@ag-grid-community/core';
 
 import { AgPrimaryColsHeader } from './agPrimaryColsHeader';
 import { AgPrimaryColsList } from './agPrimaryColsList';

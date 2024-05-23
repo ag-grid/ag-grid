@@ -1,4 +1,4 @@
-import type { IComponent} from '@ag-grid-community/core';
+import type { IComponent } from '@ag-grid-community/core';
 import { KeyCode, PostConstruct, TabGuardComp } from '@ag-grid-community/core';
 
 import type { AgMenuItemComponent } from './agMenuItemComponent';

@@ -1,4 +1,4 @@
-import type { Module} from '@ag-grid-community/core';
+import type { Module } from '@ag-grid-community/core';
 import { ModuleNames } from '@ag-grid-community/core';
 
 import { InfiniteRowModel } from './infiniteRowModel/infiniteRowModel';

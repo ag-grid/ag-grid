@@ -1,13 +1,5 @@
-import type {
-    AgEvent,
-    VirtualList,
-    VirtualListDragItem} from '@ag-grid-community/core';
-import {
-    BeanStub,
-    DragSourceType,
-    PostConstruct,
-    VirtualListDragFeature
-} from '@ag-grid-community/core';
+import type { AgEvent, VirtualList, VirtualListDragItem } from '@ag-grid-community/core';
+import { BeanStub, DragSourceType, PostConstruct, VirtualListDragFeature } from '@ag-grid-community/core';
 
 import type { AdvancedFilterBuilderComp } from './advancedFilterBuilderComp';
 import type { AdvancedFilterBuilderItemComp } from './advancedFilterBuilderItemComp';

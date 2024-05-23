@@ -1,12 +1,6 @@
 import type { Column } from '../../entities/column';
-import type {
-    IRangeService,
-    ISelectionHandle,
-    ISelectionHandleFactory} from '../../interfaces/IRangeService';
-import {
-    CellRangeType,
-    SelectionHandleType,
-} from '../../interfaces/IRangeService';
+import type { IRangeService, ISelectionHandle, ISelectionHandleFactory } from '../../interfaces/IRangeService';
+import { CellRangeType, SelectionHandleType } from '../../interfaces/IRangeService';
 import { _setAriaSelected } from '../../utils/aria';
 import { _includes, _last } from '../../utils/array';
 import { _missing } from '../../utils/generic';

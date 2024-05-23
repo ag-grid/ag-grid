@@ -6,7 +6,7 @@ import type { LocaleService } from '../../../localeService';
 import { _dateToFormattedString, _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import type { FILTER_LOCALE_TEXT } from '../../filterLocaleText';
 import type { OptionsFactory } from '../optionsFactory';
-import type { Comparator, IScalarFilterParams} from '../scalarFilter';
+import type { Comparator, IScalarFilterParams } from '../scalarFilter';
 import { ScalarFilter } from '../scalarFilter';
 import type { ISimpleFilterModel, Tuple } from '../simpleFilter';
 import { SimpleFilter, SimpleFilterModelFormatter } from '../simpleFilter';

@@ -1,7 +1,7 @@
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
 import { KeyCode } from '../../../constants/keyCode';
-import type { DragItem} from '../../../dragAndDrop/dragAndDropService';
+import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
 import { DragAndDropService, DragSourceType } from '../../../dragAndDrop/dragAndDropService';
 import type { SortDirection } from '../../../entities/colDef';
 import { Column } from '../../../entities/column';
@@ -10,11 +10,11 @@ import type { ColumnHeaderMouseLeaveEvent, ColumnHeaderMouseOverEvent } from '..
 import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import type { Beans } from '../../../rendering/beans';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
-import type { ColumnSortState} from '../../../utils/aria';
+import type { ColumnSortState } from '../../../utils/aria';
 import { _getAriaSortState } from '../../../utils/aria';
 import { _getElementSize } from '../../../utils/dom';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
-import type { ITooltipFeatureCtrl} from '../../../widgets/tooltipFeature';
+import type { ITooltipFeatureCtrl } from '../../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../../widgets/tooltipFeature';
 import { ColumnMoveHelper } from '../../columnMoveHelper';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';

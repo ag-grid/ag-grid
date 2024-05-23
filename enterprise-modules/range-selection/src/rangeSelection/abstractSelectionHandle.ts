@@ -13,7 +13,8 @@ import type {
     RowPosition,
     RowPositionUtils,
     RowRenderer,
-    VisibleColsService} from '@ag-grid-community/core';
+    VisibleColsService,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Component,

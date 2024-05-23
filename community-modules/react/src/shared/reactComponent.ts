@@ -1,6 +1,6 @@
-import type { ComponentType, IComponent, WrappableInterface} from '@ag-grid-community/core';
+import type { ComponentType, IComponent, WrappableInterface } from '@ag-grid-community/core';
 import { AgPromise, _warnOnce } from '@ag-grid-community/core';
-import type { ReactPortal} from 'react';
+import type { ReactPortal } from 'react';
 import { createElement } from 'react';
 import { createPortal } from 'react-dom';
 import { renderToStaticMarkup } from 'react-dom/server';

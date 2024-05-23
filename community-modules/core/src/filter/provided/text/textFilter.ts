@@ -4,15 +4,8 @@ import { _setAriaRole } from '../../../utils/aria';
 import { _warnOnce } from '../../../utils/function';
 import { _makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import type {
-    ISimpleFilterModel,
-    ISimpleFilterModelType,
-    ISimpleFilterParams,
-    Tuple} from '../simpleFilter';
-import {
-    SimpleFilter,
-    SimpleFilterModelFormatter
-} from '../simpleFilter';
+import type { ISimpleFilterModel, ISimpleFilterModelType, ISimpleFilterParams, Tuple } from '../simpleFilter';
+import { SimpleFilter, SimpleFilterModelFormatter } from '../simpleFilter';
 
 export interface TextFilterModel extends ISimpleFilterModel {
     /** Filter type is always `'text'` */

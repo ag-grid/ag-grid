@@ -1,12 +1,5 @@
-import type {
-    PopupService,
-    ResizableStructure} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Component,
-    _createIconNoSpan,
-    _setDisplayed,
-} from '@ag-grid-community/core';
+import type { PopupService, ResizableStructure } from '@ag-grid-community/core';
+import { Autowired, Component, _createIconNoSpan, _setDisplayed } from '@ag-grid-community/core';
 
 import type { PanelOptions } from './agPanel';
 import { AgPanel } from './agPanel';

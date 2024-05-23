@@ -11,7 +11,8 @@ import type {
     RowNode,
     RowNodeSorter,
     SortController,
-    ValueService} from '@ag-grid-community/core';
+    ValueService,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     BeanStub,

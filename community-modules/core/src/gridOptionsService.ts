@@ -3,15 +3,19 @@ import { Autowired, Bean, PostConstruct, PreDestroy } from './context/context';
 import type { DomLayoutType, GridOptions } from './entities/gridOptions';
 import type { Environment } from './environment';
 import { EventService } from './eventService';
-import type { AgEvent} from './events';
+import type { AgEvent } from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS, Events } from './events';
 import type { GridApi } from './gridApi';
-import type { GetGroupAggFilteringParams, GetGroupIncludeFooterParams, RowHeightParams } from './interfaces/iCallbackParams';
+import type {
+    GetGroupAggFilteringParams,
+    GetGroupIncludeFooterParams,
+    RowHeightParams,
+} from './interfaces/iCallbackParams';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
-import type { AnyGridOptions} from './propertyKeys';
+import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
 import { _getScrollbarWidth } from './utils/browser';
 import { _warnOnce } from './utils/function';

@@ -1,6 +1,4 @@
-import type {
-    ChartType,
-    SeriesChartType} from '@ag-grid-community/core';
+import type { ChartType, SeriesChartType } from '@ag-grid-community/core';
 import {
     AgCheckbox,
     AgSelect,

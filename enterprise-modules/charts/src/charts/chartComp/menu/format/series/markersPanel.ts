@@ -1,13 +1,5 @@
-import type {
-    AgSelectParams} from '@ag-grid-community/core';
-import {
-    AgSelect,
-    Autowired,
-    Component,
-    PostConstruct,
-    RefSelector,
-    _includes,
-} from '@ag-grid-community/core';
+import type { AgSelectParams } from '@ag-grid-community/core';
+import { AgSelect, Autowired, Component, PostConstruct, RefSelector, _includes } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 

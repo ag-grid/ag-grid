@@ -1,7 +1,7 @@
 import type { ChartType } from '@ag-grid-community/core';
 import type { _Scene } from 'ag-charts-community';
 
-import type { CreateColumnRectsParams} from '../miniChartHelpers';
+import type { CreateColumnRectsParams } from '../miniChartHelpers';
 import { createColumnRects } from '../miniChartHelpers';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 

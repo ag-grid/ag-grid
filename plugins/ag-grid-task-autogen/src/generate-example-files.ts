@@ -1,4 +1,4 @@
-import type { TargetConfiguration} from '@nx/devkit';
+import type { TargetConfiguration } from '@nx/devkit';
 import { DependencyType, type RawProjectGraphDependency, validateDependency } from '@nx/devkit';
 import type { CreateDependencies } from 'nx/src/utils/nx-plugin';
 

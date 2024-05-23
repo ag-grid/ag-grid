@@ -1,14 +1,5 @@
-import type {
-    ChartDataPanel as ChartDataPanelType,
-    ChartType} from '@ag-grid-community/core';
-import {
-    AgToggleButton,
-    Autowired,
-    Component,
-    PostConstruct,
-    _setDisplayed,
-    _warnOnce,
-} from '@ag-grid-community/core';
+import type { ChartDataPanel as ChartDataPanelType, ChartType } from '@ag-grid-community/core';
+import { AgToggleButton, Autowired, Component, PostConstruct, _setDisplayed, _warnOnce } from '@ag-grid-community/core';
 
 import type { ChartService } from '../../../chartService';
 import { ChartController } from '../../chartController';

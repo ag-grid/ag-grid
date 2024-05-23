@@ -6,7 +6,8 @@ import type {
     FuncColsService,
     IAggFuncService,
     PopupService,
-    SortController} from '@ag-grid-community/core';
+    SortController,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Column,

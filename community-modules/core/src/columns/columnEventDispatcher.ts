@@ -17,10 +17,9 @@ import type {
     DisplayedColumnsChangedEvent,
     GridColumnsChangedEvent,
     NewColumnsLoadedEvent,
-    VirtualColumnsChangedEvent} from '../events';
-import {
-    Events
+    VirtualColumnsChangedEvent,
 } from '../events';
+import { Events } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 
 /* 

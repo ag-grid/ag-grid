@@ -23,7 +23,7 @@ import { _missingOrEmpty } from '../../utils/generic';
 import { _isEventFromPrintableCharacter, _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
 import { _normaliseQwertyAzerty } from '../../utils/keyboard';
 import type { ValueService } from '../../valueService/valueService';
-import type { LongTapEvent} from '../../widgets/touchListener';
+import type { LongTapEvent } from '../../widgets/touchListener';
 import { TouchListener } from '../../widgets/touchListener';
 import type { MouseEventService } from './../mouseEventService';
 import type { NavigationService } from './../navigationService';

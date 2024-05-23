@@ -1,6 +1,4 @@
-import type {
-    RichSelectParams,
-    VirtualList} from '@ag-grid-community/core';
+import type { RichSelectParams, VirtualList } from '@ag-grid-community/core';
 import {
     AgInputTextField,
     _setAriaLabel,

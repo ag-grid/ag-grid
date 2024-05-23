@@ -4,7 +4,7 @@ import type { AgEvent, AgEventListener } from '../events';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import type { IProvidedColumn } from '../interfaces/iProvidedColumn';
 import type { ColGroupDef } from './colDef';
-import type { ColumnInstanceId} from './column';
+import type { ColumnInstanceId } from './column';
 import { Column, getNextColInstanceId } from './column';
 import type { ColumnGroupShowType } from './columnGroup';
 

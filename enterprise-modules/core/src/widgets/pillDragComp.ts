@@ -4,7 +4,8 @@ import type {
     DragItem,
     DragSource,
     DragSourceType,
-    DropTarget} from '@ag-grid-community/core';
+    DropTarget,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Component,

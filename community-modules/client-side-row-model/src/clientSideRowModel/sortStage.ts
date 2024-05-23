@@ -1,14 +1,5 @@
-import type {
-    IRowNodeStage,
-    SortController,
-    SortOption,
-    StageExecuteParams} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    _exists,
-} from '@ag-grid-community/core';
+import type { IRowNodeStage, SortController, SortOption, StageExecuteParams } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, _exists } from '@ag-grid-community/core';
 
 import type { SortService } from './sortService';
 

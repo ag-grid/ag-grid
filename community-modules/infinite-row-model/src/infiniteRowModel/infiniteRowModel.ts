@@ -10,7 +10,8 @@ import type {
     RowNodeBlockLoader,
     RowRenderer,
     SortController,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Bean,

@@ -9,12 +9,9 @@ import type {
     ExcelSheetMargin,
     ExcelSheetPageSetup,
     ExcelWorksheet,
-    XmlElement} from '@ag-grid-community/core';
-import {
-    _compose,
-    _escapeString,
-    _iterateObject,
+    XmlElement,
 } from '@ag-grid-community/core';
+import { _compose, _escapeString, _iterateObject } from '@ag-grid-community/core';
 
 import type { ExcelDataTable, ExcelHeaderFooterPosition } from '../../assets/excelInterfaces';
 import { getExcelColumnName } from '../../assets/excelUtils';

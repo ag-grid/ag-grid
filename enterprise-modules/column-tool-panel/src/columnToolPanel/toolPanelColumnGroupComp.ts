@@ -8,7 +8,8 @@ import type {
     IAggFunc,
     ITooltipParams,
     ProvidedColumnGroup,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     AgCheckbox,
     Autowired,

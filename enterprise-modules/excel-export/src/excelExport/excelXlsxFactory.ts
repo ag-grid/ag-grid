@@ -6,11 +6,9 @@ import type {
     ExcelStyle,
     ExcelTableConfig,
     ExcelWorksheet,
-    RowHeightCallbackParams} from '@ag-grid-community/core';
-import {
-    ExcelFactoryMode,
-    _escapeString,
+    RowHeightCallbackParams,
 } from '@ag-grid-community/core';
+import { ExcelFactoryMode, _escapeString } from '@ag-grid-community/core';
 
 import type {
     ExcelCalculatedImage,

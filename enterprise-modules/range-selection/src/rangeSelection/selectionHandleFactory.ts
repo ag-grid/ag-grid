@@ -1,11 +1,5 @@
-import type {
-    ISelectionHandle,
-    ISelectionHandleFactory} from '@ag-grid-community/core';
-import {
-    Bean,
-    BeanStub,
-    SelectionHandleType,
-} from '@ag-grid-community/core';
+import type { ISelectionHandle, ISelectionHandleFactory } from '@ag-grid-community/core';
+import { Bean, BeanStub, SelectionHandleType } from '@ag-grid-community/core';
 
 import { AgFillHandle } from './agFillHandle';
 import { AgRangeHandle } from './agRangeHandle';

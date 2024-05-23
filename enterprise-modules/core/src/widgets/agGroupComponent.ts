@@ -1,6 +1,4 @@
-import type {
-    AgComponentSelector,
-    AgEvent} from '@ag-grid-community/core';
+import type { AgComponentSelector, AgEvent } from '@ag-grid-community/core';
 import {
     AgCheckbox,
     AgToggleButton,

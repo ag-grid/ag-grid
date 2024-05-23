@@ -5,10 +5,9 @@ import type {
     RowContainerType,
     RowCtrl,
     RowStyle,
-    UserCompDetails} from '@ag-grid-community/core';
-import {
-    CssClassManager
+    UserCompDetails,
 } from '@ag-grid-community/core';
+import { CssClassManager } from '@ag-grid-community/core';
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { BeansContext } from '../beansContext';

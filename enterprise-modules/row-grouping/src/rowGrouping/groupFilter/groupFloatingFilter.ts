@@ -5,7 +5,8 @@ import type {
     FilterManager,
     IFloatingFilterComp,
     IFloatingFilterParams,
-    UserCompDetails} from '@ag-grid-community/core';
+    UserCompDetails,
+} from '@ag-grid-community/core';
 import {
     AgInputTextField,
     AgPromise,

@@ -1,12 +1,5 @@
-import type {
-    AgComponentSelector,
-    CellPosition,
-    CellRange} from '@ag-grid-community/core';
-import {
-    CellRangeType,
-    SelectionHandleType,
-    _last,
-} from '@ag-grid-community/core';
+import type { AgComponentSelector, CellPosition, CellRange } from '@ag-grid-community/core';
+import { CellRangeType, SelectionHandleType, _last } from '@ag-grid-community/core';
 
 import { AbstractSelectionHandle } from './abstractSelectionHandle';
 

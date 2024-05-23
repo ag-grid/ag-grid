@@ -14,10 +14,9 @@ import type {
     DisplayedRowsChangedEvent,
     FirstDataRenderedEvent,
     ModelUpdatedEvent,
-    ViewportChangedEvent} from '../events';
-import {
-    Events
+    ViewportChangedEvent,
 } from '../events';
+import { Events } from '../events';
 import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import type { ICellEditor } from '../interfaces/iCellEditor';
@@ -1388,7 +1387,13 @@ export class RowRenderer extends BeanStub {
         const stickyHeightsChanged = this.stickyRowFeature?.ensureRowHeightsValid();
         // ensureRowHeightsVisible only works with CSRM, as it's the only row model that allows lazy row height calcs.
         // all the other row models just hard code so the method just returns back false
-        const rowModelHeightsChanged = this.paginationProxy.ensureRowHeightsValid(topPixel, bottomPixel, -1, -1, stickyHeightsChanged);
+        const rowModelHeightsChanged = this.paginationProxy.ensureRowHeightsValid(
+            topPixel,
+            bottomPixel,
+            -1,
+            -1,
+            stickyHeightsChanged
+        );
 
         if (stickyHeightsChanged || rowModelHeightsChanged || pinnedRowHeightsChanged) {
             this.updateContainerHeights();

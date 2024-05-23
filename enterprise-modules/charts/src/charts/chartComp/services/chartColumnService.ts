@@ -7,14 +7,9 @@ import type {
     RowPositionUtils,
     ShowRowGroupColsService,
     ValueService,
-    VisibleColsService} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Events,
-    PostConstruct
+    VisibleColsService,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, Events, PostConstruct } from '@ag-grid-community/core';
 
 @Bean('chartColumnService')
 export class ChartColumnService extends BeanStub {

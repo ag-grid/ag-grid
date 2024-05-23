@@ -3,7 +3,8 @@ import type {
     FocusService,
     IMenuActionParams,
     MenuItemDef,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     AgPromise,
     Autowired,

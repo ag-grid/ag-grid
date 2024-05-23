@@ -1,8 +1,4 @@
-import type {
-    Column,
-    IAggFunc,
-    IAggFuncParams,
-    IAggFuncService} from '@ag-grid-community/core';
+import type { Column, IAggFunc, IAggFuncParams, IAggFuncService } from '@ag-grid-community/core';
 import {
     Bean,
     BeanStub,

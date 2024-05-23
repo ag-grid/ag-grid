@@ -3,15 +3,9 @@ import type {
     GetGroupIncludeFooterParams,
     IRowNodeStage,
     StageExecuteParams,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    RowNode,
-    _exists,
-    _missingOrEmpty,
+    WithoutGridCommon,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, RowNode, _exists, _missingOrEmpty } from '@ag-grid-community/core';
 
 interface FlattenDetails {
     hideOpenParents: boolean;

@@ -11,7 +11,7 @@ import type { ColumnViewportService } from './columns/columnViewportService';
 import type { FuncColsService } from './columns/funcColsService';
 import type { PivotResultColsService } from './columns/pivotResultColsService';
 import type { VisibleColsService } from './columns/visibleColsService';
-import type { Context} from './context/context';
+import type { Context } from './context/context';
 import { Autowired, Bean, Optional, PostConstruct } from './context/context';
 import type { CtrlsService } from './ctrlsService';
 import type { DragAndDropService } from './dragAndDrop/dragAndDropService';
@@ -63,13 +63,8 @@ import type { IClipboardCopyParams, IClipboardCopyRowsParams, IClipboardService 
 import type { IColumnToolPanel } from './interfaces/iColumnToolPanel';
 import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { ICsvCreator } from './interfaces/iCsvCreator';
-import type {
-    ExcelExportMultipleSheetParams,
-    ExcelExportParams,
-    IExcelCreator} from './interfaces/iExcelCreator';
-import {
-    ExcelFactoryMode
-} from './interfaces/iExcelCreator';
+import type { ExcelExportMultipleSheetParams, ExcelExportParams, IExcelCreator } from './interfaces/iExcelCreator';
+import { ExcelFactoryMode } from './interfaces/iExcelCreator';
 import type { IExpansionService } from './interfaces/iExpansionService';
 import type { FilterModel, IFilter } from './interfaces/iFilter';
 import type { IFiltersToolPanel } from './interfaces/iFiltersToolPanel';

@@ -5,13 +5,9 @@ import type {
     ColumnModel,
     ColumnState,
     IAggFunc,
-    IAggFuncService} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    EventService,
-    GridOptionsService
+    IAggFuncService,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, EventService, GridOptionsService } from '@ag-grid-community/core';
 
 import type { ColumnModelItem } from './columnModelItem';
 

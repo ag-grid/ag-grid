@@ -7,7 +7,8 @@ import type {
     IFilterComp,
     IRowModel,
     TabGuardCtrl,
-    UserComponentFactory} from '@ag-grid-community/core';
+    UserComponentFactory,
+} from '@ag-grid-community/core';
 import {
     AgPromise,
     IAfterGuiAttachedParams,
@@ -17,7 +18,7 @@ import {
     MultiFilterParams,
     ProvidedFilter,
     ProvidedFilterModel,
-    ProvidedFilterParams
+    ProvidedFilterParams,
 } from '@ag-grid-community/core';
 
 import { mock } from '../test-utils/mock';

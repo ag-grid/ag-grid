@@ -1,8 +1,4 @@
-import type {
-    AgComponentSelector,
-    FilterManager,
-    ITooltipParams,
-    WithoutGridCommon} from '@ag-grid-community/core';
+import type { AgComponentSelector, FilterManager, ITooltipParams, WithoutGridCommon } from '@ag-grid-community/core';
 import {
     Autowired,
     Component,
@@ -20,10 +16,9 @@ import type {
     AutocompleteOptionSelectedEvent,
     AutocompleteValidChangedEvent,
     AutocompleteValueChangedEvent,
-    AutocompleteValueConfirmedEvent} from './autocomplete/agAutocomplete';
-import {
-    AgAutocomplete
+    AutocompleteValueConfirmedEvent,
 } from './autocomplete/agAutocomplete';
+import { AgAutocomplete } from './autocomplete/agAutocomplete';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 import type { FilterExpressionParser } from './filterExpressionParser';
 import type { AutocompleteUpdate } from './filterExpressionUtils';

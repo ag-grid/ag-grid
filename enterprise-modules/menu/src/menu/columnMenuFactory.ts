@@ -5,13 +5,9 @@ import type {
     FuncColsService,
     IRowModel,
     MenuItemDef,
-    MenuService} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    _removeRepeatsFromArray,
+    MenuService,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, _removeRepeatsFromArray } from '@ag-grid-community/core';
 import { AgMenuList } from '@ag-grid-enterprise/core';
 
 import type { MenuItemMapper } from './menuItemMapper';

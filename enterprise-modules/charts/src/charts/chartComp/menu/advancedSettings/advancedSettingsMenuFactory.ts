@@ -1,4 +1,4 @@
-import type { FocusService} from '@ag-grid-community/core';
+import type { FocusService } from '@ag-grid-community/core';
 import { Autowired, Bean, BeanStub, PostConstruct, TabGuardComp } from '@ag-grid-community/core';
 import { AgDialog } from '@ag-grid-enterprise/core';
 

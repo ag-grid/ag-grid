@@ -3,12 +3,9 @@ import type {
     HeaderCellCtrl,
     IHeader,
     IHeaderCellComp,
-    UserCompDetails} from '@ag-grid-community/core';
-import {
-    CssClassManager,
-    _removeAriaSort,
-    _setAriaSort,
+    UserCompDetails,
 } from '@ag-grid-community/core';
+import { CssClassManager, _removeAriaSort, _setAriaSort } from '@ag-grid-community/core';
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { BeansContext } from '../beansContext';

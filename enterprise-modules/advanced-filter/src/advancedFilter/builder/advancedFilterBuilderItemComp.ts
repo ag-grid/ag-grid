@@ -3,7 +3,8 @@ import type {
     Beans,
     DragSource,
     FieldPickerValueSelectedEvent,
-    FieldValueEvent} from '@ag-grid-community/core';
+    FieldValueEvent,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     DragAndDropService,
@@ -28,11 +29,8 @@ import {
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 import { AddDropdownComp } from './addDropdownComp';
-import type {
-    AdvancedFilterBuilderDragStartedEvent} from './advancedFilterBuilderDragFeature';
-import {
-    AdvancedFilterBuilderDragFeature
-} from './advancedFilterBuilderDragFeature';
+import type { AdvancedFilterBuilderDragStartedEvent } from './advancedFilterBuilderDragFeature';
+import { AdvancedFilterBuilderDragFeature } from './advancedFilterBuilderDragFeature';
 import { AdvancedFilterBuilderItemNavigationFeature } from './advancedFilterBuilderItemNavigationFeature';
 import { getAdvancedFilterBuilderAddButtonParams } from './advancedFilterBuilderUtils';
 import { ConditionPillWrapperComp } from './conditionPillWrapperComp';
@@ -41,10 +39,9 @@ import type {
     AdvancedFilterBuilderItem,
     AdvancedFilterBuilderMoveEvent,
     AdvancedFilterBuilderRemoveEvent,
-    CreatePillParams} from './iAdvancedFilterBuilder';
-import {
-    AdvancedFilterBuilderEvents
+    CreatePillParams,
 } from './iAdvancedFilterBuilder';
+import { AdvancedFilterBuilderEvents } from './iAdvancedFilterBuilder';
 import { InputPillComp } from './inputPillComp';
 import { JoinPillWrapperComp } from './joinPillWrapperComp';
 import { SelectPillComp } from './selectPillComp';

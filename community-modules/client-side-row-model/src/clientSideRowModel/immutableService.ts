@@ -4,16 +4,9 @@ import type {
     ISelectionService,
     RowDataTransaction,
     RowNode,
-    RowRenderer} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    PostConstruct,
-    _exists,
-    _iterateObject,
-    _missing,
+    RowRenderer,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, PostConstruct, _exists, _iterateObject, _missing } from '@ag-grid-community/core';
 
 import type { ClientSideRowModel } from './clientSideRowModel';
 

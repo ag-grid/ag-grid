@@ -1,6 +1,6 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, PreDestroy } from '../context/context';
-import type { DragStartedEvent, DragStoppedEvent} from '../events';
+import type { DragStartedEvent, DragStoppedEvent } from '../events';
 import { Events } from '../events';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';

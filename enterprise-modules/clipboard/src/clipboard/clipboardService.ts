@@ -33,7 +33,8 @@ import type {
     RowValueChangedEvent,
     ValueService,
     VisibleColsService,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Bean,

@@ -1,5 +1,4 @@
-import type {
-    Component} from '@ag-grid-community/core';
+import type { Component } from '@ag-grid-community/core';
 import {
     KeyCode,
     PopupComponent,

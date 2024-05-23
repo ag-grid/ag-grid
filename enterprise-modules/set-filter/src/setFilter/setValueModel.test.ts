@@ -5,11 +5,9 @@ import type {
     RowNode,
     SetFilterParams,
     ValueFormatterFunc,
-    ValueService} from '@ag-grid-community/core';
-import {
-    _makeNull,
-    _toStringOrNull,
+    ValueService,
 } from '@ag-grid-community/core';
+import { _makeNull, _toStringOrNull } from '@ag-grid-community/core';
 
 import { mock } from '../test-utils/mock';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';

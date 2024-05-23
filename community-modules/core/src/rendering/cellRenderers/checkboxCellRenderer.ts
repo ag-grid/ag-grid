@@ -1,6 +1,6 @@
 import { GROUP_AUTO_COLUMN_ID } from '../../columns/autoColService';
 import { KeyCode } from '../../constants/keyCode';
-import type { CellEditingStartedEvent, CellEditingStoppedEvent} from '../../events';
+import type { CellEditingStartedEvent, CellEditingStoppedEvent } from '../../events';
 import { Events } from '../../events';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import { _getAriaCheckboxStateName, _setAriaLive } from '../../utils/aria';

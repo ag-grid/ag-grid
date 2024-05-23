@@ -1,8 +1,8 @@
-import type { ChartFormatPanel, ChartFormatPanelGroup} from '@ag-grid-community/core';
+import type { ChartFormatPanel, ChartFormatPanelGroup } from '@ag-grid-community/core';
 import { Component, PostConstruct, _warnOnce } from '@ag-grid-community/core';
 import type { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import type { ChartSeriesType} from '../../utils/seriesTypeMapper';
+import type { ChartSeriesType } from '../../utils/seriesTypeMapper';
 import { isCartesian, isPolar } from '../../utils/seriesTypeMapper';
 import type { ChartMenuContext } from '../chartMenuContext';
 import { ChartPanelFeature } from '../chartPanelFeature';

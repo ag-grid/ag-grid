@@ -14,7 +14,7 @@ import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import type { LocaleService } from '../localeService';
 import { _addSafePassiveEventListener } from '../utils/event';
 import type { Component } from '../widgets/component';
-import type { Context} from './context';
+import type { Context } from './context';
 import { Autowired, PreDestroy } from './context';
 
 export class BeanStub implements IEventEmitter {

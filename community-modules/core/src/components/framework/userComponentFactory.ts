@@ -31,8 +31,7 @@ import { _mergeDeep } from '../../utils/object';
 import { AgPromise } from '../../utils/promise';
 import type { AgComponentUtils } from './agComponentUtils';
 import type { ComponentMetadata, ComponentMetadataProvider } from './componentMetadataProvider';
-import type {
-    ComponentType} from './componentTypes';
+import type { ComponentType } from './componentTypes';
 import {
     CellEditorComponent,
     CellRendererComponent,

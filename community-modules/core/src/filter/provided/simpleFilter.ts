@@ -1,5 +1,10 @@
 import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import type { IDoesFilterPassParams, IFilterOptionDef, IFilterParams, ProvidedFilterModel } from '../../interfaces/iFilter';
+import type {
+    IDoesFilterPassParams,
+    IFilterOptionDef,
+    IFilterParams,
+    ProvidedFilterModel,
+} from '../../interfaces/iFilter';
 import type { LocaleService } from '../../localeService';
 import { _areEqual } from '../../utils/array';
 import { _removeFromParent, _setDisabled, _setDisplayed } from '../../utils/dom';
@@ -15,7 +20,7 @@ import { Component } from '../../widgets/component';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import type { IFloatingFilterParent } from '../floating/floatingFilter';
 import { OptionsFactory } from './optionsFactory';
-import type { IProvidedFilter, IProvidedFilterParams} from './providedFilter';
+import type { IProvidedFilter, IProvidedFilterParams } from './providedFilter';
 import { ProvidedFilter } from './providedFilter';
 
 export type JoinOperator = 'AND' | 'OR';

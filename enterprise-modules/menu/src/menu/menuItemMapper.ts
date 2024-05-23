@@ -12,7 +12,8 @@ import type {
     MenuItemDef,
     MenuService,
     RowPositionUtils,
-    SortController} from '@ag-grid-community/core';
+    SortController,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Bean,

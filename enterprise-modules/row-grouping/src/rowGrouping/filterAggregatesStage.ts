@@ -1,15 +1,5 @@
-import type {
-    ColumnModel,
-    FilterManager,
-    IRowNodeStage,
-    RowNode,
-    StageExecuteParams} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    GridOptions
-} from '@ag-grid-community/core';
+import type { ColumnModel, FilterManager, IRowNodeStage, RowNode, StageExecuteParams } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, GridOptions } from '@ag-grid-community/core';
 
 @Bean('filterAggregatesStage')
 export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {

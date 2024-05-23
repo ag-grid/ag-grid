@@ -10,10 +10,9 @@ import type {
     ICombinedSimpleModel,
     ISimpleFilter,
     ISimpleFilterModel,
-    SimpleFilterModelFormatter} from '../../provided/simpleFilter';
-import {
-    SimpleFilter
+    SimpleFilterModelFormatter,
 } from '../../provided/simpleFilter';
+import { SimpleFilter } from '../../provided/simpleFilter';
 import type { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
 
 export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp<ISimpleFilter> {

@@ -1,8 +1,4 @@
-import type {
-    DragItem,
-    DraggingEvent,
-    DropTarget,
-    ListOption} from '@ag-grid-community/core';
+import type { DragItem, DraggingEvent, DropTarget, ListOption } from '@ag-grid-community/core';
 import {
     AgSelect,
     Component,

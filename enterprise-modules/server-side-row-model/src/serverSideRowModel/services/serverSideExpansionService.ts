@@ -2,13 +2,9 @@ import type {
     IExpansionService,
     IsServerSideGroupOpenByDefaultParams,
     RowNode,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    Events,
-    ExpansionService
+    WithoutGridCommon,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, Events, ExpansionService } from '@ag-grid-community/core';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 

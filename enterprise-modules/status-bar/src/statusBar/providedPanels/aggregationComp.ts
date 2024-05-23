@@ -8,7 +8,8 @@ import type {
     IStatusPanelComp,
     RowPosition,
     RowPositionUtils,
-    ValueService} from '@ag-grid-community/core';
+    ValueService,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Component,

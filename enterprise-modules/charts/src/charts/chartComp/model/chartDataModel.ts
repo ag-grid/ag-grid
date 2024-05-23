@@ -6,14 +6,9 @@ import type {
     IRangeService,
     PartialCellRange,
     SeriesChartType,
-    SeriesGroupType} from '@ag-grid-community/core';
-import {
-    Autowired,
-    BeanStub,
-    CellRangeType,
-    PostConstruct,
-    _includes,
+    SeriesGroupType,
 } from '@ag-grid-community/core';
+import { Autowired, BeanStub, CellRangeType, PostConstruct, _includes } from '@ag-grid-community/core';
 import type { AgCartesianAxisType } from 'ag-charts-community';
 
 import type { ChartDatasourceParams } from '../datasource/chartDatasource';

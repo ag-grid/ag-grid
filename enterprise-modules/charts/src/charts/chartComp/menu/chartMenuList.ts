@@ -1,8 +1,4 @@
-import type {
-    FocusService,
-    IAfterGuiAttachedParams,
-    MenuItemDef,
-    PopupService} from '@ag-grid-community/core';
+import type { FocusService, IAfterGuiAttachedParams, MenuItemDef, PopupService } from '@ag-grid-community/core';
 import {
     Autowired,
     Bean,

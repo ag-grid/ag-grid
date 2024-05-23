@@ -331,7 +331,8 @@ function internalParser(
                     props.push(`${tsConvertFunctionsIntoStringsStr(columnDefProperty)}`);
                 }
                 if (props.length > 0) {
-                    const propStr = props.length === 1 ? `{ ${props.join()} }` : `{\n        ${props.join(',\n    ')} }`;
+                    const propStr =
+                        props.length === 1 ? `{ ${props.join()} }` : `{\n        ${props.join(',\n    ')} }`;
                     copyOfArray.push(propStr);
                 }
             }

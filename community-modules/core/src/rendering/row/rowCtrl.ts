@@ -14,17 +14,16 @@ import type {
     RowEditingStoppedEvent,
     RowEvent,
     RowValueChangedEvent,
-    VirtualRowRemovedEvent} from '../../events';
-import {
-    Events
+    VirtualRowRemovedEvent,
 } from '../../events';
+import { Events } from '../../events';
 import { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { GridOptionsService } from '../../gridOptionsService';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ProcessRowParams } from '../../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
-import type { DataChangedEvent, IRowNode} from '../../interfaces/iRowNode';
+import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import { RowHighlightPosition } from '../../interfaces/iRowNode';
 import { ModuleNames } from '../../modules/moduleNames';
 import { ModuleRegistry } from '../../modules/moduleRegistry';
@@ -34,7 +33,7 @@ import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _executeNextVMTurn, _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
-import type { ITooltipFeatureCtrl} from '../../widgets/tooltipFeature';
+import type { ITooltipFeatureCtrl } from '../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../widgets/tooltipFeature';
 import type { Beans } from '../beans';
 import { CellCtrl } from '../cell/cellCtrl';

@@ -6,7 +6,7 @@ import type { PaginationProxy } from '../../pagination/paginationProxy';
 import { _clearElement } from '../../utils/dom';
 import { _warnOnce } from '../../utils/function';
 import { AgSelect } from '../../widgets/agSelect';
-import type { AgComponentSelector} from '../../widgets/component';
+import type { AgComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 
 export class PageSizeSelectorComp extends Component {

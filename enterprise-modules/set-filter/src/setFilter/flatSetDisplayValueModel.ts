@@ -1,6 +1,6 @@
 import type { Column, TextFormatter, ValueFormatterParams, ValueService } from '@ag-grid-community/core';
 
-import type { ISetDisplayValueModel} from './iSetDisplayValueModel';
+import type { ISetDisplayValueModel } from './iSetDisplayValueModel';
 import { SetFilterDisplayValue } from './iSetDisplayValueModel';
 
 export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {

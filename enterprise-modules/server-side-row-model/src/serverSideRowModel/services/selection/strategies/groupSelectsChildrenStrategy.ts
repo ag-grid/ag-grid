@@ -7,15 +7,9 @@ import type {
     IServerSideGroupSelectionState,
     ISetNodesSelectedParams,
     RowNode,
-    SelectionEventSourceType} from '@ag-grid-community/core';
-import {
-    Autowired,
-    BeanStub,
-    ColumnModel,
-    Events,
-    IServerSideStore,
-    PostConstruct
+    SelectionEventSourceType,
 } from '@ag-grid-community/core';
+import { Autowired, BeanStub, ColumnModel, Events, IServerSideStore, PostConstruct } from '@ag-grid-community/core';
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
 

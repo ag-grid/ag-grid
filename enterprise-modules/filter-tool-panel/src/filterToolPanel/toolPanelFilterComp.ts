@@ -1,8 +1,4 @@
-import type {
-    ColumnNameService,
-    FilterManager,
-    FilterOpenedEvent,
-    IFilterComp} from '@ag-grid-community/core';
+import type { ColumnNameService, FilterManager, FilterOpenedEvent, IFilterComp } from '@ag-grid-community/core';
 import {
     Autowired,
     Column,

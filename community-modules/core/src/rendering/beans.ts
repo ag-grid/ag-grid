@@ -7,7 +7,7 @@ import type { VisibleColsService } from '../columns/visibleColsService';
 import type { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import type { UserComponentRegistry } from '../components/framework/userComponentRegistry';
-import type { Context} from '../context/context';
+import type { Context } from '../context/context';
 import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
 import type { CtrlsFactory } from '../ctrlsFactory';
 import type { CtrlsService } from '../ctrlsService';

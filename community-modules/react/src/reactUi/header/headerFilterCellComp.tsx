@@ -2,10 +2,9 @@ import type {
     HeaderFilterCellCtrl,
     IFloatingFilter,
     IHeaderFilterCellComp,
-    UserCompDetails} from '@ag-grid-community/core';
-import {
-    AgPromise
+    UserCompDetails,
 } from '@ag-grid-community/core';
+import { AgPromise } from '@ag-grid-community/core';
 import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { CustomContext } from '../../shared/customComp/customContext';

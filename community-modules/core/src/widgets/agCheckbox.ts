@@ -1,4 +1,4 @@
-import type { CheckboxChangedEvent} from '../events';
+import type { CheckboxChangedEvent } from '../events';
 import { Events } from '../events';
 import type { AgCheckboxParams, LabelAlignment } from '../interfaces/agFieldParams';
 import { AgAbstractInputField } from './agAbstractInputField';

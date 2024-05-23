@@ -1,4 +1,4 @@
-import type { ColumnModel} from './columns/columnModel';
+import type { ColumnModel } from './columns/columnModel';
 import { convertSourceType } from './columns/columnModel';
 import { BeanStub } from './context/beanStub';
 import { Autowired, Bean, PostConstruct } from './context/context';

@@ -1,8 +1,4 @@
-import type {
-    Beans,
-    IGetRowsParams,
-    LoadSuccessParams,
-    NumberSequence} from '@ag-grid-community/core';
+import type { Beans, IGetRowsParams, LoadSuccessParams, NumberSequence } from '@ag-grid-community/core';
 import {
     Autowired,
     PostConstruct,

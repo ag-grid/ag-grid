@@ -1,12 +1,13 @@
 import type {
     FloatingFilterInputService,
-    ITextInputFloatingFilterParams} from '../../floating/provided/textInputFloatingFilter';
+    ITextInputFloatingFilterParams,
+} from '../../floating/provided/textInputFloatingFilter';
 import {
     FloatingFilterTextInputService,
     TextInputFloatingFilter,
 } from '../../floating/provided/textInputFloatingFilter';
 import type { SimpleFilterModelFormatter } from '../simpleFilter';
-import type { TextFilterModel} from './textFilter';
+import type { TextFilterModel } from './textFilter';
 import { TextFilter, TextFilterModelFormatter } from './textFilter';
 
 export interface ITextFloatingFilterParams extends ITextInputFloatingFilterParams {}

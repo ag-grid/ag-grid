@@ -1,4 +1,4 @@
-import type { IAggFunc} from '@ag-grid-community/core';
+import type { IAggFunc } from '@ag-grid-community/core';
 import { AgSelect, AgToggleButton, PostConstruct, _clearElement } from '@ag-grid-community/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 

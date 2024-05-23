@@ -1,7 +1,4 @@
-import type {
-    AgSelectParams,
-    AgToggleButtonParams,
-    ListOption} from '@ag-grid-community/core';
+import type { AgSelectParams, AgToggleButtonParams, ListOption } from '@ag-grid-community/core';
 import {
     AgSelect,
     AgToggleButton,
@@ -19,7 +16,7 @@ import { AgColorPicker } from '../../../../../widgets/agColorPicker';
 import { AgSlider } from '../../../../../widgets/agSlider';
 import { ChartController } from '../../../chartController';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
-import type { ChartSeriesType} from '../../../utils/seriesTypeMapper';
+import type { ChartSeriesType } from '../../../utils/seriesTypeMapper';
 import { getSeriesType, isPieChartSeries } from '../../../utils/seriesTypeMapper';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import { FontPanel } from '../fontPanel';

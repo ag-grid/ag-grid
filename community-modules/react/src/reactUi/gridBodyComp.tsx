@@ -1,6 +1,4 @@
-import type {
-    ComponentClass,
-    IGridBodyComp} from '@ag-grid-community/core';
+import type { ComponentClass, IGridBodyComp } from '@ag-grid-community/core';
 import {
     CssClassManager,
     FakeHScrollComp,

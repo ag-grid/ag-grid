@@ -1,6 +1,4 @@
-import type {
-    AgComponentSelector,
-    ColumnModel} from '@ag-grid-community/core';
+import type { AgComponentSelector, ColumnModel } from '@ag-grid-community/core';
 import {
     AgCheckbox,
     AgInputTextField,

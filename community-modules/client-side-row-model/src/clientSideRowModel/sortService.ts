@@ -10,14 +10,9 @@ import type {
     ShowRowGroupColsService,
     SortOption,
     SortedRowNode,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    _missing,
-    _warnOnce,
+    WithoutGridCommon,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, _missing, _warnOnce } from '@ag-grid-community/core';
 
 @Bean('sortService')
 export class SortService extends BeanStub {

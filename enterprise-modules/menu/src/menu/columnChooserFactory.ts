@@ -6,13 +6,9 @@ import type {
     IColumnChooserFactory,
     ShowColumnChooserParams,
     VisibleColsService,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Events
+    WithoutGridCommon,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, Events } from '@ag-grid-community/core';
 import { AgPrimaryCols } from '@ag-grid-enterprise/column-tool-panel';
 import { AgDialog } from '@ag-grid-enterprise/core';
 

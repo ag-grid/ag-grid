@@ -1,15 +1,5 @@
-import type {
-    Column,
-    ColumnModel,
-    GridApi,
-    RowNode,
-    ValueService} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    _includes,
-} from '@ag-grid-community/core';
+import type { Column, ColumnModel, GridApi, RowNode, ValueService } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, _includes } from '@ag-grid-community/core';
 
 @Bean('chartCrossFilterService')
 export class ChartCrossFilterService extends BeanStub {

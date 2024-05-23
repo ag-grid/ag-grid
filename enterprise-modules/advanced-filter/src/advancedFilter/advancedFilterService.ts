@@ -8,22 +8,19 @@ import type {
     IRowNode,
     NewColumnsLoadedEvent,
     ValueService,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Events,
-    PostConstruct,
-    _exists,
-    _warnOnce,
+    WithoutGridCommon,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, Events, PostConstruct, _exists, _warnOnce } from '@ag-grid-community/core';
 
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import type { AutocompleteEntry } from './autocomplete/autocompleteParams';
 import { FilterExpressionParser } from './filterExpressionParser';
-import type { ExpressionProxy, FilterExpressionFunction, FilterExpressionFunctionParams } from './filterExpressionUtils';
+import type {
+    ExpressionProxy,
+    FilterExpressionFunction,
+    FilterExpressionFunctionParams,
+} from './filterExpressionUtils';
 
 @Bean('advancedFilterService')
 export class AdvancedFilterService extends BeanStub implements IAdvancedFilterService {

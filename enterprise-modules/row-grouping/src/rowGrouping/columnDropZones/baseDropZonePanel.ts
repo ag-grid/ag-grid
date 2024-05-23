@@ -5,12 +5,9 @@ import type {
     DragItem,
     DraggingEvent,
     DropTarget,
-    FuncColsService} from '@ag-grid-community/core';
-import {
-    Autowired,
-    DragSourceType,
-    Events
+    FuncColsService,
 } from '@ag-grid-community/core';
+import { Autowired, DragSourceType, Events } from '@ag-grid-community/core';
 import type { PillDropZonePanelParams } from '@ag-grid-enterprise/core';
 import { PillDropZonePanel } from '@ag-grid-enterprise/core';
 

@@ -1,7 +1,7 @@
 import { brk, paragraph, text } from 'mdast-builder';
 
 import { IS_MARKDOC_FIELD, MARKDOC_TAG_NAME } from '../constants';
-import type { Attribute} from './getAttributeValue';
+import type { Attribute } from './getAttributeValue';
 import { getAttributeValue } from './getAttributeValue';
 import { childrenWithoutVerticalBar } from './removeStartingVerticalBar';
 

@@ -1,12 +1,5 @@
-import type {
-    ICellRenderer,
-    ISparklineCellRendererParams,
-    ResizeObserverService} from '@ag-grid-community/core';
-import {
-    Autowired,
-    Component,
-    RefSelector
-} from '@ag-grid-community/core';
+import type { ICellRenderer, ISparklineCellRendererParams, ResizeObserverService } from '@ag-grid-community/core';
+import { Autowired, Component, RefSelector } from '@ag-grid-community/core';
 
 import type { SparklineFactoryOptions } from './sparkline/agSparkline';
 import { AgSparkline } from './sparkline/agSparkline';

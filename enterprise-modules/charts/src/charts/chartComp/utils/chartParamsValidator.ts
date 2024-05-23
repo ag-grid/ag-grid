@@ -6,10 +6,9 @@ import type {
     UpdateChartParams,
     UpdateCrossFilterChartParams,
     UpdatePivotChartParams,
-    UpdateRangeChartParams} from '@ag-grid-community/core';
-import {
-    _warnOnce,
+    UpdateRangeChartParams,
 } from '@ag-grid-community/core';
+import { _warnOnce } from '@ag-grid-community/core';
 import { _ModuleSupport } from 'ag-charts-community';
 
 import type { CommonCreateChartParams } from '../../chartService';

@@ -8,7 +8,8 @@ import type {
     ColumnNameService,
     ColumnToolPanelState,
     IProvidedColumn,
-    VirtualListModel} from '@ag-grid-community/core';
+    VirtualListModel,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Component,

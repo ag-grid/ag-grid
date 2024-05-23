@@ -13,7 +13,7 @@ import { _createIconNoSpan } from '../../../utils/icon';
 import { _escapeString } from '../../../utils/string';
 import { Component } from '../../../widgets/component';
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import type { LongTapEvent, TapEvent} from '../../../widgets/touchListener';
+import type { LongTapEvent, TapEvent } from '../../../widgets/touchListener';
 import { TouchListener } from '../../../widgets/touchListener';
 import { SortIndicatorComp } from './sortIndicatorComp';
 

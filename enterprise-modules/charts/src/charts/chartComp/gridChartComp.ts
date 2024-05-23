@@ -10,7 +10,8 @@ import type {
     PopupService,
     SeriesChartType,
     UpdateChartParams,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     Autowired,
     Component,

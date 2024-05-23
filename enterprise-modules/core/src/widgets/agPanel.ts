@@ -1,6 +1,4 @@
-import type {
-    PositionableOptions,
-    ResizableStructure} from '@ag-grid-community/core';
+import type { PositionableOptions, ResizableStructure } from '@ag-grid-community/core';
 import {
     Component,
     PositionableFeature,

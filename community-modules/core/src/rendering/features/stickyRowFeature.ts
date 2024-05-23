@@ -438,13 +438,13 @@ export class StickyRowFeature extends BeanStub {
     public ensureRowHeightsValid(): boolean {
         let anyChange = false;
         const updateRowHeight = (ctrl: RowCtrl) => {
-            const rowNode = ctrl.getRowNode()
+            const rowNode = ctrl.getRowNode();
             if (rowNode.rowHeightEstimated) {
                 const rowHeight = this.gos.getRowHeightForNode(rowNode);
                 rowNode.setRowHeight(rowHeight.height);
                 anyChange = true;
             }
-        }
+        };
         this.stickyTopRowCtrls.forEach(updateRowHeight);
         this.stickyBottomRowCtrls.forEach(updateRowHeight);
         return anyChange;

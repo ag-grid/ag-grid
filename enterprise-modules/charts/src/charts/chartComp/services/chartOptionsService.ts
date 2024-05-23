@@ -1,12 +1,5 @@
-import type {
-    AgChartThemeOverrides,
-    ChartOptionsChanged,
-    ChartType,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    BeanStub,
-    Events
-} from '@ag-grid-community/core';
+import type { AgChartThemeOverrides, ChartOptionsChanged, ChartType, WithoutGridCommon } from '@ag-grid-community/core';
+import { BeanStub, Events } from '@ag-grid-community/core';
 import type {
     AgBaseThemeableChartOptions,
     AgCartesianAxesTheme,
@@ -15,22 +8,15 @@ import type {
     AgCartesianChartOptions,
     AgChartOptions,
     AgPolarAxesTheme,
-    AgPolarAxisType} from 'ag-charts-community';
-import {
-    AgCharts
+    AgPolarAxisType,
 } from 'ag-charts-community';
+import { AgCharts } from 'ag-charts-community';
 
 import type { ChartController } from '../chartController';
 import type { AgChartActual, AgChartAxisType } from '../utils/integration';
 import { get, set } from '../utils/object';
-import type {
-    ChartSeriesType,
-    ChartThemeOverridesSeriesType} from '../utils/seriesTypeMapper';
-import {
-    getSeriesType,
-    isCartesian,
-    isSeriesType,
-} from '../utils/seriesTypeMapper';
+import type { ChartSeriesType, ChartThemeOverridesSeriesType } from '../utils/seriesTypeMapper';
+import { getSeriesType, isCartesian, isSeriesType } from '../utils/seriesTypeMapper';
 
 export interface ChartOptionsProxy {
     getValue<T = string>(expression: string, calculated?: boolean): T;

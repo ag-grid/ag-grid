@@ -13,7 +13,8 @@ import type {
     MultiFilterParams,
     ProvidedFilterModel,
     RowNode,
-    UserComponentFactory} from '@ag-grid-community/core';
+    UserComponentFactory,
+} from '@ag-grid-community/core';
 import {
     AgMenuItemRenderer,
     AgPromise,

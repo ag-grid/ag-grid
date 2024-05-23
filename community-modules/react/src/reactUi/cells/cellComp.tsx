@@ -6,22 +6,11 @@ import type {
     ICellEditor,
     ICellEditorComp,
     ICellRendererComp,
-    UserCompDetails} from '@ag-grid-community/core';
-import {
-    CssClassManager,
-    _removeFromParent,
+    UserCompDetails,
 } from '@ag-grid-community/core';
-import type {
-    MutableRefObject} from 'react';
-import React, {
-    memo,
-    useCallback,
-    useContext,
-    useLayoutEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
+import { CssClassManager, _removeFromParent } from '@ag-grid-community/core';
+import type { MutableRefObject } from 'react';
+import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComponentProxy';
 import { CustomContext } from '../../shared/customComp/customContext';

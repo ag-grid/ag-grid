@@ -23,10 +23,8 @@ export const clamp = (value: number, min: number, max: number) => Math.max(min, 
 
 export const logErrorMessage = (message: unknown, error?: unknown) => {
     if (error) {
-         
         console.error(message, error);
     } else {
-         
         console.error(message);
     }
 };

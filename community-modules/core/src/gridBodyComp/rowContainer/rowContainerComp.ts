@@ -5,17 +5,11 @@ import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
 import { _setAriaRole } from '../../utils/aria';
 import { _ensureDomOrder, _insertWithDomOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
-import type { AgComponentSelector} from '../../widgets/component';
+import type { AgComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
-import type {
-    IRowContainerComp,
-    RowContainerType} from './rowContainerCtrl';
-import {
-    RowContainerCtrl,
-    RowContainerName,
-    getRowContainerTypeForName,
-} from './rowContainerCtrl';
+import type { IRowContainerComp, RowContainerType } from './rowContainerCtrl';
+import { RowContainerCtrl, RowContainerName, getRowContainerTypeForName } from './rowContainerCtrl';
 
 function templateFactory(): string {
     const name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;

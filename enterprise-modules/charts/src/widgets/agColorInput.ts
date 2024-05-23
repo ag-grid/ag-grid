@@ -1,4 +1,4 @@
-import type { AgComponentSelector} from '@ag-grid-community/core';
+import type { AgComponentSelector } from '@ag-grid-community/core';
 import { AgInputTextField, Autowired, RefSelector } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
 

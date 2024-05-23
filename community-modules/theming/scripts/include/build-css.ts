@@ -108,7 +108,6 @@ const applyPostcssPlugin = async (css: string, path: string, ...plugins: postcss
 };
 
 const fatalError = (message: string) => {
-     
     console.error(message);
     process.exit(1);
 };

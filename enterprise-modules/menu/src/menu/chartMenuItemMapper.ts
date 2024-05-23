@@ -4,7 +4,8 @@ import type {
     GridOptionsService,
     IChartService,
     LocaleService,
-    MenuItemDef} from '@ag-grid-community/core';
+    MenuItemDef,
+} from '@ag-grid-community/core';
 import {
     Bean,
     BeanStub,

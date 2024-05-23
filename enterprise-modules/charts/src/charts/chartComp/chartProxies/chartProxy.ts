@@ -1,4 +1,9 @@
-import type { ChartType, AgChartTheme as GridAgChartTheme, SeriesChartType, SeriesGroupType } from '@ag-grid-community/core';
+import type {
+    ChartType,
+    AgChartTheme as GridAgChartTheme,
+    SeriesChartType,
+    SeriesGroupType,
+} from '@ag-grid-community/core';
 import type {
     AgChartInstance,
     AgChartOptions,
@@ -6,17 +11,14 @@ import type {
     AgChartThemeOverrides,
     AgChartThemePalette,
     AgCommonThemeableChartOptions,
-    AgCrosshairOptions} from 'ag-charts-community';
-import {
-    AgCharts,
-    _ModuleSupport,
-    _Theme,
+    AgCrosshairOptions,
 } from 'ag-charts-community';
+import { AgCharts, _ModuleSupport, _Theme } from 'ag-charts-community';
 
 import type { CrossFilteringContext } from '../../chartService';
 import { deproxy } from '../utils/integration';
 import { get } from '../utils/object';
-import type { ChartSeriesType} from '../utils/seriesTypeMapper';
+import type { ChartSeriesType } from '../utils/seriesTypeMapper';
 import { getSeriesType } from '../utils/seriesTypeMapper';
 import { createAgChartTheme, lookupCustomChartTheme } from './chartTheme';
 

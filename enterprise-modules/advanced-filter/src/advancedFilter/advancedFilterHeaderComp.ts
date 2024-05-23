@@ -1,7 +1,4 @@
-import type {
-    ColumnModel,
-    FocusService,
-    HeaderNavigationService} from '@ag-grid-community/core';
+import type { ColumnModel, FocusService, HeaderNavigationService } from '@ag-grid-community/core';
 import {
     Autowired,
     Component,
