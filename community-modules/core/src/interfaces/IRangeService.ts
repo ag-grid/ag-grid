@@ -1,9 +1,9 @@
-import { BaseBean } from '../context/bean';
-import { CellPosition } from '../entities/cellPositionUtils';
-import { Column } from '../entities/column';
-import { RowPosition } from '../entities/rowPositionUtils';
-import { RowPinnedType } from '../interfaces/iRowNode';
-import { CellCtrl } from '../rendering/cell/cellCtrl';
+import type { BaseBean } from '../context/bean';
+import type { CellPosition } from '../entities/cellPositionUtils';
+import type { Column } from '../entities/column';
+import type { RowPosition } from '../entities/rowPositionUtils';
+import type { RowPinnedType } from '../interfaces/iRowNode';
+import type { CellCtrl } from '../rendering/cell/cellCtrl';
 
 export interface IRangeService {
     isEmpty(): boolean;

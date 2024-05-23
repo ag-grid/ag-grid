@@ -1,8 +1,8 @@
-import { AgCartesianAxisOptions, AgCartesianChartOptions } from 'ag-charts-community';
+import type { AgCartesianAxisOptions, AgCartesianChartOptions } from 'ag-charts-community';
 
 import { ChartDataModel } from '../../model/chartDataModel';
 import { CartesianChartProxy } from '../cartesian/cartesianChartProxy';
-import { ChartProxyParams, UpdateParams } from '../chartProxy';
+import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 
 export abstract class StatisticalChartProxy<
     TSeries extends 'box-plot' | 'range-area' | 'range-bar',
@@ -63,7 +63,7 @@ export abstract class StatisticalChartProxy<
         };
 
         return data.reduce((acc, datum) => {
-            let category = getCategory(datum);
+            const category = getCategory(datum);
             const existingCategoryData = acc.get(category);
             if (existingCategoryData) {
                 existingCategoryData.push(datum);

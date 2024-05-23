@@ -1,27 +1,26 @@
-import {
+import type {
     AdvancedFilterEnabledChangedEvent,
     AdvancedFilterModel,
-    Autowired,
-    Bean,
-    BeanStub,
     ColumnModel,
     DataTypeService,
-    Events,
     IAdvancedFilterService,
     IRowModel,
     IRowNode,
     NewColumnsLoadedEvent,
     ValueService,
     WithoutGridCommon,
-    _exists,
-    _warnOnce,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, Events, _exists, _warnOnce } from '@ag-grid-community/core';
 
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
-import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
-import { AutocompleteEntry } from './autocomplete/autocompleteParams';
+import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
+import type { AutocompleteEntry } from './autocomplete/autocompleteParams';
 import { FilterExpressionParser } from './filterExpressionParser';
-import { ExpressionProxy, FilterExpressionFunction, FilterExpressionFunctionParams } from './filterExpressionUtils';
+import type {
+    ExpressionProxy,
+    FilterExpressionFunction,
+    FilterExpressionFunctionParams,
+} from './filterExpressionUtils';
 
 @Bean('advancedFilterService')
 export class AdvancedFilterService extends BeanStub implements IAdvancedFilterService {

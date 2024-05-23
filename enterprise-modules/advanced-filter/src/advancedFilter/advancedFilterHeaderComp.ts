@@ -1,10 +1,8 @@
+import type { ColumnModel, FocusService, HeaderNavigationService } from '@ag-grid-community/core';
 import {
     Autowired,
-    ColumnModel,
     Component,
     Events,
-    FocusService,
-    HeaderNavigationService,
     KeyCode,
     _clearElement,
     _setAriaColIndex,

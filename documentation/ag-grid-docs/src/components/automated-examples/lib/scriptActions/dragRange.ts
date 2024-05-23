@@ -1,4 +1,4 @@
-import { Group } from '@tweenjs/tween.js';
+import type { Group } from '@tweenjs/tween.js';
 
 import { type AgElementFinder } from '../agElements';
 import { type Mouse } from '../createMouse';

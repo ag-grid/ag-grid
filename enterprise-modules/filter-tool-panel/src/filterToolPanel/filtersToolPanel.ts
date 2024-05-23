@@ -1,14 +1,13 @@
-import {
+import type {
     ColDef,
     ColGroupDef,
-    Component,
     FiltersToolPanelState,
     IFiltersToolPanel,
     IToolPanelComp,
     IToolPanelFiltersCompParams,
     IToolPanelParams,
-    RefSelector,
 } from '@ag-grid-community/core';
+import { Component, RefSelector } from '@ag-grid-community/core';
 
 import { AgFiltersToolPanelHeader } from './agFiltersToolPanelHeader';
 import { AgFiltersToolPanelList } from './agFiltersToolPanelList';

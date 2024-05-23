@@ -1,17 +1,18 @@
-import { ColumnModel } from '../../columns/columnModel';
-import { ColumnMoveService } from '../../columns/columnMoveService';
-import { VisibleColsService } from '../../columns/visibleColsService';
+import type { ColumnModel } from '../../columns/columnModel';
+import type { ColumnMoveService } from '../../columns/columnMoveService';
+import type { VisibleColsService } from '../../columns/visibleColsService';
 import { HorizontalDirection } from '../../constants/direction';
 import { BeanStub } from '../../context/beanStub';
 import { Autowired } from '../../context/context';
-import { CtrlsService } from '../../ctrlsService';
-import { DragAndDropService, DragSourceType, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
-import { Column, ColumnPinnedType } from '../../entities/column';
-import { ColumnEventType } from '../../events';
-import { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
+import type { CtrlsService } from '../../ctrlsService';
+import type { DraggingEvent } from '../../dragAndDrop/dragAndDropService';
+import { DragAndDropService, DragSourceType } from '../../dragAndDrop/dragAndDropService';
+import type { Column, ColumnPinnedType } from '../../entities/column';
+import type { ColumnEventType } from '../../events';
+import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
 import { _exists, _missing } from '../../utils/generic';
 import { ColumnMoveHelper } from '../columnMoveHelper';
-import { DropListener } from './bodyDropTarget';
+import type { DropListener } from './bodyDropTarget';
 
 export class MoveColumnFeature extends BeanStub implements DropListener {
     @Autowired('columnModel') private columnModel: ColumnModel;

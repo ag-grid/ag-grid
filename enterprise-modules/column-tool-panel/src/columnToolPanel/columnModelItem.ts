@@ -1,9 +1,9 @@
 import {
-    AgEventListener,
-    Column,
-    IEventEmitter,
+    type AgEventListener,
+    type Column,
+    type IEventEmitter,
     LocalEventService,
-    ProvidedColumnGroup,
+    type ProvidedColumnGroup,
 } from '@ag-grid-community/core';
 
 export class ColumnModelItem implements IEventEmitter {

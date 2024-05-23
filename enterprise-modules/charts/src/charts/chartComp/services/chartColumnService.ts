@@ -1,11 +1,7 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
     Column,
     ColumnModel,
     ColumnNameService,
-    Events,
     FuncColsService,
     RowNode,
     RowPositionUtils,
@@ -13,6 +9,7 @@ import {
     ValueService,
     VisibleColsService,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, Events } from '@ag-grid-community/core';
 
 @Bean('chartColumnService')
 export class ChartColumnService extends BeanStub {

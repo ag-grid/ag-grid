@@ -1,7 +1,4 @@
-import {
-    Autowired,
-    BeanStub,
-    Events,
+import type {
     IRowModel,
     IServerSideSelectionState,
     ISetNodesSelectedParams,
@@ -10,8 +7,9 @@ import {
     SelectionEventSourceType,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
+import { Autowired, BeanStub, Events } from '@ag-grid-community/core';
 
-import { ISelectionStrategy } from './iSelectionStrategy';
+import type { ISelectionStrategy } from './iSelectionStrategy';
 
 interface SelectedState {
     selectAll: boolean;

@@ -1,4 +1,4 @@
-import {
+import type {
     FuncColsService,
     GridOptionsService,
     IClientSideRowModel,
@@ -6,9 +6,8 @@ import {
     SetFilterParams,
     ValueFormatterFunc,
     ValueService,
-    _makeNull,
-    _toStringOrNull,
 } from '@ag-grid-community/core';
+import { _makeNull, _toStringOrNull } from '@ag-grid-community/core';
 
 import { mock } from '../test-utils/mock';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';

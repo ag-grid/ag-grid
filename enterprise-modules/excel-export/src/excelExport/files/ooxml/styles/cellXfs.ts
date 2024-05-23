@@ -1,6 +1,7 @@
-import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
+import type { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 
-import xfFactory, { Xf } from './xf';
+import type { Xf } from './xf';
+import xfFactory from './xf';
 
 const cellXfsFactory: ExcelOOXMLTemplate = {
     getTemplate(xfs: Xf[]) {

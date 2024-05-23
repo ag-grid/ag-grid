@@ -1,14 +1,14 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean } from '../context/context';
-import { ColDef, ColGroupDef } from '../entities/colDef';
-import { GridOptions } from '../entities/gridOptions';
+import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { GridOptions } from '../entities/gridOptions';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { _warnOnce } from '../utils/function';
 import { _fuzzyCheckStrings } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { GRID_OPTIONS_VALIDATORS, GRID_OPTION_DEFAULTS } from './rules/gridOptionsValidations';
-import { DependencyValidator, OptionsValidation, OptionsValidator } from './validationTypes';
+import type { DependencyValidator, OptionsValidation, OptionsValidator } from './validationTypes';
 
 @Bean('validationService')
 export class ValidationService extends BeanStub {

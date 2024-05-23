@@ -1,6 +1,6 @@
 import { basename } from 'path';
 
-import { ExampleConfig, ImportType, ParsedBindings } from '../types';
+import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
     addBindingImports,
@@ -30,7 +30,7 @@ function getModuleImports(
     extraCoreTypes: string[],
     allStylesheets: string[]
 ): string[] {
-    let imports = [
+    const imports = [
         "import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';",
         "import { createRoot } from 'react-dom/client';",
         "import { AgGridReact } from '@ag-grid-community/react';",
@@ -49,7 +49,7 @@ function getModuleImports(
         allStylesheets.forEach((styleSheet) => imports.push(`import './${basename(styleSheet)}';`));
     }
 
-    let propertyInterfaces = getPropertyInterfaces(bindings.properties);
+    const propertyInterfaces = getPropertyInterfaces(bindings.properties);
     const bImports = [...(bindings.imports || [])];
     bImports.push({
         module: `'@ag-grid-community/core'`,
@@ -105,7 +105,7 @@ function getPackageImports(
         allStylesheets.forEach((styleSheet) => imports.push(`import './${basename(styleSheet)}';`));
     }
 
-    let propertyInterfaces = getPropertyInterfaces(bindings.properties);
+    const propertyInterfaces = getPropertyInterfaces(bindings.properties);
     const bImports = [...(bindings.imports || [])];
     bImports.push({
         module: `'ag-grid-community'`,

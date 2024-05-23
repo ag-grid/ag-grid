@@ -1,5 +1,5 @@
-import { ChartType } from '@ag-grid-community/core';
-import { _Scene } from 'ag-charts-community';
+import type { ChartType } from '@ag-grid-community/core';
+import type { _Scene } from 'ag-charts-community';
 
 import { createPolarPaths } from '../miniChartHelpers';
 import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';

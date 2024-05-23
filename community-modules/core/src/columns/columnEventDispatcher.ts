@@ -1,8 +1,8 @@
 import { BeanStub } from '../context/beanStub';
 import { Bean } from '../context/context';
-import { Column } from '../entities/column';
+import type { Column } from '../entities/column';
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
-import {
+import type {
     ColumnEvent,
     ColumnEventType,
     ColumnEverythingChangedEvent,
@@ -15,12 +15,12 @@ import {
     ColumnValueChangedEvent,
     ColumnVisibleEvent,
     DisplayedColumnsChangedEvent,
-    Events,
     GridColumnsChangedEvent,
     NewColumnsLoadedEvent,
     VirtualColumnsChangedEvent,
 } from '../events';
-import { WithoutGridCommon } from '../interfaces/iCommon';
+import { Events } from '../events';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
 
 /* 
 Created this class to:

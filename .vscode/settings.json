@@ -2,6 +2,10 @@
     "editor.insertSpaces": true,
     "editor.tabSize": 4,
     "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
     "search.exclude": {
         "**/ag-grid-docs/_dev/**": true,
         "**/ag-grid-docs/.cache/**": true,

@@ -1,7 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import { Bean } from '../context/context';
 import { _warnOnce } from '../utils/function';
-import { AgComponentSelector, ComponentClass } from '../widgets/component';
+import type { AgComponentSelector, ComponentClass } from '../widgets/component';
 
 @Bean('agStackComponentsRegistry')
 export class AgStackComponentsRegistry extends BeanStub {

@@ -1,12 +1,14 @@
-import {
-    Autowired,
-    Component,
+import type {
     DragAndDropService,
     DragItem,
     DragSourceType,
     DraggingEvent,
     DropTarget,
     FocusService,
+} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Component,
     KeyCode,
     ManagedFocusFeature,
     PositionableFeature,

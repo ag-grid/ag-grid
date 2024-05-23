@@ -1,21 +1,15 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
     Beans,
-    Events,
     FocusService,
     IRowModel,
     IViewportDatasource,
     ModelUpdatedEvent,
     RowBounds,
     RowModelType,
-    RowNode,
     RowRenderer,
     WithoutGridCommon,
-    _iterateObject,
-    _missing,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, Events, RowNode, _iterateObject, _missing } from '@ag-grid-community/core';
 
 @Bean('rowModel')
 export class ViewportRowModel extends BeanStub implements IRowModel {

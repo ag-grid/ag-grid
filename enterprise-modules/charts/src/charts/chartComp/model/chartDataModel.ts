@@ -1,8 +1,5 @@
-import {
-    Autowired,
-    BeanStub,
+import type {
     CellRange,
-    CellRangeType,
     ChartType,
     Column,
     IAggFunc,
@@ -10,13 +7,14 @@ import {
     PartialCellRange,
     SeriesChartType,
     SeriesGroupType,
-    _includes,
 } from '@ag-grid-community/core';
-import { AgCartesianAxisType } from 'ag-charts-community';
+import { Autowired, BeanStub, CellRangeType, _includes } from '@ag-grid-community/core';
+import type { AgCartesianAxisType } from 'ag-charts-community';
 
-import { ChartDatasource, ChartDatasourceParams } from '../datasource/chartDatasource';
+import type { ChartDatasourceParams } from '../datasource/chartDatasource';
+import { ChartDatasource } from '../datasource/chartDatasource';
 import { ChartColumnService } from '../services/chartColumnService';
-import { ChartTranslationService } from '../services/chartTranslationService';
+import type { ChartTranslationService } from '../services/chartTranslationService';
 import { getMaxNumSeries, getSeriesType, isComboChart, isHierarchical } from '../utils/seriesTypeMapper';
 import { ComboChartModel } from './comboChartModel';
 

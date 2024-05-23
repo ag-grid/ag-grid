@@ -1,13 +1,14 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired } from '../context/context';
-import { AgEvent, AgEventListener } from '../events';
-import { GridOptionsService } from '../gridOptionsService';
-import { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
+import type { AgEvent, AgEventListener } from '../events';
+import type { GridOptionsService } from '../gridOptionsService';
+import type { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
 import { _last } from '../utils/array';
-import { ColGroupDef } from './colDef';
-import { AbstractColDef } from './colDef';
-import { Column, ColumnPinnedType } from './column';
-import { ProvidedColumnGroup } from './providedColumnGroup';
+import type { ColGroupDef } from './colDef';
+import type { AbstractColDef } from './colDef';
+import type { ColumnPinnedType } from './column';
+import { Column } from './column';
+import type { ProvidedColumnGroup } from './providedColumnGroup';
 
 export type ColumnGroupShowType = 'open' | 'closed';
 

@@ -1,10 +1,12 @@
 import { Autowired, Component } from '@ag-grid-community/core';
-import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import { AgColorPicker } from '../../../../../widgets/agColorPicker';
-import { AgSlider, AgSliderParams } from '../../../../../widgets/agSlider';
-import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
-import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import type { AgSliderParams } from '../../../../../widgets/agSlider';
+import { AgSlider } from '../../../../../widgets/agSlider';
+import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class ShadowPanel extends Component {
     public static TEMPLATE /* html */ = `<div>

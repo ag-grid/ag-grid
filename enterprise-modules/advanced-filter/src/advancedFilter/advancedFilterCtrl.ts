@@ -1,13 +1,15 @@
-import {
+import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterEnabledChangedEvent,
-    Autowired,
-    BeanStub,
     CtrlsService,
-    Events,
     IAdvancedFilterCtrl,
     PopupService,
     WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    Autowired,
+    BeanStub,
+    Events,
     _getAbsoluteHeight,
     _getAbsoluteWidth,
     _removeFromParent,
@@ -15,7 +17,7 @@ import {
 import { AgDialog } from '@ag-grid-enterprise/core';
 
 import { AdvancedFilterComp } from './advancedFilterComp';
-import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
+import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import { AdvancedFilterHeaderComp } from './advancedFilterHeaderComp';
 import { AdvancedFilterBuilderComp } from './builder/advancedFilterBuilderComp';
 

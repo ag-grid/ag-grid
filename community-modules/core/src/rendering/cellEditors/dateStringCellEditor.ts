@@ -1,10 +1,11 @@
-import { DataTypeService } from '../../columns/dataTypeService';
+import type { DataTypeService } from '../../columns/dataTypeService';
 import { Autowired } from '../../context/context';
-import { ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _serialiseDate } from '../../utils/date';
 import { _exists } from '../../utils/generic';
 import { AgInputDateField } from '../../widgets/agInputDateField';
-import { CellEditorInput, SimpleCellEditor } from './simpleCellEditor';
+import type { CellEditorInput } from './simpleCellEditor';
+import { SimpleCellEditor } from './simpleCellEditor';
 
 export interface IDateStringCellEditorParams<TData = any, TContext = any>
     extends ICellEditorParams<TData, string, TContext> {

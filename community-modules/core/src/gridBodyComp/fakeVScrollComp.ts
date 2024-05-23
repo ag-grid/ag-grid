@@ -1,6 +1,6 @@
 import { Events } from '../eventKeys';
 import { _isVisible, _setFixedWidth } from '../utils/dom';
-import { AgComponentSelector } from '../widgets/component';
+import type { AgComponentSelector } from '../widgets/component';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { SetHeightFeature } from './rowContainer/setHeightFeature';
 

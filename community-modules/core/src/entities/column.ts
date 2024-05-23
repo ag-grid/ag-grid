@@ -1,19 +1,19 @@
-import { ColumnState } from '../columns/columnApplyStateService';
+import type { ColumnState } from '../columns/columnApplyStateService';
 import { BeanStub } from '../context/beanStub';
 import { Autowired } from '../context/context';
-import { AgEvent, AgEventListener, ColumnEvent, ColumnEventType } from '../events';
-import { BrandedType } from '../interfaces/brandedType';
-import { IEventEmitter } from '../interfaces/iEventEmitter';
-import { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
-import { IProvidedColumn } from '../interfaces/iProvidedColumn';
-import { IRowNode } from '../interfaces/iRowNode';
+import type { AgEvent, AgEventListener, ColumnEvent, ColumnEventType } from '../events';
+import type { BrandedType } from '../interfaces/brandedType';
+import type { IEventEmitter } from '../interfaces/iEventEmitter';
+import type { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
+import type { IProvidedColumn } from '../interfaces/iProvidedColumn';
+import type { IRowNode } from '../interfaces/iRowNode';
 import { LocalEventService } from '../localEventService';
 import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
-import { ColumnHoverService } from '../rendering/columnHoverService';
+import type { ColumnHoverService } from '../rendering/columnHoverService';
 import { _warnOnce } from '../utils/function';
 import { _attrToNumber, _exists, _missing } from '../utils/generic';
 import { _mergeDeep } from '../utils/object';
-import {
+import type {
     AbstractColDef,
     BaseColDefParams,
     ColDef,
@@ -24,8 +24,8 @@ import {
     RowSpanParams,
     SortDirection,
 } from './colDef';
-import { ColumnGroup, ColumnGroupShowType } from './columnGroup';
-import { ProvidedColumnGroup } from './providedColumnGroup';
+import type { ColumnGroup, ColumnGroupShowType } from './columnGroup';
+import type { ProvidedColumnGroup } from './providedColumnGroup';
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 export type ColumnEventName =

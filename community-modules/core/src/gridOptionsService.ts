@@ -1,20 +1,26 @@
 import { ComponentUtil } from './components/componentUtil';
 import { BeanStub } from './context/beanStub';
 import { Autowired, Bean } from './context/context';
-import { DomLayoutType, GridOptions } from './entities/gridOptions';
-import { ALWAYS_SYNC_GLOBAL_EVENTS, AgEvent, Events } from './events';
-import { GridApi } from './gridApi';
-import { GetGroupAggFilteringParams, GetGroupIncludeFooterParams, RowHeightParams } from './interfaces/iCallbackParams';
-import { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
-import { RowModelType } from './interfaces/iRowModel';
-import { IRowNode } from './interfaces/iRowNode';
+import type { DomLayoutType, GridOptions } from './entities/gridOptions';
+import type { AgEvent } from './events';
+import { ALWAYS_SYNC_GLOBAL_EVENTS, Events } from './events';
+import type { GridApi } from './gridApi';
+import type {
+    GetGroupAggFilteringParams,
+    GetGroupIncludeFooterParams,
+    RowHeightParams,
+} from './interfaces/iCallbackParams';
+import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
+import type { RowModelType } from './interfaces/iRowModel';
+import type { IRowNode } from './interfaces/iRowNode';
 import { LocalEventService } from './localEventService';
-import { AnyGridOptions, INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
+import type { AnyGridOptions } from './propertyKeys';
+import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
 import { _getScrollbarWidth } from './utils/browser';
 import { _warnOnce } from './utils/function';
 import { _exists, _missing } from './utils/generic';
 import { GRID_OPTION_DEFAULTS } from './validation/rules/gridOptionsValidations';
-import { ValidationService } from './validation/validationService';
+import type { ValidationService } from './validation/validationService';
 
 type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never;

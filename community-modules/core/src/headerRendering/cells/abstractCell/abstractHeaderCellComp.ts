@@ -1,5 +1,5 @@
 import { Component } from '../../../widgets/component';
-import { AbstractHeaderCellCtrl } from './abstractHeaderCellCtrl';
+import type { AbstractHeaderCellCtrl } from './abstractHeaderCellCtrl';
 
 export abstract class AbstractHeaderCellComp<T extends AbstractHeaderCellCtrl> extends Component {
     protected ctrl: T;

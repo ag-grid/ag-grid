@@ -1,4 +1,5 @@
-import { AgAbstractInputField, AgComponentSelector, AgInputFieldParams } from '@ag-grid-community/core';
+import type { AgComponentSelector, AgInputFieldParams } from '@ag-grid-community/core';
+import { AgAbstractInputField } from '@ag-grid-community/core';
 
 interface IInputRange extends AgInputFieldParams {
     min?: number;

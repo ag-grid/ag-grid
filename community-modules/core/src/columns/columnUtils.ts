@@ -1,7 +1,8 @@
-import { Context } from '../context/context';
-import { Column, ColumnInstanceId } from '../entities/column';
+import type { Context } from '../context/context';
+import type { ColumnInstanceId } from '../entities/column';
+import { Column } from '../entities/column';
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
-import { IProvidedColumn } from '../interfaces/iProvidedColumn';
+import type { IProvidedColumn } from '../interfaces/iProvidedColumn';
 import { GROUP_AUTO_COLUMN_ID } from './autoColService';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 

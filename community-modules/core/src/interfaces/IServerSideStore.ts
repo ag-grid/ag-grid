@@ -1,8 +1,8 @@
-import { BaseBean } from '../context/bean';
-import { NumberSequence } from '../utils/numberSequence';
-import { RowBounds } from './iRowModel';
-import { IRowNode } from './iRowNode';
-import { ServerSideTransaction, ServerSideTransactionResult } from './serverSideTransaction';
+import type { BaseBean } from '../context/bean';
+import type { NumberSequence } from '../utils/numberSequence';
+import type { RowBounds } from './iRowModel';
+import type { IRowNode } from './iRowNode';
+import type { ServerSideTransaction, ServerSideTransactionResult } from './serverSideTransaction';
 
 export interface IServerSideStore extends BaseBean {
     clearDisplayIndexes(): void;

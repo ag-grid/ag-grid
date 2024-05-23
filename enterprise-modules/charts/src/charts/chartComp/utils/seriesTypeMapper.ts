@@ -1,7 +1,8 @@
-import { ChartMappings, ChartType } from '@ag-grid-community/core';
-import { AgChartThemeOverrides } from 'ag-charts-community';
+import type { ChartType } from '@ag-grid-community/core';
+import { ChartMappings } from '@ag-grid-community/core';
+import type { AgChartThemeOverrides } from 'ag-charts-community';
 
-import { ChartTranslationKey } from '../services/chartTranslationService';
+import type { ChartTranslationKey } from '../services/chartTranslationService';
 
 export type ChartSeriesType =
     (typeof ChartMappings.CHART_TYPE_TO_SERIES_TYPE)[keyof typeof ChartMappings.CHART_TYPE_TO_SERIES_TYPE] &

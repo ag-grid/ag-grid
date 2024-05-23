@@ -1,13 +1,13 @@
 import { BeanStub } from './context/beanStub';
 import { Bean } from './context/context';
-import { ColumnPinnedType } from './entities/column';
-import { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
-import { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
-import { GridBodyCtrl } from './gridBodyComp/gridBodyCtrl';
-import { RowContainerCtrl } from './gridBodyComp/rowContainer/rowContainerCtrl';
-import { GridCtrl } from './gridComp/gridCtrl';
-import { GridHeaderCtrl } from './headerRendering/gridHeaderCtrl';
-import { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
+import type { ColumnPinnedType } from './entities/column';
+import type { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
+import type { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
+import type { GridBodyCtrl } from './gridBodyComp/gridBodyCtrl';
+import type { RowContainerCtrl } from './gridBodyComp/rowContainer/rowContainerCtrl';
+import type { GridCtrl } from './gridComp/gridCtrl';
+import type { GridHeaderCtrl } from './headerRendering/gridHeaderCtrl';
+import type { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
 
 // for all controllers that are singletons, they can register here so other parts
 // of the application can access them.

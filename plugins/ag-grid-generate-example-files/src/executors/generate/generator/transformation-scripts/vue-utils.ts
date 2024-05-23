@@ -1,4 +1,4 @@
-import { EventHandler, Property } from '../types';
+import type { EventHandler, Property } from '../types';
 import { recognizedDomEvents } from './parser-utils';
 import { toKebabCase, toTitleCase } from './string-utils';
 

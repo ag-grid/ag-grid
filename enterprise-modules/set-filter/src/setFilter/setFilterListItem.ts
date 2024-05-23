@@ -1,20 +1,22 @@
-import {
-    AgCheckbox,
+import type {
     AgEvent,
-    Autowired,
     ColDef,
     Column,
-    Component,
     ICellRendererComp,
     ISetFilterCellRendererParams,
     ISetFilterTreeListTooltipParams,
     ITooltipParams,
-    RefSelector,
     SetFilterParams,
     UserComponentFactory,
     ValueFormatterParams,
     ValueService,
     WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    AgCheckbox,
+    Autowired,
+    Component,
+    RefSelector,
     _createIcon,
     _setAriaChecked,
     _setAriaDescribedBy,
@@ -27,8 +29,8 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import { SetFilterModelTreeItem } from './iSetDisplayValueModel';
-import { ISetFilterLocaleText } from './localeText';
+import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
+import type { ISetFilterLocaleText } from './localeText';
 
 export interface SetFilterListItemSelectionChangedEvent<
     I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null,
@@ -159,7 +161,7 @@ export class SetFilterListItem<V> extends Component {
 
         this.refreshAriaChecked();
 
-        if (!!this.params.readOnly) {
+        if (this.params.readOnly) {
             // Don't add event listeners if we're read-only.
             return;
         }
@@ -235,7 +237,7 @@ export class SetFilterListItem<V> extends Component {
     }
 
     public toggleSelected(): void {
-        if (!!this.params.readOnly) {
+        if (this.params.readOnly) {
             return;
         }
 

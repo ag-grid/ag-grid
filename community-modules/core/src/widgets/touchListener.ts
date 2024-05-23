@@ -1,5 +1,5 @@
-import { AgEvent, AgEventListener } from '../events';
-import { IEventEmitter } from '../interfaces/iEventEmitter';
+import type { AgEvent, AgEventListener } from '../events';
+import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import { LocalEventService } from '../localEventService';
 import { _areEventsNear } from '../utils/mouse';
 

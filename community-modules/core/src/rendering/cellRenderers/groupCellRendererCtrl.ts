@@ -1,26 +1,26 @@
-import { ColumnModel } from '../../columns/columnModel';
-import { FuncColsService } from '../../columns/funcColsService';
-import { VisibleColsService } from '../../columns/visibleColsService';
-import { UserCompDetails, UserComponentFactory } from '../../components/framework/userComponentFactory';
+import type { ColumnModel } from '../../columns/columnModel';
+import type { FuncColsService } from '../../columns/funcColsService';
+import type { VisibleColsService } from '../../columns/visibleColsService';
+import type { UserCompDetails, UserComponentFactory } from '../../components/framework/userComponentFactory';
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import { Autowired } from '../../context/context';
-import { CtrlsService } from '../../ctrlsService';
-import { CellRendererSelectorFunc, ColumnFunctionCallbackParams } from '../../entities/colDef';
-import { Column } from '../../entities/column';
+import type { CtrlsService } from '../../ctrlsService';
+import type { CellRendererSelectorFunc, ColumnFunctionCallbackParams } from '../../entities/colDef';
+import type { Column } from '../../entities/column';
 import { RowNode } from '../../entities/rowNode';
-import { IRowNode } from '../../interfaces/iRowNode';
+import type { IRowNode } from '../../interfaces/iRowNode';
 import { _removeAriaExpanded, _setAriaExpanded } from '../../utils/aria';
 import { _isElementInEventPath, _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../utils/event';
 import { _warnOnce } from '../../utils/function';
 import { _missing } from '../../utils/generic';
 import { _createIconNoSpan } from '../../utils/icon';
 import { _cloneObject } from '../../utils/object';
-import { ExpressionService } from '../../valueService/expressionService';
-import { ValueService } from '../../valueService/valueService';
+import type { ExpressionService } from '../../valueService/expressionService';
+import type { ValueService } from '../../valueService/valueService';
 import { CheckboxSelectionComponent } from '../checkboxSelectionComponent';
 import { RowDragComp } from '../row/rowDragComp';
-import { ICellRendererParams } from './iCellRenderer';
+import type { ICellRendererParams } from './iCellRenderer';
 
 export interface IGroupCellRenderer {
     setInnerRenderer(compDetails: UserCompDetails | undefined, valueToDisplay: any): void;

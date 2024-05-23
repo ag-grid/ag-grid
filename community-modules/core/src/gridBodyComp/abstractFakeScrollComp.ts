@@ -1,14 +1,14 @@
 import { Autowired } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
+import type { CtrlsService } from '../ctrlsService';
 import { Events } from '../eventKeys';
-import { BodyScrollEvent } from '../events';
-import { AnimationFrameService } from '../misc/animationFrameService';
+import type { BodyScrollEvent } from '../events';
+import type { AnimationFrameService } from '../misc/animationFrameService';
 import { _isIOSUserAgent, _isInvisibleScrollbar, _isMacOsUserAgent } from '../utils/browser';
 import { _isVisible } from '../utils/dom';
 import { _waitUntil } from '../utils/function';
 import { Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
-import { ScrollVisibleService } from './scrollVisibleService';
+import type { ScrollVisibleService } from './scrollVisibleService';
 
 export abstract class AbstractFakeScrollComp extends Component {
     @RefSelector('eViewport') protected readonly eViewport: HTMLElement;

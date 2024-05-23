@@ -1,5 +1,5 @@
-import { ChartModel } from '@ag-grid-community/core';
-import { AgChartThemeName } from 'ag-charts-community';
+import type { ChartModel } from '@ag-grid-community/core';
+import type { AgChartThemeName } from 'ag-charts-community';
 
 // @ts-ignore
 import { VERSION } from '../version';

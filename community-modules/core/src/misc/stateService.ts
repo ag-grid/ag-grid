@@ -1,25 +1,25 @@
-import { ColumnApplyStateService, ColumnState, ColumnStateParams } from '../columns/columnApplyStateService';
-import { ColumnGetStateService } from '../columns/columnGetStateService';
-import { ColumnGroupStateService } from '../columns/columnGroupStateService';
-import { ColumnModel } from '../columns/columnModel';
-import { PivotResultColsService } from '../columns/pivotResultColsService';
-import { VisibleColsService } from '../columns/visibleColsService';
+import type { ColumnApplyStateService, ColumnState, ColumnStateParams } from '../columns/columnApplyStateService';
+import type { ColumnGetStateService } from '../columns/columnGetStateService';
+import type { ColumnGroupStateService } from '../columns/columnGroupStateService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { PivotResultColsService } from '../columns/pivotResultColsService';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, Optional } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { Column } from '../entities/column';
+import type { CtrlsService } from '../ctrlsService';
+import type { Column } from '../entities/column';
 import { Events } from '../eventKeys';
-import {
+import type {
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
     RangeSelectionChangedEvent,
     StateUpdatedEvent,
 } from '../events';
-import { FilterManager } from '../filter/filterManager';
-import { FocusService } from '../focusService';
-import { CellRange, IRangeService } from '../interfaces/IRangeService';
-import { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
-import {
+import type { FilterManager } from '../filter/filterManager';
+import type { FocusService } from '../focusService';
+import type { CellRange, IRangeService } from '../interfaces/IRangeService';
+import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
+import type {
     AggregationColumnState,
     AggregationState,
     ColumnGroupState,
@@ -40,16 +40,16 @@ import {
     SideBarState,
     SortState,
 } from '../interfaces/gridState';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { IExpansionService } from '../interfaces/iExpansionService';
-import { FilterModel } from '../interfaces/iFilter';
-import { IRowModel } from '../interfaces/iRowModel';
-import { ISelectionService } from '../interfaces/iSelectionService';
-import { ISideBarService } from '../interfaces/iSideBar';
-import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../interfaces/selectionState';
-import { PaginationProxy } from '../pagination/paginationProxy';
-import { ColumnAnimationService } from '../rendering/columnAnimationService';
-import { SortModelItem } from '../sortController';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IExpansionService } from '../interfaces/iExpansionService';
+import type { FilterModel } from '../interfaces/iFilter';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { ISelectionService } from '../interfaces/iSelectionService';
+import type { ISideBarService } from '../interfaces/iSideBar';
+import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../interfaces/selectionState';
+import type { PaginationProxy } from '../pagination/paginationProxy';
+import type { ColumnAnimationService } from '../rendering/columnAnimationService';
+import type { SortModelItem } from '../sortController';
 import { _debounce } from '../utils/function';
 import { _jsonEquals } from '../utils/generic';
 

@@ -1,17 +1,11 @@
-import { BaseColDefParams } from '../../../entities/colDef';
-import { IDoesFilterPassParams, IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
+import type { BaseColDefParams } from '../../../entities/colDef';
+import type { IDoesFilterPassParams, IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
 import { _setAriaRole } from '../../../utils/aria';
 import { _warnOnce } from '../../../utils/function';
 import { _makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import {
-    ISimpleFilterModel,
-    ISimpleFilterModelType,
-    ISimpleFilterParams,
-    SimpleFilter,
-    SimpleFilterModelFormatter,
-    Tuple,
-} from '../simpleFilter';
+import type { ISimpleFilterModel, ISimpleFilterModelType, ISimpleFilterParams, Tuple } from '../simpleFilter';
+import { SimpleFilter, SimpleFilterModelFormatter } from '../simpleFilter';
 
 export interface TextFilterModel extends ISimpleFilterModel {
     /** Filter type is always `'text'` */

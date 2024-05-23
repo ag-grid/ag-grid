@@ -1,16 +1,17 @@
 import { KeyCode } from '../constants/keyCode';
 import { Autowired } from '../context/context';
 import { Events } from '../events';
-import { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
+import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
 import { _setAriaDisabled } from '../utils/aria';
 import { _createIconNoSpan } from '../utils/icon';
 import { _formatNumberCommas } from '../utils/number';
-import { AgComponentSelector, Component } from '../widgets/component';
+import type { AgComponentSelector } from '../widgets/component';
+import { Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
-import { PaginationProxy } from './paginationProxy';
+import type { PaginationProxy } from './paginationProxy';
 
 export class PaginationComp extends Component {
     static readonly selector: AgComponentSelector = 'AG-PAGINATION';

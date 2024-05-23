@@ -1,7 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { PaginationProxy } from '../pagination/paginationProxy';
+import type { CtrlsService } from '../ctrlsService';
+import type { PaginationProxy } from '../pagination/paginationProxy';
 
 interface TaskItem {
     task: () => void;

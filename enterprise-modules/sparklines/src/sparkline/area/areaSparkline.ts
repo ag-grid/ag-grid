@@ -1,9 +1,10 @@
-import { CrosshairLineOptions, MarkerFormat, MarkerFormatterParams } from '@ag-grid-community/core';
+import type { CrosshairLineOptions, MarkerFormat, MarkerFormatterParams } from '@ag-grid-community/core';
 import { _Scale, _Scene, _Util } from 'ag-charts-community';
 
 import { getLineDash } from '../../util/lineDash';
 import { getMarker } from '../marker/markerFactory';
-import { Point, SeriesNodeDatum, Sparkline, ZINDICIES } from '../sparkline';
+import type { Point, SeriesNodeDatum } from '../sparkline';
+import { Sparkline, ZINDICIES } from '../sparkline';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 
 const { extent } = _Util;

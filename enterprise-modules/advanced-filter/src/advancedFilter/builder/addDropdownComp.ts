@@ -1,6 +1,6 @@
+import type { RichSelectParams } from '@ag-grid-community/core';
 import {
     AgInputTextField,
-    RichSelectParams,
     _setAriaLabel,
     _setAriaLabelledBy,
     _setDisplayed,
@@ -8,7 +8,7 @@ import {
 } from '@ag-grid-community/core';
 import { AgRichSelect } from '@ag-grid-enterprise/core';
 
-import { AutocompleteEntry } from '../autocomplete/autocompleteParams';
+import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 
 export interface AddDropdownCompParams extends RichSelectParams<AutocompleteEntry> {
     wrapperClassName?: string;

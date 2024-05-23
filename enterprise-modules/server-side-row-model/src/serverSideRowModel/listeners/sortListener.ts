@@ -1,15 +1,8 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Events,
-    SortController,
-    SortModelItem,
-    StoreRefreshAfterParams,
-} from '@ag-grid-community/core';
+import type { SortController, SortModelItem, StoreRefreshAfterParams } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, Events } from '@ag-grid-community/core';
 
-import { ServerSideRowModel } from '../serverSideRowModel';
-import { ListenerUtils } from './listenerUtils';
+import type { ServerSideRowModel } from '../serverSideRowModel';
+import type { ListenerUtils } from './listenerUtils';
 
 @Bean('ssrmSortService')
 export class SortListener extends BeanStub {

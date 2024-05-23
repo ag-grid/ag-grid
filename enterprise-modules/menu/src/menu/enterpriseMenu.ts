@@ -1,40 +1,43 @@
-import {
+import type {
     AgEvent,
     AgGridEvent,
-    AgPromise,
-    Autowired,
     BaseBean,
-    Bean,
-    BeanStub,
     Column,
     ColumnMenuTab,
     ColumnMenuVisibleChangedEvent,
-    Component,
     ContainerType,
     CtrlsService,
-    Events,
     FilterManager,
-    FilterWrapperComp,
     FocusService,
     IAfterGuiAttachedParams,
     IMenuFactory,
     MenuService,
-    ModuleNames,
-    ModuleRegistry,
     PopupEventParams,
     PopupService,
-    RefSelector,
     TabbedItem,
-    TabbedLayout,
     VisibleColsService,
     WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    AgPromise,
+    Autowired,
+    Bean,
+    BeanStub,
+    Component,
+    Events,
+    FilterWrapperComp,
+    ModuleNames,
+    ModuleRegistry,
+    RefSelector,
+    TabbedLayout,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
-import { AgMenuItemComponent, AgMenuList, CloseMenuEvent } from '@ag-grid-enterprise/core';
+import type { AgMenuList, CloseMenuEvent } from '@ag-grid-enterprise/core';
+import { AgMenuItemComponent } from '@ag-grid-enterprise/core';
 
-import { ColumnChooserFactory } from './columnChooserFactory';
-import { ColumnMenuFactory } from './columnMenuFactory';
-import { MenuRestoreFocusParams, MenuUtils } from './menuUtils';
+import type { ColumnChooserFactory } from './columnChooserFactory';
+import type { ColumnMenuFactory } from './columnMenuFactory';
+import type { MenuRestoreFocusParams, MenuUtils } from './menuUtils';
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -113,8 +116,8 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         const restrictToTabs = defaultTab ? [defaultTab] : undefined;
 
         const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
-        let nudgeX = (isLegacyMenuEnabled ? 9 : 4) * multiplier;
-        let nudgeY = isLegacyMenuEnabled ? -23 : 4;
+        const nudgeX = (isLegacyMenuEnabled ? 9 : 4) * multiplier;
+        const nudgeY = isLegacyMenuEnabled ? -23 : 4;
 
         this.showMenu(
             column,
@@ -187,7 +190,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 menu.afterGuiAttached(Object.assign({}, { container: containerType }, params)),
             // if defaultTab is not present, positionCallback will be called
             // after `showTabBasedOnPreviousSelection` is called.
-            positionCallback: !!defaultTab ? () => positionCallback(menu) : undefined,
+            positionCallback: defaultTab ? () => positionCallback(menu) : undefined,
             ariaLabel: translate('ariaLabelColumnMenu', 'Column Menu'),
         });
 

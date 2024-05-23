@@ -1,4 +1,4 @@
-import { ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
 import { PopupComponent } from '../../widgets/popupComponent';
 

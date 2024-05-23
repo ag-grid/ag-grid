@@ -1,9 +1,9 @@
-import { CellStyle } from '../entities/colDef';
-import { RowStyle } from '../entities/gridOptions';
-import { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
+import type { CellStyle } from '../entities/colDef';
+import type { RowStyle } from '../entities/gridOptions';
+import type { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
 import { _setAriaHidden } from './aria';
 import { _isBrowserChrome, _isBrowserSafari } from './browser';
-import { AgPromise } from './promise';
+import type { AgPromise } from './promise';
 import { _camelCaseToHyphenated } from './string';
 
 let rtlNegativeScroll: boolean;
@@ -178,17 +178,15 @@ export function _getInnerWidth(el: HTMLElement): number {
 }
 
 export function _getAbsoluteHeight(el: HTMLElement): number {
-    const size = _getElementSize(el);
-    const marginRight = size.marginBottom + size.marginTop;
+    const { height, paddingTop, paddingBottom, marginBottom, marginTop } = _getElementSize(el);
 
-    return Math.ceil(el.offsetHeight + marginRight);
+    return Math.floor(height + paddingTop + paddingBottom + marginBottom + marginTop);
 }
 
 export function _getAbsoluteWidth(el: HTMLElement): number {
-    const size = _getElementSize(el);
-    const marginWidth = size.marginLeft + size.marginRight;
+    const { width, paddingLeft, paddingRight, marginLeft, marginRight } = _getElementSize(el);
 
-    return Math.ceil(el.offsetWidth + marginWidth);
+    return Math.floor(width + paddingLeft + paddingRight + marginLeft + marginRight);
 }
 
 export function _getElementRectWithOffset(el: HTMLElement): {

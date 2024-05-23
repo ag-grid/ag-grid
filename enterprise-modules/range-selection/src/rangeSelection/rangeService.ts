@@ -1,9 +1,4 @@
-import {
-    AutoScrollService,
-    Autowired,
-    Bean,
-    BeanStub,
-    CellCtrl,
+import type {
     CellNavigationService,
     CellPosition,
     CellPositionUtils,
@@ -14,7 +9,6 @@ import {
     ColumnModel,
     CtrlsService,
     DragService,
-    Events,
     IRangeService,
     IRowModel,
     PartialCellRange,
@@ -28,6 +22,14 @@ import {
     ValueService,
     VisibleColsService,
     WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    AutoScrollService,
+    Autowired,
+    Bean,
+    BeanStub,
+    CellCtrl,
+    Events,
     _areEqual,
     _exists,
     _existsAndNotEmpty,

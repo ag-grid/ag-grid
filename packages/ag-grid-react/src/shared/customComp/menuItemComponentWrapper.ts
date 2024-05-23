@@ -1,7 +1,7 @@
-import { AgPromise, IMenuItem, IMenuItemParams } from 'ag-grid-community';
+import type { AgPromise, IMenuItem, IMenuItemParams } from 'ag-grid-community';
 
 import { CustomComponentWrapper } from './customComponentWrapper';
-import { CustomMenuItemCallbacks, CustomMenuItemProps } from './interfaces';
+import type { CustomMenuItemCallbacks, CustomMenuItemProps } from './interfaces';
 
 export class MenuItemComponentWrapper
     extends CustomComponentWrapper<IMenuItemParams, CustomMenuItemProps, CustomMenuItemCallbacks>

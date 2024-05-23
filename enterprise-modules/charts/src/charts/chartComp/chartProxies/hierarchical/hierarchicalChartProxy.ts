@@ -1,7 +1,8 @@
 import { GROUP_AUTO_COLUMN_ID } from '@ag-grid-community/core';
-import { AgChartThemeOverrides, AgHierarchyChartOptions, AgHierarchySeriesOptions } from 'ag-charts-community';
+import type { AgChartThemeOverrides, AgHierarchyChartOptions, AgHierarchySeriesOptions } from 'ag-charts-community';
 
-import { ChartProxy, ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
+import type { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
+import { ChartProxy } from '../chartProxy';
 import { CATEGORY_LABEL_KEY, createAutoGroupHierarchy, createCategoryHierarchy } from './hierarchicalChartUtils';
 
 export class HierarchicalChartProxy<TSeries extends 'sunburst' | 'treemap'> extends ChartProxy<

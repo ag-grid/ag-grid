@@ -1,15 +1,11 @@
-import {
+import type {
     AgComponentSelector,
     AgEvent,
-    Autowired,
-    Component,
     FocusService,
-    KeyCode,
     ToolPanelDef,
     VisibleColsService,
-    _clearElement,
-    _last,
 } from '@ag-grid-community/core';
+import { Autowired, Component, KeyCode, _clearElement, _last } from '@ag-grid-community/core';
 
 import { SideBarButtonComp } from './sideBarButtonComp';
 

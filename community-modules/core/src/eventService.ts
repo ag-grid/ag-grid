@@ -1,8 +1,8 @@
 import { BeanStub } from './context/beanStub';
 import { Bean, Optional } from './context/context';
-import { AgEvent, AgEventListener, AgGlobalEventListener } from './events';
-import { AgGridCommon } from './interfaces/iCommon';
-import { IEventEmitter } from './interfaces/iEventEmitter';
+import type { AgEvent, AgEventListener, AgGlobalEventListener } from './events';
+import type { AgGridCommon } from './interfaces/iCommon';
+import type { IEventEmitter } from './interfaces/iEventEmitter';
 import { LocalEventService } from './localEventService';
 
 @Bean('eventService')

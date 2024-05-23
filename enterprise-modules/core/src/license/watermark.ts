@@ -1,6 +1,7 @@
-import { AgComponentSelector, Autowired, Component, RefSelector } from '@ag-grid-community/core';
+import type { AgComponentSelector } from '@ag-grid-community/core';
+import { Autowired, Component, RefSelector } from '@ag-grid-community/core';
 
-import { GridLicenseManager as LicenseManager } from './gridLicenseManager';
+import type { GridLicenseManager as LicenseManager } from './gridLicenseManager';
 
 export class AgWatermark extends Component {
     static readonly selector: AgComponentSelector = 'AG-WATERMARK';

@@ -1,31 +1,33 @@
-import {
+import type {
     AdvancedFilterModel,
-    Autowired,
     Beans,
     ColumnAdvancedFilterModel,
-    Component,
     FilterManager,
     JoinAdvancedFilterModel,
+    VirtualListDragItem,
+} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Component,
     RefSelector,
     TooltipFeature,
     VirtualList,
-    VirtualListDragItem,
     _exists,
     _setDisabled,
 } from '@ag-grid-community/core';
 
-import { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
-import { AdvancedFilterService } from '../advancedFilterService';
+import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
+import type { AdvancedFilterService } from '../advancedFilterService';
 import { AdvancedFilterBuilderDragFeature } from './advancedFilterBuilderDragFeature';
 import { AdvancedFilterBuilderItemAddComp } from './advancedFilterBuilderItemAddComp';
 import { AdvancedFilterBuilderItemComp } from './advancedFilterBuilderItemComp';
-import {
+import type {
     AdvancedFilterBuilderAddEvent,
-    AdvancedFilterBuilderEvents,
     AdvancedFilterBuilderItem,
     AdvancedFilterBuilderMoveEvent,
     AdvancedFilterBuilderRemoveEvent,
 } from './iAdvancedFilterBuilder';
+import { AdvancedFilterBuilderEvents } from './iAdvancedFilterBuilder';
 
 export class AdvancedFilterBuilderComp extends Component {
     @RefSelector('eList') private eList: HTMLElement;

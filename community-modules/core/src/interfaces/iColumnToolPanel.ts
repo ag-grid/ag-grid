@@ -1,6 +1,6 @@
-import { ColDef, ColGroupDef } from '../entities/colDef';
-import { ColumnToolPanelState } from './gridState';
-import { IToolPanel } from './iToolPanel';
+import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { ColumnToolPanelState } from './gridState';
+import type { IToolPanel } from './iToolPanel';
 
 export interface IColumnToolPanel extends IToolPanel {
     expandColumnGroups(groupIds?: string[]): void;

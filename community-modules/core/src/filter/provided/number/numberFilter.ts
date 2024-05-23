@@ -1,10 +1,12 @@
-import { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
+import type { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
 import { _setAriaRole } from '../../../utils/aria';
 import { _makeNull } from '../../../utils/generic';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
-import { ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
+import type { Comparator, IScalarFilterParams } from '../scalarFilter';
+import { ScalarFilter } from '../scalarFilter';
+import type { ISimpleFilterModel, Tuple } from '../simpleFilter';
+import { SimpleFilter, SimpleFilterModelFormatter } from '../simpleFilter';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
     /** Filter type is always `'number'` */

@@ -1,17 +1,17 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, Qualifier } from '../context/context';
-import { ColDef, ColGroupDef } from '../entities/colDef';
+import type { ColDef, ColGroupDef } from '../entities/colDef';
 import { Column } from '../entities/column';
 import { DefaultColumnTypes } from '../entities/defaultColumnTypes';
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
-import { ColumnEventType } from '../events';
-import { IProvidedColumn } from '../interfaces/iProvidedColumn';
-import { Logger, LoggerFactory } from '../logger';
+import type { ColumnEventType } from '../events';
+import type { IProvidedColumn } from '../interfaces/iProvidedColumn';
+import type { Logger, LoggerFactory } from '../logger';
 import { _warnOnce } from '../utils/function';
 import { _attrToBoolean, _attrToNumber } from '../utils/generic';
 import { _iterateObject, _mergeDeep } from '../utils/object';
 import { ColumnKeyCreator } from './columnKeyCreator';
-import { DataTypeService } from './dataTypeService';
+import type { DataTypeService } from './dataTypeService';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 @Bean('columnFactory')

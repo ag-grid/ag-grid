@@ -1,12 +1,5 @@
-import {
-    AgAbstractLabel,
-    AgComponentSelector,
-    AgInputNumberField,
-    AgLabelParams,
-    Events,
-    LabelAlignment,
-    RefSelector,
-} from '@ag-grid-community/core';
+import type { AgComponentSelector, AgLabelParams, LabelAlignment } from '@ag-grid-community/core';
+import { AgAbstractLabel, AgInputNumberField, Events, RefSelector } from '@ag-grid-community/core';
 
 import { AgInputRange } from './agInputRange';
 

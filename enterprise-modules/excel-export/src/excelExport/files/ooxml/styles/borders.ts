@@ -1,6 +1,6 @@
-import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
+import type { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 
-import { BorderSet } from '../../../assets/excelInterfaces';
+import type { BorderSet } from '../../../assets/excelInterfaces';
 import borderFactory from './border';
 
 const bordersFactory: ExcelOOXMLTemplate = {

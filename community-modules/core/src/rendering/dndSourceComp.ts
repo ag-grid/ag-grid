@@ -1,6 +1,6 @@
-import { DndSourceOnRowDragParams } from '../entities/colDef';
-import { Column } from '../entities/column';
-import { RowNode } from '../entities/rowNode';
+import type { DndSourceOnRowDragParams } from '../entities/colDef';
+import type { Column } from '../entities/column';
+import type { RowNode } from '../entities/rowNode';
 import { _createIconNoSpan } from '../utils/icon';
 import { Component } from '../widgets/component';
 

@@ -1,3 +1,4 @@
+import type { FieldValueEvent, WithoutGridCommon } from '@ag-grid-community/core';
 import {
     AgInputDateField,
     AgInputNumberField,
@@ -5,10 +6,8 @@ import {
     Autowired,
     Component,
     Events,
-    FieldValueEvent,
     KeyCode,
     RefSelector,
-    WithoutGridCommon,
     _exists,
     _setAriaDescribedBy,
     _setAriaLabel,
@@ -16,7 +15,7 @@ import {
     _stopPropagationForAgGrid,
 } from '@ag-grid-community/core';
 
-import { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
+import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 
 export class InputPillComp extends Component {
     @RefSelector('ePill') private ePill: HTMLElement;

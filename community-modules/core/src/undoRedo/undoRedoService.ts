@@ -1,12 +1,12 @@
-import { ColumnModel } from '../columns/columnModel';
+import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean, Optional } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { CellPosition, CellPositionUtils } from '../entities/cellPositionUtils';
-import { Column } from '../entities/column';
-import { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
+import type { CtrlsService } from '../ctrlsService';
+import type { CellPosition, CellPositionUtils } from '../entities/cellPositionUtils';
+import type { Column } from '../entities/column';
+import type { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
 import { Events } from '../eventKeys';
-import {
+import type {
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
     CellValueChangedEvent,
@@ -17,11 +17,12 @@ import {
     UndoEndedEvent,
     UndoStartedEvent,
 } from '../events';
-import { FocusService } from '../focusService';
-import { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
-import { CellRange, CellRangeParams, IRangeService } from '../interfaces/IRangeService';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { CellValueChange, LastFocusedCell, RangeUndoRedoAction, UndoRedoAction, UndoRedoStack } from './undoRedoStack';
+import type { FocusService } from '../focusService';
+import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
+import type { CellRange, CellRangeParams, IRangeService } from '../interfaces/IRangeService';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { CellValueChange, LastFocusedCell } from './undoRedoStack';
+import { RangeUndoRedoAction, UndoRedoAction, UndoRedoStack } from './undoRedoStack';
 
 @Bean('undoRedoService')
 export class UndoRedoService extends BeanStub {

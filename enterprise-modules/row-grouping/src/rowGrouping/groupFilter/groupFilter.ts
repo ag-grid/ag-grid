@@ -1,16 +1,18 @@
-import {
-    AgPromise,
-    AgSelect,
-    Autowired,
+import type {
     Column,
     ColumnNameService,
-    Events,
     FilterManager,
-    FilterWrapperComp,
     FuncColsService,
     IAfterGuiAttachedParams,
     IFilterComp,
     IFilterParams,
+} from '@ag-grid-community/core';
+import {
+    AgPromise,
+    AgSelect,
+    Autowired,
+    Events,
+    FilterWrapperComp,
     RefSelector,
     TabGuardComp,
     _clearElement,

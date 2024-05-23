@@ -1,7 +1,7 @@
 import { Autowired, Component } from '@ag-grid-community/core';
 import { _Scene } from 'ag-charts-community';
 
-import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 
 const CANVAS_CLASS = 'ag-chart-mini-thumbnail-canvas';
 const ERROR_MESSAGE = 'AG Grid - chart update failed';

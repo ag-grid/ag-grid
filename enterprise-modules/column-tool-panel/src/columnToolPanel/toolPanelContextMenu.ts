@@ -1,16 +1,12 @@
-import {
-    Autowired,
-    Column,
+import type {
     ColumnModel,
     ColumnNameService,
-    Component,
     FocusService,
     FuncColsService,
     MenuItemDef,
     PopupService,
-    ProvidedColumnGroup,
-    _createIconNoSpan,
 } from '@ag-grid-community/core';
+import { Autowired, Column, Component, ProvidedColumnGroup, _createIconNoSpan } from '@ag-grid-community/core';
 import { AgMenuItemComponent, AgMenuList } from '@ag-grid-enterprise/core';
 
 type MenuItemName = 'rowGroup' | 'value' | 'pivot';

@@ -1,12 +1,5 @@
-import {
-    Autowired,
-    Events,
-    IClientSideRowModel,
-    IRowModel,
-    IStatusPanelComp,
-    _formatNumberCommas,
-    _warnOnce,
-} from '@ag-grid-community/core';
+import type { IClientSideRowModel, IRowModel, IStatusPanelComp } from '@ag-grid-community/core';
+import { Autowired, Events, _formatNumberCommas, _warnOnce } from '@ag-grid-community/core';
 
 import { AgNameValue } from './agNameValue';
 

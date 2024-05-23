@@ -1,11 +1,12 @@
-import { ColumnPinnedType } from '../../entities/column';
+import type { ColumnPinnedType } from '../../entities/column';
 import { _ensureDomOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { HeaderRowComp } from '../row/headerRowComp';
-import { HeaderRowCtrl, HeaderRowCtrlInstanceId } from '../row/headerRowCtrl';
-import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRowContainerCtrl';
+import type { HeaderRowCtrl, HeaderRowCtrlInstanceId } from '../row/headerRowCtrl';
+import type { IHeaderRowContainerComp } from './headerRowContainerCtrl';
+import { HeaderRowContainerCtrl } from './headerRowContainerCtrl';
 
 export class HeaderRowContainerComp extends Component {
     private static PINNED_LEFT_TEMPLATE = /* html */ `<div class="ag-pinned-left-header" role="rowgroup"></div>`;

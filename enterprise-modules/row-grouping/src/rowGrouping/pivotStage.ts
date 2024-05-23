@@ -1,12 +1,8 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
     ChangedPath,
     ColDef,
     Column,
     ColumnModel,
-    Events,
     FuncColsService,
     GridOptions,
     IRowNodeStage,
@@ -16,11 +12,10 @@ import {
     StageExecuteParams,
     ValueService,
     WithoutGridCommon,
-    _iterateObject,
-    _missing,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, Events, _iterateObject, _missing } from '@ag-grid-community/core';
 
-import { PivotColDefService } from './pivotColDefService';
+import type { PivotColDefService } from './pivotColDefService';
 
 @Bean('pivotStage')
 export class PivotStage extends BeanStub implements IRowNodeStage {

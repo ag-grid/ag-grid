@@ -8,6 +8,11 @@
         padding: 0;
     }
 
+    .ag-menu.ag-tabs {
+        // legacy column menu
+        min-width: var(--ag-tab-min-width);
+    }
+
     .ag-menu-list {
         cursor: default;
         padding: var(--ag-grid-size) 0;
@@ -76,9 +81,6 @@
     ////////////////////////////////////////
     // Column Filter
     ////////////////////////////////////////
-    .ag-tabs {
-        min-width: var(--ag-tab-min-width);
-    }
 
     .ag-tabs-header {
         display: flex;
@@ -236,7 +238,7 @@
         }
     }
 
-    .ag-menu:not(.ag-tabs) .ag-filter .ag-simple-filter-body-wrapper,
+    .ag-menu:not(.ag-tabs) .ag-filter .ag-filter-body-wrapper,
     // for custom filters without `ag-filter-wrapper`
     .ag-menu:not(.ag-tabs) .ag-filter > *:not(.ag-filter-wrapper) {
         min-width: calc(var(--ag-menu-min-width) - 2px);

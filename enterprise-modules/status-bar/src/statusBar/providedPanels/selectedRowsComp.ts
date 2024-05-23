@@ -1,11 +1,5 @@
-import {
-    Autowired,
-    Events,
-    IRowModel,
-    ISelectionService,
-    IStatusPanelComp,
-    _formatNumberCommas,
-} from '@ag-grid-community/core';
+import type { IRowModel, ISelectionService, IStatusPanelComp } from '@ag-grid-community/core';
+import { Autowired, Events, _formatNumberCommas } from '@ag-grid-community/core';
 
 import { AgNameValue } from './agNameValue';
 

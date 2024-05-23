@@ -1,14 +1,14 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean } from '../context/context';
-import { ColDef } from '../entities/colDef';
-import { Column } from '../entities/column';
+import type { ColDef } from '../entities/colDef';
+import type { Column } from '../entities/column';
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
-import { ColumnEventType } from '../events';
-import { ColumnAnimationService } from '../rendering/columnAnimationService';
+import type { ColumnEventType } from '../events';
+import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { _moveInArray } from '../utils/array';
-import { ColumnEventDispatcher } from './columnEventDispatcher';
+import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
-import { ColKey, ColumnModel } from './columnModel';
+import type { ColKey, ColumnModel } from './columnModel';
 
 @Bean('columnMoveService')
 export class ColumnMoveService extends BeanStub {

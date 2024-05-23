@@ -1,4 +1,5 @@
-import { Bean, BeanStub, RowNode } from '@ag-grid-community/core';
+import type { RowNode } from '@ag-grid-community/core';
+import { Bean, BeanStub } from '@ag-grid-community/core';
 
 @Bean('ssrmNodeManager')
 export class NodeManager extends BeanStub {

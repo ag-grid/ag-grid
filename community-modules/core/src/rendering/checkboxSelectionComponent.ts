@@ -1,5 +1,5 @@
-import { CheckboxSelectionCallback } from '../entities/colDef';
-import { Column } from '../entities/column';
+import type { CheckboxSelectionCallback } from '../entities/colDef';
+import type { Column } from '../entities/column';
 import { RowNode } from '../entities/rowNode';
 import { Events } from '../events';
 import { _getAriaCheckboxStateName } from '../utils/aria';
@@ -7,7 +7,7 @@ import { _stopPropagationForAgGrid } from '../utils/event';
 import { AgCheckbox } from '../widgets/agCheckbox';
 import { Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
-import { GroupCheckboxSelectionCallback } from './cellRenderers/groupCellRendererCtrl';
+import type { GroupCheckboxSelectionCallback } from './cellRenderers/groupCellRendererCtrl';
 
 export class CheckboxSelectionComponent extends Component {
     @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;

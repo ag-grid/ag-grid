@@ -1,14 +1,14 @@
-import { ColumnModel } from '../../columns/columnModel';
-import { UserCompDetails, UserComponentFactory } from '../../components/framework/userComponentFactory';
+import type { ColumnModel } from '../../columns/columnModel';
+import type { UserCompDetails, UserComponentFactory } from '../../components/framework/userComponentFactory';
 import { BeanStub } from '../../context/beanStub';
 import { Autowired, Bean } from '../../context/context';
-import { GridOptions } from '../../entities/gridOptions';
+import type { GridOptions } from '../../entities/gridOptions';
 import { Events } from '../../eventKeys';
-import { WithoutGridCommon } from '../../interfaces/iCommon';
-import { PaginationProxy } from '../../pagination/paginationProxy';
-import { ILoadingOverlayParams } from './loadingOverlayComponent';
-import { INoRowsOverlayParams } from './noRowsOverlayComponent';
-import { OverlayWrapperComponent } from './overlayWrapperComponent';
+import type { WithoutGridCommon } from '../../interfaces/iCommon';
+import type { PaginationProxy } from '../../pagination/paginationProxy';
+import type { ILoadingOverlayParams } from './loadingOverlayComponent';
+import type { INoRowsOverlayParams } from './noRowsOverlayComponent';
+import type { OverlayWrapperComponent } from './overlayWrapperComponent';
 
 @Bean('overlayService')
 export class OverlayService extends BeanStub {

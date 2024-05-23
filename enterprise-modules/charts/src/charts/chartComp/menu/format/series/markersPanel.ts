@@ -1,10 +1,13 @@
-import { AgSelect, AgSelectParams, Autowired, Component, RefSelector, _includes } from '@ag-grid-community/core';
-import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import type { AgSelectParams } from '@ag-grid-community/core';
+import { AgSelect, Autowired, Component, RefSelector, _includes } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { AgSlider, AgSliderParams } from '../../../../../widgets/agSlider';
-import { ChartOptionsService } from '../../../services/chartOptionsService';
-import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
-import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import type { AgSliderParams } from '../../../../../widgets/agSlider';
+import { AgSlider } from '../../../../../widgets/agSlider';
+import type { ChartOptionsService } from '../../../services/chartOptionsService';
+import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class MarkersPanel extends Component {
     public static TEMPLATE /* html */ = `<div>

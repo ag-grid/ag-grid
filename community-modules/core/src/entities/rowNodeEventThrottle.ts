@@ -1,9 +1,9 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean } from '../context/context';
-import { RowGroupOpenedEvent } from '../events';
-import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import { IRowModel } from '../interfaces/iRowModel';
-import { AnimationFrameService } from '../misc/animationFrameService';
+import type { RowGroupOpenedEvent } from '../events';
+import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { AnimationFrameService } from '../misc/animationFrameService';
 
 @Bean('rowNodeEventThrottle')
 export class RowNodeEventThrottle extends BeanStub {

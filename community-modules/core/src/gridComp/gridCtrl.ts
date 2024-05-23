@@ -1,17 +1,18 @@
-import { VisibleColsService } from '../columns/visibleColsService';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import { Autowired } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
+import type { CtrlsService } from '../ctrlsService';
 import { DragAndDropService, DragSourceType } from '../dragAndDrop/dragAndDropService';
 import { Events } from '../eventKeys';
-import { GridSizeChangedEvent } from '../events';
-import { FocusService } from '../focusService';
-import { MouseEventService } from '../gridBodyComp/mouseEventService';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { ResizeObserverService } from '../misc/resizeObserverService';
+import type { GridSizeChangedEvent } from '../events';
+import type { FocusService } from '../focusService';
+import type { MouseEventService } from '../gridBodyComp/mouseEventService';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { ResizeObserverService } from '../misc/resizeObserverService';
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
-import { LayoutFeature, LayoutView } from '../styling/layoutFeature';
+import type { LayoutView } from '../styling/layoutFeature';
+import { LayoutFeature } from '../styling/layoutFeature';
 import { _last } from '../utils/array';
 
 export interface IGridComp extends LayoutView {

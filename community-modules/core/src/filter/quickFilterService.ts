@@ -1,14 +1,14 @@
-import { ColumnModel } from '../columns/columnModel';
-import { PivotResultColsService } from '../columns/pivotResultColsService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { PivotResultColsService } from '../columns/pivotResultColsService';
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean } from '../context/context';
-import { GetQuickFilterTextParams } from '../entities/colDef';
-import { Column } from '../entities/column';
-import { RowNode } from '../entities/rowNode';
+import type { GetQuickFilterTextParams } from '../entities/colDef';
+import type { Column } from '../entities/column';
+import type { RowNode } from '../entities/rowNode';
 import { Events } from '../eventKeys';
-import { IRowModel } from '../interfaces/iRowModel';
+import type { IRowModel } from '../interfaces/iRowModel';
 import { _exists } from '../utils/generic';
-import { ValueService } from '../valueService/valueService';
+import type { ValueService } from '../valueService/valueService';
 
 @Bean('quickFilterService')
 export class QuickFilterService extends BeanStub {

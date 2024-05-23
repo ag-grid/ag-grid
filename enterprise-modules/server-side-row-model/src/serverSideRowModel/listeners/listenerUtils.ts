@@ -1,4 +1,5 @@
-import { Autowired, Bean, BeanStub, FuncColsService, PivotResultColsService } from '@ag-grid-community/core';
+import type { FuncColsService, PivotResultColsService } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub } from '@ag-grid-community/core';
 
 @Bean('ssrmListenerUtils')
 export class ListenerUtils extends BeanStub {

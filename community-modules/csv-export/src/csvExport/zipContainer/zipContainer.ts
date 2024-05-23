@@ -1,10 +1,6 @@
 import { Downloader } from '../downloader';
-import {
-    ProcessedZipFile,
-    buildCentralDirectoryEnd,
-    getDeflatedHeaderAndContent,
-    getHeaderAndContent,
-} from './zipContainerHelper';
+import type { ProcessedZipFile } from './zipContainerHelper';
+import { buildCentralDirectoryEnd, getDeflatedHeaderAndContent, getHeaderAndContent } from './zipContainerHelper';
 
 export interface ZipFile {
     path: string;

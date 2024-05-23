@@ -1,4 +1,5 @@
-import { BaseComponentWrapper, WrappableInterface } from 'ag-grid-community';
+import type { WrappableInterface } from 'ag-grid-community';
+import { BaseComponentWrapper } from 'ag-grid-community';
 
 import { VueComponentFactory } from './VueComponentFactory';
 

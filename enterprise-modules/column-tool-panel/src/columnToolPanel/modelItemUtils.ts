@@ -1,7 +1,4 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
     Column,
     ColumnApplyStateService,
     ColumnEventType,
@@ -10,8 +7,9 @@ import {
     IAggFunc,
     IAggFuncService,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub } from '@ag-grid-community/core';
 
-import { ColumnModelItem } from './columnModelItem';
+import type { ColumnModelItem } from './columnModelItem';
 
 @Bean('modelItemUtils')
 export class ModelItemUtils extends BeanStub {

@@ -1,14 +1,16 @@
 import { Autowired } from '../context/context';
 import { GridBodyComp } from '../gridBodyComp/gridBodyComp';
-import { ISideBar } from '../interfaces/iSideBar';
-import { Logger, LoggerFactory } from '../logger';
+import type { ISideBar } from '../interfaces/iSideBar';
+import type { Logger, LoggerFactory } from '../logger';
 import { PaginationComp } from '../pagination/paginationComp';
-import { LayoutCssClasses, UpdateLayoutClassesParams } from '../styling/layoutFeature';
+import type { UpdateLayoutClassesParams } from '../styling/layoutFeature';
+import { LayoutCssClasses } from '../styling/layoutFeature';
 import { _isVisible } from '../utils/dom';
-import { Component } from '../widgets/component';
+import type { Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { TabGuardComp } from '../widgets/tabGuardComp';
-import { GridCtrl, IGridComp } from './gridCtrl';
+import type { IGridComp } from './gridCtrl';
+import { GridCtrl } from './gridCtrl';
 
 export class GridComp extends TabGuardComp {
     @Autowired('loggerFactory') private readonly loggerFactory: LoggerFactory;

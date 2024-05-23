@@ -1,6 +1,5 @@
-import {
+import type {
     Column,
-    ExcelFactoryMode,
     ExcelHeaderFooterImage,
     ExcelImage,
     ExcelRelationship,
@@ -8,10 +7,10 @@ import {
     ExcelTableConfig,
     ExcelWorksheet,
     RowHeightCallbackParams,
-    _escapeString,
 } from '@ag-grid-community/core';
+import { ExcelFactoryMode, _escapeString } from '@ag-grid-community/core';
 
-import {
+import type {
     ExcelCalculatedImage,
     ExcelDataTable,
     ExcelHeaderFooterCalculatedImage,
@@ -19,7 +18,7 @@ import {
     ImageIdMap,
 } from './assets/excelInterfaces';
 import { createXmlPart, setExcelImageTotalHeight, setExcelImageTotalWidth } from './assets/excelUtils';
-import { ExcelGridSerializingParams } from './excelSerializingSession';
+import type { ExcelGridSerializingParams } from './excelSerializingSession';
 import contentTypesFactory from './files/ooxml/contentTypes';
 import coreFactory from './files/ooxml/core';
 import drawingFactory from './files/ooxml/drawing';
@@ -69,7 +68,7 @@ export class ExcelXlsxFactory {
         this.addSheetName(worksheet);
         registerStyles(styles, this.sheetNames.length);
 
-        let newConfig = Object.assign({}, config);
+        const newConfig = Object.assign({}, config);
 
         // Table export is not compatible with pivot mode nor master/detail features
         if (config.exportAsExcelTable) {
@@ -202,7 +201,7 @@ export class ExcelXlsxFactory {
         columnsToExport?: Column[],
         rowHeight?: number | ((params: RowHeightCallbackParams) => number)
     ): void {
-        let sheetIndex = this.sheetNames.length;
+        const sheetIndex = this.sheetNames.length;
         const { row, column } = image.position || {};
         const calculatedImage = image as ExcelCalculatedImage;
 

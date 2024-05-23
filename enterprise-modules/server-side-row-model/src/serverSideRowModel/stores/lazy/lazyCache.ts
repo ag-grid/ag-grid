@@ -1,6 +1,4 @@
-import {
-    Autowired,
-    BeanStub,
+import type {
     FocusService,
     GetRowIdParams,
     GridApi,
@@ -11,14 +9,15 @@ import {
     ServerSideGroupLevelParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { RowNodeSorter } from '@ag-grid-community/core';
-import { SortController } from '@ag-grid-community/core';
+import { Autowired, BeanStub } from '@ag-grid-community/core';
+import type { RowNodeSorter } from '@ag-grid-community/core';
+import type { SortController } from '@ag-grid-community/core';
 
-import { BlockUtils } from '../../blocks/blockUtils';
-import { NodeManager } from '../../nodeManager';
-import { ServerSideRowModel } from '../../serverSideRowModel';
+import type { BlockUtils } from '../../blocks/blockUtils';
+import type { NodeManager } from '../../nodeManager';
+import type { ServerSideRowModel } from '../../serverSideRowModel';
 import { LazyBlockLoadingService } from './lazyBlockLoadingService';
-import { LazyStore } from './lazyStore';
+import type { LazyStore } from './lazyStore';
 import { MultiIndexMap } from './multiIndexMap';
 
 interface LazyStoreNode {
@@ -1060,7 +1059,7 @@ export class LazyCache extends BeanStub {
 
         const uniqueInserts = Object.values(uniqueInsertsMap);
 
-        let numberOfInserts = uniqueInserts.length;
+        const numberOfInserts = uniqueInserts.length;
         if (numberOfInserts === 0) {
             return [];
         }
@@ -1102,7 +1101,7 @@ export class LazyCache extends BeanStub {
 
         const allNodes = this.getOrderedNodeMap();
         let contiguousIndex = -1;
-        for (let stringIndex in allNodes) {
+        for (const stringIndex in allNodes) {
             contiguousIndex += 1;
             const node = allNodes[stringIndex];
 

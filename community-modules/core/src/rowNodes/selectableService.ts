@@ -1,9 +1,9 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean } from '../context/context';
-import { RowNode } from '../entities/rowNode';
-import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import { IRowModel } from '../interfaces/iRowModel';
-import { ISelectionService } from '../interfaces/iSelectionService';
+import type { RowNode } from '../entities/rowNode';
+import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { ISelectionService } from '../interfaces/iSelectionService';
 import { SelectionService } from '../selectionService';
 import { ChangedPath } from '../utils/changedPath';
 

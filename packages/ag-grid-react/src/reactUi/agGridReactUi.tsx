@@ -9,24 +9,26 @@ import React, {
     useState,
 } from 'react';
 
-import {
-    BaseComponentWrapper,
+import type {
     ComponentType,
-    ComponentUtil,
     Context,
-    CtrlsService,
     FrameworkComponentWrapper,
     FrameworkOverridesIncomingSource,
     GridApi,
-    GridCoreCreator,
     GridOptions,
     GridParams,
     IDetailCellRenderer,
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
+    WrappableInterface,
+} from 'ag-grid-community';
+import {
+    BaseComponentWrapper,
+    ComponentUtil,
+    CtrlsService,
+    GridCoreCreator,
     ModuleRegistry,
     VanillaFrameworkOverrides,
-    WrappableInterface,
     _warnOnce,
 } from 'ag-grid-community';
 
@@ -40,7 +42,7 @@ import { NoRowsOverlayComponentWrapper } from '../shared/customComp/noRowsOverla
 import { StatusPanelComponentWrapper } from '../shared/customComp/statusPanelComponentWrapper';
 import { ToolPanelComponentWrapper } from '../shared/customComp/toolPanelComponentWrapper';
 import { warnReactiveCustomComponents } from '../shared/customComp/util';
-import { AgGridReactProps } from '../shared/interfaces';
+import type { AgGridReactProps } from '../shared/interfaces';
 import { PortalManager } from '../shared/portalManager';
 import { ReactComponent } from '../shared/reactComponent';
 import { BeansContext } from './beansContext';

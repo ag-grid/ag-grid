@@ -1,5 +1,5 @@
 import { BeanStub } from '@ag-grid-community/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import type { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 // handles single group expansion
 export class GroupExpansionFeature extends BeanStub {

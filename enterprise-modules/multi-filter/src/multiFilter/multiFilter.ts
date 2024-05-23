@@ -1,7 +1,4 @@
-import {
-    AgMenuItemRenderer,
-    AgPromise,
-    Autowired,
+import type {
     Column,
     ContainerType,
     FilterManager,
@@ -13,18 +10,24 @@ import {
     IMultiFilter,
     IMultiFilterDef,
     IMultiFilterModel,
-    KeyCode,
     MultiFilterParams,
-    ProvidedFilter,
     ProvidedFilterModel,
     RowNode,
-    TabGuardComp,
     UserComponentFactory,
+} from '@ag-grid-community/core';
+import {
+    AgMenuItemRenderer,
+    AgPromise,
+    Autowired,
+    KeyCode,
+    ProvidedFilter,
+    TabGuardComp,
     _forEachReverse,
     _loadTemplate,
     _removeFromArray,
 } from '@ag-grid-community/core';
-import { AgGroupComponent, AgMenuItemComponent, MenuItemActivatedEvent } from '@ag-grid-enterprise/core';
+import type { MenuItemActivatedEvent } from '@ag-grid-enterprise/core';
+import { AgGroupComponent, AgMenuItemComponent } from '@ag-grid-enterprise/core';
 
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
     @Autowired('filterManager') private readonly filterManager: FilterManager;

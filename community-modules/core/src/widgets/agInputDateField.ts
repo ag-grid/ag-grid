@@ -1,8 +1,9 @@
 import { _isBrowserSafari } from '../utils/browser';
 import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
 import { _addOrRemoveAttribute } from '../utils/dom';
-import { AgInputTextField, AgInputTextFieldParams } from './agInputTextField';
-import { AgComponentSelector } from './component';
+import type { AgInputTextFieldParams } from './agInputTextField';
+import { AgInputTextField } from './agInputTextField';
+import type { AgComponentSelector } from './component';
 
 export class AgInputDateField extends AgInputTextField {
     static readonly selector: AgComponentSelector = 'AG-INPUT-DATE-FIELD';

@@ -1,9 +1,9 @@
 import { BeanStub } from '../../context/beanStub';
 import { Autowired } from '../../context/context';
-import { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
-import { ResizeObserverService } from '../../misc/resizeObserverService';
+import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
+import type { ResizeObserverService } from '../../misc/resizeObserverService';
 import { _getAbsoluteHeight, _getAbsoluteWidth, _isVisible, _setFixedHeight, _setFixedWidth } from '../../utils/dom';
-import { PopupService } from '../../widgets/popupService';
+import type { PopupService } from '../../widgets/popupService';
 
 const RESIZE_CONTAINER_STYLE = 'ag-resizer-wrapper';
 

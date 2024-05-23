@@ -1,18 +1,20 @@
-import { ColumnModel } from '../columns/columnModel';
-import { VisibleColsService } from '../columns/visibleColsService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
 import { Autowired } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
+import type { CtrlsService } from '../ctrlsService';
 import { Events } from '../eventKeys';
-import { FilterManager } from '../filter/filterManager';
-import { FocusService } from '../focusService';
-import { MenuService } from '../misc/menuService';
+import type { FilterManager } from '../filter/filterManager';
+import type { FocusService } from '../focusService';
+import type { MenuService } from '../misc/menuService';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _exists } from '../utils/generic';
 import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
-import { LongTapEvent, TouchListener } from '../widgets/touchListener';
-import { HeaderNavigationDirection, HeaderNavigationService } from './common/headerNavigationService';
+import type { LongTapEvent } from '../widgets/touchListener';
+import { TouchListener } from '../widgets/touchListener';
+import type { HeaderNavigationService } from './common/headerNavigationService';
+import { HeaderNavigationDirection } from './common/headerNavigationService';
 
 export interface IGridHeaderComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;

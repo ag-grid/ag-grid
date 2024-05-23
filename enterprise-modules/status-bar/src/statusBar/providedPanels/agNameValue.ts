@@ -1,4 +1,5 @@
-import { AgComponentSelector, Component, RefSelector } from '@ag-grid-community/core';
+import type { AgComponentSelector } from '@ag-grid-community/core';
+import { Component, RefSelector } from '@ag-grid-community/core';
 
 export class AgNameValue extends Component {
     static readonly selector: AgComponentSelector = 'AG-NAME-VALUE';

@@ -1,12 +1,12 @@
 import { BeanStub } from '../../context/beanStub';
 import { Autowired, Bean } from '../../context/context';
-import { CtrlsService } from '../../ctrlsService';
-import { Column } from '../../entities/column';
+import type { CtrlsService } from '../../ctrlsService';
+import type { Column } from '../../entities/column';
 import { ColumnGroup } from '../../entities/columnGroup';
-import { FocusService } from '../../focusService';
-import { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
+import type { FocusService } from '../../focusService';
+import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
 import { _last } from '../../utils/array';
-import { HeaderPosition, HeaderPositionUtils } from './headerPosition';
+import type { HeaderPosition, HeaderPositionUtils } from './headerPosition';
 
 export enum HeaderNavigationDirection {
     UP,

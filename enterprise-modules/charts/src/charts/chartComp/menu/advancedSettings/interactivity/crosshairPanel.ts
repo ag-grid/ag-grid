@@ -1,9 +1,10 @@
 import { AgCheckbox, Autowired, Component } from '@ag-grid-community/core';
-import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import { AgColorPicker } from '../../../../../widgets/agColorPicker';
-import { ChartTranslationService } from '../../../services/chartTranslationService';
-import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import type { ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class CrosshairPanel extends Component {
     public static TEMPLATE = /* html */ `<div>

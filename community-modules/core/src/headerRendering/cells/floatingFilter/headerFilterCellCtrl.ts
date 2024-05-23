@@ -1,18 +1,20 @@
-import { UserCompDetails } from '../../../components/framework/userComponentFactory';
+import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { KeyCode } from '../../../constants/keyCode';
 import { Column } from '../../../entities/column';
-import { ColumnEvent, Events, FilterChangedEvent } from '../../../events';
-import { IFloatingFilter } from '../../../filter/floating/floatingFilter';
-import { Beans } from '../../../rendering/beans';
+import type { ColumnEvent, FilterChangedEvent } from '../../../events';
+import { Events } from '../../../events';
+import type { IFloatingFilter } from '../../../filter/floating/floatingFilter';
+import type { Beans } from '../../../rendering/beans';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { _setAriaLabel } from '../../../utils/aria';
 import { _isElementChildOfClass } from '../../../utils/dom';
 import { _warnOnce } from '../../../utils/function';
 import { _createIconNoSpan } from '../../../utils/icon';
-import { AgPromise } from '../../../utils/promise';
+import type { AgPromise } from '../../../utils/promise';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
-import { HeaderRowCtrl } from '../../row/headerRowCtrl';
-import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
+import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
+import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
+import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { HoverFeature } from '../hoverFeature';
 
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {

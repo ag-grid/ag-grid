@@ -1,19 +1,19 @@
 import { HorizontalDirection, VerticalDirection } from '../constants/direction';
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean } from '../context/context';
-import { IAggFunc } from '../entities/colDef';
-import { Column } from '../entities/column';
-import { GridApi } from '../gridApi';
-import { MouseEventService } from '../gridBodyComp/mouseEventService';
-import { RowDropZoneParams } from '../gridBodyComp/rowDragFeature';
-import { IRowNode } from '../interfaces/iRowNode';
+import type { IAggFunc } from '../entities/colDef';
+import type { Column } from '../entities/column';
+import type { GridApi } from '../gridApi';
+import type { MouseEventService } from '../gridBodyComp/mouseEventService';
+import type { RowDropZoneParams } from '../gridBodyComp/rowDragFeature';
+import type { IRowNode } from '../interfaces/iRowNode';
 import { _flatten, _removeFromArray } from '../utils/array';
 import { _getBodyHeight, _getBodyWidth } from '../utils/browser';
 import { _clearElement, _getElementRectWithOffset, _loadTemplate } from '../utils/dom';
 import { _isFunction } from '../utils/function';
 import { _createIcon } from '../utils/icon';
 import { _escapeString } from '../utils/string';
-import { DragListenerParams, DragService } from './dragService';
+import type { DragListenerParams, DragService } from './dragService';
 
 export interface DragItem<TValue = any> {
     /**

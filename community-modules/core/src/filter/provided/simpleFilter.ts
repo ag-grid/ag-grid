@@ -1,20 +1,27 @@
-import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import { IDoesFilterPassParams, IFilterOptionDef, IFilterParams, ProvidedFilterModel } from '../../interfaces/iFilter';
-import { LocaleService } from '../../localeService';
+import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
+import type {
+    IDoesFilterPassParams,
+    IFilterOptionDef,
+    IFilterParams,
+    ProvidedFilterModel,
+} from '../../interfaces/iFilter';
+import type { LocaleService } from '../../localeService';
 import { _areEqual } from '../../utils/array';
 import { _removeFromParent, _setDisabled, _setDisplayed } from '../../utils/dom';
 import { _isFunction, _warnOnce } from '../../utils/function';
 import { AgPromise } from '../../utils/promise';
 import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
-import { AgInputTextField } from '../../widgets/agInputTextField';
-import { ListOption } from '../../widgets/agList';
+import type { AgInputTextField } from '../../widgets/agInputTextField';
+import type { ListOption } from '../../widgets/agList';
 import { AgRadioButton } from '../../widgets/agRadioButton';
 import { AgSelect } from '../../widgets/agSelect';
-import { Component, ComponentClass } from '../../widgets/component';
+import type { ComponentClass } from '../../widgets/component';
+import { Component } from '../../widgets/component';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
-import { IFloatingFilterParent } from '../floating/floatingFilter';
+import type { IFloatingFilterParent } from '../floating/floatingFilter';
 import { OptionsFactory } from './optionsFactory';
-import { IProvidedFilter, IProvidedFilterParams, ProvidedFilter } from './providedFilter';
+import type { IProvidedFilter, IProvidedFilterParams } from './providedFilter';
+import { ProvidedFilter } from './providedFilter';
 
 export type JoinOperator = 'AND' | 'OR';
 

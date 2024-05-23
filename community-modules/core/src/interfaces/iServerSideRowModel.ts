@@ -1,9 +1,9 @@
-import { LoadSuccessParams } from '../rowNodeCache/rowNodeBlock';
-import { ServerSideGroupLevelState } from './IServerSideStore';
-import { IRowModel } from './iRowModel';
-import { IRowNode } from './iRowNode';
-import { IServerSideDatasource } from './iServerSideDatasource';
-import { ServerSideTransaction, ServerSideTransactionResult } from './serverSideTransaction';
+import type { LoadSuccessParams } from '../rowNodeCache/rowNodeBlock';
+import type { ServerSideGroupLevelState } from './IServerSideStore';
+import type { IRowModel } from './iRowModel';
+import type { IRowNode } from './iRowNode';
+import type { IServerSideDatasource } from './iServerSideDatasource';
+import type { ServerSideTransaction, ServerSideTransactionResult } from './serverSideTransaction';
 
 export interface IServerSideRowModel extends IRowModel {
     refreshStore(params?: RefreshServerSideParams): void;

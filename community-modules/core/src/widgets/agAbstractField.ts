@@ -1,9 +1,9 @@
 import { Events } from '../eventKeys';
-import { AgFieldParams } from '../interfaces/agFieldParams';
+import type { AgFieldParams } from '../interfaces/agFieldParams';
 import { _getAriaLabel, _setAriaLabel, _setAriaLabelledBy } from '../utils/aria';
 import { _setFixedWidth } from '../utils/dom';
 import { AgAbstractLabel } from './agAbstractLabel';
-import { ComponentClass } from './component';
+import type { ComponentClass } from './component';
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export abstract class AgAbstractField<

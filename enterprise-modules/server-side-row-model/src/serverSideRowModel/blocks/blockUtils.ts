@@ -1,23 +1,17 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
     Beans,
     Column,
     ColumnModel,
     IRowNode,
     NumberSequence,
     RowBounds,
-    RowNode,
     ShowRowGroupColsService,
     ValueService,
-    _doOnce,
-    _exists,
-    _missing,
 } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, RowNode, _doOnce, _exists, _missing } from '@ag-grid-community/core';
 
-import { NodeManager } from '../nodeManager';
-import { ServerSideExpansionService } from '../services/serverSideExpansionService';
+import type { NodeManager } from '../nodeManager';
+import type { ServerSideExpansionService } from '../services/serverSideExpansionService';
 
 export const GROUP_MISSING_KEY_ID: 'ag-Grid-MissingKey' = 'ag-Grid-MissingKey';
 

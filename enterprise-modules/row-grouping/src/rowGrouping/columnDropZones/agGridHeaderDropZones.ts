@@ -1,12 +1,5 @@
-import {
-    AgComponentSelector,
-    Autowired,
-    ColumnModel,
-    Component,
-    Events,
-    FuncColsService,
-    _setAriaRole,
-} from '@ag-grid-community/core';
+import type { AgComponentSelector, ColumnModel, FuncColsService } from '@ag-grid-community/core';
+import { Autowired, Component, Events, _setAriaRole } from '@ag-grid-community/core';
 
 import { PivotDropZonePanel } from './pivotDropZonePanel';
 import { RowGroupDropZonePanel } from './rowGroupDropZonePanel';

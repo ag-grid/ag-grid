@@ -1,8 +1,5 @@
-import {
+import type {
     AgPromise,
-    Autowired,
-    Component,
-    Events,
     FieldPickerValueSelectedEvent,
     ICellRendererParams,
     RichSelectParams,
@@ -10,6 +7,11 @@ import {
     UserComponentFactory,
     VirtualList,
     WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Component,
+    Events,
     _bindCellRendererToHtmlElement,
     _escapeString,
     _exists,

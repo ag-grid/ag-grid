@@ -1,17 +1,18 @@
 import { Autowired } from '../../context/context';
-import { FilterChangedEventSourceType } from '../../events';
-import { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
-import { IRowModel } from '../../interfaces/iRowModel';
-import { IRowNode } from '../../interfaces/iRowNode';
+import type { FilterChangedEventSourceType } from '../../events';
+import type { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
+import type { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
+import type { IRowModel } from '../../interfaces/iRowModel';
+import type { IRowNode } from '../../interfaces/iRowNode';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
 import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
 import { _debounce } from '../../utils/function';
-import { AgPromise } from '../../utils/promise';
-import { Component, ComponentClass } from '../../widgets/component';
+import type { AgPromise } from '../../utils/promise';
+import type { ComponentClass } from '../../widgets/component';
+import { Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
-import { PopupEventParams } from '../../widgets/popupService';
+import type { PopupEventParams } from '../../widgets/popupService';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';

@@ -1,13 +1,14 @@
 import { GROUP_AUTO_COLUMN_ID } from '../../columns/autoColService';
 import { KeyCode } from '../../constants/keyCode';
-import { CellEditingStartedEvent, CellEditingStoppedEvent, Events } from '../../events';
-import { WithoutGridCommon } from '../../interfaces/iCommon';
+import type { CellEditingStartedEvent, CellEditingStoppedEvent } from '../../events';
+import { Events } from '../../events';
+import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import { _getAriaCheckboxStateName, _setAriaLive } from '../../utils/aria';
 import { _stopPropagationForAgGrid } from '../../utils/event';
 import { AgCheckbox } from '../../widgets/agCheckbox';
 import { Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
-import { ICellRenderer, ICellRendererParams } from './iCellRenderer';
+import type { ICellRenderer, ICellRendererParams } from './iCellRenderer';
 
 export interface ICheckboxCellRendererParams<TData = any, TContext = any>
     extends ICellRendererParams<TData, boolean, TContext> {

@@ -1,11 +1,11 @@
 import { Autowired, Component } from '@ag-grid-community/core';
 
-import { ChartController } from '../chartController';
-import { ChartMenu } from '../menu/chartMenu';
-import { ChartMenuContext } from '../menu/chartMenuContext';
-import { ChartMenuService } from '../services/chartMenuService';
-import { ChartOptionsProxy, ChartOptionsService } from '../services/chartOptionsService';
-import { ChartTranslationService } from '../services/chartTranslationService';
+import type { ChartController } from '../chartController';
+import type { ChartMenu } from '../menu/chartMenu';
+import type { ChartMenuContext } from '../menu/chartMenuContext';
+import type { ChartMenuService } from '../services/chartMenuService';
+import type { ChartOptionsProxy, ChartOptionsService } from '../services/chartOptionsService';
+import type { ChartTranslationService } from '../services/chartTranslationService';
 
 interface BBox {
     x: number;

@@ -1,14 +1,13 @@
-import { UserCompDetails } from '../../components/framework/userComponentFactory';
+import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import { BeanStub } from '../../context/beanStub';
-import { CellPosition } from '../../entities/cellPositionUtils';
-import { Column, ColumnInstanceId, ColumnPinnedType } from '../../entities/column';
-import { RowClassParams, RowStyle } from '../../entities/gridOptions';
+import type { CellPosition } from '../../entities/cellPositionUtils';
+import type { Column, ColumnInstanceId, ColumnPinnedType } from '../../entities/column';
+import type { RowClassParams, RowStyle } from '../../entities/gridOptions';
 import { RowNode } from '../../entities/rowNode';
-import { RowPosition } from '../../entities/rowPositionUtils';
-import {
+import type { RowPosition } from '../../entities/rowPositionUtils';
+import type {
     AgEventListener,
     CellFocusedEvent,
-    Events,
     RowClickedEvent,
     RowDoubleClickedEvent,
     RowEditingStartedEvent,
@@ -17,13 +16,15 @@ import {
     RowValueChangedEvent,
     VirtualRowRemovedEvent,
 } from '../../events';
+import { Events } from '../../events';
 import { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
-import { GridOptionsService } from '../../gridOptionsService';
-import { BrandedType } from '../../interfaces/brandedType';
-import { ProcessRowParams } from '../../interfaces/iCallbackParams';
-import { WithoutGridCommon } from '../../interfaces/iCommon';
-import { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
-import { DataChangedEvent, IRowNode, RowHighlightPosition } from '../../interfaces/iRowNode';
+import type { GridOptionsService } from '../../gridOptionsService';
+import type { BrandedType } from '../../interfaces/brandedType';
+import type { ProcessRowParams } from '../../interfaces/iCallbackParams';
+import type { WithoutGridCommon } from '../../interfaces/iCommon';
+import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
+import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
+import { RowHighlightPosition } from '../../interfaces/iRowNode';
 import { ModuleNames } from '../../modules/moduleNames';
 import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { _setAriaExpanded, _setAriaRowIndex, _setAriaSelected } from '../../utils/aria';
@@ -32,11 +33,12 @@ import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _executeNextVMTurn, _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
-import { ITooltipFeatureCtrl, TooltipFeature } from '../../widgets/tooltipFeature';
-import { Beans } from '../beans';
+import type { ITooltipFeatureCtrl } from '../../widgets/tooltipFeature';
+import { TooltipFeature } from '../../widgets/tooltipFeature';
+import type { Beans } from '../beans';
 import { CellCtrl } from '../cell/cellCtrl';
-import { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
-import { RowCssClassCalculatorParams } from './rowCssClassCalculator';
+import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
+import type { RowCssClassCalculatorParams } from './rowCssClassCalculator';
 import { RowDragComp } from './rowDragComp';
 
 enum RowType {

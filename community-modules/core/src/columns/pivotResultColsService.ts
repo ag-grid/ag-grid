@@ -1,15 +1,15 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean } from '../context/context';
-import { AbstractColDef, ColDef, ColGroupDef } from '../entities/colDef';
-import { Column } from '../entities/column';
-import { ColumnEventType } from '../events';
-import { IProvidedColumn } from '../interfaces/iProvidedColumn';
+import type { AbstractColDef, ColDef, ColGroupDef } from '../entities/colDef';
+import type { Column } from '../entities/column';
+import type { ColumnEventType } from '../events';
+import type { IProvidedColumn } from '../interfaces/iProvidedColumn';
 import { _areEqual } from '../utils/array';
 import { _exists } from '../utils/generic';
-import { ColumnFactory } from './columnFactory';
-import { ColKey, ColumnCollections, ColumnModel } from './columnModel';
+import type { ColumnFactory } from './columnFactory';
+import type { ColKey, ColumnCollections, ColumnModel } from './columnModel';
 import { destroyColumnTree, getColumnsFromTree } from './columnUtils';
-import { VisibleColsService } from './visibleColsService';
+import type { VisibleColsService } from './visibleColsService';
 
 @Bean('pivotResultColsService')
 export class PivotResultColsService extends BeanStub {

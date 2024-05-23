@@ -1,16 +1,5 @@
-import {
-    Bean,
-    BeanStub,
-    Column,
-    IAggFunc,
-    IAggFuncParams,
-    IAggFuncService,
-    _exists,
-    _existsAndNotEmpty,
-    _includes,
-    _iterateObject,
-    _last,
-} from '@ag-grid-community/core';
+import type { Column, IAggFunc, IAggFuncParams, IAggFuncService } from '@ag-grid-community/core';
+import { Bean, BeanStub, _exists, _existsAndNotEmpty, _includes, _iterateObject, _last } from '@ag-grid-community/core';
 
 const defaultAggFuncNames: { [key: string]: string } = {
     sum: 'Sum',

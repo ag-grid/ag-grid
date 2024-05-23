@@ -1,20 +1,17 @@
 import { BeanStub } from '../../../context/beanStub';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import {
+import type {
     FloatingFilterInputService,
-    FloatingFilterTextInputService,
     ITextInputFloatingFilterParams,
+} from '../../floating/provided/textInputFloatingFilter';
+import {
+    FloatingFilterTextInputService,
     TextInputFloatingFilter,
 } from '../../floating/provided/textInputFloatingFilter';
-import { SimpleFilterModelFormatter } from '../simpleFilter';
-import {
-    NumberFilter,
-    NumberFilterModel,
-    NumberFilterModelFormatter,
-    NumberFilterParams,
-    getAllowedCharPattern,
-} from './numberFilter';
+import type { SimpleFilterModelFormatter } from '../simpleFilter';
+import type { NumberFilterModel, NumberFilterParams } from './numberFilter';
+import { NumberFilter, NumberFilterModelFormatter, getAllowedCharPattern } from './numberFilter';
 
 class FloatingFilterNumberInputService extends BeanStub implements FloatingFilterInputService {
     private eFloatingFilterTextInput: AgInputTextField;

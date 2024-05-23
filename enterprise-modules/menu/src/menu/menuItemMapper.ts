@@ -1,7 +1,4 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
     Column,
     ColumnApplyStateService,
     ColumnAutosizeService,
@@ -14,17 +11,22 @@ import {
     IClipboardService,
     MenuItemDef,
     MenuService,
+    RowPositionUtils,
+    SortController,
+} from '@ag-grid-community/core';
+import {
+    Autowired,
+    Bean,
+    BeanStub,
     ModuleNames,
     ModuleRegistry,
     Optional,
-    RowPositionUtils,
-    SortController,
     _createIconNoSpan,
     _escapeString,
     _exists,
 } from '@ag-grid-community/core';
 
-import { ChartMenuItemMapper } from './chartMenuItemMapper';
+import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 
 @Bean('menuItemMapper')
 export class MenuItemMapper extends BeanStub {

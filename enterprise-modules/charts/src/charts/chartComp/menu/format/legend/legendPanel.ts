@@ -1,11 +1,13 @@
-import { AgCheckbox, AgSelect, AgSelectParams, Autowired, Component, RefSelector } from '@ag-grid-community/core';
-import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgCheckbox, AgSelect, Autowired, Component, RefSelector } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import { AgSlider } from '../../../../../widgets/agSlider';
-import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
-import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
-import { FontPanel, FontPanelParams } from '../fontPanel';
-import { FormatPanelOptions } from '../formatPanel';
+import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import type { FontPanelParams } from '../fontPanel';
+import { FontPanel } from '../fontPanel';
+import type { FormatPanelOptions } from '../formatPanel';
 
 export class LegendPanel extends Component {
     private static TEMPLATE /* html */ = `<div>

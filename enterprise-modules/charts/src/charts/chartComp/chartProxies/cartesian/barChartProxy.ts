@@ -1,10 +1,10 @@
 import { _includes } from '@ag-grid-community/core';
-import { AgBarSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-community';
+import type { AgBarSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-community';
 
 import { hexToRGBA } from '../../utils/color';
 import { deepMerge } from '../../utils/object';
 import { isStacked } from '../../utils/seriesTypeMapper';
-import { ChartProxyParams, UpdateParams } from '../chartProxy';
+import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
 
 const HORIZONTAL_CHART_TYPES = new Set(['bar', 'groupedBar', 'stackedBar', 'normalizedBar']);

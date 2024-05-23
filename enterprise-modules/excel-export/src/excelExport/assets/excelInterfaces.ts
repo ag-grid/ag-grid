@@ -1,4 +1,4 @@
-import { ExcelFont, ExcelHeaderFooterImage, ExcelImage } from '@ag-grid-community/core';
+import type { ExcelFont, ExcelHeaderFooterImage, ExcelImage } from '@ag-grid-community/core';
 
 export type ImageIdMap = Map</** imageId */ string, { type: string; index: number }>;
 export type BorderProperty = string | undefined;

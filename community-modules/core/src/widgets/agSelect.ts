@@ -1,10 +1,11 @@
 import { KeyCode } from '../constants/keyCode';
 import { Events } from '../eventKeys';
-import { AgPickerFieldParams } from '../interfaces/agFieldParams';
+import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaControls } from '../utils/aria';
-import { AgList, ListOption } from './agList';
+import type { ListOption } from './agList';
+import { AgList } from './agList';
 import { AgPickerField } from './agPickerField';
-import { AgComponentSelector } from './component';
+import type { AgComponentSelector } from './component';
 
 export interface AgSelectParams<TValue = string>
     extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {

@@ -1,8 +1,8 @@
-import { ColDef } from '../../entities/colDef';
-import { Column } from '../../entities/column';
-import { AgGridCommon } from '../../interfaces/iCommon';
-import { IComponent } from '../../interfaces/iComponent';
-import { IRowNode } from '../../interfaces/iRowNode';
+import type { ColDef } from '../../entities/colDef';
+import type { Column } from '../../entities/column';
+import type { AgGridCommon } from '../../interfaces/iCommon';
+import type { IComponent } from '../../interfaces/iComponent';
+import type { IRowNode } from '../../interfaces/iRowNode';
 
 export interface ICellRendererParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Value to be rendered. */

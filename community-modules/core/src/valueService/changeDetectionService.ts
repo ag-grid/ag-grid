@@ -1,11 +1,12 @@
 import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean } from '../context/context';
-import { Column } from '../entities/column';
-import { RowNode } from '../entities/rowNode';
-import { CellValueChangedEvent, Events } from '../events';
-import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import { IRowModel } from '../interfaces/iRowModel';
-import { RowRenderer } from '../rendering/rowRenderer';
+import type { Column } from '../entities/column';
+import type { RowNode } from '../entities/rowNode';
+import type { CellValueChangedEvent } from '../events';
+import { Events } from '../events';
+import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { RowRenderer } from '../rendering/rowRenderer';
 import { ChangedPath } from '../utils/changedPath';
 
 // Matches value in clipboard module

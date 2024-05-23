@@ -1,19 +1,21 @@
-import {
-    Autowired,
-    BeanStub,
-    Events,
+import type {
     FocusService,
     IDatasource,
     Logger,
     LoggerFactory,
-    NumberSequence,
-    Qualifier,
     RowNode,
     RowNodeBlockLoader,
     RowRenderer,
     SortModelItem,
     StoreUpdatedEvent,
     WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    Autowired,
+    BeanStub,
+    Events,
+    NumberSequence,
+    Qualifier,
     _exists,
     _getAllValuesInObject,
     _missing,

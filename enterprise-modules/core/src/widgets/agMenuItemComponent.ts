@@ -1,19 +1,21 @@
-import {
+import type {
     AgEvent,
     AgPromise,
-    Autowired,
-    BeanStub,
     Component,
     IComponent,
     IMenuActionParams,
     IMenuConfigParams,
     IMenuItemComp,
-    KeyCode,
     MenuItemDef,
     PopupService,
-    TooltipFeature,
     UserComponentFactory,
     WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    Autowired,
+    BeanStub,
+    KeyCode,
+    TooltipFeature,
     _loadTemplate,
     _setAriaDisabled,
     _setAriaExpanded,

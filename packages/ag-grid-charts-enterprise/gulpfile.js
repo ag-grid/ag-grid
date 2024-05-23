@@ -41,6 +41,7 @@ const copyFromModuleSource = () => {
         .pipe(replace('@ag-grid-community/csv-export', 'ag-grid-community'))
         .pipe(replace('@ag-grid-community/infinite-row-model', 'ag-grid-community'))
         .pipe(replace('@ag-grid-community/core', 'ag-grid-community'))
+        .pipe(replace('@ag-grid-enterprise/core', 'ag-grid-charts-enterprise'))
         .pipe(replace('@ag-grid-enterprise/advanced-filter', 'ag-grid-charts-enterprise'))
         .pipe(replace('@ag-grid-enterprise/charts', 'ag-grid-charts-enterprise'))
         .pipe(replace('@ag-grid-enterprise/charts-enterprise', 'ag-grid-charts-enterprise'))

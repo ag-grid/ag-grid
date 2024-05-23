@@ -1,22 +1,22 @@
-import { ColumnModel } from '../columns/columnModel';
-import { VisibleColsService } from '../columns/visibleColsService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import { Autowired } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { Column } from '../entities/column';
+import type { CtrlsService } from '../ctrlsService';
+import type { Column } from '../entities/column';
 import { Events } from '../eventKeys';
-import { BodyScrollEndEvent, BodyScrollEvent } from '../events';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { IRowModel } from '../interfaces/iRowModel';
-import { IRowNode, VerticalScrollPosition } from '../interfaces/iRowNode';
-import { AnimationFrameService } from '../misc/animationFrameService';
-import { PaginationProxy } from '../pagination/paginationProxy';
-import { RowContainerHeightService } from '../rendering/rowContainerHeightService';
-import { RowRenderer } from '../rendering/rowRenderer';
+import type { BodyScrollEndEvent, BodyScrollEvent } from '../events';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { IRowNode, VerticalScrollPosition } from '../interfaces/iRowNode';
+import type { AnimationFrameService } from '../misc/animationFrameService';
+import type { PaginationProxy } from '../pagination/paginationProxy';
+import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
+import type { RowRenderer } from '../rendering/rowRenderer';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _getInnerHeight, _getScrollLeft, _isRtlNegativeScroll, _setScrollLeft } from '../utils/dom';
 import { _debounce } from '../utils/function';
-import { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
+import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 
 enum ScrollDirection {
     Vertical,

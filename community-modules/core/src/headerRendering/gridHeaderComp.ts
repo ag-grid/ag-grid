@@ -1,5 +1,7 @@
-import { AgComponentSelector, Component } from '../widgets/component';
-import { GridHeaderCtrl, IGridHeaderComp } from './gridHeaderCtrl';
+import type { AgComponentSelector } from '../widgets/component';
+import { Component } from '../widgets/component';
+import type { IGridHeaderComp } from './gridHeaderCtrl';
+import { GridHeaderCtrl } from './gridHeaderCtrl';
 import { HeaderRowContainerComp } from './rowContainer/headerRowContainerComp';
 
 export class GridHeaderComp extends Component {

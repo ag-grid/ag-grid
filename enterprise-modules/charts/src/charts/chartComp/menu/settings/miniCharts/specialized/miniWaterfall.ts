@@ -1,7 +1,7 @@
-import { ChartType } from '@ag-grid-community/core';
+import type { ChartType } from '@ag-grid-community/core';
 import { _Scene, _Theme } from 'ag-charts-community';
 
-import { ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { accumulateData } from '../miniChartHelpers';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 

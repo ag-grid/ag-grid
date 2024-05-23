@@ -1,10 +1,11 @@
 import { Autowired, Component, RefSelector } from '@ag-grid-community/core';
-import { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import { isCartesian, isPolar } from '../../../utils/seriesTypeMapper';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
-import { FormatPanelOptions } from '../formatPanel';
+import type { FormatPanelOptions } from '../formatPanel';
 import { ChartTitlePanel } from './chartTitlePanel';
 import { TitlePanel } from './titlePanel';
 
