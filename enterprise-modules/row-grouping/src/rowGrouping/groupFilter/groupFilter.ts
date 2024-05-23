@@ -13,6 +13,7 @@ import {
     Autowired,
     Events,
     FilterWrapperComp,
+    RefPlaceholder,
     TabGuardComp,
     _clearElement,
     _loadTemplate,

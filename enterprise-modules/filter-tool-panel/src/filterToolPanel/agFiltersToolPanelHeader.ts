@@ -4,6 +4,7 @@ import {
     Autowired,
     Component,
     Events,
+    RefPlaceholder,
     _createIconNoSpan,
     _debounce,
     _setDisplayed,

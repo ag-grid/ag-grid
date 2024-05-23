@@ -28,6 +28,7 @@ import {
     FilterWrapperComp,
     ModuleNames,
     ModuleRegistry,
+    RefPlaceholder,
     TabbedLayout,
     _createIconNoSpan,
 } from '@ag-grid-community/core';

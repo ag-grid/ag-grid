@@ -1,4 +1,4 @@
-import { AgCheckbox, AgSelect, Autowired, Component, RefSelector } from '@ag-grid-community/core';
+import { AgCheckbox, AgSelect, Autowired, Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 

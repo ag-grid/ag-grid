@@ -52,7 +52,7 @@ export class AgSideBar extends Component implements ISideBar {
     }
 
     public postConstruct(): void {
-        this.sideBarButtonsComp.addEventListener(
+        this.sideBarButtons.addEventListener(
             AgSideBarButtons.EVENT_SIDE_BAR_BUTTON_CLICKED,
             this.onToolPanelButtonClicked.bind(this)
         );
