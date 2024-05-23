@@ -26,9 +26,8 @@ Elements that float above the user interface are called cards or popups. Interna
 
 Menus such as the column menu and context menu are cards and so respond to the instructions above for rounded corners and shadows. Additionally:
 
-* the `ag-menu` class can be used to style the body of all menus - column menus, filter menus and right-click context menus.
-* `--ag-menu-min-width` sets the width of filter menus only
-* `--ag-tab-min-width` sets the width of the legacy column menu only
+* Use CSS rules targeting `.ag-menu` to style the body of all menus - column menus, filter menus and right-click context menus
+* To style a specific kind of menu, use the CSS `:has()` selector to select menus containing a specific component, e.g. `.ag-menu:has(.ag-filter)`. Use the browser developer tools to find the component class.
 
 ## Example
 
@@ -39,15 +38,11 @@ This example combines all of the above techniques to style the column menus. Cli
     --ag-card-radius: 10px;
     --ag-card-shadow: 0 10px 40px rgb(83, 0, 106);
     --ag-popup-shadow: var(--ag-card-shadow);
-    --ag-menu-min-width: 350px;
 }
 
 .ag-theme-quartz .ag-menu {
+    min-width: 350px;
     background-color: #55AA77;
-}
-
-.ag-theme-quartz .ag-tabs-header {
-    background-color: #AA5577;
 }
 ```
 
