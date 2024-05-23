@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct, PreDestroy } from '../context/context';
+import { Autowired, Bean, PreDestroy } from '../context/context';
 import { AbstractColDef, ColDef, ColGroupDef } from '../entities/colDef';
 import { Column } from '../entities/column';
 import { ColumnEventType } from '../events';
