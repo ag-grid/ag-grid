@@ -22,7 +22,7 @@ import { Autowired } from './context';
 export abstract class BeanStub implements BaseBean, IEventEmitter {
     public static EVENT_DESTROYED = 'destroyed';
 
-    protected localEventService: LocalEventService;
+    protected localEventService?: LocalEventService;
 
     private destroyFunctions: (() => void)[] = [];
     private destroyed = false;
@@ -81,7 +81,7 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
             this.localEventService = new LocalEventService();
         }
 
-        this.localEventService.addEventListener(eventType, listener);
+        this.localEventService!.addEventListener(eventType, listener);
     }
 
     public removeEventListener(eventType: string, listener: AgEventListener): void {

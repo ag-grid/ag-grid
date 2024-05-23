@@ -95,7 +95,7 @@ export class ProvidedColumnGroup extends BeanStub implements IProvidedColumn, IE
         const event: AgEvent = {
             type: ProvidedColumnGroup.EVENT_EXPANDED_CHANGED,
         };
-        this.localEventService.dispatchEvent(event);
+        this.dispatchEvent(event);
     }
 
     public isExpandable(): boolean {
@@ -215,7 +215,7 @@ export class ProvidedColumnGroup extends BeanStub implements IProvidedColumn, IE
             const event: AgEvent = {
                 type: ProvidedColumnGroup.EVENT_EXPANDABLE_CHANGED,
             };
-            this.localEventService.dispatchEvent(event);
+            this.dispatchEvent(event);
         }
     }
 
@@ -241,13 +241,5 @@ export class ProvidedColumnGroup extends BeanStub implements IProvidedColumn, IE
 
     private onColumnVisibilityChanged(): void {
         this.setExpandable();
-    }
-
-    public addEventListener(eventType: string, listener: AgEventListener): void {
-        this.localEventService.addEventListener(eventType, listener);
-    }
-
-    public removeEventListener(eventType: string, listener: AgEventListener): void {
-        this.localEventService.removeEventListener(eventType, listener);
     }
 }
