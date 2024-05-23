@@ -20,11 +20,11 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         editable: true,
         flex: 1,
-        minWidth: 130,
+        minWidth: 150,
         filter: true,
     },
     autoGroupColumnDef: {
-        minWidth: 200,
+        minWidth: 150,
     },
     pivotMode: true,
     onFirstDataRendered,
