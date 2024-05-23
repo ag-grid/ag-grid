@@ -1,16 +1,9 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
-    ColDef,
-    GridApi,
-    GridOptions,
-    ICellRendererComp,
-    ICellRendererParams,
-    RowSpanParams,
-    createGrid,
-} from '@ag-grid-community/core';
+import { ColDef, GridApi, GridOptions, RowSpanParams, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 
 import { getData } from './data';
+import { ShowCellRenderer } from './showCellRenderer_typescript';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -19,35 +12,6 @@ function rowSpan(params: RowSpanParams) {
         return 4;
     } else {
         return 1;
-    }
-}
-
-class ShowCellRenderer implements ICellRendererComp {
-    ui: any;
-
-    init(params: ICellRendererParams) {
-        const cellBlank = !params.value;
-        if (cellBlank) {
-            return;
-        }
-
-        this.ui = document.createElement('div');
-        this.ui.innerHTML =
-            '<div class="show-name">' +
-            params.value.name +
-            '' +
-            '</div>' +
-            '<div class="show-presenter">' +
-            params.value.presenter +
-            '</div>';
-    }
-
-    getGui() {
-        return this.ui;
-    }
-
-    refresh() {
-        return false;
     }
 }
 

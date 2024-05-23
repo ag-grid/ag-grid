@@ -25,12 +25,6 @@ const gridOptions: GridOptions = {
     },
 };
 
-function setDataValue() {
-    gridApi!.forEachNode(function (rowNode) {
-        rowNode.setDataValue('sickDays', randomInt());
-    });
-}
-
 function setData() {
     gridApi!.forEachNode(function (rowNode) {
         var newData = {
@@ -39,16 +33,6 @@ function setData() {
         };
         rowNode.setData(newData);
     });
-}
-
-function applyTransaction() {
-    var itemsToUpdate: any[] = [];
-    gridApi!.forEachNode(function (rowNode) {
-        var data = rowNode.data;
-        data.sickDays = randomInt();
-        itemsToUpdate.push(data);
-    });
-    gridApi!.applyTransaction({ update: itemsToUpdate });
 }
 
 function randomInt() {
