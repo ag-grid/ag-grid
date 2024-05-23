@@ -257,12 +257,45 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         return res;
     }
 
+    /**
+     * Topological sort of the given row nodes based on the grouping hierarchy, where parents come before children.
+     * Used to ensure tree data is moved in the correct order (see AG-11678)
+     */
+    private topoSort(rowNodes: RowNode[], details: GroupingDetails): RowNode[] {
+        const sortedNodes: RowNode[] = [];
+
+        const queue = [details.rootNode];
+
+        // BFS for nodes in the hierarchy that match IDs of the given nodes
+        while (queue.length > 0) {
+            const node = queue.shift();
+            if (node === undefined) {
+                continue;
+            }
+
+            const found = rowNodes.find((child) => child.id === node.id);
+            if (found) {
+                sortedNodes.push(found);
+            }
+
+            const children = node.childrenAfterGroup ?? [];
+            for (let i = 0; i < children.length; i++) {
+                queue.push(children[i]);
+            }
+        }
+
+        return sortedNodes;
+    }
+
     private moveNodesInWrongPath(
         childNodes: RowNode[],
         details: GroupingDetails,
         batchRemover: BatchRemover | undefined
     ): void {
-        childNodes.forEach((childNode) => {
+        // AG-11678 avoid unnecessary sorting when using normal row grouping
+        const sorted = details.usingTreeData ? this.topoSort(childNodes, details) : childNodes;
+
+        sorted.forEach((childNode) => {
             // we add node, even if parent has not changed, as the data could have
             // changed, hence aggregations will be wrong
             if (details.changedPath.isActive()) {
