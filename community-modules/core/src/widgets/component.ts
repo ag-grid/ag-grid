@@ -25,8 +25,10 @@ const compIdSequence = new NumberSequence();
  * There are hanging data-refs in the DOM that are not being used internally by the component which we don't want to apply to the component.
  * There is also the case where data-refs are solely used for passing parameters to the component and should not be applied to the component.
  * It also enables validation to catch typo errors in the data-ref attribute vs component name.
+ * The value is `null` so that it can be identified in the component and distinguished from just missing with undefined.
+ * The `null` value also allows for existing falsy checks to work as expected when code can be run before the template is setup.
  */
-export const RefPlaceholder: any = 'REF';
+export const RefPlaceholder: any = null;
 
 export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
@@ -152,7 +154,13 @@ export class Component extends BeanStub {
             if (current === RefPlaceholder) {
                 (this as any)[elementRef] = newComponent ?? element;
             } else {
-                console.warn(`Unused ref: ${elementRef} on ${this.constructor.name} with ${current}`);
+                // This can happen because of:
+                // 1. The data-ref has a typo and doesn't match the property in the component
+                // 2. The  property is not initialised with the RefPlaceholder and should be.
+                // 3. The property is on a child component and not availble on the parent during construction.
+                //    In which case you may need to pass the template via setTemplate() instead of in the super constructor.
+                // 4. The data-ref is not used by the component and should be removed from the template.
+                console.warn(`Issue with data-ref: ${elementRef} on ${this.constructor.name} with ${current}`);
             }
         }
     }
