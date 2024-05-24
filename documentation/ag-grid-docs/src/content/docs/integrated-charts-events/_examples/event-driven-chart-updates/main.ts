@@ -39,11 +39,12 @@ const gridOptions: GridOptions = {
     onChartRangeSelectionChanged: onChartRangeSelectionChanged,
 };
 
+
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
     const createRangeChartParams: CreateRangeChartParams = {
         cellRange: {
             rowStartIndex: 0,
-            rowEndIndex: 5,
+            rowEndIndex: 3,
             columns: ['Month', 'Sunshine (hours)'],
         },
         chartType: 'stackedColumn',

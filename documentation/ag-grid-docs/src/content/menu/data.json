@@ -986,7 +986,7 @@
                                     },
                                     {
                                         "title": "Total Rows",
-                                        "path": "grouping-footers",
+                                        "path": "total-rows",
                                         "isEnterprise": true
                                     },
                                     {

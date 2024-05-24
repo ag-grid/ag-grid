@@ -43,7 +43,7 @@ const gridOptions: GridOptions<IAccount> = {
                 ' ' +
                 (params.data ? params.data!.calls : '') +
                 ' calls</div>' +
-                '<div ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/>' +
+                '<div data-ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/>' +
                 '</div>'
             );
         },

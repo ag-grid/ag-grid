@@ -26,8 +26,12 @@
         "command": "tsc --project {projectRoot}/tsconfig.json"
       }
     },
-    "dev": {
+    "elapsedBuildTime": {
       "dependsOn": ["^build", "^docs-resolved-interfaces"],
+      "command": "node scripts/buildTime.mjs stop && node scripts/buildTime.mjs elapsed"
+    },
+    "dev": {
+      "dependsOn": ["^build", "^docs-resolved-interfaces", "elapsedBuildTime"],
       "command": "astro dev --port=${PORT} --host",
       "options": {
         "cwd": "{projectRoot}"
