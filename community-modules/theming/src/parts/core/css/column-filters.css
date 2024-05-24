@@ -1,3 +1,7 @@
+.ag-set-filter {
+    --ag-indentation-level: 0;
+}
+
 .ag-set-filter-item {
     display: flex;
     align-items: center;
