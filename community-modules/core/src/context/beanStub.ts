@@ -16,9 +16,10 @@ import type { LocaleService } from '../localeService';
 import { _addSafePassiveEventListener } from '../utils/event';
 import type { Component } from '../widgets/component';
 import type { BaseBean } from './bean';
-import type { BeanCollection, Context } from './context';
+import type { BeanCollection, BeanName, Context } from './context';
 
 export abstract class BeanStub implements BaseBean, IEventEmitter {
+    public readonly beanName?: BeanName;
     public static EVENT_DESTROYED = 'destroyed';
 
     protected localEventService?: LocalEventService;

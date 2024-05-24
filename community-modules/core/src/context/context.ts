@@ -67,7 +67,6 @@ export interface ControllerMeta {
 }
 
 export interface SingletonBean {
-    BeanName: BeanName;
     new (): BeanStub;
 }
 
@@ -142,13 +141,12 @@ export class Context {
         });
 
         params.beanClasses.forEach((BeanClass) => {
-            const name = BeanClass.BeanName;
-            if (!name) {
-                return;
-            }
-
             const instance = new BeanClass();
-            this.beans[name] = instance;
+            if (instance.beanName) {
+                this.beans[instance.beanName] = instance;
+            } else {
+                console.error(`Bean ${BeanClass.name} is missing beanName`);
+            }
             this.createdBeans.push(instance);
         });
 
