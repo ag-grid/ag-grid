@@ -180,6 +180,10 @@ export class Context {
         beanInstances.forEach((instance) => instance.postConstruct?.());
     }
 
+    public getBeans(): BeanCollection {
+        return this.beans;
+    }
+
     public getBean<T extends BeanName>(name: T): BeanCollection[T] {
         return this.beans[name];
     }

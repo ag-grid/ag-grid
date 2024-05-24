@@ -53,7 +53,7 @@ import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { Module } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
 import { LocaleService } from './localeService';
-import type { Logger} from './logger';
+import type { Logger } from './logger';
 import { LoggerFactory } from './logger';
 import { AnimationFrameService } from './misc/animationFrameService';
 import { ApiEventService } from './misc/apiEventService';
@@ -269,6 +269,7 @@ export class GridCoreCreator {
         this.registerModuleStackComponents(context, registeredModules);
         this.registerControllers(context, registeredModules);
 
+        debugger;
         createUi(context);
 
         context.getBean('syncService').start();
