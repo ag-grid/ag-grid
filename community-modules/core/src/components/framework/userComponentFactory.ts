@@ -92,6 +92,7 @@ export class UserComponentFactory extends BeanStub {
         this.componentMetadataProvider = beans.componentMetadataProvider;
         this.userComponentRegistry = beans.userComponentRegistry;
         this.frameworkComponentWrapper = beans.frameworkComponentWrapper;
+        this.gridOptions = beans.gridOptions;
     }
 
     public getHeaderCompDetails(colDef: ColDef, params: WithoutGridCommon<IHeaderParams>): UserCompDetails | undefined {
