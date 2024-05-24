@@ -25,7 +25,7 @@ import type { CellValueChange, LastFocusedCell } from './undoRedoStack';
 import { RangeUndoRedoAction, UndoRedoAction, UndoRedoStack } from './undoRedoStack';
 
 export class UndoRedoService extends BeanStub {
-    static BeanName: BeanName = 'undoRedoService';
+    beanName: BeanName = 'undoRedoService';
 
     private focusService: FocusService;
     private ctrlsService: CtrlsService;

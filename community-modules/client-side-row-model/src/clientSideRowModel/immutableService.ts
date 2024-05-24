@@ -12,7 +12,7 @@ import { BeanStub, _exists, _iterateObject, _missing } from '@ag-grid-community/
 import type { ClientSideRowModel } from './clientSideRowModel';
 
 export class ImmutableService extends BeanStub implements IImmutableService {
-    static BeanName: BeanName = 'immutableService';
+    beanName: BeanName = 'immutableService';
 
     private rowModel: IRowModel;
     private selectionService: ISelectionService;

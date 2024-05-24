@@ -30,7 +30,7 @@ interface AggregationDetails {
 }
 
 export class AggregationStage extends BeanStub implements IRowNodeStage {
-    static BeanName: BeanName = 'aggregationStage';
+    beanName: BeanName = 'aggregationStage';
 
     private columnModel: ColumnModel;
     private valueService: ValueService;

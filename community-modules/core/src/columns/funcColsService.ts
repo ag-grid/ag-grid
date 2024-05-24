@@ -2,7 +2,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { ColDef, IAggFunc } from '../entities/colDef';
 import type { Column } from '../entities/column';
-import type { ColumnEventType} from '../events';
+import type { ColumnEventType } from '../events';
 import { Events } from '../events';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import { _removeFromArray } from '../utils/array';
@@ -13,7 +13,7 @@ import type { ColKey, ColumnModel, Maybe } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
 
 export class FuncColsService extends BeanStub {
-    static BeanName: BeanName = 'funcColsService';
+    beanName: BeanName = 'funcColsService';
 
     private columnModel: ColumnModel;
     private eventDispatcher: ColumnEventDispatcher;

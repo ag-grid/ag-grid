@@ -10,7 +10,7 @@ import type {
 import { BeanStub, _includes } from '@ag-grid-community/core';
 
 export class ChartCrossFilterService extends BeanStub {
-    static BeanName: BeanName = 'chartCrossFilterService';
+    beanName: BeanName = 'chartCrossFilterService';
 
     private gridApi: GridApi;
     private columnModel: ColumnModel;

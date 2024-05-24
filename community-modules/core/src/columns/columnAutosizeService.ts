@@ -13,7 +13,7 @@ import type { ColKey, ColumnModel, Maybe } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
 
 export class ColumnAutosizeService extends BeanStub {
-    static BeanName: BeanName = 'columnAutosizeService';
+    beanName: BeanName = 'columnAutosizeService';
 
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;

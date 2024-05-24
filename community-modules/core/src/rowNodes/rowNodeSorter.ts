@@ -20,7 +20,7 @@ export interface SortedRowNode {
 // this logic is used by both SSRM and CSRM
 
 export class RowNodeSorter extends BeanStub {
-    static BeanName: BeanName = 'rowNodeSorter';
+    beanName: BeanName = 'rowNodeSorter';
 
     private valueService: ValueService;
     private columnModel: ColumnModel;

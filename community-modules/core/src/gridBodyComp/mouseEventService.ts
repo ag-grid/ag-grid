@@ -9,7 +9,7 @@ import { _exists } from '../utils/generic';
 import { NumberSequence } from '../utils/numberSequence';
 
 export class MouseEventService extends BeanStub {
-    static BeanName: BeanName = 'mouseEventService';
+    beanName: BeanName = 'mouseEventService';
 
     private ctrlsService: CtrlsService;
 

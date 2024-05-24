@@ -14,7 +14,7 @@ import type { LazyCache } from './lazyCache';
 import { LazyStore } from './lazyStore';
 
 export class LazyBlockLoadingService extends BeanStub {
-    static BeanName: BeanName = 'lazyBlockLoadingService';
+    beanName: BeanName = 'lazyBlockLoadingService';
 
     private rowNodeBlockLoader: RowNodeBlockLoader;
     private rowRenderer: RowRenderer;

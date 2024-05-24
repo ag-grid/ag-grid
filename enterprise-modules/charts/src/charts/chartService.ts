@@ -51,7 +51,7 @@ export interface CommonCreateChartParams extends BaseCreateChartParams {
 }
 
 export class ChartService extends BeanStub implements IChartService {
-    static BeanName: BeanName = 'chartService';
+    beanName: BeanName = 'chartService';
 
     private visibleColsService: VisibleColsService;
     private rangeService?: IRangeService;

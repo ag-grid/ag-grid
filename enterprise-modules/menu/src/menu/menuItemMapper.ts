@@ -28,7 +28,7 @@ import {
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 
 export class MenuItemMapper extends BeanStub {
-    static BeanName: BeanName = 'menuItemMapper';
+    beanName: BeanName = 'menuItemMapper';
 
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;

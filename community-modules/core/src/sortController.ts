@@ -18,7 +18,7 @@ export interface SortModelItem {
 }
 
 export class SortController extends BeanStub {
-    static BeanName: BeanName = 'sortController';
+    beanName: BeanName = 'sortController';
 
     private static DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
 

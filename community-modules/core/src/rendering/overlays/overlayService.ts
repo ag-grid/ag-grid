@@ -11,7 +11,7 @@ import type { INoRowsOverlayParams } from './noRowsOverlayComponent';
 import type { OverlayWrapperComponent } from './overlayWrapperComponent';
 
 export class OverlayService extends BeanStub {
-    static BeanName: BeanName = 'overlayService';
+    beanName: BeanName = 'overlayService';
 
     private userComponentFactory: UserComponentFactory;
     private paginationProxy: PaginationProxy;

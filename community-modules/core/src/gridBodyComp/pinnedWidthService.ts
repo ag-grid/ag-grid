@@ -4,7 +4,7 @@ import type { BeanCollection, BeanName } from '../context/context';
 import { Events } from '../eventKeys';
 
 export class PinnedWidthService extends BeanStub {
-    static BeanName: BeanName = 'pinnedWidthService';
+    beanName: BeanName = 'pinnedWidthService';
 
     private visibleColsService: VisibleColsService;
 

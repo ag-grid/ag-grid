@@ -2,7 +2,7 @@ import type { BeanCollection, BeanName, ChangedPath, FilterManager, RowNode } fr
 import { BeanStub } from '@ag-grid-community/core';
 
 export class FilterService extends BeanStub {
-    static BeanName: BeanName = 'filterService';
+    beanName: BeanName = 'filterService';
 
     private filterManager: FilterManager;
     public wireBeans(beans: BeanCollection): void {

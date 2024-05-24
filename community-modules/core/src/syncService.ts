@@ -14,7 +14,7 @@ import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 
 export class SyncService extends BeanStub {
-    static BeanName: BeanName = 'syncService';
+    beanName: BeanName = 'syncService';
 
     private ctrlsService: CtrlsService;
     private columnModel: ColumnModel;

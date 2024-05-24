@@ -11,7 +11,7 @@ import { Events, ExpansionService } from '@ag-grid-community/core';
 import type { ServerSideRowModel } from '../serverSideRowModel';
 
 export class ServerSideExpansionService extends ExpansionService implements IExpansionService {
-    static BeanName: BeanName = 'expansionService';
+    beanName: BeanName = 'expansionService';
 
     private serverSideRowModel: ServerSideRowModel;
 

@@ -35,7 +35,7 @@ import { _iterateObject } from '../../utils/object';
 import { AgMenuItemRenderer } from '../../widgets/agMenuItemRenderer';
 
 export class UserComponentRegistry extends BeanStub {
-    static BeanName: BeanName = 'userComponentRegistry';
+    beanName: BeanName = 'userComponentRegistry';
 
     private agGridDefaults: { [key: string]: any } = {
         //date

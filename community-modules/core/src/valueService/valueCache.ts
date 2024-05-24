@@ -3,7 +3,7 @@ import type { BeanName } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
 
 export class ValueCache extends BeanStub {
-    static BeanName: BeanName = 'valueCache';
+    beanName: BeanName = 'valueCache';
 
     private cacheVersion = 0;
     private active: boolean;

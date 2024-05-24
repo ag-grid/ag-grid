@@ -6,7 +6,7 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 
 export class RowNodeEventThrottle extends BeanStub {
-    static BeanName: BeanName = 'rowNodeEventThrottle';
+    beanName: BeanName = 'rowNodeEventThrottle';
 
     private animationFrameService: AnimationFrameService;
     private rowModel: IRowModel;

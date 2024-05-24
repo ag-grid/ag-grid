@@ -11,7 +11,7 @@ import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { ListenerUtils } from './listenerUtils';
 
 export class SortListener extends BeanStub {
-    static BeanName: BeanName = 'ssrmSortService';
+    beanName: BeanName = 'ssrmSortService';
 
     private sortController: SortController;
     private serverSideRowModel: ServerSideRowModel;

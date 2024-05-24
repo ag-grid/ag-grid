@@ -20,7 +20,7 @@ import type { InfiniteCacheParams } from './infiniteCache';
 import { InfiniteCache } from './infiniteCache';
 
 export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
-    static BeanName: BeanName = 'rowModel';
+    beanName: BeanName = 'rowModel';
 
     private filterManager: FilterManager;
     private sortController: SortController;

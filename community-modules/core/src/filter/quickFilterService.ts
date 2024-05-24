@@ -11,7 +11,7 @@ import { _exists } from '../utils/generic';
 import type { ValueService } from '../valueService/valueService';
 
 export class QuickFilterService extends BeanStub {
-    static BeanName: BeanName = 'quickFilterService';
+    beanName: BeanName = 'quickFilterService';
 
     private valueService: ValueService;
     private columnModel: ColumnModel;

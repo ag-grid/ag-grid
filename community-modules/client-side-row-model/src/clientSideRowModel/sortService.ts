@@ -17,7 +17,7 @@ import type {
 import { BeanStub, _missing, _warnOnce } from '@ag-grid-community/core';
 
 export class SortService extends BeanStub {
-    static BeanName: BeanName = 'sortService';
+    beanName: BeanName = 'sortService';
 
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;

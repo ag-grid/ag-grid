@@ -20,7 +20,7 @@ import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 export class VisibleColsService extends BeanStub {
-    static BeanName: BeanName = 'visibleColsService';
+    beanName: BeanName = 'visibleColsService';
 
     private columnModel: ColumnModel;
     private columnSizeService: ColumnSizeService;

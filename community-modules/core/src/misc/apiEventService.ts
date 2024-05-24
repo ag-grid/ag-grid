@@ -5,7 +5,7 @@ import { ALWAYS_SYNC_GLOBAL_EVENTS } from '../events';
 import { FrameworkEventListenerService } from './frameworkEventListenerService';
 
 export class ApiEventService extends BeanStub {
-    static BeanName: BeanName = 'apiEventService';
+    beanName: BeanName = 'apiEventService';
 
     private syncEventListeners: Map<string, Set<AgEventListener>> = new Map();
     private asyncEventListeners: Map<string, Set<AgEventListener>> = new Map();

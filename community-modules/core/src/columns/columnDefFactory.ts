@@ -6,7 +6,7 @@ import type { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import { _deepCloneDefinition } from '../utils/object';
 
 export class ColumnDefFactory extends BeanStub {
-    static BeanName: BeanName = 'columnDefFactory';
+    beanName: BeanName = 'columnDefFactory';
 
     public buildColumnDefs(
         cols: Column[],

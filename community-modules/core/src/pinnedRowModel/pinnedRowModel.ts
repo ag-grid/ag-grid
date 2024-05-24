@@ -9,7 +9,7 @@ import { _last } from '../utils/array';
 import { _missingOrEmpty } from '../utils/generic';
 
 export class PinnedRowModel extends BeanStub {
-    static BeanName: BeanName = 'pinnedRowModel';
+    beanName: BeanName = 'pinnedRowModel';
 
     private beans: BeanCollection;
 

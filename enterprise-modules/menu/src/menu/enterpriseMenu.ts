@@ -51,7 +51,7 @@ interface EnterpriseColumnMenu extends BaseBean {
 }
 
 export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
-    static BeanName: BeanName = 'enterpriseMenuFactory';
+    beanName: BeanName = 'enterpriseMenuFactory';
 
     private popupService: PopupService;
     private focusService: FocusService;

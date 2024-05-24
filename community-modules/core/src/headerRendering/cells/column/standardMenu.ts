@@ -16,7 +16,7 @@ import { _isVisible } from '../../../utils/dom';
 import type { PopupService } from '../../../widgets/popupService';
 
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
-    static BeanName: BeanName = 'filterMenuFactory';
+    beanName: BeanName = 'filterMenuFactory';
 
     private popupService: PopupService;
     private focusService: FocusService;

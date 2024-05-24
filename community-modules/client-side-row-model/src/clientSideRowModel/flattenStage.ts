@@ -19,7 +19,7 @@ interface FlattenDetails {
 }
 
 export class FlattenStage extends BeanStub implements IRowNodeStage {
-    static BeanName: BeanName = 'flattenStage';
+    beanName: BeanName = 'flattenStage';
 
     private beans: BeanCollection;
     private columnModel: ColumnModel;

@@ -7,7 +7,7 @@ import type { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainer
 import type { RowRenderer } from './rowRenderer';
 
 export class AutoWidthCalculator extends BeanStub {
-    static BeanName: BeanName = 'autoWidthCalculator';
+    beanName: BeanName = 'autoWidthCalculator';
 
     private rowRenderer: RowRenderer;
     private ctrlsService: CtrlsService;

@@ -6,7 +6,7 @@ import type { IEventEmitter } from './interfaces/iEventEmitter';
 import { LocalEventService } from './localEventService';
 
 export class EventService extends BeanStub implements IEventEmitter {
-    static BeanName: BeanName = 'eventService';
+    beanName: BeanName = 'eventService';
 
     private globalEventListener?: AgGlobalEventListener;
     private globalSyncEventListener?: AgGlobalEventListener;

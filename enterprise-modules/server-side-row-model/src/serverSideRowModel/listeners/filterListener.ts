@@ -12,7 +12,7 @@ import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { ListenerUtils } from './listenerUtils';
 
 export class FilterListener extends BeanStub {
-    static BeanName: BeanName = 'ssrmFilterListener';
+    beanName: BeanName = 'ssrmFilterListener';
 
     private serverSideRowModel: ServerSideRowModel;
     private filterManager: FilterManager;

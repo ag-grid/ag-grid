@@ -10,7 +10,7 @@ export interface CellPosition extends RowPosition {
 }
 
 export class CellPositionUtils extends BeanStub {
-    static BeanName: BeanName = 'cellPositionUtils';
+    beanName: BeanName = 'cellPositionUtils';
 
     public createId(cellPosition: CellPosition): string {
         const { rowIndex, rowPinned, column } = cellPosition;

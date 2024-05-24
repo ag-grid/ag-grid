@@ -5,7 +5,7 @@ import type { RowClassParams } from '../entities/gridOptions';
 import type { ExpressionService } from '../valueService/expressionService';
 
 export class StylingService extends BeanStub {
-    static BeanName: BeanName = 'stylingService';
+    beanName: BeanName = 'stylingService';
 
     private expressionService: ExpressionService;
 

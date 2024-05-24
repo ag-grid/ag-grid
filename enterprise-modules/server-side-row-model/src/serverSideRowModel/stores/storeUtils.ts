@@ -17,7 +17,7 @@ import type { SSRMParams, ServerSideRowModel } from '../serverSideRowModel';
 import type { StoreFactory } from './storeFactory';
 
 export class StoreUtils extends BeanStub {
-    static BeanName: BeanName = 'ssrmStoreUtils';
+    beanName: BeanName = 'ssrmStoreUtils';
 
     private columnModel: ColumnModel;
     private serverSideRowModel: ServerSideRowModel;

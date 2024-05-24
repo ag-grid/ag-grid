@@ -8,7 +8,7 @@ import { SelectionService } from '../selectionService';
 import { ChangedPath } from '../utils/changedPath';
 
 export class SelectableService extends BeanStub {
-    static BeanName: BeanName = 'selectableService';
+    beanName: BeanName = 'selectableService';
 
     private rowModel: IRowModel;
     private selectionService: ISelectionService;

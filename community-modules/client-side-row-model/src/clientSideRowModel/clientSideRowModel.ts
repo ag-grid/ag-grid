@@ -58,7 +58,7 @@ export interface RowNodeMap {
 }
 
 export class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
-    static BeanName: BeanName = 'rowModel';
+    beanName: BeanName = 'rowModel';
 
     private beans: BeanCollection;
 

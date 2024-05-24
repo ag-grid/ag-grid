@@ -7,7 +7,7 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 
 export class ExpansionService extends BeanStub implements IExpansionService {
-    static BeanName: BeanName = 'expansionService';
+    beanName: BeanName = 'expansionService';
 
     private rowModel: IRowModel;
 

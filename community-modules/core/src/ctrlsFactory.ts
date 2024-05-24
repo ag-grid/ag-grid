@@ -2,7 +2,7 @@ import { BeanStub } from './context/beanStub';
 import type { BeanName, ControllerMeta } from './context/context';
 
 export class CtrlsFactory extends BeanStub {
-    static BeanName: BeanName = 'ctrlsFactory';
+    beanName: BeanName = 'ctrlsFactory';
 
     private registry: { [name: string]: new () => Object } = {};
 

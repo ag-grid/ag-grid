@@ -19,7 +19,7 @@ export interface MenuRestoreFocusParams {
 }
 
 export class MenuUtils extends BeanStub {
-    static BeanName: BeanName = 'menuUtils';
+    beanName: BeanName = 'menuUtils';
 
     private focusService: FocusService;
     private headerNavigationService: HeaderNavigationService;

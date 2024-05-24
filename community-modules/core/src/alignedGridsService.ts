@@ -22,7 +22,7 @@ import type { Logger } from './logger';
 import { _errorOnce } from './utils/function';
 
 export class AlignedGridsService extends BeanStub {
-    static BeanName: BeanName = 'alignedGridsService';
+    beanName: BeanName = 'alignedGridsService';
 
     private columnModel: ColumnModel;
     private columnSizeService: ColumnSizeService;

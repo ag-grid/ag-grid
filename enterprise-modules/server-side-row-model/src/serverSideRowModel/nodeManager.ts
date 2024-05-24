@@ -2,7 +2,7 @@ import type { BeanName, RowNode } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
 export class NodeManager extends BeanStub {
-    static BeanName: BeanName = 'ssrmNodeManager';
+    beanName: BeanName = 'ssrmNodeManager';
 
     private rowNodes: { [id: string]: RowNode | undefined } = {};
 

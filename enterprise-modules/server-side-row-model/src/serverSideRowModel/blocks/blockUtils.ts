@@ -16,7 +16,7 @@ import type { ServerSideExpansionService } from '../services/serverSideExpansion
 export const GROUP_MISSING_KEY_ID: 'ag-Grid-MissingKey' = 'ag-Grid-MissingKey';
 
 export class BlockUtils extends BeanStub {
-    static BeanName: BeanName = 'ssrmBlockUtils';
+    beanName: BeanName = 'ssrmBlockUtils';
 
     private valueService: ValueService;
     private showRowGroupColsService: ShowRowGroupColsService;

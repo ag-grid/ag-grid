@@ -11,7 +11,7 @@ import type { ColumnModel } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
 
 export class ColumnViewportService extends BeanStub {
-    static BeanName: BeanName = 'columnViewportService';
+    beanName: BeanName = 'columnViewportService';
 
     private visibleColsService: VisibleColsService;
     private columnModel: ColumnModel;

@@ -28,7 +28,7 @@ a) common methods, eg some methods here called by ColumnModel and also ColumnApp
 b) to remove plumbing code from ColumnModel, to help make ColumnModel more maintainable
 */
 export class ColumnEventDispatcher extends BeanStub {
-    static BeanName: BeanName = 'columnEventDispatcher';
+    beanName: BeanName = 'columnEventDispatcher';
 
     public visibleCols(): void {
         const event: WithoutGridCommon<DisplayedColumnsChangedEvent> = {

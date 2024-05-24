@@ -48,7 +48,7 @@ interface ReadyParams {
 type CtrlType = keyof ReadyParams;
 
 export class CtrlsService extends BeanStub {
-    static BeanName: BeanName = 'ctrlsService';
+    beanName: BeanName = 'ctrlsService';
 
     private params: ReadyParams = {} as ReadyParams;
     private ready = false;

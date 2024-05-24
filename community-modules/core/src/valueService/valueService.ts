@@ -21,7 +21,7 @@ import type { ExpressionService } from './expressionService';
 import type { ValueCache } from './valueCache';
 
 export class ValueService extends BeanStub {
-    static BeanName: BeanName = 'valueService';
+    beanName: BeanName = 'valueService';
 
     private expressionService: ExpressionService;
     private columnModel: ColumnModel;

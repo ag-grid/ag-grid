@@ -25,7 +25,7 @@ import type {
 } from './filterExpressionUtils';
 
 export class AdvancedFilterService extends BeanStub implements IAdvancedFilterService {
-    static BeanName: BeanName = 'advancedFilterService';
+    beanName: BeanName = 'advancedFilterService';
 
     private valueService: ValueService;
     private columnModel: ColumnModel;

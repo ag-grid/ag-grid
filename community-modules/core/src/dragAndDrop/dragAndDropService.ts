@@ -146,7 +146,7 @@ export interface DraggingEvent {
 }
 
 export class DragAndDropService extends BeanStub {
-    static BeanName: BeanName = 'dragAndDropService';
+    beanName: BeanName = 'dragAndDropService';
 
     private dragService: DragService;
     private mouseEventService: MouseEventService;

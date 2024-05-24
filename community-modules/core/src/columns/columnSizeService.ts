@@ -36,7 +36,7 @@ export interface ISizeColumnsToFitParams {
 }
 
 export class ColumnSizeService extends BeanStub {
-    static BeanName: BeanName = 'columnSizeService';
+    beanName: BeanName = 'columnSizeService';
 
     private columnModel: ColumnModel;
     private columnViewportService: ColumnViewportService;

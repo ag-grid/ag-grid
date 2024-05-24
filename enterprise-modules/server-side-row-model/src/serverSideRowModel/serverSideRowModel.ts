@@ -57,7 +57,7 @@ export interface SSRMParams {
 }
 
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
-    static BeanName: BeanName = 'rowModel';
+    beanName: BeanName = 'rowModel';
 
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;

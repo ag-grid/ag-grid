@@ -14,7 +14,7 @@ import { BeanStub } from '@ag-grid-community/core';
 import type { ColumnModelItem } from './columnModelItem';
 
 export class ModelItemUtils extends BeanStub {
-    static BeanName: BeanName = 'modelItemUtils';
+    beanName: BeanName = 'modelItemUtils';
 
     private aggFuncService: IAggFuncService;
     private columnModel: ColumnModel;

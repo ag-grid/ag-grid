@@ -10,7 +10,7 @@ export interface ComponentMetadata {
 }
 
 export class ComponentMetadataProvider extends BeanStub {
-    static BeanName: BeanName = 'componentMetadataProvider';
+    beanName: BeanName = 'componentMetadataProvider';
 
     private componentMetaData: { [key: string]: ComponentMetadata };
 

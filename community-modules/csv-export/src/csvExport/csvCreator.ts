@@ -19,7 +19,7 @@ export class CsvCreator
     extends BaseCreator<CsvCustomContent, CsvSerializingSession, CsvExportParams>
     implements ICsvCreator
 {
-    static BeanName: BeanName = 'csvCreator';
+    beanName: BeanName = 'csvCreator';
 
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;

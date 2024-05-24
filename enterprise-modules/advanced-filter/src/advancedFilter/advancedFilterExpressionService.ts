@@ -8,14 +8,9 @@ import type {
     ColumnNameService,
     DataTypeService,
     JoinAdvancedFilterModel,
-    ValueService} from '@ag-grid-community/core';
-import {
-    BeanStub,
-    _exists,
-    _parseDateTimeFromString,
-    _serialiseDate,
-    _toStringOrNull,
+    ValueService,
 } from '@ag-grid-community/core';
+import { BeanStub, _exists, _parseDateTimeFromString, _serialiseDate, _toStringOrNull } from '@ag-grid-community/core';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
@@ -33,7 +28,7 @@ import {
 } from './filterExpressionOperators';
 
 export class AdvancedFilterExpressionService extends BeanStub {
-    static BeanName: BeanName = 'advancedFilterExpressionService';
+    beanName: BeanName = 'advancedFilterExpressionService';
 
     private valueService: ValueService;
     private columnModel: ColumnModel;

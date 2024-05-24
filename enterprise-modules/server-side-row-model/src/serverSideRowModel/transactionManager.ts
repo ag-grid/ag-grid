@@ -19,7 +19,7 @@ interface AsyncTransactionWrapper {
 }
 
 export class TransactionManager extends BeanStub implements IServerSideTransactionManager {
-    static BeanName: BeanName = 'ssrmTransactionManager';
+    beanName: BeanName = 'ssrmTransactionManager';
 
     private valueCache: ValueCache;
     private serverSideRowModel: ServerSideRowModel;

@@ -11,7 +11,7 @@ import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColKey, ColumnModel } from './columnModel';
 
 export class ColumnMoveService extends BeanStub {
-    static BeanName: BeanName = 'columnMoveService';
+    beanName: BeanName = 'columnMoveService';
 
     private columnModel: ColumnModel;
     private columnAnimationService: ColumnAnimationService;

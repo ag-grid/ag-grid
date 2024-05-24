@@ -46,7 +46,7 @@ export { ComponentType } from './components/framework/componentTypes';
 // context
 export { BeanStub } from './context/beanStub';
 export { BaseBean } from './context/bean';
-export { Context, ComponentMeta, SingletonBean, BeanName, BeanCollection } from './context/context';
+export { Context, BeanName, ComponentMeta, SingletonBean, BeanCollection } from './context/context';
 
 // excel
 export {

@@ -1,3 +1,4 @@
+import type { SingletonBean } from '../context/context';
 import type { Module, ModuleValidationInvalidResult } from '../interfaces/iModule';
 import { _doOnce } from '../utils/function';
 import { _values } from '../utils/generic';
@@ -6,11 +7,19 @@ import { ModuleNames } from './moduleNames';
 export class ModuleRegistry {
     // having in a map a) removes duplicates and b) allows fast lookup
     private static globalModulesMap: { [name: string]: Module } = {};
+    private static globalServiceMap: Set<SingletonBean> = new Set();
     private static gridModulesMap: { [gridId: string]: { [name: string]: Module } } = {};
     private static moduleBased: boolean | undefined;
     private static currentModuleVersion: string;
     private static isBundled: boolean | undefined;
     private static areGridScopedModules = false;
+
+    public static __registerService(service: any): void {
+        this.globalServiceMap.add(service);
+    }
+    public static __getServices(): Set<any> {
+        return this.globalServiceMap;
+    }
 
     /**
      * Globally register the given module for all grids.

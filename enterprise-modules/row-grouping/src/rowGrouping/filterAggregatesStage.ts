@@ -5,13 +5,12 @@ import type {
     FilterManager,
     IRowNodeStage,
     RowNode,
-    StageExecuteParams} from '@ag-grid-community/core';
-import {
-    BeanStub
+    StageExecuteParams,
 } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
 export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
-    static BeanName: BeanName = 'filterAggregatesStage';
+    beanName: BeanName = 'filterAggregatesStage';
 
     private filterManager: FilterManager;
     private columnModel: ColumnModel;

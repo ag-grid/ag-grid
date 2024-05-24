@@ -1,5 +1,4 @@
 import { BeanStub } from '../../../context/beanStub';
-import { Column } from '../../../entities/column';
 import { ColumnGroup } from '../../../entities/columnGroup';
 import type { IHeaderGroupCellComp } from './headerGroupCellCtrl';
 

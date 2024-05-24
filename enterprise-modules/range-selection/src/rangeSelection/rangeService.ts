@@ -42,7 +42,7 @@ import {
 } from '@ag-grid-community/core';
 
 export class RangeService extends BeanStub implements IRangeService {
-    static BeanName: BeanName = 'rangeService';
+    beanName: BeanName = 'rangeService';
 
     private rowModel: IRowModel;
     private dragService: DragService;

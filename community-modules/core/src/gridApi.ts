@@ -151,7 +151,7 @@ export function unwrapUserComp<T>(comp: T): T {
 }
 
 export class GridApi<TData = any> extends BeanStub {
-    static BeanName: BeanName = 'gridApi';
+    beanName: BeanName = 'gridApi';
 
     private rowRenderer: RowRenderer;
     private navigationService: NavigationService;

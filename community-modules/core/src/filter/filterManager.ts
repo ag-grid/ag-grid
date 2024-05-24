@@ -36,7 +36,7 @@ import { QuickFilterService } from './quickFilterService';
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
 export class FilterManager extends BeanStub {
-    static BeanName: BeanName = 'filterManager';
+    beanName: BeanName = 'filterManager';
 
     private valueService: ValueService;
     private columnModel: ColumnModel;

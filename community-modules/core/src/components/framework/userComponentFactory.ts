@@ -78,7 +78,7 @@ export interface UserCompDetails {
 }
 
 export class UserComponentFactory extends BeanStub {
-    static BeanName: BeanName = 'userComponentFactory';
+    beanName: BeanName = 'userComponentFactory';
 
     private gridOptions: GridOptions;
     private agComponentUtils: AgComponentUtils;

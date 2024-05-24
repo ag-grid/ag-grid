@@ -13,7 +13,7 @@ import type {
 import { BeanStub, Events, RowNode, _iterateObject, _missing } from '@ag-grid-community/core';
 
 export class ViewportRowModel extends BeanStub implements IRowModel {
-    static BeanName: BeanName = 'rowModel';
+    beanName: BeanName = 'rowModel';
 
     private rowRenderer: RowRenderer;
     private focusService: FocusService;

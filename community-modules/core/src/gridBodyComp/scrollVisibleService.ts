@@ -12,7 +12,7 @@ export interface SetScrollsVisibleParams {
 }
 
 export class ScrollVisibleService extends BeanStub {
-    static BeanName: BeanName = 'scrollVisibleService';
+    beanName: BeanName = 'scrollVisibleService';
 
     private ctrlsService: CtrlsService;
     private columnAnimationService: ColumnAnimationService;

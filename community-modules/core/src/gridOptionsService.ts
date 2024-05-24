@@ -78,7 +78,7 @@ export type PropertyChangedListener = (event: PropertyChangedEvent) => void;
 export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: PropertyValueChangedEvent<K>) => void;
 
 export class GridOptionsService extends BeanStub {
-    static BeanName: BeanName = 'gos';
+    beanName: BeanName = 'gos';
 
     private gridOptions: GridOptions;
     private eGridDiv: HTMLElement;

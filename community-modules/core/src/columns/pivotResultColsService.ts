@@ -12,7 +12,7 @@ import { destroyColumnTree, getColumnsFromTree } from './columnUtils';
 import type { VisibleColsService } from './visibleColsService';
 
 export class PivotResultColsService extends BeanStub {
-    static BeanName: BeanName = 'pivotResultColsService';
+    beanName: BeanName = 'pivotResultColsService';
 
     private columnModel: ColumnModel;
     private columnFactory: ColumnFactory;

@@ -11,7 +11,7 @@ import { _getMaxDivHeight } from '../utils/browser';
  */
 
 export class RowContainerHeightService extends BeanStub {
-    static BeanName: BeanName = 'rowContainerHeightService';
+    beanName: BeanName = 'rowContainerHeightService';
 
     private ctrlsService: CtrlsService;
 

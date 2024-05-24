@@ -45,7 +45,7 @@ export interface ColumnCollections {
 }
 
 export class ColumnModel extends BeanStub {
-    static BeanName: BeanName = 'columnModel';
+    beanName: BeanName = 'columnModel';
 
     private columnFactory: ColumnFactory;
     private columnSizeService: ColumnSizeService;

@@ -5,7 +5,7 @@ import type { ILicenseManager } from './shared/licenseManager';
 import { LicenseManager } from './shared/licenseManager';
 
 export class GridLicenseManager extends BeanStub {
-    static BeanName: BeanName = 'licenseManager';
+    beanName: BeanName = 'licenseManager';
 
     private licenseManager: LicenseManager;
 

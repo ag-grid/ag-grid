@@ -17,7 +17,7 @@ export interface RowPosition {
 }
 
 export class RowPositionUtils extends BeanStub {
-    static BeanName: BeanName = 'rowPositionUtils';
+    beanName: BeanName = 'rowPositionUtils';
 
     private rowModel: IRowModel;
     private pinnedRowModel: PinnedRowModel;

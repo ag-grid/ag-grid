@@ -5,7 +5,7 @@ import { _clearElement } from '../utils/dom';
 import { _debounce } from '../utils/function';
 
 export class AriaAnnouncementService extends BeanStub {
-    static BeanName: BeanName = 'ariaAnnouncementService';
+    beanName: BeanName = 'ariaAnnouncementService';
 
     private eGridDiv: HTMLElement;
 

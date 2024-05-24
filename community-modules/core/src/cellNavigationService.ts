@@ -15,7 +15,7 @@ import { _last } from './utils/array';
 import { _missing } from './utils/generic';
 
 export class CellNavigationService extends BeanStub {
-    static BeanName: BeanName = 'cellNavigationService';
+    beanName: BeanName = 'cellNavigationService';
 
     private visibleColsService: VisibleColsService;
     private rowModel: IRowModel;

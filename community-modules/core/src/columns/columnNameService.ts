@@ -11,7 +11,7 @@ import type { ColumnModel } from './columnModel';
 import type { FuncColsService } from './funcColsService';
 
 export class ColumnNameService extends BeanStub {
-    static BeanName: BeanName = 'columnNameService';
+    beanName: BeanName = 'columnNameService';
 
     private expressionService: ExpressionService;
     private funcColsService: FuncColsService;

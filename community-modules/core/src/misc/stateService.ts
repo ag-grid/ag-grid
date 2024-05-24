@@ -54,7 +54,7 @@ import { _debounce } from '../utils/function';
 import { _jsonEquals } from '../utils/generic';
 
 export class StateService extends BeanStub {
-    static BeanName: BeanName = 'stateService';
+    beanName: BeanName = 'stateService';
 
     private filterManager: FilterManager;
     private ctrlsService: CtrlsService;

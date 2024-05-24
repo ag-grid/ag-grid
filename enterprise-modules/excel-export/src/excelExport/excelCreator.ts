@@ -221,7 +221,7 @@ export class ExcelCreator
     extends BaseCreator<ExcelRow[], ExcelSerializingSession, ExcelExportParams>
     implements IExcelCreator
 {
-    static BeanName: BeanName = 'excelCreator';
+    beanName: BeanName = 'excelCreator';
 
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;

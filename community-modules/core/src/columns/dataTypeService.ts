@@ -71,7 +71,7 @@ const MONTH_KEYS: (keyof typeof MONTH_LOCALE_TEXT)[] = [
 ];
 
 export class DataTypeService extends BeanStub {
-    static BeanName: BeanName = 'dataTypeService';
+    beanName: BeanName = 'dataTypeService';
 
     private rowModel: IRowModel;
     private columnModel: ColumnModel;

@@ -19,7 +19,7 @@ export interface HeaderFuturePosition extends HeaderPosition {
 }
 
 export class HeaderPositionUtils extends BeanStub {
-    static BeanName: BeanName = 'headerPositionUtils';
+    beanName: BeanName = 'headerPositionUtils';
 
     private visibleColsService: VisibleColsService;
     private ctrlsService: CtrlsService;

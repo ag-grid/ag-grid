@@ -68,7 +68,7 @@ export interface ApplyColumnStateParams {
 }
 
 export class ColumnApplyStateService extends BeanStub {
-    static BeanName: BeanName = 'columnApplyStateService';
+    beanName: BeanName = 'columnApplyStateService';
 
     private columnModel: ColumnModel;
     private eventDispatcher: ColumnEventDispatcher;

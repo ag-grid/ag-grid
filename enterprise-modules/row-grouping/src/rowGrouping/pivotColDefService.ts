@@ -17,7 +17,7 @@ export interface PivotColDefServiceResult {
 }
 
 export class PivotColDefService extends BeanStub implements IPivotColDefService {
-    static BeanName: BeanName = 'pivotColDefService';
+    beanName: BeanName = 'pivotColDefService';
 
     public static PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
 

@@ -7,7 +7,7 @@ import { _debounce } from '../utils/function';
 import type { PaginationProxy } from './paginationProxy';
 
 export class PaginationAutoPageSizeService extends BeanStub {
-    static BeanName: BeanName = 'paginationAutoPageSizeService';
+    beanName: BeanName = 'paginationAutoPageSizeService';
 
     private ctrlsService: CtrlsService;
     private paginationProxy: PaginationProxy;

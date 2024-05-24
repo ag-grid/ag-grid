@@ -83,7 +83,7 @@ export interface RedrawRowsParams<TData = any> {
 }
 
 export class RowRenderer extends BeanStub {
-    static BeanName: BeanName = 'rowRenderer';
+    beanName: BeanName = 'rowRenderer';
 
     private animationFrameService: AnimationFrameService;
     private paginationProxy: PaginationProxy;

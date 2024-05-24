@@ -14,7 +14,7 @@ import { AgMenuList } from '@ag-grid-enterprise/core';
 import type { MenuItemMapper } from './menuItemMapper';
 
 export class ColumnMenuFactory extends BeanStub {
-    static BeanName: BeanName = 'columnMenuFactory';
+    beanName: BeanName = 'columnMenuFactory';
 
     private menuItemMapper: MenuItemMapper;
     private columnModel: ColumnModel;

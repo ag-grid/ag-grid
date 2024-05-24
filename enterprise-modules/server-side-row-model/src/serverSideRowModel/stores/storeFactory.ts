@@ -16,7 +16,7 @@ import { FullStore } from './fullStore';
 import { LazyStore } from './lazy/lazyStore';
 
 export class StoreFactory extends BeanStub {
-    static BeanName: BeanName = 'ssrmStoreFactory';
+    beanName: BeanName = 'ssrmStoreFactory';
 
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;

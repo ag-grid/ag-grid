@@ -1,12 +1,12 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import type { Column } from '../entities/column';
-import type { ColumnHoverChangedEvent} from '../events';
+import type { ColumnHoverChangedEvent } from '../events';
 import { Events } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 
 export class ColumnHoverService extends BeanStub {
-    static BeanName: BeanName = 'columnHoverService';
+    beanName: BeanName = 'columnHoverService';
 
     private selectedColumns: Column[] | null;
 

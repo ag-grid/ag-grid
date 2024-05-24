@@ -70,7 +70,7 @@ export interface IContextMenuParams extends ShowContextMenuParams {
 }
 
 export class MenuService extends BeanStub {
-    static BeanName: BeanName = 'menuService';
+    beanName: BeanName = 'menuService';
 
     private filterMenuFactory: IMenuFactory;
     private ctrlsService: CtrlsService;

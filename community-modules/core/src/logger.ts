@@ -2,7 +2,7 @@ import { BeanStub } from './context/beanStub';
 import type { BeanName } from './context/context';
 
 export class LoggerFactory extends BeanStub {
-    static BeanName: BeanName = 'loggerFactory';
+    beanName: BeanName = 'loggerFactory';
 
     public create(name: string) {
         return new Logger(name, this.isLogging.bind(this));

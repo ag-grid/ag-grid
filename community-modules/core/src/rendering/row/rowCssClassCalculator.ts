@@ -25,7 +25,7 @@ export interface RowCssClassCalculatorParams {
 }
 
 export class RowCssClassCalculator extends BeanStub {
-    static BeanName: BeanName = 'rowCssClassCalculator';
+    beanName: BeanName = 'rowCssClassCalculator';
 
     private stylingService: StylingService;
 

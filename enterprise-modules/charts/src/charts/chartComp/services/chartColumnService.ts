@@ -14,7 +14,7 @@ import type {
 import { BeanStub, Events } from '@ag-grid-community/core';
 
 export class ChartColumnService extends BeanStub {
-    static BeanName: BeanName = 'chartColumnService';
+    beanName: BeanName = 'chartColumnService';
 
     private columnModel: ColumnModel;
     private showRowGroupColsService: ShowRowGroupColsService;

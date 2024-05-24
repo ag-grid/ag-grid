@@ -12,7 +12,7 @@ const defaultAggFuncNames: { [key: string]: string } = {
 };
 
 export class AggFuncService extends BeanStub implements IAggFuncService {
-    static BeanName: BeanName = 'aggFuncService';
+    beanName: BeanName = 'aggFuncService';
 
     private static AGG_SUM = 'sum';
     private static AGG_FIRST = 'first';

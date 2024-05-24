@@ -32,7 +32,7 @@ import { ManagedFocusFeature } from './widgets/managedFocusFeature';
 import { TabGuardClassNames } from './widgets/tabGuardCtrl';
 
 export class FocusService extends BeanStub {
-    static BeanName: BeanName = 'focusService';
+    beanName: BeanName = 'focusService';
 
     private eGridDiv: HTMLElement;
     private columnModel: ColumnModel;

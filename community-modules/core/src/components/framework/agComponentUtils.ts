@@ -6,7 +6,7 @@ import { _loadTemplate } from '../../utils/dom';
 import type { ComponentMetadata, ComponentMetadataProvider } from './componentMetadataProvider';
 
 export class AgComponentUtils extends BeanStub {
-    static BeanName: BeanName = 'agComponentUtils';
+    beanName: BeanName = 'agComponentUtils';
 
     private componentMetadataProvider: ComponentMetadataProvider;
 

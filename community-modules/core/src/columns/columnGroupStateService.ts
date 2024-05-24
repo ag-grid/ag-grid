@@ -10,7 +10,7 @@ import type { ColumnModel } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
 
 export class ColumnGroupStateService extends BeanStub {
-    static BeanName: BeanName = 'columnGroupStateService';
+    beanName: BeanName = 'columnGroupStateService';
 
     private columnModel: ColumnModel;
     private columnAnimationService: ColumnAnimationService;

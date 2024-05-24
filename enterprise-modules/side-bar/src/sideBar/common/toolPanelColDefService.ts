@@ -11,7 +11,7 @@ import type {
 import { BeanStub, ProvidedColumnGroup, _includes, _last } from '@ag-grid-community/core';
 
 export class ToolPanelColDefService extends BeanStub {
-    static BeanName: BeanName = 'toolPanelColDefService';
+    beanName: BeanName = 'toolPanelColDefService';
 
     private columnModel: ColumnModel;
 

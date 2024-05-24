@@ -41,7 +41,7 @@ interface NavigateParams {
 }
 
 export class NavigationService extends BeanStub {
-    static BeanName: BeanName = 'navigationService';
+    beanName: BeanName = 'navigationService';
 
     private mouseEventService: MouseEventService;
     private paginationProxy: PaginationProxy;

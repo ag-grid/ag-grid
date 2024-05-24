@@ -16,7 +16,7 @@ export enum HeaderNavigationDirection {
 }
 
 export class HeaderNavigationService extends BeanStub {
-    static BeanName: BeanName = 'headerNavigationService';
+    beanName: BeanName = 'headerNavigationService';
 
     private focusService: FocusService;
     private headerPositionUtils: HeaderPositionUtils;

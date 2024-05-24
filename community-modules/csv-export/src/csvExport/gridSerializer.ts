@@ -38,7 +38,7 @@ export enum RowType {
 }
 
 export class GridSerializer extends BeanStub {
-    static BeanName: BeanName = 'gridSerializer';
+    beanName: BeanName = 'gridSerializer';
 
     private visibleColsService: VisibleColsService;
     private columnModel: ColumnModel;

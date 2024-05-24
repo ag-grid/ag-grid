@@ -75,7 +75,7 @@ const apiError = (method: string) =>
     'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API.';
 
 export class ClipboardService extends BeanStub implements IClipboardService {
-    static BeanName: BeanName = 'clipboardService';
+    beanName: BeanName = 'clipboardService';
 
     private csvCreator: ICsvCreator;
     private loggerFactory: LoggerFactory;

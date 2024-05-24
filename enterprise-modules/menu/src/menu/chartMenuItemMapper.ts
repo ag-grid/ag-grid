@@ -11,7 +11,7 @@ import type {
 import { BeanStub, ModuleNames, ModuleRegistry, _createIconNoSpan, _warnOnce } from '@ag-grid-community/core';
 
 export class ChartMenuItemMapper extends BeanStub {
-    static BeanName: BeanName = 'chartMenuItemMapper';
+    beanName: BeanName = 'chartMenuItemMapper';
 
     private chartService?: IChartService;
 

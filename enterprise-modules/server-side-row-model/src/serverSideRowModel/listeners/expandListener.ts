@@ -11,7 +11,7 @@ import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { StoreFactory } from '../stores/storeFactory';
 
 export class ExpandListener extends BeanStub {
-    static BeanName: BeanName = 'ssrmExpandListener';
+    beanName: BeanName = 'ssrmExpandListener';
 
     private serverSideRowModel: ServerSideRowModel;
     private storeFactory: StoreFactory;

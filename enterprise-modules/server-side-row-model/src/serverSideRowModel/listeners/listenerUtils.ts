@@ -2,7 +2,7 @@ import type { BeanCollection, BeanName, FuncColsService, PivotResultColsService 
 import { BeanStub } from '@ag-grid-community/core';
 
 export class ListenerUtils extends BeanStub {
-    static BeanName: BeanName = 'ssrmListenerUtils';
+    beanName: BeanName = 'ssrmListenerUtils';
 
     private pivotResultColsService: PivotResultColsService;
     private funcColsService: FuncColsService;

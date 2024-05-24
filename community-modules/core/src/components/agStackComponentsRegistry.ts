@@ -4,7 +4,7 @@ import { _warnOnce } from '../utils/function';
 import type { AgComponentSelector, ComponentClass } from '../widgets/component';
 
 export class AgStackComponentsRegistry extends BeanStub {
-    static BeanName: BeanName = 'agStackComponentsRegistry';
+    beanName: BeanName = 'agStackComponentsRegistry';
 
     private componentToNodeName: Map<string, ComponentClass> = new Map();
 

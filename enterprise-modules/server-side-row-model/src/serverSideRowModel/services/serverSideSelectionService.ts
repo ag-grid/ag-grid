@@ -19,7 +19,7 @@ import { GroupSelectsChildrenStrategy } from './selection/strategies/groupSelect
 import type { ISelectionStrategy } from './selection/strategies/iSelectionStrategy';
 
 export class ServerSideSelectionService extends BeanStub implements ISelectionService {
-    static BeanName: BeanName = 'selectionService';
+    beanName: BeanName = 'selectionService';
 
     private rowModel: IRowModel;
 

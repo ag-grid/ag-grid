@@ -12,7 +12,7 @@ export interface HorizontalResizeParams {
 }
 
 export class HorizontalResizeService extends BeanStub {
-    static BeanName: BeanName = 'horizontalResizeService';
+    beanName: BeanName = 'horizontalResizeService';
 
     private dragService: DragService;
     private ctrlsService: CtrlsService;

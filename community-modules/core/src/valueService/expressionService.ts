@@ -2,7 +2,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 
 export class ExpressionService extends BeanStub {
-    static BeanName: BeanName = 'expressionService';
+    beanName: BeanName = 'expressionService';
 
     private expressionToFunctionCache = {} as any;
 

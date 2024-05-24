@@ -5,7 +5,7 @@ import type { ColumnModel } from './columnModel';
 import type { FuncColsService } from './funcColsService';
 
 export class ShowRowGroupColsService extends BeanStub {
-    static BeanName: BeanName = 'showRowGroupColsService';
+    beanName: BeanName = 'showRowGroupColsService';
 
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;

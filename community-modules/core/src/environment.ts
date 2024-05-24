@@ -35,7 +35,7 @@ const CHART_MENU_PANEL_WIDTH: Variable = {
 };
 
 export class Environment extends BeanStub {
-    static BeanName: BeanName = 'environment';
+    beanName: BeanName = 'environment';
 
     private resizeObserverService: ResizeObserverService;
     private eGridDiv: HTMLElement;

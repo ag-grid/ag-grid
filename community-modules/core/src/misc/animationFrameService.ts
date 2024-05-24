@@ -15,7 +15,7 @@ interface TaskList {
 }
 
 export class AnimationFrameService extends BeanStub {
-    static BeanName: BeanName = 'animationFrameService';
+    beanName: BeanName = 'animationFrameService';
 
     private ctrlsService: CtrlsService;
     private paginationProxy: PaginationProxy;

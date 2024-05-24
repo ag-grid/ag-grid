@@ -15,7 +15,7 @@ import type { ChartTranslationService } from '../services/chartTranslationServic
 import type { ChartMenuContext } from './chartMenuContext';
 
 export class ChartMenuListFactory extends BeanStub {
-    static BeanName: BeanName = 'chartMenuListFactory';
+    beanName: BeanName = 'chartMenuListFactory';
 
     private popupService: PopupService;
     private chartMenuService: ChartMenuService;

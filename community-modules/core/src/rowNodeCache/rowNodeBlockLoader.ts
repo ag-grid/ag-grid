@@ -8,7 +8,7 @@ import { _debounce } from '../utils/function';
 import { RowNodeBlock } from './rowNodeBlock';
 
 export class RowNodeBlockLoader extends BeanStub {
-    static BeanName: BeanName = 'rowNodeBlockLoader';
+    beanName: BeanName = 'rowNodeBlockLoader';
 
     private rowModel: IRowModel;
 

@@ -6,7 +6,7 @@ import { DefaultColumnTypes } from '../entities/defaultColumnTypes';
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { IProvidedColumn } from '../interfaces/iProvidedColumn';
-import type { Logger, LoggerFactory } from '../logger';
+import type { Logger } from '../logger';
 import { _warnOnce } from '../utils/function';
 import { _attrToBoolean, _attrToNumber } from '../utils/generic';
 import { _iterateObject, _mergeDeep } from '../utils/object';
@@ -15,7 +15,7 @@ import type { DataTypeService } from './dataTypeService';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 export class ColumnFactory extends BeanStub {
-    static BeanName: BeanName = 'columnFactory';
+    beanName: BeanName = 'columnFactory';
 
     private dataTypeService: DataTypeService;
 

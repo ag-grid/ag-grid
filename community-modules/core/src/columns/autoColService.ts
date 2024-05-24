@@ -11,7 +11,7 @@ import type { ColumnNameService } from './columnNameService';
 
 export const GROUP_AUTO_COLUMN_ID: 'ag-Grid-AutoColumn' = 'ag-Grid-AutoColumn';
 export class AutoColService extends BeanStub {
-    static BeanName: BeanName = 'autoColService';
+    beanName: BeanName = 'autoColService';
 
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;

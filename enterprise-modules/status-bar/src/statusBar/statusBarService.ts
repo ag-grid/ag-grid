@@ -2,7 +2,7 @@ import type { BeanName, IStatusBarService, IStatusPanelComp } from '@ag-grid-com
 import { BeanStub } from '@ag-grid-community/core';
 
 export class StatusBarService extends BeanStub implements IStatusBarService {
-    static BeanName: BeanName = 'statusBarService';
+    beanName: BeanName = 'statusBarService';
 
     private allComponents: Map<string, IStatusPanelComp> = new Map();
 

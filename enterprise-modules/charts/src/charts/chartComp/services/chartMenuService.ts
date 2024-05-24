@@ -27,7 +27,7 @@ export const CHART_TOOL_PANEL_MENU_OPTIONS: { [key in ChartToolPanelName]: Chart
 };
 
 export class ChartMenuService extends BeanStub {
-    static BeanName: BeanName = 'chartMenuService';
+    beanName: BeanName = 'chartMenuService';
 
     private advancedSettingsMenuFactory: AdvancedSettingsMenuFactory;
 

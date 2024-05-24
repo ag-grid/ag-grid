@@ -17,7 +17,7 @@ import { AgDialog } from '@ag-grid-enterprise/core';
 import type { MenuUtils } from './menuUtils';
 
 export class ColumnChooserFactory extends BeanStub implements IColumnChooserFactory {
-    static BeanName: BeanName = 'columnChooserFactory';
+    beanName: BeanName = 'columnChooserFactory';
 
     private focusService: FocusService;
     private menuUtils: MenuUtils;

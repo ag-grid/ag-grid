@@ -11,7 +11,7 @@ import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import type { DependencyValidator, OptionsValidation, OptionsValidator } from './validationTypes';
 
 export class ValidationService extends BeanStub {
-    static BeanName: BeanName = 'validationService';
+    beanName: BeanName = 'validationService';
 
     private gridOptions: GridOptions;
 

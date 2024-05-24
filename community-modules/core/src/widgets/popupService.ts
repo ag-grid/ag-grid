@@ -91,7 +91,7 @@ export interface AddPopupResult {
 }
 
 export class PopupService extends BeanStub {
-    static BeanName: BeanName = 'popupService';
+    beanName: BeanName = 'popupService';
 
     private ctrlsService: CtrlsService;
     private resizeObserverService: ResizeObserverService;

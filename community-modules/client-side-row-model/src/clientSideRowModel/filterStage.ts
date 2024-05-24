@@ -4,7 +4,7 @@ import { BeanStub } from '@ag-grid-community/core';
 import type { FilterService } from './filterService';
 
 export class FilterStage extends BeanStub implements IRowNodeStage {
-    static BeanName: BeanName = 'filterStage';
+    beanName: BeanName = 'filterStage';
 
     private filterService: FilterService;
 

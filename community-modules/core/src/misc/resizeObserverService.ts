@@ -3,7 +3,7 @@ import type { BeanName } from '../context/context';
 
 const DEBOUNCE_DELAY = 50;
 export class ResizeObserverService extends BeanStub {
-    static BeanName: BeanName = 'resizeObserverService';
+    beanName: BeanName = 'resizeObserverService';
 
     private polyfillFunctions: (() => void)[] = [];
     private polyfillScheduled: boolean;

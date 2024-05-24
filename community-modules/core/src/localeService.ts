@@ -4,7 +4,7 @@ import type { GetLocaleTextParams } from './interfaces/iCallbackParams';
 import type { WithoutGridCommon } from './interfaces/iCommon';
 
 export class LocaleService extends BeanStub {
-    static BeanName: BeanName = 'localeService';
+    beanName: BeanName = 'localeService';
 
     public getLocaleTextFunc(): (key: string, defaultValue: string, variableValues?: string[]) => string {
         const getLocaleText = this.gos.getCallback('getLocaleText');

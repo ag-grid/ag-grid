@@ -9,7 +9,7 @@ import type { IRowModel, RowBounds, RowModelType } from '../interfaces/iRowModel
 import { _exists, _missing } from '../utils/generic';
 
 export class PaginationProxy extends BeanStub {
-    static BeanName: BeanName = 'paginationProxy';
+    beanName: BeanName = 'paginationProxy';
 
     private rowModel: IRowModel;
 

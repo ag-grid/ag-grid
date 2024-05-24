@@ -60,7 +60,7 @@ interface GroupingDetails {
 }
 
 export class GroupStage extends BeanStub implements IRowNodeStage {
-    static BeanName: BeanName = 'groupStage';
+    beanName: BeanName = 'groupStage';
 
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;

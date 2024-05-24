@@ -20,7 +20,7 @@ import { BeanStub, Events, _iterateObject, _missing } from '@ag-grid-community/c
 import type { PivotColDefService } from './pivotColDefService';
 
 export class PivotStage extends BeanStub implements IRowNodeStage {
-    static BeanName: BeanName = 'pivotStage';
+    beanName: BeanName = 'pivotStage';
 
     private valueService: ValueService;
     private columnModel: ColumnModel;

@@ -37,7 +37,7 @@ const CSS_MENU = 'ag-menu';
 const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
 
 export class ContextMenuFactory extends BeanStub implements IContextMenuFactory {
-    static BeanName: BeanName = 'contextMenuFactory';
+    beanName: BeanName = 'contextMenuFactory';
 
     private popupService: PopupService;
     private ctrlsService: CtrlsService;

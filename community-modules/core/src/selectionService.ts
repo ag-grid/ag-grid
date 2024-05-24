@@ -14,7 +14,7 @@ import { ChangedPath } from './utils/changedPath';
 import { _exists, _missing } from './utils/generic';
 
 export class SelectionService extends BeanStub implements ISelectionService {
-    static BeanName: BeanName = 'selectionService';
+    beanName: BeanName = 'selectionService';
 
     private rowModel: IRowModel;
     private paginationProxy: PaginationProxy;
