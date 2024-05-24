@@ -67,7 +67,12 @@ export class AdvancedSettingsMenuFactory extends BeanStub {
 }
 
 class AdvancedSettingsMenu extends TabGuardComp {
-    private readonly focusService: FocusService;
+    private focusService: FocusService;
+
+    public override wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.focusService = beans.focusService;
+    }
 
     private static TEMPLATE = /* html */ `<div class="ag-chart-advanced-settings"></div>`;
 

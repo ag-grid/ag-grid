@@ -567,9 +567,16 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
 }
 
 class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
-    private readonly columnMenuFactory: ColumnMenuFactory;
-    private readonly menuUtils: MenuUtils;
-    private readonly focusService: FocusService;
+    private columnMenuFactory: ColumnMenuFactory;
+    private menuUtils: MenuUtils;
+    private focusService: FocusService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnMenuFactory = beans.columnMenuFactory;
+        this.menuUtils = beans.menuUtils;
+        this.focusService = beans.focusService;
+    }
 
     private readonly eColumnMenu: HTMLElement = RefPlaceholder;
 

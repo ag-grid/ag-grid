@@ -221,7 +221,12 @@ export class ChartMenuListFactory extends BeanStub {
 }
 
 class ChartMenuList extends Component {
-    private readonly focusService: FocusService;
+    private focusService: FocusService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.focusService = beans.focusService;
+    }
 
     private readonly eChartsMenu: HTMLElement = RefPlaceholder;
 
