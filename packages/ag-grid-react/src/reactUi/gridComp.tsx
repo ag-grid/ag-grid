@@ -37,7 +37,7 @@ const GridComp = ({ context }: GridCompProps) => {
         if (context.isDestroyed()) {
             return null;
         }
-        return context.getBean('beans') as BeanCollection;
+        return context.getBeans();
     }, [context]);
 
     useReactCommentEffect(' AG Grid ', eRootWrapperRef);

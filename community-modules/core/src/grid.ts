@@ -269,7 +269,6 @@ export class GridCoreCreator {
         this.registerModuleStackComponents(context, registeredModules);
         this.registerControllers(context, registeredModules);
 
-        debugger;
         createUi(context);
 
         context.getBean('syncService').start();
