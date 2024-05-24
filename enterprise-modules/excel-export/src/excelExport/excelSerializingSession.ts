@@ -488,9 +488,8 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     private getCellValue(type: ExcelOOXMLDataType, value: string | null): { value: string | null; escaped?: boolean } {
         let escaped = false;
 
-        if (value == null) {
-            type = 's';
-            value = '';
+        if (value == null || (type === 's' && value === '')) {
+            return { value: '', escaped: false };
         }
 
         if (type === 's') {
