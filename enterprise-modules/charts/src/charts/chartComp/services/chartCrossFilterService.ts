@@ -1,14 +1,31 @@
-import type { Column, ColumnModel, GridApi, RowNode, ValueService } from '@ag-grid-community/core';
+import type {
+    Column,
+    ColumnModel,
+    FilterManager,
+    IClientSideRowModel,
+    IRowModel,
+    RowNode,
+    ValueService,
+} from '@ag-grid-community/core';
 import { Autowired, Bean, BeanStub, _includes } from '@ag-grid-community/core';
 
 @Bean('chartCrossFilterService')
 export class ChartCrossFilterService extends BeanStub {
-    @Autowired('gridApi') private readonly gridApi: GridApi;
+    @Autowired('filterManager') private readonly filterManager: FilterManager;
+    @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('valueService') private readonly valueService: ValueService;
 
+    private clientSideRowModel?: IClientSideRowModel;
+
+    public postConstruct(): void {
+        if (this.rowModel.getType() == 'clientSide') {
+            this.clientSideRowModel = this.rowModel as IClientSideRowModel;
+        }
+    }
+
     public filter(event: any, reset: boolean = false): void {
-        const filterModel = this.gridApi.getFilterModel();
+        const filterModel = this.filterManager.getFilterModel();
 
         // filters should be reset when user clicks on canvas background
         if (reset) {
@@ -34,8 +51,8 @@ export class ChartCrossFilterService extends BeanStub {
         const filtersExist = Object.keys(filterModel).length > 0;
         if (filtersExist) {
             // only reset filters / charts when necessary to prevent undesirable flickering effect
-            this.gridApi.setFilterModel(null);
-            this.gridApi.onFilterChanged();
+            this.filterManager.setFilterModel(null);
+            this.filterManager.onFilterChanged({ source: 'api' });
         }
     }
 
@@ -66,7 +83,7 @@ export class ChartCrossFilterService extends BeanStub {
             filterModel = { [colId]: this.getUpdatedFilterModel(colId, updatedValues) };
         }
 
-        this.gridApi.setFilterModel(filterModel);
+        this.filterManager.setFilterModel(filterModel);
     }
 
     private getUpdatedFilterModel(colId: any, updatedValues: any[]) {
@@ -80,7 +97,7 @@ export class ChartCrossFilterService extends BeanStub {
     private getCurrentGridValuesForCategory(colId: string) {
         const filteredValues: any[] = [];
         const column = this.getColumnById(colId);
-        this.gridApi.forEachNodeAfterFilter((rowNode: RowNode) => {
+        this.clientSideRowModel?.forEachNodeAfterFilter((rowNode: RowNode) => {
             if (column && !rowNode.group) {
                 const value = this.valueService.getValue(column, rowNode) + '';
                 if (!filteredValues.includes(value)) {

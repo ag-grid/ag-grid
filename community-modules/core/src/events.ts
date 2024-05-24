@@ -1,5 +1,6 @@
 import type { ColDef } from './entities/colDef';
 import type { Column, ColumnPinnedType } from './entities/column';
+import type { GridOptions } from './entities/gridOptions';
 import type { ProvidedColumnGroup } from './entities/providedColumnGroup';
 import { Events } from './eventKeys';
 import type { FilterRequestSource } from './filter/filterManager';
@@ -778,6 +779,18 @@ export interface FieldValueEvent<TData = any, TContext = any> extends AgGridEven
 }
 export interface FieldPickerValueSelectedEvent<TData = any, TContext = any> extends FieldValueEvent {
     fromEnterKey: boolean;
+}
+
+export interface AlignedGridColumnEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    event: ColumnEvent;
+}
+
+export interface AlignedGridScrollEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    event: BodyScrollEvent;
+}
+
+export interface GridOptionsChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    options: GridOptions;
 }
 
 export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<string> = new Set([

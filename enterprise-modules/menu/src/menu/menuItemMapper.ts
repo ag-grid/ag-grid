@@ -6,9 +6,11 @@ import type {
     ColumnNameService,
     FocusService,
     FuncColsService,
-    GridApi,
     IAggFuncService,
     IClipboardService,
+    ICsvCreator,
+    IExcelCreator,
+    IExpansionService,
     MenuItemDef,
     MenuService,
     RowPositionUtils,
@@ -34,16 +36,18 @@ export class MenuItemMapper extends BeanStub {
     @Autowired('columnNameService') private columnNameService: ColumnNameService;
     @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
     @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
-    @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
     @Autowired('chartMenuItemMapper') private readonly chartMenuItemMapper: ChartMenuItemMapper;
     @Autowired('menuService') private readonly menuService: MenuService;
     @Autowired('sortController') private readonly sortController: SortController;
     @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
+    @Autowired('expansionService') private readonly expansionService: IExpansionService;
 
     @Optional('clipboardService') private readonly clipboardService?: IClipboardService;
     @Optional('aggFuncService') private readonly aggFuncService?: IAggFuncService;
+    @Optional('csvCreator') private readonly csvCreator?: ICsvCreator;
+    @Optional('excelCreator') private readonly excelCreator?: IExcelCreator;
 
     public mapWithStockItems(
         originalList: (MenuItemDef | string)[],
@@ -159,7 +163,7 @@ export class MenuItemMapper extends BeanStub {
                     action: () => this.funcColsService.addRowGroupColumns([column], 'contextMenu'),
                     icon: _createIconNoSpan('menuAddRowGroup', this.gos, null),
                 };
-            case 'rowUnGroup':
+            case 'rowUnGroup': {
                 const icon = _createIconNoSpan('menuRemoveRowGroup', this.gos, null);
                 const showRowGroup = column?.getColDef().showRowGroup;
                 const lockedGroups = this.gos.get('groupLockGroupColumns');
@@ -204,6 +208,7 @@ export class MenuItemMapper extends BeanStub {
                     action: () => this.funcColsService.removeRowGroupColumns([column], 'contextMenu'),
                     icon: icon,
                 };
+            }
             case 'resetColumns':
                 return {
                     name: localeTextFunc('resetColumns', 'Reset Columns'),
@@ -212,12 +217,12 @@ export class MenuItemMapper extends BeanStub {
             case 'expandAll':
                 return {
                     name: localeTextFunc('expandAll', 'Expand All Row Groups'),
-                    action: () => this.gridApi.expandAll(),
+                    action: () => this.expansionService.expandAll(true),
                 };
             case 'contractAll':
                 return {
                     name: localeTextFunc('collapseAll', 'Collapse All Row Groups'),
-                    action: () => this.gridApi.collapseAll(),
+                    action: () => this.expansionService.expandAll(false),
                 };
             case 'copy':
                 if (
@@ -310,7 +315,7 @@ export class MenuItemMapper extends BeanStub {
                 } else {
                     return null;
                 }
-            case 'export':
+            case 'export': {
                 const exportSubMenuItems: string[] = [];
 
                 const csvModuleLoaded = ModuleRegistry.__isRegistered(
@@ -333,17 +338,18 @@ export class MenuItemMapper extends BeanStub {
                     subMenu: exportSubMenuItems,
                     icon: _createIconNoSpan('save', this.gos, null),
                 };
+            }
             case 'csvExport':
                 return {
                     name: localeTextFunc('csvExport', 'CSV Export'),
                     icon: _createIconNoSpan('csvExport', this.gos, null),
-                    action: () => this.gridApi.exportDataAsCsv({}),
+                    action: () => this.csvCreator?.exportDataAsCsv(),
                 };
             case 'excelExport':
                 return {
                     name: localeTextFunc('excelExport', 'Excel Export'),
                     icon: _createIconNoSpan('excelExport', this.gos, null),
-                    action: () => this.gridApi.exportDataAsExcel(),
+                    action: () => this.excelCreator?.exportDataAsExcel(),
                 };
             case 'separator':
                 return 'separator';

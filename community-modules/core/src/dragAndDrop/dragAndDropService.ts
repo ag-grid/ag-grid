@@ -3,9 +3,9 @@ import { BeanStub } from '../context/beanStub';
 import { Autowired, Bean } from '../context/context';
 import type { IAggFunc } from '../entities/colDef';
 import type { Column } from '../entities/column';
-import type { GridApi } from '../gridApi';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
 import type { RowDropZoneParams } from '../gridBodyComp/rowDragFeature';
+import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _flatten, _removeFromArray } from '../utils/array';
 import { _getBodyHeight, _getBodyWidth } from '../utils/browser';
@@ -132,7 +132,7 @@ export interface DropTarget {
     external?: boolean;
 }
 
-export interface DraggingEvent {
+export interface DraggingEvent<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     event: MouseEvent;
     x: number;
     y: number;
@@ -141,7 +141,6 @@ export interface DraggingEvent {
     dragSource: DragSource;
     dragItem: DragItem;
     fromNudge: boolean;
-    api: GridApi;
     dropZoneTarget: HTMLElement;
 }
 
@@ -149,7 +148,6 @@ export interface DraggingEvent {
 export class DragAndDropService extends BeanStub {
     @Autowired('dragService') private dragService: DragService;
     @Autowired('mouseEventService') private readonly mouseEventService: MouseEventService;
-    @Autowired('gridApi') private gridApi: GridApi;
 
     public static ICON_PINNED = 'pinned';
     public static ICON_MOVE = 'move';
@@ -478,11 +476,11 @@ export class DragAndDropService extends BeanStub {
         // localise x and y to the target
         const dropZoneTarget = dropTarget.getContainer();
         const rect = dropZoneTarget.getBoundingClientRect();
-        const { gridApi: api, dragItem, dragSource } = this;
+        const { dragItem, dragSource } = this;
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        return {
+        return this.gos.addGridCommonParams({
             event,
             x,
             y,
@@ -491,9 +489,8 @@ export class DragAndDropService extends BeanStub {
             dragSource,
             fromNudge,
             dragItem: dragItem as DragItem,
-            api,
             dropZoneTarget,
-        };
+        });
     }
 
     private positionGhost(event: MouseEvent): void {

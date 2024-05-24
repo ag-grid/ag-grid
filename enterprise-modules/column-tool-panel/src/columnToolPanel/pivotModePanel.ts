@@ -1,9 +1,9 @@
-import type { AgCheckbox, ColumnModel, GridApi } from '@ag-grid-community/core';
+import type { AgCheckbox, ColumnModel, CtrlsService } from '@ag-grid-community/core';
 import { AgToggleButton, Autowired, Component, Events, RefPlaceholder } from '@ag-grid-community/core';
 
 export class PivotModePanel extends Component {
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('gridApi') private api: GridApi;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private readonly cbPivotMode: AgCheckbox = RefPlaceholder;
 
@@ -33,10 +33,7 @@ export class PivotModePanel extends Component {
         const newValue = !!this.cbPivotMode.getValue();
         if (newValue !== this.columnModel.isPivotMode()) {
             this.gos.updateGridOptions({ options: { pivotMode: newValue }, source: 'toolPanelUi' as any });
-            const { api } = this;
-            if (api) {
-                api.refreshHeader();
-            }
+            this.ctrlsService.getHeaderRowContainerCtrls().forEach((c) => c.refresh());
         }
     }
 
