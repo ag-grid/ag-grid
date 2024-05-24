@@ -50,6 +50,12 @@ export class ChartDatasource extends BeanStub {
     public wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
         this.sortController = beans.sortController;
+        this.gridRowModel = beans.rowModel;
+        this.columnModel = beans.columnModel;
+        this.valueService = beans.valueService;
+        this.pivotResultColsService = beans.pivotResultColsService;
+        this.rowNodeSorter = beans.rowNodeSorter;
+        this.aggregationStage = beans.aggregationStage;
     }
 
     public getData(params: ChartDatasourceParams): IData {
