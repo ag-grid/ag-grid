@@ -46,6 +46,9 @@ export class FocusService extends BeanStub {
     private ctrlsService: CtrlsService;
     private filterManager: FilterManager;
 
+    private rangeService?: IRangeService;
+    private advancedFilterService?: IAdvancedFilterService;
+
     public wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
         this.eGridDiv = beans.eGridDiv;
@@ -59,10 +62,9 @@ export class FocusService extends BeanStub {
         this.navigationService = beans.navigationService;
         this.ctrlsService = beans.ctrlsService;
         this.filterManager = beans.filterManager;
+        this.rangeService = beans.rangeService;
+        this.advancedFilterService = beans.advancedFilterService;
     }
-
-    private rangeService?: IRangeService;
-    private advancedFilterService?: IAdvancedFilterService;
 
     private gridCtrl: GridCtrl;
     private focusedCellPosition: CellPosition | null;

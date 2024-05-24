@@ -331,6 +331,19 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 }
 
 class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
+    private filterManager: FilterManager;
+    private columnChooserFactory: ColumnChooserFactory;
+    private columnMenuFactory: ColumnMenuFactory;
+    private menuUtils: MenuUtils;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.filterManager = beans.filterManager;
+        this.columnChooserFactory = beans.columnChooserFactory;
+        this.columnMenuFactory = beans.columnMenuFactory;
+        this.menuUtils = beans.menuUtils;
+    }
+
     public static EVENT_TAB_SELECTED = 'tabSelected';
     public static TAB_FILTER = 'filterMenuTab' as const;
     public static TAB_GENERAL = 'generalMenuTab' as const;
@@ -340,11 +353,6 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
         TabbedColumnMenu.TAB_FILTER,
         TabbedColumnMenu.TAB_COLUMNS,
     ];
-
-    private readonly filterManager: FilterManager;
-    private readonly columnChooserFactory: ColumnChooserFactory;
-    private readonly columnMenuFactory: ColumnMenuFactory;
-    private readonly menuUtils: MenuUtils;
 
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: (popupParams?: PopupEventParams) => void;

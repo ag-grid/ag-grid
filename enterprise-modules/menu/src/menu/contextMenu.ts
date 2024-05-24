@@ -254,8 +254,14 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 }
 
 class ContextMenu extends Component {
-    private menuItemMapper: MenuItemMapper;
     private focusService: FocusService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.focusService = beans.focusService;
+    }
+
+    private menuItemMapper: MenuItemMapper;
     private cellPositionUtils: CellPositionUtils;
 
     private menuList: AgMenuList | null = null;
