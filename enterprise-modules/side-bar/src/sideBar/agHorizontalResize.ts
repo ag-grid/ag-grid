@@ -10,7 +10,7 @@ import { Component, Events } from '@ag-grid-community/core';
 export class AgHorizontalResize extends Component {
     private horizontalResizeService: HorizontalResizeService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.horizontalResizeService = beans.horizontalResizeService;
     }

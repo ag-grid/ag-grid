@@ -55,7 +55,7 @@ export class RangeService extends BeanStub implements IRangeService {
     private ctrlsService: CtrlsService;
     private valueService: ValueService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.rowModel = beans.rowModel;
         this.dragService = beans.dragService;

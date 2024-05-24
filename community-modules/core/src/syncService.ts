@@ -20,7 +20,7 @@ export class SyncService extends BeanStub {
     private columnModel: ColumnModel;
     private rowModel: IRowModel;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.ctrlsService = beans.ctrlsService;
         this.columnModel = beans.columnModel;

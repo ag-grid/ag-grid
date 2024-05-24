@@ -38,7 +38,7 @@ export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupP
 export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private columnModel: ColumnModel;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.columnModel = beans.columnModel;
     }

@@ -23,7 +23,7 @@ export class StoreUtils extends BeanStub {
     private serverSideRowModel: ServerSideRowModel;
     private storeFactory: StoreFactory;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;

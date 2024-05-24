@@ -42,7 +42,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private rangeService?: IRangeService;
     private clipboardService?: IClipboardService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.mouseEventService = beans.mouseEventService;
         this.valueService = beans.valueService;

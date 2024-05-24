@@ -20,7 +20,7 @@ export class LazyBlockLoadingService extends BeanStub {
     private rowRenderer: RowRenderer;
     private rowModel: ServerSideRowModel;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
         this.rowRenderer = beans.rowRenderer;

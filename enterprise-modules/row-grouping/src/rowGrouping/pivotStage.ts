@@ -28,7 +28,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
     private funcColsService: FuncColsService;
     private pivotColDefService: PivotColDefService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.valueService = beans.valueService;
         this.columnModel = beans.columnModel;

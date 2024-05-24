@@ -40,7 +40,7 @@ export const DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-sheets', 'ag-pol
 export class ChartController extends BeanStub {
     private rangeService: IRangeService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.rangeService = beans.rangeService;
     }

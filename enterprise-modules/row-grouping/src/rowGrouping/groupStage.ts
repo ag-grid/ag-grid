@@ -70,7 +70,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private selectionService: ISelectionService;
     private showRowGroupColsService: ShowRowGroupColsService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.beans = beans;
         this.columnModel = beans.columnModel;

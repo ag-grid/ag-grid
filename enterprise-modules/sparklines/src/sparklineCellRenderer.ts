@@ -14,7 +14,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     private resizeObserverService!: ResizeObserverService;
     private sparklineTooltipSingleton!: SparklineTooltipSingleton;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.resizeObserverService = beans.resizeObserverService;
         this.sparklineTooltipSingleton = beans.sparklineTooltipSingleton;

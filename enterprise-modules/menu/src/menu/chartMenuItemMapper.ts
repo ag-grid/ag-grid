@@ -15,7 +15,7 @@ export class ChartMenuItemMapper extends BeanStub {
 
     private chartService?: IChartService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.chartService = beans.chartService;
     }

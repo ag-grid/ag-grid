@@ -231,7 +231,7 @@ export class ExcelCreator
 
     private gridSerializer: GridSerializer;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;

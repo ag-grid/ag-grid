@@ -30,7 +30,7 @@ export class GridHeaderCtrl extends BeanStub {
     private filterManager: FilterManager;
     private menuService: MenuService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.headerNavigationService = beans.headerNavigationService;
         this.focusService = beans.focusService;

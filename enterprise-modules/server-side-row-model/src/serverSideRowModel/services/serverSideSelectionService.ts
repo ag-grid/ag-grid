@@ -23,7 +23,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
 
     private rowModel: IRowModel;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.rowModel = beans.rowModel;
     }

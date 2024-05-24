@@ -4,11 +4,9 @@ import type {
     IExpansionService,
     IsServerSideGroupOpenByDefaultParams,
     RowNode,
-    WithoutGridCommon} from '@ag-grid-community/core';
-import {
-    Events,
-    ExpansionService,
+    WithoutGridCommon,
 } from '@ag-grid-community/core';
+import { Events, ExpansionService } from '@ag-grid-community/core';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 
@@ -17,7 +15,7 @@ export class ServerSideExpansionService extends ExpansionService implements IExp
 
     private serverSideRowModel: ServerSideRowModel;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
     }

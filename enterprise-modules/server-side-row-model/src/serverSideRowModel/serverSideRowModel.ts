@@ -71,7 +71,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     private beans: BeanCollection;
     private pivotColDefService?: IPivotColDefService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;

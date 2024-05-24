@@ -67,7 +67,7 @@ export class SetFilterListItem<V> extends Component {
     private valueService: ValueService;
     private userComponentFactory: UserComponentFactory;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.valueService = beans.valueService;
         this.userComponentFactory = beans.userComponentFactory;

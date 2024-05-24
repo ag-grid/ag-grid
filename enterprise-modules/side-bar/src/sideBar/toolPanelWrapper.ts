@@ -13,7 +13,7 @@ import { AgHorizontalResize } from './agHorizontalResize';
 export class ToolPanelWrapper extends Component {
     private userComponentFactory: UserComponentFactory;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.userComponentFactory = beans.userComponentFactory;
     }

@@ -53,7 +53,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private valueService: ValueService;
     private dataTypeService: DataTypeService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.funcColsService = beans.funcColsService;
         this.valueService = beans.valueService;

@@ -17,7 +17,7 @@ export class ExpandListener extends BeanStub {
     private storeFactory: StoreFactory;
     private beans: BeanCollection;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.storeFactory = beans.ssrmStoreFactory;

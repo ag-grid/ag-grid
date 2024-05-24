@@ -30,7 +30,7 @@ export class ToolPanelContextMenu extends Component {
     private popupService: PopupService;
     private focusService: FocusService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;

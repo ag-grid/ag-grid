@@ -61,7 +61,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     private menuUtils: MenuUtils;
     private menuService: MenuService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.popupService = beans.popupService;
         this.focusService = beans.focusService;

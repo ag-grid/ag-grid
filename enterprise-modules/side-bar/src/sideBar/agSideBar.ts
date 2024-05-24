@@ -36,7 +36,7 @@ export class AgSideBar extends Component implements ISideBar {
     private filterManager: FilterManager;
     private sideBarService: SideBarService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.focusService = beans.focusService;
         this.filterManager = beans.filterManager;

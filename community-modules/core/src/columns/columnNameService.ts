@@ -17,7 +17,7 @@ export class ColumnNameService extends BeanStub {
     private funcColsService: FuncColsService;
     private columnModel: ColumnModel;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.expressionService = beans.expressionService;
         this.funcColsService = beans.funcColsService;

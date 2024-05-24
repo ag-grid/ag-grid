@@ -40,7 +40,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     private cellNavigationService: CellNavigationService;
     private visibleColsService: VisibleColsService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.valueService = beans.valueService;
         this.navigationService = beans.navigationService;

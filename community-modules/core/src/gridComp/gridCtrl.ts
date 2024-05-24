@@ -32,7 +32,7 @@ export class GridCtrl extends BeanStub {
     private mouseEventService: MouseEventService;
     private dragAndDropService: DragAndDropService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.focusService = beans.focusService;
         this.resizeObserverService = beans.resizeObserverService;

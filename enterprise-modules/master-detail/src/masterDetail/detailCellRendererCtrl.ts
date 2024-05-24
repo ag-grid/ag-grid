@@ -16,7 +16,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     private rowPositionUtils: RowPositionUtils;
     private focusService: FocusService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.focusService = beans.focusService;
         this.rowPositionUtils = beans.rowPositionUtils;

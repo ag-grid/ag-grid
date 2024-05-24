@@ -31,7 +31,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private selectionService: ISelectionService;
     private funcColsService: FuncColsService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.blockUtils = beans.ssrmBlockUtils;
         this.storeUtils = beans.ssrmStoreUtils;

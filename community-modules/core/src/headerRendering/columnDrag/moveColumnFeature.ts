@@ -21,7 +21,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     private dragAndDropService: DragAndDropService;
     private ctrlsService: CtrlsService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;

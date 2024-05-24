@@ -31,7 +31,7 @@ export class ChartMenuService extends BeanStub {
 
     private advancedSettingsMenuFactory: AdvancedSettingsMenuFactory;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.advancedSettingsMenuFactory = beans.advancedSettingsMenuFactory;
     }

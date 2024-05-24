@@ -22,7 +22,7 @@ export class ColumnMenuFactory extends BeanStub {
     private rowModel: IRowModel;
     private menuService: MenuService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.menuItemMapper = beans.menuItemMapper;
         this.columnModel = beans.columnModel;

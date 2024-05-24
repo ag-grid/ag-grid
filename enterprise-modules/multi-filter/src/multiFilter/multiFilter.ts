@@ -33,7 +33,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     private filterManager: FilterManager;
     private userComponentFactory: UserComponentFactory;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.filterManager = beans.filterManager;
         this.userComponentFactory = beans.userComponentFactory;

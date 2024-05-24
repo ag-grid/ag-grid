@@ -26,7 +26,7 @@ export class ChartMenu extends Component {
     private chartMenuService: ChartMenuService;
     private chartMenuListFactory: ChartMenuListFactory;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.chartMenuService = beans.chartMenuService;
         this.chartMenuListFactory = beans.chartMenuListFactory;

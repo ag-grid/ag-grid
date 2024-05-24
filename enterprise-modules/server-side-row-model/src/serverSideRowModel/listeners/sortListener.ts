@@ -17,7 +17,7 @@ export class SortListener extends BeanStub {
     private serverSideRowModel: ServerSideRowModel;
     private listenerUtils: ListenerUtils;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.sortController = beans.sortController;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;

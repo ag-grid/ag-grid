@@ -22,7 +22,7 @@ import {
 export class RichSelectRow<TValue> extends Component {
     private userComponentFactory: UserComponentFactory;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.userComponentFactory = beans.userComponentFactory;
     }

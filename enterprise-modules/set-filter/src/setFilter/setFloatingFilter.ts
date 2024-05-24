@@ -15,7 +15,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     private columnNameService: ColumnNameService;
     private readonly eFloatingFilterText: AgInputTextField = RefPlaceholder;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.columnNameService = beans.columnNameService;
     }

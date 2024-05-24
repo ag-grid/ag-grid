@@ -23,7 +23,7 @@ export class ToolPanelFilterComp extends Component {
     private filterManager: FilterManager;
     private columnNameService: ColumnNameService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.filterManager = beans.filterManager;
         this.columnNameService = beans.columnNameService;

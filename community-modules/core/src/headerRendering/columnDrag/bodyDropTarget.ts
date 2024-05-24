@@ -21,7 +21,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     private columnModel: ColumnModel;
     private ctrlsService: CtrlsService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.dragAndDropService = beans.dragAndDropService;
         this.columnModel = beans.columnModel;

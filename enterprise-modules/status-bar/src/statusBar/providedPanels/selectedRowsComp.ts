@@ -7,7 +7,7 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
     private rowModel: IRowModel;
     private selectionService: ISelectionService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.rowModel = beans.rowModel;
         this.selectionService = beans.selectionService;

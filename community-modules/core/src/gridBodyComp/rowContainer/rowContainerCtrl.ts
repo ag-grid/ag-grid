@@ -132,7 +132,7 @@ export class RowContainerCtrl extends BeanStub {
     private resizeObserverService: ResizeObserverService;
     private rowRenderer: RowRenderer;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.dragService = beans.dragService;
         this.ctrlsService = beans.ctrlsService;

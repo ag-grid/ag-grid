@@ -38,7 +38,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
     private funcColsService: FuncColsService;
     private pivotResultColsService: PivotResultColsService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.aggFuncService = beans.aggFuncService;

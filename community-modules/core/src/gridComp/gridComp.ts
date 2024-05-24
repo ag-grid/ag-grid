@@ -14,7 +14,7 @@ import { GridCtrl } from './gridCtrl';
 export class GridComp extends TabGuardComp {
     private loggerFactory: LoggerFactory;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.loggerFactory = beans.loggerFactory;
     }

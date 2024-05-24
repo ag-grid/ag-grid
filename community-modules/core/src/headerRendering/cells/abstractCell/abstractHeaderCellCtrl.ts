@@ -49,7 +49,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected dragAndDropService: DragAndDropService;
     protected menuService: MenuService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.pinnedWidthService = beans.pinnedWidthService;
         this.focusService = beans.focusService;

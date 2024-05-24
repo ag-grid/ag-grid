@@ -27,7 +27,7 @@ export interface DialogOptions extends PanelOptions {
 export class AgDialog extends AgPanel<DialogOptions> {
     private popupService: PopupService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.popupService = beans.popupService;
     }

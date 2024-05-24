@@ -4,7 +4,8 @@ import type {
     FilterOpenedEvent,
     IProvidedColumn,
     ITooltipParams,
-    WithoutGridCommon} from '@ag-grid-community/core';
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
 import {
     Column,
     Component,
@@ -24,7 +25,7 @@ export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp
 export class ToolPanelFilterGroupComp extends Component {
     private columnNameService: ColumnNameService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.columnNameService = beans.columnNameService;
     }

@@ -7,7 +7,7 @@ export class ListenerUtils extends BeanStub {
     private pivotResultColsService: PivotResultColsService;
     private funcColsService: FuncColsService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.pivotResultColsService = beans.pivotResultColsService;
         this.funcColsService = beans.funcColsService;

@@ -44,7 +44,7 @@ export class MenuItemMapper extends BeanStub {
     private clipboardService?: IClipboardService;
     private aggFuncService?: IAggFuncService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;

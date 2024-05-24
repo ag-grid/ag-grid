@@ -17,7 +17,7 @@ export class ScrollVisibleService extends BeanStub {
     private ctrlsService: CtrlsService;
     private columnAnimationService: ColumnAnimationService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.ctrlsService = beans.ctrlsService;
         this.columnAnimationService = beans.columnAnimationService;

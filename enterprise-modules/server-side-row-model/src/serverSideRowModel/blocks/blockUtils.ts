@@ -24,7 +24,7 @@ export class BlockUtils extends BeanStub {
     private beans: BeanCollection;
     private expansionService: ServerSideExpansionService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.valueService = beans.valueService;
         this.showRowGroupColsService = beans.showRowGroupColsService;

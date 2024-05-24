@@ -15,7 +15,7 @@ export class ToolPanelColDefService extends BeanStub {
 
     private columnModel: ColumnModel;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.columnModel = beans.columnModel;
     }

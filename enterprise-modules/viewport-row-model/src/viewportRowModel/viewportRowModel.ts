@@ -19,7 +19,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     private focusService: FocusService;
     private beans: BeanCollection;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.rowRenderer = beans.rowRenderer;
         this.focusService = beans.focusService;

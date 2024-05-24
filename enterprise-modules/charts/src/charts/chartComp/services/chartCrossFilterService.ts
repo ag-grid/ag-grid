@@ -5,11 +5,9 @@ import type {
     ColumnModel,
     GridApi,
     RowNode,
-    ValueService} from '@ag-grid-community/core';
-import {
-    BeanStub,
-    _includes,
+    ValueService,
 } from '@ag-grid-community/core';
+import { BeanStub, _includes } from '@ag-grid-community/core';
 
 export class ChartCrossFilterService extends BeanStub {
     static BeanName: BeanName = 'chartCrossFilterService';
@@ -18,7 +16,7 @@ export class ChartCrossFilterService extends BeanStub {
     private columnModel: ColumnModel;
     private valueService: ValueService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.gridApi = beans.gridApi;
         this.columnModel = beans.columnModel;

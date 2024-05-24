@@ -7,7 +7,7 @@ export class DragListenerFeature extends BeanStub {
     private dragService: DragService;
     private rangeService?: IRangeService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.dragService = beans.dragService;
         this.rangeService = beans.rangeService;

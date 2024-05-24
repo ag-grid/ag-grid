@@ -47,7 +47,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     private userComponentFactory: UserComponentFactory;
     private animationFrameService: AnimationFrameService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.animationFrameService = beans.animationFrameService;
         this.userComponentFactory = beans.userComponentFactory;

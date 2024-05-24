@@ -9,7 +9,7 @@ import type { DropListener } from './bodyDropTarget';
 export class BodyDropPivotTarget extends BeanStub implements DropListener {
     private funcColsService: FuncColsService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.funcColsService = beans.funcColsService;
     }

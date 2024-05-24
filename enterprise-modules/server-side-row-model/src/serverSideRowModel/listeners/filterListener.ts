@@ -18,7 +18,7 @@ export class FilterListener extends BeanStub {
     private filterManager: FilterManager;
     private listenerUtils: ListenerUtils;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.filterManager = beans.filterManager;

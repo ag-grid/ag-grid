@@ -21,7 +21,7 @@ export class StoreFactory extends BeanStub {
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;

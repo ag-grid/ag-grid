@@ -31,7 +31,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     private rowPositionUtils: RowPositionUtils;
     private rangeService?: IRangeService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.valueService = beans.valueService;
         this.cellNavigationService = beans.cellNavigationService;

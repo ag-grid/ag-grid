@@ -20,7 +20,7 @@ export class ModelItemUtils extends BeanStub {
     private columnModel: ColumnModel;
     private columnApplyStateService: ColumnApplyStateService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.aggFuncService = beans.aggFuncService;
         this.columnModel = beans.columnModel;
