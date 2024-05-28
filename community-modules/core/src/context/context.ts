@@ -204,16 +204,24 @@ export class Context {
         ModuleRegistry.__unRegisterGridModules(this.gridId);
     }
 
+    /**
+     * Destroys a bean and returns undefined to support destruction and clean up in a single line.
+     * this.dateComp = this.context.destroyBean(this.dateComp);
+     */
     public destroyBean(bean: BaseBean | null | undefined): undefined {
         bean?.destroy?.();
     }
 
+    /**
+     * Destroys an array of beans and returns an empty array to support destruction and clean up in a single line.
+     * this.dateComps = this.context.destroyBeans(this.dateComps);
+     */
     public destroyBeans(beans: (BaseBean | null | undefined)[]): [] {
-        if (!beans) {
-            return [];
+        if (beans) {
+            for (let i = 0; i < beans.length; i++) {
+                this.destroyBean(beans[i]);
+            }
         }
-
-        beans.forEach(this.destroyBean);
         return [];
     }
 
