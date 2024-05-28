@@ -5,5 +5,5 @@ interface Props {
 }
 
 export const MetaTagComponent = ({ tags }: Props) => {
-    return <div data-meta={JSON.stringify(tags)} />;
+    return <div data-meta={JSON.stringify(tags).replaceAll('"', '&quot;')} />;
 };
