@@ -1,9 +1,15 @@
-import type { AgCheckbox, ColumnModel, CtrlsService } from '@ag-grid-community/core';
-import { AgToggleButton, Autowired, Component, Events, RefPlaceholder } from '@ag-grid-community/core';
+import type { AgCheckbox, BeanCollection, ColumnModel, CtrlsService } from '@ag-grid-community/core';
+import { AgToggleButton, Component, Events, RefPlaceholder } from '@ag-grid-community/core';
 
 export class PivotModePanel extends Component {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    private columnModel: ColumnModel;
+    private ctrlsService: CtrlsService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private readonly cbPivotMode: AgCheckbox = RefPlaceholder;
 

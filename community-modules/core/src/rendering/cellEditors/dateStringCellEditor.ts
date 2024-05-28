@@ -1,5 +1,5 @@
 import type { DataTypeService } from '../../columns/dataTypeService';
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _serialiseDate } from '../../utils/date';
 import { _exists } from '../../utils/generic';
@@ -71,7 +71,12 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
 }
 
 export class DateStringCellEditor extends SimpleCellEditor<string, IDateStringCellEditorParams, AgInputDateField> {
-    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
+    private dataTypeService: DataTypeService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.dataTypeService = beans.dataTypeService;
+    }
 
     constructor() {
         super(new DateStringCellEditorInput(() => this.dataTypeService));

@@ -1,10 +1,15 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { Column } from '../../entities/column';
 import type { ColumnHoverService } from '../../rendering/columnHoverService';
 
 export class HoverFeature extends BeanStub {
-    @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
+    private columnHoverService: ColumnHoverService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnHoverService = beans.columnHoverService;
+    }
 
     private readonly columns: Column[];
 

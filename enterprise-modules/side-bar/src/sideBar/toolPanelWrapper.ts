@@ -1,16 +1,22 @@
 import type {
+    BeanCollection,
     IToolPanelComp,
     IToolPanelParams,
     ToolPanelDef,
     UserComponentFactory,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, Component } from '@ag-grid-community/core';
+import { Component } from '@ag-grid-community/core';
 
 import { AgHorizontalResize } from './agHorizontalResize';
 
 export class ToolPanelWrapper extends Component {
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
+    private userComponentFactory: UserComponentFactory;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.userComponentFactory = beans.userComponentFactory;
+    }
 
     private static TEMPLATE /* html */ = `<div class="ag-tool-panel-wrapper" role="tabpanel"/>`;
 

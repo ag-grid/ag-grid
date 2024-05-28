@@ -1,6 +1,7 @@
 import type {
     AbstractColDef,
     AgComponentSelector,
+    BeanCollection,
     ColGroupDef,
     Column,
     ColumnEventType,
@@ -11,7 +12,6 @@ import type {
     VirtualListModel,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
     Component,
     Events,
     ProvidedColumnGroup,
@@ -54,10 +54,18 @@ export class AgPrimaryColsList extends Component {
 
     public static TEMPLATE = /* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="presentation"></div>`;
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('toolPanelColDefService') private colDefService: ToolPanelColDefService;
-    @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
+    private columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    private colDefService: ToolPanelColDefService;
+    private modelItemUtils: ModelItemUtils;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.columnNameService = beans.columnNameService;
+        this.colDefService = beans.toolPanelColDefService;
+        this.modelItemUtils = beans.modelItemUtils;
+    }
 
     private allowDragging: boolean;
     private filterText: string | null;

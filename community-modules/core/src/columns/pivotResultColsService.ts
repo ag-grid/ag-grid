@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { AbstractColDef, ColDef, ColGroupDef } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import type { ColumnEventType } from '../events';
@@ -11,11 +11,19 @@ import type { ColKey, ColumnCollections, ColumnModel } from './columnModel';
 import { destroyColumnTree, getColumnsFromTree } from './columnUtils';
 import type { VisibleColsService } from './visibleColsService';
 
-@Bean('pivotResultColsService')
 export class PivotResultColsService extends BeanStub {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('columnFactory') private readonly columnFactory: ColumnFactory;
-    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
+    beanName: BeanName = 'pivotResultColsService';
+
+    private columnModel: ColumnModel;
+    private columnFactory: ColumnFactory;
+    private visibleColsService: VisibleColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.columnFactory = beans.columnFactory;
+        this.visibleColsService = beans.visibleColsService;
+    }
 
     // if pivoting, these are the generated columns as a result of the pivot
     private pivotResultCols: ColumnCollections | null;

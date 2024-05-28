@@ -1,14 +1,21 @@
 import { BeanStub } from './context/beanStub';
-import { Bean, Optional } from './context/context';
+import type { BeanCollection, BeanName } from './context/context';
 import type { AgEvent, AgEventListener, AgGlobalEventListener } from './events';
 import type { AgGridCommon } from './interfaces/iCommon';
 import type { IEventEmitter } from './interfaces/iEventEmitter';
 import { LocalEventService } from './localEventService';
 
-@Bean('eventService')
 export class EventService extends BeanStub implements IEventEmitter {
-    @Optional('globalEventListener') globalEventListener?: AgGlobalEventListener;
-    @Optional('globalSyncEventListener') globalSyncEventListener?: AgGlobalEventListener;
+    beanName: BeanName = 'eventService';
+
+    private globalEventListener?: AgGlobalEventListener;
+    private globalSyncEventListener?: AgGlobalEventListener;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.globalEventListener = beans.globalEventListener;
+        this.globalSyncEventListener = beans.globalSyncEventListener;
+    }
 
     private readonly globalEventService: LocalEventService = new LocalEventService();
 

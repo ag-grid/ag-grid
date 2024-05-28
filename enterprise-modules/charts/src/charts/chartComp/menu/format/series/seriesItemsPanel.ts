@@ -1,5 +1,5 @@
-import type { AgSelectParams, ListOption } from '@ag-grid-community/core';
-import { AgSelect, Autowired, Component, RefPlaceholder, _removeFromParent } from '@ag-grid-community/core';
+import type { AgSelectParams, BeanCollection, ListOption } from '@ag-grid-community/core';
+import { AgSelect, Component, RefPlaceholder, _removeFromParent } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
@@ -19,8 +19,12 @@ export class SeriesItemsPanel extends Component {
 
     private readonly seriesItemsGroup: AgGroupComponent = RefPlaceholder;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
 
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.chartTranslationService = beans.chartTranslationService;
+    }
     private activePanels: Component[] = [];
 
     constructor(private readonly chartMenuUtils: ChartMenuParamsFactory) {

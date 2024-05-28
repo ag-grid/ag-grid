@@ -1,8 +1,7 @@
 import type { ColumnAutosizeService } from '../../../columns/columnAutosizeService';
-import type { ColumnModel } from '../../../columns/columnModel';
 import type { ColumnSizeService } from '../../../columns/columnSizeService';
 import { BeanStub } from '../../../context/beanStub';
-import { Autowired } from '../../../context/context';
+import type { BeanCollection } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
 import type { Column, ColumnPinnedType } from '../../../entities/column';
 import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
@@ -13,12 +12,20 @@ import type { IHeaderResizeFeature } from '../abstractCell/abstractHeaderCellCtr
 import type { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
 
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
-    @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
-    @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
+    private horizontalResizeService: HorizontalResizeService;
+    private pinnedWidthService: PinnedWidthService;
+    private ctrlsService: CtrlsService;
+    private columnSizeService: ColumnSizeService;
+    private columnAutosizeService: ColumnAutosizeService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.horizontalResizeService = beans.horizontalResizeService;
+        this.pinnedWidthService = beans.pinnedWidthService;
+        this.ctrlsService = beans.ctrlsService;
+        this.columnSizeService = beans.columnSizeService;
+        this.columnAutosizeService = beans.columnAutosizeService;
+    }
 
     private pinned: ColumnPinnedType;
     private column: Column;

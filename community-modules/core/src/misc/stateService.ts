@@ -5,7 +5,7 @@ import type { ColumnModel } from '../columns/columnModel';
 import type { PivotResultColsService } from '../columns/pivotResultColsService';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Optional } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { Column } from '../entities/column';
 import { Events } from '../eventKeys';
@@ -53,25 +53,45 @@ import type { SortModelItem } from '../sortController';
 import { _debounce } from '../utils/function';
 import { _jsonEquals } from '../utils/generic';
 
-@Bean('stateService')
 export class StateService extends BeanStub {
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
-    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
-    @Autowired('columnGroupStateService') private readonly columnGroupStateService: ColumnGroupStateService;
-    @Autowired('columnGetStateService') private readonly columnGetStateService: ColumnGetStateService;
-    @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;
-    @Autowired('rowModel') private readonly rowModel: IRowModel;
-    @Autowired('selectionService') private readonly selectionService: ISelectionService;
-    @Autowired('expansionService') private readonly expansionService: IExpansionService;
-    @Autowired('columnAnimationService') private readonly columnAnimationService: ColumnAnimationService;
-    @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
+    beanName: BeanName = 'stateService';
 
-    @Optional('sideBarService') private readonly sideBarService?: ISideBarService;
-    @Optional('rangeService') private readonly rangeService?: IRangeService;
+    private filterManager: FilterManager;
+    private ctrlsService: CtrlsService;
+    private pivotResultColsService: PivotResultColsService;
+    private focusService: FocusService;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private columnGroupStateService: ColumnGroupStateService;
+    private columnGetStateService: ColumnGetStateService;
+    private paginationProxy: PaginationProxy;
+    private rowModel: IRowModel;
+    private selectionService: ISelectionService;
+    private expansionService: IExpansionService;
+    private columnAnimationService: ColumnAnimationService;
+    private columnApplyStateService: ColumnApplyStateService;
+    private sideBarService?: ISideBarService;
+    private rangeService?: IRangeService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.filterManager = beans.filterManager;
+        this.ctrlsService = beans.ctrlsService;
+        this.pivotResultColsService = beans.pivotResultColsService;
+        this.focusService = beans.focusService;
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.columnGroupStateService = beans.columnGroupStateService;
+        this.columnGetStateService = beans.columnGetStateService;
+        this.paginationProxy = beans.paginationProxy;
+        this.rowModel = beans.rowModel;
+        this.selectionService = beans.selectionService;
+        this.expansionService = beans.expansionService;
+        this.columnAnimationService = beans.columnAnimationService;
+        this.columnApplyStateService = beans.columnApplyStateService;
+        this.sideBarService = beans.sideBarService;
+        this.rangeService = beans.rangeService;
+    }
 
     private isClientSideRowModel: boolean;
     private cachedState: GridState;

@@ -1,12 +1,13 @@
 import { BeanStub } from '../context/beanStub';
-import { Bean } from '../context/context';
+import type { BeanName } from '../context/context';
 import type { Column } from '../entities/column';
 import type { ColumnHoverChangedEvent } from '../events';
 import { Events } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 
-@Bean('columnHoverService')
 export class ColumnHoverService extends BeanStub {
+    beanName: BeanName = 'columnHoverService';
+
     private selectedColumns: Column[] | null;
 
     public setMouseOver(columns: Column[]): void {

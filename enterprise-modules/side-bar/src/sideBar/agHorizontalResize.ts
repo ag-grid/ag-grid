@@ -1,15 +1,21 @@
 import type {
     AgComponentSelector,
+    BeanCollection,
     HorizontalResizeService,
     ToolPanelSizeChangedEvent,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, Component, Events } from '@ag-grid-community/core';
+import { Component, Events } from '@ag-grid-community/core';
 
 export class AgHorizontalResize extends Component {
-    static readonly selector: AgComponentSelector = 'AG-HORIZONTAL-RESIZE';
+    private horizontalResizeService: HorizontalResizeService;
 
-    @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.horizontalResizeService = beans.horizontalResizeService;
+    }
+
+    static readonly selector: AgComponentSelector = 'AG-HORIZONTAL-RESIZE';
 
     private startingWidth: number;
     private elementToResize: HTMLElement;

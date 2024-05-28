@@ -1,11 +1,17 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, Optional } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
 import type { IRangeService } from '../../interfaces/IRangeService';
 
 export class DragListenerFeature extends BeanStub {
-    @Autowired('dragService') private dragService: DragService;
-    @Optional('rangeService') private rangeService?: IRangeService;
+    private dragService: DragService;
+    private rangeService?: IRangeService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.dragService = beans.dragService;
+        this.rangeService = beans.rangeService;
+    }
 
     private eContainer: HTMLElement;
 

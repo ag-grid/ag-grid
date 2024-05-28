@@ -1,25 +1,32 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Qualifier } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import type { ColumnEventType } from '../events';
-import type { Logger, LoggerFactory } from '../logger';
+import type { Logger } from '../logger';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnModel } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
 
-@Bean('columnGroupStateService')
 export class ColumnGroupStateService extends BeanStub {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
-    @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
+    beanName: BeanName = 'columnGroupStateService';
+
+    private columnModel: ColumnModel;
+    private columnAnimationService: ColumnAnimationService;
+    private eventDispatcher: ColumnEventDispatcher;
+    private visibleColsService: VisibleColsService;
 
     private logger: Logger;
 
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('columnModel');
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.columnAnimationService = beans.columnAnimationService;
+        this.eventDispatcher = beans.columnEventDispatcher;
+        this.visibleColsService = beans.visibleColsService;
+
+        this.logger = beans.loggerFactory.create('columnModel');
     }
 
     public getColumnGroupState(): { groupId: string; open: boolean }[] {

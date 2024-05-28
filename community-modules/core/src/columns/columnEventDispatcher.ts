@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Bean } from '../context/context';
+import type { BeanName } from '../context/context';
 import type { Column } from '../entities/column';
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import type {
@@ -27,8 +27,9 @@ Created this class to:
 a) common methods, eg some methods here called by ColumnModel and also ColumnApplyStateService
 b) to remove plumbing code from ColumnModel, to help make ColumnModel more maintainable
 */
-@Bean('columnEventDispatcher')
 export class ColumnEventDispatcher extends BeanStub {
+    beanName: BeanName = 'columnEventDispatcher';
+
     public visibleCols(): void {
         const event: WithoutGridCommon<DisplayedColumnsChangedEvent> = {
             type: Events.EVENT_DISPLAYED_COLUMNS_CHANGED,

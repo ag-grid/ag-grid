@@ -1,5 +1,5 @@
 import type {
-    ColumnModel,
+    BeanCollection,
     ColumnNameService,
     FilterOpenedEvent,
     IProvidedColumn,
@@ -7,7 +7,6 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
     Column,
     Component,
     Events,
@@ -24,14 +23,18 @@ import { ToolPanelFilterComp } from './toolPanelFilterComp';
 export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;
 
 export class ToolPanelFilterGroupComp extends Component {
+    private columnNameService: ColumnNameService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnNameService = beans.columnNameService;
+    }
+
     private static TEMPLATE /* html */ = `<div class="ag-filter-toolpanel-group-wrapper">
             <ag-group-component data-ref="filterGroupComp"></ag-group-component>
         </div>`;
 
     private filterGroupComp: AgGroupComponent = RefPlaceholder;
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
 
     private readonly depth: number;
     private readonly columnGroup: IProvidedColumn;

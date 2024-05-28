@@ -1,12 +1,18 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { CellClassParams, ColDef } from '../entities/colDef';
 import type { RowClassParams } from '../entities/gridOptions';
 import type { ExpressionService } from '../valueService/expressionService';
 
-@Bean('stylingService')
 export class StylingService extends BeanStub {
-    @Autowired('expressionService') private expressionService: ExpressionService;
+    beanName: BeanName = 'stylingService';
+
+    private expressionService: ExpressionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.expressionService = beans.expressionService;
+    }
 
     public processAllCellClasses(
         colDef: ColDef,

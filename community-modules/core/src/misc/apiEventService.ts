@@ -1,11 +1,12 @@
 import { BeanStub } from '../context/beanStub';
-import { Bean } from '../context/context';
+import type { BeanName } from '../context/context';
 import type { AgEventListener, AgGlobalEventListener } from '../events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from '../events';
 import { FrameworkEventListenerService } from './frameworkEventListenerService';
 
-@Bean('apiEventService')
 export class ApiEventService extends BeanStub {
+    beanName: BeanName = 'apiEventService';
+
     private syncEventListeners: Map<string, Set<AgEventListener>> = new Map();
     private asyncEventListeners: Map<string, Set<AgEventListener>> = new Map();
     private syncGlobalEventListeners: Set<AgGlobalEventListener> = new Set();

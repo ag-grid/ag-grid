@@ -2,7 +2,7 @@ import type { ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
-import { Autowired } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import { Events } from '../eventKeys';
 import type { FilterManager } from '../filter/filterManager';
@@ -22,13 +22,24 @@ export interface IGridHeaderComp {
 }
 
 export class GridHeaderCtrl extends BeanStub {
-    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('menuService') private menuService: MenuService;
+    private headerNavigationService: HeaderNavigationService;
+    private focusService: FocusService;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private ctrlsService: CtrlsService;
+    private filterManager: FilterManager;
+    private menuService: MenuService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.headerNavigationService = beans.headerNavigationService;
+        this.focusService = beans.focusService;
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.ctrlsService = beans.ctrlsService;
+        this.filterManager = beans.filterManager;
+        this.menuService = beans.menuService;
+    }
 
     private comp: IGridHeaderComp;
     private eGui: HTMLElement;

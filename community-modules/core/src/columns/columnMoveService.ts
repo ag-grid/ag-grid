@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { ColDef } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
@@ -10,11 +10,19 @@ import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColKey, ColumnModel } from './columnModel';
 
-@Bean('columnMoveService')
 export class ColumnMoveService extends BeanStub {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
-    @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
+    beanName: BeanName = 'columnMoveService';
+
+    private columnModel: ColumnModel;
+    private columnAnimationService: ColumnAnimationService;
+    private eventDispatcher: ColumnEventDispatcher;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.columnAnimationService = beans.columnAnimationService;
+        this.eventDispatcher = beans.columnEventDispatcher;
+    }
 
     public moveColumnByIndex(fromIndex: number, toIndex: number, source: ColumnEventType): void {
         const gridColumns = this.columnModel.getCols();

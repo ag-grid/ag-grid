@@ -1,5 +1,12 @@
-import type { FocusService, IAfterGuiAttachedParams, MenuItemDef, PopupService } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, Component, RefPlaceholder, _createIconNoSpan } from '@ag-grid-community/core';
+import type {
+    BeanCollection,
+    BeanName,
+    FocusService,
+    IAfterGuiAttachedParams,
+    MenuItemDef,
+    PopupService,
+} from '@ag-grid-community/core';
+import { BeanStub, Component, RefPlaceholder, _createIconNoSpan } from '@ag-grid-community/core';
 import { AgMenuItemComponent, AgMenuList } from '@ag-grid-enterprise/core';
 
 import type { ChartController } from '../chartController';
@@ -7,11 +14,19 @@ import type { ChartMenuService } from '../services/chartMenuService';
 import type { ChartTranslationService } from '../services/chartTranslationService';
 import type { ChartMenuContext } from './chartMenuContext';
 
-@Bean('chartMenuListFactory')
 export class ChartMenuListFactory extends BeanStub {
-    @Autowired('popupService') private readonly popupService: PopupService;
-    @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    beanName: BeanName = 'chartMenuListFactory';
+
+    private popupService: PopupService;
+    private chartMenuService: ChartMenuService;
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.popupService = beans.popupService;
+        this.chartMenuService = beans.chartMenuService;
+        this.chartTranslationService = beans.chartTranslationService;
+    }
 
     private activeChartMenuList?: ChartMenuList;
 
@@ -206,7 +221,12 @@ export class ChartMenuListFactory extends BeanStub {
 }
 
 class ChartMenuList extends Component {
-    @Autowired('focusService') private readonly focusService: FocusService;
+    private focusService: FocusService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.focusService = beans.focusService;
+    }
 
     private readonly eChartsMenu: HTMLElement = RefPlaceholder;
 

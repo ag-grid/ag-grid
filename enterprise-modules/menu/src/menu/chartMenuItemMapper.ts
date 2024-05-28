@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    BeanName,
     ChartGroupsDef,
     ChartType,
     GridOptionsService,
@@ -6,19 +8,17 @@ import type {
     LocaleService,
     MenuItemDef,
 } from '@ag-grid-community/core';
-import {
-    Bean,
-    BeanStub,
-    ModuleNames,
-    ModuleRegistry,
-    Optional,
-    _createIconNoSpan,
-    _warnOnce,
-} from '@ag-grid-community/core';
+import { BeanStub, ModuleNames, ModuleRegistry, _createIconNoSpan, _warnOnce } from '@ag-grid-community/core';
 
-@Bean('chartMenuItemMapper')
 export class ChartMenuItemMapper extends BeanStub {
-    @Optional('chartService') private readonly chartService?: IChartService;
+    beanName: BeanName = 'chartMenuItemMapper';
+
+    private chartService?: IChartService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.chartService = beans.chartService;
+    }
 
     public getChartItems(key: 'pivotChart' | 'chartRange'): MenuItemDef | undefined {
         if (!this.chartService) {

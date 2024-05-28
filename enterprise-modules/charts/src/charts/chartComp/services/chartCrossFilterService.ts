@@ -1,26 +1,30 @@
 import type {
+    BeanCollection,
+    BeanName,
     Column,
     ColumnModel,
     FilterManager,
     IClientSideRowModel,
-    IRowModel,
     RowNode,
     ValueService,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, _includes } from '@ag-grid-community/core';
+import { BeanStub, _includes } from '@ag-grid-community/core';
 
-@Bean('chartCrossFilterService')
 export class ChartCrossFilterService extends BeanStub {
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('valueService') private readonly valueService: ValueService;
+    beanName: BeanName = 'chartCrossFilterService';
 
+    private columnModel: ColumnModel;
+    private valueService: ValueService;
+    private filterManager: FilterManager;
     private clientSideRowModel?: IClientSideRowModel;
 
-    public postConstruct(): void {
-        if (this.rowModel.getType() == 'clientSide') {
-            this.clientSideRowModel = this.rowModel as IClientSideRowModel;
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.valueService = beans.valueService;
+        this.filterManager = beans.filterManager;
+        if (beans.rowModel.getType() === 'clientSide') {
+            this.clientSideRowModel = beans.rowModel as IClientSideRowModel;
         }
     }
 

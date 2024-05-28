@@ -1,5 +1,5 @@
-import type { PopupService, ResizableStructure } from '@ag-grid-community/core';
-import { Autowired, Component, _createIconNoSpan, _setDisplayed } from '@ag-grid-community/core';
+import type { BeanCollection, PopupService, ResizableStructure } from '@ag-grid-community/core';
+import { Component, _createIconNoSpan, _setDisplayed } from '@ag-grid-community/core';
 
 import type { PanelOptions } from './agPanel';
 import { AgPanel } from './agPanel';
@@ -25,7 +25,12 @@ export interface DialogOptions extends PanelOptions {
 }
 
 export class AgDialog extends AgPanel<DialogOptions> {
-    @Autowired('popupService') private popupService: PopupService;
+    private popupService: PopupService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.popupService = beans.popupService;
+    }
 
     private isMaximizable: boolean = false;
     private isMaximized: boolean = false;

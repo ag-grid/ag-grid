@@ -1,4 +1,4 @@
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
 import { _clearElement } from '../../utils/dom';
@@ -18,7 +18,12 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
             </div>
         </div>`;
 
-    @Autowired('overlayService') private readonly overlayService: OverlayService;
+    private overlayService: OverlayService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.overlayService = beans.overlayService;
+    }
 
     private readonly eOverlayWrapper: HTMLElement = RefPlaceholder;
 

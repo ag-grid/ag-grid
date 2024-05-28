@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    BeanName,
     ColumnModel,
     ColumnVO,
     GridOptions,
@@ -9,16 +11,24 @@ import type {
     RowNodeBlock,
     StoreRefreshAfterParams,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, _missingOrEmpty, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, _missingOrEmpty, _warnOnce } from '@ag-grid-community/core';
 
 import type { SSRMParams, ServerSideRowModel } from '../serverSideRowModel';
 import type { StoreFactory } from './storeFactory';
 
-@Bean('ssrmStoreUtils')
 export class StoreUtils extends BeanStub {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
-    @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
+    beanName: BeanName = 'ssrmStoreUtils';
+
+    private columnModel: ColumnModel;
+    private serverSideRowModel: ServerSideRowModel;
+    private storeFactory: StoreFactory;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+        this.storeFactory = beans.ssrmStoreFactory;
+    }
 
     public loadFromDatasource(p: {
         storeParams: SSRMParams;

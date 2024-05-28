@@ -1,10 +1,11 @@
+import type { BeanCollection } from '@ag-grid-community/core';
+
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { KeyCode } from '../../../constants/keyCode';
 import { Column } from '../../../entities/column';
 import type { ColumnEvent, FilterChangedEvent } from '../../../events';
 import { Events } from '../../../events';
 import type { IFloatingFilter } from '../../../filter/floating/floatingFilter';
-import type { Beans } from '../../../rendering/beans';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { _setAriaLabel } from '../../../utils/aria';
 import { _isElementChildOfClass } from '../../../utils/dom';
@@ -39,7 +40,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     private destroySyncListener: (() => null) | undefined;
     private destroyFilterChangedListener: (() => null) | undefined;
 
-    constructor(column: Column, beans: Beans, parentRowCtrl: HeaderRowCtrl) {
+    constructor(column: Column, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
         super(column, beans, parentRowCtrl);
         this.column = column;
     }

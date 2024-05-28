@@ -2,7 +2,7 @@ import type { ColumnAutosizeService } from '../../../columns/columnAutosizeServi
 import type { ColumnResizeSet, ColumnSizeService } from '../../../columns/columnSizeService';
 import type { VisibleColsService } from '../../../columns/visibleColsService';
 import { BeanStub } from '../../../context/beanStub';
-import { Autowired } from '../../../context/context';
+import type { BeanCollection } from '../../../context/context';
 import type { Column, ColumnPinnedType } from '../../../entities/column';
 import type { ColumnGroup } from '../../../entities/columnGroup';
 import type { ColumnEventType } from '../../../events';
@@ -20,6 +20,21 @@ interface ColumnSizeAndRatios {
     groupAfterRatios?: number[];
 }
 export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature {
+    private horizontalResizeService: HorizontalResizeService;
+    private autoWidthCalculator: AutoWidthCalculator;
+    private visibleColsService: VisibleColsService;
+    private columnSizeService: ColumnSizeService;
+    private columnAutosizeService: ColumnAutosizeService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.horizontalResizeService = beans.horizontalResizeService;
+        this.autoWidthCalculator = beans.autoWidthCalculator;
+        this.visibleColsService = beans.visibleColsService;
+        this.columnSizeService = beans.columnSizeService;
+        this.columnAutosizeService = beans.columnAutosizeService;
+    }
+
     private eResize: HTMLElement;
     private columnGroup: ColumnGroup;
     private comp: IHeaderGroupCellComp;
@@ -32,12 +47,6 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     private resizeTakeFromCols?: Column[];
     private resizeTakeFromStartWidth?: number;
     private resizeTakeFromRatios?: number[];
-
-    @Autowired('horizontalResizeService') private readonly horizontalResizeService: HorizontalResizeService;
-    @Autowired('autoWidthCalculator') private readonly autoWidthCalculator: AutoWidthCalculator;
-    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
-    @Autowired('columnSizeService') private readonly columnSizeService: ColumnSizeService;
-    @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
 
     constructor(comp: IHeaderGroupCellComp, eResize: HTMLElement, pinned: ColumnPinnedType, columnGroup: ColumnGroup) {
         super();

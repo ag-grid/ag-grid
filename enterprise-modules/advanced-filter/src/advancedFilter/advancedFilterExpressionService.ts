@@ -1,5 +1,7 @@
 import type {
     BaseCellDataType,
+    BeanCollection,
+    BeanName,
     Column,
     ColumnAdvancedFilterModel,
     ColumnModel,
@@ -8,15 +10,7 @@ import type {
     JoinAdvancedFilterModel,
     ValueService,
 } from '@ag-grid-community/core';
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    _exists,
-    _parseDateTimeFromString,
-    _serialiseDate,
-    _toStringOrNull,
-} from '@ag-grid-community/core';
+import { BeanStub, _exists, _parseDateTimeFromString, _serialiseDate, _toStringOrNull } from '@ag-grid-community/core';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
@@ -33,12 +27,21 @@ import {
     TextFilterExpressionOperators,
 } from './filterExpressionOperators';
 
-@Bean('advancedFilterExpressionService')
 export class AdvancedFilterExpressionService extends BeanStub {
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
+    beanName: BeanName = 'advancedFilterExpressionService';
+
+    private valueService: ValueService;
+    private columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    private dataTypeService: DataTypeService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.valueService = beans.valueService;
+        this.columnModel = beans.columnModel;
+        this.columnNameService = beans.columnNameService;
+        this.dataTypeService = beans.dataTypeService;
+    }
 
     private columnNameToIdMap: { [columnNameUpperCase: string]: { colId: string; columnName: string } } = {};
     private columnAutocompleteEntries: AutocompleteEntry[] | null = null;

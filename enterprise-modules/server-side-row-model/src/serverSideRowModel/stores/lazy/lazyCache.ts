@@ -1,4 +1,6 @@
+import { BeanStub } from '@ag-grid-community/core';
 import type {
+    BeanCollection,
     FocusService,
     GetRowIdParams,
     IRowNode,
@@ -11,7 +13,6 @@ import type {
     SortController,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, BeanStub } from '@ag-grid-community/core';
 
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { NodeManager } from '../../nodeManager';
@@ -27,14 +28,26 @@ interface LazyStoreNode {
 }
 
 export class LazyCache extends BeanStub {
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
-    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
-    @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('lazyBlockLoadingService') private lazyBlockLoadingService: LazyBlockLoadingService;
+    private rowRenderer: RowRenderer;
+    private blockUtils: BlockUtils;
+    private focusService: FocusService;
+    private nodeManager: NodeManager;
+    private serverSideRowModel: ServerSideRowModel;
+    private rowNodeSorter: RowNodeSorter;
+    private sortController: SortController;
+    private lazyBlockLoadingService: LazyBlockLoadingService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.rowRenderer = beans.rowRenderer;
+        this.blockUtils = beans.ssrmBlockUtils;
+        this.focusService = beans.focusService;
+        this.nodeManager = beans.ssrmNodeManager;
+        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+        this.rowNodeSorter = beans.rowNodeSorter;
+        this.sortController = beans.sortController;
+        this.lazyBlockLoadingService = beans.lazyBlockLoadingService;
+    }
 
     /**
      * Indicates whether this is still the live dataset for this store (used for ignoring old requests after purge)

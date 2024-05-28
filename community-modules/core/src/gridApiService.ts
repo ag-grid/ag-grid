@@ -11,7 +11,7 @@ import type { FuncColsService } from './columns/funcColsService';
 import type { PivotResultColsService } from './columns/pivotResultColsService';
 import type { VisibleColsService } from './columns/visibleColsService';
 import { BeanStub } from './context/beanStub';
-import { Autowired, Bean, Optional } from './context/context';
+import type { BeanCollection, BeanName } from './context/context';
 import type { CtrlsService } from './ctrlsService';
 import type { DragAndDropService } from './dragAndDrop/dragAndDropService';
 import type { CellPosition } from './entities/cellPositionUtils';
@@ -113,51 +113,52 @@ import { _escapeString } from './utils/string';
 import type { ValueCache } from './valueService/valueCache';
 import type { ValueService } from './valueService/valueService';
 
-@Bean('gridApi')
 export class GridApiService<TData = any> extends BeanStub implements GridApi {
-    @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
-    @Autowired('navigationService') private readonly navigationService: NavigationService;
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('columnNameService') private readonly columnNameService: ColumnNameService;
-    @Autowired('pivotResultColsService') private readonly pivotResultColsService: PivotResultColsService;
-    @Autowired('columnViewportService') private readonly columnViewportService: ColumnViewportService;
-    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
-    @Autowired('columnSizeService') private readonly columnSizeService: ColumnSizeService;
-    @Autowired('columnGetStateService') private readonly columnGetStateService: ColumnGetStateService;
-    @Autowired('columnGroupStateService') private readonly columnGroupStateService: ColumnGroupStateService;
-    @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
-    @Autowired('columnAutosizeService') private readonly columnAutosizeService: ColumnAutosizeService;
-    @Autowired('columnMoveService') private readonly columnMoveService: ColumnMoveService;
-    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
-    @Autowired('selectionService') private readonly selectionService: ISelectionService;
-    @Autowired('valueService') private readonly valueService: ValueService;
-    @Autowired('pinnedRowModel') private readonly pinnedRowModel: PinnedRowModel;
-    @Autowired('rowModel') private readonly rowModel: IRowModel;
-    @Autowired('sortController') private readonly sortController: SortController;
-    @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
-    @Autowired('menuService') private readonly menuService: MenuService;
-    @Autowired('valueCache') private readonly valueCache: ValueCache;
-    @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
-    @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
-    @Autowired('overlayService') private readonly overlayService: OverlayService;
-    @Autowired('stateService') private readonly stateService: StateService;
-    @Autowired('expansionService') private readonly expansionService: IExpansionService;
-    @Autowired('apiEventService') private readonly apiEventService: ApiEventService;
-    @Autowired('undoRedoService') private readonly undoRedoService: UndoRedoService;
-    @Autowired('rowNodeBlockLoader') private readonly rowNodeBlockLoader: RowNodeBlockLoader;
+    beanName: BeanName = 'gridApi';
 
-    @Optional('csvCreator') private readonly csvCreator?: ICsvCreator;
-    @Optional('excelCreator') private readonly excelCreator?: IExcelCreator;
-    @Optional('rangeService') private readonly rangeService?: IRangeService;
-    @Optional('clipboardService') private readonly clipboardService?: IClipboardService;
-    @Optional('aggFuncService') private readonly aggFuncService?: IAggFuncService;
-    @Optional('statusBarService') private readonly statusBarService?: IStatusBarService;
-    @Optional('chartService') private readonly chartService?: IChartService;
-    @Optional('ssrmTransactionManager') private readonly serverSideTransactionManager?: IServerSideTransactionManager;
-    @Optional('sideBarService') private readonly sideBarService?: ISideBarService;
+    private rowRenderer: RowRenderer;
+    private navigationService: NavigationService;
+    private filterManager: FilterManager;
+    private columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    private pivotResultColsService: PivotResultColsService;
+    private columnViewportService: ColumnViewportService;
+    private visibleColsService: VisibleColsService;
+    private columnSizeService: ColumnSizeService;
+    private columnGetStateService: ColumnGetStateService;
+    private columnGroupStateService: ColumnGroupStateService;
+    private columnApplyStateService: ColumnApplyStateService;
+    private columnAutosizeService: ColumnAutosizeService;
+    private columnMoveService: ColumnMoveService;
+    private funcColsService: FuncColsService;
+    private selectionService: ISelectionService;
+    private valueService: ValueService;
+    private pinnedRowModel: PinnedRowModel;
+    private rowModel: IRowModel;
+    private sortController: SortController;
+    private paginationProxy: PaginationProxy;
+    private focusService: FocusService;
+    private dragAndDropService: DragAndDropService;
+    private menuService: MenuService;
+    private valueCache: ValueCache;
+    private animationFrameService: AnimationFrameService;
+    private ctrlsService: CtrlsService;
+    private overlayService: OverlayService;
+    private stateService: StateService;
+    private expansionService: IExpansionService;
+    private apiEventService: ApiEventService;
+    private undoRedoService: UndoRedoService;
+    private rowNodeBlockLoader: RowNodeBlockLoader;
+
+    private csvCreator?: ICsvCreator;
+    private excelCreator?: IExcelCreator;
+    private rangeService?: IRangeService;
+    private clipboardService?: IClipboardService;
+    private aggFuncService?: IAggFuncService;
+    private statusBarService?: IStatusBarService;
+    private chartService?: IChartService;
+    private serverSideTransactionManager?: IServerSideTransactionManager;
+    private sideBarService?: ISideBarService;
 
     private gridBodyCtrl: GridBodyCtrl;
 
@@ -170,7 +171,52 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
 
     private destroyCalled = false;
 
-    public postConstruct(): void {
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.rowRenderer = beans.rowRenderer;
+        this.navigationService = beans.navigationService;
+        this.filterManager = beans.filterManager;
+        this.columnModel = beans.columnModel;
+        this.columnNameService = beans.columnNameService;
+        this.pivotResultColsService = beans.pivotResultColsService;
+        this.columnViewportService = beans.columnViewportService;
+        this.visibleColsService = beans.visibleColsService;
+        this.columnSizeService = beans.columnSizeService;
+        this.columnGetStateService = beans.columnGetStateService;
+        this.columnGroupStateService = beans.columnGroupStateService;
+        this.columnApplyStateService = beans.columnApplyStateService;
+        this.columnAutosizeService = beans.columnAutosizeService;
+        this.columnMoveService = beans.columnMoveService;
+        this.funcColsService = beans.funcColsService;
+        this.selectionService = beans.selectionService;
+        this.valueService = beans.valueService;
+        this.pinnedRowModel = beans.pinnedRowModel;
+        this.rowModel = beans.rowModel;
+        this.sortController = beans.sortController;
+        this.paginationProxy = beans.paginationProxy;
+        this.focusService = beans.focusService;
+        this.dragAndDropService = beans.dragAndDropService;
+        this.menuService = beans.menuService;
+        this.valueCache = beans.valueCache;
+        this.animationFrameService = beans.animationFrameService;
+        this.ctrlsService = beans.ctrlsService;
+        this.overlayService = beans.overlayService;
+        this.stateService = beans.stateService;
+        this.expansionService = beans.expansionService;
+        this.apiEventService = beans.apiEventService;
+        this.undoRedoService = beans.undoRedoService;
+        this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
+
+        this.csvCreator = beans.csvCreator;
+        this.excelCreator = beans.excelCreator;
+        this.rangeService = beans.rangeService;
+        this.clipboardService = beans.clipboardService;
+        this.aggFuncService = beans.aggFuncService;
+        this.statusBarService = beans.statusBarService;
+        this.chartService = beans.chartService;
+        this.serverSideTransactionManager = beans.ssrmTransactionManager;
+        this.sideBarService = beans.sideBarService;
+
         switch (this.rowModel.getType()) {
             case 'clientSide':
                 this.clientSideRowModel = this.rowModel as IClientSideRowModel;
@@ -182,7 +228,9 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
                 this.serverSideRowModel = this.rowModel as IServerSideRowModel;
                 break;
         }
+    }
 
+    public postConstruct(): void {
         this.ctrlsService.whenReady((p) => {
             this.gridBodyCtrl = p.gridBodyCtrl;
         });

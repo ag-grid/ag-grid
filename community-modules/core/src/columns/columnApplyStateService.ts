@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { IAggFunc } from '../entities/colDef';
 import type { ColumnPinnedType } from '../entities/column';
 import { Column } from '../entities/column';
@@ -67,16 +67,29 @@ export interface ApplyColumnStateParams {
     defaultState?: ColumnStateParams;
 }
 
-@Bean('columnApplyStateService')
 export class ColumnApplyStateService extends BeanStub {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('columnGetStateService') private columnGetStateService: ColumnGetStateService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
-    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
+    beanName: BeanName = 'columnApplyStateService';
+
+    private columnModel: ColumnModel;
+    private eventDispatcher: ColumnEventDispatcher;
+    private sortController: SortController;
+    private columnGetStateService: ColumnGetStateService;
+    private funcColsService: FuncColsService;
+    private visibleColsService: VisibleColsService;
+    private columnAnimationService: ColumnAnimationService;
+    private pivotResultColsService: PivotResultColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.eventDispatcher = beans.columnEventDispatcher;
+        this.sortController = beans.sortController;
+        this.columnGetStateService = beans.columnGetStateService;
+        this.funcColsService = beans.funcColsService;
+        this.visibleColsService = beans.visibleColsService;
+        this.columnAnimationService = beans.columnAnimationService;
+        this.pivotResultColsService = beans.pivotResultColsService;
+    }
 
     public applyColumnState(params: ApplyColumnStateParams, source: ColumnEventType): boolean {
         const providedCols = this.columnModel.getColDefCols() || [];

@@ -1,7 +1,7 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { ShowRowGroupColsService } from '../columns/showRowGroupColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { Column } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
 import { _defaultComparator } from '../utils/generic';
@@ -19,11 +19,19 @@ export interface SortedRowNode {
 
 // this logic is used by both SSRM and CSRM
 
-@Bean('rowNodeSorter')
 export class RowNodeSorter extends BeanStub {
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
+    beanName: BeanName = 'rowNodeSorter';
+
+    private valueService: ValueService;
+    private columnModel: ColumnModel;
+    private showRowGroupColsService: ShowRowGroupColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.valueService = beans.valueService;
+        this.columnModel = beans.columnModel;
+        this.showRowGroupColsService = beans.showRowGroupColsService;
+    }
 
     private isAccentedSort: boolean;
     private primaryColumnsSortGroups: boolean;

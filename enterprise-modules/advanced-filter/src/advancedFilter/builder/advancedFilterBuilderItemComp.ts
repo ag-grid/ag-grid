@@ -1,11 +1,11 @@
 import type {
     BaseCellDataType,
+    BeanCollection,
     DragSource,
     FieldPickerValueSelectedEvent,
     FieldValueEvent,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
     DragAndDropService,
     DragSourceType,
     Events,
@@ -45,6 +45,15 @@ import { JoinPillWrapperComp } from './joinPillWrapperComp';
 import { SelectPillComp } from './selectPillComp';
 
 export class AdvancedFilterBuilderItemComp extends TabGuardComp {
+    private dragAndDropService: DragAndDropService;
+    private advancedFilterExpressionService: AdvancedFilterExpressionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.dragAndDropService = beans.dragAndDropService;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+    }
+
     private readonly eTreeLines: HTMLElement = RefPlaceholder;
     private readonly eDragHandle: HTMLElement = RefPlaceholder;
     private readonly eButtons: HTMLElement = RefPlaceholder;
@@ -53,9 +62,6 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     private readonly eMoveDownButton: HTMLElement = RefPlaceholder;
     private readonly eAddButton: HTMLElement = RefPlaceholder;
     private readonly eRemoveButton: HTMLElement = RefPlaceholder;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('advancedFilterExpressionService')
-    private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     private ePillWrapper: JoinPillWrapperComp | ConditionPillWrapperComp;
     private validationTooltipFeature: TooltipFeature;
@@ -71,7 +77,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     ) {
         super(/* html */ `
             <div class="ag-advanced-filter-builder-item-wrapper" role="presentation">
-                <div data-ref="eItem" class="ag-advanced-filter-builder-item" role="presentation">
+                <div class="ag-advanced-filter-builder-item" role="presentation">
                     <div data-ref="eTreeLines" class="ag-advanced-filter-builder-item-tree-lines" aria-hidden="true"></div>
                     <span data-ref="eDragHandle" class="ag-drag-handle" aria-hidden="true"></span>
                     <span data-ref="eValidation" class="ag-advanced-filter-builder-item-button ag-advanced-filter-builder-invalid" aria-hidden="true"></span>

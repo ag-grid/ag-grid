@@ -1,5 +1,5 @@
 import type { ColumnModel } from '../columns/columnModel';
-import { Autowired } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { Column } from '../entities/column';
 import { Events } from '../eventKeys';
 import type { FilterDestroyedEvent, FilterOpenedEvent } from '../events';
@@ -13,8 +13,14 @@ import { Component } from '../widgets/component';
 import type { FilterManager, FilterRequestSource, FilterWrapper } from './filterManager';
 
 export class FilterWrapperComp extends Component {
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    private filterManager: FilterManager;
+    private columnModel: ColumnModel;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.filterManager = beans.filterManager;
+        this.columnModel = beans.columnModel;
+    }
 
     private filterWrapper: FilterWrapper | null = null;
 

@@ -1,9 +1,10 @@
 import { BeanStub } from '../context/beanStub';
-import { Bean } from '../context/context';
+import type { BeanName } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
 
-@Bean('valueCache')
 export class ValueCache extends BeanStub {
+    beanName: BeanName = 'valueCache';
+
     private cacheVersion = 0;
     private active: boolean;
     private neverExpires: boolean;

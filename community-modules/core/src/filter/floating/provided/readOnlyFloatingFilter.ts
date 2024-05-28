@@ -1,5 +1,5 @@
 import type { ColumnNameService } from '../../../columns/columnNameService';
-import { Autowired } from '../../../context/context';
+import type { BeanCollection } from '../../../context/context';
 import type { IFilter } from '../../../interfaces/iFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { Component, RefPlaceholder } from '../../../widgets/component';
@@ -9,9 +9,14 @@ import type { IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParent 
 // they can provide a getModelAsString() method on the filter instead. this class just displays
 // the string returned from getModelAsString()
 export class ReadOnlyFloatingFilter extends Component implements IFloatingFilterComp<IFilter & IFloatingFilterParent> {
-    private readonly eFloatingFilterText: AgInputTextField = RefPlaceholder;
+    private columnNameService: ColumnNameService;
 
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnNameService = beans.columnNameService;
+    }
+
+    private readonly eFloatingFilterText: AgInputTextField = RefPlaceholder;
 
     private params: IFloatingFilterParams;
 

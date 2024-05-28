@@ -1,5 +1,5 @@
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import { Autowired } from '../../../context/context';
+import type { BeanCollection } from '../../../context/context';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import type { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
 import type { LocaleService } from '../../../localeService';
@@ -123,6 +123,13 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter {
 }
 
 export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrapper> {
+    private userComponentFactory: UserComponentFactory;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.userComponentFactory = beans.userComponentFactory;
+    }
+
     public static DEFAULT_FILTER_OPTIONS = [
         ScalarFilter.EQUALS,
         ScalarFilter.NOT_EQUAL,
@@ -138,8 +145,6 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
 
     private readonly dateConditionFromComps: DateCompWrapper[] = [];
     private readonly dateConditionToComps: DateCompWrapper[] = [];
-
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
     private dateFilterParams: DateFilterParams;
     private minValidYear: number = DEFAULT_MIN_YEAR;

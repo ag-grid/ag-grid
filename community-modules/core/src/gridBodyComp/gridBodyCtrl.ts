@@ -1,7 +1,7 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { ColumnSizeService, ISizeColumnsToFitParams } from '../columns/columnSizeService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
 import { Events } from '../eventKeys';
@@ -58,21 +58,40 @@ export interface IGridBodyComp extends LayoutView {
 }
 
 export class GridBodyCtrl extends BeanStub {
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('rowContainerHeightService') private rowContainerHeightService: RowContainerHeightService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
-    @Autowired('menuService') private menuService: MenuService;
-    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('popupService') public popupService: PopupService;
-    @Autowired('mouseEventService') public mouseEventService: MouseEventService;
-    @Autowired('rowModel') public rowModel: IRowModel;
-    @Autowired('filterManager') private filterManager: FilterManager;
+    private animationFrameService: AnimationFrameService;
+    private rowContainerHeightService: RowContainerHeightService;
+    private ctrlsService: CtrlsService;
+    private columnModel: ColumnModel;
+    private columnSizeService: ColumnSizeService;
+    private scrollVisibleService: ScrollVisibleService;
+    private menuService: MenuService;
+    private headerNavigationService: HeaderNavigationService;
+    private dragAndDropService: DragAndDropService;
+    private pinnedRowModel: PinnedRowModel;
+    private rowRenderer: RowRenderer;
+    private popupService: PopupService;
+    private mouseEventService: MouseEventService;
+    private rowModel: IRowModel;
+    private filterManager: FilterManager;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.animationFrameService = beans.animationFrameService;
+        this.rowContainerHeightService = beans.rowContainerHeightService;
+        this.ctrlsService = beans.ctrlsService;
+        this.columnModel = beans.columnModel;
+        this.columnSizeService = beans.columnSizeService;
+        this.scrollVisibleService = beans.scrollVisibleService;
+        this.menuService = beans.menuService;
+        this.headerNavigationService = beans.headerNavigationService;
+        this.dragAndDropService = beans.dragAndDropService;
+        this.pinnedRowModel = beans.pinnedRowModel;
+        this.rowRenderer = beans.rowRenderer;
+        this.popupService = beans.popupService;
+        this.mouseEventService = beans.mouseEventService;
+        this.rowModel = beans.rowModel;
+        this.filterManager = beans.filterManager;
+    }
 
     private comp: IGridBodyComp;
     private eGridBody: HTMLElement;

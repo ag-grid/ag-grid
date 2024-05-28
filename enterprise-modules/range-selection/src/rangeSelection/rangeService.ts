@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    BeanName,
     CellNavigationService,
     CellPosition,
     CellPositionUtils,
@@ -25,8 +27,6 @@ import type {
 } from '@ag-grid-community/core';
 import {
     AutoScrollService,
-    Autowired,
-    Bean,
     BeanStub,
     CellCtrl,
     Events,
@@ -41,18 +41,33 @@ import {
     _shallowCompare,
 } from '@ag-grid-community/core';
 
-@Bean('rangeService')
 export class RangeService extends BeanStub implements IRangeService {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('dragService') private dragService: DragService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
-    @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
-    @Autowired('valueService') private valueService: ValueService;
+    beanName: BeanName = 'rangeService';
+
+    private rowModel: IRowModel;
+    private dragService: DragService;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private cellNavigationService: CellNavigationService;
+    private pinnedRowModel: PinnedRowModel;
+    private rowPositionUtils: RowPositionUtils;
+    private cellPositionUtils: CellPositionUtils;
+    private ctrlsService: CtrlsService;
+    private valueService: ValueService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.rowModel = beans.rowModel;
+        this.dragService = beans.dragService;
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.cellNavigationService = beans.cellNavigationService;
+        this.pinnedRowModel = beans.pinnedRowModel;
+        this.rowPositionUtils = beans.rowPositionUtils;
+        this.cellPositionUtils = beans.cellPositionUtils;
+        this.ctrlsService = beans.ctrlsService;
+        this.valueService = beans.valueService;
+    }
 
     private cellRanges: CellRange[] = [];
     private lastMouseEvent: MouseEvent | null;

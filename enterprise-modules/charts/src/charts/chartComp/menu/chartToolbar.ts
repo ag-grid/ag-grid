@@ -1,5 +1,5 @@
-import type { ChartToolbarMenuItemOptions } from '@ag-grid-community/core';
-import { Autowired, Component, RefPlaceholder, _clearElement, _createIconNoSpan } from '@ag-grid-community/core';
+import type { BeanCollection, ChartToolbarMenuItemOptions } from '@ag-grid-community/core';
+import { Component, RefPlaceholder, _clearElement, _createIconNoSpan } from '@ag-grid-community/core';
 
 import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
 
@@ -10,7 +10,13 @@ interface ChartToolbarButton {
 }
 
 export class ChartToolbar extends Component {
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.chartTranslationService = beans.chartTranslationService;
+    }
+
     private readonly eMenu: HTMLButtonElement = RefPlaceholder;
 
     private buttonListenersDestroyFuncs: ((() => null) | undefined)[] = [];

@@ -1,25 +1,35 @@
 import type {
+    BeanCollection,
+    BeanName,
     Column,
     ColumnModel,
-    FilterManager,
     FuncColsService,
     IRowModel,
     MenuItemDef,
     MenuService,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, _removeRepeatsFromArray } from '@ag-grid-community/core';
+import { BeanStub, _removeRepeatsFromArray } from '@ag-grid-community/core';
 import { AgMenuList } from '@ag-grid-enterprise/core';
 
 import type { MenuItemMapper } from './menuItemMapper';
 
-@Bean('columnMenuFactory')
 export class ColumnMenuFactory extends BeanStub {
-    @Autowired('menuItemMapper') private readonly menuItemMapper: MenuItemMapper;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('rowModel') private readonly rowModel: IRowModel;
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('menuService') private readonly menuService: MenuService;
+    beanName: BeanName = 'columnMenuFactory';
+
+    private menuItemMapper: MenuItemMapper;
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+    private rowModel: IRowModel;
+    private menuService: MenuService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.menuItemMapper = beans.menuItemMapper;
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+        this.rowModel = beans.rowModel;
+        this.menuService = beans.menuService;
+    }
 
     private static MENU_ITEM_SEPARATOR = 'separator';
 

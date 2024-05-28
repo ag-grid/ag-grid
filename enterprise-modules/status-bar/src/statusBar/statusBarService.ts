@@ -1,8 +1,9 @@
-import type { IStatusBarService, IStatusPanelComp } from '@ag-grid-community/core';
-import { Bean, BeanStub } from '@ag-grid-community/core';
+import type { BeanName, IStatusBarService, IStatusPanelComp } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
-@Bean('statusBarService')
 export class StatusBarService extends BeanStub implements IStatusBarService {
+    beanName: BeanName = 'statusBarService';
+
     private allComponents: Map<string, IStatusPanelComp> = new Map();
 
     // tslint:disable-next-line

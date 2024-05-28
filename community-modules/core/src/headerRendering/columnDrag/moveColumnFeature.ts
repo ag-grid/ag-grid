@@ -3,7 +3,7 @@ import type { ColumnMoveService } from '../../columns/columnMoveService';
 import type { VisibleColsService } from '../../columns/visibleColsService';
 import { HorizontalDirection } from '../../constants/direction';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { DraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import { DragAndDropService, DragSourceType } from '../../dragAndDrop/dragAndDropService';
@@ -15,11 +15,20 @@ import { ColumnMoveHelper } from '../columnMoveHelper';
 import type { DropListener } from './bodyDropTarget';
 
 export class MoveColumnFeature extends BeanStub implements DropListener {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('columnMoveService') private columnMoveService: ColumnMoveService;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private columnMoveService: ColumnMoveService;
+    private dragAndDropService: DragAndDropService;
+    private ctrlsService: CtrlsService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.columnMoveService = beans.columnMoveService;
+        this.dragAndDropService = beans.dragAndDropService;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private gridBodyCon: GridBodyCtrl;
 

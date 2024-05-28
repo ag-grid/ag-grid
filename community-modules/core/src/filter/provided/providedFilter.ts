@@ -1,4 +1,4 @@
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { FilterChangedEventSourceType } from '../../events';
 import type { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import type { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
@@ -101,7 +101,11 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     private positionableFeature: PositionableFeature | undefined;
 
-    @Autowired('rowModel') protected readonly rowModel: IRowModel;
+    protected rowModel: IRowModel;
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.rowModel = beans.rowModel;
+    }
 
     protected readonly eFilterBody: HTMLElement = RefPlaceholder;
 

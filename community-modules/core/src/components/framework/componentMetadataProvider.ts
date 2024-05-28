@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, Bean } from '../../context/context';
+import type { BeanCollection, BeanName } from '../../context/context';
 import type { IComponent } from '../../interfaces/iComponent';
 import type { AgComponentUtils } from './agComponentUtils';
 
@@ -9,12 +9,17 @@ export interface ComponentMetadata {
     functionAdapter?: (callback: any) => { new (): IComponent<any> };
 }
 
-@Bean('componentMetadataProvider')
 export class ComponentMetadataProvider extends BeanStub {
+    beanName: BeanName = 'componentMetadataProvider';
+
     private componentMetaData: { [key: string]: ComponentMetadata };
 
-    @Autowired('agComponentUtils')
     private agComponentUtils: AgComponentUtils;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.agComponentUtils = beans.agComponentUtils;
+    }
 
     public postConstruct() {
         this.componentMetaData = {

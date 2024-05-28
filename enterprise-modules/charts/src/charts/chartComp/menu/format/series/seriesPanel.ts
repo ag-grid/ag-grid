@@ -1,12 +1,5 @@
-import type { AgSelectParams, AgToggleButtonParams, ListOption } from '@ag-grid-community/core';
-import {
-    AgSelect,
-    AgToggleButton,
-    Autowired,
-    Component,
-    RefPlaceholder,
-    _removeFromParent,
-} from '@ag-grid-community/core';
+import type { AgSelectParams, AgToggleButtonParams, BeanCollection, ListOption } from '@ag-grid-community/core';
+import { AgSelect, AgToggleButton, Component, RefPlaceholder, _removeFromParent } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
@@ -37,8 +30,12 @@ export class SeriesPanel extends Component {
 
     private readonly seriesGroup: AgGroupComponent = RefPlaceholder;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
 
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.chartTranslationService = beans.chartTranslationService;
+    }
     private chartMenuUtils: ChartMenuParamsFactory;
 
     private activePanels: Component[] = [];

@@ -1,10 +1,10 @@
+import type { BeanCollection } from '../../context/context';
 import type { Column } from '../../entities/column';
 import type { IRangeService, ISelectionHandle, ISelectionHandleFactory } from '../../interfaces/IRangeService';
 import { CellRangeType, SelectionHandleType } from '../../interfaces/IRangeService';
 import { _setAriaSelected } from '../../utils/aria';
 import { _includes, _last } from '../../utils/array';
 import { _missing } from '../../utils/generic';
-import type { Beans } from '../beans';
 import type { CellCtrl, ICellComp } from './cellCtrl';
 
 const CSS_CELL_RANGE_SELECTED = 'ag-cell-range-selected';
@@ -18,7 +18,7 @@ const CSS_CELL_RANGE_BOTTOM = 'ag-cell-range-bottom';
 const CSS_CELL_RANGE_LEFT = 'ag-cell-range-left';
 
 export class CellRangeFeature {
-    private beans: Beans;
+    private beans: BeanCollection;
     private rangeService: IRangeService;
     private selectionHandleFactory: ISelectionHandleFactory;
     private cellComp: ICellComp;
@@ -30,7 +30,7 @@ export class CellRangeFeature {
 
     private selectionHandle: ISelectionHandle | null | undefined;
 
-    constructor(beans: Beans, ctrl: CellCtrl) {
+    constructor(beans: BeanCollection, ctrl: CellCtrl) {
         this.beans = beans;
         // We know these are defined otherwise the feature wouldn't be registered
         this.rangeService = beans.rangeService!;

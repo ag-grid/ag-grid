@@ -1,7 +1,7 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { CellPosition } from '../entities/cellPositionUtils';
 import type { Column } from '../entities/column';
@@ -32,7 +32,6 @@ import { _executeInAWhile } from '../utils/function';
 import { _exists } from '../utils/generic';
 import { _createArrayOfNumbers } from '../utils/number';
 import { _getAllValuesInObject, _iterateObject } from '../utils/object';
-import type { Beans } from './beans';
 import { CellCtrl } from './cell/cellCtrl';
 import type { ICellRenderer } from './cellRenderers/iCellRenderer';
 import { StickyRowFeature } from './features/stickyRowFeature';
@@ -83,18 +82,33 @@ export interface RedrawRowsParams<TData = any> {
     rowNodes?: IRowNode<TData>[];
 }
 
-@Bean('rowRenderer')
 export class RowRenderer extends BeanStub {
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('beans') private beans: Beans;
-    @Autowired('rowContainerHeightService') private rowContainerHeightService: RowContainerHeightService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    beanName: BeanName = 'rowRenderer';
+
+    private animationFrameService: AnimationFrameService;
+    private paginationProxy: PaginationProxy;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private pinnedRowModel: PinnedRowModel;
+    private rowModel: IRowModel;
+    private focusService: FocusService;
+    private beans: BeanCollection;
+    private rowContainerHeightService: RowContainerHeightService;
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.animationFrameService = beans.animationFrameService;
+        this.paginationProxy = beans.paginationProxy;
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.pinnedRowModel = beans.pinnedRowModel;
+        this.rowModel = beans.rowModel;
+        this.focusService = beans.focusService;
+        this.beans = beans;
+        this.rowContainerHeightService = beans.rowContainerHeightService;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private gridBodyCtrl: GridBodyCtrl;
 
@@ -676,7 +690,7 @@ export class RowRenderer extends BeanStub {
             this.focusService.setRestoreFocusedCell(cellPosition);
 
             this.onCellFocusChanged(
-                this.beans.gos.addGridCommonParams<CellFocusedEvent>({
+                this.gos.addGridCommonParams<CellFocusedEvent>({
                     rowIndex: cellPosition.rowIndex,
                     column: cellPosition.column,
                     rowPinned: cellPosition.rowPinned,

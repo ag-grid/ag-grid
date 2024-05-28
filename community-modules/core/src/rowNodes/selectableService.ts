@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -7,10 +7,17 @@ import type { ISelectionService } from '../interfaces/iSelectionService';
 import { SelectionService } from '../selectionService';
 import { ChangedPath } from '../utils/changedPath';
 
-@Bean('selectableService')
 export class SelectableService extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
+    beanName: BeanName = 'selectableService';
+
+    private rowModel: IRowModel;
+    private selectionService: ISelectionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.rowModel = beans.rowModel;
+        this.selectionService = beans.selectionService;
+    }
 
     public postConstruct() {
         this.addManagedPropertyListener('isRowSelectable', () => this.updateSelectable());

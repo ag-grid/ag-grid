@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     ColumnModel,
     ColumnNameService,
     DragItem,
@@ -9,13 +10,11 @@ import type {
     SortController,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
     Column,
     Component,
     DragAndDropService,
     DragSourceType,
     KeyCode,
-    Optional,
     RefPlaceholder,
     SortIndicatorComp,
     VirtualList,
@@ -26,13 +25,22 @@ import { PillDragComp } from '@ag-grid-enterprise/core';
 import type { TDropZone } from './baseDropZonePanel';
 
 export class DropZoneColumnComp extends PillDragComp<Column> {
-    @Autowired('popupService') private readonly popupService: PopupService;
-    @Autowired('sortController') private readonly sortController: SortController;
-    @Autowired('columnModel') protected readonly columnModel: ColumnModel;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
+    private popupService: PopupService;
+    private sortController: SortController;
+    private columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    private funcColsService: FuncColsService;
+    private aggFuncService?: IAggFuncService;
 
-    @Optional('aggFuncService') private readonly aggFuncService?: IAggFuncService;
-    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.popupService = beans.popupService;
+        this.sortController = beans.sortController;
+        this.columnModel = beans.columnModel;
+        this.columnNameService = beans.columnNameService;
+        this.funcColsService = beans.funcColsService;
+        this.aggFuncService = beans.aggFuncService;
+    }
 
     private readonly eSortIndicator: SortIndicatorComp = RefPlaceholder;
 

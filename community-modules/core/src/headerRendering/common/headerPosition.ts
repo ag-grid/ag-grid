@@ -1,6 +1,6 @@
 import type { VisibleColsService } from '../../columns/visibleColsService';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, Bean } from '../../context/context';
+import type { BeanCollection, BeanName } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { Column } from '../../entities/column';
 import { ColumnGroup } from '../../entities/columnGroup';
@@ -18,10 +18,17 @@ export interface HeaderFuturePosition extends HeaderPosition {
     headerRowIndexWithoutSpan?: number;
 }
 
-@Bean('headerPositionUtils')
 export class HeaderPositionUtils extends BeanStub {
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    beanName: BeanName = 'headerPositionUtils';
+
+    private visibleColsService: VisibleColsService;
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.visibleColsService = beans.visibleColsService;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     public findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition | undefined {
         let nextColumn: Column | ColumnGroup;

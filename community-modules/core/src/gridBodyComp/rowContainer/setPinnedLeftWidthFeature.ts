@@ -1,11 +1,16 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import { Events } from '../../eventKeys';
 import { _setDisplayed, _setFixedWidth } from '../../utils/dom';
 import type { PinnedWidthService } from '../pinnedWidthService';
 
 export class SetPinnedLeftWidthFeature extends BeanStub {
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
+    private pinnedWidthService: PinnedWidthService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.pinnedWidthService = beans.pinnedWidthService;
+    }
 
     private element: HTMLElement;
 

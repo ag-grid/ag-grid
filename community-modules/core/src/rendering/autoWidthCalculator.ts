@@ -1,17 +1,22 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { Column } from '../entities/column';
 import type { ColumnGroup } from '../entities/columnGroup';
 import type { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
-import type { RowCssClassCalculator } from './row/rowCssClassCalculator';
 import type { RowRenderer } from './rowRenderer';
 
-@Bean('autoWidthCalculator')
 export class AutoWidthCalculator extends BeanStub {
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('rowCssClassCalculator') public rowCssClassCalculator: RowCssClassCalculator;
+    beanName: BeanName = 'autoWidthCalculator';
+
+    private rowRenderer: RowRenderer;
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.rowRenderer = beans.rowRenderer;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private centerRowContainerCtrl: RowContainerCtrl;
 

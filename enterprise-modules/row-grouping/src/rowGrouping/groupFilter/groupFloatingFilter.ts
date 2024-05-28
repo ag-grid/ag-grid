@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     ColumnEvent,
     ColumnNameService,
     FilterChangedEvent,
@@ -6,21 +7,19 @@ import type {
     IFloatingFilterComp,
     IFloatingFilterParams,
 } from '@ag-grid-community/core';
-import {
-    AgInputTextField,
-    AgPromise,
-    Autowired,
-    Column,
-    Component,
-    RefPlaceholder,
-    _clearElement,
-} from '@ag-grid-community/core';
+import { AgInputTextField, AgPromise, Column, Component, RefPlaceholder, _clearElement } from '@ag-grid-community/core';
 
 import { GroupFilter } from './groupFilter';
 
 export class GroupFloatingFilterComp extends Component implements IFloatingFilterComp<GroupFilter> {
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
+    private columnNameService: ColumnNameService;
+    private filterManager: FilterManager;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnNameService = beans.columnNameService;
+        this.filterManager = beans.filterManager;
+    }
 
     private readonly eFloatingFilter: HTMLElement = RefPlaceholder;
 

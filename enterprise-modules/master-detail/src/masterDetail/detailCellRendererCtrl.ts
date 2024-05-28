@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     DetailGridInfo,
     FocusService,
     FullWidthRowFocusedEvent,
@@ -9,11 +10,17 @@ import type {
     RowNode,
     RowPositionUtils,
 } from '@ag-grid-community/core';
-import { Autowired, BeanStub, Events, _missing } from '@ag-grid-community/core';
+import { BeanStub, Events, _missing } from '@ag-grid-community/core';
 
 export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRendererCtrl {
-    @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
-    @Autowired('focusService') private readonly focusService: FocusService;
+    private rowPositionUtils: RowPositionUtils;
+    private focusService: FocusService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.focusService = beans.focusService;
+        this.rowPositionUtils = beans.rowPositionUtils;
+    }
 
     private params: IDetailCellRendererParams;
 

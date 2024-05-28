@@ -1,5 +1,5 @@
 import { KeyCode } from '../../constants/keyCode';
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _missing } from '../../utils/generic';
 import type { ValueService } from '../../valueService/valueService';
@@ -33,7 +33,13 @@ interface SelectCellEditorParams<TData = any, TValue = any, TContext = any>
 export class SelectCellEditor extends PopupComponent implements ICellEditorComp {
     private focusAfterAttached: boolean;
 
-    @Autowired('valueService') private valueService: ValueService;
+    private valueService: ValueService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.valueService = beans.valueService;
+    }
+
     private readonly eSelect: AgSelect = RefPlaceholder;
 
     private startedByEnter: boolean = false;

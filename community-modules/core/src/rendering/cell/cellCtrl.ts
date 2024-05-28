@@ -1,6 +1,7 @@
 import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
 import type { CellPosition } from '../../entities/cellPositionUtils';
 import type { CellStyle } from '../../entities/colDef';
 import type { Column } from '../../entities/column';
@@ -33,7 +34,6 @@ import { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
 import { RowDragComp } from '../row/rowDragComp';
 import type { FlashCellsParams } from '../rowRenderer';
-import type { Beans } from './../beans';
 import { CellCustomStyleFeature } from './cellCustomStyleFeature';
 import { CellKeyboardListenerFeature } from './cellKeyboardListenerFeature';
 import { CellMouseListenerFeature } from './cellMouseListenerFeature';
@@ -86,7 +86,7 @@ export class CellCtrl extends BeanStub {
 
     private eGui: HTMLElement;
     private cellComp: ICellComp;
-    private beans: Beans;
+    private beans: BeanCollection;
     private column: Column;
     private rowNode: RowNode;
     private rowCtrl: RowCtrl;
@@ -123,7 +123,7 @@ export class CellCtrl extends BeanStub {
 
     private onCellCompAttachedFuncs: (() => void)[] = [];
 
-    constructor(column: Column, rowNode: RowNode, beans: Beans, rowCtrl: RowCtrl) {
+    constructor(column: Column, rowNode: RowNode, beans: BeanCollection, rowCtrl: RowCtrl) {
         super();
         this.column = column;
         this.rowNode = rowNode;

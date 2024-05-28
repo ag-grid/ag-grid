@@ -1,15 +1,22 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import { Events } from '../events';
 import type { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
 import { _debounce } from '../utils/function';
 import type { PaginationProxy } from './paginationProxy';
 
-@Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+    beanName: BeanName = 'paginationAutoPageSizeService';
+
+    private ctrlsService: CtrlsService;
+    private paginationProxy: PaginationProxy;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.ctrlsService = beans.ctrlsService;
+        this.paginationProxy = beans.paginationProxy;
+    }
 
     private centerRowsCtrl: RowContainerCtrl;
 

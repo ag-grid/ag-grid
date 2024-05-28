@@ -1,8 +1,13 @@
-import type { AgComponentSelector, AgLabelParams, DragListenerParams, DragService } from '@ag-grid-community/core';
+import type {
+    AgComponentSelector,
+    AgLabelParams,
+    BeanCollection,
+    DragListenerParams,
+    DragService,
+} from '@ag-grid-community/core';
 import {
     AgAbstractLabel,
     AgInputNumberField,
-    Autowired,
     Events,
     RefPlaceholder,
     _exists,
@@ -15,6 +20,13 @@ export interface AgAngleSelectParams extends AgLabelParams {
 }
 
 export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
+    protected dragService: DragService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.dragService = beans.dragService;
+    }
+
     static readonly selector: AgComponentSelector = 'AG-ANGLE-SELECT';
 
     private static TEMPLATE /* html */ = `<div class="ag-angle-select">
@@ -33,8 +45,6 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     private readonly eParentCircle: HTMLElement = RefPlaceholder;
     private readonly eChildCircle: HTMLElement = RefPlaceholder;
     private readonly eAngleValue: AgInputNumberField = RefPlaceholder;
-
-    @Autowired('dragService') protected readonly dragService: DragService;
 
     private parentCircleRect: ClientRect | DOMRect;
     private degrees: number;

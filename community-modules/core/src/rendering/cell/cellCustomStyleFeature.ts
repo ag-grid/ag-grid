@@ -1,23 +1,23 @@
 import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
 import type { CellClassParams, CellClassRules } from '../../entities/colDef';
 import type { CellStyle, CellStyleFunc } from '../../entities/colDef';
 import type { Column } from '../../entities/column';
 import type { RowNode } from '../../entities/rowNode';
-import type { Beans } from '../beans';
 import type { CellCtrl, ICellComp } from './cellCtrl';
 
 export class CellCustomStyleFeature extends BeanStub {
     private readonly cellCtrl: CellCtrl;
     private readonly column: Column;
     private readonly rowNode: RowNode;
-    private readonly beans: Beans;
+    private readonly beans: BeanCollection;
     private staticClasses: string[] = [];
 
     private cellComp: ICellComp;
 
     private cellClassRules?: CellClassRules;
 
-    constructor(ctrl: CellCtrl, beans: Beans) {
+    constructor(ctrl: CellCtrl, beans: BeanCollection) {
         super();
 
         this.cellCtrl = ctrl;

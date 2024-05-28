@@ -1,18 +1,22 @@
 import type {
     AgComponentSelector,
+    BeanCollection,
     CellCtrl,
+    CellNavigationService,
     CellPosition,
     CellRange,
     Column,
     FillEndEvent,
     FillOperationParams,
     FillStartEvent,
+    NavigationService,
     RowNode,
     RowPosition,
     ValueService,
+    VisibleColsService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, Events, SelectionHandleType, _last, _toStringOrNull, _warnOnce } from '@ag-grid-community/core';
+import { Events, SelectionHandleType, _last, _toStringOrNull, _warnOnce } from '@ag-grid-community/core';
 
 import { AbstractSelectionHandle } from './abstractSelectionHandle';
 import { findLineByLeastSquares } from './utils';
@@ -31,9 +35,20 @@ interface ValueContext {
 type Direction = 'x' | 'y';
 
 export class AgFillHandle extends AbstractSelectionHandle {
-    static readonly selector: AgComponentSelector = 'AG-FILL-HANDLE';
+    private valueService: ValueService;
+    private navigationService: NavigationService;
+    private cellNavigationService: CellNavigationService;
+    private visibleColsService: VisibleColsService;
 
-    @Autowired('valueService') private valueService: ValueService;
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.valueService = beans.valueService;
+        this.navigationService = beans.navigationService;
+        this.cellNavigationService = beans.cellNavigationService;
+        this.visibleColsService = beans.visibleColsService;
+    }
+
+    static readonly selector: AgComponentSelector = 'AG-FILL-HANDLE';
 
     static TEMPLATE = /* html */ `<div class="ag-fill-handle"></div>`;
 
@@ -492,6 +507,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
     private extendVertical(initialPosition: CellPosition, endPosition: CellPosition, isMovingUp?: boolean) {
         const { navigationService, rangeService } = this;
+
         let row: RowPosition | null = initialPosition;
 
         do {

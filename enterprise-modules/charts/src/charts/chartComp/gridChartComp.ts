@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     ChartCreated,
     ChartDestroyed,
     ChartModel,
@@ -13,7 +14,6 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
     Component,
     Events,
     RefPlaceholder,
@@ -78,6 +78,21 @@ export interface GridChartParams {
 }
 
 export class GridChartComp extends Component {
+    private crossFilterService: ChartCrossFilterService;
+    private chartTranslationService: ChartTranslationService;
+    private chartMenuService: ChartMenuService;
+    private focusService: FocusService;
+    private popupService: PopupService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.crossFilterService = beans.chartCrossFilterService;
+        this.chartTranslationService = beans.chartTranslationService;
+        this.chartMenuService = beans.chartMenuService;
+        this.focusService = beans.focusService;
+        this.popupService = beans.popupService;
+    }
+
     private static TEMPLATE /* html */ = `<div class="ag-chart" tabindex="-1">
             <div data-ref="eChartContainer" tabindex="-1" class="ag-chart-components-wrapper ag-chart-menu-hidden">
                 <div data-ref="eChart" class="ag-chart-canvas-wrapper"></div>
@@ -92,12 +107,6 @@ export class GridChartComp extends Component {
     private readonly eMenuContainer: HTMLElement = RefPlaceholder;
     private readonly eEmpty: HTMLElement = RefPlaceholder;
     private readonly eTitleEditContainer: HTMLDivElement = RefPlaceholder;
-
-    @Autowired('chartCrossFilterService') private readonly crossFilterService: ChartCrossFilterService;
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('popupService') private readonly popupService: PopupService;
 
     private chartMenu: ChartMenu;
     private titleEdit: TitleEdit;

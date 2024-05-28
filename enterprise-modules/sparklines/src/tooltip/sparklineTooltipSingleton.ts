@@ -1,12 +1,14 @@
-import { Bean, BeanStub } from '@ag-grid-community/core';
+import type { BeanName } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
 import { SparklineTooltip } from '../sparkline/tooltip/sparklineTooltip';
 
 /**
  * This 'bean' creates a single sparkline tooltip that is bound to the grid lifecycle.
  */
-@Bean('sparklineTooltipSingleton')
 export class SparklineTooltipSingleton extends BeanStub {
+    beanName: BeanName = 'sparklineTooltipSingleton';
+
     private tooltip!: SparklineTooltip;
 
     public postConstruct(): void {

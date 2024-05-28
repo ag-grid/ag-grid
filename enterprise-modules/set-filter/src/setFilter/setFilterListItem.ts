@@ -1,5 +1,6 @@
 import type {
     AgEvent,
+    BeanCollection,
     ColDef,
     Column,
     ICellRendererComp,
@@ -14,7 +15,6 @@ import type {
 } from '@ag-grid-community/core';
 import {
     AgCheckbox,
-    Autowired,
     Component,
     RefPlaceholder,
     _createIcon,
@@ -64,11 +64,17 @@ export interface SetFilterListItemParams<V> {
 
 /** @param V type of value in the Set Filter */
 export class SetFilterListItem<V> extends Component {
+    private valueService: ValueService;
+    private userComponentFactory: UserComponentFactory;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.valueService = beans.valueService;
+        this.userComponentFactory = beans.userComponentFactory;
+    }
+
     public static EVENT_SELECTION_CHANGED = 'selectionChanged';
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
-
-    @Autowired('valueService') private readonly valueService: ValueService;
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
     private static GROUP_TEMPLATE = /* html */ `
         <div class="ag-set-filter-item" aria-hidden="true">

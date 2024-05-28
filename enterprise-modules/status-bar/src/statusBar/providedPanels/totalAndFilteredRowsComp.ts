@@ -1,10 +1,15 @@
-import type { IClientSideRowModel, IRowModel, IStatusPanelComp } from '@ag-grid-community/core';
-import { Autowired, Events, _formatNumberCommas, _warnOnce } from '@ag-grid-community/core';
+import type { BeanCollection, IClientSideRowModel, IRowModel, IStatusPanelComp } from '@ag-grid-community/core';
+import { Events, _formatNumberCommas, _warnOnce } from '@ag-grid-community/core';
 
 import { AgNameValue } from './agNameValue';
 
 export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPanelComp {
-    @Autowired('rowModel') private rowModel: IRowModel;
+    private rowModel: IRowModel;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.rowModel = beans.rowModel;
+    }
 
     public postConstruct(): void {
         // this component is only really useful with client side row model

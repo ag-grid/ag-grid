@@ -1,7 +1,7 @@
 import type { ColumnModel } from './columns/columnModel';
 import type { VisibleColsService } from './columns/visibleColsService';
 import { BeanStub } from './context/beanStub';
-import { Autowired, Bean, Optional } from './context/context';
+import type { BeanCollection, BeanName } from './context/context';
 import type { CtrlsService } from './ctrlsService';
 import type { CellPosition, CellPositionUtils } from './entities/cellPositionUtils';
 import type { Column } from './entities/column';
@@ -31,22 +31,40 @@ import { _makeNull } from './utils/generic';
 import { ManagedFocusFeature } from './widgets/managedFocusFeature';
 import { TabGuardClassNames } from './widgets/tabGuardCtrl';
 
-@Bean('focusService')
 export class FocusService extends BeanStub {
-    @Autowired('eGridDiv') private eGridDiv: HTMLElement;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
-    @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
-    @Autowired('headerPositionUtils') private readonly headerPositionUtils: HeaderPositionUtils;
-    @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
-    @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
-    @Autowired('cellPositionUtils') private readonly cellPositionUtils: CellPositionUtils;
-    @Autowired('navigationService') public navigationService: NavigationService;
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
-    @Autowired('filterManager') public filterManager: FilterManager;
+    beanName: BeanName = 'focusService';
 
-    @Optional('rangeService') private readonly rangeService?: IRangeService;
-    @Optional('advancedFilterService') public readonly advancedFilterService?: IAdvancedFilterService;
+    private eGridDiv: HTMLElement;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private headerNavigationService: HeaderNavigationService;
+    private headerPositionUtils: HeaderPositionUtils;
+    private rowRenderer: RowRenderer;
+    private rowPositionUtils: RowPositionUtils;
+    private cellPositionUtils: CellPositionUtils;
+    private navigationService: NavigationService;
+    private ctrlsService: CtrlsService;
+    private filterManager: FilterManager;
+
+    private rangeService?: IRangeService;
+    private advancedFilterService?: IAdvancedFilterService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.eGridDiv = beans.eGridDiv;
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.headerNavigationService = beans.headerNavigationService;
+        this.headerPositionUtils = beans.headerPositionUtils;
+        this.rowRenderer = beans.rowRenderer;
+        this.rowPositionUtils = beans.rowPositionUtils;
+        this.cellPositionUtils = beans.cellPositionUtils;
+        this.navigationService = beans.navigationService;
+        this.ctrlsService = beans.ctrlsService;
+        this.filterManager = beans.filterManager;
+        this.rangeService = beans.rangeService;
+        this.advancedFilterService = beans.advancedFilterService;
+    }
 
     private gridCtrl: GridCtrl;
     private focusedCellPosition: CellPosition | null;

@@ -1,18 +1,24 @@
 import type {
+    BeanCollection,
     ColumnNameService,
     IFloatingFilter,
     IFloatingFilterParams,
     SetFilterModel,
 } from '@ag-grid-community/core';
-import { AgInputTextField, Autowired, Component, RefPlaceholder } from '@ag-grid-community/core';
+import { AgInputTextField, Component, RefPlaceholder } from '@ag-grid-community/core';
 
 import { SetFilter } from './setFilter';
 import { SetFilterModelFormatter } from './setFilterModelFormatter';
 import { SetValueModel } from './setValueModel';
 
 export class SetFloatingFilterComp<V = string> extends Component implements IFloatingFilter {
+    private columnNameService: ColumnNameService;
     private readonly eFloatingFilterText: AgInputTextField = RefPlaceholder;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnNameService = beans.columnNameService;
+    }
 
     private params: IFloatingFilterParams;
     private availableValuesListenerAdded = false;

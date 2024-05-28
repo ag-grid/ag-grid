@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    BeanName,
     Column,
     ColumnModel,
     ColumnNameService,
@@ -17,8 +19,6 @@ import type {
     VisibleColsService,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
-    Bean,
     BeanStub,
     ColumnGroup,
     GROUP_AUTO_COLUMN_ID,
@@ -37,16 +37,29 @@ export enum RowType {
     BODY,
 }
 
-@Bean('gridSerializer')
 export class GridSerializer extends BeanStub {
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
-    @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
-    @Autowired('sortController') private sortController: SortController;
+    beanName: BeanName = 'gridSerializer';
+
+    private visibleColsService: VisibleColsService;
+    private columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    private rowModel: IRowModel;
+    private pinnedRowModel: PinnedRowModel;
+    private selectionService: ISelectionService;
+    private rowNodeSorter: RowNodeSorter;
+    private sortController: SortController;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.visibleColsService = beans.visibleColsService;
+        this.columnModel = beans.columnModel;
+        this.columnNameService = beans.columnNameService;
+        this.rowModel = beans.rowModel;
+        this.pinnedRowModel = beans.pinnedRowModel;
+        this.selectionService = beans.selectionService;
+        this.rowNodeSorter = beans.rowNodeSorter;
+        this.sortController = beans.sortController;
+    }
 
     public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T> = {}): string {
         const { allColumns, columnKeys, skipRowGroups } = params;
@@ -83,10 +96,11 @@ export class GridSerializer extends BeanStub {
         const hideOpenParents = this.gos.get('groupHideOpenParents') && !isExplicitExportSelection;
         const isLeafNode = this.columnModel.isPivotMode() ? node.leafGroup : !node.group;
         const isFooter = !!node.footer;
-        const skipRowGroups = params.skipRowGroups;
         const shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
         const shouldSkipCurrentGroup =
-            node.allChildrenCount === 1 && (skipSingleChildrenGroup || shouldSkipLowestGroup);
+            node.allChildrenCount === 1 &&
+            node.childrenAfterGroup?.length === 1 &&
+            (skipSingleChildrenGroup || shouldSkipLowestGroup);
 
         if (
             (!isLeafNode && !isFooter && (params.skipRowGroups || shouldSkipCurrentGroup || hideOpenParents)) ||

@@ -1,7 +1,6 @@
-import type { AgComponentSelector, Column, ColumnModel } from '@ag-grid-community/core';
+import type { AgComponentSelector, BeanCollection, Column, ColumnModel } from '@ag-grid-community/core';
 import {
     AgInputTextField,
-    Autowired,
     Component,
     Events,
     RefPlaceholder,
@@ -19,9 +18,14 @@ export enum EXPAND_STATE {
 }
 
 export class AgFiltersToolPanelHeader extends Component {
-    static readonly selector: AgComponentSelector = 'AG-FILTERS-TOOL-PANEL-HEADER';
+    private columnModel: ColumnModel;
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+    }
+
+    static readonly selector: AgComponentSelector = 'AG-FILTERS-TOOL-PANEL-HEADER';
 
     private readonly eExpand: Element = RefPlaceholder;
     private readonly eFilterTextField: AgInputTextField = RefPlaceholder;

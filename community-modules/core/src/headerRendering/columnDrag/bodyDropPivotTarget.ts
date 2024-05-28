@@ -1,13 +1,18 @@
 import type { FuncColsService } from '../../columns/funcColsService';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { DraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import { DragAndDropService } from '../../dragAndDrop/dragAndDropService';
 import type { Column, ColumnPinnedType } from '../../entities/column';
 import type { DropListener } from './bodyDropTarget';
 
 export class BodyDropPivotTarget extends BeanStub implements DropListener {
-    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
+    private funcColsService: FuncColsService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.funcColsService = beans.funcColsService;
+    }
 
     private columnsToAggregate: Column[] = [];
     private columnsToGroup: Column[] = [];

@@ -1,71 +1,160 @@
-import type { ILogger } from '../iLogger';
-import { ModuleRegistry } from '../modules/moduleRegistry';
-import { _getFunctionName } from '../utils/function';
-import { _exists, _values } from '../utils/generic';
-import { _iterateObject } from '../utils/object';
-import type { Component } from '../widgets/component';
-import type { BaseBean } from './bean';
+import type {
+    AnimationFrameService,
+    BaseBean,
+    CellPositionUtils,
+    ColumnModel,
+    ColumnMoveService,
+    ColumnNameService,
+    ColumnSizeService,
+    CtrlsService,
+    DragAndDropService,
+    DragService,
+    Environment,
+    EventService,
+    FilterManager,
+    FocusService,
+    GridOptionsService,
+    HeaderNavigationService,
+    IFrameworkOverrides,
+    IRangeService,
+    IRowModel,
+    ISelectionHandleFactory,
+    ISelectionService,
+    LocaleService,
+    NavigationService,
+    PaginationProxy,
+    PopupService,
+    RowPositionUtils,
+    RowRenderer,
+    SortController,
+    StylingService,
+    UserComponentFactory,
+    UserComponentRegistry,
+    ValueCache,
+    ValueService,
+    VisibleColsService,
+} from '@ag-grid-community/core';
 
-// steps in booting up:
-// 1. create all beans
-// 2. autowire all attributes
-// 3. wire all beans
-// 4. initialise the model
-// 5. initialise the view
-// 6. boot??? (not sure if this is needed)
-// each bean is responsible for initialising itself, taking items from the gridOptionsService
+import type { ColumnViewportService } from '../columns/columnViewportService';
+import type { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
+import type { CtrlsFactory } from '../ctrlsFactory';
+import type { RowNodeEventThrottle } from '../entities/rowNodeEventThrottle';
+import type { ResizeObserverService } from '../misc/resizeObserverService';
+import { ModuleRegistry } from '../modules/moduleRegistry';
+import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
+import type { ColumnAnimationService } from '../rendering/columnAnimationService';
+import type { ColumnHoverService } from '../rendering/columnHoverService';
+import type { RowCssClassCalculator } from '../rendering/row/rowCssClassCalculator';
+import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
+import type { SyncService } from '../syncService';
+import type { Component } from '../widgets/component';
+import type { BeanStub } from './beanStub';
 
 export interface ContextParams {
-    providedBeanInstances: any;
-    beanClasses: any[];
-    debug: boolean;
+    providedBeanInstances: Partial<{ [key in BeanName]: BeanStub }>;
+    beanClasses: SingletonBean[];
     gridId: string;
 }
 
 export interface ComponentMeta {
-    componentClass: new () => Object;
+    componentClass: new () => object;
     componentName: string;
 }
 
 export interface ControllerMeta {
-    controllerClass: new () => Object;
+    controllerClass: new () => object;
     controllerName: string;
 }
 
-interface BeanWrapper {
-    bean: any;
-    beanInstance: BaseBean;
-    beanName: BeanName;
+export interface SingletonBean {
+    new (): BeanStub;
 }
 
+export interface CoreBeanCollection {
+    context: Context;
+    resizeObserverService: ResizeObserverService;
+    paginationProxy: PaginationProxy;
+    gos: GridOptionsService;
+    environment: Environment;
+    rowRenderer: RowRenderer;
+    valueService: ValueService;
+    eventService: EventService;
+    columnModel: ColumnModel;
+    columnViewportService: ColumnViewportService;
+    columnNameService: ColumnNameService;
+    visibleColsService: VisibleColsService;
+    columnMoveService: ColumnMoveService;
+    columnSizeService: ColumnSizeService;
+    headerNavigationService: HeaderNavigationService;
+    navigationService: NavigationService;
+    columnAnimationService: ColumnAnimationService;
+    focusService: FocusService;
+    popupService: PopupService;
+    stylingService: StylingService;
+    columnHoverService: ColumnHoverService;
+    userComponentFactory: UserComponentFactory;
+    userComponentRegistry: UserComponentRegistry;
+    animationFrameService: AnimationFrameService;
+    dragService: DragService;
+    dragAndDropService: DragAndDropService;
+    sortController: SortController;
+    filterManager: FilterManager;
+    rowContainerHeightService: RowContainerHeightService;
+    frameworkOverrides: IFrameworkOverrides;
+    cellPositionUtils: CellPositionUtils;
+    rowPositionUtils: RowPositionUtils;
+    selectionService: ISelectionService;
+    rowCssClassCalculator: RowCssClassCalculator;
+    rowModel: IRowModel;
+    ctrlsService: CtrlsService;
+    ctrlsFactory: CtrlsFactory;
+    agStackComponentsRegistry: AgStackComponentsRegistry;
+    valueCache: ValueCache;
+    rowNodeEventThrottle: RowNodeEventThrottle;
+    localeService: LocaleService;
+    syncService: SyncService;
+    ariaAnnouncementService: AriaAnnouncementService;
+    rangeService: IRangeService;
+    selectionHandleFactory: ISelectionHandleFactory;
+}
+
+export type BeanCollection = CoreBeanCollection & {
+    [key in Exclude<BeanName, keyof CoreBeanCollection>]: any;
+};
 export class Context {
-    private beanWrappers: { [key: string]: BeanWrapper } = {};
-    private contextParams: ContextParams;
-    private logger: ILogger;
+    private gridId: string;
+    private beans: BeanCollection = {} as BeanCollection;
+    private createdBeans: BeanStub[] = [];
 
     private destroyed = false;
 
-    public constructor(params: ContextParams, logger: ILogger) {
+    public constructor(params: ContextParams) {
         if (!params || !params.beanClasses) {
             return;
         }
 
-        this.contextParams = params;
+        this.gridId = params.gridId;
+        this.beans.context = this;
 
-        this.logger = logger;
-        this.logger.log('>> creating ag-Application Context');
+        Object.entries(params.providedBeanInstances).forEach(([beanName, beanInstance]) => {
+            this.beans[beanName as BeanName] = beanInstance;
+        });
 
-        this.createBeans();
+        params.beanClasses.forEach((BeanClass) => {
+            const instance = new BeanClass();
+            if (instance.beanName) {
+                this.beans[instance.beanName] = instance;
+            } else {
+                console.error(`Bean ${BeanClass.name} is missing beanName`);
+            }
+            this.createdBeans.push(instance);
+        });
 
-        const beanInstances = this.getBeanInstances();
-
-        this.wireBeans(beanInstances);
-
-        this.logger.log('>> ag-Application Context ready - component is alive');
+        this.wireBeans(this.createdBeans);
     }
 
     private getBeanInstances(): BaseBean[] {
-        return _values(this.beanWrappers).map((beanEntry) => beanEntry.beanInstance);
+        return Object.values(this.beans);
     }
 
     public createBean<T extends BaseBean | null | undefined>(
@@ -80,168 +169,21 @@ export class Context {
     }
 
     private wireBeans(beanInstances: BaseBean[], afterPreCreateCallback?: (comp: Component) => void): void {
-        this.autoWireBeans(beanInstances);
-        this.methodWireBeans(beanInstances);
-
-        // only exists on `Component`
-        beanInstances.forEach((bean) => (bean as any).preConstruct?.());
-
-        // the callback sets the attributes, so the component has access to attributes
-        // before postConstruct methods in the component are executed
-        if (_exists(afterPreCreateCallback)) {
+        beanInstances.forEach((instance) => instance.wireBeans?.(this.beans));
+        // used by the component class
+        beanInstances.forEach((instance) => (instance as any).preConstruct?.());
+        if (afterPreCreateCallback) {
             beanInstances.forEach(afterPreCreateCallback);
         }
-
-        beanInstances.forEach((bean) => bean.postConstruct?.());
+        beanInstances.forEach((instance) => instance.postConstruct?.());
     }
 
-    private createBeans(): void {
-        // register all normal beans
-        this.contextParams.beanClasses.forEach(this.createBeanWrapper.bind(this));
-        // register override beans, these will overwrite beans above of same name
-
-        // instantiate all beans - overridden beans will be left out
-        _iterateObject(this.beanWrappers, (key: string, beanEntry: BeanWrapper) => {
-            let constructorParamsMeta: any;
-            if (
-                beanEntry.bean.__agBeanMetaData &&
-                beanEntry.bean.__agBeanMetaData.autowireMethods &&
-                beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor
-            ) {
-                constructorParamsMeta = beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor;
-            }
-            const constructorParams = this.getBeansForParameters(constructorParamsMeta, beanEntry.bean.name);
-            const newInstance = new (beanEntry.bean.bind.apply(beanEntry.bean, [null, ...constructorParams]))();
-            beanEntry.beanInstance = newInstance;
-        });
-
-        const createdBeanNames = Object.keys(this.beanWrappers).join(', ');
-        this.logger.log(`created beans: ${createdBeanNames}`);
+    public getBeans(): BeanCollection {
+        return this.beans;
     }
 
-    // tslint:disable-next-line
-    private createBeanWrapper(BeanClass: new () => Object): void {
-        const metaData = (BeanClass as any).__agBeanMetaData;
-
-        if (!metaData) {
-            let beanName: string;
-            if (BeanClass.prototype.constructor) {
-                beanName = _getFunctionName(BeanClass.prototype.constructor);
-            } else {
-                beanName = '' + BeanClass;
-            }
-            console.error(`Context item ${beanName} is not a bean`);
-            return;
-        }
-
-        const beanEntry = {
-            bean: BeanClass,
-            beanInstance: null as any,
-            beanName: metaData.beanName,
-        };
-
-        this.beanWrappers[metaData.beanName] = beanEntry;
-    }
-
-    private autoWireBeans(beanInstances: any[]): void {
-        beanInstances.forEach((beanInstance) => {
-            this.forEachMetaDataInHierarchy(beanInstance, (metaData: any, beanName: string) => {
-                const attributes = metaData.agClassAttributes;
-                if (!attributes) {
-                    return;
-                }
-
-                attributes.forEach((attribute: any) => {
-                    const otherBean = this.lookupBeanInstance(beanName, attribute.beanName, attribute.optional);
-                    beanInstance[attribute.attributeName] = otherBean;
-                });
-            });
-        });
-    }
-
-    private methodWireBeans(beanInstances: any[]): void {
-        beanInstances.forEach((beanInstance) => {
-            this.forEachMetaDataInHierarchy(beanInstance, (metaData: any, beanName: BeanName) => {
-                _iterateObject(metaData.autowireMethods, (methodName: string, wireParams: any[]) => {
-                    // skip constructor, as this is dealt with elsewhere
-                    if (methodName === 'agConstructor') {
-                        return;
-                    }
-                    const initParams = this.getBeansForParameters(wireParams, beanName);
-                    beanInstance[methodName].apply(beanInstance, initParams);
-                });
-            });
-        });
-    }
-
-    private forEachMetaDataInHierarchy(beanInstance: any, callback: (metaData: any, beanName: string) => void): void {
-        let prototype: any = Object.getPrototypeOf(beanInstance);
-        while (prototype != null) {
-            const constructor: any = prototype.constructor;
-
-            if (constructor.hasOwnProperty('__agBeanMetaData')) {
-                const metaData = constructor.__agBeanMetaData;
-                const beanName = this.getBeanName(constructor);
-                callback(metaData, beanName);
-            }
-
-            prototype = Object.getPrototypeOf(prototype);
-        }
-    }
-
-    private getBeanName(constructor: any): string {
-        if (constructor.__agBeanMetaData && constructor.__agBeanMetaData.beanName) {
-            return constructor.__agBeanMetaData.beanName;
-        }
-
-        const constructorString = constructor.toString();
-        const beanName = constructorString.substring(9, constructorString.indexOf('('));
-        return beanName;
-    }
-
-    private getBeansForParameters(parameters: any, beanName: BeanName): any[] {
-        const beansList: any[] = [];
-        if (parameters) {
-            _iterateObject(parameters, (paramIndex: string, otherBeanName: BeanName) => {
-                const otherBean = this.lookupBeanInstance(beanName, otherBeanName);
-                beansList[Number(paramIndex)] = otherBean;
-            });
-        }
-        return beansList;
-    }
-
-    private lookupBeanInstance(wiringBean: string, beanName: BeanName, optional = false): any {
-        if (this.destroyed) {
-            this.logger.log(`AG Grid: bean reference ${beanName} is used after the grid is destroyed!`);
-            return null;
-        }
-
-        if (beanName === 'context') {
-            return this;
-        }
-
-        if (
-            this.contextParams.providedBeanInstances &&
-            this.contextParams.providedBeanInstances.hasOwnProperty(beanName)
-        ) {
-            return this.contextParams.providedBeanInstances[beanName];
-        }
-
-        const beanEntry = this.beanWrappers[beanName];
-
-        if (beanEntry) {
-            return beanEntry.beanInstance;
-        }
-
-        if (!optional) {
-            console.error(`AG Grid: unable to find bean reference ${beanName} while initialising ${wiringBean}`);
-        }
-
-        return null;
-    }
-
-    public getBean(name: BeanName): any {
-        return this.lookupBeanInstance('getBean', name, true);
+    public getBean<T extends BeanName>(name: T): BeanCollection[T] {
+        return this.beans[name];
     }
 
     public destroy(): void {
@@ -253,33 +195,33 @@ export class Context {
         // we are marked as destroyed already to prevent running destroy() twice
         this.destroyed = true;
 
-        this.logger.log('>> Shutting down ag-Application Context');
-
         const beanInstances = this.getBeanInstances();
         this.destroyBeans(beanInstances);
 
-        this.contextParams.providedBeanInstances = null;
+        this.beans = {} as BeanCollection;
+        this.createdBeans = [];
 
-        ModuleRegistry.__unRegisterGridModules(this.contextParams.gridId);
-
-        this.logger.log('>> ag-Application Context shut down - component is dead');
+        ModuleRegistry.__unRegisterGridModules(this.gridId);
     }
 
-    public destroyBean<T extends BaseBean | null | undefined>(bean: T): undefined {
-        if (!bean) {
-            return;
-        }
-
-        this.destroyBeans([bean]);
+    /**
+     * Destroys a bean and returns undefined to support destruction and clean up in a single line.
+     * this.dateComp = this.context.destroyBean(this.dateComp);
+     */
+    public destroyBean(bean: BaseBean | null | undefined): undefined {
+        bean?.destroy?.();
     }
 
-    public destroyBeans<T extends BaseBean | null | undefined>(beans: T[]): T[] {
-        if (!beans) {
-            return [];
+    /**
+     * Destroys an array of beans and returns an empty array to support destruction and clean up in a single line.
+     * this.dateComps = this.context.destroyBeans(this.dateComps);
+     */
+    public destroyBeans(beans: (BaseBean | null | undefined)[]): [] {
+        if (beans) {
+            for (let i = 0; i < beans.length; i++) {
+                this.destroyBean(beans[i]);
+            }
         }
-
-        beans.forEach((bean) => bean?.destroy?.());
-
         return [];
     }
 
@@ -288,90 +230,8 @@ export class Context {
     }
 
     public getGridId(): string {
-        return this.contextParams.gridId;
+        return this.gridId;
     }
-}
-
-export function Bean(beanName: BeanName): Function {
-    return (classConstructor: any) => {
-        const props = getOrCreateProps(classConstructor);
-        props.beanName = beanName;
-    };
-}
-
-export function Autowired(name?: BeanName): Function {
-    return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-        autowiredFunc(target, name, false, target, propertyKey, null);
-    };
-}
-
-export function Optional(name?: BeanName): Function {
-    return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-        autowiredFunc(target, name, true, target, propertyKey, null);
-    };
-}
-
-function autowiredFunc(
-    target: any,
-    name: string | undefined,
-    optional: boolean,
-    classPrototype: any,
-    methodOrAttributeName: string,
-    index: number | null
-) {
-    if (name === null) {
-        console.error('AG Grid: Autowired name should not be null');
-        return;
-    }
-    if (typeof index === 'number') {
-        console.error('AG Grid: Autowired should be on an attribute');
-        return;
-    }
-
-    // it's an attribute on the class
-    const props = getOrCreateProps(target.constructor);
-    if (!props.agClassAttributes) {
-        props.agClassAttributes = [];
-    }
-    props.agClassAttributes.push({
-        attributeName: methodOrAttributeName,
-        beanName: name,
-        optional: optional,
-    });
-}
-
-export function Qualifier(name: BeanName): Function {
-    return (classPrototype: any, methodOrAttributeName: string, index: number) => {
-        const constructor: any = typeof classPrototype == 'function' ? classPrototype : classPrototype.constructor;
-        let props: any;
-
-        if (typeof index === 'number') {
-            // it's a parameter on a method
-            let methodName: string;
-            if (methodOrAttributeName) {
-                props = getOrCreateProps(constructor);
-                methodName = methodOrAttributeName;
-            } else {
-                props = getOrCreateProps(constructor);
-                methodName = 'agConstructor';
-            }
-            if (!props.autowireMethods) {
-                props.autowireMethods = {};
-            }
-            if (!props.autowireMethods[methodName]) {
-                props.autowireMethods[methodName] = {};
-            }
-            props.autowireMethods[methodName][index] = name;
-        }
-    };
-}
-
-function getOrCreateProps(target: any): any {
-    if (!target.hasOwnProperty('__agBeanMetaData')) {
-        target.__agBeanMetaData = {};
-    }
-
-    return target.__agBeanMetaData;
 }
 
 export type BeanName =
@@ -458,7 +318,7 @@ export type BeanName =
     | 'globalSyncEventListener'
     | 'gridApi'
     | 'gridOptions'
-    | 'gridOptionsService'
+    | 'gos'
     | 'gridOptionsWrapper'
     | 'gridSerializer'
     | 'groupStage'

@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     FilterChangedEvent,
     FilterManager,
     IFilter,
@@ -10,13 +11,19 @@ import type {
     UserCompDetails,
     UserComponentFactory,
 } from '@ag-grid-community/core';
-import { AgPromise, Autowired, Component, _clearElement, _mergeDeep, _setDisplayed } from '@ag-grid-community/core';
+import { AgPromise, Component, _clearElement, _mergeDeep, _setDisplayed } from '@ag-grid-community/core';
 
 import { MultiFilter } from './multiFilter';
 
 export class MultiFloatingFilterComp extends Component implements IFloatingFilterComp<MultiFilter> {
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
+    private userComponentFactory: UserComponentFactory;
+    private filterManager: FilterManager;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.userComponentFactory = beans.userComponentFactory;
+        this.filterManager = beans.filterManager;
+    }
 
     private floatingFilters: IFloatingFilterComp[] = [];
     private compDetailsList: UserCompDetails[] = [];

@@ -1,7 +1,7 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { DataTypeService } from '../columns/dataTypeService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type {
     KeyCreatorParams,
     ValueFormatterParams,
@@ -20,12 +20,21 @@ import { _getValueUsingField } from '../utils/object';
 import type { ExpressionService } from './expressionService';
 import type { ValueCache } from './valueCache';
 
-@Bean('valueService')
 export class ValueService extends BeanStub {
-    @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('valueCache') private valueCache: ValueCache;
-    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
+    beanName: BeanName = 'valueService';
+
+    private expressionService: ExpressionService;
+    private columnModel: ColumnModel;
+    private valueCache: ValueCache;
+    private dataTypeService: DataTypeService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.expressionService = beans.expressionService;
+        this.columnModel = beans.columnModel;
+        this.valueCache = beans.valueCache;
+        this.dataTypeService = beans.dataTypeService;
+    }
 
     private cellExpressions: boolean;
     // Store locally for performance reasons and keep updated via property listener

@@ -1,6 +1,6 @@
 import type {
+    BeanCollection,
     Column,
-    ColumnModel,
     FuncColsService,
     IRowNode,
     ISelectionService,
@@ -18,14 +18,7 @@ import type {
     StoreUpdatedEvent,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import {
-    Autowired,
-    BeanStub,
-    Events,
-    NumberSequence,
-    ServerSideTransactionResultStatus,
-    _missing,
-} from '@ag-grid-community/core';
+import { BeanStub, Events, NumberSequence, ServerSideTransactionResultStatus } from '@ag-grid-community/core';
 
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { SSRMParams } from '../../serverSideRowModel';
@@ -33,11 +26,18 @@ import type { StoreUtils } from '../storeUtils';
 import { LazyCache } from './lazyCache';
 
 export class LazyStore extends BeanStub implements IServerSideStore {
-    @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
-    @Autowired('ssrmStoreUtils') private storeUtils: StoreUtils;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
+    private blockUtils: BlockUtils;
+    private storeUtils: StoreUtils;
+    private selectionService: ISelectionService;
+    private funcColsService: FuncColsService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.blockUtils = beans.ssrmBlockUtils;
+        this.storeUtils = beans.ssrmStoreUtils;
+        this.selectionService = beans.selectionService;
+        this.funcColsService = beans.funcColsService;
+    }
 
     // display indexes
     private displayIndexStart: number | undefined;
@@ -652,15 +652,6 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns a range of nodes between firstInRange and lastInRange inclusive
      */
     getRowNodesInRange(firstInRange: RowNode<any>, lastInRange: RowNode<any>): RowNode<any>[] {
-        const result: RowNode[] = [];
-
-        let inActiveRange = false;
-
-        // if only one node passed, we start the selection at the top
-        if (_missing(firstInRange)) {
-            inActiveRange = true;
-        }
-
         return this.cache
             .getNodes()
             .filter(({ node }) => {

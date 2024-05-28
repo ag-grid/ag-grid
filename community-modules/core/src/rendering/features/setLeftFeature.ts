@@ -1,4 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
 import { Column } from '../../entities/column';
 import type { ColumnGroup } from '../../entities/columnGroup';
 import { Events } from '../../eventKeys';
@@ -6,7 +7,6 @@ import type { IHeaderColumn } from '../../interfaces/iHeaderColumn';
 import { _setAriaColSpan } from '../../utils/aria';
 import { _last } from '../../utils/array';
 import { _exists } from '../../utils/generic';
-import type { Beans } from '../beans';
 
 export class SetLeftFeature extends BeanStub {
     private readonly columnOrGroup: IHeaderColumn;
@@ -19,9 +19,9 @@ export class SetLeftFeature extends BeanStub {
     // otherwise this is empty
     private colsSpanning: Column[] | undefined;
 
-    private beans: Beans;
+    private beans: BeanCollection;
 
-    constructor(columnOrGroup: IHeaderColumn, eCell: HTMLElement, beans: Beans, colsSpanning?: Column[]) {
+    constructor(columnOrGroup: IHeaderColumn, eCell: HTMLElement, beans: BeanCollection, colsSpanning?: Column[]) {
         super();
         this.columnOrGroup = columnOrGroup;
         this.eCell = eCell;

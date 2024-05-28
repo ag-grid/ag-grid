@@ -1,7 +1,7 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { Column } from '../entities/column';
 import { Events } from '../eventKeys';
@@ -29,14 +29,26 @@ enum ScrollSource {
 }
 
 export class GridBodyScrollFeature extends BeanStub {
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('rowContainerHeightService') private heightScaler: RowContainerHeightService;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
+    private ctrlsService: CtrlsService;
+    private animationFrameService: AnimationFrameService;
+    private paginationProxy: PaginationProxy;
+    private rowModel: IRowModel;
+    private heightScaler: RowContainerHeightService;
+    private rowRenderer: RowRenderer;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.ctrlsService = beans.ctrlsService;
+        this.animationFrameService = beans.animationFrameService;
+        this.paginationProxy = beans.paginationProxy;
+        this.rowModel = beans.rowModel;
+        this.heightScaler = beans.rowContainerHeightService;
+        this.rowRenderer = beans.rowRenderer;
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+    }
 
     private enableRtl: boolean;
 

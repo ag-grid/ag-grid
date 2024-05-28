@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, Bean } from '../../context/context';
+import type { BeanCollection, BeanName } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { Column } from '../../entities/column';
 import { ColumnGroup } from '../../entities/columnGroup';
@@ -15,11 +15,19 @@ export enum HeaderNavigationDirection {
     RIGHT,
 }
 
-@Bean('headerNavigationService')
 export class HeaderNavigationService extends BeanStub {
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    beanName: BeanName = 'headerNavigationService';
+
+    private focusService: FocusService;
+    private headerPositionUtils: HeaderPositionUtils;
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.focusService = beans.focusService;
+        this.headerPositionUtils = beans.headerPositionUtils;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private gridBodyCon: GridBodyCtrl;
     private currentHeaderRowWithoutSpan: number = -1;

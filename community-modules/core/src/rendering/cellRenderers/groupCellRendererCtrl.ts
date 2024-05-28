@@ -4,7 +4,7 @@ import type { VisibleColsService } from '../../columns/visibleColsService';
 import type { UserCompDetails, UserComponentFactory } from '../../components/framework/userComponentFactory';
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { CellRendererSelectorFunc, ColumnFunctionCallbackParams } from '../../entities/colDef';
 import type { Column } from '../../entities/column';
@@ -96,13 +96,24 @@ export type GroupCellRendererParams<TData = any, TValue = any> = IGroupCellRende
     IGroupCellRendererFullRowParams;
 
 export class GroupCellRendererCtrl extends BeanStub {
-    @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
+    private expressionService: ExpressionService;
+    private valueService: ValueService;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private userComponentFactory: UserComponentFactory;
+    private ctrlsService: CtrlsService;
+    private funcColsService: FuncColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.expressionService = beans.expressionService;
+        this.valueService = beans.valueService;
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.userComponentFactory = beans.userComponentFactory;
+        this.ctrlsService = beans.ctrlsService;
+        this.funcColsService = beans.funcColsService;
+    }
 
     private params: GroupCellRendererParams;
 
