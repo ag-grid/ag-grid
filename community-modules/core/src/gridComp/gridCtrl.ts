@@ -66,6 +66,8 @@ export class GridCtrl extends BeanStub {
 
         this.addRtlSupport();
 
+        this.applyDefaultHeight();
+
         const unsubscribeFromResize = this.resizeObserverService.observeResize(
             this.eGridHostDiv,
             this.onGridSizeChanged.bind(this)
@@ -98,12 +100,40 @@ export class GridCtrl extends BeanStub {
     }
 
     private onGridSizeChanged(): void {
+        this.applyDefaultHeight();
         const event: WithoutGridCommon<GridSizeChangedEvent> = {
             type: Events.EVENT_GRID_SIZE_CHANGED,
             clientWidth: this.eGridHostDiv.clientWidth,
             clientHeight: this.eGridHostDiv.clientHeight,
         };
         this.eventService.dispatchEvent(event);
+    }
+
+    private applyDefaultHeight(): void {
+        if (this.eGui.offsetParent == null) {
+            return;
+        }
+        // We want to apply a default height to the grid if its container
+        // element has no intrinsic height. But we don't want to apply the
+        // default height if it has an intrinsic height of zero (e.g.
+        // style="height:0px" set on wrapper). So we set different heights on
+        // the grid root element and check to see whether the wrapper resizes to
+        // accommodate it.
+        const gui = this.eGui;
+        const wrapper = this.eGridHostDiv;
+        gui.style.boxSizing = 'border-box';
+        gui.style.height = '0';
+        gui.style.padding = '0';
+        gui.style.border = 'none';
+        const firstMeasurement = wrapper.offsetHeight;
+        gui.style.height = '10px';
+        const secondMeasurement = wrapper.offsetHeight;
+        const hasIntrinsicHeight = secondMeasurement - firstMeasurement !== 10;
+        gui.style.boxSizing = '';
+        gui.style.height = '';
+        gui.style.padding = '';
+        gui.style.border = '';
+        gui.classList.toggle('ag-default-height', !hasIntrinsicHeight);
     }
 
     private addRtlSupport(): void {
