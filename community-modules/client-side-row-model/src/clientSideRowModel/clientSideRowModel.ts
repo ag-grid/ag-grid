@@ -5,6 +5,7 @@ import type {
     ClientSideRowModelStep,
     ColumnModel,
     CssVariablesChanged,
+    Environment,
     ExpandCollapseAllEvent,
     FilterChangedEvent,
     FuncColsService,
@@ -66,6 +67,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private funcColsService: FuncColsService;
     private selectionService: ISelectionService;
     private valueCache: ValueCache;
+    private environment: Environment;
 
     // standard stages
     private filterStage: IRowNodeStage;
@@ -86,6 +88,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.funcColsService = beans.funcColsService;
         this.selectionService = beans.selectionService;
         this.valueCache = beans.valueCache;
+        this.environment = beans.environment;
 
         this.filterStage = beans.filterStage;
         this.sortStage = beans.sortStage;

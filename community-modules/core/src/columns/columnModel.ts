@@ -3,6 +3,7 @@ import type { BeanCollection, BeanName } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { Column, ColumnPinnedType } from '../entities/column';
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
+import type { Environment } from '../environment';
 import type { ColumnEventType } from '../events';
 import { Events } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
@@ -64,6 +65,7 @@ export class ColumnModel extends BeanStub {
     private funcColsService: FuncColsService;
     private quickFilterService: QuickFilterService;
     private showRowGroupColsService: ShowRowGroupColsService;
+    private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
@@ -84,6 +86,7 @@ export class ColumnModel extends BeanStub {
         this.funcColsService = beans.funcColsService;
         this.quickFilterService = beans.quickFilterService;
         this.showRowGroupColsService = beans.showRowGroupColsService;
+        this.environment = beans.environment;
     }
 
     // as provided by gridProp columnsDefs
