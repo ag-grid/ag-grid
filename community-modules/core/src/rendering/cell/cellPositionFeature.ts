@@ -1,10 +1,10 @@
 import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
 import type { Column } from '../../entities/column';
 import type { RowNode } from '../../entities/rowNode';
 import { Events } from '../../eventKeys';
 import { _areEqual, _last } from '../../utils/array';
 import { _missing } from '../../utils/generic';
-import type { Beans } from '../beans';
 import type { CellCtrl } from './cellCtrl';
 
 /**
@@ -23,9 +23,9 @@ export class CellPositionFeature extends BeanStub {
     private colsSpanning: Column[];
     private rowSpan: number;
 
-    private beans: Beans;
+    private beans: BeanCollection;
 
-    constructor(ctrl: CellCtrl, beans: Beans) {
+    constructor(ctrl: CellCtrl, beans: BeanCollection) {
         super();
 
         this.cellCtrl = ctrl;

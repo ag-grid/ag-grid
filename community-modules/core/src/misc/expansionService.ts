@@ -1,14 +1,20 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { ClientSideRowModelSteps } from '../interfaces/iClientSideRowModel';
 import type { IExpansionService } from '../interfaces/iExpansionService';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 
-@Bean('expansionService')
 export class ExpansionService extends BeanStub implements IExpansionService {
-    @Autowired('rowModel') private readonly rowModel: IRowModel;
+    beanName: BeanName = 'expansionService';
+
+    private rowModel: IRowModel;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.rowModel = beans.rowModel;
+    }
 
     private isClientSideRowModel: boolean;
 

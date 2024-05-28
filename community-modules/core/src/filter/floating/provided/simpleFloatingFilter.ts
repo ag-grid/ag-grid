@@ -1,5 +1,5 @@
 import type { ColumnNameService } from '../../../columns/columnNameService';
-import { Autowired } from '../../../context/context';
+import type { BeanCollection } from '../../../context/context';
 import type { FilterChangedEvent } from '../../../events';
 import type { ProvidedFilterModel } from '../../../interfaces/iFilter';
 import { Component } from '../../../widgets/component';
@@ -16,7 +16,12 @@ import { SimpleFilter } from '../../provided/simpleFilter';
 import type { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
 
 export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp<ISimpleFilter> {
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
+    private columnNameService: ColumnNameService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnNameService = beans.columnNameService;
+    }
 
     // this method is on IFloatingFilterComp. because it's not implemented at this level, we have to
     // define it as an abstract method. it gets implemented in sub classes.

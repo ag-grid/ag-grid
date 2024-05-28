@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { ColumnPinnedType } from '../entities/column';
 import { Column } from '../entities/column';
 import { ColumnGroup } from '../entities/columnGroup';
@@ -16,17 +16,24 @@ import type { ColumnModel } from './columnModel';
 import type { ColumnSizeService } from './columnSizeService';
 import { getWidthOfColsInList } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
-import type { FuncColsService } from './funcColsService';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
-@Bean('visibleColsService')
 export class VisibleColsService extends BeanStub {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('columnViewportService') private columnViewportService: ColumnViewportService;
-    @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
+    beanName: BeanName = 'visibleColsService';
+
+    private columnModel: ColumnModel;
+    private columnSizeService: ColumnSizeService;
+    private columnViewportService: ColumnViewportService;
+    private eventDispatcher: ColumnEventDispatcher;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.columnSizeService = beans.columnSizeService;
+        this.columnViewportService = beans.columnViewportService;
+        this.eventDispatcher = beans.columnEventDispatcher;
+    }
 
     // tree of columns to be displayed for each section
     private treeLeft: IHeaderColumn[];

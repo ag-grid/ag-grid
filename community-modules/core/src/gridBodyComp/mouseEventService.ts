@@ -1,6 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Bean } from '../context/context';
-import { Autowired } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { DraggingEvent } from '../dragAndDrop/dragAndDropService';
 import type { CellPosition } from '../entities/cellPositionUtils';
@@ -9,9 +8,15 @@ import { _getCtrlForEventTarget } from '../utils/event';
 import { _exists } from '../utils/generic';
 import { NumberSequence } from '../utils/numberSequence';
 
-@Bean('mouseEventService')
 export class MouseEventService extends BeanStub {
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    beanName: BeanName = 'mouseEventService';
+
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private static gridInstanceSequence = new NumberSequence();
     private static GRID_DOM_KEY = '__ag_grid_instance';

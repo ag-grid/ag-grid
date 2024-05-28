@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { PaginationProxy } from '../pagination/paginationProxy';
 
@@ -14,10 +14,17 @@ interface TaskList {
     sorted: boolean;
 }
 
-@Bean('animationFrameService')
 export class AnimationFrameService extends BeanStub {
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+    beanName: BeanName = 'animationFrameService';
+
+    private ctrlsService: CtrlsService;
+    private paginationProxy: PaginationProxy;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.ctrlsService = beans.ctrlsService;
+        this.paginationProxy = beans.paginationProxy;
+    }
 
     // p1 and p2 are create tasks are to do with row and cell creation.
     // for them we want to execute according to row order, so we use

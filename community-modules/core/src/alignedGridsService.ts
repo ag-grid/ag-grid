@@ -2,9 +2,7 @@ import type { ColumnApplyStateService } from './columns/columnApplyStateService'
 import type { ColumnModel } from './columns/columnModel';
 import type { ColumnSizeService } from './columns/columnSizeService';
 import { BeanStub } from './context/beanStub';
-import { Bean } from './context/context';
-import { Qualifier } from './context/context';
-import { Autowired } from './context/context';
+import type { BeanCollection, BeanName } from './context/context';
 import type { CtrlsService } from './ctrlsService';
 import type { Column } from './entities/column';
 import type { ProvidedColumnGroup } from './entities/providedColumnGroup';
@@ -21,26 +19,32 @@ import type {
 import { Events } from './events';
 import { GridApi } from './gridApi';
 import type { Logger } from './logger';
-import type { LoggerFactory } from './logger';
 import { _errorOnce } from './utils/function';
 
-@Bean('alignedGridsService')
 export class AlignedGridsService extends BeanStub {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnSizeService') private columnSizeService: ColumnSizeService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
+    beanName: BeanName = 'alignedGridsService';
+
+    private columnModel: ColumnModel;
+    private columnSizeService: ColumnSizeService;
+    private ctrlsService: CtrlsService;
+    private columnApplyStateService: ColumnApplyStateService;
 
     private logger: Logger;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.columnSizeService = beans.columnSizeService;
+        this.ctrlsService = beans.ctrlsService;
+        this.columnApplyStateService = beans.columnApplyStateService;
+
+        this.logger = beans.loggerFactory.create('AlignedGridsService');
+    }
 
     // flag to mark if we are consuming. to avoid cyclic events (ie other grid firing back to master
     // while processing a master event) we mark this if consuming an event, and if we are, then
     // we don't fire back any events.
     private consuming = false;
-
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('AlignedGridsService');
-    }
 
     private getAlignedGridApis(): GridApi[] {
         let alignedGrids = this.gos.get('alignedGrids') ?? [];

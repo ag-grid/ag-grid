@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Optional } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { ColDef, IAggFunc } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import type { ColumnEventType } from '../events';
@@ -12,12 +12,21 @@ import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColKey, ColumnModel, Maybe } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
 
-@Bean('funcColsService')
 export class FuncColsService extends BeanStub {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
-    @Optional('aggFuncService') private aggFuncService?: IAggFuncService;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
+    beanName: BeanName = 'funcColsService';
+
+    private columnModel: ColumnModel;
+    private eventDispatcher: ColumnEventDispatcher;
+    private aggFuncService?: IAggFuncService;
+    private visibleColsService: VisibleColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.eventDispatcher = beans.columnEventDispatcher;
+        this.aggFuncService = beans.aggFuncService;
+        this.visibleColsService = beans.visibleColsService;
+    }
 
     private rowGroupCols: Column[] = [];
     private valueCols: Column[] = [];

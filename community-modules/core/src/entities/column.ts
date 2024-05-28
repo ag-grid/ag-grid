@@ -1,6 +1,6 @@
 import type { ColumnState } from '../columns/columnApplyStateService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { AgEvent, AgEventListener, ColumnEvent, ColumnEventType } from '../events';
 import type { BrandedType } from '../interfaces/brandedType';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
@@ -96,7 +96,12 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
     // + dataTypeService - when waiting to infer cell data types
     public static EVENT_STATE_UPDATED: ColumnEventName = 'columnStateUpdated';
 
-    @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
+    private columnHoverService: ColumnHoverService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnHoverService = beans.columnHoverService;
+    }
 
     private frameworkEventListenerService: FrameworkEventListenerService | null;
 

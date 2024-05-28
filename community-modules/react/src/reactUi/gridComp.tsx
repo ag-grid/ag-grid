@@ -1,4 +1,4 @@
-import type { Beans, Context, IGridComp } from '@ag-grid-community/core';
+import type { BeanCollection, Context, IGridComp } from '@ag-grid-community/core';
 import { GridCtrl } from '@ag-grid-community/core';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -36,7 +36,7 @@ const GridComp = ({ context }: GridCompProps) => {
         if (context.isDestroyed()) {
             return null;
         }
-        return context.getBean('beans') as Beans;
+        return context.getBeans();
     }, [context]);
 
     useReactCommentEffect(' AG Grid ', eRootWrapperRef);

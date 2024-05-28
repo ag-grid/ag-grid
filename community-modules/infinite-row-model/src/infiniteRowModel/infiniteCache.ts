@@ -1,8 +1,8 @@
 import type {
+    BeanCollection,
     FocusService,
     IDatasource,
     Logger,
-    LoggerFactory,
     RowNode,
     RowNodeBlockLoader,
     RowRenderer,
@@ -10,16 +10,7 @@ import type {
     StoreUpdatedEvent,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import {
-    Autowired,
-    BeanStub,
-    Events,
-    NumberSequence,
-    Qualifier,
-    _exists,
-    _getAllValuesInObject,
-    _missing,
-} from '@ag-grid-community/core';
+import { BeanStub, Events, NumberSequence, _exists, _getAllValuesInObject, _missing } from '@ag-grid-community/core';
 
 import { InfiniteBlock } from './infiniteBlock';
 
@@ -38,13 +29,23 @@ export interface InfiniteCacheParams {
 }
 
 export class InfiniteCache extends BeanStub {
+    protected rowRenderer: RowRenderer;
+    private focusService: FocusService;
+
+    private logger: Logger;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.rowRenderer = beans.rowRenderer;
+        this.focusService = beans.focusService;
+
+        this.logger = beans.loggerFactory.create('InfiniteCache');
+    }
+
     // this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
     // blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
     // scrolled over are not needed to be loaded.
     private static MAX_EMPTY_BLOCKS_TO_KEEP = 2;
-
-    @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
-    @Autowired('focusService') private focusService: FocusService;
 
     private readonly params: InfiniteCacheParams;
 
@@ -54,16 +55,10 @@ export class InfiniteCache extends BeanStub {
     private blocks: { [blockNumber: string]: InfiniteBlock } = {};
     private blockCount = 0;
 
-    private logger: Logger;
-
     constructor(params: InfiniteCacheParams) {
         super();
         this.rowCount = params.initialRowCount;
         this.params = params;
-    }
-
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('InfiniteCache');
     }
 
     // the rowRenderer will not pass dontCreatePage, meaning when rendering the grid,

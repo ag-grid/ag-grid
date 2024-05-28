@@ -1,6 +1,7 @@
 import type {
     AgPromise,
     AnimationFrameService,
+    BeanCollection,
     Component,
     FieldPickerValueSelectedEvent,
     ICellRendererParams,
@@ -12,7 +13,6 @@ import type {
 import {
     AgInputTextField,
     AgPickerField,
-    Autowired,
     Events,
     KeyCode,
     RefPlaceholder,
@@ -44,6 +44,15 @@ const TEMPLATE = /* html */ `
     </div>`;
 
 export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelectParams<TValue>, VirtualList> {
+    private userComponentFactory: UserComponentFactory;
+    private animationFrameService: AnimationFrameService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.animationFrameService = beans.animationFrameService;
+        this.userComponentFactory = beans.userComponentFactory;
+    }
+
     private searchString = '';
     private listComponent: VirtualList | undefined;
     protected values: TValue[];
@@ -53,9 +62,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     private lastRowHovered: number = -1;
     private searchStringCreator: ((values: TValue[]) => string[]) | null = null;
     private eLoading: HTMLElement | undefined;
-
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     private readonly eInput: AgInputTextField = RefPlaceholder;
 
     constructor(config?: RichSelectParams<TValue>) {
@@ -733,8 +739,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
     public destroy(): void {
         if (this.listComponent) {
-            this.destroyBean(this.listComponent);
-            this.listComponent = undefined;
+            this.listComponent = this.destroyBean(this.listComponent);
         }
 
         this.eLoading = undefined;

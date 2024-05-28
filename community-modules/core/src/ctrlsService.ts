@@ -1,5 +1,5 @@
 import { BeanStub } from './context/beanStub';
-import { Bean } from './context/context';
+import type { BeanName } from './context/context';
 import type { ColumnPinnedType } from './entities/column';
 import type { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
 import type { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
@@ -47,9 +47,8 @@ interface ReadyParams {
 
 type CtrlType = keyof ReadyParams;
 
-@Bean(CtrlsService.NAME)
 export class CtrlsService extends BeanStub {
-    public static readonly NAME = 'ctrlsService';
+    beanName: BeanName = 'ctrlsService';
 
     private params: ReadyParams = {} as ReadyParams;
     private ready = false;

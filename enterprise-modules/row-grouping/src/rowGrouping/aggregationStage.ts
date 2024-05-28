@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    BeanName,
     ChangedPath,
     Column,
     ColumnModel,
@@ -13,7 +15,7 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, _missingOrEmpty } from '@ag-grid-community/core';
+import { BeanStub, _missingOrEmpty } from '@ag-grid-community/core';
 
 import type { AggFuncService } from './aggFuncService';
 
@@ -27,13 +29,23 @@ interface AggregationDetails {
     userAggFunc: ((params: WithoutGridCommon<GetGroupRowAggParams<any, any>>) => any) | undefined;
 }
 
-@Bean('aggregationStage')
 export class AggregationStage extends BeanStub implements IRowNodeStage {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('aggFuncService') private aggFuncService: AggFuncService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
+    beanName: BeanName = 'aggregationStage';
+
+    private columnModel: ColumnModel;
+    private valueService: ValueService;
+    private aggFuncService: AggFuncService;
+    private funcColsService: FuncColsService;
+    private pivotResultColsService: PivotResultColsService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.aggFuncService = beans.aggFuncService;
+        this.funcColsService = beans.funcColsService;
+        this.pivotResultColsService = beans.pivotResultColsService;
+        this.valueService = beans.valueService;
+    }
 
     // it's possible to recompute the aggregate without doing the other parts
     // + api.refreshClientSideRowModel('aggregate')

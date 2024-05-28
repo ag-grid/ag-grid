@@ -1,6 +1,6 @@
 import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Optional } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { CellPosition, CellPositionUtils } from '../entities/cellPositionUtils';
 import type { Column } from '../entities/column';
@@ -24,15 +24,25 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { CellValueChange, LastFocusedCell } from './undoRedoStack';
 import { RangeUndoRedoAction, UndoRedoAction, UndoRedoStack } from './undoRedoStack';
 
-@Bean('undoRedoService')
 export class UndoRedoService extends BeanStub {
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('cellPositionUtils') private cellPositionUtils: CellPositionUtils;
-    @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    beanName: BeanName = 'undoRedoService';
 
-    @Optional('rangeService') private readonly rangeService?: IRangeService;
+    private focusService: FocusService;
+    private ctrlsService: CtrlsService;
+    private cellPositionUtils: CellPositionUtils;
+    private rowPositionUtils: RowPositionUtils;
+    private columnModel: ColumnModel;
+    private rangeService?: IRangeService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.focusService = beans.focusService;
+        this.ctrlsService = beans.ctrlsService;
+        this.cellPositionUtils = beans.cellPositionUtils;
+        this.rowPositionUtils = beans.rowPositionUtils;
+        this.columnModel = beans.columnModel;
+        this.rangeService = beans.rangeService;
+    }
 
     private gridBodyCtrl: GridBodyCtrl;
 

@@ -1,11 +1,17 @@
-import type { IRowModel, ISelectionService, IStatusPanelComp } from '@ag-grid-community/core';
-import { Autowired, Events, _formatNumberCommas } from '@ag-grid-community/core';
+import type { BeanCollection, IRowModel, ISelectionService, IStatusPanelComp } from '@ag-grid-community/core';
+import { Events, _formatNumberCommas } from '@ag-grid-community/core';
 
 import { AgNameValue } from './agNameValue';
 
 export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
+    private rowModel: IRowModel;
+    private selectionService: ISelectionService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.rowModel = beans.rowModel;
+        this.selectionService = beans.selectionService;
+    }
 
     public postConstruct(): void {
         if (!this.isValidRowModel()) {

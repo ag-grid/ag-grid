@@ -1,5 +1,5 @@
 import type { FuncColsService } from '../../../columns/funcColsService';
-import { Autowired } from '../../../context/context';
+import type { BeanCollection } from '../../../context/context';
 import type { SortDirection } from '../../../entities/colDef';
 import { Column } from '../../../entities/column';
 import { Events } from '../../../eventKeys';
@@ -109,9 +109,16 @@ export class HeaderComp extends Component implements IHeaderComp {
             </div>
         </div>`;
 
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('menuService') private menuService: MenuService;
-    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
+    private sortController: SortController;
+    private menuService: MenuService;
+    private funcColsService: FuncColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.sortController = beans.sortController;
+        this.menuService = beans.menuService;
+        this.funcColsService = beans.funcColsService;
+    }
 
     private eFilter: HTMLElement = RefPlaceholder;
     private eFilterButton?: HTMLElement = RefPlaceholder;

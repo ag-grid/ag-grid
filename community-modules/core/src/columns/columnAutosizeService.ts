@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { Column } from '../entities/column';
 import type { ColumnGroup } from '../entities/columnGroup';
@@ -12,14 +12,25 @@ import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColKey, ColumnModel, Maybe } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
 
-@Bean('columnAutosizeService')
 export class ColumnAutosizeService extends BeanStub {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
-    @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
-    @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
-    @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    beanName: BeanName = 'columnAutosizeService';
+
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private animationFrameService: AnimationFrameService;
+    private autoWidthCalculator: AutoWidthCalculator;
+    private eventDispatcher: ColumnEventDispatcher;
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.animationFrameService = beans.animationFrameService;
+        this.autoWidthCalculator = beans.autoWidthCalculator;
+        this.eventDispatcher = beans.columnEventDispatcher;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     public autoSizeCols(params: {
         colKeys: ColKey[];

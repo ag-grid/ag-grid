@@ -1,4 +1,4 @@
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { FilterManager } from '../../filter/filterManager';
 import { _clearElement } from '../../utils/dom';
 import { _exists, _missing } from '../../utils/generic';
@@ -13,7 +13,12 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
 
     private refreshCount = 0;
 
-    @Autowired('filterManager') private filterManager: FilterManager;
+    private filterManager: FilterManager;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.filterManager = beans.filterManager;
+    }
 
     constructor() {
         super();

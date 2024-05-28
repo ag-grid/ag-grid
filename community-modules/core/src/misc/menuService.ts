@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Optional } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { Column } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
@@ -69,17 +69,29 @@ export interface IContextMenuParams extends ShowContextMenuParams {
     y?: number;
 }
 
-@Bean('menuService')
 export class MenuService extends BeanStub {
-    @Autowired('filterMenuFactory') private readonly filterMenuFactory: IMenuFactory;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    beanName: BeanName = 'menuService';
 
-    @Optional('columnChooserFactory') private columnChooserFactory?: IColumnChooserFactory;
-    @Optional('contextMenuFactory') private readonly contextMenuFactory?: IContextMenuFactory;
-    @Optional('enterpriseMenuFactory') private readonly enterpriseMenuFactory?: IMenuFactory;
+    private filterMenuFactory: IMenuFactory;
+    private ctrlsService: CtrlsService;
+    private animationFrameService: AnimationFrameService;
+    private filterManager: FilterManager;
+    private rowRenderer: RowRenderer;
+    private columnChooserFactory?: IColumnChooserFactory;
+    private contextMenuFactory?: IContextMenuFactory;
+    private enterpriseMenuFactory?: IMenuFactory;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.filterMenuFactory = beans.filterMenuFactory;
+        this.ctrlsService = beans.ctrlsService;
+        this.animationFrameService = beans.animationFrameService;
+        this.filterManager = beans.filterManager;
+        this.rowRenderer = beans.rowRenderer;
+        this.columnChooserFactory = beans.columnChooserFactory;
+        this.contextMenuFactory = beans.contextMenuFactory;
+        this.enterpriseMenuFactory = beans.enterpriseMenuFactory;
+    }
 
     private activeMenuFactory: IMenuFactory;
 

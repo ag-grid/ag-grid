@@ -1,6 +1,6 @@
 import type { ColumnModel } from '../../columns/columnModel';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { ColumnPinnedType } from '../../entities/column';
 import { Column } from '../../entities/column';
@@ -29,12 +29,22 @@ export interface IHeaderRowContainerComp {
 }
 
 export class HeaderRowContainerCtrl extends BeanStub {
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('focusService') public focusService: FocusService;
-    @Autowired('filterManager') public filterManager: FilterManager;
+    private ctrlsService: CtrlsService;
+    private scrollVisibleService: ScrollVisibleService;
+    private pinnedWidthService: PinnedWidthService;
+    private columnModel: ColumnModel;
+    private focusService: FocusService;
+    private filterManager: FilterManager;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.ctrlsService = beans.ctrlsService;
+        this.scrollVisibleService = beans.scrollVisibleService;
+        this.pinnedWidthService = beans.pinnedWidthService;
+        this.columnModel = beans.columnModel;
+        this.focusService = beans.focusService;
+        this.filterManager = beans.filterManager;
+    }
 
     private pinned: ColumnPinnedType;
     private comp: IHeaderRowContainerComp;

@@ -1,6 +1,6 @@
 import type { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
 import { BeanStub } from '../context/beanStub';
-import { Autowired } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import type { ColumnGroup } from '../entities/columnGroup';
@@ -37,12 +37,18 @@ export interface VisibleChangedEvent extends AgEvent {
 export type ComponentClass = { new (params?: any): Component; selector: AgComponentSelector };
 
 export class Component extends BeanStub {
+    protected agStackComponentsRegistry: AgStackComponentsRegistry;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.agStackComponentsRegistry = beans.agStackComponentsRegistry;
+    }
+
     public static elementGettingCreated: any;
 
     public static EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     private eGui: HTMLElement;
     private components: ComponentClass[];
-    @Autowired('agStackComponentsRegistry') protected readonly agStackComponentsRegistry: AgStackComponentsRegistry;
 
     // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
     private displayed = true;

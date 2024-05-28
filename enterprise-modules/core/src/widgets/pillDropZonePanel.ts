@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     DragAndDropService,
     DragItem,
     DragSourceType,
@@ -7,7 +8,6 @@ import type {
     FocusService,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
     Component,
     KeyCode,
     ManagedFocusFeature,
@@ -34,8 +34,14 @@ export interface PillDropZonePanelParams {
 }
 
 export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem> extends Component {
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('dragAndDropService') protected readonly dragAndDropService: DragAndDropService;
+    private focusService: FocusService;
+    private dragAndDropService: DragAndDropService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.focusService = beans.focusService;
+        this.dragAndDropService = beans.dragAndDropService;
+    }
 
     private static STATE_NOT_DRAGGING = 'notDragging';
     private static STATE_NEW_ITEMS_IN = 'newItemsIn';

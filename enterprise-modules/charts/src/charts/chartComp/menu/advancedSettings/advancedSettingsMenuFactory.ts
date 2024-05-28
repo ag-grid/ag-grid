@@ -1,15 +1,22 @@
-import type { FocusService } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, TabGuardComp } from '@ag-grid-community/core';
+import type { BeanCollection, BeanName, FocusService } from '@ag-grid-community/core';
+import { BeanStub, TabGuardComp } from '@ag-grid-community/core';
 import { AgDialog } from '@ag-grid-enterprise/core';
 
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import type { ChartMenuContext } from '../chartMenuContext';
 import { AdvancedSettingsPanel } from './advancedSettingsPanel';
 
-@Bean('advancedSettingsMenuFactory')
 export class AdvancedSettingsMenuFactory extends BeanStub {
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    beanName: BeanName = 'advancedSettingsMenuFactory';
+
+    private focusService: FocusService;
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.focusService = beans.focusService;
+        this.chartTranslationService = beans.chartTranslationService;
+    }
 
     private activeMenu?: AdvancedSettingsMenu;
     private activeDialog?: AgDialog;
@@ -57,7 +64,12 @@ export class AdvancedSettingsMenuFactory extends BeanStub {
 }
 
 class AdvancedSettingsMenu extends TabGuardComp {
-    @Autowired('focusService') private readonly focusService: FocusService;
+    private focusService: FocusService;
+
+    public override wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.focusService = beans.focusService;
+    }
 
     private static TEMPLATE = /* html */ `<div class="ag-chart-advanced-settings"></div>`;
 

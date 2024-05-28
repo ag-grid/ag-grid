@@ -1,5 +1,5 @@
-import type { AgComponentSelector } from '@ag-grid-community/core';
-import { AgInputTextField, Autowired, RefPlaceholder } from '@ag-grid-community/core';
+import type { AgComponentSelector, BeanCollection } from '@ag-grid-community/core';
+import { AgInputTextField, RefPlaceholder } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
 
 import type { ChartTranslationService } from '../charts/chartComp/services/chartTranslationService';
@@ -15,7 +15,12 @@ export class AgColorInput extends AgInputTextField {
             </div>
         </div>`;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.chartTranslationService = beans.chartTranslationService;
+    }
     private readonly eColor: HTMLElement = RefPlaceholder;
 
     constructor() {

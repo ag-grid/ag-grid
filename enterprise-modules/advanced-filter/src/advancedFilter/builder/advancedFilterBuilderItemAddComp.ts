@@ -1,6 +1,5 @@
-import type { FieldPickerValueSelectedEvent } from '@ag-grid-community/core';
+import type { BeanCollection, FieldPickerValueSelectedEvent } from '@ag-grid-community/core';
 import {
-    Autowired,
     Component,
     Events,
     RefPlaceholder,
@@ -17,8 +16,13 @@ import type { AdvancedFilterBuilderAddEvent, AdvancedFilterBuilderItem } from '.
 import { AdvancedFilterBuilderEvents } from './iAdvancedFilterBuilder';
 
 export class AdvancedFilterBuilderItemAddComp extends Component {
-    @Autowired('advancedFilterExpressionService')
-    private readonly advancedFilterExpressionService: AdvancedFilterExpressionService;
+    private advancedFilterExpressionService: AdvancedFilterExpressionService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+    }
+
     private readonly eItem: HTMLElement = RefPlaceholder;
 
     constructor(

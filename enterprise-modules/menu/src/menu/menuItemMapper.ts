@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    BeanName,
     Column,
     ColumnApplyStateService,
     ColumnAutosizeService,
@@ -15,12 +17,9 @@ import type {
     SortController,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
-    Bean,
     BeanStub,
     ModuleNames,
     ModuleRegistry,
-    Optional,
     _createIconNoSpan,
     _escapeString,
     _exists,
@@ -28,22 +27,39 @@ import {
 
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 
-@Bean('menuItemMapper')
 export class MenuItemMapper extends BeanStub {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
-    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
-    @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
-    @Autowired('chartMenuItemMapper') private readonly chartMenuItemMapper: ChartMenuItemMapper;
-    @Autowired('menuService') private readonly menuService: MenuService;
-    @Autowired('sortController') private readonly sortController: SortController;
-    @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
+    beanName: BeanName = 'menuItemMapper';
 
-    @Optional('clipboardService') private readonly clipboardService?: IClipboardService;
-    @Optional('aggFuncService') private readonly aggFuncService?: IAggFuncService;
+    private columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    private columnApplyStateService: ColumnApplyStateService;
+    private funcColsService: FuncColsService;
+    private gridApi: GridApi;
+    private focusService: FocusService;
+    private rowPositionUtils: RowPositionUtils;
+    private chartMenuItemMapper: ChartMenuItemMapper;
+    private menuService: MenuService;
+    private sortController: SortController;
+    private columnAutosizeService: ColumnAutosizeService;
+    private clipboardService?: IClipboardService;
+    private aggFuncService?: IAggFuncService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.columnNameService = beans.columnNameService;
+        this.columnApplyStateService = beans.columnApplyStateService;
+        this.funcColsService = beans.funcColsService;
+        this.gridApi = beans.gridApi;
+        this.focusService = beans.focusService;
+        this.rowPositionUtils = beans.rowPositionUtils;
+        this.chartMenuItemMapper = beans.chartMenuItemMapper;
+        this.menuService = beans.menuService;
+        this.sortController = beans.sortController;
+        this.columnAutosizeService = beans.columnAutosizeService;
+        this.clipboardService = beans.clipboardService;
+        this.aggFuncService = beans.aggFuncService;
+    }
 
     public mapWithStockItems(
         originalList: (MenuItemDef | string)[],

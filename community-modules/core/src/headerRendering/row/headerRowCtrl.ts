@@ -1,12 +1,11 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { Column, ColumnPinnedType } from '../../entities/column';
 import type { ColumnGroup } from '../../entities/columnGroup';
 import { Events } from '../../eventKeys';
 import type { VirtualColumnsChangedEvent } from '../../events';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { HeaderColumnId, IHeaderColumn } from '../../interfaces/iHeaderColumn';
-import type { Beans } from '../../rendering/beans';
 import { _values } from '../../utils/generic';
 import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
@@ -25,7 +24,12 @@ let instanceIdSequence = 0;
 export type HeaderRowCtrlInstanceId = BrandedType<number, 'HeaderRowCtrlInstanceId'>;
 
 export class HeaderRowCtrl extends BeanStub {
-    @Autowired('beans') private beans: Beans;
+    private beans: BeanCollection;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.beans = beans;
+    }
 
     private comp: IHeaderRowComp;
     private rowIndex: number;

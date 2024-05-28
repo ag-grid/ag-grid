@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     Column,
     ContainerType,
     FilterManager,
@@ -18,7 +19,6 @@ import type {
 import {
     AgMenuItemRenderer,
     AgPromise,
-    Autowired,
     KeyCode,
     ProvidedFilter,
     TabGuardComp,
@@ -30,8 +30,14 @@ import type { MenuItemActivatedEvent } from '@ag-grid-enterprise/core';
 import { AgGroupComponent, AgMenuItemComponent } from '@ag-grid-enterprise/core';
 
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
+    private filterManager: FilterManager;
+    private userComponentFactory: UserComponentFactory;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.filterManager = beans.filterManager;
+        this.userComponentFactory = beans.userComponentFactory;
+    }
 
     private params: MultiFilterParams;
     private filterDefs: IMultiFilterDef[] = [];

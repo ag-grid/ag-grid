@@ -1,6 +1,5 @@
 import { BeanStub } from './context/beanStub';
-import { Bean } from './context/context';
-import { Autowired } from './context/context';
+import type { BeanCollection, BeanName } from './context/context';
 import type { RowNode } from './entities/rowNode';
 import type { SelectionChangedEvent, SelectionEventSourceType } from './events';
 import { Events } from './events';
@@ -14,10 +13,17 @@ import { _last } from './utils/array';
 import { ChangedPath } from './utils/changedPath';
 import { _exists, _missing } from './utils/generic';
 
-@Bean('selectionService')
 export class SelectionService extends BeanStub implements ISelectionService {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+    beanName: BeanName = 'selectionService';
+
+    private rowModel: IRowModel;
+    private paginationProxy: PaginationProxy;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.rowModel = beans.rowModel;
+        this.paginationProxy = beans.paginationProxy;
+    }
 
     private selectedNodes: Map<string, RowNode> = new Map();
     private lastRowNode: RowNode | null = null;

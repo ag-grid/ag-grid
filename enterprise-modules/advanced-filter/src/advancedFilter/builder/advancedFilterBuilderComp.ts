@@ -1,19 +1,12 @@
 import type {
     AdvancedFilterModel,
+    BeanCollection,
     ColumnAdvancedFilterModel,
     FilterManager,
     JoinAdvancedFilterModel,
     VirtualListDragItem,
 } from '@ag-grid-community/core';
-import {
-    Autowired,
-    Component,
-    RefPlaceholder,
-    TooltipFeature,
-    VirtualList,
-    _exists,
-    _setDisabled,
-} from '@ag-grid-community/core';
+import { Component, RefPlaceholder, TooltipFeature, VirtualList, _exists, _setDisabled } from '@ag-grid-community/core';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AdvancedFilterService } from '../advancedFilterService';
@@ -29,14 +22,21 @@ import type {
 import { AdvancedFilterBuilderEvents } from './iAdvancedFilterBuilder';
 
 export class AdvancedFilterBuilderComp extends Component {
+    private filterManager: FilterManager;
+    private advancedFilterService: AdvancedFilterService;
+    private advancedFilterExpressionService: AdvancedFilterExpressionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.filterManager = beans.filterManager;
+        this.advancedFilterService = beans.advancedFilterService;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+    }
+
     private readonly eList: HTMLElement = RefPlaceholder;
     private readonly eApplyFilterButton: HTMLElement = RefPlaceholder;
     private readonly eCancelFilterButton: HTMLElement = RefPlaceholder;
 
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('advancedFilterService') private advancedFilterService: AdvancedFilterService;
-    @Autowired('advancedFilterExpressionService')
-    private advancedFilterExpressionService: AdvancedFilterExpressionService;
     private virtualList: VirtualList<AdvancedFilterBuilderItemComp | AdvancedFilterBuilderItemAddComp>;
     private filterModel: AdvancedFilterModel;
     private stringifiedModel: string;

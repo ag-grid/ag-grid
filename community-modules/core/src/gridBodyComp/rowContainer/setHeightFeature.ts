@@ -1,10 +1,15 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import { Events } from '../../eventKeys';
 import type { RowContainerHeightService } from '../../rendering/rowContainerHeightService';
 
 export class SetHeightFeature extends BeanStub {
-    @Autowired('rowContainerHeightService') private maxDivHeightScaler: RowContainerHeightService;
+    private maxDivHeightScaler: RowContainerHeightService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.maxDivHeightScaler = beans.rowContainerHeightService;
+    }
 
     private eContainer: HTMLElement;
     private eViewport: HTMLElement | undefined;

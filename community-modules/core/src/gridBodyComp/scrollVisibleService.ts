@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { ScrollVisibilityChangedEvent } from '../events';
 import { Events } from '../events';
@@ -11,10 +11,17 @@ export interface SetScrollsVisibleParams {
     verticalScrollShowing: boolean;
 }
 
-@Bean('scrollVisibleService')
 export class ScrollVisibleService extends BeanStub {
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
-    @Autowired('columnAnimationService') public columnAnimationService: ColumnAnimationService;
+    beanName: BeanName = 'scrollVisibleService';
+
+    private ctrlsService: CtrlsService;
+    private columnAnimationService: ColumnAnimationService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.ctrlsService = beans.ctrlsService;
+        this.columnAnimationService = beans.columnAnimationService;
+    }
 
     private horizontalScrollShowing: boolean;
     private verticalScrollShowing: boolean;

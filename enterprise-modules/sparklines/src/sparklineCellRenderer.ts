@@ -1,19 +1,30 @@
-import type { ICellRenderer, ISparklineCellRendererParams, ResizeObserverService } from '@ag-grid-community/core';
-import { Autowired, Component, RefPlaceholder } from '@ag-grid-community/core';
+import type {
+    BeanCollection,
+    ICellRenderer,
+    ISparklineCellRendererParams,
+    ResizeObserverService,
+} from '@ag-grid-community/core';
+import { Component, RefPlaceholder } from '@ag-grid-community/core';
 
 import type { SparklineFactoryOptions } from './sparkline/agSparkline';
 import { AgSparkline } from './sparkline/agSparkline';
 import type { SparklineTooltipSingleton } from './tooltip/sparklineTooltipSingleton';
 
 export class SparklineCellRenderer extends Component implements ICellRenderer {
+    private resizeObserverService!: ResizeObserverService;
+    private sparklineTooltipSingleton!: SparklineTooltipSingleton;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.resizeObserverService = beans.resizeObserverService;
+        this.sparklineTooltipSingleton = beans.sparklineTooltipSingleton;
+    }
+
     private static TEMPLATE /* html */ = `<div class="ag-sparkline-wrapper">
             <span data-ref="eSparkline"></span>
         </div>`;
 
     private readonly eSparkline: HTMLElement = RefPlaceholder;
-
-    @Autowired('resizeObserverService') private resizeObserverService!: ResizeObserverService;
-    @Autowired('sparklineTooltipSingleton') private sparklineTooltipSingleton!: SparklineTooltipSingleton;
 
     private sparkline?: any;
 

@@ -6,15 +6,16 @@ import type {
     GridApi,
     GridOptions,
     GridParams,
+    IClientSideRowModel,
     IDetailCellRenderer,
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
+    IServerSideRowModel,
     WrappableInterface,
 } from '@ag-grid-community/core';
 import {
     BaseComponentWrapper,
     ComponentUtil,
-    CtrlsService,
     GridCoreCreator,
     ModuleRegistry,
     VanillaFrameworkOverrides,
@@ -107,7 +108,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
             });
 
             // because React is Async, we need to wait for the UI to be initialised before exposing the API's
-            const ctrlsService = context.getBean(CtrlsService.NAME) as CtrlsService;
+            const ctrlsService = context.getBean('ctrlsService');
             ctrlsService.whenReady(() => {
                 if (context.isDestroyed()) {
                     return;
@@ -126,7 +127,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
         // funcs in the order they were received, we know adding items here will be AFTER the grid has set columns
         // and data. this is because GridCoreCreator sets these between calling createUiCallback and acceptChangesCallback
         const acceptChangesCallback = (context: Context) => {
-            const ctrlsService = context.getBean(CtrlsService.NAME) as CtrlsService;
+            const ctrlsService = context.getBean('ctrlsService');
             ctrlsService.whenReady(() => {
                 whenReadyFuncs.current.forEach((f) => f());
                 whenReadyFuncs.current.length = 0;
@@ -248,8 +249,7 @@ class ReactFrameworkComponentWrapper
 
 // Define DetailCellRenderer and ReactFrameworkOverrides here to avoid circular dependency
 const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: any) => {
-    const { ctrlsFactory, context, gos, resizeObserverService, clientSideRowModel, serverSideRowModel } =
-        useContext(BeansContext);
+    const { ctrlsFactory, context, gos, resizeObserverService, rowModel } = useContext(BeansContext);
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [gridCssClasses, setGridCssClasses] = useState<CssClasses>(() => new CssClasses());
@@ -328,10 +328,10 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
                     // doing another update
                     const updateRowHeightFunc = () => {
                         props.node.setRowHeight(clientHeight);
-                        if (clientSideRowModel) {
-                            clientSideRowModel.onRowHeightChanged();
-                        } else if (serverSideRowModel) {
-                            serverSideRowModel.onRowHeightChanged();
+                        if (rowModel.getType() === 'clientSide') {
+                            (rowModel as unknown as IClientSideRowModel).onRowHeightChanged();
+                        } else if (rowModel.getType() === 'serverSide') {
+                            (rowModel as unknown as IServerSideRowModel).onRowHeightChanged();
                         }
                     };
                     setTimeout(updateRowHeightFunc, 0);

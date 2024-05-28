@@ -1,11 +1,27 @@
-import type { Column, ColumnModel, GridApi, RowNode, ValueService } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, _includes } from '@ag-grid-community/core';
+import type {
+    BeanCollection,
+    BeanName,
+    Column,
+    ColumnModel,
+    GridApi,
+    RowNode,
+    ValueService,
+} from '@ag-grid-community/core';
+import { BeanStub, _includes } from '@ag-grid-community/core';
 
-@Bean('chartCrossFilterService')
 export class ChartCrossFilterService extends BeanStub {
-    @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('valueService') private readonly valueService: ValueService;
+    beanName: BeanName = 'chartCrossFilterService';
+
+    private gridApi: GridApi;
+    private columnModel: ColumnModel;
+    private valueService: ValueService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.gridApi = beans.gridApi;
+        this.columnModel = beans.columnModel;
+        this.valueService = beans.valueService;
+    }
 
     public filter(event: any, reset: boolean = false): void {
         const filterModel = this.gridApi.getFilterModel();

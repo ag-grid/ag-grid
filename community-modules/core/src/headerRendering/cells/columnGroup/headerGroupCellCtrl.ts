@@ -1,3 +1,5 @@
+import type { BeanCollection } from '@ag-grid-community/core';
+
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
 import { KeyCode } from '../../../constants/keyCode';
@@ -10,7 +12,6 @@ import type { ColumnEventType, ColumnHeaderMouseLeaveEvent, ColumnHeaderMouseOve
 import { Events } from '../../../events';
 import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import type { HeaderColumnId } from '../../../interfaces/iHeaderColumn';
-import type { Beans } from '../../../rendering/beans';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { _last, _removeFromArray } from '../../../utils/array';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
@@ -40,7 +41,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
     private displayName: string | null;
     private tooltipFeature: TooltipFeature | undefined;
 
-    constructor(columnGroup: ColumnGroup, beans: Beans, parentRowCtrl: HeaderRowCtrl) {
+    constructor(columnGroup: ColumnGroup, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
         super(columnGroup, beans, parentRowCtrl);
         this.column = columnGroup;
     }

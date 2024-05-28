@@ -1,14 +1,14 @@
 import type {
     AsyncTransactionsFlushed,
+    BeanCollection,
+    BeanName,
     IServerSideTransactionManager,
-    RowNodeBlockLoader,
-    RowRenderer,
     ServerSideTransaction,
     ServerSideTransactionResult,
     ValueCache,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, Events, ServerSideTransactionResultStatus } from '@ag-grid-community/core';
+import { BeanStub, Events, ServerSideTransactionResultStatus } from '@ag-grid-community/core';
 
 import type { ServerSideRowModel } from './serverSideRowModel';
 import type { ServerSideSelectionService } from './services/serverSideSelectionService';
@@ -18,13 +18,19 @@ interface AsyncTransactionWrapper {
     callback?: (result: ServerSideTransactionResult) => void;
 }
 
-@Bean('ssrmTransactionManager')
 export class TransactionManager extends BeanStub implements IServerSideTransactionManager {
-    @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
-    @Autowired('valueCache') private valueCache: ValueCache;
-    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('selectionService') private selectionService: ServerSideSelectionService;
+    beanName: BeanName = 'ssrmTransactionManager';
+
+    private valueCache: ValueCache;
+    private serverSideRowModel: ServerSideRowModel;
+    private selectionService: ServerSideSelectionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.valueCache = beans.valueCache;
+        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+        this.selectionService = beans.selectionService as ServerSideSelectionService;
+    }
 
     private asyncTransactionsTimeout: number | undefined;
     private asyncTransactions: AsyncTransactionWrapper[] = [];

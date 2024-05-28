@@ -1,6 +1,7 @@
 import type {
     AggregationStatusPanelAggFunc,
     AggregationStatusPanelParams,
+    BeanCollection,
     CellNavigationService,
     CellPositionUtils,
     IRangeService,
@@ -11,10 +12,8 @@ import type {
     ValueService,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
     Component,
     Events,
-    Optional,
     RefPlaceholder,
     _exists,
     _formatNumberTwoDecimalPlacesAndCommas,
@@ -25,6 +24,23 @@ import {
 import { AgNameValue } from './agNameValue';
 
 export class AggregationComp extends Component implements IStatusPanelComp {
+    private valueService: ValueService;
+    private cellNavigationService: CellNavigationService;
+    private rowModel: IRowModel;
+    private cellPositionUtils: CellPositionUtils;
+    private rowPositionUtils: RowPositionUtils;
+    private rangeService?: IRangeService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.valueService = beans.valueService;
+        this.cellNavigationService = beans.cellNavigationService;
+        this.rowModel = beans.rowModel;
+        this.cellPositionUtils = beans.cellPositionUtils;
+        this.rowPositionUtils = beans.rowPositionUtils;
+        this.rangeService = beans.rangeService;
+    }
+
     private static TEMPLATE /* html */ = `<div class="ag-status-panel ag-status-panel-aggregations">
             <ag-name-value data-ref="avgAggregationComp"></ag-name-value>
             <ag-name-value data-ref="countAggregationComp"></ag-name-value>
@@ -32,13 +48,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
             <ag-name-value data-ref="maxAggregationComp"></ag-name-value>
             <ag-name-value data-ref="sumAggregationComp"></ag-name-value>
         </div>`;
-
-    @Optional('rangeService') private rangeService?: IRangeService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
-    @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
 
     private readonly sumAggregationComp: AgNameValue = RefPlaceholder;
     private readonly countAggregationComp: AgNameValue = RefPlaceholder;

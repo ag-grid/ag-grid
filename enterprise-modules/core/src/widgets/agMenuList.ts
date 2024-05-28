@@ -1,13 +1,6 @@
-import type {
-    BeanStub,
-    FocusService,
-    IMenuActionParams,
-    MenuItemDef,
-    WithoutGridCommon,
-} from '@ag-grid-community/core';
+import type { BeanStub, IMenuActionParams, MenuItemDef, WithoutGridCommon } from '@ag-grid-community/core';
 import {
     AgPromise,
-    Autowired,
     KeyCode,
     TabGuardComp,
     _last,
@@ -19,8 +12,6 @@ import type { CloseMenuEvent, MenuItemActivatedEvent } from './agMenuItemCompone
 import { AgMenuItemComponent } from './agMenuItemComponent';
 
 export class AgMenuList extends TabGuardComp {
-    @Autowired('focusService') private readonly focusService: FocusService;
-
     private menuItems: AgMenuItemComponent[] = [];
     private activeMenuItem: AgMenuItemComponent | null;
     private params: WithoutGridCommon<IMenuActionParams>;

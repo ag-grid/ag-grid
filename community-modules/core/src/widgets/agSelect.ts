@@ -65,7 +65,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
     }
 
     private createListComponent(): void {
-        this.listComponent = this.createBean(new AgList('select', true));
+        this.listComponent = this.createBean(new AgList<TValue>('select', true));
         this.listComponent.setParentComponent(this);
 
         const eListAriaEl = this.listComponent.getAriaElement();
@@ -181,8 +181,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
 
     public override destroy(): void {
         if (this.listComponent) {
-            this.destroyBean(this.listComponent);
-            this.listComponent = undefined;
+            this.listComponent = this.destroyBean(this.listComponent);
         }
 
         super.destroy();

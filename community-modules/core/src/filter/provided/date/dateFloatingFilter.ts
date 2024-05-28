@@ -1,5 +1,5 @@
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import { Autowired } from '../../../context/context';
+import type { BeanCollection } from '../../../context/context';
 import type { FilterChangedEvent } from '../../../events';
 import type { IDateParams } from '../../../interfaces/dateComponent';
 import type { WithoutGridCommon } from '../../../interfaces/iCommon';
@@ -17,7 +17,12 @@ import type { DateFilterModel, DateFilterParams } from './dateFilter';
 import { DateFilter, DateFilterModelFormatter } from './dateFilter';
 
 export class DateFloatingFilter extends SimpleFloatingFilter {
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
+    private userComponentFactory: UserComponentFactory;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.userComponentFactory = beans.userComponentFactory;
+    }
 
     private readonly eReadOnlyText: AgInputTextField = RefPlaceholder;
     private readonly eDateWrapper: HTMLInputElement = RefPlaceholder;

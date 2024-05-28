@@ -1,28 +1,37 @@
 import type {
-    Beans,
+    BeanCollection,
+    BeanName,
     Column,
-    ColumnModel,
     IRowNode,
     NumberSequence,
     RowBounds,
     ShowRowGroupColsService,
     ValueService,
 } from '@ag-grid-community/core';
-import { Autowired, Bean, BeanStub, RowNode, _doOnce, _exists, _missing } from '@ag-grid-community/core';
+import { BeanStub, RowNode, _doOnce, _exists, _missing } from '@ag-grid-community/core';
 
 import type { NodeManager } from '../nodeManager';
 import type { ServerSideExpansionService } from '../services/serverSideExpansionService';
 
 export const GROUP_MISSING_KEY_ID: 'ag-Grid-MissingKey' = 'ag-Grid-MissingKey';
 
-@Bean('ssrmBlockUtils')
 export class BlockUtils extends BeanStub {
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
-    @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
-    @Autowired('beans') private beans: Beans;
-    @Autowired('expansionService') private readonly expansionService: ServerSideExpansionService;
+    beanName: BeanName = 'ssrmBlockUtils';
+
+    private valueService: ValueService;
+    private showRowGroupColsService: ShowRowGroupColsService;
+    private nodeManager: NodeManager;
+    private beans: BeanCollection;
+    private expansionService: ServerSideExpansionService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.valueService = beans.valueService;
+        this.showRowGroupColsService = beans.showRowGroupColsService;
+        this.nodeManager = beans.ssrmNodeManager;
+        this.beans = beans;
+        this.expansionService = beans.expansionService;
+    }
 
     public createRowNode(params: {
         group: boolean;

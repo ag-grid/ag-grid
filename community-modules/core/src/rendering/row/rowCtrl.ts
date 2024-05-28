@@ -1,5 +1,6 @@
 import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
 import type { CellPosition } from '../../entities/cellPositionUtils';
 import type { Column, ColumnInstanceId, ColumnPinnedType } from '../../entities/column';
 import type { RowClassParams, RowStyle } from '../../entities/gridOptions';
@@ -21,10 +22,12 @@ import { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCt
 import type { GridOptionsService } from '../../gridOptionsService';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ProcessRowParams } from '../../interfaces/iCallbackParams';
+import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import { RowHighlightPosition } from '../../interfaces/iRowNode';
+import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
 import { ModuleNames } from '../../modules/moduleNames';
 import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { _setAriaExpanded, _setAriaRowIndex, _setAriaSelected } from '../../utils/aria';
@@ -35,7 +38,6 @@ import { _exists, _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import type { ITooltipFeatureCtrl } from '../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../widgets/tooltipFeature';
-import type { Beans } from '../beans';
 import { CellCtrl } from '../cell/cellCtrl';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { RowCssClassCalculatorParams } from './rowCssClassCalculator';
@@ -84,7 +86,7 @@ export class RowCtrl extends BeanStub {
     private instanceId: RowCtrlInstanceId;
 
     private readonly rowNode: RowNode;
-    private readonly beans: Beans;
+    private readonly beans: BeanCollection;
     // The RowCtrl is never Wired, so it needs its own access
     // to the gridOptionsService to be able to call `addManagedPropertyListener`
     protected readonly gos: GridOptionsService;
@@ -149,7 +151,7 @@ export class RowCtrl extends BeanStub {
 
     constructor(
         rowNode: RowNode,
-        beans: Beans,
+        beans: BeanCollection,
         animateIn: boolean,
         useAnimationFrameForCreate: boolean,
         printLayout: boolean
@@ -779,8 +781,7 @@ export class RowCtrl extends BeanStub {
                 });
                 return;
             }
-            this.destroyBeans(this.rowDragComps, this.beans.context);
-            this.rowDragComps = [];
+            this.rowDragComps = this.destroyBeans(this.rowDragComps, this.beans.context);
         });
 
         this.addListenersForCellComps();
@@ -1167,10 +1168,10 @@ export class RowCtrl extends BeanStub {
                 // doing another update
                 const updateRowHeightFunc = () => {
                     this.rowNode.setRowHeight(clientHeight);
-                    if (this.beans.clientSideRowModel) {
-                        this.beans.clientSideRowModel.onRowHeightChanged();
-                    } else if (this.beans.serverSideRowModel) {
-                        this.beans.serverSideRowModel.onRowHeightChanged();
+                    if (this.beans.rowModel.getType() === 'clientSide') {
+                        (this.beans.rowModel as IClientSideRowModel).onRowHeightChanged();
+                    } else if (this.beans.rowModel.getType() === 'serverSide') {
+                        (this.beans.rowModel as IServerSideRowModel).onRowHeightChanged();
                     }
                 };
                 window.setTimeout(updateRowHeightFunc, 0);

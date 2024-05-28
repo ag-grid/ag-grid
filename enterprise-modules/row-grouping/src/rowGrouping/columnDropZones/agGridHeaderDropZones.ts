@@ -1,5 +1,5 @@
-import type { AgComponentSelector, ColumnModel, FuncColsService } from '@ag-grid-community/core';
-import { Autowired, Component, Events, _setAriaRole } from '@ag-grid-community/core';
+import type { AgComponentSelector, BeanCollection, ColumnModel, FuncColsService } from '@ag-grid-community/core';
+import { Component, Events, _setAriaRole } from '@ag-grid-community/core';
 
 import { PivotDropZonePanel } from './pivotDropZonePanel';
 import { RowGroupDropZonePanel } from './rowGroupDropZonePanel';
@@ -7,8 +7,14 @@ import { RowGroupDropZonePanel } from './rowGroupDropZonePanel';
 export class AgGridHeaderDropZones extends Component {
     static readonly selector: AgComponentSelector = 'AG-GRID-HEADER-DROP-ZONES';
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+    }
 
     private rowGroupComp: Component;
     private pivotComp: Component;

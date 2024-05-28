@@ -1,5 +1,5 @@
 import { BeanStub } from './context/beanStub';
-import { Autowired, Bean } from './context/context';
+import type { BeanCollection, BeanName } from './context/context';
 import { Events } from './eventKeys';
 import type { CssVariablesChanged } from './events';
 import type { WithoutGridCommon } from './interfaces/iCommon';
@@ -34,10 +34,17 @@ const CHART_MENU_PANEL_WIDTH: Variable = {
     // defaultValue: 260,
 };
 
-@Bean('environment')
 export class Environment extends BeanStub {
-    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
-    @Autowired('eGridDiv') private eGridDiv: HTMLElement;
+    beanName: BeanName = 'environment';
+
+    private resizeObserverService: ResizeObserverService;
+    private eGridDiv: HTMLElement;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.resizeObserverService = beans.resizeObserverService;
+        this.eGridDiv = beans.eGridDiv;
+    }
 
     private sizeEls = new Map<Variable, HTMLElement>();
     private lastKnownValues = new Map<Variable, number>();

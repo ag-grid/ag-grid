@@ -1,3 +1,5 @@
+import type { BeanCollection } from '@ag-grid-community/core';
+
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
 import { KeyCode } from '../../../constants/keyCode';
@@ -8,7 +10,6 @@ import { Column } from '../../../entities/column';
 import { Events } from '../../../eventKeys';
 import type { ColumnHeaderMouseLeaveEvent, ColumnHeaderMouseOverEvent } from '../../../events';
 import type { WithoutGridCommon } from '../../../interfaces/iCommon';
-import type { Beans } from '../../../rendering/beans';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { ColumnSortState } from '../../../utils/aria';
 import { _getAriaSortState } from '../../../utils/aria';
@@ -53,7 +54,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     private ariaDescriptionProperties = new Map<HeaderAriaDescriptionKey, string>();
     private tooltipFeature: TooltipFeature | undefined;
 
-    constructor(column: Column, beans: Beans, parentRowCtrl: HeaderRowCtrl) {
+    constructor(column: Column, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
         super(column, beans, parentRowCtrl);
         this.column = column;
     }

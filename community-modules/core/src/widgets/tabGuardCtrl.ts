@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { FocusService } from '../focusService';
 import { ManagedFocusFeature } from './managedFocusFeature';
 
@@ -14,7 +14,12 @@ export interface ITabGuard {
 }
 
 export class TabGuardCtrl extends BeanStub {
-    @Autowired('focusService') private readonly focusService: FocusService;
+    private focusService: FocusService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.focusService = beans.focusService;
+    }
 
     private readonly comp: ITabGuard;
     private readonly eTopGuard: HTMLElement;

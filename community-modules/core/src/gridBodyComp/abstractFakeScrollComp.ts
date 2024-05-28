@@ -1,5 +1,4 @@
-import { Autowired } from '../context/context';
-import type { CtrlsService } from '../ctrlsService';
+import type { BeanCollection } from '../context/context';
 import { Events } from '../eventKeys';
 import type { BodyScrollEvent } from '../events';
 import type { AnimationFrameService } from '../misc/animationFrameService';
@@ -7,14 +6,17 @@ import { _isIOSUserAgent, _isInvisibleScrollbar, _isMacOsUserAgent } from '../ut
 import { _isVisible } from '../utils/dom';
 import { _waitUntil } from '../utils/function';
 import { Component, RefPlaceholder } from '../widgets/component';
-import type { ScrollVisibleService } from './scrollVisibleService';
 
 export abstract class AbstractFakeScrollComp extends Component {
+    private animationFrameService: AnimationFrameService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.animationFrameService = beans.animationFrameService;
+    }
+
     protected readonly eViewport: HTMLElement = RefPlaceholder;
     protected readonly eContainer: HTMLElement = RefPlaceholder;
-    @Autowired('scrollVisibleService') protected readonly scrollVisibleService: ScrollVisibleService;
-    @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
 
     protected invisibleScrollbar: boolean;
     protected hideTimeout: number | null = null;

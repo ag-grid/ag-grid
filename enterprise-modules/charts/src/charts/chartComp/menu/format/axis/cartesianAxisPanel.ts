@@ -1,8 +1,7 @@
-import type { AgSelectParams, ListOption } from '@ag-grid-community/core';
+import type { AgSelectParams, BeanCollection, ListOption } from '@ag-grid-community/core';
 import {
     AgCheckbox,
     AgSelect,
-    Autowired,
     Component,
     Events,
     RefPlaceholder,
@@ -46,8 +45,12 @@ export class CartesianAxisPanel extends Component {
     private readonly axisPositionSelect: AgSelect = RefPlaceholder;
     private readonly axisTimeFormatSelect: AgSelect = RefPlaceholder;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
 
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.chartTranslationService = beans.chartTranslationService;
+    }
     private readonly chartOptionsSeriesProxy: ChartOptionsProxy;
 
     private activePanels: Component[] = [];

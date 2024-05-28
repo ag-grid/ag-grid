@@ -2,6 +2,8 @@ import type {
     AgEvent,
     AgGridEvent,
     BaseBean,
+    BeanCollection,
+    BeanName,
     Column,
     ColumnMenuTab,
     ColumnMenuVisibleChangedEvent,
@@ -20,8 +22,6 @@ import type {
 } from '@ag-grid-community/core';
 import {
     AgPromise,
-    Autowired,
-    Bean,
     BeanStub,
     Component,
     Events,
@@ -50,15 +50,27 @@ interface EnterpriseColumnMenu extends BaseBean {
     showTabBasedOnPreviousSelection?(): void;
 }
 
-@Bean('enterpriseMenuFactory')
 export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
-    @Autowired('popupService') private readonly popupService: PopupService;
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
-    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('menuUtils') private readonly menuUtils: MenuUtils;
-    @Autowired('menuService') private readonly menuService: MenuService;
+    beanName: BeanName = 'enterpriseMenuFactory';
+
+    private popupService: PopupService;
+    private focusService: FocusService;
+    private ctrlsService: CtrlsService;
+    private visibleColsService: VisibleColsService;
+    private filterManager: FilterManager;
+    private menuUtils: MenuUtils;
+    private menuService: MenuService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.popupService = beans.popupService;
+        this.focusService = beans.focusService;
+        this.ctrlsService = beans.ctrlsService;
+        this.visibleColsService = beans.visibleColsService;
+        this.filterManager = beans.filterManager;
+        this.menuUtils = beans.menuUtils;
+        this.menuService = beans.menuService;
+    }
 
     private lastSelectedTab: string;
     private activeMenu: EnterpriseColumnMenu | null;
@@ -319,6 +331,19 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 }
 
 class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
+    private filterManager: FilterManager;
+    private columnChooserFactory: ColumnChooserFactory;
+    private columnMenuFactory: ColumnMenuFactory;
+    private menuUtils: MenuUtils;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.filterManager = beans.filterManager;
+        this.columnChooserFactory = beans.columnChooserFactory;
+        this.columnMenuFactory = beans.columnMenuFactory;
+        this.menuUtils = beans.menuUtils;
+    }
+
     public static EVENT_TAB_SELECTED = 'tabSelected';
     public static TAB_FILTER = 'filterMenuTab' as const;
     public static TAB_GENERAL = 'generalMenuTab' as const;
@@ -328,11 +353,6 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
         TabbedColumnMenu.TAB_FILTER,
         TabbedColumnMenu.TAB_COLUMNS,
     ];
-
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('columnChooserFactory') private readonly columnChooserFactory: ColumnChooserFactory;
-    @Autowired('columnMenuFactory') private readonly columnMenuFactory: ColumnMenuFactory;
-    @Autowired('menuUtils') private readonly menuUtils: MenuUtils;
 
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: (popupParams?: PopupEventParams) => void;
@@ -555,9 +575,16 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
 }
 
 class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
-    @Autowired('columnMenuFactory') private readonly columnMenuFactory: ColumnMenuFactory;
-    @Autowired('menuUtils') private readonly menuUtils: MenuUtils;
-    @Autowired('focusService') private readonly focusService: FocusService;
+    private columnMenuFactory: ColumnMenuFactory;
+    private menuUtils: MenuUtils;
+    private focusService: FocusService;
+
+    public wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.columnMenuFactory = beans.columnMenuFactory;
+        this.menuUtils = beans.menuUtils;
+        this.focusService = beans.focusService;
+    }
 
     private readonly eColumnMenu: HTMLElement = RefPlaceholder;
 

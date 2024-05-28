@@ -1,12 +1,16 @@
-import type { AgInputTextFieldParams } from '@ag-grid-community/core';
-import { Autowired } from '@ag-grid-community/core';
+import type { AgInputTextFieldParams, BeanCollection } from '@ag-grid-community/core';
 
 import type { AgSliderParams } from '../../../../../widgets/agSlider';
 import type { ChartMenuService } from '../../../services/chartMenuService';
 import { TitlePanel } from './titlePanel';
 
 export class ChartTitlePanel extends TitlePanel {
-    @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;
+    private chartMenuService: ChartMenuService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.chartMenuService = beans.chartMenuService;
+    }
 
     private titlePlaceholder: string;
 

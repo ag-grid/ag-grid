@@ -1,4 +1,5 @@
 import type { UserCompDetails } from '../../components/framework/userComponentFactory';
+import type { BeanCollection } from '../../context/context';
 import type { CellStyle } from '../../entities/colDef';
 import type { Column } from '../../entities/column';
 import type { RowNode } from '../../entities/rowNode';
@@ -10,7 +11,6 @@ import { _missing } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import { Component } from '../../widgets/component';
 import type { TooltipParentComp } from '../../widgets/tooltipStateManager';
-import type { Beans } from './../beans';
 import { PopupEditorWrapper } from './../cellEditors/popupEditorWrapper';
 import type { ICellRendererComp } from './../cellRenderers/iCellRenderer';
 import type { CheckboxSelectionComponent } from './../checkboxSelectionComponent';
@@ -23,7 +23,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private eCellWrapper: HTMLElement | undefined;
     private eCellValue: HTMLElement | undefined;
 
-    private beans: Beans;
+    private beans: BeanCollection;
     private column: Column;
     private rowNode: RowNode;
     private eRow: HTMLElement;
@@ -62,7 +62,13 @@ export class CellComp extends Component implements TooltipParentComp {
     private rendererVersion = 0;
     private editorVersion = 0;
 
-    constructor(beans: Beans, cellCtrl: CellCtrl, printLayout: boolean, eRow: HTMLElement, editingRow: boolean) {
+    constructor(
+        beans: BeanCollection,
+        cellCtrl: CellCtrl,
+        printLayout: boolean,
+        eRow: HTMLElement,
+        editingRow: boolean
+    ) {
         super();
         this.beans = beans;
         this.column = cellCtrl.getColumn();

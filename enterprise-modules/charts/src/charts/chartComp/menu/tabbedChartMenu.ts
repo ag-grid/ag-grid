@@ -1,5 +1,5 @@
-import type { ChartToolPanelMenuOptions, TabbedItem } from '@ag-grid-community/core';
-import { AgPromise, Autowired, Component, TabbedLayout } from '@ag-grid-community/core';
+import type { BeanCollection, ChartToolPanelMenuOptions, TabbedItem } from '@ag-grid-community/core';
+import { AgPromise, Component, TabbedLayout } from '@ag-grid-community/core';
 
 import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
 import type { ChartMenuContext } from './chartMenuContext';
@@ -8,6 +8,13 @@ import { FormatPanel } from './format/formatPanel';
 import { ChartSettingsPanel } from './settings/chartSettingsPanel';
 
 export class TabbedChartMenu extends Component {
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.chartTranslationService = beans.chartTranslationService;
+    }
+
     public static EVENT_CLOSED = 'closed';
     public static TAB_DATA = 'data';
     public static TAB_FORMAT = 'format';
@@ -15,8 +22,6 @@ export class TabbedChartMenu extends Component {
     private tabbedLayout: TabbedLayout;
     private tabs: TabbedItem[] = [];
     private eventSource?: HTMLElement;
-
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     constructor(
         private readonly panels: ChartToolPanelMenuOptions[],

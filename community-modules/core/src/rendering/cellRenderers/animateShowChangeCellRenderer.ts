@@ -1,4 +1,4 @@
-import { Autowired } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { FilterManager } from '../../filter/filterManager';
 import { _clearElement } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
@@ -9,14 +9,19 @@ const ARROW_UP = '\u2191';
 const ARROW_DOWN = '\u2193';
 
 export class AnimateShowChangeCellRenderer extends Component implements ICellRenderer {
+    private filterManager: FilterManager;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.filterManager = beans.filterManager;
+    }
+
     private lastValue: number;
 
     private eValue: HTMLElement;
     private eDelta: HTMLElement;
 
     private refreshCount = 0;
-
-    @Autowired('filterManager') private filterManager: FilterManager;
 
     constructor() {
         super();

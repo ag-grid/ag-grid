@@ -1,12 +1,11 @@
-import type { AgComponentSelector, FilterManager, ITooltipParams, WithoutGridCommon } from '@ag-grid-community/core';
-import {
-    Autowired,
-    Component,
-    RefPlaceholder,
-    _createIconNoSpan,
-    _makeNull,
-    _setDisabled,
+import type {
+    AgComponentSelector,
+    BeanCollection,
+    FilterManager,
+    ITooltipParams,
+    WithoutGridCommon,
 } from '@ag-grid-community/core';
+import { Component, RefPlaceholder, _createIconNoSpan, _makeNull, _setDisabled } from '@ag-grid-community/core';
 
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
@@ -23,6 +22,17 @@ import type { FilterExpressionParser } from './filterExpressionParser';
 import type { AutocompleteUpdate } from './filterExpressionUtils';
 
 export class AdvancedFilterComp extends Component {
+    private advancedFilterService: AdvancedFilterService;
+    private advancedFilterExpressionService: AdvancedFilterExpressionService;
+    private filterManager: FilterManager;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+        this.advancedFilterService = beans.advancedFilterService;
+        this.filterManager = beans.filterManager;
+    }
+
     static readonly selector: AgComponentSelector = 'AG-ADVANCED-FILTER';
 
     private readonly eAutocomplete: AgAutocomplete = RefPlaceholder;
@@ -30,10 +40,6 @@ export class AdvancedFilterComp extends Component {
     private readonly eBuilderFilterButton: HTMLElement = RefPlaceholder;
     private readonly eBuilderFilterButtonIcon: HTMLElement = RefPlaceholder;
     private readonly eBuilderFilterButtonLabel: HTMLElement = RefPlaceholder;
-    @Autowired('advancedFilterService') private advancedFilterService: AdvancedFilterService;
-    @Autowired('advancedFilterExpressionService')
-    private advancedFilterExpressionService: AdvancedFilterExpressionService;
-    @Autowired('filterManager') private filterManager: FilterManager;
 
     private expressionParser: FilterExpressionParser | null = null;
     private isApplyDisabled = true;

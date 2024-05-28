@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { DragStartedEvent, DragStoppedEvent } from '../events';
 import { Events } from '../events';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
@@ -12,9 +12,15 @@ import { _areEventsNear } from '../utils/mouse';
 
 /** Adds drag listening onto an element. In AG Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
-@Bean('dragService')
 export class DragService extends BeanStub {
-    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
+    beanName: BeanName = 'dragService';
+
+    private mouseEventService: MouseEventService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.mouseEventService = beans.mouseEventService;
+    }
 
     private currentDragParams: DragListenerParams | null;
     private dragging: boolean;

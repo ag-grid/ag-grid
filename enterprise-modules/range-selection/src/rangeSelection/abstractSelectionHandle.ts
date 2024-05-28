@@ -1,36 +1,37 @@
 import type {
+    BeanCollection,
     CellCtrl,
-    CellNavigationService,
     CellPosition,
     CellPositionUtils,
     CellRange,
-    ColumnModel,
     CtrlsService,
     DragService,
     ISelectionHandle,
     MouseEventService,
-    NavigationService,
     RowPosition,
     RowPositionUtils,
-    RowRenderer,
-    VisibleColsService,
 } from '@ag-grid-community/core';
-import { Autowired, Component, SelectionHandleType, _isVisible, _last, _setDisplayed } from '@ag-grid-community/core';
+import { Component, SelectionHandleType, _isVisible, _last, _setDisplayed } from '@ag-grid-community/core';
 
 import type { RangeService } from './rangeService';
 
 export abstract class AbstractSelectionHandle extends Component implements ISelectionHandle {
-    @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
-    @Autowired('dragService') protected dragService: DragService;
-    @Autowired('rangeService') protected rangeService: RangeService;
-    @Autowired('mouseEventService') protected mouseEventService: MouseEventService;
-    @Autowired('columnModel') protected columnModel: ColumnModel;
-    @Autowired('visibleColsService') protected visibleColsService: VisibleColsService;
-    @Autowired('cellNavigationService') protected cellNavigationService: CellNavigationService;
-    @Autowired('navigationService') protected navigationService: NavigationService;
-    @Autowired('rowPositionUtils') protected rowPositionUtils: RowPositionUtils;
-    @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
-    @Autowired('ctrlsService') protected ctrlsService: CtrlsService;
+    protected dragService: DragService;
+    protected rangeService: RangeService;
+    protected mouseEventService: MouseEventService;
+    protected rowPositionUtils: RowPositionUtils;
+    protected cellPositionUtils: CellPositionUtils;
+    protected ctrlsService: CtrlsService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.dragService = beans.dragService;
+        this.rangeService = beans.rangeService as RangeService;
+        this.mouseEventService = beans.mouseEventService;
+        this.rowPositionUtils = beans.rowPositionUtils;
+        this.cellPositionUtils = beans.cellPositionUtils;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private cellCtrl: CellCtrl;
     private cellRange: CellRange;

@@ -1,6 +1,7 @@
 import type {
     AgEvent,
     AgPromise,
+    BeanCollection,
     Component,
     IComponent,
     IMenuActionParams,
@@ -12,7 +13,6 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
     BeanStub,
     KeyCode,
     TooltipFeature,
@@ -44,8 +44,14 @@ interface AgMenuItemComponentParams {
 }
 
 export class AgMenuItemComponent extends BeanStub {
-    @Autowired('popupService') private readonly popupService: PopupService;
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
+    private popupService: PopupService;
+    private userComponentFactory: UserComponentFactory;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.popupService = beans.popupService;
+        this.userComponentFactory = beans.userComponentFactory;
+    }
 
     public static EVENT_CLOSE_MENU = 'closeMenu';
     public static EVENT_MENU_ITEM_ACTIVATED = 'menuItemActivated';

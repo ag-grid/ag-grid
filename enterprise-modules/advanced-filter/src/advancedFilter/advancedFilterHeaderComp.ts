@@ -1,6 +1,5 @@
-import type { ColumnModel, FocusService, HeaderNavigationService } from '@ag-grid-community/core';
+import type { BeanCollection, ColumnModel, FocusService, HeaderNavigationService } from '@ag-grid-community/core';
 import {
-    Autowired,
     Component,
     Events,
     KeyCode,
@@ -15,9 +14,16 @@ import {
 import { AdvancedFilterComp } from './advancedFilterComp';
 
 export class AdvancedFilterHeaderComp extends Component {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
+    private columnModel: ColumnModel;
+    private focusService: FocusService;
+    private headerNavigationService: HeaderNavigationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.columnModel = beans.columnModel;
+        this.focusService = beans.focusService;
+        this.headerNavigationService = beans.headerNavigationService;
+    }
 
     private eAdvancedFilter: AdvancedFilterComp | undefined;
     private height: number;

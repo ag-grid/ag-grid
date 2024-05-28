@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     FilterManager,
     FuncColsService,
     IRowModel,
@@ -9,7 +10,7 @@ import type {
     RowNode,
     SelectionEventSourceType,
 } from '@ag-grid-community/core';
-import { Autowired, BeanStub, Events } from '@ag-grid-community/core';
+import { BeanStub, Events } from '@ag-grid-community/core';
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
@@ -19,10 +20,18 @@ interface SelectionState {
 }
 
 export class GroupSelectsChildrenStrategy extends BeanStub implements ISelectionStrategy {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('selectionService') private selectionService: ISelectionService;
+    private rowModel: IRowModel;
+    private funcColsService: FuncColsService;
+    private filterManager: FilterManager;
+    private selectionService: ISelectionService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.rowModel = beans.rowModel;
+        this.funcColsService = beans.funcColsService;
+        this.filterManager = beans.filterManager;
+        this.selectionService = beans.selectionService;
+    }
 
     private selectedState: SelectionState = { selectAllChildren: false, toggledNodes: new Map() };
     private lastSelected: RowNode | null = null;

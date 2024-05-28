@@ -1,7 +1,7 @@
 import type { ColumnModel } from './columns/columnModel';
 import { convertSourceType } from './columns/columnModel';
 import { BeanStub } from './context/beanStub';
-import { Autowired, Bean } from './context/context';
+import type { BeanCollection, BeanName } from './context/context';
 import type { CtrlsService } from './ctrlsService';
 import type { ColDef, ColGroupDef } from './entities/colDef';
 import { Events } from './eventKeys';
@@ -13,11 +13,19 @@ import { Logger } from './logger';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 
-@Bean('syncService')
 export class SyncService extends BeanStub {
-    @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('rowModel') private readonly rowModel: IRowModel;
+    beanName: BeanName = 'syncService';
+
+    private ctrlsService: CtrlsService;
+    private columnModel: ColumnModel;
+    private rowModel: IRowModel;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.ctrlsService = beans.ctrlsService;
+        this.columnModel = beans.columnModel;
+        this.rowModel = beans.rowModel;
+    }
 
     private waitingForColumns: boolean = false;
 

@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import { Bean } from '../context/context';
+import type { BeanName } from '../context/context';
 import type { Column } from './column';
 import type { RowPosition } from './rowPositionUtils';
 
@@ -9,8 +9,9 @@ export interface CellPosition extends RowPosition {
     column: Column;
 }
 
-@Bean('cellPositionUtils')
 export class CellPositionUtils extends BeanStub {
+    beanName: BeanName = 'cellPositionUtils';
+
     public createId(cellPosition: CellPosition): string {
         const { rowIndex, rowPinned, column } = cellPosition;
         return this.createIdFromValues({ rowIndex, column, rowPinned });

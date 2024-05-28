@@ -1,7 +1,7 @@
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
 import { BeanStub } from '../../../context/beanStub';
-import { Autowired } from '../../../context/context';
+import type { BeanCollection } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
 import type { DragAndDropService, DragSource } from '../../../dragAndDrop/dragAndDropService';
 import type { ColumnPinnedType } from '../../../entities/column';
@@ -16,7 +16,6 @@ import type { BrandedType } from '../../../interfaces/brandedType';
 import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import type { IHeaderColumn } from '../../../interfaces/iHeaderColumn';
 import type { MenuService } from '../../../misc/menuService';
-import type { Beans } from '../../../rendering/beans';
 import { _setAriaColIndex } from '../../../utils/aria';
 import { _getInnerWidth } from '../../../utils/dom';
 import { _isUserSuppressingHeaderKeyboardEvent } from '../../../utils/keyboard';
@@ -43,14 +42,24 @@ export abstract class AbstractHeaderCellCtrl<
 > extends BeanStub {
     public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
 
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
-    @Autowired('focusService') protected readonly focusService: FocusService;
-    @Autowired('userComponentFactory') protected readonly userComponentFactory: UserComponentFactory;
-    @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
-    @Autowired('dragAndDropService') protected readonly dragAndDropService: DragAndDropService;
-    @Autowired('menuService') protected readonly menuService: MenuService;
+    private pinnedWidthService: PinnedWidthService;
+    protected focusService: FocusService;
+    protected userComponentFactory: UserComponentFactory;
+    protected ctrlsService: CtrlsService;
+    protected dragAndDropService: DragAndDropService;
+    protected menuService: MenuService;
 
-    protected readonly beans: Beans;
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.pinnedWidthService = beans.pinnedWidthService;
+        this.focusService = beans.focusService;
+        this.userComponentFactory = beans.userComponentFactory;
+        this.ctrlsService = beans.ctrlsService;
+        this.dragAndDropService = beans.dragAndDropService;
+        this.menuService = beans.menuService;
+    }
+
+    protected beans: BeanCollection;
     private instanceId: HeaderCellCtrlInstanceId;
     private columnGroupChild: IHeaderColumn;
     private parentRowCtrl: HeaderRowCtrl;
@@ -71,7 +80,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected abstract resizeHeader(delta: number, shiftKey: boolean): void;
     protected abstract moveHeader(direction: HorizontalDirection): void;
 
-    constructor(columnGroupChild: IHeaderColumn, beans: Beans, parentRowCtrl: HeaderRowCtrl) {
+    constructor(columnGroupChild: IHeaderColumn, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
         super();
 
         this.columnGroupChild = columnGroupChild;

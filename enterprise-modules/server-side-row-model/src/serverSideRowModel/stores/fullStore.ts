@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     Column,
     FilterManager,
     FuncColsService,
@@ -23,7 +24,6 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    Autowired,
     Events,
     NumberSequence,
     RowNodeBlock,
@@ -42,17 +42,32 @@ import type { TransactionManager } from '../transactionManager';
 import type { StoreUtils } from './storeUtils';
 
 export class FullStore extends RowNodeBlock implements IServerSideStore {
-    @Autowired('ssrmStoreUtils') private storeUtils: StoreUtils;
-    @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
-    @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('selectionService') private selectionService: ISelectionService;
-    @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('ssrmTransactionManager') private transactionManager: TransactionManager;
-    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
+    private storeUtils: StoreUtils;
+    private blockUtils: BlockUtils;
+    private funcColsService: FuncColsService;
+    private rowNodeBlockLoader: RowNodeBlockLoader;
+    private rowNodeSorter: RowNodeSorter;
+    private sortController: SortController;
+    private selectionService: ISelectionService;
+    private nodeManager: NodeManager;
+    private filterManager: FilterManager;
+    private transactionManager: TransactionManager;
+    private serverSideRowModel: ServerSideRowModel;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.storeUtils = beans.ssrmStoreUtils;
+        this.blockUtils = beans.ssrmBlockUtils;
+        this.funcColsService = beans.funcColsService;
+        this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
+        this.rowNodeSorter = beans.rowNodeSorter;
+        this.sortController = beans.sortController;
+        this.selectionService = beans.selectionService;
+        this.nodeManager = beans.ssrmNodeManager;
+        this.filterManager = beans.filterManager;
+        this.transactionManager = beans.ssrmTransactionManager;
+        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+    }
 
     private readonly level: number;
     private readonly groupLevel: boolean | undefined;

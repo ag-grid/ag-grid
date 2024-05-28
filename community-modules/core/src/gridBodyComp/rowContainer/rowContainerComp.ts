@@ -1,5 +1,4 @@
-import { Autowired } from '../../context/context';
-import type { Beans } from '../../rendering/beans';
+import type { BeanCollection } from '../../context/context';
 import { RowComp } from '../../rendering/row/rowComp';
 import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
 import { _setAriaRole } from '../../utils/aria';
@@ -39,7 +38,13 @@ function templateFactory(): string {
 
 export class RowContainerComp extends Component {
     static readonly selector: AgComponentSelector = 'AG-ROW-CONTAINER';
-    @Autowired('beans') private beans: Beans;
+
+    private beans: BeanCollection;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.beans = beans;
+    }
 
     private readonly eViewport: HTMLElement = RefPlaceholder;
     private readonly eContainer: HTMLElement = RefPlaceholder;

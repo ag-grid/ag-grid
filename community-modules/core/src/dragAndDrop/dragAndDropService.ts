@@ -1,6 +1,6 @@
 import { HorizontalDirection, VerticalDirection } from '../constants/direction';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
+import type { BeanCollection, BeanName } from '../context/context';
 import type { IAggFunc } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import type { GridApi } from '../gridApi';
@@ -145,11 +145,19 @@ export interface DraggingEvent {
     dropZoneTarget: HTMLElement;
 }
 
-@Bean('dragAndDropService')
 export class DragAndDropService extends BeanStub {
-    @Autowired('dragService') private dragService: DragService;
-    @Autowired('mouseEventService') private readonly mouseEventService: MouseEventService;
-    @Autowired('gridApi') private gridApi: GridApi;
+    beanName: BeanName = 'dragAndDropService';
+
+    private dragService: DragService;
+    private mouseEventService: MouseEventService;
+    private gridApi: GridApi;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.dragService = beans.dragService;
+        this.mouseEventService = beans.mouseEventService;
+        this.gridApi = beans.gridApi;
+    }
 
     public static ICON_PINNED = 'pinned';
     public static ICON_MOVE = 'move';
