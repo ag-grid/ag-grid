@@ -1,0 +1,21 @@
+{
+    "name": "showcase-example-generation",
+    "version": "0.0.1",
+    "description": "Showcase Example Generation",
+    "main": "src/index.ts",
+    "scripts": {
+      "migrate": "tsx src/index.ts",
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "license": "MIT",
+    "devDependencies": {
+      "@tsconfig/recommended": "^1.0.3",
+      "@types/prompts": "^2.4.9",
+      "tsx": "^4.7.0"
+    },
+    "dependencies": {
+      "dotenv": "^16.4.1",
+      "prompts": "^2.4.2"
+    }
+  }
+  
