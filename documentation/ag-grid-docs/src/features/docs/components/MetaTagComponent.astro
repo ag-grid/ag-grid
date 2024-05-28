@@ -1,0 +1,14 @@
+---
+import { MetaTagComponent } from './MetaTagComponent';
+
+interface Props {
+    tags: string[];
+}
+
+const { tags } = Astro.props as Props;
+
+---
+
+<MetaTagComponent
+    tags={tags}
+/>
