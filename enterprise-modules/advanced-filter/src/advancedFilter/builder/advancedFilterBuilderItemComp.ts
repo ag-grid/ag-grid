@@ -71,7 +71,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     ) {
         super(/* html */ `
             <div class="ag-advanced-filter-builder-item-wrapper" role="presentation">
-                <div data-ref="eItem" class="ag-advanced-filter-builder-item" role="presentation">
+                <div class="ag-advanced-filter-builder-item" role="presentation">
                     <div data-ref="eTreeLines" class="ag-advanced-filter-builder-item-tree-lines" aria-hidden="true"></div>
                     <span data-ref="eDragHandle" class="ag-drag-handle" aria-hidden="true"></span>
                     <span data-ref="eValidation" class="ag-advanced-filter-builder-item-button ag-advanced-filter-builder-invalid" aria-hidden="true"></span>
