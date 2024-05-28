@@ -44,8 +44,7 @@ export class ExpandListener extends BeanStub {
                 rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
             }
         } else if (this.gos.get('purgeClosedRowNodes') && _exists(rowNode.childStore)) {
-            this.destroyBean(rowNode.childStore);
-            rowNode.childStore = undefined!;
+            rowNode.childStore = this.destroyBean(rowNode.childStore)!;
         }
 
         const storeUpdatedEvent: WithoutGridCommon<StoreUpdatedEvent> = { type: Events.EVENT_STORE_UPDATED };

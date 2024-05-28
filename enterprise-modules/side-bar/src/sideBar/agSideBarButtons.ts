@@ -72,8 +72,7 @@ export class AgSideBarButtons extends Component {
     }
 
     public clearButtons(): void {
-        this.destroyBeans(this.buttonComps);
-        this.buttonComps = [];
+        this.buttonComps = this.destroyBeans(this.buttonComps);
         _clearElement(this.getGui());
         super.destroy();
     }

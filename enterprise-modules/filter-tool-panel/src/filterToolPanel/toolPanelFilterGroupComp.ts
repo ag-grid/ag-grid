@@ -264,8 +264,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private destroyFilters() {
-        this.destroyBeans(this.childFilterComps);
-        this.childFilterComps = [];
+        this.childFilterComps = this.destroyBeans(this.childFilterComps);
         _clearElement(this.getGui());
     }
 

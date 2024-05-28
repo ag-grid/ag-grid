@@ -276,8 +276,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         if (!this.rootNode || !this.rootNode.childStore) {
             return;
         }
-        this.destroyBean(this.rootNode.childStore);
-        this.rootNode.childStore = undefined!;
+        this.rootNode.childStore = this.destroyBean(this.rootNode.childStore)!;
         this.nodeManager.clear();
     }
 
