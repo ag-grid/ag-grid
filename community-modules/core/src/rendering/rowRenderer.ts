@@ -4,7 +4,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { CellPosition } from '../entities/cellPositionUtils';
-import type { Column } from '../entities/column';
+import type { InternalColumn } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
 import type { RowPosition } from '../entities/rowPositionUtils';
 import type {
@@ -20,6 +20,7 @@ import { Events } from '../events';
 import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import type { ICellEditor } from '../interfaces/iCellEditor';
+import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -441,7 +442,7 @@ export class RowRenderer extends BeanStub {
         this.redrawAfterModelUpdate(params);
     }
 
-    public getAllCellsForColumn(column: Column): HTMLElement[] {
+    public getAllCellsForColumn(column: InternalColumn): HTMLElement[] {
         const res: HTMLElement[] = [];
 
         this.getAllRowCtrls().forEach((rowCtrl) => {
@@ -744,7 +745,9 @@ export class RowRenderer extends BeanStub {
     }
 
     public flashCells(params: FlashCellsParams = {}): void {
-        this.getCellCtrls(params.rowNodes, params.columns).forEach((cellCtrl) => cellCtrl.flashCell(params));
+        this.getCellCtrls(params.rowNodes, params.columns as InternalColumn[]).forEach((cellCtrl) =>
+            cellCtrl.flashCell(params)
+        );
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
@@ -753,7 +756,7 @@ export class RowRenderer extends BeanStub {
             newData: false,
             suppressFlash: params.suppressFlash,
         };
-        this.getCellCtrls(params.rowNodes, params.columns).forEach((cellCtrl) =>
+        this.getCellCtrls(params.rowNodes, params.columns as InternalColumn[]).forEach((cellCtrl) =>
             cellCtrl.refreshOrDestroyCell(refreshCellParams)
         );
 
@@ -773,7 +776,7 @@ export class RowRenderer extends BeanStub {
     }
 
     public getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRenderer[] {
-        const cellRenderers = this.getCellCtrls(params.rowNodes, params.columns)
+        const cellRenderers = this.getCellCtrls(params.rowNodes, params.columns as InternalColumn[])
             .map((cellCtrl) => cellCtrl.getCellRenderer())
             .filter((renderer) => renderer != null) as ICellRenderer[];
         if (params.columns?.length) {
@@ -807,7 +810,7 @@ export class RowRenderer extends BeanStub {
     public getCellEditorInstances(params: GetCellRendererInstancesParams): ICellEditor[] {
         const res: ICellEditor[] = [];
 
-        this.getCellCtrls(params.rowNodes, params.columns).forEach((cellCtrl) => {
+        this.getCellCtrls(params.rowNodes, params.columns as InternalColumn[]).forEach((cellCtrl) => {
             const cellEditor = cellCtrl.getCellEditor() as ICellEditor;
 
             if (cellEditor) {
@@ -898,12 +901,12 @@ export class RowRenderer extends BeanStub {
 
     // returns CellCtrl's that match the provided rowNodes and columns. eg if one row node
     // and two columns provided, that identifies 4 cells, so 4 CellCtrl's returned.
-    private getCellCtrls(rowNodes?: IRowNode[] | null, columns?: (string | Column)[]): CellCtrl[] {
+    private getCellCtrls(rowNodes?: IRowNode[] | null, columns?: (string | InternalColumn)[]): CellCtrl[] {
         let colIdsMap: any;
         if (_exists(columns)) {
             colIdsMap = {};
-            columns.forEach((colKey: string | Column) => {
-                const column: Column | null = this.columnModel.getCol(colKey);
+            columns.forEach((colKey: string | InternalColumn) => {
+                const column: InternalColumn | null = this.columnModel.getCol(colKey);
                 if (_exists(column)) {
                     colIdsMap[column.getId()] = true;
                 }

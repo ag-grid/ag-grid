@@ -5,7 +5,7 @@ import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { Column } from '../entities/column';
+import type { InternalColumn } from '../entities/column';
 import type { BodyHeightChangedEvent } from '../events';
 import { Events } from '../events';
 import type { ScrollVisibleService, SetScrollsVisibleParams } from '../gridBodyComp/scrollVisibleService';
@@ -120,13 +120,13 @@ export class ViewportSizeFeature extends BeanStub {
                 columns: columnsToRemove,
                 viewportWidth: bodyWidth,
             };
-            columnsToRemove = processUnpinnedColumns(params);
+            columnsToRemove = processUnpinnedColumns(params) as InternalColumn[];
         }
 
         this.columnModel.setColsPinned(columnsToRemove, null, 'viewportSizeFeature');
     }
 
-    private getPinnedColumnsOverflowingViewport(viewportWidth: number): Column[] {
+    private getPinnedColumnsOverflowingViewport(viewportWidth: number): InternalColumn[] {
         const pinnedRightWidth = this.pinnedWidthService.getPinnedRightWidth();
         const pinnedLeftWidth = this.pinnedWidthService.getPinnedLeftWidth();
         const totalPinnedWidth = pinnedRightWidth + pinnedLeftWidth;
@@ -135,14 +135,14 @@ export class ViewportSizeFeature extends BeanStub {
             return [];
         }
 
-        const pinnedLeftColumns: Column[] = [...this.visibleColsService.getLeftCols()];
-        const pinnedRightColumns: Column[] = [...this.visibleColsService.getRightCols()];
+        const pinnedLeftColumns = [...this.visibleColsService.getLeftCols()];
+        const pinnedRightColumns = [...this.visibleColsService.getRightCols()];
 
         let indexRight = 0;
         let indexLeft = 0;
         const totalWidthRemoved = 0;
 
-        const columnsToRemove: Column[] = [];
+        const columnsToRemove: InternalColumn[] = [];
 
         let spaceNecessary = totalPinnedWidth - totalWidthRemoved - viewportWidth;
 

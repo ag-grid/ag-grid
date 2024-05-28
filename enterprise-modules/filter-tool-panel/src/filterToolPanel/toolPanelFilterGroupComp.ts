@@ -2,18 +2,18 @@ import type {
     BeanCollection,
     ColumnNameService,
     FilterOpenedEvent,
-    IProvidedColumn,
     ITooltipParams,
+    InternalProvidedColumnGroup,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    Column,
     Component,
     Events,
-    ProvidedColumnGroup,
+    InternalColumn,
     RefPlaceholder,
     _clearElement,
     _createIconNoSpan,
+    isProvidedColumnGroup,
 } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
@@ -37,14 +37,14 @@ export class ToolPanelFilterGroupComp extends Component {
     private filterGroupComp: AgGroupComponent = RefPlaceholder;
 
     private readonly depth: number;
-    private readonly columnGroup: IProvidedColumn;
+    private readonly columnGroup: InternalColumn | InternalProvidedColumnGroup;
     private readonly showingColumn: boolean;
     private childFilterComps: (ToolPanelFilterGroupComp | ToolPanelFilterComp)[];
     private expandedCallback: () => void;
     private filterGroupName: string | null;
 
     constructor(
-        columnGroup: IProvidedColumn,
+        columnGroup: InternalColumn | InternalProvidedColumnGroup,
         childFilterComps: (ToolPanelFilterGroupComp | ToolPanelFilterComp)[],
         expandedCallback: () => void,
         depth: number,
@@ -110,7 +110,7 @@ export class ToolPanelFilterGroupComp extends Component {
         }
 
         const refresh = () => {
-            const newTooltipText = (this.columnGroup as Column).getColDef().headerTooltip;
+            const newTooltipText = (this.columnGroup as InternalColumn).getColDef().headerTooltip;
             this.setTooltip({ newTooltipText, location: 'filterToolPanelColumnGroup', shouldDisplayTooltip });
         };
 
@@ -140,7 +140,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     public isColumnGroup(): boolean {
-        return this.columnGroup instanceof ProvidedColumnGroup;
+        return isProvidedColumnGroup(this.columnGroup);
     }
 
     public isExpanded(): boolean {
@@ -196,20 +196,20 @@ export class ToolPanelFilterGroupComp extends Component {
         this.addManagedListener(this.filterGroupComp, AgGroupComponent.EVENT_COLLAPSED, collapseListener);
     }
 
-    private getColumns(): Column[] {
-        if (this.columnGroup instanceof ProvidedColumnGroup) {
+    private getColumns(): InternalColumn[] {
+        if (isProvidedColumnGroup(this.columnGroup)) {
             return this.columnGroup.getLeafColumns();
         }
 
-        return [this.columnGroup as Column];
+        return [this.columnGroup];
     }
 
     private addFilterChangedListeners() {
         this.getColumns().forEach((column) => {
-            this.addManagedListener(column, Column.EVENT_FILTER_CHANGED, () => this.refreshFilterClass());
+            this.addManagedListener(column, InternalColumn.EVENT_FILTER_CHANGED, () => this.refreshFilterClass());
         });
 
-        if (!(this.columnGroup instanceof ProvidedColumnGroup)) {
+        if (!isProvidedColumnGroup(this.columnGroup)) {
             this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
         }
     }
@@ -247,19 +247,18 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private setGroupTitle() {
-        this.filterGroupName =
-            this.columnGroup instanceof ProvidedColumnGroup
-                ? this.getColumnGroupName(this.columnGroup)
-                : this.getColumnName(this.columnGroup as Column);
+        this.filterGroupName = isProvidedColumnGroup(this.columnGroup)
+            ? this.getColumnGroupName(this.columnGroup)
+            : this.getColumnName(this.columnGroup);
 
         this.filterGroupComp.setTitle(this.filterGroupName || '');
     }
 
-    private getColumnGroupName(columnGroup: ProvidedColumnGroup): string | null {
+    private getColumnGroupName(columnGroup: InternalProvidedColumnGroup): string | null {
         return this.columnNameService.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'filterToolPanel');
     }
 
-    private getColumnName(column: Column): string | null {
+    private getColumnName(column: InternalColumn): string | null {
         return this.columnNameService.getDisplayNameForColumn(column, 'filterToolPanel', false);
     }
 

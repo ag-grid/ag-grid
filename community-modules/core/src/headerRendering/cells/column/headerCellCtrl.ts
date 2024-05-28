@@ -6,7 +6,7 @@ import { KeyCode } from '../../../constants/keyCode';
 import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
 import { DragAndDropService, DragSourceType } from '../../../dragAndDrop/dragAndDropService';
 import type { SortDirection } from '../../../entities/colDef';
-import { Column } from '../../../entities/column';
+import { InternalColumn } from '../../../entities/column';
 import { Events } from '../../../eventKeys';
 import type { ColumnHeaderMouseLeaveEvent, ColumnHeaderMouseOverEvent } from '../../../events';
 import type { WithoutGridCommon } from '../../../interfaces/iCommon';
@@ -37,7 +37,7 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
 
 type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort' | 'selectAll' | 'filterButton';
 
-export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Column, ResizeFeature> {
+export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, InternalColumn, ResizeFeature> {
     private refreshFunctions: (() => void)[] = [];
     private selectAllFeature: SelectAllFeature;
 
@@ -54,7 +54,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     private ariaDescriptionProperties = new Map<HeaderAriaDescriptionKey, string>();
     private tooltipFeature: TooltipFeature | undefined;
 
-    constructor(column: Column, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
+    constructor(column: InternalColumn, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
         super(column, beans, parentRowCtrl);
         this.column = column;
     }
@@ -106,7 +106,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             ['suppressMovableColumns', 'suppressMenuHide', 'suppressAggFuncInHeader'],
             this.refresh.bind(this)
         );
-        this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.refresh.bind(this));
+        this.addManagedListener(this.column, InternalColumn.EVENT_COL_DEF_CHANGED, this.refresh.bind(this));
         this.addManagedListener(
             this.eventService,
             Events.EVENT_COLUMN_VALUE_CHANGED,
@@ -399,13 +399,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
                     const unlockedColumns = dragItem?.columns?.filter((col) => !col.getColDef().lockVisible) || [];
-                    columnModel.setColsVisible(unlockedColumns, true, 'uiColumnMoved');
+                    columnModel.setColsVisible(unlockedColumns as InternalColumn[], true, 'uiColumnMoved');
                 }
             },
             onGridExit: (dragItem) => {
                 if (hideColumnOnExit) {
                     const unlockedColumns = dragItem?.columns?.filter((col) => !col.getColDef().lockVisible) || [];
-                    columnModel.setColsVisible(unlockedColumns, false, 'uiColumnMoved');
+                    columnModel.setColsVisible(unlockedColumns as InternalColumn[], false, 'uiColumnMoved');
                 }
             },
         });
@@ -413,7 +413,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         dragAndDropService.addDragSource(dragSource, true);
     }
 
-    private createDragItem(column: Column): DragItem {
+    private createDragItem(column: InternalColumn): DragItem {
         const visibleState: { [key: string]: boolean } = {};
         visibleState[column.getId()] = column.isVisible();
 
@@ -519,7 +519,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             this.comp.setWidth(`${columnWidth}px`);
         };
 
-        this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, listener);
+        this.addManagedListener(this.column, InternalColumn.EVENT_WIDTH_CHANGED, listener);
         listener();
     }
 
@@ -530,7 +530,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             this.comp.addOrRemoveCssClass('ag-header-cell-moving', this.column.isMoving());
         };
 
-        this.addManagedListener(this.column, Column.EVENT_MOVING_CHANGED, listener);
+        this.addManagedListener(this.column, InternalColumn.EVENT_MOVING_CHANGED, listener);
         listener();
     }
 
@@ -539,7 +539,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             this.comp.addOrRemoveCssClass('ag-column-menu-visible', this.column.isMenuVisible());
         };
 
-        this.addManagedListener(this.column, Column.EVENT_MENU_VISIBLE_CHANGED, listener);
+        this.addManagedListener(this.column, InternalColumn.EVENT_MENU_VISIBLE_CHANGED, listener);
         listener();
     }
 
@@ -551,7 +551,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         updateSortableCssClass();
 
         this.addRefreshFunction(updateSortableCssClass);
-        this.addManagedListener(this.eventService, Column.EVENT_SORT_CHANGED, this.refreshAriaSort.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.refreshAriaSort.bind(this));
     }
 
     private setupFilterClass(): void {
@@ -561,7 +561,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             this.refreshAria();
         };
 
-        this.addManagedListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, listener);
+        this.addManagedListener(this.column, InternalColumn.EVENT_FILTER_ACTIVE_CHANGED, listener);
         listener();
     }
 
@@ -692,9 +692,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         // In theory we could rely on the resize observer for everything - but since it's debounced
         // it can be a little janky for smooth movement. in this case its better to react to our own events
         // And unfortunately we cant _just_ rely on our own events, since custom components can change whenever
-        this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, () => isMeasuring && measureHeight(0));
+        this.addManagedListener(this.column, InternalColumn.EVENT_WIDTH_CHANGED, () => isMeasuring && measureHeight(0));
         // Displaying the sort icon changes the available area for text, so sort changes can affect height
-        this.addManagedListener(this.eventService, Column.EVENT_SORT_CHANGED, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, () => {
             // Rendering changes for sort, happen after the event... not ideal
             if (isMeasuring) {
                 window.setTimeout(() => measureHeight(0));

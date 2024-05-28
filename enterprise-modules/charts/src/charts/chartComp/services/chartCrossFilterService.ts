@@ -1,10 +1,10 @@
 import type {
     BeanCollection,
     BeanName,
-    Column,
     ColumnModel,
     FilterManager,
     IClientSideRowModel,
+    InternalColumn,
     RowNode,
     ValueService,
 } from '@ag-grid-community/core';
@@ -138,6 +138,6 @@ export class ChartCrossFilterService extends BeanStub {
     }
 
     private getColumnById(colId: string) {
-        return this.columnModel.getCol(colId) as Column;
+        return this.columnModel.getCol(colId) as InternalColumn;
     }
 }

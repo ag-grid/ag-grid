@@ -1,11 +1,11 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import type { Column, ColumnPinnedType } from '../../entities/column';
-import type { ColumnGroup } from '../../entities/columnGroup';
+import type { InternalColumn } from '../../entities/column';
+import type { InternalColumnGroup } from '../../entities/columnGroup';
 import { Events } from '../../eventKeys';
 import type { VirtualColumnsChangedEvent } from '../../events';
 import type { BrandedType } from '../../interfaces/brandedType';
-import type { HeaderColumnId, IHeaderColumn } from '../../interfaces/iHeaderColumn';
+import type { ColumnPinnedType, HeaderColumnId } from '../../interfaces/iColumn';
 import { _values } from '../../utils/generic';
 import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
@@ -132,8 +132,8 @@ export class HeaderRowCtrl extends BeanStub {
         this.addManagedPropertyListener('floatingFiltersHeight', this.onRowHeightChanged.bind(this));
     }
 
-    public getHeaderCellCtrl(column: ColumnGroup): HeaderGroupCellCtrl | undefined;
-    public getHeaderCellCtrl(column: Column): HeaderCellCtrl | undefined;
+    public getHeaderCellCtrl(column: InternalColumnGroup): HeaderGroupCellCtrl | undefined;
+    public getHeaderCellCtrl(column: InternalColumn): HeaderCellCtrl | undefined;
     public getHeaderCellCtrl(column: any): any {
         if (!this.headerCellCtrls) {
             return;
@@ -276,7 +276,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private recycleAndCreateHeaderCtrls(
-        headerColumn: IHeaderColumn,
+        headerColumn: InternalColumn | InternalColumnGroup,
         oldCtrls?: Map<HeaderColumnId, AbstractHeaderCellCtrl>
     ): void {
         if (!this.headerCellCtrls) {
@@ -312,15 +312,17 @@ export class HeaderRowCtrl extends BeanStub {
         if (headerCtrl == null) {
             switch (this.type) {
                 case HeaderRowType.FLOATING_FILTER:
-                    headerCtrl = this.createBean(new HeaderFilterCellCtrl(headerColumn as Column, this.beans, this));
+                    headerCtrl = this.createBean(
+                        new HeaderFilterCellCtrl(headerColumn as InternalColumn, this.beans, this)
+                    );
                     break;
                 case HeaderRowType.COLUMN_GROUP:
                     headerCtrl = this.createBean(
-                        new HeaderGroupCellCtrl(headerColumn as ColumnGroup, this.beans, this)
+                        new HeaderGroupCellCtrl(headerColumn as InternalColumnGroup, this.beans, this)
                     );
                     break;
                 default:
-                    headerCtrl = this.createBean(new HeaderCellCtrl(headerColumn as Column, this.beans, this));
+                    headerCtrl = this.createBean(new HeaderCellCtrl(headerColumn as InternalColumn, this.beans, this));
                     break;
             }
         }
@@ -328,17 +330,17 @@ export class HeaderRowCtrl extends BeanStub {
         this.headerCellCtrls.set(idOfChild, headerCtrl);
     }
 
-    private getColumnsInViewport(): IHeaderColumn[] {
+    private getColumnsInViewport(): (InternalColumn | InternalColumnGroup)[] {
         return this.isPrintLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
     }
 
-    private getColumnsInViewportPrintLayout(): IHeaderColumn[] {
+    private getColumnsInViewportPrintLayout(): (InternalColumn | InternalColumnGroup)[] {
         // for print layout, we add all columns into the center
         if (this.pinned != null) {
             return [];
         }
 
-        let viewportColumns: IHeaderColumn[] = [];
+        let viewportColumns: (InternalColumn | InternalColumnGroup)[] = [];
         const actualDepth = this.getActualDepth();
         const { columnViewportService } = this.beans;
 
@@ -354,12 +356,12 @@ export class HeaderRowCtrl extends BeanStub {
         return this.type == HeaderRowType.FLOATING_FILTER ? this.rowIndex - 1 : this.rowIndex;
     }
 
-    private getColumnsInViewportNormalLayout(): IHeaderColumn[] {
+    private getColumnsInViewportNormalLayout(): (InternalColumn | InternalColumnGroup)[] {
         // when in normal layout, we add the columns for that container only
         return this.beans.columnViewportService.getHeadersToRender(this.pinned, this.getActualDepth());
     }
 
-    public focusHeader(column: IHeaderColumn, event?: KeyboardEvent): boolean {
+    public focusHeader(column: InternalColumn | InternalColumnGroup, event?: KeyboardEvent): boolean {
         if (!this.headerCellCtrls) {
             return false;
         }

@@ -1,15 +1,14 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import { Column } from '../../entities/column';
-import type { ColumnGroup } from '../../entities/columnGroup';
+import { InternalColumn } from '../../entities/column';
+import type { InternalColumnGroup } from '../../entities/columnGroup';
+import { isColumnGroup } from '../../entities/columnGroup';
 import { Events } from '../../eventKeys';
-import type { IHeaderColumn } from '../../interfaces/iHeaderColumn';
 import { _setAriaColSpan } from '../../utils/aria';
 import { _last } from '../../utils/array';
 import { _exists } from '../../utils/generic';
 
 export class SetLeftFeature extends BeanStub {
-    private readonly columnOrGroup: IHeaderColumn;
     private eCell: HTMLElement;
     private ariaEl: HTMLElement;
 
@@ -17,25 +16,30 @@ export class SetLeftFeature extends BeanStub {
 
     // if we are spanning columns, this tells what columns,
     // otherwise this is empty
-    private colsSpanning: Column[] | undefined;
+    private colsSpanning: InternalColumn[] | undefined;
 
     private beans: BeanCollection;
 
-    constructor(columnOrGroup: IHeaderColumn, eCell: HTMLElement, beans: BeanCollection, colsSpanning?: Column[]) {
+    constructor(
+        private readonly columnOrGroup: InternalColumn | InternalColumnGroup,
+        eCell: HTMLElement,
+        beans: BeanCollection,
+        colsSpanning?: InternalColumn[]
+    ) {
         super();
         this.columnOrGroup = columnOrGroup;
         this.eCell = eCell;
         this.ariaEl = this.eCell.querySelector('[role=columnheader]') || this.eCell;
-        this.colsSpanning = colsSpanning;
+        this.colsSpanning = colsSpanning as InternalColumn[];
         this.beans = beans;
     }
 
-    public setColsSpanning(colsSpanning: Column[]): void {
-        this.colsSpanning = colsSpanning;
+    public setColsSpanning(colsSpanning: InternalColumn[]): void {
+        this.colsSpanning = colsSpanning as InternalColumn[];
         this.onLeftChanged();
     }
 
-    public getColumnOrGroup(): IHeaderColumn {
+    public getColumnOrGroup(): InternalColumn | InternalColumnGroup {
         if (this.beans.gos.get('enableRtl') && this.colsSpanning) {
             return _last(this.colsSpanning);
         }
@@ -43,7 +47,7 @@ export class SetLeftFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.addManagedListener(this.columnOrGroup, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
+        this.addManagedListener(this.columnOrGroup, InternalColumn.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.setLeftFirstTime();
 
         // when in print layout, the left position is also dependent on the width of the pinned sections.
@@ -103,7 +107,7 @@ export class SetLeftFeature extends BeanStub {
         this.setLeft(this.actualLeft);
     }
 
-    private modifyLeftForPrintLayout(colOrGroup: IHeaderColumn, leftPosition: number): number {
+    private modifyLeftForPrintLayout(colOrGroup: InternalColumn | InternalColumnGroup, leftPosition: number): number {
         const printLayout = this.beans.gos.isDomLayout('print');
 
         if (!printLayout) {
@@ -133,13 +137,8 @@ export class SetLeftFeature extends BeanStub {
             this.eCell.style.left = `${value}px`;
         }
 
-        let indexColumn: Column;
-
-        if (this.columnOrGroup instanceof Column) {
-            indexColumn = this.columnOrGroup;
-        } else {
-            const columnGroup = this.columnOrGroup as ColumnGroup;
-            const children = columnGroup.getLeafColumns();
+        if (isColumnGroup(this.columnOrGroup)) {
+            const children = this.columnOrGroup.getLeafColumns();
 
             if (!children.length) {
                 return;
@@ -148,8 +147,6 @@ export class SetLeftFeature extends BeanStub {
             if (children.length > 1) {
                 _setAriaColSpan(this.ariaEl, children.length);
             }
-
-            indexColumn = children[0];
         }
     }
 }

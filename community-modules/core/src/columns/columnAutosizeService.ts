@@ -1,8 +1,8 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
+import type { InternalColumn } from '../entities/column';
+import type { InternalColumnGroup } from '../entities/columnGroup';
 import type { ColumnEventType } from '../events';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { AnimationFrameService } from '../misc/animationFrameService';
@@ -36,7 +36,7 @@ export class ColumnAutosizeService extends BeanStub {
         colKeys: ColKey[];
         skipHeader?: boolean;
         skipHeaderGroups?: boolean;
-        stopAtGroup?: ColumnGroup;
+        stopAtGroup?: InternalColumnGroup;
         source?: ColumnEventType;
     }): void {
         if (this.columnModel.isShouldQueueResizeOperations()) {
@@ -59,7 +59,7 @@ export class ColumnAutosizeService extends BeanStub {
         this.animationFrameService.flushAllFrames();
 
         // keep track of which cols we have resized in here
-        const columnsAutosized: Column[] = [];
+        const columnsAutosized: InternalColumn[] = [];
         // initialise with anything except 0 so that while loop executes at least once
         let changesThisTimeAround = -1;
 
@@ -69,7 +69,7 @@ export class ColumnAutosizeService extends BeanStub {
         while (changesThisTimeAround !== 0) {
             changesThisTimeAround = 0;
 
-            const updatedColumns: Column[] = [];
+            const updatedColumns: InternalColumn[] = [];
 
             colKeys.forEach((key) => {
                 if (!key) {
@@ -122,13 +122,13 @@ export class ColumnAutosizeService extends BeanStub {
     private autoSizeColumnGroupsByColumns(
         keys: ColKey[],
         source: ColumnEventType,
-        stopAtGroup?: ColumnGroup
-    ): Column[] {
-        const columnGroups: Set<ColumnGroup> = new Set();
+        stopAtGroup?: InternalColumnGroup
+    ): InternalColumn[] {
+        const columnGroups: Set<InternalColumnGroup> = new Set();
         const columns = this.columnModel.getColsForKeys(keys);
 
         columns.forEach((col) => {
-            let parent: ColumnGroup = col.getParent();
+            let parent: InternalColumnGroup | null = col.getParent();
             while (parent && parent != stopAtGroup) {
                 if (!parent.isPadding()) {
                     columnGroups.add(parent);
@@ -139,7 +139,7 @@ export class ColumnAutosizeService extends BeanStub {
 
         let headerGroupCtrl: HeaderGroupCellCtrl | undefined;
 
-        const resizedColumns: Column[] = [];
+        const resizedColumns: InternalColumn[] = [];
 
         for (const columnGroup of columnGroups) {
             for (const headerContainerCtrl of this.ctrlsService.getHeaderRowContainerCtrls()) {
@@ -167,7 +167,7 @@ export class ColumnAutosizeService extends BeanStub {
     }
 
     // returns the width we can set to this col, taking into consideration min and max widths
-    private normaliseColumnWidth(column: Column, newWidth: number): number {
+    private normaliseColumnWidth(column: InternalColumn, newWidth: number): number {
         const minWidth = column.getMinWidth();
 
         if (_exists(minWidth) && newWidth < minWidth) {

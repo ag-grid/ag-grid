@@ -1,5 +1,6 @@
 import type { ColumnNameService } from '../../../columns/columnNameService';
 import type { BeanCollection } from '../../../context/context';
+import type { InternalColumn } from '../../../entities/column';
 import type { FilterChangedEvent } from '../../../events';
 import type { ProvidedFilterModel } from '../../../interfaces/iFilter';
 import { Component } from '../../../widgets/component';
@@ -156,7 +157,11 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     protected getAriaLabel(params: IFloatingFilterParams): string {
-        const displayName = this.columnNameService.getDisplayNameForColumn(params.column, 'header', true);
+        const displayName = this.columnNameService.getDisplayNameForColumn(
+            params.column as InternalColumn,
+            'header',
+            true
+        );
         const translate = this.localeService.getLocaleTextFunc();
         return `${displayName} ${translate('ariaFilterInput', 'Filter Input')}`;
     }

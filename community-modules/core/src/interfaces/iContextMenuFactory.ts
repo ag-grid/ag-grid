@@ -1,4 +1,4 @@
-import type { Column } from '../entities/column';
+import type { InternalColumn } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
 
 export interface IContextMenuFactory {
@@ -6,7 +6,7 @@ export interface IContextMenuFactory {
         mouseEvent: MouseEvent | null,
         touchEvent: TouchEvent | null,
         rowNode: RowNode | null,
-        column: Column | null,
+        column: InternalColumn | null,
         value: any,
         anchorToElement: HTMLElement
     ): void;

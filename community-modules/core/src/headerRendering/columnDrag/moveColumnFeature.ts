@@ -7,9 +7,10 @@ import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { DraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import { DragAndDropService, DragSourceType } from '../../dragAndDrop/dragAndDropService';
-import type { Column, ColumnPinnedType } from '../../entities/column';
+import type { InternalColumn } from '../../entities/column';
 import type { ColumnEventType } from '../../events';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
+import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { _exists, _missing } from '../../utils/generic';
 import { ColumnMoveHelper } from '../columnMoveHelper';
 import type { DropListener } from './bodyDropTarget';
@@ -41,7 +42,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     private isCenterContainer: boolean;
 
     private lastDraggingEvent: DraggingEvent;
-    private lastMovedInfo: { columns: Column[]; toIndex: number } | null = null;
+    private lastMovedInfo: { columns: InternalColumn[]; toIndex: number } | null = null;
 
     // this counts how long the user has been trying to scroll by dragging and failing,
     // if they fail x amount of times, then the column will get pinned. this is what gives
@@ -67,7 +68,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     public onDragEnter(draggingEvent: DraggingEvent): void {
         // we do dummy drag, so make sure column appears in the right location when first placed
 
-        const columns = draggingEvent.dragItem.columns;
+        const columns = draggingEvent.dragItem.columns as InternalColumn[] | undefined;
         const dragCameFromToolPanel = draggingEvent.dragSource.type === DragSourceType.ToolPanel;
 
         if (dragCameFromToolPanel) {
@@ -79,7 +80,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             // will be visible again. otherwise a group with three columns (but only two visible) could
             // be dragged out, then when it's dragged in again, all three are visible. this stops that.
             const visibleState = draggingEvent.dragItem.visibleState;
-            const visibleColumns: Column[] = (columns || []).filter((column) => visibleState![column.getId()]);
+            const visibleColumns: InternalColumn[] = (columns || []).filter((column) => visibleState![column.getId()]);
             this.setColumnsVisible(visibleColumns, true, 'uiColumnDragged');
         }
 
@@ -92,14 +93,18 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         this.lastMovedInfo = null;
     }
 
-    public setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType) {
+    public setColumnsVisible(columns: InternalColumn[] | null | undefined, visible: boolean, source: ColumnEventType) {
         if (columns) {
             const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
             this.columnModel.setColsVisible(allowedCols, visible, source);
         }
     }
 
-    public setColumnsPinned(columns: Column[] | null | undefined, pinned: ColumnPinnedType, source: ColumnEventType) {
+    public setColumnsPinned(
+        columns: InternalColumn[] | null | undefined,
+        pinned: ColumnPinnedType,
+        source: ColumnEventType
+    ) {
         if (columns) {
             const allowedCols = columns.filter((c) => !c.getColDef().lockPinned);
             this.columnModel.setColsPinned(allowedCols, pinned, source);
@@ -169,16 +174,15 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
         const dragSourceType: DragSourceType = draggingEvent.dragSource.type;
 
-        const allMovingColumns =
-            draggingEvent.dragSource.getDragItem().columns?.filter((col) => {
-                if (col.getColDef().lockPinned) {
-                    // if locked return true only if both col and container are same pin type.
-                    // double equals (==) here on purpose so that null==undefined is true (for not pinned options)
-                    return col.getPinned() == this.pinned;
-                }
-                // if not pin locked, then always allowed to be in this container
-                return true;
-            }) || [];
+        const allMovingColumns = (draggingEvent.dragSource.getDragItem().columns?.filter((col) => {
+            if (col.getColDef().lockPinned) {
+                // if locked return true only if both col and container are same pin type.
+                // double equals (==) here on purpose so that null==undefined is true (for not pinned options)
+                return col.getPinned() == this.pinned;
+            }
+            // if not pin locked, then always allowed to be in this container
+            return true;
+        }) || []) as InternalColumn[];
 
         const lastMovedInfo = ColumnMoveHelper.attemptMoveColumns({
             allMovingColumns,
@@ -261,7 +265,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             // this is how we achieve pining by dragging the column to the edge of the grid.
             this.failedMoveAttempts++;
 
-            const columns = this.lastDraggingEvent.dragItem.columns;
+            const columns = this.lastDraggingEvent.dragItem.columns as InternalColumn[] | undefined;
             const columnsThatCanPin = columns!.filter((c) => !c.getColDef().lockPinned);
 
             if (columnsThatCanPin.length > 0) {

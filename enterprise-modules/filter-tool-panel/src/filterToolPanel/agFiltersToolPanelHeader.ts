@@ -1,4 +1,4 @@
-import type { AgComponentSelector, BeanCollection, Column, ColumnModel } from '@ag-grid-community/core';
+import type { AgComponentSelector, BeanCollection, ColumnModel, InternalColumn } from '@ag-grid-community/core';
 import {
     AgInputTextField,
     Component,
@@ -87,7 +87,7 @@ export class AgFiltersToolPanelHeader extends Component {
 
         this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
 
-        const isFilterGroupPresent = (col: Column) => col.getOriginalParent() && col.isFilterAllowed();
+        const isFilterGroupPresent = (col: InternalColumn) => col.getOriginalParent() && col.isFilterAllowed();
         const filterGroupsPresent = this.columnModel.getCols().some(isFilterGroupPresent);
 
         _setDisplayed(this.eFilterTextField.getGui(), showFilterSearch);

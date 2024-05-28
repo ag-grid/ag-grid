@@ -9,7 +9,7 @@ import type {
     ValueParserParams,
     ValueSetterParams,
 } from '../entities/colDef';
-import type { Column } from '../entities/column';
+import type { InternalColumn } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
 import { Events } from '../events';
@@ -68,7 +68,7 @@ export class ValueService extends BeanStub {
         this.addManagedPropertyListener('treeData', (propChange) => (this.isTreeData = propChange.currentValue));
     }
 
-    public getValue(column: Column, rowNode?: IRowNode | null, forFilter = false, ignoreAggData = false): any {
+    public getValue(column: InternalColumn, rowNode?: IRowNode | null, forFilter = false, ignoreAggData = false): any {
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
         if (!this.initialised) {
@@ -137,7 +137,7 @@ export class ValueService extends BeanStub {
         return result;
     }
 
-    public parseValue(column: Column, rowNode: IRowNode | null, newValue: any, oldValue: any): any {
+    public parseValue(column: InternalColumn, rowNode: IRowNode | null, newValue: any, oldValue: any): any {
         const colDef = column.getColDef();
         const params: ValueParserParams = this.gos.addGridCommonParams({
             node: rowNode,
@@ -160,7 +160,7 @@ export class ValueService extends BeanStub {
     }
 
     public formatValue(
-        column: Column,
+        column: InternalColumn,
         node: IRowNode | null,
         value: any,
         suppliedFormatter?: (value: any) => string,
@@ -203,7 +203,7 @@ export class ValueService extends BeanStub {
         return result;
     }
 
-    private getOpenedGroup(rowNode: IRowNode, column: Column): any {
+    private getOpenedGroup(rowNode: IRowNode, column: InternalColumn): any {
         if (!this.gos.get('showOpenedGroup')) {
             return;
         }
@@ -238,7 +238,7 @@ export class ValueService extends BeanStub {
      * @param eventSource The event source
      * @returns `True` if the value has been updated, otherwise`False`.
      */
-    public setValue(rowNode: IRowNode, colKey: string | Column, newValue: any, eventSource?: string): boolean {
+    public setValue(rowNode: IRowNode, colKey: string | InternalColumn, newValue: any, eventSource?: string): boolean {
         const column = this.columnModel.getColDefCol(colKey);
 
         if (!rowNode || !column) {
@@ -382,9 +382,10 @@ export class ValueService extends BeanStub {
     }
 
     private executeFilterValueGetter(
+        // eslint-disable-next-line @typescript-eslint/ban-types
         valueGetter: string | Function,
         data: any,
-        column: Column,
+        column: InternalColumn,
         rowNode: IRowNode
     ): any {
         const params: ValueGetterParams = this.gos.addGridCommonParams({
@@ -401,7 +402,13 @@ export class ValueService extends BeanStub {
         return this.expressionService.evaluate(valueGetter, params);
     }
 
-    private executeValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: IRowNode): any {
+    private executeValueGetter(
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        valueGetter: string | Function,
+        data: any,
+        column: InternalColumn,
+        rowNode: IRowNode
+    ): any {
         const colId = column.getColId();
 
         // if inside the same turn, just return back the value we got last time
@@ -432,7 +439,7 @@ export class ValueService extends BeanStub {
         return result;
     }
 
-    private getValueCallback(node: IRowNode, field: string | Column): any {
+    private getValueCallback(node: IRowNode, field: string | InternalColumn): any {
         const otherColumn = this.columnModel.getColDefCol(field);
 
         if (otherColumn) {
@@ -443,7 +450,7 @@ export class ValueService extends BeanStub {
     }
 
     // used by row grouping and pivot, to get key for a row. col can be a pivot col or a row grouping col
-    public getKeyForNode(col: Column, rowNode: IRowNode): any {
+    public getKeyForNode(col: InternalColumn, rowNode: IRowNode): any {
         const value = this.getValue(col, rowNode);
         const keyCreator = col.getColDef().keyCreator;
 

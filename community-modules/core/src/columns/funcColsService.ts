@@ -1,7 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { ColDef, IAggFunc } from '../entities/colDef';
-import type { Column } from '../entities/column';
+import type { InternalColumn } from '../entities/column';
 import type { ColumnEventType } from '../events';
 import { Events } from '../events';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
@@ -28,9 +28,9 @@ export class FuncColsService extends BeanStub {
         this.visibleColsService = beans.visibleColsService;
     }
 
-    private rowGroupCols: Column[] = [];
-    private valueCols: Column[] = [];
-    private pivotCols: Column[] = [];
+    private rowGroupCols: InternalColumn[] = [];
+    private valueCols: InternalColumn[] = [];
+    private pivotCols: InternalColumn[] = [];
 
     public getModifyColumnsNoEventsCallbacks(): ModifyColumnsNoEventsCallbacks {
         return {
@@ -43,7 +43,7 @@ export class FuncColsService extends BeanStub {
         };
     }
 
-    public getSourceColumnsForGroupColumn(groupCol: Column): Column[] | null {
+    public getSourceColumnsForGroupColumn(groupCol: InternalColumn): InternalColumn[] | null {
         const sourceColumnId = groupCol.getColDef().showRowGroup;
         if (!sourceColumnId) {
             return null;
@@ -57,26 +57,26 @@ export class FuncColsService extends BeanStub {
         return column ? [column] : null;
     }
 
-    public sortRowGroupColumns(compareFn?: (a: Column, b: Column) => number): void {
+    public sortRowGroupColumns(compareFn?: (a: InternalColumn, b: InternalColumn) => number): void {
         this.rowGroupCols.sort(compareFn);
     }
 
-    public sortPivotColumns(compareFn?: (a: Column, b: Column) => number): void {
+    public sortPivotColumns(compareFn?: (a: InternalColumn, b: InternalColumn) => number): void {
         this.pivotCols.sort(compareFn);
     }
 
     // + rowController
-    public getValueColumns(): Column[] {
+    public getValueColumns(): InternalColumn[] {
         return this.valueCols ? this.valueCols : [];
     }
 
     // + rowController
-    public getPivotColumns(): Column[] {
+    public getPivotColumns(): InternalColumn[] {
         return this.pivotCols ? this.pivotCols : [];
     }
 
     // + toolPanel
-    public getRowGroupColumns(): Column[] {
+    public getRowGroupColumns(): InternalColumn[] {
         return this.rowGroupCols ? this.rowGroupCols : [];
     }
 
@@ -115,7 +115,7 @@ export class FuncColsService extends BeanStub {
         );
     }
 
-    private setRowGroupActive(active: boolean, column: Column, source: ColumnEventType): void {
+    private setRowGroupActive(active: boolean, column: InternalColumn, source: ColumnEventType): void {
         if (active === column.isRowGroupActive()) {
             return;
         }
@@ -173,7 +173,7 @@ export class FuncColsService extends BeanStub {
             Events.EVENT_COLUMN_PIVOT_CHANGED,
             true,
             false,
-            (added: boolean, column: Column) => {
+            (added, column) => {
                 column.setPivotActive(added, source);
             },
             source
@@ -204,7 +204,7 @@ export class FuncColsService extends BeanStub {
         );
     }
 
-    private setValueActive(active: boolean, column: Column, source: ColumnEventType): void {
+    private setValueActive(active: boolean, column: InternalColumn, source: ColumnEventType): void {
         if (active === column.isValueActive()) {
             return;
         }
@@ -257,11 +257,11 @@ export class FuncColsService extends BeanStub {
 
     private setColList(
         colKeys: ColKey[],
-        masterList: Column[],
+        masterList: InternalColumn[],
         eventName: string,
         detectOrderChange: boolean,
         autoGroupsNeedBuilding: boolean,
-        columnCallback: (added: boolean, column: Column) => void,
+        columnCallback: (added: boolean, column: InternalColumn) => void,
         source: ColumnEventType
     ): void {
         const gridColumns = this.columnModel.getCols();
@@ -269,7 +269,7 @@ export class FuncColsService extends BeanStub {
             return;
         }
 
-        const changes: Map<Column, number> = new Map();
+        const changes: Map<InternalColumn, number> = new Map();
         // store all original cols and their index.
         masterList.forEach((col, idx) => changes.set(col, idx));
 
@@ -317,10 +317,10 @@ export class FuncColsService extends BeanStub {
 
     private updateColList(
         keys: Maybe<ColKey>[] | null,
-        masterList: Column[],
+        masterList: InternalColumn[],
         actionIsAdd: boolean,
         autoGroupsNeedBuilding: boolean,
-        columnCallback: (column: Column) => void,
+        columnCallback: (column: InternalColumn) => void,
         eventType: string,
         source: ColumnEventType
     ) {
@@ -368,17 +368,17 @@ export class FuncColsService extends BeanStub {
         this.eventDispatcher.genericColumnEvent(eventType, masterList, source);
     }
 
-    public extractCols(source: ColumnEventType, oldProvidedCols: Column[] | undefined): void {
+    public extractCols(source: ColumnEventType, oldProvidedCols: InternalColumn[] | undefined): void {
         this.extractRowGroupCols(source, oldProvidedCols);
         this.extractPivotCols(source, oldProvidedCols);
         this.extractValueCols(source, oldProvidedCols);
     }
 
-    private extractValueCols(source: ColumnEventType, oldProvidedCols: Column[] | undefined): void {
+    private extractValueCols(source: ColumnEventType, oldProvidedCols: InternalColumn[] | undefined): void {
         this.valueCols = this.extractColsCommon(
             oldProvidedCols,
             this.valueCols,
-            (col: Column, flag: boolean) => col.setValueActive(flag, source),
+            (col, flag) => col.setValueActive(flag, source),
             // aggFunc doesn't have index variant, cos order of value cols doesn't matter, so always return null
             () => undefined,
             () => undefined,
@@ -416,11 +416,11 @@ export class FuncColsService extends BeanStub {
         });
     }
 
-    private extractRowGroupCols(source: ColumnEventType, oldProvidedCols: Column[] | undefined): void {
+    private extractRowGroupCols(source: ColumnEventType, oldProvidedCols: InternalColumn[] | undefined): void {
         this.rowGroupCols = this.extractColsCommon(
             oldProvidedCols,
             this.rowGroupCols,
-            (col: Column, flag: boolean) => col.setRowGroupActive(flag, source),
+            (col, flag) => col.setRowGroupActive(flag, source),
             (colDef: ColDef) => colDef.rowGroupIndex,
             (colDef: ColDef) => colDef.initialRowGroupIndex,
             (colDef: ColDef) => colDef.rowGroup,
@@ -428,11 +428,11 @@ export class FuncColsService extends BeanStub {
         );
     }
 
-    private extractPivotCols(source: ColumnEventType, oldProvidedCols: Column[] | undefined): void {
+    private extractPivotCols(source: ColumnEventType, oldProvidedCols: InternalColumn[] | undefined): void {
         this.pivotCols = this.extractColsCommon(
             oldProvidedCols,
             this.pivotCols,
-            (col: Column, flag: boolean) => col.setPivotActive(flag, source),
+            (col, flag) => col.setPivotActive(flag, source),
             (colDef: ColDef) => colDef.pivotIndex,
             (colDef: ColDef) => colDef.initialPivotIndex,
             (colDef: ColDef) => colDef.pivot,
@@ -441,16 +441,16 @@ export class FuncColsService extends BeanStub {
     }
 
     private extractColsCommon(
-        oldProvidedCols: Column[] = [],
-        previousCols: Column[] = [],
-        setFlagFunc: (col: Column, flag: boolean) => void,
+        oldProvidedCols: InternalColumn[] = [],
+        previousCols: InternalColumn[] = [],
+        setFlagFunc: (col: InternalColumn, flag: boolean) => void,
         getIndexFunc: (colDef: ColDef) => number | null | undefined,
         getInitialIndexFunc: (colDef: ColDef) => number | null | undefined,
         getValueFunc: (colDef: ColDef) => boolean | null | undefined,
         getInitialValueFunc: (colDef: ColDef) => boolean | undefined
-    ): Column[] {
-        const colsWithIndex: Column[] = [];
-        const colsWithValue: Column[] = [];
+    ): InternalColumn[] {
+        const colsWithIndex: InternalColumn[] = [];
+        const colsWithValue: InternalColumn[] = [];
 
         const primaryCols = this.columnModel.getColDefCols() || [];
 
@@ -508,7 +508,7 @@ export class FuncColsService extends BeanStub {
             }
         });
 
-        const getIndexForCol = (col: Column): number => {
+        const getIndexForCol = (col: InternalColumn): number => {
             const index = getIndexFunc(col.getColDef());
             const defaultIndex = getInitialIndexFunc(col.getColDef());
 
@@ -530,7 +530,7 @@ export class FuncColsService extends BeanStub {
             return 1;
         });
 
-        const res: Column[] = ([] as Column[]).concat(colsWithIndex);
+        const res: InternalColumn[] = ([] as InternalColumn[]).concat(colsWithIndex);
 
         // second add columns that were there before and in the same order as they were before,
         // so we are preserving order of current grouping of columns that simply have rowGroup=true
@@ -575,7 +575,7 @@ export class FuncColsService extends BeanStub {
 
         const orderColumns = (
             updatedColumnState: { [colId: string]: ColumnState },
-            colList: Column[],
+            colList: InternalColumn[],
             enableProp: 'rowGroup' | 'pivot',
             initialEnableProp: 'initialRowGroup' | 'initialPivot',
             indexProp: 'rowGroupIndex' | 'pivotIndex',

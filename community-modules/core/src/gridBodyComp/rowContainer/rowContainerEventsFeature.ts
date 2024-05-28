@@ -3,7 +3,7 @@ import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
-import type { Column } from '../../entities/column';
+import type { InternalColumn } from '../../entities/column';
 import type { CellKeyDownEvent, FullWidthCellKeyDownEvent } from '../../events';
 import { Events } from '../../events';
 import type { FocusService } from '../../focusService';
@@ -234,7 +234,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private processFullWidthRowKeyboardEvent(rowComp: RowCtrl, eventName: string, keyboardEvent: KeyboardEvent) {
         const rowNode = rowComp.getRowNode();
         const focusedCell = this.focusService.getFocusedCell();
-        const column = (focusedCell && focusedCell.column) as Column;
+        const column = (focusedCell && focusedCell.column) as InternalColumn;
         const gridProcessingAllowed = !_isUserSuppressingKeyboardEvent(this.gos, keyboardEvent, rowNode, column, false);
 
         if (gridProcessingAllowed) {

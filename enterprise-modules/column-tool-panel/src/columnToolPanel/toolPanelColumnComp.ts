@@ -10,12 +10,12 @@ import type {
 } from '@ag-grid-community/core';
 import {
     AgCheckbox,
-    Column,
     Component,
     CssClassApplier,
     DragAndDropService,
     DragSourceType,
     Events,
+    InternalColumn,
     KeyCode,
     RefPlaceholder,
     _createIconNoSpan,
@@ -49,7 +49,7 @@ export class ToolPanelColumnComp extends Component {
     private readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly cbSelect: AgCheckbox = RefPlaceholder;
 
-    private column: Column;
+    private column: InternalColumn;
     private columnDept: number;
     private eDragHandle: Element;
     private displayName: string | null;
@@ -96,10 +96,18 @@ export class ToolPanelColumnComp extends Component {
             Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
             this.onColumnStateChanged.bind(this)
         );
-        this.addManagedListener(this.column, Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addManagedListener(this.column, Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addManagedListener(this.column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addManagedListener(this.column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.column, InternalColumn.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.column, InternalColumn.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(
+            this.column,
+            InternalColumn.EVENT_ROW_GROUP_CHANGED,
+            this.onColumnStateChanged.bind(this)
+        );
+        this.addManagedListener(
+            this.column,
+            InternalColumn.EVENT_VISIBLE_CHANGED,
+            this.onColumnStateChanged.bind(this)
+        );
         this.addManagedListener(this.focusWrapper, 'keydown', this.handleKeyDown.bind(this));
         this.addManagedListener(this.focusWrapper, 'contextmenu', this.onContextMenu.bind(this));
 
@@ -122,7 +130,7 @@ export class ToolPanelColumnComp extends Component {
         classes.forEach((c) => this.addOrRemoveCssClass(c, true));
     }
 
-    public getColumn(): Column {
+    public getColumn(): InternalColumn {
         return this.column;
     }
 
@@ -343,7 +351,8 @@ export class ToolPanelColumnComp extends Component {
         return false;
     }
 
-    public setExpanded(value: boolean): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public setExpanded(_value: boolean): void {
         console.warn('AG Grid: can not expand a column item that does not represent a column group header');
     }
 }

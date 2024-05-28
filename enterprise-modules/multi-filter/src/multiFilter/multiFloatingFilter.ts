@@ -7,6 +7,7 @@ import type {
     IFloatingFilterComp,
     IFloatingFilterParams,
     IMultiFilterModel,
+    InternalColumn,
     MultiFilterParams,
     UserCompDetails,
     UserComponentFactory,
@@ -180,7 +181,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     private getCompDetails(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): UserCompDetails | undefined {
         const defaultComponentName =
             this.userComponentFactory.getDefaultFloatingFilterType(filterDef, () =>
-                this.filterManager.getDefaultFloatingFilter(this.params.column)
+                this.filterManager.getDefaultFloatingFilter(this.params.column as InternalColumn)
             ) ?? 'agReadOnlyFloatingFilter';
 
         return this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);

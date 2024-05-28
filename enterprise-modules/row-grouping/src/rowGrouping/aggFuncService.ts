@@ -1,4 +1,4 @@
-import type { BeanName, Column, IAggFunc, IAggFuncParams, IAggFuncService } from '@ag-grid-community/core';
+import type { BeanName, IAggFunc, IAggFuncParams, IAggFuncService, InternalColumn } from '@ag-grid-community/core';
 import { BeanStub, _exists, _existsAndNotEmpty, _includes, _iterateObject, _last } from '@ag-grid-community/core';
 
 const defaultAggFuncNames: { [key: string]: string } = {
@@ -49,7 +49,7 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
         this.initialised = true;
     }
 
-    private isAggFuncPossible(column: Column, func: string): boolean {
+    private isAggFuncPossible(column: InternalColumn, func: string): boolean {
         const allKeys = this.getFuncNames(column);
         const allowed = _includes(allKeys, func);
         const funcExists = _exists(this.aggFuncsMap[func]);
@@ -60,7 +60,7 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
         return defaultAggFuncNames[fctName] ?? fctName;
     }
 
-    public getDefaultAggFunc(column: Column): string | null {
+    public getDefaultAggFunc(column: InternalColumn): string | null {
         const defaultAgg = column.getColDef().defaultAggFunc;
 
         if (_exists(defaultAgg) && this.isAggFuncPossible(column, defaultAgg)) {
@@ -87,7 +87,7 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
         return this.aggFuncsMap[name];
     }
 
-    public getFuncNames(column: Column): string[] {
+    public getFuncNames(column: InternalColumn): string[] {
         const userAllowedFuncs = column.getColDef().allowedAggFuncs;
 
         return userAllowedFuncs == null ? Object.keys(this.aggFuncsMap).sort() : userAllowedFuncs;

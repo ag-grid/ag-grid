@@ -1,15 +1,15 @@
 import { BeanStub } from '../../../context/beanStub';
-import { ColumnGroup } from '../../../entities/columnGroup';
+import { EVENT_COLUMN_GROUP_DISPLAYED_CHILDREN_CHANGED, type InternalColumnGroup } from '../../../entities/columnGroup';
 import type { IHeaderGroupCellComp } from './headerGroupCellCtrl';
 
 export class GroupWidthFeature extends BeanStub {
-    private columnGroup: ColumnGroup;
+    private columnGroup: InternalColumnGroup;
     private comp: IHeaderGroupCellComp;
 
     // the children can change, we keep destroy functions related to listening to the children here
     private removeChildListenersFuncs: (() => void)[] = [];
 
-    constructor(comp: IHeaderGroupCellComp, columnGroup: ColumnGroup) {
+    constructor(comp: IHeaderGroupCellComp, columnGroup: InternalColumnGroup) {
         super();
         this.columnGroup = columnGroup;
         this.comp = comp;
@@ -22,7 +22,7 @@ export class GroupWidthFeature extends BeanStub {
         // the children belonging to this group can change, so we need to add and remove listeners as they change
         this.addManagedListener(
             this.columnGroup,
-            ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED,
+            EVENT_COLUMN_GROUP_DISPLAYED_CHILDREN_CHANGED,
             this.onDisplayedChildrenChanged.bind(this)
         );
 

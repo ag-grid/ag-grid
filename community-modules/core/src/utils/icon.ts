@@ -1,4 +1,4 @@
-import type { Column } from '../entities/column';
+import type { InternalColumn } from '../entities/column';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _setAriaRole } from './aria';
 import { _isNodeOrElement, _loadTemplate } from './dom';
@@ -158,7 +158,7 @@ export const iconNameClassMap: { [key: string]: string } = {
  * @param {Column | null} [column]
  * @returns {Element}
  */
-export function _createIcon(iconName: string, gos: GridOptionsService, column: Column | null): Element {
+export function _createIcon(iconName: string, gos: GridOptionsService, column: InternalColumn | null): Element {
     const iconContents = _createIconNoSpan(iconName, gos, column);
 
     if (iconContents) {
@@ -180,9 +180,10 @@ export function _createIcon(iconName: string, gos: GridOptionsService, column: C
 export function _createIconNoSpan(
     iconName: string,
     gos: GridOptionsService,
-    column?: Column | null,
+    column?: InternalColumn | null,
     forceCreate?: boolean
 ): Element | undefined {
+    // eslint-disable-next-line @typescript-eslint/ban-types
     let userProvidedIcon: Function | string | null = null;
 
     // check col for icon first

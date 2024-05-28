@@ -4,17 +4,17 @@ import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
 import type { DragAndDropService, DragSource } from '../../../dragAndDrop/dragAndDropService';
-import type { ColumnPinnedType } from '../../../entities/column';
-import { Column } from '../../../entities/column';
-import type { ColumnGroup } from '../../../entities/columnGroup';
-import type { ProvidedColumnGroup } from '../../../entities/providedColumnGroup';
+import type { InternalColumn } from '../../../entities/column';
+import { isColumn } from '../../../entities/column';
+import type { InternalColumnGroup } from '../../../entities/columnGroup';
+import type { InternalProvidedColumnGroup } from '../../../entities/providedColumnGroup';
 import { Events } from '../../../eventKeys';
 import type { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent } from '../../../events';
 import type { FocusService } from '../../../focusService';
 import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
 import type { BrandedType } from '../../../interfaces/brandedType';
+import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../../interfaces/iCommon';
-import type { IHeaderColumn } from '../../../interfaces/iHeaderColumn';
 import type { MenuService } from '../../../misc/menuService';
 import { _setAriaColIndex } from '../../../utils/aria';
 import { _getInnerWidth } from '../../../utils/dom';
@@ -37,7 +37,7 @@ export type HeaderCellCtrlInstanceId = BrandedType<string, 'HeaderCellCtrlInstan
 
 export abstract class AbstractHeaderCellCtrl<
     TComp extends IAbstractHeaderCellComp = any,
-    TColumn extends IHeaderColumn = any,
+    TColumn extends InternalColumn | InternalColumnGroup = any,
     TFeature extends IHeaderResizeFeature = any,
 > extends BeanStub {
     public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
@@ -61,7 +61,7 @@ export abstract class AbstractHeaderCellCtrl<
 
     protected beans: BeanCollection;
     private instanceId: HeaderCellCtrlInstanceId;
-    private columnGroupChild: IHeaderColumn;
+    private columnGroupChild: InternalColumn | InternalColumnGroup;
     private parentRowCtrl: HeaderRowCtrl;
 
     private isResizing: boolean;
@@ -80,7 +80,11 @@ export abstract class AbstractHeaderCellCtrl<
     protected abstract resizeHeader(delta: number, shiftKey: boolean): void;
     protected abstract moveHeader(direction: HorizontalDirection): void;
 
-    constructor(columnGroupChild: IHeaderColumn, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
+    constructor(
+        columnGroupChild: InternalColumn | InternalColumnGroup,
+        beans: BeanCollection,
+        parentRowCtrl: HeaderRowCtrl
+    ) {
         super();
 
         this.columnGroupChild = columnGroupChild;
@@ -98,7 +102,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected shouldStopEventPropagation(e: KeyboardEvent): boolean {
         const { headerRowIndex, column } = this.focusService.getFocusedHeader()!;
 
-        return _isUserSuppressingHeaderKeyboardEvent(this.gos, e, headerRowIndex, column);
+        return _isUserSuppressingHeaderKeyboardEvent(this.gos, e, headerRowIndex, column as InternalColumn);
     }
 
     protected getWrapperHasFocus(): boolean {
@@ -129,17 +133,13 @@ export abstract class AbstractHeaderCellCtrl<
 
     private refreshFirstAndLastStyles(): void {
         const { comp, column, beans } = this;
-        CssClassApplier.refreshFirstAndLastStyles(
-            comp,
-            column as unknown as Column | ColumnGroup,
-            beans.visibleColsService
-        );
+        CssClassApplier.refreshFirstAndLastStyles(comp, column, beans.visibleColsService);
     }
 
     private refreshAriaColIndex(): void {
         const { beans, column } = this;
 
-        const colIdx = beans.visibleColsService.getAriaColIndex(column as unknown as Column | ColumnGroup);
+        const colIdx = beans.visibleColsService.getAriaColIndex(column);
         _setAriaColIndex(this.eGui, colIdx); // for react, we don't use JSX, as it slowed down column moving
     }
 
@@ -306,7 +306,7 @@ export abstract class AbstractHeaderCellCtrl<
         return this.instanceId;
     }
 
-    public getColumnGroupChild(): IHeaderColumn {
+    public getColumnGroupChild(): InternalColumn | InternalColumnGroup {
         return this.columnGroupChild;
     }
 
@@ -320,13 +320,13 @@ export abstract class AbstractHeaderCellCtrl<
     protected handleContextMenuMouseEvent(
         mouseEvent: MouseEvent | undefined,
         touchEvent: TouchEvent | undefined,
-        column: Column | ProvidedColumnGroup
+        column: InternalColumn | InternalProvidedColumnGroup
     ): void {
         const event = mouseEvent ?? touchEvent!;
         if (this.gos.get('preventDefaultOnContextMenu')) {
             event.preventDefault();
         }
-        const columnToUse = column instanceof Column ? column : undefined;
+        const columnToUse = isColumn(column) ? column : undefined;
         if (this.menuService.isHeaderContextMenuEnabled(columnToUse)) {
             this.menuService.showHeaderContextMenu(columnToUse, mouseEvent, touchEvent);
         }
@@ -336,7 +336,7 @@ export abstract class AbstractHeaderCellCtrl<
 
     protected dispatchColumnMouseEvent(
         eventType: 'columnHeaderContextMenu' | 'columnHeaderClicked',
-        column: Column | ProvidedColumnGroup
+        column: InternalColumn | InternalProvidedColumnGroup
     ): void {
         const event: WithoutGridCommon<ColumnHeaderClickedEvent | ColumnHeaderContextMenuEvent> = {
             type: eventType,

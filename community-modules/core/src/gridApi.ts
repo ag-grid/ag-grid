@@ -2,10 +2,7 @@ import type { ApplyColumnStateParams, ColumnState } from './columns/columnApplyS
 import type { ISizeColumnsToFitParams } from './columns/columnSizeService';
 import type { CellPosition } from './entities/cellPositionUtils';
 import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from './entities/colDef';
-import type { Column, ColumnPinnedType } from './entities/column';
-import type { ColumnGroup } from './entities/columnGroup';
 import type { ChartRef, GridOptions } from './entities/gridOptions';
-import type { ProvidedColumnGroup } from './entities/providedColumnGroup';
 import type { AgEvent, ColumnEventType, FilterChangedEventSourceType, SelectionEventSourceType } from './events';
 import type { RowDropZoneEvents, RowDropZoneParams } from './gridBodyComp/rowDragFeature';
 import type {
@@ -27,11 +24,11 @@ import type { GridState } from './interfaces/gridState';
 import type { ICellEditor } from './interfaces/iCellEditor';
 import type { ClientSideRowModelStep } from './interfaces/iClientSideRowModel';
 import type { IClipboardCopyParams, IClipboardCopyRowsParams } from './interfaces/iClipboardService';
+import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
 import type { IColumnToolPanel } from './interfaces/iColumnToolPanel';
 import type { ExcelExportMultipleSheetParams, ExcelExportParams } from './interfaces/iExcelCreator';
 import type { FilterModel, IFilter } from './interfaces/iFilter';
 import type { IFiltersToolPanel } from './interfaces/iFiltersToolPanel';
-import type { IHeaderColumn } from './interfaces/iHeaderColumn';
 import type { IRowModel } from './interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from './interfaces/iRowNode';
 import type { RefreshServerSideParams } from './interfaces/iServerSideRowModel';
@@ -246,6 +243,7 @@ export interface GridApi<TData = any> {
      * When the rendered row is removed from the grid, all associated rendered row listeners will also be removed.
      * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists.
      */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void;
 
     /** Get the current Quick Filter text from the grid, or `undefined` if none is set. */
@@ -556,18 +554,22 @@ export interface GridApi<TData = any> {
      * Works similar to `addEventListener` for a browser DOM element.
      * Listeners will be automatically removed when the grid is destroyed.
      */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     addEventListener(eventType: string, listener: Function): void;
 
     /**
      * Add an event listener for all event types coming from the grid.
      * Listeners will be automatically removed when the grid is destroyed.
      */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     addGlobalListener(listener: Function): void;
 
     /** Remove an event listener. */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     removeEventListener(eventType: string, listener: Function): void;
 
     /** Remove a global event listener. */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     removeGlobalListener(listener: Function): void;
 
     dispatchEvent(event: AgEvent): void;
@@ -1021,16 +1023,16 @@ export interface GridApi<TData = any> {
     getPivotColumns(): Column[];
 
     /** Same as `getAllDisplayedColumnGroups` but just for the pinned left portion of the grid. */
-    getLeftDisplayedColumnGroups(): IHeaderColumn[];
+    getLeftDisplayedColumnGroups(): (Column | ColumnGroup)[];
 
     /** Same as `getAllDisplayedColumnGroups` but just for the center portion of the grid. */
-    getCenterDisplayedColumnGroups(): IHeaderColumn[];
+    getCenterDisplayedColumnGroups(): (Column | ColumnGroup)[];
 
     /** Same as `getAllDisplayedColumnGroups` but just for the pinned right portion of the grid. */
-    getRightDisplayedColumnGroups(): IHeaderColumn[];
+    getRightDisplayedColumnGroups(): (Column | ColumnGroup)[];
 
     /** Returns all 'root' column headers. If you are not grouping columns, these return the columns. If you are grouping, these return the top level groups - you can navigate down through each one to get the other lower level headers and finally the columns at the bottom. */
-    getAllDisplayedColumnGroups(): IHeaderColumn[] | null;
+    getAllDisplayedColumnGroups(): (Column | ColumnGroup)[] | null;
 
     /** @deprecated v31.1 autoSizeColumn(key) deprecated, please use autoSizeColumns([colKey]) instead. */
     autoSizeColumn(key: string | ColDef | Column, skipHeader?: boolean): void;

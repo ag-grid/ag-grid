@@ -3,19 +3,20 @@ import type { ColumnResizeSet, ColumnSizeService } from '../../../columns/column
 import type { VisibleColsService } from '../../../columns/visibleColsService';
 import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
-import type { Column, ColumnPinnedType } from '../../../entities/column';
-import type { ColumnGroup } from '../../../entities/columnGroup';
+import type { InternalColumn } from '../../../entities/column';
+import type { InternalColumnGroup } from '../../../entities/columnGroup';
 import type { ColumnEventType } from '../../../events';
+import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import type { AutoWidthCalculator } from '../../../rendering/autoWidthCalculator';
 import type { HorizontalResizeService } from '../../common/horizontalResizeService';
 import type { IHeaderResizeFeature } from '../abstractCell/abstractHeaderCellCtrl';
 import type { IHeaderGroupCellComp } from './headerGroupCellCtrl';
 
 interface ColumnSizeAndRatios {
-    columnsToResize: Column[];
+    columnsToResize: InternalColumn[];
     resizeStartWidth: number;
     resizeRatios: number[];
-    groupAfterColumns?: Column[];
+    groupAfterColumns?: InternalColumn[];
     groupAfterStartWidth?: number;
     groupAfterRatios?: number[];
 }
@@ -36,19 +37,24 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     }
 
     private eResize: HTMLElement;
-    private columnGroup: ColumnGroup;
+    private columnGroup: InternalColumnGroup;
     private comp: IHeaderGroupCellComp;
     private pinned: ColumnPinnedType;
 
-    private resizeCols?: Column[];
+    private resizeCols?: InternalColumn[];
     private resizeStartWidth: number;
     private resizeRatios?: number[];
 
-    private resizeTakeFromCols?: Column[];
+    private resizeTakeFromCols?: InternalColumn[];
     private resizeTakeFromStartWidth?: number;
     private resizeTakeFromRatios?: number[];
 
-    constructor(comp: IHeaderGroupCellComp, eResize: HTMLElement, pinned: ColumnPinnedType, columnGroup: ColumnGroup) {
+    constructor(
+        comp: IHeaderGroupCellComp,
+        eResize: HTMLElement,
+        pinned: ColumnPinnedType,
+        columnGroup: InternalColumnGroup
+    ) {
         super();
 
         this.eResize = eResize;
@@ -80,7 +86,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
                 const keys: string[] = [];
                 const leafCols = this.columnGroup.getDisplayedLeafColumns();
 
-                leafCols.forEach((column: Column) => {
+                leafCols.forEach((column) => {
                     // not all cols in the group may be participating with auto-resize
                     if (!column.getColDef().suppressAutoSize) {
                         keys.push(column.getColId());
@@ -125,7 +131,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
             resizeRatios,
         };
 
-        let groupAfter: ColumnGroup | null = null;
+        let groupAfter: InternalColumnGroup | null = null;
 
         if (shiftKey) {
             groupAfter = this.visibleColsService.getGroupAtDirection(this.columnGroup, 'After');
@@ -248,16 +254,16 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         this.comp.addOrRemoveCssClass('ag-column-resizing', resizing);
     }
 
-    private getColumnsToResize(): Column[] {
+    private getColumnsToResize(): InternalColumn[] {
         const leafCols = this.columnGroup.getDisplayedLeafColumns();
         return leafCols.filter((col) => col.isResizable());
     }
 
-    private getInitialSizeOfColumns(columns: Column[]): number {
-        return columns.reduce((totalWidth: number, column: Column) => totalWidth + column.getActualWidth(), 0);
+    private getInitialSizeOfColumns(columns: InternalColumn[]): number {
+        return columns.reduce((totalWidth: number, column: InternalColumn) => totalWidth + column.getActualWidth(), 0);
     }
 
-    private getSizeRatiosOfColumns(columns: Column[], initialSizeOfColumns: number): number[] {
+    private getSizeRatiosOfColumns(columns: InternalColumn[], initialSizeOfColumns: number): number[] {
         return columns.map((column) => column.getActualWidth() / initialSizeOfColumns);
     }
 

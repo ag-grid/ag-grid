@@ -1,13 +1,13 @@
 import type {
     BeanCollection,
     BeanName,
-    Column,
     ColumnApplyStateService,
     ColumnEventType,
     ColumnModel,
     ColumnState,
     IAggFunc,
     IAggFuncService,
+    InternalColumn,
 } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
@@ -32,11 +32,11 @@ export class ModelItemUtils extends BeanStub {
         this.setAllColumns(cols, selectAllChecked, eventType);
     }
 
-    public setColumn(col: Column, selectAllChecked: boolean, eventType: ColumnEventType): void {
+    public setColumn(col: InternalColumn, selectAllChecked: boolean, eventType: ColumnEventType): void {
         this.setAllColumns([col], selectAllChecked, eventType);
     }
 
-    public setAllColumns(cols: Column[], selectAllChecked: boolean, eventType: ColumnEventType): void {
+    public setAllColumns(cols: InternalColumn[], selectAllChecked: boolean, eventType: ColumnEventType): void {
         if (this.columnModel.isPivotMode()) {
             this.setAllPivot(cols, selectAllChecked, eventType);
         } else {
@@ -44,8 +44,8 @@ export class ModelItemUtils extends BeanStub {
         }
     }
 
-    private extractAllLeafColumns(allItems: ColumnModelItem[]): Column[] {
-        const res: Column[] = [];
+    private extractAllLeafColumns(allItems: ColumnModelItem[]): InternalColumn[] {
+        const res: InternalColumn[] = [];
 
         const recursiveFunc = (items: ColumnModelItem[]) => {
             items.forEach((item) => {
@@ -65,7 +65,7 @@ export class ModelItemUtils extends BeanStub {
         return res;
     }
 
-    private setAllVisible(columns: Column[], visible: boolean, eventType: ColumnEventType): void {
+    private setAllVisible(columns: InternalColumn[], visible: boolean, eventType: ColumnEventType): void {
         const colStateItems: ColumnState[] = [];
 
         columns.forEach((col) => {
@@ -85,14 +85,14 @@ export class ModelItemUtils extends BeanStub {
         }
     }
 
-    private setAllPivot(columns: Column[], value: boolean, eventType: ColumnEventType): void {
+    private setAllPivot(columns: InternalColumn[], value: boolean, eventType: ColumnEventType): void {
         this.setAllPivotActive(columns, value, eventType);
     }
 
-    private setAllPivotActive(columns: Column[], value: boolean, eventType: ColumnEventType): void {
+    private setAllPivotActive(columns: InternalColumn[], value: boolean, eventType: ColumnEventType): void {
         const colStateItems: ColumnState[] = [];
 
-        const turnOnAction = (col: Column) => {
+        const turnOnAction = (col: InternalColumn) => {
             // don't change any column that's already got a function active
             if (col.isAnyFunctionActive()) {
                 return;
@@ -120,7 +120,7 @@ export class ModelItemUtils extends BeanStub {
             }
         };
 
-        const turnOffAction = (col: Column) => {
+        const turnOffAction = (col: InternalColumn) => {
             const isActive = col.isPivotActive() || col.isRowGroupActive() || col.isValueActive();
             if (isActive) {
                 colStateItems.push({
@@ -142,7 +142,7 @@ export class ModelItemUtils extends BeanStub {
     }
 
     public updateColumns(params: {
-        columns: Column[];
+        columns: InternalColumn[];
         visibleState?: { [key: string]: boolean };
         pivotState?: {
             [key: string]: {
@@ -174,7 +174,7 @@ export class ModelItemUtils extends BeanStub {
         this.columnApplyStateService.applyColumnState({ state }, eventType);
     }
 
-    public createPivotState(column: Column): {
+    public createPivotState(column: InternalColumn): {
         pivot?: boolean;
         rowGroup?: boolean;
         aggFunc?: string | IAggFunc | null;

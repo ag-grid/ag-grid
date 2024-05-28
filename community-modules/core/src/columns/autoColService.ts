@@ -1,7 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { ColDef } from '../entities/colDef';
-import { Column } from '../entities/column';
+import { InternalColumn } from '../entities/column';
 import type { ColumnEventType } from '../events';
 import { _missing } from '../utils/generic';
 import { _mergeDeep } from '../utils/object';
@@ -9,7 +9,8 @@ import type { ColumnFactory } from './columnFactory';
 import type { ColumnModel } from './columnModel';
 import type { ColumnNameService } from './columnNameService';
 
-export const GROUP_AUTO_COLUMN_ID: 'ag-Grid-AutoColumn' = 'ag-Grid-AutoColumn';
+export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn' as const;
+
 export class AutoColService extends BeanStub {
     beanName: BeanName = 'autoColService';
 
@@ -24,8 +25,8 @@ export class AutoColService extends BeanStub {
         this.columnFactory = beans.columnFactory;
     }
 
-    public createAutoCols(rowGroupCols: Column[]): Column[] {
-        const autoCols: Column[] = [];
+    public createAutoCols(rowGroupCols: InternalColumn[]): InternalColumn[] {
+        const autoCols: InternalColumn[] = [];
 
         const doingTreeData = this.gos.get('treeData');
         let doingMultiAutoColumn = this.gos.isGroupMultiAutoColumn();
@@ -40,7 +41,7 @@ export class AutoColService extends BeanStub {
         // if doing groupDisplayType = "multipleColumns", then we call the method multiple times, once
         // for each column we are grouping by
         if (doingMultiAutoColumn) {
-            rowGroupCols.forEach((rowGroupCol: Column, index: number) => {
+            rowGroupCols.forEach((rowGroupCol: InternalColumn, index: number) => {
                 autoCols.push(this.createOneAutoCol(rowGroupCol, index));
             });
         } else {
@@ -50,12 +51,12 @@ export class AutoColService extends BeanStub {
         return autoCols;
     }
 
-    public updateAutoCols(autoGroupCols: Column[], source: ColumnEventType) {
-        autoGroupCols.forEach((col: Column, index: number) => this.updateOneAutoCol(col, index, source));
+    public updateAutoCols(autoGroupCols: InternalColumn[], source: ColumnEventType) {
+        autoGroupCols.forEach((col: InternalColumn, index: number) => this.updateOneAutoCol(col, index, source));
     }
 
     // rowGroupCol and index are missing if groupDisplayType != "multipleColumns"
-    private createOneAutoCol(rowGroupCol?: Column, index?: number): Column {
+    private createOneAutoCol(rowGroupCol?: InternalColumn, index?: number): InternalColumn {
         // if doing multi, set the field
         let colId: string;
         if (rowGroupCol) {
@@ -67,7 +68,7 @@ export class AutoColService extends BeanStub {
         const colDef = this.createAutoColDef(colId, rowGroupCol, index);
         colDef.colId = colId;
 
-        const newCol = new Column(colDef, null, colId, true);
+        const newCol = new InternalColumn(colDef, null, colId, true);
         this.context.createBean(newCol);
         return newCol;
     }
@@ -75,7 +76,7 @@ export class AutoColService extends BeanStub {
     /**
      * Refreshes an auto group col to load changes from defaultColDef or autoGroupColDef
      */
-    private updateOneAutoCol(colToUpdate: Column, index: number, source: ColumnEventType) {
+    private updateOneAutoCol(colToUpdate: InternalColumn, index: number, source: ColumnEventType) {
         const oldColDef = colToUpdate.getColDef();
         const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
         const underlyingColumn = underlyingColId != null ? this.columnModel.getColDefCol(underlyingColId) : undefined;
@@ -85,7 +86,7 @@ export class AutoColService extends BeanStub {
         this.columnFactory.applyColumnState(colToUpdate, colDef, source);
     }
 
-    private createAutoColDef(colId: string, underlyingColumn?: Column, index?: number): ColDef {
+    private createAutoColDef(colId: string, underlyingColumn?: InternalColumn, index?: number): ColDef {
         // if one provided by user, use it, otherwise create one
         let res: ColDef = this.createBaseColDef(underlyingColumn);
 
@@ -125,7 +126,7 @@ export class AutoColService extends BeanStub {
         return res;
     }
 
-    private createBaseColDef(rowGroupCol?: Column): ColDef {
+    private createBaseColDef(rowGroupCol?: InternalColumn): ColDef {
         const userDef = this.gos.get('autoGroupColumnDef');
         const localeTextFunc = this.localeService.getLocaleTextFunc();
 

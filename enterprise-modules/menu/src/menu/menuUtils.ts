@@ -1,10 +1,10 @@
 import type {
     BeanCollection,
     BeanName,
-    Column,
     FocusService,
     HeaderNavigationService,
     HeaderPosition,
+    InternalColumn,
     PopupEventParams,
     VisibleColsService,
 } from '@ag-grid-community/core';
@@ -12,7 +12,7 @@ import { BeanStub, _isVisible, _last } from '@ag-grid-community/core';
 import type { CloseMenuEvent } from '@ag-grid-enterprise/core';
 
 export interface MenuRestoreFocusParams {
-    column: Column | undefined;
+    column: InternalColumn | undefined;
     headerPosition: HeaderPosition | null;
     columnIndex: number;
     eventSource?: HTMLElement;

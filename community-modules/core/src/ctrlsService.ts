@@ -1,6 +1,5 @@
 import { BeanStub } from './context/beanStub';
 import type { BeanName } from './context/context';
-import type { ColumnPinnedType } from './entities/column';
 import type { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
 import type { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
 import type { GridBodyCtrl } from './gridBodyComp/gridBodyCtrl';
@@ -8,6 +7,7 @@ import type { RowContainerCtrl } from './gridBodyComp/rowContainer/rowContainerC
 import type { GridCtrl } from './gridComp/gridCtrl';
 import type { GridHeaderCtrl } from './headerRendering/gridHeaderCtrl';
 import type { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
+import type { ColumnPinnedType } from './interfaces/iColumn';
 
 // for all controllers that are singletons, they can register here so other parts
 // of the application can access them.

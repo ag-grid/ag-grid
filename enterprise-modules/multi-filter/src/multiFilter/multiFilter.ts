@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    Column,
     ContainerType,
     FilterManager,
     IAfterGuiAttachedParams,
@@ -11,6 +10,7 @@ import type {
     IMultiFilter,
     IMultiFilterDef,
     IMultiFilterModel,
+    InternalColumn,
     MultiFilterParams,
     ProvidedFilterModel,
     RowNode,
@@ -45,7 +45,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     private guiDestroyFuncs: (() => void)[] = [];
     // this could be the accordion/sub menu element depending on the display type
     private filterGuis: HTMLElement[] = [];
-    private column: Column;
+    private column: InternalColumn;
     private filterChangedCallback: ((additionalEventAttributes?: any) => void) | null;
     private lastOpenedInContainer?: ContainerType;
     private activeFilterIndices: number[] = [];
@@ -78,7 +78,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
 
         const { column, filterChangedCallback } = params;
 
-        this.column = column;
+        this.column = column as InternalColumn;
         this.filterChangedCallback = filterChangedCallback;
 
         const filterPromises: AgPromise<IFilterComp>[] = [];

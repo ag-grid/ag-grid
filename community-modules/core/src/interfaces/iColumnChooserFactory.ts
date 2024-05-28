@@ -1,8 +1,8 @@
 import type { ColumnChooserParams } from '../entities/colDef';
-import type { Column } from '../entities/column';
+import type { InternalColumn } from '../entities/column';
 
 export interface ShowColumnChooserParams {
-    column?: Column | null;
+    column?: InternalColumn | null;
     chooserParams?: ColumnChooserParams;
     eventSource?: HTMLElement;
 }

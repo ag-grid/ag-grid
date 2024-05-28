@@ -1,10 +1,10 @@
 import type {
     BeanCollection,
-    Column,
     FuncColsService,
     IRowNode,
     ISelectionService,
     IServerSideStore,
+    InternalColumn,
     IsApplyServerSideTransactionParams,
     LoadSuccessParams,
     RowBounds,
@@ -55,7 +55,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private readonly storeParams: ServerSideGroupLevelParams;
     private readonly parentRowNode: RowNode;
     private groupField: string | undefined;
-    private rowGroupColumn: Column;
+    private rowGroupColumn: InternalColumn;
 
     private idSequence = new NumberSequence();
     private cache: LazyCache;

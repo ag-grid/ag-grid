@@ -2,7 +2,7 @@ import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { Column } from '../entities/column';
+import type { InternalColumn } from '../entities/column';
 import type { CssVariablesChanged } from '../events';
 import { Events } from '../events';
 import type { GridCtrl } from '../gridComp/gridCtrl';
@@ -20,7 +20,7 @@ import { AgPromise } from '../utils/promise';
 
 export interface PopupPositionParams {
     ePopup: HTMLElement;
-    column?: Column | null;
+    column?: InternalColumn | null;
     rowNode?: IRowNode | null;
     nudgeX?: number;
     nudgeY?: number;
@@ -331,7 +331,7 @@ export class PopupService extends BeanStub {
         ePopup: HTMLElement,
         eventSource?: HTMLElement | null,
         mouseEvent?: MouseEvent | Touch | null,
-        column?: Column | null,
+        column?: InternalColumn | null,
         rowNode?: IRowNode | null
     ): void {
         const callback = this.gos.getCallback('postProcessPopup');

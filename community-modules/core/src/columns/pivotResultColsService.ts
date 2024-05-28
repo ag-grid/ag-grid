@@ -1,9 +1,9 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { AbstractColDef, ColDef, ColGroupDef } from '../entities/colDef';
-import type { Column } from '../entities/column';
+import type { InternalColumn } from '../entities/column';
+import { type InternalProvidedColumnGroup } from '../entities/providedColumnGroup';
 import type { ColumnEventType } from '../events';
-import type { IProvidedColumn } from '../interfaces/iProvidedColumn';
 import { _areEqual } from '../utils/array';
 import { _exists } from '../utils/generic';
 import type { ColumnFactory } from './columnFactory';
@@ -34,7 +34,7 @@ export class PivotResultColsService extends BeanStub {
     // private pivotResultColsMap: { [id: string]: Column };
 
     // Saved when pivot is disabled, available to re-use when pivot is restored
-    private previousPivotResultCols: IProvidedColumn[] | null;
+    private previousPivotResultCols: (InternalColumn | InternalProvidedColumnGroup)[] | null;
 
     public override destroy(): void {
         destroyColumnTree(this.getContext(), this.pivotResultCols?.tree);
@@ -45,14 +45,14 @@ export class PivotResultColsService extends BeanStub {
         return this.pivotResultCols != null;
     }
 
-    public lookupPivotResultCol(pivotKeys: string[], valueColKey: ColKey): Column | null {
+    public lookupPivotResultCol(pivotKeys: string[], valueColKey: ColKey): InternalColumn | null {
         if (this.pivotResultCols == null) {
             return null;
         }
 
         const valueColumnToFind = this.columnModel.getColDefCol(valueColKey);
 
-        let foundColumn: Column | null = null;
+        let foundColumn: InternalColumn | null = null;
 
         this.pivotResultCols.list.forEach((column) => {
             const thisPivotKeys = column.getColDef().pivotKeys;
@@ -73,7 +73,7 @@ export class PivotResultColsService extends BeanStub {
         return this.pivotResultCols;
     }
 
-    public getPivotResultCol(key: ColKey): Column | null {
+    public getPivotResultCol(key: ColKey): InternalColumn | null {
         if (!this.pivotResultCols) {
             return null;
         }

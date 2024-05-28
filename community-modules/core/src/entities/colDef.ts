@@ -1,5 +1,6 @@
 import type { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from '../events';
 import type { ICellEditorParams } from '../interfaces/iCellEditor';
+import type { Column, ColumnGroup, ColumnGroupShowType, ProvidedColumnGroup } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IFilterDef } from '../interfaces/iFilter';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -7,10 +8,7 @@ import type { MenuItemDef } from '../interfaces/menuItem';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { IRowDragItem } from '../rendering/row/rowDragComp';
 import type { ITooltipParams } from '../rendering/tooltipComponent';
-import type { Column } from './column';
-import type { ColumnGroup, ColumnGroupShowType } from './columnGroup';
 import type { GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
-import type { ProvidedColumnGroup } from './providedColumnGroup';
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef<TData = any, TValue = any> {
@@ -145,6 +143,7 @@ export type ColDefField<TData = any, TValue = any> = TData extends any ? NestedF
  * Returns a union of all possible paths to nested fields in `TData`.
  */
 export type NestedFieldPaths<TData = any, TValue = any, TDepth extends any[] = []> = {
+    // eslint-disable-next-line @typescript-eslint/ban-types
     [TKey in StringOrNumKeys<TData>]: TData[TKey] extends Function | undefined
         ? never // ignore functions
         : TData[TKey] extends any[] | undefined
@@ -228,6 +227,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults.
      * @initial
      * */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     icons?: { [key: string]: Function | string };
     /**
      * Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.

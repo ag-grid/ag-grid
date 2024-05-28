@@ -1,9 +1,9 @@
 import {
     type AgEventListener,
-    type Column,
     type IEventEmitter,
+    type InternalColumn,
+    type InternalProvidedColumnGroup,
     LocalEventService,
-    type ProvidedColumnGroup,
 } from '@ag-grid-community/core';
 
 export class ColumnModelItem implements IEventEmitter {
@@ -13,8 +13,8 @@ export class ColumnModelItem implements IEventEmitter {
 
     private readonly group: boolean;
     private readonly displayName: string | null;
-    private readonly columnGroup: ProvidedColumnGroup;
-    private readonly column: Column;
+    private readonly columnGroup: InternalProvidedColumnGroup;
+    private readonly column: InternalColumn;
     private readonly dept: number;
     private readonly children: ColumnModelItem[];
 
@@ -23,7 +23,7 @@ export class ColumnModelItem implements IEventEmitter {
 
     constructor(
         displayName: string | null,
-        columnOrGroup: Column | ProvidedColumnGroup,
+        columnOrGroup: InternalColumn | InternalProvidedColumnGroup,
         dept: number,
         group = false,
         expanded?: boolean
@@ -33,11 +33,11 @@ export class ColumnModelItem implements IEventEmitter {
         this.group = group;
 
         if (group) {
-            this.columnGroup = columnOrGroup as ProvidedColumnGroup;
+            this.columnGroup = columnOrGroup as InternalProvidedColumnGroup;
             this.expanded = expanded;
             this.children = [];
         } else {
-            this.column = columnOrGroup as Column;
+            this.column = columnOrGroup as InternalColumn;
         }
     }
 
@@ -47,10 +47,10 @@ export class ColumnModelItem implements IEventEmitter {
     public getDisplayName(): string | null {
         return this.displayName;
     }
-    public getColumnGroup(): ProvidedColumnGroup {
+    public getColumnGroup(): InternalProvidedColumnGroup {
         return this.columnGroup;
     }
-    public getColumn(): Column {
+    public getColumn(): InternalColumn {
         return this.column;
     }
     public getDept(): number {

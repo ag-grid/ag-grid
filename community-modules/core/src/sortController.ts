@@ -4,7 +4,7 @@ import type { ShowRowGroupColsService } from './columns/showRowGroupColsService'
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection, BeanName } from './context/context';
 import type { SortDirection } from './entities/colDef';
-import type { Column } from './entities/column';
+import type { InternalColumn } from './entities/column';
 import type { ColumnEventType, SortChangedEvent } from './events';
 import { Events } from './events';
 import type { WithoutGridCommon } from './interfaces/iCommon';
@@ -33,12 +33,17 @@ export class SortController extends BeanStub {
         this.showRowGroupColsService = beans.showRowGroupColsService;
     }
 
-    public progressSort(column: Column, multiSort: boolean, source: ColumnEventType): void {
+    public progressSort(column: InternalColumn, multiSort: boolean, source: ColumnEventType): void {
         const nextDirection = this.getNextSortDirection(column);
         this.setSortForColumn(column, nextDirection, multiSort, source);
     }
 
-    public setSortForColumn(column: Column, sort: SortDirection, multiSort: boolean, source: ColumnEventType): void {
+    public setSortForColumn(
+        column: InternalColumn,
+        sort: SortDirection,
+        multiSort: boolean,
+        source: ColumnEventType
+    ): void {
         // auto correct - if sort not legal value, then set it to 'no sort' (which is null)
         if (sort !== 'asc' && sort !== 'desc') {
             sort = null;
@@ -62,7 +67,7 @@ export class SortController extends BeanStub {
         const doingMultiSort = (multiSort || this.gos.get('alwaysMultiSort')) && !this.gos.get('suppressMultiSort');
 
         // clear sort on all columns except those changed, and update the icons
-        const updatedColumns: Column[] = [];
+        const updatedColumns: InternalColumn[] = [];
         if (!doingMultiSort) {
             const clearedColumns = this.clearSortBarTheseColumns(columnsToUpdate, source);
             updatedColumns.push(...clearedColumns);
@@ -75,7 +80,7 @@ export class SortController extends BeanStub {
         this.dispatchSortChangedEvents(source, updatedColumns);
     }
 
-    private updateSortIndex(lastColToChange: Column) {
+    private updateSortIndex(lastColToChange: InternalColumn) {
         const isCoupled = this.gos.isColumnsSortingCoupledToGroup();
         const groupParent = this.showRowGroupColsService.getShowRowGroupCol(lastColToChange.getId());
         const lastSortIndexCol = isCoupled ? groupParent || lastColToChange : lastColToChange;
@@ -100,7 +105,7 @@ export class SortController extends BeanStub {
 
     // gets called by API, so if data changes, use can call this, which will end up
     // working out the sort order again of the rows.
-    public onSortChanged(source: string, columns?: Column[]): void {
+    public onSortChanged(source: string, columns?: InternalColumn[]): void {
         this.dispatchSortChangedEvents(source, columns);
     }
 
@@ -111,7 +116,7 @@ export class SortController extends BeanStub {
         return sortedCols && sortedCols.length > 0;
     }
 
-    public dispatchSortChangedEvents(source: string, columns?: Column[]): void {
+    public dispatchSortChangedEvents(source: string, columns?: InternalColumn[]): void {
         const event: WithoutGridCommon<SortChangedEvent> = {
             type: Events.EVENT_SORT_CHANGED,
             source,
@@ -123,9 +128,9 @@ export class SortController extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    private clearSortBarTheseColumns(columnsToSkip: Column[], source: ColumnEventType): Column[] {
-        const clearedColumns: Column[] = [];
-        this.columnModel.getAllCols().forEach((columnToClear: Column) => {
+    private clearSortBarTheseColumns(columnsToSkip: InternalColumn[], source: ColumnEventType): InternalColumn[] {
+        const clearedColumns: InternalColumn[] = [];
+        this.columnModel.getAllCols().forEach((columnToClear) => {
             // Do not clear if either holding shift, or if column in question was clicked
             if (!columnsToSkip.includes(columnToClear)) {
                 // add to list of cleared cols when sort direction is set
@@ -142,7 +147,7 @@ export class SortController extends BeanStub {
         return clearedColumns;
     }
 
-    private getNextSortDirection(column: Column): SortDirection {
+    private getNextSortDirection(column: InternalColumn): SortDirection {
         let sortingOrder: SortDirection[] | null | undefined;
 
         if (column.getColDef().sortingOrder) {
@@ -155,7 +160,7 @@ export class SortController extends BeanStub {
 
         if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
             console.warn(
-                `AG Grid: sortingOrder must be an array with at least one element, currently it\'s ${sortingOrder}`
+                `AG Grid: sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`
             );
             return null;
         }
@@ -183,7 +188,7 @@ export class SortController extends BeanStub {
     /**
      * @returns a map of sort indexes for every sorted column, if groups sort primaries then they will have equivalent indices
      */
-    private getIndexedSortMap(): Map<Column, number> {
+    private getIndexedSortMap(): Map<InternalColumn, number> {
         // pull out all the columns that have sorting set
         let allSortedCols = this.columnModel.getAllCols().filter((col) => !!col.getSort());
 
@@ -205,10 +210,10 @@ export class SortController extends BeanStub {
         // this means if colDefs only have sort, but no sortIndex, we deterministically pick which
         // cols is sorted by first.
         const allColsIndexes: { [id: string]: number } = {};
-        allSortedCols.forEach((col: Column, index: number) => (allColsIndexes[col.getId()] = index));
+        allSortedCols.forEach((col, index) => (allColsIndexes[col.getId()] = index));
 
         // put the columns in order of which one got sorted first
-        allSortedCols.sort((a: Column, b: Column) => {
+        allSortedCols.sort((a, b) => {
             const iA = a.getSortIndex();
             const iB = b.getSortIndex();
             if (iA != null && iB != null) {
@@ -235,7 +240,7 @@ export class SortController extends BeanStub {
             ];
         }
 
-        const indexMap: Map<Column, number> = new Map();
+        const indexMap: Map<InternalColumn, number> = new Map();
 
         allSortedCols.forEach((col, idx) => indexMap.set(col, idx));
 
@@ -250,11 +255,14 @@ export class SortController extends BeanStub {
         return indexMap;
     }
 
-    public getColumnsWithSortingOrdered(): Column[] {
+    public getColumnsWithSortingOrdered(): InternalColumn[] {
         // pull out all the columns that have sorting set
-        return [...this.getIndexedSortMap().entries()]
-            .sort(([col1, idx1], [col2, idx2]) => idx1 - idx2)
-            .map(([col]) => col);
+        return (
+            [...this.getIndexedSortMap().entries()]
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                .sort(([col1, idx1], [col2, idx2]) => idx1 - idx2)
+                .map(([col]) => col)
+        );
     }
 
     // used by server side row models, to sent sort to server
@@ -276,13 +284,13 @@ export class SortController extends BeanStub {
             }));
     }
 
-    public canColumnDisplayMixedSort(column: Column): boolean {
+    public canColumnDisplayMixedSort(column: InternalColumn): boolean {
         const isColumnSortCouplingActive = this.gos.isColumnsSortingCoupledToGroup();
         const isGroupDisplayColumn = !!column.getColDef().showRowGroup;
         return isColumnSortCouplingActive && isGroupDisplayColumn;
     }
 
-    public getDisplaySortForColumn(column: Column): SortDirection | 'mixed' | undefined {
+    public getDisplaySortForColumn(column: InternalColumn): SortDirection | 'mixed' | undefined {
         const linkedColumns = this.funcColsService.getSourceColumnsForGroupColumn(column);
         if (!this.canColumnDisplayMixedSort(column) || !linkedColumns?.length) {
             return column.getSort();
@@ -301,7 +309,7 @@ export class SortController extends BeanStub {
         return firstSort;
     }
 
-    public getDisplaySortIndexForColumn(column: Column): number | null | undefined {
+    public getDisplaySortIndexForColumn(column: InternalColumn): number | null | undefined {
         return this.getIndexedSortMap().get(column);
     }
 }

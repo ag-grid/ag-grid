@@ -1,10 +1,10 @@
 import type {
     BeanCollection,
     BeanName,
-    Column,
     ColumnModel,
     FuncColsService,
     IRowModel,
+    InternalColumn,
     MenuItemDef,
     MenuService,
 } from '@ag-grid-community/core';
@@ -33,7 +33,11 @@ export class ColumnMenuFactory extends BeanStub {
 
     private static MENU_ITEM_SEPARATOR = 'separator';
 
-    public createMenu(parent: BeanStub, column: Column | undefined, sourceElement: () => HTMLElement): AgMenuList {
+    public createMenu(
+        parent: BeanStub,
+        column: InternalColumn | undefined,
+        sourceElement: () => HTMLElement
+    ): AgMenuList {
         const menuList = parent.createManagedBean(
             new AgMenuList(0, {
                 column: column ?? null,
@@ -50,7 +54,7 @@ export class ColumnMenuFactory extends BeanStub {
         return menuList;
     }
 
-    private getMenuItems(column?: Column): (string | MenuItemDef)[] {
+    private getMenuItems(column?: InternalColumn): (string | MenuItemDef)[] {
         const defaultItems = this.getDefaultMenuOptions(column);
         let result: (string | MenuItemDef)[];
 
@@ -83,7 +87,7 @@ export class ColumnMenuFactory extends BeanStub {
         return result;
     }
 
-    private getDefaultMenuOptions(column?: Column): string[] {
+    private getDefaultMenuOptions(column?: InternalColumn): string[] {
         const result: string[] = [];
 
         const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();

@@ -3,16 +3,17 @@ import type { ColumnMoveService } from '../columns/columnMoveService';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { HorizontalDirection } from '../constants/direction';
 import type { CtrlsService } from '../ctrlsService';
-import type { Column, ColumnPinnedType } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
-import type { ProvidedColumnGroup } from '../entities/providedColumnGroup';
+import type { InternalColumn } from '../entities/column';
+import type { InternalColumnGroup } from '../entities/columnGroup';
+import type { InternalProvidedColumnGroup } from '../entities/providedColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
+import type { ColumnPinnedType } from '../interfaces/iColumn';
 import { _areEqual, _includes, _last, _sortNumerically } from '../utils/array';
 
 export class ColumnMoveHelper {
     public static attemptMoveColumns(params: {
-        allMovingColumns: Column[];
+        allMovingColumns: InternalColumn[];
         isFromHeader: boolean;
         hDirection?: HorizontalDirection;
         xPosition: number;
@@ -23,7 +24,7 @@ export class ColumnMoveHelper {
         columnModel: ColumnModel;
         columnMoveService: ColumnMoveService;
         presentedColsService: VisibleColsService;
-    }): { columns: Column[]; toIndex: number } | null | undefined {
+    }): { columns: InternalColumn[]; toIndex: number } | null | undefined {
         const {
             isFromHeader,
             hDirection,
@@ -43,9 +44,9 @@ export class ColumnMoveHelper {
         let { allMovingColumns } = params;
         if (isFromHeader) {
             // If the columns we're dragging are the only visible columns of their group, move the hidden ones too
-            const newCols: Column[] = [];
+            const newCols: InternalColumn[] = [];
             allMovingColumns.forEach((col) => {
-                let movingGroup: ColumnGroup | null = null;
+                let movingGroup: InternalColumnGroup | null = null;
 
                 let parent = col.getParent();
                 while (parent != null && parent.getDisplayedLeafColumns().length === 1) {
@@ -136,7 +137,7 @@ export class ColumnMoveHelper {
         const displayedCols = presentedColsService.getAllCols();
 
         const potentialMoves: { move: number; fragCount: number }[] = [];
-        let targetOrder: Column[] | null = null;
+        let targetOrder: InternalColumn[] | null = null;
 
         for (let i = 0; i < validMoves.length; i++) {
             const move: number = validMoves[i];
@@ -167,12 +168,12 @@ export class ColumnMoveHelper {
     }
 
     public static moveColumns(
-        columns: Column[],
+        columns: InternalColumn[],
         toIndex: number,
         source: ColumnEventType,
         finished: boolean,
         columnMoveService: ColumnMoveService
-    ): { columns: Column[]; toIndex: number } | null {
+    ): { columns: InternalColumn[]; toIndex: number } | null {
         columnMoveService.moveColumns(columns, toIndex, source, finished);
 
         return finished ? null : { columns, toIndex };
@@ -180,8 +181,8 @@ export class ColumnMoveHelper {
 
     // returns the index of the first column in the list ONLY if the cols are all beside
     // each other. if the cols are not beside each other, then returns null
-    private static calculateOldIndex(movingCols: Column[], columnModel: ColumnModel): number | null {
-        const gridCols: Column[] = columnModel.getCols();
+    private static calculateOldIndex(movingCols: InternalColumn[], columnModel: ColumnModel): number | null {
+        const gridCols: InternalColumn[] = columnModel.getCols();
         const indexes = _sortNumerically(movingCols.map((col) => gridCols.indexOf(col)));
         const firstIndex = indexes[0];
         const lastIndex = _last(indexes);
@@ -192,9 +193,9 @@ export class ColumnMoveHelper {
     }
 
     // A measure of how fragmented in terms of groups an order of columns is
-    private static groupFragCount(columns: Column[]): number {
-        function parents(col: Column): ProvidedColumnGroup[] {
-            const result: ProvidedColumnGroup[] = [];
+    private static groupFragCount(columns: InternalColumn[]): number {
+        function parents(col: InternalColumn): InternalProvidedColumnGroup[] {
+            const result: InternalProvidedColumnGroup[] = [];
             let parent = col.getOriginalParent();
             while (parent != null) {
                 result.push(parent);
@@ -217,7 +218,10 @@ export class ColumnMoveHelper {
         return count;
     }
 
-    private static getDisplayedColumns(presentedColsService: VisibleColsService, type: ColumnPinnedType): Column[] {
+    private static getDisplayedColumns(
+        presentedColsService: VisibleColsService,
+        type: ColumnPinnedType
+    ): InternalColumn[] {
         switch (type) {
             case 'left':
                 return presentedColsService.getLeftCols();
@@ -229,7 +233,7 @@ export class ColumnMoveHelper {
     }
 
     private static calculateValidMoves(params: {
-        movingCols: Column[];
+        movingCols: InternalColumn[];
         draggingRight: boolean;
         xPosition: number;
         pinned: ColumnPinnedType;

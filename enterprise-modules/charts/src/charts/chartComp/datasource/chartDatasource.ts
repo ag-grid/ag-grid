@@ -1,12 +1,12 @@
 import type {
     BeanCollection,
-    Column,
-    ColumnGroup,
     ColumnModel,
     IAggFunc,
     IAggregationStage,
     IClientSideRowModel,
     IRowModel,
+    InternalColumn,
+    InternalColumnGroup,
     PartialCellRange,
     PivotResultColsService,
     RowNode,
@@ -24,7 +24,7 @@ export interface ChartDatasourceParams {
     grouping: boolean;
     pivoting: boolean;
     crossFiltering: boolean;
-    valueCols: Column[];
+    valueCols: InternalColumn[];
     startRow: number;
     endRow: number;
     isScatter: boolean;
@@ -217,7 +217,7 @@ export class ChartDatasource extends BeanStub {
                     let value = this.valueService.getValue(col, rowNode);
 
                     // aggregated value
-                    if (value && value.hasOwnProperty('toString')) {
+                    if (value && Object.prototype.hasOwnProperty.call(value, 'toString')) {
                         value = parseFloat(value.toString());
                     }
 
@@ -361,25 +361,25 @@ export class ChartDatasource extends BeanStub {
         });
     }
 
-    private extractPivotKeySeparator(secondaryColumns: Column[]) {
+    private extractPivotKeySeparator(secondaryColumns: InternalColumn[]) {
         if (secondaryColumns.length === 0) {
             return '';
         }
 
-        const extractSeparator = (columnGroup: ColumnGroup, childId: string): string => {
+        const extractSeparator = (columnGroup: InternalColumnGroup, childId: string): string => {
             const groupId = columnGroup.getGroupId();
             if (!columnGroup.getParent()) {
                 // removing groupId ('2000') from childId ('2000|Swimming') yields '|Swimming' so first char is separator
                 return childId.split(groupId)[1][0];
             }
-            return extractSeparator(columnGroup.getParent(), groupId);
+            return extractSeparator(columnGroup.getParent()!, groupId);
         };
 
         const firstSecondaryCol = secondaryColumns[0];
         if (firstSecondaryCol.getParent() == null) {
             return '';
         }
-        return extractSeparator(firstSecondaryCol.getParent(), firstSecondaryCol.getColId());
+        return extractSeparator(firstSecondaryCol.getParent()!, firstSecondaryCol.getColId());
     }
 
     private static getGroupLabels(rowNode: RowNode | null, initialLabel: string): string[] {

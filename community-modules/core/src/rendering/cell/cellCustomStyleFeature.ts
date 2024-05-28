@@ -2,13 +2,13 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CellClassParams, CellClassRules } from '../../entities/colDef';
 import type { CellStyle, CellStyleFunc } from '../../entities/colDef';
-import type { Column } from '../../entities/column';
+import type { InternalColumn } from '../../entities/column';
 import type { RowNode } from '../../entities/rowNode';
 import type { CellCtrl, ICellComp } from './cellCtrl';
 
 export class CellCustomStyleFeature extends BeanStub {
     private readonly cellCtrl: CellCtrl;
-    private readonly column: Column;
+    private readonly column: InternalColumn;
     private readonly rowNode: RowNode;
     private readonly beans: BeanCollection;
     private staticClasses: string[] = [];

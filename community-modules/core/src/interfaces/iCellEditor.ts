@@ -1,9 +1,10 @@
 import type { ColDef } from '../entities/colDef';
-import type { Column } from '../entities/column';
+import type { Column } from '../interfaces/iColumn';
 import type { AgGridCommon } from './iCommon';
 import type { IPopupComponent } from './iPopupComponent';
 import type { IRowNode } from './iRowNode';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface BaseCellEditor<TData = any, TValue = any, TContext = any> {
     /** Optional: Gets called once after initialised. If you return true, the editor will not be
      * used and the grid will continue editing. Use this to make a decision on editing

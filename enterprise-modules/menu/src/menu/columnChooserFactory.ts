@@ -1,11 +1,11 @@
 import type {
     BeanCollection,
     BeanName,
-    Column,
     ColumnChooserParams,
     ColumnMenuVisibleChangedEvent,
     FocusService,
     IColumnChooserFactory,
+    InternalColumn,
     ShowColumnChooserParams,
     VisibleColsService,
     WithoutGridCommon,
@@ -35,7 +35,7 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
 
     public createColumnSelectPanel(
         parent: BeanStub,
-        column?: Column | null,
+        column?: InternalColumn | null,
         draggable?: boolean,
         params?: ColumnChooserParams
     ): AgPrimaryCols {
@@ -83,7 +83,7 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
 
         const columnSelectPanel = this.createColumnSelectPanel(this, column, true, chooserParams);
         const translate = this.localeService.getLocaleTextFunc();
-        const columnIndex = this.visibleColsService.getAllCols().indexOf(column!);
+        const columnIndex = this.visibleColsService.getAllCols().indexOf(column as InternalColumn);
         const headerPosition = column ? this.focusService.getFocusedHeader() : null;
 
         this.activeColumnChooserDialog = this.createBean(
@@ -127,7 +127,7 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
         }
     }
 
-    private dispatchVisibleChangedEvent(visible: boolean, column?: Column | null): void {
+    private dispatchVisibleChangedEvent(visible: boolean, column?: InternalColumn | null): void {
         const event: WithoutGridCommon<ColumnMenuVisibleChangedEvent> = {
             type: Events.EVENT_COLUMN_MENU_VISIBLE_CHANGED,
             visible,

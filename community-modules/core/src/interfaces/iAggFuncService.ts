@@ -1,10 +1,10 @@
 import type { IAggFunc } from '../entities/colDef';
-import type { Column } from '../entities/column';
+import type { InternalColumn } from '../entities/column';
 
 export interface IAggFuncService {
     addAggFuncs(aggFuncs: { [key: string]: IAggFunc }): void;
     clear(): void;
-    getDefaultAggFunc(column: Column): string | null;
-    getFuncNames(column: Column): string[];
+    getDefaultAggFunc(column: InternalColumn): string | null;
+    getFuncNames(column: InternalColumn): string[];
     getDefaultFuncLabel(fctName: string): string;
 }

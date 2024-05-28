@@ -2,15 +2,20 @@ import type { ColumnState } from '../columns/columnApplyStateService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgEvent, AgEventListener, ColumnEvent, ColumnEventType } from '../events';
-import type { BrandedType } from '../interfaces/brandedType';
-import type { IEventEmitter } from '../interfaces/iEventEmitter';
-import type { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
-import type { IProvidedColumn } from '../interfaces/iProvidedColumn';
+import type {
+    Column,
+    ColumnEventName,
+    ColumnGroup,
+    ColumnGroupShowType,
+    ColumnInstanceId,
+    ColumnPinnedType,
+    HeaderColumnId,
+    ProvidedColumnGroup,
+} from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { LocalEventService } from '../localEventService';
 import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
 import type { ColumnHoverService } from '../rendering/columnHoverService';
-import { _warnOnce } from '../utils/function';
 import { _attrToNumber, _exists, _missing } from '../utils/generic';
 import { _mergeDeep } from '../utils/object';
 import type {
@@ -19,41 +24,25 @@ import type {
     ColDef,
     ColSpanParams,
     ColumnFunctionCallbackParams,
-    ColumnMenuTab,
     IAggFunc,
     RowSpanParams,
     SortDirection,
 } from './colDef';
-import type { ColumnGroup, ColumnGroupShowType } from './columnGroup';
-import type { ProvidedColumnGroup } from './providedColumnGroup';
-
-export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
-export type ColumnEventName =
-    | 'movingChanged'
-    | 'leftChanged'
-    | 'widthChanged'
-    | 'lastLeftPinnedChanged'
-    | 'firstRightPinnedChanged'
-    | 'visibleChanged'
-    | 'filterChanged'
-    | 'filterActiveChanged'
-    | 'sortChanged'
-    | 'colDefChanged'
-    | 'menuVisibleChanged'
-    | 'columnRowGroupChanged'
-    | 'columnPivotChanged'
-    | 'columnValueChanged'
-    | 'columnStateUpdated';
+import type { InternalColumnGroup } from './columnGroup';
+import type { InternalProvidedColumnGroup } from './providedColumnGroup';
 
 const COL_DEF_DEFAULTS: Partial<ColDef> = {
     resizable: true,
     sortable: true,
 };
 
-export type ColumnInstanceId = BrandedType<number, 'ColumnInstanceId'>;
 let instanceIdSequence = 0;
 export function getNextColInstanceId(): ColumnInstanceId {
     return instanceIdSequence++ as ColumnInstanceId;
+}
+
+export function isColumn(col: Column | ColumnGroup | ProvidedColumnGroup): col is InternalColumn {
+    return col instanceof InternalColumn;
 }
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
@@ -62,7 +51,7 @@ export function getNextColInstanceId(): ColumnInstanceId {
 // appear as a child of either the original tree or the displayed tree. However the relevant group classes
 // for each type only implements one, as each group can only appear in it's associated tree (eg ProvidedColumnGroup
 // can only appear in OriginalColumn tree).
-export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TValue>, IProvidedColumn, IEventEmitter {
+export class InternalColumn<TValue = any> extends BeanStub implements Column {
     public static DEFAULT_MIN_WIDTH = 20;
 
     // + renderedHeaderCell - for making header cell transparent when moving
@@ -154,8 +143,8 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
 
     private readonly primary: boolean;
 
-    private parent: ColumnGroup;
-    private originalParent: ProvidedColumnGroup | null;
+    private parent: InternalColumnGroup | null;
+    private originalParent: InternalProvidedColumnGroup | null;
 
     constructor(
         colDef: ColDef<any, TValue>,
@@ -242,34 +231,23 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
         this.columnEventService.dispatchEvent(this.createColumnEvent('colDefChanged', source));
     }
 
-    /**
-     * Returns the column definition provided by the application.
-     * This may not be correct, as items can be superseded by default column options.
-     * However it's useful for comparison, eg to know which application column definition matches that column.
-     */
     public getUserProvidedColDef(): ColDef<any, TValue> | null {
         return this.userProvidedColDef;
     }
 
-    public setParent(parent: ColumnGroup): void {
+    public setParent(parent: InternalColumnGroup | null): void {
         this.parent = parent;
     }
 
-    /** Returns the parent column group, if column grouping is active. */
-    public getParent(): ColumnGroup {
+    public getParent(): InternalColumnGroup | null {
         return this.parent;
     }
 
-    public setOriginalParent(originalParent: ProvidedColumnGroup | null): void {
+    public setOriginalParent(originalParent: InternalProvidedColumnGroup | null): void {
         this.originalParent = originalParent;
     }
 
-    /**
-     * Used for marryChildren, helps with comparing when duplicate groups have been created to manage split groups.
-     *
-     * Parent may contain a duplicate but not identical group when the group is split.
-     */
-    public getOriginalParent(): ProvidedColumnGroup | null {
+    public getOriginalParent(): InternalProvidedColumnGroup | null {
         return this.originalParent;
     }
 
@@ -295,7 +273,7 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
     private initMinAndMaxWidths(): void {
         const colDef = this.colDef;
 
-        this.minWidth = colDef.minWidth ?? Column.DEFAULT_MIN_WIDTH;
+        this.minWidth = colDef.minWidth ?? InternalColumn.DEFAULT_MIN_WIDTH;
         this.maxWidth = colDef.maxWidth ?? Number.MAX_SAFE_INTEGER;
     }
 
@@ -312,7 +290,7 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
     }
 
     private calculateColInitialWidth(colDef: ColDef): number {
-        const minColWidth = colDef.minWidth ?? Column.DEFAULT_MIN_WIDTH;
+        const minColWidth = colDef.minWidth ?? InternalColumn.DEFAULT_MIN_WIDTH;
         const maxColWidth = colDef.maxWidth ?? Number.MAX_SAFE_INTEGER;
 
         let width: number;
@@ -345,12 +323,10 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
         return showingAllGroups || showingThisGroup;
     }
 
-    /** Returns `true` if column is a primary column, `false` if secondary. Secondary columns are used for pivoting. */
     public isPrimary(): boolean {
         return this.primary;
     }
 
-    /** Returns `true` if column filtering is allowed. */
     public isFilterAllowed(): boolean {
         // filter defined means it's a string, class or true.
         // if its false, null or undefined then it's false.
@@ -370,22 +346,20 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
         return this.tooltipFieldContainsDots;
     }
 
-    /** Add an event listener to the column. */
-    public addEventListener(eventType: ColumnEventName, userListener: Function): void {
+    public addEventListener(eventType: ColumnEventName, userListener: AgEventListener): void {
         if (this.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
             // Only construct if we need it, as it's an overhead for column construction
             this.columnEventService.setFrameworkOverrides(this.frameworkOverrides);
             this.frameworkEventListenerService = new FrameworkEventListenerService(this.frameworkOverrides);
         }
-        const listener = this.frameworkEventListenerService?.wrap(userListener as AgEventListener) ?? userListener;
+        const listener = this.frameworkEventListenerService?.wrap(userListener) ?? userListener;
 
-        this.columnEventService.addEventListener(eventType, listener as AgEventListener);
+        this.columnEventService.addEventListener(eventType, listener);
     }
 
-    /** Remove event listener from the column. */
-    public removeEventListener(eventType: ColumnEventName, userListener: Function): void {
-        const listener = this.frameworkEventListenerService?.unwrap(userListener as AgEventListener) ?? userListener;
-        this.columnEventService.removeEventListener(eventType, listener as AgEventListener);
+    public removeEventListener(eventType: ColumnEventName, userListener: AgEventListener): void {
+        const listener = this.frameworkEventListenerService?.unwrap(userListener) ?? userListener;
+        this.columnEventService.removeEventListener(eventType, listener);
     }
 
     public createColumnFunctionCallbackParams(rowNode: IRowNode): ColumnFunctionCallbackParams {
@@ -413,9 +387,6 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
         return false;
     }
 
-    /**
-     * Returns `true` if the cell for this column is editable for the given `rowNode`, otherwise `false`.
-     */
     public isCellEditable(rowNode: IRowNode): boolean {
         // only allow editing of groups if the user has this option enabled
         if (rowNode.group && !this.gos.get('enableGroupEdit')) {
@@ -499,7 +470,6 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
         return this.moving;
     }
 
-    /** If sorting is active, returns the sort direction e.g. `'asc'` or `'desc'`. */
     public getSort(): SortDirection | undefined {
         return this.sort;
     }
@@ -557,7 +527,6 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
         this.dispatchStateUpdatedEvent('aggFunc');
     }
 
-    /** If aggregation is set for the column, returns the aggregation function. */
     public getAggFunc(): string | IAggFunc | null | undefined {
         return this.aggFunc;
     }
@@ -582,7 +551,6 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
         }
     }
 
-    /** Returns `true` if filter is active on the column. */
     public isFilterActive(): boolean {
         return this.filterActive;
     }
@@ -600,7 +568,6 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
         this.columnEventService.dispatchEvent(filterChangedEvent);
     }
 
-    /** Returns `true` when this `Column` is hovered, otherwise `false` */
     public isHovered(): boolean {
         return this.columnHoverService.isHovered(this);
     }
@@ -693,11 +660,6 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
         return { numberOfParents, isSpanningTotal };
     }
 
-    /** Returns the column definition for this column.
-     * The column definition will be the result of merging the application provided column definition with any provided defaults
-     * (e.g. `defaultColDef` grid option, or column types.
-     *
-     * Equivalent: `getDefinition` */
     public getColDef(): ColDef<any, TValue> {
         return this.colDef;
     }
@@ -705,24 +667,15 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
     public getColumnGroupShow(): ColumnGroupShowType | undefined {
         return this.colDef.columnGroupShow;
     }
-    /**
-     * Returns the unique ID for the column.
-     *
-     * Equivalent: `getId`, `getUniqueId` */
+
     public getColId(): string {
         return this.colId;
     }
-    /**
-     * Returns the unique ID for the column.
-     *
-     * Equivalent: `getColId`, `getUniqueId` */
+
     public getId(): string {
         return this.colId;
     }
-    /**
-     * Returns the unique ID for the column.
-     *
-     * Equivalent: `getColId`, `getId` */
+
     public getUniqueId(): HeaderColumnId {
         return this.colId;
     }
@@ -731,7 +684,6 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
         return this.colDef;
     }
 
-    /** Returns the current width of the column. If the column is resized, the actual width is the new size. */
     public getActualWidth(): number {
         return this.actualWidth;
     }
@@ -846,7 +798,6 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
         this.dispatchStateUpdatedEvent('rowGroup');
     }
 
-    /** Returns `true` if row group is currently active for this column. */
     public isRowGroupActive(): boolean {
         return this.rowGroupActive;
     }
@@ -859,7 +810,6 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
         this.dispatchStateUpdatedEvent('pivot');
     }
 
-    /** Returns `true` if pivot is currently active for this column. */
     public isPivotActive(): boolean {
         return this.pivotActive;
     }
@@ -879,7 +829,6 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
         }
     }
 
-    /** Returns `true` if value (aggregation) is currently active for this column. */
     public isValueActive(): boolean {
         return this.aggregationActive;
     }
@@ -896,23 +845,9 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
         return this.colDef.enableRowGroup === true;
     }
 
-    /**
-     * @deprecated v31.1 Use `getColDef().menuTabs ?? defaultValues` instead.
-     */
-    public getMenuTabs(defaultValues: ColumnMenuTab[]): ColumnMenuTab[] {
-        _warnOnce(`As of v31.1, 'getMenuTabs' is deprecated. Use 'getColDef().menuTabs ?? defaultValues' instead.`);
-        let menuTabs = this.getColDef().menuTabs;
-
-        if (menuTabs == null) {
-            menuTabs = defaultValues;
-        }
-
-        return menuTabs;
-    }
-
     private dispatchStateUpdatedEvent(key: keyof ColumnState): void {
         this.columnEventService.dispatchEvent({
-            type: Column.EVENT_STATE_UPDATED,
+            type: InternalColumn.EVENT_STATE_UPDATED,
             key,
         } as AgEvent);
     }

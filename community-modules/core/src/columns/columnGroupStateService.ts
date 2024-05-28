@@ -1,6 +1,6 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
-import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
+import { type InternalProvidedColumnGroup, isProvidedColumnGroup } from '../entities/providedColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { Logger } from '../logger';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
@@ -34,7 +34,7 @@ export class ColumnGroupStateService extends BeanStub {
         const gridBalancedTree = this.columnModel.getColTree();
 
         depthFirstOriginalTreeSearch(null, gridBalancedTree, (node) => {
-            if (node instanceof ProvidedColumnGroup) {
+            if (isProvidedColumnGroup(node)) {
                 columnGroupState.push({
                     groupId: node.getGroupId(),
                     open: node.isExpanded(),
@@ -54,7 +54,7 @@ export class ColumnGroupStateService extends BeanStub {
         const stateItems: { groupId: string; open: boolean | undefined }[] = [];
 
         depthFirstOriginalTreeSearch(null, primaryColumnTree, (child) => {
-            if (child instanceof ProvidedColumnGroup) {
+            if (isProvidedColumnGroup(child)) {
                 const colGroupDef = child.getColGroupDef();
                 const groupState = {
                     groupId: child.getGroupId(),
@@ -78,12 +78,12 @@ export class ColumnGroupStateService extends BeanStub {
 
         this.columnAnimationService.start();
 
-        const impactedGroups: ProvidedColumnGroup[] = [];
+        const impactedGroups: InternalProvidedColumnGroup[] = [];
 
         stateItems.forEach((stateItem) => {
             const groupKey = stateItem.groupId;
             const newValue = stateItem.open;
-            const providedColumnGroup: ProvidedColumnGroup | null = this.columnModel.getProvidedColGroup(groupKey);
+            const providedColumnGroup = this.columnModel.getProvidedColGroup(groupKey);
 
             if (!providedColumnGroup) {
                 return;

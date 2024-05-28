@@ -1,23 +1,23 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { Column } from '../entities/column';
-import type { ProvidedColumnGroup } from '../entities/providedColumnGroup';
+import type { InternalColumn } from '../entities/column';
+import type { InternalProvidedColumnGroup } from '../entities/providedColumnGroup';
 import { _deepCloneDefinition } from '../utils/object';
 
 export class ColumnDefFactory extends BeanStub {
     beanName: BeanName = 'columnDefFactory';
 
     public buildColumnDefs(
-        cols: Column[],
-        rowGroupColumns: Column[],
-        pivotColumns: Column[]
+        cols: InternalColumn[],
+        rowGroupColumns: InternalColumn[],
+        pivotColumns: InternalColumn[]
     ): (ColDef | ColGroupDef)[] {
         const res: (ColDef | ColGroupDef)[] = [];
 
         const colGroupDefs: { [id: string]: ColGroupDef } = {};
 
-        cols.forEach((col) => {
+        cols.forEach((col: InternalColumn) => {
             const colDef = this.createDefFromColumn(col, rowGroupColumns, pivotColumns);
 
             let addToResult = true;
@@ -25,7 +25,7 @@ export class ColumnDefFactory extends BeanStub {
             let childDef: ColDef | ColGroupDef = colDef;
 
             let pointer = col.getOriginalParent();
-            let lastPointer: ProvidedColumnGroup | null = null;
+            let lastPointer: InternalProvidedColumnGroup | null = null;
             while (pointer) {
                 let parentDef: ColGroupDef | null | undefined = null;
 
@@ -73,7 +73,7 @@ export class ColumnDefFactory extends BeanStub {
         return res;
     }
 
-    private createDefFromGroup(group: ProvidedColumnGroup): ColGroupDef | null | undefined {
+    private createDefFromGroup(group: InternalProvidedColumnGroup): ColGroupDef | null | undefined {
         const defCloned = _deepCloneDefinition(group.getColGroupDef(), ['children']);
 
         if (defCloned) {
@@ -83,7 +83,11 @@ export class ColumnDefFactory extends BeanStub {
         return defCloned;
     }
 
-    private createDefFromColumn(col: Column, rowGroupColumns: Column[], pivotColumns: Column[]): ColDef {
+    private createDefFromColumn(
+        col: InternalColumn,
+        rowGroupColumns: InternalColumn[],
+        pivotColumns: InternalColumn[]
+    ): ColDef {
         const colDefCloned = _deepCloneDefinition(col.getColDef())!;
 
         colDefCloned.colId = col.getColId();

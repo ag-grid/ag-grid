@@ -509,5 +509,21 @@ export function getRowNode(rowNodeFile: string) {
     return rowNodeMembers;
 }
 export function getColumn(columnFile: string) {
-    return getClassProperties(columnFile, 'Column');
+    const srcFile = parseFile(columnFile);
+    const columnNode = findNode('Column', srcFile);
+    const iHeaderColumnNode = findNode('IHeaderColumn', srcFile);
+    const iProvidedColumnNode = findNode('IProvidedColumn', srcFile);
+
+    let members = {};
+    const addToMembers = (node) => {
+        ts.forEachChild(node, (n) => {
+            members = { ...members, ...extractTypesFromNode(n, srcFile, false) };
+        });
+    };
+
+    addToMembers(columnNode);
+    addToMembers(iHeaderColumnNode);
+    addToMembers(iProvidedColumnNode);
+
+    return members;
 }

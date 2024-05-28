@@ -1,11 +1,11 @@
 import type {
     BeanCollection,
-    Column,
     FilterManager,
     FuncColsService,
     IRowNode,
     ISelectionService,
     IServerSideStore,
+    InternalColumn,
     IsApplyServerSideTransactionParams,
     LoadSuccessParams,
     PostSortRowsParams,
@@ -87,7 +87,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private allNodesMap: { [id: string]: RowNode };
 
     private groupField: string;
-    private rowGroupColumn: Column;
+    private rowGroupColumn: InternalColumn;
     private nodeIdPrefix: string | undefined;
 
     private displayIndexStart: number | undefined;

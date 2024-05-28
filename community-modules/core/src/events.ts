@@ -1,13 +1,12 @@
 import type { ColDef } from './entities/colDef';
-import type { Column, ColumnPinnedType } from './entities/column';
 import type { GridOptions } from './entities/gridOptions';
-import type { ProvidedColumnGroup } from './entities/providedColumnGroup';
 import { Events } from './eventKeys';
 import type { FilterRequestSource } from './filter/filterManager';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
 import type { AgChartThemeOverrides } from './interfaces/iAgChartOptions';
 import type { ChartType } from './interfaces/iChartOptions';
+import type { Column, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
 import type { AgGridCommon } from './interfaces/iCommon';
 import type { IFilterComp } from './interfaces/iFilter';
 import type { IRowNode, RowPinnedType } from './interfaces/iRowNode';
@@ -164,7 +163,7 @@ export interface FilterModifiedEvent<TData = any, TContext = any> extends AgGrid
 }
 
 export interface FilterOpenedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
-    /** Column / OriginalColumnGroup that contains the filter */
+    /** Column / ProvidedColumnGroup that contains the filter */
     column: Column | ProvidedColumnGroup;
     /** Source of the open request */
     source: FilterRequestSource;
@@ -777,7 +776,7 @@ export interface DataTypesInferredEvent<TData = any, TContext = any> extends AgG
 export interface FieldValueEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     value: any;
 }
-export interface FieldPickerValueSelectedEvent<TData = any, TContext = any> extends FieldValueEvent {
+export interface FieldPickerValueSelectedEvent extends FieldValueEvent {
     fromEnterKey: boolean;
 }
 

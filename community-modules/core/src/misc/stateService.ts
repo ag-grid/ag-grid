@@ -7,7 +7,7 @@ import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { Column } from '../entities/column';
+import type { InternalColumn } from '../entities/column';
 import { Events } from '../eventKeys';
 import type {
     NewColumnsLoadedEvent,
@@ -544,7 +544,7 @@ export class StateService extends BeanStub {
     }
 
     private setColumnGroupState(initialState: GridState): void {
-        if (!initialState.hasOwnProperty('columnGroup')) {
+        if (!Object.prototype.hasOwnProperty.call(initialState, 'columnGroup')) {
             return;
         }
 
@@ -618,7 +618,7 @@ export class StateService extends BeanStub {
         }
         const cellRanges: CellRange[] = [];
         rangeSelectionState.cellRanges.forEach((cellRange) => {
-            const columns: Column[] = [];
+            const columns: InternalColumn[] = [];
             cellRange.colIds.forEach((colId) => {
                 const column = this.columnModel.getCol(colId);
                 if (column) {

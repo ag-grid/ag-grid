@@ -1,4 +1,4 @@
-import type { Column, TextFormatter, ValueFormatterParams, ValueService } from '@ag-grid-community/core';
+import type { InternalColumn, TextFormatter, ValueFormatterParams, ValueService } from '@ag-grid-community/core';
 
 import type { ISetDisplayValueModel } from './iSetDisplayValueModel';
 import { SetFilterDisplayValue } from './iSetDisplayValueModel';
@@ -11,7 +11,7 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         private readonly valueService: ValueService,
         private readonly valueFormatter: ((params: ValueFormatterParams) => string) | undefined,
         private readonly formatter: TextFormatter,
-        private readonly column: Column
+        private readonly column: InternalColumn
     ) {}
 
     public updateDisplayedValuesToAllAvailable(

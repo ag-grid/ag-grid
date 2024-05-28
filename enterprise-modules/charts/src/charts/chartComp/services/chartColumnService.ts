@@ -1,10 +1,10 @@
 import type {
     BeanCollection,
     BeanName,
-    Column,
     ColumnModel,
     ColumnNameService,
     FuncColsService,
+    InternalColumn,
     RowNode,
     RowPositionUtils,
     ShowRowGroupColsService,
@@ -43,23 +43,23 @@ export class ChartColumnService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, clearValueCols);
     }
 
-    public getColumn(colId: string): Column | null {
+    public getColumn(colId: string): InternalColumn | null {
         return this.columnModel.getColDefCol(colId);
     }
 
-    public getAllDisplayedColumns(): Column[] {
+    public getAllDisplayedColumns(): InternalColumn[] {
         return this.visibleColsService.getAllCols();
     }
 
-    public getColDisplayName(col: Column): string | null {
+    public getColDisplayName(col: InternalColumn): string | null {
         return this.columnNameService.getDisplayNameForColumn(col, 'chart');
     }
 
-    public getRowGroupColumns(): Column[] {
+    public getRowGroupColumns(): InternalColumn[] {
         return this.funcColsService.getRowGroupColumns();
     }
 
-    public getGroupDisplayColumns(): Column[] {
+    public getGroupDisplayColumns(): InternalColumn[] {
         return this.showRowGroupColsService.getShowRowGroupCols();
     }
 
@@ -71,11 +71,11 @@ export class ChartColumnService extends BeanStub {
         return this.columnModel.isPivotActive();
     }
 
-    public getChartColumns(): { dimensionCols: Set<Column>; valueCols: Set<Column> } {
+    public getChartColumns(): { dimensionCols: Set<InternalColumn>; valueCols: Set<InternalColumn> } {
         const gridCols = this.columnModel.getCols();
 
-        const dimensionCols = new Set<Column>();
-        const valueCols = new Set<Column>();
+        const dimensionCols = new Set<InternalColumn>();
+        const valueCols = new Set<InternalColumn>();
 
         gridCols.forEach((col) => {
             const colDef = col.getColDef();
@@ -118,7 +118,7 @@ export class ChartColumnService extends BeanStub {
         return { dimensionCols, valueCols };
     }
 
-    private isInferredValueCol(col: Column): boolean {
+    private isInferredValueCol(col: InternalColumn): boolean {
         const colId = col.getColId();
         if (colId === 'ag-Grid-AutoColumn') {
             return false;
@@ -149,7 +149,7 @@ export class ChartColumnService extends BeanStub {
         return isNumber;
     }
 
-    private extractLeafData(row: RowNode, col: Column): any {
+    private extractLeafData(row: RowNode, col: InternalColumn): any {
         if (!row.allLeafChildren) {
             return null;
         }

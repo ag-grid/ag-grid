@@ -1,5 +1,5 @@
-import type { Column } from '../entities/column';
 import type { AgEvent, SelectionEventSourceType } from '../events';
+import type { Column } from '../interfaces/iColumn';
 
 export type RowNodeEventType =
     | 'rowSelected'
@@ -216,8 +216,10 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     isHovered(): boolean;
 
     /** Add an event listener. */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     addEventListener(eventType: RowNodeEventType, listener: Function): void;
     /** Remove event listener. */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     removeEventListener(eventType: RowNodeEventType, listener: Function): void;
 
     /**

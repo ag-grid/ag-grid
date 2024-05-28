@@ -2,8 +2,9 @@ import type { ColumnModel } from '../columns/columnModel';
 import type { ShowRowGroupColsService } from '../columns/showRowGroupColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
-import type { Column } from '../entities/column';
+import type { InternalColumn } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
+import type { Column } from '../interfaces/iColumn';
 import { _defaultComparator } from '../utils/generic';
 import type { ValueService } from '../valueService/valueService';
 
@@ -68,8 +69,8 @@ export class RowNodeSorter extends BeanStub {
             const sortOption = sortOptions[i];
             const isDescending = sortOption.sort === 'desc';
 
-            const valueA: any = this.getValue(nodeA, sortOption.column);
-            const valueB: any = this.getValue(nodeB, sortOption.column);
+            const valueA: any = this.getValue(nodeA, sortOption.column as InternalColumn);
+            const valueB: any = this.getValue(nodeB, sortOption.column as InternalColumn);
 
             let comparatorResult: number;
             const providedComparator = this.getComparator(sortOption, nodeA);
@@ -123,7 +124,7 @@ export class RowNodeSorter extends BeanStub {
         return primaryColumn.getColDef().comparator;
     }
 
-    private getValue(node: RowNode, column: Column): any {
+    private getValue(node: RowNode, column: InternalColumn): any {
         if (!this.primaryColumnsSortGroups) {
             return this.valueService.getValue(column, node, false, false);
         }

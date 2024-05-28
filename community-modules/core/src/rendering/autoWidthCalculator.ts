@@ -1,8 +1,8 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
+import type { InternalColumn } from '../entities/column';
+import type { InternalColumnGroup } from '../entities/columnGroup';
 import type { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { RowRenderer } from './rowRenderer';
 
@@ -30,7 +30,7 @@ export class AutoWidthCalculator extends BeanStub {
     // into the dummy, then check the dummy's width. then destroy the dummy
     // as we don't need it any more.
     // drawback: only the cells visible on the screen are considered
-    public getPreferredWidthForColumn(column: Column, skipHeader?: boolean): number {
+    public getPreferredWidthForColumn(column: InternalColumn, skipHeader?: boolean): number {
         const eHeaderCell = this.getHeaderCellForColumn(column);
         // cell isn't visible
         if (!eHeaderCell) {
@@ -49,7 +49,7 @@ export class AutoWidthCalculator extends BeanStub {
         return this.addElementsToContainerAndGetWidth(elements);
     }
 
-    public getPreferredWidthForColumnGroup(columnGroup: ColumnGroup): number {
+    public getPreferredWidthForColumnGroup(columnGroup: InternalColumnGroup): number {
         const eHeaderCell = this.getHeaderCellForColumn(columnGroup);
 
         if (!eHeaderCell) {
@@ -95,8 +95,8 @@ export class AutoWidthCalculator extends BeanStub {
     }
 
     /* tslint:disable */
-    private getHeaderCellForColumn(column: ColumnGroup): HTMLElement | null;
-    private getHeaderCellForColumn(column: Column): HTMLElement | null;
+    private getHeaderCellForColumn(column: InternalColumnGroup): HTMLElement | null;
+    private getHeaderCellForColumn(column: InternalColumn): HTMLElement | null;
     private getHeaderCellForColumn(column: any): any {
         /* tslint:enable */
         let element: HTMLElement | null = null;

@@ -2,13 +2,13 @@ import type {
     BeanCollection,
     BeanName,
     ChangedPath,
-    Column,
     ColumnModel,
     FuncColsService,
     GetGroupRowAggParams,
     IAggFunc,
     IAggFuncParams,
     IRowNodeStage,
+    InternalColumn,
     PivotResultColsService,
     RowNode,
     StageExecuteParams,
@@ -23,8 +23,8 @@ interface AggregationDetails {
     alwaysAggregateAtRootLevel: boolean;
     groupIncludeTotalFooter: boolean;
     changedPath: ChangedPath;
-    valueColumns: Column[];
-    pivotColumns: Column[];
+    valueColumns: InternalColumn[];
+    pivotColumns: InternalColumn[];
     filteredOnly: boolean;
     userAggFunc: ((params: WithoutGridCommon<GetGroupRowAggParams<any, any>>) => any) | undefined;
 }
@@ -164,7 +164,11 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
 
             if (rowNode.leafGroup) {
                 // lowest level group, get the values from the mapped set
-                values = this.getValuesFromMappedSet(rowNode.childrenMapped, keys, colDef.pivotValueColumn!);
+                values = this.getValuesFromMappedSet(
+                    rowNode.childrenMapped,
+                    keys,
+                    colDef.pivotValueColumn as InternalColumn
+                );
             } else {
                 // value columns and pivot columns, non-leaf group
                 values = this.getValuesPivotNonLeaf(rowNode, colDef.colId!);
@@ -174,7 +178,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
             result[colDef.colId!] = this.aggregateValues(
                 values,
                 colDef.pivotValueColumn!.getAggFunc()!,
-                colDef.pivotValueColumn!,
+                colDef.pivotValueColumn as InternalColumn,
                 rowNode,
                 secondaryCol
             );
@@ -196,7 +200,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
                 result[colDef.colId!] = this.aggregateValues(
                     aggResults,
                     colDef.pivotValueColumn!.getAggFunc()!,
-                    colDef.pivotValueColumn!,
+                    colDef.pivotValueColumn as InternalColumn,
                     rowNode,
                     secondaryCol
                 );
@@ -220,7 +224,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         const values2d = this.getValuesNormal(rowNode, changedValueColumns, aggDetails.filteredOnly);
         const oldValues = rowNode.aggData;
 
-        changedValueColumns.forEach((valueColumn: Column, index: number) => {
+        changedValueColumns.forEach((valueColumn, index) => {
             result[valueColumn.getId()] = this.aggregateValues(
                 values2d[index],
                 valueColumn.getAggFunc()!,
@@ -230,7 +234,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         });
 
         if (notChangedValueColumns && oldValues) {
-            notChangedValueColumns.forEach((valueColumn: Column) => {
+            notChangedValueColumns.forEach((valueColumn) => {
                 result[valueColumn.getId()] = oldValues[valueColumn.getId()];
             });
         }
@@ -242,7 +246,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         return rowNode.childrenAfterFilter!.map((childNode: RowNode) => childNode.aggData[colId]);
     }
 
-    private getValuesFromMappedSet(mappedSet: any, keys: string[], valueColumn: Column): any[] {
+    private getValuesFromMappedSet(mappedSet: any, keys: string[], valueColumn: InternalColumn): any[] {
         let mapPointer = mappedSet;
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i];
@@ -256,7 +260,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         return mapPointer.map((rowNode: RowNode) => this.valueService.getValue(valueColumn, rowNode));
     }
 
-    private getValuesNormal(rowNode: RowNode, valueColumns: Column[], filteredOnly: boolean): any[][] {
+    private getValuesNormal(rowNode: RowNode, valueColumns: InternalColumn[], filteredOnly: boolean): any[][] {
         // create 2d array, of all values for all valueColumns
         const values: any[][] = [];
         valueColumns.forEach(() => values.push([]));
@@ -283,9 +287,9 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
     public aggregateValues(
         values: any[],
         aggFuncOrString: string | IAggFunc,
-        column?: Column,
+        column?: InternalColumn,
         rowNode?: RowNode,
-        pivotResultColumn?: Column
+        pivotResultColumn?: InternalColumn
     ): any {
         const aggFunc =
             typeof aggFuncOrString === 'string' ? this.aggFuncService.getAggFunc(aggFuncOrString) : aggFuncOrString;

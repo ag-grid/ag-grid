@@ -1,4 +1,4 @@
-import type { Column, RowHeightCallbackParams, XmlElement } from '@ag-grid-community/core';
+import type { InternalColumn, RowHeightCallbackParams, XmlElement } from '@ag-grid-community/core';
 import { XmlFactory } from '@ag-grid-community/csv-export';
 
 import { INCH_TO_EMU } from './excelConstants';
@@ -40,6 +40,7 @@ export const getHeightFromProperty = (
     if (typeof height === 'number') {
         finalHeight = height;
     } else {
+        // eslint-disable-next-line @typescript-eslint/ban-types
         const heightFunc = height as Function;
         finalHeight = heightFunc({ rowIndex });
     }
@@ -47,7 +48,7 @@ export const getHeightFromProperty = (
     return pixelsToPoint(finalHeight);
 };
 
-export const setExcelImageTotalWidth = (image: ExcelCalculatedImage, columnsToExport: Column[]): void => {
+export const setExcelImageTotalWidth = (image: ExcelCalculatedImage, columnsToExport: InternalColumn[]): void => {
     const { colSpan, column } = image.position!;
 
     if (!image.width) {

@@ -1,6 +1,6 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { BeanCollection } from '../context/context';
-import type { Column } from '../entities/column';
+import type { InternalColumn } from '../entities/column';
 import { Events } from '../eventKeys';
 import type { FilterDestroyedEvent, FilterOpenedEvent } from '../events';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
@@ -25,7 +25,7 @@ export class FilterWrapperComp extends Component {
     private filterWrapper: FilterWrapper | null = null;
 
     constructor(
-        private readonly column: Column,
+        private readonly column: InternalColumn,
         private readonly source: FilterRequestSource
     ) {
         super(/* html */ `<div class="ag-filter"></div>`);

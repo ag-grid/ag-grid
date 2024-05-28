@@ -21,7 +21,7 @@ import { LocalEventService } from '../localEventService';
 import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
 import { _debounce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
-import type { Column } from './column';
+import type { InternalColumn } from './column';
 
 export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     public static ID_PREFIX_ROW_GROUP = 'row-group-';
@@ -134,7 +134,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     public field: string | null;
 
     /** The row group column used for this group, e.g. the Country column instance. */
-    public rowGroupColumn: Column | null;
+    public rowGroupColumn: InternalColumn | null;
 
     /** The key for the group eg Ireland, UK, USA */
     public key: string | null = null;
@@ -433,6 +433,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     public getGroupKeys(excludeSelf = false): string[] {
         const keys: string[] = [];
 
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let pointer: RowNode | null = this;
         if (excludeSelf) {
             pointer = pointer.parent;
@@ -620,7 +621,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         }
     }
 
-    public setRowAutoHeight(cellHeight: number | undefined, column: Column): void {
+    public setRowAutoHeight(cellHeight: number | undefined, column: InternalColumn): void {
         if (!this.__autoHeights) {
             this.__autoHeights = {};
         }
@@ -652,7 +653,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
                 // If column spanning is active a column may not provide auto height for a row if that
                 // cell is not present for the given row due to a previous cell spanning over the auto height column.
                 if (this.beans.columnModel.isColSpanActive()) {
-                    let activeColsForRow: Column[] = [];
+                    let activeColsForRow: InternalColumn[] = [];
                     switch (col.getPinned()) {
                         case 'left':
                             activeColsForRow = this.beans.visibleColsService.getLeftColsForRow(this);
@@ -787,7 +788,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
      * @param eventSource The source of the event
      * @returns `true` if the value was changed, otherwise `false`.
      */
-    public setDataValue(colKey: string | Column, newValue: any, eventSource?: string): boolean {
+    public setDataValue(colKey: string | InternalColumn, newValue: any, eventSource?: string): boolean {
         const getColumnFromKey = () => {
             if (typeof colKey !== 'string') {
                 return colKey;
@@ -815,7 +816,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         return valueChanged;
     }
 
-    public getValueFromValueService(column: Column): any {
+    public getValueFromValueService(column: InternalColumn): any {
         // if we don't check this, then the grid will render leaf groups as open even if we are not
         // allowing the user to open leaf groups. confused? remember for pivot mode we don't allow
         // opening leaf groups, so we have to force leafGroups to be closed in case the user expanded
@@ -849,7 +850,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     private dispatchEventForSaveValueReadOnly(
-        column: Column,
+        column: InternalColumn,
         oldValue: any,
         newValue: any,
         eventSource?: string
@@ -872,7 +873,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.beans.eventService.dispatchEvent(event);
     }
 
-    public setGroupValue(colKey: string | Column, newValue: any): void {
+    public setGroupValue(colKey: string | InternalColumn, newValue: any): void {
         const column = this.beans.columnModel.getCol(colKey)!;
 
         if (_missing(this.groupData)) {
@@ -960,7 +961,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         return this.group && _missingOrEmpty(this.childrenAfterGroup);
     }
 
-    private dispatchCellChangedEvent(column: Column, newValue: TData, oldValue: TData): void {
+    private dispatchCellChangedEvent(column: InternalColumn, newValue: TData, oldValue: TData): void {
         const cellChangedEvent: CellChangedEvent<TData> = {
             type: RowNode.EVENT_CELL_CHANGED,
             node: this,
@@ -1170,6 +1171,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     /** Add an event listener. */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     public addEventListener(eventType: RowNodeEventType, userListener: Function): void {
         if (!this.localEventService) {
             this.localEventService = new LocalEventService();
@@ -1184,6 +1186,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     /** Remove event listener. */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     public removeEventListener(eventType: RowNodeEventType, userListener: Function): void {
         if (!this.localEventService) {
             return;
@@ -1204,7 +1207,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_MOUSE_LEAVE));
     }
 
-    public getFirstChildOfFirstChild(rowGroupColumn: Column | null): RowNode | null {
+    public getFirstChildOfFirstChild(rowGroupColumn: InternalColumn | null): RowNode | null {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let currentRowNode: RowNode = this;
         let isCandidate = true;
         let foundFirstChildPath = false;
@@ -1256,6 +1260,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         const res: string[] = [];
 
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let pointer: RowNode = this;
 
         while (pointer.key != null) {

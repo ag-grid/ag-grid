@@ -7,7 +7,14 @@ import type {
     IFloatingFilterComp,
     IFloatingFilterParams,
 } from '@ag-grid-community/core';
-import { AgInputTextField, AgPromise, Column, Component, RefPlaceholder, _clearElement } from '@ag-grid-community/core';
+import {
+    AgInputTextField,
+    AgPromise,
+    Component,
+    InternalColumn,
+    RefPlaceholder,
+    _clearElement,
+} from '@ag-grid-community/core';
 
 import { GroupFilter } from './groupFilter';
 
@@ -73,7 +80,11 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     }
 
     private setParams(): void {
-        const displayName = this.columnNameService.getDisplayNameForColumn(this.params.column, 'header', true);
+        const displayName = this.columnNameService.getDisplayNameForColumn(
+            this.params.column as InternalColumn,
+            'header',
+            true
+        );
         const translate = this.localeService.getLocaleTextFunc();
         this.eFloatingFilterText?.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }
@@ -107,10 +118,14 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
                     this.haveAddedColumnListeners = true;
                     this.addManagedListener(
                         column,
-                        Column.EVENT_VISIBLE_CHANGED,
+                        InternalColumn.EVENT_VISIBLE_CHANGED,
                         this.onColumnVisibleChanged.bind(this)
                     );
-                    this.addManagedListener(column, Column.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
+                    this.addManagedListener(
+                        column,
+                        InternalColumn.EVENT_COL_DEF_CHANGED,
+                        this.onColDefChanged.bind(this)
+                    );
                 }
                 return compDetails.newAgStackInstance().then((floatingFilter) => {
                     this.underlyingFloatingFilter = floatingFilter;
@@ -135,7 +150,10 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         if (!event.column) {
             return;
         }
-        const compDetails = this.filterManager.getFloatingFilterCompDetails(event.column, this.params.showParentFilter);
+        const compDetails = this.filterManager.getFloatingFilterCompDetails(
+            event.column as InternalColumn,
+            this.params.showParentFilter
+        );
         if (compDetails) {
             if (this.underlyingFloatingFilter?.refresh) {
                 this.underlyingFloatingFilter.refresh(compDetails.params);

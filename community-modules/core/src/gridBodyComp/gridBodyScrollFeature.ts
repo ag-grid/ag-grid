@@ -3,7 +3,7 @@ import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { Column } from '../entities/column';
+import type { InternalColumn } from '../entities/column';
 import { Events } from '../eventKeys';
 import type { BodyScrollEndEvent, BodyScrollEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -615,7 +615,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private getPositionedHorizontalScroll(
-        column: Column,
+        column: InternalColumn,
         position: 'auto' | 'start' | 'middle' | 'end'
     ): number | null {
         const { columnBeforeStart, columnAfterEnd } = this.isColumnOutsideViewport(column);
@@ -652,7 +652,7 @@ export class GridBodyScrollFeature extends BeanStub {
         return null;
     }
 
-    private isColumnOutsideViewport(column: Column): { columnBeforeStart: boolean; columnAfterEnd: boolean } {
+    private isColumnOutsideViewport(column: InternalColumn): { columnBeforeStart: boolean; columnAfterEnd: boolean } {
         const { start: viewportStart, end: viewportEnd } = this.getViewportBounds();
         const { colLeft, colRight } = this.getColumnBounds(column);
 
@@ -664,7 +664,7 @@ export class GridBodyScrollFeature extends BeanStub {
         return { columnBeforeStart, columnAfterEnd };
     }
 
-    private getColumnBounds(column: Column): { colLeft: number; colMiddle: number; colRight: number } {
+    private getColumnBounds(column: InternalColumn): { colLeft: number; colMiddle: number; colRight: number } {
         const isRtl = this.enableRtl;
         const bodyWidth = this.visibleColsService.getBodyContainerWidth();
         const colWidth = column.getActualWidth();

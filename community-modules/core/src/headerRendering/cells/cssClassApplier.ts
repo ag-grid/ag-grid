@@ -1,9 +1,8 @@
-import { ColumnModel } from '../../columns/columnModel';
 import type { VisibleColsService } from '../../columns/visibleColsService';
 import type { AbstractColDef, HeaderClassParams, ToolPanelClassParams } from '../../entities/colDef';
-import type { Column } from '../../entities/column';
-import type { ColumnGroup } from '../../entities/columnGroup';
-import type { ProvidedColumnGroup } from '../../entities/providedColumnGroup';
+import type { InternalColumn } from '../../entities/column';
+import type { InternalColumnGroup } from '../../entities/columnGroup';
+import type { InternalProvidedColumnGroup } from '../../entities/providedColumnGroup';
 import type { GridOptionsService } from '../../gridOptionsService';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { ICellComp } from '../../rendering/cell/cellCtrl';
@@ -17,8 +16,8 @@ export class CssClassApplier {
     public static getHeaderClassesFromColDef(
         abstractColDef: AbstractColDef | null,
         gos: GridOptionsService,
-        column: Column | null,
-        columnGroup: ColumnGroup | null
+        column: InternalColumn | null,
+        columnGroup: InternalColumnGroup | null
     ): string[] {
         if (_missing(abstractColDef)) {
             return [];
@@ -30,8 +29,8 @@ export class CssClassApplier {
     public static getToolPanelClassesFromColDef(
         abstractColDef: AbstractColDef | null,
         gos: GridOptionsService,
-        column: Column | null,
-        columnGroup: ProvidedColumnGroup | null
+        column: InternalColumn | null,
+        columnGroup: InternalProvidedColumnGroup | null
     ): string[] {
         if (_missing(abstractColDef)) {
             return [];
@@ -48,7 +47,7 @@ export class CssClassApplier {
 
     public static refreshFirstAndLastStyles(
         comp: IAbstractHeaderCellComp | ICellComp,
-        column: Column | ColumnGroup,
+        column: InternalColumn | InternalColumnGroup,
         presentedColsService: VisibleColsService
     ) {
         comp.addOrRemoveCssClass(CSS_FIRST_COLUMN, presentedColsService.isColAtEdge(column, 'first'));
@@ -58,7 +57,7 @@ export class CssClassApplier {
     private static getClassParams<T extends HeaderClassParams | ToolPanelClassParams>(
         abstractColDef: AbstractColDef,
         gos: GridOptionsService,
-        column: Column | null,
+        column: InternalColumn | null,
         columnGroup: T['columnGroup']
     ): T {
         return gos.addGridCommonParams({
@@ -75,8 +74,8 @@ export class CssClassApplier {
         classesOrFunc: string | string[] | ((params: T) => string | string[] | undefined) | null | undefined,
         abstractColDef: AbstractColDef,
         gos: GridOptionsService,
-        column: Column | null,
-        columnGroup: ColumnGroup | ProvidedColumnGroup | null
+        column: InternalColumn | null,
+        columnGroup: InternalColumnGroup | InternalProvidedColumnGroup | null
     ): string[] {
         if (_missing(classesOrFunc)) {
             return [];

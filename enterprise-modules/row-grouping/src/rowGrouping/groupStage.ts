@@ -2,13 +2,13 @@ import type {
     BeanCollection,
     BeanName,
     ChangedPath,
-    Column,
     ColumnModel,
     FuncColsService,
     GetDataPath,
     IRowNodeStage,
     ISelectionService,
     InitialGroupOrderComparatorParams,
+    InternalColumn,
     IsGroupOpenByDefaultParams,
     KeyCreatorParams,
     RowNodeTransaction,
@@ -35,7 +35,7 @@ import { BatchRemover } from './batchRemover';
 interface GroupInfo {
     key: string; // e.g. 'Ireland'
     field: string | null; // e.g. 'country'
-    rowGroupColumn: Column | null;
+    rowGroupColumn: InternalColumn | null;
     leafNode?: RowNode;
 }
 
@@ -44,7 +44,7 @@ interface GroupingDetails {
     expandByDefault: number;
     changedPath: ChangedPath;
     rootNode: RowNode;
-    groupedCols: Column[];
+    groupedCols: InternalColumn[];
     groupedColCount: number;
     transactions: RowNodeTransaction[];
     rowNodeOrder: { [id: string]: number };
@@ -759,7 +759,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo, details: GroupingDetails): void {
         groupNode.groupData = {};
-        const groupDisplayCols: Column[] = this.showRowGroupColsService.getShowRowGroupCols();
+        const groupDisplayCols = this.showRowGroupColsService.getShowRowGroupCols();
         groupDisplayCols.forEach((col) => {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
@@ -782,7 +782,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         });
     }
 
-    private getChildrenMappedKey(key: string, rowGroupColumn: Column | null): string {
+    private getChildrenMappedKey(key: string, rowGroupColumn: InternalColumn | null): string {
         if (rowGroupColumn) {
             // grouping by columns
             return rowGroupColumn.getId() + '-' + key;

@@ -1,13 +1,13 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { Column, ColumnPinnedType } from '../entities/column';
-import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
+import type { InternalColumn } from '../entities/column';
+import { type InternalProvidedColumnGroup, isProvidedColumnGroup } from '../entities/providedColumnGroup';
 import type { ColumnEventType } from '../events';
 import { Events } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { PropertyChangedSource } from '../gridOptionsService';
-import type { IProvidedColumn } from '../interfaces/iProvidedColumn';
+import type { Column, ColumnPinnedType } from '../interfaces/iColumn';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { _areEqual, _includes, _insertIntoArray, _moveInArray } from '../utils/array';
 import { _warnOnce } from '../utils/function';
@@ -36,12 +36,12 @@ export type Maybe<T> = T | null | undefined;
 
 export interface ColumnCollections {
     // columns in a tree, leaf levels are columns, everything above is group column
-    tree: IProvidedColumn[];
+    tree: (InternalColumn | InternalProvidedColumnGroup)[];
     treeDepth: number; // depth of the tree above
     // leaf level cols of the tree
-    list: Column[];
+    list: InternalColumn[];
     // cols by id, for quick lookup
-    map: { [id: string]: Column };
+    map: { [id: string]: InternalColumn };
 }
 
 export class ColumnModel extends BeanStub {
@@ -106,8 +106,8 @@ export class ColumnModel extends BeanStub {
     // true when pivotResultCols are in cols
     private showingPivotResult: boolean;
 
-    private lastOrder: Column[] | null;
-    private lastPivotOrder: Column[] | null;
+    private lastOrder: InternalColumn[] | null;
+    private lastPivotOrder: InternalColumn[] | null;
 
     // true if we are doing column spanning
     private colSpanActive: boolean;
@@ -166,7 +166,7 @@ export class ColumnModel extends BeanStub {
         const tree = newTree.columnTree;
         const treeDepth = newTree.treeDept;
         const list = getColumnsFromTree(tree);
-        const map: { [id: string]: Column } = {};
+        const map: { [id: string]: InternalColumn } = {};
 
         list.forEach((col) => (map[col.getId()] = col));
 
@@ -277,7 +277,7 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    public getColsToShow(): Column[] {
+    public getColsToShow(): InternalColumn[] {
         // pivot mode is on, but we are not pivoting, so we only
         // show columns we are aggregating on
 
@@ -357,7 +357,7 @@ export class ColumnModel extends BeanStub {
             map: {},
         };
 
-        const putAutocolsFirstInList = (cols: Column[] | null): Column[] | null => {
+        const putAutocolsFirstInList = (cols: InternalColumn[] | null): InternalColumn[] | null => {
             if (!cols) {
                 return null;
             }
@@ -379,7 +379,7 @@ export class ColumnModel extends BeanStub {
         this.visibleColsService.refresh(source);
     }
 
-    public setColsVisible(keys: (string | Column)[], visible = false, source: ColumnEventType): void {
+    public setColsVisible(keys: (string | InternalColumn)[], visible = false, source: ColumnEventType): void {
         this.columnApplyStateService.applyColumnState(
             {
                 state: keys.map<ColumnState>((key) => ({
@@ -415,7 +415,7 @@ export class ColumnModel extends BeanStub {
             actualPinned = null;
         }
 
-        const updatedCols: Column[] = [];
+        const updatedCols: InternalColumn[] = [];
 
         keys.forEach((key) => {
             if (!key) {
@@ -442,13 +442,13 @@ export class ColumnModel extends BeanStub {
 
     // called by headerRenderer - when a header is opened or closed
     public setColumnGroupOpened(
-        key: ProvidedColumnGroup | string | null,
+        key: InternalProvidedColumnGroup | string | null,
         newValue: boolean,
         source: ColumnEventType
     ): void {
         let keyAsString: string;
 
-        if (key instanceof ProvidedColumnGroup) {
+        if (isProvidedColumnGroup(key)) {
             keyAsString = key.getId();
         } else {
             keyAsString = key || '';
@@ -456,11 +456,11 @@ export class ColumnModel extends BeanStub {
         this.columnGroupStateService.setColumnGroupState([{ groupId: keyAsString, open: newValue }], source);
     }
 
-    public getProvidedColGroup(key: string): ProvidedColumnGroup | null {
-        let res: ProvidedColumnGroup | null = null;
+    public getProvidedColGroup(key: string): InternalProvidedColumnGroup | null {
+        let res: InternalProvidedColumnGroup | null = null;
 
         depthFirstOriginalTreeSearch(null, this.cols?.tree, (node) => {
-            if (node instanceof ProvidedColumnGroup) {
+            if (isProvidedColumnGroup(node)) {
                 if (node.getId() === key) {
                     res = node;
                 }
@@ -470,7 +470,7 @@ export class ColumnModel extends BeanStub {
         return res;
     }
 
-    public isColGroupLocked(column: Column): boolean {
+    public isColGroupLocked(column: InternalColumn): boolean {
         const groupLockGroupColumns = this.gos.get('groupLockGroupColumns');
         if (!column.isRowGroupActive() || groupLockGroupColumns === 0) {
             return false;
@@ -515,7 +515,7 @@ export class ColumnModel extends BeanStub {
             return;
         }
 
-        const lastOrderMapped = new Map<Column, number>(lastOrder.map((col, index) => [col, index]));
+        const lastOrderMapped = new Map<InternalColumn, number>(lastOrder.map((col, index) => [col, index]));
 
         // only do the sort if at least one column is accounted for. columns will be not accounted for
         // if changing from pivot result cols to provided columns
@@ -526,9 +526,9 @@ export class ColumnModel extends BeanStub {
 
         // order cols in the same order as before. we need to make sure that all
         // cols still exists, so filter out any that no longer exist.
-        const colsMap = new Map<Column, boolean>(this.cols.list.map((col) => [col, true]));
+        const colsMap = new Map<InternalColumn, boolean>(this.cols.list.map((col) => [col, true]));
         const lastOrderFiltered = lastOrder.filter((col) => colsMap.has(col));
-        const lastOrderFilteredMap = new Map<Column, boolean>(lastOrderFiltered.map((col) => [col, true]));
+        const lastOrderFilteredMap = new Map<InternalColumn, boolean>(lastOrderFiltered.map((col) => [col, true]));
         const missingFromLastOrder = this.cols.list.filter((col) => !lastOrderFilteredMap.has(col));
 
         // add in the new columns, at the end (if no group), or at the end of the group (if a group)
@@ -545,7 +545,7 @@ export class ColumnModel extends BeanStub {
 
             // find the group the column belongs to. if no siblings at the current level (eg col in group on it's
             // own) then go up one level and look for siblings there.
-            const siblings: Column[] = [];
+            const siblings: InternalColumn[] = [];
             while (!siblings.length && parent) {
                 const leafCols = parent.getLeafColumns();
                 leafCols.forEach((leafCol) => {
@@ -591,7 +591,7 @@ export class ColumnModel extends BeanStub {
             return;
         }
 
-        let newOrder: Column[] = [];
+        let newOrder: InternalColumn[] = [];
         const processedColIds: { [id: string]: boolean } = {};
 
         colIds.forEach((colId) => {
@@ -645,24 +645,24 @@ export class ColumnModel extends BeanStub {
 
     // returns the provided cols sorted in same order as they appear in this.cols, eg if this.cols
     // contains [a,b,c,d,e] and col passed is [e,a] then the passed cols are sorted into [a,e]
-    public sortColsLikeCols(cols: Column[]): void {
+    public sortColsLikeCols(cols: InternalColumn[]): void {
         if (!cols || cols.length <= 1) {
             return;
         }
 
-        const notAllColsPresent = cols.filter((c) => this.cols.list.indexOf(c) < 0).length > 0;
+        const notAllColsPresent = cols.filter((c: InternalColumn) => this.cols.list.indexOf(c) < 0).length > 0;
         if (notAllColsPresent) {
             return;
         }
 
-        cols.sort((a: Column, b: Column) => {
+        cols.sort((a: InternalColumn, b: InternalColumn) => {
             const indexA = this.cols.list.indexOf(a);
             const indexB = this.cols.list.indexOf(b);
             return indexA - indexB;
         });
     }
 
-    public resetColDefIntoCol(column: Column, source: ColumnEventType): boolean {
+    public resetColDefIntoCol(column: InternalColumn, source: ColumnEventType): boolean {
         const userColDef = column.getUserProvidedColDef();
         if (!userColDef) {
             return false;
@@ -690,7 +690,7 @@ export class ColumnModel extends BeanStub {
         this.resizeOperationQueue.push(func);
     }
 
-    public moveInCols(movedColumns: Column[], toIndex: number, source: ColumnEventType): void {
+    public moveInCols(movedColumns: InternalColumn[], toIndex: number, source: ColumnEventType): void {
         _moveInArray(this.cols?.list, movedColumns, toIndex);
         this.visibleColsService.refresh(source);
     }
@@ -715,9 +715,11 @@ export class ColumnModel extends BeanStub {
         const cols = this.colDefCols.list.slice();
 
         if (this.showingPivotResult) {
-            cols.sort((a: Column, b: Column) => this.lastOrder!.indexOf(a) - this.lastOrder!.indexOf(b));
+            cols.sort(
+                (a: InternalColumn, b: InternalColumn) => this.lastOrder!.indexOf(a) - this.lastOrder!.indexOf(b)
+            );
         } else if (this.lastOrder) {
-            cols.sort((a: Column, b: Column) => this.cols.list.indexOf(a) - this.cols.list.indexOf(b));
+            cols.sort((a: InternalColumn, b: InternalColumn) => this.cols.list.indexOf(a) - this.cols.list.indexOf(b));
         }
 
         const rowGroupColumns = this.funcColsService.getRowGroupColumns();
@@ -829,58 +831,58 @@ export class ColumnModel extends BeanStub {
         super.destroy();
     }
 
-    public getColTree(): IProvidedColumn[] {
+    public getColTree(): (InternalColumn | InternalProvidedColumnGroup)[] {
         return this.cols.tree;
     }
 
     // + columnSelectPanel
-    public getColDefColTree(): IProvidedColumn[] {
+    public getColDefColTree(): (InternalColumn | InternalProvidedColumnGroup)[] {
         return this.colDefCols.tree;
     }
 
     // + clientSideRowController -> sorting, building quick filter text
     // + headerRenderer -> sorting (clearing icon)
-    public getColDefCols(): Column[] | null {
+    public getColDefCols(): InternalColumn[] | null {
         return this.colDefCols?.list ? this.colDefCols.list : null;
     }
 
     // + moveColumnController
-    public getCols(): Column[] {
+    public getCols(): InternalColumn[] {
         return this.cols?.list ?? [];
     }
 
     // returns colDefCols, pivotResultCols and autoCols
-    public getAllCols(): Column[] {
+    public getAllCols(): InternalColumn[] {
         const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
         const pivotResultColsList = pivotResultCols?.list;
-        return ([] as Column[]).concat(
+        return ([] as InternalColumn[]).concat(
             ...[this.colDefCols?.list || [], this.autoCols?.list || [], pivotResultColsList || []]
         );
     }
 
-    public getColsForKeys(keys: ColKey[]): Column[] {
+    public getColsForKeys(keys: ColKey[]): InternalColumn[] {
         if (!keys) {
             return [];
         }
         const res = keys.map((key) => this.getCol(key)).filter((col) => col != null);
-        return res as Column[];
+        return res as InternalColumn[];
     }
 
-    public getColDefCol(key: ColKey): Column | null {
+    public getColDefCol(key: ColKey): InternalColumn | null {
         if (!this.colDefCols?.list) {
             return null;
         }
         return this.getColFromCollection(key, this.colDefCols);
     }
 
-    public getCol(key: Maybe<ColKey>): Column | null {
+    public getCol(key: Maybe<ColKey>): InternalColumn | null {
         if (key == null) {
             return null;
         }
         return this.getColFromCollection(key, this.cols);
     }
 
-    public getColFromCollection(key: ColKey, cols: ColumnCollections): Column | null {
+    public getColFromCollection(key: ColKey, cols: ColumnCollections): InternalColumn | null {
         if (cols == null) {
             return null;
         }
@@ -902,16 +904,16 @@ export class ColumnModel extends BeanStub {
         return this.getAutoCol(key);
     }
 
-    public getAutoCol(key: ColKey): Column | null {
+    public getAutoCol(key: ColKey): InternalColumn | null {
         if (this.autoCols == null) return null;
         return this.autoCols.list.find((groupCol) => columnsMatch(groupCol, key)) || null;
     }
 
-    public getAutoCols(): Column[] | null {
+    public getAutoCols(): InternalColumn[] | null {
         return this.autoCols?.list || null;
     }
 
-    public setColHeaderHeight(col: Column, height: number): void {
+    public setColHeaderHeight(col: InternalColumn, height: number): void {
         const changed = col.setAutoHeaderHeight(height);
 
         if (changed) {
@@ -994,7 +996,7 @@ function updateColsMap(cols: ColumnCollections): void {
     cols.list.forEach((col) => (cols.map[col.getId()] = col));
 }
 
-function columnsMatch(column: Column, key: ColKey): boolean {
+function columnsMatch(column: InternalColumn, key: ColKey): boolean {
     const columnMatches = column === key;
     const colDefMatches = column.getColDef() === key;
     const idMatches = column.getColId() == key;
@@ -1002,6 +1004,6 @@ function columnsMatch(column: Column, key: ColKey): boolean {
     return columnMatches || colDefMatches || idMatches;
 }
 
-function areColIdsEqual(colsA: Column[] | null, colsB: Column[] | null): boolean {
+function areColIdsEqual(colsA: InternalColumn[] | null, colsB: InternalColumn[] | null): boolean {
     return _areEqual(colsA, colsB, (a, b) => a.getColId() === b.getColId());
 }

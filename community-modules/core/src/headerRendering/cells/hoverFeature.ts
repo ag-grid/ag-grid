@@ -1,6 +1,6 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import type { Column } from '../../entities/column';
+import type { InternalColumn } from '../../entities/column';
 import type { ColumnHoverService } from '../../rendering/columnHoverService';
 
 export class HoverFeature extends BeanStub {
@@ -11,11 +11,11 @@ export class HoverFeature extends BeanStub {
         this.columnHoverService = beans.columnHoverService;
     }
 
-    private readonly columns: Column[];
+    private readonly columns: InternalColumn[];
 
     private element: HTMLElement;
 
-    constructor(columns: Column[], element: HTMLElement) {
+    constructor(columns: InternalColumn[], element: HTMLElement) {
         super();
         this.columns = columns;
         this.element = element;

@@ -2,7 +2,7 @@ import { KeyCode } from '../../../constants/keyCode';
 import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection, BeanName } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
-import type { Column } from '../../../entities/column';
+import type { InternalColumn } from '../../../entities/column';
 import { Events } from '../../../eventKeys';
 import type { ColumnMenuVisibleChangedEvent } from '../../../events';
 import { FilterWrapperComp } from '../../../filter/filterWrapperComp';
@@ -42,7 +42,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     public showMenuAfterMouseEvent(
-        column: Column | undefined,
+        column: InternalColumn | undefined,
         mouseEvent: MouseEvent | Touch,
         containerType: ContainerType
     ): void {
@@ -63,7 +63,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     public showMenuAfterButtonClick(
-        column: Column | undefined,
+        column: InternalColumn | undefined,
         eventSource: HTMLElement,
         containerType: ContainerType
     ): void {
@@ -100,7 +100,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     private showPopup(
-        column: Column | undefined,
+        column: InternalColumn | undefined,
         positionCallback: (eMenu: HTMLElement) => void,
         containerType: ContainerType,
         eventSource: HTMLElement,
@@ -122,6 +122,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu))!;
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
         eMenu.appendChild(comp?.getGui()!);
 
         let hidePopup: () => void;
@@ -199,7 +200,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         this.focusService.focusInto(menu, e.shiftKey);
     }
 
-    private dispatchVisibleChangedEvent(visible: boolean, containerType: ContainerType, column?: Column): void {
+    private dispatchVisibleChangedEvent(visible: boolean, containerType: ContainerType, column?: InternalColumn): void {
         const displayedEvent: WithoutGridCommon<ColumnMenuVisibleChangedEvent> = {
             type: Events.EVENT_COLUMN_MENU_VISIBLE_CHANGED,
             visible,
@@ -210,7 +211,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         this.eventService.dispatchEvent(displayedEvent);
     }
 
-    public isMenuEnabled(column: Column): boolean {
+    public isMenuEnabled(column: InternalColumn): boolean {
         // for standard, we show menu if filter is enabled, and the menu is not suppressed by passing an empty array
         return column.isFilterAllowed() && (column.getColDef().menuTabs ?? ['filterMenuTab']).includes('filterMenuTab');
     }

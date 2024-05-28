@@ -5,7 +5,7 @@ import type { UserCompDetails, UserComponentFactory } from '../components/framew
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { ColDef } from '../entities/colDef';
-import { Column } from '../entities/column';
+import { InternalColumn } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
 import type {
     AdvancedFilterEnabledChangedEvent,
@@ -78,7 +78,7 @@ export class FilterManager extends BeanStub {
 
     // when we're waiting for cell data types to be inferred, we need to defer filter model updates
     private filterModelUpdateQueue: { model: FilterModel | null; source: FilterChangedEventSourceType }[] = [];
-    private columnFilterModelUpdateQueue: { key: string | Column; model: any; resolve: () => void }[] = [];
+    private columnFilterModelUpdateQueue: { key: string | InternalColumn; model: any; resolve: () => void }[] = [];
     private advancedFilterModelUpdateQueue: (AdvancedFilterModel | null | undefined)[] = [];
 
     private initialFilterModel: FilterModel;
@@ -213,7 +213,7 @@ export class FilterManager extends BeanStub {
         AgPromise.all(allPromises).then(() => {
             const currentModel = this.getFilterModel();
 
-            const columns: Column[] = [];
+            const columns: InternalColumn[] = [];
             this.allColumnFilters.forEach((filterWrapper, colId) => {
                 const before = previousModel ? previousModel[colId] : null;
                 const after = currentModel ? currentModel[colId] : null;
@@ -347,7 +347,7 @@ export class FilterManager extends BeanStub {
 
         const groupFilterEnabled = !!this.gos.getGroupAggFiltering();
 
-        const isAggFilter = (column: Column) => {
+        const isAggFilter = (column: InternalColumn) => {
             const isSecondary = !column.isPrimary();
             // the only filters that can appear on secondary columns are groupAgg filters
             if (isSecondary) {
@@ -448,7 +448,7 @@ export class FilterManager extends BeanStub {
         source?: FilterChangedEventSourceType;
         filterInstance?: IFilterComp;
         additionalEventAttributes?: any;
-        columns?: Column[];
+        columns?: InternalColumn[];
     }): void {
         const action = () => this.onFilterChanged(params);
         if (this.rowRenderer.isRefreshInProgress()) {
@@ -463,7 +463,7 @@ export class FilterManager extends BeanStub {
             source?: FilterChangedEventSourceType;
             filterInstance?: IFilterComp;
             additionalEventAttributes?: any;
-            columns?: Column[];
+            columns?: InternalColumn[];
         } = {}
     ): void {
         const { source, filterInstance, additionalEventAttributes, columns } = params;
@@ -597,11 +597,11 @@ export class FilterManager extends BeanStub {
         this.updateActiveFilters();
     }
 
-    private createValueGetter(column: Column): IFilterParams['valueGetter'] {
+    private createValueGetter(column: InternalColumn): IFilterParams['valueGetter'] {
         return ({ node }) => this.valueService.getValue(column, node as RowNode, true);
     }
 
-    private createGetValue(filterColumn: Column): IFilterParams['getValue'] {
+    private createGetValue(filterColumn: InternalColumn): IFilterParams['getValue'] {
         return (rowNode, column) => {
             const columnToUse = column ? this.columnModel.getCol(column) : filterColumn;
             return columnToUse ? this.valueService.getValue(columnToUse, rowNode, true) : undefined;
@@ -609,7 +609,7 @@ export class FilterManager extends BeanStub {
     }
 
     public getFilterComponent(
-        column: Column,
+        column: InternalColumn,
         source: FilterRequestSource,
         createIfDoesNotExist = true
     ): AgPromise<IFilterComp> | null {
@@ -622,13 +622,13 @@ export class FilterManager extends BeanStub {
         return filterWrapper ? filterWrapper.filterPromise : null;
     }
 
-    public isFilterActive(column: Column): boolean {
+    public isFilterActive(column: InternalColumn): boolean {
         const filterWrapper = this.cachedFilter(column);
 
         return !!filterWrapper && filterWrapper.filterPromise!.resolveNow(false, (filter) => filter!.isFilterActive());
     }
 
-    public getOrCreateFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper | null {
+    public getOrCreateFilterWrapper(column: InternalColumn, source: FilterRequestSource): FilterWrapper | null {
         if (!column.isFilterAllowed()) {
             return null;
         }
@@ -643,11 +643,11 @@ export class FilterManager extends BeanStub {
         return filterWrapper;
     }
 
-    public cachedFilter(column: Column): FilterWrapper | undefined {
+    public cachedFilter(column: InternalColumn): FilterWrapper | undefined {
         return this.allColumnFilters.get(column.getColId());
     }
 
-    private getDefaultFilter(column: Column): string {
+    private getDefaultFilter(column: InternalColumn): string {
         let defaultFilter;
         if (ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.context.getGridId())) {
             defaultFilter = 'agSetColumnFilter';
@@ -664,7 +664,7 @@ export class FilterManager extends BeanStub {
         return defaultFilter;
     }
 
-    public getDefaultFloatingFilter(column: Column): string {
+    public getDefaultFloatingFilter(column: InternalColumn): string {
         let defaultFloatingFilterType: string;
         if (ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.context.getGridId())) {
             defaultFloatingFilterType = 'agSetColumnFloatingFilter';
@@ -681,7 +681,7 @@ export class FilterManager extends BeanStub {
         return defaultFloatingFilterType;
     }
 
-    private createFilterInstance(column: Column): {
+    private createFilterInstance(column: InternalColumn): {
         filterPromise: (() => AgPromise<IFilterComp> | null) | null;
         compDetails: UserCompDetails | null;
     } {
@@ -715,7 +715,7 @@ export class FilterManager extends BeanStub {
         };
     }
 
-    public createFilterParams(column: Column, colDef: ColDef): IFilterParams {
+    public createFilterParams(column: InternalColumn, colDef: ColDef): IFilterParams {
         const params: IFilterParams = this.gos.addGridCommonParams({
             column,
             colDef: _cloneObject(colDef),
@@ -730,7 +730,8 @@ export class FilterManager extends BeanStub {
         return params;
     }
 
-    private createFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    private createFilterWrapper(column: InternalColumn, source: FilterRequestSource): FilterWrapper {
         const filterWrapper: FilterWrapper = {
             column: column,
             filterPromise: null,
@@ -746,10 +747,10 @@ export class FilterManager extends BeanStub {
     }
 
     private onColumnsChanged(): void {
-        const columns: Column[] = [];
+        const columns: InternalColumn[] = [];
 
         this.allColumnFilters.forEach((wrapper, colId) => {
-            let currentColumn: Column | null;
+            let currentColumn: InternalColumn | null;
             if (wrapper.column.isPrimary()) {
                 currentColumn = this.columnModel.getColDefCol(colId);
             } else {
@@ -787,7 +788,7 @@ export class FilterManager extends BeanStub {
     }
 
     // for group filters, can change dynamically whether they are allowed or not
-    public isFilterAllowed(column: Column): boolean {
+    public isFilterAllowed(column: InternalColumn): boolean {
         if (this.isAdvancedFilterEnabled()) {
             return false;
         }
@@ -806,7 +807,10 @@ export class FilterManager extends BeanStub {
         );
     }
 
-    public getFloatingFilterCompDetails(column: Column, showParentFilter: () => void): UserCompDetails | undefined {
+    public getFloatingFilterCompDetails(
+        column: InternalColumn,
+        showParentFilter: () => void
+    ): UserCompDetails | undefined {
         const parentFilterInstance = (callback: IFloatingFilterParentCallback<IFilter>) => {
             const filterComponent = this.getFilterComponent(column, 'NO_UI');
 
@@ -853,14 +857,14 @@ export class FilterManager extends BeanStub {
         return this.userComponentFactory.getFloatingFilterCompDetails(colDef, params, defaultFloatingFilterType);
     }
 
-    public getCurrentFloatingFilterParentModel(column: Column): any {
+    public getCurrentFloatingFilterParentModel(column: InternalColumn): any {
         const filterComponent = this.getFilterComponent(column, 'NO_UI', false);
 
         return filterComponent ? filterComponent.resolveNow(null, (filter) => filter && filter.getModel()) : null;
     }
 
     // destroys the filter, so it no longer takes part
-    public destroyFilter(column: Column, source: 'api' | 'columnChanged' | 'paramsUpdated' = 'api'): void {
+    public destroyFilter(column: InternalColumn, source: 'api' | 'columnChanged' | 'paramsUpdated' = 'api'): void {
         const colId = column.getColId();
         const filterWrapper = this.allColumnFilters.get(colId);
 
@@ -906,7 +910,7 @@ export class FilterManager extends BeanStub {
         });
     }
 
-    private filterModifiedCallbackFactory(filter: IFilterComp<any>, column: Column<any>) {
+    private filterModifiedCallbackFactory(filter: IFilterComp<any>, column: InternalColumn<any>) {
         return () => {
             const event: WithoutGridCommon<FilterModifiedEvent> = {
                 type: Events.EVENT_FILTER_MODIFIED,
@@ -918,7 +922,7 @@ export class FilterManager extends BeanStub {
         };
     }
 
-    private filterChangedCallbackFactory(filter: IFilterComp<any>, column: Column<any>) {
+    private filterChangedCallbackFactory(filter: IFilterComp<any>, column: InternalColumn<any>) {
         return (additionalEventAttributes?: any) => {
             const source: FilterChangedEventSourceType = additionalEventAttributes?.source ?? 'columnFilter';
             const params = {
@@ -974,12 +978,12 @@ export class FilterManager extends BeanStub {
         });
     }
 
-    private setColumnFilterWrapper(column: Column, filterWrapper: FilterWrapper): void {
+    private setColumnFilterWrapper(column: InternalColumn, filterWrapper: FilterWrapper): void {
         const colId = column.getColId();
         this.allColumnFilters.set(colId, filterWrapper);
         this.allColumnListeners.set(
             colId,
-            this.addManagedListener(column, Column.EVENT_COL_DEF_CHANGED, () => this.checkDestroyFilter(colId))
+            this.addManagedListener(column, InternalColumn.EVENT_COL_DEF_CHANGED, () => this.checkDestroyFilter(colId))
         );
     }
 
@@ -1042,7 +1046,7 @@ export class FilterManager extends BeanStub {
     }
 
     public getFilterInstance<TFilter extends IFilter>(
-        key: string | Column,
+        key: string | InternalColumn,
         callback?: (filter: TFilter | null) => void
     ): TFilter | null | undefined {
         if (this.isAdvancedFilterEnabled()) {
@@ -1060,7 +1064,9 @@ export class FilterManager extends BeanStub {
         return unwrapped as any;
     }
 
-    public getColumnFilterInstance<TFilter extends IFilter>(key: string | Column): Promise<TFilter | null | undefined> {
+    public getColumnFilterInstance<TFilter extends IFilter>(
+        key: string | InternalColumn
+    ): Promise<TFilter | null | undefined> {
         return new Promise((resolve) => {
             this.getFilterInstance(key, (filter) => {
                 resolve(filter as any);
@@ -1069,7 +1075,7 @@ export class FilterManager extends BeanStub {
     }
 
     private getFilterInstanceImpl(
-        key: string | Column,
+        key: string | InternalColumn,
         callback: (filter: IFilter) => void
     ): IFilter | null | undefined {
         const column = this.columnModel.getColDefCol(key);
@@ -1120,12 +1126,12 @@ export class FilterManager extends BeanStub {
         this.advancedFilterModelUpdateQueue = [];
     }
 
-    public getColumnFilterModel(key: string | Column): any {
+    public getColumnFilterModel(key: string | InternalColumn): any {
         const filterWrapper = this.getFilterWrapper(key);
         return filterWrapper ? this.getModelFromFilterWrapper(filterWrapper) : null;
     }
 
-    public setColumnFilterModel(key: string | Column, model: any): Promise<void> {
+    public setColumnFilterModel(key: string | InternalColumn, model: any): Promise<void> {
         if (this.isAdvancedFilterEnabled()) {
             this.warnAdvancedFilters();
             return Promise.resolve();
@@ -1151,7 +1157,7 @@ export class FilterManager extends BeanStub {
             : Promise.resolve();
     }
 
-    private getFilterWrapper(key: string | Column): FilterWrapper | null {
+    private getFilterWrapper(key: string | InternalColumn): FilterWrapper | null {
         const column = this.columnModel.getColDefCol(key);
         return column ? this.cachedFilter(column) ?? null : null;
     }
@@ -1166,7 +1172,7 @@ export class FilterManager extends BeanStub {
 
 export interface FilterWrapper {
     compiledElement: any;
-    column: Column;
+    column: InternalColumn;
     filterPromise: AgPromise<IFilterComp> | null;
     compDetails: UserCompDetails | null;
 }

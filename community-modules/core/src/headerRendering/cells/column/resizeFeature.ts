@@ -3,8 +3,9 @@ import type { ColumnSizeService } from '../../../columns/columnSizeService';
 import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
-import type { Column, ColumnPinnedType } from '../../../entities/column';
+import type { InternalColumn } from '../../../entities/column';
 import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
+import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import { _getInnerWidth, _setDisplayed } from '../../../utils/dom';
 import { TouchListener } from '../../../widgets/touchListener';
 import type { HorizontalResizeService } from '../../common/horizontalResizeService';
@@ -28,7 +29,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     }
 
     private pinned: ColumnPinnedType;
-    private column: Column;
+    private column: InternalColumn;
     private eResize: HTMLElement;
     private comp: IHeaderCellComp;
 
@@ -40,7 +41,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
     constructor(
         pinned: ColumnPinnedType,
-        column: Column,
+        column: InternalColumn,
         eResize: HTMLElement,
         comp: IHeaderCellComp,
         ctrl: HeaderCellCtrl

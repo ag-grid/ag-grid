@@ -1,7 +1,7 @@
 import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import type { BeanCollection } from '../../context/context';
 import type { CellStyle } from '../../entities/colDef';
-import type { Column } from '../../entities/column';
+import type { InternalColumn } from '../../entities/column';
 import type { RowNode } from '../../entities/rowNode';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _setAriaRole } from '../../utils/aria';
@@ -24,7 +24,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private eCellValue: HTMLElement | undefined;
 
     private beans: BeanCollection;
-    private column: Column;
+    private column: InternalColumn;
     private rowNode: RowNode;
     private eRow: HTMLElement;
 
@@ -38,6 +38,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private dndSourceComp: DndSourceComp | undefined;
     private rowDraggingComp: RowDragComp | undefined;
 
+    // eslint-disable-next-line @typescript-eslint/ban-types
     private hideEditorPopup: Function | null | undefined;
     private cellEditorPopupWrapper: PopupEditorWrapper | undefined;
     private cellEditor: ICellEditorComp | null | undefined;

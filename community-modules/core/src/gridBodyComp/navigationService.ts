@@ -6,7 +6,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { CellPosition } from '../entities/cellPositionUtils';
-import type { Column } from '../entities/column';
+import type { InternalColumn } from '../entities/column';
 import type { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
 import { Events } from '../eventKeys';
 import type { FullWidthRowFocusedEvent } from '../events';
@@ -33,10 +33,10 @@ interface NavigateParams {
     /** The position to put scroll index. */
     scrollType: 'top' | 'bottom' | null;
     /**  The column to horizontally scroll to. */
-    scrollColumn: Column | null;
+    scrollColumn: InternalColumn | null;
     /** For page up/down, we want to scroll to one row/column but focus another (ie. scrollRow could be stub). */
     focusIndex: number;
-    focusColumn: Column;
+    focusColumn: InternalColumn;
     isAsync?: boolean;
 }
 
@@ -232,9 +232,11 @@ export class NavigationService extends BeanStub {
         const currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex);
 
         const rowPixelDiff = up
-            ? currentRowNode?.rowHeight! - pixelsInOnePage - pagingPixelOffset
+            ? // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+              currentRowNode?.rowHeight! - pixelsInOnePage - pagingPixelOffset
             : pixelsInOnePage - pagingPixelOffset;
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
         const nextCellPixel = currentRowNode?.rowTop! + rowPixelDiff;
 
         let focusIndex = this.paginationProxy.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
@@ -274,7 +276,7 @@ export class NavigationService extends BeanStub {
             scrollType,
             scrollColumn: null,
             focusIndex,
-            focusColumn: gridCell.column,
+            focusColumn: gridCell.column as InternalColumn,
         });
     }
 
@@ -291,7 +293,7 @@ export class NavigationService extends BeanStub {
             scrollType: up ? 'bottom' : 'top',
             scrollColumn: null,
             focusIndex: scrollIndex,
-            focusColumn: gridCell.column,
+            focusColumn: gridCell.column as InternalColumn,
         });
         setTimeout(() => {
             const focusIndex = this.getNextFocusIndexForAutoHeight(gridCell, up);
@@ -301,7 +303,7 @@ export class NavigationService extends BeanStub {
                 scrollType: up ? 'bottom' : 'top',
                 scrollColumn: null,
                 focusIndex: focusIndex,
-                focusColumn: gridCell.column,
+                focusColumn: gridCell.column as InternalColumn,
                 isAsync: true,
             });
         }, 50);
@@ -363,7 +365,8 @@ export class NavigationService extends BeanStub {
 
     private onCtrlUpDownLeftRight(key: string, gridCell: CellPosition): void {
         const cellToFocus = this.cellNavigationService.getNextCellToFocus(key, gridCell, true)!;
-        const { rowIndex, column } = cellToFocus;
+        const { rowIndex } = cellToFocus;
+        const column = cellToFocus.column as InternalColumn;
 
         this.navigateTo({
             scrollIndex: rowIndex,
@@ -378,7 +381,7 @@ export class NavigationService extends BeanStub {
     // same cell into view (which means either scroll all the way up, or all the way down).
     private onHomeOrEndKey(key: string): void {
         const homeKey = key === KeyCode.PAGE_HOME;
-        const allColumns: Column[] = this.visibleColsService.getAllCols();
+        const allColumns: InternalColumn[] = this.visibleColsService.getAllCols();
         const columnToSelect = homeKey ? allColumns[0] : _last(allColumns);
         const scrollIndex = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
 
@@ -736,7 +739,7 @@ export class NavigationService extends BeanStub {
             return null;
         }
 
-        return rowCtrl.getCellCtrl(cellPosition.column);
+        return rowCtrl.getCellCtrl(cellPosition.column as InternalColumn);
     }
 
     private lookupRowNodeForCell(cell: CellPosition) {

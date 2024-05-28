@@ -1,10 +1,9 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
-import type { ColumnPinnedType } from '../entities/column';
-import { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
+import { type InternalColumn, isColumn } from '../entities/column';
+import type { InternalColumnGroup } from '../entities/columnGroup';
 import type { RowNode } from '../entities/rowNode';
-import type { IHeaderColumn } from '../interfaces/iHeaderColumn';
+import type { ColumnPinnedType } from '../interfaces/iColumn';
 import { _exists } from '../utils/generic';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColumnModel } from './columnModel';
@@ -25,18 +24,18 @@ export class ColumnViewportService extends BeanStub {
     }
 
     // cols in center that are in the viewport
-    private colsWithinViewport: Column[] = [];
+    private colsWithinViewport: InternalColumn[] = [];
     // same as colsWithinViewport, except we always include columns with headerAutoHeight
-    private headerColsWithinViewport: Column[] = [];
+    private headerColsWithinViewport: InternalColumn[] = [];
 
     // A hash key to keep track of changes in viewport columns
     private colsWithinViewportHash: string = '';
 
     // all columns & groups to be rendered, index by row.
     // used by header rows to get all items to render for that row.
-    private rowsOfHeadersToRenderLeft: { [row: number]: IHeaderColumn[] } = {};
-    private rowsOfHeadersToRenderRight: { [row: number]: IHeaderColumn[] } = {};
-    private rowsOfHeadersToRenderCenter: { [row: number]: IHeaderColumn[] } = {};
+    private rowsOfHeadersToRenderLeft: { [row: number]: (InternalColumn | InternalColumnGroup)[] } = {};
+    private rowsOfHeadersToRenderRight: { [row: number]: (InternalColumn | InternalColumnGroup)[] } = {};
+    private rowsOfHeadersToRenderCenter: { [row: number]: (InternalColumn | InternalColumnGroup)[] } = {};
 
     private scrollWidth: number;
     private scrollPosition: number;
@@ -79,8 +78,8 @@ export class ColumnViewportService extends BeanStub {
         }
     }
 
-    public getHeadersToRender(type: ColumnPinnedType, dept: number): IHeaderColumn[] {
-        let result: IHeaderColumn[];
+    public getHeadersToRender(type: ColumnPinnedType, dept: number): (InternalColumn | InternalColumnGroup)[] {
+        let result: (InternalColumn | InternalColumnGroup)[];
 
         switch (type) {
             case 'left':
@@ -123,7 +122,7 @@ export class ColumnViewportService extends BeanStub {
         this.colsWithinViewportHash = '';
     }
 
-    private isColumnInHeaderViewport(col: Column): boolean {
+    private isColumnInHeaderViewport(col: InternalColumn): boolean {
         // for headers, we never filter out autoHeaderHeight columns, if calculating
         if (col.isAutoHeaderHeight()) {
             return true;
@@ -132,7 +131,7 @@ export class ColumnViewportService extends BeanStub {
         return this.isColumnInRowViewport(col);
     }
 
-    private isColumnInRowViewport(col: Column): boolean {
+    private isColumnInRowViewport(col: InternalColumn): boolean {
         // we never filter out autoHeight columns, as we need them in the DOM for calculating Auto Height
         if (col.isAutoHeight()) {
             return true;
@@ -155,7 +154,7 @@ export class ColumnViewportService extends BeanStub {
     }
 
     // used by Grid API only
-    public getViewportColumns(): Column[] {
+    public getViewportColumns(): InternalColumn[] {
         const leftCols = this.visibleColsService.getLeftCols();
         const rightCols = this.visibleColsService.getRightCols();
         const res = this.colsWithinViewport.concat(leftCols).concat(rightCols);
@@ -166,12 +165,12 @@ export class ColumnViewportService extends BeanStub {
     // if we are not column spanning, this just returns back the virtual centre columns,
     // however if we are column spanning, then different rows can have different virtual
     // columns, so we have to work out the list for each individual row.
-    public getColsWithinViewport(rowNode: RowNode): Column[] {
+    public getColsWithinViewport(rowNode: RowNode): InternalColumn[] {
         if (!this.columnModel.isColSpanActive()) {
             return this.colsWithinViewport;
         }
 
-        const emptySpaceBeforeColumn = (col: Column) => {
+        const emptySpaceBeforeColumn = (col: InternalColumn) => {
             const left = col.getLeft();
 
             return _exists(left) && left > this.viewportLeft;
@@ -218,8 +217,8 @@ export class ColumnViewportService extends BeanStub {
         allRenderedCols.forEach((col) => (renderedColIds[col.getId()] = true));
 
         const testGroup = (
-            children: IHeaderColumn[],
-            result: { [row: number]: IHeaderColumn[] },
+            children: (InternalColumn | InternalColumnGroup)[],
+            result: { [row: number]: (InternalColumn | InternalColumnGroup)[] },
             dept: number
         ): boolean => {
             let returnValue = false;
@@ -229,12 +228,12 @@ export class ColumnViewportService extends BeanStub {
                 const child = children[i];
                 let addThisItem = false;
 
-                if (child instanceof Column) {
+                if (isColumn(child)) {
                     // for column, test if column is included
                     addThisItem = renderedColIds[child.getId()] === true;
                 } else {
                     // if group, base decision on children
-                    const columnGroup = child as ColumnGroup;
+                    const columnGroup = child as InternalColumnGroup;
                     const displayedChildren = columnGroup.getDisplayedChildren();
 
                     if (displayedChildren) {
@@ -259,7 +258,7 @@ export class ColumnViewportService extends BeanStub {
     }
 
     private extractViewport(): boolean {
-        const hashColumn = (c: Column) => `${c.getId()}-${c.getPinned() || 'normal'}`;
+        const hashColumn = (c: InternalColumn) => `${c.getId()}-${c.getPinned() || 'normal'}`;
 
         this.extractViewportColumns();
         const newHash = this.getViewportColumns().map(hashColumn).join('#');
