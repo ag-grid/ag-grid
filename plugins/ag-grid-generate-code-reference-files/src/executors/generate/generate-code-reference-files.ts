@@ -480,7 +480,15 @@ export function getColumnOptions(colDefFile: string, filterFile: string) {
 }
 
 export function getGridApi(gridApiFile: string) {
-    return getClassProperties(gridApiFile, 'GridApi');
+    const srcFile = parseFile(gridApiFile);
+    const gridApi = findNode('GridApi', srcFile);
+
+    let members = {};
+    ts.forEachChild(gridApi, (n) => {
+        members = { ...members, ...extractTypesFromNode(n, srcFile, false) };
+    });
+
+    return members;
 }
 export function getRowNode(rowNodeFile: string) {
     const srcFile = parseFile(rowNodeFile);

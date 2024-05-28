@@ -2,7 +2,7 @@ import { ComponentUtil } from './components/componentUtil';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection, BeanName } from './context/context';
 import type { DomLayoutType, GridOptions } from './entities/gridOptions';
-import type { AgEvent } from './events';
+import type { AgEvent, GridOptionsChangedEvent } from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS, Events } from './events';
 import type { GridApi } from './gridApi';
 import type {
@@ -113,6 +113,14 @@ export class GridOptionsService extends BeanStub {
         this.propertyEventService.setFrameworkOverrides(this.frameworkOverrides);
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
+
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_GRID_OPTIONS_CHANGED,
+            ({ options }: GridOptionsChangedEvent) => {
+                this.updateGridOptions({ options, force: true, source: 'gridOptionsUpdated' });
+            }
+        );
     }
 
     /**

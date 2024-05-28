@@ -38,7 +38,8 @@ import { EventService } from './eventService';
 import { FilterManager } from './filter/filterManager';
 import { QuickFilterService } from './filter/quickFilterService';
 import { FocusService } from './focusService';
-import { GridApi } from './gridApi';
+import type { GridApi } from './gridApi';
+import { GridApiService } from './gridApiService';
 import { MouseEventService } from './gridBodyComp/mouseEventService';
 import { NavigationService } from './gridBodyComp/navigationService';
 import { PinnedWidthService } from './gridBodyComp/pinnedWidthService';
@@ -403,7 +404,7 @@ export class GridCoreCreator {
             CellPositionUtils,
             HeaderPositionUtils,
             PaginationAutoPageSizeService,
-            GridApi,
+            GridApiService,
             UserComponentRegistry,
             AgComponentUtils,
             ComponentMetadataProvider,

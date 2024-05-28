@@ -8,6 +8,8 @@ import type { Column } from './entities/column';
 import type { ProvidedColumnGroup } from './entities/providedColumnGroup';
 import type {
     AgEvent,
+    AlignedGridColumnEvent,
+    AlignedGridScrollEvent,
     BodyScrollEvent,
     ColumnEvent,
     ColumnGroupOpenedEvent,
@@ -17,7 +19,8 @@ import type {
     ColumnVisibleEvent,
 } from './events';
 import { Events } from './events';
-import { GridApi } from './gridApi';
+import type { GridApi } from './gridApi';
+import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { Logger } from './logger';
 import { _errorOnce } from './utils/function';
 
@@ -64,7 +67,7 @@ export class AlignedGridsService extends BeanStub {
                     _errorOnce(seeUrl());
                     return;
                 }
-                if (alignedGrid instanceof GridApi) {
+                if ('dispatchEvent' in alignedGrid) {
                     return alignedGrid;
                 }
                 // Extract the GridApi from a ref or component
@@ -92,23 +95,31 @@ export class AlignedGridsService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.fireScrollEvent.bind(this));
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_ALIGNED_GRID_COLUMN,
+            ({ event }: AlignedGridColumnEvent) => this.onColumnEvent(event)
+        );
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_ALIGNED_GRID_SCROLL,
+            ({ event }: AlignedGridScrollEvent) => this.onScrollEvent(event)
+        );
     }
 
     // common logic across all the fire methods
-    private fireEvent(callback: (alignedGridService: AlignedGridsService) => void): void {
+    private fireEvent(event: AgEvent): void {
         // if we are already consuming, then we are acting on an event from a master,
         // so we don't cause a cyclic firing of events
         if (this.consuming) {
             return;
         }
 
-        // iterate through the aligned grids, and pass each aligned grid service to the callback
         this.getAlignedGridApis().forEach((api) => {
             if (api.isDestroyed()) {
                 return;
             }
-            const alignedGridService = api.__getAlignedGridService();
-            callback(alignedGridService);
+            api.dispatchEvent(event);
         });
     }
 
@@ -120,19 +131,23 @@ export class AlignedGridsService extends BeanStub {
         this.consuming = false;
     }
 
-    private fireColumnEvent(event: ColumnEvent): void {
-        this.fireEvent((alignedGridsService) => {
-            alignedGridsService.onColumnEvent(event);
-        });
+    private fireColumnEvent(columnEvent: ColumnEvent): void {
+        const event: WithoutGridCommon<AlignedGridColumnEvent> = {
+            type: Events.EVENT_ALIGNED_GRID_COLUMN,
+            event: columnEvent,
+        };
+        this.fireEvent(event);
     }
 
-    private fireScrollEvent(event: BodyScrollEvent): void {
-        if (event.direction !== 'horizontal') {
+    private fireScrollEvent(scrollEvent: BodyScrollEvent): void {
+        if (scrollEvent.direction !== 'horizontal') {
             return;
         }
-        this.fireEvent((alignedGridsService) => {
-            alignedGridsService.onScrollEvent(event);
-        });
+        const event: WithoutGridCommon<AlignedGridScrollEvent> = {
+            type: Events.EVENT_ALIGNED_GRID_SCROLL,
+            event: scrollEvent,
+        };
+        this.fireEvent(event);
     }
 
     private onScrollEvent(event: BodyScrollEvent): void {
@@ -172,16 +187,16 @@ export class AlignedGridsService extends BeanStub {
                 case Events.EVENT_COLUMN_MOVED:
                 case Events.EVENT_COLUMN_VISIBLE:
                 case Events.EVENT_COLUMN_PINNED:
-                case Events.EVENT_COLUMN_RESIZED:
+                case Events.EVENT_COLUMN_RESIZED: {
                     const colEvent = event as ColumnEvent;
                     this.processColumnEvent(colEvent);
                     break;
-
-                case Events.EVENT_COLUMN_GROUP_OPENED:
+                }
+                case Events.EVENT_COLUMN_GROUP_OPENED: {
                     const groupOpenedEvent = event as ColumnGroupOpenedEvent;
                     this.processGroupOpenedEvent(groupOpenedEvent);
                     break;
-
+                }
                 case Events.EVENT_COLUMN_PIVOT_CHANGED:
                     // we cannot support pivoting with aligned grids as the columns will be out of sync as the
                     // grids will have columns created based on the row data of the grid.
@@ -271,7 +286,7 @@ export class AlignedGridsService extends BeanStub {
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} pinned = ${pinnedEvent.pinned}`);
                 }
                 break;
-            case Events.EVENT_COLUMN_RESIZED:
+            case Events.EVENT_COLUMN_RESIZED: {
                 const resizedEvent = colEvent as ColumnResizedEvent;
 
                 const columnWidths: {
@@ -299,6 +314,7 @@ export class AlignedGridsService extends BeanStub {
                     'alignedGridChanged'
                 );
                 break;
+            }
         }
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const isVerticalScrollShowing = gridBodyCon.isVerticalScrollShowing();

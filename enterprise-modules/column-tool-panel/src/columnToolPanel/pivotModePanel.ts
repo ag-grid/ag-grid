@@ -1,14 +1,14 @@
-import type { AgCheckbox, BeanCollection, ColumnModel, GridApi } from '@ag-grid-community/core';
+import type { AgCheckbox, BeanCollection, ColumnModel, CtrlsService } from '@ag-grid-community/core';
 import { AgToggleButton, Component, Events, RefPlaceholder } from '@ag-grid-community/core';
 
 export class PivotModePanel extends Component {
     private columnModel: ColumnModel;
-    private api: GridApi;
+    private ctrlsService: CtrlsService;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.columnModel = beans.columnModel;
-        this.api = beans.gridApi;
+        this.ctrlsService = beans.ctrlsService;
     }
 
     private readonly cbPivotMode: AgCheckbox = RefPlaceholder;
@@ -39,10 +39,7 @@ export class PivotModePanel extends Component {
         const newValue = !!this.cbPivotMode.getValue();
         if (newValue !== this.columnModel.isPivotMode()) {
             this.gos.updateGridOptions({ options: { pivotMode: newValue }, source: 'toolPanelUi' as any });
-            const { api } = this;
-            if (api) {
-                api.refreshHeader();
-            }
+            this.ctrlsService.getHeaderRowContainerCtrls().forEach((c) => c.refresh());
         }
     }
 

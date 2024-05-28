@@ -3,16 +3,16 @@ import type {
     BeanCollection,
     FocusService,
     GetRowIdParams,
-    GridApi,
     IRowNode,
     LoadSuccessParams,
     NumberSequence,
     RowNode,
     RowNodeSorter,
+    RowRenderer,
     ServerSideGroupLevelParams,
+    SortController,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import type { SortController } from '@ag-grid-community/core';
 
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { NodeManager } from '../../nodeManager';
@@ -28,7 +28,7 @@ interface LazyStoreNode {
 }
 
 export class LazyCache extends BeanStub {
-    private api: GridApi;
+    private rowRenderer: RowRenderer;
     private blockUtils: BlockUtils;
     private focusService: FocusService;
     private nodeManager: NodeManager;
@@ -39,7 +39,7 @@ export class LazyCache extends BeanStub {
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
-        this.api = beans.gridOptions.api;
+        this.rowRenderer = beans.rowRenderer;
         this.blockUtils = beans.ssrmBlockUtils;
         this.focusService = beans.focusService;
         this.nodeManager = beans.ssrmNodeManager;
@@ -628,8 +628,8 @@ export class LazyCache extends BeanStub {
      * Deletes any stub nodes not within the given range
      */
     public purgeStubsOutsideOfViewport() {
-        const firstRow = this.api.getFirstDisplayedRowIndex();
-        const lastRow = this.api.getLastDisplayedRowIndex();
+        const firstRow = this.rowRenderer.getFirstVirtualRenderedRow();
+        const lastRow = this.rowRenderer.getLastVirtualRenderedRow();
         const firstRowBlockStart = this.getBlockStartIndex(firstRow);
         const [_, lastRowBlockEnd] = this.getBlockBounds(lastRow);
 
@@ -672,8 +672,8 @@ export class LazyCache extends BeanStub {
             return;
         }
 
-        const firstRowInViewport = this.api.getFirstDisplayedRowIndex();
-        const lastRowInViewport = this.api.getLastDisplayedRowIndex();
+        const firstRowInViewport = this.rowRenderer.getFirstVirtualRenderedRow();
+        const lastRowInViewport = this.rowRenderer.getLastVirtualRenderedRow();
 
         // the start storeIndex of every block in this store
         const allLoadedBlocks: Set<number> = new Set();

@@ -8,9 +8,11 @@ import type {
     ColumnNameService,
     FocusService,
     FuncColsService,
-    GridApi,
     IAggFuncService,
     IClipboardService,
+    ICsvCreator,
+    IExcelCreator,
+    IExpansionService,
     MenuItemDef,
     MenuService,
     RowPositionUtils,
@@ -34,15 +36,17 @@ export class MenuItemMapper extends BeanStub {
     private columnNameService: ColumnNameService;
     private columnApplyStateService: ColumnApplyStateService;
     private funcColsService: FuncColsService;
-    private gridApi: GridApi;
     private focusService: FocusService;
     private rowPositionUtils: RowPositionUtils;
     private chartMenuItemMapper: ChartMenuItemMapper;
     private menuService: MenuService;
     private sortController: SortController;
     private columnAutosizeService: ColumnAutosizeService;
+    private expansionService: IExpansionService;
     private clipboardService?: IClipboardService;
     private aggFuncService?: IAggFuncService;
+    private csvCreator?: ICsvCreator;
+    private excelCreator?: IExcelCreator;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
@@ -50,15 +54,17 @@ export class MenuItemMapper extends BeanStub {
         this.columnNameService = beans.columnNameService;
         this.columnApplyStateService = beans.columnApplyStateService;
         this.funcColsService = beans.funcColsService;
-        this.gridApi = beans.gridApi;
         this.focusService = beans.focusService;
         this.rowPositionUtils = beans.rowPositionUtils;
         this.chartMenuItemMapper = beans.chartMenuItemMapper;
         this.menuService = beans.menuService;
         this.sortController = beans.sortController;
         this.columnAutosizeService = beans.columnAutosizeService;
+        this.expansionService = beans.expansionService;
         this.clipboardService = beans.clipboardService;
         this.aggFuncService = beans.aggFuncService;
+        this.csvCreator = beans.csvCreator;
+        this.excelCreator = beans.excelCreator;
     }
 
     public mapWithStockItems(
@@ -175,7 +181,7 @@ export class MenuItemMapper extends BeanStub {
                     action: () => this.funcColsService.addRowGroupColumns([column], 'contextMenu'),
                     icon: _createIconNoSpan('menuAddRowGroup', this.gos, null),
                 };
-            case 'rowUnGroup':
+            case 'rowUnGroup': {
                 const icon = _createIconNoSpan('menuRemoveRowGroup', this.gos, null);
                 const showRowGroup = column?.getColDef().showRowGroup;
                 const lockedGroups = this.gos.get('groupLockGroupColumns');
@@ -220,6 +226,7 @@ export class MenuItemMapper extends BeanStub {
                     action: () => this.funcColsService.removeRowGroupColumns([column], 'contextMenu'),
                     icon: icon,
                 };
+            }
             case 'resetColumns':
                 return {
                     name: localeTextFunc('resetColumns', 'Reset Columns'),
@@ -228,12 +235,12 @@ export class MenuItemMapper extends BeanStub {
             case 'expandAll':
                 return {
                     name: localeTextFunc('expandAll', 'Expand All Row Groups'),
-                    action: () => this.gridApi.expandAll(),
+                    action: () => this.expansionService.expandAll(true),
                 };
             case 'contractAll':
                 return {
                     name: localeTextFunc('collapseAll', 'Collapse All Row Groups'),
-                    action: () => this.gridApi.collapseAll(),
+                    action: () => this.expansionService.expandAll(false),
                 };
             case 'copy':
                 if (
@@ -326,7 +333,7 @@ export class MenuItemMapper extends BeanStub {
                 } else {
                     return null;
                 }
-            case 'export':
+            case 'export': {
                 const exportSubMenuItems: string[] = [];
 
                 const csvModuleLoaded = ModuleRegistry.__isRegistered(
@@ -349,17 +356,18 @@ export class MenuItemMapper extends BeanStub {
                     subMenu: exportSubMenuItems,
                     icon: _createIconNoSpan('save', this.gos, null),
                 };
+            }
             case 'csvExport':
                 return {
                     name: localeTextFunc('csvExport', 'CSV Export'),
                     icon: _createIconNoSpan('csvExport', this.gos, null),
-                    action: () => this.gridApi.exportDataAsCsv({}),
+                    action: () => this.csvCreator?.exportDataAsCsv(),
                 };
             case 'excelExport':
                 return {
                     name: localeTextFunc('excelExport', 'Excel Export'),
                     icon: _createIconNoSpan('excelExport', this.gos, null),
-                    action: () => this.gridApi.exportDataAsExcel(),
+                    action: () => this.excelCreator?.exportDataAsExcel(),
                 };
             case 'separator':
                 return 'separator';
