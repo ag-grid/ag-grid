@@ -163,7 +163,7 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
         }
     }
 
-    public addMethod(name: string, callback: Function): void {
+    public addMethod(name: string, callback: (...args: any[]) => any): void {
         (this as any)[name] = callback;
     }
 
@@ -237,6 +237,7 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
             const staticMarkup = renderToStaticMarkup(createElement(this.reactComponent, params) as any);
             return staticMarkup === '';
         } catch (ignore) {
+            // prevent error throw
         } finally {
             console.error = originalConsoleError;
         }

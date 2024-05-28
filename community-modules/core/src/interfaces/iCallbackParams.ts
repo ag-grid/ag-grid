@@ -171,7 +171,7 @@ export interface ProcessRowParams<TData = any, TContext = any> extends AgGridCom
     ePinnedRightRow?: HTMLElement;
     rowIndex: number;
     node: IRowNode<TData>;
-    addRenderedRowListener: (eventType: string, listener: Function) => void;
+    addRenderedRowListener: (eventType: string, listener: (...args: any[]) => any) => void;
 }
 
 export interface FillOperationParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

@@ -13,6 +13,7 @@ export default [
         rules: {
             '@typescript-eslint/no-explicit-any': 'off',
             '@typescript-eslint/consistent-type-imports': 'error',
+            '@typescript-eslint/no-this-alias': 'off',
         },
     },
 ];

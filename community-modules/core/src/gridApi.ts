@@ -246,7 +246,7 @@ export interface GridApi<TData = any> {
      * When the rendered row is removed from the grid, all associated rendered row listeners will also be removed.
      * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists.
      */
-    addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void;
+    addRenderedRowListener(eventName: string, rowIndex: number, callback: (...args: any[]) => any): void;
 
     /** Get the current Quick Filter text from the grid, or `undefined` if none is set. */
     getQuickFilter(): string | undefined;
@@ -556,19 +556,19 @@ export interface GridApi<TData = any> {
      * Works similar to `addEventListener` for a browser DOM element.
      * Listeners will be automatically removed when the grid is destroyed.
      */
-    addEventListener(eventType: string, listener: Function): void;
+    addEventListener(eventType: string, listener: (...args: any[]) => any): void;
 
     /**
      * Add an event listener for all event types coming from the grid.
      * Listeners will be automatically removed when the grid is destroyed.
      */
-    addGlobalListener(listener: Function): void;
+    addGlobalListener(listener: (...args: any[]) => any): void;
 
     /** Remove an event listener. */
-    removeEventListener(eventType: string, listener: Function): void;
+    removeEventListener(eventType: string, listener: (...args: any[]) => any): void;
 
     /** Remove a global event listener. */
-    removeGlobalListener(listener: Function): void;
+    removeGlobalListener(listener: (...args: any[]) => any): void;
 
     dispatchEvent(event: AgEvent): void;
 

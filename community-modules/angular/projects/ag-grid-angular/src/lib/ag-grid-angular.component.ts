@@ -1370,7 +1370,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Icons to use inside the grid instead of the grid's default icons.
      * @initial
      */
-    @Input() public icons: { [key: string]: Function | string } | undefined = undefined;
+    @Input() public icons: { [key: string]: ((...args: any[]) => any) | string } | undefined = undefined;
     /** Default row height in pixels.
      * @default 25
      */

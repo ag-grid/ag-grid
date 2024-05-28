@@ -54,7 +54,7 @@ export class AngularFrameworkComponentWrapper
                 );
             }
 
-            addMethod(name: string, callback: Function): void {
+            addMethod(name: string, callback: (...args: any[]) => any): void {
                 (wrapper as any)[name] = callback;
             }
         }

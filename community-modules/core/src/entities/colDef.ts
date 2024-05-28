@@ -145,7 +145,7 @@ export type ColDefField<TData = any, TValue = any> = TData extends any ? NestedF
  * Returns a union of all possible paths to nested fields in `TData`.
  */
 export type NestedFieldPaths<TData = any, TValue = any, TDepth extends any[] = []> = {
-    [TKey in StringOrNumKeys<TData>]: TData[TKey] extends Function | undefined
+    [TKey in StringOrNumKeys<TData>]: TData[TKey] extends ((...args: any[]) => any) | undefined
         ? never // ignore functions
         : TData[TKey] extends any[] | undefined
           ? (TData[TKey] extends TValue ? `${TKey}` : never) | `${TKey}.${number}` // arrays support index access
@@ -228,7 +228,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults.
      * @initial
      * */
-    icons?: { [key: string]: Function | string };
+    icons?: { [key: string]: ((...args: any[]) => any) | string };
     /**
      * Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.
      * Can also be a callback function to have different rows navigable.

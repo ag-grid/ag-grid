@@ -25,8 +25,8 @@ export class StylingService extends BeanStub {
     }
 
     public processClassRules(
-        previousClassRules: { [cssClassName: string]: Function | string } | undefined,
-        classRules: { [cssClassName: string]: Function | string } | undefined,
+        previousClassRules: { [cssClassName: string]: ((...args: any[]) => any) | string } | undefined,
+        classRules: { [cssClassName: string]: ((...args: any[]) => any) | string } | undefined,
         params: RowClassParams | CellClassParams,
         onApplicableClass: (className: string) => void,
         onNotApplicableClass?: (className: string) => void

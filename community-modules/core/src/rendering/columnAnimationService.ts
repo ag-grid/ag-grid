@@ -15,8 +15,8 @@ export class ColumnAnimationService extends BeanStub {
 
     private gridBodyCtrl: GridBodyCtrl;
 
-    private executeNextFuncs: Function[] = [];
-    private executeLaterFuncs: Function[] = [];
+    private executeNextFuncs: ((...args: any[]) => any)[] = [];
+    private executeLaterFuncs: ((...args: any[]) => any)[] = [];
 
     private active = false;
     private suppressAnimation = false;
@@ -65,7 +65,7 @@ export class ColumnAnimationService extends BeanStub {
         });
     }
 
-    public executeNextVMTurn(func: Function): void {
+    public executeNextVMTurn(func: (...args: any[]) => any): void {
         if (this.active) {
             this.executeNextFuncs.push(func);
         } else {
@@ -73,7 +73,7 @@ export class ColumnAnimationService extends BeanStub {
         }
     }
 
-    public executeLaterVMTurn(func: Function): void {
+    public executeLaterVMTurn(func: (...args: any[]) => any): void {
         if (this.active) {
             this.executeLaterFuncs.push(func);
         } else {
@@ -102,7 +102,7 @@ export class ColumnAnimationService extends BeanStub {
             return;
         }
 
-        const runFuncs = (queue: Function[]) => {
+        const runFuncs = (queue: ((...args: any[]) => any)[]) => {
             while (queue.length) {
                 const func = queue.pop();
                 if (func) {
