@@ -259,6 +259,7 @@ class ContextMenu extends Component {
     public wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
         this.focusService = beans.focusService;
+        this.menuItemMapper = beans.menuItemMapper;
     }
 
     private menuItemMapper: MenuItemMapper;
