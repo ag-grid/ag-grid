@@ -1,6 +1,7 @@
 @use 'design-system' as *;
 
 .aboutPage {
+    height: 100%;
     margin-top: $spacing-size-12;
     margin-bottom: calc($spacing-size-12 * 4);
 
@@ -43,6 +44,7 @@
     img {
         width: 100%;
         border-radius: var(--radius-md);
+        object-fit: cover;
     }
 
     h3 {
