@@ -99,7 +99,7 @@
         "repo": "https://github.com/widgetti/ipyaggrid",
         "title": "ipyaggrid",
         "description": "A wrapper for using AG Grid in Jupyter notebooks. The goal of this ipywidget is to harness the power of the excellent Javascript library ag-Grid",
-        "link": "https://widgetti.github.io/ipyaggrid/",
+        "link": "https://github.com/widgetti/ipyaggrid",
         "type": "Wrapper",
         "open_source": true,
         "stars": 46,
@@ -277,7 +277,7 @@
         "open_source": true,
         "stars": 60,
         "type": "Wrapper",
-        "link": "https://blog.bkkr.us/blazor-ag-grid/",
+        "link": "https://blog.bkkr.us/blazor-ag-grid/fetchdata",
         "frameworks": [".NET"],
         "tags": ["Wrapper"]
     },
