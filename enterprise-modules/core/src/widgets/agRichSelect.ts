@@ -739,8 +739,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
     public destroy(): void {
         if (this.listComponent) {
-            this.destroyBean(this.listComponent);
-            this.listComponent = undefined;
+            this.listComponent = this.destroyBean(this.listComponent);
         }
 
         this.eLoading = undefined;

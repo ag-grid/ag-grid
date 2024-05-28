@@ -1,13 +1,7 @@
 import type { BeanCollection } from '../../context/context';
 import type { Column } from '../../entities/column';
-import type {
-    IRangeService,
-    ISelectionHandle,
-    ISelectionHandleFactory} from '../../interfaces/IRangeService';
-import {
-    CellRangeType,
-    SelectionHandleType,
-} from '../../interfaces/IRangeService';
+import type { IRangeService, ISelectionHandle, ISelectionHandleFactory } from '../../interfaces/IRangeService';
+import { CellRangeType, SelectionHandleType } from '../../interfaces/IRangeService';
 import { _setAriaSelected } from '../../utils/aria';
 import { _includes, _last } from '../../utils/array';
 import { _missing } from '../../utils/generic';
@@ -194,8 +188,7 @@ export class CellRangeFeature {
         const shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
 
         if (this.selectionHandle && !shouldHaveSelectionHandle) {
-            this.selectionHandle = undefined;
-            this.beans.context.destroyBean(this.selectionHandle);
+            this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);
         }
 
         if (shouldHaveSelectionHandle) {
@@ -246,8 +239,7 @@ export class CellRangeFeature {
         const type = selectionHandleFill ? SelectionHandleType.FILL : SelectionHandleType.RANGE;
 
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {
-            this.beans.context.destroyBean(this.selectionHandle);
-            this.selectionHandle = undefined;
+            this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);
         }
 
         if (!this.selectionHandle) {

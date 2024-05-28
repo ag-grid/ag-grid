@@ -308,8 +308,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     private setupTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
         if (this.tooltipFeature) {
-            this.destroyBean(this.tooltipFeature);
-            this.tooltipFeature = undefined;
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
 
         const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';

@@ -107,8 +107,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
         const refreshColumnGroups = () => {
             const groupRowCount = this.columnModel.getHeaderRowCount() - 1;
 
-            this.destroyBeans(this.groupsRowCtrls);
-            this.groupsRowCtrls = [];
+            this.groupsRowCtrls = this.destroyBeans(this.groupsRowCtrls);
 
             for (let i = 0; i < groupRowCount; i++) {
                 const ctrl = this.createBean(
@@ -127,8 +126,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
             const shouldDestroyInstance = needNewInstance || this.hidden;
 
             if (shouldDestroyInstance) {
-                this.destroyBean(this.columnsRowCtrl);
-                this.columnsRowCtrl = undefined;
+                this.columnsRowCtrl = this.destroyBean(this.columnsRowCtrl);
             }
 
             if (needNewInstance) {
@@ -140,8 +138,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
             this.includeFloatingFilter = this.filterManager.hasFloatingFilters() && !this.hidden;
 
             const destroyPreviousComp = () => {
-                this.destroyBean(this.filtersRowCtrl);
-                this.filtersRowCtrl = undefined;
+                this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
             };
 
             if (!this.includeFloatingFilter) {
@@ -331,18 +328,15 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
     public override destroy(): void {
         if (this.filtersRowCtrl) {
-            this.destroyBean(this.filtersRowCtrl);
-            this.filtersRowCtrl = undefined;
+            this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
         }
 
         if (this.columnsRowCtrl) {
-            this.destroyBean(this.columnsRowCtrl);
-            this.columnsRowCtrl = undefined;
+            this.columnsRowCtrl = this.destroyBean(this.columnsRowCtrl);
         }
 
         if (this.groupsRowCtrls && this.groupsRowCtrls.length) {
-            this.destroyBeans(this.groupsRowCtrls);
-            this.groupsRowCtrls = [];
+            this.groupsRowCtrls = this.destroyBeans(this.groupsRowCtrls);
         }
 
         super.destroy();

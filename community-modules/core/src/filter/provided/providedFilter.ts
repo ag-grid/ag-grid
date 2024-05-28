@@ -528,8 +528,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         this.hidePopup = null;
 
         if (this.positionableFeature) {
-            this.destroyBean(this.positionableFeature);
-            this.positionableFeature = undefined;
+            this.positionableFeature = this.destroyBean(this.positionableFeature);
         }
 
         this.appliedModel = null;

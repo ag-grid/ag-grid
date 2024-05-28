@@ -101,8 +101,7 @@ export class TooltipFeature extends BeanStub {
         if (this.browserTooltips) {
             this.setBrowserTooltip(this.tooltip);
             if (this.tooltipManager) {
-                this.destroyBean(this.tooltipManager, this.beans.context);
-                this.tooltipManager = undefined;
+                this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
             }
         } else {
             this.setBrowserTooltip(null);
@@ -136,8 +135,7 @@ export class TooltipFeature extends BeanStub {
     // overriding to make public, as we don't dispose this bean via context
     public destroy() {
         if (this.tooltipManager) {
-            this.destroyBean(this.tooltipManager, this.beans.context);
-            this.tooltipManager = undefined;
+            this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
         }
         super.destroy();
     }

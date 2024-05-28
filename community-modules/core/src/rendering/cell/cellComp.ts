@@ -182,12 +182,9 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private removeControls(): void {
-        this.beans.context.destroyBean(this.checkboxSelectionComp);
-        this.checkboxSelectionComp = undefined;
-        this.beans.context.destroyBean(this.dndSourceComp);
-        this.dndSourceComp = undefined;
-        this.beans.context.destroyBean(this.rowDraggingComp);
-        this.rowDraggingComp = undefined;
+        this.checkboxSelectionComp = this.beans.context.destroyBean(this.checkboxSelectionComp);
+        this.dndSourceComp = this.beans.context.destroyBean(this.dndSourceComp);
+        this.rowDraggingComp = this.beans.context.destroyBean(this.rowDraggingComp);
     }
 
     // returns true if wrapper was changed
@@ -305,8 +302,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private destroyRenderer(): void {
         const { context } = this.beans;
-        this.cellRenderer = undefined;
-        context.destroyBean(this.cellRenderer);
+        this.cellRenderer = context.destroyBean(this.cellRenderer);
         _removeFromParent(this.cellRendererGui);
         this.cellRendererGui = null;
         this.rendererVersion++;
@@ -320,10 +316,8 @@ export class CellComp extends Component implements TooltipParentComp {
         }
         this.hideEditorPopup = undefined;
 
-        this.cellEditor = undefined;
-        context.destroyBean(this.cellEditor);
-        this.cellEditorPopupWrapper = undefined;
-        context.destroyBean(this.cellEditorPopupWrapper);
+        this.cellEditor = context.destroyBean(this.cellEditor);
+        this.cellEditorPopupWrapper = context.destroyBean(this.cellEditorPopupWrapper);
 
         _removeFromParent(this.cellEditorGui);
         this.cellEditorGui = null;

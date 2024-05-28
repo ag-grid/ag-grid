@@ -161,8 +161,7 @@ export class SeriesChartTypePanel extends Component {
 
     public override destroy(): void {
         this.clearComps();
-        this.destroyBean(this.seriesChartTypeGroupComp);
-        this.seriesChartTypeGroupComp = undefined!;
+        this.seriesChartTypeGroupComp = this.destroyBean(this.seriesChartTypeGroupComp)!;
         super.destroy();
     }
 }

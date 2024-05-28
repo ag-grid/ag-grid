@@ -553,8 +553,7 @@ export class AgFiltersToolPanelList extends Component {
     }
 
     private destroyFilters() {
-        this.destroyBeans(this.filterGroupComps);
-        this.filterGroupComps = [];
+        this.filterGroupComps = this.destroyBeans(this.filterGroupComps);
         _clearElement(this.getGui());
     }
 

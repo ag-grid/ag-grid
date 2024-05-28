@@ -25,7 +25,7 @@ import type { ProcessRowParams } from '../../interfaces/iCallbackParams';
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
-import type { DataChangedEvent, IRowNode} from '../../interfaces/iRowNode';
+import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import { RowHighlightPosition } from '../../interfaces/iRowNode';
 import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
 import { ModuleNames } from '../../modules/moduleNames';
@@ -36,7 +36,7 @@ import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _executeNextVMTurn, _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
-import type { ITooltipFeatureCtrl} from '../../widgets/tooltipFeature';
+import type { ITooltipFeatureCtrl } from '../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../widgets/tooltipFeature';
 import { CellCtrl } from '../cell/cellCtrl';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
@@ -770,8 +770,7 @@ export class RowCtrl extends BeanStub {
         this.addDestroyFunc(() => {
             this.destroyBeans(this.rowDragComps, this.beans.context);
             if (this.tooltipFeature) {
-                this.destroyBean(this.tooltipFeature, this.beans.context);
-                this.tooltipFeature = undefined;
+                this.tooltipFeature = this.destroyBean(this.tooltipFeature, this.beans.context);
             }
         });
         this.addManagedPropertyListeners(['rowDragEntireRow'], () => {
@@ -782,8 +781,7 @@ export class RowCtrl extends BeanStub {
                 });
                 return;
             }
-            this.destroyBeans(this.rowDragComps, this.beans.context);
-            this.rowDragComps = [];
+            this.rowDragComps = this.destroyBeans(this.rowDragComps, this.beans.context);
         });
 
         this.addListenersForCellComps();

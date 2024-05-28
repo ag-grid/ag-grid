@@ -138,8 +138,7 @@ export class AgDialog extends AgPanel<DialogOptions> {
     }
 
     public override destroy(): void {
-        this.destroyBean(this.maximizeButtonComp);
-        this.maximizeButtonComp = undefined;
+        this.maximizeButtonComp = this.destroyBean(this.maximizeButtonComp);
 
         this.clearMaximizebleListeners();
         super.destroy();

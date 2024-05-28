@@ -181,8 +181,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
 
     public override destroy(): void {
         if (this.listComponent) {
-            this.destroyBean(this.listComponent);
-            this.listComponent = undefined;
+            this.listComponent = this.destroyBean(this.listComponent);
         }
 
         super.destroy();

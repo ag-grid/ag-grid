@@ -60,8 +60,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
     private destroyFloatingFilterComp(): void {
         if (this.floatingFilterComp) {
             this.eFloatingFilterBody.removeChild(this.floatingFilterComp.getGui());
-            this.destroyBean(this.floatingFilterComp);
-            this.floatingFilterComp = undefined;
+            this.floatingFilterComp = this.destroyBean(this.floatingFilterComp);
         }
     }
 

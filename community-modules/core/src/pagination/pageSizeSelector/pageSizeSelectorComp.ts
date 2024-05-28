@@ -110,8 +110,7 @@ export class PageSizeSelectorComp extends Component {
             return;
         }
 
-        this.destroyBean(this.selectPageSizeComp);
-        this.selectPageSizeComp = undefined;
+        this.selectPageSizeComp = this.destroyBean(this.selectPageSizeComp);
     }
 
     private onPageSizeSelectorValuesChange(): void {
@@ -151,8 +150,7 @@ export class PageSizeSelectorComp extends Component {
         }
 
         if (this.selectPageSizeComp) {
-            this.destroyBean(this.selectPageSizeComp);
-            this.selectPageSizeComp = undefined;
+            this.selectPageSizeComp = this.destroyBean(this.selectPageSizeComp);
         }
 
         const localeTextFunc = this.localeService.getLocaleTextFunc();

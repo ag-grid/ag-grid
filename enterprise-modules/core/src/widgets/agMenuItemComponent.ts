@@ -440,8 +440,7 @@ export class AgMenuItemComponent extends BeanStub {
         this.tooltip = tooltip;
 
         if (this.tooltipFeature) {
-            this.destroyBean(this.tooltipFeature);
-            this.tooltipFeature = undefined;
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
 
         if (!tooltip || !this.menuItemComp) {
@@ -460,8 +459,7 @@ export class AgMenuItemComponent extends BeanStub {
 
     public override destroy(): void {
         if (this.tooltipFeature) {
-            this.destroyBean(this.tooltipFeature);
-            this.tooltipFeature = undefined;
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
         super.destroy();
     }

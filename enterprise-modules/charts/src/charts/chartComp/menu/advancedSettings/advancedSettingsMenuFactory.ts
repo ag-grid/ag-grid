@@ -40,8 +40,7 @@ export class AdvancedSettingsMenuFactory extends BeanStub {
                     this.focusService.findFocusableElements(menu.getGui())[0]?.focus();
                 },
                 closedCallback: () => {
-                    this.destroyBean(this.activeMenu);
-                    this.activeMenu = undefined;
+                    this.activeMenu = this.destroyBean(this.activeMenu);
                     this.activeDialog = undefined;
                     eventSource?.focus({ preventScroll: true });
                 },
@@ -58,10 +57,8 @@ export class AdvancedSettingsMenuFactory extends BeanStub {
     }
 
     public override destroy(): void {
-        this.destroyBean(this.activeMenu);
-        this.activeMenu = undefined;
-        this.destroyBean(this.activeDialog);
-        this.activeDialog = undefined;
+        this.activeMenu = this.destroyBean(this.activeMenu);
+        this.activeDialog = this.destroyBean(this.activeDialog);
         super.destroy();
     }
 }

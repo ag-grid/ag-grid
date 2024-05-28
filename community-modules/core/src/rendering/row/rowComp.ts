@@ -154,8 +154,7 @@ export class RowComp extends Component {
 
         this.fullWidthCellRenderer = fullWidthRowComponent;
         this.addDestroyFunc(() => {
-            this.beans.context.destroyBean(this.fullWidthCellRenderer);
-            this.fullWidthCellRenderer = undefined;
+            this.fullWidthCellRenderer = this.beans.context.destroyBean(this.fullWidthCellRenderer);
         });
     }
 

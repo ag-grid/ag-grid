@@ -119,8 +119,7 @@ export class Component extends BeanStub {
         const { newTooltipText, showDelayOverride, hideDelayOverride, location, shouldDisplayTooltip } = params || {};
 
         if (this.tooltipFeature) {
-            this.destroyBean(this.tooltipFeature);
-            this.tooltipFeature = undefined;
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
 
         if (this.tooltipText !== newTooltipText) {
@@ -370,8 +369,7 @@ export class Component extends BeanStub {
         }
 
         if (this.tooltipFeature) {
-            this.destroyBean(this.tooltipFeature);
-            this.tooltipFeature = undefined;
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
 
         super.destroy();

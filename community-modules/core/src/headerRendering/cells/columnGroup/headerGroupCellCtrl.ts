@@ -8,7 +8,7 @@ import { DragAndDropService, DragSourceType } from '../../../dragAndDrop/dragAnd
 import { Column } from '../../../entities/column';
 import type { ColumnGroup } from '../../../entities/columnGroup';
 import { ProvidedColumnGroup } from '../../../entities/providedColumnGroup';
-import type { ColumnEventType, ColumnHeaderMouseLeaveEvent, ColumnHeaderMouseOverEvent} from '../../../events';
+import type { ColumnEventType, ColumnHeaderMouseLeaveEvent, ColumnHeaderMouseOverEvent } from '../../../events';
 import { Events } from '../../../events';
 import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import type { HeaderColumnId } from '../../../interfaces/iHeaderColumn';
@@ -58,8 +58,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         this.setupTooltip();
         this.addDestroyFunc(() => {
             if (this.tooltipFeature) {
-                this.destroyBean(this.tooltipFeature);
-                this.tooltipFeature = undefined;
+                this.tooltipFeature = this.destroyBean(this.tooltipFeature);
             }
         });
         this.setupUserComp();
@@ -234,8 +233,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
 
     private setupTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
         if (this.tooltipFeature) {
-            this.destroyBean(this.tooltipFeature);
-            this.tooltipFeature = undefined;
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
 
         const colGroupDef = this.column.getColGroupDef();

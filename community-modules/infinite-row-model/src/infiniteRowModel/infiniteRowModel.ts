@@ -255,8 +255,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     private destroyCache(): void {
         if (this.infiniteCache) {
-            this.destroyBean(this.infiniteCache);
-            this.infiniteCache = undefined;
+            this.infiniteCache = this.destroyBean(this.infiniteCache);
         }
     }
 

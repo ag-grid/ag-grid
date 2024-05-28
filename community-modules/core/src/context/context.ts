@@ -204,16 +204,17 @@ export class Context {
         ModuleRegistry.__unRegisterGridModules(this.gridId);
     }
 
-    public destroyBean(bean: BaseBean | null | undefined): void {
+    public destroyBean(bean: BaseBean | null | undefined): undefined {
         bean?.destroy?.();
     }
 
-    public destroyBeans(beans: (BaseBean | null | undefined)[]): void {
+    public destroyBeans(beans: (BaseBean | null | undefined)[]): [] {
         if (!beans) {
-            return;
+            return [];
         }
 
         beans.forEach(this.destroyBean);
+        return [];
     }
 
     public isDestroyed(): boolean {
