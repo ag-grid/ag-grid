@@ -179,6 +179,10 @@
         margin: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
     }
 
+    .ag-set-filter {
+        --ag-indentation-level: 0;
+    }
+
     .ag-set-filter-item {
         @include ag.unthemed-rtl(
             (

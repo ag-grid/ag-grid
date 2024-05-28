@@ -96,10 +96,11 @@ export class GridSerializer extends BeanStub {
         const hideOpenParents = this.gos.get('groupHideOpenParents') && !isExplicitExportSelection;
         const isLeafNode = this.columnModel.isPivotMode() ? node.leafGroup : !node.group;
         const isFooter = !!node.footer;
-        const skipRowGroups = params.skipRowGroups;
         const shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
         const shouldSkipCurrentGroup =
-            node.allChildrenCount === 1 && (skipSingleChildrenGroup || shouldSkipLowestGroup);
+            node.allChildrenCount === 1 &&
+            node.childrenAfterGroup?.length === 1 &&
+            (skipSingleChildrenGroup || shouldSkipLowestGroup);
 
         if (
             (!isLeafNode && !isFooter && (params.skipRowGroups || shouldSkipCurrentGroup || hideOpenParents)) ||

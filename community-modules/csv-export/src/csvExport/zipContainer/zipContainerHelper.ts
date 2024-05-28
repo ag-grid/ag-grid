@@ -15,48 +15,6 @@ export interface ProcessedZipFile extends ZipFileHeader {
     isCompressed: boolean;
 }
 
-export const getDeflatedHeaderAndContent = async (currentFile: ZipFile, offset: number): Promise<ProcessedZipFile> => {
-    const { content } = currentFile;
-
-    const { size, content: rawContent } = !content
-        ? { size: 0, content: Uint8Array.from([]) }
-        : getDecodedContent(content);
-
-    let deflatedContent: Uint8Array | undefined = undefined;
-    let deflatedSize: number | undefined = undefined;
-    let deflationPerformed = false;
-
-    const shouldDeflate = currentFile.type === 'file' && rawContent && size > 0;
-    if (shouldDeflate) {
-        const result = await deflateLocalFile(rawContent);
-        deflatedContent = result.content;
-        deflatedSize = result.size;
-        deflationPerformed = true;
-    }
-
-    const headers = getHeaders(currentFile, deflationPerformed, offset, size, rawContent, deflatedSize);
-
-    return {
-        ...headers,
-        content: deflatedContent || rawContent,
-        isCompressed: deflationPerformed,
-    };
-};
-
-export const getHeaderAndContent = (currentFile: ZipFile, offset: number): ProcessedZipFile => {
-    const { content } = currentFile;
-
-    const { content: rawContent } = !content ? { content: Uint8Array.from([]) } : getDecodedContent(content);
-
-    const headers = getHeaders(currentFile, false, offset, rawContent.length, rawContent, undefined);
-
-    return {
-        ...headers,
-        content: rawContent,
-        isCompressed: false,
-    };
-};
-
 const getHeaders = (
     currentFile: ZipFile,
     isCompressed: boolean,
@@ -113,6 +71,69 @@ const getHeaders = (
     };
 };
 
+const getDecodedContent = (
+    content: string | Uint8Array
+): {
+    size: number;
+    content: Uint8Array;
+} => {
+    let contentToUse: Uint8Array;
+    // base64 content is passed as string
+    if (typeof content === 'string') {
+        const base64String = atob(content.split(';base64,')[1]);
+        contentToUse = Uint8Array.from(base64String, (c) => c.charCodeAt(0));
+    } else {
+        contentToUse = content;
+    }
+
+    return {
+        size: contentToUse.length,
+        content: contentToUse,
+    };
+};
+
+export const getDeflatedHeaderAndContent = async (currentFile: ZipFile, offset: number): Promise<ProcessedZipFile> => {
+    const { content } = currentFile;
+
+    const { size, content: rawContent } = !content
+        ? { size: 0, content: Uint8Array.from([]) }
+        : getDecodedContent(content);
+
+    let deflatedContent: Uint8Array | undefined = undefined;
+    let deflatedSize: number | undefined = undefined;
+    let deflationPerformed = false;
+
+    const shouldDeflate = currentFile.type === 'file' && rawContent && size > 0;
+    if (shouldDeflate) {
+        const result = await deflateLocalFile(rawContent);
+        deflatedContent = result.content;
+        deflatedSize = result.size;
+        deflationPerformed = true;
+    }
+
+    const headers = getHeaders(currentFile, deflationPerformed, offset, size, rawContent, deflatedSize);
+
+    return {
+        ...headers,
+        content: deflatedContent || rawContent,
+        isCompressed: deflationPerformed,
+    };
+};
+
+export const getHeaderAndContent = (currentFile: ZipFile, offset: number): ProcessedZipFile => {
+    const { content } = currentFile;
+
+    const { content: rawContent } = !content ? { content: Uint8Array.from([]) } : getDecodedContent(content);
+
+    const headers = getHeaders(currentFile, false, offset, rawContent.length, rawContent, undefined);
+
+    return {
+        ...headers,
+        content: rawContent,
+        isCompressed: false,
+    };
+};
+
 export const buildCentralDirectoryEnd = (tLen: number, cLen: number, lLen: number): Uint8Array => {
     const str =
         'PK\x05\x06' + // central folder end
@@ -125,34 +146,4 @@ export const buildCentralDirectoryEnd = (tLen: number, cLen: number, lLen: numbe
         '\x00\x00';
 
     return Uint8Array.from(str, (c) => c.charCodeAt(0));
-};
-
-export const convertStringToByteArray = (str: string): Uint8Array => {
-    const bytes = new Uint8Array(str.length);
-    for (let i = 0; i < str.length; i++) {
-        bytes[i] = str.charCodeAt(i);
-    }
-
-    return bytes;
-};
-
-export const getDecodedContent = (
-    content: string | Uint8Array
-): {
-    size: number;
-    content: Uint8Array;
-} => {
-    let contentToUse: Uint8Array;
-    // base64 content is passed as string
-    if (typeof content === 'string') {
-        const base64String = atob(content.split(';base64,')[1]);
-        contentToUse = convertStringToByteArray(base64String);
-    } else {
-        contentToUse = content;
-    }
-
-    return {
-        size: contentToUse.length,
-        content: contentToUse,
-    };
 };
