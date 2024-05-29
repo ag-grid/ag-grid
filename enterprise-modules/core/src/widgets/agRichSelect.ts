@@ -43,7 +43,11 @@ const TEMPLATE = /* html */ `
         </div>
     </div>`;
 
-export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelectParams<TValue>, VirtualList> {
+export class AgRichSelect<TValue = any> extends AgPickerField<
+    TValue[] | TValue,
+    RichSelectParams<TValue>,
+    VirtualList
+> {
     private userComponentFactory: UserComponentFactory;
     private animationFrameService: AnimationFrameService;
 
@@ -142,9 +146,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         this.listComponent = this.createBean(new VirtualList({ cssIdentifier: 'rich-select' }));
         this.listComponent.setComponentCreator(this.createRowComponent.bind(this));
 
-        const componentUpdater = (item: TValue, component: any) => {
-            /* nothing to update but method required to soft refresh */
-        };
+        /* nothing to update but method required to soft refresh */
+        const componentUpdater = () => {};
+
         this.listComponent.setComponentUpdater(componentUpdater);
         this.listComponent.setParentComponent(this);
 
@@ -246,7 +250,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     private highlightFilterMatch(): void {
-        this.listComponent?.forEachRenderedRow((cmp: RichSelectRow<TValue>, idx: number) => {
+        this.listComponent?.forEachRenderedRow((cmp: RichSelectRow<TValue>) => {
             cmp.highlightString(this.searchString);
         });
     }
@@ -706,6 +710,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
                     break;
                 }
             // Only break here for allowTyping, otherwise use the same logic as PageUp/PageDown
+            // eslint-disable-next-line
             case KeyCode.PAGE_UP:
             case KeyCode.PAGE_DOWN:
                 event.preventDefault();

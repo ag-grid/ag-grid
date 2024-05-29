@@ -2,7 +2,7 @@ import type { AgPickerFieldParams } from './agFieldParams';
 import type { ICellEditorParams } from './iCellEditor';
 
 export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
-    value?: TValue;
+    value?: TValue[] | TValue;
     valueList?: TValue[];
     allowTyping?: boolean;
     cellRenderer?: any;
@@ -12,10 +12,11 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
     filterList?: boolean;
     searchType?: 'match' | 'matchAny' | 'fuzzy';
     highlightMatch?: boolean;
+    multiSelect?: boolean;
     placeholder?: string;
     initialInputValue?: string;
 
-    valueFormatter?: (value: TValue) => any;
+    valueFormatter?: (value: TValue[] | TValue) => any;
     searchStringCreator?: (values: TValue[]) => string[];
 }
 export interface RichCellEditorValuesCallback<TData = any, TValue = any> {
@@ -54,6 +55,11 @@ export interface IRichCellEditorParams<TData = any, TValue = any> {
      * @default false.
      */
     highlightMatch?: boolean;
+    /**
+     * If `true` this component will allow multiple items from the list of values to be selected.
+     * Note: This feature does not work with `allowTyping=true`.
+     */
+    multiSelect?: boolean;
     /**
      * The value in `ms` for the search algorithm debounce delay (only relevant when `allowTyping=false`).
      * @default 300
