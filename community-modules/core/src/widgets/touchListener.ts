@@ -21,7 +21,7 @@ export class TouchListener implements IEventEmitter {
 
     private eElement: Element;
 
-    private destroyFuncs: Function[] = [];
+    private destroyFuncs: ((...args: any[]) => any)[] = [];
 
     private moved: boolean;
 

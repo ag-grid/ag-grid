@@ -216,9 +216,9 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     isHovered(): boolean;
 
     /** Add an event listener. */
-    addEventListener(eventType: RowNodeEventType, listener: Function): void;
+    addEventListener(eventType: RowNodeEventType, listener: (...args: any[]) => any): void;
     /** Remove event listener. */
-    removeEventListener(eventType: RowNodeEventType, listener: Function): void;
+    removeEventListener(eventType: RowNodeEventType, listener: (...args: any[]) => any): void;
 
     /**
      * The first time `quickFilter` runs, the grid creates a one-off string representation of the row.

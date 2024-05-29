@@ -96,9 +96,9 @@ import { PopupService } from './widgets/popupService';
 
 export interface GridParams {
     // INTERNAL - used by Web Components
-    globalEventListener?: Function;
+    globalEventListener?: (...args: any[]) => any;
     // INTERNAL - Always sync - for events such as gridPreDestroyed
-    globalSyncEventListener?: Function;
+    globalSyncEventListener?: (...args: any[]) => any;
     // INTERNAL - this allows the base frameworks (React, Angular, etc) to provide alternative cellRenderers and cellEditors
     frameworkOverrides?: IFrameworkOverrides;
     // INTERNAL - bean instances to add to the context

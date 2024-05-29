@@ -504,7 +504,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
         }
     }
 
-    public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function) {
+    public addRenderedRowListener(eventName: string, rowIndex: number, callback: (...args: any[]) => any) {
         this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback as any);
     }
 
@@ -911,19 +911,19 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
         return value;
     }
 
-    public addEventListener(eventType: string, listener: Function): void {
+    public addEventListener(eventType: string, listener: (...args: any[]) => any): void {
         this.apiEventService.addEventListener(eventType, listener as AgEventListener);
     }
 
-    public addGlobalListener(listener: Function): void {
+    public addGlobalListener(listener: (...args: any[]) => any): void {
         this.apiEventService.addGlobalListener(listener as AgGlobalEventListener);
     }
 
-    public removeEventListener(eventType: string, listener: Function): void {
+    public removeEventListener(eventType: string, listener: (...args: any[]) => any): void {
         this.apiEventService.removeEventListener(eventType, listener as AgEventListener);
     }
 
-    public removeGlobalListener(listener: Function): void {
+    public removeGlobalListener(listener: (...args: any[]) => any): void {
         this.apiEventService.removeGlobalListener(listener as AgGlobalEventListener);
     }
 

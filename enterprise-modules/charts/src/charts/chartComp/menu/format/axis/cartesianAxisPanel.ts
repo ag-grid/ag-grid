@@ -54,7 +54,7 @@ export class CartesianAxisPanel extends Component {
     private readonly chartOptionsSeriesProxy: ChartOptionsProxy;
 
     private activePanels: Component[] = [];
-    private axisLabelUpdateFuncs: Function[] = [];
+    private axisLabelUpdateFuncs: ((...args: any[]) => any)[] = [];
 
     private prevRotation: number | undefined;
 
@@ -121,7 +121,7 @@ export class CartesianAxisPanel extends Component {
             // Conditionally hide the time format input based on the currently selected axis type
             updateTimeFormatVisibility();
             // Update the visibility whenever the axis type changes
-            this.addManagedListener(this.eventService, Events.EVENT_CHART_OPTIONS_CHANGED, (e) => {
+            this.addManagedListener(this.eventService, Events.EVENT_CHART_OPTIONS_CHANGED, () => {
                 updateTimeFormatVisibility();
             });
         }
@@ -304,15 +304,15 @@ export class CartesianAxisPanel extends Component {
 
     private initGridLines(chartAxisThemeOverrides: ChartMenuParamsFactory) {
         const chartType = this.options.chartController.getChartType();
-        switch (chartType) {
-            // Some chart types do not support configuring grid lines
-            case 'heatmap':
-                return;
-            default:
-                const gridLineComp = this.createBean(new GridLinePanel(chartAxisThemeOverrides));
-                this.axisGroup.addItem(gridLineComp);
-                this.activePanels.push(gridLineComp);
+
+        // Some chart types do not support configuring grid lines
+        if (chartType === 'heatmap') {
+            return;
         }
+
+        const gridLineComp = this.createBean(new GridLinePanel(chartAxisThemeOverrides));
+        this.axisGroup.addItem(gridLineComp);
+        this.activePanels.push(gridLineComp);
     }
 
     private initAxisTicks(chartAxisThemeOverrides: ChartMenuParamsFactory) {

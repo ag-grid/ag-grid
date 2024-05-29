@@ -1170,7 +1170,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     /** Add an event listener. */
-    public addEventListener(eventType: RowNodeEventType, userListener: Function): void {
+    public addEventListener(eventType: RowNodeEventType, userListener: (...args: any[]) => any): void {
         if (!this.localEventService) {
             this.localEventService = new LocalEventService();
         }
@@ -1184,7 +1184,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     /** Remove event listener. */
-    public removeEventListener(eventType: RowNodeEventType, userListener: Function): void {
+    public removeEventListener(eventType: RowNodeEventType, userListener: (...args: any[]) => any): void {
         if (!this.localEventService) {
             return;
         }

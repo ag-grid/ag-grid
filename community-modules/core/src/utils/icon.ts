@@ -183,7 +183,7 @@ export function _createIconNoSpan(
     column?: Column | null,
     forceCreate?: boolean
 ): Element | undefined {
-    let userProvidedIcon: Function | string | null = null;
+    let userProvidedIcon: ((...args: any[]) => any) | string | null = null;
 
     // check col for icon first
     const icons: any = column && column.getColDef().icons;
