@@ -60,10 +60,10 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
         if (!this.values) {
             const { values } = this.params.getEditorParams();
             this.values = values!;
-            const key = this.value.key;
+            const key = (this.value as AutocompleteEntry).key;
             const value = values!.find((value) => value.key === key) ?? {
                 key,
-                displayValue: this.value.displayValue,
+                displayValue: (this.value as AutocompleteEntry).displayValue,
             };
             this.value = value;
         }
