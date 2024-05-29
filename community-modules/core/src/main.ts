@@ -109,7 +109,7 @@ export {
 // entities
 export { Column, ColumnPinnedType, ColumnGroup, ProvidedColumnGroup, ColumnGroupShowType } from './interfaces/iColumn';
 export { AgColumn, isColumn } from './entities/agColumn';
-export { AgColumnGroup as AgColumnGroup, isColumnGroup } from './entities/agColumnGroup';
+export { AgColumnGroup, isColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup, isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 export { RowNode } from './entities/rowNode';
 export { RowHighlightPosition, RowPinnedType, IRowNode } from './interfaces/iRowNode';

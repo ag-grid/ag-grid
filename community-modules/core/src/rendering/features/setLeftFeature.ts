@@ -30,12 +30,12 @@ export class SetLeftFeature extends BeanStub {
         this.columnOrGroup = columnOrGroup;
         this.eCell = eCell;
         this.ariaEl = this.eCell.querySelector('[role=columnheader]') || this.eCell;
-        this.colsSpanning = colsSpanning as AgColumn[];
+        this.colsSpanning = colsSpanning;
         this.beans = beans;
     }
 
     public setColsSpanning(colsSpanning: AgColumn[]): void {
-        this.colsSpanning = colsSpanning as AgColumn[];
+        this.colsSpanning = colsSpanning;
         this.onLeftChanged();
     }
 
