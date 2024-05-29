@@ -313,7 +313,7 @@ export class TooltipStateManager extends BeanStub {
             this.state !== TooltipStates.SHOWING || this.tooltipInstanceCount !== tooltipInstanceCopy;
 
         if (compNoLongerNeeded) {
-            this.getContext().destroyBean(tooltipComp);
+            this.destroyBean(tooltipComp);
             return;
         }
 
@@ -456,7 +456,7 @@ export class TooltipStateManager extends BeanStub {
 
         window.setTimeout(() => {
             tooltipPopupDestroyFunc!();
-            this.getContext().destroyBean(tooltipComp);
+            this.destroyBean(tooltipComp);
         }, delay);
 
         this.clearTooltipListeners();

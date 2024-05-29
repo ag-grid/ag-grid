@@ -289,7 +289,7 @@ export class AgSideBar extends Component implements ISideBar {
             const moduleMissing = !ModuleRegistry.__assertRegistered(
                 ModuleNames.ColumnsToolPanelModule,
                 'Column Tool Panel',
-                this.context.getGridId()
+                this.gridId
             );
             if (moduleMissing) {
                 return false;
@@ -300,7 +300,7 @@ export class AgSideBar extends Component implements ISideBar {
             const moduleMissing = !ModuleRegistry.__assertRegistered(
                 ModuleNames.FiltersToolPanelModule,
                 'Filters Tool Panel',
-                this.context.getGridId()
+                this.gridId
             );
             if (moduleMissing) {
                 return false;
@@ -329,7 +329,7 @@ export class AgSideBar extends Component implements ISideBar {
         if (existingToolPanelWrapper) {
             wrapper = existingToolPanelWrapper;
         } else {
-            wrapper = this.getContext().createBean(new ToolPanelWrapper());
+            wrapper = this.createBean(new ToolPanelWrapper());
 
             wrapper.setToolPanelDef(def, {
                 initialState,

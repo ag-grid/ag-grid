@@ -1,5 +1,4 @@
 import type { GridOptions } from '../entities/gridOptions';
-import type { Environment } from '../environment';
 import type { EventService } from '../eventService';
 import type { AgEvent, AgEventListener } from '../events';
 import type {
@@ -14,16 +13,16 @@ import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import { LocalEventService } from '../localEventService';
 import type { LocaleService } from '../localeService';
 import { _addSafePassiveEventListener } from '../utils/event';
-import type { Component } from '../widgets/component';
-import type { BaseBean } from './bean';
+import type { Bean } from './bean';
 import type { BeanCollection, BeanName, Context } from './context';
 
-export abstract class BeanStub implements BaseBean, IEventEmitter {
+export abstract class BeanStub implements Bean, IEventEmitter {
     public readonly beanName?: BeanName;
     public static EVENT_DESTROYED = 'destroyed';
 
     protected localEventService?: LocalEventService;
 
+    private stubContext: Context; // not named context to allow children to use 'context' as a variable name
     private destroyFunctions: (() => void)[] = [];
     private destroyed = false;
 
@@ -32,19 +31,18 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
     public __v_skip = true;
 
     protected frameworkOverrides: IFrameworkOverrides;
-    protected context: Context;
     protected eventService: EventService;
     protected gos: GridOptionsService;
     protected localeService: LocaleService;
-    protected environment: Environment;
+    protected gridId: string;
 
     public wireBeans(beans: BeanCollection): void {
+        this.gridId = beans.context.getGridId();
         this.frameworkOverrides = beans.frameworkOverrides;
-        this.context = beans.context;
+        this.stubContext = beans.context;
         this.eventService = beans.eventService;
         this.gos = beans.gos;
         this.localeService = beans.localeService;
-        this.environment = beans.environment;
     }
 
     // this was a test constructor niall built, when active, it prints after 5 seconds all beans/components that are
@@ -62,17 +60,9 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
     //     }, 5000);
     // }
 
-    // Enable multiple grid properties to be updated together by the user but only trigger shared logic once.
-    // Closely related to logic in ComponentUtil.ts
-    private lastChangeSetIdLookup: Record<string, number> = {};
-
     // CellComp and GridComp and override this because they get the FrameworkOverrides from the Beans bean
     protected getFrameworkOverrides(): IFrameworkOverrides {
         return this.frameworkOverrides;
-    }
-
-    public getContext(): Context {
-        return this.context;
     }
 
     public destroy(): void {
@@ -135,6 +125,12 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
         };
     }
 
+    /**
+     * Setup a managed property listener for the given GridOption property.
+     * However, stores the destroy function in the beanStub so that if this bean
+     * is a component the destroy function will be called when the component is destroyed
+     * as opposed to being cleaned up only when the GridOptionsService is destroyed.
+     */
     private setupGridOptionListener<K extends keyof GridOptions>(
         event: keyof GridOptions,
         listener: PropertyValueChangedListener<K>
@@ -171,6 +167,9 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
     }
 
     private propertyListenerId = 0;
+    // Enable multiple grid properties to be updated together by the user but only trigger shared logic once.
+    // Closely related to logic in ComponentUtil.ts
+    private lastChangeSetIdLookup: Record<string, number> = {};
     /**
      * Setup managed property listeners for the given set of GridOption properties.
      * The listener will be run if any of the property changes but will only run once if
@@ -220,33 +219,33 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
         }
     }
 
-    public createManagedBean<T extends BaseBean | null | undefined>(bean: T, context?: Context): T {
+    public createManagedBean<T extends Bean | null | undefined>(bean: T, context?: Context): T {
         const res = this.createBean(bean, context);
         this.addDestroyFunc(this.destroyBean.bind(this, bean, context));
         return res;
     }
 
-    protected createBean<T extends BaseBean | null | undefined>(
+    protected createBean<T extends Bean | null | undefined>(
         bean: T,
         context?: Context | null,
-        afterPreCreateCallback?: (comp: Component) => void
+        afterPreCreateCallback?: (bean: Bean) => void
     ): T {
-        return (context || this.getContext()).createBean(bean, afterPreCreateCallback);
+        return (context || this.stubContext).createBean(bean, afterPreCreateCallback);
     }
 
     /**
      * Destroys a bean and returns undefined to support destruction and clean up in a single line.
      * this.dateComp = this.context.destroyBean(this.dateComp);
      */
-    protected destroyBean<T extends BaseBean | null | undefined>(bean: T, context?: Context): undefined {
-        return (context || this.getContext()).destroyBean(bean);
+    protected destroyBean<T extends Bean | null | undefined>(bean: T, context?: Context): undefined {
+        return (context || this.stubContext).destroyBean(bean);
     }
 
     /**
      * Destroys an array of beans and returns an empty array to support destruction and clean up in a single line.
      * this.dateComps = this.context.destroyBeans(this.dateComps);
      */
-    protected destroyBeans<T extends BaseBean | null | undefined>(beans: T[], context?: Context): T[] {
-        return (context || this.getContext()).destroyBeans(beans);
+    protected destroyBeans<T extends Bean | null | undefined>(beans: T[], context?: Context): T[] {
+        return (context || this.stubContext).destroyBeans(beans);
     }
 }

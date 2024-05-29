@@ -210,7 +210,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             _clearElement(eDisplayField);
             _bindCellRendererToHtmlElement(userCompDetailsPromise, eDisplayField);
             userCompDetailsPromise.then((renderer) => {
-                this.addDestroyFunc(() => this.getContext().destroyBean(renderer));
+                this.addDestroyFunc(() => this.destroyBean(renderer));
             });
         } else {
             if (_exists(this.value)) {
@@ -569,7 +569,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         const row = new RichSelectRow<TValue>(this.config, this.eWrapper);
         row.setParentComponent(this.listComponent!);
 
-        this.getContext().createBean(row);
+        this.createBean(row);
         row.setState(value);
 
         const { highlightMatch, searchType = 'fuzzy' } = this.config;

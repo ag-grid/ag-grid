@@ -74,7 +74,7 @@
     "typesToInclude": []
   },
   "icons": {
-    "typeName": "{\n        [key: string]: Function | string;\n    }",
+    "typeName": "{\n        [key: string]: ((...args: any[]) => any) | string;\n    }",
     "typesToInclude": []
   },
   "datasource": {

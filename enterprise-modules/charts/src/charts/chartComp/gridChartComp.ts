@@ -326,7 +326,7 @@ export class GridChartComp extends Component {
             closable: true,
         });
 
-        this.getContext().createBean(this.chartDialog);
+        this.createBean(this.chartDialog);
 
         this.chartDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => {
             this.destroy();

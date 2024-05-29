@@ -1,5 +1,6 @@
 import { KeyCode } from '../constants/keyCode';
 import type { BeanCollection } from '../context/context';
+import type { Environment } from '../environment';
 import { Events } from '../eventKeys';
 import type { CssVariablesChanged } from '../events';
 import type { AnimationFrameService } from '../misc/animationFrameService';
@@ -27,11 +28,13 @@ interface VirtualListParams {
 export class VirtualList<C extends Component = Component> extends TabGuardComp {
     private resizeObserverService: ResizeObserverService;
     private animationFrameService: AnimationFrameService;
+    private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
         this.resizeObserverService = beans.resizeObserverService;
         this.animationFrameService = beans.animationFrameService;
+        this.environment = beans.environment;
     }
 
     private readonly cssIdentifier: string;

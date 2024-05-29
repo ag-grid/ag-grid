@@ -154,7 +154,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
 
         if (closable) {
             const closeButtonComp = (this.closeButtonComp = new Component(AgPanel.CLOSE_BTN_TEMPLATE));
-            this.getContext().createBean(closeButtonComp);
+            this.createBean(closeButtonComp);
 
             const eGui = closeButtonComp.getGui();
             const child = _createIconNoSpan('close', this.gos)!;

@@ -1,5 +1,5 @@
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import type { BeanCollection } from '../../../context/context';
+import type { BeanCollection, Context } from '../../../context/context';
 import type { FilterChangedEvent } from '../../../events';
 import type { IDateParams } from '../../../interfaces/dateComponent';
 import type { WithoutGridCommon } from '../../../interfaces/iCommon';
@@ -18,9 +18,11 @@ import { DateFilter, DateFilterModelFormatter } from './dateFilter';
 
 export class DateFloatingFilter extends SimpleFloatingFilter {
     private userComponentFactory: UserComponentFactory;
+    private context: Context;
 
     public wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
+        this.context = beans.context;
         this.userComponentFactory = beans.userComponentFactory;
     }
 
@@ -139,7 +141,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
     private createDateComponent(): void {
         this.dateComp = new DateCompWrapper(
-            this.getContext(),
+            this.context,
             this.userComponentFactory,
             this.getDateComponentParams(),
             this.eDateWrapper,
