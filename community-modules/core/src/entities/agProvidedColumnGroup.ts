@@ -143,7 +143,7 @@ export class AgProvidedColumnGroup extends BeanStub implements ProvidedColumnGro
         this.children.forEach((child) => {
             if (isColumn(child)) {
                 leafColumns.push(child);
-            } else if (child instanceof AgProvidedColumnGroup) {
+            } else if (isProvidedColumnGroup(child)) {
                 child.addLeafColumns(leafColumns);
             }
         });
@@ -228,7 +228,7 @@ export class AgProvidedColumnGroup extends BeanStub implements ProvidedColumnGro
         const process = (items: (AgColumn | AgProvidedColumnGroup)[]) => {
             items.forEach((item) => {
                 // if padding, we add this children instead of the padding
-                const skipBecausePadding = item instanceof AgProvidedColumnGroup && item.isPadding();
+                const skipBecausePadding = isProvidedColumnGroup(item) && item.isPadding();
                 if (skipBecausePadding) {
                     process((item as AgProvidedColumnGroup).children);
                 } else {

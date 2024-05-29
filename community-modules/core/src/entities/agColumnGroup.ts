@@ -81,7 +81,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub implements ColumnGroup
     public checkLeft(): void {
         // first get all children to setLeft, as it impacts our decision below
         this.displayedChildren!.forEach((child) => {
-            if (child instanceof AgColumnGroup) {
+            if (isColumnGroup(child)) {
                 child.checkLeft();
             }
         });
@@ -220,7 +220,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub implements ColumnGroup
         this.displayedChildren!.forEach((child) => {
             if (isColumn(child)) {
                 leafColumns.push(child);
-            } else if (child instanceof AgColumnGroup) {
+            } else if (isColumnGroup(child)) {
                 child.addDisplayedLeafColumns(leafColumns);
             }
         });
@@ -230,7 +230,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub implements ColumnGroup
         this.children!.forEach((child) => {
             if (isColumn(child)) {
                 leafColumns.push(child);
-            } else if (child instanceof AgColumnGroup) {
+            } else if (isColumnGroup(child)) {
                 child.addLeafColumns(leafColumns);
             }
         });
@@ -282,8 +282,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub implements ColumnGroup
         // colDef.columnGroupShow set.
         this.children!.forEach((child) => {
             // never add empty groups
-            const emptyGroup =
-                child instanceof AgColumnGroup && (!child.displayedChildren || !child.displayedChildren.length);
+            const emptyGroup = isColumnGroup(child) && (!child.displayedChildren || !child.displayedChildren.length);
             if (emptyGroup) {
                 return;
             }
