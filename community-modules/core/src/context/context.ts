@@ -1,73 +1,59 @@
-import type {
-    AnimationFrameService,
-    BaseBean,
-    CellPositionUtils,
-    ColumnModel,
-    ColumnMoveService,
-    ColumnNameService,
-    ColumnSizeService,
-    CtrlsService,
-    DragAndDropService,
-    DragService,
-    Environment,
-    EventService,
-    FilterManager,
-    FocusService,
-    GridOptionsService,
-    HeaderNavigationService,
-    IFrameworkOverrides,
-    IRangeService,
-    IRowModel,
-    ISelectionHandleFactory,
-    ISelectionService,
-    LocaleService,
-    NavigationService,
-    PaginationProxy,
-    PopupService,
-    RowPositionUtils,
-    RowRenderer,
-    SortController,
-    StylingService,
-    UserComponentFactory,
-    UserComponentRegistry,
-    ValueCache,
-    ValueService,
-    VisibleColsService,
-} from '@ag-grid-community/core';
-
+import type { ColumnModel } from '../columns/columnModel';
+import type { ColumnMoveService } from '../columns/columnMoveService';
+import type { ColumnNameService } from '../columns/columnNameService';
+import type { ColumnSizeService } from '../columns/columnSizeService';
 import type { ColumnViewportService } from '../columns/columnViewportService';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import type { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
+import type { UserComponentFactory } from '../components/framework/userComponentFactory';
+import type { UserComponentRegistry } from '../components/framework/userComponentRegistry';
 import type { CtrlsFactory } from '../ctrlsFactory';
+import type { CtrlsService } from '../ctrlsService';
+import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
+import type { DragService } from '../dragAndDrop/dragService';
+import type { CellPositionUtils } from '../entities/cellPositionUtils';
 import type { RowNodeEventThrottle } from '../entities/rowNodeEventThrottle';
+import type { RowPositionUtils } from '../entities/rowPositionUtils';
+import type { Environment } from '../environment';
+import type { EventService } from '../eventService';
+import type { FilterManager } from '../filter/filterManager';
+import type { FocusService } from '../focusService';
+import type { NavigationService } from '../gridBodyComp/navigationService';
+import type { GridOptionsService } from '../gridOptionsService';
+import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
+import type { IRangeService, ISelectionHandleFactory } from '../interfaces/IRangeService';
+import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { ISelectionService } from '../interfaces/iSelectionService';
+import type { LocaleService } from '../localeService';
+import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ResizeObserverService } from '../misc/resizeObserverService';
 import { ModuleRegistry } from '../modules/moduleRegistry';
+import type { PaginationProxy } from '../pagination/paginationProxy';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { ColumnHoverService } from '../rendering/columnHoverService';
 import type { RowCssClassCalculator } from '../rendering/row/rowCssClassCalculator';
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
+import type { RowRenderer } from '../rendering/rowRenderer';
+import type { SortController } from '../sortController';
+import type { StylingService } from '../styling/stylingService';
 import type { SyncService } from '../syncService';
-import type { Component } from '../widgets/component';
-import type { BeanStub } from './beanStub';
+import type { ValueCache } from '../valueService/valueCache';
+import type { ValueService } from '../valueService/valueService';
+import type { PopupService } from '../widgets/popupService';
+import type { GenericContextParams, GenericSingletonBean } from './genericContext';
+import { GenericContext } from './genericContext';
 
-export interface ContextParams {
-    providedBeanInstances: Partial<{ [key in BeanName]: BeanStub }>;
-    beanClasses: SingletonBean[];
+export interface ContextParams extends GenericContextParams<BeanName, BeanCollection> {
     gridId: string;
 }
 
-export interface ComponentMeta {
-    componentClass: new () => object;
-    componentName: string;
-}
+export interface SingletonBean extends GenericSingletonBean<BeanName, BeanCollection> {}
 
 export interface ControllerMeta {
     controllerClass: new () => object;
     controllerName: string;
-}
-
-export interface SingletonBean {
-    new (): BeanStub;
 }
 
 export interface CoreBeanCollection {
@@ -121,112 +107,21 @@ export interface CoreBeanCollection {
 export type BeanCollection = CoreBeanCollection & {
     [key in Exclude<BeanName, keyof CoreBeanCollection>]: any;
 };
-export class Context {
+
+export class Context extends GenericContext<BeanName, BeanCollection> {
     private gridId: string;
-    private beans: BeanCollection = {} as BeanCollection;
-    private createdBeans: BeanStub[] = [];
 
-    private destroyed = false;
-
-    public constructor(params: ContextParams) {
-        if (!params || !params.beanClasses) {
-            return;
-        }
-
+    protected init(params: ContextParams): void {
         this.gridId = params.gridId;
+
         this.beans.context = this;
-
-        Object.entries(params.providedBeanInstances).forEach(([beanName, beanInstance]) => {
-            this.beans[beanName as BeanName] = beanInstance;
-        });
-
-        params.beanClasses.forEach((BeanClass) => {
-            const instance = new BeanClass();
-            if (instance.beanName) {
-                this.beans[instance.beanName] = instance;
-            } else {
-                console.error(`Bean ${BeanClass.name} is missing beanName`);
-            }
-            this.createdBeans.push(instance);
-        });
-
-        this.initBeans(this.createdBeans);
-    }
-
-    private getBeanInstances(): BaseBean[] {
-        return Object.values(this.beans);
-    }
-
-    public createBean<T extends BaseBean | null | undefined>(
-        bean: T,
-        afterPreCreateCallback?: (comp: Component) => void
-    ): T {
-        if (!bean) {
-            throw Error(`Can't wire to bean since it is null`);
-        }
-        this.initBeans([bean], afterPreCreateCallback);
-        return bean;
-    }
-
-    private initBeans(beanInstances: BaseBean[], afterPreCreateCallback?: (comp: Component) => void): void {
-        beanInstances.forEach((instance) => instance.wireBeans?.(this.beans));
-        // used by the component class
-        beanInstances.forEach((instance) => (instance as any).preConstruct?.());
-        if (afterPreCreateCallback) {
-            beanInstances.forEach(afterPreCreateCallback);
-        }
-        beanInstances.forEach((instance) => instance.postConstruct?.());
-    }
-
-    public getBeans(): BeanCollection {
-        return this.beans;
-    }
-
-    public getBean<T extends BeanName>(name: T): BeanCollection[T] {
-        return this.beans[name];
+        super.init(params);
     }
 
     public destroy(): void {
-        if (this.destroyed) {
-            return;
-        }
-
-        // Set before doing the destroy, so if context.destroy() gets called via another bean
-        // we are marked as destroyed already to prevent running destroy() twice
-        this.destroyed = true;
-
-        const beanInstances = this.getBeanInstances();
-        this.destroyBeans(beanInstances);
-
-        this.beans = {} as BeanCollection;
-        this.createdBeans = [];
+        super.destroy();
 
         ModuleRegistry.__unRegisterGridModules(this.gridId);
-    }
-
-    /**
-     * Destroys a bean and returns undefined to support destruction and clean up in a single line.
-     * this.dateComp = this.context.destroyBean(this.dateComp);
-     */
-    public destroyBean(bean: BaseBean | null | undefined): undefined {
-        bean?.destroy?.();
-    }
-
-    /**
-     * Destroys an array of beans and returns an empty array to support destruction and clean up in a single line.
-     * this.dateComps = this.context.destroyBeans(this.dateComps);
-     */
-    public destroyBeans(beans: (BaseBean | null | undefined)[]): [] {
-        if (beans) {
-            for (let i = 0; i < beans.length; i++) {
-                this.destroyBean(beans[i]);
-            }
-        }
-        return [];
-    }
-
-    public isDestroyed(): boolean {
-        return this.destroyed;
     }
 
     public getGridId(): string {

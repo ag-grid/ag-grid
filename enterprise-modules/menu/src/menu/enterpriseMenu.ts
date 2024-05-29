@@ -1,7 +1,7 @@
 import type {
     AgEvent,
     AgGridEvent,
-    BaseBean,
+    Bean,
     BeanCollection,
     BeanName,
     Column,
@@ -43,7 +43,7 @@ export interface TabSelectedEvent extends AgEvent {
     key: string;
 }
 
-interface EnterpriseColumnMenu extends BaseBean {
+interface EnterpriseColumnMenu extends Bean {
     getGui(): HTMLElement;
     showTab?(tab: string): void;
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;

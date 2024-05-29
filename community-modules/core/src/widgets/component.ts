@@ -1,6 +1,7 @@
 import type { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, Context } from '../context/context';
+import type { ComponentBean } from '../context/genericContext';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import type { ColumnGroup } from '../entities/columnGroup';
@@ -36,7 +37,7 @@ export interface VisibleChangedEvent extends AgEvent {
 
 export type ComponentClass = { new (params?: any): Component; selector: AgComponentSelector };
 
-export class Component extends BeanStub {
+export class Component extends BeanStub implements ComponentBean {
     protected agStackComponentsRegistry: AgStackComponentsRegistry;
     protected componentContext: Context;
 
