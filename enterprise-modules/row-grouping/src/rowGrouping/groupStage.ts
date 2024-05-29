@@ -387,6 +387,8 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
                 this.forEachParentGroup(details, possibleEmptyGroup, (rowNode) => {
                     if (groupShouldBeRemoved(rowNode)) {
                         checkAgain = true;
+                        // This node no longer represents a group
+                        rowNode.group = false;
                         this.removeFromParent(rowNode, batchRemover);
                         // we remove selection on filler nodes here, as the selection would not be removed
                         // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
