@@ -57,6 +57,12 @@ The grid expands to fit the width and height of its container div. Your applicat
 ```
 {% /if %}
 
+{% note %}
+If the container div has no height set, or has a % height and its parent has no height,
+it would naturally have a height of 0px. In this case the grid will initialise with a
+default height of 400px.
+{% /note %}
+
 ## DOM Layout
 
 There are three DOM Layout values the grid can have 'normal', 'autoHeight' and 'print'. They are used as follows:
