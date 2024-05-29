@@ -321,7 +321,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private setupRowAnimationCssClass(): void {
-        let initialSizeMeasurementComplete = false;
+        let initialSizeMeasurementComplete = this.environment.hasMeasuredSizes();
 
         const updateAnimationClass = () => {
             // we don't want to use row animation if scaling, as rows jump strangely as you scroll,
