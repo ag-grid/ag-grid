@@ -158,13 +158,13 @@ export class AgPrimaryColsList extends Component {
                 this.eventType,
                 listItemElement
             );
-            this.getContext().createBean(renderedGroup);
+            this.createBean(renderedGroup);
 
             return renderedGroup;
         }
 
         const columnComp = new ToolPanelColumnComp(item, this.allowDragging, this.groupsExist, listItemElement);
-        this.getContext().createBean(columnComp);
+        this.createBean(columnComp);
 
         return columnComp;
     }

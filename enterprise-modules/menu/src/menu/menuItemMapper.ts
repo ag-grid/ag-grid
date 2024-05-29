@@ -145,7 +145,7 @@ export class MenuItemMapper extends BeanStub {
                     ModuleRegistry.__assertRegistered(
                         ModuleNames.RowGroupingModule,
                         'Aggregation from Menu',
-                        this.context.getGridId()
+                        this.gridId
                     )
                 ) {
                     if (!column?.isPrimary() && !column?.getColDef().pivotValueColumn) {
@@ -243,13 +243,7 @@ export class MenuItemMapper extends BeanStub {
                     action: () => this.expansionService.expandAll(false),
                 };
             case 'copy':
-                if (
-                    ModuleRegistry.__assertRegistered(
-                        ModuleNames.ClipboardModule,
-                        'Copy from Menu',
-                        this.context.getGridId()
-                    )
-                ) {
+                if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'Copy from Menu', this.gridId)) {
                     return {
                         name: localeTextFunc('copy', 'Copy'),
                         shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
@@ -264,7 +258,7 @@ export class MenuItemMapper extends BeanStub {
                     ModuleRegistry.__assertRegistered(
                         ModuleNames.ClipboardModule,
                         'Copy with Headers from Menu',
-                        this.context.getGridId()
+                        this.gridId
                     )
                 ) {
                     return {
@@ -281,7 +275,7 @@ export class MenuItemMapper extends BeanStub {
                     ModuleRegistry.__assertRegistered(
                         ModuleNames.ClipboardModule,
                         'Copy with Group Headers from Menu',
-                        this.context.getGridId()
+                        this.gridId
                     )
                 ) {
                     return {
@@ -295,13 +289,7 @@ export class MenuItemMapper extends BeanStub {
                     return null;
                 }
             case 'cut':
-                if (
-                    ModuleRegistry.__assertRegistered(
-                        ModuleNames.ClipboardModule,
-                        'Cut from Menu',
-                        this.context.getGridId()
-                    )
-                ) {
+                if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'Cut from Menu', this.gridId)) {
                     const focusedCell = this.focusService.getFocusedCell();
                     const rowNode = focusedCell ? this.rowPositionUtils.getRowNode(focusedCell) : null;
                     const isEditable = rowNode ? focusedCell?.column.isCellEditable(rowNode) : false;
@@ -317,11 +305,7 @@ export class MenuItemMapper extends BeanStub {
                 }
             case 'paste':
                 if (
-                    ModuleRegistry.__assertRegistered(
-                        ModuleNames.ClipboardModule,
-                        'Paste from Clipboard',
-                        this.context.getGridId()
-                    )
+                    ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'Paste from Clipboard', this.gridId)
                 ) {
                     return {
                         name: localeTextFunc('paste', 'Paste'),
@@ -336,14 +320,8 @@ export class MenuItemMapper extends BeanStub {
             case 'export': {
                 const exportSubMenuItems: string[] = [];
 
-                const csvModuleLoaded = ModuleRegistry.__isRegistered(
-                    ModuleNames.CsvExportModule,
-                    this.context.getGridId()
-                );
-                const excelModuleLoaded = ModuleRegistry.__isRegistered(
-                    ModuleNames.ExcelExportModule,
-                    this.context.getGridId()
-                );
+                const csvModuleLoaded = ModuleRegistry.__isRegistered(ModuleNames.CsvExportModule, this.gridId);
+                const excelModuleLoaded = ModuleRegistry.__isRegistered(ModuleNames.ExcelExportModule, this.gridId);
 
                 if (!this.gos.get('suppressCsvExport') && csvModuleLoaded) {
                     exportSubMenuItems.push('csvExport');
@@ -391,7 +369,7 @@ export class MenuItemMapper extends BeanStub {
                     return null;
                 }
             case 'columnChooser':
-                if (ModuleRegistry.__isRegistered(ModuleNames.ColumnsToolPanelModule, this.context.getGridId())) {
+                if (ModuleRegistry.__isRegistered(ModuleNames.ColumnsToolPanelModule, this.gridId)) {
                     return {
                         name: localeTextFunc('columnChooser', 'Choose Columns'),
                         icon: _createIconNoSpan('columns', this.gos, null),

@@ -58,7 +58,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
                 if (!comp) {
                     return;
                 }
-                const destroyComp = () => this.context.destroyBean(comp);
+                const destroyComp = () => this.destroyBean(comp);
                 if (this.isAlive()) {
                     this.eValue.appendChild(comp.getGui());
                     this.addDestroyFunc(destroyComp);
@@ -74,7 +74,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to have public here instead of private or protected
     public destroy(): void {
-        this.getContext().destroyBean(this.innerCellRenderer);
+        this.destroyBean(this.innerCellRenderer);
         super.destroy();
     }
 

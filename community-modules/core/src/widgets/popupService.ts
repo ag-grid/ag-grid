@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { Column } from '../entities/column';
+import type { Environment } from '../environment';
 import type { CssVariablesChanged } from '../events';
 import { Events } from '../events';
 import type { GridCtrl } from '../gridComp/gridCtrl';
@@ -95,11 +96,13 @@ export class PopupService extends BeanStub {
 
     private ctrlsService: CtrlsService;
     private resizeObserverService: ResizeObserverService;
+    private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
         this.ctrlsService = beans.ctrlsService;
         this.resizeObserverService = beans.resizeObserverService;
+        this.environment = beans.environment;
     }
 
     private gridCtrl: GridCtrl;

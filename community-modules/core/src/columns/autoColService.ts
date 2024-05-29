@@ -9,7 +9,7 @@ import type { ColumnFactory } from './columnFactory';
 import type { ColumnModel } from './columnModel';
 import type { ColumnNameService } from './columnNameService';
 
-export const GROUP_AUTO_COLUMN_ID: 'ag-Grid-AutoColumn' = 'ag-Grid-AutoColumn';
+export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn' as const;
 export class AutoColService extends BeanStub {
     beanName: BeanName = 'autoColService';
 
@@ -68,7 +68,7 @@ export class AutoColService extends BeanStub {
         colDef.colId = colId;
 
         const newCol = new Column(colDef, null, colId, true);
-        this.context.createBean(newCol);
+        this.createBean(newCol);
         return newCol;
     }
 

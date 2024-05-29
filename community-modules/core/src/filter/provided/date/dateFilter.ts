@@ -1,5 +1,5 @@
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import type { BeanCollection } from '../../../context/context';
+import type { BeanCollection, Context } from '../../../context/context';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import type { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
 import type { LocaleService } from '../../../localeService';
@@ -124,9 +124,11 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter {
 
 export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrapper> {
     private userComponentFactory: UserComponentFactory;
+    private context: Context;
 
     public wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
+        this.context = beans.context;
         this.userComponentFactory = beans.userComponentFactory;
     }
 
@@ -252,7 +254,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
 
     createDateCompWrapper(element: HTMLElement): DateCompWrapper {
         const dateCompWrapper = new DateCompWrapper(
-            this.getContext(),
+            this.context,
             this.userComponentFactory,
             {
                 onDateChanged: () => this.onUiChanged(),

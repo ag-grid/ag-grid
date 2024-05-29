@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { IAggFunc } from '../entities/colDef';
 import type { Column } from '../entities/column';
+import type { Environment } from '../environment';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
 import type { RowDropZoneParams } from '../gridBodyComp/rowDragFeature';
 import type { AgGridCommon } from '../interfaces/iCommon';
@@ -149,11 +150,13 @@ export class DragAndDropService extends BeanStub {
 
     private dragService: DragService;
     private mouseEventService: MouseEventService;
+    private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
         this.dragService = beans.dragService;
         this.mouseEventService = beans.mouseEventService;
+        this.environment = beans.environment;
     }
 
     public static ICON_PINNED = 'pinned';

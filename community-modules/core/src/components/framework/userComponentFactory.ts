@@ -401,7 +401,7 @@ export class UserComponentFactory extends BeanStub {
     }
 
     private initComponent(component: any, params: any): AgPromise<void> | void {
-        this.context.createBean(component);
+        this.createBean(component);
         if (component.init == null) {
             return;
         }
