@@ -1,5 +1,5 @@
 import type { BeanCollection } from '../../context/context';
-import type { InternalColumn } from '../../entities/column';
+import type { AgColumn } from '../../entities/agColumn';
 import type { IRangeService, ISelectionHandle, ISelectionHandleFactory } from '../../interfaces/IRangeService';
 import { CellRangeType, SelectionHandleType } from '../../interfaces/IRangeService';
 import { _setAriaSelected } from '../../utils/aria';
@@ -123,11 +123,11 @@ export class CellRangeFeature {
         let bottom = false;
         let left = false;
 
-        const thisCol = this.cellCtrl.getCellPosition().column as InternalColumn;
+        const thisCol = this.cellCtrl.getCellPosition().column as AgColumn;
         const presentedColsService = this.beans.visibleColsService;
 
-        let leftCol: InternalColumn | null;
-        let rightCol: InternalColumn | null;
+        let leftCol: AgColumn | null;
+        let rightCol: AgColumn | null;
 
         if (isRtl) {
             leftCol = presentedColsService.getColAfter(thisCol);

@@ -1,8 +1,8 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import { type AgProvidedColumnGroup, isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { InternalColumn } from '../entities/column';
-import { type InternalProvidedColumnGroup, isProvidedColumnGroup } from '../entities/providedColumnGroup';
 import type { ColumnEventType } from '../events';
 import { Events } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
@@ -36,12 +36,12 @@ export type Maybe<T> = T | null | undefined;
 
 export interface ColumnCollections {
     // columns in a tree, leaf levels are columns, everything above is group column
-    tree: (InternalColumn | InternalProvidedColumnGroup)[];
+    tree: (AgColumn | AgProvidedColumnGroup)[];
     treeDepth: number; // depth of the tree above
     // leaf level cols of the tree
-    list: InternalColumn[];
+    list: AgColumn[];
     // cols by id, for quick lookup
-    map: { [id: string]: InternalColumn };
+    map: { [id: string]: AgColumn };
 }
 
 export class ColumnModel extends BeanStub {
@@ -106,8 +106,8 @@ export class ColumnModel extends BeanStub {
     // true when pivotResultCols are in cols
     private showingPivotResult: boolean;
 
-    private lastOrder: InternalColumn[] | null;
-    private lastPivotOrder: InternalColumn[] | null;
+    private lastOrder: AgColumn[] | null;
+    private lastPivotOrder: AgColumn[] | null;
 
     // true if we are doing column spanning
     private colSpanActive: boolean;
@@ -166,7 +166,7 @@ export class ColumnModel extends BeanStub {
         const tree = newTree.columnTree;
         const treeDepth = newTree.treeDept;
         const list = getColumnsFromTree(tree);
-        const map: { [id: string]: InternalColumn } = {};
+        const map: { [id: string]: AgColumn } = {};
 
         list.forEach((col) => (map[col.getId()] = col));
 
@@ -277,7 +277,7 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    public getColsToShow(): InternalColumn[] {
+    public getColsToShow(): AgColumn[] {
         // pivot mode is on, but we are not pivoting, so we only
         // show columns we are aggregating on
 
@@ -357,7 +357,7 @@ export class ColumnModel extends BeanStub {
             map: {},
         };
 
-        const putAutocolsFirstInList = (cols: InternalColumn[] | null): InternalColumn[] | null => {
+        const putAutocolsFirstInList = (cols: AgColumn[] | null): AgColumn[] | null => {
             if (!cols) {
                 return null;
             }
@@ -379,7 +379,7 @@ export class ColumnModel extends BeanStub {
         this.visibleColsService.refresh(source);
     }
 
-    public setColsVisible(keys: (string | InternalColumn)[], visible = false, source: ColumnEventType): void {
+    public setColsVisible(keys: (string | AgColumn)[], visible = false, source: ColumnEventType): void {
         this.columnApplyStateService.applyColumnState(
             {
                 state: keys.map<ColumnState>((key) => ({
@@ -415,7 +415,7 @@ export class ColumnModel extends BeanStub {
             actualPinned = null;
         }
 
-        const updatedCols: InternalColumn[] = [];
+        const updatedCols: AgColumn[] = [];
 
         keys.forEach((key) => {
             if (!key) {
@@ -442,7 +442,7 @@ export class ColumnModel extends BeanStub {
 
     // called by headerRenderer - when a header is opened or closed
     public setColumnGroupOpened(
-        key: InternalProvidedColumnGroup | string | null,
+        key: AgProvidedColumnGroup | string | null,
         newValue: boolean,
         source: ColumnEventType
     ): void {
@@ -456,8 +456,8 @@ export class ColumnModel extends BeanStub {
         this.columnGroupStateService.setColumnGroupState([{ groupId: keyAsString, open: newValue }], source);
     }
 
-    public getProvidedColGroup(key: string): InternalProvidedColumnGroup | null {
-        let res: InternalProvidedColumnGroup | null = null;
+    public getProvidedColGroup(key: string): AgProvidedColumnGroup | null {
+        let res: AgProvidedColumnGroup | null = null;
 
         depthFirstOriginalTreeSearch(null, this.cols?.tree, (node) => {
             if (isProvidedColumnGroup(node)) {
@@ -470,7 +470,7 @@ export class ColumnModel extends BeanStub {
         return res;
     }
 
-    public isColGroupLocked(column: InternalColumn): boolean {
+    public isColGroupLocked(column: AgColumn): boolean {
         const groupLockGroupColumns = this.gos.get('groupLockGroupColumns');
         if (!column.isRowGroupActive() || groupLockGroupColumns === 0) {
             return false;
@@ -515,7 +515,7 @@ export class ColumnModel extends BeanStub {
             return;
         }
 
-        const lastOrderMapped = new Map<InternalColumn, number>(lastOrder.map((col, index) => [col, index]));
+        const lastOrderMapped = new Map<AgColumn, number>(lastOrder.map((col, index) => [col, index]));
 
         // only do the sort if at least one column is accounted for. columns will be not accounted for
         // if changing from pivot result cols to provided columns
@@ -526,9 +526,9 @@ export class ColumnModel extends BeanStub {
 
         // order cols in the same order as before. we need to make sure that all
         // cols still exists, so filter out any that no longer exist.
-        const colsMap = new Map<InternalColumn, boolean>(this.cols.list.map((col) => [col, true]));
+        const colsMap = new Map<AgColumn, boolean>(this.cols.list.map((col) => [col, true]));
         const lastOrderFiltered = lastOrder.filter((col) => colsMap.has(col));
-        const lastOrderFilteredMap = new Map<InternalColumn, boolean>(lastOrderFiltered.map((col) => [col, true]));
+        const lastOrderFilteredMap = new Map<AgColumn, boolean>(lastOrderFiltered.map((col) => [col, true]));
         const missingFromLastOrder = this.cols.list.filter((col) => !lastOrderFilteredMap.has(col));
 
         // add in the new columns, at the end (if no group), or at the end of the group (if a group)
@@ -545,7 +545,7 @@ export class ColumnModel extends BeanStub {
 
             // find the group the column belongs to. if no siblings at the current level (eg col in group on it's
             // own) then go up one level and look for siblings there.
-            const siblings: InternalColumn[] = [];
+            const siblings: AgColumn[] = [];
             while (!siblings.length && parent) {
                 const leafCols = parent.getLeafColumns();
                 leafCols.forEach((leafCol) => {
@@ -591,7 +591,7 @@ export class ColumnModel extends BeanStub {
             return;
         }
 
-        let newOrder: InternalColumn[] = [];
+        let newOrder: AgColumn[] = [];
         const processedColIds: { [id: string]: boolean } = {};
 
         colIds.forEach((colId) => {
@@ -645,24 +645,24 @@ export class ColumnModel extends BeanStub {
 
     // returns the provided cols sorted in same order as they appear in this.cols, eg if this.cols
     // contains [a,b,c,d,e] and col passed is [e,a] then the passed cols are sorted into [a,e]
-    public sortColsLikeCols(cols: InternalColumn[]): void {
+    public sortColsLikeCols(cols: AgColumn[]): void {
         if (!cols || cols.length <= 1) {
             return;
         }
 
-        const notAllColsPresent = cols.filter((c: InternalColumn) => this.cols.list.indexOf(c) < 0).length > 0;
+        const notAllColsPresent = cols.filter((c: AgColumn) => this.cols.list.indexOf(c) < 0).length > 0;
         if (notAllColsPresent) {
             return;
         }
 
-        cols.sort((a: InternalColumn, b: InternalColumn) => {
+        cols.sort((a: AgColumn, b: AgColumn) => {
             const indexA = this.cols.list.indexOf(a);
             const indexB = this.cols.list.indexOf(b);
             return indexA - indexB;
         });
     }
 
-    public resetColDefIntoCol(column: InternalColumn, source: ColumnEventType): boolean {
+    public resetColDefIntoCol(column: AgColumn, source: ColumnEventType): boolean {
         const userColDef = column.getUserProvidedColDef();
         if (!userColDef) {
             return false;
@@ -690,7 +690,7 @@ export class ColumnModel extends BeanStub {
         this.resizeOperationQueue.push(func);
     }
 
-    public moveInCols(movedColumns: InternalColumn[], toIndex: number, source: ColumnEventType): void {
+    public moveInCols(movedColumns: AgColumn[], toIndex: number, source: ColumnEventType): void {
         _moveInArray(this.cols?.list, movedColumns, toIndex);
         this.visibleColsService.refresh(source);
     }
@@ -715,11 +715,9 @@ export class ColumnModel extends BeanStub {
         const cols = this.colDefCols.list.slice();
 
         if (this.showingPivotResult) {
-            cols.sort(
-                (a: InternalColumn, b: InternalColumn) => this.lastOrder!.indexOf(a) - this.lastOrder!.indexOf(b)
-            );
+            cols.sort((a: AgColumn, b: AgColumn) => this.lastOrder!.indexOf(a) - this.lastOrder!.indexOf(b));
         } else if (this.lastOrder) {
-            cols.sort((a: InternalColumn, b: InternalColumn) => this.cols.list.indexOf(a) - this.cols.list.indexOf(b));
+            cols.sort((a: AgColumn, b: AgColumn) => this.cols.list.indexOf(a) - this.cols.list.indexOf(b));
         }
 
         const rowGroupColumns = this.funcColsService.getRowGroupColumns();
@@ -831,58 +829,58 @@ export class ColumnModel extends BeanStub {
         super.destroy();
     }
 
-    public getColTree(): (InternalColumn | InternalProvidedColumnGroup)[] {
+    public getColTree(): (AgColumn | AgProvidedColumnGroup)[] {
         return this.cols.tree;
     }
 
     // + columnSelectPanel
-    public getColDefColTree(): (InternalColumn | InternalProvidedColumnGroup)[] {
+    public getColDefColTree(): (AgColumn | AgProvidedColumnGroup)[] {
         return this.colDefCols.tree;
     }
 
     // + clientSideRowController -> sorting, building quick filter text
     // + headerRenderer -> sorting (clearing icon)
-    public getColDefCols(): InternalColumn[] | null {
+    public getColDefCols(): AgColumn[] | null {
         return this.colDefCols?.list ? this.colDefCols.list : null;
     }
 
     // + moveColumnController
-    public getCols(): InternalColumn[] {
+    public getCols(): AgColumn[] {
         return this.cols?.list ?? [];
     }
 
     // returns colDefCols, pivotResultCols and autoCols
-    public getAllCols(): InternalColumn[] {
+    public getAllCols(): AgColumn[] {
         const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
         const pivotResultColsList = pivotResultCols?.list;
-        return ([] as InternalColumn[]).concat(
+        return ([] as AgColumn[]).concat(
             ...[this.colDefCols?.list || [], this.autoCols?.list || [], pivotResultColsList || []]
         );
     }
 
-    public getColsForKeys(keys: ColKey[]): InternalColumn[] {
+    public getColsForKeys(keys: ColKey[]): AgColumn[] {
         if (!keys) {
             return [];
         }
         const res = keys.map((key) => this.getCol(key)).filter((col) => col != null);
-        return res as InternalColumn[];
+        return res as AgColumn[];
     }
 
-    public getColDefCol(key: ColKey): InternalColumn | null {
+    public getColDefCol(key: ColKey): AgColumn | null {
         if (!this.colDefCols?.list) {
             return null;
         }
         return this.getColFromCollection(key, this.colDefCols);
     }
 
-    public getCol(key: Maybe<ColKey>): InternalColumn | null {
+    public getCol(key: Maybe<ColKey>): AgColumn | null {
         if (key == null) {
             return null;
         }
         return this.getColFromCollection(key, this.cols);
     }
 
-    public getColFromCollection(key: ColKey, cols: ColumnCollections): InternalColumn | null {
+    public getColFromCollection(key: ColKey, cols: ColumnCollections): AgColumn | null {
         if (cols == null) {
             return null;
         }
@@ -904,16 +902,16 @@ export class ColumnModel extends BeanStub {
         return this.getAutoCol(key);
     }
 
-    public getAutoCol(key: ColKey): InternalColumn | null {
+    public getAutoCol(key: ColKey): AgColumn | null {
         if (this.autoCols == null) return null;
         return this.autoCols.list.find((groupCol) => columnsMatch(groupCol, key)) || null;
     }
 
-    public getAutoCols(): InternalColumn[] | null {
+    public getAutoCols(): AgColumn[] | null {
         return this.autoCols?.list || null;
     }
 
-    public setColHeaderHeight(col: InternalColumn, height: number): void {
+    public setColHeaderHeight(col: AgColumn, height: number): void {
         const changed = col.setAutoHeaderHeight(height);
 
         if (changed) {
@@ -996,7 +994,7 @@ function updateColsMap(cols: ColumnCollections): void {
     cols.list.forEach((col) => (cols.map[col.getId()] = col));
 }
 
-function columnsMatch(column: InternalColumn, key: ColKey): boolean {
+function columnsMatch(column: AgColumn, key: ColKey): boolean {
     const columnMatches = column === key;
     const colDefMatches = column.getColDef() === key;
     const idMatches = column.getColId() == key;
@@ -1004,6 +1002,6 @@ function columnsMatch(column: InternalColumn, key: ColKey): boolean {
     return columnMatches || colDefMatches || idMatches;
 }
 
-function areColIdsEqual(colsA: InternalColumn[] | null, colsB: InternalColumn[] | null): boolean {
+function areColIdsEqual(colsA: AgColumn[] | null, colsB: AgColumn[] | null): boolean {
     return _areEqual(colsA, colsB, (a, b) => a.getColId() === b.getColId());
 }

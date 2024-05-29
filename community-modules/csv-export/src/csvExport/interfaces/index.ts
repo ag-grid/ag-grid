@@ -1,10 +1,10 @@
 import type {
+    AgColumn,
     ColumnGroup,
     ColumnModel,
     ColumnNameService,
     FuncColsService,
     GridOptionsService,
-    InternalColumn,
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
     ProcessHeaderForExportParams,
@@ -21,7 +21,7 @@ export interface BaseCreatorBeans {
 }
 
 export interface RowAccumulator {
-    onColumn(column: InternalColumn, index: number, node?: RowNode): void;
+    onColumn(column: AgColumn, index: number, node?: RowNode): void;
 }
 
 export interface RowSpanningAccumulator {
@@ -52,7 +52,7 @@ export interface CsvSerializingParams extends GridSerializingParams {
 }
 
 export interface GridSerializingSession<T> {
-    prepare(columnsToExport: InternalColumn[]): void;
+    prepare(columnsToExport: AgColumn[]): void;
     onNewHeaderGroupingRow(): RowSpanningAccumulator;
     onNewHeaderRow(): RowAccumulator;
     onNewBodyRow(node?: RowNode): RowAccumulator;

@@ -1,7 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { InternalColumn } from '../entities/column';
+import type { AgColumn } from '../entities/agColumn';
 import type { ColumnEventType } from '../events';
 import type { Column } from '../interfaces/iColumn';
 import { _removeFromArray, _removeFromUnorderedArray } from '../utils/array';
@@ -13,7 +13,7 @@ import type { ColumnViewportService } from './columnViewportService';
 import type { VisibleColsService } from './visibleColsService';
 
 export interface ColumnResizeSet {
-    columns: InternalColumn[];
+    columns: AgColumn[];
     ratios: number[];
     width: number;
 }
@@ -138,8 +138,8 @@ export class ColumnSizeService extends BeanStub {
             return; // don't resize!
         }
 
-        const changedCols: InternalColumn[] = [];
-        const allResizedCols: InternalColumn[] = [];
+        const changedCols: AgColumn[] = [];
+        const allResizedCols: AgColumn[] = [];
 
         resizeSets.forEach((set) => {
             const { width, columns, ratios } = set;
@@ -175,7 +175,7 @@ export class ColumnSizeService extends BeanStub {
 
                 finishedColsGrew = false;
 
-                const subsetCols: InternalColumn[] = [];
+                const subsetCols: AgColumn[] = [];
                 let subsetRatioTotal = 0;
                 let pixelsToDistribute = width;
 
@@ -237,7 +237,7 @@ export class ColumnSizeService extends BeanStub {
         // if no cols changed, then no need to update more or send event.
         const atLeastOneColChanged = changedCols.length > 0;
 
-        let flexedCols: InternalColumn[] = [];
+        let flexedCols: AgColumn[] = [];
 
         if (atLeastOneColChanged) {
             flexedCols = this.refreshFlexedColumns({ resizingCols: allResizedCols, skipSetLeft: true });
@@ -289,14 +289,14 @@ export class ColumnSizeService extends BeanStub {
 
     public refreshFlexedColumns(
         params: {
-            resizingCols?: InternalColumn[];
+            resizingCols?: AgColumn[];
             skipSetLeft?: boolean;
             viewportWidth?: number;
             source?: ColumnEventType;
             fireResizedEvent?: boolean;
             updateBodyWidths?: boolean;
         } = {}
-    ): InternalColumn[] {
+    ): AgColumn[] {
         const source = params.source ? params.source : 'flex';
 
         if (params.viewportWidth != null) {
@@ -328,7 +328,7 @@ export class ColumnSizeService extends BeanStub {
         // the width of all of the columns for which the width has been determined
         let knownColumnsWidth = 0;
 
-        let flexingColumns: InternalColumn[] = [];
+        let flexingColumns: AgColumn[] = [];
 
         // store the minimum width of all the flex columns, so we can determine if flex is even possible more quickly
         let minimumFlexedWidth = 0;
@@ -348,7 +348,7 @@ export class ColumnSizeService extends BeanStub {
             return [];
         }
 
-        let changedColumns: InternalColumn[] = [];
+        let changedColumns: AgColumn[] = [];
 
         // this is for performance to prevent trying to flex when unnecessary
         if (knownColumnsWidth + minimumFlexedWidth > this.flexViewportWidth) {
@@ -447,8 +447,8 @@ export class ColumnSizeService extends BeanStub {
             return;
         }
 
-        const colsToSpread: InternalColumn[] = [];
-        const colsToNotSpread: InternalColumn[] = [];
+        const colsToSpread: AgColumn[] = [];
+        const colsToNotSpread: AgColumn[] = [];
 
         allDisplayedColumns.forEach((column) => {
             if (column.getColDef().suppressSizeToFit === true) {
@@ -462,7 +462,7 @@ export class ColumnSizeService extends BeanStub {
         const colsToDispatchEventFor = colsToSpread.slice(0);
         let finishedResizing = false;
 
-        const moveToNotSpread = (column: InternalColumn) => {
+        const moveToNotSpread = (column: AgColumn) => {
             _removeFromArray(colsToSpread, column);
             colsToNotSpread.push(column);
         };

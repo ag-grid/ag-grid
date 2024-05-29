@@ -1,8 +1,8 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import { InternalColumn } from '../../entities/column';
-import type { InternalColumnGroup } from '../../entities/columnGroup';
-import { isColumnGroup } from '../../entities/columnGroup';
+import { AgColumn } from '../../entities/agColumn';
+import type { AgColumnGroup } from '../../entities/agColumnGroup';
+import { isColumnGroup } from '../../entities/agColumnGroup';
 import { Events } from '../../eventKeys';
 import { _setAriaColSpan } from '../../utils/aria';
 import { _last } from '../../utils/array';
@@ -16,30 +16,30 @@ export class SetLeftFeature extends BeanStub {
 
     // if we are spanning columns, this tells what columns,
     // otherwise this is empty
-    private colsSpanning: InternalColumn[] | undefined;
+    private colsSpanning: AgColumn[] | undefined;
 
     private beans: BeanCollection;
 
     constructor(
-        private readonly columnOrGroup: InternalColumn | InternalColumnGroup,
+        private readonly columnOrGroup: AgColumn | AgColumnGroup,
         eCell: HTMLElement,
         beans: BeanCollection,
-        colsSpanning?: InternalColumn[]
+        colsSpanning?: AgColumn[]
     ) {
         super();
         this.columnOrGroup = columnOrGroup;
         this.eCell = eCell;
         this.ariaEl = this.eCell.querySelector('[role=columnheader]') || this.eCell;
-        this.colsSpanning = colsSpanning as InternalColumn[];
+        this.colsSpanning = colsSpanning as AgColumn[];
         this.beans = beans;
     }
 
-    public setColsSpanning(colsSpanning: InternalColumn[]): void {
-        this.colsSpanning = colsSpanning as InternalColumn[];
+    public setColsSpanning(colsSpanning: AgColumn[]): void {
+        this.colsSpanning = colsSpanning as AgColumn[];
         this.onLeftChanged();
     }
 
-    public getColumnOrGroup(): InternalColumn | InternalColumnGroup {
+    public getColumnOrGroup(): AgColumn | AgColumnGroup {
         if (this.beans.gos.get('enableRtl') && this.colsSpanning) {
             return _last(this.colsSpanning);
         }
@@ -47,7 +47,7 @@ export class SetLeftFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.addManagedListener(this.columnOrGroup, InternalColumn.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
+        this.addManagedListener(this.columnOrGroup, AgColumn.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.setLeftFirstTime();
 
         // when in print layout, the left position is also dependent on the width of the pinned sections.
@@ -107,7 +107,7 @@ export class SetLeftFeature extends BeanStub {
         this.setLeft(this.actualLeft);
     }
 
-    private modifyLeftForPrintLayout(colOrGroup: InternalColumn | InternalColumnGroup, leftPosition: number): number {
+    private modifyLeftForPrintLayout(colOrGroup: AgColumn | AgColumnGroup, leftPosition: number): number {
         const printLayout = this.beans.gos.isDomLayout('print');
 
         if (!printLayout) {

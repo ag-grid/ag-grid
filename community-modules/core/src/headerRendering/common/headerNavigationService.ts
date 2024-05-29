@@ -1,8 +1,8 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection, BeanName } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
-import type { InternalColumn } from '../../entities/column';
-import { type InternalColumnGroup, isColumnGroup } from '../../entities/columnGroup';
+import type { AgColumn } from '../../entities/agColumn';
+import { type AgColumnGroup, isColumnGroup } from '../../entities/agColumnGroup';
 import type { FocusService } from '../../focusService';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
 import { _last } from '../../utils/array';
@@ -64,7 +64,7 @@ export class HeaderNavigationService extends BeanStub {
         }
 
         const { headerRowIndex } = fromHeader;
-        const column = fromHeader.column as InternalColumn;
+        const column = fromHeader.column as AgColumn;
         const rowLen = this.getHeaderRowCount();
         const isUp = direction === HeaderNavigationDirection.UP;
 
@@ -189,7 +189,7 @@ export class HeaderNavigationService extends BeanStub {
         }
 
         const { column, headerRowIndex } = this.headerPositionUtils.getHeaderIndexToFocus(
-            nextPosition.column as InternalColumn,
+            nextPosition.column as AgColumn,
             nextPosition?.headerRowIndex
         );
 
@@ -202,15 +202,12 @@ export class HeaderNavigationService extends BeanStub {
         });
     }
 
-    public scrollToColumn(
-        column: InternalColumn | InternalColumnGroup,
-        direction: 'Before' | 'After' | null = 'After'
-    ): void {
+    public scrollToColumn(column: AgColumn | AgColumnGroup, direction: 'Before' | 'After' | null = 'After'): void {
         if (column.getPinned()) {
             return;
         }
 
-        let columnToScrollTo: InternalColumn;
+        let columnToScrollTo: AgColumn;
 
         if (isColumnGroup(column)) {
             const columns = column.getDisplayedLeafColumns();

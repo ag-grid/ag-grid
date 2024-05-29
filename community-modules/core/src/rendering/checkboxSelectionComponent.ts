@@ -1,5 +1,5 @@
+import type { AgColumn } from '../entities/agColumn';
 import type { CheckboxSelectionCallback } from '../entities/colDef';
-import type { InternalColumn } from '../entities/column';
 import { RowNode } from '../entities/rowNode';
 import { Events } from '../events';
 import { _getAriaCheckboxStateName } from '../utils/aria';
@@ -12,7 +12,7 @@ export class CheckboxSelectionComponent extends Component {
     private readonly eCheckbox: AgCheckbox = RefPlaceholder;
 
     private rowNode: RowNode;
-    private column: InternalColumn | undefined;
+    private column: AgColumn | undefined;
     private overrides?: {
         isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined;
         callbackParams: any;
@@ -72,7 +72,7 @@ export class CheckboxSelectionComponent extends Component {
 
     public init(params: {
         rowNode: RowNode;
-        column?: InternalColumn;
+        column?: AgColumn;
         overrides?: {
             isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined;
             callbackParams: any;

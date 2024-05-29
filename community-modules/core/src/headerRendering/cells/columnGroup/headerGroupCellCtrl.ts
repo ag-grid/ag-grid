@@ -5,12 +5,12 @@ import { HorizontalDirection } from '../../../constants/direction';
 import { KeyCode } from '../../../constants/keyCode';
 import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
 import { DragAndDropService, DragSourceType } from '../../../dragAndDrop/dragAndDropService';
-import { InternalColumn } from '../../../entities/column';
-import type { InternalColumnGroup } from '../../../entities/columnGroup';
+import { AgColumn } from '../../../entities/agColumn';
+import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import {
     EVENT_PROVIDED_COLUMN_GROUP_EXPANDABLE_CHANGED,
     EVENT_PROVIDED_COLUMN_GROUP_EXPANDED_CHANGED,
-} from '../../../entities/providedColumnGroup';
+} from '../../../entities/agProvidedColumnGroup';
 import type { ColumnEventType, ColumnHeaderMouseLeaveEvent, ColumnHeaderMouseOverEvent } from '../../../events';
 import { Events } from '../../../events';
 import type { HeaderColumnId } from '../../../interfaces/iColumn';
@@ -41,14 +41,14 @@ export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
 
 export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     IHeaderGroupCellComp,
-    InternalColumnGroup,
+    AgColumnGroup,
     GroupResizeFeature
 > {
     private expandable: boolean;
     private displayName: string | null;
     private tooltipFeature: TooltipFeature | undefined;
 
-    constructor(columnGroup: InternalColumnGroup, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
+    constructor(columnGroup: AgColumnGroup, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
         super(columnGroup, beans, parentRowCtrl);
         this.column = columnGroup;
     }
@@ -153,11 +153,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         }
     }
 
-    private restoreFocus(
-        groupId: any,
-        previousColumnGroup: InternalColumnGroup,
-        previousPosition: HeaderPosition
-    ): void {
+    private restoreFocus(groupId: any, previousColumnGroup: AgColumnGroup, previousPosition: HeaderPosition): void {
         const leafCols = previousColumnGroup.getLeafColumns();
         if (!leafCols.length) {
             return;
@@ -178,7 +174,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         }
     }
 
-    private findGroupWidthId(columnGroup: InternalColumnGroup | null, id: any): InternalColumnGroup | null {
+    private findGroupWidthId(columnGroup: AgColumnGroup | null, id: any): AgColumnGroup | null {
         while (columnGroup) {
             if (columnGroup.getGroupId() === id) {
                 return columnGroup;
@@ -339,7 +335,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         const listener = () => this.comp.addOrRemoveCssClass('ag-header-cell-moving', this.column.isMoving());
 
         leafColumns.forEach((col) => {
-            this.addManagedListener(col, InternalColumn.EVENT_MOVING_CHANGED, listener);
+            this.addManagedListener(col, AgColumn.EVENT_MOVING_CHANGED, listener);
         });
 
         listener();
@@ -419,13 +415,13 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
                     const unlockedColumns = dragItem?.columns?.filter((col) => !col.getColDef().lockVisible) || [];
-                    columnModel.setColsVisible(unlockedColumns as InternalColumn[], true, 'uiColumnMoved');
+                    columnModel.setColsVisible(unlockedColumns as AgColumn[], true, 'uiColumnMoved');
                 }
             },
             onGridExit: (dragItem) => {
                 if (hideColumnOnExit) {
                     const unlockedColumns = dragItem?.columns?.filter((col) => !col.getColDef().lockVisible) || [];
-                    columnModel.setColsVisible(unlockedColumns as InternalColumn[], false, 'uiColumnMoved');
+                    columnModel.setColsVisible(unlockedColumns as AgColumn[], false, 'uiColumnMoved');
                 }
             },
         });
@@ -435,14 +431,14 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
     // when moving the columns, we want to move all the columns (contained within the DragItem) in this group in one go,
     // and in the order they are currently in the screen.
-    public getDragItemForGroup(columnGroup: InternalColumnGroup): DragItem {
+    public getDragItemForGroup(columnGroup: AgColumnGroup): DragItem {
         const allColumnsOriginalOrder = columnGroup.getProvidedColumnGroup().getLeafColumns();
 
         // capture visible state, used when re-entering grid to dictate which columns should be visible
         const visibleState: { [key: string]: boolean } = {};
         allColumnsOriginalOrder.forEach((column) => (visibleState[column.getId()] = column.isVisible()));
 
-        const allColumnsCurrentOrder: InternalColumn[] = [];
+        const allColumnsCurrentOrder: AgColumn[] = [];
         this.beans.visibleColsService.getAllCols().forEach((column) => {
             if (allColumnsOriginalOrder.indexOf(column) >= 0) {
                 allColumnsCurrentOrder.push(column);

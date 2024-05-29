@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     AgEvent,
     BeanCollection,
     BeanName,
@@ -11,7 +12,6 @@ import type {
     IAfterGuiAttachedParams,
     IContextMenuFactory,
     IRangeService,
-    InternalColumn,
     MenuItemDef,
     PopupService,
     RowNode,
@@ -62,7 +62,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
     private getMenuItems(
         node: RowNode | null,
-        column: InternalColumn | null,
+        column: AgColumn | null,
         value: any
     ): (MenuItemDef | string)[] | undefined {
         const defaultMenuOptions: string[] = [];
@@ -139,7 +139,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         mouseEvent: MouseEvent | null,
         touchEvent: TouchEvent | null,
         rowNode: RowNode | null,
-        column: InternalColumn | null,
+        column: AgColumn | null,
         value: any,
         anchorToElement: HTMLElement
     ): void {
@@ -150,7 +150,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
     public showMenu(
         node: RowNode | null,
-        column: InternalColumn | null,
+        column: AgColumn | null,
         value: any,
         mouseEvent: MouseEvent | Touch,
         anchorToElement: HTMLElement
@@ -270,7 +270,7 @@ class ContextMenu extends Component {
 
     constructor(
         private readonly menuItems: (MenuItemDef | string)[],
-        private readonly column: InternalColumn | null,
+        private readonly column: AgColumn | null,
         private readonly node: RowNode | null,
         private readonly value: any
     ) {

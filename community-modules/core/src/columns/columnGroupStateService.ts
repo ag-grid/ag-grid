@@ -1,6 +1,6 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
-import { type InternalProvidedColumnGroup, isProvidedColumnGroup } from '../entities/providedColumnGroup';
+import { type AgProvidedColumnGroup, isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { Logger } from '../logger';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
@@ -78,7 +78,7 @@ export class ColumnGroupStateService extends BeanStub {
 
         this.columnAnimationService.start();
 
-        const impactedGroups: InternalProvidedColumnGroup[] = [];
+        const impactedGroups: AgProvidedColumnGroup[] = [];
 
         stateItems.forEach((stateItem) => {
             const groupKey = stateItem.groupId;

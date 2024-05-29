@@ -1,8 +1,8 @@
 import {
+    type AgColumn,
     type AgEventListener,
+    type AgProvidedColumnGroup,
     type IEventEmitter,
-    type InternalColumn,
-    type InternalProvidedColumnGroup,
     LocalEventService,
 } from '@ag-grid-community/core';
 
@@ -13,8 +13,8 @@ export class ColumnModelItem implements IEventEmitter {
 
     private readonly group: boolean;
     private readonly displayName: string | null;
-    private readonly columnGroup: InternalProvidedColumnGroup;
-    private readonly column: InternalColumn;
+    private readonly columnGroup: AgProvidedColumnGroup;
+    private readonly column: AgColumn;
     private readonly dept: number;
     private readonly children: ColumnModelItem[];
 
@@ -23,7 +23,7 @@ export class ColumnModelItem implements IEventEmitter {
 
     constructor(
         displayName: string | null,
-        columnOrGroup: InternalColumn | InternalProvidedColumnGroup,
+        columnOrGroup: AgColumn | AgProvidedColumnGroup,
         dept: number,
         group = false,
         expanded?: boolean
@@ -33,11 +33,11 @@ export class ColumnModelItem implements IEventEmitter {
         this.group = group;
 
         if (group) {
-            this.columnGroup = columnOrGroup as InternalProvidedColumnGroup;
+            this.columnGroup = columnOrGroup as AgProvidedColumnGroup;
             this.expanded = expanded;
             this.children = [];
         } else {
-            this.column = columnOrGroup as InternalColumn;
+            this.column = columnOrGroup as AgColumn;
         }
     }
 
@@ -47,10 +47,10 @@ export class ColumnModelItem implements IEventEmitter {
     public getDisplayName(): string | null {
         return this.displayName;
     }
-    public getColumnGroup(): InternalProvidedColumnGroup {
+    public getColumnGroup(): AgProvidedColumnGroup {
         return this.columnGroup;
     }
-    public getColumn(): InternalColumn {
+    public getColumn(): AgColumn {
         return this.column;
     }
     public getDept(): number {

@@ -1,5 +1,5 @@
 import type { BeanCollection } from '../../../context/context';
-import type { InternalColumn } from '../../../entities/column';
+import type { AgColumn } from '../../../entities/agColumn';
 import { Events } from '../../../eventKeys';
 import type { SortController } from '../../../sortController';
 import { _clearElement, _setDisplayed } from '../../../utils/dom';
@@ -31,7 +31,7 @@ export class SortIndicatorComp extends Component {
     private eSortMixed: HTMLElement = RefPlaceholder;
     private eSortNone: HTMLElement = RefPlaceholder;
 
-    private column: InternalColumn;
+    private column: AgColumn;
     private suppressOrder: boolean;
 
     constructor(skipTemplate?: boolean) {
@@ -56,7 +56,7 @@ export class SortIndicatorComp extends Component {
         this.eSortNone = eSortNone;
     }
 
-    public setupSort(column: InternalColumn, suppressOrder: boolean = false): void {
+    public setupSort(column: AgColumn, suppressOrder: boolean = false): void {
         this.column = column;
         this.suppressOrder = suppressOrder;
 
@@ -81,7 +81,7 @@ export class SortIndicatorComp extends Component {
         this.onSortChanged();
     }
 
-    private addInIcon(iconName: string, eParent: HTMLElement, column: InternalColumn): void {
+    private addInIcon(iconName: string, eParent: HTMLElement, column: AgColumn): void {
         if (eParent == null) {
             return;
         }

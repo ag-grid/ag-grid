@@ -1,25 +1,23 @@
 import { BeanStub } from '../context/beanStub';
 import type { AgEvent } from '../events';
 import type { Column, ColumnGroupShowType, ColumnInstanceId, ProvidedColumnGroup } from '../interfaces/iColumn';
+import type { AgColumn } from './agColumn';
+import { getNextColInstanceId, isColumn } from './agColumn';
 import type { ColGroupDef } from './colDef';
-import type { InternalColumn } from './column';
-import { getNextColInstanceId, isColumn } from './column';
 
-export function isProvidedColumnGroup(
-    col: Column | ProvidedColumnGroup | string | null
-): col is InternalProvidedColumnGroup {
-    return col instanceof InternalProvidedColumnGroup;
+export function isProvidedColumnGroup(col: Column | ProvidedColumnGroup | string | null): col is AgProvidedColumnGroup {
+    return col instanceof AgProvidedColumnGroup;
 }
 
 export const EVENT_PROVIDED_COLUMN_GROUP_EXPANDED_CHANGED = 'expandedChanged' as const;
 
 export const EVENT_PROVIDED_COLUMN_GROUP_EXPANDABLE_CHANGED = 'expandableChanged' as const;
 
-export class InternalProvidedColumnGroup extends BeanStub implements ProvidedColumnGroup {
+export class AgProvidedColumnGroup extends BeanStub implements ProvidedColumnGroup {
     private colGroupDef: ColGroupDef | null;
-    private originalParent: InternalProvidedColumnGroup | null;
+    private originalParent: AgProvidedColumnGroup | null;
 
-    private children: (InternalColumn | InternalProvidedColumnGroup)[];
+    private children: (AgColumn | AgProvidedColumnGroup)[];
     private groupId: string;
     private expandable = false;
 
@@ -70,11 +68,11 @@ export class InternalProvidedColumnGroup extends BeanStub implements ProvidedCol
         return this.instanceId;
     }
 
-    public setOriginalParent(originalParent: InternalProvidedColumnGroup | null): void {
+    public setOriginalParent(originalParent: AgProvidedColumnGroup | null): void {
         this.originalParent = originalParent;
     }
 
-    public getOriginalParent(): InternalProvidedColumnGroup | null {
+    public getOriginalParent(): AgProvidedColumnGroup | null {
         return this.originalParent;
     }
 
@@ -119,11 +117,11 @@ export class InternalProvidedColumnGroup extends BeanStub implements ProvidedCol
         return this.getGroupId();
     }
 
-    public setChildren(children: (InternalColumn | InternalProvidedColumnGroup)[]): void {
+    public setChildren(children: (AgColumn | AgProvidedColumnGroup)[]): void {
         this.children = children;
     }
 
-    public getChildren(): (InternalColumn | InternalProvidedColumnGroup)[] {
+    public getChildren(): (AgColumn | AgProvidedColumnGroup)[] {
         return this.children;
     }
 
@@ -131,8 +129,8 @@ export class InternalProvidedColumnGroup extends BeanStub implements ProvidedCol
         return this.colGroupDef;
     }
 
-    public getLeafColumns(): InternalColumn[] {
-        const result: InternalColumn[] = [];
+    public getLeafColumns(): AgColumn[] {
+        const result: AgColumn[] = [];
         this.addLeafColumns(result);
         return result;
     }
@@ -145,7 +143,7 @@ export class InternalProvidedColumnGroup extends BeanStub implements ProvidedCol
         this.children.forEach((child) => {
             if (isColumn(child)) {
                 leafColumns.push(child);
-            } else if (child instanceof InternalProvidedColumnGroup) {
+            } else if (child instanceof AgProvidedColumnGroup) {
                 child.addLeafColumns(leafColumns);
             }
         });
@@ -224,15 +222,15 @@ export class InternalProvidedColumnGroup extends BeanStub implements ProvidedCol
         }
     }
 
-    private findChildrenRemovingPadding(): (InternalColumn | InternalProvidedColumnGroup)[] {
-        const res: (InternalColumn | InternalProvidedColumnGroup)[] = [];
+    private findChildrenRemovingPadding(): (AgColumn | AgProvidedColumnGroup)[] {
+        const res: (AgColumn | AgProvidedColumnGroup)[] = [];
 
-        const process = (items: (InternalColumn | InternalProvidedColumnGroup)[]) => {
+        const process = (items: (AgColumn | AgProvidedColumnGroup)[]) => {
             items.forEach((item) => {
                 // if padding, we add this children instead of the padding
-                const skipBecausePadding = item instanceof InternalProvidedColumnGroup && item.isPadding();
+                const skipBecausePadding = item instanceof AgProvidedColumnGroup && item.isPadding();
                 if (skipBecausePadding) {
-                    process((item as InternalProvidedColumnGroup).children);
+                    process((item as AgProvidedColumnGroup).children);
                 } else {
                     res.push(item);
                 }

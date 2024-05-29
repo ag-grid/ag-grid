@@ -2,9 +2,9 @@ import type { UserCompDetails } from '../../components/framework/userComponentFa
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
 import type { CellPosition } from '../../entities/cellPositionUtils';
 import type { CellStyle } from '../../entities/colDef';
-import type { InternalColumn } from '../../entities/column';
 import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
 import type {
@@ -87,7 +87,7 @@ export class CellCtrl extends BeanStub {
     private eGui: HTMLElement;
     private cellComp: ICellComp;
     private beans: BeanCollection;
-    private column: InternalColumn;
+    private column: AgColumn;
     private rowNode: RowNode;
     private rowCtrl: RowCtrl;
     private editCompDetails?: UserCompDetails;
@@ -123,7 +123,7 @@ export class CellCtrl extends BeanStub {
 
     private onCellCompAttachedFuncs: (() => void)[] = [];
 
-    constructor(column: InternalColumn, rowNode: RowNode, beans: BeanCollection, rowCtrl: RowCtrl) {
+    constructor(column: AgColumn, rowNode: RowNode, beans: BeanCollection, rowCtrl: RowCtrl) {
         super();
         this.column = column;
         this.rowNode = rowNode;
@@ -934,7 +934,7 @@ export class CellCtrl extends BeanStub {
         return this.eGui;
     }
 
-    public getColSpanningList(): InternalColumn[] {
+    public getColSpanningList(): AgColumn[] {
         return this.cellPositionFeature!.getColSpanningList();
     }
 
@@ -971,7 +971,7 @@ export class CellCtrl extends BeanStub {
         return this.cellPositionFeature?.onWidthChanged();
     }
 
-    public getColumn(): InternalColumn {
+    public getColumn(): AgColumn {
         return this.column;
     }
 

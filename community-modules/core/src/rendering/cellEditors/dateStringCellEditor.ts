@@ -1,6 +1,6 @@
 import type { DataTypeService } from '../../columns/dataTypeService';
 import type { BeanCollection } from '../../context/context';
-import type { InternalColumn } from '../../entities/column';
+import type { AgColumn } from '../../entities/agColumn';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _serialiseDate } from '../../utils/date';
 import { _exists } from '../../utils/generic';
@@ -63,11 +63,11 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     }
 
     private parseDate(value: string | undefined): Date | undefined {
-        return this.getDataTypeService().getDateParserFunction(this.params.column as InternalColumn)(value);
+        return this.getDataTypeService().getDateParserFunction(this.params.column as AgColumn)(value);
     }
 
     private formatDate(value: Date | undefined): string | undefined {
-        return this.getDataTypeService().getDateFormatterFunction(this.params.column as InternalColumn)(value);
+        return this.getDataTypeService().getDateFormatterFunction(this.params.column as AgColumn)(value);
     }
 }
 

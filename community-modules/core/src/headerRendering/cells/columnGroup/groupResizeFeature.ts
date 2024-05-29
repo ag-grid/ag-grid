@@ -3,8 +3,8 @@ import type { ColumnResizeSet, ColumnSizeService } from '../../../columns/column
 import type { VisibleColsService } from '../../../columns/visibleColsService';
 import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
-import type { InternalColumn } from '../../../entities/column';
-import type { InternalColumnGroup } from '../../../entities/columnGroup';
+import type { AgColumn } from '../../../entities/agColumn';
+import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { ColumnEventType } from '../../../events';
 import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import type { AutoWidthCalculator } from '../../../rendering/autoWidthCalculator';
@@ -13,10 +13,10 @@ import type { IHeaderResizeFeature } from '../abstractCell/abstractHeaderCellCtr
 import type { IHeaderGroupCellComp } from './headerGroupCellCtrl';
 
 interface ColumnSizeAndRatios {
-    columnsToResize: InternalColumn[];
+    columnsToResize: AgColumn[];
     resizeStartWidth: number;
     resizeRatios: number[];
-    groupAfterColumns?: InternalColumn[];
+    groupAfterColumns?: AgColumn[];
     groupAfterStartWidth?: number;
     groupAfterRatios?: number[];
 }
@@ -37,15 +37,15 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     }
 
     private eResize: HTMLElement;
-    private columnGroup: InternalColumnGroup;
+    private columnGroup: AgColumnGroup;
     private comp: IHeaderGroupCellComp;
     private pinned: ColumnPinnedType;
 
-    private resizeCols?: InternalColumn[];
+    private resizeCols?: AgColumn[];
     private resizeStartWidth: number;
     private resizeRatios?: number[];
 
-    private resizeTakeFromCols?: InternalColumn[];
+    private resizeTakeFromCols?: AgColumn[];
     private resizeTakeFromStartWidth?: number;
     private resizeTakeFromRatios?: number[];
 
@@ -53,7 +53,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         comp: IHeaderGroupCellComp,
         eResize: HTMLElement,
         pinned: ColumnPinnedType,
-        columnGroup: InternalColumnGroup
+        columnGroup: AgColumnGroup
     ) {
         super();
 
@@ -131,7 +131,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
             resizeRatios,
         };
 
-        let groupAfter: InternalColumnGroup | null = null;
+        let groupAfter: AgColumnGroup | null = null;
 
         if (shiftKey) {
             groupAfter = this.visibleColsService.getGroupAtDirection(this.columnGroup, 'After');
@@ -254,16 +254,16 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         this.comp.addOrRemoveCssClass('ag-column-resizing', resizing);
     }
 
-    private getColumnsToResize(): InternalColumn[] {
+    private getColumnsToResize(): AgColumn[] {
         const leafCols = this.columnGroup.getDisplayedLeafColumns();
         return leafCols.filter((col) => col.isResizable());
     }
 
-    private getInitialSizeOfColumns(columns: InternalColumn[]): number {
-        return columns.reduce((totalWidth: number, column: InternalColumn) => totalWidth + column.getActualWidth(), 0);
+    private getInitialSizeOfColumns(columns: AgColumn[]): number {
+        return columns.reduce((totalWidth: number, column: AgColumn) => totalWidth + column.getActualWidth(), 0);
     }
 
-    private getSizeRatiosOfColumns(columns: InternalColumn[], initialSizeOfColumns: number): number[] {
+    private getSizeRatiosOfColumns(columns: AgColumn[], initialSizeOfColumns: number): number[] {
         return columns.map((column) => column.getActualWidth() / initialSizeOfColumns);
     }
 

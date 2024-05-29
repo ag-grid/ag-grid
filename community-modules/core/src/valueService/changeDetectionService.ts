@@ -1,6 +1,6 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
-import type { InternalColumn } from '../entities/column';
+import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
 import { Events } from '../events';
@@ -44,10 +44,10 @@ export class ChangeDetectionService extends BeanStub {
             return;
         }
 
-        this.doChangeDetection(event.node as RowNode, event.column as InternalColumn);
+        this.doChangeDetection(event.node as RowNode, event.column as AgColumn);
     }
 
-    private doChangeDetection(rowNode: RowNode, column: InternalColumn): void {
+    private doChangeDetection(rowNode: RowNode, column: AgColumn): void {
         if (this.gos.get('suppressChangeDetection')) {
             return;
         }

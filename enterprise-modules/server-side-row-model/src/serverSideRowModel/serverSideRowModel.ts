@@ -1,5 +1,6 @@
 import type {
     AdvancedFilterModel,
+    AgColumn,
     BeanCollection,
     BeanName,
     ColumnModel,
@@ -12,7 +13,6 @@ import type {
     IServerSideDatasource,
     IServerSideRowModel,
     IServerSideStore,
-    InternalColumn,
     LoadSuccessParams,
     ModelUpdatedEvent,
     PivotResultColsService,
@@ -376,7 +376,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.dispatchModelUpdated(true);
     }
 
-    public columnsToValueObjects(columns: InternalColumn[]): ColumnVO[] {
+    public columnsToValueObjects(columns: AgColumn[]): ColumnVO[] {
         return columns.map(
             (col) =>
                 ({

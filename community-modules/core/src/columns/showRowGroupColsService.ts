@@ -1,6 +1,6 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
-import type { InternalColumn } from '../entities/column';
+import type { AgColumn } from '../entities/agColumn';
 import type { ColumnModel } from './columnModel';
 import type { FuncColsService } from './funcColsService';
 
@@ -16,8 +16,8 @@ export class ShowRowGroupColsService extends BeanStub {
         this.funcColsService = beans.funcColsService;
     }
 
-    private showRowGroupCols: InternalColumn[];
-    private showRowGroupColsMap: { [originalColumnId: string]: InternalColumn };
+    private showRowGroupCols: AgColumn[];
+    private showRowGroupColsMap: { [originalColumnId: string]: AgColumn };
 
     public refresh(): void {
         this.showRowGroupCols = [];
@@ -47,11 +47,11 @@ export class ShowRowGroupColsService extends BeanStub {
         });
     }
 
-    public getShowRowGroupCols(): InternalColumn[] {
+    public getShowRowGroupCols(): AgColumn[] {
         return this.showRowGroupCols;
     }
 
-    public getShowRowGroupCol(id: string): InternalColumn | undefined {
+    public getShowRowGroupCol(id: string): AgColumn | undefined {
         return this.showRowGroupColsMap[id];
     }
 }

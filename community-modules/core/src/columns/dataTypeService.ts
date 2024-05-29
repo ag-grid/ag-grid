@@ -1,6 +1,7 @@
 import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
+import { AgColumn } from '../entities/agColumn';
 import type {
     ColDef,
     SuppressKeyboardEventParams,
@@ -8,7 +9,6 @@ import type {
     ValueFormatterParams,
     ValueGetterParams,
 } from '../entities/colDef';
-import { InternalColumn } from '../entities/column';
 import type {
     BaseCellDataType,
     CoreDataTypeDefinition,
@@ -130,7 +130,7 @@ export class DataTypeService extends BeanStub {
                 if (valueFormatter === dataTypeDefinition.groupSafeValueFormatter) {
                     valueFormatter = dataTypeDefinition.valueFormatter;
                 }
-                return this.valueService.formatValue(column as InternalColumn, node, value, valueFormatter as any)!;
+                return this.valueService.formatValue(column as AgColumn, node, value, valueFormatter as any)!;
             };
         };
         Object.entries(defaultDataTypes).forEach(([cellDataType, dataTypeDefinition]) => {
@@ -375,7 +375,7 @@ export class DataTypeService extends BeanStub {
         return columnTypes ? this.convertColumnTypes(columnTypes) : undefined;
     }
 
-    public addColumnListeners(column: InternalColumn): void {
+    public addColumnListeners(column: AgColumn): void {
         if (!this.isWaitingForRowData) {
             return;
         }
@@ -386,9 +386,9 @@ export class DataTypeService extends BeanStub {
         const columnListener: AgEventListener = (event: AgGridEvent & { key: keyof ColumnStateParams }) => {
             columnStateUpdates.add(event.key);
         };
-        column.addEventListener(InternalColumn.EVENT_STATE_UPDATED, columnListener);
+        column.addEventListener(AgColumn.EVENT_STATE_UPDATED, columnListener);
         this.columnStateUpdateListenerDestroyFuncs.push(() =>
-            column.removeEventListener(InternalColumn.EVENT_STATE_UPDATED, columnListener)
+            column.removeEventListener(AgColumn.EVENT_STATE_UPDATED, columnListener)
         );
     }
 
@@ -561,10 +561,7 @@ export class DataTypeService extends BeanStub {
         this.initialData = null;
     }
 
-    private getUpdatedColumnState(
-        column: InternalColumn,
-        columnStateUpdates: Set<keyof ColumnStateParams>
-    ): ColumnState {
+    private getUpdatedColumnState(column: AgColumn, columnStateUpdates: Set<keyof ColumnStateParams>): ColumnState {
         const columnState = this.columnApplyStateService.getColumnStateFromColDef(column);
         columnStateUpdates.forEach((key) => {
             // if the column state has been updated, don't update again
@@ -605,7 +602,7 @@ export class DataTypeService extends BeanStub {
         return typeKeys;
     }
 
-    private getDateStringTypeDefinition(column?: InternalColumn | null): DateStringDataTypeDefinition {
+    private getDateStringTypeDefinition(column?: AgColumn | null): DateStringDataTypeDefinition {
         if (!column) {
             return this.dataTypeDefinitions.dateString as DateStringDataTypeDefinition;
         }
@@ -613,15 +610,15 @@ export class DataTypeService extends BeanStub {
             this.dataTypeDefinitions.dateString) as DateStringDataTypeDefinition;
     }
 
-    public getDateParserFunction(column?: InternalColumn | null): (value: string | undefined) => Date | undefined {
+    public getDateParserFunction(column?: AgColumn | null): (value: string | undefined) => Date | undefined {
         return this.getDateStringTypeDefinition(column).dateParser!;
     }
 
-    public getDateFormatterFunction(column?: InternalColumn | null): (value: Date | undefined) => string | undefined {
+    public getDateFormatterFunction(column?: AgColumn | null): (value: Date | undefined) => string | undefined {
         return this.getDateStringTypeDefinition(column).dateFormatter!;
     }
 
-    public getDataTypeDefinition(column: InternalColumn): DataTypeDefinition | CoreDataTypeDefinition | undefined {
+    public getDataTypeDefinition(column: AgColumn): DataTypeDefinition | CoreDataTypeDefinition | undefined {
         const colDef = column.getColDef();
         if (!colDef.cellDataType) {
             return undefined;
@@ -629,11 +626,11 @@ export class DataTypeService extends BeanStub {
         return this.dataTypeDefinitions[colDef.cellDataType as string];
     }
 
-    public getBaseDataType(column: InternalColumn): BaseCellDataType | undefined {
+    public getBaseDataType(column: AgColumn): BaseCellDataType | undefined {
         return this.getDataTypeDefinition(column)?.baseDataType;
     }
 
-    public checkType(column: InternalColumn, value: any): boolean {
+    public checkType(column: AgColumn, value: any): boolean {
         if (value == null) {
             return true;
         }
@@ -831,7 +828,7 @@ export class DataTypeService extends BeanStub {
                         formatValue({
                             column: params.column,
                             node: params.node,
-                            value: this.valueService.getValue(params.column as InternalColumn, params.node),
+                            value: this.valueService.getValue(params.column as AgColumn, params.node),
                         });
                 }
                 break;

@@ -1,8 +1,8 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import { type AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { AbstractColDef, ColDef, ColGroupDef } from '../entities/colDef';
-import type { InternalColumn } from '../entities/column';
-import { type InternalProvidedColumnGroup } from '../entities/providedColumnGroup';
 import type { ColumnEventType } from '../events';
 import { _areEqual } from '../utils/array';
 import { _exists } from '../utils/generic';
@@ -34,7 +34,7 @@ export class PivotResultColsService extends BeanStub {
     // private pivotResultColsMap: { [id: string]: Column };
 
     // Saved when pivot is disabled, available to re-use when pivot is restored
-    private previousPivotResultCols: (InternalColumn | InternalProvidedColumnGroup)[] | null;
+    private previousPivotResultCols: (AgColumn | AgProvidedColumnGroup)[] | null;
 
     public override destroy(): void {
         destroyColumnTree(this.getContext(), this.pivotResultCols?.tree);
@@ -45,14 +45,14 @@ export class PivotResultColsService extends BeanStub {
         return this.pivotResultCols != null;
     }
 
-    public lookupPivotResultCol(pivotKeys: string[], valueColKey: ColKey): InternalColumn | null {
+    public lookupPivotResultCol(pivotKeys: string[], valueColKey: ColKey): AgColumn | null {
         if (this.pivotResultCols == null) {
             return null;
         }
 
         const valueColumnToFind = this.columnModel.getColDefCol(valueColKey);
 
-        let foundColumn: InternalColumn | null = null;
+        let foundColumn: AgColumn | null = null;
 
         this.pivotResultCols.list.forEach((column) => {
             const thisPivotKeys = column.getColDef().pivotKeys;
@@ -73,7 +73,7 @@ export class PivotResultColsService extends BeanStub {
         return this.pivotResultCols;
     }
 
-    public getPivotResultCol(key: ColKey): InternalColumn | null {
+    public getPivotResultCol(key: ColKey): AgColumn | null {
         if (!this.pivotResultCols) {
             return null;
         }

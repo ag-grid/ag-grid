@@ -1,10 +1,10 @@
 import type {
+    AgColumn,
+    AgProvidedColumnGroup,
     BeanCollection,
     ColumnModel,
     ColumnMoveService,
     ColumnPanelItemDragStartEvent,
-    InternalColumn,
-    InternalProvidedColumnGroup,
     VirtualList,
     VirtualListDragItem,
 } from '@ag-grid-community/core';
@@ -42,7 +42,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
             new VirtualListDragFeature<
                 AgPrimaryColsList,
                 ToolPanelColumnGroupComp | ToolPanelColumnComp,
-                InternalColumn | InternalProvidedColumnGroup,
+                AgColumn | AgProvidedColumnGroup,
                 ColumnPanelItemDragStartEvent
             >(this.comp, this.virtualList, {
                 dragSourceType: DragSourceType.ToolPanel,
@@ -51,11 +51,11 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
                 eventSource: this.eventService,
                 getCurrentDragValue: (listItemDragStartEvent: ColumnPanelItemDragStartEvent) =>
                     this.getCurrentDragValue(listItemDragStartEvent),
-                isMoveBlocked: (currentDragValue: InternalColumn | InternalProvidedColumnGroup | null) =>
+                isMoveBlocked: (currentDragValue: AgColumn | AgProvidedColumnGroup | null) =>
                     this.isMoveBlocked(currentDragValue),
                 getNumRows: (comp: AgPrimaryColsList) => comp.getDisplayedColsList().length,
                 moveItem: (
-                    currentDragValue: InternalColumn | InternalProvidedColumnGroup | null,
+                    currentDragValue: AgColumn | AgProvidedColumnGroup | null,
                     lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
                 ) => this.moveItem(currentDragValue, lastHoveredListItem),
             })
@@ -64,11 +64,11 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
 
     private getCurrentDragValue(
         listItemDragStartEvent: ColumnPanelItemDragStartEvent
-    ): InternalColumn | InternalProvidedColumnGroup {
-        return listItemDragStartEvent.column as InternalColumn | InternalProvidedColumnGroup;
+    ): AgColumn | AgProvidedColumnGroup {
+        return listItemDragStartEvent.column as AgColumn | AgProvidedColumnGroup;
     }
 
-    private isMoveBlocked(currentDragValue: InternalColumn | InternalProvidedColumnGroup | null): boolean {
+    private isMoveBlocked(currentDragValue: AgColumn | AgProvidedColumnGroup | null): boolean {
         const preventMoving = this.gos.get('suppressMovableColumns');
         if (preventMoving) {
             return true;
@@ -84,25 +84,25 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     }
 
     private moveItem(
-        currentDragValue: InternalColumn | InternalProvidedColumnGroup | null,
+        currentDragValue: AgColumn | AgProvidedColumnGroup | null,
         lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
     ): void {
         const targetIndex: number | null = this.getTargetIndex(currentDragValue, lastHoveredListItem);
 
-        const columnsToMove: InternalColumn[] = this.getCurrentColumns(currentDragValue);
+        const columnsToMove: AgColumn[] = this.getCurrentColumns(currentDragValue);
 
         if (targetIndex != null) {
             this.columnMoveService.moveColumns(columnsToMove, targetIndex, 'toolPanelUi');
         }
     }
 
-    private getMoveDiff(currentDragValue: InternalColumn | InternalProvidedColumnGroup | null, end: number): number {
+    private getMoveDiff(currentDragValue: AgColumn | AgProvidedColumnGroup | null, end: number): number {
         const allColumns = this.columnModel.getCols();
         const currentColumns = this.getCurrentColumns(currentDragValue);
         const currentColumn = currentColumns[0];
         const span = currentColumns.length;
 
-        const currentIndex = allColumns.indexOf(currentColumn as InternalColumn);
+        const currentIndex = allColumns.indexOf(currentColumn as AgColumn);
 
         if (currentIndex < end) {
             return span;
@@ -111,7 +111,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         return 0;
     }
 
-    private getCurrentColumns(currentDragValue: InternalColumn | InternalProvidedColumnGroup | null): InternalColumn[] {
+    private getCurrentColumns(currentDragValue: AgColumn | AgProvidedColumnGroup | null): AgColumn[] {
         if (isProvidedColumnGroup(currentDragValue)) {
             return currentDragValue.getLeafColumns();
         }
@@ -119,7 +119,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     }
 
     private getTargetIndex(
-        currentDragValue: InternalColumn | InternalProvidedColumnGroup | null,
+        currentDragValue: AgColumn | AgProvidedColumnGroup | null,
         lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
     ): number | null {
         if (!lastHoveredListItem) {
@@ -128,7 +128,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         const columnItemComponent = lastHoveredListItem.component;
         let isBefore = lastHoveredListItem.position === 'top';
 
-        let targetColumn: InternalColumn;
+        let targetColumn: AgColumn;
 
         if (columnItemComponent instanceof ToolPanelColumnGroupComp) {
             const columns = columnItemComponent.getColumns();
@@ -144,7 +144,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
             return null;
         }
 
-        const targetColumnIndex = this.columnModel.getCols().indexOf(targetColumn as InternalColumn);
+        const targetColumnIndex = this.columnModel.getCols().indexOf(targetColumn as AgColumn);
         const adjustedTarget = isBefore ? targetColumnIndex : targetColumnIndex + 1;
         const diff = this.getMoveDiff(currentDragValue, adjustedTarget);
 

@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     AgEvent,
     BeanCollection,
     ColDef,
@@ -6,7 +7,6 @@ import type {
     ISetFilterCellRendererParams,
     ISetFilterTreeListTooltipParams,
     ITooltipParams,
-    InternalColumn,
     SetFilterParams,
     UserComponentFactory,
     ValueFormatterParams,
@@ -340,7 +340,7 @@ export class SetFilterListItem<V> extends Component {
             // tree values are already formatted via treeListFormatter
             formattedValue = _toStringOrNull(value);
         } else {
-            formattedValue = this.getFormattedValue(column as InternalColumn, value);
+            formattedValue = this.getFormattedValue(column as AgColumn, value);
         }
 
         this.setTooltipAndCellRendererParams(value, formattedValue);
@@ -368,7 +368,7 @@ export class SetFilterListItem<V> extends Component {
                 newTooltipText,
                 location: 'setFilterValue',
                 getColDef: () => this.params.colDef,
-                getColumn: () => this.params.column as InternalColumn,
+                getColumn: () => this.params.column as AgColumn,
                 shouldDisplayTooltip,
             });
         }
@@ -382,7 +382,7 @@ export class SetFilterListItem<V> extends Component {
                 this.setTooltip({
                     newTooltipText: value,
                     getColDef: () => this.params.colDef,
-                    getColumn: () => this.params.column as InternalColumn,
+                    getColumn: () => this.params.column as AgColumn,
                     location: 'setFilterValue',
                     shouldDisplayTooltip,
                 });
@@ -400,7 +400,7 @@ export class SetFilterListItem<V> extends Component {
         return res;
     }
 
-    private getFormattedValue(column: InternalColumn, value: any) {
+    private getFormattedValue(column: AgColumn, value: any) {
         return this.valueService.formatValue(column, null, value, this.valueFormatter, false);
     }
 

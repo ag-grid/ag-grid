@@ -2,7 +2,7 @@ import type { BeanCollection } from '@ag-grid-community/core';
 
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { KeyCode } from '../../../constants/keyCode';
-import { InternalColumn } from '../../../entities/column';
+import { AgColumn } from '../../../entities/agColumn';
 import type { ColumnEvent, FilterChangedEvent } from '../../../events';
 import { Events } from '../../../events';
 import type { IFloatingFilter } from '../../../filter/floating/floatingFilter';
@@ -27,7 +27,7 @@ export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
     setMenuIcon(icon: HTMLElement): void;
 }
 
-export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCellComp, InternalColumn> {
+export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCellComp, AgColumn> {
     private eButtonShowMainFilter: HTMLElement;
     private eFloatingFilterBody: HTMLElement;
 
@@ -40,7 +40,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     private destroySyncListener: (() => null) | undefined;
     private destroyFilterChangedListener: (() => null) | undefined;
 
-    constructor(column: InternalColumn, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
+    constructor(column: AgColumn, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
         super(column, beans, parentRowCtrl);
         this.column = column;
     }
@@ -70,7 +70,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
         this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
         this.setupFilterChangedListener();
-        this.addManagedListener(this.column, InternalColumn.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
+        this.addManagedListener(this.column, AgColumn.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
     }
 
     // empty abstract method
@@ -155,9 +155,9 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         }
     }
 
-    private findNextColumnWithFloatingFilter(backwards: boolean): InternalColumn | null {
+    private findNextColumnWithFloatingFilter(backwards: boolean): AgColumn | null {
         const presentedColsService = this.beans.visibleColsService;
-        let nextCol: InternalColumn | null = this.column;
+        let nextCol: AgColumn | null = this.column;
 
         do {
             nextCol = backwards
@@ -321,11 +321,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             });
         };
 
-        this.destroySyncListener = this.addManagedListener(
-            this.column,
-            InternalColumn.EVENT_FILTER_CHANGED,
-            syncWithFilter
-        );
+        this.destroySyncListener = this.addManagedListener(this.column, AgColumn.EVENT_FILTER_CHANGED, syncWithFilter);
 
         if (filterManager.isFilterActive(this.column)) {
             syncWithFilter(null);
@@ -338,7 +334,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             this.comp.setWidth(width);
         };
 
-        this.addManagedListener(this.column, InternalColumn.EVENT_WIDTH_CHANGED, listener);
+        this.addManagedListener(this.column, AgColumn.EVENT_WIDTH_CHANGED, listener);
         listener();
     }
 
@@ -346,7 +342,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         if (this.active) {
             this.destroyFilterChangedListener = this.addManagedListener(
                 this.column,
-                InternalColumn.EVENT_FILTER_CHANGED,
+                AgColumn.EVENT_FILTER_CHANGED,
                 this.updateFilterButton.bind(this)
             );
             this.updateFilterButton();

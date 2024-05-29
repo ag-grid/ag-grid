@@ -1,4 +1,4 @@
-import type { AdvancedFilterModel, BaseCellDataType, InternalColumn } from '@ag-grid-community/core';
+import type { AdvancedFilterModel, AgColumn, BaseCellDataType } from '@ag-grid-community/core';
 
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
@@ -31,7 +31,7 @@ class ColumnParser implements Parser {
     public valid = true;
     public endPosition: number | undefined;
     public baseCellDataType: BaseCellDataType;
-    public column: InternalColumn | null | undefined;
+    public column: AgColumn | null | undefined;
     public hasStartChar = false;
     public hasEndChar = false;
     private colName: string = '';
@@ -198,7 +198,7 @@ class OperandParser implements Parser {
         private params: FilterExpressionParserParams,
         public readonly startPosition: number,
         private readonly baseCellDataType: BaseCellDataType,
-        private readonly column: InternalColumn | null | undefined
+        private readonly column: AgColumn | null | undefined
     ) {}
 
     public parse(char: string, position: number): boolean | undefined {

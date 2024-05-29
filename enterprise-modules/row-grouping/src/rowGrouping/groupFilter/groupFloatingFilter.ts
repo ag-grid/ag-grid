@@ -8,10 +8,10 @@ import type {
     IFloatingFilterParams,
 } from '@ag-grid-community/core';
 import {
+    AgColumn,
     AgInputTextField,
     AgPromise,
     Component,
-    InternalColumn,
     RefPlaceholder,
     _clearElement,
 } from '@ag-grid-community/core';
@@ -81,7 +81,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
 
     private setParams(): void {
         const displayName = this.columnNameService.getDisplayNameForColumn(
-            this.params.column as InternalColumn,
+            this.params.column as AgColumn,
             'header',
             true
         );
@@ -118,14 +118,10 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
                     this.haveAddedColumnListeners = true;
                     this.addManagedListener(
                         column,
-                        InternalColumn.EVENT_VISIBLE_CHANGED,
+                        AgColumn.EVENT_VISIBLE_CHANGED,
                         this.onColumnVisibleChanged.bind(this)
                     );
-                    this.addManagedListener(
-                        column,
-                        InternalColumn.EVENT_COL_DEF_CHANGED,
-                        this.onColDefChanged.bind(this)
-                    );
+                    this.addManagedListener(column, AgColumn.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
                 }
                 return compDetails.newAgStackInstance().then((floatingFilter) => {
                     this.underlyingFloatingFilter = floatingFilter;
@@ -151,7 +147,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
             return;
         }
         const compDetails = this.filterManager.getFloatingFilterCompDetails(
-            event.column as InternalColumn,
+            event.column as AgColumn,
             this.params.showParentFilter
         );
         if (compDetails) {

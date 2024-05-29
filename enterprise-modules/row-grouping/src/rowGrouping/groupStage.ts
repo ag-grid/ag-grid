@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     BeanCollection,
     BeanName,
     ChangedPath,
@@ -8,7 +9,6 @@ import type {
     IRowNodeStage,
     ISelectionService,
     InitialGroupOrderComparatorParams,
-    InternalColumn,
     IsGroupOpenByDefaultParams,
     KeyCreatorParams,
     RowNodeTransaction,
@@ -35,7 +35,7 @@ import { BatchRemover } from './batchRemover';
 interface GroupInfo {
     key: string; // e.g. 'Ireland'
     field: string | null; // e.g. 'country'
-    rowGroupColumn: InternalColumn | null;
+    rowGroupColumn: AgColumn | null;
     leafNode?: RowNode;
 }
 
@@ -44,7 +44,7 @@ interface GroupingDetails {
     expandByDefault: number;
     changedPath: ChangedPath;
     rootNode: RowNode;
-    groupedCols: InternalColumn[];
+    groupedCols: AgColumn[];
     groupedColCount: number;
     transactions: RowNodeTransaction[];
     rowNodeOrder: { [id: string]: number };
@@ -782,7 +782,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         });
     }
 
-    private getChildrenMappedKey(key: string, rowGroupColumn: InternalColumn | null): string {
+    private getChildrenMappedKey(key: string, rowGroupColumn: AgColumn | null): string {
         if (rowGroupColumn) {
             // grouping by columns
             return rowGroupColumn.getId() + '-' + key;

@@ -1,7 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
+import { AgColumn } from '../entities/agColumn';
 import type { IAggFunc } from '../entities/colDef';
-import { InternalColumn } from '../entities/column';
 import type { ColumnEvent, ColumnEventType } from '../events';
 import { Events } from '../events';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
@@ -20,12 +20,12 @@ import type { PivotResultColsService } from './pivotResultColsService';
 import type { VisibleColsService } from './visibleColsService';
 
 export interface ModifyColumnsNoEventsCallbacks {
-    addGroupCol(col: InternalColumn): void;
-    removeGroupCol(col: InternalColumn): void;
-    addPivotCol(col: InternalColumn): void;
-    removePivotCol(col: InternalColumn): void;
-    addValueCol(col: InternalColumn): void;
-    removeValueCol(col: InternalColumn): void;
+    addGroupCol(col: AgColumn): void;
+    removeGroupCol(col: AgColumn): void;
+    addPivotCol(col: AgColumn): void;
+    removePivotCol(col: AgColumn): void;
+    addValueCol(col: AgColumn): void;
+    removeValueCol(col: AgColumn): void;
 }
 
 export interface ColumnStateParams {
@@ -108,8 +108,8 @@ export class ColumnApplyStateService extends BeanStub {
 
         const applyStates = (
             states: ColumnState[],
-            existingColumns: InternalColumn[],
-            getById: (id: string) => InternalColumn | null
+            existingColumns: AgColumn[],
+            getById: (id: string) => AgColumn | null
         ) => {
             const dispatchEventsFunc = this.compareColumnStatesAndDispatchEvents(source);
 
@@ -159,7 +159,7 @@ export class ColumnApplyStateService extends BeanStub {
             });
 
             // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
-            const applyDefaultsFunc = (col: InternalColumn) =>
+            const applyDefaultsFunc = (col: AgColumn) =>
                 this.syncColumnWithStateItem(
                     col,
                     null,
@@ -250,7 +250,7 @@ export class ColumnApplyStateService extends BeanStub {
         let letRowGroupIndex = 1000;
         let letPivotIndex = 1000;
 
-        let colsToProcess: InternalColumn[] = [];
+        let colsToProcess: AgColumn[] = [];
         const groupAutoCols = this.columnModel.getAutoCols();
         if (groupAutoCols) {
             colsToProcess = colsToProcess.concat(groupAutoCols);
@@ -277,7 +277,7 @@ export class ColumnApplyStateService extends BeanStub {
         this.applyColumnState({ state: columnStates, applyOrder: true }, source);
     }
 
-    public getColumnStateFromColDef(column: InternalColumn): ColumnState {
+    public getColumnStateFromColDef(column: AgColumn): ColumnState {
         const getValueOrNull = (a: any, b: any) => (a != null ? a : b != null ? b : null);
 
         const colDef = column.getColDef();
@@ -327,7 +327,7 @@ export class ColumnApplyStateService extends BeanStub {
     }
 
     private syncColumnWithStateItem(
-        column: InternalColumn | null,
+        column: AgColumn | null,
         stateItem: ColumnState | null,
         defaultState: ColumnStateParams | undefined,
         rowGroupIndexes: { [key: string]: number } | null,
@@ -386,7 +386,7 @@ export class ColumnApplyStateService extends BeanStub {
         }
 
         // if width provided and valid, use it, otherwise stick with the old width
-        const minColWidth = column.getColDef().minWidth ?? InternalColumn.DEFAULT_MIN_WIDTH;
+        const minColWidth = column.getColDef().minWidth ?? AgColumn.DEFAULT_MIN_WIDTH;
 
         // flex
         const flex = getValue('flex').value1;
@@ -525,9 +525,9 @@ export class ColumnApplyStateService extends BeanStub {
             // dispatches generic ColumnEvents where all columns are returned rather than what has changed
             const dispatchWhenListsDifferent = (
                 eventType: string,
-                colsBefore: InternalColumn[],
-                colsAfter: InternalColumn[],
-                idMapper: (column: InternalColumn) => string
+                colsBefore: AgColumn[],
+                colsAfter: AgColumn[],
+                idMapper: (column: AgColumn) => string
             ) => {
                 const beforeList = colsBefore.map(idMapper);
                 const afterList = colsAfter.map(idMapper);
@@ -559,10 +559,8 @@ export class ColumnApplyStateService extends BeanStub {
             };
 
             // determines which columns have changed according to supplied predicate
-            const getChangedColumns = (
-                changedPredicate: (cs: ColumnState, c: InternalColumn) => boolean
-            ): InternalColumn[] => {
-                const changedColumns: InternalColumn[] = [];
+            const getChangedColumns = (changedPredicate: (cs: ColumnState, c: AgColumn) => boolean): AgColumn[] => {
+                const changedColumns: AgColumn[] = [];
 
                 colsForState.forEach((column) => {
                     const colStateBefore = columnStateBeforeMap[column.getColId()];
@@ -574,7 +572,7 @@ export class ColumnApplyStateService extends BeanStub {
                 return changedColumns;
             };
 
-            const columnIdMapper = (c: InternalColumn) => c.getColId();
+            const columnIdMapper = (c: AgColumn) => c.getColId();
 
             dispatchWhenListsDifferent(
                 Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
@@ -590,7 +588,7 @@ export class ColumnApplyStateService extends BeanStub {
                 columnIdMapper
             );
 
-            const valueChangePredicate = (cs: ColumnState, c: InternalColumn) => {
+            const valueChangePredicate = (cs: ColumnState, c: AgColumn) => {
                 const oldActive = cs.aggFunc != null;
 
                 const activeChanged = oldActive != c.isValueActive();
@@ -604,16 +602,16 @@ export class ColumnApplyStateService extends BeanStub {
                 this.eventDispatcher.columnChanged(Events.EVENT_COLUMN_VALUE_CHANGED, changedValues, source);
             }
 
-            const resizeChangePredicate = (cs: ColumnState, c: InternalColumn) => cs.width != c.getActualWidth();
+            const resizeChangePredicate = (cs: ColumnState, c: AgColumn) => cs.width != c.getActualWidth();
             this.eventDispatcher.columnResized(getChangedColumns(resizeChangePredicate), true, source);
 
-            const pinnedChangePredicate = (cs: ColumnState, c: InternalColumn) => cs.pinned != c.getPinned();
+            const pinnedChangePredicate = (cs: ColumnState, c: AgColumn) => cs.pinned != c.getPinned();
             this.eventDispatcher.columnPinned(getChangedColumns(pinnedChangePredicate), source);
 
-            const visibilityChangePredicate = (cs: ColumnState, c: InternalColumn) => cs.hide == c.isVisible();
+            const visibilityChangePredicate = (cs: ColumnState, c: AgColumn) => cs.hide == c.isVisible();
             this.eventDispatcher.columnVisible(getChangedColumns(visibilityChangePredicate), source);
 
-            const sortChangePredicate = (cs: ColumnState, c: InternalColumn) =>
+            const sortChangePredicate = (cs: ColumnState, c: AgColumn) =>
                 cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
             const changedColumns = getChangedColumns(sortChangePredicate);
             if (changedColumns.length > 0) {
@@ -646,7 +644,7 @@ export class ColumnApplyStateService extends BeanStub {
         const afterFiltered = colStateAfter.filter((c) => colsIntersectIds[c.colId!]);
 
         // see if any cols are in a different location
-        const movedColumns: InternalColumn[] = [];
+        const movedColumns: AgColumn[] = [];
 
         afterFiltered!.forEach((csAfter: ColumnState, index: number) => {
             const csBefore = beforeFiltered && beforeFiltered[index];
@@ -667,12 +665,7 @@ export class ColumnApplyStateService extends BeanStub {
 }
 
 // sort the lists according to the indexes that were provided
-const comparatorByIndex = (
-    indexes: { [key: string]: number },
-    oldList: InternalColumn[],
-    colA: InternalColumn,
-    colB: InternalColumn
-) => {
+const comparatorByIndex = (indexes: { [key: string]: number }, oldList: AgColumn[], colA: AgColumn, colB: AgColumn) => {
     const indexA = indexes[colA.getId()];
     const indexB = indexes[colB.getId()];
 

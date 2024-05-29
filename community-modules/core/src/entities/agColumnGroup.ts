@@ -2,47 +2,42 @@ import { BeanStub } from '../context/beanStub';
 import type { AgEvent } from '../events';
 import type { Column, ColumnGroup, ColumnGroupShowType, ColumnPinnedType, HeaderColumnId } from '../interfaces/iColumn';
 import { _last } from '../utils/array';
+import type { AgColumn } from './agColumn';
+import { isColumn } from './agColumn';
+import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
 import type { ColGroupDef } from './colDef';
 import type { AbstractColDef } from './colDef';
-import type { InternalColumn } from './column';
-import { isColumn } from './column';
-import type { InternalProvidedColumnGroup } from './providedColumnGroup';
 
 export function createUniqueColumnGroupId(groupId: string, instanceId: number): HeaderColumnId {
     return (groupId + '_' + instanceId) as HeaderColumnId;
 }
 
-export function isColumnGroup(col: Column | ColumnGroup | string): col is InternalColumnGroup {
-    return col instanceof InternalColumnGroup;
+export function isColumnGroup(col: Column | ColumnGroup | string): col is AgColumnGroup {
+    return col instanceof AgColumnGroup;
 }
 
 export const EVENT_COLUMN_GROUP_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged' as const;
 
-export class InternalColumnGroup<TValue = any> extends BeanStub implements ColumnGroup<TValue> {
+export class AgColumnGroup<TValue = any> extends BeanStub implements ColumnGroup<TValue> {
     public static EVENT_LEFT_CHANGED = 'leftChanged';
 
     // all the children of this group, regardless of whether they are opened or closed
-    private children: (InternalColumn | InternalColumnGroup)[] | null;
+    private children: (AgColumn | AgColumnGroup)[] | null;
     // depends on the open/closed state of the group, only displaying columns are stored here
-    private displayedChildren: (InternalColumn | InternalColumnGroup)[] | null = [];
+    private displayedChildren: (AgColumn | AgColumnGroup)[] | null = [];
 
     private readonly groupId: string;
     private readonly partId: number;
-    private readonly providedColumnGroup: InternalProvidedColumnGroup;
+    private readonly providedColumnGroup: AgProvidedColumnGroup;
     private readonly pinned: ColumnPinnedType;
 
     // private moving = false
     private left: number | null;
     private oldLeft: number | null;
 
-    private parent: InternalColumnGroup | null = null;
+    private parent: AgColumnGroup | null = null;
 
-    constructor(
-        providedColumnGroup: InternalProvidedColumnGroup,
-        groupId: string,
-        partId: number,
-        pinned: ColumnPinnedType
-    ) {
+    constructor(providedColumnGroup: AgProvidedColumnGroup, groupId: string, partId: number, pinned: ColumnPinnedType) {
         super();
         this.groupId = groupId;
         this.partId = partId;
@@ -58,11 +53,11 @@ export class InternalColumnGroup<TValue = any> extends BeanStub implements Colum
         this.displayedChildren = null;
     }
 
-    public getParent(): InternalColumnGroup | null {
+    public getParent(): AgColumnGroup | null {
         return this.parent;
     }
 
-    public setParent(parent: InternalColumnGroup | null): void {
+    public setParent(parent: AgColumnGroup | null): void {
         this.parent = parent;
     }
 
@@ -86,7 +81,7 @@ export class InternalColumnGroup<TValue = any> extends BeanStub implements Colum
     public checkLeft(): void {
         // first get all children to setLeft, as it impacts our decision below
         this.displayedChildren!.forEach((child) => {
-            if (child instanceof InternalColumnGroup) {
+            if (child instanceof AgColumnGroup) {
                 child.checkLeft();
             }
         });
@@ -120,7 +115,7 @@ export class InternalColumnGroup<TValue = any> extends BeanStub implements Colum
         this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
-            this.dispatchEvent(this.createAgEvent(InternalColumnGroup.EVENT_LEFT_CHANGED));
+            this.dispatchEvent(this.createAgEvent(AgColumnGroup.EVENT_LEFT_CHANGED));
         }
     }
 
@@ -174,25 +169,25 @@ export class InternalColumnGroup<TValue = any> extends BeanStub implements Colum
         return result;
     }
 
-    public addChild(child: InternalColumn | InternalColumnGroup): void {
+    public addChild(child: AgColumn | AgColumnGroup): void {
         if (!this.children) {
             this.children = [];
         }
         this.children.push(child);
     }
 
-    public getDisplayedChildren(): (InternalColumn | InternalColumnGroup)[] | null {
+    public getDisplayedChildren(): (AgColumn | AgColumnGroup)[] | null {
         return this.displayedChildren;
     }
 
-    public getLeafColumns(): InternalColumn[] {
-        const result: InternalColumn[] = [];
+    public getLeafColumns(): AgColumn[] {
+        const result: AgColumn[] = [];
         this.addLeafColumns(result);
         return result;
     }
 
-    public getDisplayedLeafColumns(): InternalColumn[] {
-        const result: InternalColumn[] = [];
+    public getDisplayedLeafColumns(): AgColumn[] {
+        const result: AgColumn[] = [];
         this.addDisplayedLeafColumns(result);
         return result;
     }
@@ -221,27 +216,27 @@ export class InternalColumnGroup<TValue = any> extends BeanStub implements Colum
         this.providedColumnGroup.setExpanded(expanded);
     }
 
-    private addDisplayedLeafColumns(leafColumns: InternalColumn[]): void {
+    private addDisplayedLeafColumns(leafColumns: AgColumn[]): void {
         this.displayedChildren!.forEach((child) => {
             if (isColumn(child)) {
                 leafColumns.push(child);
-            } else if (child instanceof InternalColumnGroup) {
+            } else if (child instanceof AgColumnGroup) {
                 child.addDisplayedLeafColumns(leafColumns);
             }
         });
     }
 
-    private addLeafColumns(leafColumns: InternalColumn[]): void {
+    private addLeafColumns(leafColumns: AgColumn[]): void {
         this.children!.forEach((child) => {
             if (isColumn(child)) {
                 leafColumns.push(child);
-            } else if (child instanceof InternalColumnGroup) {
+            } else if (child instanceof AgColumnGroup) {
                 child.addLeafColumns(leafColumns);
             }
         });
     }
 
-    public getChildren(): (InternalColumn | InternalColumnGroup)[] | null {
+    public getChildren(): (AgColumn | AgColumnGroup)[] | null {
         return this.children;
     }
 
@@ -249,7 +244,7 @@ export class InternalColumnGroup<TValue = any> extends BeanStub implements Colum
         return this.providedColumnGroup.getColumnGroupShow();
     }
 
-    public getProvidedColumnGroup(): InternalProvidedColumnGroup {
+    public getProvidedColumnGroup(): AgProvidedColumnGroup {
         return this.providedColumnGroup;
     }
 
@@ -269,7 +264,7 @@ export class InternalColumnGroup<TValue = any> extends BeanStub implements Colum
 
         // find the column group that is controlling expandable. this is relevant when we have padding (empty)
         // groups, where the expandable is actually the first parent that is not a padding group.
-        let parentWithExpansion: InternalColumnGroup | null = this;
+        let parentWithExpansion: AgColumnGroup | null = this;
         while (parentWithExpansion != null && parentWithExpansion.isPadding()) {
             parentWithExpansion = parentWithExpansion.getParent();
         }
@@ -288,7 +283,7 @@ export class InternalColumnGroup<TValue = any> extends BeanStub implements Colum
         this.children!.forEach((child) => {
             // never add empty groups
             const emptyGroup =
-                child instanceof InternalColumnGroup && (!child.displayedChildren || !child.displayedChildren.length);
+                child instanceof AgColumnGroup && (!child.displayedChildren || !child.displayedChildren.length);
             if (emptyGroup) {
                 return;
             }

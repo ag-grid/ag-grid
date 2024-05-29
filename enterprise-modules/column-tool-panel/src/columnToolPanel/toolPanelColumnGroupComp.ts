@@ -1,4 +1,5 @@
 import type {
+    AgProvidedColumnGroup,
     BeanCollection,
     ColumnEventType,
     ColumnModel,
@@ -8,17 +9,16 @@ import type {
     DragSource,
     IAggFunc,
     ITooltipParams,
-    InternalProvidedColumnGroup,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
     AgCheckbox,
+    AgColumn,
     Component,
     CssClassApplier,
     DragAndDropService,
     DragSourceType,
     Events,
-    InternalColumn,
     KeyCode,
     RefPlaceholder,
     TouchListener,
@@ -64,7 +64,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private eDragHandle: Element;
 
-    private readonly columnGroup: InternalProvidedColumnGroup;
+    private readonly columnGroup: AgProvidedColumnGroup;
     private readonly columnDept: number;
 
     private displayName: string | null;
@@ -134,7 +134,7 @@ export class ToolPanelColumnGroupComp extends Component {
         classes.forEach((c) => this.addOrRemoveCssClass(c, true));
     }
 
-    public getColumns(): InternalColumn[] {
+    public getColumns(): AgColumn[] {
         return this.columnGroup.getLeafColumns();
     }
 
@@ -205,14 +205,10 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private addVisibilityListenersToAllChildren(): void {
         this.columnGroup.getLeafColumns().forEach((column) => {
-            this.addManagedListener(column, InternalColumn.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
-            this.addManagedListener(column, InternalColumn.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
-            this.addManagedListener(column, InternalColumn.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
-            this.addManagedListener(
-                column,
-                InternalColumn.EVENT_ROW_GROUP_CHANGED,
-                this.onColumnStateChanged.bind(this)
-            );
+            this.addManagedListener(column, AgColumn.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
+            this.addManagedListener(column, AgColumn.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
+            this.addManagedListener(column, AgColumn.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
+            this.addManagedListener(column, AgColumn.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
         });
     }
 
@@ -312,8 +308,8 @@ export class ToolPanelColumnGroupComp extends Component {
         this.onChangeCommon(event.selected);
     }
 
-    private getVisibleLeafColumns(): InternalColumn[] {
-        const childColumns: InternalColumn[] = [];
+    private getVisibleLeafColumns(): AgColumn[] {
+        const childColumns: AgColumn[] = [];
 
         const extractCols = (children: ColumnModelItem[]) => {
             children.forEach((child) => {
@@ -417,7 +413,7 @@ export class ToolPanelColumnGroupComp extends Component {
         return colsThatCanAction === 0;
     }
 
-    private isColumnChecked(column: InternalColumn, pivotMode: boolean): boolean {
+    private isColumnChecked(column: AgColumn, pivotMode: boolean): boolean {
         if (pivotMode) {
             const pivoted = column.isPivotActive();
             const grouped = column.isRowGroupActive();

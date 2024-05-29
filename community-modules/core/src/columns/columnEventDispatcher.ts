@@ -1,7 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
-import type { InternalColumn } from '../entities/column';
-import type { InternalProvidedColumnGroup } from '../entities/providedColumnGroup';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type {
     ColumnEvent,
     ColumnEventType,
@@ -44,7 +44,7 @@ export class ColumnEventDispatcher extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public headerHeight(col: InternalColumn): void {
+    public headerHeight(col: AgColumn): void {
         const event: WithoutGridCommon<ColumnEvent> = {
             type: Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED,
             column: col,
@@ -54,7 +54,7 @@ export class ColumnEventDispatcher extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public groupOpened(impactedGroups: InternalProvidedColumnGroup[]): void {
+    public groupOpened(impactedGroups: AgProvidedColumnGroup[]): void {
         const event: WithoutGridCommon<ColumnGroupOpenedEvent> = {
             type: Events.EVENT_COLUMN_GROUP_OPENED,
             columnGroup: impactedGroups.length === 1 ? impactedGroups[0] : undefined,
@@ -63,7 +63,7 @@ export class ColumnEventDispatcher extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public rowGroupChanged(impactedColumns: InternalColumn[], source: ColumnEventType): void {
+    public rowGroupChanged(impactedColumns: AgColumn[], source: ColumnEventType): void {
         const event: WithoutGridCommon<ColumnRowGroupChangedEvent> = {
             type: Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
             columns: impactedColumns,
@@ -74,7 +74,7 @@ export class ColumnEventDispatcher extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public genericColumnEvent(eventType: string, masterList: InternalColumn[], source: ColumnEventType): void {
+    public genericColumnEvent(eventType: string, masterList: AgColumn[], source: ColumnEventType): void {
         const event: WithoutGridCommon<ColumnEvent> = {
             type: eventType,
             columns: masterList,
@@ -117,7 +117,7 @@ export class ColumnEventDispatcher extends BeanStub {
     }
 
     public columnMoved(params: {
-        movedColumns: InternalColumn[];
+        movedColumns: AgColumn[];
         source: ColumnEventType;
         toIndex?: number;
         finished: boolean;
@@ -136,13 +136,13 @@ export class ColumnEventDispatcher extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public columnPinned(changedColumns: InternalColumn[], source: ColumnEventType) {
+    public columnPinned(changedColumns: AgColumn[], source: ColumnEventType) {
         if (!changedColumns.length) {
             return;
         }
 
         // if just one column, we use this, otherwise we don't include the col
-        const column: InternalColumn | null = changedColumns.length === 1 ? changedColumns[0] : null;
+        const column: AgColumn | null = changedColumns.length === 1 ? changedColumns[0] : null;
 
         // only include visible if it's common in all columns
         const pinned = this.getCommonValue(changedColumns, (col) => col.getPinned());
@@ -159,13 +159,13 @@ export class ColumnEventDispatcher extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public columnVisible(changedColumns: InternalColumn[], source: ColumnEventType) {
+    public columnVisible(changedColumns: AgColumn[], source: ColumnEventType) {
         if (!changedColumns.length) {
             return;
         }
 
         // if just one column, we use this, otherwise we don't include the col
-        const column: InternalColumn | null = changedColumns.length === 1 ? changedColumns[0] : null;
+        const column: AgColumn | null = changedColumns.length === 1 ? changedColumns[0] : null;
 
         // only include visible if it's common in all columns
         const visible = this.getCommonValue(changedColumns, (col) => col.isVisible());
@@ -181,7 +181,7 @@ export class ColumnEventDispatcher extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    private getCommonValue<T>(cols: InternalColumn[], valueGetter: (col: InternalColumn) => T): T | undefined {
+    private getCommonValue<T>(cols: AgColumn[], valueGetter: (col: AgColumn) => T): T | undefined {
         if (!cols || cols.length == 0) {
             return undefined;
         }
@@ -198,7 +198,7 @@ export class ColumnEventDispatcher extends BeanStub {
         return firstValue;
     }
 
-    public columnChanged(type: string, columns: InternalColumn[], source: ColumnEventType): void {
+    public columnChanged(type: string, columns: AgColumn[], source: ColumnEventType): void {
         const event: WithoutGridCommon<ColumnValueChangedEvent> = {
             type: type,
             columns: columns,
@@ -209,10 +209,10 @@ export class ColumnEventDispatcher extends BeanStub {
     }
 
     public columnResized(
-        columns: InternalColumn[] | null,
+        columns: AgColumn[] | null,
         finished: boolean,
         source: ColumnEventType,
-        flexColumns: InternalColumn[] | null = null
+        flexColumns: AgColumn[] | null = null
     ): void {
         if (columns && columns.length) {
             const event: WithoutGridCommon<ColumnResizedEvent> = {

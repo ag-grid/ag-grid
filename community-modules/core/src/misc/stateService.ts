@@ -7,7 +7,7 @@ import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { InternalColumn } from '../entities/column';
+import type { AgColumn } from '../entities/agColumn';
 import { Events } from '../eventKeys';
 import type {
     NewColumnsLoadedEvent,
@@ -618,7 +618,7 @@ export class StateService extends BeanStub {
         }
         const cellRanges: CellRange[] = [];
         rangeSelectionState.cellRanges.forEach((cellRange) => {
-            const columns: InternalColumn[] = [];
+            const columns: AgColumn[] = [];
             cellRange.colIds.forEach((colId) => {
                 const column = this.columnModel.getCol(colId);
                 if (column) {

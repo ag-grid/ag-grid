@@ -1,6 +1,6 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import type { InternalColumn } from '../../entities/column';
+import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
 import { Events } from '../../eventKeys';
 import { _areEqual, _last } from '../../utils/array';
@@ -17,10 +17,10 @@ export class CellPositionFeature extends BeanStub {
     private cellCtrl: CellCtrl;
     private eGui: HTMLElement;
 
-    private readonly column: InternalColumn;
+    private readonly column: AgColumn;
     private readonly rowNode: RowNode;
 
-    private colsSpanning: InternalColumn[];
+    private colsSpanning: AgColumn[];
     private rowSpan: number;
 
     private beans: BeanCollection;
@@ -67,7 +67,7 @@ export class CellPositionFeature extends BeanStub {
     }
 
     private onDisplayColumnsChanged(): void {
-        const colsSpanning: InternalColumn[] = this.getColSpanningList();
+        const colsSpanning: AgColumn[] = this.getColSpanningList();
 
         if (!_areEqual(this.colsSpanning, colsSpanning)) {
             this.colsSpanning = colsSpanning;
@@ -117,15 +117,15 @@ export class CellPositionFeature extends BeanStub {
         return this.colsSpanning.reduce((width, col) => width + col.getActualWidth(), 0);
     }
 
-    public getColSpanningList(): InternalColumn[] {
+    public getColSpanningList(): AgColumn[] {
         const colSpan = this.column.getColSpan(this.rowNode);
-        const colsSpanning: InternalColumn[] = [];
+        const colsSpanning: AgColumn[] = [];
 
         // if just one col, the col span is just the column we are in
         if (colSpan === 1) {
             colsSpanning.push(this.column);
         } else {
-            let pointer: InternalColumn | null = this.column;
+            let pointer: AgColumn | null = this.column;
             const pinned = this.column.getPinned();
             for (let i = 0; pointer && i < colSpan; i++) {
                 colsSpanning.push(pointer);
@@ -152,7 +152,7 @@ export class CellPositionFeature extends BeanStub {
     }
 
     private getCellLeft(): number | null {
-        let mostLeftCol: InternalColumn;
+        let mostLeftCol: AgColumn;
 
         if (this.beans.gos.get('enableRtl') && this.colsSpanning) {
             mostLeftCol = _last(this.colsSpanning);

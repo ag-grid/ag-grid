@@ -1,10 +1,10 @@
 import type {
+    AgColumn,
     AgEventListener,
     FuncColsService,
     GridOptionsService,
     IClientSideRowModel,
     IEventEmitter,
-    InternalColumn,
     RowNode,
     SetFilterModelValue,
     SetFilterParams,
@@ -214,7 +214,7 @@ export class SetValueModel<V> implements IEventEmitter {
                   valueService,
                   valueFormatter,
                   this.formatter,
-                  column as InternalColumn
+                  column as AgColumn
               ) as any);
 
         this.updateAllValues().then((updatedKeys) => this.resetSelectionState(updatedKeys || []));

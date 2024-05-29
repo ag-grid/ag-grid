@@ -2,8 +2,8 @@ import type { VisibleColsService } from './columns/visibleColsService';
 import { KeyCode } from './constants/keyCode';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection, BeanName } from './context/context';
+import type { AgColumn } from './entities/agColumn';
 import type { CellPosition } from './entities/cellPositionUtils';
-import type { InternalColumn } from './entities/column';
 import type { RowNode } from './entities/rowNode';
 import type { RowPosition } from './entities/rowPositionUtils';
 import type { IRowModel } from './interfaces/iRowModel';
@@ -50,12 +50,12 @@ export class CellNavigationService extends BeanStub {
         const downKey = key === KeyCode.DOWN;
         const leftKey = key === KeyCode.LEFT;
 
-        let column: InternalColumn;
+        let column: AgColumn;
         let rowIndex: number;
 
         if (upKey || downKey) {
             rowIndex = upKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
-            column = focusedCell.column as InternalColumn;
+            column = focusedCell.column as AgColumn;
         } else {
             const allColumns = this.visibleColsService.getAllCols();
             const isRtl = this.gos.get('enableRtl');
@@ -118,7 +118,7 @@ export class CellNavigationService extends BeanStub {
     }
 
     private isCellGoodToFocusOn(gridCell: CellPosition): boolean {
-        const column = gridCell.column as InternalColumn;
+        const column = gridCell.column as AgColumn;
         let rowNode: RowNode | undefined;
 
         switch (gridCell.rowPinned) {
@@ -146,7 +146,7 @@ export class CellNavigationService extends BeanStub {
             return null;
         }
 
-        const colToLeft = this.visibleColsService.getColBefore(lastCell.column as InternalColumn);
+        const colToLeft = this.visibleColsService.getColBefore(lastCell.column as AgColumn);
         if (!colToLeft) {
             return null;
         }
@@ -163,7 +163,7 @@ export class CellNavigationService extends BeanStub {
             return null;
         }
 
-        const colToRight = this.visibleColsService.getColAfter(lastCell.column as InternalColumn);
+        const colToRight = this.visibleColsService.getColAfter(lastCell.column as AgColumn);
         // if already on right, do nothing
         if (!colToRight) {
             return null;
@@ -366,7 +366,7 @@ export class CellNavigationService extends BeanStub {
         let newFloating: string | null | undefined = gridCell.rowPinned;
 
         // move along to the next cell
-        let newColumn = this.visibleColsService.getColAfter(gridCell.column as InternalColumn);
+        let newColumn = this.visibleColsService.getColAfter(gridCell.column as AgColumn);
 
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {
@@ -397,7 +397,7 @@ export class CellNavigationService extends BeanStub {
         let newFloating: string | null | undefined = gridCell.rowPinned;
 
         // move along to the next cell
-        let newColumn = this.visibleColsService.getColBefore(gridCell.column as InternalColumn);
+        let newColumn = this.visibleColsService.getColBefore(gridCell.column as AgColumn);
 
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {

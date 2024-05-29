@@ -1,11 +1,11 @@
 import type {
     AbstractColDef,
+    AgColumn,
     AgComponentSelector,
+    AgProvidedColumnGroup,
     BeanCollection,
     ColumnModel,
     FiltersToolPanelState,
-    InternalColumn,
-    InternalProvidedColumnGroup,
 } from '@ag-grid-community/core';
 import {
     Component,
@@ -125,7 +125,7 @@ export class AgFiltersToolPanelList extends Component {
         this.recreateFilters(columnTree);
     }
 
-    private recreateFilters(columnTree: (InternalColumn | InternalProvidedColumnGroup)[]): void {
+    private recreateFilters(columnTree: (AgColumn | AgProvidedColumnGroup)[]): void {
         // Underlying filter comp/element won't get recreated if the column still exists (the element just gets detached/re-attached).
         // We can therefore restore focus if an element in the filter tool panel was focused.
         const activeElement = this.gos.getActiveDomElement() as HTMLElement;
@@ -169,7 +169,7 @@ export class AgFiltersToolPanelList extends Component {
     }
 
     private recursivelyAddComps(
-        tree: (InternalColumn | InternalProvidedColumnGroup)[],
+        tree: (AgColumn | AgProvidedColumnGroup)[],
         depth: number,
         expansionState: Map<string, boolean>
     ): (ToolPanelFilterGroupComp | ToolPanelFilterComp)[] {
@@ -229,7 +229,7 @@ export class AgFiltersToolPanelList extends Component {
     }
 
     private recursivelyAddFilterGroupComps(
-        columnGroup: InternalProvidedColumnGroup,
+        columnGroup: AgProvidedColumnGroup,
         depth: number,
         expansionState: Map<string, boolean>
     ): (ToolPanelFilterGroupComp | ToolPanelFilterComp)[] | undefined {
@@ -269,7 +269,7 @@ export class AgFiltersToolPanelList extends Component {
         return [filterGroupComp];
     }
 
-    private filtersExistInChildren(tree: (InternalColumn | InternalProvidedColumnGroup)[]): boolean {
+    private filtersExistInChildren(tree: (AgColumn | AgProvidedColumnGroup)[]): boolean {
         return tree.some((child) => {
             if (isProvidedColumnGroup(child)) {
                 return this.filtersExistInChildren(child.getChildren());
@@ -279,7 +279,7 @@ export class AgFiltersToolPanelList extends Component {
         });
     }
 
-    private shouldDisplayFilter(column: InternalColumn) {
+    private shouldDisplayFilter(column: AgColumn) {
         const suppressFiltersToolPanel = column.getColDef() && column.getColDef().suppressFiltersToolPanel;
         return column.isFilterAllowed() && !suppressFiltersToolPanel;
     }

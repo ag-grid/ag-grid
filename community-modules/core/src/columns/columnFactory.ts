@@ -1,9 +1,9 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
+import { AgColumn } from '../entities/agColumn';
+import { AgProvidedColumnGroup, isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import { InternalColumn } from '../entities/column';
 import { DefaultColumnTypes } from '../entities/defaultColumnTypes';
-import { InternalProvidedColumnGroup, isProvidedColumnGroup } from '../entities/providedColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { Logger } from '../logger';
 import { _warnOnce } from '../utils/function';
@@ -29,9 +29,9 @@ export class ColumnFactory extends BeanStub {
     public createColumnTree(
         defs: (ColDef | ColGroupDef)[] | null,
         primaryColumns: boolean,
-        existingTree: (InternalColumn | InternalProvidedColumnGroup)[] | undefined,
+        existingTree: (AgColumn | AgProvidedColumnGroup)[] | undefined,
         source: ColumnEventType
-    ): { columnTree: (InternalColumn | InternalProvidedColumnGroup)[]; treeDept: number } {
+    ): { columnTree: (AgColumn | AgProvidedColumnGroup)[]; treeDept: number } {
         // column key creator dishes out unique column id's in a deterministic way,
         // so if we have two grids (that could be master/slave) with same column definitions,
         // then this ensures the two grids use identical id's.
@@ -54,10 +54,7 @@ export class ColumnFactory extends BeanStub {
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
         const columnTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
 
-        const deptFirstCallback = (
-            child: InternalColumn | InternalProvidedColumnGroup,
-            parent: InternalProvidedColumnGroup
-        ) => {
+        const deptFirstCallback = (child: AgColumn | AgProvidedColumnGroup, parent: AgProvidedColumnGroup) => {
             if (isProvidedColumnGroup(child)) {
                 child.setupExpandable();
             }
@@ -74,17 +71,17 @@ export class ColumnFactory extends BeanStub {
         };
     }
 
-    private extractExistingTreeData(existingTree?: (InternalColumn | InternalProvidedColumnGroup)[]): {
-        existingCols: InternalColumn[];
-        existingGroups: InternalProvidedColumnGroup[];
+    private extractExistingTreeData(existingTree?: (AgColumn | AgProvidedColumnGroup)[]): {
+        existingCols: AgColumn[];
+        existingGroups: AgProvidedColumnGroup[];
         existingColKeys: string[];
     } {
-        const existingCols: InternalColumn[] = [];
-        const existingGroups: InternalProvidedColumnGroup[] = [];
+        const existingCols: AgColumn[] = [];
+        const existingGroups: AgProvidedColumnGroup[] = [];
         const existingColKeys: string[] = [];
 
         if (existingTree) {
-            depthFirstOriginalTreeSearch(null, existingTree, (item: InternalColumn | InternalProvidedColumnGroup) => {
+            depthFirstOriginalTreeSearch(null, existingTree, (item: AgColumn | AgProvidedColumnGroup) => {
                 if (isProvidedColumnGroup(item)) {
                     const group = item;
                     existingGroups.push(group);
@@ -100,18 +97,18 @@ export class ColumnFactory extends BeanStub {
     }
 
     public createForAutoGroups(
-        autoGroupCols: InternalColumn[],
-        liveTree: (InternalColumn | InternalProvidedColumnGroup)[]
-    ): [(InternalColumn | InternalProvidedColumnGroup)[], number] {
-        const tree: (InternalColumn | InternalProvidedColumnGroup)[] = [];
+        autoGroupCols: AgColumn[],
+        liveTree: (AgColumn | AgProvidedColumnGroup)[]
+    ): [(AgColumn | AgProvidedColumnGroup)[], number] {
+        const tree: (AgColumn | AgProvidedColumnGroup)[] = [];
         const dept = this.findDepth(liveTree);
 
         autoGroupCols.forEach((col) => {
             // at the end, this will be the top of the tree item.
-            let nextChild: InternalColumn | InternalProvidedColumnGroup = col;
+            let nextChild: AgColumn | AgProvidedColumnGroup = col;
 
             for (let i = dept - 1; i >= 0; i--) {
-                const autoGroup = new InternalProvidedColumnGroup(null, `FAKE_PATH_${col.getId()}}_${i}`, true, i);
+                const autoGroup = new AgProvidedColumnGroup(null, `FAKE_PATH_${col.getId()}}_${i}`, true, i);
                 this.createBean(autoGroup);
                 autoGroup.setChildren([nextChild]);
                 nextChild.setOriginalParent(autoGroup);
@@ -129,24 +126,24 @@ export class ColumnFactory extends BeanStub {
         return [tree, dept];
     }
 
-    private findDepth(balancedColumnTree: (InternalColumn | InternalProvidedColumnGroup)[]): number {
+    private findDepth(balancedColumnTree: (AgColumn | AgProvidedColumnGroup)[]): number {
         let dept = 0;
         let pointer = balancedColumnTree;
 
         while (pointer && pointer[0] && isProvidedColumnGroup(pointer[0])) {
             dept++;
-            pointer = (pointer[0] as InternalProvidedColumnGroup).getChildren();
+            pointer = (pointer[0] as AgProvidedColumnGroup).getChildren();
         }
         return dept;
     }
 
     private balanceColumnTree(
-        unbalancedTree: (InternalColumn | InternalProvidedColumnGroup)[],
+        unbalancedTree: (AgColumn | AgProvidedColumnGroup)[],
         currentDept: number,
         columnDept: number,
         columnKeyCreator: ColumnKeyCreator
-    ): (InternalColumn | InternalProvidedColumnGroup)[] {
-        const result: (InternalColumn | InternalProvidedColumnGroup)[] = [];
+    ): (AgColumn | AgProvidedColumnGroup)[] {
+        const result: (AgColumn | AgProvidedColumnGroup)[] = [];
 
         // go through each child, for groups, recurse a level deeper,
         // for columns we need to pad
@@ -165,15 +162,15 @@ export class ColumnFactory extends BeanStub {
                 result.push(originalGroup);
             } else {
                 // child is a column - so here we add in the padded column groups if needed
-                let firstPaddedGroup: InternalProvidedColumnGroup | undefined;
-                let currentPaddedGroup: InternalProvidedColumnGroup | undefined;
+                let firstPaddedGroup: AgProvidedColumnGroup | undefined;
+                let currentPaddedGroup: AgProvidedColumnGroup | undefined;
 
                 // this for loop will NOT run any loops if no padded column groups are needed
                 for (let j = columnDept - 1; j >= currentDept; j--) {
                     const newColId = columnKeyCreator.getUniqueKey(null, null);
                     const colGroupDefMerged = this.createMergedColGroupDef(null);
 
-                    const paddedGroup = new InternalProvidedColumnGroup(colGroupDefMerged, newColId, true, currentDept);
+                    const paddedGroup = new AgProvidedColumnGroup(colGroupDefMerged, newColId, true, currentDept);
                     this.createBean(paddedGroup);
 
                     if (currentPaddedGroup) {
@@ -208,7 +205,7 @@ export class ColumnFactory extends BeanStub {
         return result;
     }
 
-    private findMaxDept(treeChildren: (InternalColumn | InternalProvidedColumnGroup)[], dept: number): number {
+    private findMaxDept(treeChildren: (AgColumn | AgProvidedColumnGroup)[], dept: number): number {
         let maxDeptThisLevel = dept;
 
         for (let i = 0; i < treeChildren.length; i++) {
@@ -229,11 +226,11 @@ export class ColumnFactory extends BeanStub {
         defs: (ColDef | ColGroupDef)[] | null,
         level: number,
         primaryColumns: boolean,
-        existingColsCopy: InternalColumn[],
+        existingColsCopy: AgColumn[],
         columnKeyCreator: ColumnKeyCreator,
-        existingGroups: InternalProvidedColumnGroup[],
+        existingGroups: AgProvidedColumnGroup[],
         source: ColumnEventType
-    ): (InternalColumn | InternalProvidedColumnGroup)[] {
+    ): (AgColumn | AgProvidedColumnGroup)[] {
         if (!defs) return [];
 
         const result = new Array(defs.length);
@@ -266,14 +263,14 @@ export class ColumnFactory extends BeanStub {
         primaryColumns: boolean,
         colGroupDef: ColGroupDef,
         level: number,
-        existingColumns: InternalColumn[],
+        existingColumns: AgColumn[],
         columnKeyCreator: ColumnKeyCreator,
-        existingGroups: InternalProvidedColumnGroup[],
+        existingGroups: AgProvidedColumnGroup[],
         source: ColumnEventType
-    ): InternalProvidedColumnGroup {
+    ): AgProvidedColumnGroup {
         const colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
         const groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId || null, null);
-        const providedGroup = new InternalProvidedColumnGroup(colGroupDefMerged, groupId, false, level);
+        const providedGroup = new AgProvidedColumnGroup(colGroupDefMerged, groupId, false, level);
         this.createBean(providedGroup);
         const existingGroupAndIndex = this.findExistingGroup(colGroupDef, existingGroups);
         // make sure we remove, so if user provided duplicate id, then we don't have more than
@@ -313,10 +310,10 @@ export class ColumnFactory extends BeanStub {
     private createColumn(
         primaryColumns: boolean,
         colDef: ColDef,
-        existingColsCopy: InternalColumn[] | null,
+        existingColsCopy: AgColumn[] | null,
         columnKeyCreator: ColumnKeyCreator,
         source: ColumnEventType
-    ): InternalColumn {
+    ): AgColumn {
         // see if column already exists
         const existingColAndIndex = this.findExistingColumn(colDef, existingColsCopy);
 
@@ -331,7 +328,7 @@ export class ColumnFactory extends BeanStub {
             // no existing column, need to create one
             const colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
             const colDefMerged = this.addColumnDefaultAndTypes(colDef, colId);
-            column = new InternalColumn(colDefMerged, colDef, colId, primaryColumns);
+            column = new AgColumn(colDefMerged, colDef, colId, primaryColumns);
             this.context.createBean(column);
         } else {
             const colDefMerged = this.addColumnDefaultAndTypes(colDef, column.getColId());
@@ -344,7 +341,7 @@ export class ColumnFactory extends BeanStub {
         return column;
     }
 
-    public applyColumnState(column: InternalColumn, colDef: ColDef, source: ColumnEventType): void {
+    public applyColumnState(column: AgColumn, colDef: ColDef, source: ColumnEventType): void {
         // flex
         const flex = _attrToNumber(colDef.flex);
         if (flex !== undefined) {
@@ -395,8 +392,8 @@ export class ColumnFactory extends BeanStub {
 
     private findExistingColumn(
         newColDef: ColDef,
-        existingColsCopy: InternalColumn[] | null
-    ): { idx: number; column: InternalColumn } | undefined {
+        existingColsCopy: AgColumn[] | null
+    ): { idx: number; column: AgColumn } | undefined {
         if (!existingColsCopy) return undefined;
 
         for (let i = 0; i < existingColsCopy.length; i++) {
@@ -428,8 +425,8 @@ export class ColumnFactory extends BeanStub {
 
     private findExistingGroup(
         newGroupDef: ColGroupDef,
-        existingGroups: InternalProvidedColumnGroup[]
-    ): { idx: number; group: InternalProvidedColumnGroup } | undefined {
+        existingGroups: AgProvidedColumnGroup[]
+    ): { idx: number; group: AgProvidedColumnGroup } | undefined {
         const newHasId = newGroupDef.groupId != null;
         if (!newHasId) {
             return undefined;
@@ -526,12 +523,9 @@ export class ColumnFactory extends BeanStub {
 }
 
 export function depthFirstOriginalTreeSearch(
-    parent: InternalProvidedColumnGroup | null,
-    tree: (InternalColumn | InternalProvidedColumnGroup)[],
-    callback: (
-        treeNode: InternalColumn | InternalProvidedColumnGroup,
-        parent: InternalProvidedColumnGroup | null
-    ) => void
+    parent: AgProvidedColumnGroup | null,
+    tree: (AgColumn | AgProvidedColumnGroup)[],
+    callback: (treeNode: AgColumn | AgProvidedColumnGroup, parent: AgProvidedColumnGroup | null) => void
 ): void {
     if (!tree) {
         return;

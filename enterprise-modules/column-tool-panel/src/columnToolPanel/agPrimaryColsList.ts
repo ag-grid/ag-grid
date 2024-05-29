@@ -1,14 +1,14 @@
 import type {
     AbstractColDef,
+    AgColumn,
     AgComponentSelector,
+    AgProvidedColumnGroup,
     BeanCollection,
     ColGroupDef,
     ColumnEventType,
     ColumnModel,
     ColumnNameService,
     ColumnToolPanelState,
-    InternalColumn,
-    InternalProvidedColumnGroup,
     VirtualListModel,
 } from '@ag-grid-community/core';
 import {
@@ -272,7 +272,7 @@ export class AgPrimaryColsList extends Component {
         this.groupsExist = this.columnModel.isProvidedColGroupsPresent();
     }
 
-    private buildListModel(columnTree: (InternalColumn | InternalProvidedColumnGroup)[]): void {
+    private buildListModel(columnTree: (AgColumn | AgProvidedColumnGroup)[]): void {
         const columnExpandedListener = this.onColumnExpanded.bind(this);
         const addListeners = (item: ColumnModelItem) => {
             item.addEventListener(ColumnModelItem.EVENT_EXPANDED_CHANGED, columnExpandedListener);
@@ -285,7 +285,7 @@ export class AgPrimaryColsList extends Component {
         };
 
         const recursivelyBuild = (
-            tree: (InternalColumn | InternalProvidedColumnGroup)[],
+            tree: (AgColumn | AgProvidedColumnGroup)[],
             dept: number,
             parentList: ColumnModelItem[]
         ): void => {
@@ -299,7 +299,7 @@ export class AgPrimaryColsList extends Component {
         };
 
         const createGroupItem = (
-            columnGroup: InternalProvidedColumnGroup,
+            columnGroup: AgProvidedColumnGroup,
             dept: number,
             parentList: ColumnModelItem[]
         ): void => {
@@ -333,7 +333,7 @@ export class AgPrimaryColsList extends Component {
             recursivelyBuild(columnGroup.getChildren(), dept + 1, item.getChildren());
         };
 
-        const createColumnItem = (column: InternalColumn, dept: number, parentList: ColumnModelItem[]): void => {
+        const createColumnItem = (column: AgColumn, dept: number, parentList: ColumnModelItem[]): void => {
             const skipThisColumn = column.getColDef() && column.getColDef().suppressColumnsToolPanel;
 
             if (skipThisColumn) {

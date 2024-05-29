@@ -1,11 +1,11 @@
 import type {
+    AgColumn,
+    AgProvidedColumnGroup,
     BeanCollection,
     ColumnModel,
     ColumnNameService,
     FocusService,
     FuncColsService,
-    InternalColumn,
-    InternalProvidedColumnGroup,
     MenuItemDef,
     PopupService,
 } from '@ag-grid-community/core';
@@ -15,8 +15,8 @@ import { AgMenuItemComponent, AgMenuList } from '@ag-grid-enterprise/core';
 type MenuItemName = 'rowGroup' | 'value' | 'pivot';
 
 type MenuItemProperty = {
-    allowedFunction: (col: InternalColumn) => boolean;
-    activeFunction: (col: InternalColumn) => boolean;
+    allowedFunction: (col: AgColumn) => boolean;
+    activeFunction: (col: AgColumn) => boolean;
     activateLabel: (name: string) => string;
     deactivateLabel: (name: string) => string;
     activateFunction: () => void;
@@ -41,7 +41,7 @@ export class ToolPanelContextMenu extends Component {
         this.focusService = beans.focusService;
     }
 
-    private columns: InternalColumn[];
+    private columns: AgColumn[];
     private allowGrouping: boolean;
     private allowValues: boolean;
     private allowPivoting: boolean;
@@ -49,7 +49,7 @@ export class ToolPanelContextMenu extends Component {
     private displayName: string | null = null;
 
     constructor(
-        private readonly column: InternalColumn | InternalProvidedColumnGroup,
+        private readonly column: AgColumn | AgProvidedColumnGroup,
         private readonly mouseEvent: MouseEvent,
         private readonly parentEl: HTMLElement
     ) {
@@ -81,7 +81,7 @@ export class ToolPanelContextMenu extends Component {
         }
     }
 
-    private initializeProperties(column: InternalColumn | InternalProvidedColumnGroup): void {
+    private initializeProperties(column: AgColumn | AgProvidedColumnGroup): void {
         if (isProvidedColumnGroup(column)) {
             this.columns = column.getLeafColumns();
         } else {
@@ -155,11 +155,11 @@ export class ToolPanelContextMenu extends Component {
         });
     }
 
-    private addColumnsToList(columnList: InternalColumn[]): InternalColumn[] {
+    private addColumnsToList(columnList: AgColumn[]): AgColumn[] {
         return [...columnList].concat(this.columns.filter((col) => columnList.indexOf(col) === -1));
     }
 
-    private removeColumnsFromList(columnList: InternalColumn[]): InternalColumn[] {
+    private removeColumnsFromList(columnList: AgColumn[]): AgColumn[] {
         return columnList.filter((col) => this.columns.indexOf(col) === -1);
     }
 

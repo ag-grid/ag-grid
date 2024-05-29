@@ -1,4 +1,4 @@
-import type { InternalColumn } from '../../entities/column';
+import type { AgColumn } from '../../entities/agColumn';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
 import { PopupComponent } from '../../widgets/popupComponent';
@@ -19,7 +19,7 @@ export class PopupEditorWrapper extends PopupComponent {
         const eGui = this.getGui();
         const params = this.params;
         const listener = (event: KeyboardEvent) => {
-            if (!_isUserSuppressingKeyboardEvent(this.gos, event, params.node, params.column as InternalColumn, true)) {
+            if (!_isUserSuppressingKeyboardEvent(this.gos, event, params.node, params.column as AgColumn, true)) {
                 params.onKeyDown(event);
             }
         };

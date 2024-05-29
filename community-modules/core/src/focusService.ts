@@ -3,9 +3,9 @@ import type { VisibleColsService } from './columns/visibleColsService';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection, BeanName } from './context/context';
 import type { CtrlsService } from './ctrlsService';
+import type { AgColumn } from './entities/agColumn';
+import type { AgColumnGroup } from './entities/agColumnGroup';
 import type { CellPosition, CellPositionUtils } from './entities/cellPositionUtils';
-import type { InternalColumn } from './entities/column';
-import type { InternalColumnGroup } from './entities/columnGroup';
 import type { RowNode } from './entities/rowNode';
 import type { RowPositionUtils } from './entities/rowPositionUtils';
 import type { CellFocusClearedEvent, CellFocusedEvent, CellFocusedParams, CommonCellFocusParams } from './events';
@@ -71,7 +71,7 @@ export class FocusService extends BeanStub {
     private restoredFocusedCellPosition: CellPosition | null;
     private focusedHeaderPosition: HeaderPosition | null;
     /** the column that had focus before it moved into the advanced filter */
-    private advancedFilterFocusColumn: InternalColumn | undefined;
+    private advancedFilterFocusColumn: AgColumn | undefined;
 
     private static keyboardModeActive: boolean = false;
     private static instanceCount: number = 0;
@@ -352,7 +352,7 @@ export class FocusService extends BeanStub {
         return this.focusedHeaderPosition;
     }
 
-    public setFocusedHeader(headerRowIndex: number, column: InternalColumnGroup | InternalColumn): void {
+    public setFocusedHeader(headerRowIndex: number, column: AgColumnGroup | AgColumn): void {
         this.focusedHeaderPosition = { headerRowIndex, column };
     }
 
@@ -489,17 +489,17 @@ export class FocusService extends BeanStub {
             if (this.filterManager.isAdvancedFilterHeaderActive()) {
                 return this.focusAdvancedFilter(headerPosition);
             }
-            return this.focusGridView(headerPosition.column as InternalColumn);
+            return this.focusGridView(headerPosition.column as AgColumn);
         }
 
-        this.headerNavigationService.scrollToColumn(headerPosition.column as InternalColumn, direction);
+        this.headerNavigationService.scrollToColumn(headerPosition.column as AgColumn, direction);
 
         const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl(headerPosition.column.getPinned());
 
         // this will automatically call the setFocusedHeader method above
         const focusSuccess = headerRowContainerCtrl.focusHeader(
             headerPosition.headerRowIndex,
-            headerPosition.column as InternalColumn,
+            headerPosition.column as AgColumn,
             event
         );
 
@@ -511,7 +511,7 @@ export class FocusService extends BeanStub {
     }
 
     public focusFirstHeader(): boolean {
-        let firstColumn: InternalColumn | InternalColumnGroup = this.visibleColsService.getAllCols()[0];
+        let firstColumn: AgColumn | AgColumnGroup = this.visibleColsService.getAllCols()[0];
         if (!firstColumn) {
             return false;
         }
@@ -687,7 +687,7 @@ export class FocusService extends BeanStub {
         return node;
     }
 
-    public focusGridView(column?: InternalColumn, backwards?: boolean): boolean {
+    public focusGridView(column?: AgColumn, backwards?: boolean): boolean {
         // if suppressCellFocus is `true`, it means the user does not want to
         // navigate between the cells using tab. Instead, we put focus on either
         // the header or after the grid, depending on whether tab or shift-tab was pressed.
@@ -712,7 +712,7 @@ export class FocusService extends BeanStub {
         const focusedHeader = this.getFocusedHeader();
 
         if (!column && focusedHeader) {
-            column = focusedHeader.column as InternalColumn;
+            column = focusedHeader.column as AgColumn;
         }
 
         if (rowIndex == null || !column) {
@@ -746,7 +746,7 @@ export class FocusService extends BeanStub {
     }
 
     private focusAdvancedFilter(position: HeaderPosition | null): boolean {
-        this.advancedFilterFocusColumn = position?.column as InternalColumn | undefined;
+        this.advancedFilterFocusColumn = position?.column as AgColumn | undefined;
         return this.advancedFilterService?.getCtrl().focusHeaderComp() ?? false;
     }
 

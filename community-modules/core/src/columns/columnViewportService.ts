@@ -1,7 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
-import { type InternalColumn, isColumn } from '../entities/column';
-import type { InternalColumnGroup } from '../entities/columnGroup';
+import { type AgColumn, isColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import { _exists } from '../utils/generic';
@@ -24,18 +24,18 @@ export class ColumnViewportService extends BeanStub {
     }
 
     // cols in center that are in the viewport
-    private colsWithinViewport: InternalColumn[] = [];
+    private colsWithinViewport: AgColumn[] = [];
     // same as colsWithinViewport, except we always include columns with headerAutoHeight
-    private headerColsWithinViewport: InternalColumn[] = [];
+    private headerColsWithinViewport: AgColumn[] = [];
 
     // A hash key to keep track of changes in viewport columns
     private colsWithinViewportHash: string = '';
 
     // all columns & groups to be rendered, index by row.
     // used by header rows to get all items to render for that row.
-    private rowsOfHeadersToRenderLeft: { [row: number]: (InternalColumn | InternalColumnGroup)[] } = {};
-    private rowsOfHeadersToRenderRight: { [row: number]: (InternalColumn | InternalColumnGroup)[] } = {};
-    private rowsOfHeadersToRenderCenter: { [row: number]: (InternalColumn | InternalColumnGroup)[] } = {};
+    private rowsOfHeadersToRenderLeft: { [row: number]: (AgColumn | AgColumnGroup)[] } = {};
+    private rowsOfHeadersToRenderRight: { [row: number]: (AgColumn | AgColumnGroup)[] } = {};
+    private rowsOfHeadersToRenderCenter: { [row: number]: (AgColumn | AgColumnGroup)[] } = {};
 
     private scrollWidth: number;
     private scrollPosition: number;
@@ -78,8 +78,8 @@ export class ColumnViewportService extends BeanStub {
         }
     }
 
-    public getHeadersToRender(type: ColumnPinnedType, dept: number): (InternalColumn | InternalColumnGroup)[] {
-        let result: (InternalColumn | InternalColumnGroup)[];
+    public getHeadersToRender(type: ColumnPinnedType, dept: number): (AgColumn | AgColumnGroup)[] {
+        let result: (AgColumn | AgColumnGroup)[];
 
         switch (type) {
             case 'left':
@@ -122,7 +122,7 @@ export class ColumnViewportService extends BeanStub {
         this.colsWithinViewportHash = '';
     }
 
-    private isColumnInHeaderViewport(col: InternalColumn): boolean {
+    private isColumnInHeaderViewport(col: AgColumn): boolean {
         // for headers, we never filter out autoHeaderHeight columns, if calculating
         if (col.isAutoHeaderHeight()) {
             return true;
@@ -131,7 +131,7 @@ export class ColumnViewportService extends BeanStub {
         return this.isColumnInRowViewport(col);
     }
 
-    private isColumnInRowViewport(col: InternalColumn): boolean {
+    private isColumnInRowViewport(col: AgColumn): boolean {
         // we never filter out autoHeight columns, as we need them in the DOM for calculating Auto Height
         if (col.isAutoHeight()) {
             return true;
@@ -154,7 +154,7 @@ export class ColumnViewportService extends BeanStub {
     }
 
     // used by Grid API only
-    public getViewportColumns(): InternalColumn[] {
+    public getViewportColumns(): AgColumn[] {
         const leftCols = this.visibleColsService.getLeftCols();
         const rightCols = this.visibleColsService.getRightCols();
         const res = this.colsWithinViewport.concat(leftCols).concat(rightCols);
@@ -165,12 +165,12 @@ export class ColumnViewportService extends BeanStub {
     // if we are not column spanning, this just returns back the virtual centre columns,
     // however if we are column spanning, then different rows can have different virtual
     // columns, so we have to work out the list for each individual row.
-    public getColsWithinViewport(rowNode: RowNode): InternalColumn[] {
+    public getColsWithinViewport(rowNode: RowNode): AgColumn[] {
         if (!this.columnModel.isColSpanActive()) {
             return this.colsWithinViewport;
         }
 
-        const emptySpaceBeforeColumn = (col: InternalColumn) => {
+        const emptySpaceBeforeColumn = (col: AgColumn) => {
             const left = col.getLeft();
 
             return _exists(left) && left > this.viewportLeft;
@@ -217,8 +217,8 @@ export class ColumnViewportService extends BeanStub {
         allRenderedCols.forEach((col) => (renderedColIds[col.getId()] = true));
 
         const testGroup = (
-            children: (InternalColumn | InternalColumnGroup)[],
-            result: { [row: number]: (InternalColumn | InternalColumnGroup)[] },
+            children: (AgColumn | AgColumnGroup)[],
+            result: { [row: number]: (AgColumn | AgColumnGroup)[] },
             dept: number
         ): boolean => {
             let returnValue = false;
@@ -233,7 +233,7 @@ export class ColumnViewportService extends BeanStub {
                     addThisItem = renderedColIds[child.getId()] === true;
                 } else {
                     // if group, base decision on children
-                    const columnGroup = child as InternalColumnGroup;
+                    const columnGroup = child as AgColumnGroup;
                     const displayedChildren = columnGroup.getDisplayedChildren();
 
                     if (displayedChildren) {
@@ -258,7 +258,7 @@ export class ColumnViewportService extends BeanStub {
     }
 
     private extractViewport(): boolean {
-        const hashColumn = (c: InternalColumn) => `${c.getId()}-${c.getPinned() || 'normal'}`;
+        const hashColumn = (c: AgColumn) => `${c.getId()}-${c.getPinned() || 'normal'}`;
 
         this.extractViewportColumns();
         const newHash = this.getViewportColumns().map(hashColumn).join('#');

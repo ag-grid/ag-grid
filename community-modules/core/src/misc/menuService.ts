@@ -1,7 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { InternalColumn } from '../entities/column';
+import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { FilterManager } from '../filter/filterManager';
 import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
@@ -112,15 +112,11 @@ export class MenuService extends BeanStub {
         this.showColumnMenuCommon(menuFactory, params, params.containerType, true);
     }
 
-    public showHeaderContextMenu(
-        column: InternalColumn | undefined,
-        mouseEvent?: MouseEvent,
-        touchEvent?: TouchEvent
-    ): void {
+    public showHeaderContextMenu(column: AgColumn | undefined, mouseEvent?: MouseEvent, touchEvent?: TouchEvent): void {
         this.activeMenuFactory.showMenuAfterContextMenuEvent(column, mouseEvent, touchEvent);
     }
 
-    public getContextMenuPosition(rowNode?: RowNode | null, column?: InternalColumn | null): { x: number; y: number } {
+    public getContextMenuPosition(rowNode?: RowNode | null, column?: AgColumn | null): { x: number; y: number } {
         const rowCtrl = this.getRowCtrl(rowNode);
         const eGui = this.getCellGui(rowCtrl, column);
 
@@ -141,7 +137,7 @@ export class MenuService extends BeanStub {
 
     public showContextMenu(params: EventShowContextMenuParams & { anchorToElement?: HTMLElement }): void {
         const { rowNode } = params;
-        const column = params.column as InternalColumn | null | undefined;
+        const column = params.column as AgColumn | null | undefined;
         let { anchorToElement, value } = params;
 
         if (rowNode && column && value == null) {
@@ -177,7 +173,7 @@ export class MenuService extends BeanStub {
         this.columnChooserFactory?.hideActiveColumnChooser();
     }
 
-    public isColumnMenuInHeaderEnabled(column: InternalColumn): boolean {
+    public isColumnMenuInHeaderEnabled(column: AgColumn): boolean {
         const { suppressMenu, suppressHeaderMenuButton } = column.getColDef();
         const isSuppressMenuButton = suppressHeaderMenuButton ?? suppressMenu;
         return (
@@ -187,11 +183,11 @@ export class MenuService extends BeanStub {
         );
     }
 
-    public isFilterMenuInHeaderEnabled(column: InternalColumn): boolean {
+    public isFilterMenuInHeaderEnabled(column: AgColumn): boolean {
         return !column.getColDef().suppressHeaderFilterButton && this.filterManager.isFilterAllowed(column);
     }
 
-    public isHeaderContextMenuEnabled(column?: InternalColumn): boolean {
+    public isHeaderContextMenuEnabled(column?: AgColumn): boolean {
         return !column?.getColDef().suppressHeaderContextMenu && this.getColumnMenuType() === 'new';
     }
 
@@ -211,7 +207,7 @@ export class MenuService extends BeanStub {
         return !onIpadAndMenuHides;
     }
 
-    public isHeaderFilterButtonEnabled(column: InternalColumn): boolean {
+    public isHeaderFilterButtonEnabled(column: AgColumn): boolean {
         return (
             this.isFilterMenuInHeaderEnabled(column) &&
             !this.isLegacyMenuEnabled() &&
@@ -219,7 +215,7 @@ export class MenuService extends BeanStub {
         );
     }
 
-    public isFilterMenuItemEnabled(column: InternalColumn): boolean {
+    public isFilterMenuItemEnabled(column: AgColumn): boolean {
         return (
             this.filterManager.isFilterAllowed(column) &&
             !this.isLegacyMenuEnabled() &&
@@ -240,7 +236,7 @@ export class MenuService extends BeanStub {
         return this.getColumnMenuType() === 'legacy';
     }
 
-    public isFloatingFilterButtonEnabled(column: InternalColumn): boolean {
+    public isFloatingFilterButtonEnabled(column: AgColumn): boolean {
         const colDef = column.getColDef();
         const legacySuppressFilterButton = colDef.floatingFilterComponentParams?.suppressFilterButton;
         if (legacySuppressFilterButton != null) {
@@ -257,7 +253,7 @@ export class MenuService extends BeanStub {
         return this.gos.get('columnMenu');
     }
 
-    private isFloatingFilterButtonDisplayed(column: InternalColumn): boolean {
+    private isFloatingFilterButtonDisplayed(column: AgColumn): boolean {
         return !!column.getColDef().floatingFilter && this.isFloatingFilterButtonEnabled(column);
     }
 
@@ -278,7 +274,7 @@ export class MenuService extends BeanStub {
         filtersOnly?: boolean
     ): void {
         const { positionBy } = params;
-        const column = params.column as InternalColumn | undefined;
+        const column = params.column as AgColumn | undefined;
         if (positionBy === 'button') {
             const { buttonElement } = params;
             menuFactory.showMenuAfterButtonClick(column, buttonElement, containerType, filtersOnly);
@@ -313,7 +309,7 @@ export class MenuService extends BeanStub {
         return this.rowRenderer.getRowByPosition({ rowIndex, rowPinned }) || undefined;
     }
 
-    private getCellGui(rowCtrl?: RowCtrl, column?: InternalColumn | null): HTMLElement | undefined {
+    private getCellGui(rowCtrl?: RowCtrl, column?: AgColumn | null): HTMLElement | undefined {
         if (!rowCtrl || !column) {
             return;
         }
@@ -323,7 +319,7 @@ export class MenuService extends BeanStub {
         return cellCtrl?.getGui() || undefined;
     }
 
-    private getContextMenuAnchorElement(rowNode?: RowNode | null, column?: InternalColumn | null): HTMLElement {
+    private getContextMenuAnchorElement(rowNode?: RowNode | null, column?: AgColumn | null): HTMLElement {
         const gridBodyEl = this.ctrlsService.getGridBodyCtrl().getGridBodyElement();
         const rowCtrl = this.getRowCtrl(rowNode);
 

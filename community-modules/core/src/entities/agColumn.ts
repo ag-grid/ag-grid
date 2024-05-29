@@ -18,6 +18,8 @@ import { FrameworkEventListenerService } from '../misc/frameworkEventListenerSer
 import type { ColumnHoverService } from '../rendering/columnHoverService';
 import { _attrToNumber, _exists, _missing } from '../utils/generic';
 import { _mergeDeep } from '../utils/object';
+import type { AgColumnGroup } from './agColumnGroup';
+import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
 import type {
     AbstractColDef,
     BaseColDefParams,
@@ -28,8 +30,6 @@ import type {
     RowSpanParams,
     SortDirection,
 } from './colDef';
-import type { InternalColumnGroup } from './columnGroup';
-import type { InternalProvidedColumnGroup } from './providedColumnGroup';
 
 const COL_DEF_DEFAULTS: Partial<ColDef> = {
     resizable: true,
@@ -41,8 +41,8 @@ export function getNextColInstanceId(): ColumnInstanceId {
     return instanceIdSequence++ as ColumnInstanceId;
 }
 
-export function isColumn(col: Column | ColumnGroup | ProvidedColumnGroup): col is InternalColumn {
-    return col instanceof InternalColumn;
+export function isColumn(col: Column | ColumnGroup | ProvidedColumnGroup): col is AgColumn {
+    return col instanceof AgColumn;
 }
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
@@ -51,7 +51,7 @@ export function isColumn(col: Column | ColumnGroup | ProvidedColumnGroup): col i
 // appear as a child of either the original tree or the displayed tree. However the relevant group classes
 // for each type only implements one, as each group can only appear in it's associated tree (eg ProvidedColumnGroup
 // can only appear in OriginalColumn tree).
-export class InternalColumn<TValue = any> extends BeanStub implements Column {
+export class AgColumn<TValue = any> extends BeanStub implements Column {
     public static DEFAULT_MIN_WIDTH = 20;
 
     // + renderedHeaderCell - for making header cell transparent when moving
@@ -143,8 +143,8 @@ export class InternalColumn<TValue = any> extends BeanStub implements Column {
 
     private readonly primary: boolean;
 
-    private parent: InternalColumnGroup | null;
-    private originalParent: InternalProvidedColumnGroup | null;
+    private parent: AgColumnGroup | null;
+    private originalParent: AgProvidedColumnGroup | null;
 
     constructor(
         colDef: ColDef<any, TValue>,
@@ -235,19 +235,19 @@ export class InternalColumn<TValue = any> extends BeanStub implements Column {
         return this.userProvidedColDef;
     }
 
-    public setParent(parent: InternalColumnGroup | null): void {
+    public setParent(parent: AgColumnGroup | null): void {
         this.parent = parent;
     }
 
-    public getParent(): InternalColumnGroup | null {
+    public getParent(): AgColumnGroup | null {
         return this.parent;
     }
 
-    public setOriginalParent(originalParent: InternalProvidedColumnGroup | null): void {
+    public setOriginalParent(originalParent: AgProvidedColumnGroup | null): void {
         this.originalParent = originalParent;
     }
 
-    public getOriginalParent(): InternalProvidedColumnGroup | null {
+    public getOriginalParent(): AgProvidedColumnGroup | null {
         return this.originalParent;
     }
 
@@ -273,7 +273,7 @@ export class InternalColumn<TValue = any> extends BeanStub implements Column {
     private initMinAndMaxWidths(): void {
         const colDef = this.colDef;
 
-        this.minWidth = colDef.minWidth ?? InternalColumn.DEFAULT_MIN_WIDTH;
+        this.minWidth = colDef.minWidth ?? AgColumn.DEFAULT_MIN_WIDTH;
         this.maxWidth = colDef.maxWidth ?? Number.MAX_SAFE_INTEGER;
     }
 
@@ -290,7 +290,7 @@ export class InternalColumn<TValue = any> extends BeanStub implements Column {
     }
 
     private calculateColInitialWidth(colDef: ColDef): number {
-        const minColWidth = colDef.minWidth ?? InternalColumn.DEFAULT_MIN_WIDTH;
+        const minColWidth = colDef.minWidth ?? AgColumn.DEFAULT_MIN_WIDTH;
         const maxColWidth = colDef.maxWidth ?? Number.MAX_SAFE_INTEGER;
 
         let width: number;
@@ -847,7 +847,7 @@ export class InternalColumn<TValue = any> extends BeanStub implements Column {
 
     private dispatchStateUpdatedEvent(key: keyof ColumnState): void {
         this.columnEventService.dispatchEvent({
-            type: InternalColumn.EVENT_STATE_UPDATED,
+            type: AgColumn.EVENT_STATE_UPDATED,
             key,
         } as AgEvent);
     }

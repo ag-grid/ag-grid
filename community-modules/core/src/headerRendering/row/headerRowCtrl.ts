@@ -1,7 +1,7 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import type { InternalColumn } from '../../entities/column';
-import type { InternalColumnGroup } from '../../entities/columnGroup';
+import type { AgColumn } from '../../entities/agColumn';
+import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import { Events } from '../../eventKeys';
 import type { VirtualColumnsChangedEvent } from '../../events';
 import type { BrandedType } from '../../interfaces/brandedType';
@@ -132,8 +132,8 @@ export class HeaderRowCtrl extends BeanStub {
         this.addManagedPropertyListener('floatingFiltersHeight', this.onRowHeightChanged.bind(this));
     }
 
-    public getHeaderCellCtrl(column: InternalColumnGroup): HeaderGroupCellCtrl | undefined;
-    public getHeaderCellCtrl(column: InternalColumn): HeaderCellCtrl | undefined;
+    public getHeaderCellCtrl(column: AgColumnGroup): HeaderGroupCellCtrl | undefined;
+    public getHeaderCellCtrl(column: AgColumn): HeaderCellCtrl | undefined;
     public getHeaderCellCtrl(column: any): any {
         if (!this.headerCellCtrls) {
             return;
@@ -276,7 +276,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private recycleAndCreateHeaderCtrls(
-        headerColumn: InternalColumn | InternalColumnGroup,
+        headerColumn: AgColumn | AgColumnGroup,
         oldCtrls?: Map<HeaderColumnId, AbstractHeaderCellCtrl>
     ): void {
         if (!this.headerCellCtrls) {
@@ -312,17 +312,15 @@ export class HeaderRowCtrl extends BeanStub {
         if (headerCtrl == null) {
             switch (this.type) {
                 case HeaderRowType.FLOATING_FILTER:
-                    headerCtrl = this.createBean(
-                        new HeaderFilterCellCtrl(headerColumn as InternalColumn, this.beans, this)
-                    );
+                    headerCtrl = this.createBean(new HeaderFilterCellCtrl(headerColumn as AgColumn, this.beans, this));
                     break;
                 case HeaderRowType.COLUMN_GROUP:
                     headerCtrl = this.createBean(
-                        new HeaderGroupCellCtrl(headerColumn as InternalColumnGroup, this.beans, this)
+                        new HeaderGroupCellCtrl(headerColumn as AgColumnGroup, this.beans, this)
                     );
                     break;
                 default:
-                    headerCtrl = this.createBean(new HeaderCellCtrl(headerColumn as InternalColumn, this.beans, this));
+                    headerCtrl = this.createBean(new HeaderCellCtrl(headerColumn as AgColumn, this.beans, this));
                     break;
             }
         }
@@ -330,17 +328,17 @@ export class HeaderRowCtrl extends BeanStub {
         this.headerCellCtrls.set(idOfChild, headerCtrl);
     }
 
-    private getColumnsInViewport(): (InternalColumn | InternalColumnGroup)[] {
+    private getColumnsInViewport(): (AgColumn | AgColumnGroup)[] {
         return this.isPrintLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
     }
 
-    private getColumnsInViewportPrintLayout(): (InternalColumn | InternalColumnGroup)[] {
+    private getColumnsInViewportPrintLayout(): (AgColumn | AgColumnGroup)[] {
         // for print layout, we add all columns into the center
         if (this.pinned != null) {
             return [];
         }
 
-        let viewportColumns: (InternalColumn | InternalColumnGroup)[] = [];
+        let viewportColumns: (AgColumn | AgColumnGroup)[] = [];
         const actualDepth = this.getActualDepth();
         const { columnViewportService } = this.beans;
 
@@ -356,12 +354,12 @@ export class HeaderRowCtrl extends BeanStub {
         return this.type == HeaderRowType.FLOATING_FILTER ? this.rowIndex - 1 : this.rowIndex;
     }
 
-    private getColumnsInViewportNormalLayout(): (InternalColumn | InternalColumnGroup)[] {
+    private getColumnsInViewportNormalLayout(): (AgColumn | AgColumnGroup)[] {
         // when in normal layout, we add the columns for that container only
         return this.beans.columnViewportService.getHeadersToRender(this.pinned, this.getActualDepth());
     }
 
-    public focusHeader(column: InternalColumn | InternalColumnGroup, event?: KeyboardEvent): boolean {
+    public focusHeader(column: AgColumn | AgColumnGroup, event?: KeyboardEvent): boolean {
         if (!this.headerCellCtrls) {
             return false;
         }

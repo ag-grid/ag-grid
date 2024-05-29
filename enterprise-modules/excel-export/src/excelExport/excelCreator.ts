@@ -1,4 +1,6 @@
 import type {
+    AgColumn,
+    AgColumnGroup,
     BeanCollection,
     BeanName,
     ColumnModel,
@@ -10,8 +12,6 @@ import type {
     ExcelStyle,
     FuncColsService,
     IExcelCreator,
-    InternalColumn,
-    InternalColumnGroup,
     StylingService,
     ValueService,
 } from '@ag-grid-community/core';
@@ -359,7 +359,7 @@ export class ExcelCreator
         const { rowType, rowIndex, value, column, columnGroup, node } = params;
         const isHeader = rowType === RowType.HEADER;
         const isGroupHeader = rowType === RowType.HEADER_GROUPING;
-        const col = (isHeader ? column : columnGroup) as InternalColumn | InternalColumnGroup | null;
+        const col = (isHeader ? column : columnGroup) as AgColumn | AgColumnGroup | null;
         let headerClasses: string[] = [];
 
         if (isHeader || isGroupHeader) {
@@ -373,8 +373,8 @@ export class ExcelCreator
                     CssClassApplier.getHeaderClassesFromColDef(
                         col.getDefinition(),
                         this.gos,
-                        (column as InternalColumn) || null,
-                        (columnGroup as InternalColumnGroup) || null
+                        (column as AgColumn) || null,
+                        (columnGroup as AgColumnGroup) || null
                     )
                 );
             }
@@ -394,7 +394,7 @@ export class ExcelCreator
             return it.id;
         });
 
-        const colDef = (column as InternalColumn).getDefinition();
+        const colDef = (column as AgColumn).getDefinition();
         this.stylingService.processAllCellClasses(
             colDef,
             this.gos.addGridCommonParams({

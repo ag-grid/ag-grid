@@ -5,8 +5,8 @@ import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
+import type { AgColumn } from '../entities/agColumn';
 import type { CellPosition } from '../entities/cellPositionUtils';
-import type { InternalColumn } from '../entities/column';
 import type { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
 import { Events } from '../eventKeys';
 import type { FullWidthRowFocusedEvent } from '../events';
@@ -33,10 +33,10 @@ interface NavigateParams {
     /** The position to put scroll index. */
     scrollType: 'top' | 'bottom' | null;
     /**  The column to horizontally scroll to. */
-    scrollColumn: InternalColumn | null;
+    scrollColumn: AgColumn | null;
     /** For page up/down, we want to scroll to one row/column but focus another (ie. scrollRow could be stub). */
     focusIndex: number;
-    focusColumn: InternalColumn;
+    focusColumn: AgColumn;
     isAsync?: boolean;
 }
 
@@ -276,7 +276,7 @@ export class NavigationService extends BeanStub {
             scrollType,
             scrollColumn: null,
             focusIndex,
-            focusColumn: gridCell.column as InternalColumn,
+            focusColumn: gridCell.column as AgColumn,
         });
     }
 
@@ -293,7 +293,7 @@ export class NavigationService extends BeanStub {
             scrollType: up ? 'bottom' : 'top',
             scrollColumn: null,
             focusIndex: scrollIndex,
-            focusColumn: gridCell.column as InternalColumn,
+            focusColumn: gridCell.column as AgColumn,
         });
         setTimeout(() => {
             const focusIndex = this.getNextFocusIndexForAutoHeight(gridCell, up);
@@ -303,7 +303,7 @@ export class NavigationService extends BeanStub {
                 scrollType: up ? 'bottom' : 'top',
                 scrollColumn: null,
                 focusIndex: focusIndex,
-                focusColumn: gridCell.column as InternalColumn,
+                focusColumn: gridCell.column as AgColumn,
                 isAsync: true,
             });
         }, 50);
@@ -366,7 +366,7 @@ export class NavigationService extends BeanStub {
     private onCtrlUpDownLeftRight(key: string, gridCell: CellPosition): void {
         const cellToFocus = this.cellNavigationService.getNextCellToFocus(key, gridCell, true)!;
         const { rowIndex } = cellToFocus;
-        const column = cellToFocus.column as InternalColumn;
+        const column = cellToFocus.column as AgColumn;
 
         this.navigateTo({
             scrollIndex: rowIndex,
@@ -381,7 +381,7 @@ export class NavigationService extends BeanStub {
     // same cell into view (which means either scroll all the way up, or all the way down).
     private onHomeOrEndKey(key: string): void {
         const homeKey = key === KeyCode.PAGE_HOME;
-        const allColumns: InternalColumn[] = this.visibleColsService.getAllCols();
+        const allColumns: AgColumn[] = this.visibleColsService.getAllCols();
         const columnToSelect = homeKey ? allColumns[0] : _last(allColumns);
         const scrollIndex = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
 
@@ -739,7 +739,7 @@ export class NavigationService extends BeanStub {
             return null;
         }
 
-        return rowCtrl.getCellCtrl(cellPosition.column as InternalColumn);
+        return rowCtrl.getCellCtrl(cellPosition.column as AgColumn);
     }
 
     private lookupRowNodeForCell(cell: CellPosition) {

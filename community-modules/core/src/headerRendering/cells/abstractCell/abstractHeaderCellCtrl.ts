@@ -4,10 +4,10 @@ import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
 import type { DragAndDropService, DragSource } from '../../../dragAndDrop/dragAndDropService';
-import type { InternalColumn } from '../../../entities/column';
-import { isColumn } from '../../../entities/column';
-import type { InternalColumnGroup } from '../../../entities/columnGroup';
-import type { InternalProvidedColumnGroup } from '../../../entities/providedColumnGroup';
+import type { AgColumn } from '../../../entities/agColumn';
+import { isColumn } from '../../../entities/agColumn';
+import type { AgColumnGroup } from '../../../entities/agColumnGroup';
+import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
 import { Events } from '../../../eventKeys';
 import type { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent } from '../../../events';
 import type { FocusService } from '../../../focusService';
@@ -37,7 +37,7 @@ export type HeaderCellCtrlInstanceId = BrandedType<string, 'HeaderCellCtrlInstan
 
 export abstract class AbstractHeaderCellCtrl<
     TComp extends IAbstractHeaderCellComp = any,
-    TColumn extends InternalColumn | InternalColumnGroup = any,
+    TColumn extends AgColumn | AgColumnGroup = any,
     TFeature extends IHeaderResizeFeature = any,
 > extends BeanStub {
     public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
@@ -61,7 +61,7 @@ export abstract class AbstractHeaderCellCtrl<
 
     protected beans: BeanCollection;
     private instanceId: HeaderCellCtrlInstanceId;
-    private columnGroupChild: InternalColumn | InternalColumnGroup;
+    private columnGroupChild: AgColumn | AgColumnGroup;
     private parentRowCtrl: HeaderRowCtrl;
 
     private isResizing: boolean;
@@ -80,11 +80,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected abstract resizeHeader(delta: number, shiftKey: boolean): void;
     protected abstract moveHeader(direction: HorizontalDirection): void;
 
-    constructor(
-        columnGroupChild: InternalColumn | InternalColumnGroup,
-        beans: BeanCollection,
-        parentRowCtrl: HeaderRowCtrl
-    ) {
+    constructor(columnGroupChild: AgColumn | AgColumnGroup, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
         super();
 
         this.columnGroupChild = columnGroupChild;
@@ -102,7 +98,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected shouldStopEventPropagation(e: KeyboardEvent): boolean {
         const { headerRowIndex, column } = this.focusService.getFocusedHeader()!;
 
-        return _isUserSuppressingHeaderKeyboardEvent(this.gos, e, headerRowIndex, column as InternalColumn);
+        return _isUserSuppressingHeaderKeyboardEvent(this.gos, e, headerRowIndex, column as AgColumn);
     }
 
     protected getWrapperHasFocus(): boolean {
@@ -306,7 +302,7 @@ export abstract class AbstractHeaderCellCtrl<
         return this.instanceId;
     }
 
-    public getColumnGroupChild(): InternalColumn | InternalColumnGroup {
+    public getColumnGroupChild(): AgColumn | AgColumnGroup {
         return this.columnGroupChild;
     }
 
@@ -320,7 +316,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected handleContextMenuMouseEvent(
         mouseEvent: MouseEvent | undefined,
         touchEvent: TouchEvent | undefined,
-        column: InternalColumn | InternalProvidedColumnGroup
+        column: AgColumn | AgProvidedColumnGroup
     ): void {
         const event = mouseEvent ?? touchEvent!;
         if (this.gos.get('preventDefaultOnContextMenu')) {
@@ -336,7 +332,7 @@ export abstract class AbstractHeaderCellCtrl<
 
     protected dispatchColumnMouseEvent(
         eventType: 'columnHeaderContextMenu' | 'columnHeaderClicked',
-        column: InternalColumn | InternalProvidedColumnGroup
+        column: AgColumn | AgProvidedColumnGroup
     ): void {
         const event: WithoutGridCommon<ColumnHeaderClickedEvent | ColumnHeaderContextMenuEvent> = {
             type: eventType,

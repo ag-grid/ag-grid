@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     BeanCollection,
     BeanName,
     ColumnApplyStateService,
@@ -12,7 +13,6 @@ import type {
     ICsvCreator,
     IExcelCreator,
     IExpansionService,
-    InternalColumn,
     MenuItemDef,
     MenuService,
     RowPositionUtils,
@@ -69,7 +69,7 @@ export class MenuItemMapper extends BeanStub {
 
     public mapWithStockItems(
         originalList: (MenuItemDef | string)[],
-        column: InternalColumn | null,
+        column: AgColumn | null,
         sourceElement: () => HTMLElement
     ): (MenuItemDef | string)[] {
         if (!originalList) {
@@ -109,7 +109,7 @@ export class MenuItemMapper extends BeanStub {
 
     private getStockMenuItem(
         key: string,
-        column: InternalColumn | null,
+        column: AgColumn | null,
         sourceElement: () => HTMLElement
     ): MenuItemDef | string | null {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
@@ -425,14 +425,14 @@ export class MenuItemMapper extends BeanStub {
         }
     }
 
-    private createAggregationSubMenu(column: InternalColumn, aggFuncService: IAggFuncService): MenuItemDef[] {
+    private createAggregationSubMenu(column: AgColumn, aggFuncService: IAggFuncService): MenuItemDef[] {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
 
-        let columnToUse: InternalColumn | undefined;
+        let columnToUse: AgColumn | undefined;
         if (column.isPrimary()) {
             columnToUse = column;
         } else {
-            const pivotValueColumn = column.getColDef().pivotValueColumn as InternalColumn;
+            const pivotValueColumn = column.getColDef().pivotValueColumn as AgColumn;
             columnToUse = _exists(pivotValueColumn) ? pivotValueColumn : undefined;
         }
 

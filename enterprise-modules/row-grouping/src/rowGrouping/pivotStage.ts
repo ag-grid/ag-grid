@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     BeanCollection,
     BeanName,
     ChangedPath,
@@ -7,7 +8,6 @@ import type {
     FuncColsService,
     GridOptions,
     IRowNodeStage,
-    InternalColumn,
     PivotMaxColumnsExceededEvent,
     PivotResultColsService,
     RowNode,
@@ -216,12 +216,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private bucketChildren(
-        children: RowNode[],
-        pivotColumns: InternalColumn[],
-        pivotIndex: number,
-        uniqueValues: any
-    ): any {
+    private bucketChildren(children: RowNode[], pivotColumns: AgColumn[], pivotIndex: number, uniqueValues: any): any {
         const mappedChildren: any = {};
         const pivotColumn = pivotColumns[pivotIndex];
 

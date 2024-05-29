@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     BaseCellDataType,
     BeanCollection,
     BeanName,
@@ -6,7 +7,6 @@ import type {
     ColumnModel,
     ColumnNameService,
     DataTypeService,
-    InternalColumn,
     JoinAdvancedFilterModel,
     ValueService,
 } from '@ag-grid-community/core';
@@ -80,7 +80,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
     public getOperandModelValue(
         operand: string,
         baseCellDataType: BaseCellDataType,
-        column: InternalColumn
+        column: AgColumn
     ): string | number | null {
         switch (baseCellDataType) {
             case 'number':
@@ -204,10 +204,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
         return entries;
     }
 
-    public getOperatorAutocompleteEntries(
-        column: InternalColumn,
-        baseCellDataType: BaseCellDataType
-    ): AutocompleteEntry[] {
+    public getOperatorAutocompleteEntries(column: AgColumn, baseCellDataType: BaseCellDataType): AutocompleteEntry[] {
         const activeOperators = this.getActiveOperators(column);
         return this.getDataTypeExpressionOperator(baseCellDataType)!.getEntries(activeOperators);
     }
@@ -314,7 +311,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
         return params;
     }
 
-    public getColumnDetails(colId: string): { column?: InternalColumn; baseCellDataType: BaseCellDataType } {
+    public getColumnDetails(colId: string): { column?: AgColumn; baseCellDataType: BaseCellDataType } {
         const column = this.columnModel.getColDefCol(colId) ?? undefined;
         const baseCellDataType = (column ? this.dataTypeService.getBaseDataType(column) : undefined) ?? 'text';
         return { column, baseCellDataType };
@@ -350,7 +347,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
         };
     }
 
-    private getActiveOperators(column: InternalColumn): string[] | undefined {
+    private getActiveOperators(column: AgColumn): string[] | undefined {
         const filterOptions = column.getColDef().filterParams?.filterOptions;
         if (!filterOptions) {
             return undefined;

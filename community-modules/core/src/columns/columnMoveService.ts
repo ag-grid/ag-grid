@@ -1,8 +1,8 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef } from '../entities/colDef';
-import type { InternalColumn } from '../entities/column';
-import { isProvidedColumnGroup } from '../entities/providedColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { _moveInArray } from '../utils/array';
@@ -69,13 +69,13 @@ export class ColumnMoveService extends BeanStub {
         this.columnAnimationService.finish();
     }
 
-    private doesMovePassRules(columnsToMove: InternalColumn[], toIndex: number): boolean {
+    private doesMovePassRules(columnsToMove: AgColumn[], toIndex: number): boolean {
         // make a copy of what the grid columns would look like after the move
         const proposedColumnOrder = this.getProposedColumnOrder(columnsToMove, toIndex);
         return this.doesOrderPassRules(proposedColumnOrder);
     }
 
-    public doesOrderPassRules(gridOrder: InternalColumn[]) {
+    public doesOrderPassRules(gridOrder: AgColumn[]) {
         if (!this.doesMovePassMarryChildren(gridOrder)) {
             return false;
         }
@@ -85,14 +85,14 @@ export class ColumnMoveService extends BeanStub {
         return true;
     }
 
-    public getProposedColumnOrder(columnsToMove: InternalColumn[], toIndex: number): InternalColumn[] {
+    public getProposedColumnOrder(columnsToMove: AgColumn[], toIndex: number): AgColumn[] {
         const gridColumns = this.columnModel.getCols();
         const proposedColumnOrder = gridColumns.slice();
-        _moveInArray(proposedColumnOrder, columnsToMove as InternalColumn[], toIndex);
+        _moveInArray(proposedColumnOrder, columnsToMove as AgColumn[], toIndex);
         return proposedColumnOrder;
     }
 
-    private doesMovePassLockedPositions(proposedColumnOrder: InternalColumn[]): boolean {
+    private doesMovePassLockedPositions(proposedColumnOrder: AgColumn[]): boolean {
         // Placement is a number indicating 'left' 'center' or 'right' as 0 1 2
         let lastPlacement = 0;
         let rulePassed = true;
@@ -119,7 +119,7 @@ export class ColumnMoveService extends BeanStub {
         return rulePassed;
     }
 
-    public doesMovePassMarryChildren(allColumnsCopy: InternalColumn[]): boolean {
+    public doesMovePassMarryChildren(allColumnsCopy: AgColumn[]): boolean {
         let rulePassed = true;
         const gridBalancedTree = this.columnModel.getColTree();
 
@@ -163,11 +163,11 @@ export class ColumnMoveService extends BeanStub {
         return rulePassed;
     }
 
-    public placeLockedColumns(cols: InternalColumn[]): InternalColumn[] {
-        const left: InternalColumn[] = [];
-        const normal: InternalColumn[] = [];
-        const right: InternalColumn[] = [];
-        cols.forEach((col: InternalColumn) => {
+    public placeLockedColumns(cols: AgColumn[]): AgColumn[] {
+        const left: AgColumn[] = [];
+        const normal: AgColumn[] = [];
+        const right: AgColumn[] = [];
+        cols.forEach((col: AgColumn) => {
             const position = col.getColDef().lockPosition;
             if (position === 'right') {
                 right.push(col);

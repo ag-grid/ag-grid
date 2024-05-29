@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     BeanCollection,
     CellValueChangedEvent,
     ComponentClass,
@@ -9,7 +10,6 @@ import type {
     IDoesFilterPassParams,
     IRowNode,
     ISetFilter,
-    InternalColumn,
     KeyCreatorParams,
     SetFilterModel,
     SetFilterModelValue,
@@ -402,7 +402,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
 
         const formattedValue = this.valueService.formatValue(
-            this.setFilterParams!.column as InternalColumn,
+            this.setFilterParams!.column as AgColumn,
             null,
             value,
             this.valueFormatter,

@@ -1,15 +1,15 @@
 import type {
+    AgProvidedColumnGroup,
     BeanCollection,
     ColumnNameService,
     FilterOpenedEvent,
     ITooltipParams,
-    InternalProvidedColumnGroup,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
+    AgColumn,
     Component,
     Events,
-    InternalColumn,
     RefPlaceholder,
     _clearElement,
     _createIconNoSpan,
@@ -37,14 +37,14 @@ export class ToolPanelFilterGroupComp extends Component {
     private filterGroupComp: AgGroupComponent = RefPlaceholder;
 
     private readonly depth: number;
-    private readonly columnGroup: InternalColumn | InternalProvidedColumnGroup;
+    private readonly columnGroup: AgColumn | AgProvidedColumnGroup;
     private readonly showingColumn: boolean;
     private childFilterComps: (ToolPanelFilterGroupComp | ToolPanelFilterComp)[];
     private expandedCallback: () => void;
     private filterGroupName: string | null;
 
     constructor(
-        columnGroup: InternalColumn | InternalProvidedColumnGroup,
+        columnGroup: AgColumn | AgProvidedColumnGroup,
         childFilterComps: (ToolPanelFilterGroupComp | ToolPanelFilterComp)[],
         expandedCallback: () => void,
         depth: number,
@@ -110,7 +110,7 @@ export class ToolPanelFilterGroupComp extends Component {
         }
 
         const refresh = () => {
-            const newTooltipText = (this.columnGroup as InternalColumn).getColDef().headerTooltip;
+            const newTooltipText = (this.columnGroup as AgColumn).getColDef().headerTooltip;
             this.setTooltip({ newTooltipText, location: 'filterToolPanelColumnGroup', shouldDisplayTooltip });
         };
 
@@ -196,7 +196,7 @@ export class ToolPanelFilterGroupComp extends Component {
         this.addManagedListener(this.filterGroupComp, AgGroupComponent.EVENT_COLLAPSED, collapseListener);
     }
 
-    private getColumns(): InternalColumn[] {
+    private getColumns(): AgColumn[] {
         if (isProvidedColumnGroup(this.columnGroup)) {
             return this.columnGroup.getLeafColumns();
         }
@@ -206,7 +206,7 @@ export class ToolPanelFilterGroupComp extends Component {
 
     private addFilterChangedListeners() {
         this.getColumns().forEach((column) => {
-            this.addManagedListener(column, InternalColumn.EVENT_FILTER_CHANGED, () => this.refreshFilterClass());
+            this.addManagedListener(column, AgColumn.EVENT_FILTER_CHANGED, () => this.refreshFilterClass());
         });
 
         if (!isProvidedColumnGroup(this.columnGroup)) {
@@ -254,11 +254,11 @@ export class ToolPanelFilterGroupComp extends Component {
         this.filterGroupComp.setTitle(this.filterGroupName || '');
     }
 
-    private getColumnGroupName(columnGroup: InternalProvidedColumnGroup): string | null {
+    private getColumnGroupName(columnGroup: AgProvidedColumnGroup): string | null {
         return this.columnNameService.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'filterToolPanel');
     }
 
-    private getColumnName(column: InternalColumn): string | null {
+    private getColumnName(column: AgColumn): string | null {
         return this.columnNameService.getDisplayNameForColumn(column, 'filterToolPanel', false);
     }
 

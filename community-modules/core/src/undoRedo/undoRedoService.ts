@@ -2,8 +2,8 @@ import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
+import type { AgColumn } from '../entities/agColumn';
 import type { CellPosition, CellPositionUtils } from '../entities/cellPositionUtils';
-import type { InternalColumn } from '../entities/column';
 import type { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
 import { Events } from '../eventKeys';
 import type {
@@ -282,7 +282,7 @@ export class UndoRedoService extends BeanStub {
         const { rowIndex, columnId, rowPinned } = lastFocusedCell;
         const scrollFeature = this.gridBodyCtrl.getScrollFeature();
 
-        const column: InternalColumn | null = this.columnModel.getCol(columnId);
+        const column: AgColumn | null = this.columnModel.getCol(columnId);
 
         if (!column) {
             return;

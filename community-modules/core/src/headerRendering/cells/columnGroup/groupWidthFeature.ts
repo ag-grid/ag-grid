@@ -1,15 +1,15 @@
 import { BeanStub } from '../../../context/beanStub';
-import { EVENT_COLUMN_GROUP_DISPLAYED_CHILDREN_CHANGED, type InternalColumnGroup } from '../../../entities/columnGroup';
+import { type AgColumnGroup, EVENT_COLUMN_GROUP_DISPLAYED_CHILDREN_CHANGED } from '../../../entities/agColumnGroup';
 import type { IHeaderGroupCellComp } from './headerGroupCellCtrl';
 
 export class GroupWidthFeature extends BeanStub {
-    private columnGroup: InternalColumnGroup;
+    private columnGroup: AgColumnGroup;
     private comp: IHeaderGroupCellComp;
 
     // the children can change, we keep destroy functions related to listening to the children here
     private removeChildListenersFuncs: (() => void)[] = [];
 
-    constructor(comp: IHeaderGroupCellComp, columnGroup: InternalColumnGroup) {
+    constructor(comp: IHeaderGroupCellComp, columnGroup: AgColumnGroup) {
         super();
         this.columnGroup = columnGroup;
         this.comp = comp;

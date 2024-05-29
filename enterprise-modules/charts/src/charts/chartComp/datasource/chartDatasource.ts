@@ -1,12 +1,12 @@
 import type {
+    AgColumn,
+    AgColumnGroup,
     BeanCollection,
     ColumnModel,
     IAggFunc,
     IAggregationStage,
     IClientSideRowModel,
     IRowModel,
-    InternalColumn,
-    InternalColumnGroup,
     PartialCellRange,
     PivotResultColsService,
     RowNode,
@@ -24,7 +24,7 @@ export interface ChartDatasourceParams {
     grouping: boolean;
     pivoting: boolean;
     crossFiltering: boolean;
-    valueCols: InternalColumn[];
+    valueCols: AgColumn[];
     startRow: number;
     endRow: number;
     isScatter: boolean;
@@ -361,12 +361,12 @@ export class ChartDatasource extends BeanStub {
         });
     }
 
-    private extractPivotKeySeparator(secondaryColumns: InternalColumn[]) {
+    private extractPivotKeySeparator(secondaryColumns: AgColumn[]) {
         if (secondaryColumns.length === 0) {
             return '';
         }
 
-        const extractSeparator = (columnGroup: InternalColumnGroup, childId: string): string => {
+        const extractSeparator = (columnGroup: AgColumnGroup, childId: string): string => {
             const groupId = columnGroup.getGroupId();
             if (!columnGroup.getParent()) {
                 // removing groupId ('2000') from childId ('2000|Swimming') yields '|Swimming' so first char is separator

@@ -1,24 +1,24 @@
-import type { InternalColumn } from '../entities/column';
+import type { AgColumn } from '../entities/agColumn';
 import type { ContainerType } from './iAfterGuiAttachedParams';
 
 export interface IMenuFactory {
     showMenuAfterButtonClick(
-        column: InternalColumn | undefined,
+        column: AgColumn | undefined,
         eventSource: HTMLElement,
         containerType: ContainerType,
         filtersOnly?: boolean
     ): void;
     showMenuAfterMouseEvent(
-        column: InternalColumn | undefined,
+        column: AgColumn | undefined,
         mouseEvent: MouseEvent | Touch,
         containerType: ContainerType,
         filtersOnly?: boolean
     ): void;
     showMenuAfterContextMenuEvent(
-        column: InternalColumn | undefined,
+        column: AgColumn | undefined,
         mouseEvent?: MouseEvent | null,
         touchEvent?: TouchEvent | null
     ): void;
-    isMenuEnabled(column: InternalColumn): boolean;
+    isMenuEnabled(column: AgColumn): boolean;
     hideActiveMenu(): void;
 }

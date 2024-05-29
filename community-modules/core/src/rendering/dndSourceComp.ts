@@ -1,15 +1,15 @@
+import type { AgColumn } from '../entities/agColumn';
 import type { DndSourceOnRowDragParams } from '../entities/colDef';
-import type { InternalColumn } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
 import { _createIconNoSpan } from '../utils/icon';
 import { Component } from '../widgets/component';
 
 export class DndSourceComp extends Component {
     private readonly rowNode: RowNode;
-    private readonly column: InternalColumn;
+    private readonly column: AgColumn;
     private readonly eCell: HTMLElement;
 
-    constructor(rowNode: RowNode, column: InternalColumn, eCell: HTMLElement) {
+    constructor(rowNode: RowNode, column: AgColumn, eCell: HTMLElement) {
         super(/* html */ `<div class="ag-drag-handle ag-row-drag" draggable="true"></div>`);
         this.rowNode = rowNode;
         this.column = column;

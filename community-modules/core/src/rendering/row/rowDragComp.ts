@@ -2,7 +2,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { DragItem, DragSource } from '../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
-import type { InternalColumn } from '../../entities/column';
+import type { AgColumn } from '../../entities/agColumn';
 import { RowNode } from '../../entities/rowNode';
 import { Events } from '../../eventKeys';
 import { _isFunction, _warnOnce } from '../../utils/function';
@@ -27,7 +27,7 @@ export class RowDragComp extends Component {
     constructor(
         private readonly cellValueFn: () => string,
         private readonly rowNode: RowNode,
-        private readonly column?: InternalColumn,
+        private readonly column?: AgColumn,
         private readonly customGui?: HTMLElement,
         private readonly dragStartPixels?: number,
         private readonly suppressVisibilityChange?: boolean
@@ -94,7 +94,7 @@ export class RowDragComp extends Component {
         };
     }
 
-    private getRowDragText(column?: InternalColumn) {
+    private getRowDragText(column?: AgColumn) {
         if (column) {
             const colDef = column.getColDef();
             if (colDef.rowDragText) {
@@ -151,10 +151,10 @@ export class RowDragComp extends Component {
 
 class VisibilityStrategy extends BeanStub {
     private readonly parent: RowDragComp;
-    private readonly column: InternalColumn | undefined;
+    private readonly column: AgColumn | undefined;
     protected readonly rowNode: RowNode;
 
-    constructor(parent: RowDragComp, rowNode: RowNode, column?: InternalColumn) {
+    constructor(parent: RowDragComp, rowNode: RowNode, column?: AgColumn) {
         super();
         this.parent = parent;
         this.rowNode = rowNode;
@@ -192,7 +192,7 @@ class VisibilityStrategy extends BeanStub {
 class NonManagedVisibilityStrategy extends VisibilityStrategy {
     private readonly beans: BeanCollection;
 
-    constructor(parent: RowDragComp, beans: BeanCollection, rowNode: RowNode, column?: InternalColumn) {
+    constructor(parent: RowDragComp, beans: BeanCollection, rowNode: RowNode, column?: AgColumn) {
         super(parent, rowNode, column);
         this.beans = beans;
     }
@@ -228,7 +228,7 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
 class ManagedVisibilityStrategy extends VisibilityStrategy {
     private readonly beans: BeanCollection;
 
-    constructor(parent: RowDragComp, beans: BeanCollection, rowNode: RowNode, column?: InternalColumn) {
+    constructor(parent: RowDragComp, beans: BeanCollection, rowNode: RowNode, column?: AgColumn) {
         super(parent, rowNode, column);
         this.beans = beans;
     }

@@ -5,7 +5,7 @@ import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { InternalColumn } from '../entities/column';
+import type { AgColumn } from '../entities/agColumn';
 import type { BodyHeightChangedEvent } from '../events';
 import { Events } from '../events';
 import type { ScrollVisibleService, SetScrollsVisibleParams } from '../gridBodyComp/scrollVisibleService';
@@ -120,13 +120,13 @@ export class ViewportSizeFeature extends BeanStub {
                 columns: columnsToRemove,
                 viewportWidth: bodyWidth,
             };
-            columnsToRemove = processUnpinnedColumns(params) as InternalColumn[];
+            columnsToRemove = processUnpinnedColumns(params) as AgColumn[];
         }
 
         this.columnModel.setColsPinned(columnsToRemove, null, 'viewportSizeFeature');
     }
 
-    private getPinnedColumnsOverflowingViewport(viewportWidth: number): InternalColumn[] {
+    private getPinnedColumnsOverflowingViewport(viewportWidth: number): AgColumn[] {
         const pinnedRightWidth = this.pinnedWidthService.getPinnedRightWidth();
         const pinnedLeftWidth = this.pinnedWidthService.getPinnedLeftWidth();
         const totalPinnedWidth = pinnedRightWidth + pinnedLeftWidth;
@@ -142,7 +142,7 @@ export class ViewportSizeFeature extends BeanStub {
         let indexLeft = 0;
         const totalWidthRemoved = 0;
 
-        const columnsToRemove: InternalColumn[] = [];
+        const columnsToRemove: AgColumn[] = [];
 
         let spaceNecessary = totalPinnedWidth - totalWidthRemoved - viewportWidth;
 

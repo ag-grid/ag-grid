@@ -1,11 +1,11 @@
 import type {
+    AgColumn,
     ExcelHeaderFooterImage,
     ExcelImage,
     ExcelRelationship,
     ExcelStyle,
     ExcelTableConfig,
     ExcelWorksheet,
-    InternalColumn,
     RowHeightCallbackParams,
 } from '@ag-grid-community/core';
 import { ExcelFactoryMode, _escapeString } from '@ag-grid-community/core';
@@ -197,8 +197,8 @@ export class ExcelXlsxFactory {
     public static addBodyImageToMap(
         image: ExcelImage,
         rowIndex: number,
-        col: InternalColumn,
-        columnsToExport?: InternalColumn[],
+        col: AgColumn,
+        columnsToExport?: AgColumn[],
         rowHeight?: number | ((params: RowHeightCallbackParams) => number)
     ): void {
         const sheetIndex = this.sheetNames.length;

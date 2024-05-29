@@ -1,10 +1,10 @@
 import type { ColumnModel } from '../../../columns/columnModel';
 import type { BeanCollection } from '../../../context/context';
-import type { InternalColumnGroup } from '../../../entities/columnGroup';
+import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import {
     EVENT_PROVIDED_COLUMN_GROUP_EXPANDABLE_CHANGED,
     EVENT_PROVIDED_COLUMN_GROUP_EXPANDED_CHANGED,
-} from '../../../entities/providedColumnGroup';
+} from '../../../entities/agProvidedColumnGroup';
 import type { ColumnGroup } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { IComponent } from '../../../interfaces/iComponent';
@@ -100,7 +100,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
             const newExpandedValue = !this.params.columnGroup.isExpanded();
             this.columnModel.setColumnGroupOpened(
-                (this.params.columnGroup as InternalColumnGroup).getProvidedColumnGroup(),
+                (this.params.columnGroup as AgColumnGroup).getProvidedColumnGroup(),
                 newExpandedValue,
                 'uiColumnExpanded'
             );

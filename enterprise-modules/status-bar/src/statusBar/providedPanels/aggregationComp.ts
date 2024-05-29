@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     AggregationStatusPanelAggFunc,
     AggregationStatusPanelParams,
     BeanCollection,
@@ -7,7 +8,6 @@ import type {
     IRangeService,
     IRowModel,
     IStatusPanelComp,
-    InternalColumn,
     RowPosition,
     RowPositionUtils,
     ValueService,
@@ -171,7 +171,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         break;
                     }
 
-                    cellRange.columns.forEach((col: InternalColumn) => {
+                    cellRange.columns.forEach((col: AgColumn) => {
                         if (currentRow === null) {
                             return;
                         }

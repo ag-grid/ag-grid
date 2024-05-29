@@ -1,7 +1,7 @@
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import type { InternalColumn } from '../../entities/column';
+import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
 import { Events } from '../../eventKeys';
 import { _isDeleteKey } from '../../utils/keyboard';
@@ -16,7 +16,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
     private eGui: HTMLElement;
 
-    constructor(ctrl: CellCtrl, beans: BeanCollection, column: InternalColumn, rowNode: RowNode, rowCtrl: RowCtrl) {
+    constructor(ctrl: CellCtrl, beans: BeanCollection, column: AgColumn, rowNode: RowNode, rowCtrl: RowCtrl) {
         super();
         this.cellCtrl = ctrl;
         this.beans = beans;

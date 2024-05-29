@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     AgComponentSelector,
     BeanCollection,
     CellCtrl,
@@ -8,7 +9,6 @@ import type {
     FillEndEvent,
     FillOperationParams,
     FillStartEvent,
-    InternalColumn,
     NavigationService,
     RowNode,
     RowPosition,
@@ -28,7 +28,7 @@ interface FillValues {
 
 interface ValueContext {
     value: any;
-    column: InternalColumn;
+    column: AgColumn;
     rowNode: RowNode;
 }
 
@@ -205,7 +205,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 isVertical
                     ? initialRange.columns
                     : initialRange.columns.filter((col) => finalRange.columns.indexOf(col) < 0)
-            ) as InternalColumn[];
+            ) as AgColumn[];
 
             const startRow = isVertical ? this.cellNavigationService.getRowBelow(finalRangeEndRow) : finalRangeStartRow;
 
@@ -231,7 +231,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             idx = 0;
         };
 
-        const iterateAcrossCells = (column?: InternalColumn, columns?: InternalColumn[]) => {
+        const iterateAcrossCells = (column?: AgColumn, columns?: AgColumn[]) => {
             let currentRow: RowPosition | undefined | null = this.isUp ? initialRangeEndRow : initialRangeStartRow;
             let finished = false;
 
@@ -276,7 +276,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
         const fillValues = (
             currentValues: ValueContext[],
-            col: InternalColumn,
+            col: AgColumn,
             rowNode: RowNode,
             updateInitialSet: () => boolean
         ) => {
@@ -338,16 +338,16 @@ export class AgFillHandle extends AbstractSelectionHandle {
         };
 
         if (isVertical) {
-            initialRange.columns.forEach((col: InternalColumn) => {
+            initialRange.columns.forEach((col: AgColumn) => {
                 iterateAcrossCells(col);
             });
         } else {
-            const columns = (this.isLeft ? [...finalRange.columns].reverse() : finalRange.columns) as InternalColumn[];
+            const columns = (this.isLeft ? [...finalRange.columns].reverse() : finalRange.columns) as AgColumn[];
             iterateAcrossCells(undefined, columns);
         }
     }
 
-    private clearCellsInRange(startRow: RowPosition, endRow: RowPosition, columns: InternalColumn[]) {
+    private clearCellsInRange(startRow: RowPosition, endRow: RowPosition, columns: AgColumn[]) {
         const cellRange: CellRange = {
             startRow,
             endRow,
@@ -363,10 +363,10 @@ export class AgFillHandle extends AbstractSelectionHandle {
         initialValues: any[];
         initialNonAggregatedValues: any[];
         initialFormattedValues: any[];
-        col: InternalColumn;
+        col: AgColumn;
         rowNode: RowNode;
         idx: number;
-    }): { value: any; fromUserFunction: boolean; sourceCol?: InternalColumn; sourceRowNode?: RowNode } {
+    }): { value: any; fromUserFunction: boolean; sourceCol?: AgColumn; sourceRowNode?: RowNode } {
         const { event, values, initialValues, initialNonAggregatedValues, initialFormattedValues, col, rowNode, idx } =
             params;
 
@@ -484,8 +484,8 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 this.isReduce = false;
             }
         } else {
-            const initialColumn = initialPosition.column as InternalColumn;
-            const currentColumn = currentPosition.column as InternalColumn;
+            const initialColumn = initialPosition.column as AgColumn;
+            const currentColumn = currentPosition.column as AgColumn;
 
             if (initialColumn === currentColumn) {
                 return;
@@ -496,7 +496,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
             if (
                 currentIndex <= initialIndex &&
-                currentIndex >= displayedColumns.indexOf(this.getCellRange().columns[0] as InternalColumn)
+                currentIndex >= displayedColumns.indexOf(this.getCellRange().columns[0] as AgColumn)
             ) {
                 this.reduceHorizontal(initialPosition, currentPosition);
                 this.isReduce = true;
@@ -592,11 +592,9 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
     private extendHorizontal(initialPosition: CellPosition, endPosition: CellPosition, isMovingLeft?: boolean) {
         const allCols = this.visibleColsService.getAllCols();
-        const startCol = allCols.indexOf(
-            (isMovingLeft ? endPosition.column : initialPosition.column) as InternalColumn
-        );
+        const startCol = allCols.indexOf((isMovingLeft ? endPosition.column : initialPosition.column) as AgColumn);
         const endCol = allCols.indexOf(
-            (isMovingLeft ? this.getCellRange().columns[0] : endPosition.column) as InternalColumn
+            (isMovingLeft ? this.getCellRange().columns[0] : endPosition.column) as AgColumn
         );
         const offset = isMovingLeft ? 0 : 1;
 
@@ -643,8 +641,8 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
     private reduceHorizontal(initialPosition: CellPosition, endPosition: CellPosition) {
         const allCols = this.visibleColsService.getAllCols();
-        const startCol = allCols.indexOf(endPosition.column as InternalColumn);
-        const endCol = allCols.indexOf(initialPosition.column as InternalColumn);
+        const startCol = allCols.indexOf(endPosition.column as AgColumn);
+        const endCol = allCols.indexOf(initialPosition.column as AgColumn);
 
         const colsToMark = allCols.slice(startCol, endCol);
         const rangeStartRow = this.getRangeStartRow();

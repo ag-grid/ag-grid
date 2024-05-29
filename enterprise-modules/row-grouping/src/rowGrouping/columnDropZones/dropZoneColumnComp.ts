@@ -10,10 +10,10 @@ import type {
     SortController,
 } from '@ag-grid-community/core';
 import {
+    AgColumn,
     Component,
     DragAndDropService,
     DragSourceType,
-    InternalColumn,
     KeyCode,
     RefPlaceholder,
     SortIndicatorComp,
@@ -24,7 +24,7 @@ import { PillDragComp } from '@ag-grid-enterprise/core';
 
 import type { TDropZone } from './baseDropZonePanel';
 
-export class DropZoneColumnComp extends PillDragComp<InternalColumn> {
+export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     private popupService: PopupService;
     private sortController: SortController;
     private columnModel: ColumnModel;
@@ -48,7 +48,7 @@ export class DropZoneColumnComp extends PillDragComp<InternalColumn> {
     private popupShowing = false;
 
     constructor(
-        private column: InternalColumn,
+        private column: AgColumn,
         dragSourceDropTarget: DropTarget,
         ghost: boolean,
         private dropZonePurpose: TDropZone,
@@ -77,7 +77,7 @@ export class DropZoneColumnComp extends PillDragComp<InternalColumn> {
 
         this.setupSort();
 
-        this.addManagedListener(this.eventService, InternalColumn.EVENT_SORT_CHANGED, () => {
+        this.addManagedListener(this.eventService, AgColumn.EVENT_SORT_CHANGED, () => {
             this.setupAria();
         });
 
@@ -90,7 +90,7 @@ export class DropZoneColumnComp extends PillDragComp<InternalColumn> {
         }
     }
 
-    public getItem(): InternalColumn {
+    public getItem(): AgColumn {
         return this.column;
     }
 

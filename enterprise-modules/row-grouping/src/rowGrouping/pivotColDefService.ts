@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     BeanCollection,
     BeanName,
     ColDef,
@@ -7,7 +8,6 @@ import type {
     ColumnNameService,
     FuncColsService,
     IPivotColDefService,
-    InternalColumn,
 } from '@ag-grid-community/core';
 import { BeanStub, _cloneObject, _iterateObject } from '@ag-grid-community/core';
 
@@ -105,7 +105,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         uniqueValue: any,
         pivotKeys: string[],
         maxDepth: number,
-        primaryPivotColumns: InternalColumn[]
+        primaryPivotColumns: AgColumn[]
     ): ColGroupDef[] | ColDef[] {
         const measureColumns = this.funcColsService.getValueColumns();
         if (index >= maxDepth) {
@@ -261,7 +261,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
     private recursivelyAddPivotTotal(
         groupDef: ColGroupDef | ColDef,
         pivotColumnDefs: ColDef[],
-        valueColumn: InternalColumn,
+        valueColumn: AgColumn,
         insertAfter: boolean
     ): string[] | null {
         const group = groupDef as ColGroupDef;
@@ -323,7 +323,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         }
     }
 
-    private extractColIdsForValueColumn(groupDef: ColGroupDef | ColDef, valueColumn: InternalColumn): string[] {
+    private extractColIdsForValueColumn(groupDef: ColGroupDef | ColDef, valueColumn: AgColumn): string[] {
         const group = groupDef as ColGroupDef;
         if (!group.children) {
             const colDef = group as ColDef;
@@ -343,7 +343,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
     private createRowGroupTotal(
         parentChildren: (ColGroupDef | ColDef)[],
         pivotColumnDefs: ColDef[],
-        valueColumn: InternalColumn,
+        valueColumn: AgColumn,
         colIds: string[],
         insertAfter: boolean,
         addGroup: boolean
@@ -375,7 +375,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
     }
 
     private createColDef(
-        valueColumn: InternalColumn | null,
+        valueColumn: AgColumn | null,
         headerName: any,
         pivotKeys: string[] | undefined,
         totalColumn: boolean = false

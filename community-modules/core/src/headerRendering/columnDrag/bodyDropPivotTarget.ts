@@ -3,7 +3,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { DraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import { DragAndDropService } from '../../dragAndDrop/dragAndDropService';
-import type { InternalColumn } from '../../entities/column';
+import type { AgColumn } from '../../entities/agColumn';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { DropListener } from './bodyDropTarget';
 
@@ -15,9 +15,9 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
         this.funcColsService = beans.funcColsService;
     }
 
-    private columnsToAggregate: InternalColumn[] = [];
-    private columnsToGroup: InternalColumn[] = [];
-    private columnsToPivot: InternalColumn[] = [];
+    private columnsToAggregate: AgColumn[] = [];
+    private columnsToGroup: AgColumn[] = [];
+    private columnsToPivot: AgColumn[] = [];
 
     private pinned: ColumnPinnedType;
 
@@ -35,7 +35,7 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
             return;
         }
 
-        const dragColumns = draggingEvent.dragItem.columns as InternalColumn[] | undefined;
+        const dragColumns = draggingEvent.dragItem.columns as AgColumn[] | undefined;
 
         if (!dragColumns) {
             return;

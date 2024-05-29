@@ -2,9 +2,9 @@ import type { ColumnModel } from '../../columns/columnModel';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
-import type { InternalColumn } from '../../entities/column';
-import { isColumn } from '../../entities/column';
-import type { InternalColumnGroup } from '../../entities/columnGroup';
+import type { AgColumn } from '../../entities/agColumn';
+import { isColumn } from '../../entities/agColumn';
+import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import { Events } from '../../eventKeys';
 import type { FilterManager } from '../../filter/filterManager';
 import type { FocusService } from '../../focusService';
@@ -265,8 +265,8 @@ export class HeaderRowContainerCtrl extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, listener);
     }
 
-    public getHeaderCtrlForColumn(column: InternalColumn): HeaderCellCtrl | undefined;
-    public getHeaderCtrlForColumn(column: InternalColumnGroup): HeaderGroupCellCtrl | undefined;
+    public getHeaderCtrlForColumn(column: AgColumn): HeaderCellCtrl | undefined;
+    public getHeaderCtrlForColumn(column: AgColumnGroup): HeaderGroupCellCtrl | undefined;
     public getHeaderCtrlForColumn(column: any): any {
         if (isColumn(column)) {
             if (!this.columnsRowCtrl) {
@@ -289,8 +289,8 @@ export class HeaderRowContainerCtrl extends BeanStub {
     }
 
     /* tslint:disable */
-    public getHtmlElementForColumnHeader(column: InternalColumnGroup): HTMLElement | null;
-    public getHtmlElementForColumnHeader(column: InternalColumn): HTMLElement | null;
+    public getHtmlElementForColumnHeader(column: AgColumnGroup): HTMLElement | null;
+    public getHtmlElementForColumnHeader(column: AgColumn): HTMLElement | null;
     public getHtmlElementForColumnHeader(column: any): any {
         /* tslint:enable */
         const cellCtrl = this.getHeaderCtrlForColumn(column);
@@ -308,7 +308,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
         return ctrl ? ctrl.getType() : undefined;
     }
 
-    public focusHeader(rowIndex: number, column: InternalColumn | InternalColumnGroup, event?: KeyboardEvent): boolean {
+    public focusHeader(rowIndex: number, column: AgColumn | AgColumnGroup, event?: KeyboardEvent): boolean {
         const allCtrls = this.getAllCtrls();
         const ctrl = allCtrls[rowIndex];
         if (!ctrl) {

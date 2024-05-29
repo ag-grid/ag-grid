@@ -1,8 +1,8 @@
 import type {
+    AgColumn,
     BeanCollection,
     BeanName,
     IRowNode,
-    InternalColumn,
     NumberSequence,
     RowBounds,
     ShowRowGroupColsService,
@@ -39,7 +39,7 @@ export class BlockUtils extends BeanStub {
         level: number;
         parent: RowNode;
         field: string;
-        rowGroupColumn: InternalColumn;
+        rowGroupColumn: AgColumn;
         rowHeight?: number;
     }): RowNode {
         const rowNode = new RowNode(this.beans);

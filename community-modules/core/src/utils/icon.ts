@@ -1,4 +1,4 @@
-import type { InternalColumn } from '../entities/column';
+import type { AgColumn } from '../entities/agColumn';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _setAriaRole } from './aria';
 import { _isNodeOrElement, _loadTemplate } from './dom';
@@ -158,7 +158,7 @@ export const iconNameClassMap: { [key: string]: string } = {
  * @param {Column | null} [column]
  * @returns {Element}
  */
-export function _createIcon(iconName: string, gos: GridOptionsService, column: InternalColumn | null): Element {
+export function _createIcon(iconName: string, gos: GridOptionsService, column: AgColumn | null): Element {
     const iconContents = _createIconNoSpan(iconName, gos, column);
 
     if (iconContents) {
@@ -180,7 +180,7 @@ export function _createIcon(iconName: string, gos: GridOptionsService, column: I
 export function _createIconNoSpan(
     iconName: string,
     gos: GridOptionsService,
-    column?: InternalColumn | null,
+    column?: AgColumn | null,
     forceCreate?: boolean
 ): Element | undefined {
     let userProvidedIcon: ((...args: any[]) => any) | string | null = null;
