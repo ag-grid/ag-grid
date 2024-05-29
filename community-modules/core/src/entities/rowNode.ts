@@ -956,8 +956,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         return this.__hasChildren;
     }
 
-    public isEmptyRowGroupNode(): boolean | undefined {
-        return this.group && _missingOrEmpty(this.childrenAfterGroup);
+    public isEmptyRowGroupNode(): boolean {
+        return (this.group && _missingOrEmpty(this.childrenAfterGroup)) ?? false;
     }
 
     private dispatchCellChangedEvent(column: AgColumn, newValue: TData, oldValue: TData): void {

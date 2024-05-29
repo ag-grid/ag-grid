@@ -377,7 +377,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
                 return false;
             }
             // if still not removed, then we remove if this group is empty
-            return !!rowNode.isEmptyRowGroupNode();
+            return rowNode.isEmptyRowGroupNode();
         };
 
         while (checkAgain) {
