@@ -377,20 +377,19 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
                     parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
                     level: this.level,
                 });
-                // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
-                // it has 'startsWith' in case the user provided a number.
-                if (
-                    this.id !== null &&
-                    typeof this.id === 'string' &&
-                    this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)
-                ) {
+
+                if (typeof this.id !== 'string') {
+                    console.warn(
+                        `AG Grid: The getRowId callback must return a string. The ID ${this.id} is being cast to a string.`
+                    );
+                    this.id = String(this.id);
+                }
+
+                // make sure id provided doesn't start with 'row-group-' as this is reserved.
+                if (this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
                     console.error(
                         `AG Grid: Row IDs cannot start with ${RowNode.ID_PREFIX_ROW_GROUP}, this is a reserved prefix for AG Grid's row grouping feature.`
                     );
-                }
-                // force id to be a string
-                if (this.id !== null && typeof this.id !== 'string') {
-                    this.id = '' + this.id;
                 }
             } else {
                 // this can happen if user has set blank into the rowNode after the row previously
