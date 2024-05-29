@@ -140,9 +140,14 @@ export abstract class BeanStub implements Bean, IEventEmitter {
             this.gos.removePropertyEventListener(event, listener);
             return null;
         };
-        this.addDestroyFunc(destroyFunc);
+        this.destroyFunctions.push(destroyFunc);
 
-        return destroyFunc;
+        return () => {
+            destroyFunc();
+            // Only remove if manually called before bean is destroyed
+            this.destroyFunctions = this.destroyFunctions.filter((fn) => fn !== destroyFunc);
+            return null;
+        };
     }
 
     /**
@@ -154,7 +159,7 @@ export abstract class BeanStub implements Bean, IEventEmitter {
         event: K,
         listener: PropertyValueChangedListener<K>
     ): () => null {
-        if (!this.isAlive()) {
+        if (this.destroyed) {
             return () => null;
         }
 
@@ -174,7 +179,7 @@ export abstract class BeanStub implements Bean, IEventEmitter {
      * @param listener Shared listener to run if any of the properties change
      */
     public addManagedPropertyListeners(events: (keyof GridOptions)[], listener: PropertyChangedListener): void {
-        if (!this.isAlive()) {
+        if (this.destroyed) {
             return;
         }
 
