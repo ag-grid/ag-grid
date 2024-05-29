@@ -327,7 +327,7 @@ export class ColumnFactory extends BeanStub {
             const colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
             const colDefMerged = this.addColumnDefaultAndTypes(colDef, colId);
             column = new Column(colDefMerged, colDef, colId, primaryColumns);
-            this.context.createBean(column);
+            this.createBean(column);
         } else {
             const colDefMerged = this.addColumnDefaultAndTypes(colDef, column.getColId());
             column.setColDef(colDefMerged, colDef, source);

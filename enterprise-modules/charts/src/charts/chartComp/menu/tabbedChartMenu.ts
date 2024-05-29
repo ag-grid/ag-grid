@@ -53,14 +53,14 @@ export class TabbedChartMenu extends Component {
                 this.dispatchEvent({ type: TabbedChartMenu.EVENT_CLOSED });
             },
         });
-        this.getContext().createBean(this.tabbedLayout);
+        this.createBean(this.tabbedLayout);
     }
 
     private createTab(name: ChartToolPanelMenuOptions, title: ChartTranslationKey, panelComp: Component): TabbedItem {
         const eWrapperDiv = document.createElement('div');
         eWrapperDiv.classList.add('ag-chart-tab', `ag-chart-${title}`);
 
-        this.getContext().createBean(panelComp);
+        this.createBean(panelComp);
 
         eWrapperDiv.appendChild(panelComp.getGui());
 
