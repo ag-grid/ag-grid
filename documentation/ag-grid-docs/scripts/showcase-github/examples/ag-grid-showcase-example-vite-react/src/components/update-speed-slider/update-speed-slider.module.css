@@ -1,0 +1,16 @@
+.slider {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.slider label {
+    font-weight: 600;
+    width: 10em;
+}
+
+.slider input[type='range'] {
+    min-width: 12em;
+    margin-left: 0;
+}
