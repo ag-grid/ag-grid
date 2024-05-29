@@ -778,7 +778,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         }
 
         const rowDragComp = new RowDragComp(() => this.params.value, this.params.node as RowNode);
-        this.createManagedBean(rowDragComp, this.context);
+        this.createManagedBean(rowDragComp);
 
         this.eGui.insertAdjacentElement('afterbegin', rowDragComp.getGui());
     }
@@ -803,7 +803,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         if (checkboxNeeded) {
             const cbSelectionComponent = new CheckboxSelectionComponent();
-            this.getContext().createBean(cbSelectionComponent);
+            this.createBean(cbSelectionComponent);
 
             cbSelectionComponent.init({
                 rowNode: this.params.node as RowNode, // when groupHideOpenParents = true and group expanded, we want the checkbox to refer to leaf node state (not group node state)
@@ -815,7 +815,7 @@ export class GroupCellRendererCtrl extends BeanStub {
                 },
             });
             this.eCheckbox.appendChild(cbSelectionComponent.getGui());
-            this.addDestroyFunc(() => this.getContext().destroyBean(cbSelectionComponent));
+            this.addDestroyFunc(() => this.destroyBean(cbSelectionComponent));
         }
 
         this.comp.setCheckboxVisible(checkboxNeeded);

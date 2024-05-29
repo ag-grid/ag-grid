@@ -156,7 +156,7 @@ export class UserComponentRegistry extends BeanStub {
             ModuleRegistry.__assertRegistered(
                 moduleForComponent,
                 `AG Grid '${propertyName}' component: ${name}`,
-                this.context.getGridId()
+                this.gridId
             );
         } else {
             _doOnce(() => {

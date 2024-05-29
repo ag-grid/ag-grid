@@ -2,6 +2,7 @@ import { ComponentUtil } from './components/componentUtil';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection, BeanName } from './context/context';
 import type { DomLayoutType, GridOptions } from './entities/gridOptions';
+import type { Environment } from './environment';
 import type { AgEvent, GridOptionsChangedEvent } from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS, Events } from './events';
 import type { GridApi } from './gridApi';
@@ -83,6 +84,7 @@ export class GridOptionsService extends BeanStub {
     private gridOptions: GridOptions;
     private eGridDiv: HTMLElement;
     private validationService: ValidationService;
+    private environment: Environment;
     private api: GridApi;
 
     public wireBeans(beans: BeanCollection): void {
@@ -90,6 +92,7 @@ export class GridOptionsService extends BeanStub {
         this.gridOptions = beans.gridOptions;
         this.eGridDiv = beans.eGridDiv;
         this.validationService = beans.validationService;
+        this.environment = beans.environment;
         this.api = beans.gridApi;
     }
 

@@ -325,7 +325,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         // templates, in that case, we need to look for provided sort elements and
         // manually create eSortIndicator.
         if (!this.eSortIndicator) {
-            this.eSortIndicator = this.context.createBean(new SortIndicatorComp(true));
+            this.eSortIndicator = this.createBean(new SortIndicatorComp(true));
             this.eSortIndicator.attachCustomElements(
                 this.eSortOrder,
                 this.eSortAsc,

@@ -1,4 +1,6 @@
 import type {
+    BeanCollection,
+    Context,
     GridApi,
     GridOptions,
     GridParams,
@@ -26,10 +28,14 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     private eDetailGrid: HTMLElement = RefPlaceholder;
 
     private detailApi: GridApi;
-
     private params: IDetailCellRendererParams;
-
     private ctrl: DetailCellRendererCtrl;
+    private context: Context;
+
+    public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.context = beans.context;
+    }
 
     public init(params: IDetailCellRendererParams): void {
         this.params = params;

@@ -3,6 +3,7 @@ import type {
     ChartCreated,
     ChartToolPanelMenuOptions,
     ChartToolbarMenuItemOptions,
+    Environment,
 } from '@ag-grid-community/core';
 import { AgPromise, Component, Events } from '@ag-grid-community/core';
 import { AgPanel } from '@ag-grid-enterprise/core';
@@ -25,11 +26,13 @@ type ChartToolbarButtons = {
 export class ChartMenu extends Component {
     private chartMenuService: ChartMenuService;
     private chartMenuListFactory: ChartMenuListFactory;
+    private environment: Environment;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.chartMenuService = beans.chartMenuService;
         this.chartMenuListFactory = beans.chartMenuListFactory;
+        this.environment = beans.environment;
     }
 
     private readonly chartController: ChartController;

@@ -51,7 +51,7 @@ export class GridCtrl extends BeanStub {
         this.eGridHostDiv = eGridDiv;
         this.eGui = eGui;
 
-        this.eGui.setAttribute('grid-id', this.context.getGridId());
+        this.eGui.setAttribute('grid-id', this.gridId);
 
         // this drop target is just used to see if the drop event is inside the grid
         this.dragAndDropService.addDropTarget({
@@ -82,19 +82,19 @@ export class GridCtrl extends BeanStub {
     }
 
     public showDropZones(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.RowGroupingModule, this.context.getGridId());
+        return ModuleRegistry.__isRegistered(ModuleNames.RowGroupingModule, this.gridId);
     }
 
     public showSideBar(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.SideBarModule, this.context.getGridId());
+        return ModuleRegistry.__isRegistered(ModuleNames.SideBarModule, this.gridId);
     }
 
     public showStatusBar(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.StatusBarModule, this.context.getGridId());
+        return ModuleRegistry.__isRegistered(ModuleNames.StatusBarModule, this.gridId);
     }
 
     public showWatermark(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.context.getGridId());
+        return ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.gridId);
     }
 
     private onGridSizeChanged(): void {

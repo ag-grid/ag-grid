@@ -257,7 +257,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             },
         });
 
-        this.getContext().createBean(virtualList);
+        this.createBean(virtualList);
 
         const ePopup = _loadTemplate(/* html*/ `<div class="ag-select-agg-func-popup"></div>`);
         ePopup.style.top = '0px';

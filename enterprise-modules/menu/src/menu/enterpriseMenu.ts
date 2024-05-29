@@ -415,7 +415,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
 
     private isModuleLoaded(menuTabName: string): boolean {
         if (menuTabName === TabbedColumnMenu.TAB_COLUMNS) {
-            return ModuleRegistry.__isRegistered(ModuleNames.ColumnsToolPanelModule, this.context.getGridId());
+            return ModuleRegistry.__isRegistered(ModuleNames.ColumnsToolPanelModule, this.gridId);
         }
 
         return true;

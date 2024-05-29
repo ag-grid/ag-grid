@@ -7,6 +7,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { CellPosition } from '../entities/cellPositionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { RowPosition } from '../entities/rowPositionUtils';
+import type { Environment } from '../environment';
 import type {
     AgEventListener,
     BodyScrollEvent,
@@ -96,6 +97,7 @@ export class RowRenderer extends BeanStub {
     private beans: BeanCollection;
     private rowContainerHeightService: RowContainerHeightService;
     private ctrlsService: CtrlsService;
+    private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
@@ -109,6 +111,7 @@ export class RowRenderer extends BeanStub {
         this.beans = beans;
         this.rowContainerHeightService = beans.rowContainerHeightService;
         this.ctrlsService = beans.ctrlsService;
+        this.environment = beans.environment;
     }
 
     private gridBodyCtrl: GridBodyCtrl;

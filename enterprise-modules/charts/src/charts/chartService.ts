@@ -11,6 +11,7 @@ import type {
     CreateCrossFilterChartParams,
     CreatePivotChartParams,
     CreateRangeChartParams,
+    Environment,
     GetChartImageDataUrlParams,
     IAggFunc,
     IChartService,
@@ -55,11 +56,13 @@ export class ChartService extends BeanStub implements IChartService {
 
     private visibleColsService: VisibleColsService;
     private rangeService?: IRangeService;
+    private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
         this.visibleColsService = beans.visibleColsService;
         this.rangeService = beans.rangeService;
+        this.environment = beans.environment;
     }
 
     public static CHARTS_VERSION = CHARTS_VERSION;
@@ -265,7 +268,7 @@ export class ChartService extends BeanStub implements IChartService {
         };
 
         const chartComp = new GridChartComp(gridChartParams);
-        this.context.createBean(chartComp);
+        this.createBean(chartComp);
 
         const chartRef = this.createChartRef(chartComp);
 
@@ -300,7 +303,7 @@ export class ChartService extends BeanStub implements IChartService {
         const chartRef: ChartRef = {
             destroyChart: () => {
                 if (this.activeCharts.has(chartRef)) {
-                    this.context.destroyBean(chartComp);
+                    this.destroyBean(chartComp);
                     this.activeChartComps.delete(chartComp);
                     this.activeCharts.delete(chartRef);
                 }

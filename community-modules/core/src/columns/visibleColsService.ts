@@ -727,7 +727,7 @@ export class VisibleColsService extends BeanStub {
             columnGroup.reset();
         } else {
             columnGroup = new AgColumnGroup(providedGroup, groupId, instanceId, pinned);
-            this.context.createBean(columnGroup);
+            this.createBean(columnGroup);
         }
 
         return columnGroup;

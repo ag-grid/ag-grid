@@ -649,7 +649,7 @@ export class FilterManager extends BeanStub {
 
     private getDefaultFilter(column: AgColumn): string {
         let defaultFilter;
-        if (ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.context.getGridId())) {
+        if (ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.gridId)) {
             defaultFilter = 'agSetColumnFilter';
         } else {
             const cellDataType = this.dataTypeService.getBaseDataType(column);
@@ -666,7 +666,7 @@ export class FilterManager extends BeanStub {
 
     public getDefaultFloatingFilter(column: AgColumn): string {
         let defaultFloatingFilterType: string;
-        if (ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.context.getGridId())) {
+        if (ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.gridId)) {
             defaultFloatingFilterType = 'agSetColumnFloatingFilter';
         } else {
             const cellDataType = this.dataTypeService.getBaseDataType(column);
@@ -892,7 +892,7 @@ export class FilterManager extends BeanStub {
         source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled' | 'paramsUpdated'
     ): void {
         filterWrapper.filterPromise!.then((filter) => {
-            this.getContext().destroyBean(filter);
+            this.destroyBean(filter);
 
             filterWrapper.column.setFilterActive(false, 'filterDestroyed');
 

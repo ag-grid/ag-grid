@@ -4,6 +4,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
+import type { Environment } from '../environment';
 import { Events } from '../eventKeys';
 import type { FilterManager } from '../filter/filterManager';
 import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
@@ -73,6 +74,7 @@ export class GridBodyCtrl extends BeanStub {
     private mouseEventService: MouseEventService;
     private rowModel: IRowModel;
     private filterManager: FilterManager;
+    private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
@@ -91,6 +93,7 @@ export class GridBodyCtrl extends BeanStub {
         this.mouseEventService = beans.mouseEventService;
         this.rowModel = beans.rowModel;
         this.filterManager = beans.filterManager;
+        this.environment = beans.environment;
     }
 
     private comp: IGridBodyComp;
@@ -321,7 +324,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private setupRowAnimationCssClass(): void {
-        let initialSizeMeasurementComplete = false;
+        let initialSizeMeasurementComplete = this.environment.hasMeasuredSizes();
 
         const updateAnimationClass = () => {
             // we don't want to use row animation if scaling, as rows jump strangely as you scroll,

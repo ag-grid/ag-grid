@@ -92,7 +92,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     private destroyDatasource(): void {
         if (this.datasource) {
-            this.getContext().destroyBean(this.datasource);
+            this.destroyBean(this.datasource);
             this.rowRenderer.datasourceChanged();
             this.datasource = null;
         }

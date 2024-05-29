@@ -674,7 +674,7 @@ export class DataTypeService extends BeanStub {
         colId: string
     ): void {
         const formatValue = this.formatValueFuncs[cellDataType];
-        const usingSetFilter = ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.context.getGridId());
+        const usingSetFilter = ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.gridId);
         const translate = this.localeService.getLocaleTextFunc();
         const mergeFilterParams = (params: any) => {
             const { filterParams } = colDef;
