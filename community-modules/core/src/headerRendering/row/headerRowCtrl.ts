@@ -122,14 +122,14 @@ export class HeaderRowCtrl extends BeanStub {
         );
 
         // when print layout changes, it changes what columns are in what section
-        this.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
-        this.addManagedPropertyListener('ensureDomOrder', (e) => (this.isEnsureDomOrder = e.currentValue));
+        this.gos.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
+        this.gos.addManagedPropertyListener('ensureDomOrder', (e) => (this.isEnsureDomOrder = e.currentValue));
 
-        this.addManagedPropertyListener('headerHeight', this.onRowHeightChanged.bind(this));
-        this.addManagedPropertyListener('pivotHeaderHeight', this.onRowHeightChanged.bind(this));
-        this.addManagedPropertyListener('groupHeaderHeight', this.onRowHeightChanged.bind(this));
-        this.addManagedPropertyListener('pivotGroupHeaderHeight', this.onRowHeightChanged.bind(this));
-        this.addManagedPropertyListener('floatingFiltersHeight', this.onRowHeightChanged.bind(this));
+        this.gos.addManagedPropertyListener('headerHeight', this.onRowHeightChanged.bind(this));
+        this.gos.addManagedPropertyListener('pivotHeaderHeight', this.onRowHeightChanged.bind(this));
+        this.gos.addManagedPropertyListener('groupHeaderHeight', this.onRowHeightChanged.bind(this));
+        this.gos.addManagedPropertyListener('pivotGroupHeaderHeight', this.onRowHeightChanged.bind(this));
+        this.gos.addManagedPropertyListener('floatingFiltersHeight', this.onRowHeightChanged.bind(this));
     }
 
     public getHeaderCellCtrl(column: ColumnGroup): HeaderGroupCellCtrl | undefined;

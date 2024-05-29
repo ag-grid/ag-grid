@@ -38,7 +38,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.refreshGui.bind(this));
 
-        this.addManagedPropertyListeners(
+        this.gos.addManagedPropertyListeners(
             ['functionsReadOnly', 'rowGroupPanelSuppressSort', 'groupLockGroupColumns'],
             this.refreshGui.bind(this)
         );

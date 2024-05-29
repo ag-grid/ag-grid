@@ -65,7 +65,7 @@ export class ValueService extends BeanStub {
             this.eventService.removeEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async)
         );
 
-        this.addManagedPropertyListener('treeData', (propChange) => (this.isTreeData = propChange.currentValue));
+        this.gos.addManagedPropertyListener('treeData', (propChange) => (this.isTreeData = propChange.currentValue));
     }
 
     public getValue(column: Column, rowNode?: IRowNode | null, forFilter = false, ignoreAggData = false): any {

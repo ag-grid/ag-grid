@@ -69,7 +69,7 @@ export class AgSideBar extends Component implements ISideBar {
             sideBarState,
         });
 
-        this.addManagedPropertyListener('sideBar', this.onSideBarUpdated.bind(this));
+        this.gos.addManagedPropertyListener('sideBar', this.onSideBarUpdated.bind(this));
 
         this.sideBarService.registerSideBarComp(this);
         this.createManagedBean(

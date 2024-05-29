@@ -34,7 +34,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
     public postConstruct(): void {
         this.rowSelection = this.gos.get('rowSelection');
         this.groupSelectsChildren = this.gos.get('groupSelectsChildren');
-        this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection'], () => {
+        this.gos.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection'], () => {
             this.groupSelectsChildren = this.gos.get('groupSelectsChildren');
             this.rowSelection = this.gos.get('rowSelection');
             this.deselectAllRowNodes({ source: 'api' });

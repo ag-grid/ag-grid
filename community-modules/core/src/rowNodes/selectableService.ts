@@ -20,7 +20,7 @@ export class SelectableService extends BeanStub {
     }
 
     public postConstruct() {
-        this.addManagedPropertyListener('isRowSelectable', () => this.updateSelectable());
+        this.gos.addManagedPropertyListener('isRowSelectable', () => this.updateSelectable());
     }
 
     /**

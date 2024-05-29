@@ -362,7 +362,7 @@ export class RowContainerCtrl extends BeanStub {
             this.comp.setDomOrder(isEnsureDomOrder || isPrintLayout);
         };
 
-        this.addManagedPropertyListener('domLayout', listener);
+        this.gos.addManagedPropertyListener('domLayout', listener);
         listener();
     }
 

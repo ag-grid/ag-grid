@@ -24,8 +24,8 @@ export class PinnedRowModel extends BeanStub {
     public postConstruct(): void {
         this.setPinnedTopRowData();
         this.setPinnedBottomRowData();
-        this.addManagedPropertyListener('pinnedTopRowData', () => this.setPinnedTopRowData());
-        this.addManagedPropertyListener('pinnedBottomRowData', () => this.setPinnedBottomRowData());
+        this.gos.addManagedPropertyListener('pinnedTopRowData', () => this.setPinnedTopRowData());
+        this.gos.addManagedPropertyListener('pinnedBottomRowData', () => this.setPinnedBottomRowData());
         this.addManagedListener(
             this.eventService,
             Events.EVENT_GRID_STYLES_CHANGED,

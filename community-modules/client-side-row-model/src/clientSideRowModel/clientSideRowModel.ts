@@ -244,7 +244,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             ...filterAggStageRefreshProps,
             ...flattenStageRefreshProps,
         ];
-        this.addManagedPropertyListeners(allProps, (params) => {
+        this.gos.addManagedPropertyListeners(allProps, (params) => {
             const properties = params.changeSet?.properties;
             if (!properties) {
                 return;
@@ -292,7 +292,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             }
         });
 
-        this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
+        this.gos.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
     }
 
     public start(): void {

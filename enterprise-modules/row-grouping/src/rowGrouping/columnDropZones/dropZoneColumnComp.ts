@@ -82,7 +82,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         });
 
         if (this.isGroupingZone()) {
-            this.addManagedPropertyListener('groupLockGroupColumns', () => {
+            this.gos.addManagedPropertyListener('groupLockGroupColumns', () => {
                 this.refreshRemove();
                 this.refreshDraggable();
                 this.setupAria();

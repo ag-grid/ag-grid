@@ -648,8 +648,8 @@ export class RowCtrl extends BeanStub {
             gui.rowComp.setDomOrder(this.getDomOrder());
         };
 
-        this.addManagedPropertyListener('domLayout', listener);
-        this.addManagedPropertyListener('ensureDomOrder', listener);
+        this.gos.addManagedPropertyListener('domLayout', listener);
+        this.gos.addManagedPropertyListener('ensureDomOrder', listener);
     }
 
     private setAnimateFlags(animateIn: boolean): void {
@@ -773,7 +773,7 @@ export class RowCtrl extends BeanStub {
                 this.tooltipFeature = this.destroyBean(this.tooltipFeature, this.beans.context);
             }
         });
-        this.addManagedPropertyListeners(['rowDragEntireRow'], () => {
+        this.gos.addManagedPropertyListeners(['rowDragEntireRow'], () => {
             const useRowDragEntireRow = this.gos.get('rowDragEntireRow');
             if (useRowDragEntireRow) {
                 this.allRowGuis.forEach((gui) => {

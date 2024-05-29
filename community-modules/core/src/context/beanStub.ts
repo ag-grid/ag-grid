@@ -1,13 +1,6 @@
-import type { GridOptions } from '../entities/gridOptions';
 import type { EventService } from '../eventService';
 import type { AgEvent, AgEventListener } from '../events';
-import type {
-    GridOptionsService,
-    PropertyChangedEvent,
-    PropertyChangedListener,
-    PropertyValueChangedEvent,
-    PropertyValueChangedListener,
-} from '../gridOptionsService';
+import type { GridOptionsService } from '../gridOptionsService';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import { LocalEventService } from '../localEventService';
@@ -59,10 +52,6 @@ export abstract class BeanStub implements Bean, IEventEmitter {
     //         }
     //     }, 5000);
     // }
-
-    // Enable multiple grid properties to be updated together by the user but only trigger shared logic once.
-    // Closely related to logic in ComponentUtil.ts
-    private lastChangeSetIdLookup: Record<string, number> = {};
 
     // CellComp and GridComp and override this because they get the FrameworkOverrides from the Beans bean
     protected getFrameworkOverrides(): IFrameworkOverrides {
@@ -127,80 +116,6 @@ export abstract class BeanStub implements Bean, IEventEmitter {
             this.destroyFunctions = this.destroyFunctions.filter((fn) => fn !== destroyFunc);
             return null;
         };
-    }
-
-    private setupGridOptionListener<K extends keyof GridOptions>(
-        event: keyof GridOptions,
-        listener: PropertyValueChangedListener<K>
-    ): () => null {
-        this.gos.addPropertyEventListener(event, listener);
-        const destroyFunc: () => null = () => {
-            this.gos.removePropertyEventListener(event, listener);
-            return null;
-        };
-        this.destroyFunctions.push(destroyFunc);
-
-        return () => {
-            destroyFunc();
-            // Only remove if manually called before bean is destroyed
-            this.destroyFunctions = this.destroyFunctions.filter((fn) => fn !== destroyFunc);
-            return null;
-        };
-    }
-
-    /**
-     * Setup a managed property listener for the given GridOption property.
-     * @param event GridOption property to listen to changes for.
-     * @param listener Listener to run when property value changes
-     */
-    public addManagedPropertyListener<K extends keyof GridOptions>(
-        event: K,
-        listener: PropertyValueChangedListener<K>
-    ): () => null {
-        if (this.destroyed) {
-            return () => null;
-        }
-
-        return this.setupGridOptionListener(event, listener);
-    }
-
-    private propertyListenerId = 0;
-    /**
-     * Setup managed property listeners for the given set of GridOption properties.
-     * The listener will be run if any of the property changes but will only run once if
-     * multiple of the properties change within the same framework lifecycle event.
-     * Works on the basis that GridOptionsService updates all properties *before* any property change events are fired.
-     * @param events Array of GridOption properties to listen for changes too.
-     * @param listener Shared listener to run if any of the properties change
-     */
-    public addManagedPropertyListeners(events: (keyof GridOptions)[], listener: PropertyChangedListener): void {
-        if (this.destroyed) {
-            return;
-        }
-
-        // Ensure each set of events can run for the same changeSetId
-        const eventsKey = events.join('-') + this.propertyListenerId++;
-
-        const wrappedListener = (event: PropertyValueChangedEvent<any>) => {
-            if (event.changeSet) {
-                // ChangeSet is only set when the property change is part of a group of changes from ComponentUtils
-                // Direct api calls should always be run as
-                if (event.changeSet && event.changeSet.id === this.lastChangeSetIdLookup[eventsKey]) {
-                    // Already run the listener for this set of prop changes so don't run again
-                    return;
-                }
-                this.lastChangeSetIdLookup[eventsKey] = event.changeSet.id;
-            }
-            // Don't expose the underlying event value changes to the group listener.
-            const propertiesChangeEvent: PropertyChangedEvent = {
-                type: 'gridPropertyChanged',
-                changeSet: event.changeSet,
-                source: event.source,
-            };
-            listener(propertiesChangeEvent);
-        };
-
-        events.forEach((event) => this.setupGridOptionListener(event, wrappedListener));
     }
 
     public isAlive = (): boolean => !this.destroyed;

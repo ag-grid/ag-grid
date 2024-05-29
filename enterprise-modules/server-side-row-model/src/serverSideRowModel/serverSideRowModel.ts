@@ -131,7 +131,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, resetListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, resetListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, resetListener);
-        this.addManagedPropertyListeners(
+        this.gos.addManagedPropertyListeners(
             [
                 /**
                  * Following properties omitted as they are likely to come with undesired  side effects.
@@ -145,10 +145,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             ],
             resetListener
         );
-        this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
+        this.gos.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
         this.verifyProps();
 
-        this.addManagedPropertyListener('serverSideDatasource', () => this.updateDatasource());
+        this.gos.addManagedPropertyListener('serverSideDatasource', () => this.updateDatasource());
     }
 
     private updateDatasource(): void {

@@ -27,7 +27,7 @@ export class PageSizeSelectorComp extends Component {
     }
 
     public postConstruct() {
-        this.addManagedPropertyListener('paginationPageSizeSelector', () => {
+        this.gos.addManagedPropertyListener('paginationPageSizeSelector', () => {
             this.onPageSizeSelectorValuesChange();
         });
 

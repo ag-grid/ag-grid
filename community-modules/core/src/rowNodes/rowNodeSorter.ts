@@ -40,11 +40,11 @@ export class RowNodeSorter extends BeanStub {
         this.isAccentedSort = this.gos.get('accentedSort');
         this.primaryColumnsSortGroups = this.gos.isColumnsSortingCoupledToGroup();
 
-        this.addManagedPropertyListener(
+        this.gos.addManagedPropertyListener(
             'accentedSort',
             (propChange) => (this.isAccentedSort = propChange.currentValue)
         );
-        this.addManagedPropertyListener(
+        this.gos.addManagedPropertyListener(
             'autoGroupColumnDef',
             () => (this.primaryColumnsSortGroups = this.gos.isColumnsSortingCoupledToGroup())
         );

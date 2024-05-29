@@ -60,7 +60,7 @@ export class AdvancedFilterBuilderComp extends Component {
     public postConstruct(): void {
         const { showMoveButtons } = this.gos.get('advancedFilterBuilderParams') ?? {};
         this.showMove = !!showMoveButtons;
-        this.addManagedPropertyListener('advancedFilterBuilderParams', ({ currentValue }) => {
+        this.gos.addManagedPropertyListener('advancedFilterBuilderParams', ({ currentValue }) => {
             this.showMove = !!currentValue?.showMoveButtons;
             this.refreshList(false);
         });

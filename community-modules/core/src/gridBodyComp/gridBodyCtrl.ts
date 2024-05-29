@@ -135,7 +135,7 @@ export class GridBodyCtrl extends BeanStub {
         this.eStickyBottom = eStickyBottom;
 
         this.setCellTextSelection(this.gos.get('enableCellTextSelection'));
-        this.addManagedPropertyListener('enableCellTextSelection', (props) =>
+        this.gos.addManagedPropertyListener('enableCellTextSelection', (props) =>
             this.setCellTextSelection(props.currentValue)
         );
 
@@ -342,7 +342,7 @@ export class GridBodyCtrl extends BeanStub {
         updateAnimationClass();
 
         this.addManagedListener(this.eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, updateAnimationClass);
-        this.addManagedPropertyListener('animateRows', updateAnimationClass);
+        this.gos.addManagedPropertyListener('animateRows', updateAnimationClass);
 
         this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, () => {
             if (!initialSizeMeasurementComplete && this.environment.hasMeasuredSizes()) {

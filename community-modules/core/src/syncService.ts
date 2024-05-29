@@ -30,7 +30,7 @@ export class SyncService extends BeanStub {
     private waitingForColumns: boolean = false;
 
     public postConstruct(): void {
-        this.addManagedPropertyListener('columnDefs', (event) => this.setColumnDefs(event));
+        this.gos.addManagedPropertyListener('columnDefs', (event) => this.setColumnDefs(event));
     }
 
     public start(): void {

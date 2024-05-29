@@ -34,7 +34,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
                 Events.EVENT_SCROLL_VISIBILITY_CHANGED,
                 this.checkPageSize.bind(this)
             );
-            this.addManagedPropertyListener('paginationAutoPageSize', this.onPaginationAutoSizeChanged.bind(this));
+            this.gos.addManagedPropertyListener('paginationAutoPageSize', this.onPaginationAutoSizeChanged.bind(this));
 
             this.checkPageSize();
         });

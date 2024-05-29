@@ -105,12 +105,12 @@ export class DataTypeService extends BeanStub {
 
     public postConstruct(): void {
         this.groupHideOpenParents = this.gos.get('groupHideOpenParents');
-        this.addManagedPropertyListener('groupHideOpenParents', () => {
+        this.gos.addManagedPropertyListener('groupHideOpenParents', () => {
             this.groupHideOpenParents = this.gos.get('groupHideOpenParents');
         });
         this.processDataTypeDefinitions();
 
-        this.addManagedPropertyListener('dataTypeDefinitions', (event) => {
+        this.gos.addManagedPropertyListener('dataTypeDefinitions', (event) => {
             this.processDataTypeDefinitions();
             this.columnModel.recreateColumnDefs(convertSourceType(event.source));
         });

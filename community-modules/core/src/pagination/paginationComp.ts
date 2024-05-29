@@ -58,9 +58,9 @@ export class PaginationComp extends Component {
         btNext.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'previous' : 'next', this.gos)!);
         btLast.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'first' : 'last', this.gos)!);
 
-        this.addManagedPropertyListener('pagination', this.onPaginationChanged.bind(this));
-        this.addManagedPropertyListener('suppressPaginationPanel', this.onPaginationChanged.bind(this));
-        this.addManagedPropertyListeners(
+        this.gos.addManagedPropertyListener('pagination', this.onPaginationChanged.bind(this));
+        this.gos.addManagedPropertyListener('suppressPaginationPanel', this.onPaginationChanged.bind(this));
+        this.gos.addManagedPropertyListeners(
             ['paginationPageSizeSelector', 'paginationAutoPageSize', 'suppressPaginationPanel'],
             () => this.onPageSizeRelatedOptionsChange()
         );

@@ -135,17 +135,17 @@ export class ColumnModel extends BeanStub {
             this.pivotMode = pivotMode;
         }
 
-        this.addManagedPropertyListeners(
+        this.gos.addManagedPropertyListeners(
             ['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'],
             (event) => this.refreshAll(convertSourceType(event.source))
         );
-        this.addManagedPropertyListener('autoGroupColumnDef', (event) =>
+        this.gos.addManagedPropertyListener('autoGroupColumnDef', (event) =>
             this.onAutoGroupColumnDefChanged(convertSourceType(event.source))
         );
-        this.addManagedPropertyListeners(['defaultColDef', 'columnTypes', 'suppressFieldDotNotation'], (event) =>
+        this.gos.addManagedPropertyListeners(['defaultColDef', 'columnTypes', 'suppressFieldDotNotation'], (event) =>
             this.recreateColumnDefs(convertSourceType(event.source))
         );
-        this.addManagedPropertyListener('pivotMode', (event) =>
+        this.gos.addManagedPropertyListener('pivotMode', (event) =>
             this.setPivotMode(this.gos.get('pivotMode'), convertSourceType(event.source))
         );
         this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => this.onFirstDataRendered());

@@ -55,7 +55,7 @@ export class SetLeftFeature extends BeanStub {
         );
 
         // setting left has a dependency on print layout
-        this.addManagedPropertyListener('domLayout', this.onLeftChanged.bind(this));
+        this.gos.addManagedPropertyListener('domLayout', this.onLeftChanged.bind(this));
     }
 
     private setLeftFirstTime(): void {
