@@ -699,7 +699,8 @@
     .ag-row-animation .ag-row {
         transition:
             transform 0.4s,
-            top 0.4s;
+            top 0.4s,
+            opacity 0.2s;
     }
     // for rows older than one second, we also animate the height. we don't include the height
     // initially so we are not animating auto-height rows on initial render.
@@ -707,7 +708,8 @@
         transition:
             transform 0.4s,
             top 0.4s,
-            height 0.4s;
+            height 0.4s,
+            opacity 0.2s;
     }
 
     .ag-row-no-animation .ag-row {
