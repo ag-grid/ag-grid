@@ -1,1 +1,23 @@
-/* You can add global styles to this file, and also import other style files */
+.rag-red {
+    background-color: #cc222244;
+}
+
+.rag-green {
+    background-color: #33cc3344;
+}
+
+.rag-amber {
+    background-color: #ffbf00;
+}
+
+#finance-example-slider {
+    .update-speed {
+        font-size: 1.3em;
+    }
+}
+
+/* Exclude simple selectors from interfering with grid styles */
+img:where(:not([class^='ag'])),
+svg:where(:not([class^='ag'])) {
+    vertical-align: middle;
+}

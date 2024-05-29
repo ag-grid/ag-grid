@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
+import { PortfolioExample } from './portfolio-example/portfolio-example.component';
+
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [RouterOutlet],
+    imports: [RouterOutlet, PortfolioExample],
     templateUrl: './app.component.html',
     styleUrl: './app.component.css',
 })

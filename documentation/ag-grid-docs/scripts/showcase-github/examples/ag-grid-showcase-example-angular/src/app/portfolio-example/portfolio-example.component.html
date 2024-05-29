@@ -1,0 +1,42 @@
+<div class="wrapper">
+    <div class="container">
+        <div class="toolbar">
+            <button id="export-to-excel" class="button-secondary">
+                <img class="buttonIcon" src="/example/finance/icons/download.svg" />Export to Excel
+            </button>
+            <div id="finance-example-slider" class="slider">
+                <label for="update-speed-slider">
+                    <span class="text-secondary">Update speed:</span>
+                    <span class="update-speed">{{ updateSpeed }}x</span>
+                </label>
+                <input
+                    type="range"
+                    id="update-speed-slider"
+                    name="update-speed-slider"
+                    [min]="rangeConfig.min"
+                    [max]="rangeConfig.max"
+                    [step]="rangeConfig.step"
+                    [value]="updateSpeed"
+                    (change)="onSpeedSliderChange($event)"
+                />
+            </div>
+        </div>
+        <ag-grid-angular
+            style="height: 500px"
+            [class]="themeClass"
+            [rowData]="rowData"
+            (gridReady)="onGridReady($event)"
+            [columnDefs]="colDefs"
+            [getRowId]="getRowId"
+            [defaultColDef]="defaultColDef"
+            [enableRangeSelection]="true"
+            [enableCharts]="true"
+            rowSelection="multiple"
+            [suppressAggFuncInHeader]="true"
+            [statusBar]="statusBar"
+            groupDisplayType="groupRows"
+            [groupDefaultExpanded]="1"
+            columnMenu="new"
+        ></ag-grid-angular>
+    </div>
+</div>

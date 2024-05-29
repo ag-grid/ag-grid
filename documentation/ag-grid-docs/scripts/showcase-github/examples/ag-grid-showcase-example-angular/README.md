@@ -1,6 +1,6 @@
 # AG Grid Showcase Finance Example (Angular)
 
-This AG Grid Showcase example for Angular is generated with the [Angular CLI](https://github.com/angular/angular-cli) using:
+This [AG Grid](https://ag-grid.com/) Showcase example for Angular is generated with the [Angular CLI](https://github.com/angular/angular-cli) using:
 
 ```
 ng new ag-grid-showcase-example-angular
