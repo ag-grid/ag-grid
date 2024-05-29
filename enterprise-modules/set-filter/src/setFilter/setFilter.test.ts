@@ -107,6 +107,7 @@ function createSetFilter(filterParams?: any): SetFilter<unknown> {
     (setFilter as any).valueService = valueService;
     (setFilter as any).rowModel = rowModel;
     (setFilter as any).context = context;
+    (setFilter as any).stubContext = context;
     (setFilter as any).eGui = eGui;
     (setFilter as any).eMiniFilter = eMiniFilter;
     (setFilter as any).eSelectAll = eSelectAll;
