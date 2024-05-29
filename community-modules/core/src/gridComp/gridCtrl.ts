@@ -128,7 +128,8 @@ export class GridCtrl extends BeanStub {
         const firstMeasurement = wrapper.offsetHeight;
         gui.style.height = '10px';
         const secondMeasurement = wrapper.offsetHeight;
-        const hasIntrinsicHeight = secondMeasurement - firstMeasurement !== 10;
+        // difference should be 10px but allow some margin of error if the layout is scaled
+        const hasIntrinsicHeight = secondMeasurement - firstMeasurement <= 5;
         gui.style.boxSizing = '';
         gui.style.height = '';
         gui.style.padding = '';
