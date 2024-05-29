@@ -34,6 +34,7 @@ export class GridCtrl extends BeanStub {
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
+        this.eGridWrapperDiv = beans.eGridDiv;
         this.focusService = beans.focusService;
         this.resizeObserverService = beans.resizeObserverService;
         this.visibleColsService = beans.visibleColsService;
@@ -44,6 +45,7 @@ export class GridCtrl extends BeanStub {
 
     private view: IGridComp;
     private eGridHostDiv: HTMLElement;
+    private eGridWrapperDiv: HTMLElement;
     private eGui: HTMLElement;
 
     public setComp(view: IGridComp, eGridDiv: HTMLElement, eGui: HTMLElement): void {
@@ -120,7 +122,7 @@ export class GridCtrl extends BeanStub {
         // the height of the main grid element and check whether the container
         // resizes to fit. It it does, it has no explicit height set and we need a default height.
         const gui = this.eGui;
-        const wrapper = this.eGridHostDiv;
+        const wrapper = this.eGridWrapperDiv;
         gui.style.boxSizing = 'border-box';
         gui.style.height = '0';
         gui.style.padding = '0';
