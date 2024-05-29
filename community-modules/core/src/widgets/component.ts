@@ -1,6 +1,6 @@
 import type { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection, Context } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import type { ColumnGroup } from '../entities/columnGroup';
@@ -38,9 +38,11 @@ export type ComponentClass = { new (params?: any): Component; selector: AgCompon
 
 export class Component extends BeanStub {
     protected agStackComponentsRegistry: AgStackComponentsRegistry;
+    protected componentContext: Context;
 
     public wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
+        this.componentContext = beans.context;
         this.agStackComponentsRegistry = beans.agStackComponentsRegistry;
     }
 
@@ -90,7 +92,7 @@ export class Component extends BeanStub {
         // ui exists if user sets template in constructor. when this happens,
         // We have to wait for the context to be autoWired first before we can create child components.
         this.agStackComponentsRegistry?.ensureRegistered(this.components);
-        if (element && this.getContext()) {
+        if (element && this.componentContext) {
             this.applyElementsToComponent(element);
             this.createChildComponentsFromTags(element, paramsMap);
         }

@@ -11,7 +11,7 @@ import type { FuncColsService } from './columns/funcColsService';
 import type { PivotResultColsService } from './columns/pivotResultColsService';
 import type { VisibleColsService } from './columns/visibleColsService';
 import { BeanStub } from './context/beanStub';
-import type { BeanCollection, BeanName } from './context/context';
+import type { BeanCollection, BeanName, Context } from './context/context';
 import type { CtrlsService } from './ctrlsService';
 import type { DragAndDropService } from './dragAndDrop/dragAndDropService';
 import type { CellPosition } from './entities/cellPositionUtils';
@@ -116,6 +116,7 @@ import type { ValueService } from './valueService/valueService';
 export class GridApiService<TData = any> extends BeanStub implements GridApi {
     beanName: BeanName = 'gridApi';
 
+    private context: Context;
     private rowRenderer: RowRenderer;
     private navigationService: NavigationService;
     private filterManager: FilterManager;
@@ -173,6 +174,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
 
     public wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
+        this.context = beans.context;
         this.rowRenderer = beans.rowRenderer;
         this.navigationService = beans.navigationService;
         this.filterManager = beans.filterManager;
@@ -237,7 +239,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
     }
 
     public getGridId(): string {
-        return this.context.getGridId();
+        return this.gridId;
     }
 
     public addDetailGridInfo(id: string, gridInfo: DetailGridInfo): void {
@@ -264,29 +266,19 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
     }
 
     public getDataAsCsv(params?: CsvExportParams): string | undefined {
-        if (
-            ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv', this.context.getGridId())
-        ) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv', this.gridId)) {
             return this.csvCreator!.getDataAsCsv(params);
         }
     }
 
     public exportDataAsCsv(params?: CsvExportParams): void {
-        if (
-            ModuleRegistry.__assertRegistered(
-                ModuleNames.CsvExportModule,
-                'api.exportDataAsCsv',
-                this.context.getGridId()
-            )
-        ) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.exportDataAsCsv', this.gridId)) {
             this.csvCreator!.exportDataAsCsv(params);
         }
     }
 
     private assertNotExcelMultiSheet(method: keyof GridApi): boolean {
-        if (
-            !ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method, this.context.getGridId())
-        ) {
+        if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method, this.gridId)) {
             return false;
         }
         if (this.excelCreator!.getFactoryMode() === ExcelFactoryMode.MULTI_SHEET) {
@@ -312,11 +304,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
 
     public getSheetDataForExcel(params?: ExcelExportParams): string | undefined {
         if (
-            !ModuleRegistry.__assertRegistered(
-                ModuleNames.ExcelExportModule,
-                'api.getSheetDataForExcel',
-                this.context.getGridId()
-            )
+            !ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel', this.gridId)
         ) {
             return;
         }
@@ -330,7 +318,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
             ModuleRegistry.__assertRegistered(
                 ModuleNames.ExcelExportModule,
                 'api.getMultipleSheetsAsExcel',
-                this.context.getGridId()
+                this.gridId
             )
         ) {
             return this.excelCreator!.getMultipleSheetsAsExcel(params);
@@ -342,7 +330,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
             ModuleRegistry.__assertRegistered(
                 ModuleNames.ExcelExportModule,
                 'api.exportMultipleSheetsAsExcel',
-                this.context.getGridId()
+                this.gridId
             )
         ) {
             this.excelCreator!.exportMultipleSheetsAsExcel(params);
@@ -529,7 +517,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
             ModuleRegistry.__assertRegistered(
                 ModuleNames.AdvancedFilterModule,
                 'api.getAdvancedFilterModel',
-                this.context.getGridId()
+                this.gridId
             )
         ) {
             return this.filterManager.getAdvancedFilterModel();
@@ -546,7 +534,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
             ModuleRegistry.__assertRegistered(
                 ModuleNames.AdvancedFilterModule,
                 'api.setAdvancedFilterModel',
-                this.context.getGridId()
+                this.gridId
             )
         ) {
             this.filterManager.showAdvancedFilterBuilder('api');
@@ -727,13 +715,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
     }
 
     public getStatusPanel<TStatusPanel = IStatusPanel>(key: string): TStatusPanel | undefined {
-        if (
-            !ModuleRegistry.__assertRegistered(
-                ModuleNames.StatusBarModule,
-                'api.getStatusPanel',
-                this.context.getGridId()
-            )
-        ) {
+        if (!ModuleRegistry.__assertRegistered(ModuleNames.StatusBarModule, 'api.getStatusPanel', this.gridId)) {
             return;
         }
         const comp = this.statusBarService!.getStatusPanel(key);
@@ -805,11 +787,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
     }
 
     private assertSideBarLoaded(apiMethod: keyof GridApi): boolean {
-        return ModuleRegistry.__assertRegistered(
-            ModuleNames.SideBarModule,
-            'api.' + apiMethod,
-            this.context.getGridId()
-        );
+        return ModuleRegistry.__assertRegistered(ModuleNames.SideBarModule, 'api.' + apiMethod, this.gridId);
     }
 
     public isSideBarVisible(): boolean {
@@ -999,11 +977,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
             return this.rangeService.getCellRanges();
         }
 
-        ModuleRegistry.__assertRegistered(
-            ModuleNames.RangeSelectionModule,
-            'api.getCellRanges',
-            this.context.getGridId()
-        );
+        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'api.getCellRanges', this.gridId);
         return null;
     }
 
@@ -1012,22 +986,14 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
             this.rangeService.addCellRange(params);
             return;
         }
-        ModuleRegistry.__assertRegistered(
-            ModuleNames.RangeSelectionModule,
-            'api.addCellRange',
-            this.context.getGridId()
-        );
+        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'api.addCellRange', this.gridId);
     }
 
     public clearRangeSelection(): void {
         if (this.rangeService) {
             this.rangeService.removeAllCellRanges();
         }
-        ModuleRegistry.__assertRegistered(
-            ModuleNames.RangeSelectionModule,
-            'gridApi.clearRangeSelection',
-            this.context.getGridId()
-        );
+        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection', this.gridId);
     }
 
     public undoCellEditing(): void {
@@ -1047,13 +1013,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
     }
 
     private assertChart<T>(methodName: keyof GridApi, func: () => T): T | undefined {
-        if (
-            ModuleRegistry.__assertRegistered(
-                ModuleNames.GridChartsModule,
-                'api.' + methodName,
-                this.context.getGridId()
-            )
-        ) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.' + methodName, this.gridId)) {
             return this.frameworkOverrides.wrapIncoming(() => func());
         }
     }
@@ -1103,9 +1063,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
     }
 
     private assertClipboard<T>(methodName: keyof GridApi, func: () => T): void {
-        if (
-            ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api' + methodName, this.context.getGridId())
-        ) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api' + methodName, this.gridId)) {
             func();
         }
     }

@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection, BeanName, Context } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { Column, ColumnPinnedType } from '../entities/column';
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
@@ -48,6 +48,7 @@ export interface ColumnCollections {
 export class ColumnModel extends BeanStub {
     beanName: BeanName = 'columnModel';
 
+    private context: Context;
     private columnFactory: ColumnFactory;
     private columnSizeService: ColumnSizeService;
     private visibleColsService: VisibleColsService;
@@ -69,6 +70,7 @@ export class ColumnModel extends BeanStub {
 
     public wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
+        this.context = beans.context;
         this.columnFactory = beans.columnFactory;
         this.columnSizeService = beans.columnSizeService;
         this.visibleColsService = beans.visibleColsService;
@@ -164,7 +166,7 @@ export class ColumnModel extends BeanStub {
         const oldTree = this.colDefCols && this.colDefCols.tree;
         const newTree = this.columnFactory.createColumnTree(this.colDefs, true, oldTree, source);
 
-        destroyColumnTree(this.getContext(), this.colDefCols?.tree, newTree.columnTree);
+        destroyColumnTree(this.context, this.colDefCols?.tree, newTree.columnTree);
 
         const tree = newTree.columnTree;
         const treeDepth = newTree.treeDept;
@@ -328,7 +330,7 @@ export class ColumnModel extends BeanStub {
 
         const destroyPrevious = () => {
             if (this.autoCols) {
-                destroyColumnTree(this.getContext(), this.autoCols.tree);
+                destroyColumnTree(this.context, this.autoCols.tree);
                 this.autoCols = null;
             }
         };
@@ -827,8 +829,8 @@ export class ColumnModel extends BeanStub {
     }
 
     public override destroy(): void {
-        destroyColumnTree(this.getContext(), this.colDefCols?.tree);
-        destroyColumnTree(this.getContext(), this.autoCols?.tree);
+        destroyColumnTree(this.context, this.colDefCols?.tree);
+        destroyColumnTree(this.context, this.autoCols?.tree);
         super.destroy();
     }
 

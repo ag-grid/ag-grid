@@ -25,7 +25,7 @@ export class ChartMenuItemMapper extends BeanStub {
             ModuleRegistry.__assertRegistered(
                 ModuleNames.GridChartsModule,
                 `the Context Menu key "${key}"`,
-                this.context.getGridId()
+                this.gridId
             );
             return undefined;
         }

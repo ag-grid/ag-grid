@@ -150,7 +150,7 @@ export class Context {
             this.createdBeans.push(instance);
         });
 
-        this.wireBeans(this.createdBeans);
+        this.initBeans(this.createdBeans);
     }
 
     private getBeanInstances(): BaseBean[] {
@@ -164,11 +164,11 @@ export class Context {
         if (!bean) {
             throw Error(`Can't wire to bean since it is null`);
         }
-        this.wireBeans([bean], afterPreCreateCallback);
+        this.initBeans([bean], afterPreCreateCallback);
         return bean;
     }
 
-    private wireBeans(beanInstances: BaseBean[], afterPreCreateCallback?: (comp: Component) => void): void {
+    private initBeans(beanInstances: BaseBean[], afterPreCreateCallback?: (comp: Component) => void): void {
         beanInstances.forEach((instance) => instance.wireBeans?.(this.beans));
         // used by the component class
         beanInstances.forEach((instance) => (instance as any).preConstruct?.());

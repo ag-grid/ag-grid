@@ -67,7 +67,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
     ): (MenuItemDef | string)[] | undefined {
         const defaultMenuOptions: string[] = [];
 
-        if (_exists(node) && ModuleRegistry.__isRegistered(ModuleNames.ClipboardModule, this.context.getGridId())) {
+        if (_exists(node) && ModuleRegistry.__isRegistered(ModuleNames.ClipboardModule, this.gridId)) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
                 if (!this.gos.get('suppressCutToClipboard')) {
@@ -77,10 +77,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             }
         }
 
-        if (
-            this.gos.get('enableCharts') &&
-            ModuleRegistry.__isRegistered(ModuleNames.GridChartsModule, this.context.getGridId())
-        ) {
+        if (this.gos.get('enableCharts') && ModuleRegistry.__isRegistered(ModuleNames.GridChartsModule, this.gridId)) {
             if (this.columnModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
@@ -92,14 +89,8 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
         if (_exists(node)) {
             // if user clicks a cell
-            const csvModuleMissing = !ModuleRegistry.__isRegistered(
-                ModuleNames.CsvExportModule,
-                this.context.getGridId()
-            );
-            const excelModuleMissing = !ModuleRegistry.__isRegistered(
-                ModuleNames.ExcelExportModule,
-                this.context.getGridId()
-            );
+            const csvModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.CsvExportModule, this.gridId);
+            const excelModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.ExcelExportModule, this.gridId);
             const suppressExcel = this.gos.get('suppressExcelExport') || excelModuleMissing;
             const suppressCsv = this.gos.get('suppressCsvExport') || csvModuleMissing;
             const onIPad = _isIOSUserAgent();

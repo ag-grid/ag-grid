@@ -1,5 +1,4 @@
 import type { GridOptions } from '../entities/gridOptions';
-import type { Environment } from '../environment';
 import type { EventService } from '../eventService';
 import type { AgEvent, AgEventListener } from '../events';
 import type {
@@ -24,6 +23,7 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
 
     protected localEventService?: LocalEventService;
 
+    private stubContext: Context; // not named context to allow children to use 'context' as a variable name
     private destroyFunctions: (() => void)[] = [];
     private destroyed = false;
 
@@ -32,19 +32,18 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
     public __v_skip = true;
 
     protected frameworkOverrides: IFrameworkOverrides;
-    protected context: Context;
     protected eventService: EventService;
     protected gos: GridOptionsService;
     protected localeService: LocaleService;
-    protected environment: Environment;
+    protected gridId: string;
 
     public wireBeans(beans: BeanCollection): void {
+        this.gridId = beans.context.getGridId();
         this.frameworkOverrides = beans.frameworkOverrides;
-        this.context = beans.context;
+        this.stubContext = beans.context;
         this.eventService = beans.eventService;
         this.gos = beans.gos;
         this.localeService = beans.localeService;
-        this.environment = beans.environment;
     }
 
     // this was a test constructor niall built, when active, it prints after 5 seconds all beans/components that are
@@ -69,10 +68,6 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
     // CellComp and GridComp and override this because they get the FrameworkOverrides from the Beans bean
     protected getFrameworkOverrides(): IFrameworkOverrides {
         return this.frameworkOverrides;
-    }
-
-    public getContext(): Context {
-        return this.context;
     }
 
     public destroy(): void {
@@ -231,7 +226,7 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
         context?: Context | null,
         afterPreCreateCallback?: (comp: Component) => void
     ): T {
-        return (context || this.getContext()).createBean(bean, afterPreCreateCallback);
+        return (context || this.stubContext).createBean(bean, afterPreCreateCallback);
     }
 
     /**
@@ -239,7 +234,7 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
      * this.dateComp = this.context.destroyBean(this.dateComp);
      */
     protected destroyBean<T extends BaseBean | null | undefined>(bean: T, context?: Context): undefined {
-        return (context || this.getContext()).destroyBean(bean);
+        return (context || this.stubContext).destroyBean(bean);
     }
 
     /**
@@ -247,6 +242,6 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
      * this.dateComps = this.context.destroyBeans(this.dateComps);
      */
     protected destroyBeans<T extends BaseBean | null | undefined>(beans: T[], context?: Context): T[] {
-        return (context || this.getContext()).destroyBeans(beans);
+        return (context || this.stubContext).destroyBeans(beans);
     }
 }
