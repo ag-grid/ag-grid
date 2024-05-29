@@ -126,16 +126,14 @@ export class GridCtrl extends BeanStub {
         gui.style.boxSizing = 'border-box';
         gui.style.height = '0';
         gui.style.padding = '0';
-        gui.style.border = 'none';
-        const firstMeasurement = wrapper.offsetHeight;
+        const firstMeasurement = wrapper.clientHeight;
         gui.style.height = '10px';
-        const secondMeasurement = wrapper.offsetHeight;
+        const secondMeasurement = wrapper.clientHeight;
         // difference should be 10px but allow some margin of error if the layout is scaled
         const hasIntrinsicHeight = secondMeasurement - firstMeasurement <= 5;
         gui.style.boxSizing = '';
         gui.style.height = '';
         gui.style.padding = '';
-        gui.style.border = '';
         gui.classList.toggle('ag-default-height', !hasIntrinsicHeight);
     }
 
