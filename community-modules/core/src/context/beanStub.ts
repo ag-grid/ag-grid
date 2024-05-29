@@ -75,6 +75,56 @@ export abstract class BeanStub implements Bean, IEventEmitter {
         this.dispatchEvent({ type: BeanStub.EVENT_DESTROYED });
     }
 
+    public addEventListener(eventType: string, listener: AgEventListener): void {
+        if (!this.localEventService) {
+            this.localEventService = new LocalEventService();
+        }
+
+        this.localEventService!.addEventListener(eventType, listener);
+    }
+
+    public removeEventListener(eventType: string, listener: AgEventListener): void {
+        if (this.localEventService) {
+            this.localEventService.removeEventListener(eventType, listener);
+        }
+    }
+
+    public dispatchEvent<T extends AgEvent>(event: T): void {
+        if (this.localEventService) {
+            this.localEventService.dispatchEvent(event);
+        }
+    }
+
+    public addManagedListener(
+        object: Window | HTMLElement | IEventEmitter,
+        event: string,
+        listener: (event?: any) => void
+    ): (() => null) | undefined {
+        if (this.destroyed) {
+            return;
+        }
+
+        if (object instanceof HTMLElement) {
+            _addSafePassiveEventListener(this.getFrameworkOverrides(), object, event, listener);
+        } else {
+            object.addEventListener(event, listener);
+        }
+
+        const destroyFunc: () => null = () => {
+            (object as any).removeEventListener(event, listener);
+            return null;
+        };
+
+        this.destroyFunctions.push(destroyFunc);
+
+        return () => {
+            destroyFunc();
+            // Only remove if manually called before bean is destroyed
+            this.destroyFunctions = this.destroyFunctions.filter((fn) => fn !== destroyFunc);
+            return null;
+        };
+    }
+
     /**
      * Setup a managed property listener for the given GridOption property.
      * However, stores the destroy function in the beanStub so that if this bean
@@ -151,56 +201,6 @@ export abstract class BeanStub implements Bean, IEventEmitter {
         };
 
         events.forEach((event) => this.setupGridOptionListener(event, wrappedListener));
-    }
-
-    public addEventListener(eventType: string, listener: AgEventListener): void {
-        if (!this.localEventService) {
-            this.localEventService = new LocalEventService();
-        }
-
-        this.localEventService!.addEventListener(eventType, listener);
-    }
-
-    public removeEventListener(eventType: string, listener: AgEventListener): void {
-        if (this.localEventService) {
-            this.localEventService.removeEventListener(eventType, listener);
-        }
-    }
-
-    public dispatchEvent<T extends AgEvent>(event: T): void {
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(event);
-        }
-    }
-
-    public addManagedListener(
-        object: Window | HTMLElement | IEventEmitter,
-        event: string,
-        listener: (event?: any) => void
-    ): (() => null) | undefined {
-        if (this.destroyed) {
-            return;
-        }
-
-        if (object instanceof HTMLElement) {
-            _addSafePassiveEventListener(this.getFrameworkOverrides(), object, event, listener);
-        } else {
-            object.addEventListener(event, listener);
-        }
-
-        const destroyFunc: () => null = () => {
-            (object as any).removeEventListener(event, listener);
-            return null;
-        };
-
-        this.destroyFunctions.push(destroyFunc);
-
-        return () => {
-            destroyFunc();
-            // Only remove if manually called before bean is destroyed
-            this.destroyFunctions = this.destroyFunctions.filter((fn) => fn !== destroyFunc);
-            return null;
-        };
     }
 
     public isAlive = (): boolean => !this.destroyed;
