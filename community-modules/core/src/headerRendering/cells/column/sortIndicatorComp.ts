@@ -1,6 +1,7 @@
 import type { BeanCollection } from '../../../context/context';
 import type { Column } from '../../../entities/column';
 import { Events } from '../../../eventKeys';
+import type { EventsType } from '../../../eventKeys';
 import type { SortController } from '../../../sortController';
 import { _clearElement, _setDisplayed } from '../../../utils/dom';
 import { _createIconNoSpan } from '../../../utils/icon';
@@ -71,12 +72,13 @@ export class SortIndicatorComp extends Component {
         this.addInIcon('sortUnSort', this.eSortNone, column);
 
         this.addManagedPropertyListener('unSortIcon', () => this.updateIcons());
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.updateIcons());
-
-        // Watch global events, as row group columns can effect their display column.
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, () => this.onSortChanged());
-        // when grouping changes so can sort indexes and icons
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.onSortChanged());
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_NEW_COLUMNS_LOADED]: this.updateIcons.bind(this),
+            // Watch global events, as row group columns can effect their display column.
+            [Events.EVENT_SORT_CHANGED]: this.onSortChanged.bind(this),
+            // when grouping changes so can sort indexes and icons
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: this.onSortChanged.bind(this),
+        });
 
         this.onSortChanged();
     }
@@ -125,14 +127,12 @@ export class SortIndicatorComp extends Component {
         const isColumnShowingRowGroup = this.column.getColDef().showRowGroup;
         const areGroupsCoupled = this.gos.isColumnsSortingCoupledToGroup();
         if (areGroupsCoupled && isColumnShowingRowGroup) {
-            // Watch global events, as row group columns can effect their display column.
-            this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, () =>
-                this.updateMultiSortIndicator()
-            );
-            // when grouping changes so can sort indexes and icons
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>
-                this.updateMultiSortIndicator()
-            );
+            this.addManagedListeners<EventsType>(this.eventService, {
+                // Watch global events, as row group columns can effect their display column.
+                [Events.EVENT_SORT_CHANGED]: this.updateMultiSortIndicator.bind(this),
+                // when grouping changes so can sort indexes and icons
+                [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: this.updateMultiSortIndicator.bind(this),
+            });
             this.updateMultiSortIndicator();
         }
     }

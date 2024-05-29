@@ -5,6 +5,7 @@ import type { CtrlsService } from '../../ctrlsService';
 import type { DragService } from '../../dragAndDrop/dragService';
 import type { ColumnPinnedType } from '../../entities/column';
 import { Events } from '../../eventKeys';
+import type { EventsType } from '../../eventKeys';
 import type { DisplayedRowsChangedEvent } from '../../events';
 import type { ResizeObserverService } from '../../misc/resizeObserverService';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -321,17 +322,12 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private addListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () =>
-            this.onDisplayedColumnsChanged()
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () =>
-            this.onDisplayedColumnsWidthChanged()
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_DISPLAYED_ROWS_CHANGED,
-            (params: DisplayedRowsChangedEvent) => this.onDisplayedRowsChanged(params.afterScroll)
-        );
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+            [Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED]: this.onDisplayedColumnsWidthChanged.bind(this),
+            [Events.EVENT_DISPLAYED_ROWS_CHANGED]: (params: DisplayedRowsChangedEvent) =>
+                this.onDisplayedRowsChanged(params.afterScroll),
+        });
 
         this.onDisplayedColumnsChanged();
         this.onDisplayedColumnsWidthChanged();

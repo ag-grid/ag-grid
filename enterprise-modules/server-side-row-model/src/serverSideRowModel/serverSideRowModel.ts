@@ -6,6 +6,7 @@ import type {
     ColumnModel,
     ColumnNameService,
     ColumnVO,
+    EventsType,
     FilterManager,
     FilterModel,
     FuncColsService,
@@ -123,14 +124,16 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onStoreUpdated.bind(this));
-
         const resetListener = this.resetRootStore.bind(this);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, resetListener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, resetListener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, resetListener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, resetListener);
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onColumnEverything.bind(this),
+            [Events.EVENT_STORE_UPDATED]: this.onStoreUpdated.bind(this),
+            [Events.EVENT_COLUMN_VALUE_CHANGED]: resetListener,
+            [Events.EVENT_COLUMN_PIVOT_CHANGED]: resetListener,
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: resetListener,
+            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: resetListener,
+        });
+
         this.addManagedPropertyListeners(
             [
                 /**

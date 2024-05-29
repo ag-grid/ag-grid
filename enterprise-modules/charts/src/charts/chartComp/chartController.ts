@@ -8,6 +8,7 @@ import type {
     ChartOptionsChanged,
     ChartRangeSelectionChanged,
     ChartType,
+    EventsType,
     IAggFunc,
     IRangeService,
     PartialCellRange,
@@ -61,33 +62,24 @@ export class ChartController extends BeanStub {
     public postConstruct(): void {
         this.setChartRange();
 
-        this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, (event) => {
-            if (event.id && event.id === this.model.chartId) {
-                this.updateForRangeChange();
-            }
-        });
-
         if (this.model.unlinked) {
             if (this.rangeService) {
                 this.rangeService.setCellRanges([]);
             }
         }
-
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.updateForGridChange.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.updateForGridChange.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
-            this.updateForGridChange.bind(this)
-        );
-
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateForGridChange.bind(this));
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_CELL_VALUE_CHANGED,
-            this.updateForDataChange.bind(this)
-        );
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_RANGE_SELECTION_CHANGED]: (event) => {
+                if (event.id && event.id === this.model.chartId) {
+                    this.updateForRangeChange();
+                }
+            },
+            [Events.EVENT_COLUMN_MOVED]: this.updateForGridChange.bind(this),
+            [Events.EVENT_COLUMN_PINNED]: this.updateForGridChange.bind(this),
+            [Events.EVENT_COLUMN_VISIBLE]: this.updateForGridChange.bind(this),
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: this.updateForGridChange.bind(this),
+            [Events.EVENT_MODEL_UPDATED]: this.updateForGridChange.bind(this),
+            [Events.EVENT_CELL_VALUE_CHANGED]: this.updateForDataChange.bind(this),
+        });
     }
 
     public update(params: UpdateChartParams): boolean {

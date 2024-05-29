@@ -6,6 +6,7 @@ import type {
     ColumnModel,
     CssVariablesChanged,
     Environment,
+    EventsType,
     ExpandCollapseAllEvent,
     FilterChangedEvent,
     FuncColsService,
@@ -132,27 +133,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             animate,
         });
 
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_NEW_COLUMNS_LOADED,
-            refreshEverythingAfterColsChangedFunc
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_COLUMN_PIVOT_CHANGED,
-            this.refreshModel.bind(this, { step: ClientSideRowModelSteps.PIVOT })
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_GRID_STYLES_CHANGED,
-            this.onGridStylesChanges.bind(this)
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_READY, () => this.onGridReady());
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_NEW_COLUMNS_LOADED]: refreshEverythingAfterColsChangedFunc,
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: refreshEverythingFunc,
+            [Events.EVENT_COLUMN_VALUE_CHANGED]: this.onValueChanged.bind(this),
+            [Events.EVENT_COLUMN_PIVOT_CHANGED]: this.refreshModel.bind(this, { step: ClientSideRowModelSteps.PIVOT }),
+            [Events.EVENT_FILTER_CHANGED]: this.onFilterChanged.bind(this),
+            [Events.EVENT_SORT_CHANGED]: this.onSortChanged.bind(this),
+            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: refreshEverythingFunc,
+            [Events.EVENT_GRID_STYLES_CHANGED]: this.onGridStylesChanges.bind(this),
+            [Events.EVENT_GRID_READY]: this.onGridReady.bind(this),
+        });
 
         // doesn't need done if doing full reset
         // Property listeners which call `refreshModel` at different stages

@@ -5,6 +5,7 @@ import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
 import type { Column } from '../../entities/column';
 import { RowNode } from '../../entities/rowNode';
 import { Events } from '../../eventKeys';
+import type { EventsType } from '../../eventKeys';
 import { _isFunction, _warnOnce } from '../../utils/function';
 import { _createIconNoSpan } from '../../utils/icon';
 import { Component } from '../../widgets/component';
@@ -201,9 +202,11 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
         this.addManagedPropertyListener('suppressRowDrag', this.onSuppressRowDrag.bind(this));
 
         // in case data changes, then we need to update visibility of drag item
-        this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
+        this.addManagedListeners(this.rowNode, {
+            [RowNode.EVENT_DATA_CHANGED]: this.workOutVisibility.bind(this),
+            [RowNode.EVENT_CELL_CHANGED]: this.workOutVisibility.bind(this),
+        });
+
         this.addManagedListener(
             this.beans.eventService,
             Events.EVENT_NEW_COLUMNS_LOADED,
@@ -235,23 +238,12 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
 
     public postConstruct(): void {
         // we do not show the component if sort, filter or grouping is active
-
-        this.addManagedListener(this.beans.eventService, Events.EVENT_SORT_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(
-            this.beans.eventService,
-            Events.EVENT_FILTER_CHANGED,
-            this.workOutVisibility.bind(this)
-        );
-        this.addManagedListener(
-            this.beans.eventService,
-            Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
-            this.workOutVisibility.bind(this)
-        );
-        this.addManagedListener(
-            this.beans.eventService,
-            Events.EVENT_NEW_COLUMNS_LOADED,
-            this.workOutVisibility.bind(this)
-        );
+        this.addManagedListeners<EventsType>(this.beans.eventService, {
+            [Events.EVENT_SORT_CHANGED]: this.workOutVisibility.bind(this),
+            [Events.EVENT_FILTER_CHANGED]: this.workOutVisibility.bind(this),
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: this.workOutVisibility.bind(this),
+            [Events.EVENT_NEW_COLUMNS_LOADED]: this.workOutVisibility.bind(this),
+        });
 
         // in case data changes, then we need to update visibility of drag item
         this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));

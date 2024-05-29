@@ -6,6 +6,7 @@ import type { CellPosition, CellPositionUtils } from '../entities/cellPositionUt
 import type { Column } from '../entities/column';
 import type { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
 import { Events } from '../eventKeys';
+import type { EventsType } from '../eventKeys';
 import type {
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
@@ -77,22 +78,24 @@ export class UndoRedoService extends BeanStub {
         this.addFillListeners();
         this.addCellKeyListeners();
 
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged);
-        // undo / redo is restricted to actual editing so we clear the stacks when other operations are
-        // performed that change the order of the row / cols.
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, (e) => {
-            if (!e.keepUndoRedoStack) {
-                this.clearStacks();
-            }
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_CELL_VALUE_CHANGED]: this.onCellValueChanged.bind(this),
+            // undo / redo is restricted to actual editing so we clear the stacks when other operations are
+            // performed that change the order of the row / cols.
+            [Events.EVENT_MODEL_UPDATED]: (e) => {
+                if (!e.keepUndoRedoStack) {
+                    this.clearStacks();
+                }
+            },
+            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: this.clearStacks.bind(this),
+            [Events.EVENT_NEW_COLUMNS_LOADED]: this.clearStacks.bind(this),
+            [Events.EVENT_COLUMN_GROUP_OPENED]: this.clearStacks.bind(this),
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: this.clearStacks.bind(this),
+            [Events.EVENT_COLUMN_MOVED]: this.clearStacks.bind(this),
+            [Events.EVENT_COLUMN_PINNED]: this.clearStacks.bind(this),
+            [Events.EVENT_COLUMN_VISIBLE]: this.clearStacks.bind(this),
+            [Events.EVENT_ROW_DRAG_END]: this.clearStacks.bind(this),
         });
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DRAG_END, this.clearStacks);
 
         this.ctrlsService.whenReady((p) => {
             this.gridBodyCtrl = p.gridBodyCtrl;

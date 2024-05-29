@@ -3,6 +3,7 @@ import type { BeanCollection } from '../../../context/context';
 import type { SortDirection } from '../../../entities/colDef';
 import { Column } from '../../../entities/column';
 import { Events } from '../../../eventKeys';
+import type { EventsType } from '../../../eventKeys';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { IComponent } from '../../../interfaces/iComponent';
 import type { MenuService } from '../../../misc/menuService';
@@ -383,8 +384,10 @@ export class HeaderComp extends Component implements IHeaderComp {
                 this.addOrRemoveCssClass('ag-header-cell-sorted-mixed', isMultiSorting);
             }
         };
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, onSortingChanged);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, onSortingChanged);
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_SORT_CHANGED]: onSortingChanged,
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: onSortingChanged,
+        });
     }
 
     private setupFilterIcon(): void {

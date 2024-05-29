@@ -1,4 +1,10 @@
-import type { AgComponentSelector, BeanCollection, ColumnModel, FuncColsService } from '@ag-grid-community/core';
+import type {
+    AgComponentSelector,
+    BeanCollection,
+    ColumnModel,
+    EventsType,
+    FuncColsService,
+} from '@ag-grid-community/core';
 import { Component, Events, _setAriaRole } from '@ag-grid-community/core';
 
 import { PivotDropZonePanel } from './pivotDropZonePanel';
@@ -26,10 +32,10 @@ export class AgGridHeaderDropZones extends Component {
     public postConstruct(): void {
         this.setGui(this.createNorthPanel());
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>
-            this.onRowGroupChanged()
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onRowGroupChanged());
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: this.onRowGroupChanged.bind(this),
+            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onRowGroupChanged.bind(this),
+        });
         this.addManagedPropertyListener('rowGroupPanelShow', () => this.onRowGroupChanged());
         this.addManagedPropertyListener('pivotPanelShow', () => this.onPivotPanelShow());
 

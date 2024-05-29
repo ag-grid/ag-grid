@@ -9,6 +9,7 @@ import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { Column } from '../entities/column';
 import { Events } from '../eventKeys';
+import type { EventsType } from '../eventKeys';
 import type {
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
@@ -160,12 +161,10 @@ export class StateService extends BeanStub {
 
         this.updateCachedState('sideBar', this.getSideBarState());
 
-        this.addManagedListener(this.eventService, Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, () =>
-            this.updateCachedState('sideBar', this.getSideBarState())
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_SIDE_BAR_UPDATED, () =>
-            this.updateCachedState('sideBar', this.getSideBarState())
-        );
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED]: () => this.updateCachedState('sideBar', this.getSideBarState()),
+            [Events.EVENT_SIDE_BAR_UPDATED]: () => this.updateCachedState('sideBar', this.getSideBarState()),
+        });
     }
 
     private setupStateOnColumnsInitialised(): void {
@@ -186,57 +185,29 @@ export class StateService extends BeanStub {
         ]);
         this.updateCachedState('columnGroup', this.getColumnGroupState());
 
-        // aggregation
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, () =>
-            this.updateColumnState(['aggregation'])
-        );
-        // columnOrder
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () =>
-            this.updateColumnState(['columnOrder'])
-        );
-        // columnPinning
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, () =>
-            this.updateColumnState(['columnPinning'])
-        );
-        // columnSizing
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, () =>
-            this.updateColumnState(['columnSizing'])
-        );
-        // columnVisibility
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () =>
-            this.updateColumnState(['columnVisibility'])
-        );
-        // pivot
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () =>
-            this.updateColumnState(['pivot'])
-        );
-        // pivot
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () =>
-            this.updateColumnState(['pivot'])
-        );
-        // rowGroup
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>
-            this.updateColumnState(['rowGroup'])
-        );
-        // sort
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, () => this.updateColumnState(['sort']));
-        // any column
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () =>
-            this.updateColumnState([
-                'aggregation',
-                'columnOrder',
-                'columnPinning',
-                'columnSizing',
-                'columnVisibility',
-                'pivot',
-                'pivot',
-                'rowGroup',
-                'sort',
-            ])
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, () =>
-            this.updateCachedState('columnGroup', this.getColumnGroupState())
-        );
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_COLUMN_VALUE_CHANGED]: () => this.updateColumnState(['aggregation']),
+            [Events.EVENT_COLUMN_MOVED]: () => this.updateColumnState(['columnOrder']),
+            [Events.EVENT_COLUMN_PINNED]: () => this.updateColumnState(['columnPinning']),
+            [Events.EVENT_COLUMN_RESIZED]: () => this.updateColumnState(['columnSizing']),
+            [Events.EVENT_COLUMN_VISIBLE]: () => this.updateColumnState(['columnVisibility']),
+            [Events.EVENT_COLUMN_PIVOT_CHANGED]: () => this.updateColumnState(['pivot']),
+            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: () => this.updateColumnState(['pivot']),
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: () => this.updateColumnState(['rowGroup']),
+            [Events.EVENT_SORT_CHANGED]: () => this.updateColumnState(['sort']),
+            [Events.EVENT_NEW_COLUMNS_LOADED]: () =>
+                this.updateColumnState([
+                    'aggregation',
+                    'columnOrder',
+                    'columnPinning',
+                    'columnSizing',
+                    'columnVisibility',
+                    'pivot',
+                    'rowGroup',
+                    'sort',
+                ]),
+            [Events.EVENT_COLUMN_GROUP_OPENED]: () => this.updateCachedState('columnGroup', this.getColumnGroupState()),
+        });
     }
 
     private setupStateOnRowCountReady(): void {
@@ -265,23 +236,20 @@ export class StateService extends BeanStub {
         this.updateCachedState('rowSelection', this.getRowSelectionState());
         this.updateCachedState('pagination', this.getPaginationState());
 
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, () =>
-            this.updateCachedState('filter', this.getFilterState())
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, () =>
-            this.onRowGroupOpenedDebounced()
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_EXPAND_COLLAPSE_ALL, () =>
-            this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState())
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, () => {
-            this.staleStateKeys.add('rowSelection');
-            this.onRowSelectedDebounced();
-        });
-        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, (event: PaginationChangedEvent) => {
-            if (event.newPage || event.newPageSize) {
-                this.updateCachedState('pagination', this.getPaginationState());
-            }
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_FILTER_CHANGED]: () => this.updateCachedState('filter', this.getFilterState()),
+            [Events.EVENT_ROW_GROUP_OPENED]: () => this.onRowGroupOpenedDebounced(),
+            [Events.EVENT_EXPAND_COLLAPSE_ALL]: () =>
+                this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()),
+            [Events.EVENT_SELECTION_CHANGED]: () => {
+                this.staleStateKeys.add('rowSelection');
+                this.onRowSelectedDebounced();
+            },
+            [Events.EVENT_PAGINATION_CHANGED]: (event: PaginationChangedEvent) => {
+                if (event.newPage || event.newPageSize) {
+                    this.updateCachedState('pagination', this.getPaginationState());
+                }
+            },
         });
     }
 
@@ -309,21 +277,15 @@ export class StateService extends BeanStub {
         this.updateCachedState('rangeSelection', this.getRangeSelectionState());
         this.updateCachedState('scroll', this.getScrollState());
 
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, () =>
-            this.updateCachedState('focusedCell', this.getFocusedCellState())
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_RANGE_SELECTION_CHANGED,
-            (event: RangeSelectionChangedEvent) => {
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_CELL_FOCUSED]: () => this.updateCachedState('focusedCell', this.getFocusedCellState()),
+            [Events.EVENT_RANGE_SELECTION_CHANGED]: (event: RangeSelectionChangedEvent) => {
                 if (event.finished) {
                     this.updateCachedState('rangeSelection', this.getRangeSelectionState());
                 }
-            }
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL_END, () =>
-            this.updateCachedState('scroll', this.getScrollState())
-        );
+            },
+            [Events.EVENT_BODY_SCROLL_END]: () => this.updateCachedState('scroll', this.getScrollState()),
+        });
     }
 
     private getColumnState(): {

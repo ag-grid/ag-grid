@@ -6,6 +6,7 @@ import type { Column, ColumnInstanceId, ColumnPinnedType } from '../../entities/
 import type { RowClassParams, RowStyle } from '../../entities/gridOptions';
 import { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
+import type { EventsType } from '../../eventKeys';
 import type {
     AgEventListener,
     CellFocusedEvent,
@@ -716,13 +717,14 @@ export class RowCtrl extends BeanStub {
     }
 
     private addListeners(): void {
-        this.addManagedListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, () => this.onRowHeightChanged());
-        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, () => this.onRowSelected());
-
-        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.updateExpandedCss.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_HAS_CHILDREN_CHANGED, this.updateExpandedCss.bind(this));
+        this.addManagedListeners(this.rowNode, {
+            [RowNode.EVENT_HEIGHT_CHANGED]: this.onRowHeightChanged.bind(this),
+            [RowNode.EVENT_ROW_SELECTED]: this.onRowSelected.bind(this),
+            [RowNode.EVENT_ROW_INDEX_CHANGED]: this.onRowIndexChanged.bind(this),
+            [RowNode.EVENT_TOP_CHANGED]: this.onTopChanged.bind(this),
+            [RowNode.EVENT_EXPANDED_CHANGED]: this.updateExpandedCss.bind(this),
+            [RowNode.EVENT_HAS_CHILDREN_CHANGED]: this.updateExpandedCss.bind(this),
+        });
 
         if (this.rowNode.detail) {
             // if the master row node has updated data, we also want to try to refresh the detail row
@@ -733,39 +735,25 @@ export class RowCtrl extends BeanStub {
             );
         }
 
-        this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.postProcessCss.bind(this));
-        this.addManagedListener(
-            this.rowNode,
-            RowNode.EVENT_HIGHLIGHT_CHANGED,
-            this.onRowNodeHighlightChanged.bind(this)
-        );
-        this.addManagedListener(this.rowNode, RowNode.EVENT_DRAGGING_CHANGED, this.postProcessRowDragging.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_UI_LEVEL_CHANGED, this.onUiLevelChanged.bind(this));
+        this.addManagedListeners(this.rowNode, {
+            [RowNode.EVENT_DATA_CHANGED]: this.onRowNodeDataChanged.bind(this),
+            [RowNode.EVENT_CELL_CHANGED]: this.postProcessCss.bind(this),
+            [RowNode.EVENT_HIGHLIGHT_CHANGED]: this.onRowNodeHighlightChanged.bind(this),
+            [RowNode.EVENT_DRAGGING_CHANGED]: this.postProcessRowDragging.bind(this),
+            [RowNode.EVENT_UI_LEVEL_CHANGED]: this.onUiLevelChanged.bind(this),
+        });
 
-        const eventService = this.beans.eventService;
-        this.addManagedListener(
-            eventService,
-            Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED,
-            this.onPaginationPixelOffsetChanged.bind(this)
-        );
-        this.addManagedListener(eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, this.onTopChanged.bind(this));
-        this.addManagedListener(
-            eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
-            this.onDisplayedColumnsChanged.bind(this)
-        );
-        this.addManagedListener(
-            eventService,
-            Events.EVENT_VIRTUAL_COLUMNS_CHANGED,
-            this.onVirtualColumnsChanged.bind(this)
-        );
-        this.addManagedListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocusChanged.bind(this));
-        this.addManagedListener(eventService, Events.EVENT_CELL_FOCUS_CLEARED, this.onCellFocusChanged.bind(this));
-        this.addManagedListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
-        this.addManagedListener(eventService, Events.EVENT_MODEL_UPDATED, this.refreshFirstAndLastRowStyles.bind(this));
-
-        this.addManagedListener(eventService, Events.EVENT_COLUMN_MOVED, this.updateColumnLists.bind(this));
+        this.addManagedListeners<EventsType>(this.beans.eventService, {
+            [Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED]: this.onPaginationPixelOffsetChanged.bind(this),
+            [Events.EVENT_HEIGHT_SCALE_CHANGED]: this.onTopChanged.bind(this),
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+            [Events.EVENT_VIRTUAL_COLUMNS_CHANGED]: this.onVirtualColumnsChanged.bind(this),
+            [Events.EVENT_CELL_FOCUSED]: this.onCellFocusChanged.bind(this),
+            [Events.EVENT_CELL_FOCUS_CLEARED]: this.onCellFocusChanged.bind(this),
+            [Events.EVENT_PAGINATION_CHANGED]: this.onPaginationChanged.bind(this),
+            [Events.EVENT_MODEL_UPDATED]: this.refreshFirstAndLastRowStyles.bind(this),
+            [Events.EVENT_COLUMN_MOVED]: this.updateColumnLists.bind(this),
+        });
 
         this.addDestroyFunc(() => {
             this.destroyBeans(this.rowDragComps, this.beans.context);

@@ -4,6 +4,7 @@ import type {
     Column,
     ColumnModel,
     ColumnNameService,
+    EventsType,
     FuncColsService,
     RowNode,
     RowPositionUtils,
@@ -39,8 +40,10 @@ export class ChartColumnService extends BeanStub {
 
     public postConstruct(): void {
         const clearValueCols = () => this.valueColsWithoutSeriesType.clear();
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, clearValueCols);
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, clearValueCols);
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_NEW_COLUMNS_LOADED]: clearValueCols,
+            [Events.EVENT_ROW_DATA_UPDATED]: clearValueCols,
+        });
     }
 
     public getColumn(colId: string): Column | null {

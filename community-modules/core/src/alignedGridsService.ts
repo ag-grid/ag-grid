@@ -6,6 +6,7 @@ import type { BeanCollection, BeanName } from './context/context';
 import type { CtrlsService } from './ctrlsService';
 import type { Column } from './entities/column';
 import type { ProvidedColumnGroup } from './entities/providedColumnGroup';
+import type { EventsType } from './eventKeys';
 import type {
     AgEvent,
     AlignedGridColumnEvent,
@@ -89,22 +90,16 @@ export class AlignedGridsService extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.fireScrollEvent.bind(this));
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_ALIGNED_GRID_COLUMN,
-            ({ event }: AlignedGridColumnEvent) => this.onColumnEvent(event)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_ALIGNED_GRID_SCROLL,
-            ({ event }: AlignedGridScrollEvent) => this.onScrollEvent(event)
-        );
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_COLUMN_MOVED]: this.fireColumnEvent.bind(this),
+            [Events.EVENT_COLUMN_VISIBLE]: this.fireColumnEvent.bind(this),
+            [Events.EVENT_COLUMN_PINNED]: this.fireColumnEvent.bind(this),
+            [Events.EVENT_COLUMN_GROUP_OPENED]: this.fireColumnEvent.bind(this),
+            [Events.EVENT_COLUMN_RESIZED]: this.fireColumnEvent.bind(this),
+            [Events.EVENT_BODY_SCROLL]: this.fireScrollEvent.bind(this),
+            [Events.EVENT_ALIGNED_GRID_COLUMN]: ({ event }: AlignedGridColumnEvent) => this.onColumnEvent(event),
+            [Events.EVENT_ALIGNED_GRID_SCROLL]: ({ event }: AlignedGridScrollEvent) => this.onScrollEvent(event),
+        });
     }
 
     // common logic across all the fire methods

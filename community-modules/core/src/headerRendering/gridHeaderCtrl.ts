@@ -5,6 +5,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import { Events } from '../eventKeys';
+import type { EventsType } from '../eventKeys';
 import type { FilterManager } from '../filter/filterManager';
 import type { FocusService } from '../focusService';
 import type { MenuService } from '../misc/menuService';
@@ -58,16 +59,10 @@ export class GridHeaderCtrl extends BeanStub {
         );
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
-            this.onPivotModeChanged.bind(this)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
-            this.onDisplayedColumnsChanged.bind(this)
-        );
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: this.onPivotModeChanged.bind(this),
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+        });
 
         this.onPivotModeChanged();
         this.setupHeaderHeight();
@@ -89,10 +84,12 @@ export class GridHeaderCtrl extends BeanStub {
         this.addManagedPropertyListener('pivotGroupHeaderHeight', listener);
         this.addManagedPropertyListener('floatingFiltersHeight', listener);
 
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, listener);
+        this.addManagedListeners(this.eventService, {
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: listener,
+            [Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED]: listener,
+            [Events.EVENT_GRID_STYLES_CHANGED]: listener,
+            [Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED]: listener,
+        });
     }
 
     public getHeaderHeight(): number {

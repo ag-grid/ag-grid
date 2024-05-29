@@ -2,6 +2,7 @@ import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { HeaderCheckboxSelectionCallbackParams } from '../../../entities/colDef';
 import type { Column } from '../../../entities/column';
+import type { EventsType } from '../../../eventKeys';
 import type { SelectionEventSourceType } from '../../../events';
 import { Events } from '../../../events';
 import type { IRowModel } from '../../../interfaces/iRowModel';
@@ -52,15 +53,14 @@ export class SelectAllFeature extends BeanStub {
         _setAriaRole(this.cbSelectAll.getGui(), 'presentation');
         this.showOrHideSelectAll();
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
-            this.onDisplayedColumnsChanged.bind(this)
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onSelectionChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onNewColumnsLoaded.bind(this),
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+            [Events.EVENT_SELECTION_CHANGED]: this.onSelectionChanged.bind(this),
+            [Events.EVENT_PAGINATION_CHANGED]: this.onSelectionChanged.bind(this),
+            [Events.EVENT_MODEL_UPDATED]: this.onModelChanged.bind(this),
+        });
+
         this.addManagedListener(this.cbSelectAll, Events.EVENT_FIELD_VALUE_CHANGED, this.onCbSelectAll.bind(this));
         _setAriaHidden(this.cbSelectAll.getGui(), true);
         this.cbSelectAll.getInputElement().setAttribute('tabindex', '-1');

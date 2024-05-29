@@ -6,6 +6,7 @@ import type { ColumnPinnedType } from '../../entities/column';
 import { Column } from '../../entities/column';
 import type { ColumnGroup } from '../../entities/columnGroup';
 import { Events } from '../../eventKeys';
+import type { EventsType } from '../../eventKeys';
 import type { FilterManager } from '../../filter/filterManager';
 import type { FocusService } from '../../focusService';
 import { CenterWidthFeature } from '../../gridBodyComp/centerWidthFeature';
@@ -70,23 +71,11 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
         this.setupDragAndDrop(this.eViewport);
 
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_GRID_COLUMNS_CHANGED,
-            this.onGridColumnsChanged.bind(this)
-        );
-
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
-            this.onDisplayedColumnsChanged.bind(this)
-        );
-
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
-            this.onDisplayedColumnsChanged.bind(this)
-        );
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_GRID_COLUMNS_CHANGED]: this.onGridColumnsChanged.bind(this),
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+            [Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+        });
 
         this.ctrlsService.registerHeaderContainer(this, this.pinned);
 
@@ -259,10 +248,12 @@ export class HeaderRowContainerCtrl extends BeanStub {
             }
         };
 
-        this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, listener);
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_LEFT_PINNED_WIDTH_CHANGED]: listener,
+            [Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED]: listener,
+            [Events.EVENT_SCROLL_VISIBILITY_CHANGED]: listener,
+            [Events.EVENT_SCROLLBAR_WIDTH_CHANGED]: listener,
+        });
     }
 
     public getHeaderCtrlForColumn(column: Column): HeaderCellCtrl | undefined;

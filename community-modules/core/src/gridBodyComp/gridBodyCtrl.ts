@@ -5,6 +5,7 @@ import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
 import type { Environment } from '../environment';
+import type { EventsType } from '../eventKeys';
 import { Events } from '../eventKeys';
 import type { FilterManager } from '../filter/filterManager';
 import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
@@ -163,31 +164,13 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private addEventListeners(): void {
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_GRID_COLUMNS_CHANGED,
-            this.onGridColumnsChanged.bind(this)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_SCROLL_VISIBILITY_CHANGED,
-            this.onScrollVisibilityChanged.bind(this)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_PINNED_ROW_DATA_CHANGED,
-            this.setFloatingHeights.bind(this)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_PINNED_HEIGHT_CHANGED,
-            this.setFloatingHeights.bind(this)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_HEADER_HEIGHT_CHANGED,
-            this.onHeaderHeightChanged.bind(this)
-        );
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_GRID_COLUMNS_CHANGED]: this.onGridColumnsChanged.bind(this),
+            [Events.EVENT_SCROLL_VISIBILITY_CHANGED]: this.onScrollVisibilityChanged.bind(this),
+            [Events.EVENT_PINNED_ROW_DATA_CHANGED]: this.setFloatingHeights.bind(this),
+            [Events.EVENT_PINNED_HEIGHT_CHANGED]: this.setFloatingHeights.bind(this),
+            [Events.EVENT_HEADER_HEIGHT_CHANGED]: this.onHeaderHeightChanged.bind(this),
+        });
     }
 
     private addFocusListeners(elements: HTMLElement[]): void {

@@ -2,6 +2,7 @@ import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import { Events } from '../eventKeys';
+import type { EventsType } from '../eventKeys';
 
 export class PinnedWidthService extends BeanStub {
     beanName: BeanName = 'pinnedWidthService';
@@ -18,8 +19,10 @@ export class PinnedWidthService extends BeanStub {
 
     public postConstruct(): void {
         const listener = this.checkContainerWidths.bind(this);
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, listener);
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: listener,
+            [Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED]: listener,
+        });
         this.addManagedPropertyListener('domLayout', listener);
     }
 

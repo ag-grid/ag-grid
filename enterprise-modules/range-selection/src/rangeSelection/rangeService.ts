@@ -11,6 +11,7 @@ import type {
     ColumnModel,
     CtrlsService,
     DragService,
+    EventsType,
     IRangeService,
     IRowModel,
     PartialCellRange,
@@ -89,23 +90,17 @@ export class RangeService extends BeanStub implements IRangeService {
     public autoScrollService: AutoScrollService;
 
     public postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.onColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () =>
-            this.removeAllCellRanges()
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>
-            this.removeAllCellRanges()
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () => this.removeAllCellRanges());
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_COLUMN_GROUP_OPENED,
-            this.refreshLastRangeStart.bind(this)
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onColumnsChanged.bind(this),
+            [Events.EVENT_COLUMN_VISIBLE]: this.onColumnsChanged.bind(this),
+            [Events.EVENT_COLUMN_VALUE_CHANGED]: this.onColumnsChanged.bind(this),
+            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: this.removeAllCellRanges.bind(this),
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: this.removeAllCellRanges.bind(this),
+            [Events.EVENT_COLUMN_PIVOT_CHANGED]: this.removeAllCellRanges.bind(this),
+            [Events.EVENT_COLUMN_GROUP_OPENED]: this.refreshLastRangeStart.bind(this),
+            [Events.EVENT_COLUMN_MOVED]: this.refreshLastRangeStart.bind(this),
+            [Events.EVENT_COLUMN_PINNED]: this.refreshLastRangeStart.bind(this),
+        });
 
         this.ctrlsService.whenReady((p) => {
             const gridBodyCtrl = p.gridBodyCtrl;

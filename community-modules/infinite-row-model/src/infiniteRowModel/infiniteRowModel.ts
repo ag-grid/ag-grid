@@ -1,6 +1,7 @@
 import type {
     BeanCollection,
     BeanName,
+    EventsType,
     FilterManager,
     IDatasource,
     IInfiniteRowModel,
@@ -99,10 +100,13 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     private addEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onCacheUpdated.bind(this));
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_FILTER_CHANGED]: this.onFilterChanged.bind(this),
+            [Events.EVENT_SORT_CHANGED]: this.onSortChanged.bind(this),
+            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onColumnEverything.bind(this),
+            [Events.EVENT_STORE_UPDATED]: this.onCacheUpdated.bind(this),
+        });
+
         this.addManagedPropertyListener('datasource', () => this.setDatasource(this.gos.get('datasource')));
         this.addManagedPropertyListener('cacheBlockSize', () => this.resetCache());
         this.addManagedPropertyListener('rowHeight', () => {

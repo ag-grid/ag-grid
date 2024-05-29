@@ -5,6 +5,7 @@ import type { BeanCollection, BeanName } from '../context/context';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
+import type { EventsType } from '../eventKeys';
 import { Events } from '../eventKeys';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _exists } from '../utils/generic';
@@ -38,17 +39,15 @@ export class QuickFilterService extends BeanStub {
     private matcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
 
     public postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () =>
-            this.resetQuickFilterCache()
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.resetQuickFilterCache());
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>
-            this.resetQuickFilterCache()
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
-            if (!this.gos.get('includeHiddenColumnsInQuickFilter')) {
-                this.resetQuickFilterCache();
-            }
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: this.resetQuickFilterCache.bind(this),
+            [Events.EVENT_NEW_COLUMNS_LOADED]: this.resetQuickFilterCache.bind(this),
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: this.resetQuickFilterCache.bind(this),
+            [Events.EVENT_COLUMN_VISIBLE]: () => {
+                if (!this.gos.get('includeHiddenColumnsInQuickFilter')) {
+                    this.resetQuickFilterCache();
+                }
+            },
         });
 
         this.addManagedPropertyListener('quickFilterText', (e) => this.setQuickFilter(e.currentValue));
