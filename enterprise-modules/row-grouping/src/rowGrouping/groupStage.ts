@@ -369,8 +369,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             // so double check before trying to remove again.
             const mapKey = this.getChildrenMappedKey(rowNode.key!, rowNode.rowGroupColumn);
             const parentRowNode = rowNode.parent;
-            const groupAlreadyRemoved =
-                parentRowNode && parentRowNode.childrenMapped ? !parentRowNode.childrenMapped[mapKey] : true;
+            const groupAlreadyRemoved = parentRowNode?.childrenMapped ? !parentRowNode.childrenMapped[mapKey] : true;
 
             if (groupAlreadyRemoved) {
                 // if not linked, then group was already removed
@@ -382,7 +381,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
 
         while (checkAgain) {
             checkAgain = false;
-            const batchRemover: BatchRemover = new BatchRemover();
+            const batchRemover = new BatchRemover();
             possibleEmptyGroups.forEach((possibleEmptyGroup) => {
                 // remove empty groups
                 this.forEachParentGroup(details, possibleEmptyGroup, (rowNode) => {
@@ -414,8 +413,8 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             }
         }
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
-        if (child.parent && child.parent.childrenMapped) {
-            child.parent.childrenMapped[mapKey] = undefined;
+        if (child.parent?.childrenMapped != undefined) {
+            delete child.parent.childrenMapped[mapKey];
         }
         // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
         // remove, if rowTop is still present, the rowComp thinks it's just moved position.
