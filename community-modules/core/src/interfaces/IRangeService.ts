@@ -1,4 +1,4 @@
-import type { BaseBean } from '../context/bean';
+import type { Bean } from '../context/bean';
 import type { CellPosition } from '../entities/cellPositionUtils';
 import type { Column } from '../entities/column';
 import type { RowPosition } from '../entities/rowPositionUtils';
@@ -37,7 +37,7 @@ export interface IRangeService {
     clearCellRangeCellValues(params: ClearCellRangeParams): void;
 }
 
-export interface ISelectionHandle extends BaseBean {
+export interface ISelectionHandle extends Bean {
     getGui(): HTMLElement;
     getType(): SelectionHandleType;
     refresh(cellCtrl: CellCtrl): void;

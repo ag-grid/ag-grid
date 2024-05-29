@@ -14,11 +14,10 @@ import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import { LocalEventService } from '../localEventService';
 import type { LocaleService } from '../localeService';
 import { _addSafePassiveEventListener } from '../utils/event';
-import type { Component } from '../widgets/component';
-import type { BaseBean } from './bean';
+import type { Bean } from './bean';
 import type { BeanCollection, BeanName, Context } from './context';
 
-export abstract class BeanStub implements BaseBean, IEventEmitter {
+export abstract class BeanStub implements Bean, IEventEmitter {
     public readonly beanName?: BeanName;
     public static EVENT_DESTROYED = 'destroyed';
 
@@ -220,16 +219,16 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
         }
     }
 
-    public createManagedBean<T extends BaseBean | null | undefined>(bean: T, context?: Context): T {
+    public createManagedBean<T extends Bean | null | undefined>(bean: T, context?: Context): T {
         const res = this.createBean(bean, context);
         this.addDestroyFunc(this.destroyBean.bind(this, bean, context));
         return res;
     }
 
-    protected createBean<T extends BaseBean | null | undefined>(
+    protected createBean<T extends Bean | null | undefined>(
         bean: T,
         context?: Context | null,
-        afterPreCreateCallback?: (comp: Component) => void
+        afterPreCreateCallback?: (bean: Bean) => void
     ): T {
         return (context || this.getContext()).createBean(bean, afterPreCreateCallback);
     }
@@ -238,7 +237,7 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
      * Destroys a bean and returns undefined to support destruction and clean up in a single line.
      * this.dateComp = this.context.destroyBean(this.dateComp);
      */
-    protected destroyBean<T extends BaseBean | null | undefined>(bean: T, context?: Context): undefined {
+    protected destroyBean<T extends Bean | null | undefined>(bean: T, context?: Context): undefined {
         return (context || this.getContext()).destroyBean(bean);
     }
 
@@ -246,7 +245,7 @@ export abstract class BeanStub implements BaseBean, IEventEmitter {
      * Destroys an array of beans and returns an empty array to support destruction and clean up in a single line.
      * this.dateComps = this.context.destroyBeans(this.dateComps);
      */
-    protected destroyBeans<T extends BaseBean | null | undefined>(beans: T[], context?: Context): T[] {
+    protected destroyBeans<T extends Bean | null | undefined>(beans: T[], context?: Context): T[] {
         return (context || this.getContext()).destroyBeans(beans);
     }
 }

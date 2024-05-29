@@ -1,5 +1,5 @@
 import { KeyCode } from '../../../constants/keyCode';
-import type { BaseBean } from '../../../context/bean';
+import type { Bean } from '../../../context/bean';
 import { BeanStub } from '../../../context/beanStub';
 import type { FilterChangedEvent } from '../../../events';
 import { _clearElement } from '../../../utils/dom';
@@ -14,7 +14,7 @@ import { TextFilter } from '../../provided/text/textFilter';
 import type { IFloatingFilterParams } from '../floatingFilter';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
 
-export interface FloatingFilterInputService extends BaseBean {
+export interface FloatingFilterInputService extends Bean {
     setupGui(parentElement: HTMLElement): void;
     setEditable(editable: boolean): void;
     getValue(): string | null | undefined;
