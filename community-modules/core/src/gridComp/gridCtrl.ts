@@ -113,12 +113,12 @@ export class GridCtrl extends BeanStub {
         if (this.eGui.offsetParent == null) {
             return;
         }
-        // We want to apply a default height to the grid if its container
-        // element has no intrinsic height. But we don't want to apply the
-        // default height if it has an intrinsic height of zero (e.g.
-        // style="height:0px" set on wrapper). So we set different heights on
-        // the grid root element and check to see whether the wrapper resizes to
-        // accommodate it.
+        // If the application has not given the host div a height, then we want
+        // to apply a default height in order to prevent the grid from being
+        // zero height. However we can't just test whether the host div is 0px
+        // high, because it might have been explicitly set to 0px. So we vary
+        // the height of the main grid element and check whether the container
+        // resizes to fit. It it does, it has no explicit height set and we need a default height.
         const gui = this.eGui;
         const wrapper = this.eGridHostDiv;
         gui.style.boxSizing = 'border-box';
