@@ -33,6 +33,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     private context: Context;
 
     public wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
         this.context = beans.context;
     }
 
