@@ -39,11 +39,9 @@ export type ComponentClass = { new (params?: any): Component; selector: AgCompon
 
 export class Component extends BeanStub implements ComponentBean {
     protected agStackComponentsRegistry: AgStackComponentsRegistry;
-    protected componentContext: Context;
 
     public wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
-        this.componentContext = beans.context;
         this.agStackComponentsRegistry = beans.agStackComponentsRegistry;
     }
 
@@ -93,7 +91,7 @@ export class Component extends BeanStub implements ComponentBean {
         // ui exists if user sets template in constructor. when this happens,
         // We have to wait for the context to be autoWired first before we can create child components.
         this.agStackComponentsRegistry?.ensureRegistered(this.components);
-        if (element && this.componentContext) {
+        if (element && this.agStackComponentsRegistry) {
             this.applyElementsToComponent(element);
             this.createChildComponentsFromTags(element, paramsMap);
         }
