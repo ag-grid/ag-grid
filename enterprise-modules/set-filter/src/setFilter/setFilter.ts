@@ -456,7 +456,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             }
         });
 
-        this.gos.addManagedPropertyListeners(['treeData', 'getDataPath', 'groupAllowUnbalanced'], () => {
+        this.addManagedPropertyListeners(['treeData', 'getDataPath', 'groupAllowUnbalanced'], () => {
             this.syncAfterDataChange();
         });
     }

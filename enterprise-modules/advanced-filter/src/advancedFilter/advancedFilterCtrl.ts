@@ -54,7 +54,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
             ({ enabled }: AdvancedFilterEnabledChangedEvent) => this.onEnabledChanged(enabled)
         );
 
-        this.gos.addManagedPropertyListener('advancedFilterParent', () => this.updateComps());
+        this.addManagedPropertyListener('advancedFilterParent', () => this.updateComps());
 
         this.addDestroyFunc(() => {
             this.destroyAdvancedFilterComp();

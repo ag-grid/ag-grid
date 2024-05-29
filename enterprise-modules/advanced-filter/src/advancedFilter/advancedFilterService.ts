@@ -65,11 +65,11 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
             },
         };
 
-        this.gos.addManagedPropertyListener('enableAdvancedFilter', (event) => this.setEnabled(!!event.currentValue));
+        this.addManagedPropertyListener('enableAdvancedFilter', (event) => this.setEnabled(!!event.currentValue));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, (event: NewColumnsLoadedEvent) =>
             this.onNewColumnsLoaded(event)
         );
-        this.gos.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', () => this.updateValidity());
+        this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', () => this.updateValidity());
     }
 
     public isEnabled(): boolean {

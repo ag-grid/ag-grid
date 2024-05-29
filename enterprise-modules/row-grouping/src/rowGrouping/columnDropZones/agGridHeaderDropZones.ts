@@ -30,8 +30,8 @@ export class AgGridHeaderDropZones extends Component {
             this.onRowGroupChanged()
         );
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onRowGroupChanged());
-        this.gos.addManagedPropertyListener('rowGroupPanelShow', () => this.onRowGroupChanged());
-        this.gos.addManagedPropertyListener('pivotPanelShow', () => this.onPivotPanelShow());
+        this.addManagedPropertyListener('rowGroupPanelShow', () => this.onRowGroupChanged());
+        this.addManagedPropertyListener('pivotPanelShow', () => this.onPivotPanelShow());
 
         this.onRowGroupChanged();
     }

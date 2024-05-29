@@ -32,7 +32,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
 
     public postConstruct(): void {
         const groupSelectsChildren = this.gos.get('groupSelectsChildren');
-        this.gos.addManagedPropertyListener('groupSelectsChildren', (propChange) => {
+        this.addManagedPropertyListener('groupSelectsChildren', (propChange) => {
             this.destroyBean(this.selectionStrategy);
 
             const StrategyClazz = !propChange.currentValue ? DefaultStrategy : GroupSelectsChildrenStrategy;
@@ -46,7 +46,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
             this.eventService.dispatchEvent(event);
         });
 
-        this.gos.addManagedPropertyListener('rowSelection', () => this.deselectAllRowNodes({ source: 'api' }));
+        this.addManagedPropertyListener('rowSelection', () => this.deselectAllRowNodes({ source: 'api' }));
 
         const StrategyClazz = !groupSelectsChildren ? DefaultStrategy : GroupSelectsChildrenStrategy;
         this.selectionStrategy = this.createManagedBean(new StrategyClazz());

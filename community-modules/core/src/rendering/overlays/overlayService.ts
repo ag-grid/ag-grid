@@ -64,7 +64,7 @@ export class OverlayService extends BeanStub {
 
     private showOverlay(compDetails: UserCompDetails, wrapperCssClass: string, gridOption: keyof GridOptions): void {
         const promise = compDetails.newAgStackInstance();
-        const listenerDestroyFunc = this.gos.addManagedPropertyListener(gridOption, ({ currentValue }) => {
+        const listenerDestroyFunc = this.addManagedPropertyListener(gridOption, ({ currentValue }) => {
             promise.then((comp) => {
                 if (comp!.refresh) {
                     comp.refresh(

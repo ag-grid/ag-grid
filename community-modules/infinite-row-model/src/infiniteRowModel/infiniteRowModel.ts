@@ -103,9 +103,9 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onCacheUpdated.bind(this));
-        this.gos.addManagedPropertyListener('datasource', () => this.setDatasource(this.gos.get('datasource')));
-        this.gos.addManagedPropertyListener('cacheBlockSize', () => this.resetCache());
-        this.gos.addManagedPropertyListener('rowHeight', () => {
+        this.addManagedPropertyListener('datasource', () => this.setDatasource(this.gos.get('datasource')));
+        this.addManagedPropertyListener('cacheBlockSize', () => this.resetCache());
+        this.addManagedPropertyListener('rowHeight', () => {
             this.rowHeight = this.gos.getRowHeightAsNumber();
             this.cacheParams.rowHeight = this.rowHeight;
             this.updateRowHeights();

@@ -83,11 +83,11 @@ export class GridHeaderCtrl extends BeanStub {
         const listener = this.setHeaderHeight.bind(this);
         listener();
 
-        this.gos.addManagedPropertyListener('headerHeight', listener);
-        this.gos.addManagedPropertyListener('pivotHeaderHeight', listener);
-        this.gos.addManagedPropertyListener('groupHeaderHeight', listener);
-        this.gos.addManagedPropertyListener('pivotGroupHeaderHeight', listener);
-        this.gos.addManagedPropertyListener('floatingFiltersHeight', listener);
+        this.addManagedPropertyListener('headerHeight', listener);
+        this.addManagedPropertyListener('pivotHeaderHeight', listener);
+        this.addManagedPropertyListener('groupHeaderHeight', listener);
+        this.addManagedPropertyListener('pivotGroupHeaderHeight', listener);
+        this.addManagedPropertyListener('floatingFiltersHeight', listener);
 
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, listener);

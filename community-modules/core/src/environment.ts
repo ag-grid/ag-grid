@@ -54,7 +54,7 @@ export class Environment extends BeanStub {
     private sizesMeasured = false;
 
     public postConstruct(): void {
-        this.gos.addManagedPropertyListener('rowHeight', () => this.refreshRowHeightVariable());
+        this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeightVariable());
         this.themeClasses = this.getAncestorThemeClasses();
         this.setUpThemeClassObservers();
         this.getSizeEl(ROW_HEIGHT);

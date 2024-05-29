@@ -29,7 +29,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         if (this.rowModel.getType() === 'clientSide') {
             this.clientSideRowModel = this.rowModel as ClientSideRowModel;
 
-            this.gos.addManagedPropertyListener('rowData', () => this.onRowDataUpdated());
+            this.addManagedPropertyListener('rowData', () => this.onRowDataUpdated());
         }
     }
 

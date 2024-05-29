@@ -51,8 +51,8 @@ export class QuickFilterService extends BeanStub {
             }
         });
 
-        this.gos.addManagedPropertyListener('quickFilterText', (e) => this.setQuickFilter(e.currentValue));
-        this.gos.addManagedPropertyListeners(
+        this.addManagedPropertyListener('quickFilterText', (e) => this.setQuickFilter(e.currentValue));
+        this.addManagedPropertyListeners(
             ['includeHiddenColumnsInQuickFilter', 'applyQuickFilterBeforePivotOrAgg'],
             () => this.onQuickFilterColumnConfigChanged()
         );
@@ -62,7 +62,7 @@ export class QuickFilterService extends BeanStub {
         this.matcher = this.gos.get('quickFilterMatcher');
         this.setQuickFilterParts();
 
-        this.gos.addManagedPropertyListeners(['quickFilterMatcher', 'quickFilterParser'], () =>
+        this.addManagedPropertyListeners(['quickFilterMatcher', 'quickFilterParser'], () =>
             this.setQuickFilterParserAndMatcher()
         );
     }

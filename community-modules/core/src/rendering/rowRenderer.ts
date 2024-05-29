@@ -170,9 +170,9 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.onBodyScroll.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redraw.bind(this));
 
-        this.gos.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], () => this.onDomLayoutChanged());
-        this.gos.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction', 'rowBuffer'], () => this.redraw());
-        this.gos.addManagedPropertyListeners(
+        this.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], () => this.onDomLayoutChanged());
+        this.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction', 'rowBuffer'], () => this.redraw());
+        this.addManagedPropertyListeners(
             [
                 'suppressCellFocus',
                 'getBusinessKeyForNode',
@@ -334,7 +334,7 @@ export class RowRenderer extends BeanStub {
             this.eventService.removeEventListener(Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
         };
         this.addDestroyFunc(() => removeRangeSelectionListeners());
-        this.gos.addManagedPropertyListener('enableRangeSelection', (params) => {
+        this.addManagedPropertyListener('enableRangeSelection', (params) => {
             const isEnabled = params.currentValue;
             if (isEnabled) {
                 addRangeSelectionListeners();

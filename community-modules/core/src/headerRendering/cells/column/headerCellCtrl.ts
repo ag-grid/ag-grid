@@ -102,7 +102,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
         this.addResizeAndMoveKeyboardListeners();
 
-        this.gos.addManagedPropertyListeners(
+        this.addManagedPropertyListeners(
             ['suppressMovableColumns', 'suppressMenuHide', 'suppressAggFuncInHeader'],
             this.refresh.bind(this)
         );

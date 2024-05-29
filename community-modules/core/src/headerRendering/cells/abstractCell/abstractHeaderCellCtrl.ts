@@ -92,7 +92,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     public postConstruct(): void {
-        this.gos.addManagedPropertyListeners(['suppressHeaderFocus'], () => this.refreshTabIndex());
+        this.addManagedPropertyListeners(['suppressHeaderFocus'], () => this.refreshTabIndex());
     }
 
     protected shouldStopEventPropagation(e: KeyboardEvent): boolean {

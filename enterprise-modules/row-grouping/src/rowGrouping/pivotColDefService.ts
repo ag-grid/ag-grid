@@ -38,13 +38,13 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
     public postConstruct(): void {
         const getFieldSeparator = () => this.gos.get('serverSidePivotResultFieldSeparator') ?? '_';
         this.fieldSeparator = getFieldSeparator();
-        this.gos.addManagedPropertyListener('serverSidePivotResultFieldSeparator', () => {
+        this.addManagedPropertyListener('serverSidePivotResultFieldSeparator', () => {
             this.fieldSeparator = getFieldSeparator();
         });
 
         const getPivotDefaultExpanded = () => this.gos.get('pivotDefaultExpanded');
         this.pivotDefaultExpanded = getPivotDefaultExpanded();
-        this.gos.addManagedPropertyListener('pivotDefaultExpanded', () => {
+        this.addManagedPropertyListener('pivotDefaultExpanded', () => {
             this.pivotDefaultExpanded = getPivotDefaultExpanded();
         });
     }

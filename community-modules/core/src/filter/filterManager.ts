@@ -105,17 +105,17 @@ export class FilterManager extends BeanStub {
         );
 
         this.externalFilterPresent = this.isExternalFilterPresentCallback();
-        this.gos.addManagedPropertyListeners(['isExternalFilterPresent', 'doesExternalFilterPass'], () => {
+        this.addManagedPropertyListeners(['isExternalFilterPresent', 'doesExternalFilterPass'], () => {
             this.onFilterChanged({ source: 'api' });
         });
 
         this.updateAggFiltering();
-        this.gos.addManagedPropertyListener('groupAggFiltering', () => {
+        this.addManagedPropertyListener('groupAggFiltering', () => {
             this.updateAggFiltering();
             this.onFilterChanged();
         });
 
-        this.gos.addManagedPropertyListener('advancedFilterModel', (event) =>
+        this.addManagedPropertyListener('advancedFilterModel', (event) =>
             this.setAdvancedFilterModel(event.currentValue)
         );
         this.addManagedListener(
