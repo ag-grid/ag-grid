@@ -19,7 +19,7 @@ export interface WrappableInterface {
 
     callMethod(name: string, args: IArguments): void;
 
-    addMethod(name: string, callback: Function): void;
+    addMethod(name: string, callback: (...args: any[]) => any): void;
 }
 
 export abstract class BaseComponentWrapper<F extends WrappableInterface> implements FrameworkComponentWrapper {
@@ -52,9 +52,10 @@ export abstract class BaseComponentWrapper<F extends WrappableInterface> impleme
         wrapper.addMethod(methodName, this.createMethodProxy(wrapper, methodName, mandatory));
     }
 
-    protected createMethodProxy(wrapper: F, methodName: string, mandatory: boolean): Function {
+    protected createMethodProxy(wrapper: F, methodName: string, mandatory: boolean): (...args: any[]) => any {
         return function () {
             if (wrapper.hasMethod(methodName)) {
+                // eslint-disable-next-line
                 return wrapper.callMethod(methodName, arguments);
             }
 

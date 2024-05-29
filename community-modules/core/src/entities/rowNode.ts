@@ -433,7 +433,6 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     public getGroupKeys(excludeSelf = false): string[] {
         const keys: string[] = [];
 
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let pointer: RowNode | null = this;
         if (excludeSelf) {
             pointer = pointer.parent;
@@ -1171,8 +1170,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     /** Add an event listener. */
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    public addEventListener(eventType: RowNodeEventType, userListener: Function): void {
+    public addEventListener(eventType: RowNodeEventType, userListener: (...args: any[]) => any): void {
         if (!this.localEventService) {
             this.localEventService = new LocalEventService();
         }
@@ -1186,8 +1184,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     /** Remove event listener. */
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    public removeEventListener(eventType: RowNodeEventType, userListener: Function): void {
+    public removeEventListener(eventType: RowNodeEventType, userListener: (...args: any[]) => any): void {
         if (!this.localEventService) {
             return;
         }
@@ -1208,7 +1205,6 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     public getFirstChildOfFirstChild(rowGroupColumn: InternalColumn | null): RowNode | null {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let currentRowNode: RowNode = this;
         let isCandidate = true;
         let foundFirstChildPath = false;
@@ -1260,7 +1256,6 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         const res: string[] = [];
 
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let pointer: RowNode = this;
 
         while (pointer.key != null) {

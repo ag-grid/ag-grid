@@ -59,7 +59,6 @@ const VueExample = {
                                 params: {
                                     values: ['Male', 'Female'],
                                 },
-                                popup: true,
                             };
                         }
                         if (params.data.type === 'mood') {

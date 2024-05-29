@@ -269,7 +269,6 @@ export class InternalColumnGroup<TValue = any> extends BeanStub implements Colum
 
         // find the column group that is controlling expandable. this is relevant when we have padding (empty)
         // groups, where the expandable is actually the first parent that is not a padding group.
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let parentWithExpansion: InternalColumnGroup | null = this;
         while (parentWithExpansion != null && parentWithExpansion.isPadding()) {
             parentWithExpansion = parentWithExpansion.getParent();

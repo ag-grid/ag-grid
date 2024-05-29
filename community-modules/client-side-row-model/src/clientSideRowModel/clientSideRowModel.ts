@@ -696,6 +696,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                     changedPath,
                     !!params.afterColumnsChanged
                 );
+            /* eslint-disable no-fallthrough */
             case ClientSideRowModelSteps.FILTER:
                 this.doFilter(changedPath);
             case ClientSideRowModelSteps.PIVOT:
@@ -708,6 +709,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 this.doSort(params.rowNodeTransactions, changedPath);
             case ClientSideRowModelSteps.MAP:
                 this.doRowsToDisplay();
+            /* eslint-enable no-fallthrough */
         }
 
         // set all row tops to null, then set row tops on all visible rows. if we don't
@@ -786,6 +788,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return result;
     }
 
+    // eslint-disable-next-line
     public setDatasource(datasource: any): void {
         console.error('AG Grid: should never call setDatasource on clientSideRowController');
     }
@@ -1211,7 +1214,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private executeBatchUpdateRowData(): void {
         this.valueCache.onDataChanged();
 
-        const callbackFuncsBound: Function[] = [];
+        const callbackFuncsBound: ((...args: any[]) => any)[] = [];
         const rowNodeTrans: RowNodeTransaction[] = [];
 
         // The rowGroup stage uses rowNodeOrder if order was provided. if we didn't pass 'true' to

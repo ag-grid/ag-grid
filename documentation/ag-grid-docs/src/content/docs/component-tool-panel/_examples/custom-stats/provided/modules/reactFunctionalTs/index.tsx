@@ -47,7 +47,7 @@ const GridExample = () => {
         };
     }, []);
     const icons = useMemo<{
-        [key: string]: Function | string;
+        [key: string]: ((...args: any[]) => any) | string;
     }>(() => {
         return {
             'custom-stats': '<span class="ag-icon ag-icon-custom-stats"></span>',

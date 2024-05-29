@@ -38,8 +38,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private dndSourceComp: DndSourceComp | undefined;
     private rowDraggingComp: RowDragComp | undefined;
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    private hideEditorPopup: Function | null | undefined;
+    private hideEditorPopup: ((...args: any[]) => any) | null | undefined;
     private cellEditorPopupWrapper: PopupEditorWrapper | undefined;
     private cellEditor: ICellEditorComp | null | undefined;
     private cellEditorGui: HTMLElement | null;

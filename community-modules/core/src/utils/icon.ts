@@ -183,8 +183,7 @@ export function _createIconNoSpan(
     column?: InternalColumn | null,
     forceCreate?: boolean
 ): Element | undefined {
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    let userProvidedIcon: Function | string | null = null;
+    let userProvidedIcon: ((...args: any[]) => any) | string | null = null;
 
     // check col for icon first
     const icons: any = column && column.getColDef().icons;

@@ -29,7 +29,7 @@ export class DragService extends BeanStub {
     private touchLastTime: Touch | null;
     private touchStart: Touch | null;
 
-    private dragEndFunctions: Function[] = [];
+    private dragEndFunctions: ((...args: any[]) => any)[] = [];
 
     private dragSources: DragSourceAndListener[] = [];
 

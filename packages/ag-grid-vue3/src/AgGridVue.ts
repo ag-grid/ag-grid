@@ -60,7 +60,7 @@ export const AgGridVue = defineComponent({
     watch,
     methods: {
         globalEventListenerFactory(restrictToSyncOnly?: boolean) {
-            return (eventType: string, event: any) => {
+            return (eventType: string) => {
                 if (this.isDestroyed) {
                     return;
                 }

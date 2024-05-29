@@ -243,8 +243,7 @@ export interface GridApi<TData = any> {
      * When the rendered row is removed from the grid, all associated rendered row listeners will also be removed.
      * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists.
      */
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void;
+    addRenderedRowListener(eventName: string, rowIndex: number, callback: (...args: any[]) => any): void;
 
     /** Get the current Quick Filter text from the grid, or `undefined` if none is set. */
     getQuickFilter(): string | undefined;
@@ -554,23 +553,19 @@ export interface GridApi<TData = any> {
      * Works similar to `addEventListener` for a browser DOM element.
      * Listeners will be automatically removed when the grid is destroyed.
      */
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    addEventListener(eventType: string, listener: Function): void;
+    addEventListener(eventType: string, listener: (...args: any[]) => any): void;
 
     /**
      * Add an event listener for all event types coming from the grid.
      * Listeners will be automatically removed when the grid is destroyed.
      */
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    addGlobalListener(listener: Function): void;
+    addGlobalListener(listener: (...args: any[]) => any): void;
 
     /** Remove an event listener. */
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    removeEventListener(eventType: string, listener: Function): void;
+    removeEventListener(eventType: string, listener: (...args: any[]) => any): void;
 
     /** Remove a global event listener. */
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    removeGlobalListener(listener: Function): void;
+    removeGlobalListener(listener: (...args: any[]) => any): void;
 
     dispatchEvent(event: AgEvent): void;
 

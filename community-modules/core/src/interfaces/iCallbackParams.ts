@@ -171,8 +171,7 @@ export interface ProcessRowParams<TData = any, TContext = any> extends AgGridCom
     ePinnedRightRow?: HTMLElement;
     rowIndex: number;
     node: IRowNode<TData>;
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    addRenderedRowListener: (eventType: string, listener: Function) => void;
+    addRenderedRowListener: (eventType: string, listener: (...args: any[]) => any) => void;
 }
 
 export interface FillOperationParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

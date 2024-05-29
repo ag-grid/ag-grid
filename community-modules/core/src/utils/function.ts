@@ -27,7 +27,7 @@ export function _getFunctionName(funcConstructor: any) {
         return funcConstructor.name;
     }
 
-    // for the pestilence that is ie11
+    // eslint-disable-next-line
     const matches = /function\s+([^\(]+)/.exec(funcConstructor.toString());
     return matches && matches.length === 2 ? matches[1].trim() : null;
 }
@@ -36,11 +36,11 @@ export function _isFunction(val: any): boolean {
     return !!(val && val.constructor && val.call && val.apply);
 }
 
-export function _executeInAWhile(funcs: Function[]): void {
+export function _executeInAWhile(funcs: ((...args: any[]) => any)[]): void {
     _executeAfter(funcs, 400);
 }
 
-const executeNextVMTurnFuncs: Function[] = [];
+const executeNextVMTurnFuncs: ((...args: any[]) => any)[] = [];
 let executeNextVMTurnPending = false;
 
 export function _executeNextVMTurn(func: () => void): void {
@@ -59,7 +59,7 @@ export function _executeNextVMTurn(func: () => void): void {
     }, 0);
 }
 
-export function _executeAfter(funcs: Function[], milliseconds = 0): void {
+export function _executeAfter(funcs: ((...args: any[]) => any)[], milliseconds = 0): void {
     if (funcs.length > 0) {
         window.setTimeout(() => funcs.forEach((func) => func()), milliseconds);
     }
@@ -141,7 +141,7 @@ export function _waitUntil(
     }
 }
 
-export function _compose<T>(...fns: Function[]) {
+export function _compose<T>(...fns: ((...args: any[]) => any)[]) {
     return (arg: T) => fns.reduce<T>((composed, f) => f(composed), arg);
 }
 

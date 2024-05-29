@@ -1533,8 +1533,7 @@ export interface GridOptions<TData = any> {
      * Icons to use inside the grid instead of the grid's default icons.
      * @initial
      */
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    icons?: { [key: string]: Function | string };
+    icons?: { [key: string]: ((...args: any[]) => any) | string };
     /**
      * Default row height in pixels.
      * @default 25

@@ -516,8 +516,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function) {
+    public addRenderedRowListener(eventName: string, rowIndex: number, callback: (...args: any[]) => any) {
         this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback as any);
     }
 
@@ -934,23 +933,19 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
         return value;
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    public addEventListener(eventType: string, listener: Function): void {
+    public addEventListener(eventType: string, listener: (...args: any[]) => any): void {
         this.apiEventService.addEventListener(eventType, listener as AgEventListener);
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    public addGlobalListener(listener: Function): void {
+    public addGlobalListener(listener: (...args: any[]) => any): void {
         this.apiEventService.addGlobalListener(listener as AgGlobalEventListener);
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    public removeEventListener(eventType: string, listener: Function): void {
+    public removeEventListener(eventType: string, listener: (...args: any[]) => any): void {
         this.apiEventService.removeEventListener(eventType, listener as AgEventListener);
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    public removeGlobalListener(listener: Function): void {
+    public removeGlobalListener(listener: (...args: any[]) => any): void {
         this.apiEventService.removeGlobalListener(listener as AgGlobalEventListener);
     }
 

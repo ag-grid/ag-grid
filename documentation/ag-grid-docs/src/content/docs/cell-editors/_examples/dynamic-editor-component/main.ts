@@ -73,7 +73,6 @@ function cellEditorSelector(params: ICellEditorParams<IRow>): CellEditorSelector
             params: {
                 values: ['Male', 'Female'],
             },
-            popup: true,
         };
     }
 
