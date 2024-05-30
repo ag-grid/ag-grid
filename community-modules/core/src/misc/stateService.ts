@@ -160,10 +160,10 @@ export class StateService extends BeanStub implements NamedBean {
         // sidebar reads the initial state itself, so don't need to set
 
         this.updateCachedState('sideBar', this.getSideBarState());
-
+        const stateUpdater = () => this.updateCachedState('sideBar', this.getSideBarState());
         this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED]: () => this.updateCachedState('sideBar', this.getSideBarState()),
-            [Events.EVENT_SIDE_BAR_UPDATED]: () => this.updateCachedState('sideBar', this.getSideBarState()),
+            [Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED]: stateUpdater,
+            [Events.EVENT_SIDE_BAR_UPDATED]: stateUpdater,
         });
     }
 

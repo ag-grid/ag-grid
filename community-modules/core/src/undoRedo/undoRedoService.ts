@@ -78,6 +78,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         this.addFillListeners();
         this.addCellKeyListeners();
 
+        const listener = this.clearStacks.bind(this);
         this.addManagedListeners<EventsType>(this.eventService, {
             [Events.EVENT_CELL_VALUE_CHANGED]: this.onCellValueChanged.bind(this),
             // undo / redo is restricted to actual editing so we clear the stacks when other operations are
@@ -87,14 +88,14 @@ export class UndoRedoService extends BeanStub implements NamedBean {
                     this.clearStacks();
                 }
             },
-            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: this.clearStacks.bind(this),
-            [Events.EVENT_NEW_COLUMNS_LOADED]: this.clearStacks.bind(this),
-            [Events.EVENT_COLUMN_GROUP_OPENED]: this.clearStacks.bind(this),
-            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: this.clearStacks.bind(this),
-            [Events.EVENT_COLUMN_MOVED]: this.clearStacks.bind(this),
-            [Events.EVENT_COLUMN_PINNED]: this.clearStacks.bind(this),
-            [Events.EVENT_COLUMN_VISIBLE]: this.clearStacks.bind(this),
-            [Events.EVENT_ROW_DRAG_END]: this.clearStacks.bind(this),
+            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: listener,
+            [Events.EVENT_NEW_COLUMNS_LOADED]: listener,
+            [Events.EVENT_COLUMN_GROUP_OPENED]: listener,
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: listener,
+            [Events.EVENT_COLUMN_MOVED]: listener,
+            [Events.EVENT_COLUMN_PINNED]: listener,
+            [Events.EVENT_COLUMN_VISIBLE]: listener,
+            [Events.EVENT_ROW_DRAG_END]: listener,
         });
 
         this.ctrlsService.whenReady((p) => {

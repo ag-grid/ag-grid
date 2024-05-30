@@ -201,16 +201,13 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
         this.addManagedPropertyListener('suppressRowDrag', this.onSuppressRowDrag.bind(this));
 
         // in case data changes, then we need to update visibility of drag item
+        const listener = this.workOutVisibility.bind(this);
         this.addManagedListeners(this.rowNode, {
-            [RowNode.EVENT_DATA_CHANGED]: this.workOutVisibility.bind(this),
-            [RowNode.EVENT_CELL_CHANGED]: this.workOutVisibility.bind(this),
+            [RowNode.EVENT_DATA_CHANGED]: listener,
+            [RowNode.EVENT_CELL_CHANGED]: listener,
         });
 
-        this.addManagedListener(
-            this.beans.eventService,
-            Events.EVENT_NEW_COLUMNS_LOADED,
-            this.workOutVisibility.bind(this)
-        );
+        this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, listener);
 
         this.workOutVisibility();
     }
@@ -236,17 +233,18 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
     }
 
     public postConstruct(): void {
+        const listener = this.workOutVisibility.bind(this);
         // we do not show the component if sort, filter or grouping is active
         this.addManagedListeners<EventsType>(this.beans.eventService, {
-            [Events.EVENT_SORT_CHANGED]: this.workOutVisibility.bind(this),
-            [Events.EVENT_FILTER_CHANGED]: this.workOutVisibility.bind(this),
-            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: this.workOutVisibility.bind(this),
-            [Events.EVENT_NEW_COLUMNS_LOADED]: this.workOutVisibility.bind(this),
+            [Events.EVENT_SORT_CHANGED]: listener,
+            [Events.EVENT_FILTER_CHANGED]: listener,
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: listener,
+            [Events.EVENT_NEW_COLUMNS_LOADED]: listener,
         });
 
         // in case data changes, then we need to update visibility of drag item
-        this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, listener);
+        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, listener);
 
         this.addManagedPropertyListener('suppressRowDrag', this.onSuppressRowDrag.bind(this));
 

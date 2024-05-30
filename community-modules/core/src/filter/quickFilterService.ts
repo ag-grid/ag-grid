@@ -39,10 +39,11 @@ export class QuickFilterService extends BeanStub implements NamedBean {
     private matcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
 
     public postConstruct(): void {
+        const resetListener = this.resetQuickFilterCache.bind(this);
         this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: this.resetQuickFilterCache.bind(this),
-            [Events.EVENT_NEW_COLUMNS_LOADED]: this.resetQuickFilterCache.bind(this),
-            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: this.resetQuickFilterCache.bind(this),
+            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: resetListener,
+            [Events.EVENT_NEW_COLUMNS_LOADED]: resetListener,
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: resetListener,
             [Events.EVENT_COLUMN_VISIBLE]: () => {
                 if (!this.gos.get('includeHiddenColumnsInQuickFilter')) {
                     this.resetQuickFilterCache();
