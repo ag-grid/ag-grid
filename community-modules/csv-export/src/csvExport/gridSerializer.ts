@@ -1,11 +1,11 @@
 import type {
+    AgColumn,
+    AgColumnGroup,
     BeanCollection,
-    Column,
     ColumnModel,
     ColumnNameService,
     ExportParams,
     IClientSideRowModel,
-    IHeaderColumn,
     IRowModel,
     ISelectionService,
     IServerSideRowModel,
@@ -20,11 +20,11 @@ import type {
 } from '@ag-grid-community/core';
 import {
     BeanStub,
-    ColumnGroup,
     GROUP_AUTO_COLUMN_ID,
     GroupInstanceIdCreator,
     _compose,
     _last,
+    isColumnGroup,
 } from '@ag-grid-community/core';
 
 import type { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from './interfaces';
@@ -62,7 +62,11 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
     public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T> = {}): string {
         const { allColumns, columnKeys, skipRowGroups } = params;
-        const columnsToExport = this.getColumnsToExport(allColumns, skipRowGroups, columnKeys);
+        const columnsToExport = this.getColumnsToExport(
+            allColumns,
+            skipRowGroups,
+            columnKeys as (string | AgColumn)[] | undefined
+        );
 
         const serializeChain = _compose<GridSerializingSession<T>>(
             // first pass, put in the header names of the cols
@@ -82,7 +86,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
     private processRow<T>(
         gridSerializingSession: GridSerializingSession<T>,
         params: ExportParams<T>,
-        columnsToExport: Column[],
+        columnsToExport: AgColumn[],
         node: RowNode
     ): void {
         const rowSkipper: (params: ShouldRowBeSkippedParams) => boolean = params.shouldRowBeSkipped || (() => false);
@@ -125,7 +129,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         }
 
         const rowAccumulator: RowAccumulator = gridSerializingSession.onNewBodyRow(node);
-        columnsToExport.forEach((column: Column, index: number) => {
+        columnsToExport.forEach((column: AgColumn, index: number) => {
             rowAccumulator.onColumn(column, index, node);
         });
 
@@ -162,7 +166,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
     }
 
     private prepareSession<T>(
-        columnsToExport: Column[]
+        columnsToExport: AgColumn[]
     ): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
             gridSerializingSession.prepare(columnsToExport);
@@ -172,12 +176,12 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
     private exportColumnGroups<T>(
         params: ExportParams<T>,
-        columnsToExport: Column[]
+        columnsToExport: AgColumn[]
     ): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
             if (!params.skipColumnGroupHeaders) {
                 const groupInstanceIdCreator: GroupInstanceIdCreator = new GroupInstanceIdCreator();
-                const displayedGroups: IHeaderColumn[] = this.visibleColsService.createGroups(
+                const displayedGroups: (AgColumn | AgColumnGroup)[] = this.visibleColsService.createGroups(
                     columnsToExport,
                     groupInstanceIdCreator,
                     null
@@ -194,7 +198,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
     private exportHeaders<T>(
         params: ExportParams<T>,
-        columnsToExport: Column[]
+        columnsToExport: AgColumn[]
     ): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
             if (!params.skipColumnHeaders) {
@@ -209,7 +213,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
     private processPinnedTopRows<T>(
         params: ExportParams<T>,
-        columnsToExport: Column[]
+        columnsToExport: AgColumn[]
     ): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
@@ -230,7 +234,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
     private processRows<T>(
         params: ExportParams<T>,
-        columnsToExport: Column[]
+        columnsToExport: AgColumn[]
     ): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
             // when in pivot mode, we always render cols on screen, never 'all columns'
@@ -330,7 +334,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
     private processPinnedBottomRows<T>(
         params: ExportParams<T>,
-        columnsToExport: Column[]
+        columnsToExport: AgColumn[]
     ): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
@@ -351,8 +355,8 @@ export class GridSerializer extends BeanStub implements NamedBean {
     private getColumnsToExport(
         allColumns: boolean = false,
         skipRowGroups: boolean = false,
-        columnKeys?: (string | Column)[]
-    ): Column[] {
+        columnKeys?: (string | AgColumn)[]
+    ): AgColumn[] {
         const isPivotMode = this.columnModel.isPivotMode();
 
         if (columnKeys && columnKeys.length) {
@@ -361,7 +365,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
         const isTreeData = this.gos.get('treeData');
 
-        let columnsToExport: Column[] = [];
+        let columnsToExport: AgColumn[] = [];
 
         if (allColumns && !isPivotMode) {
             columnsToExport = this.columnModel.getCols();
@@ -377,20 +381,20 @@ export class GridSerializer extends BeanStub implements NamedBean {
     }
 
     private recursivelyAddHeaderGroups<T>(
-        displayedGroups: IHeaderColumn[],
+        displayedGroups: (AgColumn | AgColumnGroup)[],
         gridSerializingSession: GridSerializingSession<T>,
         processGroupHeaderCallback: ProcessGroupHeaderCallback | undefined
     ): void {
-        const directChildrenHeaderGroups: IHeaderColumn[] = [];
-        displayedGroups.forEach((columnGroupChild: IHeaderColumn) => {
-            const columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
+        const directChildrenHeaderGroups: (AgColumn | AgColumnGroup)[] = [];
+        displayedGroups.forEach((columnGroupChild) => {
+            const columnGroup = columnGroupChild as AgColumnGroup;
             if (!columnGroup.getChildren) {
                 return;
             }
             columnGroup.getChildren()!.forEach((it) => directChildrenHeaderGroups.push(it));
         });
 
-        if (displayedGroups.length > 0 && displayedGroups[0] instanceof ColumnGroup) {
+        if (displayedGroups.length > 0 && isColumnGroup(displayedGroups[0])) {
             this.doAddHeaderHeader(gridSerializingSession, displayedGroups, processGroupHeaderCallback);
         }
 
@@ -405,13 +409,13 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
     private doAddHeaderHeader<T>(
         gridSerializingSession: GridSerializingSession<T>,
-        displayedGroups: IHeaderColumn[],
+        displayedGroups: (AgColumn | AgColumnGroup)[],
         processGroupHeaderCallback: ProcessGroupHeaderCallback | undefined
     ) {
         const gridRowIterator: RowSpanningAccumulator = gridSerializingSession.onNewHeaderGroupingRow();
         let columnIndex: number = 0;
-        displayedGroups.forEach((columnGroupChild: IHeaderColumn) => {
-            const columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
+        displayedGroups.forEach((columnGroupChild) => {
+            const columnGroup: AgColumnGroup = columnGroupChild as AgColumnGroup;
 
             let name: string;
             if (processGroupHeaderCallback) {

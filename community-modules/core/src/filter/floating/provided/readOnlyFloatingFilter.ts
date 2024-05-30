@@ -1,5 +1,6 @@
 import type { ColumnNameService } from '../../../columns/columnNameService';
 import type { BeanCollection } from '../../../context/context';
+import type { AgColumn } from '../../../entities/agColumn';
 import type { IFilter } from '../../../interfaces/iFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { Component, RefPlaceholder } from '../../../widgets/component';
@@ -37,7 +38,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
 
     public init(params: IFloatingFilterParams): void {
         this.params = params;
-        const displayName = this.columnNameService.getDisplayNameForColumn(params.column, 'header', true);
+        const displayName = this.columnNameService.getDisplayNameForColumn(params.column as AgColumn, 'header', true);
         const translate = this.localeService.getLocaleTextFunc();
         this.eFloatingFilterText
             .setDisabled(true)

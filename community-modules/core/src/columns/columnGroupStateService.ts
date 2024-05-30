@@ -1,7 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
+import { type AgProvidedColumnGroup, isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { Logger } from '../logger';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
@@ -34,7 +34,7 @@ export class ColumnGroupStateService extends BeanStub implements NamedBean {
         const gridBalancedTree = this.columnModel.getColTree();
 
         depthFirstOriginalTreeSearch(null, gridBalancedTree, (node) => {
-            if (node instanceof ProvidedColumnGroup) {
+            if (isProvidedColumnGroup(node)) {
                 columnGroupState.push({
                     groupId: node.getGroupId(),
                     open: node.isExpanded(),
@@ -54,7 +54,7 @@ export class ColumnGroupStateService extends BeanStub implements NamedBean {
         const stateItems: { groupId: string; open: boolean | undefined }[] = [];
 
         depthFirstOriginalTreeSearch(null, primaryColumnTree, (child) => {
-            if (child instanceof ProvidedColumnGroup) {
+            if (isProvidedColumnGroup(child)) {
                 const colGroupDef = child.getColGroupDef();
                 const groupState = {
                     groupId: child.getGroupId(),
@@ -78,12 +78,12 @@ export class ColumnGroupStateService extends BeanStub implements NamedBean {
 
         this.columnAnimationService.start();
 
-        const impactedGroups: ProvidedColumnGroup[] = [];
+        const impactedGroups: AgProvidedColumnGroup[] = [];
 
         stateItems.forEach((stateItem) => {
             const groupKey = stateItem.groupId;
             const newValue = stateItem.open;
-            const providedColumnGroup: ProvidedColumnGroup | null = this.columnModel.getProvidedColGroup(groupKey);
+            const providedColumnGroup = this.columnModel.getProvidedColGroup(groupKey);
 
             if (!providedColumnGroup) {
                 return;

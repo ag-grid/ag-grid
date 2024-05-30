@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     BeanCollection,
     CellValueChangedEvent,
     ComponentClass,
@@ -401,7 +402,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
 
         const formattedValue = this.valueService.formatValue(
-            this.setFilterParams!.column,
+            this.setFilterParams!.column as AgColumn,
             null,
             value,
             this.valueFormatter,
@@ -589,7 +590,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         const { isSelected, isExpanded } = this.isSelectedExpanded(item);
 
         const { value, depth, isGroup, hasIndeterminateExpandState, selectedListener, expandedListener } =
-            this.newSetListItemAttributes(item, isTree);
+            this.newSetListItemAttributes(item);
 
         const itemParams: SetFilterListItemParams<V | string | null> = {
             focusWrapper,
@@ -616,10 +617,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return listItem;
     }
 
-    private newSetTreeItemAttributes(
-        item: SetFilterModelTreeItem,
-        isTree: boolean
-    ): {
+    private newSetTreeItemAttributes(item: SetFilterModelTreeItem): {
         value: V | string | (() => string) | null;
         depth?: number | undefined;
         isGroup?: boolean | undefined;
@@ -687,10 +685,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         };
     }
 
-    private newSetListItemAttributes(
-        item: SetFilterModelTreeItem | string | null,
-        isTree: boolean
-    ): {
+    private newSetListItemAttributes(item: SetFilterModelTreeItem | string | null): {
         value: V | string | (() => string) | null;
         depth?: number | undefined;
         isGroup?: boolean | undefined;
@@ -707,7 +702,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         // Tree item
         if (this.isSetFilterModelTreeItem(item)) {
-            return this.newSetTreeItemAttributes(item, isTree);
+            return this.newSetTreeItemAttributes(item);
         }
 
         // List item - 'Select All'

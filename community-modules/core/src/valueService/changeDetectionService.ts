@@ -1,7 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { Column } from '../entities/column';
+import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
 import { Events } from '../events';
@@ -44,10 +44,10 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.doChangeDetection(event.node as RowNode, event.column);
+        this.doChangeDetection(event.node as RowNode, event.column as AgColumn);
     }
 
-    private doChangeDetection(rowNode: RowNode, column: Column): void {
+    private doChangeDetection(rowNode: RowNode, column: AgColumn): void {
         if (this.gos.get('suppressChangeDetection')) {
             return;
         }

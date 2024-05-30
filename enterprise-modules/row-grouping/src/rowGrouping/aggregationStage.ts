@@ -1,7 +1,7 @@
 import type {
+    AgColumn,
     BeanCollection,
     ChangedPath,
-    Column,
     ColumnModel,
     FuncColsService,
     GetGroupRowAggParams,
@@ -23,8 +23,8 @@ interface AggregationDetails {
     alwaysAggregateAtRootLevel: boolean;
     groupIncludeTotalFooter: boolean;
     changedPath: ChangedPath;
-    valueColumns: Column[];
-    pivotColumns: Column[];
+    valueColumns: AgColumn[];
+    pivotColumns: AgColumn[];
     filteredOnly: boolean;
     userAggFunc: ((params: WithoutGridCommon<GetGroupRowAggParams<any, any>>) => any) | undefined;
 }
@@ -163,7 +163,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
 
             if (rowNode.leafGroup) {
                 // lowest level group, get the values from the mapped set
-                values = this.getValuesFromMappedSet(rowNode.childrenMapped, keys, colDef.pivotValueColumn!);
+                values = this.getValuesFromMappedSet(rowNode.childrenMapped, keys, colDef.pivotValueColumn as AgColumn);
             } else {
                 // value columns and pivot columns, non-leaf group
                 values = this.getValuesPivotNonLeaf(rowNode, colDef.colId!);
@@ -173,7 +173,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
             result[colDef.colId!] = this.aggregateValues(
                 values,
                 colDef.pivotValueColumn!.getAggFunc()!,
-                colDef.pivotValueColumn!,
+                colDef.pivotValueColumn as AgColumn,
                 rowNode,
                 secondaryCol
             );
@@ -195,7 +195,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
                 result[colDef.colId!] = this.aggregateValues(
                     aggResults,
                     colDef.pivotValueColumn!.getAggFunc()!,
-                    colDef.pivotValueColumn!,
+                    colDef.pivotValueColumn as AgColumn,
                     rowNode,
                     secondaryCol
                 );
@@ -219,7 +219,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         const values2d = this.getValuesNormal(rowNode, changedValueColumns, aggDetails.filteredOnly);
         const oldValues = rowNode.aggData;
 
-        changedValueColumns.forEach((valueColumn: Column, index: number) => {
+        changedValueColumns.forEach((valueColumn, index) => {
             result[valueColumn.getId()] = this.aggregateValues(
                 values2d[index],
                 valueColumn.getAggFunc()!,
@@ -229,7 +229,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         });
 
         if (notChangedValueColumns && oldValues) {
-            notChangedValueColumns.forEach((valueColumn: Column) => {
+            notChangedValueColumns.forEach((valueColumn) => {
                 result[valueColumn.getId()] = oldValues[valueColumn.getId()];
             });
         }
@@ -241,7 +241,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         return rowNode.childrenAfterFilter!.map((childNode: RowNode) => childNode.aggData[colId]);
     }
 
-    private getValuesFromMappedSet(mappedSet: any, keys: string[], valueColumn: Column): any[] {
+    private getValuesFromMappedSet(mappedSet: any, keys: string[], valueColumn: AgColumn): any[] {
         let mapPointer = mappedSet;
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i];
@@ -255,7 +255,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         return mapPointer.map((rowNode: RowNode) => this.valueService.getValue(valueColumn, rowNode));
     }
 
-    private getValuesNormal(rowNode: RowNode, valueColumns: Column[], filteredOnly: boolean): any[][] {
+    private getValuesNormal(rowNode: RowNode, valueColumns: AgColumn[], filteredOnly: boolean): any[][] {
         // create 2d array, of all values for all valueColumns
         const values: any[][] = [];
         valueColumns.forEach(() => values.push([]));
@@ -282,9 +282,9 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
     public aggregateValues(
         values: any[],
         aggFuncOrString: string | IAggFunc,
-        column?: Column,
+        column?: AgColumn,
         rowNode?: RowNode,
-        pivotResultColumn?: Column
+        pivotResultColumn?: AgColumn
     ): any {
         const aggFunc =
             typeof aggFuncOrString === 'string' ? this.aggFuncService.getAggFunc(aggFuncOrString) : aggFuncOrString;

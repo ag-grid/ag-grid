@@ -57,7 +57,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         }
     }
 
-    private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent<TData>): void {
+    private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent): void {
         this.params.stopEditing(!e.fromEnterKey);
     }
 

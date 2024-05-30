@@ -2,9 +2,9 @@ import type { UserCompDetails } from '../../components/framework/userComponentFa
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
 import type { CellPosition } from '../../entities/cellPositionUtils';
 import type { CellStyle } from '../../entities/colDef';
-import type { Column } from '../../entities/column';
 import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
 import type {
@@ -87,7 +87,7 @@ export class CellCtrl extends BeanStub {
     private eGui: HTMLElement;
     private cellComp: ICellComp;
     private beans: BeanCollection;
-    private column: Column;
+    private column: AgColumn;
     private rowNode: RowNode;
     private rowCtrl: RowCtrl;
     private editCompDetails?: UserCompDetails;
@@ -123,7 +123,7 @@ export class CellCtrl extends BeanStub {
 
     private onCellCompAttachedFuncs: (() => void)[] = [];
 
-    constructor(column: Column, rowNode: RowNode, beans: BeanCollection, rowCtrl: RowCtrl) {
+    constructor(column: AgColumn, rowNode: RowNode, beans: BeanCollection, rowCtrl: RowCtrl) {
         super();
         this.column = column;
         this.rowNode = rowNode;
@@ -429,6 +429,7 @@ export class CellCtrl extends BeanStub {
         return forceWrapper;
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-types
     private isIncludeControl(value: boolean | Function | undefined): boolean {
         const rowNodePinned = this.rowNode.rowPinned != null;
         const isFunc = typeof value === 'function';
@@ -933,7 +934,7 @@ export class CellCtrl extends BeanStub {
         return this.eGui;
     }
 
-    public getColSpanningList(): Column[] {
+    public getColSpanningList(): AgColumn[] {
         return this.cellPositionFeature!.getColSpanningList();
     }
 
@@ -970,7 +971,7 @@ export class CellCtrl extends BeanStub {
         return this.cellPositionFeature?.onWidthChanged();
     }
 
-    public getColumn(): Column {
+    public getColumn(): AgColumn {
         return this.column;
     }
 

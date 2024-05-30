@@ -1,8 +1,8 @@
 import type {
+    AgColumn,
     BeanCollection,
     ChangedPath,
     ColDef,
-    Column,
     ColumnModel,
     FuncColsService,
     GridOptions,
@@ -215,7 +215,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         }
     }
 
-    private bucketChildren(children: RowNode[], pivotColumns: Column[], pivotIndex: number, uniqueValues: any): any {
+    private bucketChildren(children: RowNode[], pivotColumns: AgColumn[], pivotIndex: number, uniqueValues: any): any {
         const mappedChildren: any = {};
         const pivotColumn = pivotColumns[pivotIndex];
 

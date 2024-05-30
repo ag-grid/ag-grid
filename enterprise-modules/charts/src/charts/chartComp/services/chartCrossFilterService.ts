@@ -1,6 +1,6 @@
 import type {
+    AgColumn,
     BeanCollection,
-    Column,
     ColumnModel,
     FilterManager,
     IClientSideRowModel,
@@ -137,6 +137,6 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
     }
 
     private getColumnById(colId: string) {
-        return this.columnModel.getCol(colId) as Column;
+        return this.columnModel.getCol(colId) as AgColumn;
     }
 }

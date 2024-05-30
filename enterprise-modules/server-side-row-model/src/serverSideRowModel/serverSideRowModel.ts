@@ -1,7 +1,7 @@
 import type {
     AdvancedFilterModel,
+    AgColumn,
     BeanCollection,
-    Column,
     ColumnModel,
     ColumnNameService,
     ColumnVO,
@@ -371,7 +371,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.dispatchModelUpdated(true);
     }
 
-    public columnsToValueObjects(columns: Column[]): ColumnVO[] {
+    public columnsToValueObjects(columns: AgColumn[]): ColumnVO[] {
         return columns.map(
             (col) =>
                 ({

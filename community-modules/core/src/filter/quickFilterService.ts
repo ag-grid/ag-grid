@@ -3,8 +3,8 @@ import type { PivotResultColsService } from '../columns/pivotResultColsService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
-import type { Column } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
 import { Events } from '../eventKeys';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -30,7 +30,7 @@ export class QuickFilterService extends BeanStub implements NamedBean {
     private static readonly QUICK_FILTER_SEPARATOR = '\n';
 
     // the columns the quick filter should use. this will be all primary columns plus the autoGroupColumns if any exist
-    private colsForQuickFilter: Column[];
+    private colsForQuickFilter: AgColumn[];
 
     private quickFilter: string | null = null;
     private quickFilterParts: string[] | null = null;
@@ -201,7 +201,7 @@ export class QuickFilterService extends BeanStub implements NamedBean {
         }
     }
 
-    private getQuickFilterTextForColumn(column: Column, node: RowNode): string {
+    private getQuickFilterTextForColumn(column: AgColumn, node: RowNode): string {
         let value = this.valueService.getValue(column, node, true);
         const colDef = column.getColDef();
 

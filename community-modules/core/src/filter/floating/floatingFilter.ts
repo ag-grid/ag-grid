@@ -1,5 +1,5 @@
-import type { Column } from '../../entities/column';
 import type { FilterChangedEvent } from '../../events';
+import type { Column } from '../../interfaces/iColumn';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { IComponent } from '../../interfaces/iComponent';
 import type { IFilter, IFilterParams, ProvidedFilterModel } from '../../interfaces/iFilter';

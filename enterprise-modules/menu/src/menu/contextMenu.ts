@@ -1,9 +1,9 @@
 import type {
+    AgColumn,
     AgEvent,
     BeanCollection,
     CellPosition,
     CellPositionUtils,
-    Column,
     ColumnModel,
     ContextMenuVisibleChangedEvent,
     CtrlsService,
@@ -61,7 +61,7 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
 
     private getMenuItems(
         node: RowNode | null,
-        column: Column | null,
+        column: AgColumn | null,
         value: any
     ): (MenuItemDef | string)[] | undefined {
         const defaultMenuOptions: string[] = [];
@@ -129,7 +129,7 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
         mouseEvent: MouseEvent | null,
         touchEvent: TouchEvent | null,
         rowNode: RowNode | null,
-        column: Column | null,
+        column: AgColumn | null,
         value: any,
         anchorToElement: HTMLElement
     ): void {
@@ -140,7 +140,7 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
 
     public showMenu(
         node: RowNode | null,
-        column: Column | null,
+        column: AgColumn | null,
         value: any,
         mouseEvent: MouseEvent | Touch,
         anchorToElement: HTMLElement
@@ -259,7 +259,7 @@ class ContextMenu extends Component {
 
     constructor(
         private readonly menuItems: (MenuItemDef | string)[],
-        private readonly column: Column | null,
+        private readonly column: AgColumn | null,
         private readonly node: RowNode | null,
         private readonly value: any
     ) {

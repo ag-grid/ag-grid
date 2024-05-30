@@ -107,9 +107,10 @@ export {
 } from './dragAndDrop/virtualListDragFeature';
 
 // entities
-export { Column, ColumnPinnedType } from './entities/column';
-export { ColumnGroup, ColumnGroupShowType } from './entities/columnGroup';
-export { ProvidedColumnGroup } from './entities/providedColumnGroup';
+export { Column, ColumnPinnedType, ColumnGroup, ProvidedColumnGroup, ColumnGroupShowType } from './interfaces/iColumn';
+export { AgColumn, isColumn } from './entities/agColumn';
+export { AgColumnGroup, isColumnGroup } from './entities/agColumnGroup';
+export { AgProvidedColumnGroup, isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 export { RowNode } from './entities/rowNode';
 export { RowHighlightPosition, RowPinnedType, IRowNode } from './interfaces/iRowNode';
 
@@ -721,8 +722,6 @@ export { WithoutGridCommon } from './interfaces/iCommon';
 
 export { ManagedGridOptionKey, ManagedGridOptions, PropertyKeys } from './propertyKeys';
 export { IPivotColDefService } from './interfaces/iPivotColDefService';
-export { IProvidedColumn } from './interfaces/iProvidedColumn';
-export { IHeaderColumn } from './interfaces/iHeaderColumn';
 export { IViewportDatasource, IViewportDatasourceParams } from './interfaces/iViewportDatasource';
 export { IContextMenuFactory } from './interfaces/iContextMenuFactory';
 export { IRowNodeStage, StageExecuteParams } from './interfaces/iRowNodeStage';

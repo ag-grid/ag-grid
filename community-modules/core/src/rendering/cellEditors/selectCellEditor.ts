@@ -1,5 +1,6 @@
 import { KeyCode } from '../../constants/keyCode';
 import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _missing } from '../../utils/generic';
 import type { ValueService } from '../../valueService/valueService';
@@ -69,7 +70,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
         let hasValue = false;
         values.forEach((currentValue: any) => {
             const option: ListOption = { value: currentValue };
-            const valueFormatted = valueService.formatValue(params.column, null, currentValue);
+            const valueFormatted = valueService.formatValue(params.column as AgColumn, null, currentValue);
             const valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
             option.text = valueFormattedExits ? valueFormatted : currentValue;
 

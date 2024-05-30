@@ -1,6 +1,6 @@
 import type {
+    AgColumn,
     BeanCollection,
-    Column,
     IRowNode,
     NamedBean,
     NumberSequence,
@@ -13,7 +13,7 @@ import { BeanStub, RowNode, _doOnce, _exists, _missing } from '@ag-grid-communit
 import type { NodeManager } from '../nodeManager';
 import type { ServerSideExpansionService } from '../services/serverSideExpansionService';
 
-export const GROUP_MISSING_KEY_ID: 'ag-Grid-MissingKey' = 'ag-Grid-MissingKey';
+export const GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey' as const;
 
 export class BlockUtils extends BeanStub implements NamedBean {
     beanName = 'ssrmBlockUtils' as const;
@@ -38,7 +38,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         level: number;
         parent: RowNode;
         field: string;
-        rowGroupColumn: Column;
+        rowGroupColumn: AgColumn;
         rowHeight?: number;
     }): RowNode {
         const rowNode = new RowNode(this.beans);
@@ -215,7 +215,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
-        const groupDisplayCols: Column[] = this.showRowGroupColsService.getShowRowGroupCols();
+        const groupDisplayCols = this.showRowGroupColsService.getShowRowGroupCols();
 
         const usingTreeData = this.gos.get('treeData');
 

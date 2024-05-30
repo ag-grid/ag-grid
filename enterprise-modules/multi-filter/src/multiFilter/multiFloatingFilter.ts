@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     BeanCollection,
     FilterChangedEvent,
     FilterManager,
@@ -179,7 +180,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     private getCompDetails(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): UserCompDetails | undefined {
         const defaultComponentName =
             this.userComponentFactory.getDefaultFloatingFilterType(filterDef, () =>
-                this.filterManager.getDefaultFloatingFilter(this.params.column)
+                this.filterManager.getDefaultFloatingFilter(this.params.column as AgColumn)
             ) ?? 'agReadOnlyFloatingFilter';
 
         return this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);

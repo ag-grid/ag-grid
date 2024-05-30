@@ -1,4 +1,6 @@
 import type {
+    AgColumn,
+    AgProvidedColumnGroup,
     BeanCollection,
     ColumnModel,
     ColumnNameService,
@@ -7,14 +9,14 @@ import type {
     MenuItemDef,
     PopupService,
 } from '@ag-grid-community/core';
-import { Column, Component, ProvidedColumnGroup, _createIconNoSpan } from '@ag-grid-community/core';
+import { Component, _createIconNoSpan, isColumn, isProvidedColumnGroup } from '@ag-grid-community/core';
 import { AgMenuItemComponent, AgMenuList } from '@ag-grid-enterprise/core';
 
 type MenuItemName = 'rowGroup' | 'value' | 'pivot';
 
 type MenuItemProperty = {
-    allowedFunction: (col: Column) => boolean;
-    activeFunction: (col: Column) => boolean;
+    allowedFunction: (col: AgColumn) => boolean;
+    activeFunction: (col: AgColumn) => boolean;
     activateLabel: (name: string) => string;
     deactivateLabel: (name: string) => string;
     activateFunction: () => void;
@@ -38,7 +40,7 @@ export class ToolPanelContextMenu extends Component {
         this.focusService = beans.focusService;
     }
 
-    private columns: Column[];
+    private columns: AgColumn[];
     private allowGrouping: boolean;
     private allowValues: boolean;
     private allowPivoting: boolean;
@@ -46,7 +48,7 @@ export class ToolPanelContextMenu extends Component {
     private displayName: string | null = null;
 
     constructor(
-        private readonly column: Column | ProvidedColumnGroup,
+        private readonly column: AgColumn | AgProvidedColumnGroup,
         private readonly mouseEvent: MouseEvent,
         private readonly parentEl: HTMLElement
     ) {
@@ -57,7 +59,7 @@ export class ToolPanelContextMenu extends Component {
         this.initializeProperties(this.column);
         this.buildMenuItemMap();
 
-        if (this.column instanceof Column) {
+        if (isColumn(this.column)) {
             this.displayName = this.columnNameService.getDisplayNameForColumn(this.column, 'columnToolPanel');
         } else {
             this.displayName = this.columnNameService.getDisplayNameForProvidedColumnGroup(
@@ -78,8 +80,8 @@ export class ToolPanelContextMenu extends Component {
         }
     }
 
-    private initializeProperties(column: Column | ProvidedColumnGroup): void {
-        if (column instanceof ProvidedColumnGroup) {
+    private initializeProperties(column: AgColumn | AgProvidedColumnGroup): void {
+        if (isProvidedColumnGroup(column)) {
             this.columns = column.getLeafColumns();
         } else {
             this.columns = [column];
@@ -96,9 +98,9 @@ export class ToolPanelContextMenu extends Component {
 
         this.menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap.set('rowGroup', {
-            allowedFunction: (col: Column) =>
+            allowedFunction: (col) =>
                 col.isPrimary() && col.isAllowRowGroup() && !this.columnModel.isColGroupLocked(col),
-            activeFunction: (col: Column) => col.isRowGroupActive(),
+            activeFunction: (col) => col.isRowGroupActive(),
             activateLabel: () => `${localeTextFunc('groupBy', 'Group by')} ${this.displayName}`,
             deactivateLabel: () => `${localeTextFunc('ungroupBy', 'Un-Group by')} ${this.displayName}`,
             activateFunction: () => {
@@ -114,8 +116,8 @@ export class ToolPanelContextMenu extends Component {
         });
 
         this.menuItemMap.set('value', {
-            allowedFunction: (col: Column) => col.isPrimary() && col.isAllowValue(),
-            activeFunction: (col: Column) => col.isValueActive(),
+            allowedFunction: (col) => col.isPrimary() && col.isAllowValue(),
+            activeFunction: (col) => col.isValueActive(),
             activateLabel: () =>
                 localeTextFunc('addToValues', `Add ${this.displayName} to values`, [this.displayName!]),
             deactivateLabel: () =>
@@ -133,8 +135,8 @@ export class ToolPanelContextMenu extends Component {
         });
 
         this.menuItemMap.set('pivot', {
-            allowedFunction: (col: Column) => this.columnModel.isPivotMode() && col.isPrimary() && col.isAllowPivot(),
-            activeFunction: (col: Column) => col.isPivotActive(),
+            allowedFunction: (col) => this.columnModel.isPivotMode() && col.isPrimary() && col.isAllowPivot(),
+            activeFunction: (col) => col.isPivotActive(),
             activateLabel: () =>
                 localeTextFunc('addToLabels', `Add ${this.displayName} to labels`, [this.displayName!]),
             deactivateLabel: () =>
@@ -152,11 +154,11 @@ export class ToolPanelContextMenu extends Component {
         });
     }
 
-    private addColumnsToList(columnList: Column[]): Column[] {
+    private addColumnsToList(columnList: AgColumn[]): AgColumn[] {
         return [...columnList].concat(this.columns.filter((col) => columnList.indexOf(col) === -1));
     }
 
-    private removeColumnsFromList(columnList: Column[]): Column[] {
+    private removeColumnsFromList(columnList: AgColumn[]): AgColumn[] {
         return columnList.filter((col) => this.columns.indexOf(col) === -1);
     }
 

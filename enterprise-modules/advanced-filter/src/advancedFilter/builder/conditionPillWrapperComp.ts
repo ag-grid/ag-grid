@@ -1,5 +1,5 @@
-import type { BaseCellDataType, BeanCollection, Column, ColumnAdvancedFilterModel } from '@ag-grid-community/core';
 import { Component, _exists, _removeFromParent } from '@ag-grid-community/core';
+import type { AgColumn, BaseCellDataType, BeanCollection, ColumnAdvancedFilterModel } from '@ag-grid-community/core';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
@@ -19,7 +19,7 @@ export class ConditionPillWrapperComp extends Component {
     private createPill: (params: CreatePillParams) => SelectPillComp | InputPillComp;
     private filterModel: ColumnAdvancedFilterModel;
     private baseCellDataType: BaseCellDataType;
-    private column: Column | undefined;
+    private column: AgColumn | undefined;
     private numOperands: number;
     private eColumnPill: SelectPillComp | InputPillComp;
     private eOperatorPill: SelectPillComp | InputPillComp | undefined;

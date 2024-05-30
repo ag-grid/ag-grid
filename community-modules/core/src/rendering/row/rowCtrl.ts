@@ -1,8 +1,8 @@
 import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
 import type { CellPosition } from '../../entities/cellPositionUtils';
-import type { Column, ColumnInstanceId, ColumnPinnedType } from '../../entities/column';
 import type { RowClassParams, RowStyle } from '../../entities/gridOptions';
 import { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
@@ -22,6 +22,7 @@ import { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCt
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ProcessRowParams } from '../../interfaces/iCallbackParams';
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
+import type { ColumnInstanceId, ColumnPinnedType } from '../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
@@ -430,7 +431,7 @@ export class RowCtrl extends BeanStub {
     }
 
     // use by autoWidthCalculator, as it clones the elements
-    public getCellElement(column: Column): HTMLElement | null {
+    public getCellElement(column: AgColumn): HTMLElement | null {
         const cellCtrl = this.getCellCtrl(column);
         return cellCtrl ? cellCtrl.getGui() : null;
     }
@@ -516,7 +517,7 @@ export class RowCtrl extends BeanStub {
 
     private createCellCtrls(
         prev: CellCtrlListAndMap,
-        cols: Column[],
+        cols: AgColumn[],
         pinned: ColumnPinnedType = null
     ): CellCtrlListAndMap {
         const res: CellCtrlListAndMap = {
@@ -628,7 +629,7 @@ export class RowCtrl extends BeanStub {
         if (mightWantToKeepCell) {
             const column = cellCtrl.getColumn();
             const displayedColumns = this.beans.visibleColsService.getAllCols();
-            const cellStillDisplayed = displayedColumns.indexOf(column) >= 0;
+            const cellStillDisplayed = displayedColumns.indexOf(column as AgColumn) >= 0;
             return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
         }
 
@@ -910,7 +911,7 @@ export class RowCtrl extends BeanStub {
         const cellPosition: CellPosition = {
             rowIndex: node.rowIndex!,
             rowPinned: node.rowPinned,
-            column: (lastFocusedCell && lastFocusedCell.column) as Column,
+            column: (lastFocusedCell && lastFocusedCell.column) as AgColumn,
         };
 
         this.beans.navigationService.navigateToNextCell(keyboardEvent, keyboardEvent.key, cellPosition, true);
@@ -1770,7 +1771,7 @@ export class RowCtrl extends BeanStub {
         return this.rowNode;
     }
 
-    public getCellCtrl(column: Column): CellCtrl | null {
+    public getCellCtrl(column: AgColumn): CellCtrl | null {
         // first up, check for cell directly linked to this column
         let res: CellCtrl | null = null;
         this.getAllCellCtrls().forEach((cellCtrl) => {

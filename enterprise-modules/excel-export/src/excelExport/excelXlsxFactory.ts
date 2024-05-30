@@ -1,5 +1,5 @@
 import type {
-    Column,
+    AgColumn,
     ExcelHeaderFooterImage,
     ExcelImage,
     ExcelRelationship,
@@ -197,8 +197,8 @@ export class ExcelXlsxFactory {
     public static addBodyImageToMap(
         image: ExcelImage,
         rowIndex: number,
-        col: Column,
-        columnsToExport?: Column[],
+        col: AgColumn,
+        columnsToExport?: AgColumn[],
         rowHeight?: number | ((params: RowHeightCallbackParams) => number)
     ): void {
         const sheetIndex = this.sheetNames.length;

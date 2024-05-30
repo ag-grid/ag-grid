@@ -1,6 +1,6 @@
 import type {
+    AgColumn,
     BeanCollection,
-    Column,
     ColumnModel,
     ColumnNameService,
     FuncColsService,
@@ -42,23 +42,23 @@ export class ChartColumnService extends BeanStub implements NamedBean {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, clearValueCols);
     }
 
-    public getColumn(colId: string): Column | null {
+    public getColumn(colId: string): AgColumn | null {
         return this.columnModel.getColDefCol(colId);
     }
 
-    public getAllDisplayedColumns(): Column[] {
+    public getAllDisplayedColumns(): AgColumn[] {
         return this.visibleColsService.getAllCols();
     }
 
-    public getColDisplayName(col: Column): string | null {
+    public getColDisplayName(col: AgColumn): string | null {
         return this.columnNameService.getDisplayNameForColumn(col, 'chart');
     }
 
-    public getRowGroupColumns(): Column[] {
+    public getRowGroupColumns(): AgColumn[] {
         return this.funcColsService.getRowGroupColumns();
     }
 
-    public getGroupDisplayColumns(): Column[] {
+    public getGroupDisplayColumns(): AgColumn[] {
         return this.showRowGroupColsService.getShowRowGroupCols();
     }
 
@@ -70,11 +70,11 @@ export class ChartColumnService extends BeanStub implements NamedBean {
         return this.columnModel.isPivotActive();
     }
 
-    public getChartColumns(): { dimensionCols: Set<Column>; valueCols: Set<Column> } {
+    public getChartColumns(): { dimensionCols: Set<AgColumn>; valueCols: Set<AgColumn> } {
         const gridCols = this.columnModel.getCols();
 
-        const dimensionCols = new Set<Column>();
-        const valueCols = new Set<Column>();
+        const dimensionCols = new Set<AgColumn>();
+        const valueCols = new Set<AgColumn>();
 
         gridCols.forEach((col) => {
             const colDef = col.getColDef();
@@ -117,7 +117,7 @@ export class ChartColumnService extends BeanStub implements NamedBean {
         return { dimensionCols, valueCols };
     }
 
-    private isInferredValueCol(col: Column): boolean {
+    private isInferredValueCol(col: AgColumn): boolean {
         const colId = col.getColId();
         if (colId === 'ag-Grid-AutoColumn') {
             return false;
@@ -148,7 +148,7 @@ export class ChartColumnService extends BeanStub implements NamedBean {
         return isNumber;
     }
 
-    private extractLeafData(row: RowNode, col: Column): any {
+    private extractLeafData(row: RowNode, col: AgColumn): any {
         if (!row.allLeafChildren) {
             return null;
         }

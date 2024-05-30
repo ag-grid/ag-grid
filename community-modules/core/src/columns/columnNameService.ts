@@ -1,10 +1,10 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
+import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { AbstractColDef, ColDef, HeaderLocation, HeaderValueGetterParams, IAggFunc } from '../entities/colDef';
-import type { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
-import type { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import { _exists } from '../utils/generic';
 import { _camelCaseToHumanText } from '../utils/string';
 import type { ExpressionService } from '../valueService/expressionService';
@@ -25,7 +25,7 @@ export class ColumnNameService extends BeanStub implements NamedBean {
     }
 
     public getDisplayNameForColumn(
-        column: Column | null,
+        column: AgColumn | null,
         location: HeaderLocation,
         includeAggFunc = false
     ): string | null {
@@ -43,8 +43,8 @@ export class ColumnNameService extends BeanStub implements NamedBean {
     }
 
     public getDisplayNameForProvidedColumnGroup(
-        columnGroup: ColumnGroup | null,
-        providedColumnGroup: ProvidedColumnGroup | null,
+        columnGroup: AgColumnGroup | null,
+        providedColumnGroup: AgProvidedColumnGroup | null,
         location: HeaderLocation
     ): string | null {
         const colGroupDef = providedColumnGroup ? providedColumnGroup.getColGroupDef() : null;
@@ -56,7 +56,7 @@ export class ColumnNameService extends BeanStub implements NamedBean {
         return null;
     }
 
-    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string | null {
+    public getDisplayNameForColumnGroup(columnGroup: AgColumnGroup, location: HeaderLocation): string | null {
         if (columnGroup.getProvidedColumnGroup == null) {
             console.log('bug');
         }
@@ -66,9 +66,9 @@ export class ColumnNameService extends BeanStub implements NamedBean {
     // location is where the column is going to appear, ie who is calling us
     private getHeaderName(
         colDef: AbstractColDef,
-        column: Column | null,
-        columnGroup: ColumnGroup | null,
-        providedColumnGroup: ProvidedColumnGroup | null,
+        column: AgColumn | null,
+        columnGroup: AgColumnGroup | null,
+        providedColumnGroup: AgProvidedColumnGroup | null,
         location: HeaderLocation
     ): string | null {
         const headerValueGetter = colDef.headerValueGetter;
@@ -100,7 +100,7 @@ export class ColumnNameService extends BeanStub implements NamedBean {
         return '';
     }
 
-    private wrapHeaderNameWithAggFunc(column: Column, headerName: string | null): string | null {
+    private wrapHeaderNameWithAggFunc(column: AgColumn, headerName: string | null): string | null {
         if (this.gos.get('suppressAggFuncInHeader')) {
             return headerName;
         }

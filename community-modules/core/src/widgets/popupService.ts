@@ -3,7 +3,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { Column } from '../entities/column';
+import type { AgColumn } from '../entities/agColumn';
 import type { Environment } from '../environment';
 import type { CssVariablesChanged } from '../events';
 import { Events } from '../events';
@@ -22,7 +22,7 @@ import { AgPromise } from '../utils/promise';
 
 export interface PopupPositionParams {
     ePopup: HTMLElement;
-    column?: Column | null;
+    column?: AgColumn | null;
     rowNode?: IRowNode | null;
     nudgeX?: number;
     nudgeY?: number;
@@ -334,7 +334,7 @@ export class PopupService extends BeanStub implements NamedBean {
         ePopup: HTMLElement,
         eventSource?: HTMLElement | null,
         mouseEvent?: MouseEvent | Touch | null,
-        column?: Column | null,
+        column?: AgColumn | null,
         rowNode?: IRowNode | null
     ): void {
         const callback = this.gos.getCallback('postProcessPopup');

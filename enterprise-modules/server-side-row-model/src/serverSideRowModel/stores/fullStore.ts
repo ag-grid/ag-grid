@@ -1,6 +1,6 @@
 import type {
+    AgColumn,
     BeanCollection,
-    Column,
     FilterManager,
     FuncColsService,
     IRowNode,
@@ -86,7 +86,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private allNodesMap: { [id: string]: RowNode };
 
     private groupField: string;
-    private rowGroupColumn: Column;
+    private rowGroupColumn: AgColumn;
     private nodeIdPrefix: string | undefined;
 
     private displayIndexStart: number | undefined;

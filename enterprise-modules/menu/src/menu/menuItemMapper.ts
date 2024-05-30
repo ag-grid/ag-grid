@@ -1,6 +1,6 @@
 import type {
+    AgColumn,
     BeanCollection,
-    Column,
     ColumnApplyStateService,
     ColumnAutosizeService,
     ColumnModel,
@@ -68,7 +68,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
 
     public mapWithStockItems(
         originalList: (MenuItemDef | string)[],
-        column: Column | null,
+        column: AgColumn | null,
         sourceElement: () => HTMLElement
     ): (MenuItemDef | string)[] {
         if (!originalList) {
@@ -108,7 +108,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
 
     private getStockMenuItem(
         key: string,
-        column: Column | null,
+        column: AgColumn | null,
         sourceElement: () => HTMLElement
     ): MenuItemDef | string | null {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
@@ -402,14 +402,14 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         }
     }
 
-    private createAggregationSubMenu(column: Column, aggFuncService: IAggFuncService): MenuItemDef[] {
+    private createAggregationSubMenu(column: AgColumn, aggFuncService: IAggFuncService): MenuItemDef[] {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
 
-        let columnToUse: Column | undefined;
+        let columnToUse: AgColumn | undefined;
         if (column.isPrimary()) {
             columnToUse = column;
         } else {
-            const pivotValueColumn = column.getColDef().pivotValueColumn;
+            const pivotValueColumn = column.getColDef().pivotValueColumn as AgColumn;
             columnToUse = _exists(pivotValueColumn) ? pivotValueColumn : undefined;
         }
 

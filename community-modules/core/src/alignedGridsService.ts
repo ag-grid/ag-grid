@@ -5,8 +5,8 @@ import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { CtrlsService } from './ctrlsService';
-import type { Column } from './entities/column';
-import type { ProvidedColumnGroup } from './entities/providedColumnGroup';
+import type { AgColumn } from './entities/agColumn';
+import type { AgProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 import type {
     AgEvent,
     AlignedGridColumnEvent,
@@ -157,14 +157,14 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         });
     }
 
-    public getMasterColumns(event: ColumnEvent): Column[] {
-        const result: Column[] = [];
+    public getMasterColumns(event: ColumnEvent): AgColumn[] {
+        const result: AgColumn[] = [];
         if (event.columns) {
-            event.columns.forEach((column: Column) => {
+            event.columns.forEach((column: AgColumn) => {
                 result.push(column);
             });
         } else if (event.column) {
-            result.push(event.column);
+            result.push(event.column as AgColumn);
         }
         return result;
     }
@@ -212,7 +212,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
     private processGroupOpenedEvent(groupOpenedEvent: ColumnGroupOpenedEvent): void {
         groupOpenedEvent.columnGroups.forEach((masterGroup) => {
             // likewise for column group
-            let otherColumnGroup: ProvidedColumnGroup | null = null;
+            let otherColumnGroup: AgProvidedColumnGroup | null = null;
 
             if (masterGroup) {
                 const groupId = masterGroup.getGroupId();
@@ -234,7 +234,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         // the column in the event is from the master grid. need to
         // look up the equivalent from this (other) grid
         const masterColumn = colEvent.column;
-        let otherColumn: Column | null = null;
+        let otherColumn: AgColumn | null = null;
 
         if (masterColumn) {
             otherColumn = this.columnModel.getColDefCol(masterColumn.getColId());
@@ -291,11 +291,11 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
 
                 const columnWidths: {
                     [key: string]: {
-                        key: string | Column;
+                        key: string | AgColumn;
                         newWidth: number;
                     };
                 } = {};
-                masterColumns.forEach((column: Column) => {
+                masterColumns.forEach((column) => {
                     this.logger.log(
                         `onColumnEvent-> processing ${colEvent.type} actualWidth = ${column.getActualWidth()}`
                     );

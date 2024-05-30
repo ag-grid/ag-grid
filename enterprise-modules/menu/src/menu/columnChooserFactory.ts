@@ -1,6 +1,6 @@
 import type {
+    AgColumn,
     BeanCollection,
-    Column,
     ColumnChooserParams,
     ColumnMenuVisibleChangedEvent,
     FocusService,
@@ -34,7 +34,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean, IColumn
 
     public createColumnSelectPanel(
         parent: BeanStub,
-        column?: Column | null,
+        column?: AgColumn | null,
         draggable?: boolean,
         params?: ColumnChooserParams
     ): AgPrimaryCols {
@@ -82,7 +82,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean, IColumn
 
         const columnSelectPanel = this.createColumnSelectPanel(this, column, true, chooserParams);
         const translate = this.localeService.getLocaleTextFunc();
-        const columnIndex = this.visibleColsService.getAllCols().indexOf(column!);
+        const columnIndex = this.visibleColsService.getAllCols().indexOf(column as AgColumn);
         const headerPosition = column ? this.focusService.getFocusedHeader() : null;
 
         this.activeColumnChooserDialog = this.createBean(
@@ -126,7 +126,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean, IColumn
         }
     }
 
-    private dispatchVisibleChangedEvent(visible: boolean, column?: Column | null): void {
+    private dispatchVisibleChangedEvent(visible: boolean, column?: AgColumn | null): void {
         const event: WithoutGridCommon<ColumnMenuVisibleChangedEvent> = {
             type: Events.EVENT_COLUMN_MENU_VISIBLE_CHANGED,
             visible,

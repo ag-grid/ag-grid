@@ -1,8 +1,8 @@
 import type {
+    AgColumn,
     BeanCollection,
     ColDef,
     ColGroupDef,
-    Column,
     ColumnModel,
     ColumnNameService,
     FuncColsService,
@@ -104,7 +104,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         uniqueValue: any,
         pivotKeys: string[],
         maxDepth: number,
-        primaryPivotColumns: Column[]
+        primaryPivotColumns: AgColumn[]
     ): ColGroupDef[] | ColDef[] {
         const measureColumns = this.funcColsService.getValueColumns();
         if (index >= maxDepth) {
@@ -260,7 +260,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
     private recursivelyAddPivotTotal(
         groupDef: ColGroupDef | ColDef,
         pivotColumnDefs: ColDef[],
-        valueColumn: Column,
+        valueColumn: AgColumn,
         insertAfter: boolean
     ): string[] | null {
         const group = groupDef as ColGroupDef;
@@ -322,7 +322,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         }
     }
 
-    private extractColIdsForValueColumn(groupDef: ColGroupDef | ColDef, valueColumn: Column): string[] {
+    private extractColIdsForValueColumn(groupDef: ColGroupDef | ColDef, valueColumn: AgColumn): string[] {
         const group = groupDef as ColGroupDef;
         if (!group.children) {
             const colDef = group as ColDef;
@@ -342,7 +342,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
     private createRowGroupTotal(
         parentChildren: (ColGroupDef | ColDef)[],
         pivotColumnDefs: ColDef[],
-        valueColumn: Column,
+        valueColumn: AgColumn,
         colIds: string[],
         insertAfter: boolean,
         addGroup: boolean
@@ -374,7 +374,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
     }
 
     private createColDef(
-        valueColumn: Column | null,
+        valueColumn: AgColumn | null,
         headerName: any,
         pivotKeys: string[] | undefined,
         totalColumn: boolean = false
@@ -460,7 +460,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
     }
 
     private merge(m1: Map<string, string[]>, m2: Map<any, any>) {
-        m2.forEach((value, key, map) => {
+        m2.forEach((value, key) => {
             const existingList = m1.has(key) ? m1.get(key) : [];
             const updatedList = [...existingList!, ...value];
             m1.set(key, updatedList);

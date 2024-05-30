@@ -15,12 +15,12 @@ import { BeanStub } from './context/beanStub';
 import type { BeanCollection, Context } from './context/context';
 import type { CtrlsService } from './ctrlsService';
 import type { DragAndDropService } from './dragAndDrop/dragAndDropService';
+import type { AgColumn } from './entities/agColumn';
+import type { AgColumnGroup } from './entities/agColumnGroup';
+import type { AgProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 import type { CellPosition } from './entities/cellPositionUtils';
 import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from './entities/colDef';
-import type { Column, ColumnPinnedType } from './entities/column';
-import type { ColumnGroup } from './entities/columnGroup';
 import type { ChartRef, GridOptions } from './entities/gridOptions';
-import type { ProvidedColumnGroup } from './entities/providedColumnGroup';
 import type { RowNode } from './entities/rowNode';
 import { Events } from './eventKeys';
 import type {
@@ -60,13 +60,13 @@ import type { IAggFuncService } from './interfaces/iAggFuncService';
 import type { ICellEditor } from './interfaces/iCellEditor';
 import type { ClientSideRowModelStep, IClientSideRowModel } from './interfaces/iClientSideRowModel';
 import type { IClipboardCopyParams, IClipboardCopyRowsParams, IClipboardService } from './interfaces/iClipboardService';
+import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
 import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { ICsvCreator } from './interfaces/iCsvCreator';
 import type { ExcelExportMultipleSheetParams, ExcelExportParams, IExcelCreator } from './interfaces/iExcelCreator';
 import { ExcelFactoryMode } from './interfaces/iExcelCreator';
 import type { IExpansionService } from './interfaces/iExpansionService';
 import type { FilterModel, IFilter } from './interfaces/iFilter';
-import type { IHeaderColumn } from './interfaces/iHeaderColumn';
 import type { IInfiniteRowModel } from './interfaces/iInfiniteRowModel';
 import type { IRowModel, RowModelType } from './interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from './interfaces/iRowNode';
@@ -700,11 +700,11 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
         _warnOnce(
             `'getFilterInstance' is deprecated. To get/set individual filter models, use 'getColumnFilterModel' or 'setColumnFilterModel' instead. To get hold of the filter instance, use 'getColumnFilterInstance' which returns the instance asynchronously.`
         );
-        return this.filterManager.getFilterInstance(key, callback);
+        return this.filterManager.getFilterInstance(key as string | AgColumn, callback);
     }
 
     public getColumnFilterInstance<TFilter extends IFilter>(key: string | Column): Promise<TFilter | null | undefined> {
-        return this.filterManager.getColumnFilterInstance(key);
+        return this.filterManager.getColumnFilterInstance(key as string | AgColumn);
     }
 
     public destroyFilter(key: string | Column) {
@@ -751,11 +751,11 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
     }
 
     public getColumnFilterModel<TModel>(column: string | Column): TModel | null {
-        return this.filterManager.getColumnFilterModel(column);
+        return this.filterManager.getColumnFilterModel(column as string | AgColumn);
     }
 
     public setColumnFilterModel<TModel>(column: string | Column, model: TModel | null): Promise<void> {
-        return this.filterManager.setColumnFilterModel(column, model);
+        return this.filterManager.setColumnFilterModel(column as string | AgColumn, model);
     }
 
     public getFocusedCell(): CellPosition | null {
@@ -1131,7 +1131,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
 
     public showContextMenu(params?: IContextMenuParams) {
         const { rowNode, column, value, x, y } = params || {};
-        let { x: clientX, y: clientY } = this.menuService.getContextMenuPosition(rowNode, column);
+        let { x: clientX, y: clientY } = this.menuService.getContextMenuPosition(rowNode, column as AgColumn);
 
         if (x != null) {
             clientX = x;
@@ -1469,7 +1469,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
     }
 
     public setColumnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void {
-        this.columnModel.setColumnGroupOpened(group, newValue, 'api');
+        this.columnModel.setColumnGroupOpened(group as AgProvidedColumnGroup | string, newValue, 'api');
     }
 
     public getColumnGroup(name: string, instanceId?: number): ColumnGroup | null {
@@ -1481,11 +1481,11 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
     }
 
     public getDisplayNameForColumn(column: Column, location: HeaderLocation): string {
-        return this.columnNameService.getDisplayNameForColumn(column, location) || '';
+        return this.columnNameService.getDisplayNameForColumn(column as AgColumn, location) || '';
     }
 
     public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string {
-        return this.columnNameService.getDisplayNameForColumnGroup(columnGroup, location) || '';
+        return this.columnNameService.getDisplayNameForColumnGroup(columnGroup as AgColumnGroup, location) || '';
     }
 
     public getColumn<TValue = any>(key: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null {
@@ -1533,20 +1533,20 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
     }
 
     public getDisplayedColAfter(col: Column): Column | null {
-        return this.visibleColsService.getColAfter(col);
+        return this.visibleColsService.getColAfter(col as AgColumn);
     }
 
     public getDisplayedColBefore(col: Column): Column | null {
-        return this.visibleColsService.getColBefore(col);
+        return this.visibleColsService.getColBefore(col as AgColumn);
     }
 
     public setColumnVisible(key: string | Column, visible: boolean): void {
         this.logDeprecation('v31.1', 'setColumnVisible(key,visible)', 'setColumnsVisible([key],visible)');
-        this.columnModel.setColsVisible([key], visible, 'api');
+        this.columnModel.setColsVisible([key as string | AgColumn], visible, 'api');
     }
 
     public setColumnsVisible(keys: (string | Column)[], visible: boolean): void {
-        this.columnModel.setColsVisible(keys, visible, 'api');
+        this.columnModel.setColsVisible(keys as (string | AgColumn)[], visible, 'api');
     }
 
     public setColumnPinned(key: string | ColDef | Column, pinned: ColumnPinnedType): void {
@@ -1710,19 +1710,19 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
         return this.funcColsService.getPivotColumns();
     }
 
-    public getLeftDisplayedColumnGroups(): IHeaderColumn[] {
+    public getLeftDisplayedColumnGroups(): (Column | ColumnGroup)[] {
         return this.visibleColsService.getTreeLeft();
     }
 
-    public getCenterDisplayedColumnGroups(): IHeaderColumn[] {
+    public getCenterDisplayedColumnGroups(): (Column | ColumnGroup)[] {
         return this.visibleColsService.getTreeCenter();
     }
 
-    public getRightDisplayedColumnGroups(): IHeaderColumn[] {
+    public getRightDisplayedColumnGroups(): (Column | ColumnGroup)[] {
         return this.visibleColsService.getTreeRight();
     }
 
-    public getAllDisplayedColumnGroups(): IHeaderColumn[] | null {
+    public getAllDisplayedColumnGroups(): (Column | ColumnGroup)[] | null {
         return this.visibleColsService.getAllTrees();
     }
 

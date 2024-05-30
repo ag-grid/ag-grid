@@ -1,4 +1,4 @@
-import type { Column, ColumnGroup, CsvCustomContent, RowNode } from '@ag-grid-community/core';
+import type { AgColumn, AgColumnGroup, CsvCustomContent, RowNode } from '@ag-grid-community/core';
 
 import type { CsvSerializingParams, RowAccumulator, RowSpanningAccumulator } from '../interfaces';
 import { BaseGridSerializingSession } from './baseGridSerializingSession';
@@ -55,7 +55,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         };
     }
 
-    private onNewHeaderGroupingRowColumn(columnGroup: ColumnGroup, header: string, index: number, span: number) {
+    private onNewHeaderGroupingRowColumn(columnGroup: AgColumnGroup, header: string, index: number, span: number) {
         if (index != 0) {
             this.result += this.columnSeparator;
         }
@@ -79,7 +79,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         };
     }
 
-    private onNewHeaderRowColumn(column: Column, index: number): void {
+    private onNewHeaderRowColumn(column: AgColumn, index: number): void {
         if (index != 0) {
             this.result += this.columnSeparator;
         }
@@ -94,7 +94,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         };
     }
 
-    private onNewBodyRowColumn(column: Column, index: number, node: RowNode): void {
+    private onNewBodyRowColumn(column: AgColumn, index: number, node: RowNode): void {
         if (index != 0) {
             this.result += this.columnSeparator;
         }

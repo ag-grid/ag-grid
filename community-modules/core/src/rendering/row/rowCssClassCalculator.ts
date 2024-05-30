@@ -1,9 +1,9 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import type { ColumnPinnedType } from '../../entities/column';
 import type { RowClassParams } from '../../entities/gridOptions';
 import type { RowNode } from '../../entities/rowNode';
+import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { StylingService } from '../../styling/stylingService';
 import { _pushAll } from '../../utils/array';
@@ -152,7 +152,7 @@ export class RowCssClassCalculator extends BeanStub implements NamedBean {
             (className: string) => {
                 res.push(className);
             },
-            (className: string) => {
+            () => {
                 // not catered for, if creating, no need
                 // to remove class as it was never there
             }

@@ -1,6 +1,6 @@
 import type {
+    AgColumn,
     BeanCollection,
-    Column,
     FuncColsService,
     IRowNode,
     ISelectionService,
@@ -54,7 +54,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private readonly storeParams: ServerSideGroupLevelParams;
     private readonly parentRowNode: RowNode;
     private groupField: string | undefined;
-    private rowGroupColumn: Column;
+    private rowGroupColumn: AgColumn;
 
     private idSequence = new NumberSequence();
     private cache: LazyCache;

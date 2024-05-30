@@ -1,7 +1,7 @@
 import type {
+    AgColumn,
+    AgColumnGroup,
     BeanCollection,
-    Column,
-    ColumnGroup,
     ColumnModel,
     ColumnNameService,
     ExcelExportMultipleSheetParams,
@@ -358,7 +358,7 @@ export class ExcelCreator
         const { rowType, rowIndex, value, column, columnGroup, node } = params;
         const isHeader = rowType === RowType.HEADER;
         const isGroupHeader = rowType === RowType.HEADER_GROUPING;
-        const col = (isHeader ? column : columnGroup) as Column | ColumnGroup;
+        const col = (isHeader ? column : columnGroup) as AgColumn | AgColumnGroup | null;
         let headerClasses: string[] = [];
 
         if (isHeader || isGroupHeader) {
@@ -372,8 +372,8 @@ export class ExcelCreator
                     CssClassApplier.getHeaderClassesFromColDef(
                         col.getDefinition(),
                         this.gos,
-                        column || null,
-                        columnGroup || null
+                        (column as AgColumn) || null,
+                        (columnGroup as AgColumnGroup) || null
                     )
                 );
             }
@@ -393,13 +393,14 @@ export class ExcelCreator
             return it.id;
         });
 
+        const colDef = (column as AgColumn).getDefinition();
         this.stylingService.processAllCellClasses(
-            column!.getDefinition(),
+            colDef,
             this.gos.addGridCommonParams({
                 value,
                 data: node!.data,
                 node: node!,
-                colDef: column!.getDefinition(),
+                colDef,
                 column: column!,
                 rowIndex: rowIndex,
             }),

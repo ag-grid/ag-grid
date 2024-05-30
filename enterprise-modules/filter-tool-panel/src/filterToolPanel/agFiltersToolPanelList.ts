@@ -1,22 +1,22 @@
 import type {
     AbstractColDef,
+    AgColumn,
     AgComponentSelector,
+    AgProvidedColumnGroup,
     BeanCollection,
-    Column,
     ColumnModel,
     FiltersToolPanelState,
-    IProvidedColumn,
 } from '@ag-grid-community/core';
 import {
     Component,
     Events,
-    ProvidedColumnGroup,
     _clearElement,
     _exists,
     _flatten,
     _includes,
     _mergeDeep,
     _setAriaLabel,
+    isProvidedColumnGroup,
 } from '@ag-grid-community/core';
 import type { ToolPanelColDefService } from '@ag-grid-enterprise/side-bar';
 
@@ -115,16 +115,16 @@ export class AgFiltersToolPanelList extends Component {
     }
 
     private buildTreeFromProvidedColumnDefs(): void {
-        const columnTree: IProvidedColumn[] = this.columnModel.getColDefColTree();
+        const columnTree = this.columnModel.getColDefColTree();
         this.recreateFilters(columnTree);
     }
 
     public setFiltersLayout(colDefs: AbstractColDef[]): void {
-        const columnTree: IProvidedColumn[] = this.toolPanelColDefService.createColumnTree(colDefs);
+        const columnTree = this.toolPanelColDefService.createColumnTree(colDefs);
         this.recreateFilters(columnTree);
     }
 
-    private recreateFilters(columnTree: IProvidedColumn[]): void {
+    private recreateFilters(columnTree: (AgColumn | AgProvidedColumnGroup)[]): void {
         // Underlying filter comp/element won't get recreated if the column still exists (the element just gets detached/re-attached).
         // We can therefore restore focus if an element in the filter tool panel was focused.
         const activeElement = this.gos.getActiveDomElement() as HTMLElement;
@@ -168,17 +168,17 @@ export class AgFiltersToolPanelList extends Component {
     }
 
     private recursivelyAddComps(
-        tree: IProvidedColumn[],
+        tree: (AgColumn | AgProvidedColumnGroup)[],
         depth: number,
         expansionState: Map<string, boolean>
     ): (ToolPanelFilterGroupComp | ToolPanelFilterComp)[] {
         return _flatten(
             tree.map((child) => {
-                if (child instanceof ProvidedColumnGroup) {
+                if (isProvidedColumnGroup(child)) {
                     return _flatten(this.recursivelyAddFilterGroupComps(child, depth, expansionState)!);
                 }
 
-                const column = child as Column;
+                const column = child;
 
                 if (!this.shouldDisplayFilter(column)) {
                     return [];
@@ -228,7 +228,7 @@ export class AgFiltersToolPanelList extends Component {
     }
 
     private recursivelyAddFilterGroupComps(
-        columnGroup: ProvidedColumnGroup,
+        columnGroup: AgProvidedColumnGroup,
         depth: number,
         expansionState: Map<string, boolean>
     ): (ToolPanelFilterGroupComp | ToolPanelFilterComp)[] | undefined {
@@ -268,17 +268,17 @@ export class AgFiltersToolPanelList extends Component {
         return [filterGroupComp];
     }
 
-    private filtersExistInChildren(tree: IProvidedColumn[]): boolean {
+    private filtersExistInChildren(tree: (AgColumn | AgProvidedColumnGroup)[]): boolean {
         return tree.some((child) => {
-            if (child instanceof ProvidedColumnGroup) {
+            if (isProvidedColumnGroup(child)) {
                 return this.filtersExistInChildren(child.getChildren());
             }
 
-            return this.shouldDisplayFilter(child as Column);
+            return this.shouldDisplayFilter(child);
         });
     }
 
-    private shouldDisplayFilter(column: Column) {
+    private shouldDisplayFilter(column: AgColumn) {
         const suppressFiltersToolPanel = column.getColDef() && column.getColDef().suppressFiltersToolPanel;
         return column.isFilterAllowed() && !suppressFiltersToolPanel;
     }

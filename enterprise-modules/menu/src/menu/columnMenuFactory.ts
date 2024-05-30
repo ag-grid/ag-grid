@@ -1,6 +1,6 @@
 import type {
+    AgColumn,
     BeanCollection,
-    Column,
     ColumnModel,
     FuncColsService,
     IRowModel,
@@ -32,7 +32,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
     private static MENU_ITEM_SEPARATOR = 'separator';
 
-    public createMenu(parent: BeanStub, column: Column | undefined, sourceElement: () => HTMLElement): AgMenuList {
+    public createMenu(parent: BeanStub, column: AgColumn | undefined, sourceElement: () => HTMLElement): AgMenuList {
         const menuList = parent.createManagedBean(
             new AgMenuList(0, {
                 column: column ?? null,
@@ -49,7 +49,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         return menuList;
     }
 
-    private getMenuItems(column?: Column): (string | MenuItemDef)[] {
+    private getMenuItems(column?: AgColumn): (string | MenuItemDef)[] {
         const defaultItems = this.getDefaultMenuOptions(column);
         let result: (string | MenuItemDef)[];
 
@@ -82,7 +82,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         return result;
     }
 
-    private getDefaultMenuOptions(column?: Column): string[] {
+    private getDefaultMenuOptions(column?: AgColumn): string[] {
         const result: string[] = [];
 
         const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();

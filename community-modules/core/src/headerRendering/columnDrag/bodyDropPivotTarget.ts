@@ -3,7 +3,8 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { DraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import { DragAndDropService } from '../../dragAndDrop/dragAndDropService';
-import type { Column, ColumnPinnedType } from '../../entities/column';
+import type { AgColumn } from '../../entities/agColumn';
+import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { DropListener } from './bodyDropTarget';
 
 export class BodyDropPivotTarget extends BeanStub implements DropListener {
@@ -13,9 +14,9 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
         this.funcColsService = beans.funcColsService;
     }
 
-    private columnsToAggregate: Column[] = [];
-    private columnsToGroup: Column[] = [];
-    private columnsToPivot: Column[] = [];
+    private columnsToAggregate: AgColumn[] = [];
+    private columnsToGroup: AgColumn[] = [];
+    private columnsToPivot: AgColumn[] = [];
 
     private pinned: ColumnPinnedType;
 
@@ -33,7 +34,7 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
             return;
         }
 
-        const dragColumns: Column[] | undefined = draggingEvent.dragItem.columns;
+        const dragColumns = draggingEvent.dragItem.columns as AgColumn[] | undefined;
 
         if (!dragColumns) {
             return;
@@ -69,6 +70,7 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
     }
 
     /** Callback for when drag leaves */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public onDragLeave(draggingEvent: DraggingEvent): void {
         // if we are taking columns out of the center, then we remove them from the report
         this.clearColumnsList();
@@ -81,9 +83,11 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
     }
 
     /** Callback for when dragging */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public onDragging(draggingEvent: DraggingEvent): void {}
 
     /** Callback for when drag stops */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public onDragStop(draggingEvent: DraggingEvent): void {
         if (this.columnsToAggregate.length > 0) {
             this.funcColsService.addValueColumns(this.columnsToAggregate, 'toolPanelDragAndDrop');

@@ -1,6 +1,6 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import type { Column } from '../../entities/column';
+import type { AgColumn } from '../../entities/agColumn';
 import type { CellClickedEvent, CellDoubleClickedEvent, CellMouseOutEvent, CellMouseOverEvent } from '../../events';
 import { Events } from '../../events';
 import { _isBrowserSafari, _isIOSUserAgent } from '../../utils/browser';
@@ -11,11 +11,11 @@ import type { CellCtrl } from './cellCtrl';
 export class CellMouseListenerFeature extends BeanStub {
     private readonly cellCtrl: CellCtrl;
     private readonly beans: BeanCollection;
-    private readonly column: Column;
+    private readonly column: AgColumn;
 
     private lastIPadMouseClickEvent: number;
 
-    constructor(ctrl: CellCtrl, beans: BeanCollection, column: Column) {
+    constructor(ctrl: CellCtrl, beans: BeanCollection, column: AgColumn) {
         super();
         this.cellCtrl = ctrl;
         this.beans = beans;
@@ -160,7 +160,7 @@ export class CellMouseListenerFeature extends BeanStub {
             if (focusedCellPosition) {
                 const { column, rowIndex, rowPinned } = focusedCellPosition;
                 const focusedRowCtrl = beans.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
-                const focusedCellCtrl = focusedRowCtrl?.getCellCtrl(column);
+                const focusedCellCtrl = focusedRowCtrl?.getCellCtrl(column as AgColumn);
 
                 // if the focused cell is editing, need to stop editing first
                 if (focusedCellCtrl?.isEditing()) {

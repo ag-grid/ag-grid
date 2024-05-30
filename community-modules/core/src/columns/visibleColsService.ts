@@ -1,15 +1,14 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { ColumnPinnedType } from '../entities/column';
-import { Column } from '../entities/column';
-import { ColumnGroup } from '../entities/columnGroup';
-import type { ProvidedColumnGroup } from '../entities/providedColumnGroup';
+import { type AgColumn, isColumn } from '../entities/agColumn';
+import { AgColumnGroup, createUniqueColumnGroupId, isColumnGroup } from '../entities/agColumnGroup';
+import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnContainerWidthChanged, ColumnEventType, DisplayedColumnsWidthChangedEvent } from '../events';
 import { Events } from '../events';
+import type { ColumnPinnedType, HeaderColumnId } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import type { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
 import { _last, _removeAllFromUnorderedArray } from '../utils/array';
 import { _exists } from '../utils/generic';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
@@ -36,21 +35,21 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     // tree of columns to be displayed for each section
-    private treeLeft: IHeaderColumn[];
-    private treeRight: IHeaderColumn[];
-    private treeCenter: IHeaderColumn[];
+    private treeLeft: (AgColumn | AgColumnGroup)[];
+    private treeRight: (AgColumn | AgColumnGroup)[];
+    private treeCenter: (AgColumn | AgColumnGroup)[];
 
     // for fast lookup, to see if a column or group is still visible
-    private colsAndGroupsMap: { [id: HeaderColumnId]: IHeaderColumn } = {};
+    private colsAndGroupsMap: { [id: HeaderColumnId]: AgColumn | AgColumnGroup } = {};
 
     // leave level columns of the displayed trees
-    private columnsLeft: Column[] = [];
-    private columnsRight: Column[] = [];
-    private columnsCenter: Column[] = [];
+    private columnsLeft: AgColumn[] = [];
+    private columnsRight: AgColumn[] = [];
+    private columnsCenter: AgColumn[] = [];
     // all three lists above combined
-    private columns: Column[] = [];
+    private columns: AgColumn[] = [];
 
-    private autoHeightCols: Column[];
+    private autoHeightCols: AgColumn[];
 
     private bodyWidth = 0;
     private leftWidth = 0;
@@ -59,7 +58,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     private bodyWidthDirty = true;
 
     // list of all columns (displayed and hidden) in visible order including pinned
-    private ariaOrderColumns: Column[];
+    private ariaOrderColumns: AgColumn[];
 
     public refresh(source: ColumnEventType, skipTreeBuild = false): void {
         // when we open/close col group, skipTreeBuild=false, as we know liveCols haven't changed
@@ -126,8 +125,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     private setFirstRightAndLastLeftPinned(source: ColumnEventType): void {
-        let lastLeft: Column | null;
-        let firstRight: Column | null;
+        let lastLeft: AgColumn | null;
+        let firstRight: AgColumn | null;
 
         if (this.gos.get('enableRtl')) {
             lastLeft = this.columnsLeft ? this.columnsLeft[0] : null;
@@ -169,9 +168,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     private joinColsAriaOrder(): void {
         const allColumns = this.columnModel.getCols();
-        const pinnedLeft: Column[] = [];
-        const center: Column[] = [];
-        const pinnedRight: Column[] = [];
+        const pinnedLeft: AgColumn[] = [];
+        const center: AgColumn[] = [];
+        const pinnedRight: AgColumn[] = [];
 
         for (const col of allColumns) {
             const pinned = col.getPinned();
@@ -187,10 +186,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.ariaOrderColumns = pinnedLeft.concat(center).concat(pinnedRight);
     }
 
-    public getAriaColIndex(colOrGroup: Column | ColumnGroup): number {
-        let col: Column;
+    public getAriaColIndex(colOrGroup: AgColumn | AgColumnGroup): number {
+        let col: AgColumn;
 
-        if (colOrGroup instanceof ColumnGroup) {
+        if (isColumnGroup(colOrGroup)) {
             col = colOrGroup.getLeafColumns()[0];
         } else {
             col = colOrGroup;
@@ -199,7 +198,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         return this.ariaOrderColumns.indexOf(col) + 1;
     }
 
-    public getAllAutoHeightCols(): Column[] {
+    public getAllAutoHeightCols(): AgColumn[] {
         return this.autoHeightCols;
     }
 
@@ -207,7 +206,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         // a groups left value is the lest left value of it's children
         [this.treeLeft, this.treeRight, this.treeCenter].forEach((columns) => {
             columns.forEach((column) => {
-                if (column instanceof ColumnGroup) {
+                if (isColumnGroup(column)) {
                     const columnGroup = column;
                     columnGroup.checkLeft();
                 }
@@ -249,7 +248,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         // items left in allColumns are columns not displayed, so remove the left position. this is
         // important for the rows, as if a col is made visible, then taken out, then made visible again,
         // we don't want the animation of the cell floating in from the old position, whatever that was.
-        allColumns.forEach((column: Column) => {
+        allColumns.forEach((column) => {
             column.setLeft(null, source);
         });
     }
@@ -262,11 +261,11 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         }
     }
 
-    public getColsCenter(): Column[] {
+    public getColsCenter(): AgColumn[] {
         return this.columnsCenter;
     }
 
-    public getAllTrees(): IHeaderColumn[] | null {
+    public getAllTrees(): (AgColumn | AgColumnGroup)[] | null {
         if (this.treeLeft && this.treeRight && this.treeCenter) {
             return this.treeLeft.concat(this.treeCenter).concat(this.treeRight);
         }
@@ -275,31 +274,31 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     // + headerRenderer -> setting pinned body width
-    public getTreeLeft(): IHeaderColumn[] {
+    public getTreeLeft(): (AgColumn | AgColumnGroup)[] {
         return this.treeLeft;
     }
 
     // + headerRenderer -> setting pinned body width
-    public getTreeRight(): IHeaderColumn[] {
+    public getTreeRight(): (AgColumn | AgColumnGroup)[] {
         return this.treeRight;
     }
 
     // + headerRenderer -> setting pinned body width
-    public getTreeCenter(): IHeaderColumn[] {
+    public getTreeCenter(): (AgColumn | AgColumnGroup)[] {
         return this.treeCenter;
     }
 
     // + csvCreator
-    public getAllCols(): Column[] {
+    public getAllCols(): AgColumn[] {
         return this.columns;
     }
 
     // gridPanel -> ensureColumnVisible
-    public isColDisplayed(column: Column): boolean {
-        return this.getAllCols().indexOf(column) >= 0;
+    public isColDisplayed(column: AgColumn): boolean {
+        return this.getAllCols().indexOf(column as AgColumn) >= 0;
     }
 
-    public getLeftColsForRow(rowNode: RowNode): Column[] {
+    public getLeftColsForRow(rowNode: RowNode): AgColumn[] {
         const colSpanActive = this.columnModel.isColSpanActive();
         if (!colSpanActive) {
             return this.columnsLeft;
@@ -308,7 +307,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         return this.getColsForRow(rowNode, this.columnsLeft);
     }
 
-    public getRightColsForRow(rowNode: RowNode): Column[] {
+    public getRightColsForRow(rowNode: RowNode): AgColumn[] {
         const colSpanActive = this.columnModel.isColSpanActive();
         if (!colSpanActive) {
             return this.columnsRight;
@@ -319,18 +318,18 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     public getColsForRow(
         rowNode: RowNode,
-        displayedColumns: Column[],
-        filterCallback?: (column: Column) => boolean,
-        emptySpaceBeforeColumn?: (column: Column) => boolean
-    ): Column[] {
-        const result: Column[] = [];
-        let lastConsideredCol: Column | null = null;
+        displayedColumns: AgColumn[],
+        filterCallback?: (column: AgColumn) => boolean,
+        emptySpaceBeforeColumn?: (column: AgColumn) => boolean
+    ): AgColumn[] {
+        const result: AgColumn[] = [];
+        let lastConsideredCol: AgColumn | null = null;
 
         for (let i = 0; i < displayedColumns.length; i++) {
-            const col = displayedColumns[i];
+            const col = displayedColumns[i] as AgColumn;
             const maxAllowedColSpan = displayedColumns.length - i;
             const colSpan = Math.min(col.getColSpan(rowNode), maxAllowedColSpan);
-            const columnsToCheckFilter: Column[] = [col];
+            const columnsToCheckFilter: AgColumn[] = [col];
 
             if (colSpan > 1) {
                 const colsToRemove = colSpan - 1;
@@ -397,22 +396,22 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     // + rowController -> while inserting rows
-    public getCenterCols(): Column[] {
+    public getCenterCols(): AgColumn[] {
         return this.columnsCenter;
     }
 
     // + rowController -> while inserting rows
-    public getLeftCols(): Column[] {
+    public getLeftCols(): AgColumn[] {
         return this.columnsLeft;
     }
 
-    public getRightCols(): Column[] {
+    public getRightCols(): AgColumn[] {
         return this.columnsRight;
     }
 
-    public getColBefore(col: Column): Column | null {
+    public getColBefore(col: AgColumn): AgColumn | null {
         const allDisplayedColumns = this.getAllCols();
-        const oldIndex = allDisplayedColumns.indexOf(col);
+        const oldIndex = allDisplayedColumns.indexOf(col as AgColumn);
 
         if (oldIndex > 0) {
             return allDisplayedColumns[oldIndex - 1];
@@ -421,11 +420,11 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         return null;
     }
 
-    public getGroupAtDirection(columnGroup: ColumnGroup, direction: 'After' | 'Before'): ColumnGroup | null {
+    public getGroupAtDirection(columnGroup: AgColumnGroup, direction: 'After' | 'Before'): AgColumnGroup | null {
         // pick the last displayed column in this group
         const requiredLevel = columnGroup.getProvidedColumnGroup().getLevel() + columnGroup.getPaddingLevel();
         const colGroupLeafColumns = columnGroup.getDisplayedLeafColumns();
-        const col: Column | null = direction === 'After' ? _last(colGroupLeafColumns) : colGroupLeafColumns[0];
+        const col: AgColumn | null = direction === 'After' ? _last(colGroupLeafColumns) : colGroupLeafColumns[0];
         const getDisplayColMethod: 'getColAfter' | 'getColBefore' = `getCol${direction}` as any;
 
         while (true) {
@@ -444,9 +443,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         }
     }
 
-    public getColGroupAtLevel(column: Column, level: number): ColumnGroup | null {
+    public getColGroupAtLevel(column: AgColumn, level: number): AgColumnGroup | null {
         // get group at same level as the one we are looking for
-        let groupPointer: ColumnGroup = column.getParent();
+        let groupPointer: AgColumnGroup = column.getParent()!;
         let originalGroupLevel: number;
         let groupPointerLevel: number;
 
@@ -458,7 +457,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             if (originalGroupLevel + groupPointerLevel <= level) {
                 break;
             }
-            groupPointer = groupPointer.getParent();
+            groupPointer = groupPointer.getParent()!;
         }
 
         return groupPointer;
@@ -475,7 +474,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     private updateColsAndGroupsMap(): void {
         this.colsAndGroupsMap = {};
 
-        const func = (child: IHeaderColumn) => {
+        const func = (child: AgColumn | AgColumnGroup) => {
             this.colsAndGroupsMap[child.getUniqueId()] = child;
         };
 
@@ -484,7 +483,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         depthFirstAllColumnTreeSearch(this.treeRight, false, func);
     }
 
-    public isVisible(item: IHeaderColumn): boolean {
+    public isVisible(item: AgColumn | AgColumnGroup): boolean {
         const fromMap = this.colsAndGroupsMap[item.getUniqueId()];
         // check for reference, in case new column / group with same id is now present
         return fromMap === item;
@@ -494,13 +493,13 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         const allColumnGroups = this.getAllTrees();
 
         depthFirstAllColumnTreeSearch(allColumnGroups, false, (child) => {
-            if (child instanceof ColumnGroup) {
+            if (isColumnGroup(child)) {
                 child.calculateDisplayedColumns();
             }
         });
     }
 
-    public getFirstColumn(): Column | null {
+    public getFirstColumn(): AgColumn | null {
         const isRtl = this.gos.get('enableRtl');
         const queryOrder: ('getLeftCols' | 'getCenterCols' | 'getRightCols')[] = [
             'getLeftCols',
@@ -524,20 +523,20 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     // returns the group with matching colId and instanceId. If instanceId is missing,
     // matches only on the colId.
-    public getColumnGroup(colId: string | ColumnGroup, partId?: number): ColumnGroup | null {
+    public getColumnGroup(colId: string | AgColumnGroup, partId?: number): AgColumnGroup | null {
         if (!colId) {
             return null;
         }
-        if (colId instanceof ColumnGroup) {
+        if (isColumnGroup(colId)) {
             return colId;
         }
 
         const allColumnGroups = this.getAllTrees();
         const checkPartId = typeof partId === 'number';
-        let result: ColumnGroup | null = null;
+        let result: AgColumnGroup | null = null;
 
-        depthFirstAllColumnTreeSearch(allColumnGroups, false, (child: IHeaderColumn) => {
-            if (child instanceof ColumnGroup) {
+        depthFirstAllColumnTreeSearch(allColumnGroups, false, (child) => {
+            if (isColumnGroup(child)) {
                 const columnGroup = child;
                 let matched: boolean;
 
@@ -558,9 +557,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     // used by:
     // + rowRenderer -> for navigation
-    public getColAfter(col: Column): Column | null {
+    public getColAfter(col: AgColumn): AgColumn | null {
         const allDisplayedColumns = this.getAllCols();
-        const oldIndex = allDisplayedColumns.indexOf(col);
+        const oldIndex = allDisplayedColumns.indexOf(col as AgColumn);
 
         if (oldIndex < allDisplayedColumns.length - 1) {
             return allDisplayedColumns[oldIndex + 1];
@@ -589,7 +588,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         return getWidthOfColsInList(this.columnsRight);
     }
 
-    public isColAtEdge(col: Column | ColumnGroup, edge: 'first' | 'last'): boolean {
+    public isColAtEdge(col: AgColumn | AgColumnGroup, edge: 'first' | 'last'): boolean {
         const allColumns = this.getAllCols();
         if (!allColumns.length) {
             return false;
@@ -597,8 +596,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
         const isFirst = edge === 'first';
 
-        let columnToCompare: Column;
-        if (col instanceof ColumnGroup) {
+        let columnToCompare: AgColumn;
+        if (isColumnGroup(col)) {
             const leafColumns = col.getDisplayedLeafColumns();
             if (!leafColumns.length) {
                 return false;
@@ -614,14 +613,14 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     public createGroups(
         // all displayed columns sorted - this is the columns the grid should show
-        sortedVisibleColumns: Column[],
+        sortedVisibleColumns: AgColumn[],
         // creates unique id's for the group
         groupInstanceIdCreator: GroupInstanceIdCreator,
         // whether it's left, right or center col
         pinned: ColumnPinnedType,
         // we try to reuse old groups if we can, to allow gui to do animation
-        oldDisplayedGroups?: IHeaderColumn[]
-    ): IHeaderColumn[] {
+        oldDisplayedGroups?: (AgColumn | AgColumnGroup)[]
+    ): (AgColumn | AgColumnGroup)[] {
         const oldColumnsMapped = this.mapOldGroupsById(oldDisplayedGroups!);
 
         /**
@@ -632,10 +631,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
          *
          * When row groups have no original parent, it's added to the result.
          */
-        const topLevelResultCols: (Column | ColumnGroup)[] = [];
+        const topLevelResultCols: (AgColumn | AgColumnGroup)[] = [];
 
         // this is an array of cols or col groups at one level of depth, starting from leaf and ending at root
-        let groupsOrColsAtCurrentLevel: (Column | ColumnGroup)[] = sortedVisibleColumns;
+        let groupsOrColsAtCurrentLevel: (AgColumn | AgColumnGroup)[] = sortedVisibleColumns as AgColumn[];
         while (groupsOrColsAtCurrentLevel.length) {
             // store what's currently iterating so the function can build the next level of col groups
             const currentlyIterating = groupsOrColsAtCurrentLevel;
@@ -651,9 +650,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
                 lastGroupedColIdx = to;
 
                 const previousNode = currentlyIterating[from];
-                const previousNodeProvided =
-                    previousNode instanceof ColumnGroup ? previousNode.getProvidedColumnGroup() : previousNode;
-                const previousNodeParent = previousNodeProvided.getOriginalParent();
+                const previousNodeProvided = isColumnGroup(previousNode)
+                    ? previousNode.getProvidedColumnGroup()
+                    : previousNode;
+                const previousNodeParent = previousNodeProvided.getOriginalParent() as AgProvidedColumnGroup | null;
 
                 if (previousNodeParent == null) {
                     // if the last node was different, and had a null parent, then we add all the nodes to the final
@@ -681,12 +681,13 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
             for (let i = 1; i < currentlyIterating.length; i++) {
                 const thisNode = currentlyIterating[i];
-                const thisNodeProvided = thisNode instanceof ColumnGroup ? thisNode.getProvidedColumnGroup() : thisNode;
+                const thisNodeProvided = isColumnGroup(thisNode) ? thisNode.getProvidedColumnGroup() : thisNode;
                 const thisNodeParent = thisNodeProvided.getOriginalParent();
 
                 const previousNode = currentlyIterating[lastGroupedColIdx];
-                const previousNodeProvided =
-                    previousNode instanceof ColumnGroup ? previousNode.getProvidedColumnGroup() : previousNode;
+                const previousNodeProvided = isColumnGroup(previousNode)
+                    ? previousNode.getProvidedColumnGroup()
+                    : previousNode;
                 const previousNodeParent = previousNodeProvided.getOriginalParent();
 
                 if (thisNodeParent !== previousNodeParent) {
@@ -703,16 +704,16 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     private createColGroup(
-        providedGroup: ProvidedColumnGroup,
+        providedGroup: AgProvidedColumnGroup,
         groupInstanceIdCreator: GroupInstanceIdCreator,
-        oldColumnsMapped: { [key: string]: ColumnGroup },
+        oldColumnsMapped: { [key: string]: AgColumnGroup },
         pinned: ColumnPinnedType
-    ): ColumnGroup {
+    ): AgColumnGroup {
         const groupId = providedGroup.getGroupId();
         const instanceId = groupInstanceIdCreator.getInstanceIdForKey(groupId);
-        const uniqueId = ColumnGroup.createUniqueId(groupId, instanceId);
+        const uniqueId = createUniqueColumnGroupId(groupId, instanceId);
 
-        let columnGroup: ColumnGroup | null = oldColumnsMapped[uniqueId];
+        let columnGroup: AgColumnGroup | null = oldColumnsMapped[uniqueId];
 
         // if the user is setting new colDefs, it is possible that the id's overlap, and we
         // would have a false match from above. so we double check we are talking about the
@@ -725,7 +726,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             // clean out the old column group here, as we will be adding children into it again
             columnGroup.reset();
         } else {
-            columnGroup = new ColumnGroup(providedGroup, groupId, instanceId, pinned);
+            columnGroup = new AgColumnGroup(providedGroup, groupId, instanceId, pinned);
             this.createBean(columnGroup);
         }
 
@@ -733,12 +734,14 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     // returns back a 2d map of ColumnGroup as follows: groupId -> instanceId -> ColumnGroup
-    private mapOldGroupsById(displayedGroups: IHeaderColumn[]): { [uniqueId: string]: ColumnGroup } {
-        const result: { [uniqueId: HeaderColumnId]: ColumnGroup } = {};
+    private mapOldGroupsById(displayedGroups: (AgColumn | AgColumnGroup)[]): {
+        [uniqueId: string]: AgColumnGroup;
+    } {
+        const result: { [uniqueId: HeaderColumnId]: AgColumnGroup } = {};
 
-        const recursive = (columnsOrGroups: IHeaderColumn[] | null) => {
+        const recursive = (columnsOrGroups: (AgColumn | AgColumnGroup)[] | null) => {
             columnsOrGroups!.forEach((columnOrGroup) => {
-                if (columnOrGroup instanceof ColumnGroup) {
+                if (isColumnGroup(columnOrGroup)) {
                     const columnGroup = columnOrGroup;
                     result[columnOrGroup.getUniqueId()] = columnGroup;
                     recursive(columnGroup.getChildren());
@@ -753,10 +756,13 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         return result;
     }
 
-    private setupParentsIntoCols(columnsOrGroups: IHeaderColumn[] | null, parent: ColumnGroup | null): void {
+    private setupParentsIntoCols(
+        columnsOrGroups: (AgColumn | AgColumnGroup)[] | null,
+        parent: AgColumnGroup | null
+    ): void {
         columnsOrGroups!.forEach((columnsOrGroup) => {
             columnsOrGroup.setParent(parent);
-            if (columnsOrGroup instanceof ColumnGroup) {
+            if (isColumnGroup(columnsOrGroup)) {
                 const columnGroup = columnsOrGroup;
                 this.setupParentsIntoCols(columnGroup.getChildren(), columnGroup);
             }
@@ -765,9 +771,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 }
 
 function depthFirstAllColumnTreeSearch(
-    tree: IHeaderColumn[] | null,
+    tree: (AgColumn | AgColumnGroup)[] | null,
     useDisplayedChildren: boolean,
-    callback: (treeNode: IHeaderColumn) => void
+    callback: (treeNode: AgColumn | AgColumnGroup) => void
 ): void {
     if (!tree) {
         return;
@@ -775,7 +781,7 @@ function depthFirstAllColumnTreeSearch(
 
     for (let i = 0; i < tree.length; i++) {
         const child = tree[i];
-        if (child instanceof ColumnGroup) {
+        if (isColumnGroup(child)) {
             const childTree = useDisplayedChildren ? child.getDisplayedChildren() : child.getChildren();
             depthFirstAllColumnTreeSearch(childTree, useDisplayedChildren, callback);
         }
@@ -783,10 +789,10 @@ function depthFirstAllColumnTreeSearch(
     }
 }
 
-function pickDisplayedCols(tree: IHeaderColumn[]): Column[] {
-    const res: Column[] = [];
-    depthFirstAllColumnTreeSearch(tree, true, (child: IHeaderColumn) => {
-        if (child instanceof Column) {
+function pickDisplayedCols(tree: (AgColumn | AgColumnGroup)[]): AgColumn[] {
+    const res: AgColumn[] = [];
+    depthFirstAllColumnTreeSearch(tree, true, (child) => {
+        if (isColumn(child)) {
             res.push(child);
         }
     });

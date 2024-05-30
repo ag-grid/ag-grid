@@ -1,8 +1,8 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ITooltipParams, TooltipLocation } from '../rendering/tooltipComponent';
@@ -14,7 +14,7 @@ export interface ITooltipFeatureCtrl {
     getGui(): HTMLElement;
     getLocation(): TooltipLocation;
 
-    getColumn?(): Column | ColumnGroup;
+    getColumn?(): AgColumn | AgColumnGroup;
     getColDef?(): ColDef | ColGroupDef;
     getRowIndex?(): number;
     getRowNode?(): RowNode;

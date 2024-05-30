@@ -1,7 +1,7 @@
 import type {
+    AgColumn,
     BaseCellDataType,
     BeanCollection,
-    Column,
     ColumnAdvancedFilterModel,
     ColumnModel,
     ColumnNameService,
@@ -79,20 +79,21 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     public getOperandModelValue(
         operand: string,
         baseCellDataType: BaseCellDataType,
-        column: Column
+        column: AgColumn
     ): string | number | null {
         switch (baseCellDataType) {
             case 'number':
                 return _exists(operand) ? Number(operand) : null;
             case 'date':
                 return _serialiseDate(this.valueService.parseValue(column, null, operand, undefined), false);
-            case 'dateString':
+            case 'dateString': {
                 // displayed string format may be different from data string format, so parse before converting to date
                 const parsedDateString = this.valueService.parseValue(column, null, operand, undefined);
                 return _serialiseDate(
                     this.dataTypeService.getDateParserFunction(column)(parsedDateString) ?? null,
                     false
                 );
+            }
         }
         return operand;
     }
@@ -107,11 +108,12 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                 case 'number':
                     operand1 = _toStringOrNull(filter) ?? '';
                     break;
-                case 'date':
+                case 'date': {
                     const dateValue = _parseDateTimeFromString(filter);
                     operand1 = column ? this.valueService.formatValue(column, null, dateValue) : null;
                     break;
-                case 'dateString':
+                }
+                case 'dateString': {
                     // need to convert from ISO date string to Date to data string format to formatted string format
                     const dateStringDateValue = _parseDateTimeFromString(filter);
                     const dateStringStringValue = column
@@ -119,6 +121,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                         : null;
                     operand1 = column ? this.valueService.formatValue(column, null, dateStringStringValue) : null;
                     break;
+                }
             }
             if (model.filterType !== 'number') {
                 operand1 = operand1 ?? _toStringOrNull(filter) ?? '';
@@ -200,7 +203,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         return entries;
     }
 
-    public getOperatorAutocompleteEntries(column: Column, baseCellDataType: BaseCellDataType): AutocompleteEntry[] {
+    public getOperatorAutocompleteEntries(column: AgColumn, baseCellDataType: BaseCellDataType): AutocompleteEntry[] {
         const activeOperators = this.getActiveOperators(column);
         return this.getDataTypeExpressionOperator(baseCellDataType)!.getEntries(activeOperators);
     }
@@ -307,7 +310,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         return params;
     }
 
-    public getColumnDetails(colId: string): { column?: Column; baseCellDataType: BaseCellDataType } {
+    public getColumnDetails(colId: string): { column?: AgColumn; baseCellDataType: BaseCellDataType } {
         const column = this.columnModel.getColDefCol(colId) ?? undefined;
         const baseCellDataType = (column ? this.dataTypeService.getBaseDataType(column) : undefined) ?? 'text';
         return { column, baseCellDataType };
@@ -343,7 +346,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         };
     }
 
-    private getActiveOperators(column: Column): string[] | undefined {
+    private getActiveOperators(column: AgColumn): string[] | undefined {
         const filterOptions = column.getColDef().filterParams?.filterOptions;
         if (!filterOptions) {
             return undefined;

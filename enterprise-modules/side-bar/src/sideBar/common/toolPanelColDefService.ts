@@ -1,14 +1,13 @@
 import type {
     AbstractColDef,
+    AgColumn,
     BeanCollection,
     ColDef,
     ColGroupDef,
-    Column,
     ColumnModel,
-    IProvidedColumn,
     NamedBean,
 } from '@ag-grid-community/core';
-import { BeanStub, ProvidedColumnGroup, _includes, _last } from '@ag-grid-community/core';
+import { AgProvidedColumnGroup, BeanStub, _includes, _last, isProvidedColumnGroup } from '@ag-grid-community/core';
 
 export class ToolPanelColDefService extends BeanStub implements NamedBean {
     beanName = 'toolPanelColDefService' as const;
@@ -19,16 +18,19 @@ export class ToolPanelColDefService extends BeanStub implements NamedBean {
         this.columnModel = beans.columnModel;
     }
 
-    public createColumnTree(colDefs: AbstractColDef[]): IProvidedColumn[] {
+    public createColumnTree(colDefs: AbstractColDef[]): (AgColumn | AgProvidedColumnGroup)[] {
         const invalidColIds: AbstractColDef[] = [];
 
-        const createDummyColGroup = (abstractColDef: AbstractColDef, depth: number): IProvidedColumn => {
+        const createDummyColGroup = (
+            abstractColDef: AbstractColDef,
+            depth: number
+        ): AgColumn | AgProvidedColumnGroup => {
             if (this.isColGroupDef(abstractColDef)) {
                 // creating 'dummy' group which is not associated with grid column group
                 const groupDef = abstractColDef as ColGroupDef;
                 const groupId = typeof groupDef.groupId !== 'undefined' ? groupDef.groupId : groupDef.headerName;
-                const group = new ProvidedColumnGroup(groupDef, groupId!, false, depth);
-                const children: IProvidedColumn[] = [];
+                const group = new AgProvidedColumnGroup(groupDef, groupId!, false, depth);
+                const children: (AgColumn | AgProvidedColumnGroup)[] = [];
                 groupDef.children.forEach((def) => {
                     const child = createDummyColGroup(def, depth + 1);
                     // check column exists in case invalid colDef is supplied for primary column
@@ -42,7 +44,7 @@ export class ToolPanelColDefService extends BeanStub implements NamedBean {
             } else {
                 const colDef = abstractColDef as ColDef;
                 const key = colDef.colId ? colDef.colId : colDef.field;
-                const column = this.columnModel.getColDefCol(key!) as IProvidedColumn;
+                const column = this.columnModel.getColDefCol(key!)!;
 
                 if (!column) {
                     invalidColIds.push(colDef);
@@ -52,7 +54,7 @@ export class ToolPanelColDefService extends BeanStub implements NamedBean {
             }
         };
 
-        const mappedResults: IProvidedColumn[] = [];
+        const mappedResults: (AgColumn | AgProvidedColumnGroup)[] = [];
         colDefs.forEach((colDef) => {
             const result = createDummyColGroup(colDef, 0);
             if (result) {
@@ -81,11 +83,11 @@ export class ToolPanelColDefService extends BeanStub implements NamedBean {
 
     private getLeafPathTrees(): AbstractColDef[] {
         // leaf tree paths are obtained by walking up the tree starting at a column until we reach the top level group.
-        const getLeafPathTree = (node: Column | ProvidedColumnGroup, childDef: AbstractColDef): AbstractColDef => {
+        const getLeafPathTree = (node: AgColumn | AgProvidedColumnGroup, childDef: AbstractColDef): AbstractColDef => {
             let leafPathTree: AbstractColDef;
 
             // build up tree in reverse order
-            if (node instanceof ProvidedColumnGroup) {
+            if (isProvidedColumnGroup(node)) {
                 if (node.isPadding()) {
                     // skip over padding groups
                     leafPathTree = childDef;

@@ -1,7 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { Column } from '../entities/column';
+import type { AgColumn } from '../entities/agColumn';
 import { _missing } from '../utils/generic';
 import type { ColumnState } from './columnApplyStateService';
 import type { ColumnModel } from './columnModel';
@@ -33,7 +33,7 @@ export class ColumnGetStateService extends BeanStub implements NamedBean {
         return res;
     }
 
-    private createStateItemFromColumn(column: Column): ColumnState {
+    private createStateItemFromColumn(column: AgColumn): ColumnState {
         const rowGorupColumns = this.funcColsService.getRowGroupColumns();
         const pivotColumns = this.funcColsService.getPivotColumns();
 

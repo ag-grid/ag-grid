@@ -2,9 +2,9 @@ import type { AgStackComponentsRegistry } from '../components/agStackComponentsR
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { BaseBean, ComponentBean } from '../context/genericContext';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
 import type { AgEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { CssClassManager } from '../rendering/cssClassManager';
@@ -113,7 +113,7 @@ export class Component extends BeanStub implements ComponentBean, BaseBean<BeanC
         showDelayOverride?: number;
         hideDelayOverride?: number;
         location?: TooltipLocation;
-        getColumn?(): Column | ColumnGroup;
+        getColumn?(): AgColumn | AgColumnGroup;
         getColDef?(): ColDef | ColGroupDef;
         shouldDisplayTooltip?: () => boolean;
     }): void {

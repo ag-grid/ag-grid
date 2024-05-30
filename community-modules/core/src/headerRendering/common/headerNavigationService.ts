@@ -2,8 +2,8 @@ import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
-import type { Column } from '../../entities/column';
-import { ColumnGroup } from '../../entities/columnGroup';
+import type { AgColumn } from '../../entities/agColumn';
+import { type AgColumnGroup, isColumnGroup } from '../../entities/agColumnGroup';
 import type { FocusService } from '../../focusService';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
 import { _last } from '../../utils/array';
@@ -63,13 +63,15 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             return false;
         }
 
-        const { headerRowIndex, column } = fromHeader;
+        const { headerRowIndex } = fromHeader;
+        const column = fromHeader.column as AgColumn;
         const rowLen = this.getHeaderRowCount();
         const isUp = direction === HeaderNavigationDirection.UP;
 
         let {
             headerRowIndex: nextRow,
             column: nextFocusColumn,
+            // eslint-disable-next-line prefer-const
             headerRowIndexWithoutSpan,
         } = isUp
             ? this.headerPositionUtils.getColumnVisibleParent(column, headerRowIndex)
@@ -187,7 +189,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         }
 
         const { column, headerRowIndex } = this.headerPositionUtils.getHeaderIndexToFocus(
-            nextPosition.column,
+            nextPosition.column as AgColumn,
             nextPosition?.headerRowIndex
         );
 
@@ -200,14 +202,14 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         });
     }
 
-    public scrollToColumn(column: Column | ColumnGroup, direction: 'Before' | 'After' | null = 'After'): void {
+    public scrollToColumn(column: AgColumn | AgColumnGroup, direction: 'Before' | 'After' | null = 'After'): void {
         if (column.getPinned()) {
             return;
         }
 
-        let columnToScrollTo: Column;
+        let columnToScrollTo: AgColumn;
 
-        if (column instanceof ColumnGroup) {
+        if (isColumnGroup(column)) {
             const columns = column.getDisplayedLeafColumns();
             columnToScrollTo = direction === 'Before' ? _last(columns) : columns[0];
         } else {

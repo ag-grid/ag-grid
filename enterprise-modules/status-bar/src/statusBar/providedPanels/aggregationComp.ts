@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     AggregationStatusPanelAggFunc,
     AggregationStatusPanelParams,
     BeanCollection,
@@ -169,7 +170,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         break;
                     }
 
-                    cellRange.columns.forEach((col) => {
+                    cellRange.columns.forEach((col: AgColumn) => {
                         if (currentRow === null) {
                             return;
                         }

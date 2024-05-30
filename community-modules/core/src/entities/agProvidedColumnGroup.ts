@@ -1,20 +1,25 @@
 import { BeanStub } from '../context/beanStub';
 import type { AgEvent } from '../events';
-import type { IEventEmitter } from '../interfaces/iEventEmitter';
-import type { IProvidedColumn } from '../interfaces/iProvidedColumn';
+import type { Column, ColumnGroupShowType, ColumnInstanceId, ProvidedColumnGroup } from '../interfaces/iColumn';
+import type { AgColumn } from './agColumn';
+import { getNextColInstanceId, isColumn } from './agColumn';
 import type { ColGroupDef } from './colDef';
-import type { ColumnInstanceId } from './column';
-import { Column, getNextColInstanceId } from './column';
-import type { ColumnGroupShowType } from './columnGroup';
 
-export class ProvidedColumnGroup extends BeanStub implements IProvidedColumn, IEventEmitter {
-    public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
-    public static EVENT_EXPANDABLE_CHANGED = 'expandableChanged';
+export function isProvidedColumnGroup(col: Column | ProvidedColumnGroup | string | null): col is AgProvidedColumnGroup {
+    return col instanceof AgProvidedColumnGroup;
+}
+
+export const EVENT_PROVIDED_COLUMN_GROUP_EXPANDED_CHANGED = 'expandedChanged' as const;
+
+export const EVENT_PROVIDED_COLUMN_GROUP_EXPANDABLE_CHANGED = 'expandableChanged' as const;
+
+export class AgProvidedColumnGroup extends BeanStub implements ProvidedColumnGroup {
+    public readonly isColumn = false as const;
 
     private colGroupDef: ColGroupDef | null;
-    private originalParent: ProvidedColumnGroup | null;
+    private originalParent: AgProvidedColumnGroup | null;
 
-    private children: IProvidedColumn[];
+    private children: (AgColumn | AgProvidedColumnGroup)[];
     private groupId: string;
     private expandable = false;
 
@@ -45,7 +50,7 @@ export class ProvidedColumnGroup extends BeanStub implements IProvidedColumn, IE
         super.destroy();
     }
 
-    public reset(colGroupDef: ColGroupDef | null, level: number | undefined): void {
+    private reset(colGroupDef: ColGroupDef | null, level: number | undefined): void {
         this.colGroupDef = colGroupDef;
         this.level = level!;
 
@@ -65,11 +70,11 @@ export class ProvidedColumnGroup extends BeanStub implements IProvidedColumn, IE
         return this.instanceId;
     }
 
-    public setOriginalParent(originalParent: ProvidedColumnGroup | null): void {
+    public setOriginalParent(originalParent: AgProvidedColumnGroup | null): void {
         this.originalParent = originalParent;
     }
 
-    public getOriginalParent(): ProvidedColumnGroup | null {
+    public getOriginalParent(): AgProvidedColumnGroup | null {
         return this.originalParent;
     }
 
@@ -93,7 +98,7 @@ export class ProvidedColumnGroup extends BeanStub implements IProvidedColumn, IE
     public setExpanded(expanded: boolean | undefined): void {
         this.expanded = expanded === undefined ? false : expanded;
         const event: AgEvent = {
-            type: ProvidedColumnGroup.EVENT_EXPANDED_CHANGED,
+            type: EVENT_PROVIDED_COLUMN_GROUP_EXPANDED_CHANGED,
         };
         this.dispatchEvent(event);
     }
@@ -114,11 +119,11 @@ export class ProvidedColumnGroup extends BeanStub implements IProvidedColumn, IE
         return this.getGroupId();
     }
 
-    public setChildren(children: IProvidedColumn[]): void {
+    public setChildren(children: (AgColumn | AgProvidedColumnGroup)[]): void {
         this.children = children;
     }
 
-    public getChildren(): IProvidedColumn[] {
+    public getChildren(): (AgColumn | AgProvidedColumnGroup)[] {
         return this.children;
     }
 
@@ -126,8 +131,8 @@ export class ProvidedColumnGroup extends BeanStub implements IProvidedColumn, IE
         return this.colGroupDef;
     }
 
-    public getLeafColumns(): Column[] {
-        const result: Column[] = [];
+    public getLeafColumns(): AgColumn[] {
+        const result: AgColumn[] = [];
         this.addLeafColumns(result);
         return result;
     }
@@ -137,10 +142,10 @@ export class ProvidedColumnGroup extends BeanStub implements IProvidedColumn, IE
             return;
         }
 
-        this.children.forEach((child: IProvidedColumn) => {
-            if (child instanceof Column) {
+        this.children.forEach((child) => {
+            if (isColumn(child)) {
                 leafColumns.push(child);
-            } else if (child instanceof ProvidedColumnGroup) {
+            } else if (isProvidedColumnGroup(child)) {
                 child.addLeafColumns(leafColumns);
             }
         });
@@ -213,21 +218,21 @@ export class ProvidedColumnGroup extends BeanStub implements IProvidedColumn, IE
         if (this.expandable !== expandable) {
             this.expandable = expandable;
             const event: AgEvent = {
-                type: ProvidedColumnGroup.EVENT_EXPANDABLE_CHANGED,
+                type: EVENT_PROVIDED_COLUMN_GROUP_EXPANDABLE_CHANGED,
             };
             this.dispatchEvent(event);
         }
     }
 
-    private findChildrenRemovingPadding(): IProvidedColumn[] {
-        const res: IProvidedColumn[] = [];
+    private findChildrenRemovingPadding(): (AgColumn | AgProvidedColumnGroup)[] {
+        const res: (AgColumn | AgProvidedColumnGroup)[] = [];
 
-        const process = (items: IProvidedColumn[]) => {
+        const process = (items: (AgColumn | AgProvidedColumnGroup)[]) => {
             items.forEach((item) => {
                 // if padding, we add this children instead of the padding
-                const skipBecausePadding = item instanceof ProvidedColumnGroup && item.isPadding();
+                const skipBecausePadding = isProvidedColumnGroup(item) && item.isPadding();
                 if (skipBecausePadding) {
-                    process((item as ProvidedColumnGroup).children);
+                    process((item as AgProvidedColumnGroup).children);
                 } else {
                     res.push(item);
                 }
