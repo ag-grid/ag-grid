@@ -1,11 +1,5 @@
 import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import type {
-    IDoesFilterPassParams,
-    IFilterOptionDef,
-    IFilterParams,
-    ProvidedFilterModel,
-} from '../../interfaces/iFilter';
-import type { LocaleService } from '../../localeService';
+import type { IDoesFilterPassParams, IFilterOptionDef } from '../../interfaces/iFilter';
 import { _areEqual } from '../../utils/array';
 import { _removeFromParent, _setDisabled, _setDisplayed } from '../../utils/dom';
 import { _isFunction, _warnOnce } from '../../utils/function';
@@ -17,156 +11,20 @@ import { AgRadioButton } from '../../widgets/agRadioButton';
 import { AgSelect } from '../../widgets/agSelect';
 import type { ComponentClass } from '../../widgets/component';
 import { Component } from '../../widgets/component';
-import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
-import type { IFloatingFilterParent } from '../floating/floatingFilter';
+import type { FILTER_LOCALE_TEXT } from '../filterLocaleText';
+import type {
+    FilterPlaceholderFunction,
+    ICombinedSimpleModel,
+    ISimpleFilter,
+    ISimpleFilterModel,
+    ISimpleFilterModelType,
+    JoinOperator,
+    SimpleFilterParams,
+    Tuple,
+} from './iSimpleFilter';
 import { OptionsFactory } from './optionsFactory';
-import type { IProvidedFilter, IProvidedFilterParams } from './providedFilter';
 import { ProvidedFilter } from './providedFilter';
-
-export type JoinOperator = 'AND' | 'OR';
-
-/** Interface contract for the public aspects of the SimpleFilter implementation(s). */
-export interface ISimpleFilter extends IProvidedFilter, IFloatingFilterParent {}
-
-export interface IFilterPlaceholderFunctionParams {
-    /**
-     * The filter option key
-     */
-    filterOptionKey: ISimpleFilterModelType;
-    /**
-     * The filter option name as localised text
-     */
-    filterOption: string;
-    /**
-     * The default placeholder text
-     */
-    placeholder: string;
-}
-export type FilterPlaceholderFunction = (params: IFilterPlaceholderFunctionParams) => string;
-
-/**
- * Parameters provided by the grid to the `init` method of a `SimpleFilter`.
- * Do not use in `colDef.filterParams` - see `ISimpleFilterParams` instead.
- */
-export type SimpleFilterParams<TData = any> = ISimpleFilterParams & IFilterParams<TData>;
-
-/**
- * Common parameters in `colDef.filterParams` used by all simple filters. Extended by the specific filter types.
- */
-export interface ISimpleFilterParams extends IProvidedFilterParams {
-    /**
-     * Array of filter options to present to the user.
-     */
-    filterOptions?: (IFilterOptionDef | ISimpleFilterModelType)[];
-    /** The default filter option to be selected. */
-    defaultOption?: string;
-    /**
-     * By default, the two conditions are combined using `AND`.
-     * You can change this default by setting this property.
-     * Options: `AND`, `OR`
-     */
-    defaultJoinOperator?: JoinOperator;
-    /**
-     * Maximum number of conditions allowed in the filter.
-     *
-     * @default 2
-     */
-    maxNumConditions?: number;
-    /**
-     * By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered
-     * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.
-     * Conditions will be disabled until the previous conditions have been entered.
-     * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored.
-     *
-     * @default 1
-     */
-    numAlwaysVisibleConditions?: number;
-
-    /**
-     * Placeholder text for the filter textbox
-     */
-    filterPlaceholder?: FilterPlaceholderFunction | string;
-}
-
-export type ISimpleFilterModelType =
-    | 'empty'
-    | 'equals'
-    | 'notEqual'
-    | 'lessThan'
-    | 'lessThanOrEqual'
-    | 'greaterThan'
-    | 'greaterThanOrEqual'
-    | 'inRange'
-    | 'contains'
-    | 'notContains'
-    | 'startsWith'
-    | 'endsWith'
-    | 'blank'
-    | 'notBlank';
-export interface ISimpleFilterModel extends ProvidedFilterModel {
-    /** One of the filter options, e.g. `'equals'` */
-    type?: ISimpleFilterModelType | null;
-}
-
-export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends ProvidedFilterModel {
-    operator: JoinOperator;
-    conditions: M[];
-}
-
-export type Tuple<T> = (T | null)[];
-
-export abstract class SimpleFilterModelFormatter<TValue = any> {
-    constructor(
-        private readonly localeService: LocaleService,
-        private optionsFactory: OptionsFactory,
-        protected readonly valueFormatter?: (value: TValue | null) => string | null
-    ) {}
-
-    // used by:
-    // 1) NumberFloatingFilter & TextFloatingFilter: Always, for both when editable and read only.
-    // 2) DateFloatingFilter: Only when read only (as we show text rather than a date picker when read only)
-    public getModelAsString(model: ISimpleFilterModel | null): string | null {
-        if (!model) {
-            return null;
-        }
-        const isCombined = (model as any).operator != null;
-        const translate = this.localeService.getLocaleTextFunc();
-        if (isCombined) {
-            const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
-            const { conditions } = combinedModel;
-            const customOptions = conditions.map((condition) => this.getModelAsString(condition));
-            const joinOperatorTranslateKey = combinedModel.operator === 'AND' ? 'andCondition' : 'orCondition';
-            return customOptions.join(
-                ` ${translate(joinOperatorTranslateKey, FILTER_LOCALE_TEXT[joinOperatorTranslateKey])} `
-            );
-        } else if (model.type === SimpleFilter.BLANK || model.type === SimpleFilter.NOT_BLANK) {
-            return translate(model.type, model.type);
-        } else {
-            const condition = model as ISimpleFilterModel;
-            const customOption = this.optionsFactory.getCustomOption(condition.type);
-
-            // For custom filter options we display the Name of the filter instead
-            // of displaying the `from` value, as it wouldn't be relevant
-            const { displayKey, displayName, numberOfInputs } = customOption || {};
-            if (displayKey && displayName && numberOfInputs === 0) {
-                translate(displayKey, displayName);
-                return displayName;
-            }
-            return this.conditionToString(condition, customOption);
-        }
-    }
-
-    // creates text equivalent of FilterModel. if it's a combined model, this takes just one condition.
-    protected abstract conditionToString(condition: ProvidedFilterModel, opts?: IFilterOptionDef): string;
-
-    public updateParams(params: { optionsFactory: OptionsFactory }) {
-        this.optionsFactory = params.optionsFactory;
-    }
-
-    protected formatValue(value?: TValue | null): string {
-        return this.valueFormatter ? this.valueFormatter(value ?? null) ?? '' : String(value);
-    }
-}
+import { SimpleFilterOptions } from './simpleFilterOptions';
 
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values.
@@ -179,21 +37,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     extends ProvidedFilter<M | ICombinedSimpleModel<M>, V>
     implements ISimpleFilter
 {
-    public static EMPTY: ISimpleFilterModelType = 'empty';
-    public static BLANK: ISimpleFilterModelType = 'blank';
-    public static NOT_BLANK: ISimpleFilterModelType = 'notBlank';
-    public static EQUALS: ISimpleFilterModelType = 'equals';
-    public static NOT_EQUAL: ISimpleFilterModelType = 'notEqual';
-    public static LESS_THAN: ISimpleFilterModelType = 'lessThan';
-    public static LESS_THAN_OR_EQUAL: ISimpleFilterModelType = 'lessThanOrEqual';
-    public static GREATER_THAN: ISimpleFilterModelType = 'greaterThan';
-    public static GREATER_THAN_OR_EQUAL: ISimpleFilterModelType = 'greaterThanOrEqual';
-    public static IN_RANGE: ISimpleFilterModelType = 'inRange';
-    public static CONTAINS: ISimpleFilterModelType = 'contains';
-    public static NOT_CONTAINS: ISimpleFilterModelType = 'notContains';
-    public static STARTS_WITH: ISimpleFilterModelType = 'startsWith';
-    public static ENDS_WITH: ISimpleFilterModelType = 'endsWith';
-
     protected readonly eTypes: AgSelect[] = [];
     protected readonly eJoinOperatorPanels: HTMLElement[] = [];
     protected readonly eJoinOperatorsAnd: AgRadioButton[] = [];
@@ -251,11 +94,11 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             return numberOfInputs != null ? numberOfInputs : 1;
         }
 
-        const zeroInputTypes = [SimpleFilter.EMPTY, SimpleFilter.NOT_BLANK, SimpleFilter.BLANK];
+        const zeroInputTypes = [SimpleFilterOptions.EMPTY, SimpleFilterOptions.NOT_BLANK, SimpleFilterOptions.BLANK];
 
         if (type && zeroInputTypes.indexOf(type) >= 0) {
             return 0;
-        } else if (type === SimpleFilter.IN_RANGE) {
+        } else if (type === SimpleFilterOptions.IN_RANGE) {
             return 2;
         }
 
@@ -675,10 +518,10 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         });
 
         const orChecked = (joinOperator ?? this.getJoinOperator()) === 'OR';
-        this.eJoinOperatorsAnd.forEach((eJoinOperatorAnd, index) => {
+        this.eJoinOperatorsAnd.forEach((eJoinOperatorAnd) => {
             eJoinOperatorAnd.setValue(!orChecked, true);
         });
-        this.eJoinOperatorsOr.forEach((eJoinOperatorOr, index) => {
+        this.eJoinOperatorsOr.forEach((eJoinOperatorOr) => {
             eJoinOperatorOr.setValue(orChecked, true);
         });
 
@@ -840,6 +683,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected setElementValue(element: E, value: V | null, fromFloatingFilter?: boolean): void {
         if (element instanceof AgAbstractInputField) {
             element.setValue(value != null ? String(value) : null, true);
@@ -921,7 +765,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
         const type = this.getConditionType(position);
 
-        if (type === SimpleFilter.EMPTY) {
+        if (type === SimpleFilterOptions.EMPTY) {
             return false;
         }
 
@@ -1046,7 +890,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     // puts model values into the UI
     private setConditionIntoUi(model: M | null, position: number): void {
         const values = this.mapValuesFromModel(model);
-        this.forEachInput((element, index, elPosition, _) => {
+        this.forEachInput((element, index, elPosition) => {
             if (elPosition !== position) {
                 return;
             }
@@ -1058,7 +902,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     // after floating filter changes, this sets the 'value' section. this is implemented by the base class
     // (as that's where value is controlled), the 'type' part from the floating filter is dealt with in this class.
     private setValueFromFloatingFilter(value: V | null): void {
-        this.forEachInput((element, index, position, _) => {
+        this.forEachInput((element, index, position) => {
             this.setElementValue(element, index === 0 && position === 0 ? value : null, true);
         });
     }

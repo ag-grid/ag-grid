@@ -1,13 +1,5 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import { ReadOnlyFloatingFilter } from '../../filter/floating/provided/readOnlyFloatingFilter';
-import { DateFilter } from '../../filter/provided/date/dateFilter';
-import { DateFloatingFilter } from '../../filter/provided/date/dateFloatingFilter';
-import { DefaultDateComponent } from '../../filter/provided/date/defaultDateComponent';
-import { NumberFilter } from '../../filter/provided/number/numberFilter';
-import { NumberFloatingFilter } from '../../filter/provided/number/numberFloatingFilter';
-import { TextFilter } from '../../filter/provided/text/textFilter';
-import { TextFloatingFilter } from '../../filter/provided/text/textFloatingFilter';
 import { HeaderComp } from '../../headerRendering/cells/column/headerComp';
 import { SortIndicatorComp } from '../../headerRendering/cells/column/sortIndicatorComp';
 import { HeaderGroupComp } from '../../headerRendering/cells/columnGroup/headerGroupComp';
@@ -38,19 +30,10 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
     beanName = 'userComponentRegistry' as const;
 
     private agGridDefaults: { [key: string]: any } = {
-        //date
-        agDateInput: DefaultDateComponent,
-
         //header
         agColumnHeader: HeaderComp,
         agColumnGroupHeader: HeaderGroupComp,
         agSortIndicator: SortIndicatorComp,
-
-        //floating filters
-        agTextColumnFloatingFilter: TextFloatingFilter,
-        agNumberColumnFloatingFilter: NumberFloatingFilter,
-        agDateColumnFloatingFilter: DateFloatingFilter,
-        agReadOnlyFloatingFilter: ReadOnlyFloatingFilter,
 
         // renderers
         agAnimateShowChangeCellRenderer: AnimateShowChangeCellRenderer,
@@ -70,11 +53,6 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
         agSelectCellEditor: SelectCellEditor,
         agLargeTextCellEditor: LargeTextCellEditor,
         agCheckboxCellEditor: CheckboxCellEditor,
-
-        //filter
-        agTextColumnFilter: TextFilter,
-        agNumberColumnFilter: NumberFilter,
-        agDateColumnFilter: DateFilter,
 
         //overlays
         agLoadingOverlay: LoadingOverlayComponent,

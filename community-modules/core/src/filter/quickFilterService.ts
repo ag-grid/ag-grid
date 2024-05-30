@@ -10,6 +10,7 @@ import { Events } from '../eventKeys';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _exists } from '../utils/generic';
 import type { ValueService } from '../valueService/valueService';
+import { EVENT_QUICK_FILTER_CHANGED } from './quickFilterConstants';
 
 export class QuickFilterService extends BeanStub implements NamedBean {
     beanName = 'quickFilterService' as const;
@@ -26,7 +27,6 @@ export class QuickFilterService extends BeanStub implements NamedBean {
         this.pivotResultColsService = beans.pivotResultColsService;
     }
 
-    public static readonly EVENT_QUICK_FILTER_CHANGED = 'quickFilterChanged';
     private static readonly QUICK_FILTER_SEPARATOR = '\n';
 
     // the columns the quick filter should use. this will be all primary columns plus the autoGroupColumns if any exist
@@ -145,7 +145,7 @@ export class QuickFilterService extends BeanStub implements NamedBean {
         if (this.quickFilter !== parsedFilter) {
             this.quickFilter = parsedFilter;
             this.setQuickFilterParts();
-            this.dispatchEvent({ type: QuickFilterService.EVENT_QUICK_FILTER_CHANGED });
+            this.dispatchEvent({ type: EVENT_QUICK_FILTER_CHANGED });
         }
     }
 
@@ -157,7 +157,7 @@ export class QuickFilterService extends BeanStub implements NamedBean {
         this.matcher = matcher;
         if (hasChanged) {
             this.setQuickFilterParts();
-            this.dispatchEvent({ type: QuickFilterService.EVENT_QUICK_FILTER_CHANGED });
+            this.dispatchEvent({ type: EVENT_QUICK_FILTER_CHANGED });
         }
     }
 
@@ -165,7 +165,7 @@ export class QuickFilterService extends BeanStub implements NamedBean {
         this.refreshQuickFilterCols();
         this.resetQuickFilterCache();
         if (this.isQuickFilterPresent()) {
-            this.dispatchEvent({ type: QuickFilterService.EVENT_QUICK_FILTER_CHANGED });
+            this.dispatchEvent({ type: EVENT_QUICK_FILTER_CHANGED });
         }
     }
 

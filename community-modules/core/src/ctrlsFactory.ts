@@ -5,19 +5,19 @@ import type { ControllerMeta } from './context/context';
 export class CtrlsFactory extends BeanStub implements NamedBean {
     beanName = 'ctrlsFactory' as const;
 
-    private registry: { [name: string]: new () => Object } = {};
+    private registry: { [name: string]: new (args?: any[]) => object } = {};
 
     public register(meta: ControllerMeta): void {
         this.registry[meta.controllerName] = meta.controllerClass;
     }
 
-    public getInstance(name: string): any {
+    public getInstance<T>(name: string, ...args: any[]): T | undefined {
         const ControllerClass = this.registry[name];
 
         if (ControllerClass == null) {
             return undefined;
         }
 
-        return new ControllerClass();
+        return new ControllerClass(...args) as any;
     }
 }

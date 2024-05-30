@@ -1,7 +1,8 @@
 import type { IFilterParams } from '../../interfaces/iFilter';
 import type { AgInputTextField } from '../../widgets/agInputTextField';
-import type { ISimpleFilterModel, ISimpleFilterModelType, ISimpleFilterParams, Tuple } from './simpleFilter';
+import type { ISimpleFilterModel, ISimpleFilterModelType, ISimpleFilterParams, Tuple } from './iSimpleFilter';
 import { SimpleFilter } from './simpleFilter';
+import { SimpleFilterOptions } from './simpleFilterOptions';
 
 /**
  * Parameters provided by the grid to the `init` method of a `ScalarFilter`.
@@ -45,34 +46,34 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     protected evaluateNullValue(filterType?: ISimpleFilterModelType | null) {
         switch (filterType) {
-            case ScalarFilter.EQUALS:
-            case ScalarFilter.NOT_EQUAL:
+            case SimpleFilterOptions.EQUALS:
+            case SimpleFilterOptions.NOT_EQUAL:
                 if (this.scalarFilterParams.includeBlanksInEquals) {
                     return true;
                 }
                 break;
 
-            case ScalarFilter.GREATER_THAN:
-            case ScalarFilter.GREATER_THAN_OR_EQUAL:
+            case SimpleFilterOptions.GREATER_THAN:
+            case SimpleFilterOptions.GREATER_THAN_OR_EQUAL:
                 if (this.scalarFilterParams.includeBlanksInGreaterThan) {
                     return true;
                 }
                 break;
 
-            case ScalarFilter.LESS_THAN:
-            case ScalarFilter.LESS_THAN_OR_EQUAL:
+            case SimpleFilterOptions.LESS_THAN:
+            case SimpleFilterOptions.LESS_THAN_OR_EQUAL:
                 if (this.scalarFilterParams.includeBlanksInLessThan) {
                     return true;
                 }
                 break;
-            case ScalarFilter.IN_RANGE:
+            case SimpleFilterOptions.IN_RANGE:
                 if (this.scalarFilterParams.includeBlanksInRange) {
                     return true;
                 }
                 break;
-            case ScalarFilter.BLANK:
+            case SimpleFilterOptions.BLANK:
                 return true;
-            case ScalarFilter.NOT_BLANK:
+            case SimpleFilterOptions.NOT_BLANK:
                 return false;
         }
 
@@ -84,25 +85,25 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputT
         const compareResult = values[0] != null ? comparator(values[0]!, cellValue) : 0;
 
         switch (filterModel.type) {
-            case ScalarFilter.EQUALS:
+            case SimpleFilterOptions.EQUALS:
                 return compareResult === 0;
 
-            case ScalarFilter.NOT_EQUAL:
+            case SimpleFilterOptions.NOT_EQUAL:
                 return compareResult !== 0;
 
-            case ScalarFilter.GREATER_THAN:
+            case SimpleFilterOptions.GREATER_THAN:
                 return compareResult > 0;
 
-            case ScalarFilter.GREATER_THAN_OR_EQUAL:
+            case SimpleFilterOptions.GREATER_THAN_OR_EQUAL:
                 return compareResult >= 0;
 
-            case ScalarFilter.LESS_THAN:
+            case SimpleFilterOptions.LESS_THAN:
                 return compareResult < 0;
 
-            case ScalarFilter.LESS_THAN_OR_EQUAL:
+            case SimpleFilterOptions.LESS_THAN_OR_EQUAL:
                 return compareResult <= 0;
 
-            case ScalarFilter.IN_RANGE: {
+            case SimpleFilterOptions.IN_RANGE: {
                 const compareToResult = comparator(values[1]!, cellValue);
 
                 return this.scalarFilterParams.inRangeInclusive
@@ -110,10 +111,10 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputT
                     : compareResult > 0 && compareToResult < 0;
             }
 
-            case ScalarFilter.BLANK:
+            case SimpleFilterOptions.BLANK:
                 return this.isBlank(cellValue);
 
-            case ScalarFilter.NOT_BLANK:
+            case SimpleFilterOptions.NOT_BLANK:
                 return !this.isBlank(cellValue);
 
             default:

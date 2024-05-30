@@ -24,7 +24,7 @@ import type { AutocompleteUpdate } from './filterExpressionUtils';
 export class AdvancedFilterComp extends Component {
     private advancedFilterService: AdvancedFilterService;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
 
     public wireBeans(beans: BeanCollection): void {
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
@@ -154,7 +154,7 @@ export class AdvancedFilterComp extends Component {
         }
         _setDisabled(this.eApplyFilterButton, true);
         this.advancedFilterService.applyExpression();
-        this.filterManager.onFilterChanged({ source: 'advancedFilter' });
+        this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
     }
 
     private onOptionSelected(position: number, updateEntry: AutocompleteEntry, type?: string): void {

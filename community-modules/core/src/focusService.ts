@@ -45,7 +45,7 @@ export class FocusService extends BeanStub implements NamedBean {
     private cellPositionUtils: CellPositionUtils;
     private navigationService: NavigationService;
     private ctrlsService: CtrlsService;
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
 
     private rangeService?: IRangeService;
     private advancedFilterService?: IAdvancedFilterService;
@@ -372,7 +372,7 @@ export class FocusService extends BeanStub implements NamedBean {
         const { direction, fromTab, allowUserOverride, event, fromCell, rowWithoutSpanValue } = params;
         let { headerPosition } = params;
 
-        if (fromCell && this.filterManager.isAdvancedFilterHeaderActive()) {
+        if (fromCell && this.filterManager?.isAdvancedFilterHeaderActive()) {
             return this.focusAdvancedFilter(headerPosition);
         }
 
@@ -486,7 +486,7 @@ export class FocusService extends BeanStub implements NamedBean {
     }): boolean {
         const { headerPosition, direction, fromCell, rowWithoutSpanValue, event } = params;
         if (headerPosition.headerRowIndex === -1) {
-            if (this.filterManager.isAdvancedFilterHeaderActive()) {
+            if (this.filterManager?.isAdvancedFilterHeaderActive()) {
                 return this.focusAdvancedFilter(headerPosition);
             }
             return this.focusGridView(headerPosition.column as AgColumn);
@@ -540,7 +540,7 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public focusPreviousFromFirstCell(event?: KeyboardEvent): boolean {
-        if (this.filterManager.isAdvancedFilterHeaderActive()) {
+        if (this.filterManager?.isAdvancedFilterHeaderActive()) {
             return this.focusAdvancedFilter(null);
         }
         return this.focusLastHeader(event);

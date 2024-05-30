@@ -4,16 +4,12 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { FilterChangedEvent } from '../../../events';
 import type { ProvidedFilterModel } from '../../../interfaces/iFilter';
 import { Component } from '../../../widgets/component';
+import type { ProvidedFilterParams } from '../../provided/iProvidedFilter';
+import type { ICombinedSimpleModel, ISimpleFilter, ISimpleFilterModel } from '../../provided/iSimpleFilter';
 import { OptionsFactory } from '../../provided/optionsFactory';
-import type { ProvidedFilterParams } from '../../provided/providedFilter';
 import type { ScalarFilterParams } from '../../provided/scalarFilter';
-import type {
-    ICombinedSimpleModel,
-    ISimpleFilter,
-    ISimpleFilterModel,
-    SimpleFilterModelFormatter,
-} from '../../provided/simpleFilter';
-import { SimpleFilter } from '../../provided/simpleFilter';
+import type { SimpleFilterModelFormatter } from '../../provided/simpleFilterModelFormatter';
+import { SimpleFilterOptions } from '../../provided/simpleFilterOptions';
 import type { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
 
 export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp<ISimpleFilter> {
@@ -145,10 +141,10 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
 
     private isTypeEditable(type?: string | null): boolean {
         const uneditableTypes: string[] = [
-            SimpleFilter.IN_RANGE,
-            SimpleFilter.EMPTY,
-            SimpleFilter.BLANK,
-            SimpleFilter.NOT_BLANK,
+            SimpleFilterOptions.IN_RANGE,
+            SimpleFilterOptions.EMPTY,
+            SimpleFilterOptions.BLANK,
+            SimpleFilterOptions.NOT_BLANK,
         ];
         return (
             !!type && !this.isReadOnly() && this.doesFilterHaveSingleInput(type) && uneditableTypes.indexOf(type) < 0

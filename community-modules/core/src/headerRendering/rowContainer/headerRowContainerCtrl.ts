@@ -34,7 +34,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     private pinnedWidthService: PinnedWidthService;
     private columnModel: ColumnModel;
     private focusService: FocusService;
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
@@ -134,7 +134,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
         };
 
         const refreshFilters = () => {
-            this.includeFloatingFilter = this.filterManager.hasFloatingFilters() && !this.hidden;
+            this.includeFloatingFilter = !!this.filterManager?.hasFloatingFilters() && !this.hidden;
 
             const destroyPreviousComp = () => {
                 this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
@@ -200,7 +200,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     }
 
     private onDisplayedColumnsChanged(): void {
-        const includeFloatingFilter = this.filterManager.hasFloatingFilters() && !this.hidden;
+        const includeFloatingFilter = this.filterManager?.hasFloatingFilters() && !this.hidden;
         if (this.includeFloatingFilter !== includeFloatingFilter) {
             this.refresh(true);
         }

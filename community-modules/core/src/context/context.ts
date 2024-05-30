@@ -16,7 +16,9 @@ import type { RowNodeEventThrottle } from '../entities/rowNodeEventThrottle';
 import type { RowPositionUtils } from '../entities/rowPositionUtils';
 import type { Environment } from '../environment';
 import type { EventService } from '../eventService';
+import type { ColumnFilterService } from '../filter/columnFilterService';
 import type { FilterManager } from '../filter/filterManager';
+import type { QuickFilterService } from '../filter/quickFilterService';
 import type { FocusService } from '../focusService';
 import type { NavigationService } from '../gridBodyComp/navigationService';
 import type { GridOptionsService } from '../gridOptionsService';
@@ -52,7 +54,7 @@ export interface ContextParams extends GenericContextParams<BeanName, BeanCollec
 export interface SingletonBean extends GenericSingletonBean<BeanName, BeanCollection> {}
 
 export interface ControllerMeta {
-    controllerClass: new () => object;
+    controllerClass: new (...args: []) => object;
     controllerName: string;
 }
 
@@ -84,7 +86,9 @@ export interface CoreBeanCollection {
     dragService: DragService;
     dragAndDropService: DragAndDropService;
     sortController: SortController;
-    filterManager: FilterManager;
+    columnFilterService?: ColumnFilterService;
+    quickFilterService?: QuickFilterService;
+    filterManager?: FilterManager;
     rowContainerHeightService: RowContainerHeightService;
     frameworkOverrides: IFrameworkOverrides;
     cellPositionUtils: CellPositionUtils;
@@ -167,6 +171,7 @@ export type BeanName =
     | 'columnDefFactory'
     | 'columnEditorFactory'
     | 'columnEventDispatcher'
+    | 'columnFilterService'
     | 'columnGetStateService'
     | 'columnSizeService'
     | 'columnFactory'
@@ -202,7 +207,6 @@ export type BeanName =
     | 'filterAggregatesStage'
     | 'filterManager'
     | 'filterMenuFactory'
-    | 'filterService'
     | 'filterStage'
     | 'flattenStage'
     | 'focusService'

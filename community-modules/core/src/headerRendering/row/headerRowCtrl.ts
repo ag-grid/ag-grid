@@ -10,7 +10,7 @@ import { _values } from '../../utils/generic';
 import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
 import { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
-import { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
+import type { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
 import { HeaderRowType } from './headerRowComp';
 
 export interface IHeaderRowComp {
@@ -193,7 +193,7 @@ export class HeaderRowCtrl extends BeanStub {
 
         let numberOfFloating = 0;
 
-        if (filterManager.hasFloatingFilters()) {
+        if (filterManager?.hasFloatingFilters()) {
             headerRowCount++;
             numberOfFloating = 1;
         }
@@ -310,9 +310,17 @@ export class HeaderRowCtrl extends BeanStub {
 
         if (headerCtrl == null) {
             switch (this.type) {
-                case HeaderRowType.FLOATING_FILTER:
-                    headerCtrl = this.createBean(new HeaderFilterCellCtrl(headerColumn as AgColumn, this.beans, this));
+                case HeaderRowType.FLOATING_FILTER: {
+                    headerCtrl = this.createBean(
+                        this.beans.ctrlsFactory.getInstance<HeaderFilterCellCtrl>(
+                            'headerFilterCell',
+                            headerColumn as AgColumn,
+                            this.beans,
+                            this
+                        )!
+                    );
                     break;
+                }
                 case HeaderRowType.COLUMN_GROUP:
                     headerCtrl = this.createBean(
                         new HeaderGroupCellCtrl(headerColumn as AgColumnGroup, this.beans, this)

@@ -13,7 +13,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
 
     private refreshCount = 0;
 
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
 
     public wireBeans(beans: BeanCollection): void {
         this.filterManager = beans.filterManager;
@@ -90,7 +90,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
 
         // we don't show the delta if we are in the middle of a filter. see comment on FilterManager
         // with regards processingFilterChange
-        if (this.filterManager.isSuppressFlashingCellsBecauseFiltering()) {
+        if (this.filterManager?.isSuppressFlashingCellsBecauseFiltering()) {
             return false;
         }
 

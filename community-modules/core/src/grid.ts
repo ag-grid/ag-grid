@@ -35,7 +35,6 @@ import { RowNodeEventThrottle } from './entities/rowNodeEventThrottle';
 import { RowPositionUtils } from './entities/rowPositionUtils';
 import { Environment } from './environment';
 import { EventService } from './eventService';
-import { FilterManager } from './filter/filterManager';
 import { QuickFilterService } from './filter/quickFilterService';
 import { FocusService } from './focusService';
 import type { GridApi } from './gridApi';
@@ -63,7 +62,7 @@ import { MenuService } from './misc/menuService';
 import { ResizeObserverService } from './misc/resizeObserverService';
 import { StateService } from './misc/stateService';
 import { ModuleNames } from './modules/moduleNames';
-import { ModuleRegistry } from './modules/moduleRegistry';
+import { INTERNAL_MODULES, ModuleRegistry } from './modules/moduleRegistry';
 import { PaginationAutoPageSizeService } from './pagination/paginationAutoPageSizeService';
 import { PaginationProxy } from './pagination/paginationProxy';
 import { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
@@ -324,6 +323,7 @@ export class GridCoreCreator {
 
         if (passedViaConstructor) {
             passedViaConstructor.forEach((m) => addModule(true, m, gridId));
+            INTERNAL_MODULES.forEach((m) => addModule(true, m, gridId));
         }
 
         if (registered) {
@@ -421,7 +421,6 @@ export class GridCoreCreator {
             GridOptionsService,
             PopupService,
             SelectionService,
-            FilterManager,
             ColumnModel,
             HeaderNavigationService,
             PaginationProxy,
