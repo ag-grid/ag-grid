@@ -13,6 +13,10 @@ export interface ComponentBean {
     preConstruct(): void;
 }
 
+/**
+ * The BaseBean can be used to avoid having to call super.wireBeans() in every subclass of a shared base bean, .i.e BeanStub, Component
+ * It is used to pre-wire beans before the wireBeans() method is called which is equivalent to calling super.wireBeans() in a sub class
+ */
 export interface BaseBean<TBeanCollection> {
     preWireBeans?(beans: TBeanCollection): void;
 }
