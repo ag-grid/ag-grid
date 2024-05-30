@@ -241,7 +241,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             });
             this.moveRows(rowNodes!, pixel, increment);
         } else {
-            const getRowIdFunc = this.gos.getCallback('getRowId');
+            const getRowIdFunc = this.gos.getRowIdCallback();
 
             let addIndex = this.clientSideRowModel.getRowIndexAtPixel(pixel) + 1;
 
@@ -253,10 +253,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 add: rowNodes!
                     .map((node) => node.data)
                     .filter(
-                        (data) =>
-                            !this.clientSideRowModel.getRowNode(
-                                getRowIdFunc ? getRowIdFunc({ data, level: 0 }) : data.id
-                            )
+                        (data) => !this.clientSideRowModel.getRowNode(getRowIdFunc?.({ data, level: 0 }) ?? data.id)
                     ),
                 addIndex,
             });

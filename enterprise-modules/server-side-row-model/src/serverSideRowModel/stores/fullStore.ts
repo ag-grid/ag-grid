@@ -294,7 +294,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
                 return undefined;
             }
 
-            const getRowIdFunc = this.gos.getCallback('getRowId');
+            const getRowIdFunc = this.gos.getRowIdCallback();
             if (!getRowIdFunc) {
                 return undefined;
             }
@@ -742,7 +742,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private lookupRowNode(data: any): RowNode | null {
-        const getRowIdFunc = this.gos.getCallback('getRowId');
+        const getRowIdFunc = this.gos.getRowIdCallback();
 
         let rowNode: RowNode;
         if (getRowIdFunc != null) {
