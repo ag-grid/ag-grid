@@ -77,7 +77,6 @@ export class GridBodyCtrl extends BeanStub {
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.animationFrameService = beans.animationFrameService;
         this.rowContainerHeightService = beans.rowContainerHeightService;
         this.ctrlsService = beans.ctrlsService;

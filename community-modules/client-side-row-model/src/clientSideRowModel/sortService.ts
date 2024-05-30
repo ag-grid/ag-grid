@@ -1,10 +1,10 @@
 import type {
     BeanCollection,
-    BeanName,
     ChangedPath,
     ColumnModel,
     FuncColsService,
     IRowNode,
+    NamedBean,
     PostSortRowsParams,
     RowNode,
     RowNodeSorter,
@@ -16,8 +16,8 @@ import type {
 } from '@ag-grid-community/core';
 import { BeanStub, _missing, _warnOnce } from '@ag-grid-community/core';
 
-export class SortService extends BeanStub {
-    beanName: BeanName = 'sortService';
+export class SortService extends BeanStub implements NamedBean {
+    beanName = 'sortService' as const;
 
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
@@ -25,7 +25,6 @@ export class SortService extends BeanStub {
     private showRowGroupColsService: ShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;
         this.rowNodeSorter = beans.rowNodeSorter;

@@ -20,7 +20,6 @@ export class InputPillComp extends Component {
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
     }
 
@@ -76,7 +75,7 @@ export class InputPillComp extends Component {
         this.addDestroyFunc(() => this.destroyBean(this.eEditor));
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.ePill;
     }
 

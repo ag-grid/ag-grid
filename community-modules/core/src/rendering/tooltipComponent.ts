@@ -1,6 +1,5 @@
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
+import type { Column, ColumnGroup } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IComponent } from '../interfaces/iComponent';
 import type { IRowNode } from '../interfaces/iRowNode';

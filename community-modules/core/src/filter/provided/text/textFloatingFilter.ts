@@ -15,16 +15,16 @@ export interface ITextFloatingFilterParams extends ITextInputFloatingFilterParam
 export class TextFloatingFilter extends TextInputFloatingFilter<TextFilterModel> {
     private filterModelFormatter: SimpleFilterModelFormatter;
 
-    public init(params: ITextFloatingFilterParams): void {
+    public override init(params: ITextFloatingFilterParams): void {
         super.init(params);
         this.filterModelFormatter = new TextFilterModelFormatter(this.localeService, this.optionsFactory);
     }
 
-    public onParamsUpdated(params: ITextFloatingFilterParams): void {
+    public override onParamsUpdated(params: ITextFloatingFilterParams): void {
         this.refresh(params);
     }
 
-    public refresh(params: ITextFloatingFilterParams): void {
+    public override refresh(params: ITextFloatingFilterParams): void {
         super.refresh(params);
         this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
     }

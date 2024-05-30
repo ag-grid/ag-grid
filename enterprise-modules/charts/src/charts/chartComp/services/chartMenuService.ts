@@ -1,10 +1,10 @@
 import type {
     BeanCollection,
-    BeanName,
     ChartToolPanelMenuOptions,
     ChartToolPanelName,
     ChartToolbarMenuItemOptions,
     GetChartToolbarItemsParams,
+    NamedBean,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import { BeanStub, _warnOnce } from '@ag-grid-community/core';
@@ -26,13 +26,12 @@ export const CHART_TOOL_PANEL_MENU_OPTIONS: { [key in ChartToolPanelName]: Chart
     format: 'chartFormat',
 };
 
-export class ChartMenuService extends BeanStub {
-    beanName: BeanName = 'chartMenuService';
+export class ChartMenuService extends BeanStub implements NamedBean {
+    beanName = 'chartMenuService' as const;
 
     private advancedSettingsMenuFactory: AdvancedSettingsMenuFactory;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.advancedSettingsMenuFactory = beans.advancedSettingsMenuFactory;
     }
 

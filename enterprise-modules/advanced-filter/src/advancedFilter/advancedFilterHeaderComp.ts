@@ -19,7 +19,6 @@ export class AdvancedFilterHeaderComp extends Component {
     private headerNavigationService: HeaderNavigationService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.focusService = beans.focusService;
         this.headerNavigationService = beans.headerNavigationService;
@@ -52,7 +51,7 @@ export class AdvancedFilterHeaderComp extends Component {
         });
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.eAdvancedFilter?.getGui() ?? this.getGui();
     }
 

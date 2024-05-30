@@ -22,7 +22,6 @@ export class SeriesItemsPanel extends Component {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.chartTranslationService = beans.chartTranslationService;
     }
     private activePanels: Component[] = [];

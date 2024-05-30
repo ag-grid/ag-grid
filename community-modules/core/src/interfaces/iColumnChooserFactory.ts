@@ -1,8 +1,8 @@
+import type { AgColumn } from '../entities/agColumn';
 import type { ColumnChooserParams } from '../entities/colDef';
-import type { Column } from '../entities/column';
 
 export interface ShowColumnChooserParams {
-    column?: Column | null;
+    column?: AgColumn | null;
     chooserParams?: ColumnChooserParams;
     eventSource?: HTMLElement;
 }

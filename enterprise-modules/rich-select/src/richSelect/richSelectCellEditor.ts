@@ -53,7 +53,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         this.focusAfterAttached = cellStartedEdit;
     }
 
-    private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent<TData>): void {
+    private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent): void {
         this.params.stopEditing(!e.fromEnterKey);
     }
 
@@ -176,7 +176,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         return this.richSelect.getValue();
     }
 
-    public isPopup(): boolean {
+    public override isPopup(): boolean {
         return false;
     }
 }

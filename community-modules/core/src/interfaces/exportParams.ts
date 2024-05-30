@@ -1,6 +1,5 @@
-import type { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
 import type { RowPosition } from '../entities/rowPositionUtils';
+import type { Column, ColumnGroup } from './iColumn';
 import type { AgGridCommon } from './iCommon';
 import type { IRowNode } from './iRowNode';
 

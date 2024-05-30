@@ -1,5 +1,6 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import { Events } from '../eventKeys';
 import type { Logger } from '../logger';
@@ -10,15 +11,14 @@ import { _getMaxDivHeight } from '../utils/browser';
  * the max div height actually allows.
  */
 
-export class RowContainerHeightService extends BeanStub {
-    beanName: BeanName = 'rowContainerHeightService';
+export class RowContainerHeightService extends BeanStub implements NamedBean {
+    beanName = 'rowContainerHeightService' as const;
 
     private ctrlsService: CtrlsService;
 
     private logger: Logger;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.ctrlsService = beans.ctrlsService;
         this.logger = beans.loggerFactory.create('RowContainerHeightService');
     }

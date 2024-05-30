@@ -25,7 +25,7 @@ export class AgRichSelectList<TValue> extends VirtualList {
         this.setComponentUpdater(() => {});
     }
 
-    public postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.createLoadingElement();
 
@@ -70,7 +70,7 @@ export class AgRichSelectList<TValue> extends VirtualList {
         });
     }
 
-    public navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): number | null {
+    public override navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): number | null {
         const newIndex = super.navigateToPage(key, this.lastRowHovered);
 
         if (newIndex != null) {
@@ -219,7 +219,7 @@ export class AgRichSelectList<TValue> extends VirtualList {
         return -1;
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
         this.eLoading = undefined;
     }

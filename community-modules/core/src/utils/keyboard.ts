@@ -1,7 +1,7 @@
 import { KeyCode } from '../constants/keyCode';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams } from '../entities/colDef';
-import type { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _isMacOsUserAgent } from './browser';
@@ -40,7 +40,7 @@ export function _isUserSuppressingKeyboardEvent(
     gos: GridOptionsService,
     keyboardEvent: KeyboardEvent,
     rowNode: IRowNode,
-    column: Column,
+    column: AgColumn,
     editing: boolean
 ): boolean {
     const colDefFunc = column ? column.getColDef().suppressKeyboardEvent : undefined;
@@ -76,7 +76,7 @@ export function _isUserSuppressingHeaderKeyboardEvent(
     gos: GridOptionsService,
     keyboardEvent: KeyboardEvent,
     headerRowIndex: number,
-    column: Column | ColumnGroup
+    column: AgColumn | AgColumnGroup
 ): boolean {
     const colDef = column.getDefinition();
     const colDefFunc = colDef && colDef.suppressHeaderKeyboardEvent;

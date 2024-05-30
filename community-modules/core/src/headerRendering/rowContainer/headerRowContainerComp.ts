@@ -1,4 +1,4 @@
-import type { ColumnPinnedType } from '../../entities/column';
+import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { _ensureDomOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
 import { Component, RefPlaceholder } from '../../widgets/component';

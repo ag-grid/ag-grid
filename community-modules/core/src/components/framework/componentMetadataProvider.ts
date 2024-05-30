@@ -1,5 +1,6 @@
+import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection, BeanName } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { IComponent } from '../../interfaces/iComponent';
 import type { AgComponentUtils } from './agComponentUtils';
 
@@ -9,15 +10,14 @@ export interface ComponentMetadata {
     functionAdapter?: (callback: any) => { new (): IComponent<any> };
 }
 
-export class ComponentMetadataProvider extends BeanStub {
-    beanName: BeanName = 'componentMetadataProvider';
+export class ComponentMetadataProvider extends BeanStub implements NamedBean {
+    beanName = 'componentMetadataProvider' as const;
 
     private componentMetaData: { [key: string]: ComponentMetadata };
 
     private agComponentUtils: AgComponentUtils;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.agComponentUtils = beans.agComponentUtils;
     }
 

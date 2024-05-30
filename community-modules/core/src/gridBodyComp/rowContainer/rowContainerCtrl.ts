@@ -3,9 +3,9 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { DragService } from '../../dragAndDrop/dragService';
-import type { ColumnPinnedType } from '../../entities/column';
 import { Events } from '../../eventKeys';
 import type { DisplayedRowsChangedEvent } from '../../events';
+import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { ResizeObserverService } from '../../misc/resizeObserverService';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { RowRenderer } from '../../rendering/rowRenderer';
@@ -132,8 +132,7 @@ export class RowContainerCtrl extends BeanStub {
     private resizeObserverService: ResizeObserverService;
     private rowRenderer: RowRenderer;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.dragService = beans.dragService;
         this.ctrlsService = beans.ctrlsService;
         this.columnViewportService = beans.columnViewportService;

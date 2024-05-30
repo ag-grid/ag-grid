@@ -1,25 +1,25 @@
 import type {
     AbstractColDef,
+    AgColumn,
     AgComponentSelector,
+    AgProvidedColumnGroup,
     BeanCollection,
     ColGroupDef,
-    Column,
     ColumnEventType,
     ColumnModel,
     ColumnNameService,
     ColumnToolPanelState,
-    IProvidedColumn,
     VirtualListModel,
 } from '@ag-grid-community/core';
 import {
     Component,
     Events,
-    ProvidedColumnGroup,
     VirtualList,
     _exists,
     _includes,
     _setAriaLabel,
     _setAriaLevel,
+    isProvidedColumnGroup,
 } from '@ag-grid-community/core';
 import type { ToolPanelColDefService } from '@ag-grid-enterprise/side-bar';
 
@@ -59,8 +59,7 @@ export class AgPrimaryColsList extends Component {
     private colDefService: ToolPanelColDefService;
     private modelItemUtils: ModelItemUtils;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
         this.colDefService = beans.toolPanelColDefService;
@@ -272,7 +271,7 @@ export class AgPrimaryColsList extends Component {
         this.groupsExist = this.columnModel.isProvidedColGroupsPresent();
     }
 
-    private buildListModel(columnTree: IProvidedColumn[]): void {
+    private buildListModel(columnTree: (AgColumn | AgProvidedColumnGroup)[]): void {
         const columnExpandedListener = this.onColumnExpanded.bind(this);
         const addListeners = (item: ColumnModelItem) => {
             item.addEventListener(ColumnModelItem.EVENT_EXPANDED_CHANGED, columnExpandedListener);
@@ -284,18 +283,22 @@ export class AgPrimaryColsList extends Component {
             this.destroyColumnItemFuncs.push(removeFunc);
         };
 
-        const recursivelyBuild = (tree: IProvidedColumn[], dept: number, parentList: ColumnModelItem[]): void => {
+        const recursivelyBuild = (
+            tree: (AgColumn | AgProvidedColumnGroup)[],
+            dept: number,
+            parentList: ColumnModelItem[]
+        ): void => {
             tree.forEach((child) => {
-                if (child instanceof ProvidedColumnGroup) {
+                if (isProvidedColumnGroup(child)) {
                     createGroupItem(child, dept, parentList);
                 } else {
-                    createColumnItem(child as Column, dept, parentList);
+                    createColumnItem(child, dept, parentList);
                 }
             });
         };
 
         const createGroupItem = (
-            columnGroup: ProvidedColumnGroup,
+            columnGroup: AgProvidedColumnGroup,
             dept: number,
             parentList: ColumnModelItem[]
         ): void => {
@@ -329,7 +332,7 @@ export class AgPrimaryColsList extends Component {
             recursivelyBuild(columnGroup.getChildren(), dept + 1, item.getChildren());
         };
 
-        const createColumnItem = (column: Column, dept: number, parentList: ColumnModelItem[]): void => {
+        const createColumnItem = (column: AgColumn, dept: number, parentList: ColumnModelItem[]): void => {
             const skipThisColumn = column.getColDef() && column.getColDef().suppressColumnsToolPanel;
 
             if (skipThisColumn) {

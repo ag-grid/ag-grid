@@ -36,8 +36,7 @@ export class AgSideBar extends Component implements ISideBar {
     private filterManager: FilterManager;
     private sideBarService: SideBarService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
         this.filterManager = beans.filterManager;
         this.sideBarService = beans.sideBarService;
@@ -244,7 +243,10 @@ export class AgSideBar extends Component implements ISideBar {
         return this;
     }
 
-    public setDisplayed(displayed: boolean, options?: { skipAriaHidden?: boolean | undefined } | undefined): void {
+    public override setDisplayed(
+        displayed: boolean,
+        options?: { skipAriaHidden?: boolean | undefined } | undefined
+    ): void {
         super.setDisplayed(displayed, options);
         this.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED });
     }

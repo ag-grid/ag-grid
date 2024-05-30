@@ -6,7 +6,7 @@ import type {
     IFilterComp,
 } from '@ag-grid-community/core';
 import {
-    Column,
+    AgColumn,
     Component,
     Events,
     FilterWrapperComp,
@@ -23,8 +23,7 @@ export class ToolPanelFilterComp extends Component {
     private filterManager: FilterManager;
     private columnNameService: ColumnNameService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.filterManager = beans.filterManager;
         this.columnNameService = beans.columnNameService;
     }
@@ -48,7 +47,7 @@ export class ToolPanelFilterComp extends Component {
     private eExpandChecked: Element;
     private eExpandUnchecked: Element;
     private hideHeader: boolean;
-    private column: Column;
+    private column: AgColumn;
     private expanded: boolean = false;
     private underlyingFilter: IFilterComp | null;
     private filterWrapperComp?: FilterWrapperComp;
@@ -68,7 +67,7 @@ export class ToolPanelFilterComp extends Component {
         this.eExpand.appendChild(this.eExpandUnchecked);
     }
 
-    public setColumn(column: Column): void {
+    public setColumn(column: AgColumn): void {
         this.column = column;
         this.eFilterName.innerText =
             this.columnNameService.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
@@ -87,7 +86,7 @@ export class ToolPanelFilterComp extends Component {
             this.eFilterToolPanelHeader.setAttribute('tabindex', '0');
         }
 
-        this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedListener(this.column, AgColumn.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
     }
 
     private onKeyDown(e: KeyboardEvent): void {
@@ -109,7 +108,7 @@ export class ToolPanelFilterComp extends Component {
         }
     }
 
-    public getColumn(): Column {
+    public getColumn(): AgColumn {
         return this.column;
     }
 
@@ -121,7 +120,7 @@ export class ToolPanelFilterComp extends Component {
         this.eFilterToolPanelHeader.classList.add(cssClass);
     }
 
-    private addInIcon(iconName: string, eParent: Element, column: Column): void {
+    private addInIcon(iconName: string, eParent: Element, column: AgColumn): void {
         if (eParent == null) {
             return;
         }
@@ -136,7 +135,7 @@ export class ToolPanelFilterComp extends Component {
 
     private onFilterChanged(): void {
         _setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
-        this.dispatchEvent({ type: Column.EVENT_FILTER_CHANGED });
+        this.dispatchEvent({ type: AgColumn.EVENT_FILTER_CHANGED });
     }
 
     public toggleExpanded(): void {

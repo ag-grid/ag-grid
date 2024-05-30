@@ -1,25 +1,24 @@
 import type {
+    AgColumn,
     BeanCollection,
-    BeanName,
-    Column,
     ColumnModel,
     FilterManager,
     IClientSideRowModel,
+    NamedBean,
     RowNode,
     ValueService,
 } from '@ag-grid-community/core';
 import { BeanStub, _includes } from '@ag-grid-community/core';
 
-export class ChartCrossFilterService extends BeanStub {
-    beanName: BeanName = 'chartCrossFilterService';
+export class ChartCrossFilterService extends BeanStub implements NamedBean {
+    beanName = 'chartCrossFilterService' as const;
 
     private columnModel: ColumnModel;
     private valueService: ValueService;
     private filterManager: FilterManager;
     private clientSideRowModel?: IClientSideRowModel;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.valueService = beans.valueService;
         this.filterManager = beans.filterManager;
@@ -138,6 +137,6 @@ export class ChartCrossFilterService extends BeanStub {
     }
 
     private getColumnById(colId: string) {
-        return this.columnModel.getCol(colId) as Column;
+        return this.columnModel.getCol(colId) as AgColumn;
     }
 }

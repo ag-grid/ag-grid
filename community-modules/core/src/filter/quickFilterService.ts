@@ -1,17 +1,18 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { PivotResultColsService } from '../columns/pivotResultColsService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
-import type { Column } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
 import { Events } from '../eventKeys';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _exists } from '../utils/generic';
 import type { ValueService } from '../valueService/valueService';
 
-export class QuickFilterService extends BeanStub {
-    beanName: BeanName = 'quickFilterService';
+export class QuickFilterService extends BeanStub implements NamedBean {
+    beanName = 'quickFilterService' as const;
 
     private valueService: ValueService;
     private columnModel: ColumnModel;
@@ -19,7 +20,6 @@ export class QuickFilterService extends BeanStub {
     private pivotResultColsService: PivotResultColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.valueService = beans.valueService;
         this.columnModel = beans.columnModel;
         this.rowModel = beans.rowModel;
@@ -30,7 +30,7 @@ export class QuickFilterService extends BeanStub {
     private static readonly QUICK_FILTER_SEPARATOR = '\n';
 
     // the columns the quick filter should use. this will be all primary columns plus the autoGroupColumns if any exist
-    private colsForQuickFilter: Column[];
+    private colsForQuickFilter: AgColumn[];
 
     private quickFilter: string | null = null;
     private quickFilterParts: string[] | null = null;
@@ -201,7 +201,7 @@ export class QuickFilterService extends BeanStub {
         }
     }
 
-    private getQuickFilterTextForColumn(column: Column, node: RowNode): string {
+    private getQuickFilterTextForColumn(column: AgColumn, node: RowNode): string {
         let value = this.valueService.getValue(column, node, true);
         const colDef = column.getColDef();
 

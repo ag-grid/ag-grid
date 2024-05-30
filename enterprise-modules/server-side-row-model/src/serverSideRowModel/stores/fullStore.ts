@@ -1,6 +1,6 @@
 import type {
+    AgColumn,
     BeanCollection,
-    Column,
     FilterManager,
     FuncColsService,
     IRowNode,
@@ -54,8 +54,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private transactionManager: TransactionManager;
     private serverSideRowModel: ServerSideRowModel;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.storeUtils = beans.ssrmStoreUtils;
         this.blockUtils = beans.ssrmBlockUtils;
         this.funcColsService = beans.funcColsService;
@@ -87,7 +86,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private allNodesMap: { [id: string]: RowNode };
 
     private groupField: string;
-    private rowGroupColumn: Column;
+    private rowGroupColumn: AgColumn;
     private nodeIdPrefix: string | undefined;
 
     private displayIndexStart: number | undefined;

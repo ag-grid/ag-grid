@@ -7,17 +7,17 @@ import type { AgComponentSelector } from './component';
 export interface AgRadioButtonParams extends AgCheckboxParams {}
 
 export class AgRadioButton extends AgCheckbox<AgRadioButtonParams> {
-    static selector: AgComponentSelector = 'AG-RADIO-BUTTON';
+    static override selector: AgComponentSelector = 'AG-RADIO-BUTTON';
 
     constructor(config?: AgRadioButtonParams) {
         super(config, 'ag-radio-button', 'radio');
     }
 
-    protected isSelected(): boolean {
+    protected override isSelected(): boolean {
         return this.eInput.checked;
     }
 
-    public toggle(): void {
+    public override toggle(): void {
         if (this.eInput.disabled) {
             return;
         }
@@ -28,7 +28,7 @@ export class AgRadioButton extends AgCheckbox<AgRadioButtonParams> {
         }
     }
 
-    protected addInputListeners() {
+    protected override addInputListeners() {
         super.addInputListeners();
 
         this.addManagedListener(this.eventService, Events.EVENT_CHECKBOX_CHANGED, this.onChange.bind(this));

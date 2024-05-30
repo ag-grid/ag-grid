@@ -1,10 +1,10 @@
 import type { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, Context } from '../context/context';
-import type { ComponentBean } from '../context/genericContext';
+import type { BeanCollection } from '../context/context';
+import type { BaseBean, ComponentBean } from '../context/genericContext';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
 import type { AgEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { CssClassManager } from '../rendering/cssClassManager';
@@ -37,11 +37,11 @@ export interface VisibleChangedEvent extends AgEvent {
 
 export type ComponentClass = { new (params?: any): Component; selector: AgComponentSelector };
 
-export class Component extends BeanStub implements ComponentBean {
+export class Component extends BeanStub implements ComponentBean, BaseBean<BeanCollection> {
     protected agStackComponentsRegistry: AgStackComponentsRegistry;
 
-    public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
+    public override preWireBeans(beans: BeanCollection): void {
+        super.preWireBeans(beans);
         this.agStackComponentsRegistry = beans.agStackComponentsRegistry;
     }
 
@@ -113,7 +113,7 @@ export class Component extends BeanStub implements ComponentBean {
         showDelayOverride?: number;
         hideDelayOverride?: number;
         location?: TooltipLocation;
-        getColumn?(): Column | ColumnGroup;
+        getColumn?(): AgColumn | AgColumnGroup;
         getColDef?(): ColDef | ColGroupDef;
         shouldDisplayTooltip?: () => boolean;
     }): void {

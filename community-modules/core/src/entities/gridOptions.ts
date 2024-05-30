@@ -141,6 +141,7 @@ import type {
     TabToNextHeaderParams,
 } from '../interfaces/iCallbackParams';
 import type { ChartToolPanelsDef, ChartToolbarMenuItemOptions } from '../interfaces/iChartOptions';
+import type { Column } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
@@ -155,7 +156,6 @@ import type { ILoadingCellRendererParams } from '../rendering/cellRenderers/load
 import type { IRowDragItem } from '../rendering/row/rowDragComp';
 import type { CellPosition } from './cellPositionUtils';
 import type { ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
-import type { Column } from './column';
 import type { DataTypeDefinition } from './dataType';
 
 export interface GridOptions<TData = any> {

@@ -2,16 +2,16 @@ import type { ColumnModel } from '../../columns/columnModel';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
-import type { ColumnPinnedType } from '../../entities/column';
-import { Column } from '../../entities/column';
-import type { ColumnGroup } from '../../entities/columnGroup';
+import type { AgColumn } from '../../entities/agColumn';
+import { isColumn } from '../../entities/agColumn';
+import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import { Events } from '../../eventKeys';
 import type { FilterManager } from '../../filter/filterManager';
 import type { FocusService } from '../../focusService';
 import { CenterWidthFeature } from '../../gridBodyComp/centerWidthFeature';
 import type { PinnedWidthService } from '../../gridBodyComp/pinnedWidthService';
 import type { ScrollVisibleService } from '../../gridBodyComp/scrollVisibleService';
-import type { IHeaderColumn } from '../../interfaces/iHeaderColumn';
+import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { NumberSequence } from '../../utils/numberSequence';
 import type { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
@@ -37,7 +37,6 @@ export class HeaderRowContainerCtrl extends BeanStub {
     private filterManager: FilterManager;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.ctrlsService = beans.ctrlsService;
         this.scrollVisibleService = beans.scrollVisibleService;
         this.pinnedWidthService = beans.pinnedWidthService;
@@ -265,10 +264,10 @@ export class HeaderRowContainerCtrl extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, listener);
     }
 
-    public getHeaderCtrlForColumn(column: Column): HeaderCellCtrl | undefined;
-    public getHeaderCtrlForColumn(column: ColumnGroup): HeaderGroupCellCtrl | undefined;
+    public getHeaderCtrlForColumn(column: AgColumn): HeaderCellCtrl | undefined;
+    public getHeaderCtrlForColumn(column: AgColumnGroup): HeaderGroupCellCtrl | undefined;
     public getHeaderCtrlForColumn(column: any): any {
-        if (column instanceof Column) {
+        if (isColumn(column)) {
             if (!this.columnsRowCtrl) {
                 return;
             }
@@ -289,8 +288,8 @@ export class HeaderRowContainerCtrl extends BeanStub {
     }
 
     /* tslint:disable */
-    public getHtmlElementForColumnHeader(column: ColumnGroup): HTMLElement | null;
-    public getHtmlElementForColumnHeader(column: Column): HTMLElement | null;
+    public getHtmlElementForColumnHeader(column: AgColumnGroup): HTMLElement | null;
+    public getHtmlElementForColumnHeader(column: AgColumn): HTMLElement | null;
     public getHtmlElementForColumnHeader(column: any): any {
         /* tslint:enable */
         const cellCtrl = this.getHeaderCtrlForColumn(column);
@@ -308,7 +307,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
         return ctrl ? ctrl.getType() : undefined;
     }
 
-    public focusHeader(rowIndex: number, column: IHeaderColumn, event?: KeyboardEvent): boolean {
+    public focusHeader(rowIndex: number, column: AgColumn | AgColumnGroup, event?: KeyboardEvent): boolean {
         const allCtrls = this.getAllCtrls();
         const ctrl = allCtrls[rowIndex];
         if (!ctrl) {

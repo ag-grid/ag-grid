@@ -111,14 +111,14 @@ export type BeanCollection = CoreBeanCollection & {
 export class Context extends GenericContext<BeanName, BeanCollection> {
     private gridId: string;
 
-    protected init(params: ContextParams): void {
+    protected override init(params: ContextParams): void {
         this.gridId = params.gridId;
 
         this.beans.context = this;
         super.init(params);
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
 
         ModuleRegistry.__unRegisterGridModules(this.gridId);

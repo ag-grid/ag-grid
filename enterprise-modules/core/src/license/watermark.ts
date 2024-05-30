@@ -9,7 +9,6 @@ export class AgWatermark extends Component {
     licenseManager: LicenseManager;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.licenseManager = beans.licenseManager;
     }
 

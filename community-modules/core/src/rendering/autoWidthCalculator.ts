@@ -1,19 +1,19 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { RowRenderer } from './rowRenderer';
 
-export class AutoWidthCalculator extends BeanStub {
-    beanName: BeanName = 'autoWidthCalculator';
+export class AutoWidthCalculator extends BeanStub implements NamedBean {
+    beanName = 'autoWidthCalculator' as const;
 
     private rowRenderer: RowRenderer;
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.rowRenderer = beans.rowRenderer;
         this.ctrlsService = beans.ctrlsService;
     }
@@ -30,7 +30,7 @@ export class AutoWidthCalculator extends BeanStub {
     // into the dummy, then check the dummy's width. then destroy the dummy
     // as we don't need it any more.
     // drawback: only the cells visible on the screen are considered
-    public getPreferredWidthForColumn(column: Column, skipHeader?: boolean): number {
+    public getPreferredWidthForColumn(column: AgColumn, skipHeader?: boolean): number {
         const eHeaderCell = this.getHeaderCellForColumn(column);
         // cell isn't visible
         if (!eHeaderCell) {
@@ -49,7 +49,7 @@ export class AutoWidthCalculator extends BeanStub {
         return this.addElementsToContainerAndGetWidth(elements);
     }
 
-    public getPreferredWidthForColumnGroup(columnGroup: ColumnGroup): number {
+    public getPreferredWidthForColumnGroup(columnGroup: AgColumnGroup): number {
         const eHeaderCell = this.getHeaderCellForColumn(columnGroup);
 
         if (!eHeaderCell) {
@@ -95,8 +95,8 @@ export class AutoWidthCalculator extends BeanStub {
     }
 
     /* tslint:disable */
-    private getHeaderCellForColumn(column: ColumnGroup): HTMLElement | null;
-    private getHeaderCellForColumn(column: Column): HTMLElement | null;
+    private getHeaderCellForColumn(column: AgColumnGroup): HTMLElement | null;
+    private getHeaderCellForColumn(column: AgColumn): HTMLElement | null;
     private getHeaderCellForColumn(column: any): any {
         /* tslint:enable */
         let element: HTMLElement | null = null;

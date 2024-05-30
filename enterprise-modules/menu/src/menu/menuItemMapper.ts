@@ -1,7 +1,6 @@
 import type {
+    AgColumn,
     BeanCollection,
-    BeanName,
-    Column,
     ColumnApplyStateService,
     ColumnAutosizeService,
     ColumnModel,
@@ -15,6 +14,7 @@ import type {
     IExpansionService,
     MenuItemDef,
     MenuService,
+    NamedBean,
     RowPositionUtils,
     SortController,
 } from '@ag-grid-community/core';
@@ -29,8 +29,8 @@ import {
 
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 
-export class MenuItemMapper extends BeanStub {
-    beanName: BeanName = 'menuItemMapper';
+export class MenuItemMapper extends BeanStub implements NamedBean {
+    beanName = 'menuItemMapper' as const;
 
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
@@ -48,8 +48,7 @@ export class MenuItemMapper extends BeanStub {
     private csvCreator?: ICsvCreator;
     private excelCreator?: IExcelCreator;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
         this.columnApplyStateService = beans.columnApplyStateService;
@@ -69,7 +68,7 @@ export class MenuItemMapper extends BeanStub {
 
     public mapWithStockItems(
         originalList: (MenuItemDef | string)[],
-        column: Column | null,
+        column: AgColumn | null,
         sourceElement: () => HTMLElement
     ): (MenuItemDef | string)[] {
         if (!originalList) {
@@ -109,7 +108,7 @@ export class MenuItemMapper extends BeanStub {
 
     private getStockMenuItem(
         key: string,
-        column: Column | null,
+        column: AgColumn | null,
         sourceElement: () => HTMLElement
     ): MenuItemDef | string | null {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
@@ -403,14 +402,14 @@ export class MenuItemMapper extends BeanStub {
         }
     }
 
-    private createAggregationSubMenu(column: Column, aggFuncService: IAggFuncService): MenuItemDef[] {
+    private createAggregationSubMenu(column: AgColumn, aggFuncService: IAggFuncService): MenuItemDef[] {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
 
-        let columnToUse: Column | undefined;
+        let columnToUse: AgColumn | undefined;
         if (column.isPrimary()) {
             columnToUse = column;
         } else {
-            const pivotValueColumn = column.getColDef().pivotValueColumn;
+            const pivotValueColumn = column.getColDef().pivotValueColumn as AgColumn;
             columnToUse = _exists(pivotValueColumn) ? pivotValueColumn : undefined;
         }
 

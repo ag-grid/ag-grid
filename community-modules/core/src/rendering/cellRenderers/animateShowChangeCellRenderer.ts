@@ -12,7 +12,6 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
     private filterManager: FilterManager;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.filterManager = beans.filterManager;
     }
 

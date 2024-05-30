@@ -4,8 +4,8 @@ import type { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniStackedBar } from './miniStackedBar';
 
 export class MiniNormalizedBar extends MiniStackedBar {
-    static chartType: ChartType = 'normalizedBar';
-    static data = [
+    static override chartType: ChartType = 'normalizedBar';
+    static override data = [
         [10, 10, 10],
         [6, 7, 8],
         [2, 4, 6],

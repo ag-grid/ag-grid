@@ -7,7 +7,7 @@ import { TitlePanel } from './titlePanel';
 export class ChartTitlePanel extends TitlePanel {
     private chartMenuService: ChartMenuService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public override wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
         this.chartMenuService = beans.chartMenuService;
     }
@@ -23,7 +23,7 @@ export class ChartTitlePanel extends TitlePanel {
         });
     }
 
-    protected getTextInputParams(): AgInputTextFieldParams {
+    protected override getTextInputParams(): AgInputTextFieldParams {
         const params = super.getTextInputParams();
         if (this.shouldOverrideTextWithPlaceholder(params.value)) {
             params.value = this.titlePlaceholder;
@@ -31,14 +31,14 @@ export class ChartTitlePanel extends TitlePanel {
         return params;
     }
 
-    protected getSpacingSliderParams(): AgSliderParams {
+    protected override getSpacingSliderParams(): AgSliderParams {
         const params = super.getSpacingSliderParams();
         // Default title spacing is 10, but this isn't reflected in the options - this should really be fixed there.
         params.value = '10';
         return params;
     }
 
-    protected onEnableChange(enabled: boolean): void {
+    protected override onEnableChange(enabled: boolean): void {
         if (this.chartMenuService.doesChartToolbarExist()) {
             // extra padding is only included when the toolbar is present
             const topPadding: number = this.chartOptions.getValue('padding.top');

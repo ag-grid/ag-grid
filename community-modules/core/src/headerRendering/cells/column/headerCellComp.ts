@@ -1,5 +1,6 @@
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
-import type { Column, ColumnPinnedType } from '../../../entities/column';
+import type { AgColumn } from '../../../entities/agColumn';
+import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import { _removeAriaSort, _setAriaSort } from '../../../utils/aria';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
@@ -15,7 +16,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
     private readonly eResize: HTMLElement = RefPlaceholder;
     private readonly eHeaderCompWrapper: HTMLElement = RefPlaceholder;
 
-    protected readonly column: Column;
+    protected readonly column: AgColumn;
     protected readonly pinned: ColumnPinnedType;
 
     private headerComp: IHeaderComp | undefined;
@@ -24,7 +25,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
 
     constructor(ctrl: HeaderCellCtrl) {
         super(HeaderCellComp.TEMPLATE, ctrl);
-        this.column = ctrl.getColumnGroupChild() as Column;
+        this.column = ctrl.getColumnGroupChild() as AgColumn;
         this.pinned = ctrl.getPinned();
     }
 

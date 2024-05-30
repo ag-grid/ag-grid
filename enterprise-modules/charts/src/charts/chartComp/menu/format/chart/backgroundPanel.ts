@@ -17,7 +17,6 @@ export class BackgroundPanel extends Component {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.chartTranslationService = beans.chartTranslationService;
     }
     constructor(private readonly chartMenuUtils: ChartMenuParamsFactory) {

@@ -1,8 +1,8 @@
 import type {
     AsyncTransactionsFlushed,
     BeanCollection,
-    BeanName,
     IServerSideTransactionManager,
+    NamedBean,
     ServerSideTransaction,
     ServerSideTransactionResult,
     ValueCache,
@@ -18,15 +18,14 @@ interface AsyncTransactionWrapper {
     callback?: (result: ServerSideTransactionResult) => void;
 }
 
-export class TransactionManager extends BeanStub implements IServerSideTransactionManager {
-    beanName: BeanName = 'ssrmTransactionManager';
+export class TransactionManager extends BeanStub implements NamedBean, IServerSideTransactionManager {
+    beanName = 'ssrmTransactionManager' as const;
 
     private valueCache: ValueCache;
     private serverSideRowModel: ServerSideRowModel;
     private selectionService: ServerSideSelectionService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.valueCache = beans.valueCache;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.selectionService = beans.selectionService as ServerSideSelectionService;

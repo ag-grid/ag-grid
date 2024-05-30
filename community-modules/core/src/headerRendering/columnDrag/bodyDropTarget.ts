@@ -4,7 +4,7 @@ import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { DragAndDropService, DraggingEvent, DropTarget } from '../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
-import type { ColumnPinnedType } from '../../entities/column';
+import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { BodyDropPivotTarget } from './bodyDropPivotTarget';
 import { MoveColumnFeature } from './moveColumnFeature';
 
@@ -21,8 +21,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     private columnModel: ColumnModel;
     private ctrlsService: CtrlsService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.dragAndDropService = beans.dragAndDropService;
         this.columnModel = beans.columnModel;
         this.ctrlsService = beans.ctrlsService;

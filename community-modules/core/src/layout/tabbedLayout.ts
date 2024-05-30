@@ -13,7 +13,6 @@ export class TabbedLayout extends TabGuardComp {
     private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.focusService = beans.focusService;
     }
 

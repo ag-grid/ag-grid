@@ -38,7 +38,7 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     protected abstract comparator(): Comparator<V>;
 
-    protected setParams(params: ScalarFilterParams): void {
+    protected override setParams(params: ScalarFilterParams): void {
         super.setParams(params);
         this.scalarFilterParams = params;
     }

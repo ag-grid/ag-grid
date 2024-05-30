@@ -1,23 +1,23 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
-import type { Column } from '../entities/column';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
 import type { ColumnModel } from './columnModel';
 import type { FuncColsService } from './funcColsService';
 
-export class ShowRowGroupColsService extends BeanStub {
-    beanName: BeanName = 'showRowGroupColsService';
+export class ShowRowGroupColsService extends BeanStub implements NamedBean {
+    beanName = 'showRowGroupColsService' as const;
 
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;
     }
 
-    private showRowGroupCols: Column[];
-    private showRowGroupColsMap: { [originalColumnId: string]: Column };
+    private showRowGroupCols: AgColumn[];
+    private showRowGroupColsMap: { [originalColumnId: string]: AgColumn };
 
     public refresh(): void {
         this.showRowGroupCols = [];
@@ -47,11 +47,11 @@ export class ShowRowGroupColsService extends BeanStub {
         });
     }
 
-    public getShowRowGroupCols(): Column[] {
+    public getShowRowGroupCols(): AgColumn[] {
         return this.showRowGroupCols;
     }
 
-    public getShowRowGroupCol(id: string): Column | undefined {
+    public getShowRowGroupCol(id: string): AgColumn | undefined {
         return this.showRowGroupColsMap[id];
     }
 }

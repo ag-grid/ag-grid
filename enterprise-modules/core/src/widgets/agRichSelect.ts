@@ -224,13 +224,13 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
     }
 
-    public showPicker() {
+    public override showPicker() {
         super.showPicker();
         this.listComponent?.highlightValue();
         this.displayOrHidePicker();
     }
 
-    protected beforeHidePicker(): void {
+    protected override beforeHidePicker(): void {
         this.highlightedItem = -1;
         super.beforeHidePicker();
     }
@@ -403,7 +403,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.searchString = '';
     }
 
-    public setValue(value: TValue, silent?: boolean, fromPicker?: boolean): this {
+    public override setValue(value: TValue, silent?: boolean, fromPicker?: boolean): this {
         const list = this.listComponent?.getCurrentList();
         const index = list ? list.indexOf(value) : -1;
 
@@ -468,7 +468,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.dispatchEvent(event);
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         const { allowTyping } = this.config;
 
         if (allowTyping) {
@@ -478,7 +478,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         return super.getFocusableElement();
     }
 
-    protected onKeyDown(event: KeyboardEvent): void {
+    protected override onKeyDown(event: KeyboardEvent): void {
         const key = event.key;
 
         const { allowTyping } = this.config;
@@ -531,7 +531,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         if (this.listComponent) {
             this.listComponent = this.destroyBean(this.listComponent);
         }

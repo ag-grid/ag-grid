@@ -1,7 +1,7 @@
 import type { CellPosition } from '../entities/cellPositionUtils';
-import type { Column } from '../entities/column';
 import type { HeaderPosition } from '../headerRendering/common/headerPosition';
 import type { ChartToolbarMenuItemOptions } from './iChartOptions';
+import type { Column } from './iColumn';
 import type { AgGridCommon } from './iCommon';
 import type { IRowNode } from './iRowNode';
 import type { ServerSideTransaction } from './serverSideTransaction';

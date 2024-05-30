@@ -1,8 +1,7 @@
 import type {
     AdvancedFilterModel,
+    AgColumn,
     BeanCollection,
-    BeanName,
-    Column,
     ColumnModel,
     ColumnNameService,
     ColumnVO,
@@ -15,6 +14,7 @@ import type {
     IServerSideStore,
     LoadSuccessParams,
     ModelUpdatedEvent,
+    NamedBean,
     PivotResultColsService,
     RefreshServerSideParams,
     RowBounds,
@@ -56,8 +56,8 @@ export interface SSRMParams {
     datasource?: IServerSideDatasource;
 }
 
-export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
-    beanName: BeanName = 'rowModel';
+export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSideRowModel {
+    beanName = 'rowModel' as const;
 
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
@@ -71,8 +71,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     private beans: BeanCollection;
     private pivotColDefService?: IPivotColDefService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
         this.pivotResultColsService = beans.pivotResultColsService;
@@ -372,7 +371,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.dispatchModelUpdated(true);
     }
 
-    public columnsToValueObjects(columns: Column[]): ColumnVO[] {
+    public columnsToValueObjects(columns: AgColumn[]): ColumnVO[] {
         return columns.map(
             (col) =>
                 ({

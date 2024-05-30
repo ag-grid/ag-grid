@@ -1,8 +1,9 @@
 import { KeyCode } from '../constants/keyCode';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { Column } from '../entities/column';
+import type { AgColumn } from '../entities/agColumn';
 import type { Environment } from '../environment';
 import type { CssVariablesChanged } from '../events';
 import { Events } from '../events';
@@ -21,7 +22,7 @@ import { AgPromise } from '../utils/promise';
 
 export interface PopupPositionParams {
     ePopup: HTMLElement;
-    column?: Column | null;
+    column?: AgColumn | null;
     rowNode?: IRowNode | null;
     nudgeX?: number;
     nudgeY?: number;
@@ -91,15 +92,14 @@ export interface AddPopupResult {
     hideFunc: (params?: PopupEventParams) => void;
 }
 
-export class PopupService extends BeanStub {
-    beanName: BeanName = 'popupService';
+export class PopupService extends BeanStub implements NamedBean {
+    beanName = 'popupService' as const;
 
     private ctrlsService: CtrlsService;
     private resizeObserverService: ResizeObserverService;
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.ctrlsService = beans.ctrlsService;
         this.resizeObserverService = beans.resizeObserverService;
         this.environment = beans.environment;
@@ -334,7 +334,7 @@ export class PopupService extends BeanStub {
         ePopup: HTMLElement,
         eventSource?: HTMLElement | null,
         mouseEvent?: MouseEvent | Touch | null,
-        column?: Column | null,
+        column?: AgColumn | null,
         rowNode?: IRowNode | null
     ): void {
         const callback = this.gos.getCallback('postProcessPopup');

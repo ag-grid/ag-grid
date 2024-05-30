@@ -93,15 +93,15 @@ export abstract class BarColumnSparkline extends Sparkline {
         this.label.enabled = false;
     }
 
-    protected abstract generateNodeData(): RectNodeDatum[] | undefined;
-    protected abstract updateYScaleRange(): void;
-    protected abstract updateXScaleRange(): void;
+    protected abstract override generateNodeData(): RectNodeDatum[] | undefined;
+    protected abstract override updateYScaleRange(): void;
+    protected abstract override updateXScaleRange(): void;
 
-    protected getNodeData(): RectNodeDatum[] {
+    protected override getNodeData(): RectNodeDatum[] {
         return this.nodeSelectionData;
     }
 
-    protected update(): void {
+    protected override update(): void {
         this.updateSelections();
         this.updateNodes();
     }
@@ -118,7 +118,7 @@ export abstract class BarColumnSparkline extends Sparkline {
         this.updateLabelSelection(nodeData);
     }
 
-    protected updateNodes(): void {
+    protected override updateNodes(): void {
         this.updateRectNodes();
         this.updateLabelNodes();
     }
@@ -143,7 +143,7 @@ export abstract class BarColumnSparkline extends Sparkline {
         return step;
     }
 
-    protected updateYScaleDomain(): void {
+    protected override updateYScaleDomain(): void {
         const { yScale, yData, valueAxisDomain } = this;
 
         const yMinMax = extent(yData as number[]);

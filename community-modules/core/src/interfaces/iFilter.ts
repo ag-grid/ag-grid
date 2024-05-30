@@ -1,6 +1,6 @@
 import type { ColDef, ValueGetterFunc } from '../entities/colDef';
-import type { Column } from '../entities/column';
 import type { IFloatingFilterComp } from '../filter/floating/floatingFilter';
+import type { Column } from '../interfaces/iColumn';
 import type { AgPromise } from '../utils/promise';
 import type { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 import type { AgGridCommon } from './iCommon';

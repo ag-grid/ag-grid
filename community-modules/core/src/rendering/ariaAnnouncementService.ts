@@ -1,16 +1,16 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { _setAriaAtomic, _setAriaLive, _setAriaRelevant } from '../utils/aria';
 import { _clearElement } from '../utils/dom';
 import { _debounce } from '../utils/function';
 
-export class AriaAnnouncementService extends BeanStub {
-    beanName: BeanName = 'ariaAnnouncementService';
+export class AriaAnnouncementService extends BeanStub implements NamedBean {
+    beanName = 'ariaAnnouncementService' as const;
 
     private eGridDiv: HTMLElement;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.eGridDiv = beans.eGridDiv;
     }
 
@@ -48,7 +48,7 @@ export class AriaAnnouncementService extends BeanStub {
         }, 50);
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
 
         const { descriptionContainer } = this;

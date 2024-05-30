@@ -1,6 +1,6 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { BeanCollection } from '../context/context';
-import type { Column } from '../entities/column';
+import type { AgColumn } from '../entities/agColumn';
 import { Events } from '../eventKeys';
 import type { FilterDestroyedEvent, FilterOpenedEvent } from '../events';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
@@ -17,7 +17,6 @@ export class FilterWrapperComp extends Component {
     private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.filterManager = beans.filterManager;
         this.columnModel = beans.columnModel;
     }
@@ -25,7 +24,7 @@ export class FilterWrapperComp extends Component {
     private filterWrapper: FilterWrapper | null = null;
 
     constructor(
-        private readonly column: Column,
+        private readonly column: AgColumn,
         private readonly source: FilterRequestSource
     ) {
         super(/* html */ `<div class="ag-filter"></div>`);

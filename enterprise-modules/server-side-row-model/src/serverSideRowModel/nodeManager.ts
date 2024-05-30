@@ -1,8 +1,8 @@
-import type { BeanName, RowNode } from '@ag-grid-community/core';
+import type { NamedBean, RowNode } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
-export class NodeManager extends BeanStub {
-    beanName: BeanName = 'ssrmNodeManager';
+export class NodeManager extends BeanStub implements NamedBean {
+    beanName = 'ssrmNodeManager' as const;
 
     private rowNodes: { [id: string]: RowNode | undefined } = {};
 

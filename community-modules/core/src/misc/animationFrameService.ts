@@ -1,5 +1,6 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { PaginationProxy } from '../pagination/paginationProxy';
 
@@ -14,14 +15,13 @@ interface TaskList {
     sorted: boolean;
 }
 
-export class AnimationFrameService extends BeanStub {
-    beanName: BeanName = 'animationFrameService';
+export class AnimationFrameService extends BeanStub implements NamedBean {
+    beanName = 'animationFrameService' as const;
 
     private ctrlsService: CtrlsService;
     private paginationProxy: PaginationProxy;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.ctrlsService = beans.ctrlsService;
         this.paginationProxy = beans.paginationProxy;
     }

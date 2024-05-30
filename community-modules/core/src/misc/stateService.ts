@@ -4,10 +4,11 @@ import type { ColumnGroupStateService } from '../columns/columnGroupStateService
 import type { ColumnModel } from '../columns/columnModel';
 import type { PivotResultColsService } from '../columns/pivotResultColsService';
 import type { VisibleColsService } from '../columns/visibleColsService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { Column } from '../entities/column';
+import type { AgColumn } from '../entities/agColumn';
 import { Events } from '../eventKeys';
 import type {
     NewColumnsLoadedEvent,
@@ -53,8 +54,8 @@ import type { SortModelItem } from '../sortController';
 import { _debounce } from '../utils/function';
 import { _jsonEquals } from '../utils/generic';
 
-export class StateService extends BeanStub {
-    beanName: BeanName = 'stateService';
+export class StateService extends BeanStub implements NamedBean {
+    beanName = 'stateService' as const;
 
     private filterManager: FilterManager;
     private ctrlsService: CtrlsService;
@@ -74,7 +75,6 @@ export class StateService extends BeanStub {
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.filterManager = beans.filterManager;
         this.ctrlsService = beans.ctrlsService;
         this.pivotResultColsService = beans.pivotResultColsService;
@@ -544,7 +544,7 @@ export class StateService extends BeanStub {
     }
 
     private setColumnGroupState(initialState: GridState): void {
-        if (!initialState.hasOwnProperty('columnGroup')) {
+        if (!Object.prototype.hasOwnProperty.call(initialState, 'columnGroup')) {
             return;
         }
 
@@ -618,7 +618,7 @@ export class StateService extends BeanStub {
         }
         const cellRanges: CellRange[] = [];
         rangeSelectionState.cellRanges.forEach((cellRange) => {
-            const columns: Column[] = [];
+            const columns: AgColumn[] = [];
             cellRange.colIds.forEach((colId) => {
                 const column = this.columnModel.getCol(colId);
                 if (column) {

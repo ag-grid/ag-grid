@@ -6,8 +6,7 @@ import type { RowContainerHeightService } from '../../rendering/rowContainerHeig
 export class SetHeightFeature extends BeanStub {
     private maxDivHeightScaler: RowContainerHeightService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.maxDivHeightScaler = beans.rowContainerHeightService;
     }
 

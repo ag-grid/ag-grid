@@ -1,20 +1,20 @@
 import type {
+    AgColumn,
     BeanCollection,
-    BeanName,
-    Column,
     ColumnModel,
     FuncColsService,
     IRowModel,
     MenuItemDef,
     MenuService,
+    NamedBean,
 } from '@ag-grid-community/core';
 import { BeanStub, _removeRepeatsFromArray } from '@ag-grid-community/core';
 import { AgMenuList } from '@ag-grid-enterprise/core';
 
 import type { MenuItemMapper } from './menuItemMapper';
 
-export class ColumnMenuFactory extends BeanStub {
-    beanName: BeanName = 'columnMenuFactory';
+export class ColumnMenuFactory extends BeanStub implements NamedBean {
+    beanName = 'columnMenuFactory' as const;
 
     private menuItemMapper: MenuItemMapper;
     private columnModel: ColumnModel;
@@ -22,8 +22,7 @@ export class ColumnMenuFactory extends BeanStub {
     private rowModel: IRowModel;
     private menuService: MenuService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.menuItemMapper = beans.menuItemMapper;
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;
@@ -33,7 +32,7 @@ export class ColumnMenuFactory extends BeanStub {
 
     private static MENU_ITEM_SEPARATOR = 'separator';
 
-    public createMenu(parent: BeanStub, column: Column | undefined, sourceElement: () => HTMLElement): AgMenuList {
+    public createMenu(parent: BeanStub, column: AgColumn | undefined, sourceElement: () => HTMLElement): AgMenuList {
         const menuList = parent.createManagedBean(
             new AgMenuList(0, {
                 column: column ?? null,
@@ -50,7 +49,7 @@ export class ColumnMenuFactory extends BeanStub {
         return menuList;
     }
 
-    private getMenuItems(column?: Column): (string | MenuItemDef)[] {
+    private getMenuItems(column?: AgColumn): (string | MenuItemDef)[] {
         const defaultItems = this.getDefaultMenuOptions(column);
         let result: (string | MenuItemDef)[];
 
@@ -83,7 +82,7 @@ export class ColumnMenuFactory extends BeanStub {
         return result;
     }
 
-    private getDefaultMenuOptions(column?: Column): string[] {
+    private getDefaultMenuOptions(column?: AgColumn): string[] {
         const result: string[] = [];
 
         const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();

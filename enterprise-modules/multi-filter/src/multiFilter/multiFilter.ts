@@ -1,6 +1,6 @@
 import type {
+    AgColumn,
     BeanCollection,
-    Column,
     ContainerType,
     FilterManager,
     IAfterGuiAttachedParams,
@@ -33,8 +33,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     private filterManager: FilterManager;
     private userComponentFactory: UserComponentFactory;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.filterManager = beans.filterManager;
         this.userComponentFactory = beans.userComponentFactory;
     }
@@ -45,7 +44,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     private guiDestroyFuncs: (() => void)[] = [];
     // this could be the accordion/sub menu element depending on the display type
     private filterGuis: HTMLElement[] = [];
-    private column: Column;
+    private column: AgColumn;
     private filterChangedCallback: ((additionalEventAttributes?: any) => void) | null;
     private lastOpenedInContainer?: ContainerType;
     private activeFilterIndices: number[] = [];
@@ -78,7 +77,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
 
         const { column, filterChangedCallback } = params;
 
-        this.column = column;
+        this.column = column as AgColumn;
         this.filterChangedCallback = filterChangedCallback;
 
         const filterPromises: AgPromise<IFilterComp>[] = [];
@@ -428,7 +427,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         this.executeFunctionIfExists('onNewRowsLoaded');
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         this.filters!.forEach((filter) => this.destroyBean(filter));
 
         this.filters!.length = 0;

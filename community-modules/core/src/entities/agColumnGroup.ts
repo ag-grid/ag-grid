@@ -1,41 +1,44 @@
 import { BeanStub } from '../context/beanStub';
 import type { AgEvent } from '../events';
-import type { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';
+import type { Column, ColumnGroup, ColumnGroupShowType, ColumnPinnedType, HeaderColumnId } from '../interfaces/iColumn';
 import { _last } from '../utils/array';
-import type { ColGroupDef } from './colDef';
-import type { AbstractColDef } from './colDef';
-import type { ColumnPinnedType } from './column';
-import { Column } from './column';
-import type { ProvidedColumnGroup } from './providedColumnGroup';
+import type { AgColumn } from './agColumn';
+import { isColumn } from './agColumn';
+import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
+import type { AbstractColDef, ColGroupDef } from './colDef';
 
-export type ColumnGroupShowType = 'open' | 'closed';
+export function createUniqueColumnGroupId(groupId: string, instanceId: number): HeaderColumnId {
+    return (groupId + '_' + instanceId) as HeaderColumnId;
+}
 
-export class ColumnGroup extends BeanStub implements IHeaderColumn {
+export function isColumnGroup(col: Column | ColumnGroup | string): col is AgColumnGroup {
+    return col instanceof AgColumnGroup;
+}
+
+export const EVENT_COLUMN_GROUP_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged' as const;
+
+export class AgColumnGroup<TValue = any> extends BeanStub implements ColumnGroup<TValue> {
+    public readonly isColumn = false as const;
+
     public static EVENT_LEFT_CHANGED = 'leftChanged';
-    public static EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
-
-    // this is static, a it is used outside of this class
-    public static createUniqueId(groupId: string, instanceId: number): HeaderColumnId {
-        return (groupId + '_' + instanceId) as HeaderColumnId;
-    }
 
     // all the children of this group, regardless of whether they are opened or closed
-    private children: IHeaderColumn[] | null;
+    private children: (AgColumn | AgColumnGroup)[] | null;
     // depends on the open/closed state of the group, only displaying columns are stored here
-    private displayedChildren: IHeaderColumn[] | null = [];
+    private displayedChildren: (AgColumn | AgColumnGroup)[] | null = [];
 
     private readonly groupId: string;
     private readonly partId: number;
-    private readonly providedColumnGroup: ProvidedColumnGroup;
+    private readonly providedColumnGroup: AgProvidedColumnGroup;
     private readonly pinned: ColumnPinnedType;
 
     // private moving = false
     private left: number | null;
     private oldLeft: number | null;
 
-    private parent: ColumnGroup | null;
+    private parent: AgColumnGroup | null = null;
 
-    constructor(providedColumnGroup: ProvidedColumnGroup, groupId: string, partId: number, pinned: ColumnPinnedType) {
+    constructor(providedColumnGroup: AgProvidedColumnGroup, groupId: string, partId: number, pinned: ColumnPinnedType) {
         super();
         this.groupId = groupId;
         this.partId = partId;
@@ -51,16 +54,16 @@ export class ColumnGroup extends BeanStub implements IHeaderColumn {
         this.displayedChildren = null;
     }
 
-    public getParent(): ColumnGroup {
-        return this.parent!;
+    public getParent(): AgColumnGroup | null {
+        return this.parent;
     }
 
-    public setParent(parent: ColumnGroup): void {
+    public setParent(parent: AgColumnGroup | null): void {
         this.parent = parent;
     }
 
     public getUniqueId(): HeaderColumnId {
-        return ColumnGroup.createUniqueId(this.groupId, this.partId);
+        return createUniqueColumnGroupId(this.groupId, this.partId);
     }
 
     public isEmptyGroup(): boolean {
@@ -78,8 +81,8 @@ export class ColumnGroup extends BeanStub implements IHeaderColumn {
 
     public checkLeft(): void {
         // first get all children to setLeft, as it impacts our decision below
-        this.displayedChildren!.forEach((child: IHeaderColumn) => {
-            if (child instanceof ColumnGroup) {
+        this.displayedChildren!.forEach((child) => {
+            if (isColumnGroup(child)) {
                 child.checkLeft();
             }
         });
@@ -113,7 +116,7 @@ export class ColumnGroup extends BeanStub implements IHeaderColumn {
         this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
-            this.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_LEFT_CHANGED));
+            this.dispatchEvent(this.createAgEvent(AgColumnGroup.EVENT_LEFT_CHANGED));
         }
     }
 
@@ -133,27 +136,10 @@ export class ColumnGroup extends BeanStub implements IHeaderColumn {
         return this.partId;
     }
 
-    public isChildInThisGroupDeepSearch(wantedChild: IHeaderColumn): boolean {
-        let result = false;
-
-        this.children!.forEach((foundChild: IHeaderColumn) => {
-            if (wantedChild === foundChild) {
-                result = true;
-            }
-            if (foundChild instanceof ColumnGroup) {
-                if (foundChild.isChildInThisGroupDeepSearch(wantedChild)) {
-                    result = true;
-                }
-            }
-        });
-
-        return result;
-    }
-
     public getActualWidth(): number {
         let groupActualWidth = 0;
         if (this.displayedChildren) {
-            this.displayedChildren.forEach((child: IHeaderColumn) => {
+            this.displayedChildren.forEach((child) => {
                 groupActualWidth += child.getActualWidth();
             });
         }
@@ -167,7 +153,7 @@ export class ColumnGroup extends BeanStub implements IHeaderColumn {
 
         // if at least one child is resizable, then the group is resizable
         let result = false;
-        this.displayedChildren.forEach((child: IHeaderColumn) => {
+        this.displayedChildren.forEach((child) => {
             if (child.isResizable()) {
                 result = true;
             }
@@ -178,31 +164,31 @@ export class ColumnGroup extends BeanStub implements IHeaderColumn {
 
     public getMinWidth(): number {
         let result = 0;
-        this.displayedChildren!.forEach((groupChild: IHeaderColumn) => {
+        this.displayedChildren!.forEach((groupChild) => {
             result += groupChild.getMinWidth() || 0;
         });
         return result;
     }
 
-    public addChild(child: IHeaderColumn): void {
+    public addChild(child: AgColumn | AgColumnGroup): void {
         if (!this.children) {
             this.children = [];
         }
         this.children.push(child);
     }
 
-    public getDisplayedChildren(): IHeaderColumn[] | null {
+    public getDisplayedChildren(): (AgColumn | AgColumnGroup)[] | null {
         return this.displayedChildren;
     }
 
-    public getLeafColumns(): Column[] {
-        const result: Column[] = [];
+    public getLeafColumns(): AgColumn[] {
+        const result: AgColumn[] = [];
         this.addLeafColumns(result);
         return result;
     }
 
-    public getDisplayedLeafColumns(): Column[] {
-        const result: Column[] = [];
+    public getDisplayedLeafColumns(): AgColumn[] {
+        const result: AgColumn[] = [];
         this.addDisplayedLeafColumns(result);
         return result;
     }
@@ -231,27 +217,27 @@ export class ColumnGroup extends BeanStub implements IHeaderColumn {
         this.providedColumnGroup.setExpanded(expanded);
     }
 
-    private addDisplayedLeafColumns(leafColumns: Column[]): void {
-        this.displayedChildren!.forEach((child: IHeaderColumn) => {
-            if (child instanceof Column) {
+    private addDisplayedLeafColumns(leafColumns: AgColumn[]): void {
+        this.displayedChildren!.forEach((child) => {
+            if (isColumn(child)) {
                 leafColumns.push(child);
-            } else if (child instanceof ColumnGroup) {
+            } else if (isColumnGroup(child)) {
                 child.addDisplayedLeafColumns(leafColumns);
             }
         });
     }
 
-    private addLeafColumns(leafColumns: Column[]): void {
-        this.children!.forEach((child: IHeaderColumn) => {
-            if (child instanceof Column) {
+    private addLeafColumns(leafColumns: AgColumn[]): void {
+        this.children!.forEach((child) => {
+            if (isColumn(child)) {
                 leafColumns.push(child);
-            } else if (child instanceof ColumnGroup) {
+            } else if (isColumnGroup(child)) {
                 child.addLeafColumns(leafColumns);
             }
         });
     }
 
-    public getChildren(): IHeaderColumn[] | null {
+    public getChildren(): (AgColumn | AgColumnGroup)[] | null {
         return this.children;
     }
 
@@ -259,7 +245,7 @@ export class ColumnGroup extends BeanStub implements IHeaderColumn {
         return this.providedColumnGroup.getColumnGroupShow();
     }
 
-    public getProvidedColumnGroup(): ProvidedColumnGroup {
+    public getProvidedColumnGroup(): AgProvidedColumnGroup {
         return this.providedColumnGroup;
     }
 
@@ -279,16 +265,16 @@ export class ColumnGroup extends BeanStub implements IHeaderColumn {
 
         // find the column group that is controlling expandable. this is relevant when we have padding (empty)
         // groups, where the expandable is actually the first parent that is not a padding group.
-        let parentWithExpansion: ColumnGroup = this;
+        let parentWithExpansion: AgColumnGroup | null = this;
         while (parentWithExpansion != null && parentWithExpansion.isPadding()) {
             parentWithExpansion = parentWithExpansion.getParent();
         }
 
-        const isExpandable = parentWithExpansion ? parentWithExpansion.providedColumnGroup.isExpandable() : false;
+        const isExpandable = parentWithExpansion ? parentWithExpansion.getProvidedColumnGroup().isExpandable() : false;
         // it not expandable, everything is visible
         if (!isExpandable) {
             this.displayedChildren = this.children;
-            this.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED));
+            this.dispatchEvent(this.createAgEvent(EVENT_COLUMN_GROUP_DISPLAYED_CHILDREN_CHANGED));
             return;
         }
 
@@ -297,8 +283,7 @@ export class ColumnGroup extends BeanStub implements IHeaderColumn {
         // colDef.columnGroupShow set.
         this.children!.forEach((child) => {
             // never add empty groups
-            const emptyGroup =
-                child instanceof ColumnGroup && (!child.displayedChildren || !child.displayedChildren.length);
+            const emptyGroup = isColumnGroup(child) && (!child.displayedChildren || !child.displayedChildren.length);
             if (emptyGroup) {
                 return;
             }
@@ -307,13 +292,13 @@ export class ColumnGroup extends BeanStub implements IHeaderColumn {
             switch (headerGroupShow) {
                 case 'open':
                     // when set to open, only show col if group is open
-                    if (parentWithExpansion.providedColumnGroup.isExpanded()) {
+                    if (parentWithExpansion!.getProvidedColumnGroup().isExpanded()) {
                         this.displayedChildren!.push(child);
                     }
                     break;
                 case 'closed':
                     // when set to open, only show col if group is open
-                    if (!parentWithExpansion.providedColumnGroup.isExpanded()) {
+                    if (!parentWithExpansion!.getProvidedColumnGroup().isExpanded()) {
                         this.displayedChildren!.push(child);
                     }
                     break;
@@ -323,6 +308,6 @@ export class ColumnGroup extends BeanStub implements IHeaderColumn {
             }
         });
 
-        this.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED));
+        this.dispatchEvent(this.createAgEvent(EVENT_COLUMN_GROUP_DISPLAYED_CHILDREN_CHANGED));
     }
 }

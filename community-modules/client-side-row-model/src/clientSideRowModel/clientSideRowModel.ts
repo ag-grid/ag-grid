@@ -1,7 +1,6 @@
 import type {
     AsyncTransactionsFlushed,
     BeanCollection,
-    BeanName,
     ClientSideRowModelStep,
     ColumnModel,
     CssVariablesChanged,
@@ -14,6 +13,7 @@ import type {
     IRowNodeStage,
     ISelectionService,
     ModelUpdatedEvent,
+    NamedBean,
     RefreshModelParams,
     RowBounds,
     RowDataTransaction,
@@ -58,8 +58,8 @@ export interface RowNodeMap {
     [id: string]: RowNode;
 }
 
-export class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
-    beanName: BeanName = 'rowModel';
+export class ClientSideRowModel extends BeanStub implements IClientSideRowModel, NamedBean {
+    beanName = 'rowModel' as const;
 
     private beans: BeanCollection;
 
@@ -81,7 +81,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private filterAggregatesStage?: IRowNodeStage;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.beans = beans;
 
         this.columnModel = beans.columnModel;

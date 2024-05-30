@@ -1,5 +1,6 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged, PinnedRowDataChangedEvent } from '../events';
 import { Events } from '../events';
@@ -8,13 +9,12 @@ import type { RowPinnedType } from '../interfaces/iRowNode';
 import { _last } from '../utils/array';
 import { _missingOrEmpty } from '../utils/generic';
 
-export class PinnedRowModel extends BeanStub {
-    beanName: BeanName = 'pinnedRowModel';
+export class PinnedRowModel extends BeanStub implements NamedBean {
+    beanName = 'pinnedRowModel' as const;
 
     private beans: BeanCollection;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.beans = beans;
     }
 

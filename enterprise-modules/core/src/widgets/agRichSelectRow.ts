@@ -19,8 +19,7 @@ import {
 export class RichSelectRow<TValue> extends Component {
     private userComponentFactory: UserComponentFactory;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.userComponentFactory = beans.userComponentFactory;
     }
 
