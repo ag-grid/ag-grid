@@ -14,6 +14,8 @@ export const EVENT_PROVIDED_COLUMN_GROUP_EXPANDED_CHANGED = 'expandedChanged' as
 export const EVENT_PROVIDED_COLUMN_GROUP_EXPANDABLE_CHANGED = 'expandableChanged' as const;
 
 export class AgProvidedColumnGroup extends BeanStub implements ProvidedColumnGroup {
+    public readonly isColumn = false as const;
+
     private colGroupDef: ColGroupDef | null;
     private originalParent: AgProvidedColumnGroup | null;
 

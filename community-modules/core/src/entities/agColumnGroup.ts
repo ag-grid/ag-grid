@@ -19,6 +19,8 @@ export function isColumnGroup(col: Column | ColumnGroup | string): col is AgColu
 export const EVENT_COLUMN_GROUP_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged' as const;
 
 export class AgColumnGroup<TValue = any> extends BeanStub implements ColumnGroup<TValue> {
+    public readonly isColumn = false as const;
+
     public static EVENT_LEFT_CHANGED = 'leftChanged';
 
     // all the children of this group, regardless of whether they are opened or closed

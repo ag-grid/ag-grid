@@ -52,6 +52,8 @@ export function isColumn(col: Column | ColumnGroup | ProvidedColumnGroup): col i
 // for each type only implements one, as each group can only appear in it's associated tree (eg ProvidedColumnGroup
 // can only appear in OriginalColumn tree).
 export class AgColumn<TValue = any> extends BeanStub implements Column {
+    public readonly isColumn = true as const;
+
     public static DEFAULT_MIN_WIDTH = 20;
 
     // + renderedHeaderCell - for making header cell transparent when moving

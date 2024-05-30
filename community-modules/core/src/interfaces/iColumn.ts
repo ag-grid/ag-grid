@@ -197,6 +197,8 @@ export interface Column<TValue = any> extends IHeaderColumn<TValue>, IProvidedCo
     isAllowValue(): boolean;
 
     isAllowRowGroup(): boolean;
+
+    isColumn: true;
 }
 
 export type ColumnGroupShowType = 'open' | 'closed';
@@ -227,6 +229,8 @@ export interface ColumnGroup<TValue = any> extends IHeaderColumn<TValue> {
     getProvidedColumnGroup(): ProvidedColumnGroup;
 
     getPaddingLevel(): number;
+
+    isColumn: false;
 }
 
 export interface ProvidedColumnGroup extends IProvidedColumn, IEventEmitter {
@@ -252,4 +256,6 @@ export interface ProvidedColumnGroup extends IProvidedColumn, IEventEmitter {
     getColGroupDef(): ColGroupDef | null;
 
     getLeafColumns(): Column[];
+
+    isColumn: false;
 }
