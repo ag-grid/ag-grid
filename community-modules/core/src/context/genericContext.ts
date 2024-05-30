@@ -13,6 +13,10 @@ export interface ComponentBean {
     preConstruct(): void;
 }
 
+export interface BaseBean<TBeanCollection> {
+    preWireBeans?(beans: TBeanCollection): void;
+}
+
 export class GenericContext<TBeanName extends string, TBeanCollection extends Record<TBeanName, any>> {
     protected beans: TBeanCollection = {} as TBeanCollection;
     private createdBeans: GenericBean<TBeanName, TBeanCollection>[] = [];
@@ -42,7 +46,7 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends Re
             this.createdBeans.push(instance);
         });
 
-        this.wireBeans(this.createdBeans);
+        this.initBeans(this.createdBeans);
     }
 
     private getBeanInstances(): GenericBean<TBeanName, TBeanCollection>[] {
@@ -56,14 +60,17 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends Re
         if (!bean) {
             throw Error(`Can't wire to bean since it is null`);
         }
-        this.wireBeans([bean], afterPreCreateCallback);
+        this.initBeans([bean], afterPreCreateCallback);
         return bean;
     }
 
-    private wireBeans(
+    private initBeans(
         beanInstances: GenericBean<TBeanName, TBeanCollection>[],
         afterPreCreateCallback?: (bean: GenericBean<TBeanName, TBeanCollection>) => void
     ): void {
+        // used by BeanStub to avoid the need for calling super.wireBeans() in every subclasses
+        beanInstances.forEach((instance) => (instance as BaseBean<TBeanCollection>).preWireBeans?.(this.beans));
+
         beanInstances.forEach((instance) => instance.wireBeans?.(this.beans));
         // used by the component class
         beanInstances.forEach((instance) => (instance as ComponentBean).preConstruct?.());
