@@ -5,7 +5,6 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
-import '@ag-grid-community/styles/ag-grid-no-native-widgets.css';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine-no-font.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
