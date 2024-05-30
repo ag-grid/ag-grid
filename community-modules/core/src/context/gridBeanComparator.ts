@@ -1,5 +1,5 @@
-import type { BeanCollection, BeanName } from './context/context';
-import type { GenericBean } from './context/genericBean';
+import type { BeanCollection, BeanName } from './context';
+import type { GenericBean } from './genericBean';
 
 /**
  * We know that there is a risk in a change of behaviour if beans are registered in a different order due to the way
@@ -10,7 +10,7 @@ import type { GenericBean } from './context/genericBean';
  *
  * We have not included beans from modules as they will be registered after the core beans in the order they are provided.
  */
-export const orderedCoreBeans: BeanName[] = [
+const orderedCoreBeans: BeanName[] = [
     // core beans only
     'rowPositionUtils',
     'cellPositionUtils',
@@ -98,7 +98,7 @@ const beanNamePosition: { [key in BeanName]?: number } = Object.fromEntries(
     orderedCoreBeans.map((beanName, index) => [beanName, index])
 );
 
-export function beanComparator(
+export function gridBeanComparator(
     bean1: GenericBean<BeanName, BeanCollection>,
     bean2: GenericBean<BeanName, BeanCollection>
 ): number {

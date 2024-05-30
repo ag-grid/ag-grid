@@ -25,6 +25,7 @@ import { UserComponentFactory } from './components/framework/userComponentFactor
 import { UserComponentRegistry } from './components/framework/userComponentRegistry';
 import type { ContextParams, SingletonBean } from './context/context';
 import { Context } from './context/context';
+import { gridBeanComparator } from './context/gridBeanComparator';
 import { CtrlsFactory } from './ctrlsFactory';
 import { CtrlsService } from './ctrlsService';
 import { DragAndDropService } from './dragAndDrop/dragAndDropService';
@@ -64,7 +65,6 @@ import { ResizeObserverService } from './misc/resizeObserverService';
 import { StateService } from './misc/stateService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
-import { beanComparator } from './orderedBeans';
 import { PaginationAutoPageSizeService } from './pagination/paginationAutoPageSizeService';
 import { PaginationProxy } from './pagination/paginationProxy';
 import { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
@@ -264,7 +264,7 @@ export class GridCoreCreator {
             providedBeanInstances: providedBeanInstances,
             beanClasses: beanClasses,
             gridId: gridId,
-            beanComparator: beanComparator,
+            beanComparator: gridBeanComparator,
         };
 
         const context = new Context(contextParams);
