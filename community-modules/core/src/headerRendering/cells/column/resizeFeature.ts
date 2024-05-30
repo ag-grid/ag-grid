@@ -1,6 +1,5 @@
 import type { ColumnAutosizeService } from '../../../columns/columnAutosizeService';
 import type { ColumnSizeService } from '../../../columns/columnSizeService';
-import type { NamedBean } from '../../../context/bean';
 import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';

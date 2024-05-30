@@ -1,6 +1,5 @@
 import type { VisibleColsService } from '../../columns/visibleColsService';
 import { KeyCode } from '../../constants/keyCode';
-import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
@@ -21,8 +20,11 @@ import { _last } from '../../utils/array';
 import { _isIOSUserAgent } from '../../utils/browser';
 import { _getCtrlForEventTarget, _isEventSupported, _isStopPropagationForAgGrid } from '../../utils/event';
 import { _missingOrEmpty } from '../../utils/generic';
-import { _isEventFromPrintableCharacter, _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
-import { _normaliseQwertyAzerty } from '../../utils/keyboard';
+import {
+    _isEventFromPrintableCharacter,
+    _isUserSuppressingKeyboardEvent,
+    _normaliseQwertyAzerty,
+} from '../../utils/keyboard';
 import type { ValueService } from '../../valueService/valueService';
 import type { LongTapEvent } from '../../widgets/touchListener';
 import { TouchListener } from '../../widgets/touchListener';

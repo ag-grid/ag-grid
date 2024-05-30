@@ -72,10 +72,12 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends Re
         beanInstances: GenericBean<TBeanName, TBeanCollection>[],
         afterPreCreateCallback?: (bean: GenericBean<TBeanName, TBeanCollection>) => void
     ): void {
-        // used by BeanStub to avoid the need for calling super.wireBeans() in every subclasses
-        beanInstances.forEach((instance) => (instance as BaseBean<TBeanCollection>).preWireBeans?.(this.beans));
+        beanInstances.forEach((instance) => {
+            // used by BaseBeans to avoid the need for calling super.wireBeans() in every subclasses
+            (instance as BaseBean<TBeanCollection>).preWireBeans?.(this.beans);
+            instance.wireBeans?.(this.beans);
+        });
 
-        beanInstances.forEach((instance) => instance.wireBeans?.(this.beans));
         // used by the component class
         beanInstances.forEach((instance) => (instance as ComponentBean).preConstruct?.());
         if (afterPreCreateCallback) {
