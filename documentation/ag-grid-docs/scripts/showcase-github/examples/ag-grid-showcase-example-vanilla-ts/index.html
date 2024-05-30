@@ -1,13 +1,40 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AG Grid Showcase Example Finance - Vanilla Typescript</title>
+
+        <!-- Load the AG Grid library from a CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/dist/ag-grid-enterprise.min.js"></script>
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="container">
+                <div class="toolbar">
+                    <button id="export-to-excel" class="button-secondary">
+                        <img class="buttonIcon" src="/example/finance/icons/download.svg" />Export to Excel
+                    </button>
+                    <div id="finance-example-slider" class="slider">
+                        <label for="update-speed-slider">
+                            <span class="text-secondary">Update speed:</span>
+                            <span class="update-speed">1x</span>
+                        </label>
+                        <input
+                            type="range"
+                            id="update-speed-slider"
+                            name="update-speed-slider"
+                            min="0"
+                            max="4"
+                            step="0.1"
+                            value="1"
+                        />
+                    </div>
+                </div>
+                <div id="myGrid" class="ag-theme-quartz grid" style="height: 500px"></div>
+            </div>
+        </div>
+        <script type="module" src="/src/main.ts"></script>
+    </body>
 </html>
