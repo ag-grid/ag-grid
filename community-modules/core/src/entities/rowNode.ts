@@ -378,13 +378,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
                     level: this.level,
                 });
 
-                if (typeof this.id !== 'string') {
-                    console.warn(
-                        `AG Grid: The getRowId callback must return a string. The ID ${this.id} is being cast to a string.`
-                    );
-                    this.id = String(this.id);
-                }
-
                 // make sure id provided doesn't start with 'row-group-' as this is reserved.
                 if (this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
                     console.error(

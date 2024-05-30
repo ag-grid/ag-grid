@@ -2,7 +2,7 @@ import { ComponentUtil } from './components/componentUtil';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
-import type { DomLayoutType, GridOptions } from './entities/gridOptions';
+import type { DomLayoutType, GetRowIdFunc, GridOptions } from './entities/gridOptions';
 import type { Environment } from './environment';
 import type { AgEvent, GridOptionsChangedEvent } from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
@@ -589,5 +589,26 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         updatedParams.api = this.api;
         updatedParams.context = this.gridOptionsContext;
         return updatedParams;
+    }
+
+    public getRowIdCallback<TData = any>(): WrappedCallback<'getRowId', GetRowIdFunc<TData> | undefined> {
+        const getRowId = this.getCallback('getRowId');
+
+        if (getRowId === undefined) {
+            return getRowId;
+        }
+
+        return (params) => {
+            let id = getRowId(params);
+
+            if (typeof id !== 'string') {
+                console.warn(
+                    `AG Grid: The getRowId callback must return a string. The ID ${id} is being cast to a string.`
+                );
+                id = String(id);
+            }
+
+            return id;
+        };
     }
 }
