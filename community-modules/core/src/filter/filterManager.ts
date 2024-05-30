@@ -8,6 +8,7 @@ import type { BeanCollection } from '../context/context';
 import { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
+import type { EventsType } from '../eventKeys';
 import type {
     AdvancedFilterEnabledChangedEvent,
     ColumnEventType,
@@ -84,25 +85,18 @@ export class FilterManager extends BeanStub implements NamedBean {
     private initialFilterModel: FilterModel;
 
     public postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, () =>
-            this.refreshFiltersForAggregations()
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () =>
-            this.refreshFiltersForAggregations()
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () =>
-            this.refreshFiltersForAggregations()
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () =>
-            this.updateAdvancedFilterColumns()
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () =>
-            this.updateAdvancedFilterColumns()
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, () =>
-            this.onNewRowsLoaded('rowDataUpdated')
-        );
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_GRID_COLUMNS_CHANGED]: this.onColumnsChanged.bind(this),
+            [Events.EVENT_COLUMN_VALUE_CHANGED]: this.refreshFiltersForAggregations.bind(this),
+            [Events.EVENT_COLUMN_PIVOT_CHANGED]: this.refreshFiltersForAggregations.bind(this),
+            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: this.refreshFiltersForAggregations.bind(this),
+            [Events.EVENT_NEW_COLUMNS_LOADED]: this.updateAdvancedFilterColumns.bind(this),
+            [Events.EVENT_COLUMN_VISIBLE]: this.updateAdvancedFilterColumns.bind(this),
+            [Events.EVENT_ROW_DATA_UPDATED]: this.onNewRowsLoaded.bind(this, 'rowDataUpdated'),
+            [Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED]: (event: AdvancedFilterEnabledChangedEvent) =>
+                this.onAdvancedFilterEnabledChanged(event.enabled),
+            [Events.EVENT_DATA_TYPES_INFERRED]: this.processFilterModelUpdateQueue.bind(this),
+        });
 
         this.externalFilterPresent = this.isExternalFilterPresentCallback();
         this.addManagedPropertyListeners(['isExternalFilterPresent', 'doesExternalFilterPass'], () => {
@@ -118,15 +112,7 @@ export class FilterManager extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('advancedFilterModel', (event) =>
             this.setAdvancedFilterModel(event.currentValue)
         );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
-            ({ enabled }: AdvancedFilterEnabledChangedEvent) => this.onAdvancedFilterEnabledChanged(enabled)
-        );
 
-        this.addManagedListener(this.eventService, Events.EVENT_DATA_TYPES_INFERRED, () =>
-            this.processFilterModelUpdateQueue()
-        );
         this.addManagedListener(this.quickFilterService, QuickFilterService.EVENT_QUICK_FILTER_CHANGED, () =>
             this.onFilterChanged({ source: 'quickFilter' })
         );
