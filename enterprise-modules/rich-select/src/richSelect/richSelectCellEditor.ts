@@ -6,7 +6,7 @@ import type {
     RichCellEditorParams,
     RichSelectParams,
 } from '@ag-grid-community/core';
-import { Events, PopupComponent, _exists, _missing, _warnOnce } from '@ag-grid-community/core';
+import { Events, PopupComponent, _missing, _warnOnce } from '@ag-grid-community/core';
 import { AgRichSelect } from '@ag-grid-enterprise/core';
 
 export class RichSelectCellEditor<TData = any, TValue = any> extends PopupComponent implements ICellEditor<TValue> {
@@ -21,7 +21,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
     public init(params: RichCellEditorParams<TData, TValue>): void {
         this.params = params;
 
-        const { cellStartedEdit, cellHeight, values } = params;
+        const { cellStartedEdit, values } = params;
 
         if (_missing(values)) {
             _warnOnce('agRichSelectCellEditor requires cellEditorParams.values to be set');
@@ -48,13 +48,9 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
             this.onEditorPickerValueSelected.bind(this)
         );
-        this.addManagedListener(this.richSelect.getGui(), 'focusout', this.onEditorFocusOut.bind(this));
+        // this.addManagedListener(this.richSelect.getGui(), 'focusout', this.onEditorFocusOut.bind(this));
 
         this.focusAfterAttached = cellStartedEdit;
-
-        if (_exists(cellHeight)) {
-            this.richSelect.setRowHeight(cellHeight);
-        }
     }
 
     private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent<TData>): void {
@@ -71,6 +67,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
     private buildRichSelectParams(): { params: RichSelectParams<TValue>; valuesPromise?: Promise<TValue[]> } {
         const {
             cellRenderer,
+            cellHeight,
             value,
             values,
             formatValue,
@@ -89,6 +86,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         const ret: RichSelectParams = {
             value: value,
             cellRenderer,
+            cellRowHeight: cellHeight,
             searchDebounceDelay,
             valueFormatter: formatValue,
             pickerAriaLabelKey: 'ariaLabelRichSelectField',

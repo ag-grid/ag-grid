@@ -1,4 +1,4 @@
-import type { RichSelectParams, VirtualList } from '@ag-grid-community/core';
+import type { RichSelectParams } from '@ag-grid-community/core';
 import {
     AgInputTextField,
     _setAriaLabel,
@@ -56,7 +56,7 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
         _setAriaLabel(this.eWrapper, ariaLabel);
     }
 
-    protected createPickerComponent(): VirtualList {
+    protected createPickerComponent() {
         if (!this.values) {
             const { values } = this.params.getEditorParams();
             this.values = values!;

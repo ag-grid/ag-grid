@@ -6,6 +6,7 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
     valueList?: TValue[];
     allowTyping?: boolean;
     cellRenderer?: any;
+
     cellRowHeight?: number;
     searchDebounceDelay?: number;
 

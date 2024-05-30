@@ -1,17 +1,14 @@
 import type {
     AgPromise,
     BeanCollection,
-    FieldPickerValueSelectedEvent,
     ICellRendererParams,
     RichSelectParams,
     UserCompDetails,
     UserComponentFactory,
     VirtualList,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
     Component,
-    Events,
     _bindCellRendererToHtmlElement,
     _escapeString,
     _exists,
@@ -35,10 +32,6 @@ export class RichSelectRow<TValue> extends Component {
         private readonly wrapperEl: HTMLElement
     ) {
         super(/* html */ `<div class="ag-rich-select-row" role="presentation"></div>`);
-    }
-
-    public postConstruct(): void {
-        this.addManagedListener(this.getGui(), 'click', this.onClick.bind(this));
     }
 
     public setState(value: TValue): void {
@@ -158,16 +151,5 @@ export class RichSelectRow<TValue> extends Component {
             return true;
         }
         return false;
-    }
-
-    private onClick(): void {
-        const parent = this.getParentComponent();
-        const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
-            type: Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
-            fromEnterKey: false,
-            value: this.value,
-        };
-
-        parent?.dispatchEvent(event);
     }
 }

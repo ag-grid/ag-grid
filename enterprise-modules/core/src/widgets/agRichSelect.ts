@@ -1,8 +1,6 @@
 import type {
     AgPromise,
-    AnimationFrameService,
     BeanCollection,
-    Component,
     FieldPickerValueSelectedEvent,
     ICellRendererParams,
     RichSelectParams,
@@ -16,7 +14,6 @@ import {
     Events,
     KeyCode,
     RefPlaceholder,
-    VirtualList,
     _bindCellRendererToHtmlElement,
     _clearElement,
     _debounce,
@@ -26,12 +23,10 @@ import {
     _isEventFromPrintableCharacter,
     _isVisible,
     _setAriaActiveDescendant,
-    _setAriaControls,
-    _setAriaLabel,
     _stopPropagationForAgGrid,
 } from '@ag-grid-community/core';
 
-import { RichSelectRow } from './agRichSelectRow';
+import { AgRichSelectList } from './agRichSelectList';
 
 const TEMPLATE = /* html */ `
     <div class="ag-picker-field" role="presentation">
@@ -46,26 +41,22 @@ const TEMPLATE = /* html */ `
 export class AgRichSelect<TValue = any> extends AgPickerField<
     TValue[] | TValue,
     RichSelectParams<TValue>,
-    VirtualList
+    AgRichSelectList<TValue>
 > {
     private userComponentFactory: UserComponentFactory;
-    private animationFrameService: AnimationFrameService;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
-        this.animationFrameService = beans.animationFrameService;
         this.userComponentFactory = beans.userComponentFactory;
     }
 
     private searchString = '';
-    private listComponent: VirtualList | undefined;
+    private listComponent: AgRichSelectList<TValue> | undefined;
     protected values: TValue[];
-    private currentList: TValue[] | undefined;
+
     private cellRowHeight: number;
     private highlightedItem: number = -1;
-    private lastRowHovered: number = -1;
     private searchStringCreator: ((values: TValue[]) => string[]) | null = null;
-    private eLoading: HTMLElement | undefined;
     private readonly eInput: AgInputTextField = RefPlaceholder;
 
     constructor(config?: RichSelectParams<TValue>) {
@@ -105,7 +96,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     public override postConstruct(): void {
         super.postConstruct();
-        this.createLoadingElement();
         this.createListComponent();
 
         const { allowTyping, placeholder } = this.config;
@@ -132,24 +122,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.addManagedListener(this.eWrapper, 'focusout', this.onWrapperFocusOut.bind(this));
     }
 
-    private createLoadingElement(): void {
-        const eDocument = this.gos.getDocument();
-        const translate = this.localeService.getLocaleTextFunc();
-        const el = eDocument.createElement('div');
-
-        el.classList.add('ag-loading-text');
-        el.innerText = translate('loadingOoo', 'Loading...');
-        this.eLoading = el;
-    }
-
     private createListComponent(): void {
-        this.listComponent = this.createBean(new VirtualList({ cssIdentifier: 'rich-select' }));
-        this.listComponent.setComponentCreator(this.createRowComponent.bind(this));
-
-        /* nothing to update but method required to soft refresh */
-        const componentUpdater = () => {};
-
-        this.listComponent.setComponentUpdater(componentUpdater);
+        this.listComponent = this.createBean(new AgRichSelectList(this.config, this.eWrapper));
         this.listComponent.setParentComponent(this);
 
         this.addManagedListener(
@@ -159,26 +133,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 this.onListValueSelected(e.value, e.fromEnterKey);
             }
         );
-
-        const { cellRowHeight } = this;
-        if (cellRowHeight) {
-            this.listComponent.setRowHeight(cellRowHeight);
-        }
-
-        const eListGui = this.listComponent.getGui();
-        const eListAriaEl = this.listComponent.getAriaElement();
-
-        this.addManagedListener(eListGui, 'mousemove', this.onPickerMouseMove.bind(this));
-        this.addManagedListener(eListGui, 'mousedown', (e) => e.preventDefault());
-        eListGui.classList.add('ag-rich-select-list');
-
-        const listId = `ag-rich-select-list-${this.listComponent.getCompId()}`;
-        eListAriaEl.setAttribute('id', listId);
-        const translate = this.localeService.getLocaleTextFunc();
-        const ariaLabel = translate(this.config.pickerAriaLabelKey, this.config.pickerAriaLabelValue);
-
-        _setAriaLabel(eListAriaEl, ariaLabel);
-        _setAriaControls(this.eWrapper, eListAriaEl);
     }
 
     private renderSelectedValue(): void {
@@ -233,51 +187,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
     }
 
-    private getCurrentValueIndex(): number {
-        const { currentList, value } = this;
-
-        if (value == null || !currentList) {
-            return -1;
-        }
-
-        for (let i = 0; i < currentList.length; i++) {
-            if (currentList[i] === value) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-    private highlightFilterMatch(): void {
-        this.listComponent?.forEachRenderedRow((cmp: RichSelectRow<TValue>) => {
-            cmp.highlightString(this.searchString);
-        });
-    }
-
-    private highlightSelectedValue(index?: number): void {
-        if (index == null) {
-            index = this.getCurrentValueIndex();
-        }
-
-        this.highlightedItem = index;
-
-        this.listComponent?.forEachRenderedRow((cmp: RichSelectRow<TValue>, idx: number) => {
-            const highlighted = index === -1 ? false : this.highlightedItem === idx;
-            cmp.updateHighlighted(highlighted);
-        });
-    }
-
-    public setRowHeight(height: number): void {
-        if (height !== this.cellRowHeight) {
-            this.cellRowHeight = height;
-        }
-
-        if (this.listComponent) {
-            this.listComponent.setRowHeight(height);
-        }
-    }
-
     protected createPickerComponent() {
         const { values } = this;
 
@@ -296,27 +205,18 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     public setValueList(params: { valueList: TValue[]; refresh?: boolean }): void {
         const { valueList, refresh } = params;
 
-        if (!this.listComponent) {
-            return;
-        }
-        if (this.currentList === valueList) {
+        if (!this.listComponent || this.listComponent.getCurrentList() === valueList) {
             return;
         }
 
-        this.currentList = valueList;
-
-        this.listComponent.setModel({
-            getRowCount: () => valueList.length,
-            getRow: (index: number) => valueList[index],
-            areRowsEqual: (oldRow, newRow) => oldRow === newRow,
-        });
+        this.listComponent.setCurrentList(valueList);
 
         if (refresh) {
             // if `values` is not present, it means the valuesList was set asynchronously
             if (!this.values) {
                 this.values = valueList;
                 if (this.isPickerDisplayed) {
-                    this.showCurrentValueInPicker();
+                    this.listComponent.highlightValue();
                 }
             } else {
                 this.listComponent.refresh(true);
@@ -326,39 +226,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     public showPicker() {
         super.showPicker();
-        this.showCurrentValueInPicker();
+        this.listComponent?.highlightValue();
         this.displayOrHidePicker();
-    }
-
-    private showCurrentValueInPicker(): void {
-        if (!this.listComponent) {
-            return;
-        }
-
-        if (!this.currentList) {
-            if (this.isPickerDisplayed && this.eLoading) {
-                this.listComponent.appendChild(this.eLoading);
-            }
-            return;
-        }
-
-        if (this.eLoading?.offsetParent) {
-            this.eLoading.parentElement?.removeChild(this.eLoading);
-        }
-
-        const currentValueIndex = this.getCurrentValueIndex();
-
-        if (currentValueIndex !== -1) {
-            // make sure the virtual list has been sized correctly
-            this.listComponent.refresh();
-            this.listComponent.ensureIndexVisible(currentValueIndex);
-            // this second call to refresh is necessary to force scrolled elements
-            // to be rendered with the correct index info.
-            this.listComponent.refresh(true);
-            this.highlightSelectedValue(currentValueIndex);
-        } else {
-            this.listComponent.refresh();
-        }
     }
 
     protected beforeHidePicker(): void {
@@ -378,7 +247,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     private onWrapperFocusOut(e: FocusEvent): void {
         if (!this.eWrapper.contains(e.relatedTarget as Element)) {
-            this.hidePicker();
+            // this.hidePicker();
         }
     }
 
@@ -482,7 +351,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         const searchStrings = this.buildSearchStrings(values);
 
         if (!searchStrings) {
-            this.highlightSelectedValue(-1);
+            this.listComponent?.highlightIndex(-1);
             return;
         }
 
@@ -496,9 +365,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (suggestions.length) {
             const topSuggestionIndex = shouldFilter ? 0 : searchStrings.indexOf(suggestions[0]);
-            this.selectListItem(topSuggestionIndex);
+            this.listComponent?.selectListItem(topSuggestionIndex);
         } else {
-            this.highlightSelectedValue(-1);
+            this.listComponent?.highlightIndex(-1);
 
             if (!shouldFilter || filterValueLen) {
                 this.listComponent?.ensureIndexVisible(0);
@@ -512,43 +381,31 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         if (highlightMatch && searchType !== 'fuzzy') {
-            this.highlightFilterMatch();
+            this.listComponent?.highlightFilterMatch(this.searchString);
         }
 
         this.displayOrHidePicker();
     }
 
     private displayOrHidePicker(): void {
-        const eListGui = this.listComponent?.getGui();
-        const toggleValue = this.currentList ? this.currentList.length === 0 : false;
-        eListGui?.classList.toggle('ag-hidden', toggleValue);
+        if (!this.listComponent) {
+            return;
+        }
+
+        const eListGui = this.listComponent.getGui();
+        const list = this.listComponent.getCurrentList();
+        const toggleValue = list ? list.length === 0 : false;
+
+        eListGui.classList.toggle('ag-hidden', toggleValue);
     }
 
     private clearSearchString(): void {
         this.searchString = '';
     }
 
-    private selectListItem(index: number, preventUnnecessaryScroll?: boolean): void {
-        if (
-            !this.isPickerDisplayed ||
-            !this.currentList ||
-            !this.listComponent ||
-            index < 0 ||
-            index >= this.currentList.length
-        ) {
-            return;
-        }
-
-        const wasScrolled = this.listComponent.ensureIndexVisible(index, !preventUnnecessaryScroll);
-
-        if (wasScrolled && !preventUnnecessaryScroll) {
-            this.listComponent.refresh(true);
-        }
-        this.highlightSelectedValue(index);
-    }
-
     public setValue(value: TValue, silent?: boolean, fromPicker?: boolean): this {
-        const index = this.currentList ? this.currentList.indexOf(value) : -1;
+        const list = this.listComponent?.getCurrentList();
+        const index = list ? list.indexOf(value) : -1;
 
         if (index === -1) {
             return this;
@@ -557,55 +414,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.value = value;
 
         if (!fromPicker) {
-            this.selectListItem(index);
+            this.listComponent?.selectListItem(index);
         }
 
         this.renderSelectedValue();
 
         return super.setValue(value, silent);
-    }
-
-    private createRowComponent(value: TValue): Component {
-        const row = new RichSelectRow<TValue>(this.config, this.eWrapper);
-        row.setParentComponent(this.listComponent!);
-
-        this.createBean(row);
-        row.setState(value);
-
-        const { highlightMatch, searchType = 'fuzzy' } = this.config;
-
-        if (highlightMatch && searchType !== 'fuzzy') {
-            row.highlightString(this.searchString);
-        }
-
-        return row;
-    }
-
-    private getRowForMouseEvent(e: MouseEvent): number {
-        const { listComponent } = this;
-
-        if (!listComponent) {
-            return -1;
-        }
-
-        const eGui = listComponent?.getGui();
-        const rect = eGui.getBoundingClientRect();
-        const scrollTop = listComponent.getScrollTop();
-        const mouseY = e.clientY - rect.top + scrollTop;
-
-        return Math.floor(mouseY / listComponent.getRowHeight());
-    }
-
-    private onPickerMouseMove(e: MouseEvent): void {
-        if (!this.listComponent) {
-            return;
-        }
-        const row = this.getRowForMouseEvent(e);
-
-        if (row !== -1 && row != this.lastRowHovered) {
-            this.lastRowHovered = row;
-            this.selectListItem(row, true);
-        }
     }
 
     private onNavigationKeyDown(event: any, key: string): void {
@@ -624,23 +438,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         const diff = isDown ? 1 : -1;
         const newIndex = oldIndex === -1 ? 0 : oldIndex + diff;
 
-        this.selectListItem(newIndex);
-    }
-
-    private onPageNavigation(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): void {
-        if (!this.isPickerDisplayed) {
-            return;
-        }
-        const newIndex = this.listComponent?.navigateToPage(key, this.highlightedItem);
-
-        if (newIndex != null) {
-            this.animationFrameService.requestAnimationFrame(() => {
-                if (!this.isAlive()) {
-                    return null;
-                }
-                this.highlightSelectedValue(newIndex);
-            });
-        }
+        this.listComponent?.selectListItem(newIndex);
     }
 
     protected onEnterKeyDown(e: KeyboardEvent): void {
@@ -649,17 +447,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
         e.preventDefault();
 
-        if (this.currentList) {
-            this.onListValueSelected(this.currentList[this.highlightedItem], true);
+        if (this.listComponent?.getCurrentList()) {
+            //this.onListValueSelected(this.currentList[this.highlightedItem], true);
         }
-    }
-
-    private onTabKeyDown(): void {
-        if (!this.isPickerDisplayed || !this.currentList) {
-            return;
-        }
-
-        this.setValue(this.currentList[this.highlightedItem], false, true);
     }
 
     private onListValueSelected(value: TValue, fromEnterKey: boolean): void {
@@ -714,7 +504,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             case KeyCode.PAGE_UP:
             case KeyCode.PAGE_DOWN:
                 event.preventDefault();
-                this.onPageNavigation(key);
+                if (this.pickerComponent) {
+                    this.listComponent?.navigateToPage(key);
+                }
                 break;
             case KeyCode.DOWN:
             case KeyCode.UP:
@@ -732,9 +524,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             case KeyCode.ENTER:
                 this.onEnterKeyDown(event);
                 break;
-            case KeyCode.TAB:
-                this.onTabKeyDown();
-                break;
             default:
                 if (!allowTyping) {
                     this.buildSearchStringFromKeyboardEvent(event);
@@ -746,8 +535,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         if (this.listComponent) {
             this.listComponent = this.destroyBean(this.listComponent);
         }
-
-        this.eLoading = undefined;
 
         super.destroy();
     }
