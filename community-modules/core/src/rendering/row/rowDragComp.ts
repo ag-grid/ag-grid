@@ -243,8 +243,10 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         });
 
         // in case data changes, then we need to update visibility of drag item
-        this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, listener);
-        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, listener);
+        this.addManagedListeners(this.rowNode, {
+            [RowNode.EVENT_DATA_CHANGED]: listener,
+            [RowNode.EVENT_CELL_CHANGED]: listener,
+        });
 
         this.addManagedPropertyListener('suppressRowDrag', this.onSuppressRowDrag.bind(this));
 
