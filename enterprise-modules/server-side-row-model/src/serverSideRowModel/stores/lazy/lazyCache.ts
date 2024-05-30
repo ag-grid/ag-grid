@@ -615,12 +615,8 @@ export class LazyCache extends BeanStub {
         if (node.stub) {
             return false;
         }
-
-        if (this.getRowIdFunc != null) {
-            const id: string = this.getRowId(data)!;
-            return node.id === id;
-        }
-        return node.data === data;
+        const id = this.getRowId(data);
+        return id === null ? node.data === data : node.id === id;
     }
 
     /**
