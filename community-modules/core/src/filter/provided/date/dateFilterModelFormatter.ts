@@ -3,7 +3,6 @@ import type { LocaleService } from '../../../localeService';
 import { _dateToFormattedString, _parseDateTimeFromString } from '../../../utils/date';
 import type { OptionsFactory } from '../optionsFactory';
 import { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
-import { SimpleFilterOptions } from '../simpleFilterOptions';
 import type { DateFilterModel, DateFilterParams } from './iDateFilter';
 
 export class DateFilterModelFormatter extends SimpleFilterModelFormatter {
@@ -18,7 +17,7 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter {
     protected conditionToString(condition: DateFilterModel, options?: IFilterOptionDef): string {
         const { type } = condition;
         const { numberOfInputs } = options || {};
-        const isRange = type == SimpleFilterOptions.IN_RANGE || numberOfInputs === 2;
+        const isRange = type == 'inRange' || numberOfInputs === 2;
 
         const dateFrom = _parseDateTimeFromString(condition.dateFrom);
         const dateTo = _parseDateTimeFromString(condition.dateTo);

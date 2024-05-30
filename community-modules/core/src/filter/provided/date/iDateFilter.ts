@@ -1,6 +1,6 @@
 import type { IFilterParams } from '../../../interfaces/iFilter';
+import type { IScalarFilterParams } from '../iScalarFilter';
 import type { ISimpleFilterModel } from '../iSimpleFilter';
-import type { IScalarFilterParams } from '../scalarFilter';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.

@@ -5,35 +5,34 @@ import { _makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import type { ISimpleFilterModel, ISimpleFilterModelType, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
-import { SimpleFilterOptions } from '../simpleFilterOptions';
 import type { TextFilterModel, TextFilterParams, TextFormatter, TextMatcher } from './iTextFilter';
 import { DEFAULT_TEXT_FILTER_OPTIONS } from './textFilterConstants';
 import { TextFilterModelFormatter } from './textFilterModelFormatter';
 import { trimInputForFilter } from './textFilterUtils';
 
 export class TextFilter extends SimpleFilter<TextFilterModel, string> {
-    private static DEFAULT_FORMATTER: TextFormatter = (from: string) => from;
+    private readonly defaultFormatter: TextFormatter = (from: string) => from;
 
-    private static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string) =>
+    private readonly defaultLowercaseFormatter: TextFormatter = (from: string) =>
         from == null ? null : from.toString().toLowerCase();
 
-    private static DEFAULT_MATCHER: TextMatcher = ({ filterOption, value, filterText }) => {
+    private readonly defaultMatcher: TextMatcher = ({ filterOption, value, filterText }) => {
         if (filterText == null) {
             return false;
         }
 
         switch (filterOption) {
-            case SimpleFilterOptions.CONTAINS:
+            case 'contains':
                 return value.indexOf(filterText) >= 0;
-            case SimpleFilterOptions.NOT_CONTAINS:
+            case 'notContains':
                 return value.indexOf(filterText) < 0;
-            case SimpleFilterOptions.EQUALS:
+            case 'equals':
                 return value === filterText;
-            case SimpleFilterOptions.NOT_EQUAL:
+            case 'notEqual':
                 return value != filterText;
-            case SimpleFilterOptions.STARTS_WITH:
+            case 'startsWith':
                 return value.indexOf(filterText) === 0;
-            case SimpleFilterOptions.ENDS_WITH: {
+            case 'endsWith': {
                 const index = value.lastIndexOf(filterText);
                 return index >= 0 && index === value.length - filterText.length;
             }
@@ -67,9 +66,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         this.matcher = this.getTextMatcher();
         this.formatter =
             this.textFilterParams.textFormatter ||
-            (this.textFilterParams.caseSensitive
-                ? TextFilter.DEFAULT_FORMATTER
-                : TextFilter.DEFAULT_LOWERCASE_FORMATTER);
+            (this.textFilterParams.caseSensitive ? this.defaultFormatter : this.defaultLowercaseFormatter);
         this.filterModelFormatter = new TextFilterModelFormatter(this.localeService, this.optionsFactory);
     }
 
@@ -79,7 +76,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
             _warnOnce('textCustomComparator is deprecated, use textMatcher instead.');
             return ({ filterOption, value, filterText }) => legacyComparator(filterOption, value, filterText);
         }
-        return this.textFilterParams.textMatcher || TextFilter.DEFAULT_MATCHER;
+        return this.textFilterParams.textMatcher || this.defaultMatcher;
     }
 
     protected createCondition(position: number): TextFilterModel {
@@ -172,11 +169,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     }
 
     protected evaluateNullValue(filterType: ISimpleFilterModelType | null) {
-        const filterTypesAllowNulls = [
-            SimpleFilterOptions.NOT_EQUAL,
-            SimpleFilterOptions.NOT_CONTAINS,
-            SimpleFilterOptions.BLANK,
-        ];
+        const filterTypesAllowNulls: ISimpleFilterModelType[] = ['notEqual', 'notContains', 'blank'];
 
         return filterType ? filterTypesAllowNulls.indexOf(filterType) >= 0 : false;
     }
@@ -191,9 +184,9 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         const cellValueFormatted = this.formatter(cellValue);
         const { api, colDef, column, context, textFormatter } = this.textFilterParams;
 
-        if (filterModel.type === SimpleFilterOptions.BLANK) {
+        if (filterModel.type === 'blank') {
             return this.isBlank(cellValue);
-        } else if (filterModel.type === SimpleFilterOptions.NOT_BLANK) {
+        } else if (filterModel.type === 'notBlank') {
             return !this.isBlank(cellValue);
         }
 

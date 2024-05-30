@@ -3,10 +3,9 @@ import type { BeanCollection, Context } from '../../../context/context';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import type { FILTER_LOCALE_TEXT } from '../../filterLocaleText';
+import type { Comparator } from '../iScalarFilter';
 import type { ISimpleFilterModel, Tuple } from '../iSimpleFilter';
-import type { Comparator } from '../scalarFilter';
 import { ScalarFilter } from '../scalarFilter';
-import { SimpleFilterOptions } from '../simpleFilterOptions';
 import { DateCompWrapper } from './dateCompWrapper';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { DateFilterModelFormatter } from './dateFilterModelFormatter';
@@ -308,10 +307,10 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     protected override translate(key: keyof typeof FILTER_LOCALE_TEXT): string {
-        if (key === SimpleFilterOptions.LESS_THAN) {
+        if (key === 'lessThan') {
             return super.translate('before');
         }
-        if (key === SimpleFilterOptions.GREATER_THAN) {
+        if (key === 'greaterThan') {
             return super.translate('after');
         }
         return super.translate(key);

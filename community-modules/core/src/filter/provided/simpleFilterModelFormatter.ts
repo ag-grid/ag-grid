@@ -3,7 +3,6 @@ import type { LocaleService } from '../../localeService';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import type { ICombinedSimpleModel, ISimpleFilterModel } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
-import { SimpleFilterOptions } from './simpleFilterOptions';
 
 export abstract class SimpleFilterModelFormatter<TValue = any> {
     constructor(
@@ -29,7 +28,7 @@ export abstract class SimpleFilterModelFormatter<TValue = any> {
             return customOptions.join(
                 ` ${translate(joinOperatorTranslateKey, FILTER_LOCALE_TEXT[joinOperatorTranslateKey])} `
             );
-        } else if (model.type === SimpleFilterOptions.BLANK || model.type === SimpleFilterOptions.NOT_BLANK) {
+        } else if (model.type === 'blank' || model.type === 'notBlank') {
             return translate(model.type, model.type);
         } else {
             const condition = model as ISimpleFilterModel;

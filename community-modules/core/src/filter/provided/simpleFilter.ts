@@ -24,7 +24,6 @@ import type {
 } from './iSimpleFilter';
 import { OptionsFactory } from './optionsFactory';
 import { ProvidedFilter } from './providedFilter';
-import { SimpleFilterOptions } from './simpleFilterOptions';
 
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values.
@@ -94,11 +93,11 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             return numberOfInputs != null ? numberOfInputs : 1;
         }
 
-        const zeroInputTypes = [SimpleFilterOptions.EMPTY, SimpleFilterOptions.NOT_BLANK, SimpleFilterOptions.BLANK];
+        const zeroInputTypes: ISimpleFilterModelType[] = ['empty', 'notBlank', 'blank'];
 
         if (type && zeroInputTypes.indexOf(type) >= 0) {
             return 0;
-        } else if (type === SimpleFilterOptions.IN_RANGE) {
+        } else if (type === 'inRange') {
             return 2;
         }
 
@@ -765,7 +764,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
         const type = this.getConditionType(position);
 
-        if (type === SimpleFilterOptions.EMPTY) {
+        if (type === 'empty') {
             return false;
         }
 

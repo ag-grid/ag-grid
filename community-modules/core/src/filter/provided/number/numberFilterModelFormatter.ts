@@ -1,12 +1,11 @@
 import type { IFilterOptionDef } from '../../../interfaces/iFilter';
 import { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
-import { SimpleFilterOptions } from '../simpleFilterOptions';
 import type { NumberFilterModel } from './iNumberFilter';
 
 export class NumberFilterModelFormatter extends SimpleFilterModelFormatter<number> {
     protected conditionToString(condition: NumberFilterModel, options?: IFilterOptionDef): string {
         const { numberOfInputs } = options || {};
-        const isRange = condition.type == SimpleFilterOptions.IN_RANGE || numberOfInputs === 2;
+        const isRange = condition.type == 'inRange' || numberOfInputs === 2;
 
         if (isRange) {
             return `${this.formatValue(condition.filter)}-${this.formatValue(condition.filterTo)}`;

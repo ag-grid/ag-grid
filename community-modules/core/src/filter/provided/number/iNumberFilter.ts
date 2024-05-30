@@ -1,6 +1,6 @@
 import type { IFilterParams } from '../../../interfaces/iFilter';
+import type { IScalarFilterParams } from '../iScalarFilter';
 import type { ISimpleFilterModel } from '../iSimpleFilter';
-import type { IScalarFilterParams } from '../scalarFilter';
 import type { ITextInputFloatingFilterParams } from '../text/iTextFilter';
 
 export interface NumberFilterModel extends ISimpleFilterModel {

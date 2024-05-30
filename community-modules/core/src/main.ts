@@ -165,7 +165,8 @@ export {
     FilterPlaceholderFunction,
 } from './filter/provided/iSimpleFilter';
 export { SimpleFilter } from './filter/provided/simpleFilter';
-export { ScalarFilter, IScalarFilterParams, ScalarFilterParams } from './filter/provided/scalarFilter';
+export { IScalarFilterParams, ScalarFilterParams } from './filter/provided/iScalarFilter';
+export { ScalarFilter } from './filter/provided/scalarFilter';
 
 export {
     INumberFilterParams,
