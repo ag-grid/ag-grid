@@ -1,14 +1,13 @@
-import type { BeanCollection, BeanName, FuncColsService, PivotResultColsService } from '@ag-grid-community/core';
+import type { BeanCollection, FuncColsService, NamedBean, PivotResultColsService } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
-export class ListenerUtils extends BeanStub {
-    beanName: BeanName = 'ssrmListenerUtils';
+export class ListenerUtils extends BeanStub implements NamedBean {
+    beanName = 'ssrmListenerUtils' as const;
 
     private pivotResultColsService: PivotResultColsService;
     private funcColsService: FuncColsService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.pivotResultColsService = beans.pivotResultColsService;
         this.funcColsService = beans.funcColsService;
     }

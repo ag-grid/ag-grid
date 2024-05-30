@@ -20,7 +20,7 @@ export class MenuItemComponentWrapper
         this.refreshProps();
     }
 
-    protected getOptionalMethods(): string[] {
+    protected override getOptionalMethods(): string[] {
         return ['select', 'configureDefaults'];
     }
 
@@ -36,7 +36,7 @@ export class MenuItemComponentWrapper
         }
     }
 
-    protected getProps(): CustomMenuItemProps {
+    protected override getProps(): CustomMenuItemProps {
         const props = super.getProps();
         props.active = this.active;
         props.expanded = this.expanded;

@@ -185,7 +185,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         return rowAccumulator;
     }
 
-    public prepare(columnsToExport: AgColumn[]): void {
+    public override prepare(columnsToExport: AgColumn[]): void {
         super.prepare(columnsToExport);
         this.columnsToExport = [...columnsToExport];
         this.cols = columnsToExport.map((col, i) => this.convertColumnToExcel(col, i));

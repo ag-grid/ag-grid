@@ -19,7 +19,6 @@ import type {
 } from '../../events';
 import { Events } from '../../events';
 import { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
-import type { GridOptionsService } from '../../gridOptionsService';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ProcessRowParams } from '../../interfaces/iCallbackParams';
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
@@ -88,9 +87,6 @@ export class RowCtrl extends BeanStub {
 
     private readonly rowNode: RowNode;
     private readonly beans: BeanCollection;
-    // The RowCtrl is never Wired, so it needs its own access
-    // to the gridOptionsService to be able to call `addManagedPropertyListener`
-    protected readonly gos: GridOptionsService;
     private tooltipFeature: TooltipFeature | undefined;
 
     private rowType: RowType;
@@ -1479,7 +1475,7 @@ export class RowCtrl extends BeanStub {
             gui.rowComp.addOrRemoveCssClass('ag-row-selected', selected);
             _setAriaSelected(gui.element, selected);
 
-            const hasFocus = gui.element.contains(this.beans.gos.getActiveDomElement());
+            const hasFocus = gui.element.contains(this.gos.getActiveDomElement());
             if (hasFocus && (gui === this.centerGui || gui === this.fullWidthGui)) {
                 this.announceDescription();
             }
@@ -1492,7 +1488,7 @@ export class RowCtrl extends BeanStub {
         }
 
         const selected = this.rowNode.isSelected()!;
-        if (selected && this.beans.gos.get('suppressRowDeselection')) {
+        if (selected && this.gos.get('suppressRowDeselection')) {
             return;
         }
 
@@ -1553,7 +1549,7 @@ export class RowCtrl extends BeanStub {
         return Math.min(Math.max(minPixel, rowTop), maxPixel);
     }
 
-    protected getFrameworkOverrides(): IFrameworkOverrides {
+    protected override getFrameworkOverrides(): IFrameworkOverrides {
         return this.beans.frameworkOverrides;
     }
 
@@ -1599,11 +1595,11 @@ export class RowCtrl extends BeanStub {
         });
     }
 
-    public addEventListener(eventType: string, listener: AgEventListener): void {
+    public override addEventListener(eventType: string, listener: AgEventListener): void {
         super.addEventListener(eventType, listener);
     }
 
-    public removeEventListener(eventType: string, listener: AgEventListener): void {
+    public override removeEventListener(eventType: string, listener: AgEventListener): void {
         super.removeEventListener(eventType, listener);
     }
 

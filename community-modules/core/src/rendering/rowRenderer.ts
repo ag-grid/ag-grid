@@ -1,7 +1,8 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import type { CellPosition } from '../entities/cellPositionUtils';
@@ -84,8 +85,8 @@ export interface RedrawRowsParams<TData = any> {
     rowNodes?: IRowNode<TData>[];
 }
 
-export class RowRenderer extends BeanStub {
-    beanName: BeanName = 'rowRenderer';
+export class RowRenderer extends BeanStub implements NamedBean {
+    beanName = 'rowRenderer' as const;
 
     private animationFrameService: AnimationFrameService;
     private paginationProxy: PaginationProxy;
@@ -100,7 +101,6 @@ export class RowRenderer extends BeanStub {
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.animationFrameService = beans.animationFrameService;
         this.paginationProxy = beans.paginationProxy;
         this.columnModel = beans.columnModel;

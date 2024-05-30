@@ -1,5 +1,5 @@
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import type { BeanName } from './context/context';
 import type { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
 import type { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
 import type { GridBodyCtrl } from './gridBodyComp/gridBodyCtrl';
@@ -47,8 +47,8 @@ interface ReadyParams {
 
 type CtrlType = keyof ReadyParams;
 
-export class CtrlsService extends BeanStub {
-    beanName: BeanName = 'ctrlsService';
+export class CtrlsService extends BeanStub implements NamedBean {
+    beanName = 'ctrlsService' as const;
 
     private params: ReadyParams = {} as ReadyParams;
     private ready = false;

@@ -1,6 +1,7 @@
 import { KeyCode } from '../constants/keyCode';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import type { Environment } from '../environment';
@@ -91,15 +92,14 @@ export interface AddPopupResult {
     hideFunc: (params?: PopupEventParams) => void;
 }
 
-export class PopupService extends BeanStub {
-    beanName: BeanName = 'popupService';
+export class PopupService extends BeanStub implements NamedBean {
+    beanName = 'popupService' as const;
 
     private ctrlsService: CtrlsService;
     private resizeObserverService: ResizeObserverService;
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.ctrlsService = beans.ctrlsService;
         this.resizeObserverService = beans.resizeObserverService;
         this.environment = beans.environment;

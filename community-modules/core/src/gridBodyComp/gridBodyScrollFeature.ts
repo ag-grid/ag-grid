@@ -39,7 +39,6 @@ export class GridBodyScrollFeature extends BeanStub {
     private visibleColsService: VisibleColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.ctrlsService = beans.ctrlsService;
         this.animationFrameService = beans.animationFrameService;
         this.paginationProxy = beans.paginationProxy;

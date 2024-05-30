@@ -1,5 +1,6 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
 import type { RowPosition } from '../entities/rowPositionUtils';
 import type { ModelUpdatedEvent, PaginationChangedEvent } from '../events';
@@ -8,13 +9,12 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel, RowBounds, RowModelType } from '../interfaces/iRowModel';
 import { _exists, _missing } from '../utils/generic';
 
-export class PaginationProxy extends BeanStub {
-    beanName: BeanName = 'paginationProxy';
+export class PaginationProxy extends BeanStub implements NamedBean {
+    beanName = 'paginationProxy' as const;
 
     private rowModel: IRowModel;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.rowModel = beans.rowModel;
     }
 

@@ -1,4 +1,4 @@
-import type { BeanCollection, BeanName, FocusService } from '@ag-grid-community/core';
+import type { BeanCollection, FocusService, NamedBean } from '@ag-grid-community/core';
 import { BeanStub, TabGuardComp } from '@ag-grid-community/core';
 import { AgDialog } from '@ag-grid-enterprise/core';
 
@@ -6,14 +6,13 @@ import type { ChartTranslationService } from '../../services/chartTranslationSer
 import type { ChartMenuContext } from '../chartMenuContext';
 import { AdvancedSettingsPanel } from './advancedSettingsPanel';
 
-export class AdvancedSettingsMenuFactory extends BeanStub {
-    beanName: BeanName = 'advancedSettingsMenuFactory';
+export class AdvancedSettingsMenuFactory extends BeanStub implements NamedBean {
+    beanName = 'advancedSettingsMenuFactory' as const;
 
     private focusService: FocusService;
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.focusService = beans.focusService;
         this.chartTranslationService = beans.chartTranslationService;
     }
@@ -66,8 +65,7 @@ export class AdvancedSettingsMenuFactory extends BeanStub {
 class AdvancedSettingsMenu extends TabGuardComp {
     private focusService: FocusService;
 
-    public override wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection): void {
         this.focusService = beans.focusService;
     }
 

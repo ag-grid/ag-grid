@@ -1,11 +1,11 @@
 import type {
     AgColumn,
     BeanCollection,
-    BeanName,
     ColumnChooserParams,
     ColumnMenuVisibleChangedEvent,
     FocusService,
     IColumnChooserFactory,
+    NamedBean,
     ShowColumnChooserParams,
     VisibleColsService,
     WithoutGridCommon,
@@ -16,15 +16,14 @@ import { AgDialog } from '@ag-grid-enterprise/core';
 
 import type { MenuUtils } from './menuUtils';
 
-export class ColumnChooserFactory extends BeanStub implements IColumnChooserFactory {
-    beanName: BeanName = 'columnChooserFactory';
+export class ColumnChooserFactory extends BeanStub implements NamedBean, IColumnChooserFactory {
+    beanName = 'columnChooserFactory' as const;
 
     private focusService: FocusService;
     private menuUtils: MenuUtils;
     private visibleColsService: VisibleColsService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
         this.menuUtils = beans.menuUtils;
         this.visibleColsService = beans.visibleColsService;

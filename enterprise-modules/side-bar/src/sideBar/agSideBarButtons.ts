@@ -18,8 +18,7 @@ export class AgSideBarButtons extends Component {
     private focusService: FocusService;
     private visibleColsService: VisibleColsService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
         this.visibleColsService = beans.visibleColsService;
     }

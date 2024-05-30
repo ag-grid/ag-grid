@@ -1,7 +1,8 @@
 import type { ColumnModel } from './columns/columnModel';
 import type { VisibleColsService } from './columns/visibleColsService';
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import type { BeanCollection, BeanName } from './context/context';
+import type { BeanCollection } from './context/context';
 import type { CtrlsService } from './ctrlsService';
 import type { AgColumn } from './entities/agColumn';
 import type { AgColumnGroup } from './entities/agColumnGroup';
@@ -31,8 +32,8 @@ import { _makeNull } from './utils/generic';
 import { ManagedFocusFeature } from './widgets/managedFocusFeature';
 import { TabGuardClassNames } from './widgets/tabGuardCtrl';
 
-export class FocusService extends BeanStub {
-    beanName: BeanName = 'focusService';
+export class FocusService extends BeanStub implements NamedBean {
+    beanName = 'focusService' as const;
 
     private eGridDiv: HTMLElement;
     private columnModel: ColumnModel;
@@ -50,7 +51,6 @@ export class FocusService extends BeanStub {
     private advancedFilterService?: IAdvancedFilterService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.eGridDiv = beans.eGridDiv;
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;

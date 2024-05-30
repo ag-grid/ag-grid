@@ -1,10 +1,10 @@
 import type {
     AgColumn,
     BeanCollection,
-    BeanName,
     ColumnModel,
     ColumnNameService,
     FuncColsService,
+    NamedBean,
     RowNode,
     RowPositionUtils,
     ShowRowGroupColsService,
@@ -13,8 +13,8 @@ import type {
 } from '@ag-grid-community/core';
 import { BeanStub, Events } from '@ag-grid-community/core';
 
-export class ChartColumnService extends BeanStub {
-    beanName: BeanName = 'chartColumnService';
+export class ChartColumnService extends BeanStub implements NamedBean {
+    beanName = 'chartColumnService' as const;
 
     private columnModel: ColumnModel;
     private showRowGroupColsService: ShowRowGroupColsService;
@@ -25,7 +25,6 @@ export class ChartColumnService extends BeanStub {
     private rowPositionUtils: RowPositionUtils;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.showRowGroupColsService = beans.showRowGroupColsService;
         this.columnNameService = beans.columnNameService;

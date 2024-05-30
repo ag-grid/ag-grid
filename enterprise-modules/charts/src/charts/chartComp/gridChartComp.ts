@@ -85,7 +85,6 @@ export class GridChartComp extends Component {
     private popupService: PopupService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.crossFilterService = beans.chartCrossFilterService;
         this.chartTranslationService = beans.chartTranslationService;
         this.chartMenuService = beans.chartMenuService;

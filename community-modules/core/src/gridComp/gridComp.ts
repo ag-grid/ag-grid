@@ -14,8 +14,7 @@ import { GridCtrl } from './gridCtrl';
 export class GridComp extends TabGuardComp {
     private loggerFactory: LoggerFactory;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.loggerFactory = beans.loggerFactory;
     }
 
@@ -109,7 +108,7 @@ export class GridComp extends TabGuardComp {
         return template;
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.rootWrapperBody;
     }
 

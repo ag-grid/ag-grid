@@ -59,8 +59,7 @@ export class AgPrimaryColsList extends Component {
     private colDefService: ToolPanelColDefService;
     private modelItemUtils: ModelItemUtils;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
         this.colDefService = beans.toolPanelColDefService;

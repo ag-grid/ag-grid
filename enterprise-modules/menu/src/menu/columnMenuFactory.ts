@@ -1,20 +1,20 @@
 import type {
     AgColumn,
     BeanCollection,
-    BeanName,
     ColumnModel,
     FuncColsService,
     IRowModel,
     MenuItemDef,
     MenuService,
+    NamedBean,
 } from '@ag-grid-community/core';
 import { BeanStub, _removeRepeatsFromArray } from '@ag-grid-community/core';
 import { AgMenuList } from '@ag-grid-enterprise/core';
 
 import type { MenuItemMapper } from './menuItemMapper';
 
-export class ColumnMenuFactory extends BeanStub {
-    beanName: BeanName = 'columnMenuFactory';
+export class ColumnMenuFactory extends BeanStub implements NamedBean {
+    beanName = 'columnMenuFactory' as const;
 
     private menuItemMapper: MenuItemMapper;
     private columnModel: ColumnModel;
@@ -22,8 +22,7 @@ export class ColumnMenuFactory extends BeanStub {
     private rowModel: IRowModel;
     private menuService: MenuService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.menuItemMapper = beans.menuItemMapper;
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;

@@ -2,8 +2,9 @@ import type { ColumnModel } from '../columns/columnModel';
 import type { DataTypeService } from '../columns/dataTypeService';
 import { FilterComponent } from '../components/framework/componentTypes';
 import type { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
@@ -35,8 +36,8 @@ import { QuickFilterService } from './quickFilterService';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
-export class FilterManager extends BeanStub {
-    beanName: BeanName = 'filterManager';
+export class FilterManager extends BeanStub implements NamedBean {
+    beanName = 'filterManager' as const;
 
     private valueService: ValueService;
     private columnModel: ColumnModel;
@@ -48,7 +49,6 @@ export class FilterManager extends BeanStub {
     private advancedFilterService: IAdvancedFilterService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.valueService = beans.valueService;
         this.columnModel = beans.columnModel;
         this.rowModel = beans.rowModel;

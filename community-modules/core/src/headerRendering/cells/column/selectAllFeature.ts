@@ -15,7 +15,6 @@ export class SelectAllFeature extends BeanStub {
     private selectionService: ISelectionService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.rowModel = beans.rowModel;
         this.selectionService = beans.selectionService;
     }

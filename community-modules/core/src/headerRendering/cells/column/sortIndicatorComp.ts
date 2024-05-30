@@ -11,7 +11,6 @@ export class SortIndicatorComp extends Component {
     private sortController: SortController;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.sortController = beans.sortController;
     }
 

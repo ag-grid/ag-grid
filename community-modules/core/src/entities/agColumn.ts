@@ -90,7 +90,6 @@ export class AgColumn<TValue = any> extends BeanStub implements Column {
     private columnHoverService: ColumnHoverService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnHoverService = beans.columnHoverService;
     }
 
@@ -348,7 +347,7 @@ export class AgColumn<TValue = any> extends BeanStub implements Column {
         return this.tooltipFieldContainsDots;
     }
 
-    public addEventListener(eventType: ColumnEventName, userListener: AgEventListener): void {
+    public override addEventListener(eventType: ColumnEventName, userListener: AgEventListener): void {
         if (this.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
             // Only construct if we need it, as it's an overhead for column construction
             this.columnEventService.setFrameworkOverrides(this.frameworkOverrides);
@@ -359,7 +358,7 @@ export class AgColumn<TValue = any> extends BeanStub implements Column {
         this.columnEventService.addEventListener(eventType, listener);
     }
 
-    public removeEventListener(eventType: ColumnEventName, userListener: AgEventListener): void {
+    public override removeEventListener(eventType: ColumnEventName, userListener: AgEventListener): void {
         const listener = this.frameworkEventListenerService?.unwrap(userListener) ?? userListener;
         this.columnEventService.removeEventListener(eventType, listener);
     }

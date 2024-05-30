@@ -565,7 +565,7 @@ export class CellComp extends Component implements TooltipParentComp {
     // the top part)
     //
     // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
-    public destroy(): void {
+    public override destroy(): void {
         this.cellCtrl.stopEditing();
 
         this.destroyEditorAndRenderer();

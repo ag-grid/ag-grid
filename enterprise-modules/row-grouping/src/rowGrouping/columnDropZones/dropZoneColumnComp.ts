@@ -102,7 +102,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         return this.column.getColDef().headerTooltip;
     }
 
-    protected addAdditionalAriaInstructions(
+    protected override addAdditionalAriaInstructions(
         ariaInstructions: string[],
         translate: (key: string, defaultValue: string) => string
     ): void {
@@ -124,11 +124,11 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         super.addAdditionalAriaInstructions(ariaInstructions, translate);
     }
 
-    protected isDraggable(): boolean {
+    protected override isDraggable(): boolean {
         return this.isReadOnly();
     }
 
-    protected isRemovable(): boolean {
+    protected override isRemovable(): boolean {
         return this.isReadOnly();
     }
 
@@ -197,7 +197,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         }
     }
 
-    protected getDefaultIconName(): string {
+    protected override getDefaultIconName(): string {
         return DragAndDropService.ICON_HIDE;
     }
 
@@ -213,7 +213,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         };
     }
 
-    protected setupComponents(): void {
+    protected override setupComponents(): void {
         super.setupComponents();
 
         if (this.isAggregationZone() && !this.gos.get('functionsReadOnly')) {
@@ -221,7 +221,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         }
     }
 
-    protected onKeyDown(e: KeyboardEvent): void {
+    protected override onKeyDown(e: KeyboardEvent): void {
         super.onKeyDown(e);
 
         const isEnter = e.key === KeyCode.ENTER;
@@ -231,7 +231,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         }
     }
 
-    protected getDisplayValue(): string {
+    protected override getDisplayValue(): string {
         const { name, aggFuncName } = this.getColumnAndAggFuncName();
         return this.isAggregationZone() ? `${aggFuncName}(${name})` : name;
     }

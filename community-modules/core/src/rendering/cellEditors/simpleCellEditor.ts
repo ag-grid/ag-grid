@@ -114,7 +114,7 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
         return this.cellEditorInput.getValue();
     }
 
-    public isPopup() {
+    public override isPopup() {
         return false;
     }
 }

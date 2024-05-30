@@ -2,8 +2,9 @@ import type { CellNavigationService } from '../cellNavigationService';
 import type { ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { KeyCode } from '../constants/keyCode';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import type { CellPosition } from '../entities/cellPositionUtils';
@@ -40,8 +41,8 @@ interface NavigateParams {
     isAsync?: boolean;
 }
 
-export class NavigationService extends BeanStub {
-    beanName: BeanName = 'navigationService';
+export class NavigationService extends BeanStub implements NamedBean {
+    beanName = 'navigationService' as const;
 
     private mouseEventService: MouseEventService;
     private paginationProxy: PaginationProxy;
@@ -58,7 +59,6 @@ export class NavigationService extends BeanStub {
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.mouseEventService = beans.mouseEventService;
         this.paginationProxy = beans.paginationProxy;
         this.focusService = beans.focusService;

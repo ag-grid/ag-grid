@@ -105,7 +105,6 @@ export class GroupCellRendererCtrl extends BeanStub {
     private funcColsService: FuncColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.expressionService = beans.expressionService;
         this.valueService = beans.valueService;
         this.columnModel = beans.columnModel;

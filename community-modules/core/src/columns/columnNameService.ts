@@ -1,5 +1,6 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
@@ -10,15 +11,14 @@ import type { ExpressionService } from '../valueService/expressionService';
 import type { ColumnModel } from './columnModel';
 import type { FuncColsService } from './funcColsService';
 
-export class ColumnNameService extends BeanStub {
-    beanName: BeanName = 'columnNameService';
+export class ColumnNameService extends BeanStub implements NamedBean {
+    beanName = 'columnNameService' as const;
 
     private expressionService: ExpressionService;
     private funcColsService: FuncColsService;
     private columnModel: ColumnModel;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.expressionService = beans.expressionService;
         this.funcColsService = beans.funcColsService;
         this.columnModel = beans.columnModel;

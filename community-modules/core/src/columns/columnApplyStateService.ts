@@ -1,5 +1,6 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { AgColumn } from '../entities/agColumn';
 import type { IAggFunc } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType } from '../events';
@@ -67,8 +68,8 @@ export interface ApplyColumnStateParams {
     defaultState?: ColumnStateParams;
 }
 
-export class ColumnApplyStateService extends BeanStub {
-    beanName: BeanName = 'columnApplyStateService';
+export class ColumnApplyStateService extends BeanStub implements NamedBean {
+    beanName = 'columnApplyStateService' as const;
 
     private columnModel: ColumnModel;
     private eventDispatcher: ColumnEventDispatcher;
@@ -80,7 +81,6 @@ export class ColumnApplyStateService extends BeanStub {
     private pivotResultColsService: PivotResultColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.eventDispatcher = beans.columnEventDispatcher;
         this.sortController = beans.sortController;

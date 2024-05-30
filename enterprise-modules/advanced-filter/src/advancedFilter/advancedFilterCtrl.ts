@@ -23,7 +23,6 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.ctrlsService = beans.ctrlsService;
         this.popupService = beans.popupService;
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService;

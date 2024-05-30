@@ -1,5 +1,6 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import { ModuleRegistry } from '../modules/moduleRegistry';
@@ -10,13 +11,12 @@ import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import type { DependencyValidator, OptionsValidation, OptionsValidator } from './validationTypes';
 
-export class ValidationService extends BeanStub {
-    beanName: BeanName = 'validationService';
+export class ValidationService extends BeanStub implements NamedBean {
+    beanName = 'validationService' as const;
 
     private gridOptions: GridOptions;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.gridOptions = beans.gridOptions;
     }
 

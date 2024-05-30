@@ -1,5 +1,6 @@
+import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection, BeanName } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { RowClassParams } from '../../entities/gridOptions';
 import type { RowNode } from '../../entities/rowNode';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
@@ -24,13 +25,12 @@ export interface RowCssClassCalculatorParams {
     fadeRowIn?: boolean;
 }
 
-export class RowCssClassCalculator extends BeanStub {
-    beanName: BeanName = 'rowCssClassCalculator';
+export class RowCssClassCalculator extends BeanStub implements NamedBean {
+    beanName = 'rowCssClassCalculator' as const;
 
     private stylingService: StylingService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.stylingService = beans.stylingService;
     }
 

@@ -116,7 +116,7 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter {
         return `${type}`;
     }
 
-    public updateParams(params: { dateFilterParams: DateFilterParams; optionsFactory: OptionsFactory }): void {
+    public override updateParams(params: { dateFilterParams: DateFilterParams; optionsFactory: OptionsFactory }): void {
         super.updateParams(params);
         this.dateFilterParams = params.dateFilterParams;
     }
@@ -126,7 +126,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     private userComponentFactory: UserComponentFactory;
     private context: Context;
 
-    public wireBeans(beans: BeanCollection): void {
+    public override wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
         this.context = beans.context;
         this.userComponentFactory = beans.userComponentFactory;
@@ -159,7 +159,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         super('dateFilter');
     }
 
-    public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+    public override afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         super.afterGuiAttached(params);
 
         this.dateConditionFromComps[0].afterGuiAttached(params);
@@ -199,7 +199,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         return 0;
     }
 
-    protected setParams(params: DateFilterParams): void {
+    protected override setParams(params: DateFilterParams): void {
         this.dateFilterParams = params;
 
         super.setParams(params);
@@ -266,15 +266,15 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         return dateCompWrapper;
     }
 
-    protected setElementValue(element: DateCompWrapper, value: Date | null): void {
+    protected override setElementValue(element: DateCompWrapper, value: Date | null): void {
         element.setDate(value);
     }
 
-    protected setElementDisplayed(element: DateCompWrapper, displayed: boolean): void {
+    protected override setElementDisplayed(element: DateCompWrapper, displayed: boolean): void {
         element.setDisplayed(displayed);
     }
 
-    protected setElementDisabled(element: DateCompWrapper, disabled: boolean): void {
+    protected override setElementDisabled(element: DateCompWrapper, disabled: boolean): void {
         element.setDisabled(disabled);
     }
 
@@ -348,7 +348,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         return true;
     }
 
-    protected isConditionUiComplete(position: number): boolean {
+    protected override isConditionUiComplete(position: number): boolean {
         if (!super.isConditionUiComplete(position)) {
             return false;
         }
@@ -395,7 +395,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         };
     }
 
-    protected resetPlaceholder(): void {
+    protected override resetPlaceholder(): void {
         const globalTranslate = this.localeService.getLocaleTextFunc();
         const placeholder = this.translate('dateFormatOoo');
         const ariaLabel = globalTranslate('ariaFilterValue', 'Filter Value');
@@ -424,7 +424,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         return result;
     }
 
-    protected translate(key: keyof typeof FILTER_LOCALE_TEXT): string {
+    protected override translate(key: keyof typeof FILTER_LOCALE_TEXT): string {
         if (key === ScalarFilter.LESS_THAN) {
             return super.translate('before');
         }

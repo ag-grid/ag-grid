@@ -1,4 +1,5 @@
 import { AutoScrollService } from '../autoScrollService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgEvent } from '../events';
@@ -32,7 +33,6 @@ export class VirtualListDragFeature<C extends Component, R extends Component, V,
     private dragAndDropService: DragAndDropService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.dragAndDropService = beans.dragAndDropService;
     }
 

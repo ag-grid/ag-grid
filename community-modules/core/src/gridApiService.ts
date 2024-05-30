@@ -10,8 +10,9 @@ import type { ColumnViewportService } from './columns/columnViewportService';
 import type { FuncColsService } from './columns/funcColsService';
 import type { PivotResultColsService } from './columns/pivotResultColsService';
 import type { VisibleColsService } from './columns/visibleColsService';
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import type { BeanCollection, BeanName, Context } from './context/context';
+import type { BeanCollection, Context } from './context/context';
 import type { CtrlsService } from './ctrlsService';
 import type { DragAndDropService } from './dragAndDrop/dragAndDropService';
 import type { AgColumn } from './entities/agColumn';
@@ -113,8 +114,8 @@ import { _escapeString } from './utils/string';
 import type { ValueCache } from './valueService/valueCache';
 import type { ValueService } from './valueService/valueService';
 
-export class GridApiService<TData = any> extends BeanStub implements GridApi {
-    beanName: BeanName = 'gridApi';
+export class GridApiService<TData = any> extends BeanStub implements GridApi, NamedBean {
+    beanName = 'gridApi' as const;
 
     private context: Context;
     private rowRenderer: RowRenderer;
@@ -173,7 +174,6 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
     private destroyCalled = false;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.context = beans.context;
         this.rowRenderer = beans.rowRenderer;
         this.navigationService = beans.navigationService;
@@ -911,7 +911,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
         return value;
     }
 
-    public addEventListener(eventType: string, listener: (...args: any[]) => any): void {
+    public override addEventListener(eventType: string, listener: (...args: any[]) => any): void {
         this.apiEventService.addEventListener(eventType, listener as AgEventListener);
     }
 
@@ -919,7 +919,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
         this.apiEventService.addGlobalListener(listener as AgGlobalEventListener);
     }
 
-    public removeEventListener(eventType: string, listener: (...args: any[]) => any): void {
+    public override removeEventListener(eventType: string, listener: (...args: any[]) => any): void {
         this.apiEventService.removeEventListener(eventType, listener as AgEventListener);
     }
 
@@ -927,11 +927,11 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi {
         this.apiEventService.removeGlobalListener(listener as AgGlobalEventListener);
     }
 
-    public dispatchEvent(event: AgEvent): void {
+    public override dispatchEvent(event: AgEvent): void {
         this.eventService.dispatchEvent(event);
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         // Get framework link before this is destroyed
         const preDestroyLink = `See ${this.frameworkOverrides.getDocLink('grid-lifecycle/#grid-pre-destroyed')}`;
 

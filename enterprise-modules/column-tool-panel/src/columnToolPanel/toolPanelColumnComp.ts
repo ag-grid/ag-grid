@@ -39,8 +39,7 @@ export class ToolPanelColumnComp extends Component {
     private dragAndDropService: DragAndDropService;
     private modelItemUtils: ModelItemUtils;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.dragAndDropService = beans.dragAndDropService;
         this.modelItemUtils = beans.modelItemUtils;
@@ -143,7 +142,7 @@ export class ToolPanelColumnComp extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
     }
 
-    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
+    public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         const res = super.getTooltipParams();
         res.location = 'columnToolPanelColumn';
         res.colDef = this.column.getColDef();

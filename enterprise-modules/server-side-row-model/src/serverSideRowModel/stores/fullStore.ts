@@ -54,8 +54,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private transactionManager: TransactionManager;
     private serverSideRowModel: ServerSideRowModel;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.storeUtils = beans.ssrmStoreUtils;
         this.blockUtils = beans.ssrmBlockUtils;
         this.funcColsService = beans.funcColsService;

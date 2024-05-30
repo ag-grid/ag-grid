@@ -1,6 +1,7 @@
 import { KeyCode } from '../../../constants/keyCode';
+import type { NamedBean } from '../../../context/bean';
 import { BeanStub } from '../../../context/beanStub';
-import type { BeanCollection, BeanName } from '../../../context/context';
+import type { BeanCollection } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
 import type { AgColumn } from '../../../entities/agColumn';
 import { Events } from '../../../eventKeys';
@@ -15,8 +16,8 @@ import { _setAriaRole } from '../../../utils/aria';
 import { _isVisible } from '../../../utils/dom';
 import type { PopupService } from '../../../widgets/popupService';
 
-export class StandardMenuFactory extends BeanStub implements IMenuFactory {
-    beanName: BeanName = 'filterMenuFactory';
+export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFactory {
+    beanName = 'filterMenuFactory' as const;
 
     private popupService: PopupService;
     private focusService: FocusService;
@@ -24,7 +25,6 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     private menuService: MenuService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.popupService = beans.popupService;
         this.focusService = beans.focusService;
         this.ctrlsService = beans.ctrlsService;

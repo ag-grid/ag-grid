@@ -1,12 +1,12 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColumnHoverChangedEvent } from '../events';
 import { Events } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 
-export class ColumnHoverService extends BeanStub {
-    beanName: BeanName = 'columnHoverService';
+export class ColumnHoverService extends BeanStub implements NamedBean {
+    beanName = 'columnHoverService' as const;
 
     private selectedColumns: AgColumn[] | null;
 

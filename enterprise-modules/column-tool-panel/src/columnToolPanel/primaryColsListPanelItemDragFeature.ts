@@ -24,8 +24,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     private columnModel: ColumnModel;
     private columnMoveService: ColumnMoveService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.columnMoveService = beans.columnMoveService;
     }

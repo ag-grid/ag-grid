@@ -1,5 +1,6 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColumnEventType } from '../events';
@@ -36,8 +37,8 @@ export interface ISizeColumnsToFitParams {
     columnLimits?: IColumnLimit[];
 }
 
-export class ColumnSizeService extends BeanStub {
-    beanName: BeanName = 'columnSizeService';
+export class ColumnSizeService extends BeanStub implements NamedBean {
+    beanName = 'columnSizeService' as const;
 
     private columnModel: ColumnModel;
     private columnViewportService: ColumnViewportService;
@@ -46,7 +47,6 @@ export class ColumnSizeService extends BeanStub {
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.columnViewportService = beans.columnViewportService;
         this.eventDispatcher = beans.columnEventDispatcher;

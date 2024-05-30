@@ -77,7 +77,7 @@ export class LineSparkline extends Sparkline {
         this.lineSparklineGroup.append([this.linePath, this.xCrosshairLine, this.yCrosshairLine, this.markers]);
     }
 
-    protected getNodeData(): LineNodeDatum[] {
+    protected override getNodeData(): LineNodeDatum[] {
         return this.markerSelectionData;
     }
 
@@ -95,7 +95,7 @@ export class LineSparkline extends Sparkline {
         this.scheduleLayout();
     }
 
-    protected update(): void {
+    protected override update(): void {
         const nodeData = this.generateNodeData();
 
         if (!nodeData) {
@@ -110,7 +110,7 @@ export class LineSparkline extends Sparkline {
         this.updateLine();
     }
 
-    protected updateYScaleDomain(): void {
+    protected override updateYScaleDomain(): void {
         const { yData, yScale } = this;
 
         const yMinMax = extent(yData as number[]);
@@ -133,7 +133,7 @@ export class LineSparkline extends Sparkline {
         yScale.domain = [yMin, yMax];
     }
 
-    protected generateNodeData(): LineNodeDatum[] | undefined {
+    protected override generateNodeData(): LineNodeDatum[] | undefined {
         const { data, yData, xData, xScale, yScale } = this;
 
         if (!data) {
@@ -168,7 +168,7 @@ export class LineSparkline extends Sparkline {
         this.markerSelection.update(selectionData);
     }
 
-    protected updateNodes(): void {
+    protected override updateNodes(): void {
         const { highlightedDatum, highlightStyle, marker } = this;
         const {
             size: highlightSize,
@@ -266,7 +266,7 @@ export class LineSparkline extends Sparkline {
         linePath.strokeWidth = line.strokeWidth;
     }
 
-    protected updateXCrosshairLine(): void {
+    protected override updateXCrosshairLine(): void {
         const {
             yScale,
             xCrosshairLine,
@@ -295,7 +295,7 @@ export class LineSparkline extends Sparkline {
         xCrosshairLine.translationX = highlightedDatum.point!.x;
     }
 
-    protected updateYCrosshairLine() {
+    protected override updateYCrosshairLine() {
         const {
             xScale,
             yCrosshairLine,

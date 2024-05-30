@@ -37,7 +37,6 @@ export class HeaderRowContainerCtrl extends BeanStub {
     private filterManager: FilterManager;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.ctrlsService = beans.ctrlsService;
         this.scrollVisibleService = beans.scrollVisibleService;
         this.pinnedWidthService = beans.pinnedWidthService;

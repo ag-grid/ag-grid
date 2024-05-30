@@ -16,7 +16,6 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
     private filterManager: FilterManager;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.filterManager = beans.filterManager;
     }
 

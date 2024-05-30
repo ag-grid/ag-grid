@@ -29,7 +29,6 @@ export class ViewportSizeFeature extends BeanStub {
     private columnViewportService: ColumnViewportService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.ctrlsService = beans.ctrlsService;
         this.pinnedWidthService = beans.pinnedWidthService;
         this.columnModel = beans.columnModel;

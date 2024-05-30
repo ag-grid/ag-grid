@@ -1,4 +1,4 @@
-import type { AgColumn, BeanName, IAggFunc, IAggFuncParams, IAggFuncService } from '@ag-grid-community/core';
+import type { AgColumn, IAggFunc, IAggFuncParams, IAggFuncService, NamedBean } from '@ag-grid-community/core';
 import { BeanStub, _exists, _existsAndNotEmpty, _includes, _iterateObject, _last } from '@ag-grid-community/core';
 
 const defaultAggFuncNames: { [key: string]: string } = {
@@ -11,8 +11,8 @@ const defaultAggFuncNames: { [key: string]: string } = {
     avg: 'Average',
 };
 
-export class AggFuncService extends BeanStub implements IAggFuncService {
-    beanName: BeanName = 'aggFuncService';
+export class AggFuncService extends BeanStub implements NamedBean, IAggFuncService {
+    beanName = 'aggFuncService' as const;
 
     private static AGG_SUM = 'sum';
     private static AGG_FIRST = 'first';

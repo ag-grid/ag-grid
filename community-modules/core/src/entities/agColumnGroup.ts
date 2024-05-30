@@ -5,8 +5,7 @@ import { _last } from '../utils/array';
 import type { AgColumn } from './agColumn';
 import { isColumn } from './agColumn';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
-import type { ColGroupDef } from './colDef';
-import type { AbstractColDef } from './colDef';
+import type { AbstractColDef, ColGroupDef } from './colDef';
 
 export function createUniqueColumnGroupId(groupId: string, instanceId: number): HeaderColumnId {
     return (groupId + '_' + instanceId) as HeaderColumnId;

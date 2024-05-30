@@ -1,5 +1,6 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { type AgColumn, isColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
@@ -9,15 +10,14 @@ import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColumnModel } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
 
-export class ColumnViewportService extends BeanStub {
-    beanName: BeanName = 'columnViewportService';
+export class ColumnViewportService extends BeanStub implements NamedBean {
+    beanName = 'columnViewportService' as const;
 
     private visibleColsService: VisibleColsService;
     private columnModel: ColumnModel;
     private eventDispatcher: ColumnEventDispatcher;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.visibleColsService = beans.visibleColsService;
         this.columnModel = beans.columnModel;
         this.eventDispatcher = beans.columnEventDispatcher;

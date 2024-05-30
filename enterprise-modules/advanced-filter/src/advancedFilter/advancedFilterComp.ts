@@ -27,7 +27,6 @@ export class AdvancedFilterComp extends Component {
     private filterManager: FilterManager;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
         this.advancedFilterService = beans.advancedFilterService;
         this.filterManager = beans.filterManager;
@@ -113,7 +112,7 @@ export class AdvancedFilterComp extends Component {
         _setDisabled(this.eApplyFilterButton, disabled || this.isApplyDisabled);
     }
 
-    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
+    public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         const res = super.getTooltipParams();
         res.location = 'advancedFilter';
         return res;

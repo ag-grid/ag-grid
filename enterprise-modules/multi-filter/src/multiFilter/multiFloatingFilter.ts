@@ -20,8 +20,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     private userComponentFactory: UserComponentFactory;
     private filterManager: FilterManager;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.userComponentFactory = beans.userComponentFactory;
         this.filterManager = beans.filterManager;
     }
@@ -171,7 +170,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         });
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         this.destroyBeans(this.floatingFilters);
         this.floatingFilters.length = 0;
 

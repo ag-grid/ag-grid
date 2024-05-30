@@ -14,7 +14,6 @@ export class StickyRowFeature extends BeanStub {
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.rowModel = beans.rowModel;
         this.rowRenderer = beans.rowRenderer;
         this.ctrlsService = beans.ctrlsService;

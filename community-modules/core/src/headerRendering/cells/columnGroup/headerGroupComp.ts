@@ -42,8 +42,7 @@ export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupP
 export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private columnModel: ColumnModel;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
     }
 
@@ -65,7 +64,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 

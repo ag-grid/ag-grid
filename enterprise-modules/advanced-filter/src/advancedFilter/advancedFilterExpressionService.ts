@@ -2,12 +2,12 @@ import type {
     AgColumn,
     BaseCellDataType,
     BeanCollection,
-    BeanName,
     ColumnAdvancedFilterModel,
     ColumnModel,
     ColumnNameService,
     DataTypeService,
     JoinAdvancedFilterModel,
+    NamedBean,
     ValueService,
 } from '@ag-grid-community/core';
 import { BeanStub, _exists, _parseDateTimeFromString, _serialiseDate, _toStringOrNull } from '@ag-grid-community/core';
@@ -27,8 +27,8 @@ import {
     TextFilterExpressionOperators,
 } from './filterExpressionOperators';
 
-export class AdvancedFilterExpressionService extends BeanStub {
-    beanName: BeanName = 'advancedFilterExpressionService';
+export class AdvancedFilterExpressionService extends BeanStub implements NamedBean {
+    beanName = 'advancedFilterExpressionService' as const;
 
     private valueService: ValueService;
     private columnModel: ColumnModel;
@@ -36,7 +36,6 @@ export class AdvancedFilterExpressionService extends BeanStub {
     private dataTypeService: DataTypeService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.valueService = beans.valueService;
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;

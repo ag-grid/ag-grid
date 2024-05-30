@@ -88,7 +88,7 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterMo
     private filterModelFormatter: SimpleFilterModelFormatter;
     private allowedCharPattern: string | null;
 
-    public init(params: INumberFloatingFilterParams): void {
+    public override init(params: INumberFloatingFilterParams): void {
         super.init(params);
         this.filterModelFormatter = new NumberFilterModelFormatter(
             this.localeService,
@@ -97,11 +97,11 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterMo
         );
     }
 
-    public onParamsUpdated(params: INumberFloatingFilterParams): void {
+    public override onParamsUpdated(params: INumberFloatingFilterParams): void {
         this.refresh(params);
     }
 
-    public refresh(params: INumberFloatingFilterParams): void {
+    public override refresh(params: INumberFloatingFilterParams): void {
         const allowedCharPattern = getAllowedCharPattern(params.filterParams);
         if (allowedCharPattern !== this.allowedCharPattern) {
             this.recreateFloatingFilterInputService(params);

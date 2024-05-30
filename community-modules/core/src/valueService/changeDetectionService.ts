@@ -1,5 +1,6 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
@@ -11,14 +12,13 @@ import { ChangedPath } from '../utils/changedPath';
 
 // Matches value in clipboard module
 const SOURCE_PASTE = 'paste';
-export class ChangeDetectionService extends BeanStub {
-    beanName: BeanName = 'changeDetectionService';
+export class ChangeDetectionService extends BeanStub implements NamedBean {
+    beanName = 'changeDetectionService' as const;
 
     private rowModel: IRowModel;
     private rowRenderer: RowRenderer;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.rowModel = beans.rowModel;
         this.rowRenderer = beans.rowRenderer;
     }

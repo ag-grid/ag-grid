@@ -1,7 +1,6 @@
 import type {
     AgColumn,
     BeanCollection,
-    BeanName,
     ChangedPath,
     ColumnModel,
     FuncColsService,
@@ -9,6 +8,7 @@ import type {
     IAggFunc,
     IAggFuncParams,
     IRowNodeStage,
+    NamedBean,
     PivotResultColsService,
     RowNode,
     StageExecuteParams,
@@ -29,8 +29,8 @@ interface AggregationDetails {
     userAggFunc: ((params: WithoutGridCommon<GetGroupRowAggParams<any, any>>) => any) | undefined;
 }
 
-export class AggregationStage extends BeanStub implements IRowNodeStage {
-    beanName: BeanName = 'aggregationStage';
+export class AggregationStage extends BeanStub implements NamedBean, IRowNodeStage {
+    beanName = 'aggregationStage' as const;
 
     private columnModel: ColumnModel;
     private valueService: ValueService;
@@ -38,8 +38,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
     private funcColsService: FuncColsService;
     private pivotResultColsService: PivotResultColsService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.aggFuncService = beans.aggFuncService;
         this.funcColsService = beans.funcColsService;

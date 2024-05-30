@@ -1,7 +1,6 @@
 import type {
     AgColumn,
     BeanCollection,
-    BeanName,
     CellNavigationService,
     CellPosition,
     CellPositionUtils,
@@ -24,6 +23,7 @@ import type {
     ISelectionService,
     Logger,
     LoggerFactory,
+    NamedBean,
     PasteEndEvent,
     PasteStartEvent,
     ProcessCellForExportParams,
@@ -74,8 +74,8 @@ const apiError = (method: string) =>
     'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
     'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API.';
 
-export class ClipboardService extends BeanStub implements IClipboardService {
-    beanName: BeanName = 'clipboardService';
+export class ClipboardService extends BeanStub implements NamedBean, IClipboardService {
+    beanName = 'clipboardService' as const;
 
     private csvCreator: ICsvCreator;
     private loggerFactory: LoggerFactory;
@@ -93,7 +93,6 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.csvCreator = beans.csvCreator;
         this.loggerFactory = beans.loggerFactory;
         this.selectionService = beans.selectionService;

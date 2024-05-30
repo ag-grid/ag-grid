@@ -67,8 +67,7 @@ export class SetFilterListItem<V> extends Component {
     private valueService: ValueService;
     private userComponentFactory: UserComponentFactory;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.valueService = beans.valueService;
         this.userComponentFactory = beans.userComponentFactory;
     }
@@ -175,7 +174,7 @@ export class SetFilterListItem<V> extends Component {
         this.eCheckbox.onValueChange((value) => this.onCheckboxChanged(!!value));
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.focusWrapper;
     }
 
@@ -390,7 +389,7 @@ export class SetFilterListItem<V> extends Component {
         });
     }
 
-    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
+    public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         const res = super.getTooltipParams();
         res.location = 'setFilterValue';
         res.colDef = this.getComponentHolder();

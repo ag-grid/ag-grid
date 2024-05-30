@@ -359,7 +359,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         }
     }
 
-    protected handleKeyDown(e: KeyboardEvent): void {
+    protected override handleKeyDown(e: KeyboardEvent): void {
         super.handleKeyDown(e);
 
         const wrapperHasFocus = this.getWrapperHasFocus();

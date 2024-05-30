@@ -1,5 +1,6 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { type AgColumn, isColumn } from '../entities/agColumn';
 import { AgColumnGroup, createUniqueColumnGroupId, isColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
@@ -18,8 +19,8 @@ import type { ColumnViewportService } from './columnViewportService';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
-export class VisibleColsService extends BeanStub {
-    beanName: BeanName = 'visibleColsService';
+export class VisibleColsService extends BeanStub implements NamedBean {
+    beanName = 'visibleColsService' as const;
 
     private columnModel: ColumnModel;
     private columnSizeService: ColumnSizeService;
@@ -27,7 +28,6 @@ export class VisibleColsService extends BeanStub {
     private eventDispatcher: ColumnEventDispatcher;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.columnSizeService = beans.columnSizeService;
         this.columnViewportService = beans.columnViewportService;

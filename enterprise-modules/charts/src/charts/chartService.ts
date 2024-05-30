@@ -1,7 +1,6 @@
 import type {
     BaseCreateChartParams,
     BeanCollection,
-    BeanName,
     CellRangeParams,
     ChartDownloadParams,
     ChartModel,
@@ -16,6 +15,7 @@ import type {
     IAggFunc,
     IChartService,
     IRangeService,
+    NamedBean,
     OpenChartToolPanelParams,
     PartialCellRange,
     SeriesChartType,
@@ -51,15 +51,14 @@ export interface CommonCreateChartParams extends BaseCreateChartParams {
     seriesGroupType?: SeriesGroupType;
 }
 
-export class ChartService extends BeanStub implements IChartService {
-    beanName: BeanName = 'chartService';
+export class ChartService extends BeanStub implements NamedBean, IChartService {
+    beanName = 'chartService' as const;
 
     private visibleColsService: VisibleColsService;
     private rangeService?: IRangeService;
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.visibleColsService = beans.visibleColsService;
         this.rangeService = beans.rangeService;
         this.environment = beans.environment;

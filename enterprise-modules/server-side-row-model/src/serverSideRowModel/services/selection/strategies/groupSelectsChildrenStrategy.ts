@@ -25,8 +25,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     private filterManager: FilterManager;
     private selectionService: ISelectionService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
         this.funcColsService = beans.funcColsService;
         this.filterManager = beans.filterManager;

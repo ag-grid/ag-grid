@@ -55,7 +55,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.dragAndDropService = beans.dragAndDropService;
         this.rowModel = beans.rowModel;
         this.paginationProxy = beans.paginationProxy;

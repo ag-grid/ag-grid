@@ -49,7 +49,6 @@ export class ChartDataModel extends BeanStub {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.rangeService = beans.rangeService;
         this.chartTranslationService = beans.chartTranslationService;
     }

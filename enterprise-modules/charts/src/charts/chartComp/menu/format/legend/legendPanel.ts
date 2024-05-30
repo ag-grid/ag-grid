@@ -19,7 +19,6 @@ export class LegendPanel extends Component {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.chartTranslationService = beans.chartTranslationService;
     }
     private readonly legendGroup: AgGroupComponent = RefPlaceholder;

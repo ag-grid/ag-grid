@@ -1,10 +1,10 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanName } from '../context/context';
 import { _warnOnce } from '../utils/function';
 import type { AgComponentSelector, ComponentClass } from '../widgets/component';
 
-export class AgStackComponentsRegistry extends BeanStub {
-    beanName: BeanName = 'agStackComponentsRegistry';
+export class AgStackComponentsRegistry extends BeanStub implements NamedBean {
+    beanName = 'agStackComponentsRegistry' as const;
 
     private componentToNodeName: Map<string, ComponentClass> = new Map();
 

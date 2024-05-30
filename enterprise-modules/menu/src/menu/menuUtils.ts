@@ -1,10 +1,10 @@
 import type {
     AgColumn,
     BeanCollection,
-    BeanName,
     FocusService,
     HeaderNavigationService,
     HeaderPosition,
+    NamedBean,
     PopupEventParams,
     VisibleColsService,
 } from '@ag-grid-community/core';
@@ -18,15 +18,14 @@ export interface MenuRestoreFocusParams {
     eventSource?: HTMLElement;
 }
 
-export class MenuUtils extends BeanStub {
-    beanName: BeanName = 'menuUtils';
+export class MenuUtils extends BeanStub implements NamedBean {
+    beanName = 'menuUtils' as const;
 
     private focusService: FocusService;
     private headerNavigationService: HeaderNavigationService;
     private visibleColsService: VisibleColsService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
         this.headerNavigationService = beans.headerNavigationService;
         this.visibleColsService = beans.visibleColsService;

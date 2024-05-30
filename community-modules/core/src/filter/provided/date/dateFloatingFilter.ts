@@ -20,7 +20,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     private userComponentFactory: UserComponentFactory;
     private context: Context;
 
-    public wireBeans(beans: BeanCollection): void {
+    public override wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
         this.context = beans.context;
         this.userComponentFactory = beans.userComponentFactory;
@@ -49,7 +49,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         return DateFilter.DEFAULT_FILTER_OPTIONS;
     }
 
-    public init(params: IFloatingFilterParams<DateFilter>): void {
+    public override init(params: IFloatingFilterParams<DateFilter>): void {
         super.init(params);
         this.params = params;
         this.filterParams = params.filterParams;
@@ -64,11 +64,11 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         this.eReadOnlyText.setDisabled(true).setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));
     }
 
-    public onParamsUpdated(params: IFloatingFilterParams<DateFilter>): void {
+    public override onParamsUpdated(params: IFloatingFilterParams<DateFilter>): void {
         this.refresh(params);
     }
 
-    public refresh(params: IFloatingFilterParams<DateFilter>): void {
+    public override refresh(params: IFloatingFilterParams<DateFilter>): void {
         super.refresh(params);
         this.params = params;
         this.filterParams = params.filterParams;

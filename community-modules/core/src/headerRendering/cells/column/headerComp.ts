@@ -115,7 +115,6 @@ export class HeaderComp extends Component implements IHeaderComp {
     private funcColsService: FuncColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.sortController = beans.sortController;
         this.menuService = beans.menuService;
         this.funcColsService = beans.funcColsService;
@@ -149,7 +148,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 

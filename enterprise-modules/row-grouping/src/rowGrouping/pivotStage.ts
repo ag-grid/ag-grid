@@ -1,13 +1,13 @@
 import type {
     AgColumn,
     BeanCollection,
-    BeanName,
     ChangedPath,
     ColDef,
     ColumnModel,
     FuncColsService,
     GridOptions,
     IRowNodeStage,
+    NamedBean,
     PivotMaxColumnsExceededEvent,
     PivotResultColsService,
     RowNode,
@@ -19,8 +19,8 @@ import { BeanStub, Events, _iterateObject, _missing } from '@ag-grid-community/c
 
 import type { PivotColDefService } from './pivotColDefService';
 
-export class PivotStage extends BeanStub implements IRowNodeStage {
-    beanName: BeanName = 'pivotStage';
+export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
+    beanName = 'pivotStage' as const;
 
     private valueService: ValueService;
     private columnModel: ColumnModel;
@@ -28,8 +28,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
     private funcColsService: FuncColsService;
     private pivotColDefService: PivotColDefService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.valueService = beans.valueService;
         this.columnModel = beans.columnModel;
         this.pivotResultColsService = beans.pivotResultColsService;

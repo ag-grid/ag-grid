@@ -36,7 +36,7 @@ export class BarSparkline extends BarColumnSparkline {
         }
     }
 
-    protected updateAxisLine() {
+    protected override updateAxisLine() {
         const { yScale, axis, axisLine, seriesRect } = this;
         const { strokeWidth } = axis;
 
@@ -168,7 +168,7 @@ export class BarSparkline extends BarColumnSparkline {
         return nodeData;
     }
 
-    protected getDistance(p1: Point, p2: Point): number {
+    protected override getDistance(p1: Point, p2: Point): number {
         return Math.abs(p1.y - p2.y);
     }
 }

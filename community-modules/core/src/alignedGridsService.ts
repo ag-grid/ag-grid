@@ -1,8 +1,9 @@
 import type { ColumnApplyStateService } from './columns/columnApplyStateService';
 import type { ColumnModel } from './columns/columnModel';
 import type { ColumnSizeService } from './columns/columnSizeService';
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import type { BeanCollection, BeanName } from './context/context';
+import type { BeanCollection } from './context/context';
 import type { CtrlsService } from './ctrlsService';
 import type { AgColumn } from './entities/agColumn';
 import type { AgProvidedColumnGroup } from './entities/agProvidedColumnGroup';
@@ -24,8 +25,8 @@ import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { Logger } from './logger';
 import { _errorOnce } from './utils/function';
 
-export class AlignedGridsService extends BeanStub {
-    beanName: BeanName = 'alignedGridsService';
+export class AlignedGridsService extends BeanStub implements NamedBean {
+    beanName = 'alignedGridsService' as const;
 
     private columnModel: ColumnModel;
     private columnSizeService: ColumnSizeService;
@@ -35,7 +36,6 @@ export class AlignedGridsService extends BeanStub {
     private logger: Logger;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.columnSizeService = beans.columnSizeService;
         this.ctrlsService = beans.ctrlsService;

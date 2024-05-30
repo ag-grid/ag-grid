@@ -1,9 +1,9 @@
 import type {
     BeanCollection,
-    BeanName,
     ColumnModel,
     GetGroupIncludeFooterParams,
     IRowNodeStage,
+    NamedBean,
     StageExecuteParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
@@ -18,14 +18,13 @@ interface FlattenDetails {
     groupTotalRow: (params: WithoutGridCommon<GetGroupIncludeFooterParams<any, any>>) => 'top' | 'bottom' | undefined;
 }
 
-export class FlattenStage extends BeanStub implements IRowNodeStage {
-    beanName: BeanName = 'flattenStage';
+export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
+    beanName = 'flattenStage' as const;
 
     private beans: BeanCollection;
     private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.beans = beans;
         this.columnModel = beans.columnModel;
     }

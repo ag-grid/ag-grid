@@ -2,20 +2,19 @@ import type {
     AbstractColDef,
     AgColumn,
     BeanCollection,
-    BeanName,
     ColDef,
     ColGroupDef,
     ColumnModel,
+    NamedBean,
 } from '@ag-grid-community/core';
 import { AgProvidedColumnGroup, BeanStub, _includes, _last, isProvidedColumnGroup } from '@ag-grid-community/core';
 
-export class ToolPanelColDefService extends BeanStub {
-    beanName: BeanName = 'toolPanelColDefService';
+export class ToolPanelColDefService extends BeanStub implements NamedBean {
+    beanName = 'toolPanelColDefService' as const;
 
     private columnModel: ColumnModel;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
     }
 

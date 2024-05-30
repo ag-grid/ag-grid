@@ -1,5 +1,6 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
@@ -10,15 +11,14 @@ import type { ColumnModel } from './columnModel';
 import type { ColumnNameService } from './columnNameService';
 
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn' as const;
-export class AutoColService extends BeanStub {
-    beanName: BeanName = 'autoColService';
+export class AutoColService extends BeanStub implements NamedBean {
+    beanName = 'autoColService' as const;
 
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
     private columnFactory: ColumnFactory;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
         this.columnFactory = beans.columnFactory;

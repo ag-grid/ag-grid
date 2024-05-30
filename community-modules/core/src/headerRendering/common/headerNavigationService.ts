@@ -1,5 +1,6 @@
+import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection, BeanName } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { AgColumn } from '../../entities/agColumn';
 import { type AgColumnGroup, isColumnGroup } from '../../entities/agColumnGroup';
@@ -15,15 +16,14 @@ export enum HeaderNavigationDirection {
     RIGHT,
 }
 
-export class HeaderNavigationService extends BeanStub {
-    beanName: BeanName = 'headerNavigationService';
+export class HeaderNavigationService extends BeanStub implements NamedBean {
+    beanName = 'headerNavigationService' as const;
 
     private focusService: FocusService;
     private headerPositionUtils: HeaderPositionUtils;
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.focusService = beans.focusService;
         this.headerPositionUtils = beans.headerPositionUtils;
         this.ctrlsService = beans.ctrlsService;

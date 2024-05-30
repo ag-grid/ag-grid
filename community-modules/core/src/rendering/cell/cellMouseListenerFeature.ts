@@ -249,5 +249,7 @@ export class CellMouseListenerFeature extends BeanStub {
         return cellContainsTarget && cellContainsRelatedTarget;
     }
 
-    public destroy(): void {}
+    public override destroy(): void {
+        super.destroy();
+    }
 }

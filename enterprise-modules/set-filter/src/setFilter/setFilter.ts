@@ -106,7 +106,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return [AgInputTextField];
     }
 
-    protected handleKeyDown(e: KeyboardEvent): void {
+    protected override handleKeyDown(e: KeyboardEvent): void {
         super.handleKeyDown(e);
 
         if (e.defaultPrevented) {
@@ -190,7 +190,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return 'set-filter';
     }
 
-    public setModel(model: SetFilterModel | null): AgPromise<void> {
+    public override setModel(model: SetFilterModel | null): AgPromise<void> {
         if (model == null && this.valueModel?.getModel() == null) {
             // refreshing is expensive. if new and old model are both null (e.g. nothing set), skip.
             // mini filter isn't contained within the model, so always reset
@@ -200,7 +200,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return super.setModel(model);
     }
 
-    refresh(params: SetFilterParams<any, V>): boolean {
+    override refresh(params: SetFilterParams<any, V>): boolean {
         if (!super.refresh(params)) {
             return false;
         }
@@ -319,7 +319,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.createKey = this.generateCreateKey(keyCreator, this.treeDataTreeList || this.groupingTreeList);
     };
 
-    public setParams(params: SetFilterParams<any, V>): void {
+    public override setParams(params: SetFilterParams<any, V>): void {
         this.applyExcelModeOptions(params);
 
         super.setParams(params);
@@ -813,7 +813,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     // we need to have the GUI attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the GUI state
-    public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+    public override afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         if (!this.setFilterParams) {
             throw new Error('Set filter params have not been provided.');
         }
@@ -834,7 +834,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
     }
 
-    public afterGuiDetached(): void {
+    public override afterGuiDetached(): void {
         super.afterGuiDetached();
 
         // discard any unapplied UI state (reset to model)
@@ -848,7 +848,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
     }
 
-    public applyModel(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
+    public override applyModel(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
         if (!this.setFilterParams) {
             throw new Error('Set filter params have not been provided.');
         }
@@ -898,7 +898,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return result;
     }
 
-    protected isModelValid(model: SetFilterModel): boolean {
+    protected override isModelValid(model: SetFilterModel): boolean {
         return this.setFilterParams && this.setFilterParams.excelMode ? model == null || model.values.length > 0 : true;
     }
 
@@ -981,7 +981,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         };
     }
 
-    public onNewRowsLoaded(): void {
+    public override onNewRowsLoaded(): void {
         if (!this.isValuesTakenFromGrid()) {
             return;
         }
@@ -1120,7 +1120,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.valueModel?.setMiniFilter(null);
     }
 
-    protected resetUiToActiveModel(currentModel: SetFilterModel | null, afterUiUpdatedFunc?: () => void): void {
+    protected override resetUiToActiveModel(
+        currentModel: SetFilterModel | null,
+        afterUiUpdatedFunc?: () => void
+    ): void {
         // override the default behaviour as we don't always want to clear the mini filter
         this.setModelAndRefresh(currentModel == null ? null : currentModel.values).then(() => {
             this.onUiChanged(false, 'prevent');
@@ -1129,7 +1132,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         });
     }
 
-    protected handleCancelEnd(e: Event): void {
+    protected override handleCancelEnd(e: Event): void {
         this.setMiniFilter(null);
         super.handleCancelEnd(e);
     }
@@ -1373,7 +1376,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         if (this.virtualList != null) {
             this.virtualList.destroy();
             this.virtualList = null;
@@ -1412,7 +1415,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return this.filterModelFormatter.getModelAsString(model, this);
     }
 
-    protected getPositionableElement(): HTMLElement {
+    protected override getPositionableElement(): HTMLElement {
         return this.eSetFilterList;
     }
 }

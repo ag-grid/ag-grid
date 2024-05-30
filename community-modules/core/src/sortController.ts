@@ -1,8 +1,9 @@
 import type { ColumnModel } from './columns/columnModel';
 import type { FuncColsService } from './columns/funcColsService';
 import type { ShowRowGroupColsService } from './columns/showRowGroupColsService';
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import type { BeanCollection, BeanName } from './context/context';
+import type { BeanCollection } from './context/context';
 import type { AgColumn } from './entities/agColumn';
 import type { SortDirection } from './entities/colDef';
 import type { ColumnEventType, SortChangedEvent } from './events';
@@ -17,8 +18,8 @@ export interface SortModelItem {
     sort: 'asc' | 'desc';
 }
 
-export class SortController extends BeanStub {
-    beanName: BeanName = 'sortController';
+export class SortController extends BeanStub implements NamedBean {
+    beanName = 'sortController' as const;
 
     private static DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
 
@@ -27,7 +28,6 @@ export class SortController extends BeanStub {
     private showRowGroupColsService: ShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;
         this.showRowGroupColsService = beans.showRowGroupColsService;

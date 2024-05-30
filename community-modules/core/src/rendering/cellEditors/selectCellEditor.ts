@@ -37,7 +37,6 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
     private valueService: ValueService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.valueService = beans.valueService;
     }
 
@@ -128,7 +127,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
         return this.eSelect.getValue();
     }
 
-    public isPopup() {
+    public override isPopup() {
         return false;
     }
 }
