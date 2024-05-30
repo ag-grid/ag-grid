@@ -323,6 +323,7 @@ export class GridCoreCreator {
 
         if (passedViaConstructor) {
             passedViaConstructor.forEach((m) => addModule(true, m, gridId));
+            // TODO - remove - temp code for backwards compatibility
             INTERNAL_MODULES.forEach((m) => addModule(true, m, gridId));
         }
 

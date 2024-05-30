@@ -4,7 +4,7 @@ import { _doOnce } from '../utils/function';
 import { _values } from '../utils/generic';
 import { ModuleNames } from './moduleNames';
 
-// TODO remove - temp backwards compatibility
+// TODO - remove - temp code for backwards compatibility
 export const INTERNAL_MODULES = [FilterModule] as const;
 
 export class ModuleRegistry {
@@ -60,6 +60,7 @@ export class ModuleRegistry {
             return;
         }
         modules.forEach((module) => ModuleRegistry.__register(module, moduleBased, gridId));
+        // TODO - remove - temp code for backwards compatibility
         INTERNAL_MODULES.forEach((module) => ModuleRegistry.__register(module, moduleBased, gridId));
     }
 
