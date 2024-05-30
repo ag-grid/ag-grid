@@ -1,7 +1,8 @@
-import { AgPromise, ICellEditor, ICellEditorParams } from '@ag-grid-community/core';
+import type { ICellEditor, ICellEditorParams } from '@ag-grid-community/core';
+import { AgPromise } from '@ag-grid-community/core';
 
 import { addOptionalMethods } from './customComponentWrapper';
-import { CustomCellEditorCallbacks, CustomCellEditorProps } from './interfaces';
+import type { CustomCellEditorCallbacks, CustomCellEditorProps } from './interfaces';
 
 export class CellEditorComponentProxy implements ICellEditor {
     private value: any;

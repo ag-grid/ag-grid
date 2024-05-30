@@ -1,25 +1,29 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Events,
-    PostConstruct,
+import type {
+    BeanCollection,
+    NamedBean,
     SortController,
     SortModelItem,
     StoreRefreshAfterParams,
 } from '@ag-grid-community/core';
+import { BeanStub, Events } from '@ag-grid-community/core';
 
-import { ServerSideRowModel } from '../serverSideRowModel';
-import { ListenerUtils } from './listenerUtils';
+import type { ServerSideRowModel } from '../serverSideRowModel';
+import type { ListenerUtils } from './listenerUtils';
 
-@Bean('ssrmSortService')
-export class SortListener extends BeanStub {
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
-    @Autowired('ssrmListenerUtils') private listenerUtils: ListenerUtils;
+export class SortListener extends BeanStub implements NamedBean {
+    beanName = 'ssrmSortService' as const;
 
-    @PostConstruct
-    private postConstruct(): void {
+    private sortController: SortController;
+    private serverSideRowModel: ServerSideRowModel;
+    private listenerUtils: ListenerUtils;
+
+    public wireBeans(beans: BeanCollection) {
+        this.sortController = beans.sortController;
+        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+        this.listenerUtils = beans.ssrmListenerUtils;
+    }
+
+    public postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
         if (!this.gos.isRowModelType('serverSide')) {
             return;

@@ -1,17 +1,23 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, PostConstruct } from '../../context/context';
-import { CtrlsService } from '../../ctrlsService';
-import { RowNode } from '../../entities/rowNode';
-import { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
-import { IRowModel } from '../../interfaces/iRowModel';
+import type { BeanCollection } from '../../context/context';
+import type { CtrlsService } from '../../ctrlsService';
+import type { RowNode } from '../../entities/rowNode';
+import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
+import type { IRowModel } from '../../interfaces/iRowModel';
 import { _last } from '../../utils/array';
-import { RowCtrl } from '../row/rowCtrl';
-import { RowCtrlByRowNodeIdMap, RowRenderer } from '../rowRenderer';
+import type { RowCtrl } from '../row/rowCtrl';
+import type { RowCtrlByRowNodeIdMap, RowRenderer } from '../rowRenderer';
 
 export class StickyRowFeature extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    private rowModel: IRowModel;
+    private rowRenderer: RowRenderer;
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.rowModel = beans.rowModel;
+        this.rowRenderer = beans.rowRenderer;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private stickyTopRowCtrls: RowCtrl[] = [];
     private stickyBottomRowCtrls: RowCtrl[] = [];
@@ -30,8 +36,7 @@ export class StickyRowFeature extends BeanStub {
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.isClientSide = this.rowModel.getType() === 'clientSide';
 
         this.ctrlsService.whenReady((params) => {
@@ -433,5 +438,20 @@ export class StickyRowFeature extends BeanStub {
         }
 
         return true;
+    }
+
+    public ensureRowHeightsValid(): boolean {
+        let anyChange = false;
+        const updateRowHeight = (ctrl: RowCtrl) => {
+            const rowNode = ctrl.getRowNode();
+            if (rowNode.rowHeightEstimated) {
+                const rowHeight = this.gos.getRowHeightForNode(rowNode);
+                rowNode.setRowHeight(rowHeight.height);
+                anyChange = true;
+            }
+        };
+        this.stickyTopRowCtrls.forEach(updateRowHeight);
+        this.stickyBottomRowCtrls.forEach(updateRowHeight);
+        return anyChange;
     }
 }

@@ -1,17 +1,13 @@
-import {
-    Bean,
-    BeanStub,
-    ISelectionHandle,
-    ISelectionHandleFactory,
-    SelectionHandleType,
-} from '@ag-grid-community/core';
+import type { ISelectionHandle, ISelectionHandleFactory, NamedBean } from '@ag-grid-community/core';
+import { BeanStub, SelectionHandleType } from '@ag-grid-community/core';
 
-import { FillHandle } from './fillHandle';
-import { RangeHandle } from './rangeHandle';
+import { AgFillHandle } from './agFillHandle';
+import { AgRangeHandle } from './agRangeHandle';
 
-@Bean('selectionHandleFactory')
-export class SelectionHandleFactory extends BeanStub implements ISelectionHandleFactory {
+export class SelectionHandleFactory extends BeanStub implements NamedBean, ISelectionHandleFactory {
+    beanName = 'selectionHandleFactory' as const;
+
     public createSelectionHandle(type: SelectionHandleType): ISelectionHandle {
-        return this.createBean(type === SelectionHandleType.RANGE ? new RangeHandle() : new FillHandle());
+        return this.createBean(type === SelectionHandleType.RANGE ? new AgRangeHandle() : new AgFillHandle());
     }
 }

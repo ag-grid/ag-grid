@@ -1,13 +1,27 @@
-import { PostConstruct } from '../context/context';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
 import { Events } from '../eventKeys';
 import { _isVisible, _setFixedWidth } from '../utils/dom';
+import type { AgComponentSelector } from '../widgets/component';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { SetHeightFeature } from './rowContainer/setHeightFeature';
+import type { ScrollVisibleService } from './scrollVisibleService';
 
 export class FakeVScrollComp extends AbstractFakeScrollComp {
+    private ctrlsService: CtrlsService;
+    private scrollVisibleService: ScrollVisibleService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.ctrlsService = beans.ctrlsService;
+        this.scrollVisibleService = beans.scrollVisibleService;
+    }
+
+    static readonly selector: AgComponentSelector = 'AG-FAKE-VERTICAL-SCROLL';
+
     private static TEMPLATE /* html */ = `<div class="ag-body-vertical-scroll" aria-hidden="true">
-            <div class="ag-body-vertical-scroll-viewport" ref="eViewport">
-                <div class="ag-body-vertical-scroll-container" ref="eContainer"></div>
+            <div class="ag-body-vertical-scroll-viewport" data-ref="eViewport">
+                <div class="ag-body-vertical-scroll-container" data-ref="eContainer"></div>
             </div>
         </div>`;
 
@@ -15,8 +29,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         super(FakeVScrollComp.TEMPLATE, 'vertical');
     }
 
-    @PostConstruct
-    protected postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
 
         this.createManagedBean(new SetHeightFeature(this.eContainer));

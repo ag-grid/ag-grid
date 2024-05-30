@@ -1,21 +1,28 @@
-import { Autowired, Bean } from '../context/context';
-import { ColDef } from '../entities/colDef';
-import { Column } from '../entities/column';
-import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
-import { ColumnEventType } from '../events';
-import { GridOptionsService } from '../gridOptionsService';
-import { ColumnAnimationService } from '../rendering/columnAnimationService';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import type { ColDef } from '../entities/colDef';
+import type { ColumnEventType } from '../events';
+import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { _moveInArray } from '../utils/array';
-import { ColumnEventDispatcher } from './columnEventDispatcher';
+import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
-import { ColKey, ColumnModel } from './columnModel';
+import type { ColKey, ColumnModel } from './columnModel';
 
-@Bean('columnMoveService')
-export class ColumnMoveService {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
-    @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
-    @Autowired('gridOptionsService') private gos: GridOptionsService;
+export class ColumnMoveService extends BeanStub implements NamedBean {
+    beanName = 'columnMoveService' as const;
+
+    private columnModel: ColumnModel;
+    private columnAnimationService: ColumnAnimationService;
+    private eventDispatcher: ColumnEventDispatcher;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.columnModel = beans.columnModel;
+        this.columnAnimationService = beans.columnAnimationService;
+        this.eventDispatcher = beans.columnEventDispatcher;
+    }
 
     public moveColumnByIndex(fromIndex: number, toIndex: number, source: ColumnEventType): void {
         const gridColumns = this.columnModel.getCols();
@@ -62,13 +69,13 @@ export class ColumnMoveService {
         this.columnAnimationService.finish();
     }
 
-    private doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean {
+    private doesMovePassRules(columnsToMove: AgColumn[], toIndex: number): boolean {
         // make a copy of what the grid columns would look like after the move
         const proposedColumnOrder = this.getProposedColumnOrder(columnsToMove, toIndex);
         return this.doesOrderPassRules(proposedColumnOrder);
     }
 
-    public doesOrderPassRules(gridOrder: Column[]) {
+    public doesOrderPassRules(gridOrder: AgColumn[]) {
         if (!this.doesMovePassMarryChildren(gridOrder)) {
             return false;
         }
@@ -78,14 +85,14 @@ export class ColumnMoveService {
         return true;
     }
 
-    public getProposedColumnOrder(columnsToMove: Column[], toIndex: number): Column[] {
+    public getProposedColumnOrder(columnsToMove: AgColumn[], toIndex: number): AgColumn[] {
         const gridColumns = this.columnModel.getCols();
         const proposedColumnOrder = gridColumns.slice();
-        _moveInArray(proposedColumnOrder, columnsToMove, toIndex);
+        _moveInArray(proposedColumnOrder, columnsToMove as AgColumn[], toIndex);
         return proposedColumnOrder;
     }
 
-    private doesMovePassLockedPositions(proposedColumnOrder: Column[]): boolean {
+    private doesMovePassLockedPositions(proposedColumnOrder: AgColumn[]): boolean {
         // Placement is a number indicating 'left' 'center' or 'right' as 0 1 2
         let lastPlacement = 0;
         let rulePassed = true;
@@ -112,12 +119,12 @@ export class ColumnMoveService {
         return rulePassed;
     }
 
-    public doesMovePassMarryChildren(allColumnsCopy: Column[]): boolean {
+    public doesMovePassMarryChildren(allColumnsCopy: AgColumn[]): boolean {
         let rulePassed = true;
         const gridBalancedTree = this.columnModel.getColTree();
 
         depthFirstOriginalTreeSearch(null, gridBalancedTree, (child) => {
-            if (!(child instanceof ProvidedColumnGroup)) {
+            if (!isProvidedColumnGroup(child)) {
                 return;
             }
 
@@ -135,7 +142,9 @@ export class ColumnMoveService {
                 newIndexes.push(newColIndex);
             });
 
+            // eslint-disable-next-line prefer-spread
             const maxIndex = Math.max.apply(Math, newIndexes);
+            // eslint-disable-next-line prefer-spread
             const minIndex = Math.min.apply(Math, newIndexes);
 
             // spread is how far the first column in this group is away from the last column
@@ -154,11 +163,11 @@ export class ColumnMoveService {
         return rulePassed;
     }
 
-    public placeLockedColumns(cols: Column[]): Column[] {
-        const left: Column[] = [];
-        const normal: Column[] = [];
-        const right: Column[] = [];
-        cols.forEach((col) => {
+    public placeLockedColumns(cols: AgColumn[]): AgColumn[] {
+        const left: AgColumn[] = [];
+        const normal: AgColumn[] = [];
+        const right: AgColumn[] = [];
+        cols.forEach((col: AgColumn) => {
             const position = col.getColDef().lockPosition;
             if (position === 'right') {
                 right.push(col);

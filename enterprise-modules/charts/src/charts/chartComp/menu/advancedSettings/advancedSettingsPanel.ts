@@ -1,7 +1,9 @@
-import { ChartType, Component, PostConstruct } from '@ag-grid-community/core';
+import type { ChartType } from '@ag-grid-community/core';
+import { Component } from '@ag-grid-community/core';
 
-import { ChartSeriesType, isCartesian } from '../../utils/seriesTypeMapper';
-import { ChartMenuContext } from '../chartMenuContext';
+import type { ChartSeriesType } from '../../utils/seriesTypeMapper';
+import { isCartesian } from '../../utils/seriesTypeMapper';
+import type { ChartMenuContext } from '../chartMenuContext';
 import { ChartPanelFeature } from '../chartPanelFeature';
 import { AnimationPanel } from './interactivity/animationPanel';
 import { CrosshairPanel } from './interactivity/crosshairPanel';
@@ -21,8 +23,7 @@ export class AdvancedSettingsPanel extends Component {
         super(AdvancedSettingsPanel.TEMPLATE);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.chartPanelFeature = this.createManagedBean(
             new ChartPanelFeature(
                 this.chartMenuContext.chartController,

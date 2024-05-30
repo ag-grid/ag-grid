@@ -1,34 +1,32 @@
-import {
-    AgGroupComponentParams,
-    AgSlider,
-    Autowired,
-    ChartOptionsChanged,
-    Component,
-    Events,
-    PostConstruct,
-    RefSelector,
-} from '@ag-grid-community/core';
-import { AgChartPaddingOptions, AgChartThemeOverrides } from 'ag-charts-community';
+import type { BeanCollection, ChartOptionsChanged } from '@ag-grid-community/core';
+import { Component, Events, RefPlaceholder } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import type { AgChartPaddingOptions, AgChartThemeOverrides } from 'ag-charts-community';
 
-import { ChartController } from '../../../chartController';
-import { ChartTranslationService } from '../../../services/chartTranslationService';
-import { ChartThemeOverridesSeriesType } from '../../../utils/seriesTypeMapper';
-import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import { AgSlider } from '../../../../../widgets/agSlider';
+import type { ChartController } from '../../../chartController';
+import type { ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartThemeOverridesSeriesType } from '../../../utils/seriesTypeMapper';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class PaddingPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="chartPaddingGroup">
-                <ag-slider ref="paddingTopSlider"></ag-slider>
-                <ag-slider ref="paddingRightSlider"></ag-slider>
-                <ag-slider ref="paddingBottomSlider"></ag-slider>
-                <ag-slider ref="paddingLeftSlider"></ag-slider>
+            <ag-group-component data-ref="chartPaddingGroup">
+                <ag-slider data-ref="paddingTopSlider"></ag-slider>
+                <ag-slider data-ref="paddingRightSlider"></ag-slider>
+                <ag-slider data-ref="paddingBottomSlider"></ag-slider>
+                <ag-slider data-ref="paddingLeftSlider"></ag-slider>
             </ag-group-component>
         <div>`;
 
-    @RefSelector('paddingTopSlider') private paddingTopSlider: AgSlider;
+    private readonly paddingTopSlider: AgSlider = RefPlaceholder;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
 
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
     constructor(
         private readonly chartMenuUtils: ChartMenuParamsFactory,
         private readonly chartController: ChartController
@@ -36,8 +34,7 @@ export class PaddingPanel extends Component {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const chartPaddingGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
@@ -48,7 +45,7 @@ export class PaddingPanel extends Component {
         const getSliderParams = (property: keyof AgChartPaddingOptions) =>
             this.chartMenuUtils.getDefaultSliderParams('padding.' + property, property, 200);
 
-        this.setTemplate(PaddingPanel.TEMPLATE, {
+        this.setTemplate(PaddingPanel.TEMPLATE, [AgGroupComponent, AgSlider], {
             chartPaddingGroup: chartPaddingGroupParams,
             paddingTopSlider: getSliderParams('top'),
             paddingRightSlider: getSliderParams('right'),

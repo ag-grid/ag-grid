@@ -1,6 +1,7 @@
 import { _Scale, _Scene, _Util } from 'ag-charts-community';
 
-import { BarColumnLabelPlacement, BarColumnSparkline, RectNodeDatum } from './barColumnSparkline';
+import type { RectNodeDatum } from './barColumnSparkline';
+import { BarColumnLabelPlacement, BarColumnSparkline } from './barColumnSparkline';
 
 const { isNumber } = _Util;
 const { BandScale } = _Scale;
@@ -34,7 +35,7 @@ export class ColumnSparkline extends BarColumnSparkline {
         }
     }
 
-    protected updateAxisLine() {
+    protected override updateAxisLine() {
         const { yScale, axis, axisLine, seriesRect } = this;
         const { strokeWidth } = axis;
 

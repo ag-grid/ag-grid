@@ -1,14 +1,19 @@
+import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, Bean } from '../../context/context';
-import { IComponent } from '../../interfaces/iComponent';
-import { ICellRendererComp, ICellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
+import type { BeanCollection } from '../../context/context';
+import type { IComponent } from '../../interfaces/iComponent';
+import type { ICellRendererComp, ICellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
 import { _loadTemplate } from '../../utils/dom';
-import { ComponentMetadata, ComponentMetadataProvider } from './componentMetadataProvider';
+import type { ComponentMetadata, ComponentMetadataProvider } from './componentMetadataProvider';
 
-@Bean('agComponentUtils')
-export class AgComponentUtils extends BeanStub {
-    @Autowired('componentMetadataProvider')
+export class AgComponentUtils extends BeanStub implements NamedBean {
+    beanName = 'agComponentUtils' as const;
+
     private componentMetadataProvider: ComponentMetadataProvider;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.componentMetadataProvider = beans.componentMetadataProvider;
+    }
 
     public adaptFunction(propertyName: string, jsCompFunc: any): any {
         const metadata: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);

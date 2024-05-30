@@ -1,10 +1,6 @@
-import {
-    AgGroupComponent,
-    AgMenuItemComponent,
-    AgMenuItemRenderer,
-    AgPromise,
-    Autowired,
-    Column,
+import type {
+    AgColumn,
+    BeanCollection,
     ContainerType,
     FilterManager,
     IAfterGuiAttachedParams,
@@ -15,23 +11,32 @@ import {
     IMultiFilter,
     IMultiFilterDef,
     IMultiFilterModel,
-    KeyCode,
-    MenuItemActivatedEvent,
     MultiFilterParams,
-    PostConstruct,
-    ProvidedFilter,
     ProvidedFilterModel,
     RowNode,
-    TabGuardComp,
     UserComponentFactory,
+} from '@ag-grid-community/core';
+import {
+    AgMenuItemRenderer,
+    AgPromise,
+    KeyCode,
+    ProvidedFilter,
+    TabGuardComp,
     _forEachReverse,
     _loadTemplate,
     _removeFromArray,
 } from '@ag-grid-community/core';
+import type { MenuItemActivatedEvent } from '@ag-grid-enterprise/core';
+import { AgGroupComponent, AgMenuItemComponent } from '@ag-grid-enterprise/core';
 
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
+    private filterManager: FilterManager;
+    private userComponentFactory: UserComponentFactory;
+
+    public wireBeans(beans: BeanCollection) {
+        this.filterManager = beans.filterManager;
+        this.userComponentFactory = beans.userComponentFactory;
+    }
 
     private params: MultiFilterParams;
     private filterDefs: IMultiFilterDef[] = [];
@@ -39,7 +44,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     private guiDestroyFuncs: (() => void)[] = [];
     // this could be the accordion/sub menu element depending on the display type
     private filterGuis: HTMLElement[] = [];
-    private column: Column;
+    private column: AgColumn;
     private filterChangedCallback: ((additionalEventAttributes?: any) => void) | null;
     private lastOpenedInContainer?: ContainerType;
     private activeFilterIndices: number[] = [];
@@ -52,8 +57,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         super(/* html */ `<div class="ag-multi-filter ag-menu-list-compact"></div>`);
     }
 
-    @PostConstruct
-    private postConstruct() {
+    public postConstruct() {
         this.initialiseTabGuard({
             onFocusIn: (e) => this.onFocusIn(e),
         });
@@ -73,7 +77,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
 
         const { column, filterChangedCallback } = params;
 
-        this.column = column;
+        this.column = column as AgColumn;
         this.filterChangedCallback = filterChangedCallback;
 
         const filterPromises: AgPromise<IFilterComp>[] = [];
@@ -423,7 +427,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         this.executeFunctionIfExists('onNewRowsLoaded');
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         this.filters!.forEach((filter) => this.destroyBean(filter));
 
         this.filters!.length = 0;

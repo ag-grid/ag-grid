@@ -1,13 +1,5 @@
-import {
-    Column,
-    DragAndDropService,
-    DraggingEvent,
-    Events,
-    ITooltipParams,
-    PostConstruct,
-    WithoutGridCommon,
-    _createIconNoSpan,
-} from '@ag-grid-community/core';
+import type { AgColumn, DraggingEvent, ITooltipParams, WithoutGridCommon } from '@ag-grid-community/core';
+import { DragAndDropService, Events, _createIconNoSpan } from '@ag-grid-community/core';
 
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
@@ -16,8 +8,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
         super(horizontal, 'aggregation');
     }
 
-    @PostConstruct
-    private passBeansUp(): void {
+    public postConstruct(): void {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag here to aggregate');
         const title = localeTextFunc('values', 'Values');
@@ -38,7 +29,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
         return label;
     }
 
-    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
+    public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         const res = super.getTooltipParams();
         res.location = 'valueColumnsList';
         return res;
@@ -48,7 +39,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
         return this.isPotentialDndItems() ? DragAndDropService.ICON_AGGREGATE : DragAndDropService.ICON_NOT_ALLOWED;
     }
 
-    protected isItemDroppable(column: Column, draggingEvent: DraggingEvent): boolean {
+    protected isItemDroppable(column: AgColumn, draggingEvent: DraggingEvent): boolean {
         // we never allow grouping of secondary columns
         if (this.gos.get('functionsReadOnly') || !column.isPrimary()) {
             return false;
@@ -57,11 +48,11 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
         return column.isAllowValue() && (!column.isValueActive() || this.isSourceEventFromTarget(draggingEvent));
     }
 
-    protected updateItems(columns: Column[]): void {
+    protected updateItems(columns: AgColumn[]): void {
         this.funcColsService.setValueColumns(columns, 'toolPanelUi');
     }
 
-    protected getExistingItems(): Column[] {
+    protected getExistingItems(): AgColumn[] {
         return this.funcColsService.getValueColumns();
     }
 }

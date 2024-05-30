@@ -1,8 +1,9 @@
-import { ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _serialiseDate } from '../../utils/date';
 import { _exists } from '../../utils/generic';
 import { AgInputDateField } from '../../widgets/agInputDateField';
-import { CellEditorInput, SimpleCellEditor } from './simpleCellEditor';
+import type { CellEditorInput } from './simpleCellEditor';
+import { SimpleCellEditor } from './simpleCellEditor';
 
 export interface IDateCellEditorParams<TData = any, TContext = any> extends ICellEditorParams<TData, Date, TContext> {
     /** Min allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */
@@ -23,7 +24,10 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
     private params: IDateCellEditorParams;
 
     public getTemplate() {
-        return /* html */ `<ag-input-date-field class="ag-cell-editor" ref="eInput"></ag-input-date-field>`;
+        return /* html */ `<ag-input-date-field class="ag-cell-editor" data-ref="eInput"></ag-input-date-field>`;
+    }
+    public getAgComponents() {
+        return [AgInputDateField];
     }
 
     public init(eInput: AgInputDateField, params: IDateCellEditorParams): void {

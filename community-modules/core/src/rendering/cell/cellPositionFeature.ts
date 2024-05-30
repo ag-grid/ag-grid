@@ -1,11 +1,11 @@
 import { BeanStub } from '../../context/beanStub';
-import { Column } from '../../entities/column';
-import { RowNode } from '../../entities/rowNode';
+import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
+import type { RowNode } from '../../entities/rowNode';
 import { Events } from '../../eventKeys';
 import { _areEqual, _last } from '../../utils/array';
 import { _missing } from '../../utils/generic';
-import { Beans } from '../beans';
-import { CellCtrl } from './cellCtrl';
+import type { CellCtrl } from './cellCtrl';
 
 /**
  * Takes care of:
@@ -17,15 +17,15 @@ export class CellPositionFeature extends BeanStub {
     private cellCtrl: CellCtrl;
     private eGui: HTMLElement;
 
-    private readonly column: Column;
+    private readonly column: AgColumn;
     private readonly rowNode: RowNode;
 
-    private colsSpanning: Column[];
+    private colsSpanning: AgColumn[];
     private rowSpan: number;
 
-    private beans: Beans;
+    private beans: BeanCollection;
 
-    constructor(ctrl: CellCtrl, beans: Beans) {
+    constructor(ctrl: CellCtrl, beans: BeanCollection) {
         super();
 
         this.cellCtrl = ctrl;
@@ -67,7 +67,7 @@ export class CellPositionFeature extends BeanStub {
     }
 
     private onDisplayColumnsChanged(): void {
-        const colsSpanning: Column[] = this.getColSpanningList();
+        const colsSpanning: AgColumn[] = this.getColSpanningList();
 
         if (!_areEqual(this.colsSpanning, colsSpanning)) {
             this.colsSpanning = colsSpanning;
@@ -117,15 +117,15 @@ export class CellPositionFeature extends BeanStub {
         return this.colsSpanning.reduce((width, col) => width + col.getActualWidth(), 0);
     }
 
-    public getColSpanningList(): Column[] {
+    public getColSpanningList(): AgColumn[] {
         const colSpan = this.column.getColSpan(this.rowNode);
-        const colsSpanning: Column[] = [];
+        const colsSpanning: AgColumn[] = [];
 
         // if just one col, the col span is just the column we are in
         if (colSpan === 1) {
             colsSpanning.push(this.column);
         } else {
-            let pointer: Column | null = this.column;
+            let pointer: AgColumn | null = this.column;
             const pinned = this.column.getPinned();
             for (let i = 0; pointer && i < colSpan; i++) {
                 colsSpanning.push(pointer);
@@ -152,7 +152,7 @@ export class CellPositionFeature extends BeanStub {
     }
 
     private getCellLeft(): number | null {
-        let mostLeftCol: Column;
+        let mostLeftCol: AgColumn;
 
         if (this.beans.gos.get('enableRtl') && this.colsSpanning) {
             mostLeftCol = _last(this.colsSpanning);
@@ -192,7 +192,7 @@ export class CellPositionFeature extends BeanStub {
     }
 
     // overriding to make public, as we don't dispose this bean via context
-    public destroy() {
+    public override destroy() {
         super.destroy();
     }
 }

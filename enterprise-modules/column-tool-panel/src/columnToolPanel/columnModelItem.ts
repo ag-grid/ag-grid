@@ -1,14 +1,20 @@
-import { AgEventListener, Column, EventService, IEventEmitter, ProvidedColumnGroup } from '@ag-grid-community/core';
+import {
+    type AgColumn,
+    type AgEventListener,
+    type AgProvidedColumnGroup,
+    type IEventEmitter,
+    LocalEventService,
+} from '@ag-grid-community/core';
 
 export class ColumnModelItem implements IEventEmitter {
-    private eventService: EventService = new EventService();
+    private localEventService: LocalEventService = new LocalEventService();
 
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
 
     private readonly group: boolean;
     private readonly displayName: string | null;
-    private readonly columnGroup: ProvidedColumnGroup;
-    private readonly column: Column;
+    private readonly columnGroup: AgProvidedColumnGroup;
+    private readonly column: AgColumn;
     private readonly dept: number;
     private readonly children: ColumnModelItem[];
 
@@ -17,7 +23,7 @@ export class ColumnModelItem implements IEventEmitter {
 
     constructor(
         displayName: string | null,
-        columnOrGroup: Column | ProvidedColumnGroup,
+        columnOrGroup: AgColumn | AgProvidedColumnGroup,
         dept: number,
         group = false,
         expanded?: boolean
@@ -27,11 +33,11 @@ export class ColumnModelItem implements IEventEmitter {
         this.group = group;
 
         if (group) {
-            this.columnGroup = columnOrGroup as ProvidedColumnGroup;
+            this.columnGroup = columnOrGroup as AgProvidedColumnGroup;
             this.expanded = expanded;
             this.children = [];
         } else {
-            this.column = columnOrGroup as Column;
+            this.column = columnOrGroup as AgColumn;
         }
     }
 
@@ -41,10 +47,10 @@ export class ColumnModelItem implements IEventEmitter {
     public getDisplayName(): string | null {
         return this.displayName;
     }
-    public getColumnGroup(): ProvidedColumnGroup {
+    public getColumnGroup(): AgProvidedColumnGroup {
         return this.columnGroup;
     }
-    public getColumn(): Column {
+    public getColumn(): AgColumn {
         return this.column;
     }
     public getDept(): number {
@@ -65,7 +71,7 @@ export class ColumnModelItem implements IEventEmitter {
             return;
         }
         this.expanded = expanded;
-        this.eventService.dispatchEvent({ type: ColumnModelItem.EVENT_EXPANDED_CHANGED });
+        this.localEventService.dispatchEvent({ type: ColumnModelItem.EVENT_EXPANDED_CHANGED });
     }
 
     public setPassesFilter(passesFilter: boolean): void {
@@ -73,10 +79,10 @@ export class ColumnModelItem implements IEventEmitter {
     }
 
     public addEventListener(eventType: string, listener: AgEventListener): void {
-        this.eventService.addEventListener(eventType, listener);
+        this.localEventService.addEventListener(eventType, listener);
     }
 
     public removeEventListener(eventType: string, listener: AgEventListener): void {
-        this.eventService.removeEventListener(eventType, listener);
+        this.localEventService.removeEventListener(eventType, listener);
     }
 }

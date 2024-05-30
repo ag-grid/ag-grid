@@ -1,14 +1,16 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Bean } from '../context/context';
-import { Column } from '../entities/column';
-import { ColumnHoverChangedEvent, Events } from '../events';
-import { WithoutGridCommon } from '../interfaces/iCommon';
+import type { AgColumn } from '../entities/agColumn';
+import type { ColumnHoverChangedEvent } from '../events';
+import { Events } from '../events';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
 
-@Bean('columnHoverService')
-export class ColumnHoverService extends BeanStub {
-    private selectedColumns: Column[] | null;
+export class ColumnHoverService extends BeanStub implements NamedBean {
+    beanName = 'columnHoverService' as const;
 
-    public setMouseOver(columns: Column[]): void {
+    private selectedColumns: AgColumn[] | null;
+
+    public setMouseOver(columns: AgColumn[]): void {
         this.selectedColumns = columns;
         const event: WithoutGridCommon<ColumnHoverChangedEvent> = {
             type: Events.EVENT_COLUMN_HOVER_CHANGED,
@@ -24,7 +26,7 @@ export class ColumnHoverService extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public isHovered(column: Column): boolean {
+    public isHovered(column: AgColumn): boolean {
         return !!this.selectedColumns && this.selectedColumns.indexOf(column) >= 0;
     }
 }

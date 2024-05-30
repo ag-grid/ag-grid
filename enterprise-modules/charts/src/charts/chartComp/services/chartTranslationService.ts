@@ -1,9 +1,11 @@
-import { Bean, BeanStub } from '@ag-grid-community/core';
+import type { NamedBean } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
 export type ChartTranslationKey = keyof typeof ChartTranslationService.DEFAULT_TRANSLATIONS;
 
-@Bean('chartTranslationService')
-export class ChartTranslationService extends BeanStub {
+export class ChartTranslationService extends BeanStub implements NamedBean {
+    beanName = 'chartTranslationService' as const;
+
     public static readonly DEFAULT_TRANSLATIONS = {
         pivotChartTitle: 'Pivot Chart',
         rangeChartTitle: 'Range Chart',

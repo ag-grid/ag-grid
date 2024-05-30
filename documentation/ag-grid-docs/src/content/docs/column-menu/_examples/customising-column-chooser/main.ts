@@ -54,7 +54,6 @@ const gridOptions: GridOptions<IOlympicData> = {
             suppressSyncLayoutWithGrid: true,
         },
     },
-    columnMenu: 'new',
 };
 
 // setup the grid after the page has finished loading

@@ -1,5 +1,6 @@
-import { ComponentMeta, ControllerMeta } from '../context/context';
-import { RowModelType } from './iRowModel';
+import type { ControllerMeta, SingletonBean } from '../context/context';
+import type { ComponentClass } from '../widgets/component';
+import type { RowModelType } from './iRowModel';
 
 export type ModuleValidationValidResult = {
     isValid: true;
@@ -21,8 +22,8 @@ export interface Module {
      */
     validate?: () => ModuleValidationResult;
     moduleName: string;
-    beans?: any[];
-    agStackComponents?: ComponentMeta[];
+    beans?: SingletonBean[];
+    agStackComponents?: ComponentClass[];
     controllers?: ControllerMeta[];
     userComponents?: { componentName: string; componentClass: any }[];
     rowModel?: RowModelType;

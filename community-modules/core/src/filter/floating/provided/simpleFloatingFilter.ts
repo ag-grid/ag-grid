@@ -1,22 +1,27 @@
-import { ColumnNameService } from '../../../columns/columnNameService';
-import { Autowired } from '../../../context/context';
-import { FilterChangedEvent } from '../../../events';
-import { ProvidedFilterModel } from '../../../interfaces/iFilter';
+import type { ColumnNameService } from '../../../columns/columnNameService';
+import type { BeanCollection } from '../../../context/context';
+import type { AgColumn } from '../../../entities/agColumn';
+import type { FilterChangedEvent } from '../../../events';
+import type { ProvidedFilterModel } from '../../../interfaces/iFilter';
 import { Component } from '../../../widgets/component';
 import { OptionsFactory } from '../../provided/optionsFactory';
-import { ProvidedFilterParams } from '../../provided/providedFilter';
-import { ScalarFilterParams } from '../../provided/scalarFilter';
-import {
+import type { ProvidedFilterParams } from '../../provided/providedFilter';
+import type { ScalarFilterParams } from '../../provided/scalarFilter';
+import type {
     ICombinedSimpleModel,
     ISimpleFilter,
     ISimpleFilterModel,
-    SimpleFilter,
     SimpleFilterModelFormatter,
 } from '../../provided/simpleFilter';
-import { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
+import { SimpleFilter } from '../../provided/simpleFilter';
+import type { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
 
 export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp<ISimpleFilter> {
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
+    private columnNameService: ColumnNameService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.columnNameService = beans.columnNameService;
+    }
 
     // this method is on IFloatingFilterComp. because it's not implemented at this level, we have to
     // define it as an abstract method. it gets implemented in sub classes.
@@ -39,7 +44,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 
@@ -151,7 +156,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     protected getAriaLabel(params: IFloatingFilterParams): string {
-        const displayName = this.columnNameService.getDisplayNameForColumn(params.column, 'header', true);
+        const displayName = this.columnNameService.getDisplayNameForColumn(params.column as AgColumn, 'header', true);
         const translate = this.localeService.getLocaleTextFunc();
         return `${displayName} ${translate('ariaFilterInput', 'Filter Input')}`;
     }

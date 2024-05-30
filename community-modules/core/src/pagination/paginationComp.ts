@@ -1,33 +1,40 @@
 import { KeyCode } from '../constants/keyCode';
-import { Autowired, PostConstruct } from '../context/context';
-import { Events, PaginationChangedEvent } from '../events';
-import { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
+import type { BeanCollection } from '../context/context';
+import { Events } from '../events';
+import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
 import { _setAriaDisabled } from '../utils/aria';
 import { _createIconNoSpan } from '../utils/icon';
 import { _formatNumberCommas } from '../utils/number';
-import { Component } from '../widgets/component';
-import { RefSelector } from '../widgets/componentAnnotations';
+import type { AgComponentSelector } from '../widgets/component';
+import { Component, RefPlaceholder } from '../widgets/component';
 import { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
-import { PaginationProxy } from './paginationProxy';
+import type { PaginationProxy } from './paginationProxy';
 
 export class PaginationComp extends Component {
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
+    private paginationProxy: PaginationProxy;
+    private rowNodeBlockLoader: RowNodeBlockLoader;
 
-    @RefSelector('btFirst') private btFirst: HTMLElement;
-    @RefSelector('btPrevious') private btPrevious: HTMLElement;
-    @RefSelector('btNext') private btNext: HTMLElement;
-    @RefSelector('btLast') private btLast: HTMLElement;
+    public wireBeans(beans: BeanCollection): void {
+        this.paginationProxy = beans.paginationProxy;
+        this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
+    }
 
-    @RefSelector('lbRecordCount') private lbRecordCount: any;
-    @RefSelector('lbFirstRowOnPage') private lbFirstRowOnPage: any;
-    @RefSelector('lbLastRowOnPage') private lbLastRowOnPage: any;
-    @RefSelector('lbCurrent') private lbCurrent: any;
-    @RefSelector('lbTotal') private lbTotal: any;
+    static readonly selector: AgComponentSelector = 'AG-PAGINATION';
 
-    @RefSelector('pageSizeComp') private pageSizeComp: PageSizeSelectorComp;
+    private readonly btFirst: HTMLElement = RefPlaceholder;
+    private readonly btPrevious: HTMLElement = RefPlaceholder;
+    private readonly btNext: HTMLElement = RefPlaceholder;
+    private readonly btLast: HTMLElement = RefPlaceholder;
+
+    private readonly lbRecordCount: any = RefPlaceholder;
+    private readonly lbFirstRowOnPage: any = RefPlaceholder;
+    private readonly lbLastRowOnPage: any = RefPlaceholder;
+    private readonly lbCurrent: any = RefPlaceholder;
+    private readonly lbTotal: any = RefPlaceholder;
+
+    private readonly pageSizeComp: PageSizeSelectorComp = RefPlaceholder;
 
     private previousAndFirstButtonsDisabled = false;
     private nextButtonDisabled = false;
@@ -38,12 +45,11 @@ export class PaginationComp extends Component {
         super();
     }
 
-    @PostConstruct
-    protected postConstruct(): void {
+    public postConstruct(): void {
         const isRtl = this.gos.get('enableRtl');
-        this.setTemplate(this.getTemplate());
+        this.setTemplate(this.getTemplate(), [PageSizeSelectorComp]);
 
-        const { btFirst, btPrevious, btNext, btLast, pageSizeComp } = this;
+        const { btFirst, btPrevious, btNext, btLast } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast]);
 
         btFirst.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'last' : 'first', this.gos)!);
@@ -154,25 +160,25 @@ export class PaginationComp extends Component {
         const compId = this.getCompId();
 
         return /* html */ `<div class="ag-paging-panel ag-unselectable" id="ag-${compId}">
-                <ag-page-size-selector ref="pageSizeComp"></ag-page-size-selector>
+                <ag-page-size-selector data-ref="pageSizeComp"></ag-page-size-selector>
                 <span class="ag-paging-row-summary-panel" role="status">
-                    <span id="ag-${compId}-first-row" ref="lbFirstRowOnPage" class="ag-paging-row-summary-panel-number"></span>
+                    <span id="ag-${compId}-first-row" data-ref="lbFirstRowOnPage" class="ag-paging-row-summary-panel-number"></span>
                     <span id="ag-${compId}-to">${strTo}</span>
-                    <span id="ag-${compId}-last-row" ref="lbLastRowOnPage" class="ag-paging-row-summary-panel-number"></span>
+                    <span id="ag-${compId}-last-row" data-ref="lbLastRowOnPage" class="ag-paging-row-summary-panel-number"></span>
                     <span id="ag-${compId}-of">${strOf}</span>
-                    <span id="ag-${compId}-row-count" ref="lbRecordCount" class="ag-paging-row-summary-panel-number"></span>
+                    <span id="ag-${compId}-row-count" data-ref="lbRecordCount" class="ag-paging-row-summary-panel-number"></span>
                 </span>
                 <span class="ag-paging-page-summary-panel" role="presentation">
-                    <div ref="btFirst" class="ag-button ag-paging-button" role="button" aria-label="${strFirst}"></div>
-                    <div ref="btPrevious" class="ag-button ag-paging-button" role="button" aria-label="${strPrevious}"></div>
+                    <div data-ref="btFirst" class="ag-button ag-paging-button" role="button" aria-label="${strFirst}"></div>
+                    <div data-ref="btPrevious" class="ag-button ag-paging-button" role="button" aria-label="${strPrevious}"></div>
                     <span class="ag-paging-description" role="status">
                         <span id="ag-${compId}-start-page">${strPage}</span>
-                        <span id="ag-${compId}-start-page-number" ref="lbCurrent" class="ag-paging-number"></span>
+                        <span id="ag-${compId}-start-page-number" data-ref="lbCurrent" class="ag-paging-number"></span>
                         <span id="ag-${compId}-of-page">${strOf}</span>
-                        <span id="ag-${compId}-of-page-number" ref="lbTotal" class="ag-paging-number"></span>
+                        <span id="ag-${compId}-of-page-number" data-ref="lbTotal" class="ag-paging-number"></span>
                     </span>
-                    <div ref="btNext" class="ag-button ag-paging-button" role="button" aria-label="${strNext}"></div>
-                    <div ref="btLast" class="ag-button ag-paging-button" role="button" aria-label="${strLast}"></div>
+                    <div data-ref="btNext" class="ag-button ag-paging-button" role="button" aria-label="${strNext}"></div>
+                    <div data-ref="btLast" class="ag-button ag-paging-button" role="button" aria-label="${strLast}"></div>
                 </span>
             </div>`;
     }

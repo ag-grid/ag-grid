@@ -1,16 +1,16 @@
 import { KeyCode } from '../constants/keyCode';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
-import {
+import type { BeanCollection } from '../context/context';
+import { AgColumn } from '../entities/agColumn';
+import type {
     ColDef,
-    KeyCreatorParams,
     SuppressKeyboardEventParams,
     ValueFormatterFunc,
     ValueFormatterParams,
     ValueGetterParams,
 } from '../entities/colDef';
-import { Column } from '../entities/column';
-import {
+import type {
     BaseCellDataType,
     CoreDataTypeDefinition,
     DataTypeDefinition,
@@ -19,21 +19,23 @@ import {
     ValueParserLiteParams,
 } from '../entities/dataType';
 import { Events } from '../eventKeys';
-import { AgEventListener, AgGridEvent, DataTypesInferredEvent, RowDataUpdateStartedEvent } from '../events';
-import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { IRowModel } from '../interfaces/iRowModel';
-import { IRowNode } from '../interfaces/iRowNode';
+import type { AgEventListener, AgGridEvent, DataTypesInferredEvent, RowDataUpdateStartedEvent } from '../events';
+import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { Column } from '../interfaces/iColumn';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { IRowNode } from '../interfaces/iRowNode';
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
 import { _warnOnce } from '../utils/function';
 import { _exists, _toStringOrNull } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
-import { ValueService } from '../valueService/valueService';
-import { ColumnApplyStateService, ColumnState, ColumnStateParams } from './columnApplyStateService';
-import { ColumnModel, convertSourceType } from './columnModel';
-import { FuncColsService } from './funcColsService';
+import type { ValueService } from '../valueService/valueService';
+import type { ColumnApplyStateService, ColumnState, ColumnStateParams } from './columnApplyStateService';
+import type { ColumnModel } from './columnModel';
+import { convertSourceType } from './columnModel';
+import type { FuncColsService } from './funcColsService';
 
 interface GroupSafeValueFormatter {
     groupSafeValueFormatter?: ValueFormatterFunc;
@@ -70,13 +72,22 @@ const MONTH_KEYS: (keyof typeof MONTH_LOCALE_TEXT)[] = [
     'december',
 ];
 
-@Bean('dataTypeService')
-export class DataTypeService extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnApplyStateService') private columnApplyStateService: ColumnApplyStateService;
+export class DataTypeService extends BeanStub implements NamedBean {
+    beanName = 'dataTypeService' as const;
+
+    private rowModel: IRowModel;
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+    private valueService: ValueService;
+    private columnApplyStateService: ColumnApplyStateService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.rowModel = beans.rowModel;
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+        this.valueService = beans.valueService;
+        this.columnApplyStateService = beans.columnApplyStateService;
+    }
 
     private dataTypeDefinitions: {
         [cellDataType: string]: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter;
@@ -93,8 +104,7 @@ export class DataTypeService extends BeanStub {
     private columnStateUpdatesPendingInference: { [colId: string]: Set<keyof ColumnStateParams> } = {};
     private columnStateUpdateListenerDestroyFuncs: (() => void)[] = [];
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         this.groupHideOpenParents = this.gos.get('groupHideOpenParents');
         this.addManagedPropertyListener('groupHideOpenParents', () => {
             this.groupHideOpenParents = this.gos.get('groupHideOpenParents');
@@ -120,7 +130,7 @@ export class DataTypeService extends BeanStub {
                 if (valueFormatter === dataTypeDefinition.groupSafeValueFormatter) {
                     valueFormatter = dataTypeDefinition.valueFormatter;
                 }
-                return this.valueService.formatValue(column, node, value, valueFormatter as any)!;
+                return this.valueService.formatValue(column as AgColumn, node, value, valueFormatter as any)!;
             };
         };
         Object.entries(defaultDataTypes).forEach(([cellDataType, dataTypeDefinition]) => {
@@ -365,7 +375,7 @@ export class DataTypeService extends BeanStub {
         return columnTypes ? this.convertColumnTypes(columnTypes) : undefined;
     }
 
-    public addColumnListeners(column: Column): void {
+    public addColumnListeners(column: AgColumn): void {
         if (!this.isWaitingForRowData) {
             return;
         }
@@ -376,9 +386,9 @@ export class DataTypeService extends BeanStub {
         const columnListener: AgEventListener = (event: AgGridEvent & { key: keyof ColumnStateParams }) => {
             columnStateUpdates.add(event.key);
         };
-        column.addEventListener(Column.EVENT_STATE_UPDATED, columnListener);
+        column.addEventListener(AgColumn.EVENT_STATE_UPDATED, columnListener);
         this.columnStateUpdateListenerDestroyFuncs.push(() =>
-            column.removeEventListener(Column.EVENT_STATE_UPDATED, columnListener)
+            column.removeEventListener(AgColumn.EVENT_STATE_UPDATED, columnListener)
         );
     }
 
@@ -451,6 +461,7 @@ export class DataTypeService extends BeanStub {
         if (value == null) {
             return undefined;
         }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [cellDataType] = Object.entries(this.dataTypeMatchers).find(([_cellDataType, dataTypeMatcher]) =>
             dataTypeMatcher!(value)
         ) ?? ['object'];
@@ -550,7 +561,7 @@ export class DataTypeService extends BeanStub {
         this.initialData = null;
     }
 
-    private getUpdatedColumnState(column: Column, columnStateUpdates: Set<keyof ColumnStateParams>): ColumnState {
+    private getUpdatedColumnState(column: AgColumn, columnStateUpdates: Set<keyof ColumnStateParams>): ColumnState {
         const columnState = this.columnApplyStateService.getColumnStateFromColDef(column);
         columnStateUpdates.forEach((key) => {
             // if the column state has been updated, don't update again
@@ -591,7 +602,7 @@ export class DataTypeService extends BeanStub {
         return typeKeys;
     }
 
-    private getDateStringTypeDefinition(column?: Column | null): DateStringDataTypeDefinition {
+    private getDateStringTypeDefinition(column?: AgColumn | null): DateStringDataTypeDefinition {
         if (!column) {
             return this.dataTypeDefinitions.dateString as DateStringDataTypeDefinition;
         }
@@ -599,15 +610,15 @@ export class DataTypeService extends BeanStub {
             this.dataTypeDefinitions.dateString) as DateStringDataTypeDefinition;
     }
 
-    public getDateParserFunction(column?: Column | null): (value: string | undefined) => Date | undefined {
+    public getDateParserFunction(column?: AgColumn | null): (value: string | undefined) => Date | undefined {
         return this.getDateStringTypeDefinition(column).dateParser!;
     }
 
-    public getDateFormatterFunction(column?: Column | null): (value: Date | undefined) => string | undefined {
+    public getDateFormatterFunction(column?: AgColumn | null): (value: Date | undefined) => string | undefined {
         return this.getDateStringTypeDefinition(column).dateFormatter!;
     }
 
-    public getDataTypeDefinition(column: Column): DataTypeDefinition | CoreDataTypeDefinition | undefined {
+    public getDataTypeDefinition(column: AgColumn): DataTypeDefinition | CoreDataTypeDefinition | undefined {
         const colDef = column.getColDef();
         if (!colDef.cellDataType) {
             return undefined;
@@ -615,11 +626,11 @@ export class DataTypeService extends BeanStub {
         return this.dataTypeDefinitions[colDef.cellDataType as string];
     }
 
-    public getBaseDataType(column: Column): BaseCellDataType | undefined {
+    public getBaseDataType(column: AgColumn): BaseCellDataType | undefined {
         return this.getDataTypeDefinition(column)?.baseDataType;
     }
 
-    public checkType(column: Column, value: any): boolean {
+    public checkType(column: AgColumn, value: any): boolean {
         if (value == null) {
             return true;
         }
@@ -663,7 +674,7 @@ export class DataTypeService extends BeanStub {
         colId: string
     ): void {
         const formatValue = this.formatValueFuncs[cellDataType];
-        const usingSetFilter = ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.context.getGridId());
+        const usingSetFilter = ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.gridId);
         const translate = this.localeService.getLocaleTextFunc();
         const mergeFilterParams = (params: any) => {
             const { filterParams } = colDef;
@@ -817,7 +828,7 @@ export class DataTypeService extends BeanStub {
                         formatValue({
                             column: params.column,
                             node: params.node,
-                            value: this.valueService.getValue(params.column, params.node),
+                            value: this.valueService.getValue(params.column as AgColumn, params.node),
                         });
                 }
                 break;
@@ -902,7 +913,7 @@ export class DataTypeService extends BeanStub {
         this.columnStateUpdateListenerDestroyFuncs = [];
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.dataTypeDefinitions = {};
         this.dataTypeMatchers = {};
         this.formatValueFuncs = {};

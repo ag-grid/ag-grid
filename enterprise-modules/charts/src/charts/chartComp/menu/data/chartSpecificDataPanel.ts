@@ -1,29 +1,29 @@
-import {
-    AgGroupComponent,
-    AgGroupComponentParams,
-    AgSelect,
-    Autowired,
-    ChartMappings,
-    Component,
-    PostConstruct,
-    RefSelector,
-} from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
+import { AgSelect, ChartMappings, Component, RefPlaceholder } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartService } from '../../../chartService';
-import { ChartTranslationService } from '../../services/chartTranslationService';
+import type { ChartService } from '../../../chartService';
+import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { canSwitchDirection, getFullChartNameTranslationKey, getSeriesType } from '../../utils/seriesTypeMapper';
-import { ChartMenuContext } from '../chartMenuContext';
+import type { ChartMenuContext } from '../chartMenuContext';
 import { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
 
 export class ChartSpecificDataPanel extends Component {
     private static TEMPLATE = /* html */ `
         <div id="chartSpecificGroup">
-            <ag-group-component ref="chartSpecificGroup"></ag-group-component>
+            <ag-group-component data-ref="chartSpecificGroup"></ag-group-component>
         </div>`;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @Autowired('chartService') private readonly chartService: ChartService;
-    @RefSelector('chartSpecificGroup') private readonly chartSpecificGroup: AgGroupComponent;
+    private chartTranslationService: ChartTranslationService;
+    private chartService: ChartService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+        this.chartService = beans.chartService;
+    }
+
+    private readonly chartSpecificGroup: AgGroupComponent = RefPlaceholder;
 
     private directionSelect?: AgSelect;
     private groupTypeSelect?: AgSelect;
@@ -36,8 +36,7 @@ export class ChartSpecificDataPanel extends Component {
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const title = this.getTitle();
         const chartSpecificGroupParams: AgGroupComponentParams = {
             title,
@@ -48,7 +47,7 @@ export class ChartSpecificDataPanel extends Component {
             expanded: this.isOpen,
             items: [...this.createDirectionSelect(), this.createGroupTypeSelect()],
         };
-        this.setTemplate(ChartSpecificDataPanel.TEMPLATE, {
+        this.setTemplate(ChartSpecificDataPanel.TEMPLATE, [AgGroupComponent], {
             chartSpecificGroup: chartSpecificGroupParams,
         });
         this.setDisplayed(this.hasContent);

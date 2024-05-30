@@ -1,18 +1,15 @@
-import {
-    AdvancedFilterModel,
-    AutocompleteEntry,
-    AutocompleteListParams,
-    BaseCellDataType,
-    Column,
-} from '@ag-grid-community/core';
+import type { AdvancedFilterModel, AgColumn, BaseCellDataType } from '@ag-grid-community/core';
 
-import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
-import {
+import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
+import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
+import type {
     AutocompleteUpdate,
     FilterExpressionFunction,
     FilterExpressionFunctionParams,
     FilterExpressionParserParams,
     FilterExpressionValidationError,
+} from './filterExpressionUtils';
+import {
     checkAndUpdateExpression,
     escapeQuotes,
     findEndPosition,
@@ -34,7 +31,7 @@ class ColumnParser implements Parser {
     public valid = true;
     public endPosition: number | undefined;
     public baseCellDataType: BaseCellDataType;
-    public column: Column | null | undefined;
+    public column: AgColumn | null | undefined;
     public hasStartChar = false;
     public hasEndChar = false;
     private colName: string = '';
@@ -201,7 +198,7 @@ class OperandParser implements Parser {
         private params: FilterExpressionParserParams,
         public readonly startPosition: number,
         private readonly baseCellDataType: BaseCellDataType,
-        private readonly column: Column | null | undefined
+        private readonly column: AgColumn | null | undefined
     ) {}
 
     public parse(char: string, position: number): boolean | undefined {

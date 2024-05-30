@@ -1,7 +1,7 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Bean } from '../context/context';
-import { Column } from './column';
-import { RowPosition } from './rowPositionUtils';
+import type { Column } from '../interfaces/iColumn';
+import type { RowPosition } from './rowPositionUtils';
 
 // this is what gets pass into and out of the api, as JavaScript users
 export interface CellPosition extends RowPosition {
@@ -9,8 +9,9 @@ export interface CellPosition extends RowPosition {
     column: Column;
 }
 
-@Bean('cellPositionUtils')
-export class CellPositionUtils extends BeanStub {
+export class CellPositionUtils extends BeanStub implements NamedBean {
+    beanName = 'cellPositionUtils' as const;
+
     public createId(cellPosition: CellPosition): string {
         const { rowIndex, rowPinned, column } = cellPosition;
         return this.createIdFromValues({ rowIndex, column, rowPinned });

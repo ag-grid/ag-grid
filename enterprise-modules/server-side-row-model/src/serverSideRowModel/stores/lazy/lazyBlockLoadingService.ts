@@ -1,27 +1,32 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
+    BeanCollection,
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
     LoadSuccessParams,
-    PostConstruct,
+    NamedBean,
     RowNode,
-    RowNodeBlockLoader,
     RowRenderer,
 } from '@ag-grid-community/core';
+import { BeanStub, RowNodeBlockLoader } from '@ag-grid-community/core';
 
-import { ServerSideRowModel } from '../../serverSideRowModel';
-import { LazyCache } from './lazyCache';
+import type { ServerSideRowModel } from '../../serverSideRowModel';
+import type { LazyCache } from './lazyCache';
 import { LazyStore } from './lazyStore';
 
-@Bean('lazyBlockLoadingService')
-export class LazyBlockLoadingService extends BeanStub {
-    public static DEFAULT_BLOCK_SIZE = 100;
+export class LazyBlockLoadingService extends BeanStub implements NamedBean {
+    beanName = 'lazyBlockLoadingService' as const;
 
-    @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('rowModel') private rowModel: ServerSideRowModel;
+    private rowNodeBlockLoader: RowNodeBlockLoader;
+    private rowRenderer: RowRenderer;
+    private rowModel: ServerSideRowModel;
+
+    public wireBeans(beans: BeanCollection) {
+        this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
+        this.rowRenderer = beans.rowRenderer;
+        this.rowModel = beans.rowModel as ServerSideRowModel;
+    }
+
+    public static DEFAULT_BLOCK_SIZE = 100;
 
     // a map of caches to loading nodes
     private cacheLoadingNodesMap: Map<LazyCache, Set<number>> = new Map();
@@ -33,8 +38,7 @@ export class LazyBlockLoadingService extends BeanStub {
     private nextBlockToLoad?: { cache: LazyCache; index: number } = undefined;
     private loaderTimeout?: number;
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         // after a block is loaded, check if we have a block to load now that
         // `maxConcurrentDatasourceRequests` has changed
         this.addManagedListener(this.rowNodeBlockLoader, RowNodeBlockLoader.BLOCK_LOADED_EVENT, () =>

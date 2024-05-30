@@ -1,7 +1,8 @@
-import { GridOptions } from '../entities/gridOptions';
-import { GridApi } from '../gridApi';
-import { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
-import { IRowNode } from './iRowNode';
+import type { Bean } from '../context/bean';
+import type { GridOptions } from '../entities/gridOptions';
+import type { GridApi } from '../gridApi';
+import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
+import type { IRowNode } from './iRowNode';
 
 export interface IDetailCellRenderer<TData = any> {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -45,7 +46,7 @@ interface TemplateFunc<TData = any> {
     (params: ICellRendererParams<TData>): string;
 }
 
-export interface IDetailCellRendererCtrl {
+export interface IDetailCellRendererCtrl extends Bean {
     init(comp: IDetailCellRenderer, params: IDetailCellRendererParams): void;
     registerDetailWithMaster(api: GridApi): void;
     refresh(): boolean;

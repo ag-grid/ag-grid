@@ -1,19 +1,17 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
+    BeanCollection,
     ChartToolPanelMenuOptions,
     ChartToolPanelName,
     ChartToolbarMenuItemOptions,
     GetChartToolbarItemsParams,
+    NamedBean,
     WithoutGridCommon,
-    _warnOnce,
 } from '@ag-grid-community/core';
+import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 
-import { ChartService } from '../../chartService';
-import { ChartController } from '../chartController';
-import { AdvancedSettingsMenuFactory } from '../menu/advancedSettings/advancedSettingsMenuFactory';
-import { ChartMenuContext } from '../menu/chartMenuContext';
+import type { ChartController } from '../chartController';
+import type { AdvancedSettingsMenuFactory } from '../menu/advancedSettings/advancedSettingsMenuFactory';
+import type { ChartMenuContext } from '../menu/chartMenuContext';
 
 const CHART_TOOLBAR_ALLOW_LIST: ChartToolbarMenuItemOptions[] = [
     'chartUnlink',
@@ -28,10 +26,14 @@ export const CHART_TOOL_PANEL_MENU_OPTIONS: { [key in ChartToolPanelName]: Chart
     format: 'chartFormat',
 };
 
-@Bean('chartMenuService')
-export class ChartMenuService extends BeanStub {
-    @Autowired('chartService') private readonly chartService: ChartService;
-    @Autowired('advancedSettingsMenuFactory') private readonly advancedSettingsMenuFactory: AdvancedSettingsMenuFactory;
+export class ChartMenuService extends BeanStub implements NamedBean {
+    beanName = 'chartMenuService' as const;
+
+    private advancedSettingsMenuFactory: AdvancedSettingsMenuFactory;
+
+    public wireBeans(beans: BeanCollection) {
+        this.advancedSettingsMenuFactory = beans.advancedSettingsMenuFactory;
+    }
 
     public downloadChart(
         chartMenuContext: ChartMenuContext,

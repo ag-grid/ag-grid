@@ -1,22 +1,29 @@
-import { Autowired, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
+import type { AgComponentSelector, BeanCollection } from '@ag-grid-community/core';
+import { Component, RefPlaceholder } from '@ag-grid-community/core';
 
-import { GridLicenseManager as LicenseManager } from './gridLicenseManager';
+import type { GridLicenseManager as LicenseManager } from './gridLicenseManager';
 
-export class WatermarkComp extends Component {
-    @Autowired('licenseManager') licenseManager: LicenseManager;
-    @RefSelector('eLicenseTextRef') private eLicenseTextRef: HTMLElement;
+export class AgWatermark extends Component {
+    static readonly selector: AgComponentSelector = 'AG-WATERMARK';
+
+    licenseManager: LicenseManager;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.licenseManager = beans.licenseManager;
+    }
+
+    private readonly eLicenseTextRef: HTMLElement = RefPlaceholder;
 
     constructor() {
         super(
             /* html*/
             `<div class="ag-watermark">
-                <div ref="eLicenseTextRef" class="ag-watermark-text"></div>
+                <div data-ref="eLicenseTextRef" class="ag-watermark-text"></div>
             </div>`
         );
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const show = this.shouldDisplayWatermark();
         this.setDisplayed(show);
 

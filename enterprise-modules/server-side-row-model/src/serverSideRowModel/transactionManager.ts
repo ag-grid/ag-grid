@@ -1,42 +1,40 @@
-import {
+import type {
     AsyncTransactionsFlushed,
-    Autowired,
-    Bean,
-    BeanStub,
-    Events,
+    BeanCollection,
     IServerSideTransactionManager,
-    PostConstruct,
-    RowNode,
-    RowNodeBlockLoader,
-    RowRenderer,
+    NamedBean,
     ServerSideTransaction,
     ServerSideTransactionResult,
-    ServerSideTransactionResultStatus,
     ValueCache,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
+import { BeanStub, Events, ServerSideTransactionResultStatus } from '@ag-grid-community/core';
 
-import { ServerSideRowModel } from './serverSideRowModel';
-import { ServerSideSelectionService } from './services/serverSideSelectionService';
+import type { ServerSideRowModel } from './serverSideRowModel';
+import type { ServerSideSelectionService } from './services/serverSideSelectionService';
 
 interface AsyncTransactionWrapper {
     transaction: ServerSideTransaction;
     callback?: (result: ServerSideTransactionResult) => void;
 }
 
-@Bean('ssrmTransactionManager')
-export class TransactionManager extends BeanStub implements IServerSideTransactionManager {
-    @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
-    @Autowired('valueCache') private valueCache: ValueCache;
-    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('selectionService') private selectionService: ServerSideSelectionService;
+export class TransactionManager extends BeanStub implements NamedBean, IServerSideTransactionManager {
+    beanName = 'ssrmTransactionManager' as const;
+
+    private valueCache: ValueCache;
+    private serverSideRowModel: ServerSideRowModel;
+    private selectionService: ServerSideSelectionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.valueCache = beans.valueCache;
+        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+        this.selectionService = beans.selectionService as ServerSideSelectionService;
+    }
 
     private asyncTransactionsTimeout: number | undefined;
     private asyncTransactions: AsyncTransactionWrapper[] = [];
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
         if (!this.gos.isRowModelType('serverSide')) {
             return;

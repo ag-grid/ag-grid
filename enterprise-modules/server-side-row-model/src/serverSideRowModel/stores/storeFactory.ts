@@ -1,26 +1,30 @@
-import {
-    Autowired,
-    Bean,
+import type {
+    BeanCollection,
     ColumnModel,
     FuncColsService,
     GetServerSideGroupLevelParamsParams,
-    GridOptionsService,
     IServerSideStore,
+    NamedBean,
     RowNode,
     ServerSideGroupLevelParams,
     WithoutGridCommon,
-    _warnOnce,
 } from '@ag-grid-community/core';
+import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 
-import { SSRMParams } from '../serverSideRowModel';
+import type { SSRMParams } from '../serverSideRowModel';
 import { FullStore } from './fullStore';
 import { LazyStore } from './lazy/lazyStore';
 
-@Bean('ssrmStoreFactory')
-export class StoreFactory {
-    @Autowired('gridOptionsService') private gos: GridOptionsService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
+export class StoreFactory extends BeanStub implements NamedBean {
+    beanName = 'ssrmStoreFactory' as const;
+
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+    }
 
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
         const storeParams = this.getStoreParams(ssrmParams, parentNode);

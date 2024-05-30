@@ -1,35 +1,30 @@
-import {
-    Autowired,
-    BeanStub,
-    Column,
-    ColumnGroup,
+import type {
+    AgColumn,
+    AgColumnGroup,
+    BeanCollection,
     ColumnModel,
     IAggFunc,
     IAggregationStage,
     IClientSideRowModel,
     IRowModel,
-    ModuleNames,
-    ModuleRegistry,
-    Optional,
     PartialCellRange,
     PivotResultColsService,
     RowNode,
     RowNodeSorter,
     SortController,
     ValueService,
-    _includes,
-    _last,
-    _values,
 } from '@ag-grid-community/core';
+import { BeanStub, ModuleNames, ModuleRegistry, _includes, _last, _values } from '@ag-grid-community/core';
 
-import { ChartDataModel, ColState } from '../model/chartDataModel';
+import type { ColState } from '../model/chartDataModel';
+import { ChartDataModel } from '../model/chartDataModel';
 
 export interface ChartDatasourceParams {
     dimensionCols: ColState[];
     grouping: boolean;
     pivoting: boolean;
     crossFiltering: boolean;
-    valueCols: Column[];
+    valueCols: AgColumn[];
     startRow: number;
     endRow: number;
     isScatter: boolean;
@@ -44,14 +39,23 @@ interface IData {
 }
 
 export class ChartDatasource extends BeanStub {
-    @Autowired('rowModel') private readonly gridRowModel: IRowModel;
-    @Autowired('pivotResultColsService') private readonly pivotResultColsService: PivotResultColsService;
-    @Autowired('valueService') private readonly valueService: ValueService;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('rowNodeSorter') private readonly rowNodeSorter: RowNodeSorter;
-    @Autowired('sortController') private sortController: SortController;
+    private gridRowModel: IRowModel;
+    private pivotResultColsService: PivotResultColsService;
+    private valueService: ValueService;
+    private columnModel: ColumnModel;
+    private rowNodeSorter: RowNodeSorter;
+    private sortController: SortController;
+    private aggregationStage?: IAggregationStage;
 
-    @Optional('aggregationStage') private readonly aggregationStage?: IAggregationStage;
+    public wireBeans(beans: BeanCollection): void {
+        this.sortController = beans.sortController;
+        this.gridRowModel = beans.rowModel;
+        this.columnModel = beans.columnModel;
+        this.valueService = beans.valueService;
+        this.pivotResultColsService = beans.pivotResultColsService;
+        this.rowNodeSorter = beans.rowNodeSorter;
+        this.aggregationStage = beans.aggregationStage;
+    }
 
     public getData(params: ChartDatasourceParams): IData {
         if (params.crossFiltering) {
@@ -212,7 +216,7 @@ export class ChartDatasource extends BeanStub {
                     let value = this.valueService.getValue(col, rowNode);
 
                     // aggregated value
-                    if (value && value.hasOwnProperty('toString')) {
+                    if (value && Object.prototype.hasOwnProperty.call(value, 'toString')) {
                         value = parseFloat(value.toString());
                     }
 
@@ -284,13 +288,7 @@ export class ChartDatasource extends BeanStub {
             });
         });
 
-        if (
-            ModuleRegistry.__assertRegistered(
-                ModuleNames.RowGroupingModule,
-                'Charting Aggregation',
-                this.context.getGridId()
-            )
-        ) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation', this.gridId)) {
             const aggStage = this.aggregationStage!;
             dataAggregated.forEach((groupItem) =>
                 params.valueCols.forEach((col) => {
@@ -303,7 +301,7 @@ export class ChartDatasource extends BeanStub {
                                 .filter((child: any) => typeof child[colId] !== 'undefined')
                                 .map((child: any) => child[colId]);
 
-                            let aggResult: any = aggStage.aggregateValues(dataToAgg, params.aggFunc!);
+                            const aggResult: any = aggStage.aggregateValues(dataToAgg, params.aggFunc!);
                             groupItem[valueCol.getId()] =
                                 aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
 
@@ -313,7 +311,7 @@ export class ChartDatasource extends BeanStub {
                                 .filter((child: any) => typeof child[filteredOutColId] !== 'undefined')
                                 .map((child: any) => child[filteredOutColId]);
 
-                            let aggResultFiltered: any = aggStage.aggregateValues(dataToAggFiltered, params.aggFunc!);
+                            const aggResultFiltered: any = aggStage.aggregateValues(dataToAggFiltered, params.aggFunc!);
                             groupItem[filteredOutColId] =
                                 aggResultFiltered && typeof aggResultFiltered.value !== 'undefined'
                                     ? aggResultFiltered.value
@@ -321,7 +319,7 @@ export class ChartDatasource extends BeanStub {
                         });
                     } else {
                         const dataToAgg = groupItem.__children.map((child: any) => child[col.getId()]);
-                        let aggResult = aggStage.aggregateValues(dataToAgg, params.aggFunc!);
+                        const aggResult = aggStage.aggregateValues(dataToAgg, params.aggFunc!);
 
                         groupItem[col.getId()] =
                             aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
@@ -356,25 +354,25 @@ export class ChartDatasource extends BeanStub {
         });
     }
 
-    private extractPivotKeySeparator(secondaryColumns: Column[]) {
+    private extractPivotKeySeparator(secondaryColumns: AgColumn[]) {
         if (secondaryColumns.length === 0) {
             return '';
         }
 
-        const extractSeparator = (columnGroup: ColumnGroup, childId: string): string => {
+        const extractSeparator = (columnGroup: AgColumnGroup, childId: string): string => {
             const groupId = columnGroup.getGroupId();
             if (!columnGroup.getParent()) {
                 // removing groupId ('2000') from childId ('2000|Swimming') yields '|Swimming' so first char is separator
                 return childId.split(groupId)[1][0];
             }
-            return extractSeparator(columnGroup.getParent(), groupId);
+            return extractSeparator(columnGroup.getParent()!, groupId);
         };
 
         const firstSecondaryCol = secondaryColumns[0];
         if (firstSecondaryCol.getParent() == null) {
             return '';
         }
-        return extractSeparator(firstSecondaryCol.getParent(), firstSecondaryCol.getColId());
+        return extractSeparator(firstSecondaryCol.getParent()!, firstSecondaryCol.getColId());
     }
 
     private static getGroupLabels(rowNode: RowNode | null, initialLabel: string): string[] {
@@ -397,7 +395,7 @@ export class ChartDatasource extends BeanStub {
     }
 
     private getAllRowNodes() {
-        let allRowNodes: RowNode[] = [];
+        const allRowNodes: RowNode[] = [];
         this.gridRowModel.forEachNode((rowNode: RowNode) => {
             allRowNodes.push(rowNode);
         });

@@ -1,11 +1,12 @@
 import { KeyCode } from '../../constants/keyCode';
-import { Autowired } from '../../context/context';
-import { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
+import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _missing } from '../../utils/generic';
-import { ValueService } from '../../valueService/valueService';
-import { ListOption } from '../../widgets/agList';
+import type { ValueService } from '../../valueService/valueService';
+import type { ListOption } from '../../widgets/agList';
 import { AgSelect } from '../../widgets/agSelect';
-import { RefSelector } from '../../widgets/componentAnnotations';
+import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
 
 export interface ISelectCellEditorParams<TValue = any> {
@@ -33,8 +34,13 @@ interface SelectCellEditorParams<TData = any, TValue = any, TContext = any>
 export class SelectCellEditor extends PopupComponent implements ICellEditorComp {
     private focusAfterAttached: boolean;
 
-    @Autowired('valueService') private valueService: ValueService;
-    @RefSelector('eSelect') private eSelect: AgSelect;
+    private valueService: ValueService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.valueService = beans.valueService;
+    }
+
+    private readonly eSelect: AgSelect = RefPlaceholder;
 
     private startedByEnter: boolean = false;
 
@@ -42,8 +48,9 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
         super(
             /* html */
             `<div class="ag-cell-edit-wrapper">
-                <ag-select class="ag-cell-editor" ref="eSelect"></ag-select>
-            </div>`
+                <ag-select class="ag-cell-editor" data-ref="eSelect"></ag-select>
+            </div>`,
+            [AgSelect]
         );
     }
 
@@ -63,7 +70,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
         let hasValue = false;
         values.forEach((currentValue: any) => {
             const option: ListOption = { value: currentValue };
-            const valueFormatted = valueService.formatValue(params.column, null, currentValue);
+            const valueFormatted = valueService.formatValue(params.column as AgColumn, null, currentValue);
             const valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
             option.text = valueFormattedExits ? valueFormatted : currentValue;
 
@@ -120,7 +127,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
         return this.eSelect.getValue();
     }
 
-    public isPopup() {
+    public override isPopup() {
         return false;
     }
 }

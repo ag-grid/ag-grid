@@ -1,7 +1,6 @@
-import {
+import type {
     AgChartThemeOverrides,
-    Autowired,
-    BeanStub,
+    BeanCollection,
     CellRange,
     CellRangeParams,
     ChartModel,
@@ -9,11 +8,10 @@ import {
     ChartOptionsChanged,
     ChartRangeSelectionChanged,
     ChartType,
-    Events,
+    EventsType,
     IAggFunc,
     IRangeService,
     PartialCellRange,
-    PostConstruct,
     SeriesChartType,
     SeriesGroupType,
     UpdateChartParams,
@@ -21,14 +19,17 @@ import {
     UpdateRangeChartParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { AgCartesianAxisType, AgChartThemePalette, _ModuleSupport, _Theme } from 'ag-charts-community';
+import { BeanStub, Events } from '@ag-grid-community/core';
+import type { AgCartesianAxisType, AgChartThemePalette } from 'ag-charts-community';
+import { _ModuleSupport, _Theme } from 'ag-charts-community';
 
-import { ChartProxy, FieldDefinition, UpdateParams } from './chartProxies/chartProxy';
+import type { ChartProxy, FieldDefinition, UpdateParams } from './chartProxies/chartProxy';
 import { isStockTheme } from './chartProxies/chartTheme';
-import { ChartDataModel, ChartModelParams, ColState } from './model/chartDataModel';
+import type { ChartModelParams, ColState } from './model/chartDataModel';
+import { ChartDataModel } from './model/chartDataModel';
 import { ChartParamsValidator } from './utils/chartParamsValidator';
+import type { ChartSeriesType } from './utils/seriesTypeMapper';
 import {
-    ChartSeriesType,
     getMaxNumCategories,
     getMaxNumSeries,
     getSeriesType,
@@ -38,6 +39,12 @@ import {
 export const DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
 
 export class ChartController extends BeanStub {
+    private rangeService: IRangeService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.rangeService = beans.rangeService;
+    }
+
     public static EVENT_CHART_UPDATED = 'chartUpdated';
     public static EVENT_CHART_API_UPDATE = 'chartApiUpdate';
     public static EVENT_CHART_MODEL_UPDATE = 'chartModelUpdate';
@@ -45,45 +52,34 @@ export class ChartController extends BeanStub {
     public static EVENT_CHART_SERIES_CHART_TYPE_CHANGED = 'chartSeriesChartTypeChanged';
     public static EVENT_CHART_LINKED_CHANGED = 'chartLinkedChanged';
 
-    @Autowired('rangeService') private readonly rangeService: IRangeService;
-
     private chartProxy: ChartProxy;
 
     public constructor(private readonly model: ChartDataModel) {
         super();
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.setChartRange();
-
-        this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, (event) => {
-            if (event.id && event.id === this.model.chartId) {
-                this.updateForRangeChange();
-            }
-        });
 
         if (this.model.unlinked) {
             if (this.rangeService) {
                 this.rangeService.setCellRanges([]);
             }
         }
-
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.updateForGridChange.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.updateForGridChange.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
-            this.updateForGridChange.bind(this)
-        );
-
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateForGridChange.bind(this));
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_CELL_VALUE_CHANGED,
-            this.updateForDataChange.bind(this)
-        );
+        const listener = this.updateForGridChange.bind(this);
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_RANGE_SELECTION_CHANGED]: (event) => {
+                if (event.id && event.id === this.model.chartId) {
+                    this.updateForRangeChange();
+                }
+            },
+            [Events.EVENT_COLUMN_MOVED]: listener,
+            [Events.EVENT_COLUMN_PINNED]: listener,
+            [Events.EVENT_COLUMN_VISIBLE]: listener,
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: listener,
+            [Events.EVENT_MODEL_UPDATED]: listener,
+            [Events.EVENT_CELL_VALUE_CHANGED]: this.updateForDataChange.bind(this),
+        });
     }
 
     public update(params: UpdateChartParams): boolean {
@@ -113,7 +109,7 @@ export class ChartController extends BeanStub {
             crossFiltering: false,
         };
 
-        let chartModelParams: ChartModelParams = { ...common };
+        const chartModelParams: ChartModelParams = { ...common };
 
         // modify the chart model properties based on the type of update
         switch (params.type) {
@@ -407,10 +403,7 @@ export class ChartController extends BeanStub {
         });
     }
 
-    public getThemeTemplateParameters(): {
-        extensions: Map<any, any>;
-        properties: Map<any, any>;
-    }[] {
+    public getThemeTemplateParameters(): Map<any, any>[] {
         const themes = this.getThemes();
 
         return themes.map((theme) => {
@@ -689,7 +682,7 @@ export class ChartController extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
 
         if (this.rangeService) {

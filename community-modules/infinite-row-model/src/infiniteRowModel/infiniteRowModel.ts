@@ -1,16 +1,12 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Events,
+import type {
+    BeanCollection,
+    EventsType,
     FilterManager,
     IDatasource,
     IInfiniteRowModel,
     ISelectionService,
     ModelUpdatedEvent,
-    NumberSequence,
-    PostConstruct,
-    PreDestroy,
+    NamedBean,
     RowBounds,
     RowModelType,
     RowNode,
@@ -18,19 +14,28 @@ import {
     RowRenderer,
     SortController,
     WithoutGridCommon,
-    _jsonEquals,
-    _warnOnce,
 } from '@ag-grid-community/core';
+import { BeanStub, Events, NumberSequence, _jsonEquals, _warnOnce } from '@ag-grid-community/core';
 
-import { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
+import type { InfiniteCacheParams } from './infiniteCache';
+import { InfiniteCache } from './infiniteCache';
 
-@Bean('rowModel')
-export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('sortController') private readonly sortController: SortController;
-    @Autowired('selectionService') private readonly selectionService: ISelectionService;
-    @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
-    @Autowired('rowNodeBlockLoader') private readonly rowNodeBlockLoader: RowNodeBlockLoader;
+export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRowModel {
+    beanName = 'rowModel' as const;
+
+    private filterManager: FilterManager;
+    private sortController: SortController;
+    private selectionService: ISelectionService;
+    private rowRenderer: RowRenderer;
+    private rowNodeBlockLoader: RowNodeBlockLoader;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.filterManager = beans.filterManager;
+        this.sortController = beans.sortController;
+        this.selectionService = beans.selectionService;
+        this.rowRenderer = beans.rowRenderer;
+        this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
+    }
 
     private infiniteCache: InfiniteCache | null | undefined;
     private datasource: IDatasource | null | undefined;
@@ -54,8 +59,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         return false;
     }
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         if (!this.gos.isRowModelType('infinite')) {
             return;
         }
@@ -81,20 +85,27 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         this.setDatasource(this.gos.get('datasource'));
     }
 
-    @PreDestroy
+    public override destroy(): void {
+        this.destroyDatasource();
+        super.destroy();
+    }
+
     private destroyDatasource(): void {
         if (this.datasource) {
-            this.getContext().destroyBean(this.datasource);
+            this.destroyBean(this.datasource);
             this.rowRenderer.datasourceChanged();
             this.datasource = null;
         }
     }
 
     private addEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onCacheUpdated.bind(this));
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_FILTER_CHANGED]: this.onFilterChanged.bind(this),
+            [Events.EVENT_SORT_CHANGED]: this.onSortChanged.bind(this),
+            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onColumnEverything.bind(this),
+            [Events.EVENT_STORE_UPDATED]: this.onCacheUpdated.bind(this),
+        });
+
         this.addManagedPropertyListener('datasource', () => this.setDatasource(this.gos.get('datasource')));
         this.addManagedPropertyListener('cacheBlockSize', () => this.resetCache());
         this.addManagedPropertyListener('rowHeight', () => {

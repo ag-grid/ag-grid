@@ -1,33 +1,22 @@
-import {
-    AgChartThemeOverrides,
-    BeanStub,
-    ChartOptionsChanged,
-    ChartType,
-    Events,
-    WithoutGridCommon,
-} from '@ag-grid-community/core';
-import {
+import type { AgChartThemeOverrides, ChartOptionsChanged, ChartType, WithoutGridCommon } from '@ag-grid-community/core';
+import { BeanStub, Events } from '@ag-grid-community/core';
+import type {
     AgBaseThemeableChartOptions,
     AgCartesianAxesTheme,
     AgCartesianAxisOptions,
     AgCartesianAxisType,
     AgCartesianChartOptions,
     AgChartOptions,
-    AgCharts,
     AgPolarAxesTheme,
     AgPolarAxisType,
 } from 'ag-charts-community';
+import { AgCharts } from 'ag-charts-community';
 
-import { ChartController } from '../chartController';
-import { AgChartActual, AgChartAxisType } from '../utils/integration';
+import type { ChartController } from '../chartController';
+import type { AgChartActual, AgChartAxisType } from '../utils/integration';
 import { get, set } from '../utils/object';
-import {
-    ChartSeriesType,
-    ChartThemeOverridesSeriesType,
-    getSeriesType,
-    isCartesian,
-    isSeriesType,
-} from '../utils/seriesTypeMapper';
+import type { ChartSeriesType, ChartThemeOverridesSeriesType } from '../utils/seriesTypeMapper';
+import { getSeriesType, isCartesian, isSeriesType } from '../utils/seriesTypeMapper';
 
 export interface ChartOptionsProxy {
     getValue<T = string>(expression: string, calculated?: boolean): T;
@@ -306,7 +295,7 @@ export class ChartOptionsService extends BeanStub {
         const chartType = this.getChartType();
 
         // combine the options into a single merged object
-        let chartOptions = this.createChartOptions();
+        const chartOptions = this.createChartOptions();
         for (const { expression, value } of properties) {
             // Only apply the property to axes that declare the property on their prototype chain
             const relevantAxes = chart.axes?.filter((axis) => {
@@ -366,7 +355,7 @@ export class ChartOptionsService extends BeanStub {
         const chartType = this.getChartType();
 
         // combine the axis options into a single merged object
-        let chartOptions = this.createChartOptions();
+        const chartOptions = this.createChartOptions();
         for (const { expression, value } of properties) {
             this.assignChartAxisThemeOverride(
                 chartOptions,
@@ -413,7 +402,7 @@ export class ChartOptionsService extends BeanStub {
         if (!chartAxis) return;
 
         // combine the axis options into a single merged object
-        let chartOptions = this.createChartOptions();
+        const chartOptions = this.createChartOptions();
         (chartOptions as Extract<AgChartOptions, { axes?: any }>).axes = axisOptions;
 
         updateFunc(chartOptions, axes, chartAxis, existingChartOptions);
@@ -466,7 +455,7 @@ export class ChartOptionsService extends BeanStub {
         properties: { expression: string; value: T }[]
     ): void {
         // combine the series options into a single merged object
-        let chartOptions = this.createChartOptions();
+        const chartOptions = this.createChartOptions();
         for (const { expression, value } of properties) {
             this.assignChartOptionsSeriesThemeOverride(chartOptions, seriesType, `series.${expression}`, value);
         }
@@ -559,7 +548,7 @@ export class ChartOptionsService extends BeanStub {
     private updateChart(chartOptions: AgChartOptions) {
         const chartRef = this.chartController.getChartProxy().getChartRef();
         chartRef.skipAnimations();
-        AgCharts.updateDelta(chartRef, chartOptions);
+        chartRef.updateDelta(chartOptions);
     }
 
     private createChartOptions(): AgChartOptionsWithThemeOverrides {
@@ -664,7 +653,7 @@ export class ChartOptionsService extends BeanStub {
         return isSeriesType(seriesType) && series.type === seriesType;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 }

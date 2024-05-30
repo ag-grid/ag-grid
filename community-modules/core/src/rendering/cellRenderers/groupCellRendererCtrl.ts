@@ -1,26 +1,26 @@
-import { ColumnModel } from '../../columns/columnModel';
-import { FuncColsService } from '../../columns/funcColsService';
-import { VisibleColsService } from '../../columns/visibleColsService';
-import { UserCompDetails, UserComponentFactory } from '../../components/framework/userComponentFactory';
+import type { ColumnModel } from '../../columns/columnModel';
+import type { FuncColsService } from '../../columns/funcColsService';
+import type { VisibleColsService } from '../../columns/visibleColsService';
+import type { UserCompDetails, UserComponentFactory } from '../../components/framework/userComponentFactory';
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired } from '../../context/context';
-import { CtrlsService } from '../../ctrlsService';
-import { CellRendererSelectorFunc, ColumnFunctionCallbackParams } from '../../entities/colDef';
-import { Column } from '../../entities/column';
+import type { BeanCollection } from '../../context/context';
+import type { CtrlsService } from '../../ctrlsService';
+import type { AgColumn } from '../../entities/agColumn';
+import type { CellRendererSelectorFunc, ColumnFunctionCallbackParams } from '../../entities/colDef';
 import { RowNode } from '../../entities/rowNode';
-import { IRowNode } from '../../interfaces/iRowNode';
+import type { IRowNode } from '../../interfaces/iRowNode';
 import { _removeAriaExpanded, _setAriaExpanded } from '../../utils/aria';
 import { _isElementInEventPath, _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../utils/event';
 import { _warnOnce } from '../../utils/function';
 import { _missing } from '../../utils/generic';
 import { _createIconNoSpan } from '../../utils/icon';
 import { _cloneObject } from '../../utils/object';
-import { ExpressionService } from '../../valueService/expressionService';
-import { ValueService } from '../../valueService/valueService';
+import type { ExpressionService } from '../../valueService/expressionService';
+import type { ValueService } from '../../valueService/valueService';
 import { CheckboxSelectionComponent } from '../checkboxSelectionComponent';
 import { RowDragComp } from '../row/rowDragComp';
-import { ICellRendererParams } from './iCellRenderer';
+import type { ICellRendererParams } from './iCellRenderer';
 
 export interface IGroupCellRenderer {
     setInnerRenderer(compDetails: UserCompDetails | undefined, valueToDisplay: any): void;
@@ -96,13 +96,23 @@ export type GroupCellRendererParams<TData = any, TValue = any> = IGroupCellRende
     IGroupCellRendererFullRowParams;
 
 export class GroupCellRendererCtrl extends BeanStub {
-    @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
+    private expressionService: ExpressionService;
+    private valueService: ValueService;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private userComponentFactory: UserComponentFactory;
+    private ctrlsService: CtrlsService;
+    private funcColsService: FuncColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.expressionService = beans.expressionService;
+        this.valueService = beans.valueService;
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.userComponentFactory = beans.userComponentFactory;
+        this.ctrlsService = beans.ctrlsService;
+        this.funcColsService = beans.funcColsService;
+    }
 
     private params: GroupCellRendererParams;
 
@@ -142,7 +152,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.comp = comp;
         this.compClass = compClass;
 
-        const { node, value, colDef } = params;
+        const { node, colDef } = params;
         const topLevelFooter = this.isTopLevelFooter();
 
         // logic for skipping cells follows, never skip top level footer cell.
@@ -226,7 +236,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         return colDefAriaRole || columnColDefAriaRole || 'gridcell';
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
         // property cleanup to avoid memory leaks
         this.expandListener = null;
@@ -340,7 +350,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         // note - this code depends on sortService.updateGroupDataForHiddenOpenParents, where group data
         // is updated to reflect the dragged down parents
         const rowNode = this.params.node;
-        const column = this.params.column as Column;
+        const column = this.params.column as AgColumn;
 
         if (!this.gos.get('groupHideOpenParents')) {
             this.showingValueForOpenedParent = false;
@@ -767,7 +777,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         }
 
         const rowDragComp = new RowDragComp(() => this.params.value, this.params.node as RowNode);
-        this.createManagedBean(rowDragComp, this.context);
+        this.createManagedBean(rowDragComp);
 
         this.eGui.insertAdjacentElement('afterbegin', rowDragComp.getGui());
     }
@@ -792,11 +802,11 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         if (checkboxNeeded) {
             const cbSelectionComponent = new CheckboxSelectionComponent();
-            this.getContext().createBean(cbSelectionComponent);
+            this.createBean(cbSelectionComponent);
 
             cbSelectionComponent.init({
                 rowNode: this.params.node as RowNode, // when groupHideOpenParents = true and group expanded, we want the checkbox to refer to leaf node state (not group node state)
-                column: this.params.column,
+                column: this.params.column as AgColumn,
                 overrides: {
                     isVisible: this.params.checkbox,
                     callbackParams: this.params,
@@ -804,7 +814,7 @@ export class GroupCellRendererCtrl extends BeanStub {
                 },
             });
             this.eCheckbox.appendChild(cbSelectionComponent.getGui());
-            this.addDestroyFunc(() => this.getContext().destroyBean(cbSelectionComponent));
+            this.addDestroyFunc(() => this.destroyBean(cbSelectionComponent));
         }
 
         this.comp.setCheckboxVisible(checkboxNeeded);

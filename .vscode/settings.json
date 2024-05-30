@@ -1,120 +1,101 @@
 {
-    "editor.insertSpaces": true,
-    "editor.tabSize": 4,
-    "editor.formatOnSave": true,
-    "search.exclude": {
-        "**/ag-grid-docs/_dev/**": true,
-        "**/ag-grid-docs/.cache/**": true,
-        "**/build": true,
-        "**/dist": true,
-        "**/node_modules": true,
-        "**/typings": true
+  "editor.insertSpaces": true,
+  "editor.tabSize": 4,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "search.exclude": {
+    "**/ag-grid-docs/_dev/**": true,
+    "**/ag-grid-docs/.cache/**": true,
+    "**/build": true,
+    "**/dist": true,
+    "**/node_modules": true,
+    "**/typings": true
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "eslint.experimental.useFlatConfig": true,
+  "[typescript]": {
+    "editor.autoClosingBrackets": "always"
+  },
+  "cSpell.enableFiletypes": ["markdoc"],
+  "cSpell.language": "en-GB",
+  "cSpell.words": [
+    "autowire",
+    "autowired",
+    "balham",
+    "crosshair",
+    "csrm",
+    "ctrls",
+    "lucide",
+    "Sparkline",
+    "sparklines",
+    "ssrm",
+    "themeable",
+    "tran",
+    "trans",
+    "treemap"
+  ],
+  "git.detectSubmodulesLimit": 20,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/node_modules": true
+  },
+  "[scss]": {
+    "editor.detectIndentation": false,
+    "editor.tabSize": 4
+  },
+  "sonarlint.connectedMode.project": {
+    "projectKey": "ag-grid-community"
+  },
+  "gitlens.autolinks": [
+    {
+      "prefix": "AG-",
+      "url": "https://ag-grid.atlassian.net/browse/AG-<num>"
     },
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "eslint.experimental.useFlatConfig": true,
-    "[typescript]": {
-        "editor.autoClosingBrackets": "always"
-    },
-    "cSpell.enableFiletypes": [
-        "markdoc"
-    ],
-    "cSpell.language": "en-GB",
-    "cSpell.words": [
-        "autowire",
-        "autowired",
-        "balham",
-        "crosshair",
-        "csrm",
-        "ctrls",
-        "lucide",
-        "Sparkline",
-        "sparklines",
-        "themeable",
-        "tran",
-        "trans",
-        "treemap"
-    ],
-    "git.detectSubmodulesLimit": 20,
-    "files.exclude": {
-        "**/.git": true,
-        "**/.DS_Store": true,
-        "**/node_modules": true,
-    },
-    "[scss]": {
-        "editor.detectIndentation": false,
-        "editor.tabSize": 4
-    },
-    "sonarlint.connectedMode.project": {
-        "projectKey": "ag-grid-community"
-    },
-    "gitlens.autolinks": [
-        {
-            "prefix": "AG-",
-            "url": "https://ag-grid.atlassian.net/browse/AG-<num>"
-        },
-        {
-            "prefix": "RTI-",
-            "url": "https://ag-grid.atlassian.net/browse/RTI-<num>"
-        }
-    ],
-    "git.autoRepositoryDetection": "subFolders",
-    "git.repositoryScanIgnoredFolders": [
-        "node_modules",
-        "dist",
-        "typings"
-    ],
-    "typescript.enablePromptUseWorkspaceTsdk": true,
-    "angular.enable-strict-mode-prompt": false,
-    "json.schemas": [
-        {
-            "fileMatch": [
-                "**/exampleConfig.json"
-            ],
-            "schema": {
-                "type": "object",
-                "properties": {
-                    "extras": {
-                        "type": "array",
-                        "description": "The extra scripts / styles to be added to the example index.html. Options are defined in .vscode/settings.json to match those supported in Extras.tsx",
-                        "items": {
-                            "type": "string",
-                            "enum": [
-                                "jquery",
-                                "jqueryui",
-                                "alasql",
-                                "flatpickr",
-                                "fontawesome",
-                                "xlsx-style",
-                                "materialdesignicons"
-                            ],
-                        }
-                    },
-                    "noStyle": {
-                        "const": true,
-                        "description": "If true, the example will not include style attribute on the <div id='myGrid'> element."
-                    },
-                    "licenseKey": {
-                        "const": true,
-                        "description": "If true, the license manager will be included in the example."
-                    },
-                    "supportedFrameworks": {
-                        "type": "array",
-                        "description": "The frameworks that this example supports. Options are defined in .vscode/settings.json to match those supported in Extras.tsx",
-                        "items": {
-                            "type": "string",
-                            "enum": [
-                                "vanilla",
-                                "typescript",
-                                "reactFunctional",
-                                "reactFunctionalTs",
-                                "angular",
-                                "vue",
-                                "vue3",
-                            ],
-                        }
-                    },
-                }
+    {
+      "prefix": "RTI-",
+      "url": "https://ag-grid.atlassian.net/browse/RTI-<num>"
+    }
+  ],
+  "git.autoRepositoryDetection": "subFolders",
+  "git.repositoryScanIgnoredFolders": ["node_modules", "dist", "typings"],
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "angular.enable-strict-mode-prompt": false,
+  "json.schemas": [
+    {
+      "fileMatch": ["**/exampleConfig.json"],
+      "schema": {
+        "type": "object",
+        "properties": {
+          "extras": {
+            "type": "array",
+            "description": "The extra scripts / styles to be added to the example index.html. Options are defined in .vscode/settings.json to match those supported in Extras.tsx",
+            "items": {
+              "type": "string",
+              "enum": ["jquery", "jqueryui", "alasql", "flatpickr", "fontawesome", "xlsx-style", "materialdesignicons"]
             }
+          },
+          "noStyle": {
+            "const": true,
+            "description": "If true, the example will not include style attribute on the <div id='myGrid'> element."
+          },
+          "licenseKey": {
+            "const": true,
+            "description": "If true, the license manager will be included in the example."
+          },
+          "supportedFrameworks": {
+            "type": "array",
+            "description": "The frameworks that this example supports. Options are defined in .vscode/settings.json to match those supported in Extras.tsx",
+            "items": {
+              "type": "string",
+              "enum": ["vanilla", "typescript", "reactFunctional", "reactFunctionalTs", "angular", "vue", "vue3"]
+            }
+          }
         }
-    ]
+      }
+    }
+  ]
 }

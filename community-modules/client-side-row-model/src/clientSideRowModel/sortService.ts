@@ -1,11 +1,10 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
+    BeanCollection,
     ChangedPath,
     ColumnModel,
     FuncColsService,
     IRowNode,
+    NamedBean,
     PostSortRowsParams,
     RowNode,
     RowNodeSorter,
@@ -14,16 +13,23 @@ import {
     SortOption,
     SortedRowNode,
     WithoutGridCommon,
-    _missing,
-    _warnOnce,
 } from '@ag-grid-community/core';
+import { BeanStub, _missing, _warnOnce } from '@ag-grid-community/core';
 
-@Bean('sortService')
-export class SortService extends BeanStub {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
-    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
+export class SortService extends BeanStub implements NamedBean {
+    beanName = 'sortService' as const;
+
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+    private rowNodeSorter: RowNodeSorter;
+    private showRowGroupColsService: ShowRowGroupColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+        this.rowNodeSorter = beans.rowNodeSorter;
+        this.showRowGroupColsService = beans.showRowGroupColsService;
+    }
 
     public sort(
         sortOptions: SortOption[],
@@ -54,7 +60,7 @@ export class SortService extends BeanStub {
             // Javascript sort is non deterministic when all the array items are equals, ie Comparator always returns 0,
             // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
             // are going to inspect the original array position. This is what sortedRowNodes is for.
-            let skipSortingGroups =
+            const skipSortingGroups =
                 groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
             if (skipSortingGroups) {
                 const nextGroup = this.funcColsService.getRowGroupColumns()?.[rowNode.level + 1];

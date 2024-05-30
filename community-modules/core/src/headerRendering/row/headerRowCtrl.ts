@@ -1,14 +1,14 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, PostConstruct } from '../../context/context';
-import { Column, ColumnPinnedType } from '../../entities/column';
-import { ColumnGroup } from '../../entities/columnGroup';
+import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
+import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import { Events } from '../../eventKeys';
-import { VirtualColumnsChangedEvent } from '../../events';
-import { BrandedType } from '../../interfaces/brandedType';
-import { HeaderColumnId, IHeaderColumn } from '../../interfaces/iHeaderColumn';
-import { Beans } from '../../rendering/beans';
+import type { EventsType } from '../../eventKeys';
+import type { VirtualColumnsChangedEvent } from '../../events';
+import type { BrandedType } from '../../interfaces/brandedType';
+import type { ColumnPinnedType, HeaderColumnId } from '../../interfaces/iColumn';
 import { _values } from '../../utils/generic';
-import { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
+import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
 import { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
 import { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
@@ -25,7 +25,11 @@ let instanceIdSequence = 0;
 export type HeaderRowCtrlInstanceId = BrandedType<number, 'HeaderRowCtrlInstanceId'>;
 
 export class HeaderRowCtrl extends BeanStub {
-    @Autowired('beans') private beans: Beans;
+    private beans: BeanCollection;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.beans = beans;
+    }
 
     private comp: IHeaderRowComp;
     private rowIndex: number;
@@ -55,8 +59,7 @@ export class HeaderRowCtrl extends BeanStub {
         this.headerRowClass = `ag-header-row ${typeClass}`;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.isPrintLayout = this.gos.isDomLayout('print');
         this.isEnsureDomOrder = this.gos.get('ensureDomOrder');
     }
@@ -91,32 +94,15 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private addEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
-            this.onDisplayedColumnsChanged.bind(this)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_VIRTUAL_COLUMNS_CHANGED,
-            (params: VirtualColumnsChangedEvent) => this.onVirtualColumnsChanged(params.afterScroll)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED,
-            this.onRowHeightChanged.bind(this)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_GRID_STYLES_CHANGED,
-            this.onRowHeightChanged.bind(this)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
-            this.onRowHeightChanged.bind(this)
-        );
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_COLUMN_RESIZED]: this.onColumnResized.bind(this),
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+            [Events.EVENT_VIRTUAL_COLUMNS_CHANGED]: (params: VirtualColumnsChangedEvent) =>
+                this.onVirtualColumnsChanged(params.afterScroll),
+            [Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED]: this.onRowHeightChanged.bind(this),
+            [Events.EVENT_GRID_STYLES_CHANGED]: this.onRowHeightChanged.bind(this),
+            [Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED]: this.onRowHeightChanged.bind(this),
+        });
 
         // when print layout changes, it changes what columns are in what section
         this.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
@@ -129,8 +115,8 @@ export class HeaderRowCtrl extends BeanStub {
         this.addManagedPropertyListener('floatingFiltersHeight', this.onRowHeightChanged.bind(this));
     }
 
-    public getHeaderCellCtrl(column: ColumnGroup): HeaderGroupCellCtrl | undefined;
-    public getHeaderCellCtrl(column: Column): HeaderCellCtrl | undefined;
+    public getHeaderCellCtrl(column: AgColumnGroup): HeaderGroupCellCtrl | undefined;
+    public getHeaderCellCtrl(column: AgColumn): HeaderCellCtrl | undefined;
     public getHeaderCellCtrl(column: any): any {
         if (!this.headerCellCtrls) {
             return;
@@ -273,7 +259,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private recycleAndCreateHeaderCtrls(
-        headerColumn: IHeaderColumn,
+        headerColumn: AgColumn | AgColumnGroup,
         oldCtrls?: Map<HeaderColumnId, AbstractHeaderCellCtrl>
     ): void {
         if (!this.headerCellCtrls) {
@@ -309,15 +295,15 @@ export class HeaderRowCtrl extends BeanStub {
         if (headerCtrl == null) {
             switch (this.type) {
                 case HeaderRowType.FLOATING_FILTER:
-                    headerCtrl = this.createBean(new HeaderFilterCellCtrl(headerColumn as Column, this.beans, this));
+                    headerCtrl = this.createBean(new HeaderFilterCellCtrl(headerColumn as AgColumn, this.beans, this));
                     break;
                 case HeaderRowType.COLUMN_GROUP:
                     headerCtrl = this.createBean(
-                        new HeaderGroupCellCtrl(headerColumn as ColumnGroup, this.beans, this)
+                        new HeaderGroupCellCtrl(headerColumn as AgColumnGroup, this.beans, this)
                     );
                     break;
                 default:
-                    headerCtrl = this.createBean(new HeaderCellCtrl(headerColumn as Column, this.beans, this));
+                    headerCtrl = this.createBean(new HeaderCellCtrl(headerColumn as AgColumn, this.beans, this));
                     break;
             }
         }
@@ -325,17 +311,17 @@ export class HeaderRowCtrl extends BeanStub {
         this.headerCellCtrls.set(idOfChild, headerCtrl);
     }
 
-    private getColumnsInViewport(): IHeaderColumn[] {
+    private getColumnsInViewport(): (AgColumn | AgColumnGroup)[] {
         return this.isPrintLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
     }
 
-    private getColumnsInViewportPrintLayout(): IHeaderColumn[] {
+    private getColumnsInViewportPrintLayout(): (AgColumn | AgColumnGroup)[] {
         // for print layout, we add all columns into the center
         if (this.pinned != null) {
             return [];
         }
 
-        let viewportColumns: IHeaderColumn[] = [];
+        let viewportColumns: (AgColumn | AgColumnGroup)[] = [];
         const actualDepth = this.getActualDepth();
         const { columnViewportService } = this.beans;
 
@@ -351,12 +337,12 @@ export class HeaderRowCtrl extends BeanStub {
         return this.type == HeaderRowType.FLOATING_FILTER ? this.rowIndex - 1 : this.rowIndex;
     }
 
-    private getColumnsInViewportNormalLayout(): IHeaderColumn[] {
+    private getColumnsInViewportNormalLayout(): (AgColumn | AgColumnGroup)[] {
         // when in normal layout, we add the columns for that container only
         return this.beans.columnViewportService.getHeadersToRender(this.pinned, this.getActualDepth());
     }
 
-    public focusHeader(column: IHeaderColumn, event?: KeyboardEvent): boolean {
+    public focusHeader(column: AgColumn | AgColumnGroup, event?: KeyboardEvent): boolean {
         if (!this.headerCellCtrls) {
             return false;
         }
@@ -371,7 +357,7 @@ export class HeaderRowCtrl extends BeanStub {
         return ctrl.focus(event);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         if (this.headerCellCtrls) {
             this.headerCellCtrls.forEach((ctrl) => {
                 this.destroyBean(ctrl);

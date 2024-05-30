@@ -1,41 +1,36 @@
-import {
-    AgGroupComponent,
-    AgGroupComponentParams,
-    AgSelectParams,
-    AgSlider,
-    Autowired,
-    Component,
-    ListOption,
-    PostConstruct,
-    RefSelector,
-    _removeFromParent,
-} from '@ag-grid-community/core';
+import type { AgSelectParams, BeanCollection, ListOption } from '@ag-grid-community/core';
+import { AgSelect, Component, RefPlaceholder, _removeFromParent } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
-import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import { AgSlider } from '../../../../../widgets/agSlider';
+import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import { FontPanel } from '../fontPanel';
 
 type SeriesItemType = 'positive' | 'negative';
 
 export class SeriesItemsPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="seriesItemsGroup">
-                <ag-select ref="seriesItemSelect"></ag-select>
+            <ag-group-component data-ref="seriesItemsGroup">
+                <ag-select data-ref="seriesItemSelect"></ag-select>
             </ag-group-component>
         </div>`;
 
-    @RefSelector('seriesItemsGroup') private seriesItemsGroup: AgGroupComponent;
+    private readonly seriesItemsGroup: AgGroupComponent = RefPlaceholder;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
 
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
     private activePanels: Component[] = [];
 
     constructor(private readonly chartMenuUtils: ChartMenuParamsFactory) {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const seriesItemsGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
@@ -44,7 +39,7 @@ export class SeriesItemsPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(SeriesItemsPanel.TEMPLATE, {
+        this.setTemplate(SeriesItemsPanel.TEMPLATE, [AgGroupComponent, AgSelect], {
             seriesItemsGroup: seriesItemsGroupParams,
             seriesItemSelect: this.getSeriesItemsParams(),
         });
@@ -113,7 +108,7 @@ export class SeriesItemsPanel extends Component {
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

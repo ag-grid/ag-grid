@@ -1,9 +1,10 @@
-import { CrosshairLineOptions, MarkerFormat, MarkerFormatterParams } from '@ag-grid-community/core';
+import type { CrosshairLineOptions, MarkerFormat, MarkerFormatterParams } from '@ag-grid-community/core';
 import { _Scale, _Scene, _Util } from 'ag-charts-community';
 
 import { getLineDash } from '../../util/lineDash';
 import { getMarker } from '../marker/markerFactory';
-import { Point, SeriesNodeDatum, Sparkline, ZINDICIES } from '../sparkline';
+import type { Point, SeriesNodeDatum } from '../sparkline';
+import { Sparkline, ZINDICIES } from '../sparkline';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 
 const { extent } = _Util;
@@ -96,11 +97,11 @@ export class AreaSparkline extends Sparkline {
         return new MarkerShape();
     }
 
-    protected getNodeData(): AreaNodeDatum[] {
+    protected override getNodeData(): AreaNodeDatum[] {
         return this.markerSelectionData;
     }
 
-    protected update(): void {
+    protected override update(): void {
         const data = this.generateNodeData();
 
         if (!data) {
@@ -118,7 +119,7 @@ export class AreaSparkline extends Sparkline {
         this.updateFill(fillData);
     }
 
-    protected updateYScaleDomain(): void {
+    protected override updateYScaleDomain(): void {
         const { yData, yScale } = this;
         const yMinMax = extent(yData as number[]);
 
@@ -139,7 +140,7 @@ export class AreaSparkline extends Sparkline {
         yScale.domain = [yMin, yMax];
     }
 
-    protected generateNodeData():
+    protected override generateNodeData():
         | { nodeData: AreaNodeDatum[]; fillData: PathDatum[]; strokeData: PathDatum[] }
         | undefined {
         const { data, yData, xData, xScale, yScale } = this;
@@ -217,7 +218,7 @@ export class AreaSparkline extends Sparkline {
         return { nodeData, fillData, strokeData };
     }
 
-    protected updateAxisLine() {
+    protected override updateAxisLine() {
         const { xScale, yScale, axis, xAxisLine } = this;
 
         xAxisLine.x1 = xScale.range[0];
@@ -234,7 +235,7 @@ export class AreaSparkline extends Sparkline {
         this.markerSelection.update(selectionData);
     }
 
-    protected updateNodes(): void {
+    protected override updateNodes(): void {
         const { highlightedDatum, highlightStyle, marker } = this;
         const {
             size: highlightSize,
@@ -366,7 +367,7 @@ export class AreaSparkline extends Sparkline {
         fillPath.fill = fill;
     }
 
-    protected updateXCrosshairLine(): void {
+    protected override updateXCrosshairLine(): void {
         const {
             yScale,
             xCrosshairLine,
@@ -395,7 +396,7 @@ export class AreaSparkline extends Sparkline {
         xCrosshairLine.translationX = highlightedDatum.point!.x;
     }
 
-    protected updateYCrosshairLine() {
+    protected override updateYCrosshairLine() {
         const {
             xScale,
             yCrosshairLine,

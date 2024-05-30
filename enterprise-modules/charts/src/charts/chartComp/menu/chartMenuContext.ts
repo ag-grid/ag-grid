@@ -1,6 +1,6 @@
-import { ChartController } from '../chartController';
-import { ChartOptionsService } from '../services/chartOptionsService';
-import { ChartMenuParamsFactory } from './chartMenuParamsFactory';
+import type { ChartController } from '../chartController';
+import type { ChartOptionsService } from '../services/chartOptionsService';
+import type { ChartMenuParamsFactory } from './chartMenuParamsFactory';
 
 /**
  * Contains the per-chart common beans

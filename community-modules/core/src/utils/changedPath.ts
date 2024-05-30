@@ -1,5 +1,5 @@
-import { Column } from '../entities/column';
-import { RowNode } from '../entities/rowNode';
+import type { AgColumn } from '../entities/agColumn';
+import type { RowNode } from '../entities/rowNode';
 
 // the class below contains a tree of row nodes. each node is
 // represented by a PathItem
@@ -127,7 +127,7 @@ export class ChangedPath {
         return newEntryCount;
     }
 
-    private populateColumnsMap(rowNode: RowNode, columns: Column[]): void {
+    private populateColumnsMap(rowNode: RowNode, columns: AgColumn[]): void {
         if (!this.keepingColumns || !columns) {
             return;
         }
@@ -160,7 +160,7 @@ export class ChangedPath {
     // called by
     // 1) change detection (provides cols) and
     // 2) groupStage if doing transaction update (doesn't provide cols)
-    public addParentNode(rowNode: RowNode | null, columns?: Column[]): void {
+    public addParentNode(rowNode: RowNode | null, columns?: AgColumn[]): void {
         if (!rowNode || rowNode.isRowPinned()) {
             return;
         }
@@ -184,7 +184,7 @@ export class ChangedPath {
         return this.active && !this.mapToItems[rowNode.id!];
     }
 
-    public getValueColumnsForNode(rowNode: RowNode, valueColumns: Column[]): Column[] {
+    public getValueColumnsForNode(rowNode: RowNode, valueColumns: AgColumn[]): AgColumn[] {
         if (!this.keepingColumns) {
             return valueColumns;
         }
@@ -194,7 +194,7 @@ export class ChangedPath {
         return result;
     }
 
-    public getNotValueColumnsForNode(rowNode: RowNode, valueColumns: Column[]): Column[] | null {
+    public getNotValueColumnsForNode(rowNode: RowNode, valueColumns: AgColumn[]): AgColumn[] | null {
         if (!this.keepingColumns) {
             return null;
         }

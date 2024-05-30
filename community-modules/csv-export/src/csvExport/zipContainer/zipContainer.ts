@@ -1,10 +1,5 @@
-import { Downloader } from '../downloader';
-import {
-    ProcessedZipFile,
-    buildCentralDirectoryEnd,
-    getDeflatedHeaderAndContent,
-    getHeaderAndContent,
-} from './zipContainerHelper';
+import type { ProcessedZipFile } from './zipContainerHelper';
+import { buildCentralDirectoryEnd, getDeflatedHeaderAndContent, getHeaderAndContent } from './zipContainerHelper';
 
 export interface ZipFile {
     path: string;
@@ -59,37 +54,37 @@ export class ZipContainer {
     }
 
     private static packageFiles(files: ProcessedZipFile[]) {
-        let fileData: Uint8Array = new Uint8Array(0);
-        let folderData: Uint8Array = new Uint8Array(0);
-        let filesContentAndHeaderLength: number = 0;
-        let folderHeadersLength: number = 0;
+        let fileLen: number = 0;
+        let folderLen: number = 0;
 
+        for (const currentFile of files) {
+            const { localFileHeader, centralDirectoryHeader, content } = currentFile;
+            fileLen += localFileHeader.length + content.length;
+            folderLen += centralDirectoryHeader.length;
+        }
+
+        const fileData: Uint8Array = new Uint8Array(fileLen);
+        const folderData: Uint8Array = new Uint8Array(folderLen);
+
+        let fileOffset = 0;
+        let folderOffset = 0;
         for (const currentFile of files) {
             const { localFileHeader, centralDirectoryHeader, content } = currentFile;
 
             // Append fileHeader to fData
-            const dataWithHeader = new Uint8Array(fileData.length + localFileHeader.length);
-            dataWithHeader.set(fileData);
-            dataWithHeader.set(localFileHeader, fileData.length);
-            fileData = dataWithHeader;
+            fileData.set(localFileHeader, fileOffset);
+            fileOffset += localFileHeader.length;
 
             // Append content to fData
-            const dataWithContent = new Uint8Array(fileData.length + content.length);
-            dataWithContent.set(fileData);
-            dataWithContent.set(content, fileData.length);
-            fileData = dataWithContent;
+            fileData.set(content, fileOffset);
+            fileOffset += content.length;
 
             // Append folder header to foData
-            const folderDataWithFolderHeader = new Uint8Array(folderData.length + centralDirectoryHeader.length);
-            folderDataWithFolderHeader.set(folderData);
-            folderDataWithFolderHeader.set(centralDirectoryHeader, folderData.length);
-            folderData = folderDataWithFolderHeader;
-
-            filesContentAndHeaderLength += localFileHeader.length + content.length;
-            folderHeadersLength += centralDirectoryHeader.length;
+            folderData.set(centralDirectoryHeader, folderOffset);
+            folderOffset += centralDirectoryHeader.length;
         }
 
-        const folderEnd = buildCentralDirectoryEnd(files.length, folderHeadersLength, filesContentAndHeaderLength);
+        const folderEnd = buildCentralDirectoryEnd(files.length, folderLen, fileLen);
 
         // Append folder data and file data
         const result = new Uint8Array(fileData.length + folderData.length + folderEnd.length);

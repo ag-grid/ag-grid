@@ -1,21 +1,18 @@
-import {
-    Autowired,
-    Events,
-    IRowModel,
-    ISelectionService,
-    IStatusPanelComp,
-    PostConstruct,
-    _formatNumberCommas,
-} from '@ag-grid-community/core';
+import type { BeanCollection, IRowModel, ISelectionService, IStatusPanelComp } from '@ag-grid-community/core';
+import { Events, _formatNumberCommas } from '@ag-grid-community/core';
 
-import { NameValueComp } from './nameValueComp';
+import { AgNameValue } from './agNameValue';
 
-export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
+export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
+    private rowModel: IRowModel;
+    private selectionService: ISelectionService;
 
-    @PostConstruct
-    protected postConstruct(): void {
+    public wireBeans(beans: BeanCollection) {
+        this.rowModel = beans.rowModel;
+        this.selectionService = beans.selectionService;
+    }
+
+    public postConstruct(): void {
         if (!this.isValidRowModel()) {
             console.warn(
                 `AG Grid: agSelectedRowCountComponent should only be used with the client and server side row model.`
@@ -63,7 +60,7 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 }

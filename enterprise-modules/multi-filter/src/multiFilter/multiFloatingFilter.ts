@@ -1,7 +1,6 @@
-import {
-    AgPromise,
-    Autowired,
-    Component,
+import type {
+    AgColumn,
+    BeanCollection,
     FilterChangedEvent,
     FilterManager,
     IFilter,
@@ -12,16 +11,19 @@ import {
     MultiFilterParams,
     UserCompDetails,
     UserComponentFactory,
-    _clearElement,
-    _mergeDeep,
-    _setDisplayed,
 } from '@ag-grid-community/core';
+import { AgPromise, Component, _clearElement, _mergeDeep, _setDisplayed } from '@ag-grid-community/core';
 
 import { MultiFilter } from './multiFilter';
 
 export class MultiFloatingFilterComp extends Component implements IFloatingFilterComp<MultiFilter> {
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
+    private userComponentFactory: UserComponentFactory;
+    private filterManager: FilterManager;
+
+    public wireBeans(beans: BeanCollection) {
+        this.userComponentFactory = beans.userComponentFactory;
+        this.filterManager = beans.filterManager;
+    }
 
     private floatingFilters: IFloatingFilterComp[] = [];
     private compDetailsList: UserCompDetails[] = [];
@@ -168,7 +170,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         });
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         this.destroyBeans(this.floatingFilters);
         this.floatingFilters.length = 0;
 
@@ -176,9 +178,9 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     }
 
     private getCompDetails(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): UserCompDetails | undefined {
-        let defaultComponentName =
+        const defaultComponentName =
             this.userComponentFactory.getDefaultFloatingFilterType(filterDef, () =>
-                this.filterManager.getDefaultFloatingFilter(this.params.column)
+                this.filterManager.getDefaultFloatingFilter(this.params.column as AgColumn)
             ) ?? 'agReadOnlyFloatingFilter';
 
         return this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);

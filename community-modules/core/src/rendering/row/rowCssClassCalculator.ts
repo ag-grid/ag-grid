@@ -1,10 +1,11 @@
-import { Autowired, Bean } from '../../context/context';
-import { ColumnPinnedType } from '../../entities/column';
-import { RowClassParams } from '../../entities/gridOptions';
-import { RowNode } from '../../entities/rowNode';
-import { GridOptionsService } from '../../gridOptionsService';
-import { WithoutGridCommon } from '../../interfaces/iCommon';
-import { StylingService } from '../../styling/stylingService';
+import type { NamedBean } from '../../context/bean';
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { RowClassParams } from '../../entities/gridOptions';
+import type { RowNode } from '../../entities/rowNode';
+import type { ColumnPinnedType } from '../../interfaces/iColumn';
+import type { WithoutGridCommon } from '../../interfaces/iCommon';
+import type { StylingService } from '../../styling/stylingService';
 import { _pushAll } from '../../utils/array';
 import { _exists } from '../../utils/generic';
 
@@ -24,10 +25,14 @@ export interface RowCssClassCalculatorParams {
     fadeRowIn?: boolean;
 }
 
-@Bean('rowCssClassCalculator')
-export class RowCssClassCalculator {
-    @Autowired('stylingService') public stylingService: StylingService;
-    @Autowired('gridOptionsService') gos: GridOptionsService;
+export class RowCssClassCalculator extends BeanStub implements NamedBean {
+    beanName = 'rowCssClassCalculator' as const;
+
+    private stylingService: StylingService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.stylingService = beans.stylingService;
+    }
 
     public getInitialRowClasses(params: RowCssClassCalculatorParams): string[] {
         const classes: string[] = [];
@@ -147,7 +152,7 @@ export class RowCssClassCalculator {
             (className: string) => {
                 res.push(className);
             },
-            (className: string) => {
+            () => {
                 // not catered for, if creating, no need
                 // to remove class as it was never there
             }

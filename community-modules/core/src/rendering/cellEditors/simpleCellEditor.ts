@@ -1,12 +1,14 @@
 import { KeyCode } from '../../constants/keyCode';
-import { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _isBrowserSafari } from '../../utils/browser';
-import { AgInputTextField } from '../../widgets/agInputTextField';
-import { RefSelector } from '../../widgets/componentAnnotations';
+import type { AgInputTextField } from '../../widgets/agInputTextField';
+import type { ComponentClass } from '../../widgets/component';
+import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
 
 export interface CellEditorInput<TValue, P extends ICellEditorParams, I extends AgInputTextField> {
     getTemplate(): string;
+    getAgComponents(): ComponentClass[];
     init(eInput: I, params: P): void;
     getValue(): TValue | null | undefined;
     getStartValue(): string | null | undefined;
@@ -20,13 +22,16 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
     protected params: ICellEditorParams;
-    @RefSelector('eInput') protected eInput: I;
+    protected readonly eInput: I = RefPlaceholder;
 
     constructor(protected cellEditorInput: CellEditorInput<TValue, P, I>) {
-        super(/* html */ `
+        super(
+            /* html */ `
             <div class="ag-cell-edit-wrapper">
                 ${cellEditorInput.getTemplate()}
-            </div>`);
+            </div>`,
+            cellEditorInput.getAgComponents()
+        );
     }
 
     public init(params: P): void {
@@ -109,7 +114,7 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
         return this.cellEditorInput.getValue();
     }
 
-    public isPopup() {
+    public override isPopup() {
         return false;
     }
 }

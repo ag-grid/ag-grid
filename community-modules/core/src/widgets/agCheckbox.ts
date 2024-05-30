@@ -1,18 +1,17 @@
-import { CheckboxChangedEvent, Events } from '../events';
-import { AgAbstractInputField, AgInputFieldParams } from './agAbstractInputField';
-import { LabelAlignment } from './agAbstractLabel';
-
-export interface AgCheckboxParams extends AgInputFieldParams {
-    readOnly?: boolean;
-    passive?: boolean;
-}
+import type { CheckboxChangedEvent } from '../events';
+import { Events } from '../events';
+import type { AgCheckboxParams, LabelAlignment } from '../interfaces/agFieldParams';
+import { AgAbstractInputField } from './agAbstractInputField';
+import type { AgComponentSelector } from './component';
 
 export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> extends AgAbstractInputField<
     HTMLInputElement,
     boolean,
     TConfig
 > {
-    protected labelAlignment: LabelAlignment = 'right';
+    static readonly selector: AgComponentSelector = 'AG-CHECKBOX';
+
+    protected override labelAlignment: LabelAlignment = 'right';
 
     private selected?: boolean = false;
     private readOnly = false;
@@ -22,7 +21,7 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
         super(config, className, inputType);
     }
 
-    protected override postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
 
         const { readOnly, passive } = this.config;
@@ -30,7 +29,7 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
         if (typeof passive === 'boolean') this.setPassive(passive);
     }
 
-    protected addInputListeners() {
+    protected override addInputListeners() {
         this.addManagedListener(this.eInput, 'click', this.onCheckboxClick.bind(this));
         this.addManagedListener(this.eLabel, 'click', this.toggle.bind(this));
     }
@@ -53,7 +52,7 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
         this.readOnly = readOnly;
     }
 
-    public setDisabled(disabled: boolean): this {
+    public override setDisabled(disabled: boolean): this {
         this.eWrapper.classList.toggle('ag-disabled', disabled);
 
         return super.setDisabled(disabled);
@@ -74,11 +73,11 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
         }
     }
 
-    public getValue(): boolean | undefined {
+    public override getValue(): boolean | undefined {
         return this.isSelected();
     }
 
-    public setValue(value?: boolean, silent?: boolean): this {
+    public override setValue(value?: boolean, silent?: boolean): this {
         this.refreshSelectedClass(value);
         this.setSelected(value, silent);
 

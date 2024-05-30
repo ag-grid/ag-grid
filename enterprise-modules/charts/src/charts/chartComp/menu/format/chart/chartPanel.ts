@@ -1,31 +1,30 @@
-import {
-    AgGroupComponent,
-    AgGroupComponentParams,
-    Autowired,
-    Component,
-    PostConstruct,
-    RefSelector,
-} from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
+import { Component, RefPlaceholder } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartTranslationService } from '../../../services/chartTranslationService';
-import { FormatPanelOptions } from '../formatPanel';
+import type { ChartTranslationService } from '../../../services/chartTranslationService';
+import type { FormatPanelOptions } from '../formatPanel';
 import { BackgroundPanel } from './backgroundPanel';
 import { PaddingPanel } from './paddingPanel';
 
 export class ChartPanel extends Component {
     private static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="chartGroup"></ag-group-component>
+            <ag-group-component data-ref="chartGroup"></ag-group-component>
         </div>`;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @RefSelector('chartGroup') private readonly chartGroup: AgGroupComponent;
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
+    private readonly chartGroup: AgGroupComponent = RefPlaceholder;
 
     constructor(private readonly options: FormatPanelOptions) {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const {
             chartController,
             chartMenuParamsFactory,
@@ -44,7 +43,7 @@ export class ChartPanel extends Component {
                 this.createManagedBean(new BackgroundPanel(chartMenuParamsFactory)),
             ],
         };
-        this.setTemplate(ChartPanel.TEMPLATE, { chartGroup: chartGroupParams });
+        this.setTemplate(ChartPanel.TEMPLATE, [AgGroupComponent], { chartGroup: chartGroupParams });
         registerGroupComponent(this.chartGroup);
     }
 }

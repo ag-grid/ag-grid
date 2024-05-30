@@ -1,12 +1,14 @@
+import type { RichSelectParams } from '@ag-grid-community/core';
 import {
-    AgRichSelect,
-    AutocompleteEntry,
-    RichSelectParams,
+    AgInputTextField,
     _setAriaLabel,
     _setAriaLabelledBy,
     _setDisplayed,
     _stopPropagationForAgGrid,
 } from '@ag-grid-community/core';
+import { AgRichSelect } from '@ag-grid-enterprise/core';
+
+import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 
 export interface AddDropdownCompParams extends RichSelectParams<AutocompleteEntry> {
     wrapperClassName?: string;
@@ -19,27 +21,28 @@ export class AddDropdownComp extends AgRichSelect {
             ...params,
             template: /* html */ `
                 <div class="ag-picker-field" role="presentation">
-                    <div ref="eLabel"></div>
-                    <div ref="eWrapper" class="ag-wrapper ag-picker-collapsed">
-                        <div ref="eDisplayField" class="ag-picker-field-display"></div>
-                        <ag-input-text-field ref="eInput" class="ag-rich-select-field-input"></ag-input-text-field>
-                        <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
+                    <div data-ref="eLabel"></div>
+                    <div data-ref="eWrapper" class="ag-wrapper ag-picker-collapsed">
+                        <div data-ref="eDisplayField" class="ag-picker-field-display"></div>
+                        <ag-input-text-field data-ref="eInput" class="ag-rich-select-field-input"></ag-input-text-field>
+                        <div data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
                     </div>
                 </div>`,
+            agComponents: [AgInputTextField],
         });
     }
 
-    public showPicker(): void {
+    public override showPicker(): void {
         // avoid focus handling issues with multiple rich selects
         setTimeout(() => super.showPicker());
     }
 
-    public hidePicker(): void {
+    public override hidePicker(): void {
         // avoid focus handling issues with multiple rich selects
         setTimeout(() => super.hidePicker());
     }
 
-    protected postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
 
         const { wrapperClassName, ariaLabel } = this.params;
@@ -52,7 +55,7 @@ export class AddDropdownComp extends AgRichSelect {
         _setAriaLabel(this.eWrapper, ariaLabel);
     }
 
-    protected onEnterKeyDown(event: KeyboardEvent): void {
+    protected override onEnterKeyDown(event: KeyboardEvent): void {
         _stopPropagationForAgGrid(event);
         if (this.isPickerDisplayed) {
             super.onEnterKeyDown(event);

@@ -1,38 +1,44 @@
-import {
-    AgDialog,
-    Autowired,
-    Bean,
-    BeanStub,
-    Column,
+import type {
+    AgColumn,
+    BeanCollection,
     ColumnChooserParams,
     ColumnMenuVisibleChangedEvent,
-    Events,
     FocusService,
     IColumnChooserFactory,
+    NamedBean,
     ShowColumnChooserParams,
     VisibleColsService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { PrimaryColsPanel } from '@ag-grid-enterprise/column-tool-panel';
+import { BeanStub, Events } from '@ag-grid-community/core';
+import { AgPrimaryCols } from '@ag-grid-enterprise/column-tool-panel';
+import { AgDialog } from '@ag-grid-enterprise/core';
 
-import { MenuUtils } from './menuUtils';
+import type { MenuUtils } from './menuUtils';
 
-@Bean('columnChooserFactory')
-export class ColumnChooserFactory extends BeanStub implements IColumnChooserFactory {
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('menuUtils') private readonly menuUtils: MenuUtils;
-    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
+export class ColumnChooserFactory extends BeanStub implements NamedBean, IColumnChooserFactory {
+    beanName = 'columnChooserFactory' as const;
 
-    private activeColumnChooser: PrimaryColsPanel | undefined;
+    private focusService: FocusService;
+    private menuUtils: MenuUtils;
+    private visibleColsService: VisibleColsService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.focusService = beans.focusService;
+        this.menuUtils = beans.menuUtils;
+        this.visibleColsService = beans.visibleColsService;
+    }
+
+    private activeColumnChooser: AgPrimaryCols | undefined;
     private activeColumnChooserDialog: AgDialog | undefined;
 
     public createColumnSelectPanel(
         parent: BeanStub,
-        column?: Column | null,
+        column?: AgColumn | null,
         draggable?: boolean,
         params?: ColumnChooserParams
-    ): PrimaryColsPanel {
-        const columnSelectPanel = parent.createManagedBean(new PrimaryColsPanel());
+    ): AgPrimaryCols {
+        const columnSelectPanel = parent.createManagedBean(new AgPrimaryCols());
 
         const columnChooserParams =
             params ?? column?.getColDef().columnChooserParams ?? column?.getColDef().columnsMenuParams ?? {};
@@ -76,7 +82,7 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
 
         const columnSelectPanel = this.createColumnSelectPanel(this, column, true, chooserParams);
         const translate = this.localeService.getLocaleTextFunc();
-        const columnIndex = this.visibleColsService.getAllCols().indexOf(column!);
+        const columnIndex = this.visibleColsService.getAllCols().indexOf(column as AgColumn);
         const headerPosition = column ? this.focusService.getFocusedHeader() : null;
 
         this.activeColumnChooserDialog = this.createBean(
@@ -120,7 +126,7 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
         }
     }
 
-    private dispatchVisibleChangedEvent(visible: boolean, column?: Column | null): void {
+    private dispatchVisibleChangedEvent(visible: boolean, column?: AgColumn | null): void {
         const event: WithoutGridCommon<ColumnMenuVisibleChangedEvent> = {
             type: Events.EVENT_COLUMN_MENU_VISIBLE_CHANGED,
             visible,

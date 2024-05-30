@@ -1,24 +1,32 @@
-import { Autowired, Bean, Qualifier } from '../context/context';
-import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
-import { ColumnEventType } from '../events';
-import { Logger, LoggerFactory } from '../logger';
-import { ColumnAnimationService } from '../rendering/columnAnimationService';
-import { ColumnEventDispatcher } from './columnEventDispatcher';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import { type AgProvidedColumnGroup, isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import type { ColumnEventType } from '../events';
+import type { Logger } from '../logger';
+import type { ColumnAnimationService } from '../rendering/columnAnimationService';
+import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
-import { ColumnModel } from './columnModel';
-import { VisibleColsService } from './visibleColsService';
+import type { ColumnModel } from './columnModel';
+import type { VisibleColsService } from './visibleColsService';
 
-@Bean('columnGroupStateService')
-export class ColumnGroupStateService {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
-    @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
+export class ColumnGroupStateService extends BeanStub implements NamedBean {
+    beanName = 'columnGroupStateService' as const;
+
+    private columnModel: ColumnModel;
+    private columnAnimationService: ColumnAnimationService;
+    private eventDispatcher: ColumnEventDispatcher;
+    private visibleColsService: VisibleColsService;
 
     private logger: Logger;
 
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('columnModel');
+    public wireBeans(beans: BeanCollection): void {
+        this.columnModel = beans.columnModel;
+        this.columnAnimationService = beans.columnAnimationService;
+        this.eventDispatcher = beans.columnEventDispatcher;
+        this.visibleColsService = beans.visibleColsService;
+
+        this.logger = beans.loggerFactory.create('columnModel');
     }
 
     public getColumnGroupState(): { groupId: string; open: boolean }[] {
@@ -26,7 +34,7 @@ export class ColumnGroupStateService {
         const gridBalancedTree = this.columnModel.getColTree();
 
         depthFirstOriginalTreeSearch(null, gridBalancedTree, (node) => {
-            if (node instanceof ProvidedColumnGroup) {
+            if (isProvidedColumnGroup(node)) {
                 columnGroupState.push({
                     groupId: node.getGroupId(),
                     open: node.isExpanded(),
@@ -46,7 +54,7 @@ export class ColumnGroupStateService {
         const stateItems: { groupId: string; open: boolean | undefined }[] = [];
 
         depthFirstOriginalTreeSearch(null, primaryColumnTree, (child) => {
-            if (child instanceof ProvidedColumnGroup) {
+            if (isProvidedColumnGroup(child)) {
                 const colGroupDef = child.getColGroupDef();
                 const groupState = {
                     groupId: child.getGroupId(),
@@ -70,12 +78,12 @@ export class ColumnGroupStateService {
 
         this.columnAnimationService.start();
 
-        const impactedGroups: ProvidedColumnGroup[] = [];
+        const impactedGroups: AgProvidedColumnGroup[] = [];
 
         stateItems.forEach((stateItem) => {
             const groupKey = stateItem.groupId;
             const newValue = stateItem.open;
-            const providedColumnGroup: ProvidedColumnGroup | null = this.columnModel.getProvidedColGroup(groupKey);
+            const providedColumnGroup = this.columnModel.getProvidedColGroup(groupKey);
 
             if (!providedColumnGroup) {
                 return;

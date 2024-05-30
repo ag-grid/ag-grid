@@ -1,15 +1,23 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { EventsType } from '../eventKeys';
 import { Events } from '../events';
-import { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
+import type { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
 import { _debounce } from '../utils/function';
-import { PaginationProxy } from './paginationProxy';
+import type { PaginationProxy } from './paginationProxy';
 
-@Bean('paginationAutoPageSizeService')
-export class PaginationAutoPageSizeService extends BeanStub {
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+export class PaginationAutoPageSizeService extends BeanStub implements NamedBean {
+    beanName = 'paginationAutoPageSizeService' as const;
+
+    private ctrlsService: CtrlsService;
+    private paginationProxy: PaginationProxy;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.ctrlsService = beans.ctrlsService;
+        this.paginationProxy = beans.paginationProxy;
+    }
 
     private centerRowsCtrl: RowContainerCtrl;
 
@@ -17,17 +25,14 @@ export class PaginationAutoPageSizeService extends BeanStub {
     // but we do not want to debounce the first time the body is rendered.
     private isBodyRendered: boolean;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.ctrlsService.whenReady((p) => {
             this.centerRowsCtrl = p.center;
 
-            this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.checkPageSize.bind(this));
-            this.addManagedListener(
-                this.eventService,
-                Events.EVENT_SCROLL_VISIBILITY_CHANGED,
-                this.checkPageSize.bind(this)
-            );
+            this.addManagedListeners<EventsType>(this.eventService, {
+                [Events.EVENT_BODY_HEIGHT_CHANGED]: this.checkPageSize.bind(this),
+                [Events.EVENT_SCROLL_VISIBILITY_CHANGED]: this.checkPageSize.bind(this),
+            });
             this.addManagedPropertyListener('paginationAutoPageSize', this.onPaginationAutoSizeChanged.bind(this));
 
             this.checkPageSize();

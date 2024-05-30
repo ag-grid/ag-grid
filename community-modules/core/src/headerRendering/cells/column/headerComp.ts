@@ -1,19 +1,21 @@
-import { FuncColsService } from '../../../columns/funcColsService';
-import { Autowired } from '../../../context/context';
-import { SortDirection } from '../../../entities/colDef';
-import { Column } from '../../../entities/column';
+import type { FuncColsService } from '../../../columns/funcColsService';
+import type { BeanCollection } from '../../../context/context';
+import { AgColumn } from '../../../entities/agColumn';
+import type { SortDirection } from '../../../entities/colDef';
 import { Events } from '../../../eventKeys';
-import { AgGridCommon } from '../../../interfaces/iCommon';
-import { IComponent } from '../../../interfaces/iComponent';
-import { MenuService } from '../../../misc/menuService';
-import { SortController } from '../../../sortController';
+import type { EventsType } from '../../../eventKeys';
+import type { Column } from '../../../interfaces/iColumn';
+import type { AgGridCommon } from '../../../interfaces/iCommon';
+import type { IComponent } from '../../../interfaces/iComponent';
+import type { MenuService } from '../../../misc/menuService';
+import type { SortController } from '../../../sortController';
 import { _removeFromParent, _setDisplayed } from '../../../utils/dom';
 import { _exists } from '../../../utils/generic';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _escapeString } from '../../../utils/string';
-import { Component } from '../../../widgets/component';
-import { RefSelector } from '../../../widgets/componentAnnotations';
-import { LongTapEvent, TapEvent, TouchListener } from '../../../widgets/touchListener';
+import { Component, RefPlaceholder } from '../../../widgets/component';
+import type { LongTapEvent, TapEvent } from '../../../widgets/touchListener';
+import { TouchListener } from '../../../widgets/touchListener';
 import { SortIndicatorComp } from './sortIndicatorComp';
 
 export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -100,34 +102,40 @@ export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {}
 
 export class HeaderComp extends Component implements IHeaderComp {
     private static TEMPLATE /* html */ = `<div class="ag-cell-label-container" role="presentation">
-            <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
-            <span ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button" aria-hidden="true"></span>
-            <div ref="eLabel" class="ag-header-cell-label" role="presentation">
-                <span ref="eText" class="ag-header-cell-text"></span>
-                <span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
-                <ag-sort-indicator ref="eSortIndicator"></ag-sort-indicator>
+            <span data-ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
+            <span data-ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button" aria-hidden="true"></span>
+            <div data-ref="eLabel" class="ag-header-cell-label" role="presentation">
+                <span data-ref="eText" class="ag-header-cell-text"></span>
+                <span data-ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
+                <ag-sort-indicator data-ref="eSortIndicator"></ag-sort-indicator>
             </div>
         </div>`;
 
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('menuService') private menuService: MenuService;
-    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
+    private sortController: SortController;
+    private menuService: MenuService;
+    private funcColsService: FuncColsService;
 
-    @RefSelector('eFilter') private eFilter: HTMLElement;
-    @RefSelector('eFilterButton') private eFilterButton?: HTMLElement;
-    @RefSelector('eSortIndicator') private eSortIndicator: SortIndicatorComp;
-    @RefSelector('eMenu') private eMenu?: HTMLElement;
-    @RefSelector('eLabel') private eLabel: HTMLElement;
-    @RefSelector('eText') private eText: HTMLElement;
+    public wireBeans(beans: BeanCollection): void {
+        this.sortController = beans.sortController;
+        this.menuService = beans.menuService;
+        this.funcColsService = beans.funcColsService;
+    }
+
+    private eFilter: HTMLElement = RefPlaceholder;
+    private eFilterButton?: HTMLElement = RefPlaceholder;
+    private eSortIndicator: SortIndicatorComp = RefPlaceholder;
+    private eMenu?: HTMLElement = RefPlaceholder;
+    private eLabel: HTMLElement = RefPlaceholder;
+    private eText: HTMLElement = RefPlaceholder;
 
     /**
      * Selectors for custom headers templates
      */
-    @RefSelector('eSortOrder') private eSortOrder: HTMLElement;
-    @RefSelector('eSortAsc') private eSortAsc: HTMLElement;
-    @RefSelector('eSortDesc') private eSortDesc: HTMLElement;
-    @RefSelector('eSortMixed') private eSortMixed: HTMLElement;
-    @RefSelector('eSortNone') private eSortNone: HTMLElement;
+    private readonly eSortOrder: HTMLElement = RefPlaceholder;
+    private readonly eSortAsc: HTMLElement = RefPlaceholder;
+    private readonly eSortDesc: HTMLElement = RefPlaceholder;
+    private readonly eSortMixed: HTMLElement = RefPlaceholder;
+    private readonly eSortNone: HTMLElement = RefPlaceholder;
 
     private params: IHeaderParams;
 
@@ -141,7 +149,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 
@@ -180,7 +188,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.params = params;
 
         this.currentTemplate = this.workOutTemplate();
-        this.setTemplate(this.currentTemplate);
+        this.setTemplate(this.currentTemplate, [SortIndicatorComp]);
         this.setupTap();
         this.setMenu();
         this.setupSort();
@@ -199,7 +207,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
     }
 
-    private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
+    private addInIcon(iconName: string, eParent: HTMLElement, column: AgColumn): void {
         if (eParent == null) {
             return;
         }
@@ -238,7 +246,7 @@ export class HeaderComp extends Component implements IHeaderComp {
                     return;
                 }
 
-                this.sortController.progressSort(this.params.column, false, 'uiColumnSorted');
+                this.sortController.progressSort(this.params.column as AgColumn, false, 'uiColumnSorted');
             };
 
             this.addManagedListener(touchListener, TouchListener.EVENT_TAP, tapListener);
@@ -283,7 +291,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
 
         const isLegacyMenu = this.menuService.isLegacyMenuEnabled();
-        this.addInIcon(isLegacyMenu ? 'menu' : 'menuAlt', this.eMenu, this.params.column);
+        this.addInIcon(isLegacyMenu ? 'menu' : 'menuAlt', this.eMenu, this.params.column as AgColumn);
         this.eMenu.classList.toggle('ag-header-menu-icon', !isLegacyMenu);
 
         this.currentSuppressMenuHide = this.shouldSuppressMenuHide();
@@ -292,7 +300,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     public onMenuKeyboardShortcut(isFilterShortcut: boolean): boolean {
-        const { column } = this.params;
+        const column = this.params.column as AgColumn;
         const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
         if (isFilterShortcut && !isLegacyMenuEnabled) {
             if (this.menuService.isFilterMenuInHeaderEnabled(column)) {
@@ -317,7 +325,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         // templates, in that case, we need to look for provided sort elements and
         // manually create eSortIndicator.
         if (!this.eSortIndicator) {
-            this.eSortIndicator = this.context.createBean(new SortIndicatorComp(true));
+            this.eSortIndicator = this.createBean(new SortIndicatorComp(true));
             this.eSortIndicator.attachCustomElements(
                 this.eSortOrder,
                 this.eSortAsc,
@@ -326,7 +334,7 @@ export class HeaderComp extends Component implements IHeaderComp {
                 this.eSortNone
             );
         }
-        this.eSortIndicator.setupSort(this.params.column);
+        this.eSortIndicator.setupSort(this.params.column as AgColumn);
 
         // we set up the indicator prior to the check for whether this column is sortable, as it allows the indicator to
         // set up the multi sort indicator which can appear irrelevant of whether this column can itself be sorted.
@@ -336,7 +344,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
 
         // keep track of last time the moving changed flag was set
-        this.addManagedListener(this.params.column, Column.EVENT_MOVING_CHANGED, () => {
+        this.addManagedListener(this.params.column, AgColumn.EVENT_MOVING_CHANGED, () => {
             this.lastMovingChanged = new Date().getTime();
         });
 
@@ -366,7 +374,9 @@ export class HeaderComp extends Component implements IHeaderComp {
             this.addOrRemoveCssClass('ag-header-cell-sorted-none', this.params.column.isSortNone());
 
             if (this.params.column.getColDef().showRowGroup) {
-                const sourceColumns = this.funcColsService.getSourceColumnsForGroupColumn(this.params.column);
+                const sourceColumns = this.funcColsService.getSourceColumnsForGroupColumn(
+                    this.params.column as AgColumn
+                );
                 // this == is intentional, as it allows null and undefined to match, which are both unsorted states
                 const sortDirectionsMatch = sourceColumns?.every(
                     (sourceCol) => this.params.column.getSort() == sourceCol.getSort()
@@ -376,8 +386,10 @@ export class HeaderComp extends Component implements IHeaderComp {
                 this.addOrRemoveCssClass('ag-header-cell-sorted-mixed', isMultiSorting);
             }
         };
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, onSortingChanged);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, onSortingChanged);
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_SORT_CHANGED]: onSortingChanged,
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: onSortingChanged,
+        });
     }
 
     private setupFilterIcon(): void {
@@ -409,10 +421,10 @@ export class HeaderComp extends Component implements IHeaderComp {
             return false;
         }
 
-        const { column } = this.params;
+        const column = this.params.column as AgColumn;
         this.addInIcon('filter', element, column);
 
-        this.addManagedListener(column, Column.EVENT_FILTER_CHANGED, filterChangedCallback);
+        this.addManagedListener(column, AgColumn.EVENT_FILTER_CHANGED, filterChangedCallback);
         filterChangedCallback();
         return true;
     }

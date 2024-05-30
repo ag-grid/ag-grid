@@ -1,11 +1,11 @@
-import { Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
+import { Component } from '@ag-grid-community/core';
 
-import { ChartController } from '../chartController';
-import { ChartMenu } from '../menu/chartMenu';
-import { ChartMenuContext } from '../menu/chartMenuContext';
-import { ChartMenuService } from '../services/chartMenuService';
-import { ChartOptionsProxy, ChartOptionsService } from '../services/chartOptionsService';
-import { ChartTranslationService } from '../services/chartTranslationService';
+import type { ChartController } from '../chartController';
+import type { ChartMenu } from '../menu/chartMenu';
+import type { ChartMenuContext } from '../menu/chartMenuContext';
+import type { ChartOptionsProxy, ChartOptionsService } from '../services/chartOptionsService';
+import type { ChartTranslationService } from '../services/chartTranslationService';
 
 interface BBox {
     x: number;
@@ -15,13 +15,16 @@ interface BBox {
 }
 
 export class TitleEdit extends Component {
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
+
     private static TEMPLATE /* html */ = `<textarea
              class="ag-chart-title-edit"
              style="padding:0; border:none; border-radius: 0; min-height: 0; text-align: center; resize: none;" />
         `;
-
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
-    @Autowired('chartMenuService') private chartMenuService: ChartMenuService;
 
     private destroyableChartListeners: (() => void)[] = [];
     private chartController: ChartController;
@@ -33,8 +36,7 @@ export class TitleEdit extends Component {
         super(TitleEdit.TEMPLATE);
     }
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         this.addManagedListener(this.getGui(), 'keydown', (e: KeyboardEvent) => {
             if (this.editing && e.key === 'Enter' && !e.shiftKey) {
                 this.handleEndEditing();

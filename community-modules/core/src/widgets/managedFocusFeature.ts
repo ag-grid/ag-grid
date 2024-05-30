@@ -1,7 +1,7 @@
 import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, PostConstruct } from '../context/context';
-import { FocusService } from '../focusService';
+import type { BeanCollection } from '../context/context';
+import type { FocusService } from '../focusService';
 import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../utils/event';
 
 export interface ManagedFocusCallbacks {
@@ -13,9 +13,13 @@ export interface ManagedFocusCallbacks {
 }
 
 export class ManagedFocusFeature extends BeanStub {
-    public static FOCUS_MANAGED_CLASS = 'ag-focus-managed';
+    private focusService: FocusService;
 
-    @Autowired('focusService') private readonly focusService: FocusService;
+    public wireBeans(beans: BeanCollection): void {
+        this.focusService = beans.focusService;
+    }
+
+    public static FOCUS_MANAGED_CLASS = 'ag-focus-managed';
 
     constructor(
         private readonly eFocusableElement: HTMLElement,
@@ -42,8 +46,7 @@ export class ManagedFocusFeature extends BeanStub {
         };
     }
 
-    @PostConstruct
-    protected postConstruct(): void {
+    public postConstruct(): void {
         this.eFocusableElement.classList.add(ManagedFocusFeature.FOCUS_MANAGED_CLASS);
 
         this.addKeyDownListeners(this.eFocusableElement);

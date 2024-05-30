@@ -1,20 +1,19 @@
-import {
-    AgPromise,
-    Autowired,
-    ChartToolPanelMenuOptions,
-    Component,
-    PostConstruct,
-    TabbedItem,
-    TabbedLayout,
-} from '@ag-grid-community/core';
+import type { BeanCollection, ChartToolPanelMenuOptions, TabbedItem } from '@ag-grid-community/core';
+import { AgPromise, Component, TabbedLayout } from '@ag-grid-community/core';
 
-import { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
-import { ChartMenuContext } from './chartMenuContext';
+import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
+import type { ChartMenuContext } from './chartMenuContext';
 import { ChartDataPanel } from './data/chartDataPanel';
 import { FormatPanel } from './format/formatPanel';
 import { ChartSettingsPanel } from './settings/chartSettingsPanel';
 
 export class TabbedChartMenu extends Component {
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
+
     public static EVENT_CLOSED = 'closed';
     public static TAB_DATA = 'data';
     public static TAB_FORMAT = 'format';
@@ -23,8 +22,6 @@ export class TabbedChartMenu extends Component {
     private tabs: TabbedItem[] = [];
     private eventSource?: HTMLElement;
 
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
-
     constructor(
         private readonly panels: ChartToolPanelMenuOptions[],
         private readonly chartMenuContext: ChartMenuContext
@@ -32,8 +29,7 @@ export class TabbedChartMenu extends Component {
         super();
     }
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         this.panels.forEach((panel) => {
             const panelType = panel.replace('chart', '').toLowerCase() as 'settings' | 'data' | 'format';
             const panelComp = this.createPanel(panelType);
@@ -56,14 +52,14 @@ export class TabbedChartMenu extends Component {
                 this.dispatchEvent({ type: TabbedChartMenu.EVENT_CLOSED });
             },
         });
-        this.getContext().createBean(this.tabbedLayout);
+        this.createBean(this.tabbedLayout);
     }
 
     private createTab(name: ChartToolPanelMenuOptions, title: ChartTranslationKey, panelComp: Component): TabbedItem {
         const eWrapperDiv = document.createElement('div');
         eWrapperDiv.classList.add('ag-chart-tab', `ag-chart-${title}`);
 
-        this.getContext().createBean(panelComp);
+        this.createBean(panelComp);
 
         eWrapperDiv.appendChild(panelComp.getGui());
 
@@ -88,7 +84,7 @@ export class TabbedChartMenu extends Component {
         this.tabbedLayout.showItem(tabItem);
     }
 
-    public getGui(): HTMLElement {
+    public override getGui(): HTMLElement {
         return this.tabbedLayout && this.tabbedLayout.getGui();
     }
 
@@ -99,7 +95,7 @@ export class TabbedChartMenu extends Component {
         }
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         if (this.parentComponent && this.parentComponent.isAlive()) {
             this.destroyBean(this.parentComponent);
         }

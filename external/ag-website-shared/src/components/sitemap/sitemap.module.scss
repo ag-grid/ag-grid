@@ -30,4 +30,35 @@
     width: var(--layout-width-1-4);
     font-size: var(--text-fs-base);
     font-weight: var(--text-regular);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1; /* number of lines to show */
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+
+@media screen and (max-width: $breakpoint-sitemap-medium) {
+    .link {
+        width: var(--layout-width-2-4);
+        font-size: var(--text-fs-base);
+        font-weight: var(--text-regular);
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 1; /* number of lines to show */
+        line-clamp: 1;
+        -webkit-box-orient: vertical;
+    }
+}
+
+@media screen and (max-width: $breakpoint-sitemap-small) {
+    .link {
+        width: 100%;
+        font-size: var(--text-fs-base);
+        font-weight: var(--text-regular);
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 1; /* number of lines to show */
+        line-clamp: 1;
+        -webkit-box-orient: vertical;
+    }
 }

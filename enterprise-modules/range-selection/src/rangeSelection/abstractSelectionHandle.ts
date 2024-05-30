@@ -1,42 +1,36 @@
-import {
-    Autowired,
+import type {
+    BeanCollection,
     CellCtrl,
-    CellNavigationService,
     CellPosition,
     CellPositionUtils,
     CellRange,
-    ColumnModel,
-    Component,
     CtrlsService,
     DragService,
     ISelectionHandle,
     MouseEventService,
-    NavigationService,
-    PostConstruct,
     RowPosition,
     RowPositionUtils,
-    RowRenderer,
-    SelectionHandleType,
-    VisibleColsService,
-    _isVisible,
-    _last,
-    _setDisplayed,
 } from '@ag-grid-community/core';
+import { Component, SelectionHandleType, _isVisible, _last, _setDisplayed } from '@ag-grid-community/core';
 
-import { RangeService } from './rangeService';
+import type { RangeService } from './rangeService';
 
 export abstract class AbstractSelectionHandle extends Component implements ISelectionHandle {
-    @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
-    @Autowired('dragService') protected dragService: DragService;
-    @Autowired('rangeService') protected rangeService: RangeService;
-    @Autowired('mouseEventService') protected mouseEventService: MouseEventService;
-    @Autowired('columnModel') protected columnModel: ColumnModel;
-    @Autowired('visibleColsService') protected visibleColsService: VisibleColsService;
-    @Autowired('cellNavigationService') protected cellNavigationService: CellNavigationService;
-    @Autowired('navigationService') protected navigationService: NavigationService;
-    @Autowired('rowPositionUtils') protected rowPositionUtils: RowPositionUtils;
-    @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
-    @Autowired('ctrlsService') protected ctrlsService: CtrlsService;
+    protected dragService: DragService;
+    protected rangeService: RangeService;
+    protected mouseEventService: MouseEventService;
+    protected rowPositionUtils: RowPositionUtils;
+    protected cellPositionUtils: CellPositionUtils;
+    protected ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.dragService = beans.dragService;
+        this.rangeService = beans.rangeService as RangeService;
+        this.mouseEventService = beans.mouseEventService;
+        this.rowPositionUtils = beans.rowPositionUtils;
+        this.cellPositionUtils = beans.cellPositionUtils;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private cellCtrl: CellCtrl;
     private cellRange: CellRange;
@@ -52,8 +46,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     protected abstract type: SelectionHandleType;
     protected shouldDestroyOnEndDragging: boolean = false;
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         this.dragService.addDragSource({
             dragStartPixels: 0,
             eElement: this.getGui(),
@@ -206,7 +199,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         }
     }
 
-    protected destroy() {
+    public override destroy() {
         if (!this.shouldDestroyOnEndDragging && this.isDragging()) {
             _setDisplayed(this.getGui(), false);
             this.shouldDestroyOnEndDragging = true;

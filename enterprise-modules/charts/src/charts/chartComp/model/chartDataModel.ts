@@ -1,28 +1,26 @@
-import {
-    Autowired,
-    BeanStub,
+import type {
+    AgColumn,
+    BeanCollection,
     CellRange,
-    CellRangeType,
     ChartType,
-    Column,
     IAggFunc,
     IRangeService,
     PartialCellRange,
-    PostConstruct,
     SeriesChartType,
     SeriesGroupType,
-    _includes,
 } from '@ag-grid-community/core';
-import { AgCartesianAxisType } from 'ag-charts-community';
+import { BeanStub, CellRangeType, _includes } from '@ag-grid-community/core';
+import type { AgCartesianAxisType } from 'ag-charts-community';
 
-import { ChartDatasource, ChartDatasourceParams } from '../datasource/chartDatasource';
+import type { ChartDatasourceParams } from '../datasource/chartDatasource';
+import { ChartDatasource } from '../datasource/chartDatasource';
 import { ChartColumnService } from '../services/chartColumnService';
-import { ChartTranslationService } from '../services/chartTranslationService';
+import type { ChartTranslationService } from '../services/chartTranslationService';
 import { getMaxNumSeries, getSeriesType, isComboChart, isHierarchical } from '../utils/seriesTypeMapper';
 import { ComboChartModel } from './comboChartModel';
 
 export interface ColState {
-    column?: Column;
+    column?: AgColumn;
     colId: string;
     displayName: string | null;
     selected?: boolean;
@@ -47,9 +45,13 @@ export interface ChartModelParams {
 export class ChartDataModel extends BeanStub {
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 
-    @Autowired('rangeService') private readonly rangeService: IRangeService;
+    private rangeService: IRangeService;
+    private chartTranslationService: ChartTranslationService;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    public wireBeans(beans: BeanCollection): void {
+        this.rangeService = beans.rangeService;
+        this.chartTranslationService = beans.chartTranslationService;
+    }
 
     public readonly params: ChartModelParams;
 
@@ -121,8 +123,7 @@ export class ChartDataModel extends BeanStub {
         this.seriesGroupType = seriesGroupType;
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.datasource = this.createManagedBean(new ChartDatasource());
         this.chartColumnService = this.createManagedBean(new ChartColumnService());
         this.comboChartModel = this.createManagedBean(new ComboChartModel(this));
@@ -140,7 +141,7 @@ export class ChartDataModel extends BeanStub {
 
         this.setParams(params);
 
-        this.updateSelectedDimensions(cellRange?.columns);
+        this.updateSelectedDimensions(cellRange?.columns as AgColumn[]);
         this.updateCellRanges({ setColsFromRange: true });
 
         const shouldUpdateComboModel = this.isComboChart() || seriesChartTypes;
@@ -226,7 +227,7 @@ export class ChartDataModel extends BeanStub {
         return !!isGroupActive && groupDimensionSelected;
     }
 
-    public getSelectedValueCols(): Column[] {
+    public getSelectedValueCols(): AgColumn[] {
         return this.valueColState.filter((cs) => cs.selected).map((cs) => cs.column!);
     }
 
@@ -234,7 +235,7 @@ export class ChartDataModel extends BeanStub {
         return this.dimensionColState.filter((cs) => cs.selected);
     }
 
-    public getColDisplayName(col: Column): string | null {
+    public getColDisplayName(col: AgColumn): string | null {
         return this.chartColumnService.getColDisplayName(col);
     }
 
@@ -251,7 +252,7 @@ export class ChartDataModel extends BeanStub {
         return this.chartColumnService.isPivotActive();
     }
 
-    private createCellRange(type: CellRangeType, ...columns: Column[]): CellRange {
+    private createCellRange(type: CellRangeType, ...columns: AgColumn[]): CellRange {
         return {
             id: this.chartId, // set range ID to match chart ID so we can identify changes to the ranges for this chart
             startRow: this.referenceCellRange.startRow,
@@ -265,7 +266,7 @@ export class ChartDataModel extends BeanStub {
         };
     }
 
-    private getAllColumnsFromRanges(): Set<Column> {
+    private getAllColumnsFromRanges(): Set<AgColumn> {
         if (this.pivotChart) {
             return new Set(this.chartColumnService.getAllDisplayedColumns());
         }
@@ -280,7 +281,7 @@ export class ChartDataModel extends BeanStub {
             columns.push(...this.valueCellRange.columns);
         }
 
-        return new Set(columns);
+        return new Set(columns as AgColumn[]);
     }
 
     private getRowIndexes(): { startRow: number; endRow: number } {
@@ -354,7 +355,9 @@ export class ChartDataModel extends BeanStub {
 
         this.dimensionColState.unshift(defaultCategory);
 
-        const valueColumnsFromReferenceRange = this.referenceCellRange.columns.filter((c) => valueCols.has(c));
+        const valueColumnsFromReferenceRange = (this.referenceCellRange.columns as AgColumn[]).filter((c) =>
+            valueCols.has(c)
+        );
 
         valueCols.forEach((column) => {
             // first time the value cell range is set, preserve the column order from the supplied range
@@ -433,15 +436,15 @@ export class ChartDataModel extends BeanStub {
     }
 
     private setDimensionCellRange(
-        dimensionCols: Set<Column>,
-        colsInRange: Set<Column>,
+        dimensionCols: Set<AgColumn>,
+        colsInRange: Set<AgColumn>,
         updatedColState?: ColState
     ): void {
         this.dimensionCellRange = undefined;
         const supportsMultipleDimensions = isHierarchical(getSeriesType(this.chartType));
 
         if (!updatedColState && !this.dimensionColState.length) {
-            const selectedCols = new Array<Column>();
+            const selectedCols = new Array<AgColumn>();
             // use first dimension column in range by default, or all dimension columns for hierarchical charts
             dimensionCols.forEach((col) => {
                 if ((selectedCols.length > 0 && !supportsMultipleDimensions) || !colsInRange.has(col)) {
@@ -481,10 +484,10 @@ export class ChartDataModel extends BeanStub {
         }
     }
 
-    private setValueCellRange(valueCols: Set<Column>, colsInRange: Set<Column>, setColsFromRange?: boolean): void {
+    private setValueCellRange(valueCols: Set<AgColumn>, colsInRange: Set<AgColumn>, setColsFromRange?: boolean): void {
         this.valueCellRange = undefined;
 
-        const selectedValueCols: Column[] = [];
+        const selectedValueCols: AgColumn[] = [];
 
         const maxSelection = getMaxNumSeries(this.chartType);
         let numSelected = 0;
@@ -531,7 +534,7 @@ export class ChartDataModel extends BeanStub {
         }
     }
 
-    private updateSelectedDimensions(columns: Column[]): void {
+    private updateSelectedDimensions(columns: AgColumn[]): void {
         const colIdSet = new Set(columns.map((column) => column.getColId()));
 
         // For non-hierarchical chart types, only one dimension can be selected

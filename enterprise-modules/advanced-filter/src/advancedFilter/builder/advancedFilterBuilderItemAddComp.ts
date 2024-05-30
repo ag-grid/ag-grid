@@ -1,31 +1,28 @@
+import type { BeanCollection, FieldPickerValueSelectedEvent } from '@ag-grid-community/core';
 import {
-    Autowired,
-    Beans,
     Component,
     Events,
-    FieldPickerValueSelectedEvent,
-    PostConstruct,
-    RefSelector,
+    RefPlaceholder,
     TooltipFeature,
     _setAriaLabel,
     _setAriaLevel,
 } from '@ag-grid-community/core';
 
-import { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
+import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import { AddDropdownComp } from './addDropdownComp';
 import { AdvancedFilterBuilderItemNavigationFeature } from './advancedFilterBuilderItemNavigationFeature';
 import { getAdvancedFilterBuilderAddButtonParams } from './advancedFilterBuilderUtils';
-import {
-    AdvancedFilterBuilderAddEvent,
-    AdvancedFilterBuilderEvents,
-    AdvancedFilterBuilderItem,
-} from './iAdvancedFilterBuilder';
+import type { AdvancedFilterBuilderAddEvent, AdvancedFilterBuilderItem } from './iAdvancedFilterBuilder';
+import { AdvancedFilterBuilderEvents } from './iAdvancedFilterBuilder';
 
 export class AdvancedFilterBuilderItemAddComp extends Component {
-    @Autowired('beans') private readonly beans: Beans;
-    @Autowired('advancedFilterExpressionService')
-    private readonly advancedFilterExpressionService: AdvancedFilterExpressionService;
-    @RefSelector('eItem') private readonly eItem: HTMLElement;
+    private advancedFilterExpressionService: AdvancedFilterExpressionService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+    }
+
+    private readonly eItem: HTMLElement = RefPlaceholder;
 
     constructor(
         private readonly item: AdvancedFilterBuilderItem,
@@ -33,7 +30,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
     ) {
         super(/* html */ `
             <div class="ag-advanced-filter-builder-item-wrapper" role="presentation">
-                <div ref="eItem" class="ag-advanced-filter-builder-item" role="presentation">
+                <div data-ref="eItem" class="ag-advanced-filter-builder-item" role="presentation">
                     <div class="ag-advanced-filter-builder-item-tree-lines" aria-hidden="true">
                         <div class="ag-advanced-filter-builder-item-tree-line-vertical-top ag-advanced-filter-builder-item-tree-line-horizontal"></div>
                     </div>
@@ -42,8 +39,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
         `);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         _setAriaLevel(this.focusWrapper, 2);
 
         const addButtonParams = getAdvancedFilterBuilderAddButtonParams(

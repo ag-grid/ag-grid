@@ -1,17 +1,17 @@
-import { Autowired, PostConstruct } from '../../context/context';
-import { FilterChangedEventSourceType } from '../../events';
-import { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
-import { IRowModel } from '../../interfaces/iRowModel';
-import { IRowNode } from '../../interfaces/iRowNode';
+import type { BeanCollection } from '../../context/context';
+import type { FilterChangedEventSourceType } from '../../events';
+import type { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
+import type { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
+import type { IRowModel } from '../../interfaces/iRowModel';
+import type { IRowNode } from '../../interfaces/iRowNode';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
 import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
 import { _debounce } from '../../utils/function';
-import { AgPromise } from '../../utils/promise';
-import { Component } from '../../widgets/component';
-import { RefSelector } from '../../widgets/componentAnnotations';
+import type { AgPromise } from '../../utils/promise';
+import type { ComponentClass } from '../../widgets/component';
+import { Component, RefPlaceholder } from '../../widgets/component';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
-import { PopupEventParams } from '../../widgets/popupService';
+import type { PopupEventParams } from '../../widgets/popupService';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
@@ -101,9 +101,12 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     private positionableFeature: PositionableFeature | undefined;
 
-    @Autowired('rowModel') protected readonly rowModel: IRowModel;
+    protected rowModel: IRowModel;
+    public wireBeans(beans: BeanCollection): void {
+        this.rowModel = beans.rowModel;
+    }
 
-    @RefSelector('eFilterBody') protected readonly eFilterBody: HTMLElement;
+    protected readonly eFilterBody: HTMLElement = RefPlaceholder;
 
     private eButtonsPanel: HTMLElement;
     private buttonListeners: ((() => null) | undefined)[] = [];
@@ -117,6 +120,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     protected abstract updateUiVisibility(): void;
 
     protected abstract createBodyTemplate(): string;
+    protected abstract getAgComponents(): ComponentClass[];
     protected abstract getCssIdentifier(): string;
     protected abstract resetUiToDefaults(silent?: boolean): AgPromise<void>;
 
@@ -126,8 +130,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     /** Used to get the filter type for filter models. */
     protected abstract getFilterType(): string;
 
-    @PostConstruct
-    protected postConstruct(): void {
+    public postConstruct(): void {
         this.resetTemplate(); // do this first to create the DOM
         this.createManagedBean(
             new ManagedFocusFeature(this.getFocusableElement(), {
@@ -164,12 +167,12 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         }
         const templateString = /* html */ `
             <form class="ag-filter-wrapper">
-                <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper" ref="eFilterBody">
+                <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper" data-ref="eFilterBody">
                     ${this.createBodyTemplate()}
                 </div>
             </form>`;
 
-        this.setTemplate(templateString, paramsMap);
+        this.setTemplate(templateString, this.getAgComponents(), paramsMap);
 
         eGui = this.getGui();
         if (eGui) {
@@ -272,7 +275,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                 /* html */
                 `<button
                     type="${buttonType}"
-                    ref="${type}FilterButton"
+                    data-ref="${type}FilterButton"
                     class="ag-button ag-standard-button ag-filter-apply-panel-button"
                 >${text}
                 </button>`
@@ -439,7 +442,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
         if (this.applyActive && !this.isReadOnly()) {
             const isValid = this.isModelValid(this.getModelFromUi()!);
-            const applyFilterButton = this.getRefElement('applyFilterButton');
+            const applyFilterButton = this.queryForHtmlElement(`[data-ref="applyFilterButton"]`);
             if (applyFilterButton) {
                 _setDisabled(applyFilterButton, !isValid);
             }
@@ -515,7 +518,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         return true;
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         const eGui = this.getGui();
 
         if (eGui) {

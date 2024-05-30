@@ -1,8 +1,13 @@
-import { Autowired, Bean, BeanStub, ChangedPath, FilterManager, RowNode } from '@ag-grid-community/core';
+import type { BeanCollection, ChangedPath, FilterManager, NamedBean, RowNode } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
-@Bean('filterService')
-export class FilterService extends BeanStub {
-    @Autowired('filterManager') private filterManager: FilterManager;
+export class FilterService extends BeanStub implements NamedBean {
+    beanName = 'filterService' as const;
+
+    private filterManager: FilterManager;
+    public wireBeans(beans: BeanCollection): void {
+        this.filterManager = beans.filterManager;
+    }
 
     public filter(changedPath: ChangedPath): void {
         const filterActive: boolean = this.filterManager.isChildFilterPresent();

@@ -1,18 +1,19 @@
-import {
-    AgPromise,
-    AgSelect,
-    Autowired,
-    Column,
+import type {
+    AgColumn,
+    BeanCollection,
     ColumnNameService,
-    Events,
     FilterManager,
-    FilterWrapperComp,
     FuncColsService,
     IAfterGuiAttachedParams,
     IFilterComp,
     IFilterParams,
-    PostConstruct,
-    RefSelector,
+} from '@ag-grid-community/core';
+import {
+    AgPromise,
+    AgSelect,
+    Events,
+    FilterWrapperComp,
+    RefPlaceholder,
     TabGuardComp,
     _clearElement,
     _loadTemplate,
@@ -22,23 +23,29 @@ import {
 
 interface FilterColumnPair {
     filter: IFilterComp;
-    column: Column;
+    column: AgColumn;
 }
 
 export class GroupFilter extends TabGuardComp implements IFilterComp {
+    private filterManager: FilterManager;
+    private columnNameService: ColumnNameService;
+    private funcColsService: FuncColsService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.filterManager = beans.filterManager;
+        this.columnNameService = beans.columnNameService;
+        this.funcColsService = beans.funcColsService;
+    }
+
     public static EVENT_COLUMN_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
     public static EVENT_SELECTED_COLUMN_CHANGED = 'selectedColumnChanged';
 
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
-
-    @RefSelector('eGroupField') private readonly eGroupField: HTMLElement;
-    @RefSelector('eUnderlyingFilter') private readonly eUnderlyingFilter: HTMLElement;
+    private readonly eGroupField: HTMLElement = RefPlaceholder;
+    private readonly eUnderlyingFilter: HTMLElement = RefPlaceholder;
 
     private params: IFilterParams;
-    private groupColumn: Column;
-    private selectedColumn: Column | undefined;
+    private groupColumn: AgColumn;
+    private selectedColumn: AgColumn | undefined;
     private selectedFilter: IFilterComp | undefined;
     private filterColumnPairs: FilterColumnPair[] | undefined;
     private eGroupFieldSelect: AgSelect;
@@ -48,14 +55,13 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
     constructor() {
         super(/* html */ `
             <div class="ag-group-filter">
-                <div ref="eGroupField"></div>
-                <div ref="eUnderlyingFilter"></div>
+                <div data-ref="eGroupField"></div>
+                <div data-ref="eUnderlyingFilter"></div>
             </div>
         `);
     }
 
-    @PostConstruct
-    private postConstruct() {
+    public postConstruct() {
         this.initialiseTabGuard({});
     }
 
@@ -93,8 +99,8 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         return this.getUnderlyingFilters(sourceColumns);
     }
 
-    private getSourceColumns(): Column[] {
-        this.groupColumn = this.params.column;
+    private getSourceColumns(): AgColumn[] {
+        this.groupColumn = this.params.column as AgColumn;
         if (this.gos.get('treeData')) {
             _warnOnce(
                 'Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.'
@@ -109,7 +115,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         return sourceColumns;
     }
 
-    private updateGroupField(): Column[] | null {
+    private updateGroupField(): AgColumn[] | null {
         _clearElement(this.eGroupField);
         if (this.eGroupFieldSelect) {
             this.destroyBean(this.eGroupFieldSelect);
@@ -144,7 +150,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         return sourceColumns;
     }
 
-    private createGroupFieldSelectElement(sourceColumns: Column[]): void {
+    private createGroupFieldSelectElement(sourceColumns: AgColumn[]): void {
         this.eGroupFieldSelect = this.createManagedBean(new AgSelect());
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         this.eGroupFieldSelect.setLabel(localeTextFunc('groupFilterSelect', 'Select field:'));
@@ -163,7 +169,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         }
     }
 
-    private getUnderlyingFilters(sourceColumns: Column[] | null): AgPromise<void> {
+    private getUnderlyingFilters(sourceColumns: AgColumn[] | null): AgPromise<void> {
         if (!sourceColumns) {
             this.filterColumnPairs = undefined;
             this.selectedFilter = undefined;
@@ -287,7 +293,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         return this.selectedFilter;
     }
 
-    public getSelectedColumn(): Column | undefined {
+    public getSelectedColumn(): AgColumn | undefined {
         return this.selectedColumn;
     }
 
@@ -295,7 +301,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         return !!this.selectedColumn;
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 }

@@ -1,23 +1,23 @@
 import { BeanStub } from '../../context/beanStub';
-import { CellClassParams, CellClassRules } from '../../entities/colDef';
-import { CellStyle, CellStyleFunc } from '../../entities/colDef';
-import { Column } from '../../entities/column';
-import { RowNode } from '../../entities/rowNode';
-import { Beans } from '../beans';
-import { CellCtrl, ICellComp } from './cellCtrl';
+import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
+import type { CellClassParams, CellClassRules } from '../../entities/colDef';
+import type { CellStyle, CellStyleFunc } from '../../entities/colDef';
+import type { RowNode } from '../../entities/rowNode';
+import type { CellCtrl, ICellComp } from './cellCtrl';
 
 export class CellCustomStyleFeature extends BeanStub {
     private readonly cellCtrl: CellCtrl;
-    private readonly column: Column;
+    private readonly column: AgColumn;
     private readonly rowNode: RowNode;
-    private readonly beans: Beans;
+    private readonly beans: BeanCollection;
     private staticClasses: string[] = [];
 
     private cellComp: ICellComp;
 
     private cellClassRules?: CellClassRules;
 
-    constructor(ctrl: CellCtrl, beans: Beans) {
+    constructor(ctrl: CellCtrl, beans: BeanCollection) {
         super();
 
         this.cellCtrl = ctrl;
@@ -110,7 +110,7 @@ export class CellCustomStyleFeature extends BeanStub {
     }
 
     // overriding to make public, as we don't dispose this bean via context
-    public destroy() {
+    public override destroy() {
         super.destroy();
     }
 }

@@ -1,29 +1,21 @@
-import {
+import type { MutableRefObject } from 'react';
+import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
+
+import type {
     CellCtrl,
     CellStyle,
     Component,
-    CssClassManager,
     ICellComp,
     ICellEditor,
     ICellEditorComp,
     ICellRendererComp,
     UserCompDetails,
-    _removeFromParent,
 } from 'ag-grid-community';
-import React, {
-    MutableRefObject,
-    memo,
-    useCallback,
-    useContext,
-    useLayoutEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
+import { CssClassManager, _removeFromParent } from 'ag-grid-community';
 
 import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComponentProxy';
 import { CustomContext } from '../../shared/customComp/customContext';
-import { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
+import type { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
 import { createSyncJsComp } from '../jsComp';
@@ -247,7 +239,7 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
         [setCellEditorRef]
     );
 
-    let cssClassManager = useRef<CssClassManager>();
+    const cssClassManager = useRef<CssClassManager>();
 
     if (!cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eGui.current);

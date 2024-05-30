@@ -1,43 +1,47 @@
-import { ColumnModel } from '../columns/columnModel';
-import { VisibleColsService } from '../columns/visibleColsService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { VisibleColsService } from '../columns/visibleColsService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { CellPosition } from '../entities/cellPositionUtils';
-import { Column } from '../entities/column';
-import { RowNode } from '../entities/rowNode';
-import { RowPosition } from '../entities/rowPositionUtils';
-import {
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { AgColumn } from '../entities/agColumn';
+import type { CellPosition } from '../entities/cellPositionUtils';
+import type { RowNode } from '../entities/rowNode';
+import type { RowPosition } from '../entities/rowPositionUtils';
+import type { Environment } from '../environment';
+import type { EventsType } from '../eventKeys';
+import type {
     AgEventListener,
     BodyScrollEvent,
     CellFocusedEvent,
     DisplayedRowsChangedEvent,
-    Events,
     FirstDataRenderedEvent,
     ModelUpdatedEvent,
     ViewportChangedEvent,
 } from '../events';
-import { FocusService } from '../focusService';
-import { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
-import { ICellEditor } from '../interfaces/iCellEditor';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { IRowModel } from '../interfaces/iRowModel';
-import { IRowNode } from '../interfaces/iRowNode';
-import { AnimationFrameService } from '../misc/animationFrameService';
-import { PaginationProxy } from '../pagination/paginationProxy';
-import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
+import { Events } from '../events';
+import type { FocusService } from '../focusService';
+import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
+import type { ICellEditor } from '../interfaces/iCellEditor';
+import type { Column } from '../interfaces/iColumn';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { IRowNode } from '../interfaces/iRowNode';
+import type { AnimationFrameService } from '../misc/animationFrameService';
+import type { PaginationProxy } from '../pagination/paginationProxy';
+import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _removeFromArray } from '../utils/array';
 import { _browserSupportsPreventScroll } from '../utils/browser';
 import { _executeInAWhile } from '../utils/function';
 import { _exists } from '../utils/generic';
 import { _createArrayOfNumbers } from '../utils/number';
 import { _getAllValuesInObject, _iterateObject } from '../utils/object';
-import { Beans } from './beans';
 import { CellCtrl } from './cell/cellCtrl';
-import { ICellRenderer } from './cellRenderers/iCellRenderer';
+import type { ICellRenderer } from './cellRenderers/iCellRenderer';
 import { StickyRowFeature } from './features/stickyRowFeature';
-import { RowCtrl, RowCtrlInstanceId } from './row/rowCtrl';
-import { RowContainerHeightService } from './rowContainerHeightService';
+import type { RowCtrlInstanceId } from './row/rowCtrl';
+import { RowCtrl } from './row/rowCtrl';
+import type { RowContainerHeightService } from './rowContainerHeightService';
 
 type RowCtrlIdMap = Record<RowCtrlInstanceId, RowCtrl>;
 type RowCtrlByRowIndex = Record<number, RowCtrl>;
@@ -82,18 +86,34 @@ export interface RedrawRowsParams<TData = any> {
     rowNodes?: IRowNode<TData>[];
 }
 
-@Bean('rowRenderer')
-export class RowRenderer extends BeanStub {
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('beans') private beans: Beans;
-    @Autowired('rowContainerHeightService') private rowContainerHeightService: RowContainerHeightService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+export class RowRenderer extends BeanStub implements NamedBean {
+    beanName = 'rowRenderer' as const;
+
+    private animationFrameService: AnimationFrameService;
+    private paginationProxy: PaginationProxy;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private pinnedRowModel: PinnedRowModel;
+    private rowModel: IRowModel;
+    private focusService: FocusService;
+    private beans: BeanCollection;
+    private rowContainerHeightService: RowContainerHeightService;
+    private ctrlsService: CtrlsService;
+    private environment: Environment;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.animationFrameService = beans.animationFrameService;
+        this.paginationProxy = beans.paginationProxy;
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.pinnedRowModel = beans.pinnedRowModel;
+        this.rowModel = beans.rowModel;
+        this.focusService = beans.focusService;
+        this.beans = beans;
+        this.rowContainerHeightService = beans.rowContainerHeightService;
+        this.ctrlsService = beans.ctrlsService;
+        this.environment = beans.environment;
+    }
 
     private gridBodyCtrl: GridBodyCtrl;
 
@@ -130,8 +150,7 @@ export class RowRenderer extends BeanStub {
 
     private dataFirstRenderedFired = false;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.ctrlsService.whenReady((p) => {
             this.gridBodyCtrl = p.gridBodyCtrl;
             this.initialise();
@@ -139,19 +158,13 @@ export class RowRenderer extends BeanStub {
     }
 
     private initialise(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_PINNED_ROW_DATA_CHANGED,
-            this.onPinnedRowDataChanged.bind(this)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
-            this.onDisplayedColumnsChanged.bind(this)
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.onBodyScroll.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redraw.bind(this));
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_PAGINATION_CHANGED]: this.onPageLoaded.bind(this),
+            [Events.EVENT_PINNED_ROW_DATA_CHANGED]: this.onPinnedRowDataChanged.bind(this),
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+            [Events.EVENT_BODY_SCROLL]: this.onBodyScroll.bind(this),
+            [Events.EVENT_BODY_HEIGHT_CHANGED]: this.redraw.bind(this),
+        });
 
         this.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], () => this.onDomLayoutChanged());
         this.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction', 'rowBuffer'], () => this.redraw());
@@ -249,35 +262,30 @@ export class RowRenderer extends BeanStub {
     // registering and de-registering for events is a performance bottleneck. so we register here once and inform
     // all active cells.
     private registerCellEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, (event: CellFocusedEvent) => {
-            this.onCellFocusChanged(event);
-        });
-
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUS_CLEARED, () => {
-            this.onCellFocusChanged();
-        });
-
-        this.addManagedListener(this.eventService, Events.EVENT_FLASH_CELLS, (event) => {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onFlashCells(event));
-        });
-
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, () => {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onColumnHover());
-        });
-
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onDisplayedColumnsChanged());
-        });
-
-        // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,
-        // then changing the width of the containers will impact left position. eg the center cols all have their
-        // left position adjusted by the width of the left pinned column, so if the pinned left column width changes,
-        // all the center cols need to be shifted to accommodate this. when in normal layout, the pinned cols are
-        // in different containers so doesn't impact.
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => {
-            if (this.printLayout) {
-                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onLeftChanged());
-            }
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_CELL_FOCUSED]: (event: CellFocusedEvent) => {
+                this.onCellFocusChanged(event);
+            },
+            [Events.EVENT_CELL_FOCUS_CLEARED]: this.onCellFocusChanged.bind(this),
+            [Events.EVENT_FLASH_CELLS]: (event) => {
+                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onFlashCells(event));
+            },
+            [Events.EVENT_COLUMN_HOVER_CHANGED]: () => {
+                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onColumnHover());
+            },
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: () => {
+                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onDisplayedColumnsChanged());
+            },
+            [Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED]: () => {
+                // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,
+                // then changing the width of the containers will impact left position. eg the center cols all have their
+                // left position adjusted by the width of the left pinned column, so if the pinned left column width changes,
+                // all the center cols need to be shifted to accommodate this. when in normal layout, the pinned cols are
+                // in different containers so doesn't impact.
+                if (this.printLayout) {
+                    this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onLeftChanged());
+                }
+            },
         });
 
         this.setupRangeSelectionListeners();
@@ -427,7 +435,7 @@ export class RowRenderer extends BeanStub {
         this.redrawAfterModelUpdate(params);
     }
 
-    public getAllCellsForColumn(column: Column): HTMLElement[] {
+    public getAllCellsForColumn(column: AgColumn): HTMLElement[] {
         const res: HTMLElement[] = [];
 
         this.getAllRowCtrls().forEach((rowCtrl) => {
@@ -676,7 +684,7 @@ export class RowRenderer extends BeanStub {
             this.focusService.setRestoreFocusedCell(cellPosition);
 
             this.onCellFocusChanged(
-                this.beans.gos.addGridCommonParams<CellFocusedEvent>({
+                this.gos.addGridCommonParams<CellFocusedEvent>({
                     rowIndex: cellPosition.rowIndex,
                     column: cellPosition.column,
                     rowPinned: cellPosition.rowPinned,
@@ -730,7 +738,9 @@ export class RowRenderer extends BeanStub {
     }
 
     public flashCells(params: FlashCellsParams = {}): void {
-        this.getCellCtrls(params.rowNodes, params.columns).forEach((cellCtrl) => cellCtrl.flashCell(params));
+        this.getCellCtrls(params.rowNodes, params.columns as AgColumn[]).forEach((cellCtrl) =>
+            cellCtrl.flashCell(params)
+        );
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
@@ -739,7 +749,7 @@ export class RowRenderer extends BeanStub {
             newData: false,
             suppressFlash: params.suppressFlash,
         };
-        this.getCellCtrls(params.rowNodes, params.columns).forEach((cellCtrl) =>
+        this.getCellCtrls(params.rowNodes, params.columns as AgColumn[]).forEach((cellCtrl) =>
             cellCtrl.refreshOrDestroyCell(refreshCellParams)
         );
 
@@ -759,7 +769,7 @@ export class RowRenderer extends BeanStub {
     }
 
     public getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRenderer[] {
-        const cellRenderers = this.getCellCtrls(params.rowNodes, params.columns)
+        const cellRenderers = this.getCellCtrls(params.rowNodes, params.columns as AgColumn[])
             .map((cellCtrl) => cellCtrl.getCellRenderer())
             .filter((renderer) => renderer != null) as ICellRenderer[];
         if (params.columns?.length) {
@@ -793,7 +803,7 @@ export class RowRenderer extends BeanStub {
     public getCellEditorInstances(params: GetCellRendererInstancesParams): ICellEditor[] {
         const res: ICellEditor[] = [];
 
-        this.getCellCtrls(params.rowNodes, params.columns).forEach((cellCtrl) => {
+        this.getCellCtrls(params.rowNodes, params.columns as AgColumn[]).forEach((cellCtrl) => {
             const cellEditor = cellCtrl.getCellEditor() as ICellEditor;
 
             if (cellEditor) {
@@ -884,12 +894,12 @@ export class RowRenderer extends BeanStub {
 
     // returns CellCtrl's that match the provided rowNodes and columns. eg if one row node
     // and two columns provided, that identifies 4 cells, so 4 CellCtrl's returned.
-    private getCellCtrls(rowNodes?: IRowNode[] | null, columns?: (string | Column)[]): CellCtrl[] {
+    private getCellCtrls(rowNodes?: IRowNode[] | null, columns?: (string | AgColumn)[]): CellCtrl[] {
         let colIdsMap: any;
         if (_exists(columns)) {
             colIdsMap = {};
-            columns.forEach((colKey: string | Column) => {
-                const column: Column | null = this.columnModel.getCol(colKey);
+            columns.forEach((colKey: string | AgColumn) => {
+                const column: AgColumn | null = this.columnModel.getCol(colKey);
                 if (_exists(column)) {
                     colIdsMap[column.getId()] = true;
                 }
@@ -912,7 +922,7 @@ export class RowRenderer extends BeanStub {
         return res;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.removeAllRowComps();
         super.destroy();
     }
@@ -1380,15 +1390,25 @@ export class RowRenderer extends BeanStub {
     }
 
     private ensureAllRowsInRangeHaveHeightsCalculated(topPixel: number, bottomPixel: number): boolean {
+        const pinnedRowHeightsChanged = this.pinnedRowModel?.ensureRowHeightsValid();
+
+        // ensure sticky rows heights are all updated
+        const stickyHeightsChanged = this.stickyRowFeature?.ensureRowHeightsValid();
         // ensureRowHeightsVisible only works with CSRM, as it's the only row model that allows lazy row height calcs.
         // all the other row models just hard code so the method just returns back false
-        const res = this.paginationProxy.ensureRowHeightsValid(topPixel, bottomPixel, -1, -1);
+        const rowModelHeightsChanged = this.paginationProxy.ensureRowHeightsValid(
+            topPixel,
+            bottomPixel,
+            -1,
+            -1,
+            stickyHeightsChanged
+        );
 
-        if (res) {
+        if (stickyHeightsChanged || rowModelHeightsChanged || pinnedRowHeightsChanged) {
             this.updateContainerHeights();
+            return true;
         }
-
-        return res;
+        return false;
     }
 
     public getFirstVisibleVerticalPixel(): number {

@@ -1,16 +1,23 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
-import { Column } from '../entities/column';
-import { ColumnModel } from './columnModel';
-import { FuncColsService } from './funcColsService';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { ColumnModel } from './columnModel';
+import type { FuncColsService } from './funcColsService';
 
-@Bean('showRowGroupColsService')
-export class ShowRowGroupColsService extends BeanStub {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
+export class ShowRowGroupColsService extends BeanStub implements NamedBean {
+    beanName = 'showRowGroupColsService' as const;
 
-    private showRowGroupCols: Column[];
-    private showRowGroupColsMap: { [originalColumnId: string]: Column };
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+    }
+
+    private showRowGroupCols: AgColumn[];
+    private showRowGroupColsMap: { [originalColumnId: string]: AgColumn };
 
     public refresh(): void {
         this.showRowGroupCols = [];
@@ -40,11 +47,11 @@ export class ShowRowGroupColsService extends BeanStub {
         });
     }
 
-    public getShowRowGroupCols(): Column[] {
+    public getShowRowGroupCols(): AgColumn[] {
         return this.showRowGroupCols;
     }
 
-    public getShowRowGroupCol(id: string): Column | undefined {
+    public getShowRowGroupCol(id: string): AgColumn | undefined {
         return this.showRowGroupColsMap[id];
     }
 }

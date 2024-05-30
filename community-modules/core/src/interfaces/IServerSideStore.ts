@@ -1,9 +1,10 @@
-import { NumberSequence } from '../utils/numberSequence';
-import { RowBounds } from './iRowModel';
-import { IRowNode } from './iRowNode';
-import { ServerSideTransaction, ServerSideTransactionResult } from './serverSideTransaction';
+import type { Bean } from '../context/bean';
+import type { NumberSequence } from '../utils/numberSequence';
+import type { RowBounds } from './iRowModel';
+import type { IRowNode } from './iRowNode';
+import type { ServerSideTransaction, ServerSideTransactionResult } from './serverSideTransaction';
 
-export interface IServerSideStore {
+export interface IServerSideStore extends Bean {
     clearDisplayIndexes(): void;
     getDisplayIndexEnd(): number | undefined;
     isDisplayIndexInStore(displayIndex: number): boolean;

@@ -1,4 +1,6 @@
-import {
+import { useContext } from 'react';
+
+import type {
     BaseCellEditor,
     BaseDate,
     BaseDateParams,
@@ -22,7 +24,6 @@ import {
     IStatusPanelParams,
     ITooltipParams,
 } from 'ag-grid-community';
-import { useContext } from 'react';
 
 import { CustomContext } from './customContext';
 

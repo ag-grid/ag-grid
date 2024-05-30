@@ -1,8 +1,11 @@
 import { KeyCode } from '../constants/keyCode';
 import { Events } from '../eventKeys';
+import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaControls } from '../utils/aria';
-import { AgList, ListOption } from './agList';
-import { AgPickerField, AgPickerFieldParams } from './agPickerField';
+import type { ListOption } from './agList';
+import { AgList } from './agList';
+import { AgPickerField } from './agPickerField';
+import type { AgComponentSelector } from './component';
 
 export interface AgSelectParams<TValue = string>
     extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
@@ -18,6 +21,8 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
     AgSelectParams<TValue> & AgPickerFieldParams,
     AgList<TValue>
 > {
+    static readonly selector: AgComponentSelector = 'AG-SELECT';
+
     public static EVENT_ITEM_SELECTED = 'selectedItem';
     protected listComponent: AgList<TValue> | undefined;
 
@@ -33,7 +38,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
         });
     }
 
-    protected postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.createListComponent();
         this.eWrapper.tabIndex = this.gos.get('tabIndex');
@@ -60,7 +65,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
     }
 
     private createListComponent(): void {
-        this.listComponent = this.createBean(new AgList('select', true));
+        this.listComponent = this.createBean(new AgList<TValue>('select', true));
         this.listComponent.setParentComponent(this);
 
         const eListAriaEl = this.listComponent.getAriaElement();
@@ -88,7 +93,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
         return this.listComponent!;
     }
 
-    protected onKeyDown(e: KeyboardEvent): void {
+    protected override onKeyDown(e: KeyboardEvent): void {
         const { key } = e;
 
         if (key === KeyCode.TAB) {
@@ -116,7 +121,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
         }
     }
 
-    public showPicker() {
+    public override showPicker() {
         if (!this.listComponent) {
             return;
         }
@@ -144,7 +149,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
         return this;
     }
 
-    public setValue(value?: TValue, silent?: boolean, fromPicker?: boolean): this {
+    public override setValue(value?: TValue, silent?: boolean, fromPicker?: boolean): this {
         if (this.value === value || !this.listComponent) {
             return this;
         }
@@ -174,10 +179,9 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
         return super.setValue(value, silent);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         if (this.listComponent) {
-            this.destroyBean(this.listComponent);
-            this.listComponent = undefined;
+            this.listComponent = this.destroyBean(this.listComponent);
         }
 
         super.destroy();

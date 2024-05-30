@@ -1,20 +1,26 @@
-import { Autowired, PostConstruct } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { GridBodyComp } from '../gridBodyComp/gridBodyComp';
-import { ISideBar } from '../interfaces/iSideBar';
-import { Logger, LoggerFactory } from '../logger';
-import { LayoutCssClasses, UpdateLayoutClassesParams } from '../styling/layoutFeature';
+import type { ISideBar } from '../interfaces/iSideBar';
+import type { Logger, LoggerFactory } from '../logger';
+import { PaginationComp } from '../pagination/paginationComp';
+import type { UpdateLayoutClassesParams } from '../styling/layoutFeature';
+import { LayoutCssClasses } from '../styling/layoutFeature';
 import { _isVisible } from '../utils/dom';
-import { Component } from '../widgets/component';
-import { RefSelector } from '../widgets/componentAnnotations';
+import { type Component, RefPlaceholder } from '../widgets/component';
 import { TabGuardComp } from '../widgets/tabGuardComp';
-import { GridCtrl, IGridComp } from './gridCtrl';
+import type { IGridComp } from './gridCtrl';
+import { GridCtrl } from './gridCtrl';
 
 export class GridComp extends TabGuardComp {
-    @Autowired('loggerFactory') private readonly loggerFactory: LoggerFactory;
+    private loggerFactory: LoggerFactory;
 
-    @RefSelector('gridBody') private readonly gridBodyComp: GridBodyComp;
-    @RefSelector('sideBar') private readonly sideBarComp: ISideBar & Component;
-    @RefSelector('rootWrapperBody') private readonly eRootWrapperBody: HTMLElement;
+    public wireBeans(beans: BeanCollection) {
+        this.loggerFactory = beans.loggerFactory;
+    }
+
+    private readonly gridBody: GridBodyComp = RefPlaceholder;
+    private readonly sideBar: ISideBar & Component = RefPlaceholder;
+    private readonly rootWrapperBody: HTMLElement = RefPlaceholder;
 
     private logger: Logger;
     private eGridDiv: HTMLElement;
@@ -25,8 +31,7 @@ export class GridComp extends TabGuardComp {
         this.eGridDiv = eGridDiv;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.logger = this.loggerFactory.create('GridComp');
 
         const compProxy: IGridComp = {
@@ -47,7 +52,7 @@ export class GridComp extends TabGuardComp {
         this.ctrl = this.createManagedBean(new GridCtrl());
 
         const template = this.createTemplate();
-        this.setTemplate(template);
+        this.setTemplate(template, [GridBodyComp, PaginationComp]);
 
         this.ctrl.setComp(compProxy, this.eGridDiv, this.getGui());
 
@@ -71,7 +76,7 @@ export class GridComp extends TabGuardComp {
     }
 
     private updateLayoutClasses(cssClass: string, params: UpdateLayoutClassesParams): void {
-        const eRootWrapperBodyClassList = this.eRootWrapperBody.classList;
+        const eRootWrapperBodyClassList = this.rootWrapperBody.classList;
         eRootWrapperBodyClassList.toggle(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
         eRootWrapperBodyClassList.toggle(LayoutCssClasses.NORMAL, params.normal);
         eRootWrapperBodyClassList.toggle(LayoutCssClasses.PRINT, params.print);
@@ -83,16 +88,16 @@ export class GridComp extends TabGuardComp {
 
     private createTemplate(): string {
         const dropZones = this.ctrl.showDropZones() ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
-        const sideBar = this.ctrl.showSideBar() ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
-        const statusBar = this.ctrl.showStatusBar() ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
+        const sideBar = this.ctrl.showSideBar() ? '<ag-side-bar data-ref="sideBar"></ag-side-bar>' : '';
+        const statusBar = this.ctrl.showStatusBar() ? '<ag-status-bar></ag-status-bar>' : '';
         const watermark = this.ctrl.showWatermark() ? '<ag-watermark></ag-watermark>' : '';
 
         const template =
             /* html */
             `<div class="ag-root-wrapper" role="presentation">
                 ${dropZones}
-                <div class="ag-root-wrapper-body" ref="rootWrapperBody" role="presentation">
-                    <ag-grid-body ref="gridBody"></ag-grid-body>
+                <div class="ag-root-wrapper-body" data-ref="rootWrapperBody" role="presentation">
+                    <ag-grid-body data-ref="gridBody"></ag-grid-body>
                     ${sideBar}
                 </div>
                 ${statusBar}
@@ -103,15 +108,15 @@ export class GridComp extends TabGuardComp {
         return template;
     }
 
-    public getFocusableElement(): HTMLElement {
-        return this.eRootWrapperBody;
+    public override getFocusableElement(): HTMLElement {
+        return this.rootWrapperBody;
     }
 
     protected getFocusableContainers(): HTMLElement[] {
-        const focusableContainers = [this.gridBodyComp.getGui()];
+        const focusableContainers = [this.gridBody.getGui()];
 
-        if (this.sideBarComp) {
-            focusableContainers.push(this.sideBarComp.getGui());
+        if (this.sideBar) {
+            focusableContainers.push(this.sideBar.getGui());
         }
 
         return focusableContainers.filter((el) => _isVisible(el));

@@ -1,29 +1,25 @@
-import {
-    AgCheckbox,
-    Autowired,
-    ColumnModel,
-    Component,
-    Events,
-    GridApi,
-    PreConstruct,
-    RefSelector,
-} from '@ag-grid-community/core';
+import type { AgCheckbox, BeanCollection, ColumnModel, CtrlsService } from '@ag-grid-community/core';
+import { AgToggleButton, Component, Events, RefPlaceholder } from '@ag-grid-community/core';
 
 export class PivotModePanel extends Component {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('gridApi') private api: GridApi;
+    private columnModel: ColumnModel;
+    private ctrlsService: CtrlsService;
 
-    @RefSelector('cbPivotMode') private cbPivotMode: AgCheckbox;
+    public wireBeans(beans: BeanCollection) {
+        this.columnModel = beans.columnModel;
+        this.ctrlsService = beans.ctrlsService;
+    }
+
+    private readonly cbPivotMode: AgCheckbox = RefPlaceholder;
 
     private createTemplate(): string {
         return /* html */ `<div class="ag-pivot-mode-panel">
-                <ag-toggle-button ref="cbPivotMode" class="ag-pivot-mode-select"></ag-toggle-button>
+                <ag-toggle-button data-ref="cbPivotMode" class="ag-pivot-mode-select"></ag-toggle-button>
             </div>`;
     }
 
-    @PreConstruct
-    public init(): void {
-        this.setTemplate(this.createTemplate());
+    public postConstruct(): void {
+        this.setTemplate(this.createTemplate(), [AgToggleButton]);
 
         this.cbPivotMode.setValue(this.columnModel.isPivotMode());
         const localeTextFunc = this.localeService.getLocaleTextFunc();
@@ -42,10 +38,7 @@ export class PivotModePanel extends Component {
         const newValue = !!this.cbPivotMode.getValue();
         if (newValue !== this.columnModel.isPivotMode()) {
             this.gos.updateGridOptions({ options: { pivotMode: newValue }, source: 'toolPanelUi' as any });
-            const { api } = this;
-            if (api) {
-                api.refreshHeader();
-            }
+            this.ctrlsService.getHeaderRowContainerCtrls().forEach((c) => c.refresh());
         }
     }
 

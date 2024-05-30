@@ -1,18 +1,20 @@
 import { KeyCode } from '../../../constants/keyCode';
+import type { Bean } from '../../../context/bean';
 import { BeanStub } from '../../../context/beanStub';
-import { PostConstruct } from '../../../context/context';
-import { FilterChangedEvent } from '../../../events';
+import type { FilterChangedEvent } from '../../../events';
 import { _clearElement } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
-import { AgInputTextField, AgInputTextFieldParams } from '../../../widgets/agInputTextField';
-import { RefSelector } from '../../../widgets/componentAnnotations';
-import { NumberFilter, NumberFilterModel } from '../../provided/number/numberFilter';
+import type { AgInputTextFieldParams } from '../../../widgets/agInputTextField';
+import { AgInputTextField } from '../../../widgets/agInputTextField';
+import { RefPlaceholder } from '../../../widgets/component';
+import type { NumberFilter, NumberFilterModel } from '../../provided/number/numberFilter';
 import { ProvidedFilter } from '../../provided/providedFilter';
-import { TextFilter, TextFilterModel, TextFilterParams } from '../../provided/text/textFilter';
-import { IFloatingFilterParams } from '../floatingFilter';
+import type { TextFilterModel, TextFilterParams } from '../../provided/text/textFilter';
+import { TextFilter } from '../../provided/text/textFilter';
+import type { IFloatingFilterParams } from '../floatingFilter';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
 
-export interface FloatingFilterInputService {
+export interface FloatingFilterInputService extends Bean {
     setupGui(parentElement: HTMLElement): void;
     setEditable(editable: boolean): void;
     getValue(): string | null | undefined;
@@ -22,7 +24,7 @@ export interface FloatingFilterInputService {
 }
 
 export class FloatingFilterTextInputService extends BeanStub implements FloatingFilterInputService {
-    private eFloatingFilterTextInput: AgInputTextField;
+    private eFloatingFilterTextInput: AgInputTextField = RefPlaceholder;
     private valueChangedListener: (e: KeyboardEvent) => void = () => {};
 
     constructor(private params?: { config?: AgInputTextFieldParams }) {
@@ -88,7 +90,7 @@ export interface ITextInputFloatingFilterParams extends IFloatingFilterParams<Te
 
 type ModelUnion = TextFilterModel | NumberFilterModel;
 export abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
-    @RefSelector('eFloatingFilterInputContainer') private readonly eFloatingFilterInputContainer: HTMLElement;
+    private readonly eFloatingFilterInputContainer: HTMLElement = RefPlaceholder;
     private floatingFilterInputService: FloatingFilterInputService;
 
     protected params: ITextInputFloatingFilterParams;
@@ -99,14 +101,13 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         params: ITextInputFloatingFilterParams
     ): FloatingFilterInputService;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.setTemplate(/* html */ `
-            <div class="ag-floating-filter-input" role="presentation" ref="eFloatingFilterInputContainer"></div>
+            <div class="ag-floating-filter-input" role="presentation" data-ref="eFloatingFilterInputContainer"></div>
         `);
     }
 
-    protected getDefaultDebounceMs(): number {
+    protected override getDefaultDebounceMs(): number {
         return 500;
     }
 
@@ -122,7 +123,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         this.floatingFilterInputService.setValue(this.getFilterModelFormatter().getModelAsString(model));
     }
 
-    public init(params: ITextInputFloatingFilterParams): void {
+    public override init(params: ITextInputFloatingFilterParams): void {
         this.setupFloatingFilterInputService(params);
         super.init(params);
         this.setTextInputParams(params);
@@ -155,11 +156,11 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         }
     }
 
-    public onParamsUpdated(params: ITextInputFloatingFilterParams): void {
+    public override onParamsUpdated(params: ITextInputFloatingFilterParams): void {
         this.refresh(params);
     }
 
-    public refresh(params: ITextInputFloatingFilterParams): void {
+    public override refresh(params: ITextInputFloatingFilterParams): void {
         super.refresh(params);
         this.setTextInputParams(params);
     }

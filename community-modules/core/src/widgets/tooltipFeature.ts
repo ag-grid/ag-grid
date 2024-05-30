@@ -1,20 +1,20 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, PostConstruct } from '../context/context';
-import { ColDef, ColGroupDef } from '../entities/colDef';
-import { Column } from '../entities/column';
-import { ColumnGroup } from '../entities/columnGroup';
-import { RowNode } from '../entities/rowNode';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { Beans } from '../rendering/beans';
-import { ITooltipParams, TooltipLocation } from '../rendering/tooltipComponent';
-import { TooltipParentComp, TooltipStateManager } from './tooltipStateManager';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
+import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { RowNode } from '../entities/rowNode';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { ITooltipParams, TooltipLocation } from '../rendering/tooltipComponent';
+import type { TooltipParentComp } from './tooltipStateManager';
+import { TooltipStateManager } from './tooltipStateManager';
 
 export interface ITooltipFeatureCtrl {
     getTooltipValue(): any;
     getGui(): HTMLElement;
     getLocation(): TooltipLocation;
 
-    getColumn?(): Column | ColumnGroup;
+    getColumn?(): AgColumn | AgColumnGroup;
     getColDef?(): ColDef | ColGroupDef;
     getRowIndex?(): number;
     getRowNode?(): RowNode;
@@ -27,16 +27,20 @@ export interface ITooltipFeatureCtrl {
 }
 
 export class TooltipFeature extends BeanStub {
+    private beans: BeanCollection;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.beans = beans;
+    }
+
     private tooltip: any;
 
     private tooltipManager: TooltipStateManager | undefined;
     private browserTooltips: boolean;
 
-    @Autowired('beans') private beans: Beans;
-
     constructor(
         private readonly ctrl: ITooltipFeatureCtrl,
-        beans?: Beans
+        beans?: BeanCollection
     ) {
         super();
 
@@ -45,8 +49,7 @@ export class TooltipFeature extends BeanStub {
         }
     }
 
-    @PostConstruct
-    private postConstruct() {
+    public postConstruct() {
         this.refreshToolTip();
     }
 
@@ -129,7 +132,7 @@ export class TooltipFeature extends BeanStub {
     }
 
     // overriding to make public, as we don't dispose this bean via context
-    public destroy() {
+    public override destroy() {
         if (this.tooltipManager) {
             this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
         }

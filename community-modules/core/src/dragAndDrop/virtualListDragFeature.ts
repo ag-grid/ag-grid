@@ -1,12 +1,14 @@
 import { AutoScrollService } from '../autoScrollService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, PostConstruct } from '../context/context';
-import { AgEvent } from '../events';
-import { IEventEmitter } from '../interfaces/iEventEmitter';
+import type { BeanCollection } from '../context/context';
+import type { AgEvent } from '../events';
+import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import { _radioCssClass } from '../utils/dom';
-import { Component } from '../widgets/component';
-import { VirtualList } from '../widgets/virtualList';
-import { DragAndDropService, DragSourceType, DraggingEvent, DropTarget } from './dragAndDropService';
+import type { Component } from '../widgets/component';
+import type { VirtualList } from '../widgets/virtualList';
+import type { DragSourceType, DraggingEvent, DropTarget } from './dragAndDropService';
+import { DragAndDropService } from './dragAndDropService';
 
 const LIST_ITEM_HOVERED = 'ag-list-item-hovered';
 
@@ -28,7 +30,11 @@ export interface VirtualListDragParams<C extends Component, R extends Component,
 }
 
 export class VirtualListDragFeature<C extends Component, R extends Component, V, E extends AgEvent> extends BeanStub {
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
+    private dragAndDropService: DragAndDropService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.dragAndDropService = beans.dragAndDropService;
+    }
 
     private currentDragValue: V | null = null;
     private lastHoveredListItem: VirtualListDragItem<R> | null = null;
@@ -43,8 +49,7 @@ export class VirtualListDragFeature<C extends Component, R extends Component, V,
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.addManagedListener(
             this.params.eventSource,
             this.params.listItemDragStartEvent,

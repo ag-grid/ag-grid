@@ -1,16 +1,18 @@
 import { KeyCode } from '../constants/keyCode';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { Column } from '../entities/column';
-import { CssVariablesChanged, Events } from '../events';
-import { FocusService } from '../focusService';
-import { GridCtrl } from '../gridComp/gridCtrl';
-import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
-import { PostProcessPopupParams } from '../interfaces/iCallbackParams';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { IRowNode } from '../interfaces/iRowNode';
-import { ResizeObserverService } from '../misc/resizeObserverService';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { AgColumn } from '../entities/agColumn';
+import type { Environment } from '../environment';
+import type { CssVariablesChanged } from '../events';
+import { Events } from '../events';
+import type { GridCtrl } from '../gridComp/gridCtrl';
+import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
+import type { PostProcessPopupParams } from '../interfaces/iCallbackParams';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IRowNode } from '../interfaces/iRowNode';
+import type { ResizeObserverService } from '../misc/resizeObserverService';
 import { _setAriaLabel, _setAriaRole } from '../utils/aria';
 import { _last } from '../utils/array';
 import { _getAbsoluteHeight, _getAbsoluteWidth, _getElementRectWithOffset } from '../utils/dom';
@@ -20,7 +22,7 @@ import { AgPromise } from '../utils/promise';
 
 export interface PopupPositionParams {
     ePopup: HTMLElement;
-    column?: Column | null;
+    column?: AgColumn | null;
     rowNode?: IRowNode | null;
     nudgeX?: number;
     nudgeY?: number;
@@ -90,13 +92,18 @@ export interface AddPopupResult {
     hideFunc: (params?: PopupEventParams) => void;
 }
 
-@Bean('popupService')
-export class PopupService extends BeanStub {
-    // really this should be using eGridDiv, not sure why it's not working.
-    // maybe popups in the future should be parent to the body??
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
-    @Autowired('resizeObserverService') public resizeObserverService: ResizeObserverService;
+export class PopupService extends BeanStub implements NamedBean {
+    beanName = 'popupService' as const;
+
+    private ctrlsService: CtrlsService;
+    private resizeObserverService: ResizeObserverService;
+    private environment: Environment;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.ctrlsService = beans.ctrlsService;
+        this.resizeObserverService = beans.resizeObserverService;
+        this.environment = beans.environment;
+    }
 
     private gridCtrl: GridCtrl;
 
@@ -104,8 +111,7 @@ export class PopupService extends BeanStub {
 
     private static WAIT_FOR_POPUP_CONTENT_RESIZE: number = 200;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.ctrlsService.whenReady((p) => {
             this.gridCtrl = p.gridCtrl;
         });
@@ -328,7 +334,7 @@ export class PopupService extends BeanStub {
         ePopup: HTMLElement,
         eventSource?: HTMLElement | null,
         mouseEvent?: MouseEvent | Touch | null,
-        column?: Column | null,
+        column?: AgColumn | null,
         rowNode?: IRowNode | null
     ): void {
         const callback = this.gos.getCallback('postProcessPopup');

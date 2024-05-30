@@ -1,16 +1,11 @@
-import { Column } from '../../entities/column';
-import {
-    CellRangeType,
-    IRangeService,
-    ISelectionHandle,
-    ISelectionHandleFactory,
-    SelectionHandleType,
-} from '../../interfaces/IRangeService';
+import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
+import type { IRangeService, ISelectionHandle, ISelectionHandleFactory } from '../../interfaces/IRangeService';
+import { CellRangeType, SelectionHandleType } from '../../interfaces/IRangeService';
 import { _setAriaSelected } from '../../utils/aria';
 import { _includes, _last } from '../../utils/array';
 import { _missing } from '../../utils/generic';
-import { Beans } from '../beans';
-import { CellCtrl, ICellComp } from './cellCtrl';
+import type { CellCtrl, ICellComp } from './cellCtrl';
 
 const CSS_CELL_RANGE_SELECTED = 'ag-cell-range-selected';
 const CSS_CELL_RANGE_CHART = 'ag-cell-range-chart';
@@ -23,7 +18,7 @@ const CSS_CELL_RANGE_BOTTOM = 'ag-cell-range-bottom';
 const CSS_CELL_RANGE_LEFT = 'ag-cell-range-left';
 
 export class CellRangeFeature {
-    private beans: Beans;
+    private beans: BeanCollection;
     private rangeService: IRangeService;
     private selectionHandleFactory: ISelectionHandleFactory;
     private cellComp: ICellComp;
@@ -35,7 +30,7 @@ export class CellRangeFeature {
 
     private selectionHandle: ISelectionHandle | null | undefined;
 
-    constructor(beans: Beans, ctrl: CellCtrl) {
+    constructor(beans: BeanCollection, ctrl: CellCtrl) {
         this.beans = beans;
         // We know these are defined otherwise the feature wouldn't be registered
         this.rangeService = beans.rangeService!;
@@ -128,11 +123,11 @@ export class CellRangeFeature {
         let bottom = false;
         let left = false;
 
-        const thisCol = this.cellCtrl.getCellPosition().column;
+        const thisCol = this.cellCtrl.getCellPosition().column as AgColumn;
         const presentedColsService = this.beans.visibleColsService;
 
-        let leftCol: Column | null;
-        let rightCol: Column | null;
+        let leftCol: AgColumn | null;
+        let rightCol: AgColumn | null;
 
         if (isRtl) {
             leftCol = presentedColsService.getColAfter(thisCol);

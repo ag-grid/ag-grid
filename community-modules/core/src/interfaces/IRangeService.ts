@@ -1,8 +1,9 @@
-import { CellPosition } from '../entities/cellPositionUtils';
-import { Column } from '../entities/column';
-import { RowPosition } from '../entities/rowPositionUtils';
-import { RowPinnedType } from '../interfaces/iRowNode';
-import { CellCtrl } from '../rendering/cell/cellCtrl';
+import type { Bean } from '../context/bean';
+import type { CellPosition } from '../entities/cellPositionUtils';
+import type { RowPosition } from '../entities/rowPositionUtils';
+import type { Column } from '../interfaces/iColumn';
+import type { RowPinnedType } from '../interfaces/iRowNode';
+import type { CellCtrl } from '../rendering/cell/cellCtrl';
 
 export interface IRangeService {
     isEmpty(): boolean;
@@ -36,7 +37,7 @@ export interface IRangeService {
     clearCellRangeCellValues(params: ClearCellRangeParams): void;
 }
 
-export interface ISelectionHandle {
+export interface ISelectionHandle extends Bean {
     getGui(): HTMLElement;
     getType(): SelectionHandleType;
     refresh(cellCtrl: CellCtrl): void;

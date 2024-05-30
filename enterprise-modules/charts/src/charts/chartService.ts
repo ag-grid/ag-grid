@@ -1,8 +1,6 @@
-import {
-    Autowired,
+import type {
     BaseCreateChartParams,
-    Bean,
-    BeanStub,
+    BeanCollection,
     CellRangeParams,
     ChartDownloadParams,
     ChartModel,
@@ -12,28 +10,26 @@ import {
     CreateCrossFilterChartParams,
     CreatePivotChartParams,
     CreateRangeChartParams,
+    Environment,
     GetChartImageDataUrlParams,
     IAggFunc,
     IChartService,
     IRangeService,
+    NamedBean,
     OpenChartToolPanelParams,
-    Optional,
     PartialCellRange,
-    PreDestroy,
     SeriesChartType,
     SeriesGroupType,
     UpdateChartParams,
     VisibleColsService,
 } from '@ag-grid-community/core';
-import {
-    AgChartThemeOverrides,
-    AgChartThemePalette,
-    VERSION as CHARTS_VERSION,
-    _ModuleSupport,
-} from 'ag-charts-community';
+import { BeanStub } from '@ag-grid-community/core';
+import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
+import { VERSION as CHARTS_VERSION, _ModuleSupport } from 'ag-charts-community';
 
 import { VERSION as GRID_VERSION } from '../version';
-import { GridChartComp, GridChartParams } from './chartComp/gridChartComp';
+import type { GridChartParams } from './chartComp/gridChartComp';
+import { GridChartComp } from './chartComp/gridChartComp';
 import { ChartParamsValidator } from './chartComp/utils/chartParamsValidator';
 import { getCanonicalChartType } from './chartComp/utils/seriesTypeMapper';
 import { upgradeChartModel } from './chartModelMigration';
@@ -55,10 +51,18 @@ export interface CommonCreateChartParams extends BaseCreateChartParams {
     seriesGroupType?: SeriesGroupType;
 }
 
-@Bean('chartService')
-export class ChartService extends BeanStub implements IChartService {
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Optional('rangeService') private rangeService?: IRangeService;
+export class ChartService extends BeanStub implements NamedBean, IChartService {
+    beanName = 'chartService' as const;
+
+    private visibleColsService: VisibleColsService;
+    private rangeService?: IRangeService;
+    private environment: Environment;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.visibleColsService = beans.visibleColsService;
+        this.rangeService = beans.rangeService;
+        this.environment = beans.environment;
+    }
 
     public static CHARTS_VERSION = CHARTS_VERSION;
 
@@ -263,7 +267,7 @@ export class ChartService extends BeanStub implements IChartService {
         };
 
         const chartComp = new GridChartComp(gridChartParams);
-        this.context.createBean(chartComp);
+        this.createBean(chartComp);
 
         const chartRef = this.createChartRef(chartComp);
 
@@ -298,7 +302,7 @@ export class ChartService extends BeanStub implements IChartService {
         const chartRef: ChartRef = {
             destroyChart: () => {
                 if (this.activeCharts.has(chartRef)) {
-                    this.context.destroyBean(chartComp);
+                    this.destroyBean(chartComp);
                     this.activeChartComps.delete(chartComp);
                     this.activeCharts.delete(chartRef);
                 }
@@ -344,8 +348,8 @@ export class ChartService extends BeanStub implements IChartService {
         return cellRange;
     }
 
-    @PreDestroy
-    private destroyAllActiveCharts(): void {
+    public override destroy(): void {
         this.activeCharts.forEach((chart) => chart.destroyChart());
+        super.destroy();
     }
 }

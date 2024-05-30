@@ -1,4 +1,4 @@
-import { AdvancedFilterModel, AgEvent, BaseCellDataType, JoinAdvancedFilterModel } from '@ag-grid-community/core';
+import type { AdvancedFilterModel, AgEvent, BaseCellDataType, JoinAdvancedFilterModel } from '@ag-grid-community/core';
 
 interface AdvancedFilterBuilderItemEvent extends AgEvent {
     item: AdvancedFilterBuilderItem;

@@ -346,13 +346,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public allowContextMenuWithControlKey: boolean | undefined = undefined;
     /** Changes the display type of the column menu.
      * `'new'` just displays the main list of menu items. `'legacy'` displays a tabbed menu.
-     * @default 'legacy'
+     * @default 'new'
      * @initial
      */
     @Input() public columnMenu: 'legacy' | 'new' | undefined = undefined;
-    /** Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header.
-     * If `columnMenu = 'new'`, this will default to `true` instead of `false`.
-     * @default false
+    /** When `true`, the column menu button will always be shown.
+     * When `false, the column menu button will only show when the mouse is over the column header.
+     * If `columnMenu = 'legacy'`, this will default to `false` instead of `true`.
+     * @default true
      */
     @Input() public suppressMenuHide: boolean | undefined = undefined;
     /** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component.
@@ -1369,7 +1370,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Icons to use inside the grid instead of the grid's default icons.
      * @initial
      */
-    @Input() public icons: { [key: string]: Function | string } | undefined = undefined;
+    @Input() public icons: { [key: string]: ((...args: any[]) => any) | string } | undefined = undefined;
     /** Default row height in pixels.
      * @default 25
      */

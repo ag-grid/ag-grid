@@ -1,5 +1,5 @@
-import {
-    Column,
+import type {
+    AgColumn,
     ColumnModel,
     ColumnNameService,
     FuncColsService,
@@ -12,7 +12,12 @@ import {
     ValueService,
 } from '@ag-grid-community/core';
 
-import { GridSerializingParams, GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from '../interfaces';
+import type {
+    GridSerializingParams,
+    GridSerializingSession,
+    RowAccumulator,
+    RowSpanningAccumulator,
+} from '../interfaces';
 
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public columnModel: ColumnModel;
@@ -25,7 +30,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     public processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;
     public processRowGroupCallback?: (params: ProcessRowGroupForExportParams) => string;
 
-    private groupColumns: Column[] = [];
+    private groupColumns: AgColumn[] = [];
 
     constructor(config: GridSerializingParams) {
         const {
@@ -57,17 +62,17 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     abstract onNewBodyRow(node?: RowNode): RowAccumulator;
     abstract parse(): string;
 
-    public prepare(columnsToExport: Column[]): void {
+    public prepare(columnsToExport: AgColumn[]): void {
         this.groupColumns = columnsToExport.filter((col) => !!col.getColDef().showRowGroup);
     }
 
-    public extractHeaderValue(column: Column): string {
+    public extractHeaderValue(column: AgColumn): string {
         const value = this.getHeaderName(this.processHeaderCallback, column);
         return value ?? '';
     }
 
     public extractRowCellValue(
-        column: Column,
+        column: AgColumn,
         index: number,
         accumulatedRowIndex: number,
         type: string,
@@ -92,7 +97,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return processedValue;
     }
 
-    private shouldRenderGroupSummaryCell(node: RowNode, column: Column, currentColumnIndex: number): boolean {
+    private shouldRenderGroupSummaryCell(node: RowNode, column: AgColumn, currentColumnIndex: number): boolean {
         const isGroupNode = node && node.group;
         // only on group rows
         if (!isGroupNode) {
@@ -126,7 +131,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     private getHeaderName(
         callback: ((params: ProcessHeaderForExportParams) => string) | undefined,
-        column: Column
+        column: AgColumn
     ): string | null {
         if (callback) {
             return callback(this.gos.addGridCommonParams({ column }));
@@ -135,7 +140,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return this.columnNameService.getDisplayNameForColumn(column, 'csv', true);
     }
 
-    private createValueForGroupNode(column: Column, node: RowNode): string {
+    private createValueForGroupNode(column: AgColumn, node: RowNode): string {
         if (this.processRowGroupCallback) {
             return this.processRowGroupCallback(this.gos.addGridCommonParams({ column, node }));
         }
@@ -177,7 +182,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     private processCell(params: {
         accumulatedRowIndex: number;
         rowNode: RowNode;
-        column: Column;
+        column: AgColumn;
         value: any;
         processCellCallback: ((params: ProcessCellForExportParams) => string) | undefined;
         type: string;

@@ -1,14 +1,22 @@
-import { Autowired, Bean } from '../context/context';
-import { Column } from '../entities/column';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
 import { _missing } from '../utils/generic';
-import { ColumnState } from './columnApplyStateService';
-import { ColumnModel } from './columnModel';
-import { FuncColsService } from './funcColsService';
+import type { ColumnState } from './columnApplyStateService';
+import type { ColumnModel } from './columnModel';
+import type { FuncColsService } from './funcColsService';
 
-@Bean('columnGetStateService')
-export class ColumnGetStateService {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
+export class ColumnGetStateService extends BeanStub implements NamedBean {
+    beanName = 'columnGetStateService' as const;
+
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+    }
 
     public getColumnState(): ColumnState[] {
         const primaryCols = this.columnModel.getColDefCols();
@@ -25,7 +33,7 @@ export class ColumnGetStateService {
         return res;
     }
 
-    private createStateItemFromColumn(column: Column): ColumnState {
+    private createStateItemFromColumn(column: AgColumn): ColumnState {
         const rowGorupColumns = this.funcColsService.getRowGroupColumns();
         const pivotColumns = this.funcColsService.getPivotColumns();
 

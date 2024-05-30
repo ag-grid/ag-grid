@@ -1,6 +1,8 @@
+import type { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { _exists } from '../utils/generic';
 import { _isEventFromPrintableCharacter } from '../utils/keyboard';
-import { AgAbstractInputField, AgInputFieldParams } from './agAbstractInputField';
+import { AgAbstractInputField } from './agAbstractInputField';
+import type { AgComponentSelector } from './component';
 
 export interface AgInputTextFieldParams extends AgInputFieldParams {
     allowedCharPattern?: string;
@@ -9,11 +11,13 @@ export interface AgInputTextFieldParams extends AgInputFieldParams {
 export class AgInputTextField<
     TConfig extends AgInputTextFieldParams = AgInputTextFieldParams,
 > extends AgAbstractInputField<HTMLInputElement, string, TConfig> {
+    static readonly selector: AgComponentSelector = 'AG-INPUT-TEXT-FIELD';
+
     constructor(config?: TConfig, className = 'ag-text-field', inputType = 'text') {
         super(config, className, inputType);
     }
 
-    protected postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
 
         if (this.config.allowedCharPattern) {
@@ -21,7 +25,7 @@ export class AgInputTextField<
         }
     }
 
-    public setValue(value?: string | null, silent?: boolean): this {
+    public override setValue(value?: string | null, silent?: boolean): this {
         // update the input before we call super.setValue, so it's updated before the value changed event is fired
         if (this.eInput.value !== value) {
             this.eInput.value = _exists(value) ? value : '';

@@ -1,12 +1,18 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
-import { CellClassParams, ColDef } from '../entities/colDef';
-import { RowClassParams } from '../entities/gridOptions';
-import { ExpressionService } from '../valueService/expressionService';
+import type { BeanCollection } from '../context/context';
+import type { CellClassParams, ColDef } from '../entities/colDef';
+import type { RowClassParams } from '../entities/gridOptions';
+import type { ExpressionService } from '../valueService/expressionService';
 
-@Bean('stylingService')
-export class StylingService extends BeanStub {
-    @Autowired('expressionService') private expressionService: ExpressionService;
+export class StylingService extends BeanStub implements NamedBean {
+    beanName = 'stylingService' as const;
+
+    private expressionService: ExpressionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.expressionService = beans.expressionService;
+    }
 
     public processAllCellClasses(
         colDef: ColDef,
@@ -19,8 +25,8 @@ export class StylingService extends BeanStub {
     }
 
     public processClassRules(
-        previousClassRules: { [cssClassName: string]: Function | string } | undefined,
-        classRules: { [cssClassName: string]: Function | string } | undefined,
+        previousClassRules: { [cssClassName: string]: ((...args: any[]) => any) | string } | undefined,
+        classRules: { [cssClassName: string]: ((...args: any[]) => any) | string } | undefined,
         params: RowClassParams | CellClassParams,
         onApplicableClass: (className: string) => void,
         onNotApplicableClass?: (className: string) => void

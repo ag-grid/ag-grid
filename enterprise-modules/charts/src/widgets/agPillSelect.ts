@@ -1,18 +1,13 @@
+import type { DragItem, DraggingEvent, DropTarget, ListOption } from '@ag-grid-community/core';
 import {
     AgSelect,
     Component,
     DragAndDropService,
-    DragItem,
     DragSourceType,
-    DraggingEvent,
-    DropTarget,
-    ListOption,
-    PillDragComp,
-    PillDropZonePanel,
-    PostConstruct,
     _escapeString,
     _removeFromParent,
 } from '@ag-grid-community/core';
+import { PillDragComp, PillDropZonePanel } from '@ag-grid-enterprise/core';
 
 export interface AgPillSelectParams<TValue = string | null> {
     valueList?: TValue[];
@@ -54,8 +49,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
         this.valueFormatter = valueFormatter ?? ((value) => _escapeString(value as any)!);
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         const { ariaLabel, onValuesChange, dragSourceId } = this.config;
         this.dropZonePanel = this.createManagedBean(
             new PillSelectDropZonePanel(
@@ -112,7 +106,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
     }
 
     private createSelectOptions(): ListOption<TValue>[] {
-        let options: ListOption<TValue>[] = [];
+        const options: ListOption<TValue>[] = [];
         const { maxSelection } = this.config;
         if (maxSelection && this.selectedValues.length >= maxSelection) {
             return options;
@@ -178,7 +172,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
         return true;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyBean(this.eSelect);
         super.destroy();
     }
@@ -222,11 +216,11 @@ class PillSelectDragComp<TValue> extends PillDragComp<TValue> {
         return DragSourceType.ChartPanel;
     }
 
-    protected getDragSourceId(): string | undefined {
+    protected override getDragSourceId(): string | undefined {
         return this.sourceId;
     }
 
-    protected isDraggable(): boolean {
+    protected override isDraggable(): boolean {
         return this.draggable;
     }
 }
@@ -245,8 +239,7 @@ class PillSelectDropZonePanel<TValue> extends PillDropZonePanel<PillSelectDragCo
         super(false);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         super.init();
     }
 

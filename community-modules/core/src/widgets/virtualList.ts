@@ -1,14 +1,15 @@
 import { KeyCode } from '../constants/keyCode';
-import { Autowired, PostConstruct } from '../context/context';
+import type { BeanCollection } from '../context/context';
+import type { Environment } from '../environment';
 import { Events } from '../eventKeys';
-import { CssVariablesChanged } from '../events';
-import { AnimationFrameService } from '../misc/animationFrameService';
-import { ResizeObserverService } from '../misc/resizeObserverService';
+import type { CssVariablesChanged } from '../events';
+import type { AnimationFrameService } from '../misc/animationFrameService';
+import type { ResizeObserverService } from '../misc/resizeObserverService';
 import { _getAriaPosInSet, _setAriaLabel, _setAriaPosInSet, _setAriaRole, _setAriaSetSize } from '../utils/aria';
 import { _stopPropagationForAgGrid } from '../utils/event';
 import { _waitUntil } from '../utils/function';
-import { Component } from './component';
-import { RefSelector } from './componentAnnotations';
+import type { Component } from './component';
+import { RefPlaceholder } from './component';
 import { TabGuardComp } from './tabGuardComp';
 
 export interface VirtualListModel {
@@ -25,6 +26,16 @@ interface VirtualListParams {
 }
 
 export class VirtualList<C extends Component = Component> extends TabGuardComp {
+    private resizeObserverService: ResizeObserverService;
+    private animationFrameService: AnimationFrameService;
+    private environment: Environment;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.resizeObserverService = beans.resizeObserverService;
+        this.animationFrameService = beans.animationFrameService;
+        this.environment = beans.environment;
+    }
+
     private readonly cssIdentifier: string;
     private readonly ariaRole: string;
     private listName?: string;
@@ -38,10 +49,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     private isScrolling = false;
     private lastFocusedRowIndex: number | null;
     private isHeightFromTheme: boolean = true;
-
-    @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
-    @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
-    @RefSelector('eContainer') private readonly eContainer: HTMLElement;
+    private readonly eContainer: HTMLElement = RefPlaceholder;
 
     constructor(params?: VirtualListParams) {
         super(VirtualList.getTemplate(params?.cssIdentifier || 'default'));
@@ -53,8 +61,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         this.listName = listName;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.addScrollListener();
         this.rowHeight = this.getItemHeight();
         this.addResizeObserver();
@@ -238,7 +245,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         return (
             /* html */
             `<div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
-                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" ref="eContainer"></div>
+                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" data-ref="eContainer"></div>
             </div>`
         );
     }
@@ -455,11 +462,11 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         this.model = model;
     }
 
-    public getAriaElement(): Element {
+    public override getAriaElement(): Element {
         return this.eContainer;
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         if (!this.isAlive()) {
             return;
         }

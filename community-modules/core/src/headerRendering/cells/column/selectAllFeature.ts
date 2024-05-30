@@ -1,26 +1,33 @@
 import { BeanStub } from '../../../context/beanStub';
-import { Autowired } from '../../../context/context';
-import { HeaderCheckboxSelectionCallbackParams } from '../../../entities/colDef';
-import { Column } from '../../../entities/column';
-import { Events, SelectionEventSourceType } from '../../../events';
-import { IRowModel } from '../../../interfaces/iRowModel';
-import { ISelectionService } from '../../../interfaces/iSelectionService';
+import type { BeanCollection } from '../../../context/context';
+import type { AgColumn } from '../../../entities/agColumn';
+import type { HeaderCheckboxSelectionCallbackParams } from '../../../entities/colDef';
+import type { EventsType } from '../../../eventKeys';
+import type { SelectionEventSourceType } from '../../../events';
+import { Events } from '../../../events';
+import type { IRowModel } from '../../../interfaces/iRowModel';
+import type { ISelectionService } from '../../../interfaces/iSelectionService';
 import { _setAriaHidden, _setAriaRole } from '../../../utils/aria';
 import { AgCheckbox } from '../../../widgets/agCheckbox';
-import { HeaderCellCtrl } from './headerCellCtrl';
+import type { HeaderCellCtrl } from './headerCellCtrl';
 
 export class SelectAllFeature extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
+    private rowModel: IRowModel;
+    private selectionService: ISelectionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.rowModel = beans.rowModel;
+        this.selectionService = beans.selectionService;
+    }
 
     private cbSelectAllVisible = false;
     private processingEventFromCheckbox = false;
-    private column: Column;
+    private column: AgColumn;
     private headerCellCtrl: HeaderCellCtrl;
 
     private cbSelectAll: AgCheckbox;
 
-    constructor(column: Column) {
+    constructor(column: AgColumn) {
         super();
         this.column = column;
     }
@@ -45,15 +52,14 @@ export class SelectAllFeature extends BeanStub {
         _setAriaRole(this.cbSelectAll.getGui(), 'presentation');
         this.showOrHideSelectAll();
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
-            this.onDisplayedColumnsChanged.bind(this)
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onSelectionChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onNewColumnsLoaded.bind(this),
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+            [Events.EVENT_SELECTION_CHANGED]: this.onSelectionChanged.bind(this),
+            [Events.EVENT_PAGINATION_CHANGED]: this.onSelectionChanged.bind(this),
+            [Events.EVENT_MODEL_UPDATED]: this.onModelChanged.bind(this),
+        });
+
         this.addManagedListener(this.cbSelectAll, Events.EVENT_FIELD_VALUE_CHANGED, this.onCbSelectAll.bind(this));
         _setAriaHidden(this.cbSelectAll.getGui(), true);
         this.cbSelectAll.getInputElement().setAttribute('tabindex', '-1');

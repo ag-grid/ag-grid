@@ -1,29 +1,30 @@
-import {
-    Bean,
-    BeanStub,
+import type {
+    BeanCollection,
     ChartGroupsDef,
     ChartType,
     GridOptionsService,
     IChartService,
     LocaleService,
     MenuItemDef,
-    ModuleNames,
-    ModuleRegistry,
-    Optional,
-    _createIconNoSpan,
-    _warnOnce,
+    NamedBean,
 } from '@ag-grid-community/core';
+import { BeanStub, ModuleNames, ModuleRegistry, _createIconNoSpan, _warnOnce } from '@ag-grid-community/core';
 
-@Bean('chartMenuItemMapper')
-export class ChartMenuItemMapper extends BeanStub {
-    @Optional('chartService') private readonly chartService?: IChartService;
+export class ChartMenuItemMapper extends BeanStub implements NamedBean {
+    beanName = 'chartMenuItemMapper' as const;
+
+    private chartService?: IChartService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.chartService = beans.chartService;
+    }
 
     public getChartItems(key: 'pivotChart' | 'chartRange'): MenuItemDef | undefined {
         if (!this.chartService) {
             ModuleRegistry.__assertRegistered(
                 ModuleNames.GridChartsModule,
                 `the Context Menu key "${key}"`,
-                this.context.getGridId()
+                this.gridId
             );
             return undefined;
         }
@@ -74,7 +75,7 @@ export class ChartMenuItemMapper extends BeanStub {
     }
 
     private static buildLookup<T extends MenuItemDefWithKey<any>>(menuItem: T) {
-        let itemLookup: Record<any, T> = {} as any;
+        const itemLookup: Record<any, T> = {} as any;
         const addItem = (item: T) => {
             itemLookup[item._key] = item;
             if (item.subMenu) {
@@ -94,7 +95,7 @@ export class ChartMenuItemMapper extends BeanStub {
         configLookup: ChartDefToMenuItems<TKeys>
     ): MenuItemDefWithKey<TKeys> | undefined {
         const menuItemLookup = this.buildLookup(topLevelMenuItem);
-        let orderedAndFiltered: MenuItemDefWithKey = { ...topLevelMenuItem, subMenu: [] };
+        const orderedAndFiltered: MenuItemDefWithKey = { ...topLevelMenuItem, subMenu: [] };
 
         Object.entries(chartGroupsDef).forEach(([group, chartTypes]: [keyof ChartGroupsDef, ChartType[]]) => {
             const chartConfigGroup = configLookup[group];

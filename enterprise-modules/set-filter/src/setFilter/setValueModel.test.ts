@@ -1,5 +1,4 @@
-import {
-    ColumnModel,
+import type {
     FuncColsService,
     GridOptionsService,
     IClientSideRowModel,
@@ -7,9 +6,8 @@ import {
     SetFilterParams,
     ValueFormatterFunc,
     ValueService,
-    _makeNull,
-    _toStringOrNull,
 } from '@ag-grid-community/core';
+import { _makeNull, _toStringOrNull } from '@ag-grid-community/core';
 
 import { mock } from '../test-utils/mock';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
@@ -18,9 +16,7 @@ type ValueType = string | number | boolean | Date;
 
 const DEFAULT_OPTS = {
     values: ['A', 'B', 'C'] as ValueType[] | ValueType[][],
-    filterParams: {
-        convertValuesToStrings: true,
-    } as any,
+    filterParams: {} as any,
     doesRowPassOtherFilters: (_) => true,
     suppressSorting: false,
     simulateCaseSensitivity: false,
@@ -90,7 +86,6 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
     const gos = mock<GridOptionsService>('get', 'addGridCommonParams');
     gos.addGridCommonParams.mockImplementation((params) => params as any);
 
-    const columnModel = mock<ColumnModel>();
     const funcColsService = mock<FuncColsService>('getRowGroupColumns');
     funcColsService.getRowGroupColumns.mockImplementation(() => []);
 
@@ -102,7 +97,6 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
         createKey: (value) => _makeNull(Array.isArray(value) ? (value as any) : _toStringOrNull(value)!),
         valueFormatter: (params) => _toStringOrNull(params.value)!,
         gos,
-        columnModel,
         valueService,
         addManagedListener: () => undefined,
         funcColsService,

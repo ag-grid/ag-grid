@@ -1,30 +1,26 @@
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import { Bean } from './context/context';
-import { Qualifier } from './context/context';
-import { GridOptionsService } from './gridOptionsService';
 
-@Bean('loggerFactory')
-export class LoggerFactory extends BeanStub {
-    private logging: boolean;
-
-    private setBeans(@Qualifier('gridOptionsService') gos: GridOptionsService): void {
-        this.logging = gos.get('debug');
-    }
+export class LoggerFactory extends BeanStub implements NamedBean {
+    beanName = 'loggerFactory' as const;
 
     public create(name: string) {
         return new Logger(name, this.isLogging.bind(this));
     }
 
     public isLogging(): boolean {
-        return this.logging;
+        if (!this.gos) {
+            return false;
+        }
+        return this.gos.get('debug');
     }
 }
 
 export class Logger {
-    private isLoggingFunc: () => boolean | undefined;
+    private isLoggingFunc: () => boolean;
     private name: string;
 
-    constructor(name: string, isLoggingFunc: () => boolean | undefined) {
+    constructor(name: string, isLoggingFunc: () => boolean) {
         this.name = name;
         this.isLoggingFunc = isLoggingFunc;
     }

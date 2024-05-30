@@ -1,11 +1,12 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
-import { IRowModel } from '../interfaces/iRowModel';
-import { RowPinnedType } from '../interfaces/iRowNode';
-import { PaginationProxy } from '../pagination/paginationProxy';
-import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
+import type { BeanCollection } from '../context/context';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { RowPinnedType } from '../interfaces/iRowNode';
+import type { PaginationProxy } from '../pagination/paginationProxy';
+import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _exists } from '../utils/generic';
-import { RowNode } from './rowNode';
+import type { RowNode } from './rowNode';
 
 export interface RowPosition {
     /** A positive number from 0 to n, where n is the last row the grid is rendering
@@ -16,11 +17,18 @@ export interface RowPosition {
     rowPinned: RowPinnedType;
 }
 
-@Bean('rowPositionUtils')
-export class RowPositionUtils extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+export class RowPositionUtils extends BeanStub implements NamedBean {
+    beanName = 'rowPositionUtils' as const;
+
+    private rowModel: IRowModel;
+    private pinnedRowModel: PinnedRowModel;
+    private paginationProxy: PaginationProxy;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.rowModel = beans.rowModel;
+        this.pinnedRowModel = beans.pinnedRowModel;
+        this.paginationProxy = beans.paginationProxy;
+    }
 
     public getFirstRow(): RowPosition | null {
         let rowIndex = 0;

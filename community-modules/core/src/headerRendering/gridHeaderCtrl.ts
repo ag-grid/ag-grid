@@ -1,18 +1,21 @@
-import { ColumnModel } from '../columns/columnModel';
-import { VisibleColsService } from '../columns/visibleColsService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
-import { Autowired } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
 import { Events } from '../eventKeys';
-import { FilterManager } from '../filter/filterManager';
-import { FocusService } from '../focusService';
-import { MenuService } from '../misc/menuService';
+import type { EventsType } from '../eventKeys';
+import type { FilterManager } from '../filter/filterManager';
+import type { FocusService } from '../focusService';
+import type { MenuService } from '../misc/menuService';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _exists } from '../utils/generic';
 import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
-import { LongTapEvent, TouchListener } from '../widgets/touchListener';
-import { HeaderNavigationDirection, HeaderNavigationService } from './common/headerNavigationService';
+import type { LongTapEvent } from '../widgets/touchListener';
+import { TouchListener } from '../widgets/touchListener';
+import type { HeaderNavigationService } from './common/headerNavigationService';
+import { HeaderNavigationDirection } from './common/headerNavigationService';
 
 export interface IGridHeaderComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -20,13 +23,23 @@ export interface IGridHeaderComp {
 }
 
 export class GridHeaderCtrl extends BeanStub {
-    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('menuService') private menuService: MenuService;
+    private headerNavigationService: HeaderNavigationService;
+    private focusService: FocusService;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private ctrlsService: CtrlsService;
+    private filterManager: FilterManager;
+    private menuService: MenuService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.headerNavigationService = beans.headerNavigationService;
+        this.focusService = beans.focusService;
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.ctrlsService = beans.ctrlsService;
+        this.filterManager = beans.filterManager;
+        this.menuService = beans.menuService;
+    }
 
     private comp: IGridHeaderComp;
     private eGui: HTMLElement;
@@ -45,16 +58,10 @@ export class GridHeaderCtrl extends BeanStub {
         );
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
-            this.onPivotModeChanged.bind(this)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
-            this.onDisplayedColumnsChanged.bind(this)
-        );
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: this.onPivotModeChanged.bind(this),
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+        });
 
         this.onPivotModeChanged();
         this.setupHeaderHeight();
@@ -76,10 +83,12 @@ export class GridHeaderCtrl extends BeanStub {
         this.addManagedPropertyListener('pivotGroupHeaderHeight', listener);
         this.addManagedPropertyListener('floatingFiltersHeight', listener);
 
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, listener);
+        this.addManagedListeners(this.eventService, {
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: listener,
+            [Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED]: listener,
+            [Events.EVENT_GRID_STYLES_CHANGED]: listener,
+            [Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED]: listener,
+        });
     }
 
     public getHeaderHeight(): number {

@@ -1,15 +1,15 @@
-import { ColumnModel } from '../../columns/columnModel';
-import { ColumnViewportService } from '../../columns/columnViewportService';
+import type { ColumnViewportService } from '../../columns/columnViewportService';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, PostConstruct } from '../../context/context';
-import { CtrlsService } from '../../ctrlsService';
-import { DragService } from '../../dragAndDrop/dragService';
-import { ColumnPinnedType } from '../../entities/column';
+import type { BeanCollection } from '../../context/context';
+import type { CtrlsService } from '../../ctrlsService';
+import type { DragService } from '../../dragAndDrop/dragService';
 import { Events } from '../../eventKeys';
-import { DisplayedRowsChangedEvent } from '../../events';
-import { ResizeObserverService } from '../../misc/resizeObserverService';
-import { RowCtrl } from '../../rendering/row/rowCtrl';
-import { RowRenderer } from '../../rendering/rowRenderer';
+import type { EventsType } from '../../eventKeys';
+import type { DisplayedRowsChangedEvent } from '../../events';
+import type { ColumnPinnedType } from '../../interfaces/iColumn';
+import type { ResizeObserverService } from '../../misc/resizeObserverService';
+import type { RowCtrl } from '../../rendering/row/rowCtrl';
+import type { RowRenderer } from '../../rendering/rowRenderer';
 import { _getInnerWidth, _getScrollLeft, _isHorizontalScrollShowing, _isInDOM, _setScrollLeft } from '../../utils/dom';
 import { CenterWidthFeature } from '../centerWidthFeature';
 import { ViewportSizeFeature } from '../viewportSizeFeature';
@@ -127,6 +127,20 @@ export interface IRowContainerComp {
 }
 
 export class RowContainerCtrl extends BeanStub {
+    private dragService: DragService;
+    private ctrlsService: CtrlsService;
+    private columnViewportService: ColumnViewportService;
+    private resizeObserverService: ResizeObserverService;
+    private rowRenderer: RowRenderer;
+
+    public wireBeans(beans: BeanCollection) {
+        this.dragService = beans.dragService;
+        this.ctrlsService = beans.ctrlsService;
+        this.columnViewportService = beans.columnViewportService;
+        this.resizeObserverService = beans.resizeObserverService;
+        this.rowRenderer = beans.rowRenderer;
+    }
+
     public static getRowContainerCssClasses(name: RowContainerName): { container?: string; viewport?: string } {
         const containerClass = ContainerCssClasses.get(name);
         const viewportClass = ViewportCssClasses.get(name);
@@ -151,12 +165,6 @@ export class RowContainerCtrl extends BeanStub {
                 return null;
         }
     }
-
-    @Autowired('dragService') private dragService: DragService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('columnViewportService') private columnViewportService: ColumnViewportService;
-    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private readonly name: RowContainerName;
     private readonly isFullWithContainer: boolean;
@@ -183,8 +191,7 @@ export class RowContainerCtrl extends BeanStub {
             this.name === RowContainerName.FULL_WIDTH;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.enableRtl = this.gos.get('enableRtl');
 
         this.forContainers(
@@ -265,11 +272,11 @@ export class RowContainerCtrl extends BeanStub {
         ];
 
         const allCenter = [
+            RowContainerName.STICKY_TOP_CENTER,
+            RowContainerName.STICKY_BOTTOM_CENTER,
             RowContainerName.CENTER,
             RowContainerName.TOP_CENTER,
-            RowContainerName.STICKY_TOP_CENTER,
             RowContainerName.BOTTOM_CENTER,
-            RowContainerName.STICKY_BOTTOM_CENTER,
         ];
         const allLeft = [
             RowContainerName.LEFT,
@@ -314,17 +321,12 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private addListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () =>
-            this.onDisplayedColumnsChanged()
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () =>
-            this.onDisplayedColumnsWidthChanged()
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_DISPLAYED_ROWS_CHANGED,
-            (params: DisplayedRowsChangedEvent) => this.onDisplayedRowsChanged(params.afterScroll)
-        );
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+            [Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED]: this.onDisplayedColumnsWidthChanged.bind(this),
+            [Events.EVENT_DISPLAYED_ROWS_CHANGED]: (params: DisplayedRowsChangedEvent) =>
+                this.onDisplayedRowsChanged(params.afterScroll),
+        });
 
         this.onDisplayedColumnsChanged();
         this.onDisplayedColumnsWidthChanged();

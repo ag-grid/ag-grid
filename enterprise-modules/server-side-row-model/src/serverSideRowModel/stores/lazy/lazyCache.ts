@@ -1,26 +1,24 @@
-import {
-    Autowired,
-    BeanStub,
+import { BeanStub } from '@ag-grid-community/core';
+import type {
+    BeanCollection,
     FocusService,
     GetRowIdParams,
-    GridApi,
     IRowNode,
     LoadSuccessParams,
     NumberSequence,
-    PostConstruct,
-    PreDestroy,
     RowNode,
+    RowNodeSorter,
+    RowRenderer,
     ServerSideGroupLevelParams,
+    SortController,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { RowNodeSorter } from '@ag-grid-community/core';
-import { SortController } from '@ag-grid-community/core';
 
-import { BlockUtils } from '../../blocks/blockUtils';
-import { NodeManager } from '../../nodeManager';
-import { ServerSideRowModel } from '../../serverSideRowModel';
+import type { BlockUtils } from '../../blocks/blockUtils';
+import type { NodeManager } from '../../nodeManager';
+import type { ServerSideRowModel } from '../../serverSideRowModel';
 import { LazyBlockLoadingService } from './lazyBlockLoadingService';
-import { LazyStore } from './lazyStore';
+import type { LazyStore } from './lazyStore';
 import { MultiIndexMap } from './multiIndexMap';
 
 interface LazyStoreNode {
@@ -30,14 +28,25 @@ interface LazyStoreNode {
 }
 
 export class LazyCache extends BeanStub {
-    @Autowired('gridApi') private api: GridApi;
-    @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
-    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
-    @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('lazyBlockLoadingService') private lazyBlockLoadingService: LazyBlockLoadingService;
+    private rowRenderer: RowRenderer;
+    private blockUtils: BlockUtils;
+    private focusService: FocusService;
+    private nodeManager: NodeManager;
+    private serverSideRowModel: ServerSideRowModel;
+    private rowNodeSorter: RowNodeSorter;
+    private sortController: SortController;
+    private lazyBlockLoadingService: LazyBlockLoadingService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.rowRenderer = beans.rowRenderer;
+        this.blockUtils = beans.ssrmBlockUtils;
+        this.focusService = beans.focusService;
+        this.nodeManager = beans.ssrmNodeManager;
+        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+        this.rowNodeSorter = beans.rowNodeSorter;
+        this.sortController = beans.sortController;
+        this.lazyBlockLoadingService = beans.lazyBlockLoadingService;
+    }
 
     /**
      * Indicates whether this is still the live dataset for this store (used for ignoring old requests after purge)
@@ -97,8 +106,7 @@ export class LazyCache extends BeanStub {
         this.storeParams = storeParams;
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         this.lazyBlockLoadingService.subscribe(this);
         // initiate the node map to be indexed at 'index', 'id' and 'node' for quick look-up.
         // it's important id isn't first, as stub nodes overwrite each-other, and the first index is
@@ -113,8 +121,7 @@ export class LazyCache extends BeanStub {
         this.isMasterDetail = this.gos.get('masterDetail');
     }
 
-    @PreDestroy
-    private destroyRowNodes() {
+    public override destroy() {
         this.lazyBlockLoadingService.unsubscribe(this);
         this.numberOfRows = 0;
         this.nodeMap.forEach((node) => this.blockUtils.destroyRowNode(node.node));
@@ -122,6 +129,7 @@ export class LazyCache extends BeanStub {
         this.nodeDisplayIndexMap.clear();
         this.nodesToRefresh.clear();
         this.live = false;
+        super.destroy();
     }
 
     /**
@@ -619,8 +627,8 @@ export class LazyCache extends BeanStub {
      * Deletes any stub nodes not within the given range
      */
     public purgeStubsOutsideOfViewport() {
-        const firstRow = this.api.getFirstDisplayedRowIndex();
-        const lastRow = this.api.getLastDisplayedRowIndex();
+        const firstRow = this.rowRenderer.getFirstVirtualRenderedRow();
+        const lastRow = this.rowRenderer.getLastVirtualRenderedRow();
         const firstRowBlockStart = this.getBlockStartIndex(firstRow);
         const [_, lastRowBlockEnd] = this.getBlockBounds(lastRow);
 
@@ -663,8 +671,8 @@ export class LazyCache extends BeanStub {
             return;
         }
 
-        const firstRowInViewport = this.api.getFirstDisplayedRowIndex();
-        const lastRowInViewport = this.api.getLastDisplayedRowIndex();
+        const firstRowInViewport = this.rowRenderer.getFirstVirtualRenderedRow();
+        const lastRowInViewport = this.rowRenderer.getLastVirtualRenderedRow();
 
         // the start storeIndex of every block in this store
         const allLoadedBlocks: Set<number> = new Set();
@@ -1063,7 +1071,7 @@ export class LazyCache extends BeanStub {
 
         const uniqueInserts = Object.values(uniqueInsertsMap);
 
-        let numberOfInserts = uniqueInserts.length;
+        const numberOfInserts = uniqueInserts.length;
         if (numberOfInserts === 0) {
             return [];
         }
@@ -1105,7 +1113,7 @@ export class LazyCache extends BeanStub {
 
         const allNodes = this.getOrderedNodeMap();
         let contiguousIndex = -1;
-        for (let stringIndex in allNodes) {
+        for (const stringIndex in allNodes) {
             contiguousIndex += 1;
             const node = allNodes[stringIndex];
 

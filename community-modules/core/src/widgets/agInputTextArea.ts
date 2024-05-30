@@ -1,11 +1,15 @@
-import { AgAbstractInputField, AgInputFieldParams } from './agAbstractInputField';
+import type { AgInputFieldParams } from '../interfaces/agFieldParams';
+import { AgAbstractInputField } from './agAbstractInputField';
+import type { AgComponentSelector } from './component';
 
 export class AgInputTextArea extends AgAbstractInputField<HTMLTextAreaElement, string> {
+    static readonly selector: AgComponentSelector = 'AG-INPUT-TEXT-AREA';
+
     constructor(config?: AgInputFieldParams) {
         super(config, 'ag-text-area', null, 'textarea');
     }
 
-    public setValue(value: string, silent?: boolean): this {
+    public override setValue(value: string, silent?: boolean): this {
         const ret = super.setValue(value, silent);
 
         this.eInput.value = value;

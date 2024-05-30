@@ -1,15 +1,22 @@
-import { Autowired, PostConstruct } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import { Events } from '../../eventKeys';
-import { PaginationChangedEvent } from '../../events';
-import { WithoutGridCommon } from '../../interfaces/iCommon';
-import { PaginationProxy } from '../../pagination/paginationProxy';
+import type { PaginationChangedEvent } from '../../events';
+import type { WithoutGridCommon } from '../../interfaces/iCommon';
+import type { PaginationProxy } from '../../pagination/paginationProxy';
 import { _clearElement } from '../../utils/dom';
 import { _warnOnce } from '../../utils/function';
 import { AgSelect } from '../../widgets/agSelect';
+import type { AgComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 
 export class PageSizeSelectorComp extends Component {
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+    static readonly selector: AgComponentSelector = 'AG-PAGE-SIZE-SELECTOR';
+
+    private paginationProxy: PaginationProxy;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.paginationProxy = beans.paginationProxy;
+    }
 
     private selectPageSizeComp: AgSelect | undefined;
     private hasEmptyOption = false;
@@ -18,8 +25,7 @@ export class PageSizeSelectorComp extends Component {
         super(/* html */ `<span class="ag-paging-page-size"></span>`);
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         this.addManagedPropertyListener('paginationPageSizeSelector', () => {
             this.onPageSizeSelectorValuesChange();
         });
@@ -103,8 +109,7 @@ export class PageSizeSelectorComp extends Component {
             return;
         }
 
-        this.destroyBean(this.selectPageSizeComp);
-        this.selectPageSizeComp = undefined;
+        this.selectPageSizeComp = this.destroyBean(this.selectPageSizeComp);
     }
 
     private onPageSizeSelectorValuesChange(): void {
@@ -144,8 +149,7 @@ export class PageSizeSelectorComp extends Component {
         }
 
         if (this.selectPageSizeComp) {
-            this.destroyBean(this.selectPageSizeComp);
-            this.selectPageSizeComp = undefined;
+            this.selectPageSizeComp = this.destroyBean(this.selectPageSizeComp);
         }
 
         const localeTextFunc = this.localeService.getLocaleTextFunc();
@@ -218,7 +222,7 @@ export class PageSizeSelectorComp extends Component {
         return true;
     }
 
-    public destroy() {
+    public override destroy() {
         this.toggleSelectDisplay(false);
         super.destroy();
     }

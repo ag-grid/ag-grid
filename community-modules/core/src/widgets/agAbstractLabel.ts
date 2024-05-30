@@ -1,17 +1,8 @@
-import { PostConstruct } from '../context/context';
+import type { AgLabelParams, LabelAlignment } from '../interfaces/agFieldParams';
 import { _setAriaRole } from '../utils/aria';
 import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from '../utils/dom';
+import type { ComponentClass } from './component';
 import { Component } from './component';
-
-export type LabelAlignment = 'left' | 'right' | 'top';
-
-export interface AgLabelParams {
-    label?: HTMLElement | string;
-    labelWidth?: number | 'flex';
-    labelSeparator?: string;
-    labelAlignment?: LabelAlignment;
-    disabled?: boolean;
-}
 
 export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelParams> extends Component {
     protected abstract eLabel: HTMLElement;
@@ -22,14 +13,13 @@ export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelPar
     protected disabled: boolean = false;
     private label: HTMLElement | string = '';
 
-    constructor(config?: TConfig, template?: string) {
-        super(template);
+    constructor(config?: TConfig, template?: string, components?: ComponentClass[]) {
+        super(template, components);
 
         this.config = config || ({} as any);
     }
 
-    @PostConstruct
-    protected postConstruct() {
+    public postConstruct() {
         this.addCssClass('ag-labeled');
         this.eLabel.classList.add('ag-label');
 

@@ -1,26 +1,26 @@
-import {
-    Autowired,
-    Bean,
-    Column,
-    ColumnGroup,
+import type {
+    AgColumn,
+    AgColumnGroup,
+    BeanCollection,
     ColumnModel,
     ColumnNameService,
-    CssClassApplier,
     ExcelExportMultipleSheetParams,
     ExcelExportParams,
     ExcelFactoryMode,
     ExcelRow,
     ExcelStyle,
     FuncColsService,
-    GridOptionsService,
     IExcelCreator,
-    PostConstruct,
+    NamedBean,
     StylingService,
     ValueService,
 } from '@ag-grid-community/core';
-import { BaseCreator, Downloader, GridSerializer, RowType, ZipContainer } from '@ag-grid-community/csv-export';
+import { CssClassApplier } from '@ag-grid-community/core';
+import type { GridSerializer } from '@ag-grid-community/csv-export';
+import { BaseCreator, Downloader, RowType, ZipContainer } from '@ag-grid-community/csv-export';
 
-import { ExcelGridSerializingParams, ExcelSerializingSession, StyleLinkerInterface } from './excelSerializingSession';
+import type { ExcelGridSerializingParams, StyleLinkerInterface } from './excelSerializingSession';
+import { ExcelSerializingSession } from './excelSerializingSession';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
 
 const createExcelXMLCoreFolderStructure = (): void => {
@@ -217,21 +217,30 @@ export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetPara
     });
 };
 
-@Bean('excelCreator')
 export class ExcelCreator
     extends BaseCreator<ExcelRow[], ExcelSerializingSession, ExcelExportParams>
-    implements IExcelCreator
+    implements NamedBean, IExcelCreator
 {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('stylingService') private stylingService: StylingService;
+    beanName = 'excelCreator' as const;
 
-    @Autowired('gridSerializer') private gridSerializer: GridSerializer;
-    @Autowired('gridOptionsService') gos: GridOptionsService;
+    private columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    private funcColsService: FuncColsService;
+    private valueService: ValueService;
+    private stylingService: StylingService;
 
-    @PostConstruct
+    private gridSerializer: GridSerializer;
+
+    public wireBeans(beans: BeanCollection) {
+        this.columnModel = beans.columnModel;
+        this.columnNameService = beans.columnNameService;
+        this.funcColsService = beans.funcColsService;
+        this.valueService = beans.valueService;
+        this.stylingService = beans.stylingService;
+        this.gridSerializer = beans.gridSerializer;
+        this.gos = beans.gos;
+    }
+
     public postConstruct(): void {
         this.setBeans({
             gridSerializer: this.gridSerializer,
@@ -349,7 +358,7 @@ export class ExcelCreator
         const { rowType, rowIndex, value, column, columnGroup, node } = params;
         const isHeader = rowType === RowType.HEADER;
         const isGroupHeader = rowType === RowType.HEADER_GROUPING;
-        const col = (isHeader ? column : columnGroup) as Column | ColumnGroup;
+        const col = (isHeader ? column : columnGroup) as AgColumn | AgColumnGroup | null;
         let headerClasses: string[] = [];
 
         if (isHeader || isGroupHeader) {
@@ -363,8 +372,8 @@ export class ExcelCreator
                     CssClassApplier.getHeaderClassesFromColDef(
                         col.getDefinition(),
                         this.gos,
-                        column || null,
-                        columnGroup || null
+                        (column as AgColumn) || null,
+                        (columnGroup as AgColumnGroup) || null
                     )
                 );
             }
@@ -384,13 +393,14 @@ export class ExcelCreator
             return it.id;
         });
 
+        const colDef = (column as AgColumn).getDefinition();
         this.stylingService.processAllCellClasses(
-            column!.getDefinition(),
+            colDef,
             this.gos.addGridCommonParams({
                 value,
                 data: node!.data,
                 node: node!,
-                colDef: column!.getDefinition(),
+                colDef,
                 column: column!,
                 rowIndex: rowIndex,
             }),

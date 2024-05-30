@@ -1,22 +1,31 @@
-import { AgGroupComponentParams, AgSliderParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
-import { AgAxisGridLineOptions } from 'ag-charts-community';
+import type { BeanCollection } from '@ag-grid-community/core';
+import { Component } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import type { AgAxisGridLineOptions } from 'ag-charts-community';
 
-import { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
-import { ChartOptionsProxy } from '../../../services/chartOptionsService';
-import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
-import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import type { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
+import { AgColorPicker } from '../../../../../widgets/agColorPicker';
+import type { AgSliderParams } from '../../../../../widgets/agSlider';
+import { AgSlider } from '../../../../../widgets/agSlider';
+import type { ChartOptionsProxy } from '../../../services/chartOptionsService';
+import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class GridLinePanel extends Component {
     public static TEMPLATE = /* html */ `<div>
-            <ag-group-component ref="gridLineGroup">
-                <ag-color-picker ref="gridLineColorPicker"></ag-color-picker>
-                <ag-slider ref="gridLineWidthSlider"></ag-slider>
-                <ag-slider ref="gridLineLineDashSlider"></ag-slider>
+            <ag-group-component data-ref="gridLineGroup">
+                <ag-color-picker data-ref="gridLineColorPicker"></ag-color-picker>
+                <ag-slider data-ref="gridLineWidthSlider"></ag-slider>
+                <ag-slider data-ref="gridLineLineDashSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
 
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
     private readonly chartOptions: ChartOptionsProxy;
 
     constructor(private readonly chartMenuUtils: ChartMenuParamsFactory) {
@@ -24,8 +33,7 @@ export class GridLinePanel extends Component {
         this.chartOptions = chartMenuUtils.getChartOptions();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const gridLineGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>('gridLine.enabled', {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
@@ -37,7 +45,7 @@ export class GridLinePanel extends Component {
         const gridLineColorPickerParams = this.getGridLineColorPickerParams('color');
         const gridLineWidthSliderParams = this.getGridLineWidthSliderParams('thickness');
         const gridLineLineDashSliderParams = this.getGridLineDashSliderParams('lineDash');
-        this.setTemplate(GridLinePanel.TEMPLATE, {
+        this.setTemplate(GridLinePanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
             gridLineGroup: gridLineGroupParams,
             gridLineColorPicker: gridLineColorPickerParams,
             gridLineWidthSlider: gridLineWidthSliderParams,

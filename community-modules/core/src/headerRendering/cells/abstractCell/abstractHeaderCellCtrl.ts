@@ -1,26 +1,26 @@
-import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
+import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
 import { BeanStub } from '../../../context/beanStub';
-import { Autowired, PostConstruct } from '../../../context/context';
-import { CtrlsService } from '../../../ctrlsService';
-import { DragAndDropService, DragSource } from '../../../dragAndDrop/dragAndDropService';
-import { Column, ColumnPinnedType } from '../../../entities/column';
-import { ColumnGroup } from '../../../entities/columnGroup';
-import { ProvidedColumnGroup } from '../../../entities/providedColumnGroup';
+import type { BeanCollection } from '../../../context/context';
+import type { CtrlsService } from '../../../ctrlsService';
+import type { DragAndDropService, DragSource } from '../../../dragAndDrop/dragAndDropService';
+import type { AgColumn } from '../../../entities/agColumn';
+import { isColumn } from '../../../entities/agColumn';
+import type { AgColumnGroup } from '../../../entities/agColumnGroup';
+import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
 import { Events } from '../../../eventKeys';
-import { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent } from '../../../events';
-import { FocusService } from '../../../focusService';
-import { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
-import { BrandedType } from '../../../interfaces/brandedType';
-import { WithoutGridCommon } from '../../../interfaces/iCommon';
-import { IHeaderColumn } from '../../../interfaces/iHeaderColumn';
-import { MenuService } from '../../../misc/menuService';
-import { Beans } from '../../../rendering/beans';
+import type { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent } from '../../../events';
+import type { FocusService } from '../../../focusService';
+import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
+import type { BrandedType } from '../../../interfaces/brandedType';
+import type { ColumnPinnedType } from '../../../interfaces/iColumn';
+import type { WithoutGridCommon } from '../../../interfaces/iCommon';
+import type { MenuService } from '../../../misc/menuService';
 import { _setAriaColIndex } from '../../../utils/aria';
 import { _getInnerWidth } from '../../../utils/dom';
 import { _isUserSuppressingHeaderKeyboardEvent } from '../../../utils/keyboard';
 import { KeyCode } from '../.././../constants/keyCode';
-import { HeaderRowCtrl } from '../../row/headerRowCtrl';
+import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import { CssClassApplier } from '../cssClassApplier';
 
 let instanceIdSequence = 0;
@@ -37,21 +37,30 @@ export type HeaderCellCtrlInstanceId = BrandedType<string, 'HeaderCellCtrlInstan
 
 export abstract class AbstractHeaderCellCtrl<
     TComp extends IAbstractHeaderCellComp = any,
-    TColumn extends IHeaderColumn = any,
+    TColumn extends AgColumn | AgColumnGroup = any,
     TFeature extends IHeaderResizeFeature = any,
 > extends BeanStub {
     public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
 
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
-    @Autowired('focusService') protected readonly focusService: FocusService;
-    @Autowired('userComponentFactory') protected readonly userComponentFactory: UserComponentFactory;
-    @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
-    @Autowired('dragAndDropService') protected readonly dragAndDropService: DragAndDropService;
-    @Autowired('menuService') protected readonly menuService: MenuService;
+    private pinnedWidthService: PinnedWidthService;
+    protected focusService: FocusService;
+    protected userComponentFactory: UserComponentFactory;
+    protected ctrlsService: CtrlsService;
+    protected dragAndDropService: DragAndDropService;
+    protected menuService: MenuService;
 
-    protected readonly beans: Beans;
+    public wireBeans(beans: BeanCollection) {
+        this.pinnedWidthService = beans.pinnedWidthService;
+        this.focusService = beans.focusService;
+        this.userComponentFactory = beans.userComponentFactory;
+        this.ctrlsService = beans.ctrlsService;
+        this.dragAndDropService = beans.dragAndDropService;
+        this.menuService = beans.menuService;
+    }
+
+    protected beans: BeanCollection;
     private instanceId: HeaderCellCtrlInstanceId;
-    private columnGroupChild: IHeaderColumn;
+    private columnGroupChild: AgColumn | AgColumnGroup;
     private parentRowCtrl: HeaderRowCtrl;
 
     private isResizing: boolean;
@@ -70,7 +79,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected abstract resizeHeader(delta: number, shiftKey: boolean): void;
     protected abstract moveHeader(direction: HorizontalDirection): void;
 
-    constructor(columnGroupChild: IHeaderColumn, beans: Beans, parentRowCtrl: HeaderRowCtrl) {
+    constructor(columnGroupChild: AgColumn | AgColumnGroup, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
         super();
 
         this.columnGroupChild = columnGroupChild;
@@ -81,15 +90,14 @@ export abstract class AbstractHeaderCellCtrl<
         this.instanceId = (columnGroupChild.getUniqueId() + '-' + instanceIdSequence++) as HeaderCellCtrlInstanceId;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.addManagedPropertyListeners(['suppressHeaderFocus'], () => this.refreshTabIndex());
     }
 
     protected shouldStopEventPropagation(e: KeyboardEvent): boolean {
         const { headerRowIndex, column } = this.focusService.getFocusedHeader()!;
 
-        return _isUserSuppressingHeaderKeyboardEvent(this.gos, e, headerRowIndex, column);
+        return _isUserSuppressingHeaderKeyboardEvent(this.gos, e, headerRowIndex, column as AgColumn);
     }
 
     protected getWrapperHasFocus(): boolean {
@@ -120,17 +128,13 @@ export abstract class AbstractHeaderCellCtrl<
 
     private refreshFirstAndLastStyles(): void {
         const { comp, column, beans } = this;
-        CssClassApplier.refreshFirstAndLastStyles(
-            comp,
-            column as unknown as Column | ColumnGroup,
-            beans.visibleColsService
-        );
+        CssClassApplier.refreshFirstAndLastStyles(comp, column, beans.visibleColsService);
     }
 
     private refreshAriaColIndex(): void {
         const { beans, column } = this;
 
-        const colIdx = beans.visibleColsService.getAriaColIndex(column as unknown as Column | ColumnGroup);
+        const colIdx = beans.visibleColsService.getAriaColIndex(column);
         _setAriaColIndex(this.eGui, colIdx); // for react, we don't use JSX, as it slowed down column moving
     }
 
@@ -297,7 +301,7 @@ export abstract class AbstractHeaderCellCtrl<
         return this.instanceId;
     }
 
-    public getColumnGroupChild(): IHeaderColumn {
+    public getColumnGroupChild(): AgColumn | AgColumnGroup {
         return this.columnGroupChild;
     }
 
@@ -311,13 +315,13 @@ export abstract class AbstractHeaderCellCtrl<
     protected handleContextMenuMouseEvent(
         mouseEvent: MouseEvent | undefined,
         touchEvent: TouchEvent | undefined,
-        column: Column | ProvidedColumnGroup
+        column: AgColumn | AgProvidedColumnGroup
     ): void {
         const event = mouseEvent ?? touchEvent!;
         if (this.gos.get('preventDefaultOnContextMenu')) {
             event.preventDefault();
         }
-        const columnToUse = column instanceof Column ? column : undefined;
+        const columnToUse = isColumn(column) ? column : undefined;
         if (this.menuService.isHeaderContextMenuEnabled(columnToUse)) {
             this.menuService.showHeaderContextMenu(columnToUse, mouseEvent, touchEvent);
         }
@@ -327,7 +331,7 @@ export abstract class AbstractHeaderCellCtrl<
 
     protected dispatchColumnMouseEvent(
         eventType: 'columnHeaderContextMenu' | 'columnHeaderClicked',
-        column: Column | ProvidedColumnGroup
+        column: AgColumn | AgProvidedColumnGroup
     ): void {
         const event: WithoutGridCommon<ColumnHeaderClickedEvent | ColumnHeaderContextMenuEvent> = {
             type: eventType,
@@ -337,7 +341,7 @@ export abstract class AbstractHeaderCellCtrl<
         this.eventService.dispatchEvent(event);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
 
         this.removeDragSource();

@@ -1,21 +1,23 @@
-import { Bean } from '../context/context';
-import { ColDef, ColGroupDef } from '../entities/colDef';
-import { Column } from '../entities/column';
-import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import type { ColDef, ColGroupDef } from '../entities/colDef';
 import { _deepCloneDefinition } from '../utils/object';
 
-@Bean('columnDefFactory')
-export class ColumnDefFactory {
+export class ColumnDefFactory extends BeanStub implements NamedBean {
+    beanName = 'columnDefFactory' as const;
+
     public buildColumnDefs(
-        cols: Column[],
-        rowGroupColumns: Column[],
-        pivotColumns: Column[]
+        cols: AgColumn[],
+        rowGroupColumns: AgColumn[],
+        pivotColumns: AgColumn[]
     ): (ColDef | ColGroupDef)[] {
         const res: (ColDef | ColGroupDef)[] = [];
 
         const colGroupDefs: { [id: string]: ColGroupDef } = {};
 
-        cols.forEach((col) => {
+        cols.forEach((col: AgColumn) => {
             const colDef = this.createDefFromColumn(col, rowGroupColumns, pivotColumns);
 
             let addToResult = true;
@@ -23,7 +25,7 @@ export class ColumnDefFactory {
             let childDef: ColDef | ColGroupDef = colDef;
 
             let pointer = col.getOriginalParent();
-            let lastPointer: ProvidedColumnGroup | null = null;
+            let lastPointer: AgProvidedColumnGroup | null = null;
             while (pointer) {
                 let parentDef: ColGroupDef | null | undefined = null;
 
@@ -71,7 +73,7 @@ export class ColumnDefFactory {
         return res;
     }
 
-    private createDefFromGroup(group: ProvidedColumnGroup): ColGroupDef | null | undefined {
+    private createDefFromGroup(group: AgProvidedColumnGroup): ColGroupDef | null | undefined {
         const defCloned = _deepCloneDefinition(group.getColGroupDef(), ['children']);
 
         if (defCloned) {
@@ -81,7 +83,7 @@ export class ColumnDefFactory {
         return defCloned;
     }
 
-    private createDefFromColumn(col: Column, rowGroupColumns: Column[], pivotColumns: Column[]): ColDef {
+    private createDefFromColumn(col: AgColumn, rowGroupColumns: AgColumn[], pivotColumns: AgColumn[]): ColDef {
         const colDefCloned = _deepCloneDefinition(col.getColDef())!;
 
         colDefCloned.colId = col.getColId();

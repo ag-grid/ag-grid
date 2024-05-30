@@ -1,24 +1,19 @@
-import {
-    AgCheckbox,
-    AgGroupComponent,
-    AgSelect,
-    Autowired,
-    ChartType,
-    Component,
-    PostConstruct,
-    SeriesChartType,
-    _areEqual,
-    _clearElement,
-} from '@ag-grid-community/core';
+import type { BeanCollection, ChartType, SeriesChartType } from '@ag-grid-community/core';
+import { AgCheckbox, AgSelect, Component, _areEqual, _clearElement } from '@ag-grid-community/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartController } from '../../chartController';
-import { ColState } from '../../model/chartDataModel';
-import { ChartTranslationService } from '../../services/chartTranslationService';
+import type { ChartController } from '../../chartController';
+import type { ColState } from '../../model/chartDataModel';
+import type { ChartTranslationService } from '../../services/chartTranslationService';
 
 export class SeriesChartTypePanel extends Component {
     private static TEMPLATE = /* html */ `<div id="seriesChartTypeGroup"></div>`;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
 
     private seriesChartTypeGroupComp: AgGroupComponent;
     private selectedColIds: string[] = [];
@@ -33,8 +28,7 @@ export class SeriesChartTypePanel extends Component {
         super(SeriesChartTypePanel.TEMPLATE);
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         this.createSeriesChartTypeGroup(this.columns);
     }
 
@@ -53,7 +47,7 @@ export class SeriesChartTypePanel extends Component {
         this.columns = columns;
         this.selectedColIds = [];
         this.clearComps();
-        this.init();
+        this.postConstruct();
     }
 
     private getValidColIds(columns: ColState[]): string[] {
@@ -164,7 +158,7 @@ export class SeriesChartTypePanel extends Component {
         return ['groupedColumn', 'stackedColumn', 'stackedArea'].includes(chartType);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.clearComps();
         this.seriesChartTypeGroupComp = this.destroyBean(this.seriesChartTypeGroupComp)!;
         super.destroy();

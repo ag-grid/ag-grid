@@ -1,17 +1,18 @@
-import { VisibleColsService } from '../columns/visibleColsService';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
 import { DragAndDropService, DragSourceType } from '../dragAndDrop/dragAndDropService';
 import { Events } from '../eventKeys';
-import { GridSizeChangedEvent } from '../events';
-import { FocusService } from '../focusService';
-import { MouseEventService } from '../gridBodyComp/mouseEventService';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { ResizeObserverService } from '../misc/resizeObserverService';
+import type { GridSizeChangedEvent } from '../events';
+import type { FocusService } from '../focusService';
+import type { MouseEventService } from '../gridBodyComp/mouseEventService';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { ResizeObserverService } from '../misc/resizeObserverService';
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
-import { LayoutFeature, LayoutView } from '../styling/layoutFeature';
+import type { LayoutView } from '../styling/layoutFeature';
+import { LayoutFeature } from '../styling/layoutFeature';
 import { _last } from '../utils/array';
 
 export interface IGridComp extends LayoutView {
@@ -24,15 +25,26 @@ export interface IGridComp extends LayoutView {
 }
 
 export class GridCtrl extends BeanStub {
-    @Autowired('focusService') protected readonly focusService: FocusService;
-    @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
-    @Autowired('mouseEventService') private readonly mouseEventService: MouseEventService;
-    @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
+    private focusService: FocusService;
+    private resizeObserverService: ResizeObserverService;
+    private visibleColsService: VisibleColsService;
+    private ctrlsService: CtrlsService;
+    private mouseEventService: MouseEventService;
+    private dragAndDropService: DragAndDropService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.eGridWrapperDiv = beans.eGridDiv;
+        this.focusService = beans.focusService;
+        this.resizeObserverService = beans.resizeObserverService;
+        this.visibleColsService = beans.visibleColsService;
+        this.ctrlsService = beans.ctrlsService;
+        this.mouseEventService = beans.mouseEventService;
+        this.dragAndDropService = beans.dragAndDropService;
+    }
 
     private view: IGridComp;
     private eGridHostDiv: HTMLElement;
+    private eGridWrapperDiv: HTMLElement;
     private eGui: HTMLElement;
 
     public setComp(view: IGridComp, eGridDiv: HTMLElement, eGui: HTMLElement): void {
@@ -40,7 +52,7 @@ export class GridCtrl extends BeanStub {
         this.eGridHostDiv = eGridDiv;
         this.eGui = eGui;
 
-        this.eGui.setAttribute('grid-id', this.context.getGridId());
+        this.eGui.setAttribute('grid-id', this.gridId);
 
         // this drop target is just used to see if the drop event is inside the grid
         this.dragAndDropService.addDropTarget({
@@ -54,6 +66,8 @@ export class GridCtrl extends BeanStub {
         this.createManagedBean(new LayoutFeature(this.view));
 
         this.addRtlSupport();
+
+        this.applyDefaultHeight();
 
         const unsubscribeFromResize = this.resizeObserverService.observeResize(
             this.eGridHostDiv,
@@ -71,28 +85,55 @@ export class GridCtrl extends BeanStub {
     }
 
     public showDropZones(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.RowGroupingModule, this.context.getGridId());
+        return ModuleRegistry.__isRegistered(ModuleNames.RowGroupingModule, this.gridId);
     }
 
     public showSideBar(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.SideBarModule, this.context.getGridId());
+        return ModuleRegistry.__isRegistered(ModuleNames.SideBarModule, this.gridId);
     }
 
     public showStatusBar(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.StatusBarModule, this.context.getGridId());
+        return ModuleRegistry.__isRegistered(ModuleNames.StatusBarModule, this.gridId);
     }
 
     public showWatermark(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.context.getGridId());
+        return ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.gridId);
     }
 
     private onGridSizeChanged(): void {
+        this.applyDefaultHeight();
         const event: WithoutGridCommon<GridSizeChangedEvent> = {
             type: Events.EVENT_GRID_SIZE_CHANGED,
             clientWidth: this.eGridHostDiv.clientWidth,
             clientHeight: this.eGridHostDiv.clientHeight,
         };
         this.eventService.dispatchEvent(event);
+    }
+
+    private applyDefaultHeight(): void {
+        if (this.eGui.offsetParent == null) {
+            return;
+        }
+        // If the application has not given the host div a height, then we want
+        // to apply a default height in order to prevent the grid from being
+        // zero height. However we can't just test whether the host div is 0px
+        // high, because it might have been explicitly set to 0px. So we vary
+        // the height of the main grid element and check whether the container
+        // resizes to fit. It it does, it has no explicit height set and we need a default height.
+        const gui = this.eGui;
+        const wrapper = this.eGridWrapperDiv;
+        gui.style.boxSizing = 'border-box';
+        gui.style.height = '0';
+        gui.style.padding = '0';
+        const firstMeasurement = wrapper.clientHeight;
+        gui.style.height = '10px';
+        const secondMeasurement = wrapper.clientHeight;
+        // difference should be 10px but allow some margin of error if the layout is scaled
+        const hasIntrinsicHeight = secondMeasurement - firstMeasurement <= 5;
+        gui.style.boxSizing = '';
+        gui.style.height = '';
+        gui.style.padding = '';
+        gui.classList.toggle('ag-default-height', !hasIntrinsicHeight);
     }
 
     private addRtlSupport(): void {

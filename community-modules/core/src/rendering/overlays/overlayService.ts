@@ -1,28 +1,38 @@
-import { ColumnModel } from '../../columns/columnModel';
-import { UserCompDetails, UserComponentFactory } from '../../components/framework/userComponentFactory';
+import type { ColumnModel } from '../../columns/columnModel';
+import type { UserCompDetails, UserComponentFactory } from '../../components/framework/userComponentFactory';
+import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../../context/context';
-import { GridOptions } from '../../entities/gridOptions';
+import type { BeanCollection } from '../../context/context';
+import type { GridOptions } from '../../entities/gridOptions';
 import { Events } from '../../eventKeys';
-import { WithoutGridCommon } from '../../interfaces/iCommon';
-import { PaginationProxy } from '../../pagination/paginationProxy';
-import { ILoadingOverlayParams } from './loadingOverlayComponent';
-import { INoRowsOverlayParams } from './noRowsOverlayComponent';
-import { OverlayWrapperComponent } from './overlayWrapperComponent';
+import type { EventsType } from '../../eventKeys';
+import type { WithoutGridCommon } from '../../interfaces/iCommon';
+import type { PaginationProxy } from '../../pagination/paginationProxy';
+import type { ILoadingOverlayParams } from './loadingOverlayComponent';
+import type { INoRowsOverlayParams } from './noRowsOverlayComponent';
+import type { OverlayWrapperComponent } from './overlayWrapperComponent';
 
-@Bean('overlayService')
-export class OverlayService extends BeanStub {
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
-    @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+export class OverlayService extends BeanStub implements NamedBean {
+    beanName = 'overlayService' as const;
+
+    private userComponentFactory: UserComponentFactory;
+    private paginationProxy: PaginationProxy;
+    private columnModel: ColumnModel;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.userComponentFactory = beans.userComponentFactory;
+        this.paginationProxy = beans.paginationProxy;
+        this.columnModel = beans.columnModel;
+    }
 
     private overlayWrapperComp: OverlayWrapperComponent;
     private manuallyDisplayed: boolean = false;
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, () => this.onRowDataUpdated());
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onNewColumnsLoaded());
+    public postConstruct(): void {
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_ROW_DATA_UPDATED]: () => this.onRowDataUpdated(),
+            [Events.EVENT_NEW_COLUMNS_LOADED]: () => this.onNewColumnsLoaded(),
+        });
     }
 
     public registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void {

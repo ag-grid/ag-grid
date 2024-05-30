@@ -3,27 +3,43 @@
     width: 100%;
     display: flex;
     flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 #top {
-    flex: 1;
     display: flex;
-    height: 25%;
+    gap: 10px;
+    min-height: 300px;
+    max-height: 300px;
 }
 
 #lineChart {
-    width: 60%;
+    flex: 2;
+    height: 100%;
 }
 
 #donutChart {
-    width: calc(40% - 8px);
+    flex: 2;
+    height: 100%;
 }
 
 #areaChart {
+    min-height: 250px;
+    max-height: 250px;
+}
+
+#myGrid {
     flex: 1;
     height: 25%;
 }
 
-#myGrid {
-    flex: 2;
+.my-chart {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    box-sizing: border-box;
 }

@@ -1,35 +1,37 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { Events, ScrollVisibilityChangedEvent } from '../events';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { ColumnAnimationService } from '../rendering/columnAnimationService';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { EventsType } from '../eventKeys';
+import type { ScrollVisibilityChangedEvent } from '../events';
+import { Events } from '../events';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 
 export interface SetScrollsVisibleParams {
     horizontalScrollShowing: boolean;
     verticalScrollShowing: boolean;
 }
 
-@Bean('scrollVisibleService')
-export class ScrollVisibleService extends BeanStub {
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
-    @Autowired('columnAnimationService') public columnAnimationService: ColumnAnimationService;
+export class ScrollVisibleService extends BeanStub implements NamedBean {
+    beanName = 'scrollVisibleService' as const;
+
+    private ctrlsService: CtrlsService;
+    private columnAnimationService: ColumnAnimationService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.ctrlsService = beans.ctrlsService;
+        this.columnAnimationService = beans.columnAnimationService;
+    }
 
     private horizontalScrollShowing: boolean;
     private verticalScrollShowing: boolean;
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
-            this.onDisplayedColumnsChanged.bind(this)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
-            this.onDisplayedColumnsWidthChanged.bind(this)
-        );
+    public postConstruct(): void {
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+            [Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED]: this.onDisplayedColumnsWidthChanged.bind(this),
+        });
     }
 
     public onDisplayedColumnsChanged(): void {

@@ -1,10 +1,16 @@
-import { Autowired, Bean, BeanStub, GridOptions, IRowNodeStage, StageExecuteParams } from '@ag-grid-community/core';
+import type { BeanCollection, IRowNodeStage, NamedBean, StageExecuteParams } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
-import { FilterService } from './filterService';
+import type { FilterService } from './filterService';
 
-@Bean('filterStage')
-export class FilterStage extends BeanStub implements IRowNodeStage {
-    @Autowired('filterService') private filterService: FilterService;
+export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
+    beanName = 'filterStage' as const;
+
+    private filterService: FilterService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.filterService = beans.filterService;
+    }
 
     public execute(params: StageExecuteParams): void {
         const { changedPath } = params;

@@ -1,19 +1,13 @@
-import { Autowired, PostConstruct, PreDestroy } from '../../context/context';
-import { Beans } from '../../rendering/beans';
+import type { BeanCollection } from '../../context/context';
 import { RowComp } from '../../rendering/row/rowComp';
-import { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
+import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
 import { _setAriaRole } from '../../utils/aria';
 import { _ensureDomOrder, _insertWithDomOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
-import { Component } from '../../widgets/component';
-import { RefSelector } from '../../widgets/componentAnnotations';
-import {
-    IRowContainerComp,
-    RowContainerCtrl,
-    RowContainerName,
-    RowContainerType,
-    getRowContainerTypeForName,
-} from './rowContainerCtrl';
+import type { AgComponentSelector } from '../../widgets/component';
+import { Component, RefPlaceholder } from '../../widgets/component';
+import type { IRowContainerComp, RowContainerType } from './rowContainerCtrl';
+import { RowContainerCtrl, RowContainerName, getRowContainerTypeForName } from './rowContainerCtrl';
 
 function templateFactory(): string {
     const name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
@@ -32,21 +26,27 @@ function templateFactory(): string {
     if (centerTemplate) {
         res =
             /* html */
-            `<div class="${cssClasses.viewport}" ref="eViewport" role="presentation">
-                <div class="${cssClasses.container}" ref="eContainer"></div>
+            `<div class="${cssClasses.viewport}" data-ref="eViewport" role="presentation">
+                <div class="${cssClasses.container}" data-ref="eContainer"></div>
             </div>`;
     } else {
-        res = /* html */ `<div class="${cssClasses.container}" ref="eContainer"></div>`;
+        res = /* html */ `<div class="${cssClasses.container}" data-ref="eContainer"></div>`;
     }
 
     return res;
 }
 
 export class RowContainerComp extends Component {
-    @Autowired('beans') private beans: Beans;
+    static readonly selector: AgComponentSelector = 'AG-ROW-CONTAINER';
 
-    @RefSelector('eViewport') private eViewport: HTMLElement;
-    @RefSelector('eContainer') private eContainer: HTMLElement;
+    private beans: BeanCollection;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.beans = beans;
+    }
+
+    private readonly eViewport: HTMLElement = RefPlaceholder;
+    private readonly eContainer: HTMLElement = RefPlaceholder;
 
     private readonly name: RowContainerName;
     private readonly type: RowContainerType;
@@ -59,13 +59,13 @@ export class RowContainerComp extends Component {
     private lastPlacedElement: HTMLElement | null;
 
     constructor() {
-        super(templateFactory());
+        super();
+        this.setTemplate(templateFactory());
         this.name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
         this.type = getRowContainerTypeForName(this.name);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const compProxy: IRowContainerComp = {
             setViewportHeight: (height) => (this.eViewport.style.height = height),
             setRowCtrls: ({ rowCtrls }) => this.setRowCtrls(rowCtrls),
@@ -79,10 +79,10 @@ export class RowContainerComp extends Component {
         ctrl.setComp(compProxy, this.eContainer, this.eViewport);
     }
 
-    @PreDestroy
-    private preDestroy(): void {
+    public override destroy(): void {
         // destroys all row comps
         this.setRowCtrls([]);
+        super.destroy();
     }
 
     private setRowCtrls(rowCtrls: RowCtrl[]): void {

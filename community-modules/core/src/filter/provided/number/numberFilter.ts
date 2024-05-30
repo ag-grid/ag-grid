@@ -1,10 +1,12 @@
-import { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
+import type { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
 import { _setAriaRole } from '../../../utils/aria';
 import { _makeNull } from '../../../utils/generic';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
-import { ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
+import type { Comparator, IScalarFilterParams } from '../scalarFilter';
+import { ScalarFilter } from '../scalarFilter';
+import type { ISimpleFilterModel, Tuple } from '../simpleFilter';
+import { SimpleFilter, SimpleFilterModelFormatter } from '../simpleFilter';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
     /** Filter type is always `'number'` */
@@ -94,7 +96,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         super('numberFilter');
     }
 
-    refresh(params: NumberFilterParams): boolean {
+    override refresh(params: NumberFilterParams): boolean {
         if (this.numberFilterParams.allowedCharPattern !== params.allowedCharPattern) {
             return false;
         }
@@ -107,7 +109,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return [this.processValue(filter), this.processValue(filterTo)].slice(0, this.getNumberOfInputs(type));
     }
 
-    protected getDefaultDebounceMs(): number {
+    protected override getDefaultDebounceMs(): number {
         return 500;
     }
 
@@ -121,7 +123,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         };
     }
 
-    protected setParams(params: NumberFilterParams): void {
+    protected override setParams(params: NumberFilterParams): void {
         this.numberFilterParams = params;
 
         super.setParams(params);
@@ -136,7 +138,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
     }
 
-    protected setElementValue(
+    protected override setElementValue(
         element: AgInputTextField | AgInputNumberField,
         value: number | null,
         fromFloatingFilter?: boolean
@@ -257,7 +259,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return this.filterModelFormatter.getModelAsString(model) ?? '';
     }
 
-    protected hasInvalidInputs(): boolean {
+    protected override hasInvalidInputs(): boolean {
         let invalidInputs = false;
         this.forEachInput((element) => {
             if (!element.getInputElement().validity.valid) {

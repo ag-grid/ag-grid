@@ -1,4 +1,4 @@
-import { ChartModel } from '@ag-grid-community/core';
+import type { ChartModel } from '@ag-grid-community/core';
 import { describe, expect, it } from '@jest/globals';
 import * as fs from 'fs';
 

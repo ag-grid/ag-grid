@@ -1,34 +1,36 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Beans,
-    Column,
-    ColumnModel,
+import type {
+    AgColumn,
+    BeanCollection,
     IRowNode,
+    NamedBean,
     NumberSequence,
     RowBounds,
-    RowNode,
     ShowRowGroupColsService,
     ValueService,
-    _doOnce,
-    _exists,
-    _missing,
 } from '@ag-grid-community/core';
+import { BeanStub, RowNode, _doOnce, _exists, _missing } from '@ag-grid-community/core';
 
-import { NodeManager } from '../nodeManager';
-import { ServerSideExpansionService } from '../services/serverSideExpansionService';
+import type { NodeManager } from '../nodeManager';
+import type { ServerSideExpansionService } from '../services/serverSideExpansionService';
 
-export const GROUP_MISSING_KEY_ID: 'ag-Grid-MissingKey' = 'ag-Grid-MissingKey';
+export const GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey' as const;
 
-@Bean('ssrmBlockUtils')
-export class BlockUtils extends BeanStub {
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
-    @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
-    @Autowired('beans') private beans: Beans;
-    @Autowired('expansionService') private readonly expansionService: ServerSideExpansionService;
+export class BlockUtils extends BeanStub implements NamedBean {
+    beanName = 'ssrmBlockUtils' as const;
+
+    private valueService: ValueService;
+    private showRowGroupColsService: ShowRowGroupColsService;
+    private nodeManager: NodeManager;
+    private beans: BeanCollection;
+    private expansionService: ServerSideExpansionService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.valueService = beans.valueService;
+        this.showRowGroupColsService = beans.showRowGroupColsService;
+        this.nodeManager = beans.ssrmNodeManager;
+        this.beans = beans;
+        this.expansionService = beans.expansionService;
+    }
 
     public createRowNode(params: {
         group: boolean;
@@ -36,7 +38,7 @@ export class BlockUtils extends BeanStub {
         level: number;
         parent: RowNode;
         field: string;
-        rowGroupColumn: Column;
+        rowGroupColumn: AgColumn;
         rowHeight?: number;
     }): RowNode {
         const rowNode = new RowNode(this.beans);
@@ -213,7 +215,7 @@ export class BlockUtils extends BeanStub {
     }
 
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
-        const groupDisplayCols: Column[] = this.showRowGroupColsService.getShowRowGroupCols();
+        const groupDisplayCols = this.showRowGroupColsService.getShowRowGroupCols();
 
         const usingTreeData = this.gos.get('treeData');
 

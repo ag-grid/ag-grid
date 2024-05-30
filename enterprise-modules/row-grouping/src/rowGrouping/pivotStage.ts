@@ -1,35 +1,40 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
+    AgColumn,
+    BeanCollection,
     ChangedPath,
     ColDef,
-    Column,
     ColumnModel,
-    Events,
     FuncColsService,
     GridOptions,
     IRowNodeStage,
+    NamedBean,
     PivotMaxColumnsExceededEvent,
     PivotResultColsService,
     RowNode,
     StageExecuteParams,
     ValueService,
     WithoutGridCommon,
-    _iterateObject,
-    _missing,
 } from '@ag-grid-community/core';
+import { BeanStub, Events, _iterateObject, _missing } from '@ag-grid-community/core';
 
-import { PivotColDefService } from './pivotColDefService';
+import type { PivotColDefService } from './pivotColDefService';
 
-@Bean('pivotStage')
-export class PivotStage extends BeanStub implements IRowNodeStage {
-    // these should go into the pivot column creator
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('pivotColDefService') private pivotColDefService: PivotColDefService;
+export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
+    beanName = 'pivotStage' as const;
+
+    private valueService: ValueService;
+    private columnModel: ColumnModel;
+    private pivotResultColsService: PivotResultColsService;
+    private funcColsService: FuncColsService;
+    private pivotColDefService: PivotColDefService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.valueService = beans.valueService;
+        this.columnModel = beans.columnModel;
+        this.pivotResultColsService = beans.pivotResultColsService;
+        this.funcColsService = beans.funcColsService;
+        this.pivotColDefService = beans.pivotColDefService;
+    }
 
     private uniqueValues: any = {};
 
@@ -210,7 +215,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private bucketChildren(children: RowNode[], pivotColumns: Column[], pivotIndex: number, uniqueValues: any): any {
+    private bucketChildren(children: RowNode[], pivotColumns: AgColumn[], pivotIndex: number, uniqueValues: any): any {
         const mappedChildren: any = {};
         const pivotColumn = pivotColumns[pivotIndex];
 

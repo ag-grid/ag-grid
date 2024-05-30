@@ -1,5 +1,4 @@
 import { KeyCode } from '../constants/keyCode';
-import { PostConstruct } from '../context/context';
 import { Events } from '../eventKeys';
 import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/aria';
 import { _isVisible, _removeFromParent } from '../utils/dom';
@@ -28,8 +27,7 @@ export class AgList<TValue = string> extends Component {
         super(/* html */ `<div class="ag-list ag-${cssIdentifier}-list" role="listbox"></div>`);
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         const eGui = this.getGui();
         this.addManagedListener(eGui, 'mouseleave', () => this.clearHighlighted());
         if (this.unFocusable) {

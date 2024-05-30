@@ -1,21 +1,25 @@
-import {
+import type {
     AgCheckboxParams,
     AgFieldParams,
     AgInputNumberFieldParams,
     AgSelectParams,
-    AgSliderParams,
-    Autowired,
-    BeanStub,
+    BeanCollection,
     ListOption,
 } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
-import { AgColorPickerParams } from '../../../widgets/agColorPicker';
-import { ChartOptionsProxy } from '../services/chartOptionsService';
-import { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
-import { FontPanelParams } from './format/fontPanel';
+import type { AgColorPickerParams } from '../../../widgets/agColorPicker';
+import type { AgSliderParams } from '../../../widgets/agSlider';
+import type { ChartOptionsProxy } from '../services/chartOptionsService';
+import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
+import type { FontPanelParams } from './format/fontPanel';
 
 export class ChartMenuParamsFactory extends BeanStub {
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
 
     constructor(private readonly chartOptionsProxy: ChartOptionsProxy) {
         super();

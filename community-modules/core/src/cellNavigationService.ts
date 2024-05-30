@@ -1,26 +1,36 @@
-import { VisibleColsService } from './columns/visibleColsService';
+import type { VisibleColsService } from './columns/visibleColsService';
 import { KeyCode } from './constants/keyCode';
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import { Autowired, Bean } from './context/context';
-import { CellPosition } from './entities/cellPositionUtils';
-import { Column } from './entities/column';
-import { RowNode } from './entities/rowNode';
-import { RowPosition } from './entities/rowPositionUtils';
-import { IRowModel } from './interfaces/iRowModel';
-import { PaginationProxy } from './pagination/paginationProxy';
-import { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
-import { RowCtrl } from './rendering/row/rowCtrl';
-import { RowRenderer } from './rendering/rowRenderer';
+import type { BeanCollection } from './context/context';
+import type { AgColumn } from './entities/agColumn';
+import type { CellPosition } from './entities/cellPositionUtils';
+import type { RowNode } from './entities/rowNode';
+import type { RowPosition } from './entities/rowPositionUtils';
+import type { IRowModel } from './interfaces/iRowModel';
+import type { PaginationProxy } from './pagination/paginationProxy';
+import type { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
+import type { RowCtrl } from './rendering/row/rowCtrl';
+import type { RowRenderer } from './rendering/rowRenderer';
 import { _last } from './utils/array';
 import { _missing } from './utils/generic';
 
-@Bean('cellNavigationService')
-export class CellNavigationService extends BeanStub {
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+export class CellNavigationService extends BeanStub implements NamedBean {
+    beanName = 'cellNavigationService' as const;
+
+    private visibleColsService: VisibleColsService;
+    private rowModel: IRowModel;
+    private rowRenderer: RowRenderer;
+    private pinnedRowModel: PinnedRowModel;
+    private paginationProxy: PaginationProxy;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.visibleColsService = beans.visibleColsService;
+        this.rowModel = beans.rowModel;
+        this.rowRenderer = beans.rowRenderer;
+        this.pinnedRowModel = beans.pinnedRowModel;
+        this.paginationProxy = beans.paginationProxy;
+    }
 
     // returns null if no cell to focus on, ie at the end of the grid
     public getNextCellToFocus(
@@ -40,14 +50,14 @@ export class CellNavigationService extends BeanStub {
         const downKey = key === KeyCode.DOWN;
         const leftKey = key === KeyCode.LEFT;
 
-        let column: Column;
+        let column: AgColumn;
         let rowIndex: number;
 
         if (upKey || downKey) {
             rowIndex = upKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
-            column = focusedCell.column;
+            column = focusedCell.column as AgColumn;
         } else {
-            const allColumns: Column[] = this.visibleColsService.getAllCols();
+            const allColumns = this.visibleColsService.getAllCols();
             const isRtl = this.gos.get('enableRtl');
             rowIndex = focusedCell.rowIndex;
             column = leftKey !== isRtl ? allColumns[0] : _last(allColumns);
@@ -108,7 +118,7 @@ export class CellNavigationService extends BeanStub {
     }
 
     private isCellGoodToFocusOn(gridCell: CellPosition): boolean {
-        const column: Column = gridCell.column;
+        const column = gridCell.column as AgColumn;
         let rowNode: RowNode | undefined;
 
         switch (gridCell.rowPinned) {
@@ -136,7 +146,7 @@ export class CellNavigationService extends BeanStub {
             return null;
         }
 
-        const colToLeft = this.visibleColsService.getColBefore(lastCell.column);
+        const colToLeft = this.visibleColsService.getColBefore(lastCell.column as AgColumn);
         if (!colToLeft) {
             return null;
         }
@@ -153,7 +163,7 @@ export class CellNavigationService extends BeanStub {
             return null;
         }
 
-        const colToRight = this.visibleColsService.getColAfter(lastCell.column);
+        const colToRight = this.visibleColsService.getColAfter(lastCell.column as AgColumn);
         // if already on right, do nothing
         if (!colToRight) {
             return null;
@@ -356,7 +366,7 @@ export class CellNavigationService extends BeanStub {
         let newFloating: string | null | undefined = gridCell.rowPinned;
 
         // move along to the next cell
-        let newColumn = this.visibleColsService.getColAfter(gridCell.column);
+        let newColumn = this.visibleColsService.getColAfter(gridCell.column as AgColumn);
 
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {
@@ -387,7 +397,7 @@ export class CellNavigationService extends BeanStub {
         let newFloating: string | null | undefined = gridCell.rowPinned;
 
         // move along to the next cell
-        let newColumn = this.visibleColsService.getColBefore(gridCell.column);
+        let newColumn = this.visibleColsService.getColBefore(gridCell.column as AgColumn);
 
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {

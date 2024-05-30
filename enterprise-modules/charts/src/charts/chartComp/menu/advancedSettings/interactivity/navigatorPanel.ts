@@ -1,24 +1,31 @@
-import { AgGroupComponentParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
+import { AgCheckbox, Component } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartTranslationService } from '../../../services/chartTranslationService';
-import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import { AgSlider } from '../../../../../widgets/agSlider';
+import type { ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class NavigatorPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="navigatorGroup">
-                <ag-slider ref="navigatorHeightSlider"></ag-slider>
-                <ag-checkbox ref="navigatorMiniChartCheckbox"></ag-checkbox>
+            <ag-group-component data-ref="navigatorGroup">
+                <ag-slider data-ref="navigatorHeightSlider"></ag-slider>
+                <ag-checkbox data-ref="navigatorMiniChartCheckbox"></ag-checkbox>
             </ag-group-component>
         </div>`;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
 
     constructor(private readonly chartMenuParamsFactory: ChartMenuParamsFactory) {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const navigatorGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(
             'navigator.enabled',
             {
@@ -41,7 +48,7 @@ export class NavigatorPanel extends Component {
             'miniChart'
         );
 
-        this.setTemplate(NavigatorPanel.TEMPLATE, {
+        this.setTemplate(NavigatorPanel.TEMPLATE, [AgGroupComponent, AgSlider, AgCheckbox], {
             navigatorGroup: navigatorGroupParams,
             navigatorHeightSlider: navigatorHeightSliderParams,
             navigatorMiniChartCheckbox: navigatorMiniChartCheckboxParams,

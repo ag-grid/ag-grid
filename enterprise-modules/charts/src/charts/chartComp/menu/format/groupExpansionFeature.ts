@@ -1,4 +1,5 @@
-import { AgGroupComponent, BeanStub } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
+import type { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 // handles single group expansion
 export class GroupExpansionFeature extends BeanStub {
@@ -42,7 +43,7 @@ export class GroupExpansionFeature extends BeanStub {
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.groupComponents.clear();
         super.destroy();
     }

@@ -1,20 +1,22 @@
-import { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
-import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
+import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
+import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { _getSafariVersion, _isBrowserChrome, _isBrowserFirefox, _isBrowserSafari } from '../../../utils/browser';
 import { _dateToFormattedString, _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import { _warnOnce } from '../../../utils/function';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { Component } from '../../../widgets/component';
-import { RefSelector } from '../../../widgets/componentAnnotations';
+import { Component, RefPlaceholder } from '../../../widgets/component';
 
 export class DefaultDateComponent extends Component implements IDateComp {
-    @RefSelector('eDateInput') private readonly eDateInput: AgInputTextField;
+    private readonly eDateInput: AgInputTextField = RefPlaceholder;
 
     constructor() {
-        super(/* html */ `
+        super(
+            /* html */ `
             <div class="ag-filter-filter">
-                <ag-input-text-field class="ag-date-filter" ref="eDateInput"></ag-input-text-field>
-            </div>`);
+                <ag-input-text-field class="ag-date-filter" data-ref="eDateInput"></ag-input-text-field>
+            </div>`,
+            [AgInputTextField]
+        );
     }
 
     private params: IDateParams;
@@ -22,7 +24,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 

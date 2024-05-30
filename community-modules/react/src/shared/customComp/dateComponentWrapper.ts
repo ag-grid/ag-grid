@@ -1,7 +1,7 @@
-import { IDate, IDateParams } from '@ag-grid-community/core';
+import type { IDate, IDateParams } from '@ag-grid-community/core';
 
 import { CustomComponentWrapper } from './customComponentWrapper';
-import { CustomDateCallbacks, CustomDateProps } from './interfaces';
+import type { CustomDateCallbacks, CustomDateProps } from './interfaces';
 
 export class DateComponentWrapper
     extends CustomComponentWrapper<IDateParams, CustomDateProps, CustomDateCallbacks>
@@ -24,7 +24,7 @@ export class DateComponentWrapper
         this.refreshProps();
     }
 
-    protected getOptionalMethods(): string[] {
+    protected override getOptionalMethods(): string[] {
         return ['afterGuiAttached', 'setInputPlaceholder', 'setInputAriaLabel', 'setDisabled'];
     }
 
@@ -34,7 +34,7 @@ export class DateComponentWrapper
         this.sourceParams.onDateChanged();
     }
 
-    protected getProps(): CustomDateProps {
+    protected override getProps(): CustomDateProps {
         const props = super.getProps();
         props.date = this.date;
         props.onDateChange = this.onDateChange;

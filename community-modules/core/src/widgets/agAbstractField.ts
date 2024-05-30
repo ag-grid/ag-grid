@@ -1,13 +1,9 @@
 import { Events } from '../eventKeys';
+import type { AgFieldParams } from '../interfaces/agFieldParams';
 import { _getAriaLabel, _setAriaLabel, _setAriaLabelledBy } from '../utils/aria';
 import { _setFixedWidth } from '../utils/dom';
-import { AgAbstractLabel, AgLabelParams } from './agAbstractLabel';
-
-export interface AgFieldParams extends AgLabelParams {
-    value?: any;
-    width?: number;
-    onValueChange?: (value?: any) => void;
-}
+import { AgAbstractLabel } from './agAbstractLabel';
+import type { ComponentClass } from './component';
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export abstract class AgAbstractField<
@@ -20,12 +16,13 @@ export abstract class AgAbstractField<
     constructor(
         config?: TConfig,
         template?: string,
+        components?: ComponentClass[],
         protected readonly className?: string
     ) {
-        super(config, template);
+        super(config, template, components);
     }
 
-    protected postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
 
         const { width, value, onValueChange } = this.config;

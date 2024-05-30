@@ -1,7 +1,8 @@
+import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../../context/context';
-import { IComponent } from '../../interfaces/iComponent';
-import { AgComponentUtils } from './agComponentUtils';
+import type { BeanCollection } from '../../context/context';
+import type { IComponent } from '../../interfaces/iComponent';
+import type { AgComponentUtils } from './agComponentUtils';
 
 export interface ComponentMetadata {
     mandatoryMethodList: string[];
@@ -9,14 +10,17 @@ export interface ComponentMetadata {
     functionAdapter?: (callback: any) => { new (): IComponent<any> };
 }
 
-@Bean('componentMetadataProvider')
-export class ComponentMetadataProvider extends BeanStub {
+export class ComponentMetadataProvider extends BeanStub implements NamedBean {
+    beanName = 'componentMetadataProvider' as const;
+
     private componentMetaData: { [key: string]: ComponentMetadata };
 
-    @Autowired('agComponentUtils')
     private agComponentUtils: AgComponentUtils;
 
-    @PostConstruct
+    public wireBeans(beans: BeanCollection): void {
+        this.agComponentUtils = beans.agComponentUtils;
+    }
+
     public postConstruct() {
         this.componentMetaData = {
             dateComponent: {

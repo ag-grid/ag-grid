@@ -41,7 +41,6 @@ const cellEditorSelector: (params: ICellEditorParams<IRow>) => CellEditorSelecto
             params: {
                 values: ['Male', 'Female'],
             },
-            popup: true,
         };
     }
     if (params.data.type === 'mood') {

@@ -1,14 +1,10 @@
-import {
-    AgGroupComponent,
-    AgSelect,
-    AgToggleButton,
-    IAggFunc,
-    PostConstruct,
-    _clearElement,
-} from '@ag-grid-community/core';
+import type { IAggFunc } from '@ag-grid-community/core';
+import { AgSelect, AgToggleButton } from '@ag-grid-community/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartController } from '../../chartController';
-import { ChartDataModel, ColState } from '../../model/chartDataModel';
+import type { ChartController } from '../../chartController';
+import type { ColState } from '../../model/chartDataModel';
+import { ChartDataModel } from '../../model/chartDataModel';
 import { DragDataPanel } from './dragDataPanel';
 
 type AggFuncPreset = 'count' | 'sum' | 'min' | 'max' | 'avg' | 'first' | 'last';
@@ -32,8 +28,7 @@ export class CategoriesDataPanel extends DragDataPanel {
         super(chartController, allowMultipleSelection, maxSelection, CategoriesDataPanel.TEMPLATE);
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         this.groupComp = this.createBean(
             new AgGroupComponent({
                 title: this.title,
@@ -117,11 +112,11 @@ export class CategoriesDataPanel extends DragDataPanel {
     }
 
     private clearAggFuncControls(): void {
-        this.aggFuncToggle = this.aggFuncToggle && this.destroyBean(this.aggFuncToggle);
-        this.aggFuncSelect = this.aggFuncSelect && this.destroyBean(this.aggFuncSelect);
+        this.aggFuncToggle = this.destroyBean(this.aggFuncToggle);
+        this.aggFuncSelect = this.destroyBean(this.aggFuncSelect);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.clearAggFuncControls();
         this.groupComp = this.destroyBean(this.groupComp)!;
         super.destroy();

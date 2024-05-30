@@ -1,21 +1,21 @@
-import { Autowired } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
+import type { BeanCollection } from '../context/context';
 import { Events } from '../eventKeys';
-import { BodyScrollEvent } from '../events';
-import { AnimationFrameService } from '../misc/animationFrameService';
+import type { BodyScrollEvent } from '../events';
+import type { AnimationFrameService } from '../misc/animationFrameService';
 import { _isIOSUserAgent, _isInvisibleScrollbar, _isMacOsUserAgent } from '../utils/browser';
 import { _isVisible } from '../utils/dom';
 import { _waitUntil } from '../utils/function';
-import { Component } from '../widgets/component';
-import { RefSelector } from '../widgets/componentAnnotations';
-import { ScrollVisibleService } from './scrollVisibleService';
+import { Component, RefPlaceholder } from '../widgets/component';
 
 export abstract class AbstractFakeScrollComp extends Component {
-    @RefSelector('eViewport') protected readonly eViewport: HTMLElement;
-    @RefSelector('eContainer') protected readonly eContainer: HTMLElement;
-    @Autowired('scrollVisibleService') protected readonly scrollVisibleService: ScrollVisibleService;
-    @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
+    private animationFrameService: AnimationFrameService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.animationFrameService = beans.animationFrameService;
+    }
+
+    protected readonly eViewport: HTMLElement = RefPlaceholder;
+    protected readonly eContainer: HTMLElement = RefPlaceholder;
 
     protected invisibleScrollbar: boolean;
     protected hideTimeout: number | null = null;
@@ -28,10 +28,11 @@ export abstract class AbstractFakeScrollComp extends Component {
         template: string,
         private readonly direction: 'horizontal' | 'vertical'
     ) {
-        super(template);
+        super();
+        this.setTemplate(template);
     }
 
-    protected postConstruct(): void {
+    public postConstruct(): void {
         this.addManagedListener(
             this.eventService,
             Events.EVENT_SCROLL_VISIBILITY_CHANGED,
@@ -69,7 +70,7 @@ export abstract class AbstractFakeScrollComp extends Component {
 
     protected onScrollVisibilityChanged(): void {
         // initialiseInvisibleScrollbar should only be called once, but the reason
-        // this can't be inside `setComp` or `PostConstruct` is the DOM might not
+        // this can't be inside `setComp` or `postConstruct` is the DOM might not
         // be ready, so we call it until eventually, it gets calculated.
         if (this.invisibleScrollbar === undefined) {
             this.initialiseInvisibleScrollbar();

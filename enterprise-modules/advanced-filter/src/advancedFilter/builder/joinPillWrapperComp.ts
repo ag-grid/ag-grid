@@ -1,13 +1,17 @@
-import { Autowired, Component, JoinAdvancedFilterModel } from '@ag-grid-community/core';
+import type { BeanCollection, JoinAdvancedFilterModel } from '@ag-grid-community/core';
+import { Component } from '@ag-grid-community/core';
 
-import { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
-import { AdvancedFilterBuilderItem, CreatePillParams } from './iAdvancedFilterBuilder';
-import { InputPillComp } from './inputPillComp';
-import { SelectPillComp } from './selectPillComp';
+import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
+import type { AdvancedFilterBuilderItem, CreatePillParams } from './iAdvancedFilterBuilder';
+import type { InputPillComp } from './inputPillComp';
+import type { SelectPillComp } from './selectPillComp';
 
 export class JoinPillWrapperComp extends Component {
-    @Autowired('advancedFilterExpressionService')
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+    }
 
     private filterModel: JoinAdvancedFilterModel;
     private ePill: SelectPillComp | InputPillComp;
@@ -55,7 +59,7 @@ export class JoinPillWrapperComp extends Component {
         return null;
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.ePill.getFocusableElement();
     }
 }

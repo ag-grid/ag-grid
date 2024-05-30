@@ -1,38 +1,39 @@
-import { UserCompDetails } from '../../components/framework/userComponentFactory';
+import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
-import { CellPosition } from '../../entities/cellPositionUtils';
-import { CellStyle } from '../../entities/colDef';
-import { Column } from '../../entities/column';
-import { RowNode } from '../../entities/rowNode';
-import { RowPosition } from '../../entities/rowPositionUtils';
-import {
+import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
+import type { CellPosition } from '../../entities/cellPositionUtils';
+import type { CellStyle } from '../../entities/colDef';
+import type { RowNode } from '../../entities/rowNode';
+import type { RowPosition } from '../../entities/rowPositionUtils';
+import type {
     CellContextMenuEvent,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
     CellEvent,
     CellFocusedEvent,
-    Events,
     FlashCellsEvent,
 } from '../../events';
+import { Events } from '../../events';
 import { CssClassApplier } from '../../headerRendering/cells/cssClassApplier';
-import { BrandedType } from '../../interfaces/brandedType';
-import { ICellEditor, ICellEditorParams } from '../../interfaces/iCellEditor';
-import { CellChangedEvent } from '../../interfaces/iRowNode';
+import type { BrandedType } from '../../interfaces/brandedType';
+import type { ICellEditor, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import { _setAriaColIndex } from '../../utils/aria';
 import { _getElementSize } from '../../utils/dom';
 import { _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _getValueUsingField } from '../../utils/object';
 import { _escapeString } from '../../utils/string';
-import { ITooltipFeatureCtrl, TooltipFeature } from '../../widgets/tooltipFeature';
-import { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
+import type { ITooltipFeatureCtrl } from '../../widgets/tooltipFeature';
+import { TooltipFeature } from '../../widgets/tooltipFeature';
+import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import { CheckboxSelectionComponent } from '../checkboxSelectionComponent';
 import { DndSourceComp } from '../dndSourceComp';
-import { RowCtrl } from '../row/rowCtrl';
+import type { RowCtrl } from '../row/rowCtrl';
 import { RowDragComp } from '../row/rowDragComp';
-import { FlashCellsParams } from '../rowRenderer';
-import { Beans } from './../beans';
+import type { FlashCellsParams } from '../rowRenderer';
 import { CellCustomStyleFeature } from './cellCustomStyleFeature';
 import { CellKeyboardListenerFeature } from './cellKeyboardListenerFeature';
 import { CellMouseListenerFeature } from './cellMouseListenerFeature';
@@ -85,8 +86,8 @@ export class CellCtrl extends BeanStub {
 
     private eGui: HTMLElement;
     private cellComp: ICellComp;
-    private beans: Beans;
-    private column: Column;
+    private beans: BeanCollection;
+    private column: AgColumn;
     private rowNode: RowNode;
     private rowCtrl: RowCtrl;
     private editCompDetails?: UserCompDetails;
@@ -122,7 +123,7 @@ export class CellCtrl extends BeanStub {
 
     private onCellCompAttachedFuncs: (() => void)[] = [];
 
-    constructor(column: Column, rowNode: RowNode, beans: Beans, rowCtrl: RowCtrl) {
+    constructor(column: AgColumn, rowNode: RowNode, beans: BeanCollection, rowCtrl: RowCtrl) {
         super();
         this.column = column;
         this.rowNode = rowNode;
@@ -428,6 +429,7 @@ export class CellCtrl extends BeanStub {
         return forceWrapper;
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-types
     private isIncludeControl(value: boolean | Function | undefined): boolean {
         const rowNodePinned = this.rowNode.rowPinned != null;
         const isFunc = typeof value === 'function';
@@ -932,7 +934,7 @@ export class CellCtrl extends BeanStub {
         return this.eGui;
     }
 
-    public getColSpanningList(): Column[] {
+    public getColSpanningList(): AgColumn[] {
         return this.cellPositionFeature!.getColSpanningList();
     }
 
@@ -969,7 +971,7 @@ export class CellCtrl extends BeanStub {
         return this.cellPositionFeature?.onWidthChanged();
     }
 
-    public getColumn(): Column {
+    public getColumn(): AgColumn {
         return this.column;
     }
 
@@ -1206,7 +1208,7 @@ export class CellCtrl extends BeanStub {
         return this.cellComp ? this.cellComp.getCellEditor() : null;
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         this.onCellCompAttachedFuncs = [];
         super.destroy();
     }

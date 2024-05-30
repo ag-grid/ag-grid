@@ -1,17 +1,17 @@
-import { ColDef } from './entities/colDef';
-import { Column, ColumnPinnedType } from './entities/column';
-import { ProvidedColumnGroup } from './entities/providedColumnGroup';
+import type { ColDef } from './entities/colDef';
+import type { GridOptions } from './entities/gridOptions';
 import { Events } from './eventKeys';
-import { FilterRequestSource } from './filter/filterManager';
-import { CellRange, CellRangeParams } from './interfaces/IRangeService';
-import { GridState } from './interfaces/gridState';
-import { AgChartThemeOverrides } from './interfaces/iAgChartOptions';
-import { ChartType } from './interfaces/iChartOptions';
-import { AgGridCommon } from './interfaces/iCommon';
-import { IFilterComp } from './interfaces/iFilter';
-import { IRowNode, RowPinnedType } from './interfaces/iRowNode';
-import { RowNodeTransaction } from './interfaces/rowNodeTransaction';
-import { ServerSideTransactionResult } from './interfaces/serverSideTransaction';
+import type { FilterRequestSource } from './filter/filterManager';
+import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
+import type { GridState } from './interfaces/gridState';
+import type { AgChartThemeOverrides } from './interfaces/iAgChartOptions';
+import type { ChartType } from './interfaces/iChartOptions';
+import type { Column, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
+import type { AgGridCommon } from './interfaces/iCommon';
+import type { IFilterComp } from './interfaces/iFilter';
+import type { IRowNode, RowPinnedType } from './interfaces/iRowNode';
+import type { RowNodeTransaction } from './interfaces/rowNodeTransaction';
+import type { ServerSideTransactionResult } from './interfaces/serverSideTransaction';
 
 export { Events } from './eventKeys';
 
@@ -163,7 +163,7 @@ export interface FilterModifiedEvent<TData = any, TContext = any> extends AgGrid
 }
 
 export interface FilterOpenedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
-    /** Column / OriginalColumnGroup that contains the filter */
+    /** Column / ProvidedColumnGroup that contains the filter */
     column: Column | ProvidedColumnGroup;
     /** Source of the open request */
     source: FilterRequestSource;
@@ -595,11 +595,11 @@ export interface ColumnMenuVisibleChangedEvent<TData = any, TContext = any> exte
     /**
      * Currently displayed menu/tab.
      * If filter launched from floating filter, will be `'floatingFilter'`.
+     * If using `columnMenu = 'new'` (default behaviour), will be `'columnMenu'` for the column menu,
+     * `'columnFilter'` for the column filter, and `'columnChooser'` for the column chooser.
      * If using AG Grid Enterprise and `columnMenu = 'legacy'`,
      * will be the tab `'generalMenuTab'`, `'filterMenuTab'` or `'columnsMenuTab'`.
      * If using AG Grid Community and `columnMenu = 'legacy'`, will be `'columnMenu'`.
-     * If using `columnMenu = 'new'`, will be `'columnMenu'` for the column menu,
-     * `'columnFilter'` for the column filter, and `'columnChooser'` for the column chooser.
      */
     key:
         | 'generalMenuTab'
@@ -776,8 +776,20 @@ export interface DataTypesInferredEvent<TData = any, TContext = any> extends AgG
 export interface FieldValueEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     value: any;
 }
-export interface FieldPickerValueSelectedEvent<TData = any, TContext = any> extends FieldValueEvent {
+export interface FieldPickerValueSelectedEvent extends FieldValueEvent {
     fromEnterKey: boolean;
+}
+
+export interface AlignedGridColumnEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    event: ColumnEvent;
+}
+
+export interface AlignedGridScrollEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    event: BodyScrollEvent;
+}
+
+export interface GridOptionsChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    options: GridOptions;
 }
 
 export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<string> = new Set([

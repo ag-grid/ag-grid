@@ -1,22 +1,17 @@
-import {
+import type {
     ColDef,
     ColGroupDef,
     ColumnToolPanelState,
-    Component,
-    Events,
     IColumnToolPanel,
     IToolPanelColumnCompParams,
     IToolPanelComp,
     IToolPanelParams,
-    ModuleNames,
-    ModuleRegistry,
-    _clearElement,
-    _last,
 } from '@ag-grid-community/core';
+import { Component, Events, ModuleNames, ModuleRegistry, _clearElement, _last } from '@ag-grid-community/core';
 import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from '@ag-grid-enterprise/row-grouping';
 
+import { AgPrimaryCols } from './agPrimaryCols';
 import { PivotModePanel } from './pivotModePanel';
-import { PrimaryColsPanel } from './primaryColsPanel';
 
 export interface ToolPanelColumnCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, ColumnToolPanelState>,
@@ -31,7 +26,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private childDestroyFuncs: (() => void)[] = [];
 
     private pivotModePanel: PivotModePanel;
-    private primaryColsPanel: PrimaryColsPanel;
+    private primaryColsPanel: AgPrimaryCols;
     private rowGroupDropZonePanel: RowGroupDropZonePanel;
     private valuesDropZonePanel: ValuesDropZonePanel;
     private pivotDropZonePanel: PivotDropZonePanel;
@@ -41,7 +36,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     // lazy initialise the panel
-    public setVisible(visible: boolean): void {
+    public override setVisible(visible: boolean): void {
         super.setDisplayed(visible);
         if (visible && !this.initialised) {
             this.init(this.params);
@@ -74,7 +69,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         }
 
         // DO NOT CHANGE TO createManagedBean
-        this.primaryColsPanel = this.createBean(new PrimaryColsPanel());
+        this.primaryColsPanel = this.createBean(new AgPrimaryCols());
         this.childDestroyFuncs.push(() => this.destroyBean(this.primaryColsPanel));
 
         this.primaryColsPanel.init(true, this.params, 'toolPanelUi');
@@ -221,11 +216,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private isRowGroupingModuleLoaded(): boolean {
-        return ModuleRegistry.__assertRegistered(
-            ModuleNames.RowGroupingModule,
-            'Row Grouping',
-            this.context.getGridId()
-        );
+        return ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Row Grouping', this.gridId);
     }
 
     public expandColumnGroups(groupIds?: string[]): void {
@@ -264,7 +255,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so this must be public.
-    public destroy(): void {
+    public override destroy(): void {
         this.destroyChildren();
         super.destroy();
     }

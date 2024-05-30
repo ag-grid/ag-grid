@@ -1,14 +1,14 @@
-import { UserComponentFactory } from '../components/framework/userComponentFactory';
+import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, PostConstruct } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { Events } from '../eventKeys';
-import { TooltipHideEvent, TooltipShowEvent } from '../events';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { ITooltipComp, ITooltipParams } from '../rendering/tooltipComponent';
+import type { TooltipHideEvent, TooltipShowEvent } from '../events';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { ITooltipComp, ITooltipParams } from '../rendering/tooltipComponent';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
-import { PopupService } from './popupService';
+import type { PopupService } from './popupService';
 
 export interface TooltipParentComp {
     getTooltipParams(): WithoutGridCommon<ITooltipParams>;
@@ -26,6 +26,14 @@ enum TooltipTrigger {
 }
 
 export class TooltipStateManager extends BeanStub {
+    private popupService: PopupService;
+    private userComponentFactory: UserComponentFactory;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.popupService = beans.popupService;
+        this.userComponentFactory = beans.userComponentFactory;
+    }
+
     private readonly SHOW_QUICK_TOOLTIP_DIFF = 1000;
     private readonly FADE_OUT_TOOLTIP_TIMEOUT = 1000;
     private readonly INTERACTIVE_HIDE_DELAY = 100;
@@ -34,9 +42,6 @@ export class TooltipStateManager extends BeanStub {
     // last tooltip was hidden.
     private static lastTooltipHideTime: number;
     private static isLocked = false;
-
-    @Autowired('popupService') private popupService: PopupService;
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     private showTooltipTimeoutId: number | undefined;
     private hideTooltipTimeoutId: number | undefined;
@@ -75,8 +80,7 @@ export class TooltipStateManager extends BeanStub {
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         if (this.gos.get('tooltipInteraction')) {
             this.interactionEnabled = true;
         }
@@ -120,7 +124,7 @@ export class TooltipStateManager extends BeanStub {
         return this.tooltipHideDelayOverride ?? this.getGridOptionsTooltipDelay('tooltipHideDelay')!;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         // if this component gets destroyed while tooltip is showing, need to make sure
         // we don't end with no mouseLeave event resulting in zombie tooltip
         this.setToDoNothing();
@@ -308,7 +312,7 @@ export class TooltipStateManager extends BeanStub {
             this.state !== TooltipStates.SHOWING || this.tooltipInstanceCount !== tooltipInstanceCopy;
 
         if (compNoLongerNeeded) {
-            this.getContext().destroyBean(tooltipComp);
+            this.destroyBean(tooltipComp);
             return;
         }
 
@@ -451,7 +455,7 @@ export class TooltipStateManager extends BeanStub {
 
         window.setTimeout(() => {
             tooltipPopupDestroyFunc!();
-            this.getContext().destroyBean(tooltipComp);
+            this.destroyBean(tooltipComp);
         }, delay);
 
         this.clearTooltipListeners();

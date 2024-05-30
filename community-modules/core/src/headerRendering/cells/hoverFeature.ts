@@ -1,23 +1,26 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, PostConstruct } from '../../context/context';
-import { Column } from '../../entities/column';
-import { ColumnHoverService } from '../../rendering/columnHoverService';
+import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
+import type { ColumnHoverService } from '../../rendering/columnHoverService';
 
 export class HoverFeature extends BeanStub {
-    @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
+    private columnHoverService: ColumnHoverService;
 
-    private readonly columns: Column[];
+    public wireBeans(beans: BeanCollection): void {
+        this.columnHoverService = beans.columnHoverService;
+    }
+
+    private readonly columns: AgColumn[];
 
     private element: HTMLElement;
 
-    constructor(columns: Column[], element: HTMLElement) {
+    constructor(columns: AgColumn[], element: HTMLElement) {
         super();
         this.columns = columns;
         this.element = element;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         if (this.gos.get('columnHoverHighlight')) {
             this.addMouseHoverListeners();
         }

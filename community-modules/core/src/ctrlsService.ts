@@ -1,13 +1,13 @@
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import { Bean } from './context/context';
-import { ColumnPinnedType } from './entities/column';
-import { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
-import { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
-import { GridBodyCtrl } from './gridBodyComp/gridBodyCtrl';
-import { RowContainerCtrl } from './gridBodyComp/rowContainer/rowContainerCtrl';
-import { GridCtrl } from './gridComp/gridCtrl';
-import { GridHeaderCtrl } from './headerRendering/gridHeaderCtrl';
-import { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
+import type { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
+import type { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
+import type { GridBodyCtrl } from './gridBodyComp/gridBodyCtrl';
+import type { RowContainerCtrl } from './gridBodyComp/rowContainer/rowContainerCtrl';
+import type { GridCtrl } from './gridComp/gridCtrl';
+import type { GridHeaderCtrl } from './headerRendering/gridHeaderCtrl';
+import type { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
+import type { ColumnPinnedType } from './interfaces/iColumn';
 
 // for all controllers that are singletons, they can register here so other parts
 // of the application can access them.
@@ -47,9 +47,8 @@ interface ReadyParams {
 
 type CtrlType = keyof ReadyParams;
 
-@Bean(CtrlsService.NAME)
-export class CtrlsService extends BeanStub {
-    public static readonly NAME = 'ctrlsService';
+export class CtrlsService extends BeanStub implements NamedBean {
+    beanName = 'ctrlsService' as const;
 
     private params: ReadyParams = {} as ReadyParams;
     private ready = false;

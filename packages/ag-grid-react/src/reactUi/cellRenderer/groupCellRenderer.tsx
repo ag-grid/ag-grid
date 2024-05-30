@@ -1,10 +1,3 @@
-import {
-    GroupCellRendererCtrl,
-    GroupCellRendererParams,
-    IGroupCellRenderer,
-    UserCompDetails,
-    _escapeString,
-} from 'ag-grid-community';
 import React, {
     forwardRef,
     useCallback,
@@ -15,6 +8,9 @@ import React, {
     useRef,
     useState,
 } from 'react';
+
+import type { GroupCellRendererParams, IGroupCellRenderer, UserCompDetails } from 'ag-grid-community';
+import { GroupCellRendererCtrl, _escapeString } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';

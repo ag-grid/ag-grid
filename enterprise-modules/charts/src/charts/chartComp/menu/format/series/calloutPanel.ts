@@ -1,25 +1,31 @@
-import { AgGroupComponentParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
+import { Component } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartTranslationService } from '../../../services/chartTranslationService';
-import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import { AgSlider } from '../../../../../widgets/agSlider';
+import type { ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class CalloutPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="calloutGroup">
-                <ag-slider ref="calloutLengthSlider"></ag-slider>
-                <ag-slider ref="calloutStrokeWidthSlider"></ag-slider>
-                <ag-slider ref="labelOffsetSlider"></ag-slider>
+            <ag-group-component data-ref="calloutGroup">
+                <ag-slider data-ref="calloutLengthSlider"></ag-slider>
+                <ag-slider data-ref="calloutStrokeWidthSlider"></ag-slider>
+                <ag-slider data-ref="labelOffsetSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
 
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
     constructor(private readonly chartMenuUtils: ChartMenuParamsFactory) {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const calloutGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
@@ -28,7 +34,7 @@ export class CalloutPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(CalloutPanel.TEMPLATE, {
+        this.setTemplate(CalloutPanel.TEMPLATE, [AgGroupComponent, AgSlider], {
             calloutGroup: calloutGroupParams,
             calloutLengthSlider: this.chartMenuUtils.getDefaultSliderParams('calloutLine.length', 'length', 40),
             calloutStrokeWidthSlider: this.chartMenuUtils.getDefaultSliderParams(

@@ -1,7 +1,8 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { PaginationProxy } from '../pagination/paginationProxy';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { PaginationProxy } from '../pagination/paginationProxy';
 
 interface TaskItem {
     task: () => void;
@@ -14,10 +15,16 @@ interface TaskList {
     sorted: boolean;
 }
 
-@Bean('animationFrameService')
-export class AnimationFrameService extends BeanStub {
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+export class AnimationFrameService extends BeanStub implements NamedBean {
+    beanName = 'animationFrameService' as const;
+
+    private ctrlsService: CtrlsService;
+    private paginationProxy: PaginationProxy;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.ctrlsService = beans.ctrlsService;
+        this.paginationProxy = beans.paginationProxy;
+    }
 
     // p1 and p2 are create tasks are to do with row and cell creation.
     // for them we want to execute according to row order, so we use
@@ -56,8 +63,7 @@ export class AnimationFrameService extends BeanStub {
         this.lastScrollTop = scrollTop;
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.useAnimationFrame = !this.gos.get('suppressAnimationFrame');
     }
 

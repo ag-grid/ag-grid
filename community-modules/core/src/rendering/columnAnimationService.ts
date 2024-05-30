@@ -1,24 +1,29 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 
-@Bean('columnAnimationService')
-export class ColumnAnimationService extends BeanStub {
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+export class ColumnAnimationService extends BeanStub implements NamedBean {
+    beanName = 'columnAnimationService' as const;
+
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private gridBodyCtrl: GridBodyCtrl;
 
-    private executeNextFuncs: Function[] = [];
-    private executeLaterFuncs: Function[] = [];
+    private executeNextFuncs: ((...args: any[]) => any)[] = [];
+    private executeLaterFuncs: ((...args: any[]) => any)[] = [];
 
     private active = false;
     private suppressAnimation = false;
 
     private animationThreadCount = 0;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.ctrlsService.whenReady((p) => (this.gridBodyCtrl = p.gridBodyCtrl));
     }
 
@@ -60,7 +65,7 @@ export class ColumnAnimationService extends BeanStub {
         });
     }
 
-    public executeNextVMTurn(func: Function): void {
+    public executeNextVMTurn(func: (...args: any[]) => any): void {
         if (this.active) {
             this.executeNextFuncs.push(func);
         } else {
@@ -68,7 +73,7 @@ export class ColumnAnimationService extends BeanStub {
         }
     }
 
-    public executeLaterVMTurn(func: Function): void {
+    public executeLaterVMTurn(func: (...args: any[]) => any): void {
         if (this.active) {
             this.executeLaterFuncs.push(func);
         } else {
@@ -97,7 +102,7 @@ export class ColumnAnimationService extends BeanStub {
             return;
         }
 
-        const runFuncs = (queue: Function[]) => {
+        const runFuncs = (queue: ((...args: any[]) => any)[]) => {
             while (queue.length) {
                 const func = queue.pop();
                 if (func) {

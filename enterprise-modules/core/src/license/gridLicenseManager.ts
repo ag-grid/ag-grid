@@ -1,12 +1,18 @@
-import { Bean, BeanStub, PreConstruct } from '@ag-grid-community/core';
+import type { NamedBean } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
-import { ILicenseManager, LicenseManager } from './shared/licenseManager';
+import type { ILicenseManager } from './shared/licenseManager';
+import { LicenseManager } from './shared/licenseManager';
 
-@Bean('licenseManager')
-export class GridLicenseManager extends BeanStub {
+export class GridLicenseManager extends BeanStub implements NamedBean {
+    beanName = 'licenseManager' as const;
+
     private licenseManager: LicenseManager;
 
-    @PreConstruct
+    public postConstruct(): void {
+        this.validateLicense();
+    }
+
     public validateLicense(): void {
         this.licenseManager = new LicenseManager(this.gos.getDocument());
         this.licenseManager.validateLicense();

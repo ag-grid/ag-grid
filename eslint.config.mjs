@@ -9,4 +9,11 @@ export default [
     {
         ignores: ['node_modules/', 'dist/'],
     },
+    {
+        rules: {
+            '@typescript-eslint/no-explicit-any': 'off',
+            '@typescript-eslint/consistent-type-imports': 'error',
+            '@typescript-eslint/no-this-alias': 'off',
+        },
+    },
 ];

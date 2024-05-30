@@ -1,37 +1,40 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
+    AgColumn,
+    BeanCollection,
     ColDef,
     ColGroupDef,
-    Column,
     ColumnModel,
     ColumnNameService,
     FuncColsService,
     IPivotColDefService,
-    PostConstruct,
-    _cloneObject,
-    _iterateObject,
+    NamedBean,
 } from '@ag-grid-community/core';
+import { BeanStub, _cloneObject, _iterateObject } from '@ag-grid-community/core';
 
 export interface PivotColDefServiceResult {
     pivotColumnGroupDefs: (ColDef | ColGroupDef)[];
     pivotColumnDefs: ColDef[];
 }
 
-@Bean('pivotColDefService')
-export class PivotColDefService extends BeanStub implements IPivotColDefService {
+export class PivotColDefService extends BeanStub implements NamedBean, IPivotColDefService {
+    beanName = 'pivotColDefService' as const;
+
     public static PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+    private columnNameService: ColumnNameService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+        this.columnNameService = beans.columnNameService;
+    }
 
     private fieldSeparator: string;
     private pivotDefaultExpanded: number;
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         const getFieldSeparator = () => this.gos.get('serverSidePivotResultFieldSeparator') ?? '_';
         this.fieldSeparator = getFieldSeparator();
         this.addManagedPropertyListener('serverSidePivotResultFieldSeparator', () => {
@@ -101,7 +104,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         uniqueValue: any,
         pivotKeys: string[],
         maxDepth: number,
-        primaryPivotColumns: Column[]
+        primaryPivotColumns: AgColumn[]
     ): ColGroupDef[] | ColDef[] {
         const measureColumns = this.funcColsService.getValueColumns();
         if (index >= maxDepth) {
@@ -257,7 +260,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
     private recursivelyAddPivotTotal(
         groupDef: ColGroupDef | ColDef,
         pivotColumnDefs: ColDef[],
-        valueColumn: Column,
+        valueColumn: AgColumn,
         insertAfter: boolean
     ): string[] | null {
         const group = groupDef as ColGroupDef;
@@ -319,7 +322,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         }
     }
 
-    private extractColIdsForValueColumn(groupDef: ColGroupDef | ColDef, valueColumn: Column): string[] {
+    private extractColIdsForValueColumn(groupDef: ColGroupDef | ColDef, valueColumn: AgColumn): string[] {
         const group = groupDef as ColGroupDef;
         if (!group.children) {
             const colDef = group as ColDef;
@@ -339,7 +342,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
     private createRowGroupTotal(
         parentChildren: (ColGroupDef | ColDef)[],
         pivotColumnDefs: ColDef[],
-        valueColumn: Column,
+        valueColumn: AgColumn,
         colIds: string[],
         insertAfter: boolean,
         addGroup: boolean
@@ -371,7 +374,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
     }
 
     private createColDef(
-        valueColumn: Column | null,
+        valueColumn: AgColumn | null,
         headerName: any,
         pivotKeys: string[] | undefined,
         totalColumn: boolean = false
@@ -457,7 +460,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
     }
 
     private merge(m1: Map<string, string[]>, m2: Map<any, any>) {
-        m2.forEach((value, key, map) => {
+        m2.forEach((value, key) => {
             const existingList = m1.has(key) ? m1.get(key) : [];
             const updatedList = [...existingList!, ...value];
             m1.set(key, updatedList);
@@ -506,7 +509,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
             depth: number
         ): ColDef | ColGroupDef => {
             const children: (ColDef | ColGroupDef)[] = [];
-            for (let key in uniqueValues) {
+            for (const key in uniqueValues) {
                 const item = uniqueValues[key];
                 const child = uniqueValuesToGroups(`${id}${this.fieldSeparator}${key}`, key, item, depth + 1);
                 children.push(child);
@@ -551,7 +554,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         };
 
         const res: (ColDef | ColGroupDef)[] = [];
-        for (let key in uniqueValues) {
+        for (const key in uniqueValues) {
             const item = uniqueValues[key];
             const col = uniqueValuesToGroups(key, key, item, 0);
             res.push(col);

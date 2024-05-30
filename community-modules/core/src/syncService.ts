@@ -1,27 +1,35 @@
-import { ColumnModel, convertSourceType } from './columns/columnModel';
+import type { ColumnModel } from './columns/columnModel';
+import { convertSourceType } from './columns/columnModel';
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import { Autowired, Bean, PostConstruct } from './context/context';
-import { CtrlsService } from './ctrlsService';
-import { ColDef, ColGroupDef } from './entities/colDef';
+import type { BeanCollection } from './context/context';
+import type { CtrlsService } from './ctrlsService';
+import type { ColDef, ColGroupDef } from './entities/colDef';
 import { Events } from './eventKeys';
-import { GridReadyEvent } from './events';
-import { PropertyValueChangedEvent } from './gridOptionsService';
-import { WithoutGridCommon } from './interfaces/iCommon';
-import { IRowModel } from './interfaces/iRowModel';
+import type { GridReadyEvent } from './events';
+import type { PropertyValueChangedEvent } from './gridOptionsService';
+import type { WithoutGridCommon } from './interfaces/iCommon';
+import type { IRowModel } from './interfaces/iRowModel';
 import { Logger } from './logger';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 
-@Bean('syncService')
-export class SyncService extends BeanStub {
-    @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('rowModel') private readonly rowModel: IRowModel;
+export class SyncService extends BeanStub implements NamedBean {
+    beanName = 'syncService' as const;
+
+    private ctrlsService: CtrlsService;
+    private columnModel: ColumnModel;
+    private rowModel: IRowModel;
+
+    public wireBeans(beans: BeanCollection) {
+        this.ctrlsService = beans.ctrlsService;
+        this.columnModel = beans.columnModel;
+        this.rowModel = beans.rowModel;
+    }
 
     private waitingForColumns: boolean = false;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.addManagedPropertyListener('columnDefs', (event) => this.setColumnDefs(event));
     }
 
@@ -45,7 +53,7 @@ export class SyncService extends BeanStub {
 
     private gridReady(): void {
         this.dispatchGridReadyEvent();
-        const isEnterprise = ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.context.getGridId());
+        const isEnterprise = ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.gridId);
         const logger = new Logger('AG Grid', () => this.gos.get('debug'));
         logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
     }

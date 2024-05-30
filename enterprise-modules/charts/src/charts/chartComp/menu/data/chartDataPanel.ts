@@ -1,20 +1,12 @@
-import {
-    AgToggleButton,
-    Autowired,
-    ChartDataPanel as ChartDataPanelType,
-    ChartType,
-    Component,
-    PostConstruct,
-    _setDisplayed,
-    _warnOnce,
-} from '@ag-grid-community/core';
+import type { BeanCollection, ChartDataPanel as ChartDataPanelType, ChartType } from '@ag-grid-community/core';
+import { AgToggleButton, Component, _setDisplayed, _warnOnce } from '@ag-grid-community/core';
 
-import { ChartService } from '../../../chartService';
+import type { ChartService } from '../../../chartService';
 import { ChartController } from '../../chartController';
-import { ColState } from '../../model/chartDataModel';
-import { ChartTranslationService } from '../../services/chartTranslationService';
+import type { ColState } from '../../model/chartDataModel';
+import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { getMaxNumCategories, getMaxNumSeries, supportsInvertedCategorySeries } from '../../utils/seriesTypeMapper';
-import { ChartMenuContext } from '../chartMenuContext';
+import type { ChartMenuContext } from '../chartMenuContext';
 import { CategoriesDataPanel } from './categoriesDataPanel';
 import { ChartSpecificDataPanel } from './chartSpecificDataPanel';
 import { SeriesChartTypePanel } from './seriesChartTypePanel';
@@ -32,8 +24,13 @@ const DefaultDataPanelDef: ChartDataPanelType = {
 export class ChartDataPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper ag-scrollable-container"></div>`;
 
-    @Autowired('chartTranslationService') protected readonly chartTranslationService: ChartTranslationService;
-    @Autowired('chartService') private chartService: ChartService;
+    protected chartTranslationService: ChartTranslationService;
+    private chartService: ChartService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+        this.chartService = beans.chartService;
+    }
 
     private readonly chartController: ChartController;
     private chartType?: ChartType;
@@ -52,8 +49,7 @@ export class ChartDataPanel extends Component {
         this.chartController = chartMenuContext.chartController;
     }
 
-    @PostConstruct
-    public init() {
+    public postConstruct() {
         this.createSwitchCategorySeriesToggle();
         this.isSwitchCategorySeriesToggled = this.chartController.isCategorySeriesSwitched();
 
@@ -70,7 +66,7 @@ export class ChartDataPanel extends Component {
         );
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.clearPanelComponents();
         super.destroy();
     }

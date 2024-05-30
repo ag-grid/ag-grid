@@ -1,4 +1,4 @@
-import { Module, ModuleValidationInvalidResult } from '../interfaces/iModule';
+import type { Module, ModuleValidationInvalidResult } from '../interfaces/iModule';
 import { _doOnce } from '../utils/function';
 import { _values } from '../utils/generic';
 import { ModuleNames } from './moduleNames';

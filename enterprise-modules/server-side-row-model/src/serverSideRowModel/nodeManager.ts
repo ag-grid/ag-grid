@@ -1,7 +1,9 @@
-import { Bean, PreDestroy, RowNode } from '@ag-grid-community/core';
+import type { NamedBean, RowNode } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
-@Bean('ssrmNodeManager')
-export class NodeManager {
+export class NodeManager extends BeanStub implements NamedBean {
+    beanName = 'ssrmNodeManager' as const;
+
     private rowNodes: { [id: string]: RowNode | undefined } = {};
 
     public addRowNode(rowNode: RowNode): void {
@@ -24,8 +26,13 @@ export class NodeManager {
         }
     }
 
-    @PreDestroy
+    public override destroy(): void {
+        this.clear();
+        super.destroy();
+    }
+
     public clear(): void {
         this.rowNodes = {};
+        super.destroy();
     }
 }

@@ -1,21 +1,16 @@
-import {
-    Autowired,
-    Events,
-    IClientSideRowModel,
-    IRowModel,
-    IStatusPanelComp,
-    PostConstruct,
-    _formatNumberCommas,
-    _warnOnce,
-} from '@ag-grid-community/core';
+import type { BeanCollection, IClientSideRowModel, IRowModel, IStatusPanelComp } from '@ag-grid-community/core';
+import { Events, _formatNumberCommas, _warnOnce } from '@ag-grid-community/core';
 
-import { NameValueComp } from './nameValueComp';
+import { AgNameValue } from './agNameValue';
 
-export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
-    @Autowired('rowModel') private rowModel: IRowModel;
+export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
+    private rowModel: IRowModel;
 
-    @PostConstruct
-    protected postConstruct(): void {
+    public wireBeans(beans: BeanCollection) {
+        this.rowModel = beans.rowModel;
+    }
+
+    public postConstruct(): void {
         this.setLabel('totalRows', 'Total Rows');
 
         // this component is only really useful with client side row model
@@ -54,7 +49,7 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 }

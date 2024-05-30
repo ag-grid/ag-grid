@@ -1,31 +1,32 @@
-import { CellNavigationService } from '../cellNavigationService';
-import { ColumnModel } from '../columns/columnModel';
-import { VisibleColsService } from '../columns/visibleColsService';
+import type { CellNavigationService } from '../cellNavigationService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { KeyCode } from '../constants/keyCode';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { CellPosition } from '../entities/cellPositionUtils';
-import { Column } from '../entities/column';
-import { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { AgColumn } from '../entities/agColumn';
+import type { CellPosition } from '../entities/cellPositionUtils';
+import type { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
 import { Events } from '../eventKeys';
-import { FullWidthRowFocusedEvent } from '../events';
-import { FocusService } from '../focusService';
-import { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
-import { IRangeService } from '../interfaces/IRangeService';
-import { NavigateToNextCellParams, TabToNextCellParams } from '../interfaces/iCallbackParams';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { IRowModel } from '../interfaces/iRowModel';
-import { PaginationProxy } from '../pagination/paginationProxy';
-import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
+import type { FullWidthRowFocusedEvent } from '../events';
+import type { FocusService } from '../focusService';
+import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
+import type { IRangeService } from '../interfaces/IRangeService';
+import type { NavigateToNextCellParams, TabToNextCellParams } from '../interfaces/iCallbackParams';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { PaginationProxy } from '../pagination/paginationProxy';
+import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import { RowCtrl } from '../rendering/row/rowCtrl';
-import { RowRenderer } from '../rendering/rowRenderer';
+import type { RowRenderer } from '../rendering/rowRenderer';
 import { _last } from '../utils/array';
 import { _throttle, _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
-import { GridBodyCtrl } from './gridBodyCtrl';
-import { MouseEventService } from './mouseEventService';
+import type { GridBodyCtrl } from './gridBodyCtrl';
+import type { MouseEventService } from './mouseEventService';
 
 interface NavigateParams {
     /** The rowIndex to vertically scroll to. */
@@ -33,29 +34,45 @@ interface NavigateParams {
     /** The position to put scroll index. */
     scrollType: 'top' | 'bottom' | null;
     /**  The column to horizontally scroll to. */
-    scrollColumn: Column | null;
+    scrollColumn: AgColumn | null;
     /** For page up/down, we want to scroll to one row/column but focus another (ie. scrollRow could be stub). */
     focusIndex: number;
-    focusColumn: Column;
+    focusColumn: AgColumn;
     isAsync?: boolean;
 }
 
-@Bean('navigationService')
-export class NavigationService extends BeanStub {
-    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
-    @Autowired('rowRenderer') public rowRenderer: RowRenderer;
-    @Autowired('headerNavigationService') public headerNavigationService: HeaderNavigationService;
-    @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
-    @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
+export class NavigationService extends BeanStub implements NamedBean {
+    beanName = 'navigationService' as const;
 
-    @Optional('rangeService') private rangeService?: IRangeService;
+    private mouseEventService: MouseEventService;
+    private paginationProxy: PaginationProxy;
+    private focusService: FocusService;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private rowModel: IRowModel;
+    private ctrlsService: CtrlsService;
+    private rowRenderer: RowRenderer;
+    private headerNavigationService: HeaderNavigationService;
+    private rowPositionUtils: RowPositionUtils;
+    private cellNavigationService: CellNavigationService;
+    private pinnedRowModel: PinnedRowModel;
+    private rangeService?: IRangeService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.mouseEventService = beans.mouseEventService;
+        this.paginationProxy = beans.paginationProxy;
+        this.focusService = beans.focusService;
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.rowModel = beans.rowModel;
+        this.ctrlsService = beans.ctrlsService;
+        this.rowRenderer = beans.rowRenderer;
+        this.headerNavigationService = beans.headerNavigationService;
+        this.rowPositionUtils = beans.rowPositionUtils;
+        this.cellNavigationService = beans.cellNavigationService;
+        this.pinnedRowModel = beans.pinnedRowModel;
+        this.rangeService = beans.rangeService;
+    }
 
     private gridBodyCon: GridBodyCtrl;
 
@@ -65,8 +82,7 @@ export class NavigationService extends BeanStub {
         this.onPageUp = _throttle(this.onPageUp, 100);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.ctrlsService.whenReady((p) => {
             this.gridBodyCon = p.gridBodyCtrl;
         });
@@ -216,9 +232,11 @@ export class NavigationService extends BeanStub {
         const currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex);
 
         const rowPixelDiff = up
-            ? currentRowNode?.rowHeight! - pixelsInOnePage - pagingPixelOffset
+            ? // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+              currentRowNode?.rowHeight! - pixelsInOnePage - pagingPixelOffset
             : pixelsInOnePage - pagingPixelOffset;
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
         const nextCellPixel = currentRowNode?.rowTop! + rowPixelDiff;
 
         let focusIndex = this.paginationProxy.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
@@ -258,7 +276,7 @@ export class NavigationService extends BeanStub {
             scrollType,
             scrollColumn: null,
             focusIndex,
-            focusColumn: gridCell.column,
+            focusColumn: gridCell.column as AgColumn,
         });
     }
 
@@ -275,7 +293,7 @@ export class NavigationService extends BeanStub {
             scrollType: up ? 'bottom' : 'top',
             scrollColumn: null,
             focusIndex: scrollIndex,
-            focusColumn: gridCell.column,
+            focusColumn: gridCell.column as AgColumn,
         });
         setTimeout(() => {
             const focusIndex = this.getNextFocusIndexForAutoHeight(gridCell, up);
@@ -285,7 +303,7 @@ export class NavigationService extends BeanStub {
                 scrollType: up ? 'bottom' : 'top',
                 scrollColumn: null,
                 focusIndex: focusIndex,
-                focusColumn: gridCell.column,
+                focusColumn: gridCell.column as AgColumn,
                 isAsync: true,
             });
         }, 50);
@@ -347,7 +365,8 @@ export class NavigationService extends BeanStub {
 
     private onCtrlUpDownLeftRight(key: string, gridCell: CellPosition): void {
         const cellToFocus = this.cellNavigationService.getNextCellToFocus(key, gridCell, true)!;
-        const { rowIndex, column } = cellToFocus;
+        const { rowIndex } = cellToFocus;
+        const column = cellToFocus.column as AgColumn;
 
         this.navigateTo({
             scrollIndex: rowIndex,
@@ -362,7 +381,7 @@ export class NavigationService extends BeanStub {
     // same cell into view (which means either scroll all the way up, or all the way down).
     private onHomeOrEndKey(key: string): void {
         const homeKey = key === KeyCode.PAGE_HOME;
-        const allColumns: Column[] = this.visibleColsService.getAllCols();
+        const allColumns: AgColumn[] = this.visibleColsService.getAllCols();
         const columnToSelect = homeKey ? allColumns[0] : _last(allColumns);
         const scrollIndex = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
 
@@ -720,7 +739,7 @@ export class NavigationService extends BeanStub {
             return null;
         }
 
-        return rowCtrl.getCellCtrl(cellPosition.column);
+        return rowCtrl.getCellCtrl(cellPosition.column as AgColumn);
     }
 
     private lookupRowNodeForCell(cell: CellPosition) {

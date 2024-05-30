@@ -32,7 +32,6 @@ const gridOptions: GridOptions = {
             cellEditorParams: {
                 values: ['Male', 'Female'],
                 cellRenderer: GenderCellRenderer,
-                cellEditorPopup: true,
             },
         },
         {

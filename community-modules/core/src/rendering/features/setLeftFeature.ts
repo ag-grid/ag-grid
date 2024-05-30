@@ -1,16 +1,14 @@
 import { BeanStub } from '../../context/beanStub';
-import { PostConstruct } from '../../context/context';
-import { Column } from '../../entities/column';
-import { ColumnGroup } from '../../entities/columnGroup';
+import type { BeanCollection } from '../../context/context';
+import { AgColumn } from '../../entities/agColumn';
+import type { AgColumnGroup } from '../../entities/agColumnGroup';
+import { isColumnGroup } from '../../entities/agColumnGroup';
 import { Events } from '../../eventKeys';
-import { IHeaderColumn } from '../../interfaces/iHeaderColumn';
 import { _setAriaColSpan } from '../../utils/aria';
 import { _last } from '../../utils/array';
 import { _exists } from '../../utils/generic';
-import { Beans } from '../beans';
 
 export class SetLeftFeature extends BeanStub {
-    private readonly columnOrGroup: IHeaderColumn;
     private eCell: HTMLElement;
     private ariaEl: HTMLElement;
 
@@ -18,11 +16,16 @@ export class SetLeftFeature extends BeanStub {
 
     // if we are spanning columns, this tells what columns,
     // otherwise this is empty
-    private colsSpanning: Column[] | undefined;
+    private colsSpanning: AgColumn[] | undefined;
 
-    private beans: Beans;
+    private beans: BeanCollection;
 
-    constructor(columnOrGroup: IHeaderColumn, eCell: HTMLElement, beans: Beans, colsSpanning?: Column[]) {
+    constructor(
+        private readonly columnOrGroup: AgColumn | AgColumnGroup,
+        eCell: HTMLElement,
+        beans: BeanCollection,
+        colsSpanning?: AgColumn[]
+    ) {
         super();
         this.columnOrGroup = columnOrGroup;
         this.eCell = eCell;
@@ -31,21 +34,20 @@ export class SetLeftFeature extends BeanStub {
         this.beans = beans;
     }
 
-    public setColsSpanning(colsSpanning: Column[]): void {
+    public setColsSpanning(colsSpanning: AgColumn[]): void {
         this.colsSpanning = colsSpanning;
         this.onLeftChanged();
     }
 
-    public getColumnOrGroup(): IHeaderColumn {
+    public getColumnOrGroup(): AgColumn | AgColumnGroup {
         if (this.beans.gos.get('enableRtl') && this.colsSpanning) {
             return _last(this.colsSpanning);
         }
         return this.columnOrGroup;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.addManagedListener(this.columnOrGroup, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
+    public postConstruct(): void {
+        this.addManagedListener(this.columnOrGroup, AgColumn.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.setLeftFirstTime();
 
         // when in print layout, the left position is also dependent on the width of the pinned sections.
@@ -105,7 +107,7 @@ export class SetLeftFeature extends BeanStub {
         this.setLeft(this.actualLeft);
     }
 
-    private modifyLeftForPrintLayout(colOrGroup: IHeaderColumn, leftPosition: number): number {
+    private modifyLeftForPrintLayout(colOrGroup: AgColumn | AgColumnGroup, leftPosition: number): number {
         const printLayout = this.beans.gos.isDomLayout('print');
 
         if (!printLayout) {
@@ -135,13 +137,8 @@ export class SetLeftFeature extends BeanStub {
             this.eCell.style.left = `${value}px`;
         }
 
-        let indexColumn: Column;
-
-        if (this.columnOrGroup instanceof Column) {
-            indexColumn = this.columnOrGroup;
-        } else {
-            const columnGroup = this.columnOrGroup as ColumnGroup;
-            const children = columnGroup.getLeafColumns();
+        if (isColumnGroup(this.columnOrGroup)) {
+            const children = this.columnOrGroup.getLeafColumns();
 
             if (!children.length) {
                 return;
@@ -150,8 +147,6 @@ export class SetLeftFeature extends BeanStub {
             if (children.length > 1) {
                 _setAriaColSpan(this.ariaEl, children.length);
             }
-
-            indexColumn = children[0];
         }
     }
 }

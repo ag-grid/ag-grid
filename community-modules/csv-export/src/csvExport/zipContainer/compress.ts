@@ -1,4 +1,4 @@
-export const compressBlob = async (
+const compressBlob = async (
     data: Blob
 ): Promise<{
     size: number;

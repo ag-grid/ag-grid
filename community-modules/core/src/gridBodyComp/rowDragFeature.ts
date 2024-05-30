@@ -1,27 +1,26 @@
 import { AutoScrollService } from '../autoScrollService';
-import { ColumnModel } from '../columns/columnModel';
-import { FuncColsService } from '../columns/funcColsService';
+import type { FuncColsService } from '../columns/funcColsService';
 import { VerticalDirection } from '../constants/direction';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Optional, PostConstruct } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { DragAndDropService, DragSourceType, DraggingEvent, DropTarget } from '../dragAndDrop/dragAndDropService';
-import { RowNode } from '../entities/rowNode';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { DraggingEvent, DropTarget } from '../dragAndDrop/dragAndDropService';
+import { DragAndDropService, DragSourceType } from '../dragAndDrop/dragAndDropService';
+import type { RowNode } from '../entities/rowNode';
 import { Events } from '../eventKeys';
-import { RowDragEndEvent, RowDragEnterEvent, RowDragEvent, RowDragLeaveEvent, RowDragMoveEvent } from '../events';
-import { FilterManager } from '../filter/filterManager';
-import { FocusService } from '../focusService';
-import { IRangeService } from '../interfaces/IRangeService';
-import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import { IRowModel } from '../interfaces/iRowModel';
+import type { RowDragEndEvent, RowDragEnterEvent, RowDragEvent, RowDragLeaveEvent, RowDragMoveEvent } from '../events';
+import type { FilterManager } from '../filter/filterManager';
+import type { FocusService } from '../focusService';
+import type { IRangeService } from '../interfaces/IRangeService';
+import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { IRowModel } from '../interfaces/iRowModel';
 import { RowHighlightPosition } from '../interfaces/iRowNode';
-import { ISelectionService } from '../interfaces/iSelectionService';
-import { PaginationProxy } from '../pagination/paginationProxy';
-import { SortController } from '../sortController';
+import type { ISelectionService } from '../interfaces/iSelectionService';
+import type { PaginationProxy } from '../pagination/paginationProxy';
+import type { SortController } from '../sortController';
 import { _last } from '../utils/array';
 import { _warnOnce } from '../utils/function';
-import { _missingOrEmpty } from '../utils/generic';
-import { MouseEventService } from './mouseEventService';
+import type { MouseEventService } from './mouseEventService';
 
 export interface RowDropZoneEvents {
     /** Callback function that will be executed when the rowDrag enters the target. */
@@ -43,20 +42,31 @@ export interface RowDropZoneParams extends RowDropZoneEvents {
 }
 
 export class RowDragFeature extends BeanStub implements DropTarget {
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    // this feature is only created when row model is ClientSide, so we can type it as ClientSide
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('selectionService') private selectionService: ISelectionService;
-    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
+    private dragAndDropService: DragAndDropService;
+    private rowModel: IRowModel;
+    private paginationProxy: PaginationProxy;
+    private focusService: FocusService;
+    private sortController: SortController;
+    private filterManager: FilterManager;
+    private selectionService: ISelectionService;
+    private mouseEventService: MouseEventService;
+    private ctrlsService: CtrlsService;
+    private funcColsService: FuncColsService;
+    private rangeService?: IRangeService;
 
-    @Optional('rangeService') private rangeService?: IRangeService;
+    public wireBeans(beans: BeanCollection): void {
+        this.dragAndDropService = beans.dragAndDropService;
+        this.rowModel = beans.rowModel;
+        this.paginationProxy = beans.paginationProxy;
+        this.focusService = beans.focusService;
+        this.sortController = beans.sortController;
+        this.filterManager = beans.filterManager;
+        this.selectionService = beans.selectionService;
+        this.mouseEventService = beans.mouseEventService;
+        this.ctrlsService = beans.ctrlsService;
+        this.funcColsService = beans.funcColsService;
+        this.rangeService = beans.rangeService;
+    }
 
     private clientSideRowModel: IClientSideRowModel;
     private eContainer: HTMLElement;
@@ -68,8 +78,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.eContainer = eContainer;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         if (this.gos.isRowModelType('clientSide')) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }

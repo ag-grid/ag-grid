@@ -1,11 +1,13 @@
-import { ColumnModel } from '../columns/columnModel';
-import { ShowRowGroupColsService } from '../columns/showRowGroupColsService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { ShowRowGroupColsService } from '../columns/showRowGroupColsService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
-import { Column } from '../entities/column';
-import { RowNode } from '../entities/rowNode';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { RowNode } from '../entities/rowNode';
+import type { Column } from '../interfaces/iColumn';
 import { _defaultComparator } from '../utils/generic';
-import { ValueService } from '../valueService/valueService';
+import type { ValueService } from '../valueService/valueService';
 
 export interface SortOption {
     sort: 'asc' | 'desc';
@@ -19,17 +21,23 @@ export interface SortedRowNode {
 
 // this logic is used by both SSRM and CSRM
 
-@Bean('rowNodeSorter')
-export class RowNodeSorter extends BeanStub {
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
+export class RowNodeSorter extends BeanStub implements NamedBean {
+    beanName = 'rowNodeSorter' as const;
+
+    private valueService: ValueService;
+    private columnModel: ColumnModel;
+    private showRowGroupColsService: ShowRowGroupColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.valueService = beans.valueService;
+        this.columnModel = beans.columnModel;
+        this.showRowGroupColsService = beans.showRowGroupColsService;
+    }
 
     private isAccentedSort: boolean;
     private primaryColumnsSortGroups: boolean;
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         this.isAccentedSort = this.gos.get('accentedSort');
         this.primaryColumnsSortGroups = this.gos.isColumnsSortingCoupledToGroup();
 
@@ -61,8 +69,8 @@ export class RowNodeSorter extends BeanStub {
             const sortOption = sortOptions[i];
             const isDescending = sortOption.sort === 'desc';
 
-            const valueA: any = this.getValue(nodeA, sortOption.column);
-            const valueB: any = this.getValue(nodeB, sortOption.column);
+            const valueA: any = this.getValue(nodeA, sortOption.column as AgColumn);
+            const valueB: any = this.getValue(nodeB, sortOption.column as AgColumn);
 
             let comparatorResult: number;
             const providedComparator = this.getComparator(sortOption, nodeA);
@@ -116,7 +124,7 @@ export class RowNodeSorter extends BeanStub {
         return primaryColumn.getColDef().comparator;
     }
 
-    private getValue(node: RowNode, column: Column): any {
+    private getValue(node: RowNode, column: AgColumn): any {
         if (!this.primaryColumnsSortGroups) {
             return this.valueService.getValue(column, node, false, false);
         }

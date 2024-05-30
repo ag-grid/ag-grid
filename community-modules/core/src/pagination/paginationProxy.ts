@@ -1,15 +1,22 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
-import { RowNode } from '../entities/rowNode';
-import { RowPosition } from '../entities/rowPositionUtils';
-import { Events, ModelUpdatedEvent, PaginationChangedEvent } from '../events';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { IRowModel, RowBounds, RowModelType } from '../interfaces/iRowModel';
+import type { BeanCollection } from '../context/context';
+import type { RowNode } from '../entities/rowNode';
+import type { RowPosition } from '../entities/rowPositionUtils';
+import type { ModelUpdatedEvent, PaginationChangedEvent } from '../events';
+import { Events } from '../events';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IRowModel, RowBounds, RowModelType } from '../interfaces/iRowModel';
 import { _exists, _missing } from '../utils/generic';
 
-@Bean('paginationProxy')
-export class PaginationProxy extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
+export class PaginationProxy extends BeanStub implements NamedBean {
+    beanName = 'paginationProxy' as const;
+
+    private rowModel: IRowModel;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.rowModel = beans.rowModel;
+    }
 
     private active: boolean;
     private paginateChildRows: boolean;
@@ -36,8 +43,7 @@ export class PaginationProxy extends BeanStub {
 
     private masterRowCount: number = 0;
 
-    @PostConstruct
-    private postConstruct() {
+    public postConstruct() {
         this.active = this.gos.get('pagination');
         this.pageSizeFromGridOptions = this.gos.get('paginationPageSize');
         this.paginateChildRows = this.isPaginateChildRows();
@@ -53,7 +59,8 @@ export class PaginationProxy extends BeanStub {
         startPixel: number,
         endPixel: number,
         startLimitIndex: number,
-        endLimitIndex: number
+        endLimitIndex: number,
+        force = false
     ): boolean {
         const res = this.rowModel.ensureRowHeightsValid(
             startPixel,
@@ -61,7 +68,7 @@ export class PaginationProxy extends BeanStub {
             this.getPageFirstRow(),
             this.getPageLastRow()
         );
-        if (res) {
+        if (res || force) {
             this.calculatePages();
         }
         return res;

@@ -1,34 +1,34 @@
-import {
-    AgGroupComponentParams,
-    AgSlider,
-    Autowired,
-    Component,
-    PostConstruct,
-    RefSelector,
-} from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
+import { AgCheckbox, Component, RefPlaceholder } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartTranslationService } from '../../../services/chartTranslationService';
-import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import { AgSlider } from '../../../../../widgets/agSlider';
+import type { ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class ZoomPanel extends Component {
     public static TEMPLATE = /* html */ `<div>
-            <ag-group-component ref="zoomGroup">
-                <ag-checkbox ref="zoomSelectingCheckbox"></ag-checkbox>
-                <ag-checkbox ref="zoomScrollingCheckbox"></ag-checkbox>
-                <ag-slider ref="zoomScrollingStepInput"></ag-slider>
+            <ag-group-component data-ref="zoomGroup">
+                <ag-checkbox data-ref="zoomSelectingCheckbox"></ag-checkbox>
+                <ag-checkbox data-ref="zoomScrollingCheckbox"></ag-checkbox>
+                <ag-slider data-ref="zoomScrollingStepInput"></ag-slider>
             </ag-group-component>
         </div>`;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
 
-    @RefSelector('zoomScrollingStepInput') private readonly zoomScrollingStepInput: AgSlider;
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
+
+    private readonly zoomScrollingStepInput: AgSlider = RefPlaceholder;
 
     constructor(private readonly chartMenuParamsFactory: ChartMenuParamsFactory) {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const zoomGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>('zoom.enabled', {
             cssIdentifier: 'charts-advanced-settings-top-level',
             direction: 'vertical',
@@ -60,7 +60,7 @@ export class ZoomPanel extends Component {
             this.zoomScrollingStepInput.setDisabled(!value);
         })(zoomScrollingCheckboxParams.onValueChange);
 
-        this.setTemplate(ZoomPanel.TEMPLATE, {
+        this.setTemplate(ZoomPanel.TEMPLATE, [AgGroupComponent, AgCheckbox, AgSlider], {
             zoomGroup: zoomGroupParams,
             zoomScrollingCheckbox: zoomScrollingCheckboxParams,
             zoomScrollingStepInput: zoomScrollingStepSliderParams,

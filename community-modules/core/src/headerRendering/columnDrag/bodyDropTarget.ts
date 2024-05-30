@@ -1,9 +1,10 @@
-import { ColumnModel } from '../../columns/columnModel';
+import type { ColumnModel } from '../../columns/columnModel';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, PostConstruct } from '../../context/context';
-import { CtrlsService } from '../../ctrlsService';
-import { DragAndDropService, DragSourceType, DraggingEvent, DropTarget } from '../../dragAndDrop/dragAndDropService';
-import { ColumnPinnedType } from '../../entities/column';
+import type { BeanCollection } from '../../context/context';
+import type { CtrlsService } from '../../ctrlsService';
+import type { DragAndDropService, DraggingEvent, DropTarget } from '../../dragAndDrop/dragAndDropService';
+import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
+import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { BodyDropPivotTarget } from './bodyDropPivotTarget';
 import { MoveColumnFeature } from './moveColumnFeature';
 
@@ -16,9 +17,15 @@ export interface DropListener {
 }
 
 export class BodyDropTarget extends BeanStub implements DropTarget {
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    private dragAndDropService: DragAndDropService;
+    private columnModel: ColumnModel;
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.dragAndDropService = beans.dragAndDropService;
+        this.columnModel = beans.columnModel;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private pinned: ColumnPinnedType;
     // public because it's part of the DropTarget interface
@@ -36,8 +43,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         this.eContainer = eContainer;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.ctrlsService.whenReady((p) => {
             switch (this.pinned) {
                 case 'left':
@@ -63,6 +69,11 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
                     break;
             }
         });
+
+        this.moveColumnFeature = this.createManagedBean(new MoveColumnFeature(this.pinned));
+        this.bodyDropPivotTarget = this.createManagedBean(new BodyDropPivotTarget(this.pinned));
+
+        this.dragAndDropService.addDropTarget(this);
     }
 
     public isInterestedIn(type: DragSourceType): boolean {
@@ -78,14 +89,6 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
 
     public getContainer(): HTMLElement {
         return this.eContainer;
-    }
-
-    @PostConstruct
-    private init(): void {
-        this.moveColumnFeature = this.createManagedBean(new MoveColumnFeature(this.pinned));
-        this.bodyDropPivotTarget = this.createManagedBean(new BodyDropPivotTarget(this.pinned));
-
-        this.dragAndDropService.addDropTarget(this);
     }
 
     public getIconName(): string | null {

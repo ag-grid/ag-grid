@@ -25,6 +25,10 @@
         "cwd": "packages/ag-grid-react"
       }
     },
+    "build:format-copied-files": {
+      "command": "nx format:write --projects ag-grid-react",
+      "dependsOn": ["build:copy-source"]
+    },
     "build:types": {
       "executor": "@nx/js:tsc",
       "dependsOn": ["@ag-grid-community/core:build:types", "build:copy-source"],
@@ -55,7 +59,7 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["ag-grid-community:build:types", "build:copy-source"],
+      "dependsOn": ["ag-grid-community:build:types", "build:copy-source", "build:format-copied-files"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",

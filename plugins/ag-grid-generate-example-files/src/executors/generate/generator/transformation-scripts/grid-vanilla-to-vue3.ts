@@ -1,6 +1,6 @@
 import * as JSON5 from 'json5';
 
-import { ExampleConfig, ImportType, ParsedBindings } from '../types';
+import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import {
     GRID_WIDE_COMPONENTS,
     OVERRIDABLE_AG_COMPONENTS,
@@ -253,7 +253,7 @@ function getModuleImports(
 ): string[] {
     const { inlineGridStyles } = bindings;
 
-    let imports = [
+    const imports = [
         "import { createApp, onBeforeMount, ref } from 'vue';",
         "import { AgGridVue } from '@ag-grid-community/vue3';",
     ];

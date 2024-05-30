@@ -1,4 +1,4 @@
-import { Group } from '@tweenjs/tween.js';
+import type { Group } from '@tweenjs/tween.js';
 
 import type { ApplyColumnStateParams } from 'ag-grid-community';
 

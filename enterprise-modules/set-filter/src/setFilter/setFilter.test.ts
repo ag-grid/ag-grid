@@ -1,10 +1,10 @@
-import {
+import type {
     AgCheckbox,
     AgInputTextField,
     ColDef,
-    FuncColsService,
     Context,
     EventService,
+    FuncColsService,
     GridOptionsService,
     IClientSideRowModel,
     IRowModel,
@@ -17,7 +17,7 @@ import {
 
 import { mock } from '../test-utils/mock';
 import { SetFilter } from './setFilter';
-import { SetValueModel } from './setValueModel';
+import type { SetValueModel } from './setValueModel';
 
 let rowModel: jest.Mocked<IRowModel>;
 let eventService: jest.Mocked<EventService>;
@@ -65,7 +65,7 @@ beforeEach(() => {
     eSelectAll = mock<AgCheckbox>('setValue', 'getInputElement', 'onValueChange', 'setLabel');
     eSelectAll.getInputElement.mockImplementation(() => mock<HTMLInputElement>('addEventListener'));
 
-    gridOptionsService = mock<GridOptionsService>('get', 'addEventListener');
+    gridOptionsService = mock<GridOptionsService>('get', 'addPropertyEventListener');
 
     funcColsService = mock<FuncColsService>('getRowGroupColumns');
     funcColsService.getRowGroupColumns.mockImplementation(() => []);
@@ -107,6 +107,7 @@ function createSetFilter(filterParams?: any): SetFilter<unknown> {
     (setFilter as any).valueService = valueService;
     (setFilter as any).rowModel = rowModel;
     (setFilter as any).context = context;
+    (setFilter as any).stubContext = context;
     (setFilter as any).eGui = eGui;
     (setFilter as any).eMiniFilter = eMiniFilter;
     (setFilter as any).eSelectAll = eSelectAll;

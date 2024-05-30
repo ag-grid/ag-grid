@@ -1,32 +1,38 @@
-import {
-    AgMenuList,
-    Autowired,
-    Bean,
-    BeanStub,
-    Column,
+import type {
+    AgColumn,
+    BeanCollection,
     ColumnModel,
-    FilterManager,
     FuncColsService,
     IRowModel,
     MenuItemDef,
     MenuService,
-    _removeRepeatsFromArray,
+    NamedBean,
 } from '@ag-grid-community/core';
+import { BeanStub, _removeRepeatsFromArray } from '@ag-grid-community/core';
+import { AgMenuList } from '@ag-grid-enterprise/core';
 
-import { MenuItemMapper } from './menuItemMapper';
+import type { MenuItemMapper } from './menuItemMapper';
 
-@Bean('columnMenuFactory')
-export class ColumnMenuFactory extends BeanStub {
-    @Autowired('menuItemMapper') private readonly menuItemMapper: MenuItemMapper;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('rowModel') private readonly rowModel: IRowModel;
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('menuService') private readonly menuService: MenuService;
+export class ColumnMenuFactory extends BeanStub implements NamedBean {
+    beanName = 'columnMenuFactory' as const;
+
+    private menuItemMapper: MenuItemMapper;
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+    private rowModel: IRowModel;
+    private menuService: MenuService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.menuItemMapper = beans.menuItemMapper;
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+        this.rowModel = beans.rowModel;
+        this.menuService = beans.menuService;
+    }
 
     private static MENU_ITEM_SEPARATOR = 'separator';
 
-    public createMenu(parent: BeanStub, column: Column | undefined, sourceElement: () => HTMLElement): AgMenuList {
+    public createMenu(parent: BeanStub, column: AgColumn | undefined, sourceElement: () => HTMLElement): AgMenuList {
         const menuList = parent.createManagedBean(
             new AgMenuList(0, {
                 column: column ?? null,
@@ -43,7 +49,7 @@ export class ColumnMenuFactory extends BeanStub {
         return menuList;
     }
 
-    private getMenuItems(column?: Column): (string | MenuItemDef)[] {
+    private getMenuItems(column?: AgColumn): (string | MenuItemDef)[] {
         const defaultItems = this.getDefaultMenuOptions(column);
         let result: (string | MenuItemDef)[];
 
@@ -76,7 +82,7 @@ export class ColumnMenuFactory extends BeanStub {
         return result;
     }
 
-    private getDefaultMenuOptions(column?: Column): string[] {
+    private getDefaultMenuOptions(column?: AgColumn): string[] {
         const result: string[] = [];
 
         const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();

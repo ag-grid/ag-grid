@@ -1,6 +1,7 @@
-import {
+import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+
+import type {
     CellCtrl,
-    CssClassManager,
     ICellRenderer,
     IRowComp,
     RowContainerType,
@@ -8,7 +9,7 @@ import {
     RowStyle,
     UserCompDetails,
 } from 'ag-grid-community';
-import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { CssClassManager } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import CellComp from '../cells/cellComp';
@@ -77,7 +78,7 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
         }
     }, [fullWidthCompDetails, autoHeightSetupAttempt]);
 
-    let cssClassManager = useRef<CssClassManager>();
+    const cssClassManager = useRef<CssClassManager>();
     if (!cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eGui.current);
     }

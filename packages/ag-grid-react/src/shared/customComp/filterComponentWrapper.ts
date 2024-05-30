@@ -1,7 +1,7 @@
-import { AgPromise, IDoesFilterPassParams, IFilter, IFilterParams } from 'ag-grid-community';
+import type { AgPromise, IDoesFilterPassParams, IFilter, IFilterParams } from 'ag-grid-community';
 
 import { CustomComponentWrapper } from './customComponentWrapper';
-import { CustomFilterCallbacks, CustomFilterProps } from './interfaces';
+import type { CustomFilterCallbacks, CustomFilterProps } from './interfaces';
 
 export class FilterComponentWrapper
     extends CustomComponentWrapper<IFilterParams, CustomFilterProps, CustomFilterCallbacks>
@@ -34,7 +34,7 @@ export class FilterComponentWrapper
         return true;
     }
 
-    protected getOptionalMethods(): string[] {
+    protected override getOptionalMethods(): string[] {
         return ['afterGuiAttached', 'afterGuiDetached', 'onNewRowsLoaded', 'getModelAsString', 'onAnyFilterChanged'];
     }
 
@@ -42,7 +42,7 @@ export class FilterComponentWrapper
         this.setModel(model).then(() => this.sourceParams.filterChangedCallback());
     }
 
-    protected getProps(): CustomFilterProps {
+    protected override getProps(): CustomFilterProps {
         const props = super.getProps();
         props.model = this.model;
         props.onModelChange = this.onModelChange;

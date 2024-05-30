@@ -1,45 +1,64 @@
-import { VisibleColsService } from '../../columns/visibleColsService';
+import type { VisibleColsService } from '../../columns/visibleColsService';
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, Optional, PostConstruct } from '../../context/context';
-import { CtrlsService } from '../../ctrlsService';
-import { Column } from '../../entities/column';
-import { CellKeyDownEvent, Events, FullWidthCellKeyDownEvent } from '../../events';
-import { FocusService } from '../../focusService';
-import { IRangeService } from '../../interfaces/IRangeService';
-import { IClipboardService } from '../../interfaces/iClipboardService';
-import { RowPinnedType } from '../../interfaces/iRowNode';
-import { EventShowContextMenuParams, MenuService } from '../../misc/menuService';
-import { PaginationProxy } from '../../pagination/paginationProxy';
-import { PinnedRowModel } from '../../pinnedRowModel/pinnedRowModel';
+import type { BeanCollection } from '../../context/context';
+import type { CtrlsService } from '../../ctrlsService';
+import type { AgColumn } from '../../entities/agColumn';
+import type { CellKeyDownEvent, FullWidthCellKeyDownEvent } from '../../events';
+import { Events } from '../../events';
+import type { FocusService } from '../../focusService';
+import type { IRangeService } from '../../interfaces/IRangeService';
+import type { IClipboardService } from '../../interfaces/iClipboardService';
+import type { RowPinnedType } from '../../interfaces/iRowNode';
+import type { EventShowContextMenuParams, MenuService } from '../../misc/menuService';
+import type { PaginationProxy } from '../../pagination/paginationProxy';
+import type { PinnedRowModel } from '../../pinnedRowModel/pinnedRowModel';
 import { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { RowCtrl } from '../../rendering/row/rowCtrl';
-import { UndoRedoService } from '../../undoRedo/undoRedoService';
+import type { UndoRedoService } from '../../undoRedo/undoRedoService';
 import { _last } from '../../utils/array';
 import { _isIOSUserAgent } from '../../utils/browser';
 import { _getCtrlForEventTarget, _isEventSupported, _isStopPropagationForAgGrid } from '../../utils/event';
 import { _missingOrEmpty } from '../../utils/generic';
-import { _isEventFromPrintableCharacter, _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
-import { _normaliseQwertyAzerty } from '../../utils/keyboard';
-import { ValueService } from '../../valueService/valueService';
-import { LongTapEvent, TouchListener } from '../../widgets/touchListener';
-import { MouseEventService } from './../mouseEventService';
-import { NavigationService } from './../navigationService';
+import {
+    _isEventFromPrintableCharacter,
+    _isUserSuppressingKeyboardEvent,
+    _normaliseQwertyAzerty,
+} from '../../utils/keyboard';
+import type { ValueService } from '../../valueService/valueService';
+import type { LongTapEvent } from '../../widgets/touchListener';
+import { TouchListener } from '../../widgets/touchListener';
+import type { MouseEventService } from './../mouseEventService';
+import type { NavigationService } from './../navigationService';
 
 export class RowContainerEventsFeature extends BeanStub {
-    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('menuService') private menuService: MenuService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('navigationService') private navigationService: NavigationService;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('undoRedoService') private undoRedoService: UndoRedoService;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
+    private mouseEventService: MouseEventService;
+    private valueService: ValueService;
+    private menuService: MenuService;
+    private ctrlsService: CtrlsService;
+    private navigationService: NavigationService;
+    private focusService: FocusService;
+    private undoRedoService: UndoRedoService;
+    private visibleColsService: VisibleColsService;
+    private paginationProxy: PaginationProxy;
+    private pinnedRowModel: PinnedRowModel;
+    private rangeService?: IRangeService;
+    private clipboardService?: IClipboardService;
 
-    @Optional('rangeService') private rangeService?: IRangeService;
-    @Optional('clipboardService') private clipboardService?: IClipboardService;
+    public wireBeans(beans: BeanCollection) {
+        this.mouseEventService = beans.mouseEventService;
+        this.valueService = beans.valueService;
+        this.menuService = beans.menuService;
+        this.ctrlsService = beans.ctrlsService;
+        this.navigationService = beans.navigationService;
+        this.focusService = beans.focusService;
+        this.undoRedoService = beans.undoRedoService;
+        this.visibleColsService = beans.visibleColsService;
+        this.paginationProxy = beans.paginationProxy;
+        this.pinnedRowModel = beans.pinnedRowModel;
+        this.rangeService = beans.rangeService;
+        this.clipboardService = beans.clipboardService;
+    }
 
     private element: HTMLElement;
 
@@ -48,7 +67,6 @@ export class RowContainerEventsFeature extends BeanStub {
         this.element = element;
     }
 
-    @PostConstruct
     public postConstruct(): void {
         this.addKeyboardListeners();
         this.addMouseListeners();
@@ -218,7 +236,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private processFullWidthRowKeyboardEvent(rowComp: RowCtrl, eventName: string, keyboardEvent: KeyboardEvent) {
         const rowNode = rowComp.getRowNode();
         const focusedCell = this.focusService.getFocusedCell();
-        const column = (focusedCell && focusedCell.column) as Column;
+        const column = (focusedCell && focusedCell.column) as AgColumn;
         const gridProcessingAllowed = !_isUserSuppressingKeyboardEvent(this.gos, keyboardEvent, rowNode, column, false);
 
         if (gridProcessingAllowed) {

@@ -1,7 +1,7 @@
-import { ILoadingOverlay, ILoadingOverlayParams } from '@ag-grid-community/core';
+import type { ILoadingOverlay, ILoadingOverlayParams } from '@ag-grid-community/core';
 
 import { CustomComponentWrapper } from './customComponentWrapper';
-import { CustomLoadingOverlayProps } from './interfaces';
+import type { CustomLoadingOverlayProps } from './interfaces';
 
 export class LoadingOverlayComponentWrapper
     extends CustomComponentWrapper<ILoadingOverlayParams, CustomLoadingOverlayProps, {}>

@@ -1,7 +1,7 @@
-import { IStatusPanel, IStatusPanelParams } from '@ag-grid-community/core';
+import type { IStatusPanel, IStatusPanelParams } from '@ag-grid-community/core';
 
 import { CustomComponentWrapper } from './customComponentWrapper';
-import { CustomStatusPanelProps } from './interfaces';
+import type { CustomStatusPanelProps } from './interfaces';
 
 export class StatusPanelComponentWrapper
     extends CustomComponentWrapper<IStatusPanelParams, CustomStatusPanelProps, {}>

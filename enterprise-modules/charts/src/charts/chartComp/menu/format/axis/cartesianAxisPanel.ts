@@ -1,30 +1,29 @@
+import type { AgSelectParams, BeanCollection, ListOption } from '@ag-grid-community/core';
 import {
     AgCheckbox,
-    AgGroupComponent,
-    AgGroupComponentParams,
     AgSelect,
-    AgSelectParams,
-    AgSlider,
-    AgSliderParams,
-    Autowired,
     Component,
     Events,
-    ListOption,
-    PostConstruct,
-    RefSelector,
+    RefPlaceholder,
     _removeFromParent,
     _setDisplayed,
 } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 import type { AgCartesianAxisOptions } from 'ag-charts-community';
 
 import { AgAngleSelect } from '../../../../../widgets/agAngleSelect';
-import { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
+import type { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
+import { AgColorPicker } from '../../../../../widgets/agColorPicker';
+import type { AgSliderParams } from '../../../../../widgets/agSlider';
+import { AgSlider } from '../../../../../widgets/agSlider';
 import { ChartController } from '../../../chartController';
-import { ChartOptionsProxy } from '../../../services/chartOptionsService';
-import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartOptionsProxy } from '../../../services/chartOptionsService';
+import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
-import { FontPanel, FontPanelParams } from '../fontPanel';
-import { FormatPanelOptions } from '../formatPanel';
+import type { FontPanelParams } from '../fontPanel';
+import { FontPanel } from '../fontPanel';
+import type { FormatPanelOptions } from '../formatPanel';
 import { AxisTicksPanel } from './axisTicksPanel';
 import { GridLinePanel } from './gridLinePanel';
 
@@ -32,26 +31,29 @@ const DEFAULT_TIME_AXIS_FORMAT = '%d %B %Y';
 
 export class CartesianAxisPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="axisGroup">
-                <ag-select ref="axisTypeSelect"></ag-select>
-                <ag-select ref="axisTimeFormatSelect"></ag-select>
-                <ag-select ref="axisPositionSelect"></ag-select>
-                <ag-color-picker ref="axisColorInput"></ag-color-picker>
-                <ag-slider ref="axisLineWidthSlider"></ag-slider>
+            <ag-group-component data-ref="axisGroup">
+                <ag-select data-ref="axisTypeSelect"></ag-select>
+                <ag-select data-ref="axisTimeFormatSelect"></ag-select>
+                <ag-select data-ref="axisPositionSelect"></ag-select>
+                <ag-color-picker data-ref="axisColorInput"></ag-color-picker>
+                <ag-slider data-ref="axisLineWidthSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
-    @RefSelector('axisGroup') private axisGroup: AgGroupComponent;
-    @RefSelector('axisTypeSelect') private axisTypeSelect: AgSelect;
-    @RefSelector('axisPositionSelect') private axisPositionSelect: AgSelect;
-    @RefSelector('axisTimeFormatSelect') private axisTimeFormatSelect: AgSelect;
+    private readonly axisGroup: AgGroupComponent = RefPlaceholder;
+    private readonly axisTypeSelect: AgSelect = RefPlaceholder;
+    private readonly axisPositionSelect: AgSelect = RefPlaceholder;
+    private readonly axisTimeFormatSelect: AgSelect = RefPlaceholder;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
 
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
     private readonly chartOptionsSeriesProxy: ChartOptionsProxy;
 
     private activePanels: Component[] = [];
-    private axisLabelUpdateFuncs: Function[] = [];
+    private axisLabelUpdateFuncs: ((...args: any[]) => any)[] = [];
 
     private prevRotation: number | undefined;
 
@@ -65,8 +67,7 @@ export class CartesianAxisPanel extends Component {
         this.chartOptionsSeriesProxy = chartOptionsService.getSeriesOptionsProxy(() => seriesType);
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const {
             isExpandedOnInit: expanded,
             chartOptionsService,
@@ -97,7 +98,7 @@ export class CartesianAxisPanel extends Component {
         const axisColorInputParams = this.getAxisColorInputParams(chartAxisThemeOverrides);
         const axisLineWidthSliderParams = this.getAxisLineWidthSliderParams(chartAxisThemeOverrides);
 
-        this.setTemplate(CartesianAxisPanel.TEMPLATE, {
+        this.setTemplate(CartesianAxisPanel.TEMPLATE, [AgGroupComponent, AgSelect, AgColorPicker, AgSlider], {
             axisGroup: axisGroupParams,
             axisTypeSelect: axisTypeSelectParams ?? undefined,
             axisPositionSelect: axisPositionSelectParams ?? undefined,
@@ -119,7 +120,7 @@ export class CartesianAxisPanel extends Component {
             // Conditionally hide the time format input based on the currently selected axis type
             updateTimeFormatVisibility();
             // Update the visibility whenever the axis type changes
-            this.addManagedListener(this.eventService, Events.EVENT_CHART_OPTIONS_CHANGED, (e) => {
+            this.addManagedListener(this.eventService, Events.EVENT_CHART_OPTIONS_CHANGED, () => {
                 updateTimeFormatVisibility();
             });
         }
@@ -302,15 +303,15 @@ export class CartesianAxisPanel extends Component {
 
     private initGridLines(chartAxisThemeOverrides: ChartMenuParamsFactory) {
         const chartType = this.options.chartController.getChartType();
-        switch (chartType) {
-            // Some chart types do not support configuring grid lines
-            case 'heatmap':
-                return;
-            default:
-                const gridLineComp = this.createBean(new GridLinePanel(chartAxisThemeOverrides));
-                this.axisGroup.addItem(gridLineComp);
-                this.activePanels.push(gridLineComp);
+
+        // Some chart types do not support configuring grid lines
+        if (chartType === 'heatmap') {
+            return;
         }
+
+        const gridLineComp = this.createBean(new GridLinePanel(chartAxisThemeOverrides));
+        this.axisGroup.addItem(gridLineComp);
+        this.activePanels.push(gridLineComp);
     }
 
     private initAxisTicks(chartAxisThemeOverrides: ChartMenuParamsFactory) {
@@ -454,7 +455,7 @@ export class CartesianAxisPanel extends Component {
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

@@ -15,14 +15,14 @@ export class CustomHeader implements IHeaderComp {
         this.eGui.innerHTML =
             '' +
             '<div style="display: flex;">' +
-            '<span ref="eMenu" class="ag-icon ag-icon-menu" style="margin-right: 4px;"></span>' +
+            '<span data-ref="eMenu" class="ag-icon ag-icon-menu" style="margin-right: 4px;"></span>' +
             '<div style="flex-grow: 1;">' +
-            '<span ref="eText" style=""></span>' +
+            '<span data-ref="eText" style=""></span>' +
             '</div>' +
             '</div>';
 
-        this.eMenu = this.eGui.querySelector('[ref="eMenu"]');
-        this.eText = this.eGui.querySelector('[ref="eText"]');
+        this.eMenu = this.eGui.querySelector('[data-ref="eMenu"]');
+        this.eText = this.eGui.querySelector('[data-ref="eText"]');
 
         this.menuPresent = this.params.enableMenu;
 
@@ -43,7 +43,7 @@ export class CustomHeader implements IHeaderComp {
     refresh(params: IHeaderParams) {
         this.params = params;
 
-        var res = this.params.enableMenu === this.menuPresent;
+        const res = this.params.enableMenu === this.menuPresent;
 
         console.log('CustomHeader.refresh() -> ' + this.params.column.getId() + ' returning ' + res);
 

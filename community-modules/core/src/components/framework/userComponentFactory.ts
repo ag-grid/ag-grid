@@ -1,40 +1,41 @@
+import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, Bean, Optional } from '../../context/context';
-import {
+import type { BeanCollection } from '../../context/context';
+import type {
     CellEditorSelectorFunc,
     CellEditorSelectorResult,
     CellRendererSelectorFunc,
     ColDef,
     ColGroupDef,
 } from '../../entities/colDef';
-import { GridOptions } from '../../entities/gridOptions';
-import { IFloatingFilterParams } from '../../filter/floating/floatingFilter';
+import type { GridOptions } from '../../entities/gridOptions';
+import type { IFloatingFilterParams } from '../../filter/floating/floatingFilter';
 import { FloatingFilterMapper } from '../../filter/floating/floatingFilterMapper';
-import { IHeaderParams } from '../../headerRendering/cells/column/headerComp';
-import { IHeaderGroupParams } from '../../headerRendering/cells/columnGroup/headerGroupComp';
-import { IDateParams } from '../../interfaces/dateComponent';
-import { ICellEditorParams } from '../../interfaces/iCellEditor';
-import { AgGridCommon, WithoutGridCommon } from '../../interfaces/iCommon';
-import { IFilterDef, IFilterParams } from '../../interfaces/iFilter';
-import { SetFilterParams } from '../../interfaces/iSetFilter';
-import { ToolPanelDef } from '../../interfaces/iSideBar';
-import { IStatusPanelParams, StatusPanelDef } from '../../interfaces/iStatusPanel';
-import { IToolPanelParams } from '../../interfaces/iToolPanel';
-import { IMenuItemParams, MenuItemDef } from '../../interfaces/menuItem';
-import { GroupCellRendererParams } from '../../rendering/cellRenderers/groupCellRendererCtrl';
-import { ICellRendererParams, ISetFilterCellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
-import { ILoadingOverlayParams } from '../../rendering/overlays/loadingOverlayComponent';
-import { INoRowsOverlayParams } from '../../rendering/overlays/noRowsOverlayComponent';
-import { ITooltipParams } from '../../rendering/tooltipComponent';
+import type { IHeaderParams } from '../../headerRendering/cells/column/headerComp';
+import type { IHeaderGroupParams } from '../../headerRendering/cells/columnGroup/headerGroupComp';
+import type { IDateParams } from '../../interfaces/dateComponent';
+import type { ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { AgGridCommon, WithoutGridCommon } from '../../interfaces/iCommon';
+import type { IFilterDef, IFilterParams } from '../../interfaces/iFilter';
+import type { RichSelectParams } from '../../interfaces/iRichCellEditorParams';
+import type { SetFilterParams } from '../../interfaces/iSetFilter';
+import type { ToolPanelDef } from '../../interfaces/iSideBar';
+import type { IStatusPanelParams, StatusPanelDef } from '../../interfaces/iStatusPanel';
+import type { IToolPanelParams } from '../../interfaces/iToolPanel';
+import type { IMenuItemParams, MenuItemDef } from '../../interfaces/menuItem';
+import type { GroupCellRendererParams } from '../../rendering/cellRenderers/groupCellRendererCtrl';
+import type { ICellRendererParams, ISetFilterCellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
+import type { ILoadingOverlayParams } from '../../rendering/overlays/loadingOverlayComponent';
+import type { INoRowsOverlayParams } from '../../rendering/overlays/noRowsOverlayComponent';
+import type { ITooltipParams } from '../../rendering/tooltipComponent';
 import { _mergeDeep } from '../../utils/object';
 import { AgPromise } from '../../utils/promise';
-import { RichSelectParams } from '../../widgets/agRichSelect';
-import { AgComponentUtils } from './agComponentUtils';
-import { ComponentMetadata, ComponentMetadataProvider } from './componentMetadataProvider';
+import type { AgComponentUtils } from './agComponentUtils';
+import type { ComponentMetadata, ComponentMetadataProvider } from './componentMetadataProvider';
+import type { ComponentType } from './componentTypes';
 import {
     CellEditorComponent,
     CellRendererComponent,
-    ComponentType,
     DateComponent,
     FilterComponent,
     FloatingFilterComponent,
@@ -53,8 +54,8 @@ import {
     ToolPanelComponent,
     TooltipComponent,
 } from './componentTypes';
-import { FrameworkComponentWrapper } from './frameworkComponentWrapper';
-import { UserComponentRegistry } from './userComponentRegistry';
+import type { FrameworkComponentWrapper } from './frameworkComponentWrapper';
+import type { UserComponentRegistry } from './userComponentRegistry';
 
 export type DefinitionObject =
     | GridOptions
@@ -77,13 +78,22 @@ export interface UserCompDetails {
     newAgStackInstance: () => AgPromise<any>;
 }
 
-@Bean('userComponentFactory')
-export class UserComponentFactory extends BeanStub {
-    @Autowired('gridOptions') private readonly gridOptions: GridOptions;
-    @Autowired('agComponentUtils') private readonly agComponentUtils: AgComponentUtils;
-    @Autowired('componentMetadataProvider') private readonly componentMetadataProvider: ComponentMetadataProvider;
-    @Autowired('userComponentRegistry') private readonly userComponentRegistry: UserComponentRegistry;
-    @Optional('frameworkComponentWrapper') private readonly frameworkComponentWrapper?: FrameworkComponentWrapper;
+export class UserComponentFactory extends BeanStub implements NamedBean {
+    beanName = 'userComponentFactory' as const;
+
+    private gridOptions: GridOptions;
+    private agComponentUtils: AgComponentUtils;
+    private componentMetadataProvider: ComponentMetadataProvider;
+    private userComponentRegistry: UserComponentRegistry;
+    private frameworkComponentWrapper?: FrameworkComponentWrapper;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.agComponentUtils = beans.agComponentUtils;
+        this.componentMetadataProvider = beans.componentMetadataProvider;
+        this.userComponentRegistry = beans.userComponentRegistry;
+        this.frameworkComponentWrapper = beans.frameworkComponentWrapper;
+        this.gridOptions = beans.gridOptions;
+    }
 
     public getHeaderCompDetails(colDef: ColDef, params: WithoutGridCommon<IHeaderParams>): UserCompDetails | undefined {
         return this.getCompDetails(colDef, HeaderComponent, 'agColumnHeader', params);
@@ -391,7 +401,7 @@ export class UserComponentFactory extends BeanStub {
     }
 
     private initComponent(component: any, params: any): AgPromise<void> | void {
-        this.context.createBean(component);
+        this.createBean(component);
         if (component.init == null) {
             return;
         }

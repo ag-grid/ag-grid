@@ -1,18 +1,16 @@
-import {
-    Autowired,
-    BeanStub,
-    Events,
+import type {
+    BeanCollection,
     IRowModel,
     IServerSideSelectionState,
     ISetNodesSelectedParams,
-    PostConstruct,
     RowNode,
     SelectionChangedEvent,
     SelectionEventSourceType,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
+import { BeanStub, Events } from '@ag-grid-community/core';
 
-import { ISelectionStrategy } from './iSelectionStrategy';
+import type { ISelectionStrategy } from './iSelectionStrategy';
 
 interface SelectedState {
     selectAll: boolean;
@@ -20,7 +18,11 @@ interface SelectedState {
 }
 
 export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
-    @Autowired('rowModel') private rowModel: IRowModel;
+    private rowModel: IRowModel;
+
+    public wireBeans(beans: BeanCollection) {
+        this.rowModel = beans.rowModel;
+    }
 
     private selectedState: SelectedState = { selectAll: false, toggledNodes: new Set() };
     private lastSelected: string | null = null;
@@ -31,8 +33,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
     private rowSelection?: 'single' | 'multiple';
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.rowSelection = this.gos.get('rowSelection');
         this.addManagedPropertyListener('rowSelection', (propChange) => {
             this.rowSelection = propChange.currentValue;

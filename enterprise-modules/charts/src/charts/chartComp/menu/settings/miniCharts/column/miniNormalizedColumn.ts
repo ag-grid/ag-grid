@@ -1,11 +1,11 @@
-import { ChartType } from '@ag-grid-community/core';
+import type { ChartType } from '@ag-grid-community/core';
 
-import { ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniStackedColumn } from './miniStackedColumn';
 
 export class MiniNormalizedColumn extends MiniStackedColumn {
-    static chartType: ChartType = 'normalizedColumn';
-    static data = [
+    static override chartType: ChartType = 'normalizedColumn';
+    static override data = [
         [10, 10, 10],
         [6, 7, 8],
         [2, 4, 6],

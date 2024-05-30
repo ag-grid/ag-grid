@@ -1,8 +1,10 @@
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import { Bean, ControllerMeta } from './context/context';
+import type { ControllerMeta } from './context/context';
 
-@Bean('ctrlsFactory')
-export class CtrlsFactory extends BeanStub {
+export class CtrlsFactory extends BeanStub implements NamedBean {
+    beanName = 'ctrlsFactory' as const;
+
     private registry: { [name: string]: new () => Object } = {};
 
     public register(meta: ControllerMeta): void {

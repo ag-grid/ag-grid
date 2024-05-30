@@ -1,10 +1,11 @@
+import { ComponentRef, Injectable, ViewContainerRef } from '@angular/core';
+
 import {
     BaseComponentWrapper,
     FrameworkComponentWrapper,
     WrappableInterface,
     _removeFromParent,
 } from 'ag-grid-community';
-import { ComponentRef, Injectable, ViewContainerRef } from '@angular/core';
 
 import { AngularFrameworkOverrides } from './angularFrameworkOverrides';
 import { AgFrameworkComponent } from './interfaces';
@@ -54,7 +55,7 @@ export class AngularFrameworkComponentWrapper
                 );
             }
 
-            addMethod(name: string, callback: Function): void {
+            addMethod(name: string, callback: (...args: any[]) => any): void {
                 (wrapper as any)[name] = callback;
             }
         }

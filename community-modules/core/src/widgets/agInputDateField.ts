@@ -1,9 +1,12 @@
 import { _isBrowserSafari } from '../utils/browser';
 import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
 import { _addOrRemoveAttribute } from '../utils/dom';
-import { AgInputTextField, AgInputTextFieldParams } from './agInputTextField';
+import type { AgInputTextFieldParams } from './agInputTextField';
+import { AgInputTextField } from './agInputTextField';
+import type { AgComponentSelector } from './component';
 
 export class AgInputDateField extends AgInputTextField {
+    static override selector: AgComponentSelector = 'AG-INPUT-DATE-FIELD';
     private min?: string;
     private max?: string;
     private step?: number;
@@ -12,7 +15,7 @@ export class AgInputDateField extends AgInputTextField {
         super(config, 'ag-date-field', 'date');
     }
 
-    postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
 
         this.addManagedListener(this.eInput, 'wheel', this.onWheel.bind(this));

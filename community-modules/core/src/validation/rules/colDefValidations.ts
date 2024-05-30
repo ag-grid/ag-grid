@@ -1,12 +1,12 @@
-import { ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
-import { GridOptions } from '../../entities/gridOptions';
+import type { ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
+import type { GridOptions } from '../../entities/gridOptions';
 import { ModuleNames } from '../../modules/moduleNames';
-import { Deprecations, OptionsValidator, Validations } from '../validationTypes';
+import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 
 const COLUMN_DEFINITION_DEPRECATIONS: Deprecations<ColDef | ColGroupDef> = {
     columnsMenuParams: { version: '31.1', message: 'Use `columnChooserParams` instead.' },
     suppressMenu: { version: '31.1', message: 'Use `suppressHeaderMenuButton` instead.' },
-    suppressCellFlash: { version: '31.2', message: 'Use `enableCellChangeFlash={false}` in the ColDef' }
+    suppressCellFlash: { version: '31.2', message: 'Use `enableCellChangeFlash={false}` in the ColDef' },
 };
 
 const CSRM_REQUIRES_ROW_GROUP_MODULE = (_options: never, gridOptions: GridOptions) => {

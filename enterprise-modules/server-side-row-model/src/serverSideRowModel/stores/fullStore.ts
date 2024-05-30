@@ -1,8 +1,6 @@
-import {
-    Autowired,
-    Column,
-    ColumnModel,
-    Events,
+import type {
+    AgColumn,
+    BeanCollection,
     FilterManager,
     FuncColsService,
     IRowNode,
@@ -10,13 +8,9 @@ import {
     IServerSideStore,
     IsApplyServerSideTransactionParams,
     LoadSuccessParams,
-    NumberSequence,
-    PostConstruct,
     PostSortRowsParams,
-    PreDestroy,
     RowBounds,
     RowNode,
-    RowNodeBlock,
     RowNodeBlockLoader,
     RowNodeSorter,
     SelectionChangedEvent,
@@ -24,11 +18,16 @@ import {
     ServerSideGroupLevelState,
     ServerSideTransaction,
     ServerSideTransactionResult,
-    ServerSideTransactionResultStatus,
     SortController,
     StoreRefreshAfterParams,
     StoreUpdatedEvent,
     WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    Events,
+    NumberSequence,
+    RowNodeBlock,
+    ServerSideTransactionResultStatus,
     _getAllValuesInObject,
     _insertIntoArray,
     _missing,
@@ -36,24 +35,38 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import { BlockUtils } from '../blocks/blockUtils';
-import { NodeManager } from '../nodeManager';
-import { SSRMParams, ServerSideRowModel } from '../serverSideRowModel';
-import { TransactionManager } from '../transactionManager';
-import { StoreUtils } from './storeUtils';
+import type { BlockUtils } from '../blocks/blockUtils';
+import type { NodeManager } from '../nodeManager';
+import type { SSRMParams, ServerSideRowModel } from '../serverSideRowModel';
+import type { TransactionManager } from '../transactionManager';
+import type { StoreUtils } from './storeUtils';
 
 export class FullStore extends RowNodeBlock implements IServerSideStore {
-    @Autowired('ssrmStoreUtils') private storeUtils: StoreUtils;
-    @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
-    @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('selectionService') private selectionService: ISelectionService;
-    @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('ssrmTransactionManager') private transactionManager: TransactionManager;
-    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
+    private storeUtils: StoreUtils;
+    private blockUtils: BlockUtils;
+    private funcColsService: FuncColsService;
+    private rowNodeBlockLoader: RowNodeBlockLoader;
+    private rowNodeSorter: RowNodeSorter;
+    private sortController: SortController;
+    private selectionService: ISelectionService;
+    private nodeManager: NodeManager;
+    private filterManager: FilterManager;
+    private transactionManager: TransactionManager;
+    private serverSideRowModel: ServerSideRowModel;
+
+    public wireBeans(beans: BeanCollection) {
+        this.storeUtils = beans.ssrmStoreUtils;
+        this.blockUtils = beans.ssrmBlockUtils;
+        this.funcColsService = beans.funcColsService;
+        this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
+        this.rowNodeSorter = beans.rowNodeSorter;
+        this.sortController = beans.sortController;
+        this.selectionService = beans.selectionService;
+        this.nodeManager = beans.ssrmNodeManager;
+        this.filterManager = beans.filterManager;
+        this.transactionManager = beans.ssrmTransactionManager;
+        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+    }
 
     private readonly level: number;
     private readonly groupLevel: boolean | undefined;
@@ -73,7 +86,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private allNodesMap: { [id: string]: RowNode };
 
     private groupField: string;
-    private rowGroupColumn: Column;
+    private rowGroupColumn: AgColumn;
     private nodeIdPrefix: string | undefined;
 
     private displayIndexStart: number | undefined;
@@ -96,8 +109,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.leafGroup = ssrmParams.rowGroupCols ? this.level === ssrmParams.rowGroupCols.length - 1 : false;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.usingTreeData = this.gos.get('treeData');
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
 
@@ -127,7 +139,11 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         }
     }
 
-    @PreDestroy
+    public override destroy(): void {
+        this.destroyRowNodes();
+        super.destroy();
+    }
+
     private destroyRowNodes(): void {
         this.blockUtils.destroyRowNodes(this.allRowNodes);
 

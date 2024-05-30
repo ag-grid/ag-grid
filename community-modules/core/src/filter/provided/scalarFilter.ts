@@ -1,6 +1,7 @@
-import { IFilterParams } from '../../interfaces/iFilter';
-import { AgInputTextField } from '../../widgets/agInputTextField';
-import { ISimpleFilterModel, ISimpleFilterModelType, ISimpleFilterParams, SimpleFilter, Tuple } from './simpleFilter';
+import type { IFilterParams } from '../../interfaces/iFilter';
+import type { AgInputTextField } from '../../widgets/agInputTextField';
+import type { ISimpleFilterModel, ISimpleFilterModelType, ISimpleFilterParams, Tuple } from './simpleFilter';
+import { SimpleFilter } from './simpleFilter';
 
 /**
  * Parameters provided by the grid to the `init` method of a `ScalarFilter`.
@@ -37,7 +38,7 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     protected abstract comparator(): Comparator<V>;
 
-    protected setParams(params: ScalarFilterParams): void {
+    protected override setParams(params: ScalarFilterParams): void {
         super.setParams(params);
         this.scalarFilterParams = params;
     }

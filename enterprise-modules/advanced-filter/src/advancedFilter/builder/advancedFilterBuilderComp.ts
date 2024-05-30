@@ -1,42 +1,40 @@
-import {
+import type {
     AdvancedFilterModel,
-    Autowired,
-    Beans,
+    BeanCollection,
     ColumnAdvancedFilterModel,
-    Component,
     FilterManager,
     JoinAdvancedFilterModel,
-    PostConstruct,
-    RefSelector,
-    TooltipFeature,
-    VirtualList,
     VirtualListDragItem,
-    _exists,
-    _setDisabled,
 } from '@ag-grid-community/core';
+import { Component, RefPlaceholder, TooltipFeature, VirtualList, _exists, _setDisabled } from '@ag-grid-community/core';
 
-import { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
-import { AdvancedFilterService } from '../advancedFilterService';
+import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
+import type { AdvancedFilterService } from '../advancedFilterService';
 import { AdvancedFilterBuilderDragFeature } from './advancedFilterBuilderDragFeature';
 import { AdvancedFilterBuilderItemAddComp } from './advancedFilterBuilderItemAddComp';
 import { AdvancedFilterBuilderItemComp } from './advancedFilterBuilderItemComp';
-import {
+import type {
     AdvancedFilterBuilderAddEvent,
-    AdvancedFilterBuilderEvents,
     AdvancedFilterBuilderItem,
     AdvancedFilterBuilderMoveEvent,
     AdvancedFilterBuilderRemoveEvent,
 } from './iAdvancedFilterBuilder';
+import { AdvancedFilterBuilderEvents } from './iAdvancedFilterBuilder';
 
 export class AdvancedFilterBuilderComp extends Component {
-    @RefSelector('eList') private eList: HTMLElement;
-    @RefSelector('eApplyFilterButton') private eApplyFilterButton: HTMLElement;
-    @RefSelector('eCancelFilterButton') private eCancelFilterButton: HTMLElement;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('advancedFilterService') private advancedFilterService: AdvancedFilterService;
-    @Autowired('advancedFilterExpressionService')
+    private filterManager: FilterManager;
+    private advancedFilterService: AdvancedFilterService;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
-    @Autowired('beans') private beans: Beans;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.filterManager = beans.filterManager;
+        this.advancedFilterService = beans.advancedFilterService;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+    }
+
+    private readonly eList: HTMLElement = RefPlaceholder;
+    private readonly eApplyFilterButton: HTMLElement = RefPlaceholder;
+    private readonly eCancelFilterButton: HTMLElement = RefPlaceholder;
 
     private virtualList: VirtualList<AdvancedFilterBuilderItemComp | AdvancedFilterBuilderItemAddComp>;
     private filterModel: AdvancedFilterModel;
@@ -50,16 +48,15 @@ export class AdvancedFilterBuilderComp extends Component {
     constructor() {
         super(/* html */ `
             <div role="presentation" class="ag-advanced-filter-builder" tabindex="-1">
-                <div role="presentation" class="ag-advanced-filter-builder-list" ref="eList"></div>
+                <div role="presentation" class="ag-advanced-filter-builder-list" data-ref="eList"></div>
                 <div role="presentation" class="ag-advanced-filter-builder-button-panel">
-                    <button class="ag-button ag-standard-button ag-advanced-filter-builder-apply-button" ref="eApplyFilterButton"></button>
-                    <button class="ag-button ag-standard-button ag-advanced-filter-builder-cancel-button" ref="eCancelFilterButton"></button>
+                    <button class="ag-button ag-standard-button ag-advanced-filter-builder-apply-button" data-ref="eApplyFilterButton"></button>
+                    <button class="ag-button ag-standard-button ag-advanced-filter-builder-cancel-button" data-ref="eCancelFilterButton"></button>
                 </div>
             </div>`);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const { showMoveButtons } = this.gos.get('advancedFilterBuilderParams') ?? {};
         this.showMove = !!showMoveButtons;
         this.addManagedPropertyListener('advancedFilterBuilderParams', ({ currentValue }) => {

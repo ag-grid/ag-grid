@@ -1,21 +1,26 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
-import { ColDef, ColGroupDef } from '../entities/colDef';
-import { GridOptions } from '../entities/gridOptions';
+import type { BeanCollection } from '../context/context';
+import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { GridOptions } from '../entities/gridOptions';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { _warnOnce } from '../utils/function';
 import { _fuzzyCheckStrings } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
-import { GRID_OPTIONS_VALIDATORS, GRID_OPTION_DEFAULTS } from './rules/gridOptionsValidations';
-import { DependencyValidator, OptionsValidation, OptionsValidator } from './validationTypes';
+import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
+import type { DependencyValidator, OptionsValidation, OptionsValidator } from './validationTypes';
 
-@Bean('validationService')
-export class ValidationService extends BeanStub {
-    @Autowired('gridOptions') private readonly gridOptions: GridOptions;
+export class ValidationService extends BeanStub implements NamedBean {
+    beanName = 'validationService' as const;
 
-    @PostConstruct
-    public init(): void {
+    private gridOptions: GridOptions;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.gridOptions = beans.gridOptions;
+    }
+
+    public postConstruct(): void {
         this.processGridOptions(this.gridOptions);
     }
 
@@ -106,7 +111,7 @@ export class ValidationService extends BeanStub {
 
                 let allRegistered = true;
                 modules.forEach((m) => {
-                    if (!ModuleRegistry.__assertRegistered(m, String(key), this.context.getGridId())) {
+                    if (!ModuleRegistry.__assertRegistered(m, String(key), this.gridId)) {
                         allRegistered = false;
                         warnings.add(`${String(key)} is only available when ${m} is loaded.`);
                     }

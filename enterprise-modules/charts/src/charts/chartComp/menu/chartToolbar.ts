@@ -1,13 +1,7 @@
-import {
-    Autowired,
-    ChartToolbarMenuItemOptions,
-    Component,
-    RefSelector,
-    _clearElement,
-    _createIconNoSpan,
-} from '@ag-grid-community/core';
+import type { BeanCollection, ChartToolbarMenuItemOptions } from '@ag-grid-community/core';
+import { Component, RefPlaceholder, _clearElement, _createIconNoSpan } from '@ag-grid-community/core';
 
-import { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
+import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
 
 interface ChartToolbarButton {
     buttonName: ChartToolbarMenuItemOptions;
@@ -16,13 +10,18 @@ interface ChartToolbarButton {
 }
 
 export class ChartToolbar extends Component {
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @RefSelector('eMenu') private eMenu: HTMLButtonElement;
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
+
+    private readonly eMenu: HTMLButtonElement = RefPlaceholder;
 
     private buttonListenersDestroyFuncs: ((() => null) | undefined)[] = [];
 
     constructor() {
-        super(/* html */ `<div class="ag-chart-menu" ref="eMenu"></div>`);
+        super(/* html */ `<div class="ag-chart-menu" data-ref="eMenu"></div>`);
     }
 
     public updateParams(params: { buttons: ChartToolbarButton[] }): void {
@@ -57,7 +56,7 @@ export class ChartToolbar extends Component {
     }
 
     private createButton(iconName: string): Element {
-        let buttonEl = _createIconNoSpan(iconName, this.gos, undefined, true)!;
+        const buttonEl = _createIconNoSpan(iconName, this.gos, undefined, true)!;
         buttonEl.classList.add('ag-chart-menu-icon');
 
         const wrapperEl = this.gos.getDocument().createElement('button');
@@ -66,7 +65,7 @@ export class ChartToolbar extends Component {
         return wrapperEl;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.buttonListenersDestroyFuncs = [];
         super.destroy();
     }

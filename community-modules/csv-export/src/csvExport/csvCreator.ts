@@ -1,35 +1,40 @@
-import {
-    Autowired,
-    Bean,
+import type {
+    BeanCollection,
     ColumnModel,
     ColumnNameService,
     CsvCustomContent,
     CsvExportParams,
     FuncColsService,
-    GridOptionsService,
     ICsvCreator,
-    PostConstruct,
+    NamedBean,
     ValueService,
 } from '@ag-grid-community/core';
 
 import { BaseCreator } from './baseCreator';
 import { Downloader } from './downloader';
-import { GridSerializer } from './gridSerializer';
+import type { GridSerializer } from './gridSerializer';
 import { CsvSerializingSession } from './sessions/csvSerializingSession';
 
-@Bean('csvCreator')
 export class CsvCreator
     extends BaseCreator<CsvCustomContent, CsvSerializingSession, CsvExportParams>
-    implements ICsvCreator
+    implements NamedBean, ICsvCreator
 {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('gridSerializer') private gridSerializer: GridSerializer;
-    @Autowired('gridOptionsService') gos: GridOptionsService;
+    beanName = 'csvCreator' as const;
 
-    @PostConstruct
+    private columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    private funcColsService: FuncColsService;
+    private valueService: ValueService;
+    private gridSerializer: GridSerializer;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.columnModel = beans.columnModel;
+        this.columnNameService = beans.columnNameService;
+        this.funcColsService = beans.funcColsService;
+        this.valueService = beans.valueService;
+        this.gridSerializer = beans.gridSerializer;
+    }
+
     public postConstruct(): void {
         this.setBeans({
             gridSerializer: this.gridSerializer,

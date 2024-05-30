@@ -1,7 +1,7 @@
 /************************************************************************************************
  * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
  ************************************************************************************************/
-import {
+import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AsyncTransactionsFlushed,
     BodyScrollEndEvent,
@@ -91,24 +91,24 @@ import {
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
 } from '../events';
-import { HeaderPosition } from '../headerRendering/common/headerPosition';
-import { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
-import {
+import type { HeaderPosition } from '../headerRendering/common/headerPosition';
+import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
+import type {
     SizeColumnsToContentStrategy,
     SizeColumnsToFitGridStrategy,
     SizeColumnsToFitProvidedWidthStrategy,
 } from '../interfaces/autoSizeStrategy';
-import {
+import type {
     CsvExportParams,
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
     ProcessHeaderForExportParams,
 } from '../interfaces/exportParams';
-import { GridState } from '../interfaces/gridState';
-import { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
-import { AgChartTheme, AgChartThemeOverrides } from '../interfaces/iAgChartOptions';
-import { AlignedGrid } from '../interfaces/iAlignedGrid';
-import {
+import type { GridState } from '../interfaces/gridState';
+import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
+import type { AgChartTheme, AgChartThemeOverrides } from '../interfaces/iAgChartOptions';
+import type { AlignedGrid } from '../interfaces/iAlignedGrid';
+import type {
     FillOperationParams,
     GetChartMenuItemsParams,
     GetChartToolbarItemsParams,
@@ -140,23 +140,23 @@ import {
     TabToNextCellParams,
     TabToNextHeaderParams,
 } from '../interfaces/iCallbackParams';
-import { ChartToolPanelsDef, ChartToolbarMenuItemOptions } from '../interfaces/iChartOptions';
-import { AgGridCommon } from '../interfaces/iCommon';
-import { IDatasource } from '../interfaces/iDatasource';
-import { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
-import { RowModelType } from '../interfaces/iRowModel';
-import { IRowNode } from '../interfaces/iRowNode';
-import { IServerSideDatasource } from '../interfaces/iServerSideDatasource';
-import { SideBarDef } from '../interfaces/iSideBar';
-import { StatusPanelDef } from '../interfaces/iStatusPanel';
-import { IViewportDatasource } from '../interfaces/iViewportDatasource';
-import { MenuItemDef } from '../interfaces/menuItem';
-import { ILoadingCellRendererParams } from '../rendering/cellRenderers/loadingCellRenderer';
-import { IRowDragItem } from '../rendering/row/rowDragComp';
-import { CellPosition } from './cellPositionUtils';
-import { ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
-import { Column } from './column';
-import { DataTypeDefinition } from './dataType';
+import type { ChartToolPanelsDef, ChartToolbarMenuItemOptions } from '../interfaces/iChartOptions';
+import type { Column } from '../interfaces/iColumn';
+import type { AgGridCommon } from '../interfaces/iCommon';
+import type { IDatasource } from '../interfaces/iDatasource';
+import type { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
+import type { RowModelType } from '../interfaces/iRowModel';
+import type { IRowNode } from '../interfaces/iRowNode';
+import type { IServerSideDatasource } from '../interfaces/iServerSideDatasource';
+import type { SideBarDef } from '../interfaces/iSideBar';
+import type { StatusPanelDef } from '../interfaces/iStatusPanel';
+import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
+import type { MenuItemDef } from '../interfaces/menuItem';
+import type { ILoadingCellRendererParams } from '../rendering/cellRenderers/loadingCellRenderer';
+import type { IRowDragItem } from '../rendering/row/rowDragComp';
+import type { CellPosition } from './cellPositionUtils';
+import type { ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
+import type { DataTypeDefinition } from './dataType';
 
 export interface GridOptions<TData = any> {
     // ******************************************************************************************************
@@ -191,14 +191,15 @@ export interface GridOptions<TData = any> {
     /**
      * Changes the display type of the column menu.
      * `'new'` just displays the main list of menu items. `'legacy'` displays a tabbed menu.
-     * @default 'legacy'
+     * @default 'new'
      * @initial
      */
     columnMenu?: 'legacy' | 'new';
     /**
-     * Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header.
-     * If `columnMenu = 'new'`, this will default to `true` instead of `false`.
-     * @default false
+     * When `true`, the column menu button will always be shown.
+     * When `false, the column menu button will only show when the mouse is over the column header.
+     * If `columnMenu = 'legacy'`, this will default to `false` instead of `true`.
+     * @default true
      */
     suppressMenuHide?: boolean;
     /**
@@ -1532,7 +1533,7 @@ export interface GridOptions<TData = any> {
      * Icons to use inside the grid instead of the grid's default icons.
      * @initial
      */
-    icons?: { [key: string]: Function | string };
+    icons?: { [key: string]: ((...args: any[]) => any) | string };
     /**
      * Default row height in pixels.
      * @default 25

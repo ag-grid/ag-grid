@@ -1,5 +1,5 @@
-import { PostConstruct } from '../../context/context';
-import { ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { AgColumn } from '../../entities/agColumn';
+import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
 import { PopupComponent } from '../../widgets/popupComponent';
 
@@ -10,8 +10,7 @@ export class PopupEditorWrapper extends PopupComponent {
         super(/* html */ `<div class="ag-popup-editor" tabindex="-1"/>`);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.gos.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
         this.addKeyDownListener();
     }
@@ -20,7 +19,7 @@ export class PopupEditorWrapper extends PopupComponent {
         const eGui = this.getGui();
         const params = this.params;
         const listener = (event: KeyboardEvent) => {
-            if (!_isUserSuppressingKeyboardEvent(this.gos, event, params.node, params.column, true)) {
+            if (!_isUserSuppressingKeyboardEvent(this.gos, event, params.node, params.column as AgColumn, true)) {
                 params.onKeyDown(event);
             }
         };

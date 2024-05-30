@@ -1,21 +1,22 @@
-import {
-    AgCheckbox,
+import type {
+    AgColumn,
     AgEvent,
-    Autowired,
+    BeanCollection,
     ColDef,
-    Column,
-    Component,
     ICellRendererComp,
     ISetFilterCellRendererParams,
     ISetFilterTreeListTooltipParams,
     ITooltipParams,
-    PostConstruct,
-    RefSelector,
     SetFilterParams,
     UserComponentFactory,
     ValueFormatterParams,
     ValueService,
     WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    AgCheckbox,
+    Component,
+    RefPlaceholder,
     _createIcon,
     _setAriaChecked,
     _setAriaDescribedBy,
@@ -28,8 +29,8 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import { SetFilterModelTreeItem } from './iSetDisplayValueModel';
-import { ISetFilterLocaleText } from './localeText';
+import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
+import type { ISetFilterLocaleText } from './localeText';
 
 export interface SetFilterListItemSelectionChangedEvent<
     I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null,
@@ -63,32 +64,37 @@ export interface SetFilterListItemParams<V> {
 
 /** @param V type of value in the Set Filter */
 export class SetFilterListItem<V> extends Component {
+    private valueService: ValueService;
+    private userComponentFactory: UserComponentFactory;
+
+    public wireBeans(beans: BeanCollection) {
+        this.valueService = beans.valueService;
+        this.userComponentFactory = beans.userComponentFactory;
+    }
+
     public static EVENT_SELECTION_CHANGED = 'selectionChanged';
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
-
-    @Autowired('valueService') private readonly valueService: ValueService;
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
     private static GROUP_TEMPLATE = /* html */ `
         <div class="ag-set-filter-item" aria-hidden="true">
             <span class="ag-set-filter-group-icons">
-                <span class="ag-set-filter-group-closed-icon" ref="eGroupClosedIcon"></span>
-                <span class="ag-set-filter-group-opened-icon" ref="eGroupOpenedIcon"></span>
-                <span class="ag-set-filter-group-indeterminate-icon" ref="eGroupIndeterminateIcon"></span>
+                <span class="ag-set-filter-group-closed-icon" data-ref="eGroupClosedIcon"></span>
+                <span class="ag-set-filter-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
+                <span class="ag-set-filter-group-indeterminate-icon" data-ref="eGroupIndeterminateIcon"></span>
             </span>
-            <ag-checkbox ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
+            <ag-checkbox data-ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
         </div>`;
 
     private static TEMPLATE = /* html */ `
         <div class="ag-set-filter-item">
-            <ag-checkbox ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
+            <ag-checkbox data-ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
         </div>`;
 
-    @RefSelector('eCheckbox') private readonly eCheckbox: AgCheckbox;
+    private readonly eCheckbox: AgCheckbox = RefPlaceholder;
 
-    @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
-    @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
-    @RefSelector('eGroupIndeterminateIcon') private eGroupIndeterminateIcon: HTMLElement;
+    private readonly eGroupOpenedIcon: HTMLElement = RefPlaceholder;
+    private readonly eGroupClosedIcon: HTMLElement = RefPlaceholder;
+    private readonly eGroupIndeterminateIcon: HTMLElement = RefPlaceholder;
 
     private readonly focusWrapper: HTMLElement;
     private readonly value: V | null | (() => string);
@@ -112,7 +118,7 @@ export class SetFilterListItem<V> extends Component {
     private destroyCellRendererComponent?: () => void;
 
     constructor(params: SetFilterListItemParams<V>) {
-        super(params.isGroup ? SetFilterListItem.GROUP_TEMPLATE : SetFilterListItem.TEMPLATE);
+        super(params.isGroup ? SetFilterListItem.GROUP_TEMPLATE : SetFilterListItem.TEMPLATE, [AgCheckbox]);
         this.focusWrapper = params.focusWrapper;
         this.value = params.value;
         this.params = params.params;
@@ -128,8 +134,7 @@ export class SetFilterListItem<V> extends Component {
         this.hasIndeterminateExpandState = params.hasIndeterminateExpandState;
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.addDestroyFunc(() => this.destroyCellRendererComponent?.());
 
         this.render();
@@ -161,7 +166,7 @@ export class SetFilterListItem<V> extends Component {
 
         this.refreshAriaChecked();
 
-        if (!!this.params.readOnly) {
+        if (this.params.readOnly) {
             // Don't add event listeners if we're read-only.
             return;
         }
@@ -169,7 +174,7 @@ export class SetFilterListItem<V> extends Component {
         this.eCheckbox.onValueChange((value) => this.onCheckboxChanged(!!value));
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.focusWrapper;
     }
 
@@ -237,7 +242,7 @@ export class SetFilterListItem<V> extends Component {
     }
 
     public toggleSelected(): void {
-        if (!!this.params.readOnly) {
+        if (this.params.readOnly) {
             return;
         }
 
@@ -334,7 +339,7 @@ export class SetFilterListItem<V> extends Component {
             // tree values are already formatted via treeListFormatter
             formattedValue = _toStringOrNull(value);
         } else {
-            formattedValue = this.getFormattedValue(column, value);
+            formattedValue = this.getFormattedValue(column as AgColumn, value);
         }
 
         this.setTooltipAndCellRendererParams(value, formattedValue);
@@ -362,7 +367,7 @@ export class SetFilterListItem<V> extends Component {
                 newTooltipText,
                 location: 'setFilterValue',
                 getColDef: () => this.params.colDef,
-                getColumn: () => this.params.column,
+                getColumn: () => this.params.column as AgColumn,
                 shouldDisplayTooltip,
             });
         }
@@ -376,7 +381,7 @@ export class SetFilterListItem<V> extends Component {
                 this.setTooltip({
                     newTooltipText: value,
                     getColDef: () => this.params.colDef,
-                    getColumn: () => this.params.column,
+                    getColumn: () => this.params.column as AgColumn,
                     location: 'setFilterValue',
                     shouldDisplayTooltip,
                 });
@@ -384,7 +389,7 @@ export class SetFilterListItem<V> extends Component {
         });
     }
 
-    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
+    public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         const res = super.getTooltipParams();
         res.location = 'setFilterValue';
         res.colDef = this.getComponentHolder();
@@ -394,7 +399,7 @@ export class SetFilterListItem<V> extends Component {
         return res;
     }
 
-    private getFormattedValue(column: Column, value: any) {
+    private getFormattedValue(column: AgColumn, value: any) {
         return this.valueService.formatValue(column, null, value, this.valueFormatter, false);
     }
 
@@ -426,7 +431,7 @@ export class SetFilterListItem<V> extends Component {
                 : this.cellRendererParams.valueFormatted) ?? this.translate('blanks');
         if (typeof valueToRender !== 'string') {
             _warnOnce(
-                `Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects, or set convertValuesToStrings=true in the filterParams. See ${this.getFrameworkOverrides().getDocLink('filter-set-filter-list/#filter-value-types')}`
+                `Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects. See ${this.getFrameworkOverrides().getDocLink('filter-set-filter-list/#filter-value-types')}`
             );
             valueToRender = '';
         }

@@ -1,6 +1,6 @@
-import { SetFilterModel } from '@ag-grid-community/core';
+import type { SetFilterModel } from '@ag-grid-community/core';
 
-import { SetFilter } from './setFilter';
+import type { SetFilter } from './setFilter';
 
 export class SetFilterModelFormatter {
     public getModelAsString<V>(model: SetFilterModel | null | undefined, setFilter: SetFilter<V>): string {

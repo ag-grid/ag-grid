@@ -9,7 +9,7 @@ import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { getData } from './data.js';
+import { getData } from './data.jsx';
 import GenderRenderer from './genderRenderer.jsx';
 import MoodEditor from './moodEditor.jsx';
 import MoodRenderer from './moodRenderer.jsx';

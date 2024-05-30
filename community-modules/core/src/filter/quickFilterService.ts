@@ -1,46 +1,54 @@
-import { ColumnModel } from '../columns/columnModel';
-import { PivotResultColsService } from '../columns/pivotResultColsService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { PivotResultColsService } from '../columns/pivotResultColsService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
-import { GetQuickFilterTextParams } from '../entities/colDef';
-import { Column } from '../entities/column';
-import { RowNode } from '../entities/rowNode';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { GetQuickFilterTextParams } from '../entities/colDef';
+import type { RowNode } from '../entities/rowNode';
+import type { EventsType } from '../eventKeys';
 import { Events } from '../eventKeys';
-import { IRowModel } from '../interfaces/iRowModel';
+import type { IRowModel } from '../interfaces/iRowModel';
 import { _exists } from '../utils/generic';
-import { ValueService } from '../valueService/valueService';
+import type { ValueService } from '../valueService/valueService';
 
-@Bean('quickFilterService')
-export class QuickFilterService extends BeanStub {
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
+export class QuickFilterService extends BeanStub implements NamedBean {
+    beanName = 'quickFilterService' as const;
+
+    private valueService: ValueService;
+    private columnModel: ColumnModel;
+    private rowModel: IRowModel;
+    private pivotResultColsService: PivotResultColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.valueService = beans.valueService;
+        this.columnModel = beans.columnModel;
+        this.rowModel = beans.rowModel;
+        this.pivotResultColsService = beans.pivotResultColsService;
+    }
 
     public static readonly EVENT_QUICK_FILTER_CHANGED = 'quickFilterChanged';
     private static readonly QUICK_FILTER_SEPARATOR = '\n';
 
     // the columns the quick filter should use. this will be all primary columns plus the autoGroupColumns if any exist
-    private colsForQuickFilter: Column[];
+    private colsForQuickFilter: AgColumn[];
 
     private quickFilter: string | null = null;
     private quickFilterParts: string[] | null = null;
     private parser?: (quickFilter: string) => string[];
     private matcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () =>
-            this.resetQuickFilterCache()
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.resetQuickFilterCache());
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>
-            this.resetQuickFilterCache()
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
-            if (!this.gos.get('includeHiddenColumnsInQuickFilter')) {
-                this.resetQuickFilterCache();
-            }
+    public postConstruct(): void {
+        const resetListener = this.resetQuickFilterCache.bind(this);
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: resetListener,
+            [Events.EVENT_NEW_COLUMNS_LOADED]: resetListener,
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: resetListener,
+            [Events.EVENT_COLUMN_VISIBLE]: () => {
+                if (!this.gos.get('includeHiddenColumnsInQuickFilter')) {
+                    this.resetQuickFilterCache();
+                }
+            },
         });
 
         this.addManagedPropertyListener('quickFilterText', (e) => this.setQuickFilter(e.currentValue));
@@ -193,7 +201,7 @@ export class QuickFilterService extends BeanStub {
         }
     }
 
-    private getQuickFilterTextForColumn(column: Column, node: RowNode): string {
+    private getQuickFilterTextForColumn(column: AgColumn, node: RowNode): string {
         let value = this.valueService.getValue(column, node, true);
         const colDef = column.getColDef();
 

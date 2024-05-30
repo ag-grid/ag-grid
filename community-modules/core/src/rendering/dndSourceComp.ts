@@ -1,24 +1,22 @@
-import { PostConstruct } from '../context/context';
-import { DndSourceOnRowDragParams } from '../entities/colDef';
-import { Column } from '../entities/column';
-import { RowNode } from '../entities/rowNode';
+import type { AgColumn } from '../entities/agColumn';
+import type { DndSourceOnRowDragParams } from '../entities/colDef';
+import type { RowNode } from '../entities/rowNode';
 import { _createIconNoSpan } from '../utils/icon';
 import { Component } from '../widgets/component';
 
 export class DndSourceComp extends Component {
     private readonly rowNode: RowNode;
-    private readonly column: Column;
+    private readonly column: AgColumn;
     private readonly eCell: HTMLElement;
 
-    constructor(rowNode: RowNode, column: Column, eCell: HTMLElement) {
+    constructor(rowNode: RowNode, column: AgColumn, eCell: HTMLElement) {
         super(/* html */ `<div class="ag-drag-handle ag-row-drag" draggable="true"></div>`);
         this.rowNode = rowNode;
         this.column = column;
         this.eCell = eCell;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const eGui = this.getGui();
         eGui.appendChild(_createIconNoSpan('rowDrag', this.gos, null)!);
         // we need to stop the event propagation here to avoid starting a range selection while dragging

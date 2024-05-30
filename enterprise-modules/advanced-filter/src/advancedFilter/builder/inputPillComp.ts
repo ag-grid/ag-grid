@@ -1,15 +1,12 @@
+import type { BeanCollection, FieldValueEvent, WithoutGridCommon } from '@ag-grid-community/core';
 import {
     AgInputDateField,
     AgInputNumberField,
     AgInputTextField,
-    Autowired,
     Component,
     Events,
-    FieldValueEvent,
     KeyCode,
-    PostConstruct,
-    RefSelector,
-    WithoutGridCommon,
+    RefPlaceholder,
     _exists,
     _setAriaDescribedBy,
     _setAriaLabel,
@@ -17,13 +14,17 @@ import {
     _stopPropagationForAgGrid,
 } from '@ag-grid-community/core';
 
-import { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
+import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 
 export class InputPillComp extends Component {
-    @RefSelector('ePill') private ePill: HTMLElement;
-    @RefSelector('eLabel') private eLabel: HTMLElement;
-    @Autowired('advancedFilterExpressionService')
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+    }
+
+    private readonly ePill: HTMLElement = RefPlaceholder;
+    private readonly eLabel: HTMLElement = RefPlaceholder;
 
     private eEditor: AgInputTextField | undefined;
     private value: string;
@@ -38,16 +39,15 @@ export class InputPillComp extends Component {
     ) {
         super(/* html */ `
             <div class="ag-advanced-filter-builder-pill-wrapper" role="presentation">
-                <div ref="ePill" class="ag-advanced-filter-builder-pill" role="button">
-                    <span ref="eLabel" class="ag-advanced-filter-builder-pill-display"></span>
+                <div data-ref="ePill" class="ag-advanced-filter-builder-pill" role="button">
+                    <span data-ref="eLabel" class="ag-advanced-filter-builder-pill-display"></span>
                 </div>
             </div>
         `);
         this.value = params.value;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const { cssClass, ariaLabel } = this.params;
 
         this.ePill.classList.add(cssClass);
@@ -75,7 +75,7 @@ export class InputPillComp extends Component {
         this.addDestroyFunc(() => this.destroyBean(this.eEditor));
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.ePill;
     }
 

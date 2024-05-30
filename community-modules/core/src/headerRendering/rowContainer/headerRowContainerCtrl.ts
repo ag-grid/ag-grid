@@ -1,21 +1,23 @@
-import { ColumnModel } from '../../columns/columnModel';
+import type { ColumnModel } from '../../columns/columnModel';
 import { BeanStub } from '../../context/beanStub';
-import { Autowired } from '../../context/context';
-import { CtrlsService } from '../../ctrlsService';
-import { Column, ColumnPinnedType } from '../../entities/column';
-import { ColumnGroup } from '../../entities/columnGroup';
+import type { BeanCollection } from '../../context/context';
+import type { CtrlsService } from '../../ctrlsService';
+import type { AgColumn } from '../../entities/agColumn';
+import { isColumn } from '../../entities/agColumn';
+import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import { Events } from '../../eventKeys';
-import { FilterManager } from '../../filter/filterManager';
-import { FocusService } from '../../focusService';
+import type { EventsType } from '../../eventKeys';
+import type { FilterManager } from '../../filter/filterManager';
+import type { FocusService } from '../../focusService';
 import { CenterWidthFeature } from '../../gridBodyComp/centerWidthFeature';
-import { PinnedWidthService } from '../../gridBodyComp/pinnedWidthService';
-import { ScrollVisibleService } from '../../gridBodyComp/scrollVisibleService';
-import { IHeaderColumn } from '../../interfaces/iHeaderColumn';
+import type { PinnedWidthService } from '../../gridBodyComp/pinnedWidthService';
+import type { ScrollVisibleService } from '../../gridBodyComp/scrollVisibleService';
+import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { NumberSequence } from '../../utils/numberSequence';
-import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
-import { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
+import type { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
+import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
 import { BodyDropTarget } from '../columnDrag/bodyDropTarget';
-import { HeaderPosition } from '../common/headerPosition';
+import type { HeaderPosition } from '../common/headerPosition';
 import { HeaderRowType } from '../row/headerRowComp';
 import { HeaderRowCtrl } from '../row/headerRowCtrl';
 
@@ -28,12 +30,21 @@ export interface IHeaderRowContainerComp {
 }
 
 export class HeaderRowContainerCtrl extends BeanStub {
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('focusService') public focusService: FocusService;
-    @Autowired('filterManager') public filterManager: FilterManager;
+    private ctrlsService: CtrlsService;
+    private scrollVisibleService: ScrollVisibleService;
+    private pinnedWidthService: PinnedWidthService;
+    private columnModel: ColumnModel;
+    private focusService: FocusService;
+    private filterManager: FilterManager;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.ctrlsService = beans.ctrlsService;
+        this.scrollVisibleService = beans.scrollVisibleService;
+        this.pinnedWidthService = beans.pinnedWidthService;
+        this.columnModel = beans.columnModel;
+        this.focusService = beans.focusService;
+        this.filterManager = beans.filterManager;
+    }
 
     private pinned: ColumnPinnedType;
     private comp: IHeaderRowContainerComp;
@@ -59,23 +70,11 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
         this.setupDragAndDrop(this.eViewport);
 
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_GRID_COLUMNS_CHANGED,
-            this.onGridColumnsChanged.bind(this)
-        );
-
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
-            this.onDisplayedColumnsChanged.bind(this)
-        );
-
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
-            this.onDisplayedColumnsChanged.bind(this)
-        );
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_GRID_COLUMNS_CHANGED]: this.onGridColumnsChanged.bind(this),
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+            [Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+        });
 
         this.ctrlsService.registerHeaderContainer(this, this.pinned);
 
@@ -248,16 +247,18 @@ export class HeaderRowContainerCtrl extends BeanStub {
             }
         };
 
-        this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, listener);
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_LEFT_PINNED_WIDTH_CHANGED]: listener,
+            [Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED]: listener,
+            [Events.EVENT_SCROLL_VISIBILITY_CHANGED]: listener,
+            [Events.EVENT_SCROLLBAR_WIDTH_CHANGED]: listener,
+        });
     }
 
-    public getHeaderCtrlForColumn(column: Column): HeaderCellCtrl | undefined;
-    public getHeaderCtrlForColumn(column: ColumnGroup): HeaderGroupCellCtrl | undefined;
+    public getHeaderCtrlForColumn(column: AgColumn): HeaderCellCtrl | undefined;
+    public getHeaderCtrlForColumn(column: AgColumnGroup): HeaderGroupCellCtrl | undefined;
     public getHeaderCtrlForColumn(column: any): any {
-        if (column instanceof Column) {
+        if (isColumn(column)) {
             if (!this.columnsRowCtrl) {
                 return;
             }
@@ -278,8 +279,8 @@ export class HeaderRowContainerCtrl extends BeanStub {
     }
 
     /* tslint:disable */
-    public getHtmlElementForColumnHeader(column: ColumnGroup): HTMLElement | null;
-    public getHtmlElementForColumnHeader(column: Column): HTMLElement | null;
+    public getHtmlElementForColumnHeader(column: AgColumnGroup): HTMLElement | null;
+    public getHtmlElementForColumnHeader(column: AgColumn): HTMLElement | null;
     public getHtmlElementForColumnHeader(column: any): any {
         /* tslint:enable */
         const cellCtrl = this.getHeaderCtrlForColumn(column);
@@ -297,7 +298,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
         return ctrl ? ctrl.getType() : undefined;
     }
 
-    public focusHeader(rowIndex: number, column: IHeaderColumn, event?: KeyboardEvent): boolean {
+    public focusHeader(rowIndex: number, column: AgColumn | AgColumnGroup, event?: KeyboardEvent): boolean {
         const allCtrls = this.getAllCtrls();
         const ctrl = allCtrls[rowIndex];
         if (!ctrl) {
@@ -315,7 +316,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
         return this.groupsRowCtrls.length + (this.columnsRowCtrl ? 1 : 0) + (this.filtersRowCtrl ? 1 : 0);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         if (this.filtersRowCtrl) {
             this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
         }

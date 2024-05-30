@@ -1,7 +1,7 @@
-import { Column } from '../entities/column';
-import { ExportFileNameGetter, ExportParams } from './exportParams';
-import { AgGridCommon } from './iCommon';
-import { XmlElement } from './iXmlFactory';
+import type { Column } from '../interfaces/iColumn';
+import type { ExportFileNameGetter, ExportParams } from './exportParams';
+import type { AgGridCommon } from './iCommon';
+import type { XmlElement } from './iXmlFactory';
 
 // Excel Styles
 export interface ExcelStyle {

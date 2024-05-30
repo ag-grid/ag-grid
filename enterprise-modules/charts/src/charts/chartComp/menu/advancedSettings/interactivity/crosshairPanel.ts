@@ -1,25 +1,32 @@
-import { AgGroupComponentParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
+import { AgCheckbox, Component } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartTranslationService } from '../../../services/chartTranslationService';
-import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import { AgColorPicker } from '../../../../../widgets/agColorPicker';
+import type { ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class CrosshairPanel extends Component {
     public static TEMPLATE = /* html */ `<div>
-            <ag-group-component ref="crosshairGroup">
-                <ag-checkbox ref="crosshairLabelCheckbox"></ag-checkbox>
-                <ag-checkbox ref="crosshairSnapCheckbox"></ag-checkbox>
-                <ag-color-picker ref="crosshairStrokeColorPicker"></ag-color-picker>
+            <ag-group-component data-ref="crosshairGroup">
+                <ag-checkbox data-ref="crosshairLabelCheckbox"></ag-checkbox>
+                <ag-checkbox data-ref="crosshairSnapCheckbox"></ag-checkbox>
+                <ag-color-picker data-ref="crosshairStrokeColorPicker"></ag-color-picker>
             </ag-group-component>
         </div>`;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
 
     constructor(private readonly chartMenuParamsFactory: ChartMenuParamsFactory) {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const crosshairGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(
             'crosshair.enabled',
             {
@@ -43,7 +50,7 @@ export class CrosshairPanel extends Component {
             'crosshair.stroke',
             'color'
         );
-        this.setTemplate(CrosshairPanel.TEMPLATE, {
+        this.setTemplate(CrosshairPanel.TEMPLATE, [AgGroupComponent, AgCheckbox, AgColorPicker], {
             crosshairGroup: crosshairGroupParams,
             crosshairLabelCheckbox: crosshairLabelCheckboxParams,
             crosshairSnapCheckbox: crosshairSnapCheckboxParams,

@@ -1,19 +1,21 @@
-import { Column } from '../../entities/column';
-import { CellClickedEvent, CellDoubleClickedEvent, CellMouseOutEvent, CellMouseOverEvent, Events } from '../../events';
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
+import type { CellClickedEvent, CellDoubleClickedEvent, CellMouseOutEvent, CellMouseOverEvent } from '../../events';
+import { Events } from '../../events';
 import { _isBrowserSafari, _isIOSUserAgent } from '../../utils/browser';
 import { _isElementChildOfClass, _isFocusableFormField } from '../../utils/dom';
 import { _isEventSupported, _isStopPropagationForAgGrid } from '../../utils/event';
-import { Beans } from '../beans';
-import { CellCtrl } from './cellCtrl';
+import type { CellCtrl } from './cellCtrl';
 
-export class CellMouseListenerFeature extends Beans {
+export class CellMouseListenerFeature extends BeanStub {
     private readonly cellCtrl: CellCtrl;
-    private readonly beans: Beans;
-    private readonly column: Column;
+    private readonly beans: BeanCollection;
+    private readonly column: AgColumn;
 
     private lastIPadMouseClickEvent: number;
 
-    constructor(ctrl: CellCtrl, beans: Beans, column: Column) {
+    constructor(ctrl: CellCtrl, beans: BeanCollection, column: AgColumn) {
         super();
         this.cellCtrl = ctrl;
         this.beans = beans;
@@ -158,7 +160,7 @@ export class CellMouseListenerFeature extends Beans {
             if (focusedCellPosition) {
                 const { column, rowIndex, rowPinned } = focusedCellPosition;
                 const focusedRowCtrl = beans.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
-                const focusedCellCtrl = focusedRowCtrl?.getCellCtrl(column);
+                const focusedCellCtrl = focusedRowCtrl?.getCellCtrl(column as AgColumn);
 
                 // if the focused cell is editing, need to stop editing first
                 if (focusedCellCtrl?.isEditing()) {
@@ -247,5 +249,7 @@ export class CellMouseListenerFeature extends Beans {
         return cellContainsTarget && cellContainsRelatedTarget;
     }
 
-    public destroy(): void {}
+    public override destroy(): void {
+        super.destroy();
+    }
 }

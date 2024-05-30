@@ -1,33 +1,31 @@
-import {
-    AgGroupComponentParams,
-    AgSelectParams,
-    AgSlider,
-    AgSliderParams,
-    Autowired,
-    Component,
-    PostConstruct,
-    RefSelector,
-    _includes,
-} from '@ag-grid-community/core';
+import type { AgSelectParams, BeanCollection } from '@ag-grid-community/core';
+import { AgSelect, Component, RefPlaceholder, _includes } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartOptionsService } from '../../../services/chartOptionsService';
-import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
-import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import type { AgSliderParams } from '../../../../../widgets/agSlider';
+import { AgSlider } from '../../../../../widgets/agSlider';
+import type { ChartOptionsService } from '../../../services/chartOptionsService';
+import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class MarkersPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="seriesMarkersGroup">
-                <ag-select ref="seriesMarkerShapeSelect"></ag-select>
-                <ag-slider ref="seriesMarkerMinSizeSlider"></ag-slider>
-                <ag-slider ref="seriesMarkerSizeSlider"></ag-slider>
-                <ag-slider ref="seriesMarkerStrokeWidthSlider"></ag-slider>
+            <ag-group-component data-ref="seriesMarkersGroup">
+                <ag-select data-ref="seriesMarkerShapeSelect"></ag-select>
+                <ag-slider data-ref="seriesMarkerMinSizeSlider"></ag-slider>
+                <ag-slider data-ref="seriesMarkerSizeSlider"></ag-slider>
+                <ag-slider data-ref="seriesMarkerStrokeWidthSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
-    @RefSelector('seriesMarkerMinSizeSlider') private seriesMarkerMinSizeSlider: AgSlider;
+    private readonly seriesMarkerMinSizeSlider: AgSlider = RefPlaceholder;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
 
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
     constructor(
         private readonly chartOptionsService: ChartOptionsService,
         private readonly chartMenuUtils: ChartMenuParamsFactory
@@ -35,8 +33,7 @@ export class MarkersPanel extends Component {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         // scatter charts should always show markers
         const chartType = this.chartOptionsService.getChartType();
         const shouldHideEnabledCheckbox = _includes(['scatter', 'bubble'], chartType);
@@ -60,7 +57,7 @@ export class MarkersPanel extends Component {
             seriesMarkerSizeSliderParams = this.getSliderParams('marker.size', 'size', 60);
         }
 
-        this.setTemplate(MarkersPanel.TEMPLATE, {
+        this.setTemplate(MarkersPanel.TEMPLATE, [AgGroupComponent, AgSelect, AgSlider], {
             seriesMarkersGroup: seriesMarkersGroupParams,
             seriesMarkerShapeSelect: this.getMarkerShapeSelectParams(),
             seriesMarkerMinSizeSlider: seriesMarkerMinSizeSliderParams,

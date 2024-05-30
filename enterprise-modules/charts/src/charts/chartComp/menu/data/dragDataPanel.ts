@@ -1,12 +1,20 @@
-import { AgGroupComponent, AgSelect, AgSelectParams, Autowired, Component, ListOption } from '@ag-grid-community/core';
+import type { AgSelectParams, BeanCollection, ListOption } from '@ag-grid-community/core';
+import { AgSelect, Component } from '@ag-grid-community/core';
+import type { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { AgPillSelect, AgPillSelectChangeParams } from '../../../../widgets/agPillSelect';
-import { ChartController } from '../../chartController';
-import { ChartDataModel, ColState } from '../../model/chartDataModel';
-import { ChartTranslationKey, ChartTranslationService } from '../../services/chartTranslationService';
+import type { AgPillSelectChangeParams } from '../../../../widgets/agPillSelect';
+import { AgPillSelect } from '../../../../widgets/agPillSelect';
+import type { ChartController } from '../../chartController';
+import type { ColState } from '../../model/chartDataModel';
+import { ChartDataModel } from '../../model/chartDataModel';
+import type { ChartTranslationKey, ChartTranslationService } from '../../services/chartTranslationService';
 
 export abstract class DragDataPanel extends Component {
-    @Autowired('chartTranslationService') protected readonly chartTranslationService: ChartTranslationService;
+    protected chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
 
     protected groupComp: AgGroupComponent;
     protected valuePillSelect?: AgPillSelect<ColState>;
@@ -118,7 +126,7 @@ export abstract class DragDataPanel extends Component {
         }
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.valuePillSelect = undefined;
         this.valueSelect = undefined;
         super.destroy();

@@ -1,19 +1,22 @@
 import { Events } from '../../eventKeys';
-import { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _getAriaCheckboxStateName } from '../../utils/aria';
 import { AgCheckbox } from '../../widgets/agCheckbox';
-import { RefSelector } from '../../widgets/componentAnnotations';
+import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
 
 export class CheckboxCellEditor extends PopupComponent implements ICellEditorComp {
     constructor() {
-        super(/* html */ `
+        super(
+            /* html */ `
             <div class="ag-cell-wrapper ag-cell-edit-wrapper ag-checkbox-edit">
-                <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
-            </div>`);
+                <ag-checkbox role="presentation" data-ref="eCheckbox"></ag-checkbox>
+            </div>`,
+            [AgCheckbox]
+        );
     }
 
-    @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
+    private readonly eCheckbox: AgCheckbox = RefPlaceholder;
     private params: ICellEditorParams<any, boolean>;
 
     public init(params: ICellEditorParams<any, boolean>): void {
@@ -46,7 +49,7 @@ export class CheckboxCellEditor extends PopupComponent implements ICellEditorCom
         }
     }
 
-    public isPopup() {
+    public override isPopup() {
         return false;
     }
 

@@ -10,9 +10,8 @@ let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: columnDefs,
-    sortingOrder: ['desc', 'asc', null],
     accentedSort: true,
-    rowData: [{ accented: 'aáàä' }, { accented: 'aàáä' }, { accented: 'aäàá' }],
+    rowData: [{ accented: 'aàáä' }, { accented: 'aäàá' }, { accented: 'aáàä' }],
 };
 
 // setup the grid after the page has finished loading

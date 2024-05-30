@@ -17,3 +17,12 @@ button {
     float: left;
     margin-right: 5px;
 }
+
+.pinned-rows {
+    background-color: #2244cc44;
+    width: 15px;
+    height: 15px;
+    border: 1px solid #888;
+    display: inline-block;
+    vertical-align: text-top;
+}

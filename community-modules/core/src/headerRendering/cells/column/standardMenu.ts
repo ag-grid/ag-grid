@@ -1,28 +1,35 @@
 import { KeyCode } from '../../../constants/keyCode';
+import type { NamedBean } from '../../../context/bean';
 import { BeanStub } from '../../../context/beanStub';
-import { Autowired, Bean } from '../../../context/context';
-import { CtrlsService } from '../../../ctrlsService';
-import { Column } from '../../../entities/column';
+import type { BeanCollection } from '../../../context/context';
+import type { CtrlsService } from '../../../ctrlsService';
+import type { AgColumn } from '../../../entities/agColumn';
 import { Events } from '../../../eventKeys';
-import { ColumnMenuVisibleChangedEvent } from '../../../events';
-import { FilterManager } from '../../../filter/filterManager';
+import type { ColumnMenuVisibleChangedEvent } from '../../../events';
 import { FilterWrapperComp } from '../../../filter/filterWrapperComp';
-import { FocusService } from '../../../focusService';
-import { ContainerType } from '../../../interfaces/iAfterGuiAttachedParams';
-import { WithoutGridCommon } from '../../../interfaces/iCommon';
-import { IMenuFactory } from '../../../interfaces/iMenuFactory';
-import { MenuService } from '../../../misc/menuService';
+import type { FocusService } from '../../../focusService';
+import type { ContainerType } from '../../../interfaces/iAfterGuiAttachedParams';
+import type { WithoutGridCommon } from '../../../interfaces/iCommon';
+import type { IMenuFactory } from '../../../interfaces/iMenuFactory';
+import type { MenuService } from '../../../misc/menuService';
 import { _setAriaRole } from '../../../utils/aria';
 import { _isVisible } from '../../../utils/dom';
-import { PopupService } from '../../../widgets/popupService';
+import type { PopupService } from '../../../widgets/popupService';
 
-@Bean('filterMenuFactory')
-export class StandardMenuFactory extends BeanStub implements IMenuFactory {
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('popupService') private popupService: PopupService;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('menuService') private menuService: MenuService;
+export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFactory {
+    beanName = 'filterMenuFactory' as const;
+
+    private popupService: PopupService;
+    private focusService: FocusService;
+    private ctrlsService: CtrlsService;
+    private menuService: MenuService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.popupService = beans.popupService;
+        this.focusService = beans.focusService;
+        this.ctrlsService = beans.ctrlsService;
+        this.menuService = beans.menuService;
+    }
 
     private hidePopup: () => void;
     private tabListener: () => null;
@@ -35,7 +42,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     public showMenuAfterMouseEvent(
-        column: Column | undefined,
+        column: AgColumn | undefined,
         mouseEvent: MouseEvent | Touch,
         containerType: ContainerType
     ): void {
@@ -56,7 +63,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     public showMenuAfterButtonClick(
-        column: Column | undefined,
+        column: AgColumn | undefined,
         eventSource: HTMLElement,
         containerType: ContainerType
     ): void {
@@ -93,7 +100,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     private showPopup(
-        column: Column | undefined,
+        column: AgColumn | undefined,
         positionCallback: (eMenu: HTMLElement) => void,
         containerType: ContainerType,
         eventSource: HTMLElement,
@@ -115,6 +122,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu))!;
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
         eMenu.appendChild(comp?.getGui()!);
 
         let hidePopup: () => void;
@@ -192,7 +200,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         this.focusService.focusInto(menu, e.shiftKey);
     }
 
-    private dispatchVisibleChangedEvent(visible: boolean, containerType: ContainerType, column?: Column): void {
+    private dispatchVisibleChangedEvent(visible: boolean, containerType: ContainerType, column?: AgColumn): void {
         const displayedEvent: WithoutGridCommon<ColumnMenuVisibleChangedEvent> = {
             type: Events.EVENT_COLUMN_MENU_VISIBLE_CHANGED,
             visible,
@@ -203,7 +211,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         this.eventService.dispatchEvent(displayedEvent);
     }
 
-    public isMenuEnabled(column: Column): boolean {
+    public isMenuEnabled(column: AgColumn): boolean {
         // for standard, we show menu if filter is enabled, and the menu is not suppressed by passing an empty array
         return column.isFilterAllowed() && (column.getColDef().menuTabs ?? ['filterMenuTab']).includes('filterMenuTab');
     }
@@ -212,7 +220,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         // not supported in standard menu
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyBean(this.activeMenu);
         super.destroy();
     }

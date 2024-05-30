@@ -1,6 +1,6 @@
-import { Group } from '@tweenjs/tween.js';
+import type { Group } from '@tweenjs/tween.js';
 
-import { GridApi } from 'ag-grid-community';
+import type { GridApi } from 'ag-grid-community';
 
 import { type Mouse } from '../../lib/createMouse';
 import { type ScriptDebugger } from '../../lib/scriptDebugger';

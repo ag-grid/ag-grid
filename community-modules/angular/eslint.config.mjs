@@ -7,12 +7,17 @@ export default [
     },
     {
         rules: {
-            '@typescript-eslint/no-explicit-any': 'off',
             '@typescript-eslint/ban-types': 'warn',
             '@typescript-eslint/no-this-alias': 'warn',
             '@typescript-eslint/no-var-requires': 'warn',
             '@typescript-eslint/no-unused-vars': 'warn',
             'no-undef': 'warn',
+        },
+    },
+    {
+        files: ['projects/ag-grid-angular/src/**'],
+        rules: {
+            '@typescript-eslint/consistent-type-imports': 'off',
         },
     },
 ];

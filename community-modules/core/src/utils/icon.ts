@@ -1,5 +1,5 @@
-import { Column } from '../entities/column';
-import { GridOptionsService } from '../gridOptionsService';
+import type { AgColumn } from '../entities/agColumn';
+import type { GridOptionsService } from '../gridOptionsService';
 import { _setAriaRole } from './aria';
 import { _isNodeOrElement, _loadTemplate } from './dom';
 
@@ -158,7 +158,7 @@ export const iconNameClassMap: { [key: string]: string } = {
  * @param {Column | null} [column]
  * @returns {Element}
  */
-export function _createIcon(iconName: string, gos: GridOptionsService, column: Column | null): Element {
+export function _createIcon(iconName: string, gos: GridOptionsService, column: AgColumn | null): Element {
     const iconContents = _createIconNoSpan(iconName, gos, column);
 
     if (iconContents) {
@@ -180,10 +180,10 @@ export function _createIcon(iconName: string, gos: GridOptionsService, column: C
 export function _createIconNoSpan(
     iconName: string,
     gos: GridOptionsService,
-    column?: Column | null,
+    column?: AgColumn | null,
     forceCreate?: boolean
 ): Element | undefined {
-    let userProvidedIcon: Function | string | null = null;
+    let userProvidedIcon: ((...args: any[]) => any) | string | null = null;
 
     // check col for icon first
     const icons: any = column && column.getColDef().icons;

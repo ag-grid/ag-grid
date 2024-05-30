@@ -1,14 +1,15 @@
-import { UserCompDetails } from '../../components/framework/userComponentFactory';
+import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import { BeanStub } from '../../context/beanStub';
-import { CellPosition } from '../../entities/cellPositionUtils';
-import { Column, ColumnInstanceId, ColumnPinnedType } from '../../entities/column';
-import { RowClassParams, RowStyle } from '../../entities/gridOptions';
+import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
+import type { CellPosition } from '../../entities/cellPositionUtils';
+import type { RowClassParams, RowStyle } from '../../entities/gridOptions';
 import { RowNode } from '../../entities/rowNode';
-import { RowPosition } from '../../entities/rowPositionUtils';
-import {
+import type { RowPosition } from '../../entities/rowPositionUtils';
+import type { EventsType } from '../../eventKeys';
+import type {
     AgEventListener,
     CellFocusedEvent,
-    Events,
     RowClickedEvent,
     RowDoubleClickedEvent,
     RowEditingStartedEvent,
@@ -17,13 +18,17 @@ import {
     RowValueChangedEvent,
     VirtualRowRemovedEvent,
 } from '../../events';
+import { Events } from '../../events';
 import { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
-import { GridOptionsService } from '../../gridOptionsService';
-import { BrandedType } from '../../interfaces/brandedType';
-import { ProcessRowParams } from '../../interfaces/iCallbackParams';
-import { WithoutGridCommon } from '../../interfaces/iCommon';
-import { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
-import { DataChangedEvent, IRowNode, RowHighlightPosition } from '../../interfaces/iRowNode';
+import type { BrandedType } from '../../interfaces/brandedType';
+import type { ProcessRowParams } from '../../interfaces/iCallbackParams';
+import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
+import type { ColumnInstanceId, ColumnPinnedType } from '../../interfaces/iColumn';
+import type { WithoutGridCommon } from '../../interfaces/iCommon';
+import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
+import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
+import { RowHighlightPosition } from '../../interfaces/iRowNode';
+import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
 import { ModuleNames } from '../../modules/moduleNames';
 import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { _setAriaExpanded, _setAriaRowIndex, _setAriaSelected } from '../../utils/aria';
@@ -32,11 +37,11 @@ import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _executeNextVMTurn, _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
-import { ITooltipFeatureCtrl, TooltipFeature } from '../../widgets/tooltipFeature';
-import { Beans } from '../beans';
+import type { ITooltipFeatureCtrl } from '../../widgets/tooltipFeature';
+import { TooltipFeature } from '../../widgets/tooltipFeature';
 import { CellCtrl } from '../cell/cellCtrl';
-import { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
-import { RowCssClassCalculatorParams } from './rowCssClassCalculator';
+import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
+import type { RowCssClassCalculatorParams } from './rowCssClassCalculator';
 import { RowDragComp } from './rowDragComp';
 
 enum RowType {
@@ -82,10 +87,7 @@ export class RowCtrl extends BeanStub {
     private instanceId: RowCtrlInstanceId;
 
     private readonly rowNode: RowNode;
-    private readonly beans: Beans;
-    // The RowCtrl is never Wired, so it needs its own access
-    // to the gridOptionsService to be able to call `addManagedPropertyListener`
-    protected readonly gos: GridOptionsService;
+    private readonly beans: BeanCollection;
     private tooltipFeature: TooltipFeature | undefined;
 
     private rowType: RowType;
@@ -147,7 +149,7 @@ export class RowCtrl extends BeanStub {
 
     constructor(
         rowNode: RowNode,
-        beans: Beans,
+        beans: BeanCollection,
         animateIn: boolean,
         useAnimationFrameForCreate: boolean,
         printLayout: boolean
@@ -430,7 +432,7 @@ export class RowCtrl extends BeanStub {
     }
 
     // use by autoWidthCalculator, as it clones the elements
-    public getCellElement(column: Column): HTMLElement | null {
+    public getCellElement(column: AgColumn): HTMLElement | null {
         const cellCtrl = this.getCellCtrl(column);
         return cellCtrl ? cellCtrl.getGui() : null;
     }
@@ -516,7 +518,7 @@ export class RowCtrl extends BeanStub {
 
     private createCellCtrls(
         prev: CellCtrlListAndMap,
-        cols: Column[],
+        cols: AgColumn[],
         pinned: ColumnPinnedType = null
     ): CellCtrlListAndMap {
         const res: CellCtrlListAndMap = {
@@ -583,9 +585,10 @@ export class RowCtrl extends BeanStub {
                 return [];
             case RowContainerType.CENTER:
                 return this.centerCellCtrls.list;
-            default:
+            default: {
                 const exhaustiveCheck: never = containerType;
                 throw new Error(`Unhandled case: ${exhaustiveCheck}`);
+            }
         }
     }
 
@@ -627,7 +630,7 @@ export class RowCtrl extends BeanStub {
         if (mightWantToKeepCell) {
             const column = cellCtrl.getColumn();
             const displayedColumns = this.beans.visibleColsService.getAllCols();
-            const cellStillDisplayed = displayedColumns.indexOf(column) >= 0;
+            const cellStillDisplayed = displayedColumns.indexOf(column as AgColumn) >= 0;
             return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
         }
 
@@ -712,13 +715,14 @@ export class RowCtrl extends BeanStub {
     }
 
     private addListeners(): void {
-        this.addManagedListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, () => this.onRowHeightChanged());
-        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, () => this.onRowSelected());
-
-        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.updateExpandedCss.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_HAS_CHILDREN_CHANGED, this.updateExpandedCss.bind(this));
+        this.addManagedListeners(this.rowNode, {
+            [RowNode.EVENT_HEIGHT_CHANGED]: this.onRowHeightChanged.bind(this),
+            [RowNode.EVENT_ROW_SELECTED]: this.onRowSelected.bind(this),
+            [RowNode.EVENT_ROW_INDEX_CHANGED]: this.onRowIndexChanged.bind(this),
+            [RowNode.EVENT_TOP_CHANGED]: this.onTopChanged.bind(this),
+            [RowNode.EVENT_EXPANDED_CHANGED]: this.updateExpandedCss.bind(this),
+            [RowNode.EVENT_HAS_CHILDREN_CHANGED]: this.updateExpandedCss.bind(this),
+        });
 
         if (this.rowNode.detail) {
             // if the master row node has updated data, we also want to try to refresh the detail row
@@ -729,39 +733,25 @@ export class RowCtrl extends BeanStub {
             );
         }
 
-        this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.postProcessCss.bind(this));
-        this.addManagedListener(
-            this.rowNode,
-            RowNode.EVENT_HIGHLIGHT_CHANGED,
-            this.onRowNodeHighlightChanged.bind(this)
-        );
-        this.addManagedListener(this.rowNode, RowNode.EVENT_DRAGGING_CHANGED, this.postProcessRowDragging.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_UI_LEVEL_CHANGED, this.onUiLevelChanged.bind(this));
+        this.addManagedListeners(this.rowNode, {
+            [RowNode.EVENT_DATA_CHANGED]: this.onRowNodeDataChanged.bind(this),
+            [RowNode.EVENT_CELL_CHANGED]: this.postProcessCss.bind(this),
+            [RowNode.EVENT_HIGHLIGHT_CHANGED]: this.onRowNodeHighlightChanged.bind(this),
+            [RowNode.EVENT_DRAGGING_CHANGED]: this.postProcessRowDragging.bind(this),
+            [RowNode.EVENT_UI_LEVEL_CHANGED]: this.onUiLevelChanged.bind(this),
+        });
 
-        const eventService = this.beans.eventService;
-        this.addManagedListener(
-            eventService,
-            Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED,
-            this.onPaginationPixelOffsetChanged.bind(this)
-        );
-        this.addManagedListener(eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, this.onTopChanged.bind(this));
-        this.addManagedListener(
-            eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
-            this.onDisplayedColumnsChanged.bind(this)
-        );
-        this.addManagedListener(
-            eventService,
-            Events.EVENT_VIRTUAL_COLUMNS_CHANGED,
-            this.onVirtualColumnsChanged.bind(this)
-        );
-        this.addManagedListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocusChanged.bind(this));
-        this.addManagedListener(eventService, Events.EVENT_CELL_FOCUS_CLEARED, this.onCellFocusChanged.bind(this));
-        this.addManagedListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
-        this.addManagedListener(eventService, Events.EVENT_MODEL_UPDATED, this.refreshFirstAndLastRowStyles.bind(this));
-
-        this.addManagedListener(eventService, Events.EVENT_COLUMN_MOVED, this.updateColumnLists.bind(this));
+        this.addManagedListeners<EventsType>(this.beans.eventService, {
+            [Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED]: this.onPaginationPixelOffsetChanged.bind(this),
+            [Events.EVENT_HEIGHT_SCALE_CHANGED]: this.onTopChanged.bind(this),
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+            [Events.EVENT_VIRTUAL_COLUMNS_CHANGED]: this.onVirtualColumnsChanged.bind(this),
+            [Events.EVENT_CELL_FOCUSED]: this.onCellFocusChanged.bind(this),
+            [Events.EVENT_CELL_FOCUS_CLEARED]: this.onCellFocusChanged.bind(this),
+            [Events.EVENT_PAGINATION_CHANGED]: this.onPaginationChanged.bind(this),
+            [Events.EVENT_MODEL_UPDATED]: this.refreshFirstAndLastRowStyles.bind(this),
+            [Events.EVENT_COLUMN_MOVED]: this.updateColumnLists.bind(this),
+        });
 
         this.addDestroyFunc(() => {
             this.destroyBeans(this.rowDragComps, this.beans.context);
@@ -777,8 +767,7 @@ export class RowCtrl extends BeanStub {
                 });
                 return;
             }
-            this.destroyBeans(this.rowDragComps, this.beans.context);
-            this.rowDragComps = [];
+            this.rowDragComps = this.destroyBeans(this.rowDragComps, this.beans.context);
         });
 
         this.addListenersForCellComps();
@@ -910,7 +899,7 @@ export class RowCtrl extends BeanStub {
         const cellPosition: CellPosition = {
             rowIndex: node.rowIndex!,
             rowPinned: node.rowPinned,
-            column: (lastFocusedCell && lastFocusedCell.column) as Column,
+            column: (lastFocusedCell && lastFocusedCell.column) as AgColumn,
         };
 
         this.beans.navigationService.navigateToNextCell(keyboardEvent, keyboardEvent.key, cellPosition, true);
@@ -1165,10 +1154,10 @@ export class RowCtrl extends BeanStub {
                 // doing another update
                 const updateRowHeightFunc = () => {
                     this.rowNode.setRowHeight(clientHeight);
-                    if (this.beans.clientSideRowModel) {
-                        this.beans.clientSideRowModel.onRowHeightChanged();
-                    } else if (this.beans.serverSideRowModel) {
-                        this.beans.serverSideRowModel.onRowHeightChanged();
+                    if (this.beans.rowModel.getType() === 'clientSide') {
+                        (this.beans.rowModel as IClientSideRowModel).onRowHeightChanged();
+                    } else if (this.beans.rowModel.getType() === 'serverSide') {
+                        (this.beans.rowModel as IServerSideRowModel).onRowHeightChanged();
                     }
                 };
                 window.setTimeout(updateRowHeightFunc, 0);
@@ -1474,7 +1463,7 @@ export class RowCtrl extends BeanStub {
             gui.rowComp.addOrRemoveCssClass('ag-row-selected', selected);
             _setAriaSelected(gui.element, selected);
 
-            const hasFocus = gui.element.contains(this.beans.gos.getActiveDomElement());
+            const hasFocus = gui.element.contains(this.gos.getActiveDomElement());
             if (hasFocus && (gui === this.centerGui || gui === this.fullWidthGui)) {
                 this.announceDescription();
             }
@@ -1487,7 +1476,7 @@ export class RowCtrl extends BeanStub {
         }
 
         const selected = this.rowNode.isSelected()!;
-        if (selected && this.beans.gos.get('suppressRowDeselection')) {
+        if (selected && this.gos.get('suppressRowDeselection')) {
             return;
         }
 
@@ -1548,7 +1537,7 @@ export class RowCtrl extends BeanStub {
         return Math.min(Math.max(minPixel, rowTop), maxPixel);
     }
 
-    protected getFrameworkOverrides(): IFrameworkOverrides {
+    protected override getFrameworkOverrides(): IFrameworkOverrides {
         return this.beans.frameworkOverrides;
     }
 
@@ -1594,11 +1583,11 @@ export class RowCtrl extends BeanStub {
         });
     }
 
-    public addEventListener(eventType: string, listener: AgEventListener): void {
+    public override addEventListener(eventType: string, listener: AgEventListener): void {
         super.addEventListener(eventType, listener);
     }
 
-    public removeEventListener(eventType: string, listener: AgEventListener): void {
+    public override removeEventListener(eventType: string, listener: AgEventListener): void {
         super.removeEventListener(eventType, listener);
     }
 
@@ -1770,7 +1759,7 @@ export class RowCtrl extends BeanStub {
         return this.rowNode;
     }
 
-    public getCellCtrl(column: Column): CellCtrl | null {
+    public getCellCtrl(column: AgColumn): CellCtrl | null {
         // first up, check for cell directly linked to this column
         let res: CellCtrl | null = null;
         this.getAllCellCtrls().forEach((cellCtrl) => {

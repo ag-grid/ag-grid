@@ -1,4 +1,4 @@
-import { ChartType } from '@ag-grid-community/core';
+import type { ChartType } from '@ag-grid-community/core';
 import { _ModuleSupport, _Scene, _Theme, _Util } from 'ag-charts-community';
 
 import { accumulateData } from '../miniChartHelpers';

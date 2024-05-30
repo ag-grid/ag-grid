@@ -1,26 +1,42 @@
-import { VisibleColsService } from '../columns/visibleColsService';
-import { Autowired, PostConstruct } from '../context/context';
+import type { VisibleColsService } from '../columns/visibleColsService';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { EventsType } from '../eventKeys';
 import { Events } from '../eventKeys';
-import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
+import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from '../utils/dom';
-import { RefSelector } from '../widgets/componentAnnotations';
+import type { AgComponentSelector } from '../widgets/component';
+import { RefPlaceholder } from '../widgets/component';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { CenterWidthFeature } from './centerWidthFeature';
+import type { ScrollVisibleService } from './scrollVisibleService';
 
 export class FakeHScrollComp extends AbstractFakeScrollComp {
+    static readonly selector: AgComponentSelector = 'AG-FAKE-HORIZONTAL-SCROLL';
+
     private static TEMPLATE /* html */ = `<div class="ag-body-horizontal-scroll" aria-hidden="true">
-            <div class="ag-horizontal-left-spacer" ref="eLeftSpacer"></div>
-            <div class="ag-body-horizontal-scroll-viewport" ref="eViewport">
-                <div class="ag-body-horizontal-scroll-container" ref="eContainer"></div>
+            <div class="ag-horizontal-left-spacer" data-ref="eLeftSpacer"></div>
+            <div class="ag-body-horizontal-scroll-viewport" data-ref="eViewport">
+                <div class="ag-body-horizontal-scroll-container" data-ref="eContainer"></div>
             </div>
-            <div class="ag-horizontal-right-spacer" ref="eRightSpacer"></div>
+            <div class="ag-horizontal-right-spacer" data-ref="eRightSpacer"></div>
         </div>`;
 
-    @RefSelector('eLeftSpacer') private eLeftSpacer: HTMLElement;
-    @RefSelector('eRightSpacer') private eRightSpacer: HTMLElement;
+    private visibleColsService: VisibleColsService;
+    private pinnedRowModel: PinnedRowModel;
+    private ctrlsService: CtrlsService;
+    private scrollVisibleService: ScrollVisibleService;
 
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
+    public override wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.visibleColsService = beans.visibleColsService;
+        this.pinnedRowModel = beans.pinnedRowModel;
+        this.ctrlsService = beans.ctrlsService;
+        this.scrollVisibleService = beans.scrollVisibleService;
+    }
+
+    private readonly eLeftSpacer: HTMLElement = RefPlaceholder;
+    private readonly eRightSpacer: HTMLElement = RefPlaceholder;
 
     private enableRtl: boolean;
 
@@ -28,19 +44,18 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         super(FakeHScrollComp.TEMPLATE, 'horizontal');
     }
 
-    @PostConstruct
-    protected postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
 
         // When doing printing, this changes whether cols are pinned or not
         const spacerWidthsListener = this.setFakeHScrollSpacerWidths.bind(this);
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, spacerWidthsListener);
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, spacerWidthsListener);
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_PINNED_ROW_DATA_CHANGED,
-            this.onPinnedRowDataChanged.bind(this)
-        );
+
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: spacerWidthsListener,
+            [Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED]: spacerWidthsListener,
+            [Events.EVENT_PINNED_ROW_DATA_CHANGED]: this.onPinnedRowDataChanged.bind(this),
+        });
+
         this.addManagedPropertyListener('domLayout', spacerWidthsListener);
 
         this.ctrlsService.register('fakeHScrollComp', this);
@@ -49,7 +64,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         this.addManagedPropertyListeners(['suppressHorizontalScroll'], this.onScrollVisibilityChanged.bind(this));
     }
 
-    protected initialiseInvisibleScrollbar(): void {
+    protected override initialiseInvisibleScrollbar(): void {
         if (this.invisibleScrollbar !== undefined) {
             return;
         }
@@ -75,7 +90,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         this.getGui().style.bottom = `${bottomPinnedHeight}px`;
     }
 
-    protected onScrollVisibilityChanged(): void {
+    protected override onScrollVisibilityChanged(): void {
         super.onScrollVisibilityChanged();
         this.setFakeHScrollSpacerWidths();
     }

@@ -1,16 +1,10 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Bean } from '../context/context';
-import { Qualifier } from '../context/context';
-import { Logger, LoggerFactory } from '../logger';
 
-@Bean('expressionService')
-export class ExpressionService extends BeanStub {
+export class ExpressionService extends BeanStub implements NamedBean {
+    beanName = 'expressionService' as const;
+
     private expressionToFunctionCache = {} as any;
-    private logger: Logger;
-
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('ExpressionService');
-    }
 
     public evaluate(expression: string | undefined, params: any): any {
         if (typeof expression === 'string') {

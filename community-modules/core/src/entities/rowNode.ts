@@ -1,11 +1,12 @@
-import { EventService } from '../eventService';
-import { AgEvent, AgEventListener, Events, RowEvent, RowSelectedEvent, SelectionEventSourceType } from '../events';
-import { CellEditRequestEvent } from '../events';
-import { DetailGridInfo } from '../gridApi';
-import { IServerSideStore } from '../interfaces/IServerSideStore';
-import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import { IEventEmitter } from '../interfaces/iEventEmitter';
-import {
+import type { BeanCollection } from '../context/context';
+import type { AgEvent, AgEventListener, RowEvent, RowSelectedEvent, SelectionEventSourceType } from '../events';
+import { Events } from '../events';
+import type { CellEditRequestEvent } from '../events';
+import type { DetailGridInfo } from '../gridApi';
+import type { IServerSideStore } from '../interfaces/IServerSideStore';
+import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { IEventEmitter } from '../interfaces/iEventEmitter';
+import type {
     CellChangedEvent,
     DataChangedEvent,
     IRowNode,
@@ -15,12 +16,12 @@ import {
     RowPinnedType,
     SetSelectedParams,
 } from '../interfaces/iRowNode';
-import { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
+import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
+import { LocalEventService } from '../localEventService';
 import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
-import { Beans } from '../rendering/beans';
 import { _debounce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
-import { Column } from './column';
+import type { AgColumn } from './agColumn';
 
 export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     public static ID_PREFIX_ROW_GROUP = 'row-group-';
@@ -133,7 +134,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     public field: string | null;
 
     /** The row group column used for this group, e.g. the Country column instance. */
-    public rowGroupColumn: Column | null;
+    public rowGroupColumn: AgColumn | null;
 
     /** The key for the group eg Ireland, UK, USA */
     public key: string | null = null;
@@ -232,14 +233,14 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     private hovered: boolean = false;
 
     private selected: boolean | undefined = false;
-    private eventService: EventService | null;
+    private localEventService: LocalEventService | null;
     private frameworkEventListenerService: FrameworkEventListenerService | null;
 
-    private beans: Beans;
+    private beans: BeanCollection;
 
     private checkAutoHeightsDebounced: () => void;
 
-    constructor(beans: Beans) {
+    constructor(beans: BeanCollection) {
         this.beans = beans;
     }
 
@@ -357,8 +358,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     public setRowSelectable(newVal: boolean, suppressSelectionUpdate?: boolean) {
         if (this.selectable !== newVal) {
             this.selectable = newVal;
-            if (this.eventService) {
-                this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_SELECTABLE_CHANGED));
+            if (this.localEventService) {
+                this.localEventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_SELECTABLE_CHANGED));
             }
 
             if (suppressSelectionUpdate) {
@@ -459,8 +460,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         this.firstChild = firstChild;
 
-        if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_FIRST_CHILD_CHANGED));
+        if (this.localEventService) {
+            this.localEventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_FIRST_CHILD_CHANGED));
         }
     }
 
@@ -471,8 +472,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         this.lastChild = lastChild;
 
-        if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_LAST_CHILD_CHANGED));
+        if (this.localEventService) {
+            this.localEventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_LAST_CHILD_CHANGED));
         }
     }
 
@@ -483,8 +484,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         this.childIndex = childIndex;
 
-        if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_CHILD_INDEX_CHANGED));
+        if (this.localEventService) {
+            this.localEventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_CHILD_INDEX_CHANGED));
         }
     }
 
@@ -497,8 +498,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         this.rowTop = rowTop;
 
-        if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_TOP_CHANGED));
+        if (this.localEventService) {
+            this.localEventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_TOP_CHANGED));
         }
 
         this.setDisplayed(rowTop !== null);
@@ -517,8 +518,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         this.displayed = displayed;
 
-        if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DISPLAYED_CHANGED));
+        if (this.localEventService) {
+            this.localEventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DISPLAYED_CHANGED));
         }
     }
 
@@ -529,8 +530,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         this.dragging = dragging;
 
-        if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DRAGGING_CHANGED));
+        if (this.localEventService) {
+            this.localEventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DRAGGING_CHANGED));
         }
     }
 
@@ -541,8 +542,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         this.highlighted = highlighted;
 
-        if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HIGHLIGHT_CHANGED));
+        if (this.localEventService) {
+            this.localEventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HIGHLIGHT_CHANGED));
         }
     }
 
@@ -565,8 +566,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         this.allChildrenCount = allChildrenCount;
 
-        if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED));
+        if (this.localEventService) {
+            this.localEventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED));
         }
     }
 
@@ -583,8 +584,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         this.master = master;
 
-        if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_MASTER_CHANGED));
+        if (this.localEventService) {
+            this.localEventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_MASTER_CHANGED));
         }
     }
 
@@ -601,8 +602,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.group = group;
         this.updateHasChildren();
 
-        if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_GROUP_CHANGED));
+        if (this.localEventService) {
+            this.localEventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_GROUP_CHANGED));
         }
     }
 
@@ -614,12 +615,12 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.rowHeight = rowHeight;
         this.rowHeightEstimated = estimated;
 
-        if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HEIGHT_CHANGED));
+        if (this.localEventService) {
+            this.localEventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HEIGHT_CHANGED));
         }
     }
 
-    public setRowAutoHeight(cellHeight: number | undefined, column: Column): void {
+    public setRowAutoHeight(cellHeight: number | undefined, column: AgColumn): void {
         if (!this.__autoHeights) {
             this.__autoHeights = {};
         }
@@ -651,7 +652,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
                 // If column spanning is active a column may not provide auto height for a row if that
                 // cell is not present for the given row due to a previous cell spanning over the auto height column.
                 if (this.beans.columnModel.isColSpanActive()) {
-                    let activeColsForRow: Column[] = [];
+                    let activeColsForRow: AgColumn[] = [];
                     switch (col.getPinned()) {
                         case 'left':
                             activeColsForRow = this.beans.visibleColsService.getLeftColsForRow(this);
@@ -716,8 +717,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         this.rowIndex = rowIndex;
 
-        if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_INDEX_CHANGED));
+        if (this.localEventService) {
+            this.localEventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_INDEX_CHANGED));
         }
     }
 
@@ -728,8 +729,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         this.uiLevel = uiLevel;
 
-        if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_UI_LEVEL_CHANGED));
+        if (this.localEventService) {
+            this.localEventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_UI_LEVEL_CHANGED));
         }
     }
 
@@ -743,8 +744,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         this.expanded = expanded;
 
-        if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_EXPANDED_CHANGED));
+        if (this.localEventService) {
+            this.localEventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_EXPANDED_CHANGED));
         }
 
         const event = Object.assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED), {
@@ -771,8 +772,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     private dispatchLocalEvent(event: AgEvent): void {
-        if (this.eventService) {
-            this.eventService.dispatchEvent(event);
+        if (this.localEventService) {
+            this.localEventService.dispatchEvent(event);
         }
     }
 
@@ -786,7 +787,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
      * @param eventSource The source of the event
      * @returns `true` if the value was changed, otherwise `false`.
      */
-    public setDataValue(colKey: string | Column, newValue: any, eventSource?: string): boolean {
+    public setDataValue(colKey: string | AgColumn, newValue: any, eventSource?: string): boolean {
         const getColumnFromKey = () => {
             if (typeof colKey !== 'string') {
                 return colKey;
@@ -814,7 +815,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         return valueChanged;
     }
 
-    public getValueFromValueService(column: Column): any {
+    public getValueFromValueService(column: AgColumn): any {
         // if we don't check this, then the grid will render leaf groups as open even if we are not
         // allowing the user to open leaf groups. confused? remember for pivot mode we don't allow
         // opening leaf groups, so we have to force leafGroups to be closed in case the user expanded
@@ -848,7 +849,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     private dispatchEventForSaveValueReadOnly(
-        column: Column,
+        column: AgColumn,
         oldValue: any,
         newValue: any,
         eventSource?: string
@@ -871,7 +872,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.beans.eventService.dispatchEvent(event);
     }
 
-    public setGroupValue(colKey: string | Column, newValue: any): void {
+    public setGroupValue(colKey: string | AgColumn, newValue: any): void {
         const column = this.beans.columnModel.getCol(colKey)!;
 
         if (_missing(this.groupData)) {
@@ -895,7 +896,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.aggData = newAggData;
 
         // if no event service, nobody has registered for events, so no need fire event
-        if (this.eventService) {
+        if (this.localEventService) {
             const eventFunc = (colId: string) => {
                 const value = this.aggData ? this.aggData[colId] : undefined;
                 const oldValue = oldAggData ? oldAggData[colId] : undefined;
@@ -942,8 +943,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         if (newValue !== this.__hasChildren) {
             this.__hasChildren = !!newValue;
-            if (this.eventService) {
-                this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HAS_CHILDREN_CHANGED));
+            if (this.localEventService) {
+                this.localEventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HAS_CHILDREN_CHANGED));
             }
         }
     }
@@ -959,7 +960,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         return this.group && _missingOrEmpty(this.childrenAfterGroup);
     }
 
-    private dispatchCellChangedEvent(column: Column, newValue: TData, oldValue: TData): void {
+    private dispatchCellChangedEvent(column: AgColumn, newValue: TData, oldValue: TData): void {
         const cellChangedEvent: CellChangedEvent<TData> = {
             type: RowNode.EVENT_CELL_CHANGED,
             node: this,
@@ -1088,13 +1089,13 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         this.selected = newValue;
 
-        if (this.eventService) {
+        if (this.localEventService) {
             this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
         }
 
         // in case of root node, sibling may have service while this row may not
         const sibling = this.sibling;
-        if (sibling && sibling.footer && sibling.eventService) {
+        if (sibling && sibling.footer && sibling.localEventService) {
             sibling.dispatchLocalEvent(sibling.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
         }
 
@@ -1169,29 +1170,29 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     /** Add an event listener. */
-    public addEventListener(eventType: RowNodeEventType, userListener: Function): void {
-        if (!this.eventService) {
-            this.eventService = new EventService();
+    public addEventListener(eventType: RowNodeEventType, userListener: (...args: any[]) => any): void {
+        if (!this.localEventService) {
+            this.localEventService = new LocalEventService();
         }
         if (this.beans.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
-            this.eventService.setFrameworkOverrides(this.beans.frameworkOverrides);
+            this.localEventService.setFrameworkOverrides(this.beans.frameworkOverrides);
             this.frameworkEventListenerService = new FrameworkEventListenerService(this.beans.frameworkOverrides);
         }
 
         const listener = this.frameworkEventListenerService?.wrap(userListener as AgEventListener) ?? userListener;
-        this.eventService.addEventListener(eventType, listener as AgEventListener);
+        this.localEventService.addEventListener(eventType, listener as AgEventListener);
     }
 
     /** Remove event listener. */
-    public removeEventListener(eventType: RowNodeEventType, userListener: Function): void {
-        if (!this.eventService) {
+    public removeEventListener(eventType: RowNodeEventType, userListener: (...args: any[]) => any): void {
+        if (!this.localEventService) {
             return;
         }
 
         const listener = this.frameworkEventListenerService?.unwrap(userListener as AgEventListener) ?? userListener;
-        this.eventService.removeEventListener(eventType, listener as AgEventListener);
-        if (this.eventService.noRegisteredListenersExist()) {
-            this.eventService = null;
+        this.localEventService.removeEventListener(eventType, listener as AgEventListener);
+        if (this.localEventService.noRegisteredListenersExist()) {
+            this.localEventService = null;
         }
     }
 
@@ -1203,7 +1204,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_MOUSE_LEAVE));
     }
 
-    public getFirstChildOfFirstChild(rowGroupColumn: Column | null): RowNode | null {
+    public getFirstChildOfFirstChild(rowGroupColumn: AgColumn | null): RowNode | null {
         let currentRowNode: RowNode = this;
         let isCandidate = true;
         let foundFirstChildPath = false;

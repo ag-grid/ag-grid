@@ -1,22 +1,18 @@
-import {
-    Autowired,
-    BeanStub,
-    ColumnModel,
-    Events,
+import type {
+    BeanCollection,
     FilterManager,
     FuncColsService,
     IRowModel,
     IRowNode,
     ISelectionService,
     IServerSideGroupSelectionState,
-    IServerSideStore,
     ISetNodesSelectedParams,
-    PostConstruct,
     RowNode,
     SelectionEventSourceType,
 } from '@ag-grid-community/core';
+import { BeanStub, Events } from '@ag-grid-community/core';
 
-import { ISelectionStrategy } from './iSelectionStrategy';
+import type { ISelectionStrategy } from './iSelectionStrategy';
 
 interface SelectionState {
     selectAllChildren: boolean;
@@ -24,16 +20,22 @@ interface SelectionState {
 }
 
 export class GroupSelectsChildrenStrategy extends BeanStub implements ISelectionStrategy {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('selectionService') private selectionService: ISelectionService;
+    private rowModel: IRowModel;
+    private funcColsService: FuncColsService;
+    private filterManager: FilterManager;
+    private selectionService: ISelectionService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.rowModel = beans.rowModel;
+        this.funcColsService = beans.funcColsService;
+        this.filterManager = beans.filterManager;
+        this.selectionService = beans.selectionService;
+    }
 
     private selectedState: SelectionState = { selectAllChildren: false, toggledNodes: new Map() };
     private lastSelected: RowNode | null = null;
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         // if model has updated, a store may now be fully loaded to clean up indeterminate states
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, () => this.removeRedundantState());
 

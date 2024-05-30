@@ -1,39 +1,36 @@
-import {
-    AgGroupComponent,
-    AgGroupComponentParams,
-    AgSelect,
-    AgSelectParams,
-    AgSlider,
-    Autowired,
-    Component,
-    ListOption,
-    PostConstruct,
-    RefSelector,
-} from '@ag-grid-community/core';
+import type { BeanCollection, ListOption } from '@ag-grid-community/core';
+import { AgSelect, Component, RefPlaceholder } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import { AgColorPicker } from '../../../../../widgets/agColorPicker';
+import { AgSlider } from '../../../../../widgets/agSlider';
+import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { getSeriesType, isRadial } from '../../../utils/seriesTypeMapper';
-import { FontPanel, FontPanelParams } from '../fontPanel';
-import { FormatPanelOptions } from '../formatPanel';
+import type { FontPanelParams } from '../fontPanel';
+import { FontPanel } from '../fontPanel';
+import type { FormatPanelOptions } from '../formatPanel';
 
 export class PolarAxisPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="axisGroup">
-                <ag-color-picker ref="axisColorInput"></ag-color-picker>
-                <ag-slider ref="axisLineWidthSlider"></ag-slider>
+            <ag-group-component data-ref="axisGroup">
+                <ag-color-picker data-ref="axisColorInput"></ag-color-picker>
+                <ag-slider data-ref="axisLineWidthSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
-    @RefSelector('axisGroup') private axisGroup: AgGroupComponent;
+    private readonly axisGroup: AgGroupComponent = RefPlaceholder;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
 
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
     constructor(private readonly options: FormatPanelOptions) {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const { isExpandedOnInit: expanded, chartAxisMenuParamsFactory, registerGroupComponent } = this.options;
         const axisGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-top-level',
@@ -48,7 +45,7 @@ export class PolarAxisPanel extends Component {
             'thickness',
             10
         );
-        this.setTemplate(PolarAxisPanel.TEMPLATE, {
+        this.setTemplate(PolarAxisPanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
             axisGroup: axisGroupParams,
             axisColorInput: axisColorInputParams,
             axisLineWidthSlider: axisLineWidthSliderParams,

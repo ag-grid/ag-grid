@@ -1,17 +1,13 @@
-import {
-    AgPromise,
-    Column,
-    ColumnModel,
-    Events,
+import type {
+    AgColumn,
     FuncColsService,
     GetDataPath,
     IClientSideRowModel,
     RowNode,
     SetFilterParams,
     ValueService,
-    _makeNull,
-    _toStringOrNull,
 } from '@ag-grid-community/core';
+import { AgPromise, Events, _makeNull, _toStringOrNull } from '@ag-grid-community/core';
 
 /** @param V type of value in the Set Filter */
 export class ClientSideValuesExtractor<V> {
@@ -85,13 +81,7 @@ export class ClientSideValuesExtractor<V> {
                 return;
             }
 
-            let value = this.getValue(node);
-
-            if (this.filterParams.convertValuesToStrings) {
-                // for backwards compatibility - keeping separate as it will eventually be removed
-                this.addValueForConvertValuesToString(node, value, addValue);
-                return;
-            }
+            const value = this.getValue(node);
 
             if (value != null && Array.isArray(value)) {
                 value.forEach((x) => {
@@ -108,29 +98,10 @@ export class ClientSideValuesExtractor<V> {
         return values;
     }
 
-    private addValueForConvertValuesToString(
-        node: RowNode,
-        value: V | null | undefined,
-        addValue: (unformattedKey: string | null, value: V | null) => void
-    ): void {
-        const key = this.createKey(value, node);
-        if (key != null && Array.isArray(key)) {
-            key.forEach((part) => {
-                const processedPart = _toStringOrNull(_makeNull(part));
-                addValue(processedPart, processedPart as any);
-            });
-            if (key.length === 0) {
-                addValue(null, null);
-            }
-        } else {
-            addValue(key, key as any);
-        }
-    }
-
     private addValueForTreeDataOrGrouping(
         node: RowNode,
         treeData: boolean,
-        groupedCols: Column[],
+        groupedCols: AgColumn[],
         addValue: (unformattedKey: string | null, value: V | null) => void
     ): void {
         let dataPath: string[] | null;

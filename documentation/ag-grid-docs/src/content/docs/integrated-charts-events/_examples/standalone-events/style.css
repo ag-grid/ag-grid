@@ -5,10 +5,11 @@
 }
 
 #myGrid {
-    flex: 1;
-    height: auto !important;
+    height: 300px;
+    flex: none;
 }
 
 .my-chart {
-    flex: 1;
+    height: 400px;
+    flex: none;
 }

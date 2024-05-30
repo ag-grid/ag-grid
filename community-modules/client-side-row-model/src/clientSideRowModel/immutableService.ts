@@ -1,31 +1,30 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
+    BeanCollection,
     IImmutableService,
     IRowModel,
     ISelectionService,
-    PostConstruct,
+    NamedBean,
     RowDataTransaction,
     RowNode,
-    RowRenderer,
-    _exists,
-    _iterateObject,
-    _missing,
 } from '@ag-grid-community/core';
+import { BeanStub, _exists, _iterateObject, _missing } from '@ag-grid-community/core';
 
-import { ClientSideRowModel } from './clientSideRowModel';
+import type { ClientSideRowModel } from './clientSideRowModel';
 
-@Bean('immutableService')
-export class ImmutableService extends BeanStub implements IImmutableService {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('selectionService') private selectionService: ISelectionService;
+export class ImmutableService extends BeanStub implements NamedBean, IImmutableService {
+    beanName = 'immutableService' as const;
+
+    private rowModel: IRowModel;
+    private selectionService: ISelectionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.rowModel = beans.rowModel;
+        this.selectionService = beans.selectionService;
+    }
 
     private clientSideRowModel: ClientSideRowModel;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         if (this.rowModel.getType() === 'clientSide') {
             this.clientSideRowModel = this.rowModel as ClientSideRowModel;
 

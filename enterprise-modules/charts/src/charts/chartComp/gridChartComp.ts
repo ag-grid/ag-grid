@@ -1,22 +1,22 @@
-import {
-    AgDialog,
-    Autowired,
+import type {
+    BeanCollection,
     ChartCreated,
     ChartDestroyed,
     ChartModel,
     ChartToolPanelName,
     ChartType,
-    Component,
-    Events,
     FocusService,
     IAggFunc,
     PartialCellRange,
     PopupService,
-    PostConstruct,
-    RefSelector,
     SeriesChartType,
     UpdateChartParams,
     WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    Component,
+    Events,
+    RefPlaceholder,
     _clearElement,
     _getAbsoluteHeight,
     _getAbsoluteWidth,
@@ -24,9 +24,10 @@ import {
     _removeFromParent,
     _setDisplayed,
 } from '@ag-grid-community/core';
-import { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
+import { AgDialog } from '@ag-grid-enterprise/core';
+import type { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
 
-import { CrossFilteringContext } from '../chartService';
+import type { CrossFilteringContext } from '../chartService';
 import { ChartController, DEFAULT_THEMES } from './chartController';
 import { AreaChartProxy } from './chartProxies/cartesian/areaChartProxy';
 import { BarChartProxy } from './chartProxies/cartesian/barChartProxy';
@@ -34,7 +35,7 @@ import { HistogramChartProxy } from './chartProxies/cartesian/histogramChartProx
 import { LineChartProxy } from './chartProxies/cartesian/lineChartProxy';
 import { ScatterChartProxy } from './chartProxies/cartesian/scatterChartProxy';
 import { WaterfallChartProxy } from './chartProxies/cartesian/waterfallChartProxy';
-import { ChartProxy, ChartProxyParams } from './chartProxies/chartProxy';
+import type { ChartProxy, ChartProxyParams } from './chartProxies/chartProxy';
 import { ComboChartProxy } from './chartProxies/combo/comboChartProxy';
 import { HierarchicalChartProxy } from './chartProxies/hierarchical/hierarchicalChartProxy';
 import { PieChartProxy } from './chartProxies/pie/pieChartProxy';
@@ -44,13 +45,15 @@ import { BoxPlotChartProxy } from './chartProxies/statistical/boxPlotChartProxy'
 import { RangeChartProxy } from './chartProxies/statistical/rangeChartProxy';
 import { TitleEdit } from './chartTitle/titleEdit';
 import { ChartMenu } from './menu/chartMenu';
-import { ChartMenuContext } from './menu/chartMenuContext';
+import type { ChartMenuContext } from './menu/chartMenuContext';
 import { ChartMenuParamsFactory } from './menu/chartMenuParamsFactory';
-import { ChartDataModel, ChartModelParams } from './model/chartDataModel';
-import { ChartCrossFilterService } from './services/chartCrossFilterService';
-import { CHART_TOOL_PANEL_MENU_OPTIONS, ChartMenuService } from './services/chartMenuService';
+import type { ChartModelParams } from './model/chartDataModel';
+import { ChartDataModel } from './model/chartDataModel';
+import type { ChartCrossFilterService } from './services/chartCrossFilterService';
+import type { ChartMenuService } from './services/chartMenuService';
+import { CHART_TOOL_PANEL_MENU_OPTIONS } from './services/chartMenuService';
 import { ChartOptionsService } from './services/chartOptionsService';
-import { ChartTranslationKey, ChartTranslationService } from './services/chartTranslationService';
+import type { ChartTranslationKey, ChartTranslationService } from './services/chartTranslationService';
 import { deepMerge } from './utils/object';
 import { getCanonicalChartType, getSeriesType, isHierarchical } from './utils/seriesTypeMapper';
 
@@ -75,26 +78,34 @@ export interface GridChartParams {
 }
 
 export class GridChartComp extends Component {
+    private crossFilterService: ChartCrossFilterService;
+    private chartTranslationService: ChartTranslationService;
+    private chartMenuService: ChartMenuService;
+    private focusService: FocusService;
+    private popupService: PopupService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.crossFilterService = beans.chartCrossFilterService;
+        this.chartTranslationService = beans.chartTranslationService;
+        this.chartMenuService = beans.chartMenuService;
+        this.focusService = beans.focusService;
+        this.popupService = beans.popupService;
+    }
+
     private static TEMPLATE /* html */ = `<div class="ag-chart" tabindex="-1">
-            <div ref="eChartContainer" tabindex="-1" class="ag-chart-components-wrapper ag-chart-menu-hidden">
-                <div ref="eChart" class="ag-chart-canvas-wrapper"></div>
-                <div ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
+            <div data-ref="eChartContainer" tabindex="-1" class="ag-chart-components-wrapper ag-chart-menu-hidden">
+                <div data-ref="eChart" class="ag-chart-canvas-wrapper"></div>
+                <div data-ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
             </div>
-            <div ref="eTitleEditContainer"></div>
-            <div ref="eMenuContainer" class="ag-chart-docked-container"></div>
+            <div data-ref="eTitleEditContainer"></div>
+            <div data-ref="eMenuContainer" class="ag-chart-docked-container"></div>
         </div>`;
 
-    @RefSelector('eChart') private readonly eChart: HTMLElement;
-    @RefSelector('eChartContainer') private readonly eChartContainer: HTMLElement;
-    @RefSelector('eMenuContainer') private readonly eMenuContainer: HTMLElement;
-    @RefSelector('eEmpty') private readonly eEmpty: HTMLElement;
-    @RefSelector('eTitleEditContainer') private readonly eTitleEditContainer: HTMLDivElement;
-
-    @Autowired('chartCrossFilterService') private readonly crossFilterService: ChartCrossFilterService;
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('popupService') private readonly popupService: PopupService;
+    private readonly eChart: HTMLElement = RefPlaceholder;
+    private readonly eChartContainer: HTMLElement = RefPlaceholder;
+    private readonly eMenuContainer: HTMLElement = RefPlaceholder;
+    private readonly eEmpty: HTMLElement = RefPlaceholder;
+    private readonly eTitleEditContainer: HTMLDivElement = RefPlaceholder;
 
     private chartMenu: ChartMenu;
     private titleEdit: TitleEdit;
@@ -118,8 +129,7 @@ export class GridChartComp extends Component {
         this.params = params;
     }
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         const modelParams: ChartModelParams = {
             ...this.params,
             chartType: getCanonicalChartType(this.params.chartType),
@@ -315,7 +325,7 @@ export class GridChartComp extends Component {
             closable: true,
         });
 
-        this.getContext().createBean(this.chartDialog);
+        this.createBean(this.chartDialog);
 
         this.chartDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => {
             this.destroy();
@@ -429,7 +439,7 @@ export class GridChartComp extends Component {
             return;
         }
 
-        let chartUpdateParams = this.chartController.getChartUpdateParams(updatedOverrides);
+        const chartUpdateParams = this.chartController.getChartUpdateParams(updatedOverrides);
         chartProxy.update(chartUpdateParams);
 
         this.chartProxy
@@ -608,7 +618,7 @@ export class GridChartComp extends Component {
         this.eventService.dispatchEvent(event);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
 
         if (this.chartProxy) {

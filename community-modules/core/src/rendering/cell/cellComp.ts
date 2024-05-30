@@ -1,30 +1,30 @@
-import { UserCompDetails } from '../../components/framework/userComponentFactory';
-import { CellStyle } from '../../entities/colDef';
-import { Column } from '../../entities/column';
-import { RowNode } from '../../entities/rowNode';
-import { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { UserCompDetails } from '../../components/framework/userComponentFactory';
+import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
+import type { CellStyle } from '../../entities/colDef';
+import type { RowNode } from '../../entities/rowNode';
+import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _setAriaRole } from '../../utils/aria';
 import { _browserSupportsPreventScroll } from '../../utils/browser';
 import { _addStylesToElement, _clearElement, _removeFromParent } from '../../utils/dom';
 import { _missing } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import { Component } from '../../widgets/component';
-import { TooltipParentComp } from '../../widgets/tooltipStateManager';
-import { Beans } from './../beans';
+import type { TooltipParentComp } from '../../widgets/tooltipStateManager';
 import { PopupEditorWrapper } from './../cellEditors/popupEditorWrapper';
-import { ICellRendererComp } from './../cellRenderers/iCellRenderer';
-import { CheckboxSelectionComponent } from './../checkboxSelectionComponent';
-import { DndSourceComp } from './../dndSourceComp';
-import { RowCtrl } from './../row/rowCtrl';
-import { RowDragComp } from './../row/rowDragComp';
-import { CellCtrl, ICellComp } from './cellCtrl';
+import type { ICellRendererComp } from './../cellRenderers/iCellRenderer';
+import type { CheckboxSelectionComponent } from './../checkboxSelectionComponent';
+import type { DndSourceComp } from './../dndSourceComp';
+import type { RowCtrl } from './../row/rowCtrl';
+import type { RowDragComp } from './../row/rowDragComp';
+import type { CellCtrl, ICellComp } from './cellCtrl';
 
 export class CellComp extends Component implements TooltipParentComp {
     private eCellWrapper: HTMLElement | undefined;
     private eCellValue: HTMLElement | undefined;
 
-    private beans: Beans;
-    private column: Column;
+    private beans: BeanCollection;
+    private column: AgColumn;
     private rowNode: RowNode;
     private eRow: HTMLElement;
 
@@ -38,7 +38,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private dndSourceComp: DndSourceComp | undefined;
     private rowDraggingComp: RowDragComp | undefined;
 
-    private hideEditorPopup: Function | null | undefined;
+    private hideEditorPopup: ((...args: any[]) => any) | null | undefined;
     private cellEditorPopupWrapper: PopupEditorWrapper | undefined;
     private cellEditor: ICellEditorComp | null | undefined;
     private cellEditorGui: HTMLElement | null;
@@ -62,7 +62,13 @@ export class CellComp extends Component implements TooltipParentComp {
     private rendererVersion = 0;
     private editorVersion = 0;
 
-    constructor(beans: Beans, cellCtrl: CellCtrl, printLayout: boolean, eRow: HTMLElement, editingRow: boolean) {
+    constructor(
+        beans: BeanCollection,
+        cellCtrl: CellCtrl,
+        printLayout: boolean,
+        eRow: HTMLElement,
+        editingRow: boolean
+    ) {
         super();
         this.beans = beans;
         this.column = cellCtrl.getColumn();
@@ -559,7 +565,7 @@ export class CellComp extends Component implements TooltipParentComp {
     // the top part)
     //
     // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
-    public destroy(): void {
+    public override destroy(): void {
         this.cellCtrl.stopEditing();
 
         this.destroyEditorAndRenderer();

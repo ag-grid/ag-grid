@@ -1,7 +1,8 @@
-import { GridOptions } from '../entities/gridOptions';
-import { ComponentStateChangedEvent, Events } from '../events';
-import { GridApi } from '../gridApi';
-import { WithoutGridCommon } from '../interfaces/iCommon';
+import type { GridOptions } from '../entities/gridOptions';
+import type { ComponentStateChangedEvent, GridOptionsChangedEvent } from '../events';
+import { Events } from '../events';
+import type { GridApi } from '../gridApi';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { PropertyKeys } from '../propertyKeys';
 import { _includes } from '../utils/array';
 import { _values } from '../utils/generic';
@@ -51,6 +52,10 @@ export class ComponentUtil {
         Events.EVENT_SUPPRESS_FIELD_DOT_NOTATION,
         Events.EVENT_ROW_COUNT_READY,
         Events.EVENT_SIDE_BAR_UPDATED,
+        Events.EVENT_PINNED_HEIGHT_CHANGED,
+        Events.EVENT_ALIGNED_GRID_COLUMN,
+        Events.EVENT_ALIGNED_GRID_SCROLL,
+        Events.EVENT_GRID_OPTIONS_CHANGED,
     ];
 
     // events that are available for use by users of AG Grid and so should be documented
@@ -120,7 +125,11 @@ export class ComponentUtil {
             return;
         }
 
-        api.__internalUpdateGridOptions(gridChanges, true);
+        const internalUpdateEvent: WithoutGridCommon<GridOptionsChangedEvent> = {
+            type: Events.EVENT_GRID_OPTIONS_CHANGED,
+            options: gridChanges,
+        };
+        api.dispatchEvent(internalUpdateEvent);
 
         // copy gridChanges into an event for dispatch
         const event: WithoutGridCommon<ComponentStateChangedEvent> = {

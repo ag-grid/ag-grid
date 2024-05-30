@@ -18,6 +18,15 @@
     background-color: #0f0f0f;
 }
 
+.example-header-row {
+    display: inline-block;
+    height: 10px;
+    margin-top: 5px;
+    margin-right: 10px;
+    width: 100px;
+    border: 1px solid grey;
+}
+
 .code-highlight-blue {
     color: #a3b9a3;
 }

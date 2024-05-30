@@ -1,17 +1,16 @@
-import { UserCompDetails } from '../../../components/framework/userComponentFactory';
-import { PostConstruct } from '../../../context/context';
+import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { _setDisplayed } from '../../../utils/dom';
-import { RefSelector } from '../../../widgets/componentAnnotations';
+import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
-import { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCellCtrl';
-import { IHeaderGroupComp } from './headerGroupComp';
+import type { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCellCtrl';
+import type { IHeaderGroupComp } from './headerGroupComp';
 
 export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellCtrl> {
     private static TEMPLATE /* html */ = `<div class="ag-header-group-cell" role="columnheader">
-            <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
+            <div data-ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
         </div>`;
 
-    @RefSelector('eResize') private eResize: HTMLElement;
+    private eResize: HTMLElement = RefPlaceholder;
 
     private headerGroupComp: IHeaderGroupComp | undefined;
 
@@ -19,8 +18,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         super(HeaderGroupCellComp.TEMPLATE, ctrl);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const eGui = this.getGui();
 
         const setAttribute = (key: string, value: string | undefined) =>

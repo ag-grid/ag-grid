@@ -1,14 +1,13 @@
-import { ColumnModel } from '../../columns/columnModel';
-import { VisibleColsService } from '../../columns/visibleColsService';
-import { AbstractColDef, HeaderClassParams, ToolPanelClassParams } from '../../entities/colDef';
-import { Column } from '../../entities/column';
-import { ColumnGroup } from '../../entities/columnGroup';
-import { ProvidedColumnGroup } from '../../entities/providedColumnGroup';
-import { GridOptionsService } from '../../gridOptionsService';
-import { WithoutGridCommon } from '../../interfaces/iCommon';
-import { ICellComp } from '../../rendering/cell/cellCtrl';
+import type { VisibleColsService } from '../../columns/visibleColsService';
+import type { AgColumn } from '../../entities/agColumn';
+import type { AgColumnGroup } from '../../entities/agColumnGroup';
+import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
+import type { AbstractColDef, HeaderClassParams, ToolPanelClassParams } from '../../entities/colDef';
+import type { GridOptionsService } from '../../gridOptionsService';
+import type { WithoutGridCommon } from '../../interfaces/iCommon';
+import type { ICellComp } from '../../rendering/cell/cellCtrl';
 import { _missing } from '../../utils/generic';
-import { IAbstractHeaderCellComp } from './abstractCell/abstractHeaderCellCtrl';
+import type { IAbstractHeaderCellComp } from './abstractCell/abstractHeaderCellCtrl';
 
 const CSS_FIRST_COLUMN = 'ag-column-first';
 const CSS_LAST_COLUMN = 'ag-column-last';
@@ -17,8 +16,8 @@ export class CssClassApplier {
     public static getHeaderClassesFromColDef(
         abstractColDef: AbstractColDef | null,
         gos: GridOptionsService,
-        column: Column | null,
-        columnGroup: ColumnGroup | null
+        column: AgColumn | null,
+        columnGroup: AgColumnGroup | null
     ): string[] {
         if (_missing(abstractColDef)) {
             return [];
@@ -30,8 +29,8 @@ export class CssClassApplier {
     public static getToolPanelClassesFromColDef(
         abstractColDef: AbstractColDef | null,
         gos: GridOptionsService,
-        column: Column | null,
-        columnGroup: ProvidedColumnGroup | null
+        column: AgColumn | null,
+        columnGroup: AgProvidedColumnGroup | null
     ): string[] {
         if (_missing(abstractColDef)) {
             return [];
@@ -48,7 +47,7 @@ export class CssClassApplier {
 
     public static refreshFirstAndLastStyles(
         comp: IAbstractHeaderCellComp | ICellComp,
-        column: Column | ColumnGroup,
+        column: AgColumn | AgColumnGroup,
         presentedColsService: VisibleColsService
     ) {
         comp.addOrRemoveCssClass(CSS_FIRST_COLUMN, presentedColsService.isColAtEdge(column, 'first'));
@@ -58,7 +57,7 @@ export class CssClassApplier {
     private static getClassParams<T extends HeaderClassParams | ToolPanelClassParams>(
         abstractColDef: AbstractColDef,
         gos: GridOptionsService,
-        column: Column | null,
+        column: AgColumn | null,
         columnGroup: T['columnGroup']
     ): T {
         return gos.addGridCommonParams({
@@ -75,8 +74,8 @@ export class CssClassApplier {
         classesOrFunc: string | string[] | ((params: T) => string | string[] | undefined) | null | undefined,
         abstractColDef: AbstractColDef,
         gos: GridOptionsService,
-        column: Column | null,
-        columnGroup: ColumnGroup | ProvidedColumnGroup | null
+        column: AgColumn | null,
+        columnGroup: AgColumnGroup | AgProvidedColumnGroup | null
     ): string[] {
         if (_missing(classesOrFunc)) {
             return [];

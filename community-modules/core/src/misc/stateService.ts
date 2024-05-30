@@ -1,25 +1,27 @@
-import { ColumnApplyStateService, ColumnState, ColumnStateParams } from '../columns/columnApplyStateService';
-import { ColumnGetStateService } from '../columns/columnGetStateService';
-import { ColumnGroupStateService } from '../columns/columnGroupStateService';
-import { ColumnModel } from '../columns/columnModel';
-import { PivotResultColsService } from '../columns/pivotResultColsService';
-import { VisibleColsService } from '../columns/visibleColsService';
+import type { ColumnApplyStateService, ColumnState, ColumnStateParams } from '../columns/columnApplyStateService';
+import type { ColumnGetStateService } from '../columns/columnGetStateService';
+import type { ColumnGroupStateService } from '../columns/columnGroupStateService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { PivotResultColsService } from '../columns/pivotResultColsService';
+import type { VisibleColsService } from '../columns/visibleColsService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { Column } from '../entities/column';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { AgColumn } from '../entities/agColumn';
 import { Events } from '../eventKeys';
-import {
+import type { EventsType } from '../eventKeys';
+import type {
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
     RangeSelectionChangedEvent,
     StateUpdatedEvent,
 } from '../events';
-import { FilterManager } from '../filter/filterManager';
-import { FocusService } from '../focusService';
-import { CellRange, IRangeService } from '../interfaces/IRangeService';
-import { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
-import {
+import type { FilterManager } from '../filter/filterManager';
+import type { FocusService } from '../focusService';
+import type { CellRange, IRangeService } from '../interfaces/IRangeService';
+import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
+import type {
     AggregationColumnState,
     AggregationState,
     ColumnGroupState,
@@ -40,38 +42,57 @@ import {
     SideBarState,
     SortState,
 } from '../interfaces/gridState';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { IExpansionService } from '../interfaces/iExpansionService';
-import { FilterModel } from '../interfaces/iFilter';
-import { IRowModel } from '../interfaces/iRowModel';
-import { ISelectionService } from '../interfaces/iSelectionService';
-import { ISideBarService } from '../interfaces/iSideBar';
-import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../interfaces/selectionState';
-import { PaginationProxy } from '../pagination/paginationProxy';
-import { ColumnAnimationService } from '../rendering/columnAnimationService';
-import { SortModelItem } from '../sortController';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IExpansionService } from '../interfaces/iExpansionService';
+import type { FilterModel } from '../interfaces/iFilter';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { ISelectionService } from '../interfaces/iSelectionService';
+import type { ISideBarService } from '../interfaces/iSideBar';
+import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../interfaces/selectionState';
+import type { PaginationProxy } from '../pagination/paginationProxy';
+import type { ColumnAnimationService } from '../rendering/columnAnimationService';
+import type { SortModelItem } from '../sortController';
 import { _debounce } from '../utils/function';
 import { _jsonEquals } from '../utils/generic';
 
-@Bean('stateService')
-export class StateService extends BeanStub {
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
-    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
-    @Autowired('columnGroupStateService') private readonly columnGroupStateService: ColumnGroupStateService;
-    @Autowired('columnGetStateService') private readonly columnGetStateService: ColumnGetStateService;
-    @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;
-    @Autowired('rowModel') private readonly rowModel: IRowModel;
-    @Autowired('selectionService') private readonly selectionService: ISelectionService;
-    @Autowired('expansionService') private readonly expansionService: IExpansionService;
-    @Autowired('columnAnimationService') private readonly columnAnimationService: ColumnAnimationService;
-    @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
+export class StateService extends BeanStub implements NamedBean {
+    beanName = 'stateService' as const;
 
-    @Optional('sideBarService') private readonly sideBarService?: ISideBarService;
-    @Optional('rangeService') private readonly rangeService?: IRangeService;
+    private filterManager: FilterManager;
+    private ctrlsService: CtrlsService;
+    private pivotResultColsService: PivotResultColsService;
+    private focusService: FocusService;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private columnGroupStateService: ColumnGroupStateService;
+    private columnGetStateService: ColumnGetStateService;
+    private paginationProxy: PaginationProxy;
+    private rowModel: IRowModel;
+    private selectionService: ISelectionService;
+    private expansionService: IExpansionService;
+    private columnAnimationService: ColumnAnimationService;
+    private columnApplyStateService: ColumnApplyStateService;
+    private sideBarService?: ISideBarService;
+    private rangeService?: IRangeService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.filterManager = beans.filterManager;
+        this.ctrlsService = beans.ctrlsService;
+        this.pivotResultColsService = beans.pivotResultColsService;
+        this.focusService = beans.focusService;
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.columnGroupStateService = beans.columnGroupStateService;
+        this.columnGetStateService = beans.columnGetStateService;
+        this.paginationProxy = beans.paginationProxy;
+        this.rowModel = beans.rowModel;
+        this.selectionService = beans.selectionService;
+        this.expansionService = beans.expansionService;
+        this.columnAnimationService = beans.columnAnimationService;
+        this.columnApplyStateService = beans.columnApplyStateService;
+        this.sideBarService = beans.sideBarService;
+        this.rangeService = beans.rangeService;
+    }
 
     private isClientSideRowModel: boolean;
     private cachedState: GridState;
@@ -93,8 +114,7 @@ export class StateService extends BeanStub {
     private columnGroupStates?: { groupId: string; open: boolean | undefined }[];
     private staleStateKeys: Set<keyof GridState> = new Set();
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.isClientSideRowModel = this.rowModel.getType() === 'clientSide';
 
         this.cachedState = this.gos.get('initialState') ?? {};
@@ -140,13 +160,11 @@ export class StateService extends BeanStub {
         // sidebar reads the initial state itself, so don't need to set
 
         this.updateCachedState('sideBar', this.getSideBarState());
-
-        this.addManagedListener(this.eventService, Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, () =>
-            this.updateCachedState('sideBar', this.getSideBarState())
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_SIDE_BAR_UPDATED, () =>
-            this.updateCachedState('sideBar', this.getSideBarState())
-        );
+        const stateUpdater = () => this.updateCachedState('sideBar', this.getSideBarState());
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED]: stateUpdater,
+            [Events.EVENT_SIDE_BAR_UPDATED]: stateUpdater,
+        });
     }
 
     private setupStateOnColumnsInitialised(): void {
@@ -167,57 +185,29 @@ export class StateService extends BeanStub {
         ]);
         this.updateCachedState('columnGroup', this.getColumnGroupState());
 
-        // aggregation
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, () =>
-            this.updateColumnState(['aggregation'])
-        );
-        // columnOrder
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () =>
-            this.updateColumnState(['columnOrder'])
-        );
-        // columnPinning
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, () =>
-            this.updateColumnState(['columnPinning'])
-        );
-        // columnSizing
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, () =>
-            this.updateColumnState(['columnSizing'])
-        );
-        // columnVisibility
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () =>
-            this.updateColumnState(['columnVisibility'])
-        );
-        // pivot
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () =>
-            this.updateColumnState(['pivot'])
-        );
-        // pivot
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () =>
-            this.updateColumnState(['pivot'])
-        );
-        // rowGroup
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>
-            this.updateColumnState(['rowGroup'])
-        );
-        // sort
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, () => this.updateColumnState(['sort']));
-        // any column
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () =>
-            this.updateColumnState([
-                'aggregation',
-                'columnOrder',
-                'columnPinning',
-                'columnSizing',
-                'columnVisibility',
-                'pivot',
-                'pivot',
-                'rowGroup',
-                'sort',
-            ])
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, () =>
-            this.updateCachedState('columnGroup', this.getColumnGroupState())
-        );
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_COLUMN_VALUE_CHANGED]: () => this.updateColumnState(['aggregation']),
+            [Events.EVENT_COLUMN_MOVED]: () => this.updateColumnState(['columnOrder']),
+            [Events.EVENT_COLUMN_PINNED]: () => this.updateColumnState(['columnPinning']),
+            [Events.EVENT_COLUMN_RESIZED]: () => this.updateColumnState(['columnSizing']),
+            [Events.EVENT_COLUMN_VISIBLE]: () => this.updateColumnState(['columnVisibility']),
+            [Events.EVENT_COLUMN_PIVOT_CHANGED]: () => this.updateColumnState(['pivot']),
+            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: () => this.updateColumnState(['pivot']),
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: () => this.updateColumnState(['rowGroup']),
+            [Events.EVENT_SORT_CHANGED]: () => this.updateColumnState(['sort']),
+            [Events.EVENT_NEW_COLUMNS_LOADED]: () =>
+                this.updateColumnState([
+                    'aggregation',
+                    'columnOrder',
+                    'columnPinning',
+                    'columnSizing',
+                    'columnVisibility',
+                    'pivot',
+                    'rowGroup',
+                    'sort',
+                ]),
+            [Events.EVENT_COLUMN_GROUP_OPENED]: () => this.updateCachedState('columnGroup', this.getColumnGroupState()),
+        });
     }
 
     private setupStateOnRowCountReady(): void {
@@ -246,23 +236,20 @@ export class StateService extends BeanStub {
         this.updateCachedState('rowSelection', this.getRowSelectionState());
         this.updateCachedState('pagination', this.getPaginationState());
 
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, () =>
-            this.updateCachedState('filter', this.getFilterState())
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, () =>
-            this.onRowGroupOpenedDebounced()
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_EXPAND_COLLAPSE_ALL, () =>
-            this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState())
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, () => {
-            this.staleStateKeys.add('rowSelection');
-            this.onRowSelectedDebounced();
-        });
-        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, (event: PaginationChangedEvent) => {
-            if (event.newPage || event.newPageSize) {
-                this.updateCachedState('pagination', this.getPaginationState());
-            }
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_FILTER_CHANGED]: () => this.updateCachedState('filter', this.getFilterState()),
+            [Events.EVENT_ROW_GROUP_OPENED]: () => this.onRowGroupOpenedDebounced(),
+            [Events.EVENT_EXPAND_COLLAPSE_ALL]: () =>
+                this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()),
+            [Events.EVENT_SELECTION_CHANGED]: () => {
+                this.staleStateKeys.add('rowSelection');
+                this.onRowSelectedDebounced();
+            },
+            [Events.EVENT_PAGINATION_CHANGED]: (event: PaginationChangedEvent) => {
+                if (event.newPage || event.newPageSize) {
+                    this.updateCachedState('pagination', this.getPaginationState());
+                }
+            },
         });
     }
 
@@ -290,21 +277,15 @@ export class StateService extends BeanStub {
         this.updateCachedState('rangeSelection', this.getRangeSelectionState());
         this.updateCachedState('scroll', this.getScrollState());
 
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, () =>
-            this.updateCachedState('focusedCell', this.getFocusedCellState())
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_RANGE_SELECTION_CHANGED,
-            (event: RangeSelectionChangedEvent) => {
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_CELL_FOCUSED]: () => this.updateCachedState('focusedCell', this.getFocusedCellState()),
+            [Events.EVENT_RANGE_SELECTION_CHANGED]: (event: RangeSelectionChangedEvent) => {
                 if (event.finished) {
                     this.updateCachedState('rangeSelection', this.getRangeSelectionState());
                 }
-            }
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL_END, () =>
-            this.updateCachedState('scroll', this.getScrollState())
-        );
+            },
+            [Events.EVENT_BODY_SCROLL_END]: () => this.updateCachedState('scroll', this.getScrollState()),
+        });
     }
 
     private getColumnState(): {
@@ -525,7 +506,7 @@ export class StateService extends BeanStub {
     }
 
     private setColumnGroupState(initialState: GridState): void {
-        if (!initialState.hasOwnProperty('columnGroup')) {
+        if (!Object.prototype.hasOwnProperty.call(initialState, 'columnGroup')) {
             return;
         }
 
@@ -599,7 +580,7 @@ export class StateService extends BeanStub {
         }
         const cellRanges: CellRange[] = [];
         rangeSelectionState.cellRanges.forEach((cellRange) => {
-            const columns: Column[] = [];
+            const columns: AgColumn[] = [];
             cellRange.colIds.forEach((colId) => {
                 const column = this.columnModel.getCol(colId);
                 if (column) {

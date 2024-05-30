@@ -1,19 +1,19 @@
+import type { AgSelectParams, BeanCollection } from '@ag-grid-community/core';
 import {
-    AgGroupComponent,
-    AgGroupComponentParams,
-    AgSelectParams,
-    Autowired,
+    AgSelect,
     Component,
-    PostConstruct,
-    RefSelector,
+    RefPlaceholder,
     _capitalise,
     _includes,
     _removeFromParent,
 } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartOptionsProxy } from '../../services/chartOptionsService';
-import { ChartTranslationService } from '../../services/chartTranslationService';
-import { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
+import { AgColorPicker } from '../../../../widgets/agColorPicker';
+import type { ChartOptionsProxy } from '../../services/chartOptionsService';
+import type { ChartTranslationService } from '../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
 
 interface Font {
     fontFamily?: string;
@@ -33,20 +33,24 @@ export interface FontPanelParams {
 }
 
 export class FontPanel extends Component {
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
+
     public static TEMPLATE /* html */ = `<div class="ag-font-panel">
-            <ag-group-component ref="fontGroup">
-                <ag-select ref="familySelect"></ag-select>
-                <ag-select ref="weightStyleSelect"></ag-select>
+            <ag-group-component data-ref="fontGroup">
+                <ag-select data-ref="familySelect"></ag-select>
+                <ag-select data-ref="weightStyleSelect"></ag-select>
                 <div class="ag-charts-font-size-color">
-                    <ag-select ref="sizeSelect"></ag-select>
-                    <ag-color-picker ref="colorPicker"></ag-color-picker>
+                    <ag-select data-ref="sizeSelect"></ag-select>
+                    <ag-color-picker data-ref="colorPicker"></ag-color-picker>
                 </div>
             </ag-group-component>
         </div>`;
 
-    @RefSelector('fontGroup') private fontGroup: AgGroupComponent;
-
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private readonly fontGroup: AgGroupComponent = RefPlaceholder;
 
     private readonly chartOptions: ChartOptionsProxy;
     private activeComps: Component[] = [];
@@ -56,8 +60,7 @@ export class FontPanel extends Component {
         this.chartOptions = params.chartMenuParamsFactory.getChartOptions();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const fontGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
@@ -72,7 +75,7 @@ export class FontPanel extends Component {
             },
             useToggle: !this.params.suppressEnabledCheckbox,
         };
-        this.setTemplate(FontPanel.TEMPLATE, {
+        this.setTemplate(FontPanel.TEMPLATE, [AgGroupComponent, AgSelect, AgColorPicker], {
             fontGroup: fontGroupParams,
             familySelect: this.getFamilySelectParams(),
             weightStyleSelect: this.getWeightStyleSelectParams(),
@@ -212,7 +215,7 @@ export class FontPanel extends Component {
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyActiveComps();
         super.destroy();
     }

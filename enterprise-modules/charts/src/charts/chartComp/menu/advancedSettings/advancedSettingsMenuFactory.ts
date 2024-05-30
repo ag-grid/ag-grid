@@ -1,21 +1,21 @@
-import {
-    AgDialog,
-    Autowired,
-    Bean,
-    BeanStub,
-    FocusService,
-    PostConstruct,
-    TabGuardComp,
-} from '@ag-grid-community/core';
+import type { BeanCollection, FocusService, NamedBean } from '@ag-grid-community/core';
+import { BeanStub, TabGuardComp } from '@ag-grid-community/core';
+import { AgDialog } from '@ag-grid-enterprise/core';
 
-import { ChartTranslationService } from '../../services/chartTranslationService';
-import { ChartMenuContext } from '../chartMenuContext';
+import type { ChartTranslationService } from '../../services/chartTranslationService';
+import type { ChartMenuContext } from '../chartMenuContext';
 import { AdvancedSettingsPanel } from './advancedSettingsPanel';
 
-@Bean('advancedSettingsMenuFactory')
-export class AdvancedSettingsMenuFactory extends BeanStub {
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+export class AdvancedSettingsMenuFactory extends BeanStub implements NamedBean {
+    beanName = 'advancedSettingsMenuFactory' as const;
+
+    private focusService: FocusService;
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.focusService = beans.focusService;
+        this.chartTranslationService = beans.chartTranslationService;
+    }
 
     private activeMenu?: AdvancedSettingsMenu;
     private activeDialog?: AgDialog;
@@ -55,7 +55,7 @@ export class AdvancedSettingsMenuFactory extends BeanStub {
         }
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.activeMenu = this.destroyBean(this.activeMenu);
         this.activeDialog = this.destroyBean(this.activeDialog);
         super.destroy();
@@ -63,7 +63,11 @@ export class AdvancedSettingsMenuFactory extends BeanStub {
 }
 
 class AdvancedSettingsMenu extends TabGuardComp {
-    @Autowired('focusService') private readonly focusService: FocusService;
+    private focusService: FocusService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.focusService = beans.focusService;
+    }
 
     private static TEMPLATE = /* html */ `<div class="ag-chart-advanced-settings"></div>`;
 
@@ -73,8 +77,7 @@ class AdvancedSettingsMenu extends TabGuardComp {
         super(AdvancedSettingsMenu.TEMPLATE);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.advancedSettingsPanel = this.createManagedBean(new AdvancedSettingsPanel(this.chartMenuContext));
         this.getGui().appendChild(this.advancedSettingsPanel.getGui());
         this.initialiseTabGuard({

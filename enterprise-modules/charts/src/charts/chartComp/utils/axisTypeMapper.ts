@@ -1,5 +1,5 @@
-import { ChartType } from '@ag-grid-community/core';
-import { AgCartesianAxisType } from 'ag-charts-community';
+import type { ChartType } from '@ag-grid-community/core';
+import type { AgCartesianAxisType } from 'ag-charts-community';
 
 export const ALL_AXIS_TYPES: AgCartesianAxisType[] = ['number', 'category', 'grouped-category', 'log', 'time'];
 

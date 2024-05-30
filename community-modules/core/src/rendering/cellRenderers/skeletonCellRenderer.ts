@@ -1,6 +1,6 @@
 import { _setAriaLabel, _setAriaLabelledBy } from '../../utils/aria';
 import { Component } from '../../widgets/component';
-import { ILoadingCellRendererComp, ILoadingCellRendererParams } from './loadingCellRenderer';
+import type { ILoadingCellRendererComp, ILoadingCellRendererParams } from './loadingCellRenderer';
 
 export class SkeletonCellRenderer extends Component implements ILoadingCellRendererComp {
     private static TEMPLATE = `<div class="ag-skeleton-container"></div>`;
@@ -44,7 +44,7 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 }

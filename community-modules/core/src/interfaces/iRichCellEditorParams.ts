@@ -1,5 +1,23 @@
-import { ICellEditorParams } from './iCellEditor';
+import type { AgPickerFieldParams } from './agFieldParams';
+import type { ICellEditorParams } from './iCellEditor';
 
+export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
+    value?: TValue;
+    valueList?: TValue[];
+    allowTyping?: boolean;
+    cellRenderer?: any;
+    cellRowHeight?: number;
+    searchDebounceDelay?: number;
+
+    filterList?: boolean;
+    searchType?: 'match' | 'matchAny' | 'fuzzy';
+    highlightMatch?: boolean;
+    placeholder?: string;
+    initialInputValue?: string;
+
+    valueFormatter?: (value: TValue) => any;
+    searchStringCreator?: (values: TValue[]) => string[];
+}
 export interface RichCellEditorValuesCallback<TData = any, TValue = any> {
     (params: ICellEditorParams<TData, TValue>): TValue[] | Promise<TValue[]>;
 }

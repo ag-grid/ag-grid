@@ -1,14 +1,18 @@
-import { Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
+import { Component } from '@ag-grid-community/core';
 import { _Scene } from 'ag-charts-community';
 
-import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 
 const CANVAS_CLASS = 'ag-chart-mini-thumbnail-canvas';
 const ERROR_MESSAGE = 'AG Grid - chart update failed';
 
 export abstract class MiniChart extends Component {
-    @Autowired('chartTranslationService')
-    protected chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
 
     protected readonly size: number = 58;
     protected readonly padding: number = 5;
@@ -33,8 +37,7 @@ export abstract class MiniChart extends Component {
         this.scene = scene;
     }
 
-    @PostConstruct
-    protected init(): void {
+    public postConstruct(): void {
         this.scene.canvas.element.title = this.chartTranslationService.translate(this.tooltipName);
 
         // Necessary to force scene graph render as we are not using the standalone factory.

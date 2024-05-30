@@ -1,15 +1,20 @@
-import {
-    Component,
+import type {
+    BeanCollection,
+    Context,
     GridApi,
     GridOptions,
     GridParams,
     ICellRenderer,
     IDetailCellRenderer,
     IDetailCellRendererParams,
+} from '@ag-grid-community/core';
+import {
+    Component,
     ModuleRegistry,
-    RefSelector,
+    RefPlaceholder,
     _cloneObject,
     _missing,
+    _warnOnce,
     createGrid,
 } from '@ag-grid-community/core';
 
@@ -17,16 +22,19 @@ import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
 
 export class DetailCellRenderer extends Component implements ICellRenderer {
     private static TEMPLATE /* html */ = `<div class="ag-details-row" role="gridcell">
-            <div ref="eDetailGrid" class="ag-details-grid" role="presentation"></div>
+            <div data-ref="eDetailGrid" class="ag-details-grid" role="presentation"></div>
         </div>`;
 
-    @RefSelector('eDetailGrid') private eDetailGrid: HTMLElement;
+    private eDetailGrid: HTMLElement = RefPlaceholder;
 
     private detailApi: GridApi;
-
     private params: IDetailCellRendererParams;
-
     private ctrl: DetailCellRendererCtrl;
+    private context: Context;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.context = beans.context;
+    }
 
     public init(params: IDetailCellRendererParams): void {
         this.params = params;
@@ -51,18 +59,18 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 
     private selectAndSetTemplate(): void {
         if (this.params.pinned) {
-            this.setTemplate('<div class="ag-details-row"></div>');
+            this.setTemplate('<div class="ag-details-row"></div>', []);
             return;
         }
 
         const setDefaultTemplate = () => {
-            this.setTemplate(DetailCellRenderer.TEMPLATE);
+            this.setTemplate(DetailCellRenderer.TEMPLATE, []);
         };
 
         if (_missing(this.params.template)) {
@@ -71,21 +79,21 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         } else {
             // use user provided template
             if (typeof this.params.template === 'string') {
-                this.setTemplate(this.params.template);
+                this.setTemplate(this.params.template, []);
             } else if (typeof this.params.template === 'function') {
                 const templateFunc = this.params.template;
                 const template = templateFunc(this.params);
-                this.setTemplate(template);
+                this.setTemplate(template, []);
             } else {
-                console.warn('AG Grid: detailCellRendererParams.template should be function or string');
+                _warnOnce('detailCellRendererParams.template should be function or string');
                 setDefaultTemplate();
             }
         }
 
         if (this.eDetailGrid == null) {
-            console.warn(
-                'AG Grid: reference to eDetailGrid was missing from the details template. ' +
-                    'Please add ref="eDetailGrid" to the template.'
+            _warnOnce(
+                'Reference to eDetailGrid was missing from the details template. ' +
+                    'Please add data-ref="eDetailGrid" to the template.'
             );
         }
     }

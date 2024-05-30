@@ -1,43 +1,42 @@
-import {
-    Autowired,
-    BeanStub,
-    Column,
-    ColumnModel,
-    Events,
+import type {
+    AgColumn,
+    BeanCollection,
     FuncColsService,
     IRowNode,
     ISelectionService,
     IServerSideStore,
     IsApplyServerSideTransactionParams,
     LoadSuccessParams,
-    NumberSequence,
-    PostConstruct,
-    PreDestroy,
     RowBounds,
     RowNode,
     ServerSideGroupLevelParams,
     ServerSideGroupLevelState,
     ServerSideTransaction,
     ServerSideTransactionResult,
-    ServerSideTransactionResultStatus,
     StoreRefreshAfterParams,
     StoreRefreshedEvent,
     StoreUpdatedEvent,
     WithoutGridCommon,
-    _missing,
 } from '@ag-grid-community/core';
+import { BeanStub, Events, NumberSequence, ServerSideTransactionResultStatus } from '@ag-grid-community/core';
 
-import { BlockUtils } from '../../blocks/blockUtils';
-import { SSRMParams } from '../../serverSideRowModel';
-import { StoreUtils } from '../storeUtils';
+import type { BlockUtils } from '../../blocks/blockUtils';
+import type { SSRMParams } from '../../serverSideRowModel';
+import type { StoreUtils } from '../storeUtils';
 import { LazyCache } from './lazyCache';
 
 export class LazyStore extends BeanStub implements IServerSideStore {
-    @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
-    @Autowired('ssrmStoreUtils') private storeUtils: StoreUtils;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
+    private blockUtils: BlockUtils;
+    private storeUtils: StoreUtils;
+    private selectionService: ISelectionService;
+    private funcColsService: FuncColsService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.blockUtils = beans.ssrmBlockUtils;
+        this.storeUtils = beans.ssrmStoreUtils;
+        this.selectionService = beans.selectionService;
+        this.funcColsService = beans.funcColsService;
+    }
 
     // display indexes
     private displayIndexStart: number | undefined;
@@ -55,7 +54,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private readonly storeParams: ServerSideGroupLevelParams;
     private readonly parentRowNode: RowNode;
     private groupField: string | undefined;
-    private rowGroupColumn: Column;
+    private rowGroupColumn: AgColumn;
 
     private idSequence = new NumberSequence();
     private cache: LazyCache;
@@ -72,8 +71,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.info = {};
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         let numberOfRows = 1;
         if (this.level === 0) {
             numberOfRows = this.storeUtils.getServerSideInitialRowCount() ?? 1;
@@ -93,11 +91,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
     }
 
-    @PreDestroy
-    private destroyRowNodes(): void {
+    public override destroy(): void {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
         this.destroyBean(this.cache);
+        super.destroy();
     }
 
     /**
@@ -352,7 +350,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
 
         const orderedNodes = this.cache.getOrderedNodeMap();
-        for (let key in orderedNodes) {
+        for (const key in orderedNodes) {
             const lazyNode = orderedNodes[key];
             callback(lazyNode.node, sequence.next());
             const childCache = lazyNode.node.childStore;
@@ -653,15 +651,6 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns a range of nodes between firstInRange and lastInRange inclusive
      */
     getRowNodesInRange(firstInRange: RowNode<any>, lastInRange: RowNode<any>): RowNode<any>[] {
-        const result: RowNode[] = [];
-
-        let inActiveRange = false;
-
-        // if only one node passed, we start the selection at the top
-        if (_missing(firstInRange)) {
-            inActiveRange = true;
-        }
-
         return this.cache
             .getNodes()
             .filter(({ node }) => {

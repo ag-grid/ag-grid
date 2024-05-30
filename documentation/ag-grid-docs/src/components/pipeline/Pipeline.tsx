@@ -181,7 +181,6 @@ export const Pipeline = ({ location }) => {
                 detailCellRenderer={DetailCellRenderer}
                 masterDetail={true}
                 rowData={rowData}
-                columnMenu={'new'}
                 onGridReady={gridReady}
                 theme={!darkMode ? 'ag-theme-quartz' : 'ag-theme-quartz-dark'}
             ></Grid>

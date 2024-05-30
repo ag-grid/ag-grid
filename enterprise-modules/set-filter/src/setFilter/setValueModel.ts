@@ -1,8 +1,6 @@
-import {
+import type {
+    AgColumn,
     AgEventListener,
-    AgPromise,
-    ColumnModel,
-    EventService,
     FuncColsService,
     GridOptionsService,
     IClientSideRowModel,
@@ -13,10 +11,14 @@ import {
     SetFilterValues,
     SetFilterValuesFunc,
     SetFilterValuesFuncParams,
-    TextFilter,
     TextFormatter,
     ValueFormatterParams,
     ValueService,
+} from '@ag-grid-community/core';
+import {
+    AgPromise,
+    LocalEventService,
+    TextFilter,
     _defaultComparator,
     _doOnce,
     _exists,
@@ -27,8 +29,8 @@ import {
 import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
 import { SetValueModelFilteringKeys } from './filteringKeys';
 import { FlatSetDisplayValueModel } from './flatSetDisplayValueModel';
-import { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
-import { ISetFilterLocaleText } from './localeText';
+import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
+import type { ISetFilterLocaleText } from './localeText';
 import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 
 export enum SetFilterModelValuesType {
@@ -39,7 +41,6 @@ export enum SetFilterModelValuesType {
 
 export interface SetValueModelParams<V> {
     gos: GridOptionsService;
-    columnModel: ColumnModel;
     funcColsService: FuncColsService;
     valueService: ValueService;
     filterParams: SetFilterParams<any, V>;
@@ -59,7 +60,7 @@ export class SetValueModel<V> implements IEventEmitter {
     public static EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
 
     private readonly gos: GridOptionsService;
-    private readonly localEventService = new EventService();
+    private readonly localEventService = new LocalEventService();
     private formatter: TextFormatter;
     private suppressSorting: boolean;
     private readonly clientSideValuesExtractor: ClientSideValuesExtractor<V>;
@@ -67,7 +68,6 @@ export class SetValueModel<V> implements IEventEmitter {
     private readonly keyComparator: (a: string | null, b: string | null) => number;
     private readonly entryComparator: (a: [string | null, V | null], b: [string | null, V | null]) => number;
     private readonly compareByValue: boolean;
-    private readonly convertValuesToStrings: boolean;
     private readonly caseSensitive: boolean;
     private displayValueModel: ISetDisplayValueModel<V>;
     private filterParams: SetFilterParams<any, V>;
@@ -111,7 +111,6 @@ export class SetValueModel<V> implements IEventEmitter {
     constructor(params: SetValueModelParams<V>) {
         const {
             usingComplexObjects,
-            columnModel,
             funcColsService,
             valueService,
             treeDataTreeList,
@@ -131,7 +130,6 @@ export class SetValueModel<V> implements IEventEmitter {
             rowModel,
             values,
             caseSensitive,
-            convertValuesToStrings,
             treeList,
             treeListPathGetter,
             treeListFormatter,
@@ -147,7 +145,6 @@ export class SetValueModel<V> implements IEventEmitter {
         this.formatter = textFormatter || TextFilter.DEFAULT_FORMATTER;
         this.doesRowPassOtherFilters = doesRowPassOtherFilter;
         this.suppressSorting = suppressSorting || false;
-        this.convertValuesToStrings = !!convertValuesToStrings;
         this.filteringKeys = new SetValueModelFilteringKeys({ caseFormat: this.caseFormat });
         const keyComparator = comparator ?? (colDef.comparator as (a: any, b: any) => number);
         const treeDataOrGrouping = !!treeDataTreeList || !!groupingTreeList;
@@ -162,12 +159,16 @@ export class SetValueModel<V> implements IEventEmitter {
             this.entryComparator = this.createTreeDataOrGroupingComparator() as any;
         } else if (treeList && !treeListPathGetter && !keyComparator) {
             this.entryComparator = (
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 [_aKey, aValue]: [string | null, V | null],
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 [_bKey, bValue]: [string | null, V | null]
             ) => _defaultComparator(aValue, bValue);
         } else {
             this.entryComparator = (
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 [_aKey, aValue]: [string | null, V | null],
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 [_bKey, bValue]: [string | null, V | null]
             ) => keyComparator(aValue, bValue);
         }
@@ -209,7 +210,12 @@ export class SetValueModel<V> implements IEventEmitter {
                   treeListFormatter,
                   treeDataTreeList || groupingTreeList
               )
-            : (new FlatSetDisplayValueModel<V>(valueService, valueFormatter, this.formatter, column) as any);
+            : (new FlatSetDisplayValueModel<V>(
+                  valueService,
+                  valueFormatter,
+                  this.formatter,
+                  column as AgColumn
+              ) as any);
 
         this.updateAllValues().then((updatedKeys) => this.resetSelectionState(updatedKeys || []));
     }
@@ -247,7 +253,7 @@ export class SetValueModel<V> implements IEventEmitter {
                 }
 
                 const currentModel = this.getModel();
-                this.updateAllValues().then((updatedKeys) => {
+                this.updateAllValues().then(() => {
                     this.setModel(currentModel).then(() => resolve());
                 });
             } else {
@@ -370,11 +376,11 @@ export class SetValueModel<V> implements IEventEmitter {
                 const firstKey = this.createKey(firstValue);
                 if (firstKey == null) {
                     _warnOnce(
-                        'Set Filter Key Creator is returning null for provided values and provided values are primitives. Please provide complex objects or set convertValuesToStrings=true in the filterParams. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types'
+                        'Set Filter Key Creator is returning null for provided values and provided values are primitives. Please provide complex objects. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types'
                     );
                 } else {
                     _warnOnce(
-                        'Set Filter has a Key Creator, but provided values are primitives. Did you mean to provide complex objects or enable convertValuesToStrings?'
+                        'Set Filter has a Key Creator, but provided values are primitives. Did you mean to provide complex objects?'
                     );
                 }
             }
@@ -695,7 +701,7 @@ export class SetValueModel<V> implements IEventEmitter {
         const formattedKeys: Set<string | null> = new Set();
         (values ?? []).forEach((value) => {
             const valueToUse = _makeNull(value);
-            const unformattedKey = this.convertAndGetKey(valueToUse);
+            const unformattedKey = this.createKey(valueToUse);
             const formattedKey = this.caseFormat(unformattedKey);
             if (!formattedKeys.has(formattedKey)) {
                 formattedKeys.add(formattedKey);
@@ -704,10 +710,6 @@ export class SetValueModel<V> implements IEventEmitter {
         });
 
         return uniqueValues;
-    }
-
-    private convertAndGetKey(value: V | null): string | null {
-        return this.convertValuesToStrings ? (value as any) : this.createKey(value);
     }
 
     private resetSelectionState(keys: (string | null)[]): void {
@@ -727,7 +729,9 @@ export class SetValueModel<V> implements IEventEmitter {
         b: [string | null, string[] | null]
     ) => number {
         return (
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             [_aKey, aValue]: [string | null, string[] | null],
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             [_bKey, bValue]: [string | null, string[] | null]
         ) => {
             if (aValue == null) {

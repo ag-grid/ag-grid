@@ -1,20 +1,18 @@
-import { PostConstruct } from '../context/context';
-import { CheckboxSelectionCallback } from '../entities/colDef';
-import { Column } from '../entities/column';
+import type { AgColumn } from '../entities/agColumn';
+import type { CheckboxSelectionCallback } from '../entities/colDef';
 import { RowNode } from '../entities/rowNode';
 import { Events } from '../events';
 import { _getAriaCheckboxStateName } from '../utils/aria';
 import { _stopPropagationForAgGrid } from '../utils/event';
 import { AgCheckbox } from '../widgets/agCheckbox';
-import { Component } from '../widgets/component';
-import { RefSelector } from '../widgets/componentAnnotations';
-import { GroupCheckboxSelectionCallback } from './cellRenderers/groupCellRendererCtrl';
+import { Component, RefPlaceholder } from '../widgets/component';
+import type { GroupCheckboxSelectionCallback } from './cellRenderers/groupCellRendererCtrl';
 
 export class CheckboxSelectionComponent extends Component {
-    @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
+    private readonly eCheckbox: AgCheckbox = RefPlaceholder;
 
     private rowNode: RowNode;
-    private column: Column | undefined;
+    private column: AgColumn | undefined;
     private overrides?: {
         isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined;
         callbackParams: any;
@@ -22,14 +20,16 @@ export class CheckboxSelectionComponent extends Component {
     };
 
     constructor() {
-        super(/* html*/ `
+        super(
+            /* html*/ `
             <div class="ag-selection-checkbox" role="presentation">
-                <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
-            </div>`);
+                <ag-checkbox role="presentation" data-ref="eCheckbox"></ag-checkbox>
+            </div>`,
+            [AgCheckbox]
+        );
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.eCheckbox.setPassive(true);
     }
 
@@ -72,7 +72,7 @@ export class CheckboxSelectionComponent extends Component {
 
     public init(params: {
         rowNode: RowNode;
-        column?: Column;
+        column?: AgColumn;
         overrides?: {
             isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined;
             callbackParams: any;

@@ -1,12 +1,15 @@
+import type {
+    AgComponentSelector,
+    AgLabelParams,
+    BeanCollection,
+    DragListenerParams,
+    DragService,
+} from '@ag-grid-community/core';
 import {
     AgAbstractLabel,
     AgInputNumberField,
-    AgLabelParams,
-    Autowired,
-    DragListenerParams,
-    DragService,
     Events,
-    RefSelector,
+    RefPlaceholder,
     _exists,
     _setFixedWidth,
 } from '@ag-grid-community/core';
@@ -17,24 +20,30 @@ export interface AgAngleSelectParams extends AgLabelParams {
 }
 
 export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
+    protected dragService: DragService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.dragService = beans.dragService;
+    }
+
+    static readonly selector: AgComponentSelector = 'AG-ANGLE-SELECT';
+
     private static TEMPLATE /* html */ = `<div class="ag-angle-select">
-            <div ref="eLabel"></div>
+            <div data-ref="eLabel"></div>
             <div class="ag-wrapper ag-angle-select-wrapper">
-                <div ref="eAngleSelectField" class="ag-angle-select-field">
-                    <div ref="eParentCircle" class="ag-angle-select-parent-circle">
-                        <div ref="eChildCircle" class="ag-angle-select-child-circle"></div>
+                <div class="ag-angle-select-field">
+                    <div data-ref="eParentCircle" class="ag-angle-select-parent-circle">
+                        <div data-ref="eChildCircle" class="ag-angle-select-child-circle"></div>
                     </div>
                 </div>
-                <ag-input-number-field ref="eAngleValue"></ag-input-number-field>
+                <ag-input-number-field data-ref="eAngleValue"></ag-input-number-field>
             </div>
         </div>`;
 
-    @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
-    @RefSelector('eParentCircle') private readonly eParentCircle: HTMLElement;
-    @RefSelector('eChildCircle') private readonly eChildCircle: HTMLElement;
-    @RefSelector('eAngleValue') private readonly eAngleValue: AgInputNumberField;
-
-    @Autowired('dragService') protected readonly dragService: DragService;
+    protected readonly eLabel: HTMLElement = RefPlaceholder;
+    private readonly eParentCircle: HTMLElement = RefPlaceholder;
+    private readonly eChildCircle: HTMLElement = RefPlaceholder;
+    private readonly eAngleValue: AgInputNumberField = RefPlaceholder;
 
     private parentCircleRect: ClientRect | DOMRect;
     private degrees: number;
@@ -44,10 +53,10 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     private dragListener: DragListenerParams;
 
     constructor(config?: AgAngleSelectParams) {
-        super(config, AgAngleSelect.TEMPLATE);
+        super(config, AgAngleSelect.TEMPLATE, [AgInputNumberField]);
     }
 
-    postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
 
         const { value, onValueChange } = this.config;
@@ -247,7 +256,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
         return this;
     }
 
-    public setDisabled(disabled: boolean): this {
+    public override setDisabled(disabled: boolean): this {
         super.setDisabled(disabled);
 
         this.eAngleValue.setDisabled(disabled);
@@ -255,7 +264,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
         return this;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.dragService.removeDragSource(this.dragListener);
         super.destroy();
     }

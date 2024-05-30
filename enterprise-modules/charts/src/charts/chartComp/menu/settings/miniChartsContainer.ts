@@ -1,17 +1,9 @@
-import {
-    AgGroupComponent,
-    Autowired,
-    ChartGroupsDef,
-    ChartType,
-    Component,
-    KeyCode,
-    PostConstruct,
-    _setAriaLabel,
-    _warnOnce,
-} from '@ag-grid-community/core';
+import type { BeanCollection, ChartGroupsDef, ChartType } from '@ag-grid-community/core';
+import { Component, KeyCode, _setAriaLabel, _warnOnce } from '@ag-grid-community/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartController } from '../../chartController';
-import { ChartTranslationService } from '../../services/chartTranslationService';
+import type { ChartController } from '../../chartController';
+import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { getFullChartNameTranslationKey } from '../../utils/seriesTypeMapper';
 import {
     MiniArea,
@@ -46,14 +38,9 @@ import {
     MiniWaterfall,
 } from './miniCharts/index';
 // please leave this as is - we want it to be explicit for build reasons
-import { MiniChart } from './miniCharts/miniChart';
+import type { MiniChart } from './miniCharts/miniChart';
 
-// import {enterprise} from "../../../../main";
-
-export type ThemeTemplateParameters = {
-    extensions: Map<any, any>;
-    properties: Map<any, any>;
-};
+export type ThemeTemplateParameters = Map<any, any>;
 
 type MiniChartMenuMapping = {
     [K in keyof ChartGroupsDef]-?: MiniChartMenuGroup<K>;
@@ -144,6 +131,12 @@ const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
 };
 
 export class MiniChartsContainer extends Component {
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
+
     static TEMPLATE = /* html */ `<div class="ag-chart-settings-mini-wrapper"></div>`;
 
     private readonly fills: string[];
@@ -154,8 +147,6 @@ export class MiniChartsContainer extends Component {
     private chartController: ChartController;
 
     private chartGroups: ChartGroupsDef;
-
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     constructor(
         chartController: ChartController,
@@ -175,8 +166,7 @@ export class MiniChartsContainer extends Component {
         this.chartGroups = { ...chartGroups };
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         // hide MiniCustomCombo if no custom combo exists
         if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
             this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(
@@ -303,7 +293,7 @@ export class MiniChartsContainer extends Component {
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.wrappers.clear();
         super.destroy();
     }

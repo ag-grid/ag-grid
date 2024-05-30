@@ -1,8 +1,8 @@
 import { ComponentUtil } from '../../components/componentUtil';
-import { GridOptions } from '../../entities/gridOptions';
+import type { GridOptions } from '../../entities/gridOptions';
 import { ModuleNames } from '../../modules/moduleNames';
 import { PropertyKeys } from '../../propertyKeys';
-import { Deprecations, OptionsValidator, Validations } from '../validationTypes';
+import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 import { COL_DEF_VALIDATORS } from './colDefValidations';
 
 /**
@@ -35,7 +35,7 @@ export const GRID_OPTION_DEFAULTS = {
     suppressContextMenu: false,
     preventDefaultOnContextMenu: false,
     allowContextMenuWithControlKey: false,
-    suppressMenuHide: false,
+    suppressMenuHide: true,
     enableBrowserTooltips: false,
     tooltipTrigger: 'hover',
     tooltipShowDelay: 2000,
@@ -205,6 +205,7 @@ export const GRID_OPTION_DEFAULTS = {
     serverSideEnableClientSideSort: false,
     suppressServerSideFullWidthLoadingRow: false,
     pivotMaxGeneratedColumns: -1,
+    columnMenu: 'new',
 } as const;
 /**
  * Used simply to type check the default grid options.

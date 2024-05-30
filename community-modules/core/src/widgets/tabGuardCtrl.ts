@@ -1,6 +1,6 @@
 import { BeanStub } from '../context/beanStub';
-import { Autowired, PostConstruct } from '../context/context';
-import { FocusService } from '../focusService';
+import type { BeanCollection } from '../context/context';
+import type { FocusService } from '../focusService';
 import { ManagedFocusFeature } from './managedFocusFeature';
 
 export enum TabGuardClassNames {
@@ -14,7 +14,11 @@ export interface ITabGuard {
 }
 
 export class TabGuardCtrl extends BeanStub {
-    @Autowired('focusService') private readonly focusService: FocusService;
+    private focusService: FocusService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.focusService = beans.focusService;
+    }
 
     private readonly comp: ITabGuard;
     private readonly eTopGuard: HTMLElement;
@@ -82,8 +86,7 @@ export class TabGuardCtrl extends BeanStub {
         this.providedHandleKeyDown = handleKeyDown;
     }
 
-    @PostConstruct
-    private postConstruct() {
+    public postConstruct() {
         this.createManagedBean(
             new ManagedFocusFeature(this.eFocusableElement, {
                 shouldStopEventPropagation: () => this.shouldStopEventPropagation(),

@@ -1,15 +1,11 @@
-import {
+import type {
     AsyncTransactionsFlushed,
-    Autowired,
-    Bean,
-    BeanStub,
-    Beans,
-    ChangedPath,
+    BeanCollection,
     ClientSideRowModelStep,
-    ClientSideRowModelSteps,
     ColumnModel,
     CssVariablesChanged,
-    Events,
+    Environment,
+    EventsType,
     ExpandCollapseAllEvent,
     FilterChangedEvent,
     FuncColsService,
@@ -18,19 +14,24 @@ import {
     IRowNodeStage,
     ISelectionService,
     ModelUpdatedEvent,
-    Optional,
-    PostConstruct,
+    NamedBean,
     RefreshModelParams,
     RowBounds,
     RowDataTransaction,
     RowDataUpdatedEvent,
-    RowHighlightPosition,
     RowModelType,
-    RowNode,
     RowNodeTransaction,
     SelectionChangedEvent,
     ValueCache,
     WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    BeanStub,
+    ChangedPath,
+    ClientSideRowModelSteps,
+    Events,
+    RowHighlightPosition,
+    RowNode,
     _debounce,
     _exists,
     _insertIntoArray,
@@ -58,24 +59,46 @@ export interface RowNodeMap {
     [id: string]: RowNode;
 }
 
-@Bean('rowModel')
-export class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('selectionService') private selectionService: ISelectionService;
-    @Autowired('valueCache') private valueCache: ValueCache;
-    @Autowired('beans') private beans: Beans;
+export class ClientSideRowModel extends BeanStub implements IClientSideRowModel, NamedBean {
+    beanName = 'rowModel' as const;
+
+    private beans: BeanCollection;
+
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+    private selectionService: ISelectionService;
+    private valueCache: ValueCache;
+    private environment: Environment;
 
     // standard stages
-    @Autowired('filterStage') private filterStage: IRowNodeStage;
-    @Autowired('sortStage') private sortStage: IRowNodeStage;
-    @Autowired('flattenStage') private flattenStage: IRowNodeStage;
+    private filterStage: IRowNodeStage;
+    private sortStage: IRowNodeStage;
+    private flattenStage: IRowNodeStage;
 
     // enterprise stages
-    @Optional('groupStage') private groupStage?: IRowNodeStage;
-    @Optional('aggregationStage') private aggregationStage?: IRowNodeStage;
-    @Optional('pivotStage') private pivotStage?: IRowNodeStage;
-    @Optional('filterAggregatesStage') private filterAggregatesStage?: IRowNodeStage;
+    private groupStage?: IRowNodeStage;
+    private aggregationStage?: IRowNodeStage;
+    private pivotStage?: IRowNodeStage;
+    private filterAggregatesStage?: IRowNodeStage;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.beans = beans;
+
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+        this.selectionService = beans.selectionService;
+        this.valueCache = beans.valueCache;
+        this.environment = beans.environment;
+
+        this.filterStage = beans.filterStage;
+        this.sortStage = beans.sortStage;
+        this.flattenStage = beans.flattenStage;
+
+        this.groupStage = beans.groupStage;
+        this.aggregationStage = beans.aggregationStage;
+        this.pivotStage = beans.pivotStage;
+        this.filterAggregatesStage = beans.filterAggregatesStage;
+    }
 
     private onRowHeightChanged_debounced = _debounce(this.onRowHeightChanged.bind(this), 100);
 
@@ -99,8 +122,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private isRefreshingModel: boolean = false;
     private rowCountReady: boolean = false;
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         const refreshEverythingFunc = this.refreshModel.bind(this, { step: ClientSideRowModelSteps.EVERYTHING });
         const animate = !this.gos.get('suppressAnimationFrame');
         const refreshEverythingAfterColsChangedFunc = this.refreshModel.bind(this, {
@@ -110,27 +132,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             animate,
         });
 
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_NEW_COLUMNS_LOADED,
-            refreshEverythingAfterColsChangedFunc
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_COLUMN_PIVOT_CHANGED,
-            this.refreshModel.bind(this, { step: ClientSideRowModelSteps.PIVOT })
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_GRID_STYLES_CHANGED,
-            this.onGridStylesChanges.bind(this)
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_READY, () => this.onGridReady());
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_NEW_COLUMNS_LOADED]: refreshEverythingAfterColsChangedFunc,
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: refreshEverythingFunc,
+            [Events.EVENT_COLUMN_VALUE_CHANGED]: this.onValueChanged.bind(this),
+            [Events.EVENT_COLUMN_PIVOT_CHANGED]: this.refreshModel.bind(this, { step: ClientSideRowModelSteps.PIVOT }),
+            [Events.EVENT_FILTER_CHANGED]: this.onFilterChanged.bind(this),
+            [Events.EVENT_SORT_CHANGED]: this.onSortChanged.bind(this),
+            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: refreshEverythingFunc,
+            [Events.EVENT_GRID_STYLES_CHANGED]: this.onGridStylesChanges.bind(this),
+            [Events.EVENT_GRID_READY]: this.onGridReady.bind(this),
+        });
 
         // doesn't need done if doing full reset
         // Property listeners which call `refreshModel` at different stages
@@ -640,7 +652,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             return;
         }
 
-        let params =
+        const params =
             typeof paramsOrStep === 'object' && 'step' in paramsOrStep
                 ? paramsOrStep
                 : this.buildRefreshModelParams(paramsOrStep);
@@ -677,6 +689,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                     changedPath,
                     !!params.afterColumnsChanged
                 );
+            /* eslint-disable no-fallthrough */
             case ClientSideRowModelSteps.FILTER:
                 this.doFilter(changedPath);
             case ClientSideRowModelSteps.PIVOT:
@@ -689,6 +702,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 this.doSort(params.rowNodeTransactions, changedPath);
             case ClientSideRowModelSteps.MAP:
                 this.doRowsToDisplay();
+            /* eslint-enable no-fallthrough */
         }
 
         // set all row tops to null, then set row tops on all visible rows. if we don't
@@ -767,6 +781,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return result;
     }
 
+    // eslint-disable-next-line
     public setDatasource(datasource: any): void {
         console.error('AG Grid: should never call setDatasource on clientSideRowController');
     }
@@ -1192,7 +1207,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private executeBatchUpdateRowData(): void {
         this.valueCache.onDataChanged();
 
-        const callbackFuncsBound: Function[] = [];
+        const callbackFuncsBound: ((...args: any[]) => any)[] = [];
         const rowNodeTrans: RowNodeTransaction[] = [];
 
         // The rowGroup stage uses rowNodeOrder if order was provided. if we didn't pass 'true' to

@@ -1,8 +1,7 @@
-import { IComponent } from '../../interfaces/iComponent';
+import type { IComponent } from '../../interfaces/iComponent';
 import { _createIconNoSpan } from '../../utils/icon';
-import { Component } from '../../widgets/component';
-import { RefSelector } from '../../widgets/componentAnnotations';
-import { ICellRendererParams } from './iCellRenderer';
+import { Component, RefPlaceholder } from '../../widgets/component';
+import type { ICellRendererParams } from './iCellRenderer';
 
 export interface ILoadingCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<TData, TContext> {}
 export interface ILoadingCellRenderer {}
@@ -10,12 +9,12 @@ export interface ILoadingCellRendererComp extends ILoadingCellRenderer, ICompone
 
 export class LoadingCellRenderer extends Component implements ILoadingCellRendererComp {
     private static TEMPLATE = `<div class="ag-loading">
-            <span class="ag-loading-icon" ref="eLoadingIcon"></span>
-            <span class="ag-loading-text" ref="eLoadingText"></span>
+            <span class="ag-loading-icon" data-ref="eLoadingIcon"></span>
+            <span class="ag-loading-text" data-ref="eLoadingText"></span>
         </div>`;
 
-    @RefSelector('eLoadingIcon') private eLoadingIcon: HTMLElement;
-    @RefSelector('eLoadingText') private eLoadingText: HTMLElement;
+    private readonly eLoadingIcon: HTMLElement = RefPlaceholder;
+    private readonly eLoadingText: HTMLElement = RefPlaceholder;
 
     constructor() {
         super(LoadingCellRenderer.TEMPLATE);
@@ -46,7 +45,7 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 }

@@ -147,7 +147,7 @@
                                 "path": "videos"
                             },
                             {
-                                "title": "AG Grid Enterprise",
+                                "title": "Licensing / AG Grid Enterprise",
                                 "path": "licensing"
                             },
                             {
@@ -269,7 +269,7 @@
                         "path": "ag-grid-design-system"
                     },
                     {
-                        "title": "Grid Size",
+                        "title": "Grid Layout",
                         "path": "grid-size"
                     }
                 ]
@@ -986,7 +986,7 @@
                                     },
                                     {
                                         "title": "Total Rows",
-                                        "path": "grouping-footers",
+                                        "path": "total-rows",
                                         "isEnterprise": true
                                     },
                                     {

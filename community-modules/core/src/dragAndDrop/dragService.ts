@@ -1,8 +1,10 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PreDestroy } from '../context/context';
-import { DragStartedEvent, DragStoppedEvent, Events } from '../events';
-import { MouseEventService } from '../gridBodyComp/mouseEventService';
-import { WithoutGridCommon } from '../interfaces/iCommon';
+import type { BeanCollection } from '../context/context';
+import type { DragStartedEvent, DragStoppedEvent } from '../events';
+import { Events } from '../events';
+import type { MouseEventService } from '../gridBodyComp/mouseEventService';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _removeFromArray } from '../utils/array';
 import { _isBrowserSafari } from '../utils/browser';
 import { _isFocusableFormField } from '../utils/dom';
@@ -11,9 +13,14 @@ import { _areEventsNear } from '../utils/mouse';
 
 /** Adds drag listening onto an element. In AG Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
-@Bean('dragService')
-export class DragService extends BeanStub {
-    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
+export class DragService extends BeanStub implements NamedBean {
+    beanName = 'dragService' as const;
+
+    private mouseEventService: MouseEventService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.mouseEventService = beans.mouseEventService;
+    }
 
     private currentDragParams: DragListenerParams | null;
     private dragging: boolean;
@@ -22,14 +29,14 @@ export class DragService extends BeanStub {
     private touchLastTime: Touch | null;
     private touchStart: Touch | null;
 
-    private dragEndFunctions: Function[] = [];
+    private dragEndFunctions: ((...args: any[]) => any)[] = [];
 
     private dragSources: DragSourceAndListener[] = [];
 
-    @PreDestroy
-    private removeAllListeners(): void {
+    public override destroy(): void {
         this.dragSources.forEach(this.removeListener.bind(this));
         this.dragSources.length = 0;
+        super.destroy();
     }
 
     private removeListener(dragSourceAndListener: DragSourceAndListener): void {

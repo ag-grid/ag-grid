@@ -1,20 +1,17 @@
 import { BeanStub } from '../../../context/beanStub';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import {
+import type {
     FloatingFilterInputService,
-    FloatingFilterTextInputService,
     ITextInputFloatingFilterParams,
+} from '../../floating/provided/textInputFloatingFilter';
+import {
+    FloatingFilterTextInputService,
     TextInputFloatingFilter,
 } from '../../floating/provided/textInputFloatingFilter';
-import { SimpleFilterModelFormatter } from '../simpleFilter';
-import {
-    NumberFilter,
-    NumberFilterModel,
-    NumberFilterModelFormatter,
-    NumberFilterParams,
-    getAllowedCharPattern,
-} from './numberFilter';
+import type { SimpleFilterModelFormatter } from '../simpleFilter';
+import type { NumberFilterModel, NumberFilterParams } from './numberFilter';
+import { NumberFilter, NumberFilterModelFormatter, getAllowedCharPattern } from './numberFilter';
 
 class FloatingFilterNumberInputService extends BeanStub implements FloatingFilterInputService {
     private eFloatingFilterTextInput: AgInputTextField;
@@ -91,7 +88,7 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterMo
     private filterModelFormatter: SimpleFilterModelFormatter;
     private allowedCharPattern: string | null;
 
-    public init(params: INumberFloatingFilterParams): void {
+    public override init(params: INumberFloatingFilterParams): void {
         super.init(params);
         this.filterModelFormatter = new NumberFilterModelFormatter(
             this.localeService,
@@ -100,11 +97,11 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterMo
         );
     }
 
-    public onParamsUpdated(params: INumberFloatingFilterParams): void {
+    public override onParamsUpdated(params: INumberFloatingFilterParams): void {
         this.refresh(params);
     }
 
-    public refresh(params: INumberFloatingFilterParams): void {
+    public override refresh(params: INumberFloatingFilterParams): void {
         const allowedCharPattern = getAllowedCharPattern(params.filterParams);
         if (allowedCharPattern !== this.allowedCharPattern) {
             this.recreateFloatingFilterInputService(params);

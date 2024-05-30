@@ -1,19 +1,21 @@
 import { HorizontalDirection, VerticalDirection } from '../constants/direction';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct, PreDestroy } from '../context/context';
-import { IAggFunc } from '../entities/colDef';
-import { Column } from '../entities/column';
-import { GridApi } from '../gridApi';
-import { MouseEventService } from '../gridBodyComp/mouseEventService';
-import { RowDropZoneParams } from '../gridBodyComp/rowDragFeature';
-import { IRowNode } from '../interfaces/iRowNode';
+import type { BeanCollection } from '../context/context';
+import type { IAggFunc } from '../entities/colDef';
+import type { Environment } from '../environment';
+import type { MouseEventService } from '../gridBodyComp/mouseEventService';
+import type { RowDropZoneParams } from '../gridBodyComp/rowDragFeature';
+import type { Column } from '../interfaces/iColumn';
+import type { AgGridCommon } from '../interfaces/iCommon';
+import type { IRowNode } from '../interfaces/iRowNode';
 import { _flatten, _removeFromArray } from '../utils/array';
 import { _getBodyHeight, _getBodyWidth } from '../utils/browser';
 import { _clearElement, _getElementRectWithOffset, _loadTemplate } from '../utils/dom';
 import { _isFunction } from '../utils/function';
 import { _createIcon } from '../utils/icon';
 import { _escapeString } from '../utils/string';
-import { DragListenerParams, DragService } from './dragService';
+import type { DragListenerParams, DragService } from './dragService';
 
 export interface DragItem<TValue = any> {
     /**
@@ -132,7 +134,7 @@ export interface DropTarget {
     external?: boolean;
 }
 
-export interface DraggingEvent {
+export interface DraggingEvent<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     event: MouseEvent;
     x: number;
     y: number;
@@ -141,15 +143,21 @@ export interface DraggingEvent {
     dragSource: DragSource;
     dragItem: DragItem;
     fromNudge: boolean;
-    api: GridApi;
     dropZoneTarget: HTMLElement;
 }
 
-@Bean('dragAndDropService')
-export class DragAndDropService extends BeanStub {
-    @Autowired('dragService') private dragService: DragService;
-    @Autowired('mouseEventService') private readonly mouseEventService: MouseEventService;
-    @Autowired('gridApi') private gridApi: GridApi;
+export class DragAndDropService extends BeanStub implements NamedBean {
+    beanName = 'dragAndDropService' as const;
+
+    private dragService: DragService;
+    private mouseEventService: MouseEventService;
+    private environment: Environment;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.dragService = beans.dragService;
+        this.mouseEventService = beans.mouseEventService;
+        this.environment = beans.environment;
+    }
 
     public static ICON_PINNED = 'pinned';
     public static ICON_MOVE = 'move';
@@ -190,8 +198,7 @@ export class DragAndDropService extends BeanStub {
     private ePivotIcon: Element;
     private eDropNotAllowedIcon: Element;
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.ePinnedIcon = _createIcon('columnMovePin', this.gos, null);
         this.eHideIcon = _createIcon('columnMoveHide', this.gos, null);
         this.eMoveIcon = _createIcon('columnMoveMove', this.gos, null);
@@ -227,13 +234,13 @@ export class DragAndDropService extends BeanStub {
         }
     }
 
-    @PreDestroy
-    private clearDragSourceParamsList(): void {
+    public override destroy(): void {
         this.dragSourceAndParamsList.forEach((sourceAndParams) =>
             this.dragService.removeDragSource(sourceAndParams.params)
         );
         this.dragSourceAndParamsList.length = 0;
         this.dropTargets.length = 0;
+        super.destroy();
     }
 
     public nudge(): void {
@@ -479,11 +486,11 @@ export class DragAndDropService extends BeanStub {
         // localise x and y to the target
         const dropZoneTarget = dropTarget.getContainer();
         const rect = dropZoneTarget.getBoundingClientRect();
-        const { gridApi: api, dragItem, dragSource } = this;
+        const { dragItem, dragSource } = this;
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        return {
+        return this.gos.addGridCommonParams({
             event,
             x,
             y,
@@ -492,9 +499,8 @@ export class DragAndDropService extends BeanStub {
             dragSource,
             fromNudge,
             dragItem: dragItem as DragItem,
-            api,
             dropZoneTarget,
-        };
+        });
     }
 
     private positionGhost(event: MouseEvent): void {

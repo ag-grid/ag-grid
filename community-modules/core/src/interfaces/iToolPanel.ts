@@ -1,8 +1,6 @@
-import { ColDef, ColGroupDef } from '../entities/colDef';
-import { ColumnEventType } from '../events';
-import { ColumnToolPanelState } from './gridState';
-import { AgGridCommon } from './iCommon';
-import { IComponent } from './iComponent';
+import type { ColumnToolPanelState } from './gridState';
+import type { AgGridCommon } from './iCommon';
+import type { IComponent } from './iComponent';
 
 export interface BaseToolPanelParams<TData = any, TContext = any, TState = any> extends AgGridCommon<TData, TContext> {
     /** The tool-panel-specific initial state as provided in grid options if applicable */

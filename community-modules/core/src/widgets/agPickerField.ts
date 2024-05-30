@@ -1,41 +1,21 @@
 import { KeyCode } from '../constants/keyCode';
-import { Autowired } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { Events } from '../eventKeys';
+import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaExpanded, _setAriaRole } from '../utils/aria';
 import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
-import { AgAbstractField, AgFieldParams } from './agAbstractField';
-import { Component } from './component';
-import { RefSelector } from './componentAnnotations';
-import { AddPopupParams, PopupService } from './popupService';
-
-export interface AgPickerFieldParams extends AgFieldParams {
-    pickerType: string;
-    pickerGap?: number;
-    /**
-     * If true, will set min-width and max-width (if present), and will set width to wrapper element width.
-     * If false, will set min-width, max-width and width to maxPickerWidth or wrapper element width.
-     */
-    variableWidth?: boolean;
-    minPickerWidth?: number | string;
-    maxPickerWidth?: number | string;
-    maxPickerHeight?: number | string;
-    pickerAriaLabelKey: string;
-    pickerAriaLabelValue: string;
-    template?: string;
-    className?: string;
-    pickerIcon?: string;
-    ariaRole?: string;
-    modalPicker?: boolean;
-    inputWidth?: number | 'flex';
-}
+import { AgAbstractField } from './agAbstractField';
+import type { Component } from './component';
+import { RefPlaceholder } from './component';
+import type { AddPopupParams, PopupService } from './popupService';
 
 const TEMPLATE = /* html */ `
     <div class="ag-picker-field" role="presentation">
-        <div ref="eLabel"></div>
-            <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-picker-collapsed">
-            <div ref="eDisplayField" class="ag-picker-field-display"></div>
-            <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
+        <div data-ref="eLabel"></div>
+            <div data-ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-picker-collapsed">
+            <div data-ref="eDisplayField" class="ag-picker-field-display"></div>
+            <div data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
         </div>
     </div>`;
 
@@ -44,6 +24,12 @@ export abstract class AgPickerField<
     TConfig extends AgPickerFieldParams = AgPickerFieldParams,
     TComponent extends Component = Component,
 > extends AgAbstractField<TValue, TConfig> {
+    protected popupService: PopupService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.popupService = beans.popupService;
+    }
+
     protected abstract createPickerComponent(): TComponent;
 
     protected pickerComponent: TComponent | undefined;
@@ -53,7 +39,7 @@ export abstract class AgPickerField<
     protected variableWidth: boolean;
     protected minPickerWidth: string | undefined;
     protected maxPickerWidth: string | undefined;
-    protected value: TValue;
+    protected override value: TValue;
 
     private skipClick: boolean = false;
     private pickerGap: number = 4;
@@ -62,15 +48,13 @@ export abstract class AgPickerField<
     private destroyMouseWheelFunc: (() => null) | undefined;
     private ariaRole?: string;
 
-    @Autowired('popupService') protected popupService: PopupService;
-
-    @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
-    @RefSelector('eWrapper') protected readonly eWrapper: HTMLElement;
-    @RefSelector('eDisplayField') protected readonly eDisplayField: HTMLElement;
-    @RefSelector('eIcon') private readonly eIcon: HTMLButtonElement;
+    protected readonly eLabel: HTMLElement = RefPlaceholder;
+    protected readonly eWrapper: HTMLElement = RefPlaceholder;
+    protected readonly eDisplayField: HTMLElement = RefPlaceholder;
+    private readonly eIcon: HTMLButtonElement = RefPlaceholder;
 
     constructor(config?: TConfig) {
-        super(config, config?.template || TEMPLATE, config?.className);
+        super(config, config?.template || TEMPLATE, config?.agComponents || [], config?.className);
 
         this.ariaRole = config?.ariaRole;
         this.onPickerFocusIn = this.onPickerFocusIn.bind(this);
@@ -101,7 +85,7 @@ export abstract class AgPickerField<
         }
     }
 
-    protected postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
 
         this.setupAria();
@@ -347,7 +331,7 @@ export abstract class AgPickerField<
         return this;
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.eWrapper;
     }
 
@@ -382,7 +366,7 @@ export abstract class AgPickerField<
         return this;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.hidePicker();
         super.destroy();
     }

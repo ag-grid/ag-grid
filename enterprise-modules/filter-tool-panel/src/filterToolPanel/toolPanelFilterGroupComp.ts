@@ -1,47 +1,49 @@
-import {
-    AgGroupComponent,
-    AgGroupComponentParams,
-    Autowired,
-    Column,
-    ColumnModel,
+import type {
+    AgProvidedColumnGroup,
+    BeanCollection,
     ColumnNameService,
+    FilterOpenedEvent,
+    ITooltipParams,
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    AgColumn,
     Component,
     Events,
-    FilterOpenedEvent,
-    IProvidedColumn,
-    ITooltipParams,
-    PostConstruct,
-    PreConstruct,
-    ProvidedColumnGroup,
-    RefSelector,
-    WithoutGridCommon,
+    RefPlaceholder,
     _clearElement,
     _createIconNoSpan,
+    isProvidedColumnGroup,
 } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import { ToolPanelFilterComp } from './toolPanelFilterComp';
 
 export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;
 
 export class ToolPanelFilterGroupComp extends Component {
+    private columnNameService: ColumnNameService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.columnNameService = beans.columnNameService;
+    }
+
     private static TEMPLATE /* html */ = `<div class="ag-filter-toolpanel-group-wrapper">
-            <ag-group-component ref="filterGroupComp"></ag-group-component>
+            <ag-group-component data-ref="filterGroupComp"></ag-group-component>
         </div>`;
 
-    @RefSelector('filterGroupComp') private filterGroupComp: AgGroupComponent;
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
+    private filterGroupComp: AgGroupComponent = RefPlaceholder;
 
     private readonly depth: number;
-    private readonly columnGroup: IProvidedColumn;
+    private readonly columnGroup: AgColumn | AgProvidedColumnGroup;
     private readonly showingColumn: boolean;
     private childFilterComps: (ToolPanelFilterGroupComp | ToolPanelFilterComp)[];
     private expandedCallback: () => void;
     private filterGroupName: string | null;
 
     constructor(
-        columnGroup: IProvidedColumn,
+        columnGroup: AgColumn | AgProvidedColumnGroup,
         childFilterComps: (ToolPanelFilterGroupComp | ToolPanelFilterComp)[],
         expandedCallback: () => void,
         depth: number,
@@ -55,17 +57,13 @@ export class ToolPanelFilterGroupComp extends Component {
         this.showingColumn = showingColumn;
     }
 
-    @PreConstruct
-    private preConstruct(): void {
+    public postConstruct(): void {
         const groupParams: AgGroupComponentParams = {
             cssIdentifier: 'filter-toolpanel',
             direction: 'vertical',
         };
-        this.setTemplate(ToolPanelFilterGroupComp.TEMPLATE, { filterGroupComp: groupParams });
-    }
+        this.setTemplate(ToolPanelFilterGroupComp.TEMPLATE, [AgGroupComponent], { filterGroupComp: groupParams });
 
-    @PostConstruct
-    public init(): void {
         this.setGroupTitle();
         this.filterGroupComp.setAlignItems('stretch');
 
@@ -111,7 +109,7 @@ export class ToolPanelFilterGroupComp extends Component {
         }
 
         const refresh = () => {
-            const newTooltipText = (this.columnGroup as Column).getColDef().headerTooltip;
+            const newTooltipText = (this.columnGroup as AgColumn).getColDef().headerTooltip;
             this.setTooltip({ newTooltipText, location: 'filterToolPanelColumnGroup', shouldDisplayTooltip });
         };
 
@@ -120,7 +118,7 @@ export class ToolPanelFilterGroupComp extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
     }
 
-    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
+    public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         const res = super.getTooltipParams();
         res.location = 'filterToolPanelColumnGroup';
         return res;
@@ -141,7 +139,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     public isColumnGroup(): boolean {
-        return this.columnGroup instanceof ProvidedColumnGroup;
+        return isProvidedColumnGroup(this.columnGroup);
     }
 
     public isExpanded(): boolean {
@@ -197,20 +195,20 @@ export class ToolPanelFilterGroupComp extends Component {
         this.addManagedListener(this.filterGroupComp, AgGroupComponent.EVENT_COLLAPSED, collapseListener);
     }
 
-    private getColumns(): Column[] {
-        if (this.columnGroup instanceof ProvidedColumnGroup) {
+    private getColumns(): AgColumn[] {
+        if (isProvidedColumnGroup(this.columnGroup)) {
             return this.columnGroup.getLeafColumns();
         }
 
-        return [this.columnGroup as Column];
+        return [this.columnGroup];
     }
 
     private addFilterChangedListeners() {
         this.getColumns().forEach((column) => {
-            this.addManagedListener(column, Column.EVENT_FILTER_CHANGED, () => this.refreshFilterClass());
+            this.addManagedListener(column, AgColumn.EVENT_FILTER_CHANGED, () => this.refreshFilterClass());
         });
 
-        if (!(this.columnGroup instanceof ProvidedColumnGroup)) {
+        if (!isProvidedColumnGroup(this.columnGroup)) {
             this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
         }
     }
@@ -248,19 +246,18 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private setGroupTitle() {
-        this.filterGroupName =
-            this.columnGroup instanceof ProvidedColumnGroup
-                ? this.getColumnGroupName(this.columnGroup)
-                : this.getColumnName(this.columnGroup as Column);
+        this.filterGroupName = isProvidedColumnGroup(this.columnGroup)
+            ? this.getColumnGroupName(this.columnGroup)
+            : this.getColumnName(this.columnGroup);
 
         this.filterGroupComp.setTitle(this.filterGroupName || '');
     }
 
-    private getColumnGroupName(columnGroup: ProvidedColumnGroup): string | null {
+    private getColumnGroupName(columnGroup: AgProvidedColumnGroup): string | null {
         return this.columnNameService.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'filterToolPanel');
     }
 
-    private getColumnName(column: Column): string | null {
+    private getColumnName(column: AgColumn): string | null {
         return this.columnNameService.getDisplayNameForColumn(column, 'filterToolPanel', false);
     }
 
@@ -269,7 +266,7 @@ export class ToolPanelFilterGroupComp extends Component {
         _clearElement(this.getGui());
     }
 
-    protected destroy() {
+    public override destroy() {
         this.destroyFilters();
         super.destroy();
     }

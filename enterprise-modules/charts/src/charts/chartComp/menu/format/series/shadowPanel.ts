@@ -1,20 +1,29 @@
-import { AgGroupComponentParams, AgSliderParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
+import { Component } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
-import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import { AgColorPicker } from '../../../../../widgets/agColorPicker';
+import type { AgSliderParams } from '../../../../../widgets/agSlider';
+import { AgSlider } from '../../../../../widgets/agSlider';
+import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class ShadowPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="shadowGroup">
-                <ag-color-picker ref="shadowColorPicker"></ag-color-picker>
-                <ag-slider ref="shadowBlurSlider"></ag-slider>
-                <ag-slider ref="shadowXOffsetSlider"></ag-slider>
-                <ag-slider ref="shadowYOffsetSlider"></ag-slider>
+            <ag-group-component data-ref="shadowGroup">
+                <ag-color-picker data-ref="shadowColorPicker"></ag-color-picker>
+                <ag-slider data-ref="shadowBlurSlider"></ag-slider>
+                <ag-slider data-ref="shadowXOffsetSlider"></ag-slider>
+                <ag-slider data-ref="shadowYOffsetSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
 
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
     constructor(
         private readonly chartMenuUtils: ChartMenuParamsFactory,
         private propertyKey: string = 'shadow'
@@ -22,8 +31,7 @@ export class ShadowPanel extends Component {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         // Determine the path within the series options object to get/set the individual shadow options
         const propertyNamespace = this.propertyKey;
         const shadowGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
@@ -38,7 +46,7 @@ export class ShadowPanel extends Component {
             }
         );
         const shadowColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(`${propertyNamespace}.color`);
-        this.setTemplate(ShadowPanel.TEMPLATE, {
+        this.setTemplate(ShadowPanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
             shadowGroup: shadowGroupParams,
             shadowColorPicker: shadowColorPickerParams,
             shadowBlurSlider: this.getSliderParams('blur', 0, 20),

@@ -1,4 +1,4 @@
-import { Beans } from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
 import React from 'react';
 
-export const BeansContext = React.createContext<Beans>({} as Beans);
+export const BeansContext = React.createContext<BeanCollection>({} as BeanCollection);

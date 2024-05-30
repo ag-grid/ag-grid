@@ -1,26 +1,27 @@
-import {
-    AgCheckbox,
-    Autowired,
-    Column,
+import type {
+    AgProvidedColumnGroup,
+    BeanCollection,
     ColumnEventType,
     ColumnModel,
     ColumnPanelItemDragEndEvent,
     ColumnPanelItemDragStartEvent,
+    DragItem,
+    DragSource,
+    IAggFunc,
+    ITooltipParams,
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    AgCheckbox,
+    AgColumn,
     Component,
     CssClassApplier,
     DragAndDropService,
-    DragItem,
-    DragSource,
     DragSourceType,
     Events,
-    IAggFunc,
-    ITooltipParams,
     KeyCode,
-    PostConstruct,
-    ProvidedColumnGroup,
-    RefSelector,
+    RefPlaceholder,
     TouchListener,
-    WithoutGridCommon,
     _createIcon,
     _createIconNoSpan,
     _setAriaDescribedBy,
@@ -30,33 +31,39 @@ import {
 } from '@ag-grid-community/core';
 
 import { ColumnModelItem } from './columnModelItem';
-import { ModelItemUtils } from './modelItemUtils';
+import type { ModelItemUtils } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
 export class ToolPanelColumnGroupComp extends Component {
     private static TEMPLATE /* html */ = `<div class="ag-column-select-column-group" aria-hidden="true">
-            <span class="ag-column-group-icons" ref="eColumnGroupIcons" >
-                <span class="ag-column-group-closed-icon" ref="eGroupClosedIcon"></span>
-                <span class="ag-column-group-opened-icon" ref="eGroupOpenedIcon"></span>
+            <span class="ag-column-group-icons" data-ref="eColumnGroupIcons" >
+                <span class="ag-column-group-closed-icon" data-ref="eGroupClosedIcon"></span>
+                <span class="ag-column-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
             </span>
-            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-select-column-label" ref="eLabel"></span>
+            <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
+            <span class="ag-column-select-column-label" data-ref="eLabel"></span>
         </div>`;
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
+    private columnModel: ColumnModel;
+    private dragAndDropService: DragAndDropService;
+    private modelItemUtils: ModelItemUtils;
 
-    @RefSelector('cbSelect') private cbSelect: AgCheckbox;
-    @RefSelector('eLabel') private eLabel: HTMLElement;
+    public wireBeans(beans: BeanCollection) {
+        this.columnModel = beans.columnModel;
+        this.dragAndDropService = beans.dragAndDropService;
+        this.modelItemUtils = beans.modelItemUtils;
+    }
 
-    @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: Element;
-    @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: Element;
-    @RefSelector('eColumnGroupIcons') private eColumnGroupIcons: Element;
+    private readonly cbSelect: AgCheckbox = RefPlaceholder;
+    private readonly eLabel: HTMLElement = RefPlaceholder;
+
+    private readonly eGroupOpenedIcon: Element = RefPlaceholder;
+    private readonly eGroupClosedIcon: Element = RefPlaceholder;
+    private readonly eColumnGroupIcons: Element = RefPlaceholder;
 
     private eDragHandle: Element;
 
-    private readonly columnGroup: ProvidedColumnGroup;
+    private readonly columnGroup: AgProvidedColumnGroup;
     private readonly columnDept: number;
 
     private displayName: string | null;
@@ -76,9 +83,8 @@ export class ToolPanelColumnGroupComp extends Component {
         this.allowDragging = allowDragging;
     }
 
-    @PostConstruct
-    public init(): void {
-        this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE);
+    public postConstruct(): void {
+        this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE, [AgCheckbox]);
 
         this.eDragHandle = _createIconNoSpan('columnDrag', this.gos)!;
         this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-group-drag-handle');
@@ -127,7 +133,7 @@ export class ToolPanelColumnGroupComp extends Component {
         classes.forEach((c) => this.addOrRemoveCssClass(c, true));
     }
 
-    public getColumns(): Column[] {
+    public getColumns(): AgColumn[] {
         return this.columnGroup.getLeafColumns();
     }
 
@@ -156,7 +162,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
     }
 
-    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
+    public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         const res = super.getTooltipParams();
         res.location = 'columnToolPanelColumnGroup';
         return res;
@@ -198,10 +204,10 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private addVisibilityListenersToAllChildren(): void {
         this.columnGroup.getLeafColumns().forEach((column) => {
-            this.addManagedListener(column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
-            this.addManagedListener(column, Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
-            this.addManagedListener(column, Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
-            this.addManagedListener(column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
+            this.addManagedListener(column, AgColumn.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
+            this.addManagedListener(column, AgColumn.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
+            this.addManagedListener(column, AgColumn.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
+            this.addManagedListener(column, AgColumn.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
         });
     }
 
@@ -301,8 +307,8 @@ export class ToolPanelColumnGroupComp extends Component {
         this.onChangeCommon(event.selected);
     }
 
-    private getVisibleLeafColumns(): Column[] {
-        const childColumns: Column[] = [];
+    private getVisibleLeafColumns(): AgColumn[] {
+        const childColumns: AgColumn[] = [];
 
         const extractCols = (children: ColumnModelItem[]) => {
             children.forEach((child) => {
@@ -406,7 +412,7 @@ export class ToolPanelColumnGroupComp extends Component {
         return colsThatCanAction === 0;
     }
 
-    private isColumnChecked(column: Column, pivotMode: boolean): boolean {
+    private isColumnChecked(column: AgColumn, pivotMode: boolean): boolean {
         if (pivotMode) {
             const pivoted = column.isPivotActive();
             const grouped = column.isRowGroupActive();

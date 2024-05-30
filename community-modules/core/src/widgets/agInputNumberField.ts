@@ -1,6 +1,8 @@
 import { _addOrRemoveAttribute } from '../utils/dom';
 import { _exists } from '../utils/generic';
-import { AgInputTextField, AgInputTextFieldParams } from './agInputTextField';
+import type { AgInputTextFieldParams } from './agInputTextField';
+import { AgInputTextField } from './agInputTextField';
+import type { AgComponentSelector } from './component';
 
 export interface AgInputNumberFieldParams extends AgInputTextFieldParams {
     precision?: number;
@@ -10,6 +12,8 @@ export interface AgInputNumberFieldParams extends AgInputTextFieldParams {
 }
 
 export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParams> {
+    static override selector: AgComponentSelector = 'AG-INPUT-NUMBER-FIELD';
+
     private precision?: number;
     private step?: number;
     private min?: number;
@@ -19,7 +23,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
         super(config, 'ag-number-field', 'number');
     }
 
-    postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.addManagedListener(this.eInput, 'blur', () => {
             const floatedValue = parseFloat(this.eInput.value);
@@ -131,7 +135,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
         return this;
     }
 
-    public setValue(value?: string | null, silent?: boolean): this {
+    public override setValue(value?: string | null, silent?: boolean): this {
         return this.setValueOrInputValue(
             (v) => super.setValue(v, silent),
             () => this,
@@ -139,7 +143,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
         );
     }
 
-    public setStartValue(value?: string | null): void {
+    public override setStartValue(value?: string | null): void {
         return this.setValueOrInputValue<void>(
             (v) => super.setValue(v, true),
             (v) => {
@@ -175,7 +179,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
         return setValueFunc(value);
     }
 
-    public getValue(): string | null | undefined {
+    public override getValue(): string | null | undefined {
         if (!this.eInput.validity.valid) {
             return undefined;
         }

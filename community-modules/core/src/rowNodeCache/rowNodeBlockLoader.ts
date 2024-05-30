@@ -1,15 +1,24 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct, Qualifier } from '../context/context';
-import { IRowModel } from '../interfaces/iRowModel';
-import { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
-import { Logger, LoggerFactory } from '../logger';
+import type { BeanCollection } from '../context/context';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
+import type { Logger } from '../logger';
 import { _removeFromArray } from '../utils/array';
 import { _debounce } from '../utils/function';
 import { RowNodeBlock } from './rowNodeBlock';
 
-@Bean('rowNodeBlockLoader')
-export class RowNodeBlockLoader extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
+export class RowNodeBlockLoader extends BeanStub implements NamedBean {
+    beanName = 'rowNodeBlockLoader' as const;
+
+    private rowModel: IRowModel;
+
+    private logger: Logger;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.rowModel = beans.rowModel;
+        this.logger = beans.loggerFactory.create('RowNodeBlockLoader');
+    }
 
     public static BLOCK_LOADED_EVENT = 'blockLoaded';
     public static BLOCK_LOADER_FINISHED_EVENT = 'blockLoaderFinished';
@@ -19,11 +28,9 @@ export class RowNodeBlockLoader extends BeanStub {
 
     private activeBlockLoadsCount = 0;
     private blocks: RowNodeBlock[] = [];
-    private logger: Logger;
     private active = true;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.maxConcurrentRequests = this.getMaxConcurrentDatasourceRequests();
         const blockLoadDebounceMillis = this.gos.get('blockLoadDebounceMillis');
 
@@ -33,10 +40,6 @@ export class RowNodeBlockLoader extends BeanStub {
                 blockLoadDebounceMillis
             );
         }
-    }
-
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('RowNodeBlockLoader');
     }
 
     private getMaxConcurrentDatasourceRequests(): number | undefined {
@@ -65,7 +68,7 @@ export class RowNodeBlockLoader extends BeanStub {
         _removeFromArray(this.blocks, block);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
         this.active = false;
     }

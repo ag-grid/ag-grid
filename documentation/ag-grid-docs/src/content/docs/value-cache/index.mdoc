@@ -8,7 +8,7 @@ Each time the grid requires a value from a Value Getter, the Value Getter is exe
 
 If you are not using Value Getters, or you don't have performance problems, then you do not need the Value Cache.
 
-When the Calue Cache is turned on, each time a Value Getter is executed, its result is stored in the Value Cache. If the data in the grid has not changed since the last time the value getter was used, then the value is retrieved from the cache instead of executing the Value Getter again.
+When the Value Cache is turned on, each time a Value Getter is executed, its result is stored in the Value Cache. If the data in the grid has not changed since the last time the value getter was used, then the value is retrieved from the cache instead of executing the Value Getter again.
 
 {% note %}
 One client of AG Grid had 1,000 rows and 20 columns in a grid. A lot of the columns were doing advanced
@@ -58,7 +58,7 @@ The Value Cache starts empty. Then as Value Getters execute, their results are s
 * Assuming your framework allows binding properties and this is what you are using.
 {% /note %}
 
-The first example above didn't have any editing, so there was no concern for expiring the Calue Cache. This example introduces grid editing. The example differs from the last in the following ways:
+The first example above didn't have any editing, so there was no concern for expiring the Value Cache. This example introduces grid editing. The example differs from the last in the following ways:
 
 * Value Cache is on.
 * Editing is enabled.

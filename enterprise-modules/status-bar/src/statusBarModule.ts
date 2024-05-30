@@ -1,13 +1,14 @@
-import { Module, ModuleNames } from '@ag-grid-community/core';
+import type { Module } from '@ag-grid-community/core';
+import { ModuleNames } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
+import { AgStatusBar } from './statusBar/agStatusBar';
+import { AgNameValue } from './statusBar/providedPanels/agNameValue';
 import { AggregationComp } from './statusBar/providedPanels/aggregationComp';
 import { FilteredRowsComp } from './statusBar/providedPanels/filteredRowsComp';
-import { NameValueComp } from './statusBar/providedPanels/nameValueComp';
 import { SelectedRowsComp } from './statusBar/providedPanels/selectedRowsComp';
 import { TotalAndFilteredRowsComp } from './statusBar/providedPanels/totalAndFilteredRowsComp';
 import { TotalRowsComp } from './statusBar/providedPanels/totalRowsComp';
-import { StatusBar } from './statusBar/statusBar';
 import { StatusBarService } from './statusBar/statusBarService';
 import { VERSION } from './version';
 
@@ -15,10 +16,7 @@ export const StatusBarModule: Module = {
     version: VERSION,
     moduleName: ModuleNames.StatusBarModule,
     beans: [StatusBarService],
-    agStackComponents: [
-        { componentName: 'AgStatusBar', componentClass: StatusBar },
-        { componentName: 'AgNameValue', componentClass: NameValueComp },
-    ],
+    agStackComponents: [AgStatusBar, AgNameValue],
     userComponents: [
         { componentName: 'agAggregationComponent', componentClass: AggregationComp },
         { componentName: 'agSelectedRowCountComponent', componentClass: SelectedRowsComp },

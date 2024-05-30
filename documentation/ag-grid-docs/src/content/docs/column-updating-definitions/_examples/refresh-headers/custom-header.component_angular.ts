@@ -10,7 +10,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
                 <span #menuButton class="ag-icon ag-icon-menu" (click)="onMenuClicked($event)"></span>
             }
             <div style="flex-grow: 1;">
-                <span ref="eText">{{ params.displayName }}</span>
+                <span>{{ params.displayName }}</span>
             </div>
         </div>
     `,

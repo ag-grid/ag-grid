@@ -1,29 +1,31 @@
-import {
-    AgMenuItemComponent,
-    AgMenuList,
-    Autowired,
-    Bean,
-    BeanStub,
-    Component,
+import type {
+    BeanCollection,
     FocusService,
     IAfterGuiAttachedParams,
     MenuItemDef,
+    NamedBean,
     PopupService,
-    PostConstruct,
-    RefSelector,
-    _createIconNoSpan,
 } from '@ag-grid-community/core';
+import { BeanStub, Component, RefPlaceholder, _createIconNoSpan } from '@ag-grid-community/core';
+import { AgMenuItemComponent, AgMenuList } from '@ag-grid-enterprise/core';
 
-import { ChartController } from '../chartController';
-import { ChartMenuService } from '../services/chartMenuService';
-import { ChartTranslationService } from '../services/chartTranslationService';
-import { ChartMenuContext } from './chartMenuContext';
+import type { ChartController } from '../chartController';
+import type { ChartMenuService } from '../services/chartMenuService';
+import type { ChartTranslationService } from '../services/chartTranslationService';
+import type { ChartMenuContext } from './chartMenuContext';
 
-@Bean('chartMenuListFactory')
-export class ChartMenuListFactory extends BeanStub {
-    @Autowired('popupService') private readonly popupService: PopupService;
-    @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+export class ChartMenuListFactory extends BeanStub implements NamedBean {
+    beanName = 'chartMenuListFactory' as const;
+
+    private popupService: PopupService;
+    private chartMenuService: ChartMenuService;
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.popupService = beans.popupService;
+        this.chartMenuService = beans.chartMenuService;
+        this.chartTranslationService = beans.chartTranslationService;
+    }
 
     private activeChartMenuList?: ChartMenuList;
 
@@ -211,28 +213,31 @@ export class ChartMenuListFactory extends BeanStub {
         };
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyBean(this.activeChartMenuList);
         super.destroy();
     }
 }
 
 class ChartMenuList extends Component {
-    @Autowired('focusService') private readonly focusService: FocusService;
+    private focusService: FocusService;
 
-    @RefSelector('eChartsMenu') private readonly eChartsMenu: HTMLElement;
+    public wireBeans(beans: BeanCollection) {
+        this.focusService = beans.focusService;
+    }
+
+    private readonly eChartsMenu: HTMLElement = RefPlaceholder;
 
     private hidePopupFunc: () => void;
     private mainMenuList: AgMenuList;
 
     constructor(private readonly menuItems: (MenuItemDef | string)[]) {
         super(/* html */ `
-            <div ref="eChartsMenu" role="presentation" class="ag-menu ag-chart-menu-popup"></div>
+            <div data-ref="eChartsMenu" role="presentation" class="ag-menu ag-chart-menu-popup"></div>
         `);
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.mainMenuList = this.createManagedBean(new AgMenuList(0));
         this.mainMenuList.addMenuItems(this.menuItems);
         this.mainMenuList.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, this.onHidePopup.bind(this));

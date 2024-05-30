@@ -1,10 +1,10 @@
-import { ChartType } from '@ag-grid-community/core';
+import type { ChartType } from '@ag-grid-community/core';
 
-import { ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniDonut } from './miniDonut';
 
 export class MiniPie extends MiniDonut {
-    static chartType: ChartType = 'pie';
+    static override chartType: ChartType = 'pie';
 
     constructor(
         container: HTMLElement,

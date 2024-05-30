@@ -1,25 +1,34 @@
-import { ColumnModel } from '../../columns/columnModel';
-import { ColumnMoveService } from '../../columns/columnMoveService';
-import { VisibleColsService } from '../../columns/visibleColsService';
+import type { ColumnModel } from '../../columns/columnModel';
+import type { ColumnMoveService } from '../../columns/columnMoveService';
+import type { VisibleColsService } from '../../columns/visibleColsService';
 import { HorizontalDirection } from '../../constants/direction';
-import { Autowired, PostConstruct } from '../../context/context';
-import { CtrlsService } from '../../ctrlsService';
-import { DragAndDropService, DragSourceType, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
-import { Column, ColumnPinnedType } from '../../entities/column';
-import { ColumnEventType } from '../../events';
-import { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
-import { GridOptionsService } from '../../gridOptionsService';
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { CtrlsService } from '../../ctrlsService';
+import type { DraggingEvent } from '../../dragAndDrop/dragAndDropService';
+import { DragAndDropService, DragSourceType } from '../../dragAndDrop/dragAndDropService';
+import type { AgColumn } from '../../entities/agColumn';
+import type { ColumnEventType } from '../../events';
+import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
+import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { _exists, _missing } from '../../utils/generic';
 import { ColumnMoveHelper } from '../columnMoveHelper';
-import { DropListener } from './bodyDropTarget';
+import type { DropListener } from './bodyDropTarget';
 
-export class MoveColumnFeature implements DropListener {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('columnMoveService') private columnMoveService: ColumnMoveService;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('gridOptionsService') private gos: GridOptionsService;
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
+export class MoveColumnFeature extends BeanStub implements DropListener {
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private columnMoveService: ColumnMoveService;
+    private dragAndDropService: DragAndDropService;
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.columnMoveService = beans.columnMoveService;
+        this.dragAndDropService = beans.dragAndDropService;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private gridBodyCon: GridBodyCtrl;
 
@@ -32,7 +41,7 @@ export class MoveColumnFeature implements DropListener {
     private isCenterContainer: boolean;
 
     private lastDraggingEvent: DraggingEvent;
-    private lastMovedInfo: { columns: Column[]; toIndex: number } | null = null;
+    private lastMovedInfo: { columns: AgColumn[]; toIndex: number } | null = null;
 
     // this counts how long the user has been trying to scroll by dragging and failing,
     // if they fail x amount of times, then the column will get pinned. this is what gives
@@ -40,12 +49,12 @@ export class MoveColumnFeature implements DropListener {
     private failedMoveAttempts: number;
 
     constructor(pinned: ColumnPinnedType) {
+        super();
         this.pinned = pinned;
         this.isCenterContainer = !_exists(pinned);
     }
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         this.ctrlsService.whenReady((p) => {
             this.gridBodyCon = p.gridBodyCtrl;
         });
@@ -58,7 +67,7 @@ export class MoveColumnFeature implements DropListener {
     public onDragEnter(draggingEvent: DraggingEvent): void {
         // we do dummy drag, so make sure column appears in the right location when first placed
 
-        const columns = draggingEvent.dragItem.columns;
+        const columns = draggingEvent.dragItem.columns as AgColumn[] | undefined;
         const dragCameFromToolPanel = draggingEvent.dragSource.type === DragSourceType.ToolPanel;
 
         if (dragCameFromToolPanel) {
@@ -70,7 +79,7 @@ export class MoveColumnFeature implements DropListener {
             // will be visible again. otherwise a group with three columns (but only two visible) could
             // be dragged out, then when it's dragged in again, all three are visible. this stops that.
             const visibleState = draggingEvent.dragItem.visibleState;
-            const visibleColumns: Column[] = (columns || []).filter((column) => visibleState![column.getId()]);
+            const visibleColumns: AgColumn[] = (columns || []).filter((column) => visibleState![column.getId()]);
             this.setColumnsVisible(visibleColumns, true, 'uiColumnDragged');
         }
 
@@ -83,14 +92,14 @@ export class MoveColumnFeature implements DropListener {
         this.lastMovedInfo = null;
     }
 
-    public setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType) {
+    public setColumnsVisible(columns: AgColumn[] | null | undefined, visible: boolean, source: ColumnEventType) {
         if (columns) {
             const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
             this.columnModel.setColsVisible(allowedCols, visible, source);
         }
     }
 
-    public setColumnsPinned(columns: Column[] | null | undefined, pinned: ColumnPinnedType, source: ColumnEventType) {
+    public setColumnsPinned(columns: AgColumn[] | null | undefined, pinned: ColumnPinnedType, source: ColumnEventType) {
         if (columns) {
             const allowedCols = columns.filter((c) => !c.getColDef().lockPinned);
             this.columnModel.setColsPinned(allowedCols, pinned, source);
@@ -160,16 +169,15 @@ export class MoveColumnFeature implements DropListener {
 
         const dragSourceType: DragSourceType = draggingEvent.dragSource.type;
 
-        const allMovingColumns =
-            draggingEvent.dragSource.getDragItem().columns?.filter((col) => {
-                if (col.getColDef().lockPinned) {
-                    // if locked return true only if both col and container are same pin type.
-                    // double equals (==) here on purpose so that null==undefined is true (for not pinned options)
-                    return col.getPinned() == this.pinned;
-                }
-                // if not pin locked, then always allowed to be in this container
-                return true;
-            }) || [];
+        const allMovingColumns = (draggingEvent.dragSource.getDragItem().columns?.filter((col) => {
+            if (col.getColDef().lockPinned) {
+                // if locked return true only if both col and container are same pin type.
+                // double equals (==) here on purpose so that null==undefined is true (for not pinned options)
+                return col.getPinned() == this.pinned;
+            }
+            // if not pin locked, then always allowed to be in this container
+            return true;
+        }) || []) as AgColumn[];
 
         const lastMovedInfo = ColumnMoveHelper.attemptMoveColumns({
             allMovingColumns,
@@ -252,7 +260,7 @@ export class MoveColumnFeature implements DropListener {
             // this is how we achieve pining by dragging the column to the edge of the grid.
             this.failedMoveAttempts++;
 
-            const columns = this.lastDraggingEvent.dragItem.columns;
+            const columns = this.lastDraggingEvent.dragItem.columns as AgColumn[] | undefined;
             const columnsThatCanPin = columns!.filter((c) => !c.getColDef().lockPinned);
 
             if (columnsThatCanPin.length > 0) {

@@ -1,13 +1,5 @@
-import {
-    Column,
-    DragAndDropService,
-    DraggingEvent,
-    Events,
-    ITooltipParams,
-    PostConstruct,
-    WithoutGridCommon,
-    _createIconNoSpan,
-} from '@ag-grid-community/core';
+import type { AgColumn, DraggingEvent, ITooltipParams, WithoutGridCommon } from '@ag-grid-community/core';
+import { DragAndDropService, Events, _createIconNoSpan } from '@ag-grid-community/core';
 
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
@@ -16,8 +8,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
         super(horizontal, 'rowGroup');
     }
 
-    @PostConstruct
-    private passBeansUp(): void {
+    public postConstruct(): void {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag here to set row groups');
         const title = localeTextFunc('groups', 'Row Groups');
@@ -38,14 +29,14 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
         return label;
     }
 
-    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
+    public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         const res = super.getTooltipParams();
         res.location = 'rowGroupColumnsList';
 
         return res;
     }
 
-    protected isItemDroppable(column: Column, draggingEvent: DraggingEvent): boolean {
+    protected isItemDroppable(column: AgColumn, draggingEvent: DraggingEvent): boolean {
         // we never allow grouping of secondary columns
         if (this.gos.get('functionsReadOnly') || !column.isPrimary()) {
             return false;
@@ -54,7 +45,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
         return column.isAllowRowGroup() && (!column.isRowGroupActive() || this.isSourceEventFromTarget(draggingEvent));
     }
 
-    protected updateItems(columns: Column[]) {
+    protected updateItems(columns: AgColumn[]) {
         this.funcColsService.setRowGroupColumns(columns, 'toolPanelUi');
     }
 
@@ -62,7 +53,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
         return this.isPotentialDndItems() ? DragAndDropService.ICON_GROUP : DragAndDropService.ICON_NOT_ALLOWED;
     }
 
-    protected getExistingItems(): Column[] {
+    protected getExistingItems(): AgColumn[] {
         return this.funcColsService.getRowGroupColumns();
     }
 }

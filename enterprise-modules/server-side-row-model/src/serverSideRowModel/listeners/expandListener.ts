@@ -1,29 +1,29 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Beans,
-    Events,
-    PostConstruct,
+import type {
+    BeanCollection,
+    NamedBean,
     RowGroupOpenedEvent,
-    RowNode,
     StoreUpdatedEvent,
     WithoutGridCommon,
-    _exists,
-    _missing,
 } from '@ag-grid-community/core';
+import { BeanStub, Events, RowNode, _exists, _missing } from '@ag-grid-community/core';
 
-import { ServerSideRowModel } from '../serverSideRowModel';
-import { StoreFactory } from '../stores/storeFactory';
+import type { ServerSideRowModel } from '../serverSideRowModel';
+import type { StoreFactory } from '../stores/storeFactory';
 
-@Bean('ssrmExpandListener')
-export class ExpandListener extends BeanStub {
-    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
-    @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
-    @Autowired('beans') private beans: Beans;
+export class ExpandListener extends BeanStub implements NamedBean {
+    beanName = 'ssrmExpandListener' as const;
 
-    @PostConstruct
-    private postConstruct(): void {
+    private serverSideRowModel: ServerSideRowModel;
+    private storeFactory: StoreFactory;
+    private beans: BeanCollection;
+
+    public wireBeans(beans: BeanCollection) {
+        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+        this.storeFactory = beans.ssrmStoreFactory;
+        this.beans = beans;
+    }
+
+    public postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
         if (!this.gos.isRowModelType('serverSide')) {
             return;

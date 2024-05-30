@@ -1,23 +1,29 @@
-import { AgGroupComponentParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
+import { Component } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartTranslationService } from '../../../services/chartTranslationService';
-import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import { AgSlider } from '../../../../../widgets/agSlider';
+import type { ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class CapsPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="capsGroup">
-                <ag-slider ref="capLengthRatioSlider"></ag-slider>
+            <ag-group-component data-ref="capsGroup">
+                <ag-slider data-ref="capLengthRatioSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
 
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
     constructor(private readonly chartMenuUtils: ChartMenuParamsFactory) {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const capsGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
@@ -33,7 +39,7 @@ export class CapsPanel extends Component {
         );
         capLengthRatioSliderParams.step = 0.05;
 
-        this.setTemplate(CapsPanel.TEMPLATE, {
+        this.setTemplate(CapsPanel.TEMPLATE, [AgGroupComponent, AgSlider], {
             capsGroup: capsGroupParams,
             capLengthRatioSlider: capLengthRatioSliderParams,
         });

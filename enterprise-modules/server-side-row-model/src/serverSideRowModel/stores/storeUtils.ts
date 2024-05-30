@@ -1,28 +1,33 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
+    BeanCollection,
     ColumnModel,
     ColumnVO,
     GridOptions,
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
     IServerSideStore,
+    NamedBean,
     RowNode,
     RowNodeBlock,
     StoreRefreshAfterParams,
-    _missingOrEmpty,
-    _warnOnce,
 } from '@ag-grid-community/core';
+import { BeanStub, _missingOrEmpty, _warnOnce } from '@ag-grid-community/core';
 
-import { SSRMParams, ServerSideRowModel } from '../serverSideRowModel';
-import { StoreFactory } from './storeFactory';
+import type { SSRMParams, ServerSideRowModel } from '../serverSideRowModel';
+import type { StoreFactory } from './storeFactory';
 
-@Bean('ssrmStoreUtils')
-export class StoreUtils extends BeanStub {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
-    @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
+export class StoreUtils extends BeanStub implements NamedBean {
+    beanName = 'ssrmStoreUtils' as const;
+
+    private columnModel: ColumnModel;
+    private serverSideRowModel: ServerSideRowModel;
+    private storeFactory: StoreFactory;
+
+    public wireBeans(beans: BeanCollection) {
+        this.columnModel = beans.columnModel;
+        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+        this.storeFactory = beans.ssrmStoreFactory;
+    }
 
     public loadFromDatasource(p: {
         storeParams: SSRMParams;

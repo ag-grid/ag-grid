@@ -1,4 +1,5 @@
-import { BaseComponentWrapper, WrappableInterface } from '@ag-grid-community/core';
+import type { WrappableInterface } from '@ag-grid-community/core';
+import { BaseComponentWrapper } from '@ag-grid-community/core';
 
 import { VueComponentFactory } from './VueComponentFactory';
 
@@ -27,7 +28,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
         const that = this;
 
         class DynamicComponent extends VueComponent<any, any> implements WrappableInterface {
-            public init(params: any): void {
+            public override init(params: any): void {
                 super.init(params);
             }
 
@@ -84,7 +85,11 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
         );
     }
 
-    protected createMethodProxy(wrapper: VueWrappableInterface, methodName: string, mandatory: boolean): () => any {
+    protected override createMethodProxy(
+        wrapper: VueWrappableInterface,
+        methodName: string,
+        mandatory: boolean
+    ): () => any {
         return function () {
             if (wrapper.hasMethod(methodName)) {
                 return wrapper.callMethod(methodName, arguments);

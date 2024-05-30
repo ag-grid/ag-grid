@@ -1,27 +1,30 @@
-import { ColumnModel } from './columns/columnModel';
-import { VisibleColsService } from './columns/visibleColsService';
+import type { ColumnModel } from './columns/columnModel';
+import type { VisibleColsService } from './columns/visibleColsService';
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import { Autowired, Bean, Optional, PostConstruct } from './context/context';
-import { CtrlsService } from './ctrlsService';
-import { CellPosition, CellPositionUtils } from './entities/cellPositionUtils';
-import { Column } from './entities/column';
-import { ColumnGroup } from './entities/columnGroup';
-import { RowNode } from './entities/rowNode';
-import { RowPositionUtils } from './entities/rowPositionUtils';
-import { CellFocusClearedEvent, CellFocusedEvent, CellFocusedParams, CommonCellFocusParams, Events } from './events';
-import { FilterManager } from './filter/filterManager';
-import { NavigationService } from './gridBodyComp/navigationService';
-import { GridCtrl } from './gridComp/gridCtrl';
+import type { BeanCollection } from './context/context';
+import type { CtrlsService } from './ctrlsService';
+import type { AgColumn } from './entities/agColumn';
+import type { AgColumnGroup } from './entities/agColumnGroup';
+import type { CellPosition, CellPositionUtils } from './entities/cellPositionUtils';
+import type { RowNode } from './entities/rowNode';
+import type { RowPositionUtils } from './entities/rowPositionUtils';
+import type { EventsType } from './eventKeys';
+import type { CellFocusClearedEvent, CellFocusedEvent, CellFocusedParams, CommonCellFocusParams } from './events';
+import { Events } from './events';
+import type { FilterManager } from './filter/filterManager';
+import type { NavigationService } from './gridBodyComp/navigationService';
+import type { GridCtrl } from './gridComp/gridCtrl';
 import { AbstractHeaderCellCtrl } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
-import { HeaderCellCtrl } from './headerRendering/cells/column/headerCellCtrl';
-import { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
-import { HeaderPosition, HeaderPositionUtils } from './headerRendering/common/headerPosition';
-import { IRangeService } from './interfaces/IRangeService';
-import { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
-import { NavigateToNextHeaderParams, TabToNextHeaderParams } from './interfaces/iCallbackParams';
-import { WithoutGridCommon } from './interfaces/iCommon';
+import type { HeaderCellCtrl } from './headerRendering/cells/column/headerCellCtrl';
+import type { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
+import type { HeaderPosition, HeaderPositionUtils } from './headerRendering/common/headerPosition';
+import type { IRangeService } from './interfaces/IRangeService';
+import type { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
+import type { NavigateToNextHeaderParams, TabToNextHeaderParams } from './interfaces/iCallbackParams';
+import type { WithoutGridCommon } from './interfaces/iCommon';
 import { RowCtrl } from './rendering/row/rowCtrl';
-import { RowRenderer } from './rendering/rowRenderer';
+import type { RowRenderer } from './rendering/rowRenderer';
 import { _last } from './utils/array';
 import { _getTabIndex } from './utils/browser';
 import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR, _isVisible } from './utils/dom';
@@ -30,29 +33,46 @@ import { _makeNull } from './utils/generic';
 import { ManagedFocusFeature } from './widgets/managedFocusFeature';
 import { TabGuardClassNames } from './widgets/tabGuardCtrl';
 
-@Bean('focusService')
-export class FocusService extends BeanStub {
-    @Autowired('eGridDiv') private eGridDiv: HTMLElement;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
-    @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
-    @Autowired('headerPositionUtils') private readonly headerPositionUtils: HeaderPositionUtils;
-    @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
-    @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
-    @Autowired('cellPositionUtils') private readonly cellPositionUtils: CellPositionUtils;
-    @Autowired('navigationService') public navigationService: NavigationService;
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
-    @Autowired('filterManager') public filterManager: FilterManager;
+export class FocusService extends BeanStub implements NamedBean {
+    beanName = 'focusService' as const;
 
-    @Optional('rangeService') private readonly rangeService?: IRangeService;
-    @Optional('advancedFilterService') public readonly advancedFilterService?: IAdvancedFilterService;
+    private eGridDiv: HTMLElement;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private headerNavigationService: HeaderNavigationService;
+    private headerPositionUtils: HeaderPositionUtils;
+    private rowRenderer: RowRenderer;
+    private rowPositionUtils: RowPositionUtils;
+    private cellPositionUtils: CellPositionUtils;
+    private navigationService: NavigationService;
+    private ctrlsService: CtrlsService;
+    private filterManager: FilterManager;
+
+    private rangeService?: IRangeService;
+    private advancedFilterService?: IAdvancedFilterService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.eGridDiv = beans.eGridDiv;
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.headerNavigationService = beans.headerNavigationService;
+        this.headerPositionUtils = beans.headerPositionUtils;
+        this.rowRenderer = beans.rowRenderer;
+        this.rowPositionUtils = beans.rowPositionUtils;
+        this.cellPositionUtils = beans.cellPositionUtils;
+        this.navigationService = beans.navigationService;
+        this.ctrlsService = beans.ctrlsService;
+        this.filterManager = beans.filterManager;
+        this.rangeService = beans.rangeService;
+        this.advancedFilterService = beans.advancedFilterService;
+    }
 
     private gridCtrl: GridCtrl;
     private focusedCellPosition: CellPosition | null;
     private restoredFocusedCellPosition: CellPosition | null;
     private focusedHeaderPosition: HeaderPosition | null;
     /** the column that had focus before it moved into the advanced filter */
-    private advancedFilterFocusColumn: Column | undefined;
+    private advancedFilterFocusColumn: AgColumn | undefined;
 
     private static keyboardModeActive: boolean = false;
     private static instanceCount: number = 0;
@@ -93,18 +113,16 @@ export class FocusService extends BeanStub {
         FocusService.removeKeyboardModeEvents(doc);
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         const clearFocusedCellListener = this.clearFocusedCell.bind(this);
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener);
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_NEW_COLUMNS_LOADED,
-            this.onColumnEverythingChanged.bind(this)
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: clearFocusedCellListener,
+            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onColumnEverythingChanged.bind(this),
+            [Events.EVENT_COLUMN_GROUP_OPENED]: clearFocusedCellListener,
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: clearFocusedCellListener,
+        });
+
         this.registerKeyboardFocusEvents();
 
         this.ctrlsService.whenReady((p) => {
@@ -334,7 +352,7 @@ export class FocusService extends BeanStub {
         return this.focusedHeaderPosition;
     }
 
-    public setFocusedHeader(headerRowIndex: number, column: ColumnGroup | Column): void {
+    public setFocusedHeader(headerRowIndex: number, column: AgColumnGroup | AgColumn): void {
         this.focusedHeaderPosition = { headerRowIndex, column };
     }
 
@@ -471,17 +489,17 @@ export class FocusService extends BeanStub {
             if (this.filterManager.isAdvancedFilterHeaderActive()) {
                 return this.focusAdvancedFilter(headerPosition);
             }
-            return this.focusGridView(headerPosition.column as Column);
+            return this.focusGridView(headerPosition.column as AgColumn);
         }
 
-        this.headerNavigationService.scrollToColumn(headerPosition.column, direction);
+        this.headerNavigationService.scrollToColumn(headerPosition.column as AgColumn, direction);
 
         const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl(headerPosition.column.getPinned());
 
         // this will automatically call the setFocusedHeader method above
         const focusSuccess = headerRowContainerCtrl.focusHeader(
             headerPosition.headerRowIndex,
-            headerPosition.column,
+            headerPosition.column as AgColumn,
             event
         );
 
@@ -493,7 +511,7 @@ export class FocusService extends BeanStub {
     }
 
     public focusFirstHeader(): boolean {
-        let firstColumn: Column | ColumnGroup = this.visibleColsService.getAllCols()[0];
+        let firstColumn: AgColumn | AgColumnGroup = this.visibleColsService.getAllCols()[0];
         if (!firstColumn) {
             return false;
         }
@@ -669,7 +687,7 @@ export class FocusService extends BeanStub {
         return node;
     }
 
-    public focusGridView(column?: Column, backwards?: boolean): boolean {
+    public focusGridView(column?: AgColumn, backwards?: boolean): boolean {
         // if suppressCellFocus is `true`, it means the user does not want to
         // navigate between the cells using tab. Instead, we put focus on either
         // the header or after the grid, depending on whether tab or shift-tab was pressed.
@@ -694,7 +712,7 @@ export class FocusService extends BeanStub {
         const focusedHeader = this.getFocusedHeader();
 
         if (!column && focusedHeader) {
-            column = focusedHeader.column as Column;
+            column = focusedHeader.column as AgColumn;
         }
 
         if (rowIndex == null || !column) {
@@ -728,7 +746,7 @@ export class FocusService extends BeanStub {
     }
 
     private focusAdvancedFilter(position: HeaderPosition | null): boolean {
-        this.advancedFilterFocusColumn = position?.column as Column | undefined;
+        this.advancedFilterFocusColumn = position?.column as AgColumn | undefined;
         return this.advancedFilterService?.getCtrl().focusHeaderComp() ?? false;
     }
 

@@ -1,6 +1,6 @@
-import { ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
+import type { ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
 
-import { BorderSet } from '../../../assets/excelInterfaces';
+import type { BorderSet } from '../../../assets/excelInterfaces';
 import { convertLegacyColor } from '../../../assets/excelLegacyConvert';
 
 const getBorderColor = (color?: string): XmlElement => {

@@ -1,17 +1,22 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Bean } from '../context/context';
-import { Autowired } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { DraggingEvent } from '../dragAndDrop/dragAndDropService';
-import { CellPosition } from '../entities/cellPositionUtils';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { DraggingEvent } from '../dragAndDrop/dragAndDropService';
+import type { CellPosition } from '../entities/cellPositionUtils';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import { _getCtrlForEventTarget } from '../utils/event';
 import { _exists } from '../utils/generic';
 import { NumberSequence } from '../utils/numberSequence';
 
-@Bean('mouseEventService')
-export class MouseEventService extends BeanStub {
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+export class MouseEventService extends BeanStub implements NamedBean {
+    beanName = 'mouseEventService' as const;
+
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private static gridInstanceSequence = new NumberSequence();
     private static GRID_DOM_KEY = '__ag_grid_instance';

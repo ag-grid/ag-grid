@@ -1,7 +1,7 @@
-import { ChartType } from '@ag-grid-community/core';
+import type { ChartType } from '@ag-grid-community/core';
 import { _Scene, _Theme, _Util } from 'ag-charts-community';
 
-import { ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniChart } from '../miniChart';
 
 export class MiniHeatmap extends MiniChart {
@@ -69,9 +69,8 @@ export class MiniHeatmap extends MiniChart {
     }
 
     updateColors(fills: string[], strokes: string[], themeTemplate?: ThemeTemplateParameters, isCustomTheme?: boolean) {
-        const { properties } = themeTemplate ?? {};
-        const defaultColorRange = properties?.get(_Theme.DEFAULT_DIVERGING_SERIES_COLOUR_RANGE);
-        const defaultBackgroundColor = properties?.get(_Theme.DEFAULT_BACKGROUND_COLOUR);
+        const defaultColorRange = themeTemplate?.get(_Theme.DEFAULT_DIVERGING_SERIES_COLOUR_RANGE);
+        const defaultBackgroundColor = themeTemplate?.get(_Theme.DEFAULT_BACKGROUND_COLOUR);
         const backgroundFill =
             (Array.isArray(defaultBackgroundColor) ? defaultBackgroundColor[0] : defaultBackgroundColor) ?? 'white';
 

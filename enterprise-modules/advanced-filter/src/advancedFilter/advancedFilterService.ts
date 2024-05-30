@@ -1,37 +1,45 @@
-import {
+import type {
     AdvancedFilterEnabledChangedEvent,
     AdvancedFilterModel,
-    AutocompleteEntry,
-    Autowired,
-    Bean,
-    BeanStub,
+    BeanCollection,
     ColumnModel,
     DataTypeService,
-    Events,
     IAdvancedFilterService,
     IRowModel,
     IRowNode,
+    NamedBean,
     NewColumnsLoadedEvent,
-    PostConstruct,
     ValueService,
     WithoutGridCommon,
-    _exists,
-    _warnOnce,
 } from '@ag-grid-community/core';
+import { BeanStub, Events, _exists, _warnOnce } from '@ag-grid-community/core';
 
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
-import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
+import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
+import type { AutocompleteEntry } from './autocomplete/autocompleteParams';
 import { FilterExpressionParser } from './filterExpressionParser';
-import { ExpressionProxy, FilterExpressionFunction, FilterExpressionFunctionParams } from './filterExpressionUtils';
+import type {
+    ExpressionProxy,
+    FilterExpressionFunction,
+    FilterExpressionFunctionParams,
+} from './filterExpressionUtils';
 
-@Bean('advancedFilterService')
-export class AdvancedFilterService extends BeanStub implements IAdvancedFilterService {
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('advancedFilterExpressionService')
+export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvancedFilterService {
+    beanName = 'advancedFilterService' as const;
+
+    private valueService: ValueService;
+    private columnModel: ColumnModel;
+    private dataTypeService: DataTypeService;
+    private rowModel: IRowModel;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.valueService = beans.valueService;
+        this.columnModel = beans.columnModel;
+        this.dataTypeService = beans.dataTypeService;
+        this.rowModel = beans.rowModel;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+    }
 
     private enabled: boolean;
     private ctrl: AdvancedFilterCtrl;
@@ -44,8 +52,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     private expressionParams: FilterExpressionFunctionParams | null;
     private isValid: boolean = true;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.setEnabled(this.gos.get('enableAdvancedFilter'), true);
 
         this.ctrl = this.createManagedBean(new AdvancedFilterCtrl(this.enabled));

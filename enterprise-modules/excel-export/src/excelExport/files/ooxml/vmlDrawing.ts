@@ -1,6 +1,6 @@
-import { ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
+import type { ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
 
-import { ExcelHeaderFooterCalculatedImage } from '../../assets/excelInterfaces';
+import type { ExcelHeaderFooterCalculatedImage } from '../../assets/excelInterfaces';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 
 const getShapeLayout = (): XmlElement => ({

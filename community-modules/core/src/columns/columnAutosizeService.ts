@@ -1,31 +1,42 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { Column } from '../entities/column';
-import { ColumnGroup } from '../entities/columnGroup';
-import { ColumnEventType } from '../events';
-import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
-import { AnimationFrameService } from '../misc/animationFrameService';
-import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
+import type { ColumnEventType } from '../events';
+import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
+import type { AnimationFrameService } from '../misc/animationFrameService';
+import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import { _exists } from '../utils/generic';
-import { ColumnEventDispatcher } from './columnEventDispatcher';
-import { ColKey, ColumnModel, Maybe } from './columnModel';
-import { VisibleColsService } from './visibleColsService';
+import type { ColumnEventDispatcher } from './columnEventDispatcher';
+import type { ColKey, ColumnModel, Maybe } from './columnModel';
+import type { VisibleColsService } from './visibleColsService';
 
-@Bean('columnAutosizeService')
-export class ColumnAutosizeService extends BeanStub {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
-    @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
-    @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
-    @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+export class ColumnAutosizeService extends BeanStub implements NamedBean {
+    beanName = 'columnAutosizeService' as const;
+
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private animationFrameService: AnimationFrameService;
+    private autoWidthCalculator: AutoWidthCalculator;
+    private eventDispatcher: ColumnEventDispatcher;
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.animationFrameService = beans.animationFrameService;
+        this.autoWidthCalculator = beans.autoWidthCalculator;
+        this.eventDispatcher = beans.columnEventDispatcher;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     public autoSizeCols(params: {
         colKeys: ColKey[];
         skipHeader?: boolean;
         skipHeaderGroups?: boolean;
-        stopAtGroup?: ColumnGroup;
+        stopAtGroup?: AgColumnGroup;
         source?: ColumnEventType;
     }): void {
         if (this.columnModel.isShouldQueueResizeOperations()) {
@@ -48,7 +59,7 @@ export class ColumnAutosizeService extends BeanStub {
         this.animationFrameService.flushAllFrames();
 
         // keep track of which cols we have resized in here
-        const columnsAutosized: Column[] = [];
+        const columnsAutosized: AgColumn[] = [];
         // initialise with anything except 0 so that while loop executes at least once
         let changesThisTimeAround = -1;
 
@@ -58,7 +69,7 @@ export class ColumnAutosizeService extends BeanStub {
         while (changesThisTimeAround !== 0) {
             changesThisTimeAround = 0;
 
-            const updatedColumns: Column[] = [];
+            const updatedColumns: AgColumn[] = [];
 
             colKeys.forEach((key) => {
                 if (!key) {
@@ -111,13 +122,13 @@ export class ColumnAutosizeService extends BeanStub {
     private autoSizeColumnGroupsByColumns(
         keys: ColKey[],
         source: ColumnEventType,
-        stopAtGroup?: ColumnGroup
-    ): Column[] {
-        const columnGroups: Set<ColumnGroup> = new Set();
+        stopAtGroup?: AgColumnGroup
+    ): AgColumn[] {
+        const columnGroups: Set<AgColumnGroup> = new Set();
         const columns = this.columnModel.getColsForKeys(keys);
 
         columns.forEach((col) => {
-            let parent: ColumnGroup = col.getParent();
+            let parent: AgColumnGroup | null = col.getParent();
             while (parent && parent != stopAtGroup) {
                 if (!parent.isPadding()) {
                     columnGroups.add(parent);
@@ -128,7 +139,7 @@ export class ColumnAutosizeService extends BeanStub {
 
         let headerGroupCtrl: HeaderGroupCellCtrl | undefined;
 
-        const resizedColumns: Column[] = [];
+        const resizedColumns: AgColumn[] = [];
 
         for (const columnGroup of columnGroups) {
             for (const headerContainerCtrl of this.ctrlsService.getHeaderRowContainerCtrls()) {
@@ -156,7 +167,7 @@ export class ColumnAutosizeService extends BeanStub {
     }
 
     // returns the width we can set to this col, taking into consideration min and max widths
-    private normaliseColumnWidth(column: Column, newWidth: number): number {
+    private normaliseColumnWidth(column: AgColumn, newWidth: number): number {
         const minWidth = column.getMinWidth();
 
         if (_exists(minWidth) && newWidth < minWidth) {

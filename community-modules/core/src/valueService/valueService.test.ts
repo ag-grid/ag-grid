@@ -1,13 +1,13 @@
-import { ColDef, ValueFormatterParams } from '../entities/colDef';
-import { Column } from '../entities/column';
+import type { AgColumn } from '../entities/agColumn';
+import type { ColDef, ValueFormatterParams } from '../entities/colDef';
 import { RowNode } from '../entities/rowNode';
-import { GridOptionsService } from '../gridOptionsService';
+import type { GridOptionsService } from '../gridOptionsService';
 import { mock } from '../test-utils/mock';
-import { ExpressionService } from './expressionService';
+import type { ExpressionService } from './expressionService';
 import { ValueService } from './valueService';
 
 let colDef: ColDef;
-let column: jest.Mocked<Column>;
+let column: jest.Mocked<AgColumn>;
 let gos: jest.Mocked<GridOptionsService>;
 let expressionService: jest.Mocked<ExpressionService>;
 let valueService: ValueService;
@@ -15,7 +15,7 @@ let valueService: ValueService;
 describe('formatValue', () => {
     beforeEach(() => {
         colDef = {};
-        column = mock<Column>('getColDef');
+        column = mock<AgColumn>('getColDef');
         column.getColDef.mockReturnValue(colDef);
 
         gos = mock<GridOptionsService>('get', 'addGridCommonParams');
@@ -28,7 +28,7 @@ describe('formatValue', () => {
 
     it('uses supplied formatter if provided', () => {
         const returnValue = 'foo';
-        const formatter = (params: ValueFormatterParams) => returnValue;
+        const formatter = () => returnValue;
         const value = 'bar';
 
         const formattedValue = valueService.formatValue(column, null, value, formatter);
@@ -39,7 +39,7 @@ describe('formatValue', () => {
 
     it('uses value formatter from column definition if no formatter provided', () => {
         const returnValue = 'foo';
-        const formatter = (params: ValueFormatterParams) => returnValue;
+        const formatter = () => returnValue;
         colDef.valueFormatter = formatter;
         const value = 'bar';
 

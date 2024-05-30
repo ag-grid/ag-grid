@@ -1,23 +1,23 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired } from '../../context/context';
-import { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
-import { ResizeObserverService } from '../../misc/resizeObserverService';
+import type { BeanCollection } from '../../context/context';
+import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
+import type { ResizeObserverService } from '../../misc/resizeObserverService';
 import { _getAbsoluteHeight, _getAbsoluteWidth, _isVisible, _setFixedHeight, _setFixedWidth } from '../../utils/dom';
-import { PopupService } from '../../widgets/popupService';
+import type { PopupService } from '../../widgets/popupService';
 
 const RESIZE_CONTAINER_STYLE = 'ag-resizer-wrapper';
 
 const RESIZE_TEMPLATE =
     /* html */
     `<div class="${RESIZE_CONTAINER_STYLE}">
-        <div ref="eTopLeftResizer" class="ag-resizer ag-resizer-topLeft"></div>
-        <div ref="eTopResizer" class="ag-resizer ag-resizer-top"></div>
-        <div ref="eTopRightResizer" class="ag-resizer ag-resizer-topRight"></div>
-        <div ref="eRightResizer" class="ag-resizer ag-resizer-right"></div>
-        <div ref="eBottomRightResizer" class="ag-resizer ag-resizer-bottomRight"></div>
-        <div ref="eBottomResizer" class="ag-resizer ag-resizer-bottom"></div>
-        <div ref="eBottomLeftResizer" class="ag-resizer ag-resizer-bottomLeft"></div>
-        <div ref="eLeftResizer" class="ag-resizer ag-resizer-left"></div>
+        <div data-ref="eTopLeftResizer" class="ag-resizer ag-resizer-topLeft"></div>
+        <div data-ref="eTopResizer" class="ag-resizer ag-resizer-top"></div>
+        <div data-ref="eTopRightResizer" class="ag-resizer ag-resizer-topRight"></div>
+        <div data-ref="eRightResizer" class="ag-resizer ag-resizer-right"></div>
+        <div data-ref="eBottomRightResizer" class="ag-resizer ag-resizer-bottomRight"></div>
+        <div data-ref="eBottomResizer" class="ag-resizer ag-resizer-bottom"></div>
+        <div data-ref="eBottomLeftResizer" class="ag-resizer ag-resizer-bottomLeft"></div>
+        <div data-ref="eLeftResizer" class="ag-resizer ag-resizer-left"></div>
     </div>`;
 
 export interface PositionableOptions {
@@ -58,9 +58,15 @@ interface MappedResizer {
 }
 
 export class PositionableFeature extends BeanStub {
-    @Autowired('popupService') protected readonly popupService: PopupService;
-    @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
-    @Autowired('dragService') private readonly dragService: DragService;
+    protected popupService: PopupService;
+    private resizeObserverService: ResizeObserverService;
+    private dragService: DragService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.popupService = beans.popupService;
+        this.resizeObserverService = beans.resizeObserverService;
+        this.dragService = beans.dragService;
+    }
 
     private dragStartPosition = {
         x: 0,
@@ -570,14 +576,14 @@ export class PositionableFeature extends BeanStub {
         const eGui = this.element;
 
         this.resizerMap = {
-            topLeft: { element: eGui.querySelector('[ref=eTopLeftResizer]') as HTMLElement },
-            top: { element: eGui.querySelector('[ref=eTopResizer]') as HTMLElement },
-            topRight: { element: eGui.querySelector('[ref=eTopRightResizer]') as HTMLElement },
-            right: { element: eGui.querySelector('[ref=eRightResizer]') as HTMLElement },
-            bottomRight: { element: eGui.querySelector('[ref=eBottomRightResizer]') as HTMLElement },
-            bottom: { element: eGui.querySelector('[ref=eBottomResizer]') as HTMLElement },
-            bottomLeft: { element: eGui.querySelector('[ref=eBottomLeftResizer]') as HTMLElement },
-            left: { element: eGui.querySelector('[ref=eLeftResizer]') as HTMLElement },
+            topLeft: { element: eGui.querySelector('[data-ref=eTopLeftResizer]') as HTMLElement },
+            top: { element: eGui.querySelector('[data-ref=eTopResizer]') as HTMLElement },
+            topRight: { element: eGui.querySelector('[data-ref=eTopRightResizer]') as HTMLElement },
+            right: { element: eGui.querySelector('[data-ref=eRightResizer]') as HTMLElement },
+            bottomRight: { element: eGui.querySelector('[data-ref=eBottomRightResizer]') as HTMLElement },
+            bottom: { element: eGui.querySelector('[data-ref=eBottomResizer]') as HTMLElement },
+            bottomLeft: { element: eGui.querySelector('[data-ref=eBottomLeftResizer]') as HTMLElement },
+            left: { element: eGui.querySelector('[data-ref=eLeftResizer]') as HTMLElement },
         };
     }
 
@@ -899,7 +905,7 @@ export class PositionableFeature extends BeanStub {
         }
     }
 
-    protected destroy() {
+    public override destroy() {
         super.destroy();
 
         if (this.moveElementDragListener) {

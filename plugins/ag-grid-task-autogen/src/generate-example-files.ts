@@ -1,5 +1,10 @@
-import { DependencyType, type RawProjectGraphDependency, TargetConfiguration, validateDependency } from '@nx/devkit';
-import type { CreateDependencies } from 'nx/src/utils/nx-plugin';
+import {
+    type CreateDependencies,
+    DependencyType,
+    type RawProjectGraphDependency,
+    type TargetConfiguration,
+    validateDependency,
+} from '@nx/devkit';
 
 export function createTask(parentProject: string, srcRelativeInputPath: string): Record<string, TargetConfiguration> {
     return {

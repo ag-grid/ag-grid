@@ -1,50 +1,57 @@
-import {
+import type {
+    AgColumn,
     AgEvent,
-    AgMenuItemComponent,
-    AgMenuList,
-    Autowired,
-    Bean,
-    BeanStub,
+    BeanCollection,
     CellPosition,
     CellPositionUtils,
-    CloseMenuEvent,
-    Column,
     ColumnModel,
-    Component,
     ContextMenuVisibleChangedEvent,
     CtrlsService,
-    Events,
     FocusService,
     IAfterGuiAttachedParams,
     IContextMenuFactory,
     IRangeService,
     MenuItemDef,
-    ModuleNames,
-    ModuleRegistry,
-    Optional,
+    NamedBean,
     PopupService,
-    PostConstruct,
     RowNode,
     WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    BeanStub,
+    Component,
+    Events,
+    ModuleNames,
+    ModuleRegistry,
     _exists,
     _isIOSUserAgent,
     _missingOrEmpty,
 } from '@ag-grid-community/core';
+import type { CloseMenuEvent } from '@ag-grid-enterprise/core';
+import { AgMenuItemComponent, AgMenuList } from '@ag-grid-enterprise/core';
 
-import { MenuItemMapper } from './menuItemMapper';
-import { MenuUtils } from './menuUtils';
+import type { MenuItemMapper } from './menuItemMapper';
+import type { MenuUtils } from './menuUtils';
 
 const CSS_MENU = 'ag-menu';
 const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
 
-@Bean('contextMenuFactory')
-export class ContextMenuFactory extends BeanStub implements IContextMenuFactory {
-    @Autowired('popupService') private popupService: PopupService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('menuUtils') private menuUtils: MenuUtils;
+export class ContextMenuFactory extends BeanStub implements NamedBean, IContextMenuFactory {
+    beanName = 'contextMenuFactory' as const;
 
-    @Optional('rangeService') private rangeService?: IRangeService;
+    private popupService: PopupService;
+    private ctrlsService: CtrlsService;
+    private columnModel: ColumnModel;
+    private menuUtils: MenuUtils;
+    private rangeService?: IRangeService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.popupService = beans.popupService;
+        this.ctrlsService = beans.ctrlsService;
+        this.columnModel = beans.columnModel;
+        this.menuUtils = beans.menuUtils;
+        this.rangeService = beans.rangeService;
+    }
 
     private activeMenu: ContextMenu | null;
 
@@ -54,12 +61,12 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
     private getMenuItems(
         node: RowNode | null,
-        column: Column | null,
+        column: AgColumn | null,
         value: any
     ): (MenuItemDef | string)[] | undefined {
         const defaultMenuOptions: string[] = [];
 
-        if (_exists(node) && ModuleRegistry.__isRegistered(ModuleNames.ClipboardModule, this.context.getGridId())) {
+        if (_exists(node) && ModuleRegistry.__isRegistered(ModuleNames.ClipboardModule, this.gridId)) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
                 if (!this.gos.get('suppressCutToClipboard')) {
@@ -69,10 +76,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             }
         }
 
-        if (
-            this.gos.get('enableCharts') &&
-            ModuleRegistry.__isRegistered(ModuleNames.GridChartsModule, this.context.getGridId())
-        ) {
+        if (this.gos.get('enableCharts') && ModuleRegistry.__isRegistered(ModuleNames.GridChartsModule, this.gridId)) {
             if (this.columnModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
@@ -84,14 +88,8 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
         if (_exists(node)) {
             // if user clicks a cell
-            const csvModuleMissing = !ModuleRegistry.__isRegistered(
-                ModuleNames.CsvExportModule,
-                this.context.getGridId()
-            );
-            const excelModuleMissing = !ModuleRegistry.__isRegistered(
-                ModuleNames.ExcelExportModule,
-                this.context.getGridId()
-            );
+            const csvModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.CsvExportModule, this.gridId);
+            const excelModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.ExcelExportModule, this.gridId);
             const suppressExcel = this.gos.get('suppressExcelExport') || excelModuleMissing;
             const suppressCsv = this.gos.get('suppressCsvExport') || csvModuleMissing;
             const onIPad = _isIOSUserAgent();
@@ -131,7 +129,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         mouseEvent: MouseEvent | null,
         touchEvent: TouchEvent | null,
         rowNode: RowNode | null,
-        column: Column | null,
+        column: AgColumn | null,
         value: any,
         anchorToElement: HTMLElement
     ): void {
@@ -142,7 +140,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
     public showMenu(
         node: RowNode | null,
-        column: Column | null,
+        column: AgColumn | null,
         value: any,
         mouseEvent: MouseEvent | Touch,
         anchorToElement: HTMLElement
@@ -246,24 +244,29 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 }
 
 class ContextMenu extends Component {
-    @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('cellPositionUtils') private cellPositionUtils: CellPositionUtils;
+    private focusService: FocusService;
+    private menuItemMapper: MenuItemMapper;
+    private cellPositionUtils: CellPositionUtils;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.focusService = beans.focusService;
+        this.menuItemMapper = beans.menuItemMapper;
+        this.cellPositionUtils = beans.cellPositionUtils;
+    }
 
     private menuList: AgMenuList | null = null;
     private focusedCell: CellPosition | null = null;
 
     constructor(
         private readonly menuItems: (MenuItemDef | string)[],
-        private readonly column: Column | null,
+        private readonly column: AgColumn | null,
         private readonly node: RowNode | null,
         private readonly value: any
     ) {
         super(/* html */ `<div class="${CSS_MENU}" role="presentation"></div>`);
     }
 
-    @PostConstruct
-    private addMenuItems(): void {
+    public postConstruct(): void {
         const menuList = this.createManagedBean(
             new AgMenuList(0, {
                 column: this.column,
@@ -317,7 +320,7 @@ class ContextMenu extends Component {
         }
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.restoreFocusedCell();
         super.destroy();
     }

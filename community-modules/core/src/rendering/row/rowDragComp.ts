@@ -1,13 +1,14 @@
 import { BeanStub } from '../../context/beanStub';
-import { Autowired, PostConstruct, PreDestroy } from '../../context/context';
-import { DragItem, DragSource, DragSourceType } from '../../dragAndDrop/dragAndDropService';
-import { Column } from '../../entities/column';
+import type { BeanCollection } from '../../context/context';
+import type { DragItem, DragSource } from '../../dragAndDrop/dragAndDropService';
+import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
+import type { AgColumn } from '../../entities/agColumn';
 import { RowNode } from '../../entities/rowNode';
 import { Events } from '../../eventKeys';
+import type { EventsType } from '../../eventKeys';
 import { _isFunction, _warnOnce } from '../../utils/function';
 import { _createIconNoSpan } from '../../utils/icon';
 import { Component } from '../../widgets/component';
-import { Beans } from '../beans';
 
 export interface IRowDragItem extends DragItem {
     /** The default text that would be applied to this Drag Element */
@@ -17,12 +18,16 @@ export interface IRowDragItem extends DragItem {
 export class RowDragComp extends Component {
     private dragSource: DragSource | null = null;
 
-    @Autowired('beans') private readonly beans: Beans;
+    private beans: BeanCollection;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.beans = beans;
+    }
 
     constructor(
         private readonly cellValueFn: () => string,
         private readonly rowNode: RowNode,
-        private readonly column?: Column,
+        private readonly column?: AgColumn,
         private readonly customGui?: HTMLElement,
         private readonly dragStartPixels?: number,
         private readonly suppressVisibilityChange?: boolean
@@ -34,8 +39,7 @@ export class RowDragComp extends Component {
         return this.customGui != null;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         if (!this.customGui) {
             this.setTemplate(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`);
             this.getGui().appendChild(_createIconNoSpan('rowDrag', this.gos, null)!);
@@ -90,7 +94,7 @@ export class RowDragComp extends Component {
         };
     }
 
-    private getRowDragText(column?: Column) {
+    private getRowDragText(column?: AgColumn) {
         if (column) {
             const colDef = column.getColDef();
             if (colDef.rowDragText) {
@@ -132,7 +136,11 @@ export class RowDragComp extends Component {
         this.beans.dragAndDropService.addDragSource(this.dragSource, true);
     }
 
-    @PreDestroy
+    public override destroy(): void {
+        this.removeDragSource();
+        super.destroy();
+    }
+
     private removeDragSource() {
         if (this.dragSource) {
             this.beans.dragAndDropService.removeDragSource(this.dragSource);
@@ -143,10 +151,10 @@ export class RowDragComp extends Component {
 
 class VisibilityStrategy extends BeanStub {
     private readonly parent: RowDragComp;
-    private readonly column: Column | undefined;
+    private readonly column: AgColumn | undefined;
     protected readonly rowNode: RowNode;
 
-    constructor(parent: RowDragComp, rowNode: RowNode, column?: Column) {
+    constructor(parent: RowDragComp, rowNode: RowNode, column?: AgColumn) {
         super();
         this.parent = parent;
         this.rowNode = rowNode;
@@ -182,26 +190,24 @@ class VisibilityStrategy extends BeanStub {
 
 // when non managed, the visibility depends on suppressRowDrag property only
 class NonManagedVisibilityStrategy extends VisibilityStrategy {
-    private readonly beans: Beans;
+    private readonly beans: BeanCollection;
 
-    constructor(parent: RowDragComp, beans: Beans, rowNode: RowNode, column?: Column) {
+    constructor(parent: RowDragComp, beans: BeanCollection, rowNode: RowNode, column?: AgColumn) {
         super(parent, rowNode, column);
         this.beans = beans;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.addManagedPropertyListener('suppressRowDrag', this.onSuppressRowDrag.bind(this));
 
         // in case data changes, then we need to update visibility of drag item
-        this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(
-            this.beans.eventService,
-            Events.EVENT_NEW_COLUMNS_LOADED,
-            this.workOutVisibility.bind(this)
-        );
+        const listener = this.workOutVisibility.bind(this);
+        this.addManagedListeners(this.rowNode, {
+            [RowNode.EVENT_DATA_CHANGED]: listener,
+            [RowNode.EVENT_CELL_CHANGED]: listener,
+        });
+
+        this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, listener);
 
         this.workOutVisibility();
     }
@@ -219,37 +225,28 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
 
 // when managed, the visibility depends on sort, filter and row group, as well as suppressRowDrag property
 class ManagedVisibilityStrategy extends VisibilityStrategy {
-    private readonly beans: Beans;
+    private readonly beans: BeanCollection;
 
-    constructor(parent: RowDragComp, beans: Beans, rowNode: RowNode, column?: Column) {
+    constructor(parent: RowDragComp, beans: BeanCollection, rowNode: RowNode, column?: AgColumn) {
         super(parent, rowNode, column);
         this.beans = beans;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
+        const listener = this.workOutVisibility.bind(this);
         // we do not show the component if sort, filter or grouping is active
-
-        this.addManagedListener(this.beans.eventService, Events.EVENT_SORT_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(
-            this.beans.eventService,
-            Events.EVENT_FILTER_CHANGED,
-            this.workOutVisibility.bind(this)
-        );
-        this.addManagedListener(
-            this.beans.eventService,
-            Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
-            this.workOutVisibility.bind(this)
-        );
-        this.addManagedListener(
-            this.beans.eventService,
-            Events.EVENT_NEW_COLUMNS_LOADED,
-            this.workOutVisibility.bind(this)
-        );
+        this.addManagedListeners<EventsType>(this.beans.eventService, {
+            [Events.EVENT_SORT_CHANGED]: listener,
+            [Events.EVENT_FILTER_CHANGED]: listener,
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: listener,
+            [Events.EVENT_NEW_COLUMNS_LOADED]: listener,
+        });
 
         // in case data changes, then we need to update visibility of drag item
-        this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
+        this.addManagedListeners(this.rowNode, {
+            [RowNode.EVENT_DATA_CHANGED]: listener,
+            [RowNode.EVENT_CELL_CHANGED]: listener,
+        });
 
         this.addManagedPropertyListener('suppressRowDrag', this.onSuppressRowDrag.bind(this));
 

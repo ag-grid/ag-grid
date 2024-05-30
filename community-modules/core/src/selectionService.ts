@@ -1,23 +1,29 @@
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import { Bean } from './context/context';
-import { Autowired } from './context/context';
-import { PostConstruct } from './context/context';
-import { RowNode } from './entities/rowNode';
-import { Events, SelectionChangedEvent, SelectionEventSourceType } from './events';
-import { IClientSideRowModel } from './interfaces/iClientSideRowModel';
-import { WithoutGridCommon } from './interfaces/iCommon';
-import { IRowModel } from './interfaces/iRowModel';
-import { ISelectionService, ISetNodesSelectedParams } from './interfaces/iSelectionService';
-import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './interfaces/selectionState';
-import { PaginationProxy } from './pagination/paginationProxy';
+import type { BeanCollection } from './context/context';
+import type { RowNode } from './entities/rowNode';
+import type { SelectionChangedEvent, SelectionEventSourceType } from './events';
+import { Events } from './events';
+import type { IClientSideRowModel } from './interfaces/iClientSideRowModel';
+import type { WithoutGridCommon } from './interfaces/iCommon';
+import type { IRowModel } from './interfaces/iRowModel';
+import type { ISelectionService, ISetNodesSelectedParams } from './interfaces/iSelectionService';
+import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './interfaces/selectionState';
+import type { PaginationProxy } from './pagination/paginationProxy';
 import { _last } from './utils/array';
 import { ChangedPath } from './utils/changedPath';
 import { _exists, _missing } from './utils/generic';
 
-@Bean('selectionService')
-export class SelectionService extends BeanStub implements ISelectionService {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+export class SelectionService extends BeanStub implements NamedBean, ISelectionService {
+    beanName = 'selectionService' as const;
+
+    private rowModel: IRowModel;
+    private paginationProxy: PaginationProxy;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.rowModel = beans.rowModel;
+        this.paginationProxy = beans.paginationProxy;
+    }
 
     private selectedNodes: Map<string, RowNode> = new Map();
     private lastRowNode: RowNode | null = null;
@@ -25,8 +31,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
     private groupSelectsChildren: boolean;
     private rowSelection?: 'single' | 'multiple';
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.rowSelection = this.gos.get('rowSelection');
         this.groupSelectsChildren = this.gos.get('groupSelectsChildren');
         this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection'], () => {
@@ -38,7 +43,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
         this.resetNodes();
         this.lastRowNode = null;

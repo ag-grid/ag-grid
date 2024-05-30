@@ -1,4 +1,6 @@
-import {
+import type {
+    AgColumn,
+    AgColumnGroup,
     Column,
     ColumnGroup,
     ColumnWidthCallbackParams,
@@ -15,16 +17,10 @@ import {
     ExcelWorksheet,
     RowHeightCallbackParams,
     RowNode,
-    _last,
-    _mergeDeep,
 } from '@ag-grid-community/core';
-import {
-    BaseGridSerializingSession,
-    GridSerializingParams,
-    RowAccumulator,
-    RowSpanningAccumulator,
-    RowType,
-} from '@ag-grid-community/csv-export';
+import { _last, _mergeDeep } from '@ag-grid-community/core';
+import type { GridSerializingParams, RowAccumulator, RowSpanningAccumulator } from '@ag-grid-community/csv-export';
+import { BaseGridSerializingSession, RowType } from '@ag-grid-community/csv-export';
 
 import { getHeightFromProperty } from './assets/excelUtils';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
@@ -77,7 +73,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
     private rows: ExcelRow[] = [];
     private cols: ExcelColumn[];
-    private columnsToExport: Column[];
+    private columnsToExport: AgColumn[];
 
     constructor(config: ExcelGridSerializingParams) {
         super(config);
@@ -150,7 +146,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         });
         return {
             onColumn: (
-                columnGroup: ColumnGroup,
+                columnGroup: AgColumnGroup,
                 header: string,
                 index: number,
                 span: number,
@@ -189,7 +185,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         return rowAccumulator;
     }
 
-    public prepare(columnsToExport: Column[]): void {
+    public override prepare(columnsToExport: AgColumn[]): void {
         super.prepare(columnsToExport);
         this.columnsToExport = [...columnsToExport];
         this.cols = columnsToExport.map((col, i) => this.convertColumnToExcel(col, i));
@@ -257,7 +253,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         return false;
     }
 
-    private convertColumnToExcel(column: Column | null, index: number): ExcelColumn {
+    private convertColumnToExcel(column: AgColumn | null, index: number): ExcelColumn {
         const columnWidth = this.config.columnWidth;
         const headerValue = column ? this.extractHeaderValue(column) : undefined;
         const displayName = headerValue ?? '';
@@ -284,7 +280,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     private onNewHeaderColumn(
         rowIndex: number,
         currentCells: ExcelCell[]
-    ): (column: Column, index: number, node: RowNode) => void {
+    ): (column: AgColumn, index: number, node: RowNode) => void {
         return (column) => {
             const nameForCol = this.extractHeaderValue(column);
             const styleIds: string[] = this.config.styleLinker({
@@ -302,7 +298,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     private onNewBodyColumn(
         rowIndex: number,
         currentCells: ExcelCell[]
-    ): (column: Column, index: number, node: RowNode) => void {
+    ): (column: AgColumn, index: number, node: RowNode) => void {
         let skipCols = 0;
 
         return (column, index, node) => {
@@ -359,7 +355,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         onNewColumnAccumulator: (
             rowIndex: number,
             currentCells: ExcelCell[]
-        ) => (column: Column, index: number, node: RowNode) => void,
+        ) => (column: AgColumn, index: number, node: RowNode) => void,
         height?: number | ((params: RowHeightCallbackParams) => number)
     ): RowAccumulator {
         const currentCells: ExcelCell[] = [];
@@ -416,7 +412,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
     private addImage(
         rowIndex: number,
-        column: Column,
+        column: AgColumn,
         value: string
     ): { image: ExcelImage; value?: string } | undefined {
         if (!this.config.addImageToCell) {
@@ -482,7 +478,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     ): ExcelCell {
         const valueToUse = value == null ? '' : value;
         return {
-            styleId: !!this.getStyleById(styleId) ? styleId! : undefined,
+            styleId: this.getStyleById(styleId) ? styleId! : undefined,
             data: {
                 type: type,
                 value: type === 's' ? ExcelXlsxFactory.getStringPosition(valueToUse).toString() : value,
@@ -494,9 +490,8 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     private getCellValue(type: ExcelOOXMLDataType, value: string | null): { value: string | null; escaped?: boolean } {
         let escaped = false;
 
-        if (value == null) {
-            type = 's';
-            value = '';
+        if (value == null || (type === 's' && value === '')) {
+            return { value: '', escaped: false };
         }
 
         if (type === 's') {

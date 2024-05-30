@@ -1,7 +1,8 @@
-import { ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _exists } from '../../utils/generic';
 import { AgInputTextField } from '../../widgets/agInputTextField';
-import { CellEditorInput, SimpleCellEditor } from './simpleCellEditor';
+import type { CellEditorInput } from './simpleCellEditor';
+import { SimpleCellEditor } from './simpleCellEditor';
 
 export interface ITextCellEditorParams<TData = any, TValue = any, TContext = any>
     extends ICellEditorParams<TData, TValue, TContext> {
@@ -24,7 +25,10 @@ class TextCellEditorInput<TValue = any>
     private params: ITextCellEditorParams<any, TValue>;
 
     public getTemplate() {
-        return /* html */ `<ag-input-text-field class="ag-cell-editor" ref="eInput"></ag-input-text-field>`;
+        return /* html */ `<ag-input-text-field class="ag-cell-editor" data-ref="eInput"></ag-input-text-field>`;
+    }
+    public getAgComponents() {
+        return [AgInputTextField];
     }
 
     public init(eInput: AgInputTextField, params: ITextCellEditorParams<any, TValue>): void {

@@ -1,14 +1,21 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
-import { RowGroupOpenedEvent } from '../events';
-import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import { IRowModel } from '../interfaces/iRowModel';
-import { AnimationFrameService } from '../misc/animationFrameService';
+import type { BeanCollection } from '../context/context';
+import type { RowGroupOpenedEvent } from '../events';
+import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { AnimationFrameService } from '../misc/animationFrameService';
 
-@Bean('rowNodeEventThrottle')
-export class RowNodeEventThrottle extends BeanStub {
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('rowModel') private rowModel: IRowModel;
+export class RowNodeEventThrottle extends BeanStub implements NamedBean {
+    beanName = 'rowNodeEventThrottle' as const;
+
+    private animationFrameService: AnimationFrameService;
+    private rowModel: IRowModel;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.animationFrameService = beans.animationFrameService;
+        this.rowModel = beans.rowModel;
+    }
 
     private clientSideRowModel: IClientSideRowModel;
 
@@ -16,8 +23,7 @@ export class RowNodeEventThrottle extends BeanStub {
 
     private dispatchExpandedDebounced: () => void;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         if (this.rowModel.getType() == 'clientSide') {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }

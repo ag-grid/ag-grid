@@ -1,18 +1,20 @@
-import {
-    Beans,
-    ColumnModel,
+import type {
+    BeanCollection,
     EventService,
-    Events,
     FuncColsService,
     GridOptionsService,
     ISelectionService,
     RowDataTransaction,
     RowDataUpdateStartedEvent,
-    RowNode,
     RowNodeTransaction,
     SelectionChangedEvent,
     SelectionEventSourceType,
     WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    ColumnModel,
+    Events,
+    RowNode,
     _cloneObject,
     _missingOrEmpty,
     _sortRowNodesByOrder,
@@ -27,7 +29,7 @@ export class ClientSideNodeManager {
     private eventService: EventService;
     private funcColsService: FuncColsService;
     private selectionService: ISelectionService;
-    private beans: Beans;
+    private beans: BeanCollection;
 
     private nextId = 0;
 
@@ -45,7 +47,7 @@ export class ClientSideNodeManager {
         eventService: EventService,
         funcColsService: FuncColsService,
         selectionService: ISelectionService,
-        beans: Beans
+        beans: BeanCollection
     ) {
         this.rootNode = rootNode;
         this.gos = gos;

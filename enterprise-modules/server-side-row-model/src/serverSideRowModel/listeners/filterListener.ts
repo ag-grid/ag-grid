@@ -1,26 +1,30 @@
-import {
+import type {
     AdvancedFilterModel,
-    Autowired,
-    Bean,
-    BeanStub,
-    Events,
+    BeanCollection,
     FilterManager,
     FilterModel,
-    PostConstruct,
+    NamedBean,
     StoreRefreshAfterParams,
 } from '@ag-grid-community/core';
+import { BeanStub, Events } from '@ag-grid-community/core';
 
-import { ServerSideRowModel } from '../serverSideRowModel';
-import { ListenerUtils } from './listenerUtils';
+import type { ServerSideRowModel } from '../serverSideRowModel';
+import type { ListenerUtils } from './listenerUtils';
 
-@Bean('ssrmFilterListener')
-export class FilterListener extends BeanStub {
-    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('ssrmListenerUtils') private listenerUtils: ListenerUtils;
+export class FilterListener extends BeanStub implements NamedBean {
+    beanName = 'ssrmFilterListener' as const;
 
-    @PostConstruct
-    private postConstruct(): void {
+    private serverSideRowModel: ServerSideRowModel;
+    private filterManager: FilterManager;
+    private listenerUtils: ListenerUtils;
+
+    public wireBeans(beans: BeanCollection) {
+        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+        this.filterManager = beans.filterManager;
+        this.listenerUtils = beans.ssrmListenerUtils;
+    }
+
+    public postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
         if (!this.gos.isRowModelType('serverSide')) {
             return;

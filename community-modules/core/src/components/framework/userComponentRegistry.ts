@@ -1,5 +1,5 @@
+import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import { Bean, PostConstruct } from '../../context/context';
 import { ReadOnlyFloatingFilter } from '../../filter/floating/provided/readOnlyFloatingFilter';
 import { DateFilter } from '../../filter/provided/date/dateFilter';
 import { DateFloatingFilter } from '../../filter/provided/date/dateFloatingFilter';
@@ -34,8 +34,9 @@ import { _fuzzySuggestions } from '../../utils/fuzzyMatch';
 import { _iterateObject } from '../../utils/object';
 import { AgMenuItemRenderer } from '../../widgets/agMenuItemRenderer';
 
-@Bean('userComponentRegistry')
-export class UserComponentRegistry extends BeanStub {
+export class UserComponentRegistry extends BeanStub implements NamedBean {
+    beanName = 'userComponentRegistry' as const;
+
     private agGridDefaults: { [key: string]: any } = {
         //date
         agDateInput: DefaultDateComponent,
@@ -102,8 +103,7 @@ export class UserComponentRegistry extends BeanStub {
 
     private jsComps: { [key: string]: any } = {};
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         const comps = this.gos.get('components');
         if (comps != null) {
             _iterateObject(comps, (key, component) => this.registerJsComponent(key, component));
@@ -156,7 +156,7 @@ export class UserComponentRegistry extends BeanStub {
             ModuleRegistry.__assertRegistered(
                 moduleForComponent,
                 `AG Grid '${propertyName}' component: ${name}`,
-                this.context.getGridId()
+                this.gridId
             );
         } else {
             _doOnce(() => {

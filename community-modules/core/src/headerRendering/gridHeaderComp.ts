@@ -1,17 +1,18 @@
-import { PostConstruct } from '../context/context';
+import type { AgComponentSelector } from '../widgets/component';
 import { Component } from '../widgets/component';
-import { GridHeaderCtrl, IGridHeaderComp } from './gridHeaderCtrl';
+import type { IGridHeaderComp } from './gridHeaderCtrl';
+import { GridHeaderCtrl } from './gridHeaderCtrl';
 import { HeaderRowContainerComp } from './rowContainer/headerRowContainerComp';
 
 export class GridHeaderComp extends Component {
+    static readonly selector: AgComponentSelector = 'AG-HEADER-ROOT';
     private static TEMPLATE /* html */ = `<div class="ag-header" role="presentation"/>`;
 
     constructor() {
         super(GridHeaderComp.TEMPLATE);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const compProxy: IGridHeaderComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setHeightAndMinHeight: (height) => {

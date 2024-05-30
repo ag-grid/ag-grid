@@ -1,27 +1,18 @@
-import {
-    AgGroupComponent,
-    AgGroupComponentParams,
-    AgSelect,
-    AgSelectParams,
-    AgSlider,
-    AgToggleButton,
-    AgToggleButtonParams,
-    Autowired,
-    Component,
-    ListOption,
-    PostConstruct,
-    RefSelector,
-    _removeFromParent,
-} from '@ag-grid-community/core';
+import type { AgSelectParams, AgToggleButtonParams, BeanCollection, ListOption } from '@ag-grid-community/core';
+import { AgSelect, AgToggleButton, Component, RefPlaceholder, _removeFromParent } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
 
 import { AgColorPicker } from '../../../../../widgets/agColorPicker';
+import { AgSlider } from '../../../../../widgets/agSlider';
 import { ChartController } from '../../../chartController';
-import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
-import { ChartSeriesType, getSeriesType, isPieChartSeries } from '../../../utils/seriesTypeMapper';
+import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartSeriesType } from '../../../utils/seriesTypeMapper';
+import { getSeriesType, isPieChartSeries } from '../../../utils/seriesTypeMapper';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import { FontPanel } from '../fontPanel';
-import { FormatPanelOptions } from '../formatPanel';
+import type { FormatPanelOptions } from '../formatPanel';
 import { CalloutPanel } from './calloutPanel';
 import { CapsPanel } from './capsPanel';
 import { ConnectorLinePanel } from './connectorLinePanel';
@@ -33,14 +24,17 @@ import { WhiskersPanel } from './whiskersPanel';
 
 export class SeriesPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="seriesGroup">
+            <ag-group-component data-ref="seriesGroup">
             </ag-group-component>
         </div>`;
 
-    @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
+    private readonly seriesGroup: AgGroupComponent = RefPlaceholder;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    private chartTranslationService: ChartTranslationService;
 
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
     private chartMenuUtils: ChartMenuParamsFactory;
 
     private activePanels: Component[] = [];
@@ -102,8 +96,7 @@ export class SeriesPanel extends Component {
         this.seriesType = options.seriesType;
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const {
             isExpandedOnInit: expanded,
             chartOptionsService,
@@ -117,7 +110,7 @@ export class SeriesPanel extends Component {
             expanded,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(SeriesPanel.TEMPLATE, { seriesGroup: seriesGroupParams });
+        this.setTemplate(SeriesPanel.TEMPLATE, [AgGroupComponent], { seriesGroup: seriesGroupParams });
 
         registerGroupComponent(this.seriesGroup);
 
@@ -378,7 +371,7 @@ export class SeriesPanel extends Component {
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

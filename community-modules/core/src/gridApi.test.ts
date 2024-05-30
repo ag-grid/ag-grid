@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, jest, test } from '@jest/globals';
 
-import { GridApi } from './gridApi';
+import { GridApiService } from './gridApiService';
 
 interface RowData {
     name: string;
@@ -11,13 +11,13 @@ interface RowData {
 describe('GridApi setGridOption, updateGridOptions types', () => {
     beforeAll(() => {
         // We only want to test the types not that it actually does anything
-        jest.spyOn(GridApi.prototype, 'setGridOption').mockImplementation(() => undefined);
-        jest.spyOn(GridApi.prototype, 'updateGridOptions').mockImplementation(() => undefined);
+        jest.spyOn(GridApiService.prototype, 'setGridOption').mockImplementation(() => undefined);
+        jest.spyOn(GridApiService.prototype, 'updateGridOptions').mockImplementation(() => undefined);
     });
 
     describe('setters', () => {
         test('no TData generic', () => {
-            const api: GridApi = new GridApi();
+            const api: GridApiService = new GridApiService();
 
             api.setGridOption('columnDefs', [
                 { field: 'name' },
@@ -40,7 +40,7 @@ describe('GridApi setGridOption, updateGridOptions types', () => {
         });
 
         test('setters with TData generic', () => {
-            const api: GridApi<RowData> = new GridApi<RowData>();
+            const api: GridApiService<RowData> = new GridApiService<RowData>();
 
             api.setGridOption('columnDefs', [
                 { field: 'name' },
@@ -88,11 +88,11 @@ describe('GridApi setGridOption, updateGridOptions types', () => {
     describe('getters', () => {
         describe('columnDefs', () => {
             beforeAll(() => {
-                jest.spyOn(GridApi.prototype, 'getGridOption').mockImplementation(() => [{ field: 'name' }]);
+                jest.spyOn(GridApiService.prototype, 'getGridOption').mockImplementation(() => [{ field: 'name' }]);
             });
 
             test('no TData generic', () => {
-                const api: GridApi = new GridApi();
+                const api: GridApiService = new GridApiService();
 
                 const cols = api.getGridOption('columnDefs')!;
                 const col = cols![0]!;
@@ -104,7 +104,7 @@ describe('GridApi setGridOption, updateGridOptions types', () => {
             });
 
             test(' with TData generic', () => {
-                const api: GridApi<RowData> = new GridApi<RowData>();
+                const api: GridApiService<RowData> = new GridApiService<RowData>();
 
                 const cols = api.getGridOption('columnDefs')!;
                 const col = cols[0]!;
@@ -119,11 +119,11 @@ describe('GridApi setGridOption, updateGridOptions types', () => {
 
         describe('rowData', () => {
             beforeAll(() => {
-                jest.spyOn(GridApi.prototype, 'getGridOption').mockImplementation(() => [{ name: 'a' }]);
+                jest.spyOn(GridApiService.prototype, 'getGridOption').mockImplementation(() => [{ name: 'a' }]);
             });
 
             test('no TData generic', () => {
-                const api: GridApi = new GridApi();
+                const api: GridApiService = new GridApiService();
 
                 const rows = api.getGridOption('rowData')!;
                 rows[0].name = 'a';
@@ -131,7 +131,7 @@ describe('GridApi setGridOption, updateGridOptions types', () => {
             });
 
             test(' with TData generic', () => {
-                const api: GridApi<RowData> = new GridApi<RowData>();
+                const api: GridApiService<RowData> = new GridApiService<RowData>();
 
                 const rows = api.getGridOption('rowData')!;
                 rows[0].name = 'a';

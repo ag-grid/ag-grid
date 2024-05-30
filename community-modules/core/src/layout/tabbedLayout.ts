@@ -1,19 +1,23 @@
 import { KeyCode } from '../constants/keyCode';
-import { Autowired, PostConstruct } from '../context/context';
-import { FocusService } from '../focusService';
-import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
+import type { BeanCollection } from '../context/context';
+import type { FocusService } from '../focusService';
+import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import { _setAriaLabel, _setAriaRole } from '../utils/aria';
 import { _clearElement } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
-import { AgPromise } from '../utils/promise';
-import { RefSelector } from '../widgets/componentAnnotations';
+import type { AgPromise } from '../utils/promise';
+import { RefPlaceholder } from '../widgets/component';
 import { TabGuardComp } from '../widgets/tabGuardComp';
 
 export class TabbedLayout extends TabGuardComp {
-    @Autowired('focusService') private focusService: FocusService;
+    private focusService: FocusService;
 
-    @RefSelector('eHeader') private readonly eHeader: HTMLElement;
-    @RefSelector('eBody') private readonly eBody: HTMLElement;
+    public wireBeans(beans: BeanCollection): void {
+        this.focusService = beans.focusService;
+    }
+
+    private readonly eHeader: HTMLElement = RefPlaceholder;
+    private readonly eBody: HTMLElement = RefPlaceholder;
 
     private eTabHeader: HTMLElement;
     private eCloseButton?: HTMLElement;
@@ -30,8 +34,7 @@ export class TabbedLayout extends TabGuardComp {
         this.params = params;
     }
 
-    @PostConstruct
-    private postConstruct() {
+    public postConstruct() {
         this.setupHeader();
 
         if (this.params.items) {
@@ -50,8 +53,8 @@ export class TabbedLayout extends TabGuardComp {
 
     private static getTemplate(cssClass?: string) {
         return /* html */ `<div class="ag-tabs ${cssClass}">
-            <div ref="eHeader"></div>
-            <div ref="eBody" role="presentation" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
+            <div data-ref="eHeader"></div>
+            <div data-ref="eBody" role="presentation" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
         </div>`;
     }
 

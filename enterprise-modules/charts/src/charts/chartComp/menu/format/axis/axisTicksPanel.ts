@@ -1,25 +1,33 @@
-import { AgGroupComponentParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
+import { Component } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { ChartTranslationService } from '../../../services/chartTranslationService';
-import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import { AgColorPicker } from '../../../../../widgets/agColorPicker';
+import { AgSlider } from '../../../../../widgets/agSlider';
+import type { ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class AxisTicksPanel extends Component {
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService;
+    }
+
     public static TEMPLATE /* html */ = `<div>
-            <ag-group-component ref="axisTicksGroup">
-                <ag-color-picker ref="axisTicksColorPicker"></ag-color-picker>
-                <ag-slider ref="axisTicksWidthSlider"></ag-slider>
-                <ag-slider ref="axisTicksSizeSlider"></ag-slider>
+            <ag-group-component data-ref="axisTicksGroup">
+                <ag-color-picker data-ref="axisTicksColorPicker"></ag-color-picker>
+                <ag-slider data-ref="axisTicksWidthSlider"></ag-slider>
+                <ag-slider data-ref="axisTicksSizeSlider"></ag-slider>
             </ag-group-component>
         </div>`;
-
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
     constructor(private readonly chartMenuUtils: ChartMenuParamsFactory) {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const axisTicksGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>('tick.enabled', {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
@@ -31,7 +39,7 @@ export class AxisTicksPanel extends Component {
         const axisTicksColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams('tick.color');
         const axisTicksWidthSliderParams = this.chartMenuUtils.getDefaultSliderParams('tick.width', 'width', 10);
         const axisTicksSizeSliderParams = this.chartMenuUtils.getDefaultSliderParams('tick.size', 'length', 30);
-        this.setTemplate(AxisTicksPanel.TEMPLATE, {
+        this.setTemplate(AxisTicksPanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
             axisTicksGroup: axisTicksGroupParams,
             axisTicksColorPicker: axisTicksColorPickerParams,
             axisTicksWidthSlider: axisTicksWidthSliderParams,

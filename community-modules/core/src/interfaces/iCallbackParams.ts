@@ -1,10 +1,10 @@
-import { CellPosition } from '../entities/cellPositionUtils';
-import { Column } from '../entities/column';
-import { HeaderPosition } from '../headerRendering/common/headerPosition';
-import { ChartToolbarMenuItemOptions } from './iChartOptions';
-import { AgGridCommon } from './iCommon';
-import { IRowNode } from './iRowNode';
-import { ServerSideTransaction } from './serverSideTransaction';
+import type { CellPosition } from '../entities/cellPositionUtils';
+import type { HeaderPosition } from '../headerRendering/common/headerPosition';
+import type { ChartToolbarMenuItemOptions } from './iChartOptions';
+import type { Column } from './iColumn';
+import type { AgGridCommon } from './iCommon';
+import type { IRowNode } from './iRowNode';
+import type { ServerSideTransaction } from './serverSideTransaction';
 
 export interface GetContextMenuItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Names of the items that would be provided by default. */
@@ -171,7 +171,7 @@ export interface ProcessRowParams<TData = any, TContext = any> extends AgGridCom
     ePinnedRightRow?: HTMLElement;
     rowIndex: number;
     node: IRowNode<TData>;
-    addRenderedRowListener: (eventType: string, listener: Function) => void;
+    addRenderedRowListener: (eventType: string, listener: (...args: any[]) => any) => void;
 }
 
 export interface FillOperationParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

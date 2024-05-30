@@ -1,16 +1,12 @@
-import {
-    ALWAYS_SYNC_GLOBAL_EVENTS,
-    ComponentUtil,
-    GridApi,
-    GridOptions,
-    IRowNode,
-    Module,
-    createGrid,
-} from 'ag-grid-community';
 import { markRaw, toRaw } from '@vue/reactivity';
-import { PropType, defineComponent, getCurrentInstance, h } from 'vue';
+import type { PropType } from 'vue';
+import { defineComponent, getCurrentInstance, h } from 'vue';
 
-import { Properties, getAgGridProperties } from './Utils';
+import type { GridApi, GridOptions, IRowNode, Module } from 'ag-grid-community';
+import { ALWAYS_SYNC_GLOBAL_EVENTS, ComponentUtil, createGrid } from 'ag-grid-community';
+
+import type { Properties } from './Utils';
+import { getAgGridProperties } from './Utils';
 import { VueFrameworkComponentWrapper } from './VueFrameworkComponentWrapper';
 import { VueFrameworkOverrides } from './VueFrameworkOverrides';
 
@@ -30,7 +26,7 @@ export const AgGridVue = defineComponent({
             default: () => ({}) as GridOptions,
         },
         componentDependencies: {
-            type: Array as PropType<String[]>,
+            type: Array as PropType<string[]>,
             default: () => [],
         },
         plugins: [],
@@ -64,7 +60,7 @@ export const AgGridVue = defineComponent({
     watch,
     methods: {
         globalEventListenerFactory(restrictToSyncOnly?: boolean) {
-            return (eventType: string, event: any) => {
+            return (eventType: string) => {
                 if (this.isDestroyed) {
                     return;
                 }

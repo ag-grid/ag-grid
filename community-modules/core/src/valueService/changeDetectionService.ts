@@ -1,24 +1,31 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
-import { Column } from '../entities/column';
-import { RowNode } from '../entities/rowNode';
-import { CellValueChangedEvent, Events } from '../events';
-import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import { IRowModel } from '../interfaces/iRowModel';
-import { RowRenderer } from '../rendering/rowRenderer';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { RowNode } from '../entities/rowNode';
+import type { CellValueChangedEvent } from '../events';
+import { Events } from '../events';
+import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { RowRenderer } from '../rendering/rowRenderer';
 import { ChangedPath } from '../utils/changedPath';
 
 // Matches value in clipboard module
 const SOURCE_PASTE = 'paste';
-@Bean('changeDetectionService')
-export class ChangeDetectionService extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+export class ChangeDetectionService extends BeanStub implements NamedBean {
+    beanName = 'changeDetectionService' as const;
+
+    private rowModel: IRowModel;
+    private rowRenderer: RowRenderer;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.rowModel = beans.rowModel;
+        this.rowRenderer = beans.rowRenderer;
+    }
 
     private clientSideRowModel: IClientSideRowModel;
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         if (this.rowModel.getType() === 'clientSide') {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
@@ -37,10 +44,10 @@ export class ChangeDetectionService extends BeanStub {
             return;
         }
 
-        this.doChangeDetection(event.node as RowNode, event.column);
+        this.doChangeDetection(event.node as RowNode, event.column as AgColumn);
     }
 
-    private doChangeDetection(rowNode: RowNode, column: Column): void {
+    private doChangeDetection(rowNode: RowNode, column: AgColumn): void {
         if (this.gos.get('suppressChangeDetection')) {
             return;
         }

@@ -1,30 +1,25 @@
-import {
-    AutocompleteEntry,
-    Autowired,
-    BaseCellDataType,
-    Column,
-    ColumnAdvancedFilterModel,
-    Component,
-    ValueService,
-    _exists,
-    _removeFromParent,
-} from '@ag-grid-community/core';
+import { Component, _exists, _removeFromParent } from '@ag-grid-community/core';
+import type { AgColumn, BaseCellDataType, BeanCollection, ColumnAdvancedFilterModel } from '@ag-grid-community/core';
 
-import { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
-import { AdvancedFilterBuilderEvents, AdvancedFilterBuilderItem, CreatePillParams } from './iAdvancedFilterBuilder';
-import { InputPillComp } from './inputPillComp';
-import { SelectPillComp } from './selectPillComp';
+import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
+import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
+import type { AdvancedFilterBuilderItem, CreatePillParams } from './iAdvancedFilterBuilder';
+import { AdvancedFilterBuilderEvents } from './iAdvancedFilterBuilder';
+import type { InputPillComp } from './inputPillComp';
+import type { SelectPillComp } from './selectPillComp';
 
 export class ConditionPillWrapperComp extends Component {
-    @Autowired('advancedFilterExpressionService')
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
-    @Autowired('valueService') private valueService: ValueService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+    }
 
     private item: AdvancedFilterBuilderItem;
     private createPill: (params: CreatePillParams) => SelectPillComp | InputPillComp;
     private filterModel: ColumnAdvancedFilterModel;
     private baseCellDataType: BaseCellDataType;
-    private column: Column | undefined;
+    private column: AgColumn | undefined;
     private numOperands: number;
     private eColumnPill: SelectPillComp | InputPillComp;
     private eOperatorPill: SelectPillComp | InputPillComp | undefined;
@@ -65,7 +60,7 @@ export class ConditionPillWrapperComp extends Component {
         return this.validationMessage;
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.eColumnPill.getFocusableElement();
     }
 

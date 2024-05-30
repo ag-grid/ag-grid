@@ -1,56 +1,67 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Column,
+import type {
+    AgColumn,
+    BeanCollection,
     ColumnModel,
     ColumnNameService,
-    Events,
+    EventsType,
     FuncColsService,
-    PostConstruct,
+    NamedBean,
     RowNode,
     RowPositionUtils,
     ShowRowGroupColsService,
     ValueService,
     VisibleColsService,
 } from '@ag-grid-community/core';
+import { BeanStub, Events } from '@ag-grid-community/core';
 
-@Bean('chartColumnService')
-export class ChartColumnService extends BeanStub {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('showRowGroupColsService') private showRowGroupColsService: ShowRowGroupColsService;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
+export class ChartColumnService extends BeanStub implements NamedBean {
+    beanName = 'chartColumnService' as const;
+
+    private columnModel: ColumnModel;
+    private showRowGroupColsService: ShowRowGroupColsService;
+    private columnNameService: ColumnNameService;
+    private visibleColsService: VisibleColsService;
+    private funcColsService: FuncColsService;
+    private valueService: ValueService;
+    private rowPositionUtils: RowPositionUtils;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.columnModel = beans.columnModel;
+        this.showRowGroupColsService = beans.showRowGroupColsService;
+        this.columnNameService = beans.columnNameService;
+        this.visibleColsService = beans.visibleColsService;
+        this.funcColsService = beans.funcColsService;
+        this.valueService = beans.valueService;
+        this.rowPositionUtils = beans.rowPositionUtils;
+    }
 
     private valueColsWithoutSeriesType: Set<string> = new Set();
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const clearValueCols = () => this.valueColsWithoutSeriesType.clear();
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, clearValueCols);
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, clearValueCols);
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_NEW_COLUMNS_LOADED]: clearValueCols,
+            [Events.EVENT_ROW_DATA_UPDATED]: clearValueCols,
+        });
     }
 
-    public getColumn(colId: string): Column | null {
+    public getColumn(colId: string): AgColumn | null {
         return this.columnModel.getColDefCol(colId);
     }
 
-    public getAllDisplayedColumns(): Column[] {
+    public getAllDisplayedColumns(): AgColumn[] {
         return this.visibleColsService.getAllCols();
     }
 
-    public getColDisplayName(col: Column): string | null {
+    public getColDisplayName(col: AgColumn): string | null {
         return this.columnNameService.getDisplayNameForColumn(col, 'chart');
     }
 
-    public getRowGroupColumns(): Column[] {
+    public getRowGroupColumns(): AgColumn[] {
         return this.funcColsService.getRowGroupColumns();
     }
 
-    public getGroupDisplayColumns(): Column[] {
+    public getGroupDisplayColumns(): AgColumn[] {
         return this.showRowGroupColsService.getShowRowGroupCols();
     }
 
@@ -62,11 +73,11 @@ export class ChartColumnService extends BeanStub {
         return this.columnModel.isPivotActive();
     }
 
-    public getChartColumns(): { dimensionCols: Set<Column>; valueCols: Set<Column> } {
+    public getChartColumns(): { dimensionCols: Set<AgColumn>; valueCols: Set<AgColumn> } {
         const gridCols = this.columnModel.getCols();
 
-        const dimensionCols = new Set<Column>();
-        const valueCols = new Set<Column>();
+        const dimensionCols = new Set<AgColumn>();
+        const valueCols = new Set<AgColumn>();
 
         gridCols.forEach((col) => {
             const colDef = col.getColDef();
@@ -109,7 +120,7 @@ export class ChartColumnService extends BeanStub {
         return { dimensionCols, valueCols };
     }
 
-    private isInferredValueCol(col: Column): boolean {
+    private isInferredValueCol(col: AgColumn): boolean {
         const colId = col.getColId();
         if (colId === 'ag-Grid-AutoColumn') {
             return false;
@@ -140,7 +151,7 @@ export class ChartColumnService extends BeanStub {
         return isNumber;
     }
 
-    private extractLeafData(row: RowNode, col: Column): any {
+    private extractLeafData(row: RowNode, col: AgColumn): any {
         if (!row.allLeafChildren) {
             return null;
         }
@@ -157,7 +168,7 @@ export class ChartColumnService extends BeanStub {
         return null;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.valueColsWithoutSeriesType.clear();
         super.destroy();
     }

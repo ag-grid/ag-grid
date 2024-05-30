@@ -1,30 +1,35 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    CloseMenuEvent,
-    Column,
+import type {
+    AgColumn,
+    BeanCollection,
     FocusService,
     HeaderNavigationService,
     HeaderPosition,
+    NamedBean,
     PopupEventParams,
     VisibleColsService,
-    _isVisible,
-    _last,
 } from '@ag-grid-community/core';
+import { BeanStub, _isVisible, _last } from '@ag-grid-community/core';
+import type { CloseMenuEvent } from '@ag-grid-enterprise/core';
 
 export interface MenuRestoreFocusParams {
-    column: Column | undefined;
+    column: AgColumn | undefined;
     headerPosition: HeaderPosition | null;
     columnIndex: number;
     eventSource?: HTMLElement;
 }
 
-@Bean('menuUtils')
-export class MenuUtils extends BeanStub {
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
-    @Autowired('visibleColsService') private readonly visibleColsService: VisibleColsService;
+export class MenuUtils extends BeanStub implements NamedBean {
+    beanName = 'menuUtils' as const;
+
+    private focusService: FocusService;
+    private headerNavigationService: HeaderNavigationService;
+    private visibleColsService: VisibleColsService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.focusService = beans.focusService;
+        this.headerNavigationService = beans.headerNavigationService;
+        this.visibleColsService = beans.visibleColsService;
+    }
 
     public restoreFocusOnClose(
         restoreFocusParams: MenuRestoreFocusParams,

@@ -1,32 +1,36 @@
-import { ColumnModel } from '../columns/columnModel';
-import { Autowired, PostConstruct } from '../context/context';
-import { Column } from '../entities/column';
+import type { ColumnModel } from '../columns/columnModel';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
 import { Events } from '../eventKeys';
-import { FilterDestroyedEvent, FilterOpenedEvent } from '../events';
-import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { IFilterComp } from '../interfaces/iFilter';
+import type { FilterDestroyedEvent, FilterOpenedEvent } from '../events';
+import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IFilterComp } from '../interfaces/iFilter';
 import { _clearElement } from '../utils/dom';
 import { _exists } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { Component } from '../widgets/component';
-import { FilterManager, FilterRequestSource, FilterWrapper } from './filterManager';
+import type { FilterManager, FilterRequestSource, FilterWrapper } from './filterManager';
 
 export class FilterWrapperComp extends Component {
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    private filterManager: FilterManager;
+    private columnModel: ColumnModel;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.filterManager = beans.filterManager;
+        this.columnModel = beans.columnModel;
+    }
 
     private filterWrapper: FilterWrapper | null = null;
 
     constructor(
-        private readonly column: Column,
+        private readonly column: AgColumn,
         private readonly source: FilterRequestSource
     ) {
         super(/* html */ `<div class="ag-filter"></div>`);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.createFilter(true);
 
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_DESTROYED, this.onFilterDestroyed.bind(this));
@@ -96,7 +100,7 @@ export class FilterWrapperComp extends Component {
         }
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.filterWrapper = null;
         super.destroy();
     }

@@ -1,5 +1,5 @@
-import {
-    Column,
+import type {
+    AgColumn,
     ColumnGroup,
     ColumnModel,
     ColumnNameService,
@@ -13,7 +13,7 @@ import {
     ValueService,
 } from '@ag-grid-community/core';
 
-import { GridSerializer } from '../gridSerializer';
+import type { GridSerializer } from '../gridSerializer';
 
 export interface BaseCreatorBeans {
     gridSerializer: GridSerializer;
@@ -21,7 +21,7 @@ export interface BaseCreatorBeans {
 }
 
 export interface RowAccumulator {
-    onColumn(column: Column, index: number, node?: RowNode): void;
+    onColumn(column: AgColumn, index: number, node?: RowNode): void;
 }
 
 export interface RowSpanningAccumulator {
@@ -52,7 +52,7 @@ export interface CsvSerializingParams extends GridSerializingParams {
 }
 
 export interface GridSerializingSession<T> {
-    prepare(columnsToExport: Column[]): void;
+    prepare(columnsToExport: AgColumn[]): void;
     onNewHeaderGroupingRow(): RowSpanningAccumulator;
     onNewHeaderRow(): RowAccumulator;
     onNewBodyRow(node?: RowNode): RowAccumulator;

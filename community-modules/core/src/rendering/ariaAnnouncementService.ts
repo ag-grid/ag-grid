@@ -1,12 +1,18 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { _setAriaAtomic, _setAriaLive, _setAriaRelevant } from '../utils/aria';
 import { _clearElement } from '../utils/dom';
 import { _debounce } from '../utils/function';
 
-@Bean('ariaAnnouncementService')
-export class AriaAnnouncementService extends BeanStub {
-    @Autowired('eGridDiv') private eGridDiv: HTMLElement;
+export class AriaAnnouncementService extends BeanStub implements NamedBean {
+    beanName = 'ariaAnnouncementService' as const;
+
+    private eGridDiv: HTMLElement;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.eGridDiv = beans.eGridDiv;
+    }
 
     private descriptionContainer: HTMLElement | null = null;
 
@@ -16,8 +22,7 @@ export class AriaAnnouncementService extends BeanStub {
         this.announceValue = _debounce(this.announceValue.bind(this), 200);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const eDocument = this.gos.getDocument();
         const div = (this.descriptionContainer = eDocument.createElement('div'));
         div.classList.add('ag-aria-description-container');
@@ -43,7 +48,7 @@ export class AriaAnnouncementService extends BeanStub {
         }, 50);
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
 
         const { descriptionContainer } = this;

@@ -1,20 +1,28 @@
-import { VisibleColsService } from '../columns/visibleColsService';
+import type { VisibleColsService } from '../columns/visibleColsService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { Events } from '../eventKeys';
+import type { EventsType } from '../eventKeys';
 
-@Bean('pinnedWidthService')
-export class PinnedWidthService extends BeanStub {
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
+export class PinnedWidthService extends BeanStub implements NamedBean {
+    beanName = 'pinnedWidthService' as const;
+
+    private visibleColsService: VisibleColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.visibleColsService = beans.visibleColsService;
+    }
 
     private leftWidth: number;
     private rightWidth: number;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const listener = this.checkContainerWidths.bind(this);
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, listener);
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: listener,
+            [Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED]: listener,
+        });
         this.addManagedPropertyListener('domLayout', listener);
     }
 

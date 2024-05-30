@@ -1,19 +1,24 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
+    BeanCollection,
     ColumnModel,
     FilterManager,
-    GridOptions,
     IRowNodeStage,
+    NamedBean,
     RowNode,
     StageExecuteParams,
 } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
-@Bean('filterAggregatesStage')
-export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('columnModel') private columnModel: ColumnModel;
+export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNodeStage {
+    beanName = 'filterAggregatesStage' as const;
+
+    private filterManager: FilterManager;
+    private columnModel: ColumnModel;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.filterManager = beans.filterManager;
+        this.columnModel = beans.columnModel;
+    }
 
     public execute(params: StageExecuteParams): void {
         const isPivotMode = this.columnModel.isPivotMode();

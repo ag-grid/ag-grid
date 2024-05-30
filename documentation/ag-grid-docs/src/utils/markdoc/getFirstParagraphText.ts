@@ -1,4 +1,4 @@
-import { Framework } from '@ag-grid-types';
+import { type Framework } from '@ag-grid-types';
 import Markdoc from '@markdoc/markdoc';
 
 export function getFirstParagraphText(markdocContent: string, currentFramework: Framework) {

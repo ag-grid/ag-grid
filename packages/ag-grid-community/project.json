@@ -46,6 +46,10 @@
         "cwd": "packages/ag-grid-community"
       }
     },
+    "build:format-copied-files": {
+      "command": "nx format:write --projects ag-grid-community",
+      "dependsOn": ["build:copy-styles"]
+    },
     "build:types": {
       "dependsOn": ["^build:types"],
       "command": "npx gulp copy-from-module-source && cp main.d.ts.src dist/types/main.d.ts",
@@ -56,7 +60,7 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build", "build:updateWithCoreExports"],
+      "dependsOn": ["^build", "build:updateWithCoreExports", "build:format-copied-files"],
       "inputs": [
         "tsDefaults",
         {

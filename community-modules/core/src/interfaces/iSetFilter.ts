@@ -1,10 +1,10 @@
-import { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
-import { Column } from '../entities/column';
-import { IProvidedFilter, IProvidedFilterParams } from '../filter/provided/providedFilter';
-import { GridApi } from '../gridApi';
-import { ITooltipParams } from '../rendering/tooltipComponent';
-import { AgPromise } from '../utils/promise';
-import { IFilterParams, ProvidedFilterModel } from './iFilter';
+import type { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
+import type { IProvidedFilter, IProvidedFilterParams } from '../filter/provided/providedFilter';
+import type { GridApi } from '../gridApi';
+import type { Column } from '../interfaces/iColumn';
+import type { ITooltipParams } from '../rendering/tooltipComponent';
+import type { AgPromise } from '../utils/promise';
+import type { IFilterParams, ProvidedFilterModel } from './iFilter';
 
 export type SetFilterModelValue = (string | null)[];
 export interface SetFilterModel extends ProvidedFilterModel {
@@ -33,14 +33,6 @@ export interface ISetFilter<V = string> extends IProvidedFilter {
      * `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });`
      */
     setModel(model: SetFilterModel | null): AgPromise<void>;
-
-    /**
-     * @deprecated As of v29 use `getFilterValues` to get the values in the Set Filter
-     * (e.g. complex objects if provided), or `getFilterKeys` to get the string keys
-     *
-     * Returns the full list of unique keys used by the Set Filter.
-     */
-    getValues(): SetFilterModelValue;
 
     /** Returns the full list of unique keys used by the Set Filter. */
     getFilterKeys(): SetFilterModelValue;
@@ -169,8 +161,7 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
     textFormatter?: (from: string) => string;
     /**
      * If specified, this formats the value before it is displayed in the Filter List.
-     * If a Key Creator is provided (see `keyCreator`), this must also be provided,
-     * unless `convertValuesToStrings` is `true`
+     * If a Key Creator is provided (see `keyCreator`), this must also be provided.
      */
     valueFormatter?: (params: ValueFormatterParams) => string;
     /**
@@ -195,14 +186,6 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      * Changes the behaviour of the Set Filter to match that of Excel's AutoFilter.
      */
     excelMode?: 'mac' | 'windows';
-    /**
-     * @deprecated As of v29 the Filter Model and Filter List will accept and return complex objects,
-     * as well as maintaining the type of primitives (e.g. number, boolean) when not used as keys.
-     *
-     * If this option is set to `true`, values will instead be converted to strings within the Filter Model and Filter List.
-     * Complex objects will be converted via the Key Creator, and primitive types will be converted directly to strings.
-     */
-    convertValuesToStrings?: boolean;
     /**
      * If `true`, the Set Filter List will be displayed in a tree format. If enabled, one of the following must be true:
      *

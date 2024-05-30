@@ -1,64 +1,73 @@
-import {
+import type {
+    AgColumn,
     AggregationStatusPanelAggFunc,
     AggregationStatusPanelParams,
-    Autowired,
+    BeanCollection,
     CellNavigationService,
     CellPositionUtils,
-    Component,
-    Events,
     IRangeService,
     IRowModel,
     IStatusPanelComp,
-    Optional,
-    PostConstruct,
-    RefSelector,
     RowPosition,
     RowPositionUtils,
     ValueService,
+} from '@ag-grid-community/core';
+import {
+    Component,
+    Events,
+    RefPlaceholder,
     _exists,
     _formatNumberTwoDecimalPlacesAndCommas,
     _missing,
     _missingOrEmpty,
 } from '@ag-grid-community/core';
 
-import { NameValueComp } from './nameValueComp';
+import { AgNameValue } from './agNameValue';
 
 export class AggregationComp extends Component implements IStatusPanelComp {
+    private valueService: ValueService;
+    private cellNavigationService: CellNavigationService;
+    private rowModel: IRowModel;
+    private cellPositionUtils: CellPositionUtils;
+    private rowPositionUtils: RowPositionUtils;
+    private rangeService?: IRangeService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.valueService = beans.valueService;
+        this.cellNavigationService = beans.cellNavigationService;
+        this.rowModel = beans.rowModel;
+        this.cellPositionUtils = beans.cellPositionUtils;
+        this.rowPositionUtils = beans.rowPositionUtils;
+        this.rangeService = beans.rangeService;
+    }
+
     private static TEMPLATE /* html */ = `<div class="ag-status-panel ag-status-panel-aggregations">
-            <ag-name-value ref="avgAggregationComp"></ag-name-value>
-            <ag-name-value ref="countAggregationComp"></ag-name-value>
-            <ag-name-value ref="minAggregationComp"></ag-name-value>
-            <ag-name-value ref="maxAggregationComp"></ag-name-value>
-            <ag-name-value ref="sumAggregationComp"></ag-name-value>
+            <ag-name-value data-ref="avgAggregationComp"></ag-name-value>
+            <ag-name-value data-ref="countAggregationComp"></ag-name-value>
+            <ag-name-value data-ref="minAggregationComp"></ag-name-value>
+            <ag-name-value data-ref="maxAggregationComp"></ag-name-value>
+            <ag-name-value data-ref="sumAggregationComp"></ag-name-value>
         </div>`;
 
-    @Optional('rangeService') private rangeService?: IRangeService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
-    @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
-
-    @RefSelector('sumAggregationComp') private sumAggregationComp: NameValueComp;
-    @RefSelector('countAggregationComp') private countAggregationComp: NameValueComp;
-    @RefSelector('minAggregationComp') private minAggregationComp: NameValueComp;
-    @RefSelector('maxAggregationComp') private maxAggregationComp: NameValueComp;
-    @RefSelector('avgAggregationComp') private avgAggregationComp: NameValueComp;
+    private readonly sumAggregationComp: AgNameValue = RefPlaceholder;
+    private readonly countAggregationComp: AgNameValue = RefPlaceholder;
+    private readonly minAggregationComp: AgNameValue = RefPlaceholder;
+    private readonly maxAggregationComp: AgNameValue = RefPlaceholder;
+    private readonly avgAggregationComp: AgNameValue = RefPlaceholder;
 
     private params!: AggregationStatusPanelParams;
 
     constructor() {
-        super(AggregationComp.TEMPLATE);
+        super(AggregationComp.TEMPLATE, [AgNameValue]);
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         if (!this.isValidRowModel()) {
             console.warn(
                 `AG Grid: agAggregationComponent should only be used with the client and server side row model.`
@@ -117,7 +126,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         }
     }
 
-    private getAllowedAggregationValueComponent(aggFuncName: AggregationStatusPanelAggFunc): NameValueComp | null {
+    private getAllowedAggregationValueComponent(aggFuncName: AggregationStatusPanelAggFunc): AgNameValue | null {
         // if the user has specified the agAggregationPanelComp but no aggFuncs we show the all
         // if the user has specified the agAggregationPanelComp and aggFuncs, then we only show the aggFuncs listed
         const { aggFuncs } = this.params;
@@ -130,7 +139,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         return null;
     }
 
-    private getAggregationValueComponent(aggFuncName: AggregationStatusPanelAggFunc): NameValueComp {
+    private getAggregationValueComponent(aggFuncName: AggregationStatusPanelAggFunc): AgNameValue {
         // converts user supplied agg name to our reference - eg: sum => sumAggregationComp
         const refComponentName = `${aggFuncName}AggregationComp`;
         return (this as any)[refComponentName];
@@ -161,7 +170,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         break;
                     }
 
-                    cellRange.columns.forEach((col) => {
+                    cellRange.columns.forEach((col: AgColumn) => {
                         if (currentRow === null) {
                             return;
                         }

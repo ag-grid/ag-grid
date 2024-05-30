@@ -1,20 +1,18 @@
-import {
-    AgPanel,
-    AgPromise,
-    Autowired,
+import type {
+    BeanCollection,
     ChartCreated,
     ChartToolPanelMenuOptions,
     ChartToolbarMenuItemOptions,
-    Component,
-    Events,
-    PostConstruct,
+    Environment,
 } from '@ag-grid-community/core';
+import { AgPromise, Component, Events } from '@ag-grid-community/core';
+import { AgPanel } from '@ag-grid-enterprise/core';
 
 import { ChartController } from '../chartController';
-import { ExtraPaddingDirection } from '../chartProxies/chartProxy';
-import { ChartMenuService } from '../services/chartMenuService';
-import { ChartMenuContext } from './chartMenuContext';
-import { ChartMenuListFactory } from './chartMenuList';
+import type { ExtraPaddingDirection } from '../chartProxies/chartProxy';
+import type { ChartMenuService } from '../services/chartMenuService';
+import type { ChartMenuContext } from './chartMenuContext';
+import type { ChartMenuListFactory } from './chartMenuList';
 import { ChartToolbar } from './chartToolbar';
 import { TabbedChartMenu } from './tabbedChartMenu';
 
@@ -26,8 +24,15 @@ type ChartToolbarButtons = {
 };
 
 export class ChartMenu extends Component {
-    @Autowired('chartMenuService') private chartMenuService: ChartMenuService;
-    @Autowired('chartMenuListFactory') private chartMenuListFactory: ChartMenuListFactory;
+    private chartMenuService: ChartMenuService;
+    private chartMenuListFactory: ChartMenuListFactory;
+    private environment: Environment;
+
+    public wireBeans(beans: BeanCollection) {
+        this.chartMenuService = beans.chartMenuService;
+        this.chartMenuListFactory = beans.chartMenuListFactory;
+        this.environment = beans.environment;
+    }
 
     private readonly chartController: ChartController;
 
@@ -61,8 +66,7 @@ export class ChartMenu extends Component {
         this.chartController = chartMenuContext.chartController;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.chartToolbar = this.createManagedBean(new ChartToolbar());
         this.getGui().appendChild(this.chartToolbar.getGui());
 
@@ -218,7 +222,7 @@ export class ChartMenu extends Component {
         });
     }
 
-    protected destroy() {
+    public override destroy() {
         super.destroy();
 
         if (this.menuPanel && this.menuPanel.isAlive()) {

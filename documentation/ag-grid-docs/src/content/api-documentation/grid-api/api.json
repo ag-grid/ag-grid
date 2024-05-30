@@ -1008,8 +1008,20 @@
         "meta": {
             "displayName": "Miscellaneous"
         },
+        "getState": {
+            "more": {
+                "name": "Grid State",
+                "url": "./grid-state/"
+            }
+        },
         "getCellValue": {
             "description": "Gets the cell value for the given column and `rowNode` (row). Will return the cell value or the formatted value depending on the value of `params.useFormatter`."
+        },
+        "expireValueCache": {
+            "more": {
+                "name": "Value Cache",
+                "url": "./value-cache/"
+            }
         },
         "destroy": {},
         "isDestroyed": {},

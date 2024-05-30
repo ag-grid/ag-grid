@@ -1,27 +1,27 @@
-import { UserCompDetails } from '../../components/framework/userComponentFactory';
-import { RowStyle } from '../../entities/gridOptions';
-import { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
+import type { UserCompDetails } from '../../components/framework/userComponentFactory';
+import type { BeanCollection } from '../../context/context';
+import type { RowStyle } from '../../entities/gridOptions';
+import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import { _setAriaRole } from '../../utils/aria';
 import { _addStylesToElement, _setDomChildOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
-import { Beans } from '../beans';
 import { CellComp } from '../cell/cellComp';
-import { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
-import { ICellRendererComp, ICellRendererParams } from '../cellRenderers/iCellRenderer';
-import { IRowComp, RowCtrl } from './rowCtrl';
+import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
+import type { ICellRendererComp, ICellRendererParams } from '../cellRenderers/iCellRenderer';
+import type { IRowComp, RowCtrl } from './rowCtrl';
 
 export class RowComp extends Component {
     private fullWidthCellRenderer: ICellRendererComp | null | undefined;
 
-    private beans: Beans;
+    private beans: BeanCollection;
 
     private rowCtrl: RowCtrl;
 
     private domOrder: boolean;
     private cellComps: { [key: CellCtrlInstanceId]: CellComp | null } = {};
 
-    constructor(ctrl: RowCtrl, beans: Beans, containerType: RowContainerType) {
+    constructor(ctrl: RowCtrl, beans: BeanCollection, containerType: RowContainerType) {
         super();
 
         this.beans = beans;
@@ -137,7 +137,7 @@ export class RowComp extends Component {
         this.getGui().appendChild(cellComp.getGui());
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
         this.destroyAllCells();
     }

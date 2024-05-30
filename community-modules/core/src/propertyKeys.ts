@@ -1,5 +1,5 @@
-import { GridOptions } from './entities/gridOptions';
-import { AgGridCommon } from './interfaces/iCommon';
+import type { GridOptions } from './entities/gridOptions';
+import type { AgGridCommon } from './interfaces/iCommon';
 
 type GridOptionKey = keyof GridOptions;
 
@@ -113,7 +113,7 @@ export const INITIAL_GRID_OPTION_KEYS = {
     getLocaleText: true,
     getRowId: true,
     reactiveCustomComponents: true,
-    columnMenu: true,
+    columnMenu: 'new',
 };
 
 type InitialGridOptionKey = keyof typeof INITIAL_GRID_OPTION_KEYS;

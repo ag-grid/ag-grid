@@ -1,22 +1,22 @@
-import { ColumnModel } from '../columns/columnModel';
-import { VisibleColsService } from '../columns/visibleColsService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, PostConstruct } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { Column } from '../entities/column';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { AgColumn } from '../entities/agColumn';
 import { Events } from '../eventKeys';
-import { BodyScrollEndEvent, BodyScrollEvent } from '../events';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { IRowModel } from '../interfaces/iRowModel';
-import { IRowNode, VerticalScrollPosition } from '../interfaces/iRowNode';
-import { AnimationFrameService } from '../misc/animationFrameService';
-import { PaginationProxy } from '../pagination/paginationProxy';
-import { RowContainerHeightService } from '../rendering/rowContainerHeightService';
-import { RowRenderer } from '../rendering/rowRenderer';
+import type { BodyScrollEndEvent, BodyScrollEvent } from '../events';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { IRowNode, VerticalScrollPosition } from '../interfaces/iRowNode';
+import type { AnimationFrameService } from '../misc/animationFrameService';
+import type { PaginationProxy } from '../pagination/paginationProxy';
+import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
+import type { RowRenderer } from '../rendering/rowRenderer';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _getInnerHeight, _getScrollLeft, _isRtlNegativeScroll, _setScrollLeft } from '../utils/dom';
 import { _debounce } from '../utils/function';
-import { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
+import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 
 enum ScrollDirection {
     Vertical,
@@ -29,14 +29,25 @@ enum ScrollSource {
 }
 
 export class GridBodyScrollFeature extends BeanStub {
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('rowContainerHeightService') private heightScaler: RowContainerHeightService;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
+    private ctrlsService: CtrlsService;
+    private animationFrameService: AnimationFrameService;
+    private paginationProxy: PaginationProxy;
+    private rowModel: IRowModel;
+    private heightScaler: RowContainerHeightService;
+    private rowRenderer: RowRenderer;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.ctrlsService = beans.ctrlsService;
+        this.animationFrameService = beans.animationFrameService;
+        this.paginationProxy = beans.paginationProxy;
+        this.rowModel = beans.rowModel;
+        this.heightScaler = beans.rowContainerHeightService;
+        this.rowRenderer = beans.rowRenderer;
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+    }
 
     private enableRtl: boolean;
 
@@ -70,8 +81,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.resetLastVScrollDebounced = _debounce(() => (this.lastScrollSource[ScrollDirection.Vertical] = null), 500);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.enableRtl = this.gos.get('enableRtl');
         this.addManagedListener(
             this.eventService,
@@ -604,7 +614,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private getPositionedHorizontalScroll(
-        column: Column,
+        column: AgColumn,
         position: 'auto' | 'start' | 'middle' | 'end'
     ): number | null {
         const { columnBeforeStart, columnAfterEnd } = this.isColumnOutsideViewport(column);
@@ -641,7 +651,7 @@ export class GridBodyScrollFeature extends BeanStub {
         return null;
     }
 
-    private isColumnOutsideViewport(column: Column): { columnBeforeStart: boolean; columnAfterEnd: boolean } {
+    private isColumnOutsideViewport(column: AgColumn): { columnBeforeStart: boolean; columnAfterEnd: boolean } {
         const { start: viewportStart, end: viewportEnd } = this.getViewportBounds();
         const { colLeft, colRight } = this.getColumnBounds(column);
 
@@ -653,7 +663,7 @@ export class GridBodyScrollFeature extends BeanStub {
         return { columnBeforeStart, columnAfterEnd };
     }
 
-    private getColumnBounds(column: Column): { colLeft: number; colMiddle: number; colRight: number } {
+    private getColumnBounds(column: AgColumn): { colLeft: number; colMiddle: number; colRight: number } {
         const isRtl = this.enableRtl;
         const bodyWidth = this.visibleColsService.getBodyContainerWidth();
         const colWidth = column.getActualWidth();

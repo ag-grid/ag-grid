@@ -46,7 +46,7 @@ const gridOptions: GridOptions<IAccount> = {
         template:
             '<div style="height: 100%; background-color: #2244CC44; padding: 20px; box-sizing: border-box;">' +
             '  <div style="height: 10%; padding: 2px; font-weight: bold;">###### Call Details</div>' +
-            '  <div ref="eDetailGrid" style="height: 90%;"></div>' +
+            '  <div data-ref="eDetailGrid" style="height: 90%;"></div>' +
             '</div>',
     } as IDetailCellRendererParams<IAccount, ICallRecord>,
     onFirstDataRendered: onFirstDataRendered,

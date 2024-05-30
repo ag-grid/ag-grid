@@ -348,13 +348,7 @@
         background-color: unset;
     }
 
-    @include ag.keyboard-focus(
-        (
-            ag-charts-data-group-title-bar,
-            ag-charts-format-top-level-group-title-bar
-        ),
-        4px
-    );
+    @include ag.keyboard-focus((ag-charts-data-group-title-bar, ag-charts-format-top-level-group-title-bar), 4px);
 
     .ag-charts-data-group-container {
         padding: calc(var(--ag-widget-container-vertical-padding) * 0.5) var(--ag-widget-container-horizontal-padding);

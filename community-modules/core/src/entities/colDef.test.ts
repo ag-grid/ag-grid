@@ -1,6 +1,6 @@
 import { describe, test } from '@jest/globals';
 
-import { ColDef, ColGroupDef } from './colDef';
+import type { ColDef, ColGroupDef } from './colDef';
 
 describe('ColDef.field Types', () => {
     test('string with no generic', () => {

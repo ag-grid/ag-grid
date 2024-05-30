@@ -1,22 +1,22 @@
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
-import { Column } from '../../entities/column';
-import { RowNode } from '../../entities/rowNode';
+import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
+import type { RowNode } from '../../entities/rowNode';
 import { Events } from '../../eventKeys';
 import { _isDeleteKey } from '../../utils/keyboard';
-import { Beans } from '../beans';
-import { RowCtrl } from '../row/rowCtrl';
-import { CellCtrl } from './cellCtrl';
+import type { RowCtrl } from '../row/rowCtrl';
+import type { CellCtrl } from './cellCtrl';
 
 export class CellKeyboardListenerFeature extends BeanStub {
     private readonly cellCtrl: CellCtrl;
-    private readonly beans: Beans;
+    private readonly beans: BeanCollection;
     private readonly rowNode: RowNode;
     private readonly rowCtrl: RowCtrl;
 
     private eGui: HTMLElement;
 
-    constructor(ctrl: CellCtrl, beans: Beans, column: Column, rowNode: RowNode, rowCtrl: RowCtrl) {
+    constructor(ctrl: CellCtrl, beans: BeanCollection, column: AgColumn, rowNode: RowNode, rowCtrl: RowCtrl) {
         super();
         this.cellCtrl = ctrl;
         this.beans = beans;
@@ -141,6 +141,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     private onEscapeKeyDown(event: KeyboardEvent): void {
         if (this.cellCtrl.isEditing()) {
             this.cellCtrl.stopRowOrCellEdit(true);
@@ -203,7 +204,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         event.preventDefault();
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 }

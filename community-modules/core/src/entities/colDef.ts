@@ -1,16 +1,14 @@
-import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from '../events';
-import { ICellEditorParams } from '../interfaces/iCellEditor';
-import { AgGridCommon } from '../interfaces/iCommon';
-import { IFilterDef } from '../interfaces/iFilter';
-import { IRowNode } from '../interfaces/iRowNode';
-import { MenuItemDef } from '../interfaces/menuItem';
-import { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
-import { IRowDragItem } from '../rendering/row/rowDragComp';
-import { ITooltipParams } from '../rendering/tooltipComponent';
-import { Column } from './column';
-import { ColumnGroup, ColumnGroupShowType } from './columnGroup';
-import { GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
-import { ProvidedColumnGroup } from './providedColumnGroup';
+import type { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from '../events';
+import type { ICellEditorParams } from '../interfaces/iCellEditor';
+import type { Column, ColumnGroup, ColumnGroupShowType, ProvidedColumnGroup } from '../interfaces/iColumn';
+import type { AgGridCommon } from '../interfaces/iCommon';
+import type { IFilterDef } from '../interfaces/iFilter';
+import type { IRowNode } from '../interfaces/iRowNode';
+import type { MenuItemDef } from '../interfaces/menuItem';
+import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
+import type { IRowDragItem } from '../rendering/row/rowDragComp';
+import type { ITooltipParams } from '../rendering/tooltipComponent';
+import type { GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef<TData = any, TValue = any> {
@@ -145,13 +143,13 @@ export type ColDefField<TData = any, TValue = any> = TData extends any ? NestedF
  * Returns a union of all possible paths to nested fields in `TData`.
  */
 export type NestedFieldPaths<TData = any, TValue = any, TDepth extends any[] = []> = {
-    [TKey in StringOrNumKeys<TData>]: TData[TKey] extends Function | undefined
-    ? never // ignore functions
-    : TData[TKey] extends any[] | undefined
-    ? (TData[TKey] extends TValue ? `${TKey}` : never) | `${TKey}.${number}` // arrays support index access
-    :
-    | (TData[TKey] extends TValue ? `${TKey}` : never)
-    | NestedPath<TData[TKey], `${TKey}`, TValue, [...TDepth, any]>;
+    [TKey in StringOrNumKeys<TData>]: TData[TKey] extends ((...args: any[]) => any) | undefined
+        ? never // ignore functions
+        : TData[TKey] extends any[] | undefined
+          ? (TData[TKey] extends TValue ? `${TKey}` : never) | `${TKey}.${number}` // arrays support index access
+          :
+                | (TData[TKey] extends TValue ? `${TKey}` : never)
+                | NestedPath<TData[TKey], `${TKey}`, TValue, [...TDepth, any]>;
 }[StringOrNumKeys<TData>];
 
 /** Configuration options for columns in AG Grid. */
@@ -228,7 +226,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults.
      * @initial
      * */
-    icons?: { [key: string]: Function | string };
+    icons?: { [key: string]: ((...args: any[]) => any) | string };
     /**
      * Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.
      * Can also be a callback function to have different rows navigable.
@@ -396,13 +394,13 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     suppressHeaderMenuButton?: boolean;
     /**
      * Set to `true` to not display the filter button in the column header.
-     * Only applies when `columnMenu = 'new'`.
+     * Doesn't apply when `columnMenu = 'legacy'`.
      * @default false
      */
     suppressHeaderFilterButton?: boolean;
     /**
      * Set to `true` to not display the column menu when the column header is right-clicked.
-     * Only applies when `columnMenu = 'new'`.
+     * Doesn't apply when `columnMenu = 'legacy'`.
      * @default false
      */
     suppressHeaderContextMenu?: boolean;
@@ -738,16 +736,16 @@ export interface ColumnFunctionCallbackParams<TData = any, TValue = any> extends
 }
 
 export interface CheckboxSelectionCallbackParams<TData = any, TValue = any>
-    extends ColumnFunctionCallbackParams<TData, TValue> { }
+    extends ColumnFunctionCallbackParams<TData, TValue> {}
 export interface CheckboxSelectionCallback<TData = any, TValue = any> {
     (params: CheckboxSelectionCallbackParams<TData, TValue>): boolean;
 }
-export interface RowDragCallbackParams<TData = any, TValue = any> extends ColumnFunctionCallbackParams<TData, TValue> { }
+export interface RowDragCallbackParams<TData = any, TValue = any> extends ColumnFunctionCallbackParams<TData, TValue> {}
 export interface RowDragCallback<TData = any, TValue = any> {
     (params: RowDragCallbackParams<TData, TValue>): boolean;
 }
 export interface DndSourceCallbackParams<TData = any, TValue = any>
-    extends ColumnFunctionCallbackParams<TData, TValue> { }
+    extends ColumnFunctionCallbackParams<TData, TValue> {}
 
 export interface DndSourceOnRowDragParams<TData = any> extends AgGridCommon<TData, any> {
     /** Row node for the given row */
@@ -759,17 +757,17 @@ export interface DndSourceCallback<TData = any, TValue = any> {
     (params: DndSourceCallbackParams<TData, TValue>): boolean;
 }
 export interface EditableCallbackParams<TData = any, TValue = any>
-    extends ColumnFunctionCallbackParams<TData, TValue> { }
+    extends ColumnFunctionCallbackParams<TData, TValue> {}
 export interface EditableCallback<TData = any, TValue = any> {
     (params: EditableCallbackParams<TData, TValue>): boolean;
 }
 export interface SuppressPasteCallbackParams<TData = any, TValue = any>
-    extends ColumnFunctionCallbackParams<TData, TValue> { }
+    extends ColumnFunctionCallbackParams<TData, TValue> {}
 export interface SuppressPasteCallback<TData = any, TValue = any> {
     (params: SuppressPasteCallbackParams<TData, TValue>): boolean;
 }
 export interface SuppressNavigableCallbackParams<TData = any, TValue = any>
-    extends ColumnFunctionCallbackParams<TData, TValue> { }
+    extends ColumnFunctionCallbackParams<TData, TValue> {}
 export interface SuppressNavigableCallback<TData = any, TValue = any> {
     (params: SuppressNavigableCallbackParams<TData, TValue>): boolean;
 }
@@ -797,7 +795,7 @@ export interface GetQuickFilterTextParams<TData = any, TValue = any> extends AgG
 export type ColumnMenuTab = 'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab';
 
 /** @deprecated v31.1 Use `ColumnChooserParams` instead */
-export interface ColumnsMenuParams extends ColumnChooserParams { }
+export interface ColumnsMenuParams extends ColumnChooserParams {}
 
 export interface ColumnChooserParams {
     /** To suppress updating the layout of columns as they are rearranged in the grid */
@@ -878,15 +876,15 @@ interface ChangedValueParams<TData, TValueOld, TValueNew> extends BaseColDefPara
     newValue: TValueNew;
 }
 export interface NewValueParams<TData = any, TValue = any>
-    extends ChangedValueParams<TData, TValue | null | undefined, TValue | null | undefined> { }
+    extends ChangedValueParams<TData, TValue | null | undefined, TValue | null | undefined> {}
 
 export interface ValueSetterParams<TData = any, TValue = any>
-    extends ChangedValueParams<TData, TValue | null | undefined, TValue | null | undefined> { }
+    extends ChangedValueParams<TData, TValue | null | undefined, TValue | null | undefined> {}
 export interface ValueSetterFunc<TData = any, TValue = any> {
     (params: ValueSetterParams<TData, TValue>): boolean;
 }
 export interface ValueParserParams<TData = any, TValue = any>
-    extends ChangedValueParams<TData, TValue | null | undefined, string> { }
+    extends ChangedValueParams<TData, TValue | null | undefined, string> {}
 export interface ValueParserFunc<TData = any, TValue = any> {
     (params: ValueParserParams<TData, TValue>): TValue | null | undefined;
 }
@@ -905,9 +903,9 @@ export interface KeyCreatorParams<TData = any, TValue = any> extends BaseColDefP
     value: TValue | null | undefined;
 }
 
-export interface ColSpanParams<TData = any, TValue = any> extends BaseColDefOptionalDataParams<TData, TValue> { }
+export interface ColSpanParams<TData = any, TValue = any> extends BaseColDefOptionalDataParams<TData, TValue> {}
 
-export interface RowSpanParams<TData = any, TValue = any> extends BaseColDefOptionalDataParams<TData, TValue> { }
+export interface RowSpanParams<TData = any, TValue = any> extends BaseColDefOptionalDataParams<TData, TValue> {}
 
 export interface SuppressKeyboardEventParams<TData = any, TValue = any>
     extends ColumnFunctionCallbackParams<TData, TValue> {

@@ -1,51 +1,74 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Column,
+import type {
+    AgColumn,
+    BeanCollection,
     ColumnApplyStateService,
     ColumnAutosizeService,
     ColumnModel,
     ColumnNameService,
     FocusService,
     FuncColsService,
-    GridApi,
     IAggFuncService,
     IClipboardService,
+    ICsvCreator,
+    IExcelCreator,
+    IExpansionService,
     MenuItemDef,
     MenuService,
-    ModuleNames,
-    ModuleRegistry,
-    Optional,
+    NamedBean,
     RowPositionUtils,
     SortController,
+} from '@ag-grid-community/core';
+import {
+    BeanStub,
+    ModuleNames,
+    ModuleRegistry,
     _createIconNoSpan,
     _escapeString,
     _exists,
 } from '@ag-grid-community/core';
 
-import { ChartMenuItemMapper } from './chartMenuItemMapper';
+import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 
-@Bean('menuItemMapper')
-export class MenuItemMapper extends BeanStub {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('columnApplyStateService') private readonly columnApplyStateService: ColumnApplyStateService;
-    @Autowired('funcColsService') private readonly funcColsService: FuncColsService;
-    @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
-    @Autowired('chartMenuItemMapper') private readonly chartMenuItemMapper: ChartMenuItemMapper;
-    @Autowired('menuService') private readonly menuService: MenuService;
-    @Autowired('sortController') private readonly sortController: SortController;
-    @Autowired('columnAutosizeService') private columnAutosizeService: ColumnAutosizeService;
+export class MenuItemMapper extends BeanStub implements NamedBean {
+    beanName = 'menuItemMapper' as const;
 
-    @Optional('clipboardService') private readonly clipboardService?: IClipboardService;
-    @Optional('aggFuncService') private readonly aggFuncService?: IAggFuncService;
+    private columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    private columnApplyStateService: ColumnApplyStateService;
+    private funcColsService: FuncColsService;
+    private focusService: FocusService;
+    private rowPositionUtils: RowPositionUtils;
+    private chartMenuItemMapper: ChartMenuItemMapper;
+    private menuService: MenuService;
+    private sortController: SortController;
+    private columnAutosizeService: ColumnAutosizeService;
+    private expansionService: IExpansionService;
+    private clipboardService?: IClipboardService;
+    private aggFuncService?: IAggFuncService;
+    private csvCreator?: ICsvCreator;
+    private excelCreator?: IExcelCreator;
+
+    public wireBeans(beans: BeanCollection) {
+        this.columnModel = beans.columnModel;
+        this.columnNameService = beans.columnNameService;
+        this.columnApplyStateService = beans.columnApplyStateService;
+        this.funcColsService = beans.funcColsService;
+        this.focusService = beans.focusService;
+        this.rowPositionUtils = beans.rowPositionUtils;
+        this.chartMenuItemMapper = beans.chartMenuItemMapper;
+        this.menuService = beans.menuService;
+        this.sortController = beans.sortController;
+        this.columnAutosizeService = beans.columnAutosizeService;
+        this.expansionService = beans.expansionService;
+        this.clipboardService = beans.clipboardService;
+        this.aggFuncService = beans.aggFuncService;
+        this.csvCreator = beans.csvCreator;
+        this.excelCreator = beans.excelCreator;
+    }
 
     public mapWithStockItems(
         originalList: (MenuItemDef | string)[],
-        column: Column | null,
+        column: AgColumn | null,
         sourceElement: () => HTMLElement
     ): (MenuItemDef | string)[] {
         if (!originalList) {
@@ -85,7 +108,7 @@ export class MenuItemMapper extends BeanStub {
 
     private getStockMenuItem(
         key: string,
-        column: Column | null,
+        column: AgColumn | null,
         sourceElement: () => HTMLElement
     ): MenuItemDef | string | null {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
@@ -121,7 +144,7 @@ export class MenuItemMapper extends BeanStub {
                     ModuleRegistry.__assertRegistered(
                         ModuleNames.RowGroupingModule,
                         'Aggregation from Menu',
-                        this.context.getGridId()
+                        this.gridId
                     )
                 ) {
                     if (!column?.isPrimary() && !column?.getColDef().pivotValueColumn) {
@@ -157,7 +180,7 @@ export class MenuItemMapper extends BeanStub {
                     action: () => this.funcColsService.addRowGroupColumns([column], 'contextMenu'),
                     icon: _createIconNoSpan('menuAddRowGroup', this.gos, null),
                 };
-            case 'rowUnGroup':
+            case 'rowUnGroup': {
                 const icon = _createIconNoSpan('menuRemoveRowGroup', this.gos, null);
                 const showRowGroup = column?.getColDef().showRowGroup;
                 const lockedGroups = this.gos.get('groupLockGroupColumns');
@@ -202,6 +225,7 @@ export class MenuItemMapper extends BeanStub {
                     action: () => this.funcColsService.removeRowGroupColumns([column], 'contextMenu'),
                     icon: icon,
                 };
+            }
             case 'resetColumns':
                 return {
                     name: localeTextFunc('resetColumns', 'Reset Columns'),
@@ -210,21 +234,15 @@ export class MenuItemMapper extends BeanStub {
             case 'expandAll':
                 return {
                     name: localeTextFunc('expandAll', 'Expand All Row Groups'),
-                    action: () => this.gridApi.expandAll(),
+                    action: () => this.expansionService.expandAll(true),
                 };
             case 'contractAll':
                 return {
                     name: localeTextFunc('collapseAll', 'Collapse All Row Groups'),
-                    action: () => this.gridApi.collapseAll(),
+                    action: () => this.expansionService.expandAll(false),
                 };
             case 'copy':
-                if (
-                    ModuleRegistry.__assertRegistered(
-                        ModuleNames.ClipboardModule,
-                        'Copy from Menu',
-                        this.context.getGridId()
-                    )
-                ) {
+                if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'Copy from Menu', this.gridId)) {
                     return {
                         name: localeTextFunc('copy', 'Copy'),
                         shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
@@ -239,7 +257,7 @@ export class MenuItemMapper extends BeanStub {
                     ModuleRegistry.__assertRegistered(
                         ModuleNames.ClipboardModule,
                         'Copy with Headers from Menu',
-                        this.context.getGridId()
+                        this.gridId
                     )
                 ) {
                     return {
@@ -256,7 +274,7 @@ export class MenuItemMapper extends BeanStub {
                     ModuleRegistry.__assertRegistered(
                         ModuleNames.ClipboardModule,
                         'Copy with Group Headers from Menu',
-                        this.context.getGridId()
+                        this.gridId
                     )
                 ) {
                     return {
@@ -270,13 +288,7 @@ export class MenuItemMapper extends BeanStub {
                     return null;
                 }
             case 'cut':
-                if (
-                    ModuleRegistry.__assertRegistered(
-                        ModuleNames.ClipboardModule,
-                        'Cut from Menu',
-                        this.context.getGridId()
-                    )
-                ) {
+                if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'Cut from Menu', this.gridId)) {
                     const focusedCell = this.focusService.getFocusedCell();
                     const rowNode = focusedCell ? this.rowPositionUtils.getRowNode(focusedCell) : null;
                     const isEditable = rowNode ? focusedCell?.column.isCellEditable(rowNode) : false;
@@ -292,11 +304,7 @@ export class MenuItemMapper extends BeanStub {
                 }
             case 'paste':
                 if (
-                    ModuleRegistry.__assertRegistered(
-                        ModuleNames.ClipboardModule,
-                        'Paste from Clipboard',
-                        this.context.getGridId()
-                    )
+                    ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'Paste from Clipboard', this.gridId)
                 ) {
                     return {
                         name: localeTextFunc('paste', 'Paste'),
@@ -308,17 +316,11 @@ export class MenuItemMapper extends BeanStub {
                 } else {
                     return null;
                 }
-            case 'export':
+            case 'export': {
                 const exportSubMenuItems: string[] = [];
 
-                const csvModuleLoaded = ModuleRegistry.__isRegistered(
-                    ModuleNames.CsvExportModule,
-                    this.context.getGridId()
-                );
-                const excelModuleLoaded = ModuleRegistry.__isRegistered(
-                    ModuleNames.ExcelExportModule,
-                    this.context.getGridId()
-                );
+                const csvModuleLoaded = ModuleRegistry.__isRegistered(ModuleNames.CsvExportModule, this.gridId);
+                const excelModuleLoaded = ModuleRegistry.__isRegistered(ModuleNames.ExcelExportModule, this.gridId);
 
                 if (!this.gos.get('suppressCsvExport') && csvModuleLoaded) {
                     exportSubMenuItems.push('csvExport');
@@ -331,17 +333,18 @@ export class MenuItemMapper extends BeanStub {
                     subMenu: exportSubMenuItems,
                     icon: _createIconNoSpan('save', this.gos, null),
                 };
+            }
             case 'csvExport':
                 return {
                     name: localeTextFunc('csvExport', 'CSV Export'),
                     icon: _createIconNoSpan('csvExport', this.gos, null),
-                    action: () => this.gridApi.exportDataAsCsv({}),
+                    action: () => this.csvCreator?.exportDataAsCsv(),
                 };
             case 'excelExport':
                 return {
                     name: localeTextFunc('excelExport', 'Excel Export'),
                     icon: _createIconNoSpan('excelExport', this.gos, null),
-                    action: () => this.gridApi.exportDataAsExcel(),
+                    action: () => this.excelCreator?.exportDataAsExcel(),
                 };
             case 'separator':
                 return 'separator';
@@ -365,7 +368,7 @@ export class MenuItemMapper extends BeanStub {
                     return null;
                 }
             case 'columnChooser':
-                if (ModuleRegistry.__isRegistered(ModuleNames.ColumnsToolPanelModule, this.context.getGridId())) {
+                if (ModuleRegistry.__isRegistered(ModuleNames.ColumnsToolPanelModule, this.gridId)) {
                     return {
                         name: localeTextFunc('columnChooser', 'Choose Columns'),
                         icon: _createIconNoSpan('columns', this.gos, null),
@@ -399,14 +402,14 @@ export class MenuItemMapper extends BeanStub {
         }
     }
 
-    private createAggregationSubMenu(column: Column, aggFuncService: IAggFuncService): MenuItemDef[] {
+    private createAggregationSubMenu(column: AgColumn, aggFuncService: IAggFuncService): MenuItemDef[] {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
 
-        let columnToUse: Column | undefined;
+        let columnToUse: AgColumn | undefined;
         if (column.isPrimary()) {
             columnToUse = column;
         } else {
-            const pivotValueColumn = column.getColDef().pivotValueColumn;
+            const pivotValueColumn = column.getColDef().pivotValueColumn as AgColumn;
             columnToUse = _exists(pivotValueColumn) ? pivotValueColumn : undefined;
         }
 

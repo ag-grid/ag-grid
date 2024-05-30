@@ -1,13 +1,13 @@
 import { GROUP_AUTO_COLUMN_ID } from '../../columns/autoColService';
 import { KeyCode } from '../../constants/keyCode';
-import { CellEditingStartedEvent, CellEditingStoppedEvent, Events } from '../../events';
-import { WithoutGridCommon } from '../../interfaces/iCommon';
+import type { CellEditingStartedEvent, CellEditingStoppedEvent } from '../../events';
+import { Events } from '../../events';
+import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import { _getAriaCheckboxStateName, _setAriaLive } from '../../utils/aria';
 import { _stopPropagationForAgGrid } from '../../utils/event';
 import { AgCheckbox } from '../../widgets/agCheckbox';
-import { Component } from '../../widgets/component';
-import { RefSelector } from '../../widgets/componentAnnotations';
-import { ICellRenderer, ICellRendererParams } from './iCellRenderer';
+import { Component, RefPlaceholder } from '../../widgets/component';
+import type { ICellRenderer, ICellRendererParams } from './iCellRenderer';
 
 export interface ICheckboxCellRendererParams<TData = any, TContext = any>
     extends ICellRendererParams<TData, boolean, TContext> {
@@ -18,14 +18,14 @@ export interface ICheckboxCellRendererParams<TData = any, TContext = any>
 export class CheckboxCellRenderer extends Component implements ICellRenderer {
     private static TEMPLATE = /* html*/ `
         <div class="ag-cell-wrapper ag-checkbox-cell" role="presentation">
-            <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
+            <ag-checkbox role="presentation" data-ref="eCheckbox"></ag-checkbox>
         </div>`;
 
-    @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
+    private readonly eCheckbox: AgCheckbox = RefPlaceholder;
     private params: ICheckboxCellRendererParams;
 
     constructor() {
-        super(CheckboxCellRenderer.TEMPLATE);
+        super(CheckboxCellRenderer.TEMPLATE, [AgCheckbox]);
     }
 
     public init(params: ICheckboxCellRendererParams): void {

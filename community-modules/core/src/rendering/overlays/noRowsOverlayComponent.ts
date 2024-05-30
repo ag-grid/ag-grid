@@ -1,5 +1,5 @@
-import { AgGridCommon } from '../../interfaces/iCommon';
-import { IComponent } from '../../interfaces/iComponent';
+import type { AgGridCommon } from '../../interfaces/iCommon';
+import type { IComponent } from '../../interfaces/iComponent';
 import { Component } from '../../widgets/component';
 
 export interface INoRowsOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
@@ -22,7 +22,7 @@ export class NoRowsOverlayComponent extends Component implements INoRowsOverlayC
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 

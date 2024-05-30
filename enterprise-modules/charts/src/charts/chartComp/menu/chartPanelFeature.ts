@@ -1,7 +1,9 @@
-import { BeanStub, ChartType, Component, PostConstruct, _removeFromParent } from '@ag-grid-community/core';
+import type { ChartType, Component } from '@ag-grid-community/core';
+import { BeanStub, _removeFromParent } from '@ag-grid-community/core';
 
 import { ChartController } from '../chartController';
-import { ChartSeriesType, getSeriesType } from '../utils/seriesTypeMapper';
+import type { ChartSeriesType } from '../utils/seriesTypeMapper';
+import { getSeriesType } from '../utils/seriesTypeMapper';
 
 export class ChartPanelFeature extends BeanStub {
     private chartType: ChartType;
@@ -17,8 +19,7 @@ export class ChartPanelFeature extends BeanStub {
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, () =>
             this.refreshPanels(true)
         );
@@ -60,7 +61,7 @@ export class ChartPanelFeature extends BeanStub {
         this.panels = [];
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyPanels();
         super.destroy();
     }

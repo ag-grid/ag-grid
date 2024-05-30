@@ -1,9 +1,10 @@
-import { Module, ModuleNames } from '@ag-grid-community/core';
+import type { Module } from '@ag-grid-community/core';
+import { ModuleNames } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
 import { AggFuncService } from './rowGrouping/aggFuncService';
 import { AggregationStage } from './rowGrouping/aggregationStage';
-import { GridHeaderDropZones } from './rowGrouping/columnDropZones/gridHeaderDropZones';
+import { AgGridHeaderDropZones } from './rowGrouping/columnDropZones/agGridHeaderDropZones';
 import { FilterAggregatesStage } from './rowGrouping/filterAggregatesStage';
 import { GroupFilter } from './rowGrouping/groupFilter/groupFilter';
 import { GroupFloatingFilterComp } from './rowGrouping/groupFilter/groupFloatingFilter';
@@ -16,7 +17,7 @@ export const RowGroupingModule: Module = {
     version: VERSION,
     moduleName: ModuleNames.RowGroupingModule,
     beans: [AggregationStage, FilterAggregatesStage, GroupStage, PivotColDefService, PivotStage, AggFuncService],
-    agStackComponents: [{ componentName: 'AgGridHeaderDropZones', componentClass: GridHeaderDropZones }],
+    agStackComponents: [AgGridHeaderDropZones],
     userComponents: [
         { componentName: 'agGroupColumnFilter', componentClass: GroupFilter },
         { componentName: 'agGroupColumnFloatingFilter', componentClass: GroupFloatingFilterComp },

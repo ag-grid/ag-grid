@@ -1,14 +1,11 @@
-import {
+import type {
     AdvancedFilterModel,
-    Autowired,
-    Bean,
-    BeanStub,
-    Beans,
-    Column,
+    AgColumn,
+    BeanCollection,
     ColumnModel,
     ColumnNameService,
     ColumnVO,
-    Events,
+    EventsType,
     FilterManager,
     FilterModel,
     FuncColsService,
@@ -18,33 +15,35 @@ import {
     IServerSideStore,
     LoadSuccessParams,
     ModelUpdatedEvent,
-    ModuleNames,
-    ModuleRegistry,
-    NumberSequence,
-    Optional,
+    NamedBean,
     PivotResultColsService,
-    PostConstruct,
-    PreDestroy,
     RefreshServerSideParams,
     RowBounds,
     RowModelType,
-    RowNode,
     RowRenderer,
     ServerSideGroupLevelState,
     SortController,
     SortModelItem,
     StoreRefreshAfterParams,
     WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    BeanStub,
+    Events,
+    ModuleNames,
+    ModuleRegistry,
+    NumberSequence,
+    RowNode,
     _debounce,
     _exists,
     _jsonEquals,
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import { NodeManager } from './nodeManager';
+import type { NodeManager } from './nodeManager';
 import { FullStore } from './stores/fullStore';
 import { LazyStore } from './stores/lazy/lazyStore';
-import { StoreFactory } from './stores/storeFactory';
+import type { StoreFactory } from './stores/storeFactory';
 
 export interface SSRMParams {
     sortModel: SortModelItem[];
@@ -58,20 +57,34 @@ export interface SSRMParams {
     datasource?: IServerSideDatasource;
 }
 
-@Bean('rowModel')
-export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('columnNameService') private columnNameService: ColumnNameService;
-    @Autowired('pivotResultColsService') private pivotResultColsService: PivotResultColsService;
-    @Autowired('funcColsService') private funcColsService: FuncColsService;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
-    @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
-    @Autowired('beans') private beans: Beans;
+export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSideRowModel {
+    beanName = 'rowModel' as const;
 
-    @Optional('pivotColDefService') private pivotColDefService?: IPivotColDefService;
+    private columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    private pivotResultColsService: PivotResultColsService;
+    private funcColsService: FuncColsService;
+    private filterManager: FilterManager;
+    private sortController: SortController;
+    private rowRenderer: RowRenderer;
+    private nodeManager: NodeManager;
+    private storeFactory: StoreFactory;
+    private beans: BeanCollection;
+    private pivotColDefService?: IPivotColDefService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.columnModel = beans.columnModel;
+        this.columnNameService = beans.columnNameService;
+        this.pivotResultColsService = beans.pivotResultColsService;
+        this.funcColsService = beans.funcColsService;
+        this.filterManager = beans.filterManager;
+        this.sortController = beans.sortController;
+        this.rowRenderer = beans.rowRenderer;
+        this.nodeManager = beans.ssrmNodeManager;
+        this.storeFactory = beans.ssrmStoreFactory;
+        this.beans = beans;
+        this.pivotColDefService = beans.pivotColDefService;
+    }
 
     private onRowHeightChanged_debounced = _debounce(this.onRowHeightChanged.bind(this), 100);
 
@@ -96,7 +109,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.updateDatasource();
     }
 
-    @PreDestroy
     private destroyDatasource(): void {
         if (!this.datasource) {
             return;
@@ -110,16 +122,17 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.datasource = undefined;
     }
 
-    @PostConstruct
-    private addEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onStoreUpdated.bind(this));
-
+    public postConstruct(): void {
         const resetListener = this.resetRootStore.bind(this);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, resetListener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, resetListener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, resetListener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, resetListener);
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onColumnEverything.bind(this),
+            [Events.EVENT_STORE_UPDATED]: this.onStoreUpdated.bind(this),
+            [Events.EVENT_COLUMN_VALUE_CHANGED]: resetListener,
+            [Events.EVENT_COLUMN_PIVOT_CHANGED]: resetListener,
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: resetListener,
+            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: resetListener,
+        });
+
         this.addManagedPropertyListeners(
             [
                 /**
@@ -261,7 +274,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
     }
 
-    @PreDestroy
     private destroyRootStore(): void {
         if (!this.rootNode || !this.rootNode.childStore) {
             return;
@@ -287,11 +299,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public generateSecondaryColumns(pivotFields: string[]) {
         if (!this.pivotColDefService) {
-            ModuleRegistry.__assertRegistered(
-                ModuleNames.RowGroupingModule,
-                'pivotResultFields',
-                this.context.getGridId()
-            );
+            ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'pivotResultFields', this.gridId);
             return;
         }
 
@@ -366,7 +374,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.dispatchModelUpdated(true);
     }
 
-    public columnsToValueObjects(columns: Column[]): ColumnVO[] {
+    public columnsToValueObjects(columns: AgColumn[]): ColumnVO[] {
         return columns.map(
             (col) =>
                 ({
@@ -714,5 +722,11 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             }
             console.error('AG Grid: Infinite scrolling must be enabled in order to set the row count.');
         }
+    }
+
+    public override destroy(): void {
+        this.destroyDatasource();
+        this.destroyRootStore();
+        super.destroy();
     }
 }

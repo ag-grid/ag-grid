@@ -1,12 +1,8 @@
+import type { BeanCollection, ColumnModel, FocusService, HeaderNavigationService } from '@ag-grid-community/core';
 import {
-    Autowired,
-    ColumnModel,
     Component,
     Events,
-    FocusService,
-    HeaderNavigationService,
     KeyCode,
-    PostConstruct,
     _clearElement,
     _setAriaColIndex,
     _setAriaColSpan,
@@ -18,9 +14,15 @@ import {
 import { AdvancedFilterComp } from './advancedFilterComp';
 
 export class AdvancedFilterHeaderComp extends Component {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
+    private columnModel: ColumnModel;
+    private focusService: FocusService;
+    private headerNavigationService: HeaderNavigationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.columnModel = beans.columnModel;
+        this.focusService = beans.focusService;
+        this.headerNavigationService = beans.headerNavigationService;
+    }
 
     private eAdvancedFilter: AdvancedFilterComp | undefined;
     private height: number;
@@ -31,8 +33,7 @@ export class AdvancedFilterHeaderComp extends Component {
             </div>`);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.setupAdvancedFilter(this.enabled);
 
         this.addDestroyFunc(() => this.destroyBean(this.eAdvancedFilter));
@@ -50,7 +51,7 @@ export class AdvancedFilterHeaderComp extends Component {
         });
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.eAdvancedFilter?.getGui() ?? this.getGui();
     }
 

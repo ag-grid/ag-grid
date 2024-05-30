@@ -1,30 +1,40 @@
-import { ColumnModel } from '../columns/columnModel';
-import { DataTypeService } from '../columns/dataTypeService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { DataTypeService } from '../columns/dataTypeService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
-import {
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type {
     KeyCreatorParams,
     ValueFormatterParams,
     ValueGetterParams,
     ValueParserParams,
     ValueSetterParams,
 } from '../entities/colDef';
-import { Column } from '../entities/column';
-import { RowNode } from '../entities/rowNode';
-import { CellValueChangedEvent, Events } from '../events';
-import { IRowNode } from '../interfaces/iRowNode';
+import type { RowNode } from '../entities/rowNode';
+import type { CellValueChangedEvent } from '../events';
+import { Events } from '../events';
+import type { IRowNode } from '../interfaces/iRowNode';
 import { _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
-import { ExpressionService } from './expressionService';
-import { ValueCache } from './valueCache';
+import type { ExpressionService } from './expressionService';
+import type { ValueCache } from './valueCache';
 
-@Bean('valueService')
-export class ValueService extends BeanStub {
-    @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('valueCache') private valueCache: ValueCache;
-    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
+export class ValueService extends BeanStub implements NamedBean {
+    beanName = 'valueService' as const;
+
+    private expressionService: ExpressionService;
+    private columnModel: ColumnModel;
+    private valueCache: ValueCache;
+    private dataTypeService: DataTypeService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.expressionService = beans.expressionService;
+        this.columnModel = beans.columnModel;
+        this.valueCache = beans.valueCache;
+        this.dataTypeService = beans.dataTypeService;
+    }
 
     private cellExpressions: boolean;
     // Store locally for performance reasons and keep updated via property listener
@@ -34,8 +44,13 @@ export class ValueService extends BeanStub {
 
     private isSsrm = false;
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
+        if (!this.initialised) {
+            this.init();
+        }
+    }
+
+    private init(): void {
         this.isSsrm = this.gos.isRowModelType('serverSide');
         this.cellExpressions = this.gos.get('enableCellExpressions');
         this.isTreeData = this.gos.get('treeData');
@@ -53,7 +68,7 @@ export class ValueService extends BeanStub {
         this.addManagedPropertyListener('treeData', (propChange) => (this.isTreeData = propChange.currentValue));
     }
 
-    public getValue(column: Column, rowNode?: IRowNode | null, forFilter = false, ignoreAggData = false): any {
+    public getValue(column: AgColumn, rowNode?: IRowNode | null, forFilter = false, ignoreAggData = false): any {
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
         if (!this.initialised) {
@@ -122,7 +137,7 @@ export class ValueService extends BeanStub {
         return result;
     }
 
-    public parseValue(column: Column, rowNode: IRowNode | null, newValue: any, oldValue: any): any {
+    public parseValue(column: AgColumn, rowNode: IRowNode | null, newValue: any, oldValue: any): any {
         const colDef = column.getColDef();
         const params: ValueParserParams = this.gos.addGridCommonParams({
             node: rowNode,
@@ -145,7 +160,7 @@ export class ValueService extends BeanStub {
     }
 
     public formatValue(
-        column: Column,
+        column: AgColumn,
         node: IRowNode | null,
         value: any,
         suppliedFormatter?: (value: any) => string,
@@ -188,7 +203,7 @@ export class ValueService extends BeanStub {
         return result;
     }
 
-    private getOpenedGroup(rowNode: IRowNode, column: Column): any {
+    private getOpenedGroup(rowNode: IRowNode, column: AgColumn): any {
         if (!this.gos.get('showOpenedGroup')) {
             return;
         }
@@ -223,7 +238,7 @@ export class ValueService extends BeanStub {
      * @param eventSource The event source
      * @returns `True` if the value has been updated, otherwise`False`.
      */
-    public setValue(rowNode: IRowNode, colKey: string | Column, newValue: any, eventSource?: string): boolean {
+    public setValue(rowNode: IRowNode, colKey: string | AgColumn, newValue: any, eventSource?: string): boolean {
         const column = this.columnModel.getColDefCol(colKey);
 
         if (!rowNode || !column) {
@@ -367,9 +382,10 @@ export class ValueService extends BeanStub {
     }
 
     private executeFilterValueGetter(
+        // eslint-disable-next-line @typescript-eslint/ban-types
         valueGetter: string | Function,
         data: any,
-        column: Column,
+        column: AgColumn,
         rowNode: IRowNode
     ): any {
         const params: ValueGetterParams = this.gos.addGridCommonParams({
@@ -386,7 +402,13 @@ export class ValueService extends BeanStub {
         return this.expressionService.evaluate(valueGetter, params);
     }
 
-    private executeValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: IRowNode): any {
+    private executeValueGetter(
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        valueGetter: string | Function,
+        data: any,
+        column: AgColumn,
+        rowNode: IRowNode
+    ): any {
         const colId = column.getColId();
 
         // if inside the same turn, just return back the value we got last time
@@ -417,7 +439,7 @@ export class ValueService extends BeanStub {
         return result;
     }
 
-    private getValueCallback(node: IRowNode, field: string | Column): any {
+    private getValueCallback(node: IRowNode, field: string | AgColumn): any {
         const otherColumn = this.columnModel.getColDefCol(field);
 
         if (otherColumn) {
@@ -428,7 +450,7 @@ export class ValueService extends BeanStub {
     }
 
     // used by row grouping and pivot, to get key for a row. col can be a pivot col or a row grouping col
-    public getKeyForNode(col: Column, rowNode: IRowNode): any {
+    public getKeyForNode(col: AgColumn, rowNode: IRowNode): any {
         const value = this.getValue(col, rowNode);
         const keyCreator = col.getColDef().keyCreator;
 

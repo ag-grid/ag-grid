@@ -1,15 +1,15 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Bean, PostConstruct } from '../context/context';
-import { RowNode } from '../entities/rowNode';
+import type { RowNode } from '../entities/rowNode';
 
-@Bean('valueCache')
-export class ValueCache extends BeanStub {
+export class ValueCache extends BeanStub implements NamedBean {
+    beanName = 'valueCache' as const;
+
     private cacheVersion = 0;
     private active: boolean;
     private neverExpires: boolean;
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         this.active = this.gos.get('valueCache');
         this.neverExpires = this.gos.get('valueCacheNeverExpires');
     }

@@ -1,18 +1,20 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, PostConstruct } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { Column } from '../entities/column';
-import { ColumnEventType } from '../events';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { AgColumn } from '../entities/agColumn';
+import type { ColumnEventType } from '../events';
+import type { Column } from '../interfaces/iColumn';
 import { _removeFromArray, _removeFromUnorderedArray } from '../utils/array';
 import { _exists } from '../utils/generic';
-import { ColumnEventDispatcher } from './columnEventDispatcher';
-import { ColKey, ColumnModel } from './columnModel';
+import type { ColumnEventDispatcher } from './columnEventDispatcher';
+import type { ColKey, ColumnModel } from './columnModel';
 import { getWidthOfColsInList } from './columnUtils';
-import { ColumnViewportService } from './columnViewportService';
-import { VisibleColsService } from './visibleColsService';
+import type { ColumnViewportService } from './columnViewportService';
+import type { VisibleColsService } from './visibleColsService';
 
 export interface ColumnResizeSet {
-    columns: Column[];
+    columns: AgColumn[];
     ratios: number[];
     width: number;
 }
@@ -35,13 +37,22 @@ export interface ISizeColumnsToFitParams {
     columnLimits?: IColumnLimit[];
 }
 
-@Bean('columnSizeService')
-export class ColumnSizeService extends BeanStub {
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('columnViewportService') private readonly columnViewportService: ColumnViewportService;
-    @Autowired('columnEventDispatcher') private eventDispatcher: ColumnEventDispatcher;
-    @Autowired('visibleColsService') private visibleColsService: VisibleColsService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+export class ColumnSizeService extends BeanStub implements NamedBean {
+    beanName = 'columnSizeService' as const;
+
+    private columnModel: ColumnModel;
+    private columnViewportService: ColumnViewportService;
+    private eventDispatcher: ColumnEventDispatcher;
+    private visibleColsService: VisibleColsService;
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.columnModel = beans.columnModel;
+        this.columnViewportService = beans.columnViewportService;
+        this.eventDispatcher = beans.columnEventDispatcher;
+        this.visibleColsService = beans.visibleColsService;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private flexViewportWidth: number;
 
@@ -127,8 +138,8 @@ export class ColumnSizeService extends BeanStub {
             return; // don't resize!
         }
 
-        const changedCols: Column[] = [];
-        const allResizedCols: Column[] = [];
+        const changedCols: AgColumn[] = [];
+        const allResizedCols: AgColumn[] = [];
 
         resizeSets.forEach((set) => {
             const { width, columns, ratios } = set;
@@ -164,11 +175,11 @@ export class ColumnSizeService extends BeanStub {
 
                 finishedColsGrew = false;
 
-                const subsetCols: Column[] = [];
+                const subsetCols: AgColumn[] = [];
                 let subsetRatioTotal = 0;
                 let pixelsToDistribute = width;
 
-                columns.forEach((col: Column, index: number) => {
+                columns.forEach((col, index) => {
                     const thisColFinished = finishedCols[col.getId()];
                     if (thisColFinished) {
                         pixelsToDistribute -= newWidths[col.getId()];
@@ -184,7 +195,7 @@ export class ColumnSizeService extends BeanStub {
                 // and so the ratioScale will be 1.
                 const ratioScale = 1 / subsetRatioTotal;
 
-                subsetCols.forEach((col: Column, index: number) => {
+                subsetCols.forEach((col, index) => {
                     const lastCol = index === subsetCols.length - 1;
                     let colNewWidth: number;
 
@@ -226,7 +237,7 @@ export class ColumnSizeService extends BeanStub {
         // if no cols changed, then no need to update more or send event.
         const atLeastOneColChanged = changedCols.length > 0;
 
-        let flexedCols: Column[] = [];
+        let flexedCols: AgColumn[] = [];
 
         if (atLeastOneColChanged) {
             flexedCols = this.refreshFlexedColumns({ resizingCols: allResizedCols, skipSetLeft: true });
@@ -278,14 +289,14 @@ export class ColumnSizeService extends BeanStub {
 
     public refreshFlexedColumns(
         params: {
-            resizingCols?: Column[];
+            resizingCols?: AgColumn[];
             skipSetLeft?: boolean;
             viewportWidth?: number;
             source?: ColumnEventType;
             fireResizedEvent?: boolean;
             updateBodyWidths?: boolean;
         } = {}
-    ): Column[] {
+    ): AgColumn[] {
         const source = params.source ? params.source : 'flex';
 
         if (params.viewportWidth != null) {
@@ -300,7 +311,7 @@ export class ColumnSizeService extends BeanStub {
         // A "flexing column" is one that has a 'flex' value set and is not currently being constrained by its
         // minWidth or maxWidth rules.
 
-        let displayedCenterCols = this.visibleColsService.getCenterCols();
+        const displayedCenterCols = this.visibleColsService.getCenterCols();
 
         let flexAfterDisplayIndex = -1;
         if (params.resizingCols) {
@@ -317,7 +328,7 @@ export class ColumnSizeService extends BeanStub {
         // the width of all of the columns for which the width has been determined
         let knownColumnsWidth = 0;
 
-        let flexingColumns: Column[] = [];
+        let flexingColumns: AgColumn[] = [];
 
         // store the minimum width of all the flex columns, so we can determine if flex is even possible more quickly
         let minimumFlexedWidth = 0;
@@ -337,7 +348,7 @@ export class ColumnSizeService extends BeanStub {
             return [];
         }
 
-        let changedColumns: Column[] = [];
+        let changedColumns: AgColumn[] = [];
 
         // this is for performance to prevent trying to flex when unnecessary
         if (knownColumnsWidth + minimumFlexedWidth > this.flexViewportWidth) {
@@ -436,8 +447,8 @@ export class ColumnSizeService extends BeanStub {
             return;
         }
 
-        const colsToSpread: Column[] = [];
-        const colsToNotSpread: Column[] = [];
+        const colsToSpread: AgColumn[] = [];
+        const colsToNotSpread: AgColumn[] = [];
 
         allDisplayedColumns.forEach((column) => {
             if (column.getColDef().suppressSizeToFit === true) {
@@ -451,7 +462,7 @@ export class ColumnSizeService extends BeanStub {
         const colsToDispatchEventFor = colsToSpread.slice(0);
         let finishedResizing = false;
 
-        const moveToNotSpread = (column: Column) => {
+        const moveToNotSpread = (column: AgColumn) => {
             _removeFromArray(colsToSpread, column);
             colsToNotSpread.push(column);
         };
@@ -484,7 +495,7 @@ export class ColumnSizeService extends BeanStub {
             const availablePixels = gridWidth - getWidthOfColsInList(colsToNotSpread);
             if (availablePixels <= 0) {
                 // no width, set everything to minimum
-                colsToSpread.forEach((column: Column) => {
+                colsToSpread.forEach((column) => {
                     const widthOverride = limitsMap?.[column.getId()]?.minWidth ?? params?.defaultMinWidth;
                     if (typeof widthOverride === 'number') {
                         column.setActualWidth(widthOverride, source, true);

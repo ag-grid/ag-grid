@@ -1,12 +1,14 @@
-import { ColumnModel } from '../columns/columnModel';
+import type { ColumnModel } from '../columns/columnModel';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { CellPosition, CellPositionUtils } from '../entities/cellPositionUtils';
-import { Column } from '../entities/column';
-import { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { AgColumn } from '../entities/agColumn';
+import type { CellPosition, CellPositionUtils } from '../entities/cellPositionUtils';
+import type { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
 import { Events } from '../eventKeys';
-import {
+import type { EventsType } from '../eventKeys';
+import type {
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
     CellValueChangedEvent,
@@ -17,21 +19,31 @@ import {
     UndoEndedEvent,
     UndoStartedEvent,
 } from '../events';
-import { FocusService } from '../focusService';
-import { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
-import { CellRange, CellRangeParams, IRangeService } from '../interfaces/IRangeService';
-import { WithoutGridCommon } from '../interfaces/iCommon';
-import { CellValueChange, LastFocusedCell, RangeUndoRedoAction, UndoRedoAction, UndoRedoStack } from './undoRedoStack';
+import type { FocusService } from '../focusService';
+import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
+import type { CellRange, CellRangeParams, IRangeService } from '../interfaces/IRangeService';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { CellValueChange, LastFocusedCell } from './undoRedoStack';
+import { RangeUndoRedoAction, UndoRedoAction, UndoRedoStack } from './undoRedoStack';
 
-@Bean('undoRedoService')
-export class UndoRedoService extends BeanStub {
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('cellPositionUtils') private cellPositionUtils: CellPositionUtils;
-    @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
-    @Autowired('columnModel') private columnModel: ColumnModel;
+export class UndoRedoService extends BeanStub implements NamedBean {
+    beanName = 'undoRedoService' as const;
 
-    @Optional('rangeService') private readonly rangeService?: IRangeService;
+    private focusService: FocusService;
+    private ctrlsService: CtrlsService;
+    private cellPositionUtils: CellPositionUtils;
+    private rowPositionUtils: RowPositionUtils;
+    private columnModel: ColumnModel;
+    private rangeService?: IRangeService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.focusService = beans.focusService;
+        this.ctrlsService = beans.ctrlsService;
+        this.cellPositionUtils = beans.cellPositionUtils;
+        this.rowPositionUtils = beans.rowPositionUtils;
+        this.columnModel = beans.columnModel;
+        this.rangeService = beans.rangeService;
+    }
 
     private gridBodyCtrl: GridBodyCtrl;
 
@@ -46,8 +58,7 @@ export class UndoRedoService extends BeanStub {
     private isPasting = false;
     private isRangeInAction = false;
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         if (!this.gos.get('undoRedoCellEditing')) {
             return;
         }
@@ -67,22 +78,25 @@ export class UndoRedoService extends BeanStub {
         this.addFillListeners();
         this.addCellKeyListeners();
 
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged);
-        // undo / redo is restricted to actual editing so we clear the stacks when other operations are
-        // performed that change the order of the row / cols.
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, (e) => {
-            if (!e.keepUndoRedoStack) {
-                this.clearStacks();
-            }
+        const listener = this.clearStacks.bind(this);
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_CELL_VALUE_CHANGED]: this.onCellValueChanged.bind(this),
+            // undo / redo is restricted to actual editing so we clear the stacks when other operations are
+            // performed that change the order of the row / cols.
+            [Events.EVENT_MODEL_UPDATED]: (e) => {
+                if (!e.keepUndoRedoStack) {
+                    this.clearStacks();
+                }
+            },
+            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: listener,
+            [Events.EVENT_NEW_COLUMNS_LOADED]: listener,
+            [Events.EVENT_COLUMN_GROUP_OPENED]: listener,
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: listener,
+            [Events.EVENT_COLUMN_MOVED]: listener,
+            [Events.EVENT_COLUMN_PINNED]: listener,
+            [Events.EVENT_COLUMN_VISIBLE]: listener,
+            [Events.EVENT_ROW_DRAG_END]: listener,
         });
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DRAG_END, this.clearStacks);
 
         this.ctrlsService.whenReady((p) => {
             this.gridBodyCtrl = p.gridBodyCtrl;
@@ -272,7 +286,7 @@ export class UndoRedoService extends BeanStub {
         const { rowIndex, columnId, rowPinned } = lastFocusedCell;
         const scrollFeature = this.gridBodyCtrl.getScrollFeature();
 
-        const column: Column | null = this.columnModel.getCol(columnId);
+        const column: AgColumn | null = this.columnModel.getCol(columnId);
 
         if (!column) {
             return;
