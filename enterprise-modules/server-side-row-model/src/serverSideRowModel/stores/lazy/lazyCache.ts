@@ -978,7 +978,6 @@ export class LazyCache extends BeanStub {
             parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
             level,
         });
-        return String(id);
     }
 
     public getOrderedNodeMap() {
