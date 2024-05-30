@@ -1,4 +1,4 @@
-import type { BeanName } from '@ag-grid-community/core';
+import type { NamedBean } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
 export type ChartTranslationKey = keyof typeof ChartTranslationService.DEFAULT_TRANSLATIONS;

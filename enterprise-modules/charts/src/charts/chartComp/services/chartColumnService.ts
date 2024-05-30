@@ -1,10 +1,10 @@
 import type {
     BeanCollection,
-    BeanName,
     Column,
     ColumnModel,
     ColumnNameService,
     FuncColsService,
+    NamedBean,
     RowNode,
     RowPositionUtils,
     ShowRowGroupColsService,

@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    BeanName,
     ChangedPath,
     Column,
     ColumnModel,
@@ -11,6 +10,7 @@ import type {
     InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
     KeyCreatorParams,
+    NamedBean,
     RowNodeTransaction,
     SelectableService,
     ShowRowGroupColsService,

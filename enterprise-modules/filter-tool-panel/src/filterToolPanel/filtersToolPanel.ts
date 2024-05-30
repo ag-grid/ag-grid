@@ -81,7 +81,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     }
 
     // lazy initialise the panel
-    public setVisible(visible: boolean): void {
+    public override setVisible(visible: boolean): void {
         super.setDisplayed(visible);
         if (visible && !this.initialised) {
             this.init(this.params);

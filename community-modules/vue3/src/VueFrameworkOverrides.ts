@@ -16,7 +16,7 @@ export class VueFrameworkOverrides extends VanillaFrameworkOverrides {
      * if a given component is within that context - this method provides this
      * Note: This is only really used/necessary with cellRendererSelectors
      */
-    public frameworkComponent(name: string, components?: any): any {
+    public override frameworkComponent(name: string, components?: any): any {
         let result = VueComponentFactory.searchForComponentInstance(this.parent, name, 10, true) ? name : null;
         if (!result && components && components[name]) {
             const indirectName = components[name];
@@ -27,7 +27,7 @@ export class VueFrameworkOverrides extends VanillaFrameworkOverrides {
         return result;
     }
 
-    public isFrameworkComponent(comp: any): boolean {
+    public override isFrameworkComponent(comp: any): boolean {
         return typeof comp === 'object';
     }
 }

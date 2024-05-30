@@ -20,7 +20,8 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     protected columnModel: ColumnModel;
     protected funcColsService: FuncColsService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;
     }
@@ -32,7 +33,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         super(horizontal);
     }
 
-    public init(params: PillDropZonePanelParams): void {
+    public override init(params: PillDropZonePanelParams): void {
         super.init(params);
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.refreshGui.bind(this));
@@ -52,7 +53,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         return type === DragSourceType.HeaderCell || type === DragSourceType.ToolPanel;
     }
 
-    protected minimumAllowedNewInsertIndex(): number {
+    protected override minimumAllowedNewInsertIndex(): number {
         const numberOfLockedCols = this.gos.get('groupLockGroupColumns');
         const numberOfGroupCols = this.funcColsService.getRowGroupColumns().length;
         if (numberOfLockedCols === -1) {
@@ -65,7 +66,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         return this.isRowGroupPanel() && !this.gos.get('suppressRowGroupHidesColumns') && !draggingEvent.fromNudge;
     }
 
-    protected handleDragEnterEnd(draggingEvent: DraggingEvent): void {
+    protected override handleDragEnterEnd(draggingEvent: DraggingEvent): void {
         const hideColumnOnExit = this.showOrHideColumnOnExit(draggingEvent);
 
         if (hideColumnOnExit) {
@@ -75,7 +76,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         }
     }
 
-    protected handleDragLeaveEnd(draggingEvent: DraggingEvent): void {
+    protected override handleDragLeaveEnd(draggingEvent: DraggingEvent): void {
         const showColumnOnExit = this.showOrHideColumnOnExit(draggingEvent);
 
         if (showColumnOnExit) {

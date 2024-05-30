@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    BeanName,
     ChangedPath,
     ColDef,
     Column,
@@ -8,6 +7,7 @@ import type {
     FuncColsService,
     GridOptions,
     IRowNodeStage,
+    NamedBean,
     PivotMaxColumnsExceededEvent,
     PivotResultColsService,
     RowNode,

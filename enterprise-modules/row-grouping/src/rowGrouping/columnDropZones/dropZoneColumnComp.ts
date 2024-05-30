@@ -32,7 +32,8 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     private funcColsService: FuncColsService;
     private aggFuncService?: IAggFuncService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
         this.popupService = beans.popupService;
         this.sortController = beans.sortController;
         this.columnModel = beans.columnModel;
@@ -123,11 +124,11 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         super.addAdditionalAriaInstructions(ariaInstructions, translate);
     }
 
-    protected isDraggable(): boolean {
+    protected override isDraggable(): boolean {
         return this.isReadOnly();
     }
 
-    protected isRemovable(): boolean {
+    protected override isRemovable(): boolean {
         return this.isReadOnly();
     }
 
@@ -196,7 +197,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         }
     }
 
-    protected getDefaultIconName(): string {
+    protected override getDefaultIconName(): string {
         return DragAndDropService.ICON_HIDE;
     }
 
@@ -212,7 +213,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         };
     }
 
-    protected setupComponents(): void {
+    protected override setupComponents(): void {
         super.setupComponents();
 
         if (this.isAggregationZone() && !this.gos.get('functionsReadOnly')) {
@@ -220,7 +221,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         }
     }
 
-    protected onKeyDown(e: KeyboardEvent): void {
+    protected override onKeyDown(e: KeyboardEvent): void {
         super.onKeyDown(e);
 
         const isEnter = e.key === KeyCode.ENTER;
@@ -230,7 +231,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         }
     }
 
-    protected getDisplayValue(): string {
+    protected override getDisplayValue(): string {
         const { name, aggFuncName } = this.getColumnAndAggFuncName();
         return this.isAggregationZone() ? `${aggFuncName}(${name})` : name;
     }

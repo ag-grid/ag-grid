@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    BeanName,
     Column,
     ColumnApplyStateService,
     ColumnEventType,
@@ -8,6 +7,7 @@ import type {
     ColumnState,
     IAggFunc,
     IAggFuncService,
+    NamedBean,
 } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 

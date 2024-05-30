@@ -1,7 +1,6 @@
 import type {
     BaseCreateChartParams,
     BeanCollection,
-    BeanName,
     CellRangeParams,
     ChartDownloadParams,
     ChartModel,
@@ -16,6 +15,7 @@ import type {
     IAggFunc,
     IChartService,
     IRangeService,
+    NamedBean,
     OpenChartToolPanelParams,
     PartialCellRange,
     SeriesChartType,

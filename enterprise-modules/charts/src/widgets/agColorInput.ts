@@ -5,7 +5,7 @@ import { _Util } from 'ag-charts-community';
 import type { ChartTranslationService } from '../charts/chartComp/services/chartTranslationService';
 
 export class AgColorInput extends AgInputTextField {
-    static readonly selector: AgComponentSelector = 'AG-COLOR-INPUT';
+    static override selector: AgComponentSelector = 'AG-COLOR-INPUT';
     private static TEMPLATE = /* html */ `
         <div role="presentation" class="ag-color-input">
             <div data-ref="eLabel" class="ag-input-field-label"></div>
@@ -32,7 +32,7 @@ export class AgColorInput extends AgInputTextField {
         this.eColor.style.backgroundColor = rgbaColor;
     }
 
-    public setValue(value?: string | null | undefined, silent?: boolean | undefined): this {
+    public override setValue(value?: string | null | undefined, silent?: boolean | undefined): this {
         const isValid = _Util.Color.validColorString(value ?? '');
         this.eInput.setCustomValidity(isValid ? '' : this.chartTranslationService.translate('invalidColor'));
         super.setValue(value, silent);

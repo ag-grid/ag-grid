@@ -4,8 +4,8 @@ import type { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniStackedArea } from './miniStackedArea';
 
 export class MiniNormalizedArea extends MiniStackedArea {
-    static chartType: ChartType = 'normalizedArea';
-    static readonly data = MiniStackedArea.data.map((stack) => {
+    static override chartType: ChartType = 'normalizedArea';
+    static override readonly data = MiniStackedArea.data.map((stack) => {
         const sum = stack.reduce((p, c) => p + c, 0);
         return stack.map((v) => (v / sum) * 16);
     });

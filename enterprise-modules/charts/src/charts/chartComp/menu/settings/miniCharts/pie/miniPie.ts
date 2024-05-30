@@ -4,7 +4,7 @@ import type { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniDonut } from './miniDonut';
 
 export class MiniPie extends MiniDonut {
-    static chartType: ChartType = 'pie';
+    static override chartType: ChartType = 'pie';
 
     constructor(
         container: HTMLElement,

@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    BeanName,
     ColDef,
     ColGroupDef,
     Column,
@@ -8,6 +7,7 @@ import type {
     ColumnNameService,
     FuncColsService,
     IPivotColDefService,
+    NamedBean,
 } from '@ag-grid-community/core';
 import { BeanStub, _cloneObject, _iterateObject } from '@ag-grid-community/core';
 

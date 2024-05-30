@@ -256,7 +256,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
         return this;
     }
 
-    public setDisabled(disabled: boolean): this {
+    public override setDisabled(disabled: boolean): this {
         super.setDisabled(disabled);
 
         this.eAngleValue.setDisabled(disabled);

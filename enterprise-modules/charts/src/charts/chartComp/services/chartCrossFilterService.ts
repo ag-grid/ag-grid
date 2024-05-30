@@ -1,10 +1,10 @@
 import type {
     BeanCollection,
-    BeanName,
     Column,
     ColumnModel,
     FilterManager,
     IClientSideRowModel,
+    NamedBean,
     RowNode,
     ValueService,
 } from '@ag-grid-community/core';

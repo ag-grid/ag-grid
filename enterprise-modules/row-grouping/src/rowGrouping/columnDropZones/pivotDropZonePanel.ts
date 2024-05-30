@@ -37,7 +37,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
         return label;
     }
 
-    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
+    public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         const res = super.getTooltipParams();
         res.location = 'pivotColumnsList';
         return res;

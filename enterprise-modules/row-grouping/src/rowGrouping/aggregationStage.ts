@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    BeanName,
     ChangedPath,
     Column,
     ColumnModel,
@@ -9,6 +8,7 @@ import type {
     IAggFunc,
     IAggFuncParams,
     IRowNodeStage,
+    NamedBean,
     PivotResultColsService,
     RowNode,
     StageExecuteParams,

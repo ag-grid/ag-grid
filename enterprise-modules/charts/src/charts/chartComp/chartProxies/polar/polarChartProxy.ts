@@ -41,7 +41,7 @@ export class PolarChartProxy extends ChartProxy<
         }));
     }
 
-    public getSeriesGroupType(): SeriesGroupType | undefined {
+    public override getSeriesGroupType(): SeriesGroupType | undefined {
         const standaloneChartType = this.standaloneChartType;
         if (!['nightingale', 'radial-bar', 'radial-column'].includes(standaloneChartType)) {
             return undefined;

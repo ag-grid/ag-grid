@@ -1,9 +1,9 @@
 import type {
     BeanCollection,
-    BeanName,
     FocusService,
     IAfterGuiAttachedParams,
     MenuItemDef,
+    NamedBean,
     PopupService,
 } from '@ag-grid-community/core';
 import { BeanStub, Component, RefPlaceholder, _createIconNoSpan } from '@ag-grid-community/core';

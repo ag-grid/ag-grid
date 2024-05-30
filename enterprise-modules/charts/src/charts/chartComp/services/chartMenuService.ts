@@ -1,10 +1,10 @@
 import type {
     BeanCollection,
-    BeanName,
     ChartToolPanelMenuOptions,
     ChartToolPanelName,
     ChartToolbarMenuItemOptions,
     GetChartToolbarItemsParams,
+    NamedBean,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import { BeanStub, _warnOnce } from '@ag-grid-community/core';

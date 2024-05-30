@@ -1,9 +1,9 @@
 import type {
     BeanCollection,
-    BeanName,
     ColumnModel,
     FilterManager,
     IRowNodeStage,
+    NamedBean,
     RowNode,
     StageExecuteParams,
 } from '@ag-grid-community/core';
