@@ -19,7 +19,6 @@ export class ChartSpecificDataPanel extends Component {
     private chartService: ChartService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.chartTranslationService = beans.chartTranslationService;
         this.chartService = beans.chartService;
     }

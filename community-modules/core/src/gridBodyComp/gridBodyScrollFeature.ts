@@ -1,5 +1,6 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
@@ -39,7 +40,6 @@ export class GridBodyScrollFeature extends BeanStub {
     private visibleColsService: VisibleColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.ctrlsService = beans.ctrlsService;
         this.animationFrameService = beans.animationFrameService;
         this.paginationProxy = beans.paginationProxy;

@@ -1,5 +1,6 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { ColumnSizeService, ISizeColumnsToFitParams } from '../columns/columnSizeService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
@@ -77,7 +78,6 @@ export class GridBodyCtrl extends BeanStub {
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.animationFrameService = beans.animationFrameService;
         this.rowContainerHeightService = beans.rowContainerHeightService;
         this.ctrlsService = beans.ctrlsService;

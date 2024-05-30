@@ -23,8 +23,7 @@ import {
 export abstract class PillDragComp<TItem> extends Component {
     private dragAndDropService: DragAndDropService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.dragAndDropService = beans.dragAndDropService;
     }
 

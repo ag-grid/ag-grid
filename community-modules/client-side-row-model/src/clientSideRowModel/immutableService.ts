@@ -1,9 +1,9 @@
 import type {
     BeanCollection,
-    BeanName,
     IImmutableService,
     IRowModel,
     ISelectionService,
+    NamedBean,
     RowDataTransaction,
     RowNode,
 } from '@ag-grid-community/core';
@@ -11,14 +11,13 @@ import { BeanStub, _exists, _iterateObject, _missing } from '@ag-grid-community/
 
 import type { ClientSideRowModel } from './clientSideRowModel';
 
-export class ImmutableService extends BeanStub implements IImmutableService {
-    beanName: BeanName = 'immutableService';
+export class ImmutableService extends BeanStub implements NamedBean, IImmutableService {
+    beanName = 'immutableService' as const;
 
     private rowModel: IRowModel;
     private selectionService: ISelectionService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.rowModel = beans.rowModel;
         this.selectionService = beans.selectionService;
     }

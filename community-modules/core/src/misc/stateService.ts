@@ -4,8 +4,9 @@ import type { ColumnGroupStateService } from '../columns/columnGroupStateService
 import type { ColumnModel } from '../columns/columnModel';
 import type { PivotResultColsService } from '../columns/pivotResultColsService';
 import type { VisibleColsService } from '../columns/visibleColsService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { Column } from '../entities/column';
 import { Events } from '../eventKeys';
@@ -53,8 +54,8 @@ import type { SortModelItem } from '../sortController';
 import { _debounce } from '../utils/function';
 import { _jsonEquals } from '../utils/generic';
 
-export class StateService extends BeanStub {
-    beanName: BeanName = 'stateService';
+export class StateService extends BeanStub implements NamedBean {
+    beanName = 'stateService' as const;
 
     private filterManager: FilterManager;
     private ctrlsService: CtrlsService;
@@ -74,7 +75,6 @@ export class StateService extends BeanStub {
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.filterManager = beans.filterManager;
         this.ctrlsService = beans.ctrlsService;
         this.pivotResultColsService = beans.pivotResultColsService;

@@ -1,4 +1,5 @@
 import { KeyCode } from '../constants/keyCode';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type {
@@ -70,8 +71,8 @@ const MONTH_KEYS: (keyof typeof MONTH_LOCALE_TEXT)[] = [
     'december',
 ];
 
-export class DataTypeService extends BeanStub {
-    beanName: BeanName = 'dataTypeService';
+export class DataTypeService extends BeanStub implements NamedBean {
+    beanName = 'dataTypeService' as const;
 
     private rowModel: IRowModel;
     private columnModel: ColumnModel;
@@ -80,7 +81,6 @@ export class DataTypeService extends BeanStub {
     private columnApplyStateService: ColumnApplyStateService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.rowModel = beans.rowModel;
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;

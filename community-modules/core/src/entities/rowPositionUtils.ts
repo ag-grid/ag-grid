@@ -1,3 +1,4 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -16,15 +17,14 @@ export interface RowPosition {
     rowPinned: RowPinnedType;
 }
 
-export class RowPositionUtils extends BeanStub {
-    beanName: BeanName = 'rowPositionUtils';
+export class RowPositionUtils extends BeanStub implements NamedBean {
+    beanName = 'rowPositionUtils' as const;
 
     private rowModel: IRowModel;
     private pinnedRowModel: PinnedRowModel;
     private paginationProxy: PaginationProxy;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.rowModel = beans.rowModel;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.paginationProxy = beans.paginationProxy;

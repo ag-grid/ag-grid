@@ -13,15 +13,14 @@ import { BeanStub } from '@ag-grid-community/core';
 
 import type { ColumnModelItem } from './columnModelItem';
 
-export class ModelItemUtils extends BeanStub {
-    beanName: BeanName = 'modelItemUtils';
+export class ModelItemUtils extends BeanStub implements NamedBean {
+    beanName = 'modelItemUtils' as const;
 
     private aggFuncService: IAggFuncService;
     private columnModel: ColumnModel;
     private columnApplyStateService: ColumnApplyStateService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.aggFuncService = beans.aggFuncService;
         this.columnModel = beans.columnModel;
         this.columnApplyStateService = beans.columnApplyStateService;

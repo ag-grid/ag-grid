@@ -1,3 +1,4 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import type { Column } from './column';
@@ -9,8 +10,8 @@ export interface CellPosition extends RowPosition {
     column: Column;
 }
 
-export class CellPositionUtils extends BeanStub {
-    beanName: BeanName = 'cellPositionUtils';
+export class CellPositionUtils extends BeanStub implements NamedBean {
+    beanName = 'cellPositionUtils' as const;
 
     public createId(cellPosition: CellPosition): string {
         const { rowIndex, rowPinned, column } = cellPosition;

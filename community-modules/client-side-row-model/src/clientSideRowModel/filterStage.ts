@@ -1,15 +1,14 @@
-import type { BeanCollection, BeanName, IRowNodeStage, StageExecuteParams } from '@ag-grid-community/core';
+import type { BeanCollection, IRowNodeStage, NamedBean, StageExecuteParams } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
 import type { FilterService } from './filterService';
 
-export class FilterStage extends BeanStub implements IRowNodeStage {
-    beanName: BeanName = 'filterStage';
+export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
+    beanName = 'filterStage' as const;
 
     private filterService: FilterService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.filterService = beans.filterService;
     }
 

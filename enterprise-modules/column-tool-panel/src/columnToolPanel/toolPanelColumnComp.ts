@@ -39,8 +39,7 @@ export class ToolPanelColumnComp extends Component {
     private dragAndDropService: DragAndDropService;
     private modelItemUtils: ModelItemUtils;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.dragAndDropService = beans.dragAndDropService;
         this.modelItemUtils = beans.modelItemUtils;

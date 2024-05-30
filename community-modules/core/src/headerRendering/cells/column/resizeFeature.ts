@@ -1,5 +1,6 @@
 import type { ColumnAutosizeService } from '../../../columns/columnAutosizeService';
 import type { ColumnSizeService } from '../../../columns/columnSizeService';
+import type { NamedBean } from '../../../context/bean';
 import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
@@ -18,8 +19,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private columnSizeService: ColumnSizeService;
     private columnAutosizeService: ColumnAutosizeService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.horizontalResizeService = beans.horizontalResizeService;
         this.pinnedWidthService = beans.pinnedWidthService;
         this.ctrlsService = beans.ctrlsService;

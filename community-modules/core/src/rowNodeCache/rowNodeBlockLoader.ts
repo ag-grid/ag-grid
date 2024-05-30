@@ -1,5 +1,6 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
 import type { Logger } from '../logger';
@@ -7,15 +8,14 @@ import { _removeFromArray } from '../utils/array';
 import { _debounce } from '../utils/function';
 import { RowNodeBlock } from './rowNodeBlock';
 
-export class RowNodeBlockLoader extends BeanStub {
-    beanName: BeanName = 'rowNodeBlockLoader';
+export class RowNodeBlockLoader extends BeanStub implements NamedBean {
+    beanName = 'rowNodeBlockLoader' as const;
 
     private rowModel: IRowModel;
 
     private logger: Logger;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.rowModel = beans.rowModel;
         this.logger = beans.loggerFactory.create('RowNodeBlockLoader');
     }

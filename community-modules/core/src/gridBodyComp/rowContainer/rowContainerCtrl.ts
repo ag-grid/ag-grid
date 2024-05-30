@@ -1,4 +1,5 @@
 import type { ColumnViewportService } from '../../columns/columnViewportService';
+import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
@@ -132,8 +133,7 @@ export class RowContainerCtrl extends BeanStub {
     private resizeObserverService: ResizeObserverService;
     private rowRenderer: RowRenderer;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.dragService = beans.dragService;
         this.ctrlsService = beans.ctrlsService;
         this.columnViewportService = beans.columnViewportService;

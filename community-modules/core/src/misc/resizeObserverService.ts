@@ -1,9 +1,9 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanName } from '../context/context';
 
 const DEBOUNCE_DELAY = 50;
-export class ResizeObserverService extends BeanStub {
-    beanName: BeanName = 'resizeObserverService';
+export class ResizeObserverService extends BeanStub implements NamedBean {
+    beanName = 'resizeObserverService' as const;
 
     private polyfillFunctions: (() => void)[] = [];
     private polyfillScheduled: boolean;

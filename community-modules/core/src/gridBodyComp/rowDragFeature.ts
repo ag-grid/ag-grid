@@ -1,6 +1,7 @@
 import { AutoScrollService } from '../autoScrollService';
 import type { FuncColsService } from '../columns/funcColsService';
 import { VerticalDirection } from '../constants/direction';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
@@ -55,7 +56,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.dragAndDropService = beans.dragAndDropService;
         this.rowModel = beans.rowModel;
         this.paginationProxy = beans.paginationProxy;

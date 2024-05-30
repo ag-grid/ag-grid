@@ -32,8 +32,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     private funcColsService: FuncColsService;
     private aggFuncService?: IAggFuncService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.popupService = beans.popupService;
         this.sortController = beans.sortController;
         this.columnModel = beans.columnModel;
@@ -102,7 +101,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         return this.column.getColDef().headerTooltip;
     }
 
-    protected addAdditionalAriaInstructions(
+    protected override addAdditionalAriaInstructions(
         ariaInstructions: string[],
         translate: (key: string, defaultValue: string) => string
     ): void {

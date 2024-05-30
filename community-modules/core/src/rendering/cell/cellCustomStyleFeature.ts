@@ -110,7 +110,7 @@ export class CellCustomStyleFeature extends BeanStub {
     }
 
     // overriding to make public, as we don't dispose this bean via context
-    public destroy() {
+    public override destroy() {
         super.destroy();
     }
 }

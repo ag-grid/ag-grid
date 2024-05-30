@@ -103,7 +103,6 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     protected rowModel: IRowModel;
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.rowModel = beans.rowModel;
     }
 
@@ -519,7 +518,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         return true;
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         const eGui = this.getGui();
 
         if (eGui) {

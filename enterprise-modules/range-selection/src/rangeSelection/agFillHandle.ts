@@ -69,7 +69,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         super(AgFillHandle.TEMPLATE);
     }
 
-    protected updateValuesOnMove(e: MouseEvent) {
+    protected override updateValuesOnMove(e: MouseEvent) {
         super.updateValuesOnMove(e);
 
         if (!this.initialXY) {
@@ -421,7 +421,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         };
     }
 
-    protected clearValues() {
+    protected override clearValues() {
         this.clearMarkedPath();
         this.clearCellValues();
 
@@ -666,7 +666,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         });
     }
 
-    public refresh(cellCtrl: CellCtrl) {
+    public override refresh(cellCtrl: CellCtrl) {
         const cellRange = this.rangeService.getCellRanges()[0];
         const isColumnRange = !cellRange.startRow || !cellRange.endRow;
 

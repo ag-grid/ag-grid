@@ -33,7 +33,6 @@ export class AgAutocomplete extends Component {
     private popupService: PopupService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.popupService = beans.popupService;
     }
 

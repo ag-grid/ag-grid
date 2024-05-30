@@ -1,5 +1,6 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { ColDef } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
@@ -10,15 +11,14 @@ import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColKey, ColumnModel } from './columnModel';
 
-export class ColumnMoveService extends BeanStub {
-    beanName: BeanName = 'columnMoveService';
+export class ColumnMoveService extends BeanStub implements NamedBean {
+    beanName = 'columnMoveService' as const;
 
     private columnModel: ColumnModel;
     private columnAnimationService: ColumnAnimationService;
     private eventDispatcher: ColumnEventDispatcher;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.columnAnimationService = beans.columnAnimationService;
         this.eventDispatcher = beans.columnEventDispatcher;

@@ -26,8 +26,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     private columnSizeService: ColumnSizeService;
     private columnAutosizeService: ColumnAutosizeService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.horizontalResizeService = beans.horizontalResizeService;
         this.autoWidthCalculator = beans.autoWidthCalculator;
         this.visibleColsService = beans.visibleColsService;

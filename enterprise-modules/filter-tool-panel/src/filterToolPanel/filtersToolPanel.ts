@@ -144,7 +144,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 }

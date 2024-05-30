@@ -1,4 +1,5 @@
 import type { VisibleColsService } from '../columns/visibleColsService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
@@ -32,8 +33,7 @@ export class GridCtrl extends BeanStub {
     private mouseEventService: MouseEventService;
     private dragAndDropService: DragAndDropService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
         this.resizeObserverService = beans.resizeObserverService;
         this.visibleColsService = beans.visibleColsService;

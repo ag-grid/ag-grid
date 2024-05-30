@@ -137,7 +137,7 @@ export class RowComp extends Component {
         this.getGui().appendChild(cellComp.getGui());
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
         this.destroyAllCells();
     }

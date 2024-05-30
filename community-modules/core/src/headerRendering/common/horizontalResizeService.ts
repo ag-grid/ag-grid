@@ -1,5 +1,6 @@
+import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection, BeanName } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
 
@@ -11,14 +12,13 @@ export interface HorizontalResizeParams {
     onResizeEnd: (delta: number) => void;
 }
 
-export class HorizontalResizeService extends BeanStub {
-    beanName: BeanName = 'horizontalResizeService';
+export class HorizontalResizeService extends BeanStub implements NamedBean {
+    beanName = 'horizontalResizeService' as const;
 
     private dragService: DragService;
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.dragService = beans.dragService;
         this.ctrlsService = beans.ctrlsService;
     }

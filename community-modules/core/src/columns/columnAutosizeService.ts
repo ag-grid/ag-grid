@@ -1,3 +1,4 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
@@ -12,8 +13,8 @@ import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColKey, ColumnModel, Maybe } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
 
-export class ColumnAutosizeService extends BeanStub {
-    beanName: BeanName = 'columnAutosizeService';
+export class ColumnAutosizeService extends BeanStub implements NamedBean {
+    beanName = 'columnAutosizeService' as const;
 
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
@@ -23,7 +24,6 @@ export class ColumnAutosizeService extends BeanStub {
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
         this.animationFrameService = beans.animationFrameService;

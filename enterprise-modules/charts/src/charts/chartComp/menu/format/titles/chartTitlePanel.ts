@@ -8,7 +8,6 @@ export class ChartTitlePanel extends TitlePanel {
     private chartMenuService: ChartMenuService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.chartMenuService = beans.chartMenuService;
     }
 

@@ -1,5 +1,6 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { Column } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
@@ -69,8 +70,8 @@ export interface IContextMenuParams extends ShowContextMenuParams {
     y?: number;
 }
 
-export class MenuService extends BeanStub {
-    beanName: BeanName = 'menuService';
+export class MenuService extends BeanStub implements NamedBean {
+    beanName = 'menuService' as const;
 
     private filterMenuFactory: IMenuFactory;
     private ctrlsService: CtrlsService;
@@ -82,7 +83,6 @@ export class MenuService extends BeanStub {
     private enterpriseMenuFactory?: IMenuFactory;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.filterMenuFactory = beans.filterMenuFactory;
         this.ctrlsService = beans.ctrlsService;
         this.animationFrameService = beans.animationFrameService;

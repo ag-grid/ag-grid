@@ -28,7 +28,6 @@ export class CsvCreator
     private gridSerializer: GridSerializer;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
         this.funcColsService = beans.funcColsService;

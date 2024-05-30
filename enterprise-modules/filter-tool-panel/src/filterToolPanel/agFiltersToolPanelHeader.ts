@@ -20,8 +20,7 @@ export enum EXPAND_STATE {
 export class AgFiltersToolPanelHeader extends Component {
     private columnModel: ColumnModel;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
     }
 

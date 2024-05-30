@@ -1,5 +1,6 @@
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import type { BeanCollection, BeanName } from './context/context';
+import type { BeanCollection } from './context/context';
 import { Events } from './eventKeys';
 import type { CssVariablesChanged } from './events';
 import type { WithoutGridCommon } from './interfaces/iCommon';
@@ -34,14 +35,13 @@ const CHART_MENU_PANEL_WIDTH: Variable = {
     // defaultValue: 260,
 };
 
-export class Environment extends BeanStub {
-    beanName: BeanName = 'environment';
+export class Environment extends BeanStub implements NamedBean {
+    beanName = 'environment' as const;
 
     private resizeObserverService: ResizeObserverService;
     private eGridDiv: HTMLElement;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.resizeObserverService = beans.resizeObserverService;
         this.eGridDiv = beans.eGridDiv;
     }

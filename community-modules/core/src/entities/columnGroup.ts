@@ -1,3 +1,4 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgEvent } from '../events';
 import type { HeaderColumnId, IHeaderColumn } from '../interfaces/iHeaderColumn';

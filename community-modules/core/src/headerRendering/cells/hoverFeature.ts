@@ -7,7 +7,6 @@ export class HoverFeature extends BeanStub {
     private columnHoverService: ColumnHoverService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnHoverService = beans.columnHoverService;
     }
 

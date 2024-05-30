@@ -10,16 +10,15 @@ import type {
 } from '@ag-grid-community/core';
 import { BeanStub, _includes } from '@ag-grid-community/core';
 
-export class ChartCrossFilterService extends BeanStub {
-    beanName: BeanName = 'chartCrossFilterService';
+export class ChartCrossFilterService extends BeanStub implements NamedBean {
+    beanName = 'chartCrossFilterService' as const;
 
     private columnModel: ColumnModel;
     private valueService: ValueService;
     private filterManager: FilterManager;
     private clientSideRowModel?: IClientSideRowModel;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.valueService = beans.valueService;
         this.filterManager = beans.filterManager;

@@ -20,8 +20,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     protected columnModel: ColumnModel;
     protected funcColsService: FuncColsService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;
     }

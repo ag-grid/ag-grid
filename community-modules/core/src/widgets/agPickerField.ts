@@ -27,7 +27,6 @@ export abstract class AgPickerField<
     protected popupService: PopupService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.popupService = beans.popupService;
     }
 
@@ -40,7 +39,7 @@ export abstract class AgPickerField<
     protected variableWidth: boolean;
     protected minPickerWidth: string | undefined;
     protected maxPickerWidth: string | undefined;
-    protected value: TValue;
+    protected override value: TValue;
 
     private skipClick: boolean = false;
     private pickerGap: number = 4;
@@ -332,7 +331,7 @@ export abstract class AgPickerField<
         return this;
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.eWrapper;
     }
 

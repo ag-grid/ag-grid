@@ -8,8 +8,8 @@ import type { ResizeObserverService } from '../misc/resizeObserverService';
 import { _getAriaPosInSet, _setAriaLabel, _setAriaPosInSet, _setAriaRole, _setAriaSetSize } from '../utils/aria';
 import { _stopPropagationForAgGrid } from '../utils/event';
 import { _waitUntil } from '../utils/function';
-import { RefPlaceholder } from './component';
 import type { Component } from './component';
+import { RefPlaceholder } from './component';
 import { TabGuardComp } from './tabGuardComp';
 
 export interface VirtualListModel {
@@ -31,7 +31,6 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.resizeObserverService = beans.resizeObserverService;
         this.animationFrameService = beans.animationFrameService;
         this.environment = beans.environment;
@@ -463,11 +462,11 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         this.model = model;
     }
 
-    public getAriaElement(): Element {
+    public override getAriaElement(): Element {
         return this.eContainer;
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         if (!this.isAlive()) {
             return;
         }

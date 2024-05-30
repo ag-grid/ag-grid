@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    BeanName,
     Column,
     ColumnModel,
     ColumnNameService,
@@ -10,6 +9,7 @@ import type {
     IRowModel,
     ISelectionService,
     IServerSideRowModel,
+    NamedBean,
     PinnedRowModel,
     ProcessGroupHeaderForExportParams,
     RowNode,
@@ -37,8 +37,8 @@ export enum RowType {
     BODY,
 }
 
-export class GridSerializer extends BeanStub {
-    beanName: BeanName = 'gridSerializer';
+export class GridSerializer extends BeanStub implements NamedBean {
+    beanName = 'gridSerializer' as const;
 
     private visibleColsService: VisibleColsService;
     private columnModel: ColumnModel;
@@ -50,7 +50,6 @@ export class GridSerializer extends BeanStub {
     private sortController: SortController;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.visibleColsService = beans.visibleColsService;
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;

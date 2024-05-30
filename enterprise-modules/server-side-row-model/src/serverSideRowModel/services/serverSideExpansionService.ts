@@ -1,8 +1,8 @@
 import type {
     BeanCollection,
-    BeanName,
     IExpansionService,
     IsServerSideGroupOpenByDefaultParams,
+    NamedBean,
     RowNode,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
@@ -10,8 +10,8 @@ import { Events, ExpansionService } from '@ag-grid-community/core';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 
-export class ServerSideExpansionService extends ExpansionService implements IExpansionService {
-    beanName: BeanName = 'expansionService';
+export class ServerSideExpansionService extends ExpansionService implements NamedBean, IExpansionService {
+    override beanName = 'expansionService' as const;
 
     private serverSideRowModel: ServerSideRowModel;
 
@@ -57,7 +57,7 @@ export class ServerSideExpansionService extends ExpansionService implements IExp
         }
     }
 
-    public expandRows(rowIds: string[]): void {
+    public override expandRows(rowIds: string[]): void {
         rowIds.forEach((rowId) => {
             const rowNode = this.serverSideRowModel.getRowNode(rowId);
             if (rowNode) {
@@ -68,11 +68,11 @@ export class ServerSideExpansionService extends ExpansionService implements IExp
         });
     }
 
-    public expandAll(value: boolean): void {
+    public override expandAll(value: boolean): void {
         this.serverSideRowModel.expandAll(value);
     }
 
-    public onGroupExpandedOrCollapsed(): void {
+    public override onGroupExpandedOrCollapsed(): void {
         // do nothing
     }
 }

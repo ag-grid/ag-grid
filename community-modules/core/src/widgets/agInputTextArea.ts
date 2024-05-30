@@ -9,7 +9,7 @@ export class AgInputTextArea extends AgAbstractInputField<HTMLTextAreaElement, s
         super(config, 'ag-text-area', null, 'textarea');
     }
 
-    public setValue(value: string, silent?: boolean): this {
+    public override setValue(value: string, silent?: boolean): this {
         const ret = super.setValue(value, silent);
 
         this.eInput.value = value;

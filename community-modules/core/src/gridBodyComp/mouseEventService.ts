@@ -1,3 +1,4 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
@@ -8,13 +9,12 @@ import { _getCtrlForEventTarget } from '../utils/event';
 import { _exists } from '../utils/generic';
 import { NumberSequence } from '../utils/numberSequence';
 
-export class MouseEventService extends BeanStub {
-    beanName: BeanName = 'mouseEventService';
+export class MouseEventService extends BeanStub implements NamedBean {
+    beanName = 'mouseEventService' as const;
 
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.ctrlsService = beans.ctrlsService;
     }
 

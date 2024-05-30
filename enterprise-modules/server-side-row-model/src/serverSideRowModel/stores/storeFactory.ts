@@ -1,10 +1,10 @@
 import type {
     BeanCollection,
-    BeanName,
     ColumnModel,
     FuncColsService,
     GetServerSideGroupLevelParamsParams,
     IServerSideStore,
+    NamedBean,
     RowNode,
     ServerSideGroupLevelParams,
     WithoutGridCommon,
@@ -15,14 +15,13 @@ import type { SSRMParams } from '../serverSideRowModel';
 import { FullStore } from './fullStore';
 import { LazyStore } from './lazy/lazyStore';
 
-export class StoreFactory extends BeanStub {
-    beanName: BeanName = 'ssrmStoreFactory';
+export class StoreFactory extends BeanStub implements NamedBean {
+    beanName = 'ssrmStoreFactory' as const;
 
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;
     }

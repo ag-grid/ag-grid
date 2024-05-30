@@ -1,3 +1,4 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
@@ -7,14 +8,13 @@ import type { ISelectionService } from '../interfaces/iSelectionService';
 import { SelectionService } from '../selectionService';
 import { ChangedPath } from '../utils/changedPath';
 
-export class SelectableService extends BeanStub {
-    beanName: BeanName = 'selectableService';
+export class SelectableService extends BeanStub implements NamedBean {
+    beanName = 'selectableService' as const;
 
     private rowModel: IRowModel;
     private selectionService: ISelectionService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.rowModel = beans.rowModel;
         this.selectionService = beans.selectionService;
     }

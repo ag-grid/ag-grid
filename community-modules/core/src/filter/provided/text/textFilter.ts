@@ -139,9 +139,10 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
                 return value != filterText;
             case TextFilter.STARTS_WITH:
                 return value.indexOf(filterText) === 0;
-            case TextFilter.ENDS_WITH:
+            case TextFilter.ENDS_WITH: {
                 const index = value.lastIndexOf(filterText);
                 return index >= 0 && index === value.length - filterText.length;
+            }
             default:
                 return false;
         }
@@ -167,11 +168,11 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         return trimmedInput === '' ? value : trimmedInput;
     }
 
-    protected getDefaultDebounceMs(): number {
+    protected override getDefaultDebounceMs(): number {
         return 500;
     }
 
-    protected setParams(params: TextFilterParams): void {
+    protected override setParams(params: TextFilterParams): void {
         this.textFilterParams = params;
 
         super.setParams(params);

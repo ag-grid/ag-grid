@@ -1,3 +1,4 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { Column } from '../entities/column';
@@ -6,14 +7,13 @@ import type { ColumnState } from './columnApplyStateService';
 import type { ColumnModel } from './columnModel';
 import type { FuncColsService } from './funcColsService';
 
-export class ColumnGetStateService extends BeanStub {
-    beanName: BeanName = 'columnGetStateService';
+export class ColumnGetStateService extends BeanStub implements NamedBean {
+    beanName = 'columnGetStateService' as const;
 
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;
     }

@@ -1,18 +1,18 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { ClientSideRowModelSteps } from '../interfaces/iClientSideRowModel';
 import type { IExpansionService } from '../interfaces/iExpansionService';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 
-export class ExpansionService extends BeanStub implements IExpansionService {
-    beanName: BeanName = 'expansionService';
+export class ExpansionService extends BeanStub implements NamedBean, IExpansionService {
+    beanName = 'expansionService' as const;
 
     private rowModel: IRowModel;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.rowModel = beans.rowModel;
     }
 

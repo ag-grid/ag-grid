@@ -1,7 +1,6 @@
 import type {
     AgEvent,
     BeanCollection,
-    BeanName,
     CellPosition,
     CellPositionUtils,
     Column,
@@ -13,6 +12,7 @@ import type {
     IContextMenuFactory,
     IRangeService,
     MenuItemDef,
+    NamedBean,
     PopupService,
     RowNode,
     WithoutGridCommon,
@@ -36,8 +36,8 @@ import type { MenuUtils } from './menuUtils';
 const CSS_MENU = 'ag-menu';
 const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
 
-export class ContextMenuFactory extends BeanStub implements IContextMenuFactory {
-    beanName: BeanName = 'contextMenuFactory';
+export class ContextMenuFactory extends BeanStub implements NamedBean, IContextMenuFactory {
+    beanName = 'contextMenuFactory' as const;
 
     private popupService: PopupService;
     private ctrlsService: CtrlsService;
@@ -46,7 +46,6 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.popupService = beans.popupService;
         this.ctrlsService = beans.ctrlsService;
         this.columnModel = beans.columnModel;
@@ -250,7 +249,6 @@ class ContextMenu extends Component {
     private cellPositionUtils: CellPositionUtils;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.focusService = beans.focusService;
         this.menuItemMapper = beans.menuItemMapper;
         this.cellPositionUtils = beans.cellPositionUtils;

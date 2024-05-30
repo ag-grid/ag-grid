@@ -1,8 +1,8 @@
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import type { BeanName } from './context/context';
 
-export class LoggerFactory extends BeanStub {
-    beanName: BeanName = 'loggerFactory';
+export class LoggerFactory extends BeanStub implements NamedBean {
+    beanName = 'loggerFactory' as const;
 
     public create(name: string) {
         return new Logger(name, this.isLogging.bind(this));

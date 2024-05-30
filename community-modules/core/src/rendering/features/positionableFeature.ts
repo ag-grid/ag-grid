@@ -1,3 +1,4 @@
+import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
@@ -63,7 +64,6 @@ export class PositionableFeature extends BeanStub {
     private dragService: DragService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.popupService = beans.popupService;
         this.resizeObserverService = beans.resizeObserverService;
         this.dragService = beans.dragService;

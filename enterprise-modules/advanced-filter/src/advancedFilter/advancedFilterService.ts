@@ -2,12 +2,12 @@ import type {
     AdvancedFilterEnabledChangedEvent,
     AdvancedFilterModel,
     BeanCollection,
-    BeanName,
     ColumnModel,
     DataTypeService,
     IAdvancedFilterService,
     IRowModel,
     IRowNode,
+    NamedBean,
     NewColumnsLoadedEvent,
     ValueService,
     WithoutGridCommon,
@@ -24,8 +24,8 @@ import type {
     FilterExpressionFunctionParams,
 } from './filterExpressionUtils';
 
-export class AdvancedFilterService extends BeanStub implements IAdvancedFilterService {
-    beanName: BeanName = 'advancedFilterService';
+export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvancedFilterService {
+    beanName = 'advancedFilterService' as const;
 
     private valueService: ValueService;
     private columnModel: ColumnModel;
@@ -34,7 +34,6 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.valueService = beans.valueService;
         this.columnModel = beans.columnModel;
         this.dataTypeService = beans.dataTypeService;

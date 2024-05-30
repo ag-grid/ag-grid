@@ -22,8 +22,7 @@ export interface AgAngleSelectParams extends AgLabelParams {
 export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     protected dragService: DragService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.dragService = beans.dragService;
     }
 

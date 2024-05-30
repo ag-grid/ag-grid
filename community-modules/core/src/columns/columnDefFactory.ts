@@ -1,3 +1,4 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
@@ -5,8 +6,8 @@ import type { Column } from '../entities/column';
 import type { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import { _deepCloneDefinition } from '../utils/object';
 
-export class ColumnDefFactory extends BeanStub {
-    beanName: BeanName = 'columnDefFactory';
+export class ColumnDefFactory extends BeanStub implements NamedBean {
+    beanName = 'columnDefFactory' as const;
 
     public buildColumnDefs(
         cols: Column[],

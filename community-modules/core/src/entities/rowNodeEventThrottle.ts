@@ -1,18 +1,18 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { RowGroupOpenedEvent } from '../events';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 
-export class RowNodeEventThrottle extends BeanStub {
-    beanName: BeanName = 'rowNodeEventThrottle';
+export class RowNodeEventThrottle extends BeanStub implements NamedBean {
+    beanName = 'rowNodeEventThrottle' as const;
 
     private animationFrameService: AnimationFrameService;
     private rowModel: IRowModel;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.animationFrameService = beans.animationFrameService;
         this.rowModel = beans.rowModel;
     }

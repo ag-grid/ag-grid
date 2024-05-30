@@ -23,8 +23,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     protected cellPositionUtils: CellPositionUtils;
     protected ctrlsService: CtrlsService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.dragService = beans.dragService;
         this.rangeService = beans.rangeService as RangeService;
         this.mouseEventService = beans.mouseEventService;

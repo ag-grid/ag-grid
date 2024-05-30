@@ -1,6 +1,6 @@
 import type {
     BeanCollection,
-    BeanName,
+    NamedBean,
     RowGroupOpenedEvent,
     StoreUpdatedEvent,
     WithoutGridCommon,
@@ -10,15 +10,14 @@ import { BeanStub, Events, RowNode, _exists, _missing } from '@ag-grid-community
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { StoreFactory } from '../stores/storeFactory';
 
-export class ExpandListener extends BeanStub {
-    beanName: BeanName = 'ssrmExpandListener';
+export class ExpandListener extends BeanStub implements NamedBean {
+    beanName = 'ssrmExpandListener' as const;
 
     private serverSideRowModel: ServerSideRowModel;
     private storeFactory: StoreFactory;
     private beans: BeanCollection;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.storeFactory = beans.ssrmStoreFactory;
         this.beans = beans;

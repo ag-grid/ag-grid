@@ -1,3 +1,4 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
@@ -9,8 +10,8 @@ import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnModel } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
 
-export class ColumnGroupStateService extends BeanStub {
-    beanName: BeanName = 'columnGroupStateService';
+export class ColumnGroupStateService extends BeanStub implements NamedBean {
+    beanName = 'columnGroupStateService' as const;
 
     private columnModel: ColumnModel;
     private columnAnimationService: ColumnAnimationService;
@@ -20,7 +21,6 @@ export class ColumnGroupStateService extends BeanStub {
     private logger: Logger;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.columnAnimationService = beans.columnAnimationService;
         this.eventDispatcher = beans.columnEventDispatcher;

@@ -47,8 +47,7 @@ export class AgMenuItemComponent extends BeanStub {
     private popupService: PopupService;
     private userComponentFactory: UserComponentFactory;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.popupService = beans.popupService;
         this.userComponentFactory = beans.userComponentFactory;
     }

@@ -99,7 +99,6 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
     private columnHoverService: ColumnHoverService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnHoverService = beans.columnHoverService;
     }
 
@@ -371,7 +370,7 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
     }
 
     /** Add an event listener to the column. */
-    public addEventListener(eventType: ColumnEventName, userListener: (...args: any[]) => any): void {
+    public override addEventListener(eventType: ColumnEventName, userListener: (...args: any[]) => any): void {
         if (this.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
             // Only construct if we need it, as it's an overhead for column construction
             this.columnEventService.setFrameworkOverrides(this.frameworkOverrides);
@@ -383,7 +382,7 @@ export class Column<TValue = any> extends BeanStub implements IHeaderColumn<TVal
     }
 
     /** Remove event listener from the column. */
-    public removeEventListener(eventType: ColumnEventName, userListener: (...args: any[]) => any): void {
+    public override removeEventListener(eventType: ColumnEventName, userListener: (...args: any[]) => any): void {
         const listener = this.frameworkEventListenerService?.unwrap(userListener as AgEventListener) ?? userListener;
         this.columnEventService.removeEventListener(eventType, listener as AgEventListener);
     }

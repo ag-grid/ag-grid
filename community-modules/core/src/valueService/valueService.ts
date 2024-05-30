@@ -1,7 +1,8 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { DataTypeService } from '../columns/dataTypeService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type {
     KeyCreatorParams,
     ValueFormatterParams,
@@ -20,8 +21,8 @@ import { _getValueUsingField } from '../utils/object';
 import type { ExpressionService } from './expressionService';
 import type { ValueCache } from './valueCache';
 
-export class ValueService extends BeanStub {
-    beanName: BeanName = 'valueService';
+export class ValueService extends BeanStub implements NamedBean {
+    beanName = 'valueService' as const;
 
     private expressionService: ExpressionService;
     private columnModel: ColumnModel;
@@ -29,7 +30,6 @@ export class ValueService extends BeanStub {
     private dataTypeService: DataTypeService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.expressionService = beans.expressionService;
         this.columnModel = beans.columnModel;
         this.valueCache = beans.valueCache;

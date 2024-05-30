@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import type { AgEvent, AgEventListener } from '../events';
+import type { AgEvent } from '../events';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import type { IProvidedColumn } from '../interfaces/iProvidedColumn';
 import type { ColGroupDef } from './colDef';

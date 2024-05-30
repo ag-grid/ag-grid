@@ -1,3 +1,4 @@
+import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection, BeanName } from '../../context/context';
 import type {
@@ -77,8 +78,8 @@ export interface UserCompDetails {
     newAgStackInstance: () => AgPromise<any>;
 }
 
-export class UserComponentFactory extends BeanStub {
-    beanName: BeanName = 'userComponentFactory';
+export class UserComponentFactory extends BeanStub implements NamedBean {
+    beanName = 'userComponentFactory' as const;
 
     private gridOptions: GridOptions;
     private agComponentUtils: AgComponentUtils;
@@ -87,7 +88,6 @@ export class UserComponentFactory extends BeanStub {
     private frameworkComponentWrapper?: FrameworkComponentWrapper;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.agComponentUtils = beans.agComponentUtils;
         this.componentMetadataProvider = beans.componentMetadataProvider;
         this.userComponentRegistry = beans.userComponentRegistry;

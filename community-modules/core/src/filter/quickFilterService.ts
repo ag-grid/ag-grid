@@ -1,5 +1,6 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { PivotResultColsService } from '../columns/pivotResultColsService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
@@ -10,8 +11,8 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import { _exists } from '../utils/generic';
 import type { ValueService } from '../valueService/valueService';
 
-export class QuickFilterService extends BeanStub {
-    beanName: BeanName = 'quickFilterService';
+export class QuickFilterService extends BeanStub implements NamedBean {
+    beanName = 'quickFilterService' as const;
 
     private valueService: ValueService;
     private columnModel: ColumnModel;
@@ -19,7 +20,6 @@ export class QuickFilterService extends BeanStub {
     private pivotResultColsService: PivotResultColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.valueService = beans.valueService;
         this.columnModel = beans.columnModel;
         this.rowModel = beans.rowModel;

@@ -33,8 +33,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     private filterManager: FilterManager;
     private userComponentFactory: UserComponentFactory;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.filterManager = beans.filterManager;
         this.userComponentFactory = beans.userComponentFactory;
     }
@@ -428,7 +427,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         this.executeFunctionIfExists('onNewRowsLoaded');
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         this.filters!.forEach((filter) => this.destroyBean(filter));
 
         this.filters!.length = 0;

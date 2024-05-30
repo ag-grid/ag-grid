@@ -1,3 +1,4 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
@@ -14,15 +15,14 @@ import { ColumnKeyCreator } from './columnKeyCreator';
 import type { DataTypeService } from './dataTypeService';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
-export class ColumnFactory extends BeanStub {
-    beanName: BeanName = 'columnFactory';
+export class ColumnFactory extends BeanStub implements NamedBean {
+    beanName = 'columnFactory' as const;
 
     private dataTypeService: DataTypeService;
 
     private logger: Logger;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.dataTypeService = beans.dataTypeService;
         this.logger = beans.loggerFactory.create('ColumnFactory');
     }

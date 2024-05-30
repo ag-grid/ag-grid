@@ -1,4 +1,5 @@
 import type { FuncColsService } from '../../columns/funcColsService';
+import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { DraggingEvent } from '../../dragAndDrop/dragAndDropService';
@@ -9,8 +10,7 @@ import type { DropListener } from './bodyDropTarget';
 export class BodyDropPivotTarget extends BeanStub implements DropListener {
     private funcColsService: FuncColsService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.funcColsService = beans.funcColsService;
     }
 

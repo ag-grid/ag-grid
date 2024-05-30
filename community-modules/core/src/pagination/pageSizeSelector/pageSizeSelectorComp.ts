@@ -15,7 +15,6 @@ export class PageSizeSelectorComp extends Component {
     private paginationProxy: PaginationProxy;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.paginationProxy = beans.paginationProxy;
     }
 
@@ -223,7 +222,7 @@ export class PageSizeSelectorComp extends Component {
         return true;
     }
 
-    public destroy() {
+    public override destroy() {
         this.toggleSelectDisplay(false);
         super.destroy();
     }

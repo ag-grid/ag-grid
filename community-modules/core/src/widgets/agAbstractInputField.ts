@@ -84,7 +84,7 @@ export abstract class AgAbstractInputField<
         return this;
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.eInput;
     }
 
@@ -108,7 +108,7 @@ export abstract class AgAbstractInputField<
         return this;
     }
 
-    public setDisabled(disabled: boolean): this {
+    public override setDisabled(disabled: boolean): this {
         _setDisabled(this.eInput, disabled);
 
         return super.setDisabled(disabled);

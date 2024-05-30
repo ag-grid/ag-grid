@@ -37,8 +37,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     private focusService: FocusService;
     private dragAndDropService: DragAndDropService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
         this.dragAndDropService = beans.dragAndDropService;
     }

@@ -14,15 +14,14 @@ import type { ChartMenuService } from '../services/chartMenuService';
 import type { ChartTranslationService } from '../services/chartTranslationService';
 import type { ChartMenuContext } from './chartMenuContext';
 
-export class ChartMenuListFactory extends BeanStub {
-    beanName: BeanName = 'chartMenuListFactory';
+export class ChartMenuListFactory extends BeanStub implements NamedBean {
+    beanName = 'chartMenuListFactory' as const;
 
     private popupService: PopupService;
     private chartMenuService: ChartMenuService;
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.popupService = beans.popupService;
         this.chartMenuService = beans.chartMenuService;
         this.chartTranslationService = beans.chartTranslationService;
@@ -224,7 +223,6 @@ class ChartMenuList extends Component {
     private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
         this.focusService = beans.focusService;
     }
 

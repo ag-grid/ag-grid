@@ -1,4 +1,5 @@
 import { HorizontalDirection, VerticalDirection } from '../constants/direction';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { IAggFunc } from '../entities/colDef';
@@ -145,15 +146,14 @@ export interface DraggingEvent<TData = any, TContext = any> extends AgGridCommon
     dropZoneTarget: HTMLElement;
 }
 
-export class DragAndDropService extends BeanStub {
-    beanName: BeanName = 'dragAndDropService';
+export class DragAndDropService extends BeanStub implements NamedBean {
+    beanName = 'dragAndDropService' as const;
 
     private dragService: DragService;
     private mouseEventService: MouseEventService;
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.dragService = beans.dragService;
         this.mouseEventService = beans.mouseEventService;
         this.environment = beans.environment;

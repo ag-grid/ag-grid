@@ -1,5 +1,6 @@
 import type { VisibleColsService } from '../../columns/visibleColsService';
 import { KeyCode } from '../../constants/keyCode';
+import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
@@ -42,8 +43,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private rangeService?: IRangeService;
     private clipboardService?: IClipboardService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.mouseEventService = beans.mouseEventService;
         this.valueService = beans.valueService;
         this.menuService = beans.menuService;

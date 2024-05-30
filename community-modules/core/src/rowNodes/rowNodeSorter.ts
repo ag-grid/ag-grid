@@ -1,7 +1,8 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { ShowRowGroupColsService } from '../columns/showRowGroupColsService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { Column } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';
 import { _defaultComparator } from '../utils/generic';
@@ -19,15 +20,14 @@ export interface SortedRowNode {
 
 // this logic is used by both SSRM and CSRM
 
-export class RowNodeSorter extends BeanStub {
-    beanName: BeanName = 'rowNodeSorter';
+export class RowNodeSorter extends BeanStub implements NamedBean {
+    beanName = 'rowNodeSorter' as const;
 
     private valueService: ValueService;
     private columnModel: ColumnModel;
     private showRowGroupColsService: ShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.valueService = beans.valueService;
         this.columnModel = beans.columnModel;
         this.showRowGroupColsService = beans.showRowGroupColsService;
