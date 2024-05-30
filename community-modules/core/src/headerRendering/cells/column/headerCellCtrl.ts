@@ -8,6 +8,7 @@ import { DragAndDropService, DragSourceType } from '../../../dragAndDrop/dragAnd
 import { AgColumn } from '../../../entities/agColumn';
 import type { SortDirection } from '../../../entities/colDef';
 import { Events } from '../../../eventKeys';
+import type { EventsType } from '../../../eventKeys';
 import type { ColumnHeaderMouseLeaveEvent, ColumnHeaderMouseOverEvent } from '../../../events';
 import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
@@ -107,26 +108,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             this.refresh.bind(this)
         );
         this.addManagedListener(this.column, AgColumn.EVENT_COL_DEF_CHANGED, this.refresh.bind(this));
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_COLUMN_VALUE_CHANGED,
-            this.onColumnValueChanged.bind(this)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
-            this.onColumnRowGroupChanged.bind(this)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_COLUMN_PIVOT_CHANGED,
-            this.onColumnPivotChanged.bind(this)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_HEADER_HEIGHT_CHANGED,
-            this.onHeaderHeightChanged.bind(this)
-        );
+
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_COLUMN_VALUE_CHANGED]: this.onColumnValueChanged.bind(this),
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: this.onColumnRowGroupChanged.bind(this),
+            [Events.EVENT_COLUMN_PIVOT_CHANGED]: this.onColumnPivotChanged.bind(this),
+            [Events.EVENT_HEADER_HEIGHT_CHANGED]: this.onHeaderHeightChanged.bind(this),
+        });
     }
 
     protected resizeHeader(delta: number, shiftKey: boolean): void {

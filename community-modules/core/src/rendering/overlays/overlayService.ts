@@ -5,6 +5,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { GridOptions } from '../../entities/gridOptions';
 import { Events } from '../../eventKeys';
+import type { EventsType } from '../../eventKeys';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { PaginationProxy } from '../../pagination/paginationProxy';
 import type { ILoadingOverlayParams } from './loadingOverlayComponent';
@@ -28,8 +29,10 @@ export class OverlayService extends BeanStub implements NamedBean {
     private manuallyDisplayed: boolean = false;
 
     public postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, () => this.onRowDataUpdated());
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onNewColumnsLoaded());
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_ROW_DATA_UPDATED]: () => this.onRowDataUpdated(),
+            [Events.EVENT_NEW_COLUMNS_LOADED]: () => this.onNewColumnsLoaded(),
+        });
     }
 
     public registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void {

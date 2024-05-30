@@ -95,6 +95,18 @@ export abstract class BeanStub implements BaseBean<BeanCollection>, Bean, IEvent
         }
     }
 
+    public addManagedListeners<TEvent extends string>(
+        object: Window | HTMLElement | IEventEmitter,
+        handlers: Partial<Record<TEvent, (event?: any) => void>>
+    ): void {
+        for (const k in handlers) {
+            const handler = handlers[k];
+            if (handler) {
+                this.addManagedListener(object, k, handler);
+            }
+        }
+    }
+
     public addManagedListener(
         object: Window | HTMLElement | IEventEmitter,
         event: string,

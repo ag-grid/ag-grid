@@ -9,6 +9,7 @@ import type { CellPosition } from '../entities/cellPositionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { RowPosition } from '../entities/rowPositionUtils';
 import type { Environment } from '../environment';
+import type { EventsType } from '../eventKeys';
 import type {
     AgEventListener,
     BodyScrollEvent,
@@ -157,19 +158,13 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private initialise(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_PINNED_ROW_DATA_CHANGED,
-            this.onPinnedRowDataChanged.bind(this)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
-            this.onDisplayedColumnsChanged.bind(this)
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.onBodyScroll.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redraw.bind(this));
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_PAGINATION_CHANGED]: this.onPageLoaded.bind(this),
+            [Events.EVENT_PINNED_ROW_DATA_CHANGED]: this.onPinnedRowDataChanged.bind(this),
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+            [Events.EVENT_BODY_SCROLL]: this.onBodyScroll.bind(this),
+            [Events.EVENT_BODY_HEIGHT_CHANGED]: this.redraw.bind(this),
+        });
 
         this.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], () => this.onDomLayoutChanged());
         this.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction', 'rowBuffer'], () => this.redraw());
@@ -267,35 +262,30 @@ export class RowRenderer extends BeanStub implements NamedBean {
     // registering and de-registering for events is a performance bottleneck. so we register here once and inform
     // all active cells.
     private registerCellEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, (event: CellFocusedEvent) => {
-            this.onCellFocusChanged(event);
-        });
-
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUS_CLEARED, () => {
-            this.onCellFocusChanged();
-        });
-
-        this.addManagedListener(this.eventService, Events.EVENT_FLASH_CELLS, (event) => {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onFlashCells(event));
-        });
-
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, () => {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onColumnHover());
-        });
-
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onDisplayedColumnsChanged());
-        });
-
-        // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,
-        // then changing the width of the containers will impact left position. eg the center cols all have their
-        // left position adjusted by the width of the left pinned column, so if the pinned left column width changes,
-        // all the center cols need to be shifted to accommodate this. when in normal layout, the pinned cols are
-        // in different containers so doesn't impact.
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => {
-            if (this.printLayout) {
-                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onLeftChanged());
-            }
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_CELL_FOCUSED]: (event: CellFocusedEvent) => {
+                this.onCellFocusChanged(event);
+            },
+            [Events.EVENT_CELL_FOCUS_CLEARED]: this.onCellFocusChanged.bind(this),
+            [Events.EVENT_FLASH_CELLS]: (event) => {
+                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onFlashCells(event));
+            },
+            [Events.EVENT_COLUMN_HOVER_CHANGED]: () => {
+                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onColumnHover());
+            },
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: () => {
+                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onDisplayedColumnsChanged());
+            },
+            [Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED]: () => {
+                // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,
+                // then changing the width of the containers will impact left position. eg the center cols all have their
+                // left position adjusted by the width of the left pinned column, so if the pinned left column width changes,
+                // all the center cols need to be shifted to accommodate this. when in normal layout, the pinned cols are
+                // in different containers so doesn't impact.
+                if (this.printLayout) {
+                    this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onLeftChanged());
+                }
+            },
         });
 
         this.setupRangeSelectionListeners();
