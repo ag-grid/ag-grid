@@ -47,9 +47,7 @@ import type { HeaderNavigationService } from '../headerRendering/common/headerNa
 import type { HeaderPositionUtils } from '../headerRendering/common/headerPosition';
 import type { HorizontalResizeService } from '../headerRendering/common/horizontalResizeService';
 import type { IRangeService, ISelectionHandleFactory } from '../interfaces/IRangeService';
-import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IClipboardService } from '../interfaces/iClipboardService';
-import type { IColumnChooserFactory } from '../interfaces/iColumnChooserFactory';
 import type { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
 import type { IExcelCreator } from '../interfaces/iExcelCreator';
@@ -162,7 +160,6 @@ export interface CoreBeanCollection {
     quickFilterService: QuickFilterService;
     showRowGroupColsService: ShowRowGroupColsService;
     headerPositionUtils: HeaderPositionUtils;
-    advancedFilterService: IAdvancedFilterService;
     dataTypeService: DataTypeService;
     globalEventListener: AgGlobalEventListener;
     globalSyncEventListener: AgGlobalEventListener;
