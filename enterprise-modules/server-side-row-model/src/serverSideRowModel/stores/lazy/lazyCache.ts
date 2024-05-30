@@ -88,7 +88,7 @@ export class LazyCache extends BeanStub {
     /**
      * Grid options properties - stored locally for access speed.
      */
-    private getRowIdFunc?: (params: WithoutGridCommon<GetRowIdParams<any, any>>) => string;
+    private getRowIdFunc?: (params: WithoutGridCommon<GetRowIdParams>) => string;
     private isMasterDetail: boolean;
 
     /**
@@ -630,7 +630,7 @@ export class LazyCache extends BeanStub {
         const firstRow = this.rowRenderer.getFirstVirtualRenderedRow();
         const lastRow = this.rowRenderer.getLastVirtualRenderedRow();
         const firstRowBlockStart = this.getBlockStartIndex(firstRow);
-        const [_, lastRowBlockEnd] = this.getBlockBounds(lastRow);
+        const [, lastRowBlockEnd] = this.getBlockBounds(lastRow);
 
         this.nodeMap.forEach((lazyNode) => {
             // failed loads are still useful, so we don't purge them
@@ -969,7 +969,7 @@ export class LazyCache extends BeanStub {
         this.store.fireStoreUpdatedEvent();
     }
 
-    private getRowId(data: any) {
+    private getRowId(data: any): string | null {
         if (this.getRowIdFunc == null) {
             return null;
         }
@@ -977,7 +977,7 @@ export class LazyCache extends BeanStub {
         // find rowNode using id
         const { level } = this.store.getRowDetails();
         const parentKeys = this.store.getParentNode().getGroupKeys();
-        const id: string = this.getRowIdFunc({
+        return this.getRowIdFunc({
             data,
             parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
             level,
@@ -1031,7 +1031,7 @@ export class LazyCache extends BeanStub {
 
         const updatedNodes: RowNode[] = [];
         updates.forEach((data) => {
-            const id: string = this.getRowId(data)!;
+            const id = this.getRowId(data);
             const lazyNode = this.nodeMap.getBy('id', id);
             if (lazyNode) {
                 this.blockUtils.updateDataIntoRowNode(lazyNode.node, data);
