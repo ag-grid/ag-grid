@@ -76,6 +76,10 @@ export class RichSelectRow<TValue> extends Component {
         }
     }
 
+    public updateSelected(selected: boolean): void {
+        this.addOrRemoveCssClass('ag-rich-select-row-selected', selected);
+    }
+
     public updateHighlighted(highlighted: boolean): void {
         const eGui = this.getGui();
         const parentId = `ag-rich-select-row-${this.getCompId()}`;
@@ -89,7 +93,7 @@ export class RichSelectRow<TValue> extends Component {
         }
 
         _setAriaSelected(eGui.parentElement!, highlighted);
-        this.addOrRemoveCssClass('ag-rich-select-row-selected', highlighted);
+        this.addOrRemoveCssClass('ag-rich-select-row-highlighted', highlighted);
     }
 
     private populateWithoutRenderer(value: any, valueFormatted: any) {

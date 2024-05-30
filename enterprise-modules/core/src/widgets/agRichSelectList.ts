@@ -12,7 +12,7 @@ export class AgRichSelectList<TValue> extends VirtualList {
     private eLoading: HTMLElement | undefined;
     private lastRowHovered: number = -1;
     private currentList: TValue[] | undefined;
-    private highlightedItems: number[] = [];
+    private selectedItems: Set<number> = new Set<number>();
 
     constructor(
         private readonly params: RichSelectParams,
@@ -60,16 +60,6 @@ export class AgRichSelectList<TValue> extends VirtualList {
         });
     }
 
-    public highlightIndex(index: number): void {
-        this.forEachRenderedRow((cmp: RichSelectRow<TValue>, idx: number) => {
-            let highlighted = false;
-            if (index !== -1) {
-                highlighted = this.highlightedItems.some((currentIdx) => currentIdx === idx);
-            }
-            cmp.updateHighlighted(highlighted);
-        });
-    }
-
     public override navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): number | null {
         const newIndex = super.navigateToPage(key, this.lastRowHovered);
 
@@ -78,14 +68,14 @@ export class AgRichSelectList<TValue> extends VirtualList {
                 if (!this.isAlive()) {
                     return null;
                 }
-                this.highlightSelectedValue(newIndex);
+                this.highlightIndex(newIndex);
             });
         }
 
         return newIndex;
     }
 
-    public highlightValue(value?: TValue): void {
+    public selectValue(value?: TValue[] | TValue): void {
         if (!this.currentList) {
             if (this.eLoading) {
                 this.appendChild(this.eLoading);
@@ -97,18 +87,21 @@ export class AgRichSelectList<TValue> extends VirtualList {
             this.eLoading.parentElement?.removeChild(this.eLoading);
         }
 
-        const currentValueIndex = this.getValueIndex(value);
+        const selectedPositions = this.getIndicesForValues(value);
+        const len = selectedPositions.length;
 
-        if (currentValueIndex !== -1) {
+        if (len === 0) {
+            return;
+        }
+
+        if (len === 1) {
             // make sure the virtual list has been sized correctly
             this.refresh();
-            this.ensureIndexVisible(currentValueIndex);
+            this.ensureIndexVisible(selectedPositions[0]);
             // this second call to refresh is necessary to force scrolled elements
             // to be rendered with the correct index info.
             this.refresh(true);
-            this.highlightSelectedValue(currentValueIndex);
-        } else {
-            this.refresh();
+            this.selectListItem(selectedPositions[0]);
         }
     }
 
@@ -126,17 +119,49 @@ export class AgRichSelectList<TValue> extends VirtualList {
         });
     }
 
-    public selectListItem(index: number, preventUnnecessaryScroll?: boolean): void {
-        if (!this.currentList || index < 0 || index >= this.currentList.length) {
+    public selectListItem(index: number): void {
+        if (this.selectedItems.has(index)) {
+            return;
+        }
+        this.selectedItems.add(index);
+        this.refreshSelectedItems();
+    }
+
+    private deselectListItem(index: number): void {
+        if (!this.selectedItems.has(index)) {
+            return;
+        }
+        this.selectedItems.delete(index);
+        this.refreshSelectedItems();
+    }
+
+    private refreshSelectedItems(): void {
+        this.forEachRenderedRow((cmp: RichSelectRow<TValue>, idx: number) => {
+            const selected = this.selectedItems.has(idx);
+            cmp.updateSelected(selected);
+        });
+    }
+
+    public highlightIndex(index: number, preventUnnecessaryScroll?: boolean): void {
+        if (!this.currentList) {
             return;
         }
 
-        const wasScrolled = this.ensureIndexVisible(index, !preventUnnecessaryScroll);
+        if (index < 0 || index >= this.currentList.length) {
+            this.lastRowHovered = -1;
+        } else {
+            this.lastRowHovered = index;
 
-        if (wasScrolled && !preventUnnecessaryScroll) {
-            this.refresh(true);
+            const wasScrolled = this.ensureIndexVisible(index, !preventUnnecessaryScroll);
+
+            if (wasScrolled && !preventUnnecessaryScroll) {
+                this.refresh(true);
+            }
         }
-        this.highlightSelectedValue(index);
+
+        this.forEachRenderedRow((cmp: RichSelectRow<TValue>, idx: number) => {
+            cmp.updateHighlighted(index === idx);
+        });
     }
 
     private createLoadingElement(): void {
@@ -195,28 +220,31 @@ export class AgRichSelectList<TValue> extends VirtualList {
         parent?.dispatchEvent(event);
     }
 
-    private highlightSelectedValue(index?: number, value?: TValue): void {
-        if (index == null) {
-            index = this.getValueIndex(value);
-        }
-
-        this.lastRowHovered = index;
-    }
-
-    private getValueIndex(value?: TValue): number {
+    private getIndicesForValues(values?: TValue[] | TValue): number[] {
         const { currentList } = this;
 
-        if (value == null || !currentList) {
-            return -1;
+        if (!currentList || currentList.length === 0 || values == null) {
+            return [];
         }
 
-        for (let i = 0; i < currentList.length; i++) {
-            if (currentList[i] === value) {
-                return i;
+        if (!Array.isArray(values)) {
+            values = [values] as TValue[];
+        }
+
+        if (values.length === 0) {
+            return [];
+        }
+
+        const positions: number[] = [];
+
+        for (let i = 0; i < values.length; i++) {
+            const idx = currentList.indexOf(values[i]);
+            if (idx >= 0) {
+                positions.push(idx);
             }
         }
 
-        return -1;
+        return positions;
     }
 
     public override destroy(): void {

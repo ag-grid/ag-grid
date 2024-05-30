@@ -54,7 +54,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private listComponent: AgRichSelectList<TValue> | undefined;
     protected values: TValue[];
 
-    private cellRowHeight: number;
     private highlightedItem: number = -1;
     private searchStringCreator: ((values: TValue[]) => string[]) | null = null;
     private readonly eInput: AgInputTextField = RefPlaceholder;
@@ -75,11 +74,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             maxPickerHeight: config?.maxPickerHeight ?? 'calc(var(--ag-row-height) * 6.5)',
         });
 
-        const { cellRowHeight, value, valueList, searchStringCreator } = config || {};
-
-        if (cellRowHeight != null) {
-            this.cellRowHeight = cellRowHeight;
-        }
+        const { value, valueList, searchStringCreator } = config || {};
 
         if (value !== undefined) {
             this.value = value;
@@ -102,7 +97,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (allowTyping) {
             this.eInput.setAutoComplete(false).setInputPlaceholder(placeholder);
-
             this.eDisplayField.classList.add('ag-hidden');
         } else {
             this.eInput.setDisplayed(false);
@@ -216,7 +210,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             if (!this.values) {
                 this.values = valueList;
                 if (this.isPickerDisplayed) {
-                    this.listComponent.highlightValue();
+                    this.listComponent.selectValue(this.value);
                 }
             } else {
                 this.listComponent.refresh(true);
@@ -226,7 +220,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     public override showPicker() {
         super.showPicker();
-        this.listComponent?.highlightValue();
+        this.listComponent?.selectValue(this.value);
         this.displayOrHidePicker();
     }
 
@@ -365,7 +359,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (suggestions.length) {
             const topSuggestionIndex = shouldFilter ? 0 : searchStrings.indexOf(suggestions[0]);
-            this.listComponent?.selectListItem(topSuggestionIndex);
+            this.listComponent?.highlightIndex(topSuggestionIndex);
         } else {
             this.listComponent?.highlightIndex(-1);
 
