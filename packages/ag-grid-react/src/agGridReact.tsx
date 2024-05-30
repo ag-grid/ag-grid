@@ -19,11 +19,11 @@ export class AgGridReact<TData = any> extends Component<AgGridReactProps<TData> 
         this.apiListeners.forEach((listener) => listener(api));
     };
 
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this.apiListeners.length = 0;
     }
 
-    render() {
+    override render() {
         return <AgGridReactUi<TData> {...this.props} setGridApi={this.setGridApi} />;
     }
 }
