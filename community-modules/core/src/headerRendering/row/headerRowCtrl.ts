@@ -3,6 +3,7 @@ import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import { Events } from '../../eventKeys';
+import type { EventsType } from '../../eventKeys';
 import type { VirtualColumnsChangedEvent } from '../../events';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ColumnPinnedType, HeaderColumnId } from '../../interfaces/iColumn';
@@ -93,32 +94,15 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private addEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
-            this.onDisplayedColumnsChanged.bind(this)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_VIRTUAL_COLUMNS_CHANGED,
-            (params: VirtualColumnsChangedEvent) => this.onVirtualColumnsChanged(params.afterScroll)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED,
-            this.onRowHeightChanged.bind(this)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_GRID_STYLES_CHANGED,
-            this.onRowHeightChanged.bind(this)
-        );
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
-            this.onRowHeightChanged.bind(this)
-        );
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_COLUMN_RESIZED]: this.onColumnResized.bind(this),
+            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+            [Events.EVENT_VIRTUAL_COLUMNS_CHANGED]: (params: VirtualColumnsChangedEvent) =>
+                this.onVirtualColumnsChanged(params.afterScroll),
+            [Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED]: this.onRowHeightChanged.bind(this),
+            [Events.EVENT_GRID_STYLES_CHANGED]: this.onRowHeightChanged.bind(this),
+            [Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED]: this.onRowHeightChanged.bind(this),
+        });
 
         // when print layout changes, it changes what columns are in what section
         this.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));

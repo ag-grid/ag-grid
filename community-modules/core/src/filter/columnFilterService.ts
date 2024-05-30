@@ -7,7 +7,7 @@ import type { BeanCollection, BeanName } from '../context/context';
 import { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import { Events } from '../eventKeys';
+import { Events, type EventsType } from '../eventKeys';
 import type {
     ColumnEventType,
     FilterChangedEvent,
@@ -69,14 +69,11 @@ export class ColumnFilterService extends BeanStub {
     private initialFilterModel: FilterModel;
 
     public postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, () =>
-            this.onNewRowsLoaded('rowDataUpdated')
-        );
-
-        this.addManagedListener(this.eventService, Events.EVENT_DATA_TYPES_INFERRED, () =>
-            this.processFilterModelUpdateQueue()
-        );
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_GRID_COLUMNS_CHANGED]: this.onColumnsChanged.bind(this),
+            [Events.EVENT_ROW_DATA_UPDATED]: () => this.onNewRowsLoaded('rowDataUpdated'),
+            [Events.EVENT_DATA_TYPES_INFERRED]: this.processFilterModelUpdateQueue.bind(this),
+        });
 
         this.initialFilterModel = {
             ...(this.gos.get('initialState')?.filter?.filterModel ?? {}),

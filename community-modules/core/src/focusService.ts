@@ -9,6 +9,7 @@ import type { AgColumnGroup } from './entities/agColumnGroup';
 import type { CellPosition, CellPositionUtils } from './entities/cellPositionUtils';
 import type { RowNode } from './entities/rowNode';
 import type { RowPositionUtils } from './entities/rowPositionUtils';
+import type { EventsType } from './eventKeys';
 import type { CellFocusClearedEvent, CellFocusedEvent, CellFocusedParams, CommonCellFocusParams } from './events';
 import { Events } from './events';
 import type { FilterManager } from './filter/filterManager';
@@ -115,14 +116,13 @@ export class FocusService extends BeanStub implements NamedBean {
     public postConstruct(): void {
         const clearFocusedCellListener = this.clearFocusedCell.bind(this);
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener);
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_NEW_COLUMNS_LOADED,
-            this.onColumnEverythingChanged.bind(this)
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
+        this.addManagedListeners<EventsType>(this.eventService, {
+            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: clearFocusedCellListener,
+            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onColumnEverythingChanged.bind(this),
+            [Events.EVENT_COLUMN_GROUP_OPENED]: clearFocusedCellListener,
+            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: clearFocusedCellListener,
+        });
+
         this.registerKeyboardFocusEvents();
 
         this.ctrlsService.whenReady((p) => {
