@@ -1,6 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged, PinnedRowDataChangedEvent } from '../events';
 import { Events } from '../events';

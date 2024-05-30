@@ -2,7 +2,7 @@ import type { ColumnModel } from '../columns/columnModel';
 import type { PivotResultColsService } from '../columns/pivotResultColsService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import type { RowNode } from '../entities/rowNode';

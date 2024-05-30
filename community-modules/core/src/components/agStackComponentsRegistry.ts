@@ -1,6 +1,5 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanName } from '../context/context';
 import { _warnOnce } from '../utils/function';
 import type { AgComponentSelector, ComponentClass } from '../widgets/component';
 

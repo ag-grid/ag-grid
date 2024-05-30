@@ -1,7 +1,7 @@
 import { KeyCode } from '../../../constants/keyCode';
 import type { NamedBean } from '../../../context/bean';
 import { BeanStub } from '../../../context/beanStub';
-import type { BeanCollection, BeanName } from '../../../context/context';
+import type { BeanCollection } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
 import type { Column } from '../../../entities/column';
 import { Events } from '../../../eventKeys';

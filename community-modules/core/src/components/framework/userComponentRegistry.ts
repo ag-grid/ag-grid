@@ -1,6 +1,5 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import type { BeanName } from '../../context/context';
 import { ReadOnlyFloatingFilter } from '../../filter/floating/provided/readOnlyFloatingFilter';
 import { DateFilter } from '../../filter/provided/date/dateFilter';
 import { DateFloatingFilter } from '../../filter/provided/date/dateFloatingFilter';

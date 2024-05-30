@@ -1,6 +1,5 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanName } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { Column } from '../entities/column';
 import type { ProvidedColumnGroup } from '../entities/providedColumnGroup';

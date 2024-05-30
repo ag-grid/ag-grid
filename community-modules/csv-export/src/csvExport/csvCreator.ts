@@ -6,9 +6,9 @@ import type {
     CsvExportParams,
     FuncColsService,
     ICsvCreator,
+    NamedBean,
     ValueService,
 } from '@ag-grid-community/core';
-import type { BeanName } from '@ag-grid-community/core';
 
 import { BaseCreator } from './baseCreator';
 import { Downloader } from './downloader';
@@ -17,9 +17,9 @@ import { CsvSerializingSession } from './sessions/csvSerializingSession';
 
 export class CsvCreator
     extends BaseCreator<CsvCustomContent, CsvSerializingSession, CsvExportParams>
-    implements ICsvCreator
+    implements NamedBean, ICsvCreator
 {
-    beanName: BeanName = 'csvCreator';
+    beanName = 'csvCreator' as const;
 
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
