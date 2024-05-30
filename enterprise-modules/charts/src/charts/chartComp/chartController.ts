@@ -403,10 +403,7 @@ export class ChartController extends BeanStub {
         });
     }
 
-    public getThemeTemplateParameters(): {
-        extensions: Map<any, any>;
-        properties: Map<any, any>;
-    }[] {
+    public getThemeTemplateParameters(): Map<any, any>[] {
         const themes = this.getThemes();
 
         return themes.map((theme) => {

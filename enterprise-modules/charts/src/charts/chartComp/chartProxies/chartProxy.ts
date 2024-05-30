@@ -103,14 +103,11 @@ export abstract class ChartProxy<
     }
 
     public update(params: UpdateParams): void {
-        AgCharts.update(
-            this.getChartRef(),
-            this.getUpdateOptions(params, this.getCommonChartOptions(params.updatedOverrides))
-        );
+        this.getChartRef().update(this.getUpdateOptions(params, this.getCommonChartOptions(params.updatedOverrides)));
     }
 
     public updateThemeOverrides(themeOverrides: AgChartThemeOverrides): void {
-        AgCharts.updateDelta(this.getChartRef(), { theme: { overrides: themeOverrides } });
+        this.getChartRef().updateDelta({ theme: { overrides: themeOverrides } });
     }
 
     public getChart() {
@@ -127,7 +124,7 @@ export abstract class ChartProxy<
         const imageFileName = fileName || (rawChart.title ? rawChart.title.text : 'chart');
         const { width, height } = dimensions || {};
 
-        AgCharts.download(chart, { width, height, fileName: imageFileName, fileFormat });
+        chart.download({ width, height, fileName: imageFileName, fileFormat });
     }
 
     public getChartImageDataURL(type?: string) {
@@ -153,7 +150,7 @@ export abstract class ChartProxy<
         // the first column is used for X and every other column is treated as Y
         // (or alternates between Y and size for bubble)
         const seriesType = getSeriesType(this.chartProxyParams.chartType);
-        AgCharts.updateDelta(this.chart, { theme: { overrides: { [seriesType]: { paired } } } });
+        this.chart.updateDelta({ theme: { overrides: { [seriesType]: { paired } } } });
     }
 
     public isPaired(): boolean {

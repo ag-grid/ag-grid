@@ -40,10 +40,7 @@ import {
 // please leave this as is - we want it to be explicit for build reasons
 import type { MiniChart } from './miniCharts/miniChart';
 
-export type ThemeTemplateParameters = {
-    extensions: Map<any, any>;
-    properties: Map<any, any>;
-};
+export type ThemeTemplateParameters = Map<any, any>;
 
 type MiniChartMenuMapping = {
     [K in keyof ChartGroupsDef]-?: MiniChartMenuGroup<K>;
