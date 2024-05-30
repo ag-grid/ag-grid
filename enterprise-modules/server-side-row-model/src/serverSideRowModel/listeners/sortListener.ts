@@ -1,6 +1,6 @@
 import type {
     BeanCollection,
-    BeanName,
+    NamedBean,
     SortController,
     SortModelItem,
     StoreRefreshAfterParams,
@@ -10,15 +10,14 @@ import { BeanStub, Events } from '@ag-grid-community/core';
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { ListenerUtils } from './listenerUtils';
 
-export class SortListener extends BeanStub {
-    beanName: BeanName = 'ssrmSortService';
+export class SortListener extends BeanStub implements NamedBean {
+    beanName = 'ssrmSortService' as const;
 
     private sortController: SortController;
     private serverSideRowModel: ServerSideRowModel;
     private listenerUtils: ListenerUtils;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.sortController = beans.sortController;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.listenerUtils = beans.ssrmListenerUtils;

@@ -20,7 +20,6 @@ export class RowDragComp extends Component {
     private beans: BeanCollection;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.beans = beans;
     }
 

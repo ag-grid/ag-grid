@@ -1,10 +1,10 @@
 import type {
     BeanCollection,
-    BeanName,
     ChangedPath,
     IRowModel,
     ISelectionService,
     ISetNodesSelectedParams,
+    NamedBean,
     RowNode,
     SelectionChangedEvent,
     SelectionEventSourceType,
@@ -18,13 +18,12 @@ import { DefaultStrategy } from './selection/strategies/defaultStrategy';
 import { GroupSelectsChildrenStrategy } from './selection/strategies/groupSelectsChildrenStrategy';
 import type { ISelectionStrategy } from './selection/strategies/iSelectionStrategy';
 
-export class ServerSideSelectionService extends BeanStub implements ISelectionService {
-    beanName: BeanName = 'selectionService';
+export class ServerSideSelectionService extends BeanStub implements NamedBean, ISelectionService {
+    beanName = 'selectionService' as const;
 
     private rowModel: IRowModel;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
     }
 

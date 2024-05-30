@@ -1,22 +1,21 @@
 import type {
     BeanCollection,
-    BeanName,
     ColumnModel,
     FilterManager,
     IRowNodeStage,
+    NamedBean,
     RowNode,
     StageExecuteParams,
 } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
-export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
-    beanName: BeanName = 'filterAggregatesStage';
+export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNodeStage {
+    beanName = 'filterAggregatesStage' as const;
 
     private filterManager: FilterManager;
     private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.filterManager = beans.filterManager;
         this.columnModel = beans.columnModel;
     }

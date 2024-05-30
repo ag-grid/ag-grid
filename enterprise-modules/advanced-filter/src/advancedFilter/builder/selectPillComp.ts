@@ -32,16 +32,16 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
         });
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.eWrapper;
     }
 
-    public showPicker(): void {
+    public override showPicker(): void {
         // avoid focus handling issues with multiple rich selects
         setTimeout(() => super.showPicker());
     }
 
-    public hidePicker(): void {
+    public override hidePicker(): void {
         // avoid focus handling issues with multiple rich selects
         setTimeout(() => super.hidePicker());
     }
@@ -56,7 +56,7 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
         _setAriaLabel(this.eWrapper, ariaLabel);
     }
 
-    protected createPickerComponent(): VirtualList {
+    protected override createPickerComponent(): VirtualList {
         if (!this.values) {
             const { values } = this.params.getEditorParams();
             this.values = values!;
@@ -70,7 +70,7 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
         return super.createPickerComponent();
     }
 
-    protected onEnterKeyDown(event: KeyboardEvent): void {
+    protected override onEnterKeyDown(event: KeyboardEvent): void {
         _stopPropagationForAgGrid(event);
         if (this.isPickerDisplayed) {
             super.onEnterKeyDown(event);

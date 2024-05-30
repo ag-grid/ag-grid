@@ -74,7 +74,6 @@ export class DateStringCellEditor extends SimpleCellEditor<string, IDateStringCe
     private dataTypeService: DataTypeService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.dataTypeService = beans.dataTypeService;
     }
 

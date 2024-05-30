@@ -17,7 +17,6 @@ export class PaginationComp extends Component {
     private rowNodeBlockLoader: RowNodeBlockLoader;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.paginationProxy = beans.paginationProxy;
         this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
     }

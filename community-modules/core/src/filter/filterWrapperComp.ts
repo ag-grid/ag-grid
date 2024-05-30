@@ -17,7 +17,6 @@ export class FilterWrapperComp extends Component {
     private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.filterManager = beans.filterManager;
         this.columnModel = beans.columnModel;
     }

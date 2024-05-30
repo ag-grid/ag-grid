@@ -1,5 +1,5 @@
+import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import type { BeanName } from '../../context/context';
 import { ReadOnlyFloatingFilter } from '../../filter/floating/provided/readOnlyFloatingFilter';
 import { DateFilter } from '../../filter/provided/date/dateFilter';
 import { DateFloatingFilter } from '../../filter/provided/date/dateFloatingFilter';
@@ -34,8 +34,8 @@ import { _fuzzySuggestions } from '../../utils/fuzzyMatch';
 import { _iterateObject } from '../../utils/object';
 import { AgMenuItemRenderer } from '../../widgets/agMenuItemRenderer';
 
-export class UserComponentRegistry extends BeanStub {
-    beanName: BeanName = 'userComponentRegistry';
+export class UserComponentRegistry extends BeanStub implements NamedBean {
+    beanName = 'userComponentRegistry' as const;
 
     private agGridDefaults: { [key: string]: any } = {
         //date

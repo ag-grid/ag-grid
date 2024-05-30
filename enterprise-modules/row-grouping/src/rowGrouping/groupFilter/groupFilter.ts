@@ -31,8 +31,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
     private columnNameService: ColumnNameService;
     private funcColsService: FuncColsService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.filterManager = beans.filterManager;
         this.columnNameService = beans.columnNameService;
         this.funcColsService = beans.funcColsService;
@@ -302,7 +301,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         return !!this.selectedColumn;
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 }

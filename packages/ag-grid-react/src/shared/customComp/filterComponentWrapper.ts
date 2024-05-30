@@ -34,7 +34,7 @@ export class FilterComponentWrapper
         return true;
     }
 
-    protected getOptionalMethods(): string[] {
+    protected override getOptionalMethods(): string[] {
         return ['afterGuiAttached', 'afterGuiDetached', 'onNewRowsLoaded', 'getModelAsString', 'onAnyFilterChanged'];
     }
 
@@ -42,7 +42,7 @@ export class FilterComponentWrapper
         this.setModel(model).then(() => this.sourceParams.filterChangedCallback());
     }
 
-    protected getProps(): CustomFilterProps {
+    protected override getProps(): CustomFilterProps {
         const props = super.getProps();
         props.model = this.model;
         props.onModelChange = this.onModelChange;

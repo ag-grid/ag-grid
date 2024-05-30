@@ -15,8 +15,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     private columnNameService: ColumnNameService;
     private filterManager: FilterManager;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnNameService = beans.columnNameService;
         this.filterManager = beans.filterManager;
     }
@@ -187,7 +186,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         }
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 }

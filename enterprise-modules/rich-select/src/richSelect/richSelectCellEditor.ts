@@ -178,7 +178,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         return this.richSelect.getValue();
     }
 
-    public isPopup(): boolean {
+    public override isPopup(): boolean {
         return false;
     }
 }

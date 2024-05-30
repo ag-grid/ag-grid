@@ -25,8 +25,7 @@ export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp
 export class ToolPanelFilterGroupComp extends Component {
     private columnNameService: ColumnNameService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnNameService = beans.columnNameService;
     }
 
@@ -119,7 +118,7 @@ export class ToolPanelFilterGroupComp extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
     }
 
-    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
+    public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         const res = super.getTooltipParams();
         res.location = 'filterToolPanelColumnGroup';
         return res;

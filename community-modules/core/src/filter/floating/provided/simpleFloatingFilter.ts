@@ -19,7 +19,6 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     private columnNameService: ColumnNameService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnNameService = beans.columnNameService;
     }
 
@@ -44,7 +43,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 

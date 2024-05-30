@@ -25,7 +25,6 @@ export class PaddingPanel extends Component {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.chartTranslationService = beans.chartTranslationService;
     }
     constructor(

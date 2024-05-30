@@ -13,7 +13,6 @@ export abstract class DragDataPanel extends Component {
     protected chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.chartTranslationService = beans.chartTranslationService;
     }
 

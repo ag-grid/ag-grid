@@ -251,7 +251,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         return this.selectAllFeature.getCheckboxGui();
     }
 
-    protected handleKeyDown(e: KeyboardEvent): void {
+    protected override handleKeyDown(e: KeyboardEvent): void {
         super.handleKeyDown(e);
 
         if (e.key === KeyCode.SPACE) {
@@ -574,7 +574,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         this.addRefreshFunction(listener);
     }
 
-    protected onDisplayedColumnsChanged(): void {
+    protected override onDisplayedColumnsChanged(): void {
         super.onDisplayedColumnsChanged();
         if (!this.isAlive()) {
             return;

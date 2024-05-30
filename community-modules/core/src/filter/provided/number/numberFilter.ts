@@ -96,7 +96,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         super('numberFilter');
     }
 
-    refresh(params: NumberFilterParams): boolean {
+    override refresh(params: NumberFilterParams): boolean {
         if (this.numberFilterParams.allowedCharPattern !== params.allowedCharPattern) {
             return false;
         }
@@ -109,7 +109,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return [this.processValue(filter), this.processValue(filterTo)].slice(0, this.getNumberOfInputs(type));
     }
 
-    protected getDefaultDebounceMs(): number {
+    protected override getDefaultDebounceMs(): number {
         return 500;
     }
 
@@ -123,7 +123,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         };
     }
 
-    protected setParams(params: NumberFilterParams): void {
+    protected override setParams(params: NumberFilterParams): void {
         this.numberFilterParams = params;
 
         super.setParams(params);
@@ -138,7 +138,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
     }
 
-    protected setElementValue(
+    protected override setElementValue(
         element: AgInputTextField | AgInputNumberField,
         value: number | null,
         fromFloatingFilter?: boolean
@@ -259,7 +259,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return this.filterModelFormatter.getModelAsString(model) ?? '';
     }
 
-    protected hasInvalidInputs(): boolean {
+    protected override hasInvalidInputs(): boolean {
         let invalidInputs = false;
         this.forEachInput((element) => {
             if (!element.getInputElement().validity.valid) {

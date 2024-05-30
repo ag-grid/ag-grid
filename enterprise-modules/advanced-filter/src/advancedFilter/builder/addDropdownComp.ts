@@ -32,12 +32,12 @@ export class AddDropdownComp extends AgRichSelect {
         });
     }
 
-    public showPicker(): void {
+    public override showPicker(): void {
         // avoid focus handling issues with multiple rich selects
         setTimeout(() => super.showPicker());
     }
 
-    public hidePicker(): void {
+    public override hidePicker(): void {
         // avoid focus handling issues with multiple rich selects
         setTimeout(() => super.hidePicker());
     }
@@ -55,7 +55,7 @@ export class AddDropdownComp extends AgRichSelect {
         _setAriaLabel(this.eWrapper, ariaLabel);
     }
 
-    protected onEnterKeyDown(event: KeyboardEvent): void {
+    protected override onEnterKeyDown(event: KeyboardEvent): void {
         _stopPropagationForAgGrid(event);
         if (this.isPickerDisplayed) {
             super.onEnterKeyDown(event);

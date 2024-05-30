@@ -1,9 +1,9 @@
 import type {
     AdvancedFilterModel,
     BeanCollection,
-    BeanName,
     FilterManager,
     FilterModel,
+    NamedBean,
     StoreRefreshAfterParams,
 } from '@ag-grid-community/core';
 import { BeanStub, Events } from '@ag-grid-community/core';
@@ -11,15 +11,14 @@ import { BeanStub, Events } from '@ag-grid-community/core';
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { ListenerUtils } from './listenerUtils';
 
-export class FilterListener extends BeanStub {
-    beanName: BeanName = 'ssrmFilterListener';
+export class FilterListener extends BeanStub implements NamedBean {
+    beanName = 'ssrmFilterListener' as const;
 
     private serverSideRowModel: ServerSideRowModel;
     private filterManager: FilterManager;
     private listenerUtils: ListenerUtils;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.filterManager = beans.filterManager;
         this.listenerUtils = beans.ssrmListenerUtils;

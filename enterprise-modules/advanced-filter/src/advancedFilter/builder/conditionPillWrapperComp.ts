@@ -11,8 +11,7 @@ import type { SelectPillComp } from './selectPillComp';
 export class ConditionPillWrapperComp extends Component {
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
     }
 
@@ -61,7 +60,7 @@ export class ConditionPillWrapperComp extends Component {
         return this.validationMessage;
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.eColumnPill.getFocusableElement();
     }
 

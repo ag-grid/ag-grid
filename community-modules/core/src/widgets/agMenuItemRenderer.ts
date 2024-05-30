@@ -100,7 +100,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
         return `${this.cssClassPrefix}-${suffix}`;
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 }

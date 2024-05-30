@@ -1,7 +1,7 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { Column } from '../../entities/column';
-import type { CellClickedEvent, CellDoubleClickedEvent, CellMouseOutEvent, CellMouseOverEvent} from '../../events';
+import type { CellClickedEvent, CellDoubleClickedEvent, CellMouseOutEvent, CellMouseOverEvent } from '../../events';
 import { Events } from '../../events';
 import { _isBrowserSafari, _isIOSUserAgent } from '../../utils/browser';
 import { _isElementChildOfClass, _isFocusableFormField } from '../../utils/dom';
@@ -249,5 +249,7 @@ export class CellMouseListenerFeature extends BeanStub {
         return cellContainsTarget && cellContainsRelatedTarget;
     }
 
-    public destroy(): void {}
+    public override destroy(): void {
+        super.destroy();
+    }
 }

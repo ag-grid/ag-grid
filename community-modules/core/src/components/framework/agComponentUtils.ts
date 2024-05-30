@@ -1,17 +1,17 @@
+import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection, BeanName } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { IComponent } from '../../interfaces/iComponent';
 import type { ICellRendererComp, ICellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
 import { _loadTemplate } from '../../utils/dom';
 import type { ComponentMetadata, ComponentMetadataProvider } from './componentMetadataProvider';
 
-export class AgComponentUtils extends BeanStub {
-    beanName: BeanName = 'agComponentUtils';
+export class AgComponentUtils extends BeanStub implements NamedBean {
+    beanName = 'agComponentUtils' as const;
 
     private componentMetadataProvider: ComponentMetadataProvider;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.componentMetadataProvider = beans.componentMetadataProvider;
     }
 

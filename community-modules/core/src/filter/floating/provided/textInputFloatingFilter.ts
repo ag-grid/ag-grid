@@ -107,7 +107,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         `);
     }
 
-    protected getDefaultDebounceMs(): number {
+    protected override getDefaultDebounceMs(): number {
         return 500;
     }
 
@@ -123,7 +123,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         this.floatingFilterInputService.setValue(this.getFilterModelFormatter().getModelAsString(model));
     }
 
-    public init(params: ITextInputFloatingFilterParams): void {
+    public override init(params: ITextInputFloatingFilterParams): void {
         this.setupFloatingFilterInputService(params);
         super.init(params);
         this.setTextInputParams(params);
@@ -156,11 +156,11 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         }
     }
 
-    public onParamsUpdated(params: ITextInputFloatingFilterParams): void {
+    public override onParamsUpdated(params: ITextInputFloatingFilterParams): void {
         this.refresh(params);
     }
 
-    public refresh(params: ITextInputFloatingFilterParams): void {
+    public override refresh(params: ITextInputFloatingFilterParams): void {
         super.refresh(params);
         this.setTextInputParams(params);
     }

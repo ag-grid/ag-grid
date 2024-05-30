@@ -27,7 +27,6 @@ export class HeaderRowCtrl extends BeanStub {
     private beans: BeanCollection;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.beans = beans;
     }
 

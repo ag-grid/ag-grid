@@ -1,5 +1,6 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName, Context } from '../context/context';
+import type { BeanCollection, Context } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { Column, ColumnPinnedType } from '../entities/column';
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
@@ -45,8 +46,8 @@ export interface ColumnCollections {
     map: { [id: string]: Column };
 }
 
-export class ColumnModel extends BeanStub {
-    beanName: BeanName = 'columnModel';
+export class ColumnModel extends BeanStub implements NamedBean {
+    beanName = 'columnModel' as const;
 
     private context: Context;
     private columnFactory: ColumnFactory;
@@ -69,7 +70,6 @@ export class ColumnModel extends BeanStub {
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.context = beans.context;
         this.columnFactory = beans.columnFactory;
         this.columnSizeService = beans.columnSizeService;

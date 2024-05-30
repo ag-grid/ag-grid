@@ -1,7 +1,7 @@
 import type {
     BeanCollection,
-    BeanName,
     IRowNodeStage,
+    NamedBean,
     SortController,
     SortOption,
     StageExecuteParams,
@@ -10,14 +10,13 @@ import { BeanStub, _exists } from '@ag-grid-community/core';
 
 import type { SortService } from './sortService';
 
-export class SortStage extends BeanStub implements IRowNodeStage {
-    beanName: BeanName = 'sortStage';
+export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
+    beanName = 'sortStage' as const;
 
     private sortService: SortService;
     private sortController: SortController;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.sortService = beans.sortService;
         this.sortController = beans.sortController;
     }

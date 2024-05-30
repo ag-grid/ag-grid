@@ -4,7 +4,7 @@ import type { AgGridCommon } from './iCommon';
 import type { IPopupComponent } from './iPopupComponent';
 import type { IRowNode } from './iRowNode';
 
-export interface BaseCellEditor<TData = any, TValue = any, TContext = any> {
+export interface BaseCellEditor {
     /** Optional: Gets called once after initialised. If you return true, the editor will not be
      * used and the grid will continue editing. Use this to make a decision on editing
      * inside the init() function, eg maybe you want to only start editing if the user
@@ -29,7 +29,7 @@ export interface BaseCellEditor<TData = any, TValue = any, TContext = any> {
     focusOut?(): void;
 }
 
-export interface ICellEditor<TValue = any> extends BaseCellEditor<any, TValue> {
+export interface ICellEditor<TValue = any> extends BaseCellEditor {
     /**
      * Return the final value - called by the grid once after editing is complete
      */

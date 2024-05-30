@@ -30,8 +30,7 @@ export class AgFiltersToolPanelList extends Component {
     private toolPanelColDefService: ToolPanelColDefService;
     private columnModel: ColumnModel;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.toolPanelColDefService = beans.toolPanelColDefService;
         this.columnModel = beans.columnModel;
     }
@@ -314,7 +313,7 @@ export class AgFiltersToolPanelList extends Component {
     public refresh(): void {}
 
     // lazy initialise the panel
-    public setVisible(visible: boolean): void {
+    public override setVisible(visible: boolean): void {
         super.setDisplayed(visible);
         if (visible && !this.initialised) {
             this.init(this.params);

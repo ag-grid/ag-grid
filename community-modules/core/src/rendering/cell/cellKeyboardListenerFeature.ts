@@ -203,7 +203,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         event.preventDefault();
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 }

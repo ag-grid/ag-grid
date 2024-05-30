@@ -1,4 +1,3 @@
-import { ColumnModel } from '../../columns/columnModel';
 import type { VisibleColsService } from '../../columns/visibleColsService';
 import type { AbstractColDef, HeaderClassParams, ToolPanelClassParams } from '../../entities/colDef';
 import type { Column } from '../../entities/column';

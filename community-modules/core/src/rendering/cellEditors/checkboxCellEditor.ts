@@ -49,7 +49,7 @@ export class CheckboxCellEditor extends PopupComponent implements ICellEditorCom
         }
     }
 
-    public isPopup() {
+    public override isPopup() {
         return false;
     }
 

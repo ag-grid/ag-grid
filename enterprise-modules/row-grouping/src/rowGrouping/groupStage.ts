@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    BeanName,
     ChangedPath,
     Column,
     ColumnModel,
@@ -11,6 +10,7 @@ import type {
     InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
     KeyCreatorParams,
+    NamedBean,
     RowNodeTransaction,
     SelectableService,
     ShowRowGroupColsService,
@@ -59,8 +59,8 @@ interface GroupingDetails {
     keyCreators: (((params: KeyCreatorParams) => string) | undefined)[];
 }
 
-export class GroupStage extends BeanStub implements IRowNodeStage {
-    beanName: BeanName = 'groupStage';
+export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
+    beanName = 'groupStage' as const;
 
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
@@ -70,8 +70,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private selectionService: ISelectionService;
     private showRowGroupColsService: ShowRowGroupColsService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.beans = beans;
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;

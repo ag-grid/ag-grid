@@ -3,7 +3,6 @@ import type {
     AgGridEvent,
     Bean,
     BeanCollection,
-    BeanName,
     Column,
     ColumnMenuTab,
     ColumnMenuVisibleChangedEvent,
@@ -14,6 +13,7 @@ import type {
     IAfterGuiAttachedParams,
     IMenuFactory,
     MenuService,
+    NamedBean,
     PopupEventParams,
     PopupService,
     TabbedItem,
@@ -50,8 +50,8 @@ interface EnterpriseColumnMenu extends Bean {
     showTabBasedOnPreviousSelection?(): void;
 }
 
-export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
-    beanName: BeanName = 'enterpriseMenuFactory';
+export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuFactory {
+    beanName = 'enterpriseMenuFactory' as const;
 
     private popupService: PopupService;
     private focusService: FocusService;
@@ -61,8 +61,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     private menuUtils: MenuUtils;
     private menuService: MenuService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.popupService = beans.popupService;
         this.focusService = beans.focusService;
         this.ctrlsService = beans.ctrlsService;
@@ -337,7 +336,6 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
     private menuUtils: MenuUtils;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.filterManager = beans.filterManager;
         this.columnChooserFactory = beans.columnChooserFactory;
         this.columnMenuFactory = beans.columnMenuFactory;
@@ -580,7 +578,6 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
     private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
         this.columnMenuFactory = beans.columnMenuFactory;
         this.menuUtils = beans.menuUtils;
         this.focusService = beans.focusService;

@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    BeanName,
     CellNavigationService,
     CellPosition,
     CellPositionUtils,
@@ -13,6 +12,7 @@ import type {
     DragService,
     IRangeService,
     IRowModel,
+    NamedBean,
     PartialCellRange,
     PinnedRowModel,
     RangeDeleteEndEvent,
@@ -41,8 +41,8 @@ import {
     _shallowCompare,
 } from '@ag-grid-community/core';
 
-export class RangeService extends BeanStub implements IRangeService {
-    beanName: BeanName = 'rangeService';
+export class RangeService extends BeanStub implements NamedBean, IRangeService {
+    beanName = 'rangeService' as const;
 
     private rowModel: IRowModel;
     private dragService: DragService;
@@ -55,8 +55,7 @@ export class RangeService extends BeanStub implements IRangeService {
     private ctrlsService: CtrlsService;
     private valueService: ValueService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
         this.dragService = beans.dragService;
         this.columnModel = beans.columnModel;

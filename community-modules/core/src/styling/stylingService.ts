@@ -1,16 +1,16 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { CellClassParams, ColDef } from '../entities/colDef';
 import type { RowClassParams } from '../entities/gridOptions';
 import type { ExpressionService } from '../valueService/expressionService';
 
-export class StylingService extends BeanStub {
-    beanName: BeanName = 'stylingService';
+export class StylingService extends BeanStub implements NamedBean {
+    beanName = 'stylingService' as const;
 
     private expressionService: ExpressionService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.expressionService = beans.expressionService;
     }
 

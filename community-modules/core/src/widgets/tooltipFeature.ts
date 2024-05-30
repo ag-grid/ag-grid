@@ -30,7 +30,6 @@ export class TooltipFeature extends BeanStub {
     private beans: BeanCollection;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.beans = beans;
     }
 
@@ -133,7 +132,7 @@ export class TooltipFeature extends BeanStub {
     }
 
     // overriding to make public, as we don't dispose this bean via context
-    public destroy() {
+    public override destroy() {
         if (this.tooltipManager) {
             this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
         }

@@ -48,7 +48,6 @@ export class ChartDatasource extends BeanStub {
     private aggregationStage?: IAggregationStage;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.sortController = beans.sortController;
         this.gridRowModel = beans.rowModel;
         this.columnModel = beans.columnModel;

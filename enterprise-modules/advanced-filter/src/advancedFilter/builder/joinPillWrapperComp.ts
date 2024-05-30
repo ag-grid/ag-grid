@@ -10,7 +10,6 @@ export class JoinPillWrapperComp extends Component {
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
     }
 
@@ -60,7 +59,7 @@ export class JoinPillWrapperComp extends Component {
         return null;
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.ePill.getFocusableElement();
     }
 }

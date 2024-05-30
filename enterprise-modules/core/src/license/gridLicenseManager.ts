@@ -1,11 +1,11 @@
-import type { BeanName } from '@ag-grid-community/core';
+import type { NamedBean } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
 import type { ILicenseManager } from './shared/licenseManager';
 import { LicenseManager } from './shared/licenseManager';
 
-export class GridLicenseManager extends BeanStub {
-    beanName: BeanName = 'licenseManager';
+export class GridLicenseManager extends BeanStub implements NamedBean {
+    beanName = 'licenseManager' as const;
 
     private licenseManager: LicenseManager;
 

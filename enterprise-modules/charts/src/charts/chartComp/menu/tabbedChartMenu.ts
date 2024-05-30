@@ -11,7 +11,6 @@ export class TabbedChartMenu extends Component {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.chartTranslationService = beans.chartTranslationService;
     }
 
@@ -85,7 +84,7 @@ export class TabbedChartMenu extends Component {
         this.tabbedLayout.showItem(tabItem);
     }
 
-    public getGui(): HTMLElement {
+    public override getGui(): HTMLElement {
         return this.tabbedLayout && this.tabbedLayout.getGui();
     }
 

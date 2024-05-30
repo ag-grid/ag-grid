@@ -1,7 +1,8 @@
 import type { ColumnModel } from './columns/columnModel';
 import { convertSourceType } from './columns/columnModel';
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import type { BeanCollection, BeanName } from './context/context';
+import type { BeanCollection } from './context/context';
 import type { CtrlsService } from './ctrlsService';
 import type { ColDef, ColGroupDef } from './entities/colDef';
 import { Events } from './eventKeys';
@@ -13,15 +14,14 @@ import { Logger } from './logger';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 
-export class SyncService extends BeanStub {
-    beanName: BeanName = 'syncService';
+export class SyncService extends BeanStub implements NamedBean {
+    beanName = 'syncService' as const;
 
     private ctrlsService: CtrlsService;
     private columnModel: ColumnModel;
     private rowModel: IRowModel;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.ctrlsService = beans.ctrlsService;
         this.columnModel = beans.columnModel;
         this.rowModel = beans.rowModel;

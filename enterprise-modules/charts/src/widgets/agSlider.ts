@@ -27,7 +27,7 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams> {
     private readonly eSlider: AgInputRange = RefPlaceholder;
     private readonly eText: AgInputNumberField = RefPlaceholder;
 
-    protected labelAlignment: LabelAlignment = 'top';
+    protected override labelAlignment: LabelAlignment = 'top';
 
     constructor(config?: AgSliderParams) {
         super(config, AgSlider.TEMPLATE, [AgInputRange, AgInputNumberField]);

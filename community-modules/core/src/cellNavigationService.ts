@@ -1,7 +1,8 @@
 import type { VisibleColsService } from './columns/visibleColsService';
 import { KeyCode } from './constants/keyCode';
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import type { BeanCollection, BeanName } from './context/context';
+import type { BeanCollection } from './context/context';
 import type { CellPosition } from './entities/cellPositionUtils';
 import type { Column } from './entities/column';
 import type { RowNode } from './entities/rowNode';
@@ -14,8 +15,8 @@ import type { RowRenderer } from './rendering/rowRenderer';
 import { _last } from './utils/array';
 import { _missing } from './utils/generic';
 
-export class CellNavigationService extends BeanStub {
-    beanName: BeanName = 'cellNavigationService';
+export class CellNavigationService extends BeanStub implements NamedBean {
+    beanName = 'cellNavigationService' as const;
 
     private visibleColsService: VisibleColsService;
     private rowModel: IRowModel;
@@ -24,7 +25,6 @@ export class CellNavigationService extends BeanStub {
     private paginationProxy: PaginationProxy;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.visibleColsService = beans.visibleColsService;
         this.rowModel = beans.rowModel;
         this.rowRenderer = beans.rowRenderer;

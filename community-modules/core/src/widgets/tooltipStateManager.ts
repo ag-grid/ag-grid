@@ -30,7 +30,6 @@ export class TooltipStateManager extends BeanStub {
     private userComponentFactory: UserComponentFactory;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.popupService = beans.popupService;
         this.userComponentFactory = beans.userComponentFactory;
     }

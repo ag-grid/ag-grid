@@ -1,15 +1,15 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 
-export class ColumnAnimationService extends BeanStub {
-    beanName: BeanName = 'columnAnimationService';
+export class ColumnAnimationService extends BeanStub implements NamedBean {
+    beanName = 'columnAnimationService' as const;
 
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.ctrlsService = beans.ctrlsService;
     }
 

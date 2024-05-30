@@ -1207,7 +1207,7 @@ export class CellCtrl extends BeanStub {
         return this.cellComp ? this.cellComp.getCellEditor() : null;
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         this.onCellCompAttachedFuncs = [];
         super.destroy();
     }

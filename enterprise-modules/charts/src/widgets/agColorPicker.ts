@@ -65,7 +65,7 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
         return colorDialog;
     }
 
-    protected renderAndPositionPicker(): () => void {
+    protected override renderAndPositionPicker(): () => void {
         const pickerComponent = this.pickerComponent!;
         const colorPanel = this.createBean(new AgColorPanel({ picker: this }));
 
@@ -104,7 +104,7 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
         return () => this.pickerComponent?.close();
     }
 
-    public setValue(color: string): this {
+    public override setValue(color: string): this {
         if (this.value === color) {
             return this;
         }
@@ -115,7 +115,7 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
         return super.setValue(color);
     }
 
-    public getValue(): string {
+    public override getValue(): string {
         return this.value;
     }
 }

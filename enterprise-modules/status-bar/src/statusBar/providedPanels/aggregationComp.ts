@@ -31,8 +31,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     private rowPositionUtils: RowPositionUtils;
     private rangeService?: IRangeService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.valueService = beans.valueService;
         this.cellNavigationService = beans.cellNavigationService;
         this.rowModel = beans.rowModel;
@@ -63,7 +62,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 

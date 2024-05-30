@@ -32,12 +32,12 @@ export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> exten
 
     protected sourceParams!: TInputParams;
 
-    public init(params: TInputParams): AgPromise<void> {
+    public override init(params: TInputParams): AgPromise<void> {
         this.sourceParams = params;
         return super.init(this.getProps());
     }
 
-    public addMethod(): void {
+    public override addMethod(): void {
         // do nothing
     }
 
@@ -45,11 +45,11 @@ export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> exten
         return this.instanceCreated.then(() => this.componentInstance);
     }
 
-    public getFrameworkComponentInstance(): any {
+    public override getFrameworkComponentInstance(): any {
         return this;
     }
 
-    protected createElement(reactComponent: any, props: TOutputParams): any {
+    protected override createElement(reactComponent: any, props: TOutputParams): any {
         return super.createElement(this.wrapperComponent, {
             initialProps: props,
             CustomComponentClass: reactComponent,

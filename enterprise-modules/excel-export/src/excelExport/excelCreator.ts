@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    BeanName,
     Column,
     ColumnGroup,
     ColumnModel,
@@ -12,6 +11,7 @@ import type {
     ExcelStyle,
     FuncColsService,
     IExcelCreator,
+    NamedBean,
     StylingService,
     ValueService,
 } from '@ag-grid-community/core';
@@ -219,9 +219,9 @@ export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetPara
 
 export class ExcelCreator
     extends BaseCreator<ExcelRow[], ExcelSerializingSession, ExcelExportParams>
-    implements IExcelCreator
+    implements NamedBean, IExcelCreator
 {
-    beanName: BeanName = 'excelCreator';
+    beanName = 'excelCreator' as const;
 
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
@@ -231,8 +231,7 @@ export class ExcelCreator
 
     private gridSerializer: GridSerializer;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
         this.funcColsService = beans.funcColsService;

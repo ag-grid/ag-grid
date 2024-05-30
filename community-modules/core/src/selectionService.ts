@@ -1,5 +1,6 @@
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import type { BeanCollection, BeanName } from './context/context';
+import type { BeanCollection } from './context/context';
 import type { RowNode } from './entities/rowNode';
 import type { SelectionChangedEvent, SelectionEventSourceType } from './events';
 import { Events } from './events';
@@ -13,14 +14,13 @@ import { _last } from './utils/array';
 import { ChangedPath } from './utils/changedPath';
 import { _exists, _missing } from './utils/generic';
 
-export class SelectionService extends BeanStub implements ISelectionService {
-    beanName: BeanName = 'selectionService';
+export class SelectionService extends BeanStub implements NamedBean, ISelectionService {
+    beanName = 'selectionService' as const;
 
     private rowModel: IRowModel;
     private paginationProxy: PaginationProxy;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.rowModel = beans.rowModel;
         this.paginationProxy = beans.paginationProxy;
     }

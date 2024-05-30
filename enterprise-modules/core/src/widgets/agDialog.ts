@@ -27,8 +27,7 @@ export interface DialogOptions extends PanelOptions {
 export class AgDialog extends AgPanel<DialogOptions> {
     private popupService: PopupService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.popupService = beans.popupService;
     }
 
@@ -74,7 +73,7 @@ export class AgDialog extends AgPanel<DialogOptions> {
         }
     }
 
-    protected renderComponent() {
+    protected override renderComponent() {
         const eGui = this.getGui();
         const { alwaysOnTop, modal, title, afterGuiAttached } = this.config;
         const translate = this.localeService.getLocaleTextFunc();

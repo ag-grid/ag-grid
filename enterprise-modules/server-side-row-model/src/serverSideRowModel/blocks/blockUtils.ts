@@ -1,8 +1,8 @@
 import type {
     BeanCollection,
-    BeanName,
     Column,
     IRowNode,
+    NamedBean,
     NumberSequence,
     RowBounds,
     ShowRowGroupColsService,
@@ -15,8 +15,8 @@ import type { ServerSideExpansionService } from '../services/serverSideExpansion
 
 export const GROUP_MISSING_KEY_ID: 'ag-Grid-MissingKey' = 'ag-Grid-MissingKey';
 
-export class BlockUtils extends BeanStub {
-    beanName: BeanName = 'ssrmBlockUtils';
+export class BlockUtils extends BeanStub implements NamedBean {
+    beanName = 'ssrmBlockUtils' as const;
 
     private valueService: ValueService;
     private showRowGroupColsService: ShowRowGroupColsService;
@@ -24,8 +24,7 @@ export class BlockUtils extends BeanStub {
     private beans: BeanCollection;
     private expansionService: ServerSideExpansionService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.valueService = beans.valueService;
         this.showRowGroupColsService = beans.showRowGroupColsService;
         this.nodeManager = beans.ssrmNodeManager;
