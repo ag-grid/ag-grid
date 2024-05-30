@@ -64,6 +64,7 @@ import { ResizeObserverService } from './misc/resizeObserverService';
 import { StateService } from './misc/stateService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
+import { beanComparator } from './orderedBeans';
 import { PaginationAutoPageSizeService } from './pagination/paginationAutoPageSizeService';
 import { PaginationProxy } from './pagination/paginationProxy';
 import { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
@@ -263,6 +264,7 @@ export class GridCoreCreator {
             providedBeanInstances: providedBeanInstances,
             beanClasses: beanClasses,
             gridId: gridId,
+            beanComparator: beanComparator,
         };
 
         const context = new Context(contextParams);
