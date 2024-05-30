@@ -1,8 +1,8 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { Column } from '../entities/column';
-import type { ColumnGroup } from '../entities/columnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ITooltipParams, TooltipLocation } from '../rendering/tooltipComponent';
@@ -14,7 +14,7 @@ export interface ITooltipFeatureCtrl {
     getGui(): HTMLElement;
     getLocation(): TooltipLocation;
 
-    getColumn?(): Column | ColumnGroup;
+    getColumn?(): AgColumn | AgColumnGroup;
     getColDef?(): ColDef | ColGroupDef;
     getRowIndex?(): number;
     getRowNode?(): RowNode;
@@ -30,7 +30,6 @@ export class TooltipFeature extends BeanStub {
     private beans: BeanCollection;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.beans = beans;
     }
 
@@ -133,7 +132,7 @@ export class TooltipFeature extends BeanStub {
     }
 
     // overriding to make public, as we don't dispose this bean via context
-    public destroy() {
+    public override destroy() {
         if (this.tooltipManager) {
             this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
         }

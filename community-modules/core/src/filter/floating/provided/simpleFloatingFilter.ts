@@ -1,5 +1,6 @@
 import type { ColumnNameService } from '../../../columns/columnNameService';
 import type { BeanCollection } from '../../../context/context';
+import type { AgColumn } from '../../../entities/agColumn';
 import type { FilterChangedEvent } from '../../../events';
 import type { ProvidedFilterModel } from '../../../interfaces/iFilter';
 import { Component } from '../../../widgets/component';
@@ -19,7 +20,6 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     private columnNameService: ColumnNameService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnNameService = beans.columnNameService;
     }
 
@@ -44,7 +44,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 
@@ -156,7 +156,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     protected getAriaLabel(params: IFloatingFilterParams): string {
-        const displayName = this.columnNameService.getDisplayNameForColumn(params.column, 'header', true);
+        const displayName = this.columnNameService.getDisplayNameForColumn(params.column as AgColumn, 'header', true);
         const translate = this.localeService.getLocaleTextFunc();
         return `${displayName} ${translate('ariaFilterInput', 'Filter Input')}`;
     }

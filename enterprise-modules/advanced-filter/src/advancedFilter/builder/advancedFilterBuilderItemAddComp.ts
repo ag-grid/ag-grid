@@ -18,8 +18,7 @@ import { AdvancedFilterBuilderEvents } from './iAdvancedFilterBuilder';
 export class AdvancedFilterBuilderItemAddComp extends Component {
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
     }
 

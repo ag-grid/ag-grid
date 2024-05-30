@@ -21,7 +21,6 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     private overlayService: OverlayService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.overlayService = beans.overlayService;
     }
 
@@ -113,7 +112,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.setDisplayed(false, { skipAriaHidden: true });
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         this.destroyActiveOverlay();
         super.destroy();
     }

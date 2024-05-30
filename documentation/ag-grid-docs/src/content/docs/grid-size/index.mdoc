@@ -3,8 +3,7 @@ title: "Grid Layout"
 description: "Format the grid layout for your $framework Table. Change grid width/height, assign a DOM layout value, format dynamic resizing."
 ---
 
-Under normal usage, your application should set the width and height of the grid using CSS styles. The grid will then fit the width you provide 
-and use scrolling inside the grid to allow all rows and columns to be viewed.
+The grid expands to fit the width and height of its container div. Your application should set the width and height of the container using CSS styles.
 
 {% if isFramework("javascript") %}
 ```html
@@ -58,15 +57,9 @@ and use scrolling inside the grid to allow all rows and columns to be viewed.
 ```
 {% /if %}
 
-{% warning %}
-If using % for your height, then make sure the container you are putting the grid into
-also has height specified, as the browser will fit the div according to a percentage of
-the parents height, and if the parent has no height, then this % will always be zero.
-
-If your grid is not the size you think it should be then put a border on the grid's
-div and see if that's the size you want (the grid will fill this div). If it is not the size
-you want, then you have a CSS layout issue in your application.
-{% /warning %}
+If the container div has no height set, or has a % height and its parent has no height,
+it would naturally have a height of 0px. In this case the grid will adopt a default height
+of 400px.
 
 ## DOM Layout
 

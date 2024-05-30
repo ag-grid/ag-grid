@@ -93,7 +93,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
         return this.listComponent!;
     }
 
-    protected onKeyDown(e: KeyboardEvent): void {
+    protected override onKeyDown(e: KeyboardEvent): void {
         const { key } = e;
 
         if (key === KeyCode.TAB) {
@@ -121,7 +121,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
         }
     }
 
-    public showPicker() {
+    public override showPicker() {
         if (!this.listComponent) {
             return;
         }
@@ -149,7 +149,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
         return this;
     }
 
-    public setValue(value?: TValue, silent?: boolean, fromPicker?: boolean): this {
+    public override setValue(value?: TValue, silent?: boolean, fromPicker?: boolean): this {
         if (this.value === value || !this.listComponent) {
             return this;
         }

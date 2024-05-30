@@ -374,11 +374,11 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
         agDetailCellRenderer: DetailCellRenderer,
     };
 
-    public frameworkComponent(name: string): any {
+    public override frameworkComponent(name: string): any {
         return this.frameworkComponents[name];
     }
 
-    isFrameworkComponent(comp: any): boolean {
+    override isFrameworkComponent(comp: any): boolean {
         if (!comp) {
             return false;
         }
@@ -387,7 +387,10 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
         return !isJsComp;
     }
 
-    wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T = (callback, source) => {
+    override wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T = (
+        callback,
+        source
+    ) => {
         if (source === 'ensureVisible') {
             // As ensureVisible could easily be called from an effect which is already running inside a React render
             // we need to run it without flushSync to avoid the DEV error from React when calling flushSync inside a render.

@@ -1,22 +1,21 @@
 import type {
     BeanCollection,
-    BeanName,
     ChartGroupsDef,
     ChartType,
     GridOptionsService,
     IChartService,
     LocaleService,
     MenuItemDef,
+    NamedBean,
 } from '@ag-grid-community/core';
 import { BeanStub, ModuleNames, ModuleRegistry, _createIconNoSpan, _warnOnce } from '@ag-grid-community/core';
 
-export class ChartMenuItemMapper extends BeanStub {
-    beanName: BeanName = 'chartMenuItemMapper';
+export class ChartMenuItemMapper extends BeanStub implements NamedBean {
+    beanName = 'chartMenuItemMapper' as const;
 
     private chartService?: IChartService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.chartService = beans.chartService;
     }
 

@@ -11,7 +11,6 @@ export abstract class AbstractFakeScrollComp extends Component {
     private animationFrameService: AnimationFrameService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.animationFrameService = beans.animationFrameService;
     }
 

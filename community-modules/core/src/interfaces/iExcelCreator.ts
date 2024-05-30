@@ -1,4 +1,4 @@
-import type { Column } from '../entities/column';
+import type { Column } from '../interfaces/iColumn';
 import type { ExportFileNameGetter, ExportParams } from './exportParams';
 import type { AgGridCommon } from './iCommon';
 import type { XmlElement } from './iXmlFactory';

@@ -94,7 +94,7 @@ export class TabGuardComp extends Component {
         this.tabGuardCtrl.forceFocusOutOfContainer(up);
     }
 
-    public appendChild(newChild: Component | HTMLElement, container?: HTMLElement | undefined): void {
+    public override appendChild(newChild: Component | HTMLElement, container?: HTMLElement | undefined): void {
         if (!_isNodeOrElement(newChild)) {
             newChild = (newChild as Component).getGui();
         }

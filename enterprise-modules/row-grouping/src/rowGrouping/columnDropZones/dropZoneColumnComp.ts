@@ -10,7 +10,7 @@ import type {
     SortController,
 } from '@ag-grid-community/core';
 import {
-    Column,
+    AgColumn,
     Component,
     DragAndDropService,
     DragSourceType,
@@ -24,7 +24,7 @@ import { PillDragComp } from '@ag-grid-enterprise/core';
 
 import type { TDropZone } from './baseDropZonePanel';
 
-export class DropZoneColumnComp extends PillDragComp<Column> {
+export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     private popupService: PopupService;
     private sortController: SortController;
     private columnModel: ColumnModel;
@@ -48,7 +48,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     private popupShowing = false;
 
     constructor(
-        private column: Column,
+        private column: AgColumn,
         dragSourceDropTarget: DropTarget,
         ghost: boolean,
         private dropZonePurpose: TDropZone,
@@ -77,7 +77,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
 
         this.setupSort();
 
-        this.addManagedListener(this.eventService, Column.EVENT_SORT_CHANGED, () => {
+        this.addManagedListener(this.eventService, AgColumn.EVENT_SORT_CHANGED, () => {
             this.setupAria();
         });
 
@@ -90,7 +90,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         }
     }
 
-    public getItem(): Column {
+    public getItem(): AgColumn {
         return this.column;
     }
 
@@ -102,7 +102,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         return this.column.getColDef().headerTooltip;
     }
 
-    protected addAdditionalAriaInstructions(
+    protected override addAdditionalAriaInstructions(
         ariaInstructions: string[],
         translate: (key: string, defaultValue: string) => string
     ): void {
@@ -124,11 +124,11 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         super.addAdditionalAriaInstructions(ariaInstructions, translate);
     }
 
-    protected isDraggable(): boolean {
+    protected override isDraggable(): boolean {
         return this.isReadOnly();
     }
 
-    protected isRemovable(): boolean {
+    protected override isRemovable(): boolean {
         return this.isReadOnly();
     }
 
@@ -197,7 +197,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         }
     }
 
-    protected getDefaultIconName(): string {
+    protected override getDefaultIconName(): string {
         return DragAndDropService.ICON_HIDE;
     }
 
@@ -213,7 +213,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         };
     }
 
-    protected setupComponents(): void {
+    protected override setupComponents(): void {
         super.setupComponents();
 
         if (this.isAggregationZone() && !this.gos.get('functionsReadOnly')) {
@@ -221,7 +221,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         }
     }
 
-    protected onKeyDown(e: KeyboardEvent): void {
+    protected override onKeyDown(e: KeyboardEvent): void {
         super.onKeyDown(e);
 
         const isEnter = e.key === KeyCode.ENTER;
@@ -231,7 +231,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         }
     }
 
-    protected getDisplayValue(): string {
+    protected override getDisplayValue(): string {
         const { name, aggFuncName } = this.getColumnAndAggFuncName();
         return this.isAggregationZone() ? `${aggFuncName}(${name})` : name;
     }

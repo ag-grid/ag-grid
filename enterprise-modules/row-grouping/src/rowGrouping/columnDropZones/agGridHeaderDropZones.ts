@@ -16,8 +16,7 @@ export class AgGridHeaderDropZones extends Component {
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;
     }

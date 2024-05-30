@@ -35,7 +35,6 @@ export class InfiniteCache extends BeanStub {
     private logger: Logger;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.rowRenderer = beans.rowRenderer;
         this.focusService = beans.focusService;
 

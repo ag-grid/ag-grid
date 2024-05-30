@@ -3,8 +3,9 @@ import type { ColumnSizeService } from '../../../columns/columnSizeService';
 import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
-import type { Column, ColumnPinnedType } from '../../../entities/column';
+import type { AgColumn } from '../../../entities/agColumn';
 import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
+import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import { _getInnerWidth, _setDisplayed } from '../../../utils/dom';
 import { TouchListener } from '../../../widgets/touchListener';
 import type { HorizontalResizeService } from '../../common/horizontalResizeService';
@@ -18,8 +19,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private columnSizeService: ColumnSizeService;
     private columnAutosizeService: ColumnAutosizeService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.horizontalResizeService = beans.horizontalResizeService;
         this.pinnedWidthService = beans.pinnedWidthService;
         this.ctrlsService = beans.ctrlsService;
@@ -28,7 +28,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     }
 
     private pinned: ColumnPinnedType;
-    private column: Column;
+    private column: AgColumn;
     private eResize: HTMLElement;
     private comp: IHeaderCellComp;
 
@@ -40,7 +40,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
     constructor(
         pinned: ColumnPinnedType,
-        column: Column,
+        column: AgColumn,
         eResize: HTMLElement,
         comp: IHeaderCellComp,
         ctrl: HeaderCellCtrl

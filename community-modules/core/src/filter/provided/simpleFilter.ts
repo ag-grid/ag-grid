@@ -380,7 +380,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return true;
     }
 
-    refresh(newParams: SimpleFilterParams): boolean {
+    override refresh(newParams: SimpleFilterParams): boolean {
         if (!this.shouldRefresh(newParams)) {
             return false;
         }
@@ -478,7 +478,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return models[combineFunction]((m) => this.individualConditionPasses(params, m));
     }
 
-    protected setParams(params: SimpleFilterParams): void {
+    protected override setParams(params: SimpleFilterParams): void {
         super.setParams(params);
 
         this.setNumConditions(params);
@@ -724,7 +724,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return deleteCount == null ? items.splice(startPosition) : items.splice(startPosition, deleteCount);
     }
 
-    public afterGuiAttached(params?: IAfterGuiAttachedParams) {
+    public override afterGuiAttached(params?: IAfterGuiAttachedParams) {
         super.afterGuiAttached(params);
 
         this.resetPlaceholder();
@@ -746,7 +746,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         }
     }
 
-    public afterGuiDetached(): void {
+    public override afterGuiDetached(): void {
         super.afterGuiDetached();
 
         const appliedModel = this.getModel();

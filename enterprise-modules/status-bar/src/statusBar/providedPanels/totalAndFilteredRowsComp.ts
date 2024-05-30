@@ -6,8 +6,7 @@ import { AgNameValue } from './agNameValue';
 export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPanelComp {
     private rowModel: IRowModel;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
     }
 
@@ -73,7 +72,7 @@ export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPane
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 }

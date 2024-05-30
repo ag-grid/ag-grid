@@ -22,7 +22,7 @@ export class FloatingFilterComponentWrapper
         this.refreshProps();
     }
 
-    protected getOptionalMethods(): string[] {
+    protected override getOptionalMethods(): string[] {
         return ['afterGuiAttached'];
     }
 
@@ -33,7 +33,7 @@ export class FloatingFilterComponentWrapper
         updateFloatingFilterParent(this.sourceParams, model);
     }
 
-    protected getProps(): CustomFloatingFilterProps {
+    protected override getProps(): CustomFloatingFilterProps {
         const props = super.getProps();
         props.model = this.model;
         props.onModelChange = this.onModelChange;

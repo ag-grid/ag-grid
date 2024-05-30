@@ -62,7 +62,6 @@ export class GridBodyComp extends Component {
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.resizeObserverService = beans.resizeObserverService;
         this.rangeService = beans.rangeService;
     }

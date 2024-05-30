@@ -1,6 +1,7 @@
 import { ComponentUtil } from './components/componentUtil';
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import type { BeanCollection, BeanName } from './context/context';
+import type { BeanCollection } from './context/context';
 import type { DomLayoutType, GridOptions } from './entities/gridOptions';
 import type { Environment } from './environment';
 import type { AgEvent, GridOptionsChangedEvent } from './events';
@@ -78,8 +79,8 @@ export interface PropertyValueChangedEvent<K extends keyof GridOptions> extends 
 export type PropertyChangedListener = (event: PropertyChangedEvent) => void;
 export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: PropertyValueChangedEvent<K>) => void;
 
-export class GridOptionsService extends BeanStub {
-    beanName: BeanName = 'gos';
+export class GridOptionsService extends BeanStub implements NamedBean {
+    beanName = 'gos' as const;
 
     private gridOptions: GridOptions;
     private eGridDiv: HTMLElement;
@@ -88,7 +89,6 @@ export class GridOptionsService extends BeanStub {
     private api: GridApi;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.gridOptions = beans.gridOptions;
         this.eGridDiv = beans.eGridDiv;
         this.validationService = beans.validationService;

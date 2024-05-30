@@ -1,9 +1,10 @@
 import type { FuncColsService } from '../../../columns/funcColsService';
 import type { BeanCollection } from '../../../context/context';
+import { AgColumn } from '../../../entities/agColumn';
 import type { SortDirection } from '../../../entities/colDef';
-import { Column } from '../../../entities/column';
 import { Events } from '../../../eventKeys';
 import type { EventsType } from '../../../eventKeys';
+import type { Column } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { IComponent } from '../../../interfaces/iComponent';
 import type { MenuService } from '../../../misc/menuService';
@@ -115,7 +116,6 @@ export class HeaderComp extends Component implements IHeaderComp {
     private funcColsService: FuncColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.sortController = beans.sortController;
         this.menuService = beans.menuService;
         this.funcColsService = beans.funcColsService;
@@ -149,7 +149,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 
@@ -207,7 +207,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
     }
 
-    private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
+    private addInIcon(iconName: string, eParent: HTMLElement, column: AgColumn): void {
         if (eParent == null) {
             return;
         }
@@ -246,7 +246,7 @@ export class HeaderComp extends Component implements IHeaderComp {
                     return;
                 }
 
-                this.sortController.progressSort(this.params.column, false, 'uiColumnSorted');
+                this.sortController.progressSort(this.params.column as AgColumn, false, 'uiColumnSorted');
             };
 
             this.addManagedListener(touchListener, TouchListener.EVENT_TAP, tapListener);
@@ -291,7 +291,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
 
         const isLegacyMenu = this.menuService.isLegacyMenuEnabled();
-        this.addInIcon(isLegacyMenu ? 'menu' : 'menuAlt', this.eMenu, this.params.column);
+        this.addInIcon(isLegacyMenu ? 'menu' : 'menuAlt', this.eMenu, this.params.column as AgColumn);
         this.eMenu.classList.toggle('ag-header-menu-icon', !isLegacyMenu);
 
         this.currentSuppressMenuHide = this.shouldSuppressMenuHide();
@@ -300,7 +300,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     public onMenuKeyboardShortcut(isFilterShortcut: boolean): boolean {
-        const { column } = this.params;
+        const column = this.params.column as AgColumn;
         const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
         if (isFilterShortcut && !isLegacyMenuEnabled) {
             if (this.menuService.isFilterMenuInHeaderEnabled(column)) {
@@ -334,7 +334,7 @@ export class HeaderComp extends Component implements IHeaderComp {
                 this.eSortNone
             );
         }
-        this.eSortIndicator.setupSort(this.params.column);
+        this.eSortIndicator.setupSort(this.params.column as AgColumn);
 
         // we set up the indicator prior to the check for whether this column is sortable, as it allows the indicator to
         // set up the multi sort indicator which can appear irrelevant of whether this column can itself be sorted.
@@ -344,7 +344,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
 
         // keep track of last time the moving changed flag was set
-        this.addManagedListener(this.params.column, Column.EVENT_MOVING_CHANGED, () => {
+        this.addManagedListener(this.params.column, AgColumn.EVENT_MOVING_CHANGED, () => {
             this.lastMovingChanged = new Date().getTime();
         });
 
@@ -374,7 +374,9 @@ export class HeaderComp extends Component implements IHeaderComp {
             this.addOrRemoveCssClass('ag-header-cell-sorted-none', this.params.column.isSortNone());
 
             if (this.params.column.getColDef().showRowGroup) {
-                const sourceColumns = this.funcColsService.getSourceColumnsForGroupColumn(this.params.column);
+                const sourceColumns = this.funcColsService.getSourceColumnsForGroupColumn(
+                    this.params.column as AgColumn
+                );
                 // this == is intentional, as it allows null and undefined to match, which are both unsorted states
                 const sortDirectionsMatch = sourceColumns?.every(
                     (sourceCol) => this.params.column.getSort() == sourceCol.getSort()
@@ -419,10 +421,10 @@ export class HeaderComp extends Component implements IHeaderComp {
             return false;
         }
 
-        const { column } = this.params;
+        const column = this.params.column as AgColumn;
         this.addInIcon('filter', element, column);
 
-        this.addManagedListener(column, Column.EVENT_FILTER_CHANGED, filterChangedCallback);
+        this.addManagedListener(column, AgColumn.EVENT_FILTER_CHANGED, filterChangedCallback);
         filterChangedCallback();
         return true;
     }

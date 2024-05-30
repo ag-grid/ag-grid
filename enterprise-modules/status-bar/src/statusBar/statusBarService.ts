@@ -1,8 +1,8 @@
-import type { BeanName, IStatusBarService, IStatusPanelComp } from '@ag-grid-community/core';
+import type { IStatusBarService, IStatusPanelComp, NamedBean } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
-export class StatusBarService extends BeanStub implements IStatusBarService {
-    beanName: BeanName = 'statusBarService';
+export class StatusBarService extends BeanStub implements NamedBean, IStatusBarService {
+    beanName = 'statusBarService' as const;
 
     private allComponents: Map<string, IStatusPanelComp> = new Map();
 

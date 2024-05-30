@@ -8,7 +8,6 @@ export class SetPinnedLeftWidthFeature extends BeanStub {
     private pinnedWidthService: PinnedWidthService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.pinnedWidthService = beans.pinnedWidthService;
     }
 

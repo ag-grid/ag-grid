@@ -3,7 +3,7 @@ import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
-import type { Column } from '../../entities/column';
+import type { AgColumn } from '../../entities/agColumn';
 import type { CellKeyDownEvent, FullWidthCellKeyDownEvent } from '../../events';
 import { Events } from '../../events';
 import type { FocusService } from '../../focusService';
@@ -20,8 +20,11 @@ import { _last } from '../../utils/array';
 import { _isIOSUserAgent } from '../../utils/browser';
 import { _getCtrlForEventTarget, _isEventSupported, _isStopPropagationForAgGrid } from '../../utils/event';
 import { _missingOrEmpty } from '../../utils/generic';
-import { _isEventFromPrintableCharacter, _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
-import { _normaliseQwertyAzerty } from '../../utils/keyboard';
+import {
+    _isEventFromPrintableCharacter,
+    _isUserSuppressingKeyboardEvent,
+    _normaliseQwertyAzerty,
+} from '../../utils/keyboard';
 import type { ValueService } from '../../valueService/valueService';
 import type { LongTapEvent } from '../../widgets/touchListener';
 import { TouchListener } from '../../widgets/touchListener';
@@ -42,8 +45,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private rangeService?: IRangeService;
     private clipboardService?: IClipboardService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.mouseEventService = beans.mouseEventService;
         this.valueService = beans.valueService;
         this.menuService = beans.menuService;
@@ -234,7 +236,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private processFullWidthRowKeyboardEvent(rowComp: RowCtrl, eventName: string, keyboardEvent: KeyboardEvent) {
         const rowNode = rowComp.getRowNode();
         const focusedCell = this.focusService.getFocusedCell();
-        const column = (focusedCell && focusedCell.column) as Column;
+        const column = (focusedCell && focusedCell.column) as AgColumn;
         const gridProcessingAllowed = !_isUserSuppressingKeyboardEvent(this.gos, keyboardEvent, rowNode, column, false);
 
         if (gridProcessingAllowed) {

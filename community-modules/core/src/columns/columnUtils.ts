@@ -1,21 +1,20 @@
 import type { Context } from '../context/context';
-import type { ColumnInstanceId } from '../entities/column';
-import { Column } from '../entities/column';
-import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
-import type { IProvidedColumn } from '../interfaces/iProvidedColumn';
+import { type AgColumn, isColumn } from '../entities/agColumn';
+import { type AgProvidedColumnGroup, isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import type { ColumnInstanceId } from '../interfaces/iColumn';
 import { GROUP_AUTO_COLUMN_ID } from './autoColService';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 
 // Possible candidate for reuse (alot of recursive traversal duplication)
-export function getColumnsFromTree(rootColumns: IProvidedColumn[]): Column[] {
-    const result: Column[] = [];
+export function getColumnsFromTree(rootColumns: (AgColumn | AgProvidedColumnGroup)[]): AgColumn[] {
+    const result: AgColumn[] = [];
 
-    const recursiveFindColumns = (childColumns: IProvidedColumn[]): void => {
+    const recursiveFindColumns = (childColumns: (AgColumn | AgProvidedColumnGroup)[]): void => {
         for (let i = 0; i < childColumns.length; i++) {
             const child = childColumns[i];
-            if (child instanceof Column) {
+            if (isColumn(child)) {
                 result.push(child);
-            } else if (child instanceof ProvidedColumnGroup) {
+            } else if (isProvidedColumnGroup(child)) {
                 recursiveFindColumns(child.getChildren());
             }
         }
@@ -26,16 +25,16 @@ export function getColumnsFromTree(rootColumns: IProvidedColumn[]): Column[] {
     return result;
 }
 
-export function getWidthOfColsInList(columnList: Column[]) {
+export function getWidthOfColsInList(columnList: AgColumn[]) {
     return columnList.reduce((width, col) => width + col.getActualWidth(), 0);
 }
 
 export function destroyColumnTree(
     context: Context,
-    oldTree: IProvidedColumn[] | null | undefined,
-    newTree?: IProvidedColumn[] | null
+    oldTree: (AgColumn | AgProvidedColumnGroup)[] | null | undefined,
+    newTree?: (AgColumn | AgProvidedColumnGroup)[] | null
 ): void {
-    const oldObjectsById: { [id: ColumnInstanceId]: IProvidedColumn | null } = {};
+    const oldObjectsById: { [id: ColumnInstanceId]: (AgColumn | AgProvidedColumnGroup) | null } = {};
 
     if (!oldTree) {
         return;
@@ -58,7 +57,7 @@ export function destroyColumnTree(
     context.destroyBeans(colsToDestroy);
 }
 
-export function isColumnGroupAutoCol(col: Column): boolean {
+export function isColumnGroupAutoCol(col: AgColumn): boolean {
     const colId = col.getId();
     return colId.startsWith(GROUP_AUTO_COLUMN_ID);
 }

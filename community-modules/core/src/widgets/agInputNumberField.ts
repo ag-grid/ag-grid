@@ -12,7 +12,7 @@ export interface AgInputNumberFieldParams extends AgInputTextFieldParams {
 }
 
 export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParams> {
-    static readonly selector: AgComponentSelector = 'AG-INPUT-NUMBER-FIELD';
+    static override selector: AgComponentSelector = 'AG-INPUT-NUMBER-FIELD';
 
     private precision?: number;
     private step?: number;
@@ -135,7 +135,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
         return this;
     }
 
-    public setValue(value?: string | null, silent?: boolean): this {
+    public override setValue(value?: string | null, silent?: boolean): this {
         return this.setValueOrInputValue(
             (v) => super.setValue(v, silent),
             () => this,
@@ -143,7 +143,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
         );
     }
 
-    public setStartValue(value?: string | null): void {
+    public override setStartValue(value?: string | null): void {
         return this.setValueOrInputValue<void>(
             (v) => super.setValue(v, true),
             (v) => {
@@ -179,7 +179,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
         return setValueFunc(value);
     }
 
-    public getValue(): string | null | undefined {
+    public override getValue(): string | null | undefined {
         if (!this.eInput.validity.valid) {
             return undefined;
         }

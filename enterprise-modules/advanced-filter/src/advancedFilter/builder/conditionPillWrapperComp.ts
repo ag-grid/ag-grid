@@ -1,5 +1,5 @@
-import type { BaseCellDataType, BeanCollection, Column, ColumnAdvancedFilterModel } from '@ag-grid-community/core';
 import { Component, _exists, _removeFromParent } from '@ag-grid-community/core';
+import type { AgColumn, BaseCellDataType, BeanCollection, ColumnAdvancedFilterModel } from '@ag-grid-community/core';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
@@ -11,8 +11,7 @@ import type { SelectPillComp } from './selectPillComp';
 export class ConditionPillWrapperComp extends Component {
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
     }
 
@@ -20,7 +19,7 @@ export class ConditionPillWrapperComp extends Component {
     private createPill: (params: CreatePillParams) => SelectPillComp | InputPillComp;
     private filterModel: ColumnAdvancedFilterModel;
     private baseCellDataType: BaseCellDataType;
-    private column: Column | undefined;
+    private column: AgColumn | undefined;
     private numOperands: number;
     private eColumnPill: SelectPillComp | InputPillComp;
     private eOperatorPill: SelectPillComp | InputPillComp | undefined;
@@ -61,7 +60,7 @@ export class ConditionPillWrapperComp extends Component {
         return this.validationMessage;
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.eColumnPill.getFocusableElement();
     }
 

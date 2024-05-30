@@ -1,9 +1,9 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanName } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
 
-export class ValueCache extends BeanStub {
-    beanName: BeanName = 'valueCache';
+export class ValueCache extends BeanStub implements NamedBean {
+    beanName = 'valueCache' as const;
 
     private cacheVersion = 0;
     private active: boolean;

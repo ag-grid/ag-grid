@@ -27,7 +27,7 @@ export class ToolPanelComponentWrapper
         this.sourceParams.onStateUpdated();
     }
 
-    protected getProps(): CustomToolPanelProps {
+    protected override getProps(): CustomToolPanelProps {
         const props = super.getProps();
         props.state = this.state;
         props.onStateChange = this.onStateChange;

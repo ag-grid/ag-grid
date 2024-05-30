@@ -1,6 +1,6 @@
 import type {
+    AgColumn,
     BeanCollection,
-    Column,
     FuncColsService,
     IRowNode,
     ISelectionService,
@@ -31,8 +31,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private selectionService: ISelectionService;
     private funcColsService: FuncColsService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.blockUtils = beans.ssrmBlockUtils;
         this.storeUtils = beans.ssrmStoreUtils;
         this.selectionService = beans.selectionService;
@@ -55,7 +54,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private readonly storeParams: ServerSideGroupLevelParams;
     private readonly parentRowNode: RowNode;
     private groupField: string | undefined;
-    private rowGroupColumn: Column;
+    private rowGroupColumn: AgColumn;
 
     private idSequence = new NumberSequence();
     private cache: LazyCache;

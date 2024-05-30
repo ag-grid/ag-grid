@@ -15,8 +15,7 @@ export class AgStatusBar extends Component {
     private userComponentFactory: UserComponentFactory;
     private statusBarService: StatusBarService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.userComponentFactory = beans.userComponentFactory;
         this.statusBarService = beans.statusBarService;
     }

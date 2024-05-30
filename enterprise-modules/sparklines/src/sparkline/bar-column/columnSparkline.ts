@@ -35,7 +35,7 @@ export class ColumnSparkline extends BarColumnSparkline {
         }
     }
 
-    protected updateAxisLine() {
+    protected override updateAxisLine() {
         const { yScale, axis, axisLine, seriesRect } = this;
         const { strokeWidth } = axis;
 

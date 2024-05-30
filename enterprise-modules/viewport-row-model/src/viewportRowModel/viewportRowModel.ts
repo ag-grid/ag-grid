@@ -1,10 +1,10 @@
 import type {
     BeanCollection,
-    BeanName,
     FocusService,
     IRowModel,
     IViewportDatasource,
     ModelUpdatedEvent,
+    NamedBean,
     RowBounds,
     RowModelType,
     RowRenderer,
@@ -12,15 +12,14 @@ import type {
 } from '@ag-grid-community/core';
 import { BeanStub, Events, RowNode, _iterateObject, _missing } from '@ag-grid-community/core';
 
-export class ViewportRowModel extends BeanStub implements IRowModel {
-    beanName: BeanName = 'rowModel';
+export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
+    beanName = 'rowModel' as const;
 
     private rowRenderer: RowRenderer;
     private focusService: FocusService;
     private beans: BeanCollection;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.rowRenderer = beans.rowRenderer;
         this.focusService = beans.focusService;
         this.beans = beans;

@@ -1,8 +1,9 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef } from '../entities/colDef';
-import type { Column } from '../entities/column';
-import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { _moveInArray } from '../utils/array';
@@ -10,15 +11,14 @@ import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColKey, ColumnModel } from './columnModel';
 
-export class ColumnMoveService extends BeanStub {
-    beanName: BeanName = 'columnMoveService';
+export class ColumnMoveService extends BeanStub implements NamedBean {
+    beanName = 'columnMoveService' as const;
 
     private columnModel: ColumnModel;
     private columnAnimationService: ColumnAnimationService;
     private eventDispatcher: ColumnEventDispatcher;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.columnModel = beans.columnModel;
         this.columnAnimationService = beans.columnAnimationService;
         this.eventDispatcher = beans.columnEventDispatcher;
@@ -69,13 +69,13 @@ export class ColumnMoveService extends BeanStub {
         this.columnAnimationService.finish();
     }
 
-    private doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean {
+    private doesMovePassRules(columnsToMove: AgColumn[], toIndex: number): boolean {
         // make a copy of what the grid columns would look like after the move
         const proposedColumnOrder = this.getProposedColumnOrder(columnsToMove, toIndex);
         return this.doesOrderPassRules(proposedColumnOrder);
     }
 
-    public doesOrderPassRules(gridOrder: Column[]) {
+    public doesOrderPassRules(gridOrder: AgColumn[]) {
         if (!this.doesMovePassMarryChildren(gridOrder)) {
             return false;
         }
@@ -85,14 +85,14 @@ export class ColumnMoveService extends BeanStub {
         return true;
     }
 
-    public getProposedColumnOrder(columnsToMove: Column[], toIndex: number): Column[] {
+    public getProposedColumnOrder(columnsToMove: AgColumn[], toIndex: number): AgColumn[] {
         const gridColumns = this.columnModel.getCols();
         const proposedColumnOrder = gridColumns.slice();
-        _moveInArray(proposedColumnOrder, columnsToMove, toIndex);
+        _moveInArray(proposedColumnOrder, columnsToMove as AgColumn[], toIndex);
         return proposedColumnOrder;
     }
 
-    private doesMovePassLockedPositions(proposedColumnOrder: Column[]): boolean {
+    private doesMovePassLockedPositions(proposedColumnOrder: AgColumn[]): boolean {
         // Placement is a number indicating 'left' 'center' or 'right' as 0 1 2
         let lastPlacement = 0;
         let rulePassed = true;
@@ -119,12 +119,12 @@ export class ColumnMoveService extends BeanStub {
         return rulePassed;
     }
 
-    public doesMovePassMarryChildren(allColumnsCopy: Column[]): boolean {
+    public doesMovePassMarryChildren(allColumnsCopy: AgColumn[]): boolean {
         let rulePassed = true;
         const gridBalancedTree = this.columnModel.getColTree();
 
         depthFirstOriginalTreeSearch(null, gridBalancedTree, (child) => {
-            if (!(child instanceof ProvidedColumnGroup)) {
+            if (!isProvidedColumnGroup(child)) {
                 return;
             }
 
@@ -142,7 +142,9 @@ export class ColumnMoveService extends BeanStub {
                 newIndexes.push(newColIndex);
             });
 
+            // eslint-disable-next-line prefer-spread
             const maxIndex = Math.max.apply(Math, newIndexes);
+            // eslint-disable-next-line prefer-spread
             const minIndex = Math.min.apply(Math, newIndexes);
 
             // spread is how far the first column in this group is away from the last column
@@ -161,11 +163,11 @@ export class ColumnMoveService extends BeanStub {
         return rulePassed;
     }
 
-    public placeLockedColumns(cols: Column[]): Column[] {
-        const left: Column[] = [];
-        const normal: Column[] = [];
-        const right: Column[] = [];
-        cols.forEach((col) => {
+    public placeLockedColumns(cols: AgColumn[]): AgColumn[] {
+        const left: AgColumn[] = [];
+        const normal: AgColumn[] = [];
+        const right: AgColumn[] = [];
+        cols.forEach((col: AgColumn) => {
             const position = col.getColDef().lockPosition;
             if (position === 'right') {
                 right.push(col);

@@ -1,8 +1,8 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanName } from '../context/context';
 
-export class ExpressionService extends BeanStub {
-    beanName: BeanName = 'expressionService';
+export class ExpressionService extends BeanStub implements NamedBean {
+    beanName = 'expressionService' as const;
 
     private expressionToFunctionCache = {} as any;
 

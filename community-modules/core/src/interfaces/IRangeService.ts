@@ -1,7 +1,7 @@
 import type { Bean } from '../context/bean';
 import type { CellPosition } from '../entities/cellPositionUtils';
-import type { Column } from '../entities/column';
 import type { RowPosition } from '../entities/rowPositionUtils';
+import type { Column } from '../interfaces/iColumn';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 

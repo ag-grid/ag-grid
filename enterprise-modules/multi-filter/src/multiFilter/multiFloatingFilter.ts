@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     BeanCollection,
     FilterChangedEvent,
     FilterManager,
@@ -19,8 +20,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     private userComponentFactory: UserComponentFactory;
     private filterManager: FilterManager;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.userComponentFactory = beans.userComponentFactory;
         this.filterManager = beans.filterManager;
     }
@@ -170,7 +170,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         });
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         this.destroyBeans(this.floatingFilters);
         this.floatingFilters.length = 0;
 
@@ -180,7 +180,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     private getCompDetails(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): UserCompDetails | undefined {
         const defaultComponentName =
             this.userComponentFactory.getDefaultFloatingFilterType(filterDef, () =>
-                this.filterManager.getDefaultFloatingFilter(this.params.column)
+                this.filterManager.getDefaultFloatingFilter(this.params.column as AgColumn)
             ) ?? 'agReadOnlyFloatingFilter';
 
         return this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);

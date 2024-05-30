@@ -1,11 +1,11 @@
 import type {
+    AgColumn,
     BeanCollection,
-    BeanName,
-    Column,
     ColumnChooserParams,
     ColumnMenuVisibleChangedEvent,
     FocusService,
     IColumnChooserFactory,
+    NamedBean,
     ShowColumnChooserParams,
     VisibleColsService,
     WithoutGridCommon,
@@ -16,15 +16,14 @@ import { AgDialog } from '@ag-grid-enterprise/core';
 
 import type { MenuUtils } from './menuUtils';
 
-export class ColumnChooserFactory extends BeanStub implements IColumnChooserFactory {
-    beanName: BeanName = 'columnChooserFactory';
+export class ColumnChooserFactory extends BeanStub implements NamedBean, IColumnChooserFactory {
+    beanName = 'columnChooserFactory' as const;
 
     private focusService: FocusService;
     private menuUtils: MenuUtils;
     private visibleColsService: VisibleColsService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
         this.menuUtils = beans.menuUtils;
         this.visibleColsService = beans.visibleColsService;
@@ -35,7 +34,7 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
 
     public createColumnSelectPanel(
         parent: BeanStub,
-        column?: Column | null,
+        column?: AgColumn | null,
         draggable?: boolean,
         params?: ColumnChooserParams
     ): AgPrimaryCols {
@@ -83,7 +82,7 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
 
         const columnSelectPanel = this.createColumnSelectPanel(this, column, true, chooserParams);
         const translate = this.localeService.getLocaleTextFunc();
-        const columnIndex = this.visibleColsService.getAllCols().indexOf(column!);
+        const columnIndex = this.visibleColsService.getAllCols().indexOf(column as AgColumn);
         const headerPosition = column ? this.focusService.getFocusedHeader() : null;
 
         this.activeColumnChooserDialog = this.createBean(
@@ -127,7 +126,7 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
         }
     }
 
-    private dispatchVisibleChangedEvent(visible: boolean, column?: Column | null): void {
+    private dispatchVisibleChangedEvent(visible: boolean, column?: AgColumn | null): void {
         const event: WithoutGridCommon<ColumnMenuVisibleChangedEvent> = {
             type: Events.EVENT_COLUMN_MENU_VISIBLE_CHANGED,
             visible,

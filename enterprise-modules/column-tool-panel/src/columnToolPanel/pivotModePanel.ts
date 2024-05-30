@@ -5,8 +5,7 @@ export class PivotModePanel extends Component {
     private columnModel: ColumnModel;
     private ctrlsService: CtrlsService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.ctrlsService = beans.ctrlsService;
     }

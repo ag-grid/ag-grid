@@ -1,12 +1,11 @@
-import type { BeanCollection, BeanName, ChangedPath, FilterManager, RowNode } from '@ag-grid-community/core';
+import type { BeanCollection, ChangedPath, FilterManager, NamedBean, RowNode } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
-export class FilterService extends BeanStub {
-    beanName: BeanName = 'filterService';
+export class FilterService extends BeanStub implements NamedBean {
+    beanName = 'filterService' as const;
 
     private filterManager: FilterManager;
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.filterManager = beans.filterManager;
     }
 

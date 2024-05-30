@@ -1,7 +1,7 @@
 import type { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
-import type { Column } from '../entities/column';
 import type { IProvidedFilter, IProvidedFilterParams } from '../filter/provided/providedFilter';
 import type { GridApi } from '../gridApi';
+import type { Column } from '../interfaces/iColumn';
 import type { ITooltipParams } from '../rendering/tooltipComponent';
 import type { AgPromise } from '../utils/promise';
 import type { IFilterParams, ProvidedFilterModel } from './iFilter';

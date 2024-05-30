@@ -14,10 +14,10 @@ import { LocalEventService } from '../localEventService';
 import type { LocaleService } from '../localeService';
 import { _addSafePassiveEventListener } from '../utils/event';
 import type { Bean } from './bean';
-import type { BeanCollection, BeanName, Context } from './context';
+import type { BeanCollection, Context } from './context';
+import type { BaseBean } from './genericContext';
 
-export abstract class BeanStub implements Bean, IEventEmitter {
-    public readonly beanName?: BeanName;
+export abstract class BeanStub implements BaseBean<BeanCollection>, Bean, IEventEmitter {
     public static EVENT_DESTROYED = 'destroyed';
 
     protected localEventService?: LocalEventService;
@@ -36,7 +36,7 @@ export abstract class BeanStub implements Bean, IEventEmitter {
     protected localeService: LocaleService;
     protected gridId: string;
 
-    public wireBeans(beans: BeanCollection): void {
+    public preWireBeans(beans: BeanCollection): void {
         this.gridId = beans.context.getGridId();
         this.frameworkOverrides = beans.frameworkOverrides;
         this.stubContext = beans.context;

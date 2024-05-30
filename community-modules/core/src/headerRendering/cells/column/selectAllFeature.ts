@@ -1,7 +1,7 @@
 import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
+import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderCheckboxSelectionCallbackParams } from '../../../entities/colDef';
-import type { Column } from '../../../entities/column';
 import type { EventsType } from '../../../eventKeys';
 import type { SelectionEventSourceType } from '../../../events';
 import { Events } from '../../../events';
@@ -16,19 +16,18 @@ export class SelectAllFeature extends BeanStub {
     private selectionService: ISelectionService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.rowModel = beans.rowModel;
         this.selectionService = beans.selectionService;
     }
 
     private cbSelectAllVisible = false;
     private processingEventFromCheckbox = false;
-    private column: Column;
+    private column: AgColumn;
     private headerCellCtrl: HeaderCellCtrl;
 
     private cbSelectAll: AgCheckbox;
 
-    constructor(column: Column) {
+    constructor(column: AgColumn) {
         super();
         this.column = column;
     }

@@ -1,10 +1,9 @@
 import type {
+    AgColumn,
     AgEvent,
     BeanCollection,
-    BeanName,
     CellPosition,
     CellPositionUtils,
-    Column,
     ColumnModel,
     ContextMenuVisibleChangedEvent,
     CtrlsService,
@@ -13,6 +12,7 @@ import type {
     IContextMenuFactory,
     IRangeService,
     MenuItemDef,
+    NamedBean,
     PopupService,
     RowNode,
     WithoutGridCommon,
@@ -36,8 +36,8 @@ import type { MenuUtils } from './menuUtils';
 const CSS_MENU = 'ag-menu';
 const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
 
-export class ContextMenuFactory extends BeanStub implements IContextMenuFactory {
-    beanName: BeanName = 'contextMenuFactory';
+export class ContextMenuFactory extends BeanStub implements NamedBean, IContextMenuFactory {
+    beanName = 'contextMenuFactory' as const;
 
     private popupService: PopupService;
     private ctrlsService: CtrlsService;
@@ -46,7 +46,6 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.popupService = beans.popupService;
         this.ctrlsService = beans.ctrlsService;
         this.columnModel = beans.columnModel;
@@ -62,7 +61,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
     private getMenuItems(
         node: RowNode | null,
-        column: Column | null,
+        column: AgColumn | null,
         value: any
     ): (MenuItemDef | string)[] | undefined {
         const defaultMenuOptions: string[] = [];
@@ -130,7 +129,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         mouseEvent: MouseEvent | null,
         touchEvent: TouchEvent | null,
         rowNode: RowNode | null,
-        column: Column | null,
+        column: AgColumn | null,
         value: any,
         anchorToElement: HTMLElement
     ): void {
@@ -141,7 +140,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
     public showMenu(
         node: RowNode | null,
-        column: Column | null,
+        column: AgColumn | null,
         value: any,
         mouseEvent: MouseEvent | Touch,
         anchorToElement: HTMLElement
@@ -250,7 +249,6 @@ class ContextMenu extends Component {
     private cellPositionUtils: CellPositionUtils;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.focusService = beans.focusService;
         this.menuItemMapper = beans.menuItemMapper;
         this.cellPositionUtils = beans.cellPositionUtils;
@@ -261,7 +259,7 @@ class ContextMenu extends Component {
 
     constructor(
         private readonly menuItems: (MenuItemDef | string)[],
-        private readonly column: Column | null,
+        private readonly column: AgColumn | null,
         private readonly node: RowNode | null,
         private readonly value: any
     ) {

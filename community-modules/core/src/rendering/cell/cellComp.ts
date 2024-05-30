@@ -1,7 +1,7 @@
 import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle } from '../../entities/colDef';
-import type { Column } from '../../entities/column';
 import type { RowNode } from '../../entities/rowNode';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _setAriaRole } from '../../utils/aria';
@@ -24,7 +24,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private eCellValue: HTMLElement | undefined;
 
     private beans: BeanCollection;
-    private column: Column;
+    private column: AgColumn;
     private rowNode: RowNode;
     private eRow: HTMLElement;
 
@@ -565,7 +565,7 @@ export class CellComp extends Component implements TooltipParentComp {
     // the top part)
     //
     // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
-    public destroy(): void {
+    public override destroy(): void {
         this.cellCtrl.stopEditing();
 
         this.destroyEditorAndRenderer();

@@ -1,6 +1,6 @@
 import type {
+    AgColumn,
     BeanCollection,
-    Column,
     ColumnEventType,
     ColumnModel,
     DragItem,
@@ -16,7 +16,7 @@ import { DropZoneColumnComp } from './dropZoneColumnComp';
 
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 
-export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, Column> {
+export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, AgColumn> {
     protected columnModel: ColumnModel;
     protected funcColsService: FuncColsService;
 
@@ -33,7 +33,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         super(horizontal);
     }
 
-    public init(params: PillDropZonePanelParams): void {
+    public override init(params: PillDropZonePanelParams): void {
         super.init(params);
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.refreshGui.bind(this));
@@ -44,8 +44,8 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         );
     }
 
-    protected getItems(dragItem: DragItem): Column[] {
-        return dragItem.columns ?? [];
+    protected getItems(dragItem: DragItem): AgColumn[] {
+        return (dragItem.columns as AgColumn[]) ?? [];
     }
 
     protected isInterestedIn(type: DragSourceType): boolean {
@@ -53,7 +53,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         return type === DragSourceType.HeaderCell || type === DragSourceType.ToolPanel;
     }
 
-    protected minimumAllowedNewInsertIndex(): number {
+    protected override minimumAllowedNewInsertIndex(): number {
         const numberOfLockedCols = this.gos.get('groupLockGroupColumns');
         const numberOfGroupCols = this.funcColsService.getRowGroupColumns().length;
         if (numberOfLockedCols === -1) {
@@ -66,27 +66,27 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         return this.isRowGroupPanel() && !this.gos.get('suppressRowGroupHidesColumns') && !draggingEvent.fromNudge;
     }
 
-    protected handleDragEnterEnd(draggingEvent: DraggingEvent): void {
+    protected override handleDragEnterEnd(draggingEvent: DraggingEvent): void {
         const hideColumnOnExit = this.showOrHideColumnOnExit(draggingEvent);
 
         if (hideColumnOnExit) {
             const dragItem = draggingEvent.dragSource.getDragItem();
-            const columns = dragItem.columns;
+            const columns = dragItem.columns as AgColumn[];
             this.setColumnsVisible(columns, false, 'uiColumnDragged');
         }
     }
 
-    protected handleDragLeaveEnd(draggingEvent: DraggingEvent): void {
+    protected override handleDragLeaveEnd(draggingEvent: DraggingEvent): void {
         const showColumnOnExit = this.showOrHideColumnOnExit(draggingEvent);
 
         if (showColumnOnExit) {
             const dragItem = draggingEvent.dragSource.getDragItem();
 
-            this.setColumnsVisible(dragItem.columns, true, 'uiColumnDragged');
+            this.setColumnsVisible(dragItem.columns as AgColumn[], true, 'uiColumnDragged');
         }
     }
 
-    public setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType) {
+    public setColumnsVisible(columns: AgColumn[] | null | undefined, visible: boolean, source: ColumnEventType) {
         if (columns) {
             const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
             this.columnModel.setColsVisible(allowedCols, visible, source);
@@ -98,7 +98,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     }
 
     protected createPillComponent(
-        column: Column,
+        column: AgColumn,
         dropTarget: DropTarget,
         ghost: boolean,
         horizontal: boolean

@@ -73,7 +73,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to have public here instead of private or protected
-    public destroy(): void {
+    public override destroy(): void {
         this.destroyBean(this.innerCellRenderer);
         super.destroy();
     }

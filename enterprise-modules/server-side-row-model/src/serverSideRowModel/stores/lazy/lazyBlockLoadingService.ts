@@ -1,9 +1,9 @@
 import type {
     BeanCollection,
-    BeanName,
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
     LoadSuccessParams,
+    NamedBean,
     RowNode,
     RowRenderer,
 } from '@ag-grid-community/core';
@@ -13,15 +13,14 @@ import type { ServerSideRowModel } from '../../serverSideRowModel';
 import type { LazyCache } from './lazyCache';
 import { LazyStore } from './lazyStore';
 
-export class LazyBlockLoadingService extends BeanStub {
-    beanName: BeanName = 'lazyBlockLoadingService';
+export class LazyBlockLoadingService extends BeanStub implements NamedBean {
+    beanName = 'lazyBlockLoadingService' as const;
 
     private rowNodeBlockLoader: RowNodeBlockLoader;
     private rowRenderer: RowRenderer;
     private rowModel: ServerSideRowModel;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
         this.rowRenderer = beans.rowRenderer;
         this.rowModel = beans.rowModel as ServerSideRowModel;

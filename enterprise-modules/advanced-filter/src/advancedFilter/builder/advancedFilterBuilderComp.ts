@@ -27,7 +27,6 @@ export class AdvancedFilterBuilderComp extends Component {
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.filterManager = beans.filterManager;
         this.advancedFilterService = beans.advancedFilterService;
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService;

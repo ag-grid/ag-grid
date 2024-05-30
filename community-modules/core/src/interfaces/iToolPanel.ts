@@ -1,5 +1,3 @@
-import { ColDef, ColGroupDef } from '../entities/colDef';
-import { ColumnEventType } from '../events';
 import type { ColumnToolPanelState } from './gridState';
 import type { AgGridCommon } from './iCommon';
 import type { IComponent } from './iComponent';

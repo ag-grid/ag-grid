@@ -1,4 +1,3 @@
-import { Column } from '@ag-grid-community/core';
 import React, { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 export default ({ column, api, active, onActiveChange }) => {

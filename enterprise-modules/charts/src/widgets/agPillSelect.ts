@@ -216,11 +216,11 @@ class PillSelectDragComp<TValue> extends PillDragComp<TValue> {
         return DragSourceType.ChartPanel;
     }
 
-    protected getDragSourceId(): string | undefined {
+    protected override getDragSourceId(): string | undefined {
         return this.sourceId;
     }
 
-    protected isDraggable(): boolean {
+    protected override isDraggable(): boolean {
         return this.draggable;
     }
 }

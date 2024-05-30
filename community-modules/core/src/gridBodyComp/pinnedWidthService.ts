@@ -1,16 +1,16 @@
 import type { VisibleColsService } from '../columns/visibleColsService';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import { Events } from '../eventKeys';
 import type { EventsType } from '../eventKeys';
 
-export class PinnedWidthService extends BeanStub {
-    beanName: BeanName = 'pinnedWidthService';
+export class PinnedWidthService extends BeanStub implements NamedBean {
+    beanName = 'pinnedWidthService' as const;
 
     private visibleColsService: VisibleColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.visibleColsService = beans.visibleColsService;
     }
 

@@ -38,7 +38,7 @@ export class AgAutocompleteList extends PopupComponent {
         super(AgAutocompleteList.TEMPLATE);
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 

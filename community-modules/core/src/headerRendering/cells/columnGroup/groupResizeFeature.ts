@@ -3,19 +3,20 @@ import type { ColumnResizeSet, ColumnSizeService } from '../../../columns/column
 import type { VisibleColsService } from '../../../columns/visibleColsService';
 import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
-import type { Column, ColumnPinnedType } from '../../../entities/column';
-import type { ColumnGroup } from '../../../entities/columnGroup';
+import type { AgColumn } from '../../../entities/agColumn';
+import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { ColumnEventType } from '../../../events';
+import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import type { AutoWidthCalculator } from '../../../rendering/autoWidthCalculator';
 import type { HorizontalResizeService } from '../../common/horizontalResizeService';
 import type { IHeaderResizeFeature } from '../abstractCell/abstractHeaderCellCtrl';
 import type { IHeaderGroupCellComp } from './headerGroupCellCtrl';
 
 interface ColumnSizeAndRatios {
-    columnsToResize: Column[];
+    columnsToResize: AgColumn[];
     resizeStartWidth: number;
     resizeRatios: number[];
-    groupAfterColumns?: Column[];
+    groupAfterColumns?: AgColumn[];
     groupAfterStartWidth?: number;
     groupAfterRatios?: number[];
 }
@@ -26,8 +27,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     private columnSizeService: ColumnSizeService;
     private columnAutosizeService: ColumnAutosizeService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.horizontalResizeService = beans.horizontalResizeService;
         this.autoWidthCalculator = beans.autoWidthCalculator;
         this.visibleColsService = beans.visibleColsService;
@@ -36,19 +36,24 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     }
 
     private eResize: HTMLElement;
-    private columnGroup: ColumnGroup;
+    private columnGroup: AgColumnGroup;
     private comp: IHeaderGroupCellComp;
     private pinned: ColumnPinnedType;
 
-    private resizeCols?: Column[];
+    private resizeCols?: AgColumn[];
     private resizeStartWidth: number;
     private resizeRatios?: number[];
 
-    private resizeTakeFromCols?: Column[];
+    private resizeTakeFromCols?: AgColumn[];
     private resizeTakeFromStartWidth?: number;
     private resizeTakeFromRatios?: number[];
 
-    constructor(comp: IHeaderGroupCellComp, eResize: HTMLElement, pinned: ColumnPinnedType, columnGroup: ColumnGroup) {
+    constructor(
+        comp: IHeaderGroupCellComp,
+        eResize: HTMLElement,
+        pinned: ColumnPinnedType,
+        columnGroup: AgColumnGroup
+    ) {
         super();
 
         this.eResize = eResize;
@@ -80,7 +85,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
                 const keys: string[] = [];
                 const leafCols = this.columnGroup.getDisplayedLeafColumns();
 
-                leafCols.forEach((column: Column) => {
+                leafCols.forEach((column) => {
                     // not all cols in the group may be participating with auto-resize
                     if (!column.getColDef().suppressAutoSize) {
                         keys.push(column.getColId());
@@ -125,7 +130,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
             resizeRatios,
         };
 
-        let groupAfter: ColumnGroup | null = null;
+        let groupAfter: AgColumnGroup | null = null;
 
         if (shiftKey) {
             groupAfter = this.visibleColsService.getGroupAtDirection(this.columnGroup, 'After');
@@ -248,16 +253,16 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         this.comp.addOrRemoveCssClass('ag-column-resizing', resizing);
     }
 
-    private getColumnsToResize(): Column[] {
+    private getColumnsToResize(): AgColumn[] {
         const leafCols = this.columnGroup.getDisplayedLeafColumns();
         return leafCols.filter((col) => col.isResizable());
     }
 
-    private getInitialSizeOfColumns(columns: Column[]): number {
-        return columns.reduce((totalWidth: number, column: Column) => totalWidth + column.getActualWidth(), 0);
+    private getInitialSizeOfColumns(columns: AgColumn[]): number {
+        return columns.reduce((totalWidth: number, column: AgColumn) => totalWidth + column.getActualWidth(), 0);
     }
 
-    private getSizeRatiosOfColumns(columns: Column[], initialSizeOfColumns: number): number[] {
+    private getSizeRatiosOfColumns(columns: AgColumn[], initialSizeOfColumns: number): number[] {
         return columns.map((column) => column.getActualWidth() / initialSizeOfColumns);
     }
 

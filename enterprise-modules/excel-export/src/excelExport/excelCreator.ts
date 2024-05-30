@@ -1,8 +1,7 @@
 import type {
+    AgColumn,
+    AgColumnGroup,
     BeanCollection,
-    BeanName,
-    Column,
-    ColumnGroup,
     ColumnModel,
     ColumnNameService,
     ExcelExportMultipleSheetParams,
@@ -12,6 +11,7 @@ import type {
     ExcelStyle,
     FuncColsService,
     IExcelCreator,
+    NamedBean,
     StylingService,
     ValueService,
 } from '@ag-grid-community/core';
@@ -219,9 +219,9 @@ export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetPara
 
 export class ExcelCreator
     extends BaseCreator<ExcelRow[], ExcelSerializingSession, ExcelExportParams>
-    implements IExcelCreator
+    implements NamedBean, IExcelCreator
 {
-    beanName: BeanName = 'excelCreator';
+    beanName = 'excelCreator' as const;
 
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
@@ -231,8 +231,7 @@ export class ExcelCreator
 
     private gridSerializer: GridSerializer;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
         this.funcColsService = beans.funcColsService;
@@ -359,7 +358,7 @@ export class ExcelCreator
         const { rowType, rowIndex, value, column, columnGroup, node } = params;
         const isHeader = rowType === RowType.HEADER;
         const isGroupHeader = rowType === RowType.HEADER_GROUPING;
-        const col = (isHeader ? column : columnGroup) as Column | ColumnGroup;
+        const col = (isHeader ? column : columnGroup) as AgColumn | AgColumnGroup | null;
         let headerClasses: string[] = [];
 
         if (isHeader || isGroupHeader) {
@@ -373,8 +372,8 @@ export class ExcelCreator
                     CssClassApplier.getHeaderClassesFromColDef(
                         col.getDefinition(),
                         this.gos,
-                        column || null,
-                        columnGroup || null
+                        (column as AgColumn) || null,
+                        (columnGroup as AgColumnGroup) || null
                     )
                 );
             }
@@ -394,13 +393,14 @@ export class ExcelCreator
             return it.id;
         });
 
+        const colDef = (column as AgColumn).getDefinition();
         this.stylingService.processAllCellClasses(
-            column!.getDefinition(),
+            colDef,
             this.gos.addGridCommonParams({
                 value,
                 data: node!.data,
                 node: node!,
-                colDef: column!.getDefinition(),
+                colDef,
                 column: column!,
                 rowIndex: rowIndex,
             }),

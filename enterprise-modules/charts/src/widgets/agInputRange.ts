@@ -32,7 +32,7 @@ export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string,
         this.setStep(step || 1);
     }
 
-    protected addInputListeners() {
+    protected override addInputListeners() {
         this.addManagedListener(this.eInput, 'input', (e) => {
             const value = e.target.value;
 
@@ -62,7 +62,7 @@ export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string,
         return this;
     }
 
-    public setValue(value: string, silent?: boolean): this {
+    public override setValue(value: string, silent?: boolean): this {
         if (this.min != null) {
             value = Math.max(parseFloat(value), this.min).toString();
         }

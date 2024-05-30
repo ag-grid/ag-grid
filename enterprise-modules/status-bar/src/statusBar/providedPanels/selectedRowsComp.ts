@@ -7,8 +7,7 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
     private rowModel: IRowModel;
     private selectionService: ISelectionService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
         this.selectionService = beans.selectionService;
     }
@@ -61,7 +60,7 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 }

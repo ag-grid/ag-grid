@@ -1,12 +1,12 @@
 import type {
     BeanCollection,
-    BeanName,
     ColumnModel,
     ColumnVO,
     GridOptions,
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
     IServerSideStore,
+    NamedBean,
     RowNode,
     RowNodeBlock,
     StoreRefreshAfterParams,
@@ -16,15 +16,14 @@ import { BeanStub, _missingOrEmpty, _warnOnce } from '@ag-grid-community/core';
 import type { SSRMParams, ServerSideRowModel } from '../serverSideRowModel';
 import type { StoreFactory } from './storeFactory';
 
-export class StoreUtils extends BeanStub {
-    beanName: BeanName = 'ssrmStoreUtils';
+export class StoreUtils extends BeanStub implements NamedBean {
+    beanName = 'ssrmStoreUtils' as const;
 
     private columnModel: ColumnModel;
     private serverSideRowModel: ServerSideRowModel;
     private storeFactory: StoreFactory;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.storeFactory = beans.ssrmStoreFactory;

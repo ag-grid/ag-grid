@@ -1,5 +1,5 @@
 import type {
-    Column,
+    AgColumn,
     FuncColsService,
     GetDataPath,
     IClientSideRowModel,
@@ -101,7 +101,7 @@ export class ClientSideValuesExtractor<V> {
     private addValueForTreeDataOrGrouping(
         node: RowNode,
         treeData: boolean,
-        groupedCols: Column[],
+        groupedCols: AgColumn[],
         addValue: (unformattedKey: string | null, value: V | null) => void
     ): void {
         let dataPath: string[] | null;

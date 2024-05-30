@@ -1,12 +1,12 @@
 import type {
     BeanCollection,
-    BeanName,
     EventsType,
     FilterManager,
     IDatasource,
     IInfiniteRowModel,
     ISelectionService,
     ModelUpdatedEvent,
+    NamedBean,
     RowBounds,
     RowModelType,
     RowNode,
@@ -20,8 +20,8 @@ import { BeanStub, Events, NumberSequence, _jsonEquals, _warnOnce } from '@ag-gr
 import type { InfiniteCacheParams } from './infiniteCache';
 import { InfiniteCache } from './infiniteCache';
 
-export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
-    beanName: BeanName = 'rowModel';
+export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRowModel {
+    beanName = 'rowModel' as const;
 
     private filterManager: FilterManager;
     private sortController: SortController;
@@ -30,7 +30,6 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     private rowNodeBlockLoader: RowNodeBlockLoader;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.filterManager = beans.filterManager;
         this.sortController = beans.sortController;
         this.selectionService = beans.selectionService;

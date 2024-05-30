@@ -1,18 +1,18 @@
+import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import type { BeanCollection, BeanName } from './context/context';
+import type { BeanCollection } from './context/context';
 import type { AgEvent, AgEventListener, AgGlobalEventListener } from './events';
 import type { AgGridCommon } from './interfaces/iCommon';
 import type { IEventEmitter } from './interfaces/iEventEmitter';
 import { LocalEventService } from './localEventService';
 
-export class EventService extends BeanStub implements IEventEmitter {
-    beanName: BeanName = 'eventService';
+export class EventService extends BeanStub implements NamedBean, IEventEmitter {
+    beanName = 'eventService' as const;
 
     private globalEventListener?: AgGlobalEventListener;
     private globalSyncEventListener?: AgGlobalEventListener;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.globalEventListener = beans.globalEventListener;
         this.globalSyncEventListener = beans.globalSyncEventListener;
     }
@@ -30,11 +30,11 @@ export class EventService extends BeanStub implements IEventEmitter {
         }
     }
 
-    public addEventListener(eventType: string, listener: AgEventListener, async?: boolean): void {
+    public override addEventListener(eventType: string, listener: AgEventListener, async?: boolean): void {
         this.globalEventService.addEventListener(eventType, listener, async);
     }
 
-    public removeEventListener(eventType: string, listener: AgEventListener, async?: boolean): void {
+    public override removeEventListener(eventType: string, listener: AgEventListener, async?: boolean): void {
         this.globalEventService.removeEventListener(eventType, listener, async);
     }
 
@@ -46,7 +46,7 @@ export class EventService extends BeanStub implements IEventEmitter {
         this.globalEventService.removeGlobalListener(listener, async);
     }
 
-    public dispatchEvent(event: AgEvent): void {
+    public override dispatchEvent(event: AgEvent): void {
         this.globalEventService.dispatchEvent(this.gos.addGridCommonParams<AgEvent & AgGridCommon<any, any>>(event));
     }
 

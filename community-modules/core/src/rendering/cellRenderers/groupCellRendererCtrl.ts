@@ -6,8 +6,8 @@ import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
+import type { AgColumn } from '../../entities/agColumn';
 import type { CellRendererSelectorFunc, ColumnFunctionCallbackParams } from '../../entities/colDef';
-import type { Column } from '../../entities/column';
 import { RowNode } from '../../entities/rowNode';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import { _removeAriaExpanded, _setAriaExpanded } from '../../utils/aria';
@@ -105,7 +105,6 @@ export class GroupCellRendererCtrl extends BeanStub {
     private funcColsService: FuncColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        super.wireBeans(beans);
         this.expressionService = beans.expressionService;
         this.valueService = beans.valueService;
         this.columnModel = beans.columnModel;
@@ -153,7 +152,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.comp = comp;
         this.compClass = compClass;
 
-        const { node, value, colDef } = params;
+        const { node, colDef } = params;
         const topLevelFooter = this.isTopLevelFooter();
 
         // logic for skipping cells follows, never skip top level footer cell.
@@ -351,7 +350,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         // note - this code depends on sortService.updateGroupDataForHiddenOpenParents, where group data
         // is updated to reflect the dragged down parents
         const rowNode = this.params.node;
-        const column = this.params.column as Column;
+        const column = this.params.column as AgColumn;
 
         if (!this.gos.get('groupHideOpenParents')) {
             this.showingValueForOpenedParent = false;
@@ -807,7 +806,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
             cbSelectionComponent.init({
                 rowNode: this.params.node as RowNode, // when groupHideOpenParents = true and group expanded, we want the checkbox to refer to leaf node state (not group node state)
-                column: this.params.column,
+                column: this.params.column as AgColumn,
                 overrides: {
                     isVisible: this.params.checkbox,
                     callbackParams: this.params,

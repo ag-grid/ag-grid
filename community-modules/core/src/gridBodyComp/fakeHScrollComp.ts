@@ -27,7 +27,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     private ctrlsService: CtrlsService;
     private scrollVisibleService: ScrollVisibleService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public override wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
         this.visibleColsService = beans.visibleColsService;
         this.pinnedRowModel = beans.pinnedRowModel;
@@ -64,7 +64,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         this.addManagedPropertyListeners(['suppressHorizontalScroll'], this.onScrollVisibilityChanged.bind(this));
     }
 
-    protected initialiseInvisibleScrollbar(): void {
+    protected override initialiseInvisibleScrollbar(): void {
         if (this.invisibleScrollbar !== undefined) {
             return;
         }
@@ -90,7 +90,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         this.getGui().style.bottom = `${bottomPinnedHeight}px`;
     }
 
-    protected onScrollVisibilityChanged(): void {
+    protected override onScrollVisibilityChanged(): void {
         super.onScrollVisibilityChanged();
         this.setFakeHScrollSpacerWidths();
     }
