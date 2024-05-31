@@ -18,7 +18,6 @@ import { CustomContext } from '../../shared/customComp/customContext';
 import type { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
-import { createSyncJsComp } from '../jsComp';
 import { isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
@@ -299,32 +298,38 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
         const compDetails = editDetails!.compDetails;
         const isPopup = editDetails!.popup === true;
 
-        const cellEditor = createSyncJsComp(compDetails) as ICellEditorComp;
-        if (!cellEditor) {
-            return;
-        }
+        const cellEditorPromise = compDetails.newAgStackInstance();
 
-        const compGui = cellEditor.getGui();
+        cellEditorPromise.then((cellEditor: ICellEditorComp) => {
+            if (!cellEditor) {
+                return;
+            }
 
-        setCellEditorRef(isPopup, cellEditor);
+            const compGui = cellEditor.getGui();
 
-        if (!isPopup) {
-            const parentEl = (forceWrapper ? eCellWrapper : eGui).current;
-            parentEl?.appendChild(compGui);
+            setCellEditorRef(isPopup, cellEditor);
 
-            cellEditor.afterGuiAttached && cellEditor.afterGuiAttached();
-        }
+            if (!isPopup) {
+                const parentEl = (forceWrapper ? eCellWrapper : eGui).current;
+                parentEl?.appendChild(compGui);
 
-        setJsEditorComp(cellEditor);
+                cellEditor.afterGuiAttached && cellEditor.afterGuiAttached();
+            }
+
+            setJsEditorComp(cellEditor);
+        });
 
         return () => {
-            context.destroyBean(cellEditor);
-            setCellEditorRef(isPopup, undefined);
-            setJsEditorComp(undefined);
+            cellEditorPromise.then((cellEditor) => {
+                const compGui = cellEditor.getGui();
+                context.destroyBean(cellEditor);
+                setCellEditorRef(isPopup, undefined);
+                setJsEditorComp(undefined);
 
-            if (compGui && compGui.parentElement) {
-                compGui.parentElement.removeChild(compGui);
-            }
+                if (compGui && compGui.parentElement) {
+                    compGui.parentElement.removeChild(compGui);
+                }
+            });
         };
     }, [editDetails]);
 

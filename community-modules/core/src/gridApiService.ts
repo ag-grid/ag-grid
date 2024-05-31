@@ -696,7 +696,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
     public getFilterInstance<TFilter extends IFilter>(
         key: string | Column,
         callback?: (filter: TFilter | null) => void
-    ): TFilter | null | undefined {
+    ): undefined {
         _warnOnce(
             `'getFilterInstance' is deprecated. To get/set individual filter models, use 'getColumnFilterModel' or 'setColumnFilterModel' instead. To get hold of the filter instance, use 'getColumnFilterInstance' which returns the instance asynchronously.`
         );

@@ -352,7 +352,7 @@ export class FilterManager extends BeanStub implements NamedBean {
     public getFilterInstance<TFilter extends IFilter>(
         key: string | AgColumn,
         callback?: (filter: TFilter | null) => void
-    ): TFilter | null | undefined {
+    ): undefined {
         if (this.isAdvancedFilterEnabled()) {
             this.warnAdvancedFilters();
             return undefined;

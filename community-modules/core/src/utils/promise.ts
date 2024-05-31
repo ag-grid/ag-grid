@@ -49,10 +49,6 @@ export class AgPromise<T> {
         });
     }
 
-    public resolveNow<Z>(ifNotResolvedValue: Z, ifResolved: (current: T | null) => Z): Z {
-        return this.status === AgPromiseStatus.RESOLVED ? ifResolved(this.resolution) : ifNotResolvedValue;
-    }
-
     private onDone(value: T | null): void {
         this.status = AgPromiseStatus.RESOLVED;
         this.resolution = value;

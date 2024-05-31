@@ -130,19 +130,3 @@ describe('all', () => {
         }, 0);
     });
 });
-
-describe('resolveNow', () => {
-    it('returns default if promise has not yet resolved', () => {
-        const promise = new AgPromise<number>((resolve) => {});
-        const value = 123;
-
-        expect(promise.resolveNow(value, (x) => x)).toBe(value);
-    });
-
-    it('returns value from promise if promise has resolved', () => {
-        const value = 456;
-        const promise = AgPromise.resolve(value);
-
-        expect(promise.resolveNow(123, (x) => x)).toBe(value);
-    });
-});
