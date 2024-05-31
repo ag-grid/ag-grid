@@ -41,8 +41,11 @@ export class AgRichSelectList<TValue> extends VirtualList {
         this.addManagedListener(eGui, 'mousemove', this.onPickerMouseMove.bind(this));
         this.addManagedListener(eGui, 'mousedown', (e) => {
             e.preventDefault();
-            this.onMouseDown();
         });
+        this.addManagedListener(eGui, 'click', () => {
+            this.onClick();
+        });
+
         eGui.classList.add('ag-rich-select-list');
 
         const listId = `ag-rich-select-list-${this.getCompId()}`;
@@ -101,7 +104,7 @@ export class AgRichSelectList<TValue> extends VirtualList {
             // this second call to refresh is necessary to force scrolled elements
             // to be rendered with the correct index info.
             this.refresh(true);
-            this.selectListItem(selectedPositions[0]);
+            this.selectListItems(selectedPositions);
         }
     }
 
@@ -119,19 +122,25 @@ export class AgRichSelectList<TValue> extends VirtualList {
         });
     }
 
-    public selectListItem(index: number): void {
-        if (this.selectedItems.has(index)) {
-            return;
+    public selectListItems(indices: number[]): void {
+        for (let i = 0; i < indices.length; i++) {
+            const currentIndex = indices[i];
+            if (this.selectedItems.has(currentIndex)) {
+                continue;
+            }
+            this.selectedItems.add(currentIndex);
         }
-        this.selectedItems.add(index);
+
         this.refreshSelectedItems();
     }
 
-    private deselectListItem(index: number): void {
-        if (!this.selectedItems.has(index)) {
-            return;
+    private toggleListItemSelection(index: number): void {
+        if (this.selectedItems.has(index)) {
+            this.selectedItems.delete(index);
+        } else {
+            this.selectedItems.add(index);
         }
-        this.selectedItems.delete(index);
+
         this.refreshSelectedItems();
     }
 
@@ -190,15 +199,6 @@ export class AgRichSelectList<TValue> extends VirtualList {
         return row;
     }
 
-    private onPickerMouseMove(e: MouseEvent): void {
-        const row = this.getRowForMouseEvent(e);
-
-        if (row !== -1 && row != this.lastRowHovered) {
-            this.lastRowHovered = row;
-            // this.selectListItem(row, true);
-        }
-    }
-
     private getRowForMouseEvent(e: MouseEvent): number {
         const eGui = this.getGui();
         const rect = eGui.getBoundingClientRect();
@@ -208,13 +208,32 @@ export class AgRichSelectList<TValue> extends VirtualList {
         return Math.floor(mouseY / this.getRowHeight());
     }
 
-    private onMouseDown(): void {
+    private onPickerMouseMove(e: MouseEvent): void {
+        const row = this.getRowForMouseEvent(e);
+
+        if (row !== -1 && row != this.lastRowHovered) {
+            this.lastRowHovered = row;
+            this.highlightIndex(row, true);
+        }
+    }
+
+    private onClick(): void {
+        const { multiSelect } = this.params;
+
+        if (multiSelect) {
+            this.toggleListItemSelection(this.lastRowHovered);
+        } else {
+            this.selectListItems([this.lastRowHovered]);
+            this.dispatchValueSelected();
+        }
+    }
+
+    private dispatchValueSelected(): void {
         const parent = this.getParentComponent();
         const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
             type: Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
             fromEnterKey: false,
-            value: 'foo',
-            // value: this.value,
+            value: this.selectedItems,
         };
 
         parent?.dispatchEvent(event);

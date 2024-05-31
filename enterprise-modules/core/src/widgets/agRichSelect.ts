@@ -397,23 +397,33 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.searchString = '';
     }
 
-    public override setValue(value: TValue, silent?: boolean, fromPicker?: boolean): this {
-        const list = this.listComponent?.getCurrentList();
-        const index = list ? list.indexOf(value) : -1;
-
-        if (index === -1) {
+    public override setValue(value: TValue[] | TValue, silent?: boolean, fromPicker?: boolean): this {
+        if (this.value === value) {
             return this;
         }
 
-        this.value = value;
+        if (Array.isArray(value)) {
+            if (!fromPicker) {
+                this.listComponent?.selectValue(value);
+            }
+        } else {
+            const list = this.listComponent?.getCurrentList();
+            const index = list ? list.indexOf(value) : -1;
 
-        if (!fromPicker) {
-            this.listComponent?.selectListItem(index);
+            if (index === -1) {
+                return this;
+            }
+
+            if (!fromPicker) {
+                this.listComponent?.selectListItems([index]);
+            }
         }
+
+        super.setValue(value, silent);
 
         this.renderSelectedValue();
 
-        return super.setValue(value, silent);
+        return this;
     }
 
     private onNavigationKeyDown(event: any, key: string): void {
@@ -432,7 +442,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         const diff = isDown ? 1 : -1;
         const newIndex = oldIndex === -1 ? 0 : oldIndex + diff;
 
-        this.listComponent?.selectListItem(newIndex);
+        this.listComponent?.selectListItems([newIndex]);
     }
 
     protected onEnterKeyDown(e: KeyboardEvent): void {
@@ -446,13 +456,31 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
     }
 
-    private onListValueSelected(value: TValue, fromEnterKey: boolean): void {
-        this.setValue(value, false, true);
-        this.dispatchPickerEvent(value, fromEnterKey);
+    private onListValueSelected(valueSet: Set<number>, fromEnterKey: boolean): void {
+        let newValue: TValue[] | TValue | undefined;
+
+        for (const value of valueSet) {
+            const currentValue = this.values[value];
+            if (valueSet.size === 1) {
+                newValue = currentValue;
+                break;
+            }
+            if (!newValue) {
+                newValue = [];
+            }
+            (newValue as TValue[]).push(currentValue);
+        }
+
+        if (newValue === undefined) {
+            return;
+        }
+
+        this.setValue(newValue, false, true);
+        this.dispatchPickerEvent(newValue, fromEnterKey);
         this.hidePicker();
     }
 
-    private dispatchPickerEvent(value: TValue, fromEnterKey: boolean): void {
+    private dispatchPickerEvent(value: TValue[] | TValue, fromEnterKey: boolean): void {
         const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
             type: Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
             fromEnterKey,
