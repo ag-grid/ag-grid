@@ -263,19 +263,31 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
      */
     private topoSort(rowNodes: RowNode[], details: GroupingDetails): RowNode[] {
         const sortedNodes: RowNode[] = [];
+        // performance: create a cache of ids to make lookups during the search faster
+        const idLookup = Object.fromEntries(rowNodes.map<[string, number]>((node, i) => [node.id!, i]));
+        // performance: keep track of the nodes we haven't found yet so we can return early
+        const stillToFind = new Set(Object.keys(idLookup));
 
         const queue = [details.rootNode];
+        let i = 0;
 
         // BFS for nodes in the hierarchy that match IDs of the given nodes
-        while (queue.length > 0) {
-            const node = queue.shift();
+        while (i < queue.length) {
+            // performance: indexing into the array instead of using e.g. `.shift` is _much_ faster
+            const node = queue[i];
+            i++;
             if (node === undefined) {
                 continue;
             }
 
-            const found = rowNodes.find((child) => child.id === node.id);
-            if (found) {
-                sortedNodes.push(found);
+            if (node.id && node.id in idLookup) {
+                sortedNodes.push(rowNodes[idLookup[node.id]]);
+                stillToFind.delete(node.id);
+            }
+
+            // we can stop early if we've already found all the nodes
+            if (stillToFind.size === 0) {
+                return sortedNodes;
             }
 
             const children = node.childrenAfterGroup ?? [];
