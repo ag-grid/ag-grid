@@ -823,7 +823,7 @@ export class ColumnFilterService extends BeanStub {
     ): Promise<TFilter | null | undefined> {
         return new Promise((resolve) => {
             this.getFilterInstanceImpl(key).then((filter) => {
-                resolve(filter as any);
+                resolve(unwrapUserComp(filter) as any);
             });
         });
     }
