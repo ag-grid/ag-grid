@@ -122,7 +122,11 @@ export class AgRichSelectList<TValue> extends VirtualList {
         });
     }
 
-    public selectListItems(indices: number[]): void {
+    public selectListItems(indices: number[], append = false): void {
+        if (!append) {
+            this.selectedItems.clear();
+        }
+
         for (let i = 0; i < indices.length; i++) {
             const currentIndex = indices[i];
             if (this.selectedItems.has(currentIndex)) {
@@ -229,14 +233,13 @@ export class AgRichSelectList<TValue> extends VirtualList {
     }
 
     private dispatchValueSelected(): void {
-        const parent = this.getParentComponent();
         const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
             type: Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
             fromEnterKey: false,
             value: this.selectedItems,
         };
 
-        parent?.dispatchEvent(event);
+        this.dispatchEvent(event);
     }
 
     private getIndicesForValues(values?: TValue[] | TValue): number[] {
