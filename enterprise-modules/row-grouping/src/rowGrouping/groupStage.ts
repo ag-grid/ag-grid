@@ -387,10 +387,11 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
                 this.forEachParentGroup(details, possibleEmptyGroup, (rowNode) => {
                     if (groupShouldBeRemoved(rowNode)) {
                         if (details.usingTreeData && details.getDataPath?.(rowNode.data)) {
-                            // This node has associated tree data so shouldn't be removed, but should no longer be marked as a group
-                            // since it has no children.
-                            rowNode.group =
-                                (rowNode.childrenAfterGroup && rowNode.childrenAfterGroup.length > 0) ?? false;
+                            // This node has associated tree data so shouldn't be removed, but should no longer be
+                            // marked as a group if it has no children.
+                            rowNode.setGroup(
+                                (rowNode.childrenAfterGroup && rowNode.childrenAfterGroup.length > 0) ?? false
+                            );
                         } else {
                             checkAgain = true;
 
@@ -445,8 +446,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             if (parent?.childrenMapped?.[mapKey] !== child) {
                 parent.childrenMapped[mapKey] = child;
                 parent.childrenAfterGroup!.push(child);
-                parent.group = true;
-                parent.updateHasChildren();
+                parent.setGroup(true); // calls `.updateHasChildren` internally
             }
         }
     }
