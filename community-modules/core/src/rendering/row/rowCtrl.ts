@@ -12,10 +12,7 @@ import type {
     CellFocusedEvent,
     RowClickedEvent,
     RowDoubleClickedEvent,
-    RowEditingStartedEvent,
-    RowEditingStoppedEvent,
     RowEvent,
-    RowValueChangedEvent,
     VirtualRowRemovedEvent,
 } from '../../events';
 import { Events } from '../../events';
@@ -1286,29 +1283,7 @@ export class RowCtrl extends BeanStub {
             return;
         }
 
-        const cellControls = this.getAllCellCtrls();
-        const isRowEdit = this.editingRow;
-
-        this.stoppingRowEdit = true;
-
-        let fireRowEditEvent = false;
-        for (const ctrl of cellControls) {
-            const valueChanged = ctrl.stopEditing(cancel);
-            if (isRowEdit && !cancel && !fireRowEditEvent && valueChanged) {
-                fireRowEditEvent = true;
-            }
-        }
-
-        if (fireRowEditEvent) {
-            const event: RowValueChangedEvent = this.createRowEvent(Events.EVENT_ROW_VALUE_CHANGED);
-            this.beans.eventService.dispatchEvent(event);
-        }
-
-        if (isRowEdit) {
-            this.setEditingRow(false);
-        }
-
-        this.stoppingRowEdit = false;
+        this.beans.rowEditService?.stopEditing(this, cancel);
     }
 
     public setInlineEditingCss(editing: boolean): void {
@@ -1318,15 +1293,8 @@ export class RowCtrl extends BeanStub {
         });
     }
 
-    private setEditingRow(value: boolean): void {
+    public setEditingRow(value: boolean): void {
         this.editingRow = value;
-        this.allRowGuis.forEach((gui) => gui.rowComp.addOrRemoveCssClass('ag-row-editing', value));
-
-        const event: RowEvent = value
-            ? (this.createRowEvent(Events.EVENT_ROW_EDITING_STARTED) as RowEditingStartedEvent)
-            : (this.createRowEvent(Events.EVENT_ROW_EDITING_STOPPED) as RowEditingStoppedEvent);
-
-        this.beans.eventService.dispatchEvent(event);
     }
 
     public startRowEditing(
@@ -1339,23 +1307,7 @@ export class RowCtrl extends BeanStub {
             return;
         }
 
-        const atLeastOneEditing = this.getAllCellCtrls().reduce((prev: boolean, cellCtrl: CellCtrl) => {
-            const cellStartedEdit = cellCtrl === sourceRenderedCell;
-            if (cellStartedEdit) {
-                cellCtrl.startEditing(key, cellStartedEdit, event);
-            } else {
-                cellCtrl.startEditing(null, cellStartedEdit, event);
-            }
-            if (prev) {
-                return true;
-            }
-
-            return cellCtrl.isEditing();
-        }, false);
-
-        if (atLeastOneEditing) {
-            this.setEditingRow(true);
-        }
+        this.beans.rowEditService?.startEditing(this, key, sourceRenderedCell, event);
     }
 
     public getAllCellCtrls(): CellCtrl[] {
@@ -1541,7 +1493,7 @@ export class RowCtrl extends BeanStub {
         return this.beans.frameworkOverrides;
     }
 
-    private forEachGui(gui: RowGui | undefined, callback: (gui: RowGui) => void): void {
+    public forEachGui(gui: RowGui | undefined, callback: (gui: RowGui) => void): void {
         if (gui) {
             callback(gui);
         } else {
@@ -1814,5 +1766,9 @@ export class RowCtrl extends BeanStub {
             c.rowComp.addOrRemoveCssClass('ag-row-odd', !rowIsEven);
             _setAriaRowIndex(c.element, ariaRowIndex);
         });
+    }
+
+    public setStoppingRowEdit(stoppingRowEdit: boolean): void {
+        this.stoppingRowEdit = stoppingRowEdit;
     }
 }

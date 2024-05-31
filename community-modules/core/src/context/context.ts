@@ -27,6 +27,8 @@ import type { CtrlsFactory } from '../ctrlsFactory';
 import type { CtrlsService } from '../ctrlsService';
 import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
 import type { DragService } from '../dragAndDrop/dragService';
+import type { EditService } from '../edit/editService';
+import type { RowEditService } from '../edit/rowEditService';
 import type { CellPositionUtils } from '../entities/cellPositionUtils';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNodeEventThrottle } from '../entities/rowNodeEventThrottle';
@@ -187,6 +189,8 @@ export interface CoreBeanCollection {
     filterMenuFactory: IMenuFactory;
     enterpriseMenuFactory: IMenuFactory;
     contextMenuFactory: IContextMenuFactory;
+    editService?: EditService;
+    rowEditService?: RowEditService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -277,6 +281,7 @@ export type BeanName =
     | 'visibleColsService'
     | 'dragAndDropService'
     | 'dragService'
+    | 'editService'
     | 'excelCreator'
     | 'enterpriseMenuFactory'
     | 'environment'
@@ -329,6 +334,7 @@ export type BeanName =
     | 'resizeObserverService'
     | 'rowContainerHeightService'
     | 'rowCssClassCalculator'
+    | 'rowEditService'
     | 'rowModel'
     | 'rowNodeBlockLoader'
     | 'rowNodeEventThrottle'

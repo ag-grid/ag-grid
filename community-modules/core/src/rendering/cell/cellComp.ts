@@ -1,5 +1,6 @@
 import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import type { BeanCollection } from '../../context/context';
+import type { PopupEditorWrapper } from '../../edit/cellEditors/popupEditorWrapper';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
@@ -11,7 +12,6 @@ import { _missing } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import { Component } from '../../widgets/component';
 import type { TooltipParentComp } from '../../widgets/tooltipStateManager';
-import { PopupEditorWrapper } from './../cellEditors/popupEditorWrapper';
 import type { ICellRendererComp } from './../cellRenderers/iCellRenderer';
 import type { CheckboxSelectionComponent } from './../checkboxSelectionComponent';
 import type { DndSourceComp } from './../dndSourceComp';
@@ -509,7 +509,9 @@ export class CellComp extends Component implements TooltipParentComp {
         const cellEditor = this.cellEditor!;
 
         // if a popup, then we wrap in a popup editor and return the popup
-        this.cellEditorPopupWrapper = this.beans.context.createBean(new PopupEditorWrapper(params));
+        this.cellEditorPopupWrapper = this.beans.context.createBean(
+            this.beans.editService!.createPopupEditorWrapper(params)
+        );
         const ePopupGui = this.cellEditorPopupWrapper.getGui();
         if (this.cellEditorGui) {
             ePopupGui.appendChild(this.cellEditorGui);
