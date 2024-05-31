@@ -449,9 +449,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     public refreshFloatingRowComps(): void {
-        this.refreshFloatingRows(this.topRowCtrls, this.pinnedRowModel.getPinnedTopRowData());
+        this.refreshFloatingRows(this.topRowCtrls, this.pinnedRowModel.getPinnedTopRowNodes());
 
-        this.refreshFloatingRows(this.bottomRowCtrls, this.pinnedRowModel.getPinnedBottomRowData());
+        this.refreshFloatingRows(this.bottomRowCtrls, this.pinnedRowModel.getPinnedBottomRowNodes());
     }
 
     public getTopRowCtrls(): RowCtrl[] {

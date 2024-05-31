@@ -138,11 +138,11 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         return rowNodes;
     }
 
-    public getPinnedTopRowData(): RowNode[] {
+    public getPinnedTopRowNodes(): RowNode[] {
         return this.pinnedTopRows;
     }
 
-    public getPinnedBottomRowData(): RowNode[] {
+    public getPinnedBottomRowNodes(): RowNode[] {
         return this.pinnedBottomRows;
     }
 
