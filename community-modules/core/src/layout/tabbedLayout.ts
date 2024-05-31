@@ -5,7 +5,6 @@ import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedPar
 import { _setAriaLabel, _setAriaRole } from '../utils/aria';
 import { _clearElement } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
-import type { AgPromise } from '../utils/promise';
 import { RefPlaceholder } from '../widgets/component';
 import { TabGuardComp } from '../widgets/tabGuardComp';
 
@@ -312,7 +311,7 @@ export interface TabbedLayoutParams {
 export interface TabbedItem {
     title: Element;
     titleLabel: string;
-    bodyPromise: AgPromise<HTMLElement>;
+    bodyPromise: Promise<HTMLElement>;
     name: string;
     getScrollableContainer?: () => HTMLElement;
     afterAttachedCallback?: (params: IAfterGuiAttachedParams) => void;

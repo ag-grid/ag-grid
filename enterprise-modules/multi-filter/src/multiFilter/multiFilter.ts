@@ -18,7 +18,6 @@ import type {
 } from '@ag-grid-community/core';
 import {
     AgMenuItemRenderer,
-    AgPromise,
     KeyCode,
     ProvidedFilter,
     TabGuardComp,
@@ -71,7 +70,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             : [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }];
     }
 
-    public init(params: MultiFilterParams): AgPromise<void> {
+    public init(params: MultiFilterParams): Promise<void> {
         this.params = params;
         this.filterDefs = MultiFilter.getFilterDefs(params);
 
@@ -80,7 +79,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         this.column = column as AgColumn;
         this.filterChangedCallback = filterChangedCallback;
 
-        const filterPromises: AgPromise<IFilterComp>[] = [];
+        const filterPromises: Promise<IFilterComp>[] = [];
 
         this.filterDefs.forEach((filterDef, index) => {
             const filterPromise = this.createFilter(filterDef, index);
@@ -91,8 +90,8 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         });
 
         // we have to refresh the GUI here to ensure that Angular components are not rendered in odd places
-        return new AgPromise<void>((resolve) => {
-            AgPromise.all(filterPromises).then((filters) => {
+        return new Promise<void>((resolve) => {
+            Promise.all(filterPromises).then((filters) => {
                 this.filters = filters as IFilterComp[];
                 this.refreshGui('columnMenu').then(() => {
                     resolve();
@@ -104,19 +103,19 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         });
     }
 
-    private refreshGui(container: ContainerType): AgPromise<void> {
+    private refreshGui(container: ContainerType): Promise<void> {
         if (container === this.lastOpenedInContainer) {
-            return AgPromise.resolve();
+            return Promise.resolve();
         }
 
         this.removeAllChildrenExceptTabGuards();
         this.destroyChildren();
 
-        return AgPromise.all(
+        return Promise.all(
             this.filters!.map((filter, index) => {
                 const filterDef = this.filterDefs[index];
                 const filterTitle = this.getFilterTitle(filter, filterDef);
-                let filterGuiPromise: AgPromise<HTMLElement>;
+                let filterGuiPromise: Promise<HTMLElement>;
 
                 if (filterDef.display === 'subMenu' && container !== 'toolPanel') {
                     // prevent sub-menu being used in tool panel
@@ -127,10 +126,10 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
                     // sub-menus should appear as groups in the tool panel
                     const group = this.insertFilterGroup(filter, filterTitle);
 
-                    filterGuiPromise = AgPromise.resolve(group.getGui());
+                    filterGuiPromise = Promise.resolve(group.getGui());
                 } else {
                     // display inline
-                    filterGuiPromise = AgPromise.resolve(filter.getGui());
+                    filterGuiPromise = Promise.resolve(filter.getGui());
                 }
 
                 return filterGuiPromise;
@@ -161,7 +160,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         this.filterGuis.length = 0;
     }
 
-    private insertFilterMenu(filter: IFilterComp, name: string): AgPromise<AgMenuItemComponent> {
+    private insertFilterMenu(filter: IFilterComp, name: string): Promise<AgMenuItemComponent> {
         const menuItem = this.createBean(new AgMenuItemComponent());
         return menuItem
             .init({
@@ -318,15 +317,15 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         return model;
     }
 
-    public setModel(model: IMultiFilterModel | null): AgPromise<void> {
+    public setModel(model: IMultiFilterModel | null): Promise<void> {
         const setFilterModel = (filter: IFilterComp, filterModel: any) => {
-            return new AgPromise<void>((resolve) => {
+            return new Promise<void>((resolve) => {
                 const promise = filter.setModel(filterModel);
                 promise ? promise.then(() => resolve()) : resolve();
             });
         };
 
-        let promises: AgPromise<void>[] = [];
+        let promises: Promise<void>[] = [];
 
         if (model == null) {
             promises = this.filters!.map((filter: IFilterComp, index: number) => {
@@ -345,7 +344,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             });
         }
 
-        return AgPromise.all(promises).then(() => {});
+        return Promise.all(promises).then(() => {});
     }
 
     public applyModel(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
@@ -365,13 +364,13 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
-        let refreshPromise: AgPromise<void>;
+        let refreshPromise: Promise<void>;
         if (params) {
             this.hidePopup = params.hidePopup;
             refreshPromise = this.refreshGui(params.container!);
         } else {
             this.hidePopup = undefined;
-            refreshPromise = AgPromise.resolve();
+            refreshPromise = Promise.resolve();
         }
 
         refreshPromise.then(() => {
@@ -453,7 +452,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         }
     }
 
-    private createFilter(filterDef: IFilterDef, index: number): AgPromise<IFilterComp> | null {
+    private createFilter(filterDef: IFilterDef, index: number): Promise<IFilterComp> | null {
         const { filterModifiedCallback, doesRowPassOtherFilter } = this.params;
 
         let filterInstance: IFilterComp;

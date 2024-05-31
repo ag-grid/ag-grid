@@ -1,4 +1,4 @@
-import type { AgPromise, IMenuItem, IMenuItemParams } from 'ag-grid-community';
+import type { IMenuItem, IMenuItemParams } from 'ag-grid-community';
 
 import { CustomComponentWrapper } from './customComponentWrapper';
 import type { CustomMenuItemCallbacks, CustomMenuItemProps } from './interfaces';
@@ -24,7 +24,7 @@ export class MenuItemComponentWrapper
         return ['select', 'configureDefaults'];
     }
 
-    private awaitSetActive(active: boolean): AgPromise<void> {
+    private awaitSetActive(active: boolean): Promise<void> {
         this.active = active;
         return this.refreshProps();
     }

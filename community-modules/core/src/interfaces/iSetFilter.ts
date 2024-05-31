@@ -3,7 +3,6 @@ import type { IProvidedFilter, IProvidedFilterParams } from '../filter/provided/
 import type { GridApi } from '../gridApi';
 import type { Column } from '../interfaces/iColumn';
 import type { ITooltipParams } from '../rendering/tooltipComponent';
-import type { AgPromise } from '../utils/promise';
 import type { IFilterParams, ProvidedFilterModel } from './iFilter';
 
 export type SetFilterModelValue = (string | null)[];
@@ -32,7 +31,7 @@ export interface ISetFilter<V = string> extends IProvidedFilter {
      * actions by waiting on the returned grid promise, e.g.
      * `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });`
      */
-    setModel(model: SetFilterModel | null): AgPromise<void>;
+    setModel(model: SetFilterModel | null): Promise<void>;
 
     /** Returns the full list of unique keys used by the Set Filter. */
     getFilterKeys(): SetFilterModelValue;

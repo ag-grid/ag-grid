@@ -9,7 +9,6 @@ import type {
     IFilterParams,
 } from '@ag-grid-community/core';
 import {
-    AgPromise,
     AgSelect,
     Events,
     FilterWrapperComp,
@@ -65,7 +64,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         this.initialiseTabGuard({});
     }
 
-    public init(params: IFilterParams): AgPromise<void> {
+    public init(params: IFilterParams): Promise<void> {
         this.params = params;
         this.validateParams();
         return this.updateGroups().then(() => {
@@ -94,7 +93,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         }
     }
 
-    private updateGroups(): AgPromise<void> {
+    private updateGroups(): Promise<void> {
         const sourceColumns = this.updateGroupField();
         return this.getUnderlyingFilters(sourceColumns);
     }
@@ -169,14 +168,14 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         }
     }
 
-    private getUnderlyingFilters(sourceColumns: AgColumn[] | null): AgPromise<void> {
+    private getUnderlyingFilters(sourceColumns: AgColumn[] | null): Promise<void> {
         if (!sourceColumns) {
             this.filterColumnPairs = undefined;
             this.selectedFilter = undefined;
             this.groupColumn.setFilterActive(false, 'columnRowGroupChanged');
-            return AgPromise.resolve();
+            return Promise.resolve();
         }
-        const filterPromises: AgPromise<IFilterComp>[] = [];
+        const filterPromises: Promise<IFilterComp>[] = [];
         const filterColumnPairs: FilterColumnPair[] = [];
         sourceColumns.forEach((column) => {
             const filterWrapper = this.filterManager!.getOrCreateFilterWrapper(column);
@@ -197,21 +196,21 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
                 );
             }
         });
-        return AgPromise.all(filterPromises).then(() => {
+        return Promise.all(filterPromises).then(() => {
             this.filterColumnPairs = filterColumnPairs;
             this.groupColumn.setFilterActive(this.isFilterActive(), 'columnRowGroupChanged');
         });
     }
 
-    private addUnderlyingFilterElement(): AgPromise<void> {
+    private addUnderlyingFilterElement(): Promise<void> {
         _clearElement(this.eUnderlyingFilter);
         if (!this.selectedColumn) {
-            return AgPromise.resolve();
+            return Promise.resolve();
         }
         const comp = this.createManagedBean(new FilterWrapperComp(this.selectedColumn, 'COLUMN_MENU'));
         this.filterWrapperComp = comp;
         if (!comp.hasFilter()) {
-            return AgPromise.resolve();
+            return Promise.resolve();
         }
         this.eUnderlyingFilter.appendChild(comp.getGui());
 
@@ -225,7 +224,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
                 ) {
                     this.eGroupFieldSelect.getFocusableElement().focus();
                 }
-            }) ?? AgPromise.resolve()
+            }) ?? Promise.resolve()
         );
     }
 
@@ -257,8 +256,8 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         return null;
     }
 
-    public setModel(): AgPromise<void> {
-        return AgPromise.resolve();
+    public setModel(): Promise<void> {
+        return Promise.resolve();
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {

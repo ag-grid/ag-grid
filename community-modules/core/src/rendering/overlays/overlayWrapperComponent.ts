@@ -2,7 +2,6 @@ import type { BeanCollection } from '../../context/context';
 import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
 import { _clearElement } from '../../utils/dom';
-import type { AgPromise } from '../../utils/promise';
 import type { AgComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import type { OverlayService } from './overlayService';
@@ -60,7 +59,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     }
 
     public showOverlay(
-        overlayComp: AgPromise<Component> | null,
+        overlayComp: Promise<Component> | null,
         overlayWrapperCssClass: string,
         updateListenerDestroyFunc: () => null
     ): void {

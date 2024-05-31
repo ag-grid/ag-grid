@@ -1,5 +1,4 @@
 import type {
-    AgPromise,
     AnimationFrameService,
     BeanCollection,
     Component,
@@ -196,7 +195,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             } as ICellRendererParams);
         }
 
-        let userCompDetailsPromise: AgPromise<any> | undefined;
+        let userCompDetailsPromise: Promise<any> | undefined;
 
         if (userCompDetails) {
             userCompDetailsPromise = userCompDetails.newAgStackInstance();

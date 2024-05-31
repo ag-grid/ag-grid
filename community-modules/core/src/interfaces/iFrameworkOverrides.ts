@@ -1,9 +1,7 @@
-import type { AgPromise } from '../utils/promise';
-
 export type FrameworkOverridesIncomingSource = 'resize-observer' | 'ensureVisible';
 
 export interface IFrameworkOverrides {
-    setInterval(action: any, interval?: any): AgPromise<number>;
+    setInterval(action: any, interval?: any): Promise<number>;
 
     addEventListener(
         element: HTMLElement,

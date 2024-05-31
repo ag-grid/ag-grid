@@ -1,12 +1,5 @@
 import type { BeanStub, IMenuActionParams, MenuItemDef, WithoutGridCommon } from '@ag-grid-community/core';
-import {
-    AgPromise,
-    KeyCode,
-    TabGuardComp,
-    _last,
-    _loadTemplate,
-    _stopPropagationForAgGrid,
-} from '@ag-grid-community/core';
+import { KeyCode, TabGuardComp, _last, _loadTemplate, _stopPropagationForAgGrid } from '@ag-grid-community/core';
 
 import type { CloseMenuEvent, MenuItemActivatedEvent } from './agMenuItemComponent';
 import { AgMenuItemComponent } from './agMenuItemComponent';
@@ -112,13 +105,13 @@ export class AgMenuList extends TabGuardComp {
             return;
         }
 
-        AgPromise.all(
-            menuItems.map<AgPromise<{ eGui: HTMLElement | null; comp?: AgMenuItemComponent }>>((menuItemOrString) => {
+        Promise.all(
+            menuItems.map<Promise<{ eGui: HTMLElement | null; comp?: AgMenuItemComponent }>>((menuItemOrString) => {
                 if (menuItemOrString === 'separator') {
-                    return AgPromise.resolve({ eGui: this.createSeparator() });
+                    return Promise.resolve({ eGui: this.createSeparator() });
                 } else if (typeof menuItemOrString === 'string') {
                     console.warn(`AG Grid: unrecognised menu item ${menuItemOrString}`);
-                    return AgPromise.resolve({ eGui: null });
+                    return Promise.resolve({ eGui: null });
                 } else {
                     return this.addItem(menuItemOrString);
                 }
@@ -135,7 +128,7 @@ export class AgMenuList extends TabGuardComp {
         });
     }
 
-    private addItem(menuItemDef: MenuItemDef): AgPromise<{ comp: AgMenuItemComponent; eGui: HTMLElement }> {
+    private addItem(menuItemDef: MenuItemDef): Promise<{ comp: AgMenuItemComponent; eGui: HTMLElement }> {
         const menuItem = this.createManagedBean(new AgMenuItemComponent());
         return menuItem
             .init({

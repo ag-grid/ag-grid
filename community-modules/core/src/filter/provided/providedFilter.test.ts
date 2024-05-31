@@ -3,7 +3,6 @@ import type { IRowModel, RowModelType } from '../../interfaces/iRowModel';
 import type { LocaleService } from '../../localeService';
 import type { PositionableFeature } from '../../rendering/features/positionableFeature';
 import { mock } from '../../test-utils/mock';
-import type { AgPromise } from '../../utils/promise';
 import type { ComponentClass } from '../../widgets/component';
 import type { ProvidedFilterParams } from './iProvidedFilter';
 import { ProvidedFilter } from './providedFilter';
@@ -55,11 +54,11 @@ class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {
         throw new Error('Method not implemented.');
     }
 
-    protected resetUiToDefaults(silent?: boolean): AgPromise<void> {
+    protected resetUiToDefaults(silent?: boolean): Promise<void> {
         throw new Error('Method not implemented.');
     }
 
-    protected setModelIntoUi(model: ProvidedFilterModel): AgPromise<void> {
+    protected setModelIntoUi(model: ProvidedFilterModel): Promise<void> {
         throw new Error('Method not implemented.');
     }
 

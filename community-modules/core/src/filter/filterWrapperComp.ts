@@ -8,7 +8,6 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IFilterComp } from '../interfaces/iFilter';
 import { _clearElement } from '../utils/dom';
 import { _exists } from '../utils/generic';
-import { AgPromise } from '../utils/promise';
 import { Component } from '../widgets/component';
 import type { FilterWrapper } from './columnFilterService';
 import type { FilterManager } from './filterManager';
@@ -42,12 +41,12 @@ export class FilterWrapperComp extends Component {
         return !!this.filterWrapper;
     }
 
-    public getFilter(): AgPromise<IFilterComp> | null {
+    public getFilter(): Promise<IFilterComp> | null {
         return this.filterWrapper?.filterPromise ?? null;
     }
 
-    public afterInit(): AgPromise<void> {
-        return this.filterWrapper?.filterPromise?.then(() => {}) ?? AgPromise.resolve();
+    public afterInit(): Promise<void> {
+        return this.filterWrapper?.filterPromise?.then(() => {}) ?? Promise.resolve();
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {

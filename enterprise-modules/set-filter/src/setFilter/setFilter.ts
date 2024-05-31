@@ -20,7 +20,6 @@ import type {
 } from '@ag-grid-community/core';
 import {
     AgInputTextField,
-    AgPromise,
     Events,
     GROUP_AUTO_COLUMN_ID,
     KeyCode,
@@ -190,12 +189,12 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return 'set-filter';
     }
 
-    public override setModel(model: SetFilterModel | null): AgPromise<void> {
+    public override setModel(model: SetFilterModel | null): Promise<void> {
         if (model == null && this.valueModel?.getModel() == null) {
             // refreshing is expensive. if new and old model are both null (e.g. nothing set), skip.
             // mini filter isn't contained within the model, so always reset
             this.setMiniFilter(null);
-            return AgPromise.resolve();
+            return Promise.resolve();
         }
         return super.setModel(model);
     }
@@ -256,19 +255,19 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         );
     }
 
-    private setModelAndRefresh(values: SetFilterModelValue | null): AgPromise<void> {
+    private setModelAndRefresh(values: SetFilterModelValue | null): Promise<void> {
         return this.valueModel
             ? this.valueModel.setModel(values).then(() => this.checkAndRefreshVirtualList())
-            : AgPromise.resolve();
+            : Promise.resolve();
     }
 
-    protected resetUiToDefaults(): AgPromise<void> {
+    protected resetUiToDefaults(): Promise<void> {
         this.setMiniFilter(null);
 
         return this.setModelAndRefresh(null);
     }
 
-    protected setModelIntoUi(model: SetFilterModel | null): AgPromise<void> {
+    protected setModelIntoUi(model: SetFilterModel | null): Promise<void> {
         this.setMiniFilter(null);
 
         const values = model == null ? null : model.values;
@@ -462,7 +461,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         });
     }
 
-    private syncAfterDataChange(): AgPromise<void> {
+    private syncAfterDataChange(): Promise<void> {
         if (!this.valueModel) {
             throw new Error('Value model has not been created.');
         }

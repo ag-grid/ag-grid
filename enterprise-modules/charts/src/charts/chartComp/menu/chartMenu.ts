@@ -5,7 +5,7 @@ import type {
     ChartToolbarMenuItemOptions,
     Environment,
 } from '@ag-grid-community/core';
-import { AgPromise, Component, Events } from '@ag-grid-community/core';
+import { Component, Events } from '@ag-grid-community/core';
 import { AgPanel } from '@ag-grid-enterprise/core';
 
 import { ChartController } from '../chartController';
@@ -131,7 +131,7 @@ export class ChartMenu extends Component {
         this.chartToolbar.updateParams({ buttons });
     }
 
-    private createMenuPanel(defaultTab: number): AgPromise<AgPanel> {
+    private createMenuPanel(defaultTab: number): Promise<AgPanel> {
         const width = this.environment.getDefaultChartMenuPanelWidth();
 
         const menuPanel = (this.menuPanel = this.createBean(
@@ -156,7 +156,7 @@ export class ChartMenu extends Component {
 
         this.addManagedListener(menuPanel, Component.EVENT_DESTROYED, () => this.destroyBean(this.tabbedMenu));
 
-        return new AgPromise((res: (arg0: any) => void) => {
+        return new Promise((res: (arg0: any) => void) => {
             window.setTimeout(() => {
                 menuPanel.setBodyComponent(this.tabbedMenu);
                 this.tabbedMenu.showTab(defaultTab);

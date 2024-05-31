@@ -68,7 +68,6 @@ export { AgInputTextArea } from '@ag-grid-community/core';
 export { AgInputTextField } from '@ag-grid-community/core';
 export { AgMenuItemRenderer } from '@ag-grid-community/core';
 export { AgPickerField } from '@ag-grid-community/core';
-export { AgPromise } from '@ag-grid-community/core';
 export { AgProvidedColumnGroup } from '@ag-grid-community/core';
 export { AgRadioButton } from '@ag-grid-community/core';
 export { AgSelect } from '@ag-grid-community/core';

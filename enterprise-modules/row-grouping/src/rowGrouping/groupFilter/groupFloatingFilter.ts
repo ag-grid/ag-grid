@@ -7,14 +7,7 @@ import type {
     IFloatingFilterComp,
     IFloatingFilterParams,
 } from '@ag-grid-community/core';
-import {
-    AgColumn,
-    AgInputTextField,
-    AgPromise,
-    Component,
-    RefPlaceholder,
-    _clearElement,
-} from '@ag-grid-community/core';
+import { AgColumn, AgInputTextField, Component, RefPlaceholder, _clearElement } from '@ag-grid-community/core';
 
 import { GroupFilter } from './groupFilter';
 
@@ -42,13 +35,13 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         `);
     }
 
-    public init(params: IFloatingFilterParams<GroupFilter>): AgPromise<void> {
+    public init(params: IFloatingFilterParams<GroupFilter>): Promise<void> {
         this.params = params;
 
         // we only support showing the underlying floating filter for multiple group columns
         const canShowUnderlyingFloatingFilter = this.gos.get('groupDisplayType') === 'multipleColumns';
 
-        return new AgPromise<void>((resolve) => {
+        return new Promise<void>((resolve) => {
             this.params.parentFilterInstance((parentFilterInstance) => {
                 this.parentFilterInstance = parentFilterInstance;
 
@@ -104,7 +97,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         this.eFloatingFilter.appendChild(this.eFloatingFilterText.getGui());
     }
 
-    private setupUnderlyingFloatingFilterElement(): AgPromise<void> {
+    private setupUnderlyingFloatingFilterElement(): Promise<void> {
         this.showingUnderlyingFloatingFilter = false;
         this.underlyingFloatingFilter = undefined;
         _clearElement(this.eFloatingFilter);
@@ -134,7 +127,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         }
         // fallback to the read-only version
         this.setupReadOnlyFloatingFilterElement();
-        return AgPromise.resolve();
+        return Promise.resolve();
     }
 
     private onColumnVisibleChanged(): void {

@@ -29,7 +29,6 @@ import type { ILoadingOverlayParams } from '../../rendering/overlays/loadingOver
 import type { INoRowsOverlayParams } from '../../rendering/overlays/noRowsOverlayComponent';
 import type { ITooltipParams } from '../../rendering/tooltipComponent';
 import { _mergeDeep } from '../../utils/object';
-import { AgPromise } from '../../utils/promise';
 import type { AgComponentUtils } from './agComponentUtils';
 import type { ComponentMetadata, ComponentMetadataProvider } from './componentMetadataProvider';
 import type { ComponentType } from './componentTypes';
@@ -75,7 +74,7 @@ export interface UserCompDetails {
     type: ComponentType;
     popupFromSelector?: boolean;
     popupPositionFromSelector?: 'over' | 'under';
-    newAgStackInstance: () => AgPromise<any>;
+    newAgStackInstance: () => Promise<any>;
 }
 
 export class UserComponentFactory extends BeanStub implements NamedBean {
@@ -345,7 +344,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         componentFromFramework: boolean,
         params: any,
         type: ComponentType
-    ): AgPromise<any> {
+    ): Promise<any> {
         const propertyName = type.propertyName;
         const jsComponent = !componentFromFramework;
         // using javascript component
@@ -367,7 +366,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         const deferredInit = this.initComponent(instance, params);
 
         if (deferredInit == null) {
-            return AgPromise.resolve(instance);
+            return Promise.resolve(instance);
         }
         return deferredInit.then(() => instance);
     }
@@ -400,7 +399,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         return params;
     }
 
-    private initComponent(component: any, params: any): AgPromise<void> | void {
+    private initComponent(component: any, params: any): Promise<void> | void {
         this.createBean(component);
         if (component.init == null) {
             return;

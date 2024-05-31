@@ -181,7 +181,7 @@ import {
     VirtualRowRemovedEvent,
 } from 'ag-grid-community';
 // @END_IMPORTS@
-import { AgPromise, ComponentUtil, GridApi, GridOptions, GridParams, Module, createGrid } from 'ag-grid-community';
+import { ComponentUtil, GridApi, GridOptions, GridParams, Module, createGrid } from 'ag-grid-community';
 
 import { AngularFrameworkComponentWrapper } from './angularFrameworkComponentWrapper';
 import { AngularFrameworkOverrides } from './angularFrameworkOverrides';

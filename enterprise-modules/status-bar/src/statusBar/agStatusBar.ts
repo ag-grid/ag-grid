@@ -7,7 +7,7 @@ import type {
     UserComponentFactory,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { AgPromise, Component, RefPlaceholder, _removeFromParent } from '@ag-grid-community/core';
+import { Component, RefPlaceholder, _removeFromParent } from '@ag-grid-community/core';
 
 import type { StatusBarService } from './statusBarService';
 
@@ -125,15 +125,15 @@ export class AgStatusBar extends Component {
         ePanelComponent: HTMLElement,
         existingStatusPanelsToReuse: Map<string, IStatusPanelComp>
     ) {
-        const componentDetails: { key: string; promise: AgPromise<IStatusPanelComp> }[] = [];
+        const componentDetails: { key: string; promise: Promise<IStatusPanelComp> }[] = [];
 
         statusBarComponents.forEach((componentConfig) => {
             // default to the component name if no key supplied
             const key = componentConfig.key || componentConfig.statusPanel;
             const existingStatusPanel = existingStatusPanelsToReuse.get(key);
-            let promise: AgPromise<IStatusPanelComp>;
+            let promise: Promise<IStatusPanelComp>;
             if (existingStatusPanel) {
-                promise = AgPromise.resolve(existingStatusPanel);
+                promise = Promise.resolve(existingStatusPanel);
             } else {
                 const params: WithoutGridCommon<IStatusPanelParams> = {};
 
@@ -151,7 +151,7 @@ export class AgStatusBar extends Component {
             });
         });
 
-        AgPromise.all(componentDetails.map((details) => details.promise)).then(() => {
+        Promise.all(componentDetails.map((details) => details.promise)).then(() => {
             componentDetails.forEach((componentDetail) => {
                 componentDetail.promise.then((component: IStatusPanelComp) => {
                     const destroyFunc = () => {

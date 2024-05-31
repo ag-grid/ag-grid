@@ -168,15 +168,7 @@ import {
     VirtualRowRemovedEvent,
 } from '@ag-grid-community/core';
 // @END_IMPORTS@
-import {
-    AgPromise,
-    ComponentUtil,
-    GridApi,
-    GridOptions,
-    GridParams,
-    Module,
-    createGrid,
-} from '@ag-grid-community/core';
+import { ComponentUtil, GridApi, GridOptions, GridParams, Module, createGrid } from '@ag-grid-community/core';
 import {
     AfterViewInit,
     Component,

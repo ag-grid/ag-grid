@@ -1,6 +1,5 @@
 import type { FrameworkOverridesIncomingSource, IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import { _includes } from './utils/array';
-import { AgPromise } from './utils/promise';
 
 const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
 
@@ -10,8 +9,8 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
 
     constructor(private frameworkName: 'javascript' | 'angular' | 'react' | 'vue' | 'solid' = 'javascript') {}
 
-    public setInterval(action: any, timeout?: any): AgPromise<number> {
-        return new AgPromise((resolve) => {
+    public setInterval(action: any, timeout?: any): Promise<number> {
+        return new Promise((resolve) => {
             resolve(window.setInterval(action, timeout));
         });
     }

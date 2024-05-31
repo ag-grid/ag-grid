@@ -1,5 +1,5 @@
 import type { ICellEditor, IFilter, IStatusPanel, IToolPanel } from 'ag-grid-community';
-import { AgPromise, _warnOnce } from 'ag-grid-community';
+import { _warnOnce } from 'ag-grid-community';
 
 /**
  * Function to retrieve the React component from an instance returned by the grid.
@@ -14,7 +14,7 @@ export function getInstance<
         | IStatusPanel,
     TCustomComponent extends TGridComponent = TGridComponent,
 >(wrapperComponent: TGridComponent, callback: (customComponent: TCustomComponent | undefined) => void): void {
-    const promise = (wrapperComponent as any)?.getInstance?.() ?? AgPromise.resolve(undefined);
+    const promise = (wrapperComponent as any)?.getInstance?.() ?? Promise.resolve(undefined);
     promise.then((comp: TCustomComponent | undefined) => callback(comp));
 }
 
