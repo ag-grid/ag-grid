@@ -385,27 +385,20 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             possibleEmptyGroups.forEach((possibleEmptyGroup) => {
                 // remove empty groups
                 this.forEachParentGroup(details, possibleEmptyGroup, (rowNode) => {
-                    if (groupShouldBeRemoved(rowNode)) {
-                        if (details.usingTreeData && details.getDataPath?.(rowNode.data)) {
-                            // This node has associated tree data so shouldn't be removed, but should no longer be
-                            // marked as a group if it has no children.
-                            rowNode.setGroup(
-                                (rowNode.childrenAfterGroup && rowNode.childrenAfterGroup.length > 0) ?? false
-                            );
-                        } else {
-                            checkAgain = true;
+                    const shouldBeRemoved = groupShouldBeRemoved(rowNode);
+                    if (shouldBeRemoved && details.usingTreeData && details.getDataPath?.(rowNode.data)) {
+                        // This node has associated tree data so shouldn't be removed, but should no longer be
+                        // marked as a group if it has no children.
+                        rowNode.setGroup(
+                            (rowNode.childrenAfterGroup && rowNode.childrenAfterGroup.length > 0) ?? false
+                        );
+                    } else if (shouldBeRemoved) {
+                        checkAgain = true;
 
-                            this.removeFromParent(rowNode, batchRemover);
-                            // we remove selection on filler nodes here, as the selection would not be removed
-                            // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-                            rowNode.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
-                            checkAgain = true;
-
-                            this.removeFromParent(rowNode, batchRemover);
-                            // we remove selection on filler nodes here, as the selection would not be removed
-                            // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-                            rowNode.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
-                        }
+                        this.removeFromParent(rowNode, batchRemover);
+                        // we remove selection on filler nodes here, as the selection would not be removed
+                        // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
+                        rowNode.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
                     }
                 });
             });
