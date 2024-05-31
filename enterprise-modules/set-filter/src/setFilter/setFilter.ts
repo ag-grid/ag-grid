@@ -16,7 +16,6 @@ import type {
     SetFilterParams,
     ValueFormatterParams,
     ValueService,
-    VirtualListModel,
 } from '@ag-grid-community/core';
 import {
     AgInputTextField,
@@ -26,7 +25,6 @@ import {
     KeyCode,
     ProvidedFilter,
     RefPlaceholder,
-    VirtualList,
     _areEqual,
     _last,
     _makeNull,
@@ -34,6 +32,7 @@ import {
     _toStringOrNull,
     _warnOnce,
 } from '@ag-grid-community/core';
+import { VirtualList, type VirtualListModel } from '@ag-grid-enterprise/core';
 
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { SetFilterDisplayValue } from './iSetDisplayValueModel';

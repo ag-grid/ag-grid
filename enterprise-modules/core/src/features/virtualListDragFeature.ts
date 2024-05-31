@@ -1,33 +1,17 @@
-import { AutoScrollService } from '../autoScrollService';
-import type { NamedBean } from '../context/bean';
-import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
-import type { AgEvent } from '../events';
-import type { IEventEmitter } from '../interfaces/iEventEmitter';
-import { _radioCssClass } from '../utils/dom';
-import type { Component } from '../widgets/component';
+import type {
+    AgEvent,
+    BeanCollection,
+    Component,
+    DragSourceType,
+    DraggingEvent,
+    DropTarget,
+} from '@ag-grid-community/core';
+import { AutoScrollService, BeanStub, DragAndDropService, _radioCssClass } from '@ag-grid-community/core';
+
 import type { VirtualList } from '../widgets/virtualList';
-import type { DragSourceType, DraggingEvent, DropTarget } from './dragAndDropService';
-import { DragAndDropService } from './dragAndDropService';
+import type { VirtualListDragItem, VirtualListDragParams } from './iVirtualListDragFeature';
 
 const LIST_ITEM_HOVERED = 'ag-list-item-hovered';
-
-export interface VirtualListDragItem<R extends Component> {
-    rowIndex: number;
-    position: 'top' | 'bottom';
-    component: R;
-}
-
-export interface VirtualListDragParams<C extends Component, R extends Component, V, E extends AgEvent> {
-    eventSource: Window | HTMLElement | IEventEmitter;
-    listItemDragStartEvent: string;
-    listItemDragEndEvent: string;
-    dragSourceType: DragSourceType;
-    getCurrentDragValue: (listItemDragStartEvent: E) => V;
-    isMoveBlocked: (currentDragValue: V | null) => boolean;
-    getNumRows: (comp: C) => number;
-    moveItem: (currentDragValue: V | null, lastHoveredListItem: VirtualListDragItem<R> | null) => void;
-}
 
 export class VirtualListDragFeature<C extends Component, R extends Component, V, E extends AgEvent> extends BeanStub {
     private dragAndDropService: DragAndDropService;

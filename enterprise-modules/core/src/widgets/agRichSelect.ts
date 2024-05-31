@@ -16,7 +16,6 @@ import {
     Events,
     KeyCode,
     RefPlaceholder,
-    VirtualList,
     _bindCellRendererToHtmlElement,
     _clearElement,
     _debounce,
@@ -32,6 +31,7 @@ import {
 } from '@ag-grid-community/core';
 
 import { RichSelectRow } from './agRichSelectRow';
+import { VirtualList } from './virtualList';
 
 const TEMPLATE = /* html */ `
     <div class="ag-picker-field" role="presentation">
