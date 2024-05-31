@@ -83,7 +83,6 @@ import { SelectionService } from './selectionService';
 import { SortController } from './sortController';
 import { StylingService } from './styling/stylingService';
 import { SyncService } from './syncService';
-import { UndoRedoService } from './undoRedo/undoRedoService';
 import { _errorOnce, _warnOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
@@ -453,7 +452,6 @@ export class GridCoreCreator {
             AutoColService,
             ChangeDetectionService,
             AnimationFrameService,
-            UndoRedoService,
             AgStackComponentsRegistry,
             ColumnDefFactory,
             RowCssClassCalculator,

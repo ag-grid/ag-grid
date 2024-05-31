@@ -242,6 +242,7 @@ export { TextFloatingFilter } from '@ag-grid-community/core';
 export { TooltipFeature } from '@ag-grid-community/core';
 export { TooltipStateManager } from '@ag-grid-community/core';
 export { TouchListener } from '@ag-grid-community/core';
+export { UndoRedoEditModule } from '@ag-grid-community/core';
 export { UserComponentFactory } from '@ag-grid-community/core';
 export { UserComponentRegistry } from '@ag-grid-community/core';
 export { ValueCache } from '@ag-grid-community/core';

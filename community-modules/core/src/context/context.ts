@@ -171,7 +171,7 @@ export interface CoreBeanCollection {
     pinnedRowModel: PinnedRowModel;
     menuService: MenuService;
     apiEventService: ApiEventService;
-    undoRedoService: UndoRedoService;
+    undoRedoService?: UndoRedoService;
     rowNodeBlockLoader: RowNodeBlockLoader;
     csvCreator: ICsvCreator;
     excelCreator: IExcelCreator;

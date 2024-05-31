@@ -1,4 +1,5 @@
 import type { Module } from '../interfaces/iModule';
+import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { VERSION } from '../version';
 import { CheckboxCellEditor } from './cellEditors/checkboxCellEditor';
 import { DateCellEditor } from './cellEditors/dateCellEditor';
@@ -14,6 +15,12 @@ export const EditCoreModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-community/edit-core',
     beans: [EditService],
+};
+
+export const UndoRedoEditModule: Module = {
+    version: VERSION,
+    moduleName: '@ag-grid-community/undo-redo-edit',
+    beans: [UndoRedoService],
 };
 
 export const FullRowEditModule: Module = {
@@ -66,5 +73,5 @@ const AllCommunityEditorsModule: Module = {
 export const EditModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-community/editing',
-    dependantModules: [EditCoreModule, FullRowEditModule, AllCommunityEditorsModule],
+    dependantModules: [EditCoreModule, UndoRedoEditModule, FullRowEditModule, AllCommunityEditorsModule],
 };

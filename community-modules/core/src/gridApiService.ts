@@ -149,7 +149,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
     private stateService: StateService;
     private expansionService: IExpansionService;
     private apiEventService: ApiEventService;
-    private undoRedoService: UndoRedoService;
+    private undoRedoService?: UndoRedoService;
     private rowNodeBlockLoader: RowNodeBlockLoader;
 
     private csvCreator?: ICsvCreator;
@@ -997,19 +997,19 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
     }
 
     public undoCellEditing(): void {
-        this.undoRedoService.undo('api');
+        this.undoRedoService?.undo('api');
     }
 
     public redoCellEditing(): void {
-        this.undoRedoService.redo('api');
+        this.undoRedoService?.redo('api');
     }
 
     public getCurrentUndoSize(): number {
-        return this.undoRedoService.getCurrentUndoStackSize();
+        return this.undoRedoService?.getCurrentUndoStackSize() ?? 0;
     }
 
     public getCurrentRedoSize(): number {
-        return this.undoRedoService.getCurrentRedoStackSize();
+        return this.undoRedoService?.getCurrentRedoStackSize() ?? 0;
     }
 
     private assertChart<T>(methodName: keyof GridApi, func: () => T): T | undefined {
