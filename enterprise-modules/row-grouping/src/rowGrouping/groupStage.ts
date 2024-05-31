@@ -386,13 +386,25 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
                 // remove empty groups
                 this.forEachParentGroup(details, possibleEmptyGroup, (rowNode) => {
                     if (groupShouldBeRemoved(rowNode)) {
-                        checkAgain = true;
-                        // This node no longer represents a group
-                        rowNode.group = false;
-                        this.removeFromParent(rowNode, batchRemover);
-                        // we remove selection on filler nodes here, as the selection would not be removed
-                        // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-                        rowNode.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
+                        if (details.usingTreeData && details.getDataPath?.(rowNode.data)) {
+                            // This node has associated tree data so shouldn't be removed, but should no longer be marked as a group
+                            // since it has no children.
+                            rowNode.group =
+                                (rowNode.childrenAfterGroup && rowNode.childrenAfterGroup.length > 0) ?? false;
+                        } else {
+                            checkAgain = true;
+
+                            this.removeFromParent(rowNode, batchRemover);
+                            // we remove selection on filler nodes here, as the selection would not be removed
+                            // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
+                            rowNode.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
+                            checkAgain = true;
+
+                            this.removeFromParent(rowNode, batchRemover);
+                            // we remove selection on filler nodes here, as the selection would not be removed
+                            // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
+                            rowNode.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
+                        }
                     }
                 });
             });
@@ -814,14 +826,13 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         }
 
         // use expandByDefault if exists
-        const { expandByDefault } = details;
         if (details.expandByDefault === -1) {
             groupNode.expanded = true;
             return;
         }
 
         // otherwise
-        groupNode.expanded = groupNode.level < expandByDefault;
+        groupNode.expanded = groupNode.level < details.expandByDefault;
     }
 
     private getGroupInfo(rowNode: RowNode, details: GroupingDetails): GroupInfo[] {
@@ -832,13 +843,12 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     }
 
     private getGroupInfoFromCallback(rowNode: RowNode, details: GroupingDetails): GroupInfo[] {
-        const keys: string[] | null = details.getDataPath ? details.getDataPath(rowNode.data) : null;
+        const keys = details.getDataPath?.(rowNode.data);
 
-        if (keys === null || keys === undefined || keys.length === 0) {
+        if (keys === undefined || keys.length === 0) {
             _warnOnce(`getDataPath() should not return an empty path for data ${rowNode.data}`);
         }
-        const groupInfoMapper = (key: string | null) => ({ key, field: null, rowGroupColumn: null }) as GroupInfo;
-        return keys ? keys.map(groupInfoMapper) : [];
+        return keys?.map((key) => ({ key, field: null, rowGroupColumn: null })) ?? [];
     }
 
     private getGroupInfoFromGroupColumns(rowNode: RowNode, details: GroupingDetails) {
