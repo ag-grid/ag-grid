@@ -602,14 +602,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
         this.getLockOnRefresh();
 
-        const focusedCell: CellPosition | null = this.getCellToRestoreFocusToAfterRefresh(params);
+        const focusedCell = this.getCellToRestoreFocusToAfterRefresh(params);
 
         this.updateContainerHeights();
         this.scrollToTopIfNewData(params);
 
         // never recycle rows on layout change as rows could change from normal DOM layout
         // back to the grid's row positioning.
-        const recycleRows: boolean = !params.domLayoutChanged && !!params.recycleRows;
+        const recycleRows = !params.domLayoutChanged && !!params.recycleRows;
         const animate = params.animate && this.gos.isAnimateRows();
 
         // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
@@ -961,7 +961,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private getRowsToRecycle(): RowCtrlByRowNodeIdMap {
         // remove all stub nodes, they can't be reused, as no rowNode id
         const stubNodeIndexes: string[] = [];
-        _iterateObject(this.rowCtrlsByRowIndex, (index: string, rowCtrl: RowCtrl) => {
+        _iterateObject(this.rowCtrlsByRowIndex, (index, rowCtrl) => {
             const stubNode = rowCtrl.getRowNode().id == null;
             if (stubNode) {
                 stubNodeIndexes.push(index);
@@ -971,7 +971,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         // then clear out rowCompsByIndex, but before that take a copy, but index by id, not rowIndex
         const ctrlsByIdMap: RowCtrlByRowNodeIdMap = {};
-        _iterateObject(this.rowCtrlsByRowIndex, (index: string, rowCtrl: RowCtrl) => {
+        _iterateObject(this.rowCtrlsByRowIndex, (_, rowCtrl) => {
             const rowNode = rowCtrl.getRowNode();
             ctrlsByIdMap[rowNode.id!] = rowCtrl;
         });
