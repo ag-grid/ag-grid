@@ -466,23 +466,45 @@ export class RowRenderer extends BeanStub implements NamedBean {
         return this.bottomRowCtrls;
     }
 
-    private refreshFloatingRows(rowComps: RowCtrl[], rowNodes: RowNode[]): void {
-        rowComps.forEach((row: RowCtrl) => {
-            row.destroyFirstPass();
-            row.destroySecondPass();
-        });
+    /**
+     * Determines which row controllers need to be destroyed and re-created vs which ones can
+     * be re-used.
+     *
+     * This is operation is to pinned/floating rows as `this.recycleRows` is to normal/body rows.
+     *
+     * All `RowCtrl` instances in `rowCtrls` that don't correspond to `RowNode` instances in `rowNodes` are destroyed.
+     * All `RowNode` instances in `rowNodes` that don't correspond to `RowCtrl` instances in `rowCtrls` are created.
+     * All instances in `rowCtrls` must be in the same order as their corresponding nodes in `rowNodes`.
+     *
+     * @param rowCtrls The list of existing row controllers
+     * @param rowNodes The canonical list of row nodes that should have associated controllers
+     */
+    private refreshFloatingRows(rowCtrls: RowCtrl[], rowNodes: RowNode[]): void {
+        const nodeMap = Object.fromEntries(rowNodes.map((node) => [node.id!, node]));
+        const rowCtrlMap = Object.fromEntries(rowCtrls.map((ctrl) => [ctrl.getRowNode().id!, ctrl]));
 
-        rowComps.length = 0;
+        for (let i = 0; i < rowNodes.length; i++) {
+            const node = rowNodes[i];
+            const rowCtrl = rowCtrls[i];
 
-        if (!rowNodes) {
-            return;
+            if (rowCtrl && nodeMap[rowCtrl.getRowNode().id!] === undefined) {
+                // ctrl not in new nodes list, destroy
+                rowCtrl.destroyFirstPass();
+                rowCtrl.destroySecondPass();
+            }
+
+            if (node.id! in rowCtrlMap) {
+                // ctrl exists already, re-use it
+                rowCtrls[i] = rowCtrlMap[node.id!];
+                delete rowCtrlMap[node.id!];
+            } else {
+                // ctrl doesn't exist, create it
+                rowCtrls[i] = new RowCtrl(node, this.beans, false, false, this.printLayout);
+            }
         }
 
-        rowNodes.forEach((rowNode) => {
-            const rowCtrl = new RowCtrl(rowNode, this.beans, false, false, this.printLayout);
-
-            rowComps.push(rowCtrl);
-        });
+        // Truncate array if rowCtrls is longer than rowNodes
+        rowCtrls.length = rowNodes.length;
     }
 
     private onPinnedRowDataChanged(): void {
