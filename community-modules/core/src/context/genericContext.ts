@@ -3,6 +3,10 @@ import type { GenericBean } from './genericBean';
 export interface GenericContextParams<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
     providedBeanInstances: Partial<{ [key in TBeanName]: GenericBean<TBeanName, TBeanCollection> }>;
     beanClasses: GenericSingletonBean<TBeanName, TBeanCollection>[];
+    beanComparator?: (
+        bean1: GenericBean<TBeanName, TBeanCollection>,
+        bean2: GenericBean<TBeanName, TBeanCollection>
+    ) => number;
 }
 
 export interface GenericSingletonBean<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
@@ -49,6 +53,11 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
             }
             this.createdBeans.push(instance);
         });
+
+        if (params.beanComparator) {
+            // sort the beans so that they are in a consistent order
+            this.createdBeans.sort(params.beanComparator);
+        }
 
         this.initBeans(this.createdBeans);
     }

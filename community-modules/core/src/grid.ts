@@ -25,6 +25,7 @@ import { UserComponentFactory } from './components/framework/userComponentFactor
 import { UserComponentRegistry } from './components/framework/userComponentRegistry';
 import type { ContextParams, SingletonBean } from './context/context';
 import { Context } from './context/context';
+import { gridBeanComparator } from './context/gridBeanComparator';
 import { CtrlsFactory } from './ctrlsFactory';
 import { CtrlsService } from './ctrlsService';
 import { DragAndDropService } from './dragAndDrop/dragAndDropService';
@@ -261,6 +262,7 @@ export class GridCoreCreator {
             providedBeanInstances: providedBeanInstances,
             beanClasses: beanClasses,
             gridId: gridId,
+            beanComparator: gridBeanComparator,
         };
 
         const context = new Context(contextParams);
