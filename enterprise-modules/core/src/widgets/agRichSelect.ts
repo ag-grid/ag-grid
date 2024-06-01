@@ -54,7 +54,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private listComponent: AgRichSelectList<TValue> | undefined;
     protected values: TValue[];
 
-    private highlightedItem: number = -1;
     private searchStringCreator: ((values: TValue[]) => string[]) | null = null;
     private readonly eInput: AgInputTextField = RefPlaceholder;
 
@@ -220,12 +219,26 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     public override showPicker() {
         super.showPicker();
-        this.listComponent?.selectValue(this.value);
+        const { listComponent, config, value } = this;
+        const { multiSelect } = config;
+
+        if (!listComponent) {
+            return;
+        }
+
+        listComponent.selectValue(this.value);
+        if (multiSelect) {
+            listComponent.highlightIndex(0);
+        } else {
+            const idx = listComponent.getIndicesForValues([value as TValue])[0];
+            if (idx != null) {
+                listComponent.highlightIndex(idx);
+            }
+        }
         this.displayOrHidePicker();
     }
 
     protected override beforeHidePicker(): void {
-        this.highlightedItem = -1;
         super.beforeHidePicker();
     }
 
@@ -287,48 +300,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         return searchStrings;
     }
 
-    private getSuggestionsAndFilteredValues(
-        searchValue: string,
-        valueList: string[]
-    ): { suggestions: string[]; filteredValues: TValue[] } {
-        let suggestions: string[] = [];
-        const filteredValues: TValue[] = [];
-
-        if (!searchValue.length) {
-            return { suggestions, filteredValues };
-        }
-
-        const { searchType = 'fuzzy', filterList } = this.config;
-
-        if (searchType === 'fuzzy') {
-            const fuzzySearchResult = _fuzzySuggestions(this.searchString, valueList, true);
-            suggestions = fuzzySearchResult.values;
-
-            const indices = fuzzySearchResult.indices;
-            if (filterList && indices.length) {
-                for (let i = 0; i < indices.length; i++) {
-                    filteredValues.push(this.values[indices[i]]);
-                }
-            }
-        } else {
-            suggestions = valueList.filter((val, idx) => {
-                const currentValue = val.toLocaleLowerCase();
-                const valueToMatch = this.searchString.toLocaleLowerCase();
-
-                const isMatch =
-                    searchType === 'match'
-                        ? currentValue.startsWith(valueToMatch)
-                        : currentValue.indexOf(valueToMatch) !== -1;
-                if (filterList && isMatch) {
-                    filteredValues.push(this.values[idx]);
-                }
-                return isMatch;
-            });
-        }
-
-        return { suggestions, filteredValues };
-    }
-
     private filterListModel(filteredValues: TValue[]): void {
         const { filterList } = this.config;
 
@@ -341,11 +312,15 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     private runSearch() {
+        if (!this.listComponent) {
+            return;
+        }
+
         const { values } = this;
         const searchStrings = this.buildSearchStrings(values);
 
         if (!searchStrings) {
-            this.listComponent?.highlightIndex(-1);
+            this.listComponent.highlightIndex(-1);
             return;
         }
 
@@ -379,6 +354,48 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         this.displayOrHidePicker();
+    }
+
+    private getSuggestionsAndFilteredValues(
+        searchValue: string,
+        valueList: string[]
+    ): { suggestions: string[]; filteredValues: TValue[] } {
+        let suggestions: string[] = [];
+        const filteredValues: TValue[] = [];
+
+        if (!searchValue.length) {
+            return { suggestions, filteredValues };
+        }
+
+        const { searchType = 'fuzzy', filterList } = this.config;
+
+        if (searchType === 'fuzzy') {
+            const fuzzySearchResult = _fuzzySuggestions(searchValue, valueList, true);
+            suggestions = fuzzySearchResult.values;
+
+            const indices = fuzzySearchResult.indices;
+            if (filterList && indices.length) {
+                for (let i = 0; i < indices.length; i++) {
+                    filteredValues.push(this.values[indices[i]]);
+                }
+            }
+        } else {
+            suggestions = valueList.filter((val, idx) => {
+                const currentValue = val.toLocaleLowerCase();
+                const valueToMatch = this.searchString.toLocaleLowerCase();
+
+                const isMatch =
+                    searchType === 'match'
+                        ? currentValue.startsWith(valueToMatch)
+                        : currentValue.indexOf(valueToMatch) !== -1;
+                if (filterList && isMatch) {
+                    filteredValues.push(this.values[idx]);
+                }
+                return isMatch;
+            });
+        }
+
+        return { suggestions, filteredValues };
     }
 
     private displayOrHidePicker(): void {
@@ -415,7 +432,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             }
 
             if (!fromPicker) {
-                this.listComponent?.selectListItems([index]);
+                this.listComponent?.selectListItems([value]);
             }
         }
 
@@ -437,12 +454,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             return;
         }
 
-        const oldIndex = this.highlightedItem;
-
-        const diff = isDown ? 1 : -1;
-        const newIndex = oldIndex === -1 ? 0 : oldIndex + diff;
-
-        this.listComponent?.selectListItems([newIndex]);
+        this.listComponent?.onNavigationKeyDown(key);
     }
 
     protected onEnterKeyDown(e: KeyboardEvent): void {
@@ -452,23 +464,27 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         e.preventDefault();
 
         if (this.listComponent?.getCurrentList()) {
-            //this.onListValueSelected(this.currentList[this.highlightedItem], true);
+            if (this.config.multiSelect) {
+                this.onListValueSelected(this.listComponent.getSelectedItems(), true);
+            } else {
+                const lastRowHovered = this.listComponent.getLastItemHovered();
+                this.onListValueSelected(new Set<TValue>([lastRowHovered]), true);
+            }
         }
     }
 
-    private onListValueSelected(valueSet: Set<number>, fromEnterKey: boolean): void {
+    private onListValueSelected(valueSet: Set<TValue>, fromEnterKey: boolean): void {
         let newValue: TValue[] | TValue | undefined;
 
         for (const value of valueSet) {
-            const currentValue = this.values[value];
             if (valueSet.size === 1) {
-                newValue = currentValue;
+                newValue = value;
                 break;
             }
             if (!newValue) {
                 newValue = [];
             }
-            (newValue as TValue[]).push(currentValue);
+            (newValue as TValue[]).push(value);
         }
 
         if (newValue === undefined) {

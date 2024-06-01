@@ -77,7 +77,14 @@ export class RichSelectRow<TValue> extends Component {
     }
 
     public updateSelected(selected: boolean): void {
+        const eGui = this.getGui();
+        _setAriaSelected(eGui.parentElement!, selected);
+
         this.addOrRemoveCssClass('ag-rich-select-row-selected', selected);
+    }
+
+    public getValue(): TValue {
+        return this.value;
     }
 
     public updateHighlighted(highlighted: boolean): void {
@@ -92,7 +99,6 @@ export class RichSelectRow<TValue> extends Component {
             this.wrapperEl.setAttribute('data-active-option', parentId);
         }
 
-        _setAriaSelected(eGui.parentElement!, highlighted);
         this.addOrRemoveCssClass('ag-rich-select-row-highlighted', highlighted);
     }
 

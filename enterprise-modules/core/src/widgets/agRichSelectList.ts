@@ -5,6 +5,7 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import { Events, VirtualList, _setAriaControls, _setAriaLabel } from '@ag-grid-community/core';
+import { KeyCode } from '@ag-grid-community/core';
 
 import { RichSelectRow } from './agRichSelectRow';
 
@@ -12,7 +13,7 @@ export class AgRichSelectList<TValue> extends VirtualList {
     private eLoading: HTMLElement | undefined;
     private lastRowHovered: number = -1;
     private currentList: TValue[] | undefined;
-    private selectedItems: Set<number> = new Set<number>();
+    private selectedItems: Set<TValue> = new Set<TValue>();
 
     constructor(
         private readonly params: RichSelectParams,
@@ -63,6 +64,19 @@ export class AgRichSelectList<TValue> extends VirtualList {
         });
     }
 
+    public onNavigationKeyDown(key: string): void {
+        if (!this.currentList) {
+            return;
+        }
+        const len = this.currentList.length;
+        const oldIndex = this.lastRowHovered;
+
+        const diff = key === KeyCode.DOWN ? 1 : -1;
+        const newIndex = Math.min(Math.max(oldIndex === -1 ? 0 : oldIndex + diff, 0), len - 1);
+
+        this.highlightIndex(newIndex);
+    }
+
     public override navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): number | null {
         const newIndex = super.navigateToPage(key, this.lastRowHovered);
 
@@ -104,7 +118,7 @@ export class AgRichSelectList<TValue> extends VirtualList {
             // this second call to refresh is necessary to force scrolled elements
             // to be rendered with the correct index info.
             this.refresh(true);
-            this.selectListItems(selectedPositions);
+            this.selectListItems([value as TValue]);
         }
     }
 
@@ -122,37 +136,28 @@ export class AgRichSelectList<TValue> extends VirtualList {
         });
     }
 
-    public selectListItems(indices: number[], append = false): void {
+    public selectListItems(values: TValue[], append = false): void {
         if (!append) {
             this.selectedItems.clear();
         }
 
-        for (let i = 0; i < indices.length; i++) {
-            const currentIndex = indices[i];
-            if (this.selectedItems.has(currentIndex)) {
+        for (let i = 0; i < values.length; i++) {
+            const currentItem = values[i];
+            if (this.selectedItems.has(currentItem)) {
                 continue;
             }
-            this.selectedItems.add(currentIndex);
+            this.selectedItems.add(currentItem);
         }
 
         this.refreshSelectedItems();
     }
 
-    private toggleListItemSelection(index: number): void {
-        if (this.selectedItems.has(index)) {
-            this.selectedItems.delete(index);
-        } else {
-            this.selectedItems.add(index);
-        }
-
-        this.refreshSelectedItems();
+    public getSelectedItems(): Set<TValue> {
+        return this.selectedItems;
     }
 
-    private refreshSelectedItems(): void {
-        this.forEachRenderedRow((cmp: RichSelectRow<TValue>, idx: number) => {
-            const selected = this.selectedItems.has(idx);
-            cmp.updateSelected(selected);
-        });
+    public getLastItemHovered(): TValue {
+        return this.currentList![this.lastRowHovered];
     }
 
     public highlightIndex(index: number, preventUnnecessaryScroll?: boolean): void {
@@ -174,6 +179,50 @@ export class AgRichSelectList<TValue> extends VirtualList {
 
         this.forEachRenderedRow((cmp: RichSelectRow<TValue>, idx: number) => {
             cmp.updateHighlighted(index === idx);
+        });
+    }
+
+    public getIndicesForValues(values?: TValue[] | TValue): number[] {
+        const { currentList } = this;
+
+        if (!currentList || currentList.length === 0 || values == null) {
+            return [];
+        }
+
+        if (!Array.isArray(values)) {
+            values = [values] as TValue[];
+        }
+
+        if (values.length === 0) {
+            return [];
+        }
+
+        const positions: number[] = [];
+
+        for (let i = 0; i < values.length; i++) {
+            const idx = currentList.indexOf(values[i]);
+            if (idx >= 0) {
+                positions.push(idx);
+            }
+        }
+
+        return positions;
+    }
+
+    private toggleListItemSelection(value: TValue): void {
+        if (this.selectedItems.has(value)) {
+            this.selectedItems.delete(value);
+        } else {
+            this.selectedItems.add(value);
+        }
+
+        this.refreshSelectedItems();
+    }
+
+    private refreshSelectedItems(): void {
+        this.forEachRenderedRow((cmp: RichSelectRow<TValue>) => {
+            const selected = this.selectedItems.has(cmp.getValue());
+            cmp.updateSelected(selected);
         });
     }
 
@@ -224,10 +273,16 @@ export class AgRichSelectList<TValue> extends VirtualList {
     private onClick(): void {
         const { multiSelect } = this.params;
 
+        if (!this.currentList) {
+            return;
+        }
+
+        const item = this.currentList[this.lastRowHovered];
+
         if (multiSelect) {
-            this.toggleListItemSelection(this.lastRowHovered);
+            this.toggleListItemSelection(item);
         } else {
-            this.selectListItems([this.lastRowHovered]);
+            this.selectListItems([item]);
             this.dispatchValueSelected();
         }
     }
@@ -240,33 +295,6 @@ export class AgRichSelectList<TValue> extends VirtualList {
         };
 
         this.dispatchEvent(event);
-    }
-
-    private getIndicesForValues(values?: TValue[] | TValue): number[] {
-        const { currentList } = this;
-
-        if (!currentList || currentList.length === 0 || values == null) {
-            return [];
-        }
-
-        if (!Array.isArray(values)) {
-            values = [values] as TValue[];
-        }
-
-        if (values.length === 0) {
-            return [];
-        }
-
-        const positions: number[] = [];
-
-        for (let i = 0; i < values.length; i++) {
-            const idx = currentList.indexOf(values[i]);
-            if (idx >= 0) {
-                positions.push(idx);
-            }
-        }
-
-        return positions;
     }
 
     public override destroy(): void {
