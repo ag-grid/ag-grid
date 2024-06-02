@@ -41,8 +41,6 @@ ModuleRegistry.registerModules([
     StatusBarModule,
 ]);
 
-ModuleRegistry.registerModules([SetFilterModule]);
-
 const GridPreview = () => {
     const { config, gridOptions, updateCount } = useGridOptions();
 
