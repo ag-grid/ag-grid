@@ -276,6 +276,7 @@ export { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
 export { ExpansionService } from './misc/expansionService';
 export { MenuService, IContextMenuParams } from './misc/menuService';
+export { StateModule } from './misc/stateServiceModule';
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams, BaseCellEditor } from './interfaces/iCellEditor';

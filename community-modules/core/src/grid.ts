@@ -60,7 +60,6 @@ import { ApiEventService } from './misc/apiEventService';
 import { ExpansionService } from './misc/expansionService';
 import { MenuService } from './misc/menuService';
 import { ResizeObserverService } from './misc/resizeObserverService';
-import { StateService } from './misc/stateService';
 import { ModuleNames } from './modules/moduleNames';
 import { INTERNAL_MODULES, ModuleRegistry } from './modules/moduleRegistry';
 import { PaginationAutoPageSizeService } from './pagination/paginationAutoPageSizeService';
@@ -463,7 +462,6 @@ export class GridCoreCreator {
             DataTypeService,
             SyncService,
             OverlayService,
-            StateService,
             ExpansionService,
             ApiEventService,
             AriaAnnouncementService,

@@ -187,6 +187,7 @@ export { SimpleFloatingFilterModule } from '@ag-grid-community/core';
 export { SortController } from '@ag-grid-community/core';
 export { SortIndicatorComp } from '@ag-grid-community/core';
 export { StandardMenuFactory } from '@ag-grid-community/core';
+export { StateModule } from '@ag-grid-community/core';
 export { StylingService } from '@ag-grid-community/core';
 export { TabGuardClassNames } from '@ag-grid-community/core';
 export { TabGuardComp } from '@ag-grid-community/core';
