@@ -167,14 +167,16 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             }
         });
 
-        this.updateGroupsFromChildrenSelections(source);
+        if (updatedCount > 0) {
+            this.updateGroupsFromChildrenSelections(source);
 
-        const event: WithoutGridCommon<SelectionChangedEvent> = {
-            type: Events.EVENT_SELECTION_CHANGED,
-            source,
-        };
+            const event: WithoutGridCommon<SelectionChangedEvent> = {
+                type: Events.EVENT_SELECTION_CHANGED,
+                source,
+            };
 
-        this.eventService.dispatchEvent(event);
+            this.eventService.dispatchEvent(event);
+        }
 
         return updatedCount;
     }
