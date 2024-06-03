@@ -11,21 +11,23 @@ export class AgPromise<T> {
     private waiters: ((value: T | null) => void)[] = [];
 
     static all<T>(promises: AgPromise<T | null>[]): AgPromise<(T | null)[]> {
-        return new AgPromise((resolve) => {
-            let remainingToResolve = promises.length;
-            const combinedValues = new Array<T | null>(remainingToResolve);
+        return promises.length
+            ? new AgPromise((resolve) => {
+                  let remainingToResolve = promises.length;
+                  const combinedValues = new Array<T | null>(remainingToResolve);
 
-            promises.forEach((promise, index) => {
-                promise.then((value) => {
-                    combinedValues[index] = value;
-                    remainingToResolve--;
+                  promises.forEach((promise, index) => {
+                      promise.then((value) => {
+                          combinedValues[index] = value;
+                          remainingToResolve--;
 
-                    if (remainingToResolve === 0) {
-                        resolve(combinedValues);
-                    }
-                });
-            });
-        });
+                          if (remainingToResolve === 0) {
+                              resolve(combinedValues);
+                          }
+                      });
+                  });
+              })
+            : AgPromise.resolve();
     }
 
     static resolve<T>(value: T | null = null): AgPromise<T> {
