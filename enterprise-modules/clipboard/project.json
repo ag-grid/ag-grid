@@ -66,14 +66,16 @@
         "platform": "browser",
         "target": "es6",
         "format": ["cjs", "esm"],
-        "sourcemap": true
+        "sourcemap": true,
+        "metafile": true
       },
       "configurations": {
         "watch": {
           "tsConfig": "enterprise-modules/clipboard/tsconfig.watch.json"
         },
         "production": {
-          "sourcemap": false
+          "sourcemap": false,
+          "metafile": false
         }
       }
     },

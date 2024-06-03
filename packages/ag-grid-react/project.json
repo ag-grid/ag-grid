@@ -79,11 +79,13 @@
         "platform": "browser",
         "target": "es6",
         "format": ["cjs", "esm"],
-        "sourcemap": true
+        "sourcemap": true,
+        "metafile": true
       },
       "configurations": {
         "production": {
-          "sourcemap": false
+          "sourcemap": false,
+          "metafile": false
         }
       }
     },
@@ -104,11 +106,13 @@
         "skipTypeCheck": true,
         "external": ["ag-grid-community", "react", "react-dom"],
         "format": ["cjs"],
-        "sourcemap": true
+        "sourcemap": true,
+        "metafile": true
       },
       "configurations": {
         "production": {
-          "sourcemap": false
+          "sourcemap": false,
+          "metafile": false
         }
       }
     },
