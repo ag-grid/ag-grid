@@ -49,7 +49,7 @@ import type {
     RedrawRowsParams,
     RefreshCellsParams,
 } from './rendering/rowRenderer';
-import type { LoadSuccessParams } from './rowNodeCache/rowNodeBlock';
+import type { LoadSuccessParams } from './rowNodeCache/iRowNodeBlock';
 
 export interface DetailGridInfo {
     /**

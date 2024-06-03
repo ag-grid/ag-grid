@@ -15,12 +15,14 @@ import type { ServerSideTransactionResult } from './interfaces/serverSideTransac
 
 export { Events } from './eventKeys';
 
-export interface AgEvent {
+export interface AgEvent<T extends string = string> {
     /** Event identifier */
-    type: string;
+    type: T;
 }
 
-export interface AgGridEvent<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, AgEvent {}
+export interface AgGridEvent<TData = any, TContext = any, TEventType extends string = string>
+    extends AgGridCommon<TData, TContext>,
+        AgEvent<TEventType> {}
 
 export type AgEventListener<TData = any, TContext = any> = (event: AgGridEvent<TData, TContext>) => void;
 export type AgGlobalEventListener<TData = any, TContext = any> = (

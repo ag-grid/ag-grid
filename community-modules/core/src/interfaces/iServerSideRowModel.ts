@@ -1,4 +1,4 @@
-import type { LoadSuccessParams } from '../rowNodeCache/rowNodeBlock';
+import type { LoadSuccessParams } from '../rowNodeCache/iRowNodeBlock';
 import type { ServerSideGroupLevelState } from './IServerSideStore';
 import type { IRowModel } from './iRowModel';
 import type { IRowNode } from './iRowNode';

@@ -17,10 +17,12 @@ import type { Bean } from './bean';
 import type { BeanCollection, Context } from './context';
 import type { BaseBean } from './genericContext';
 
-export abstract class BeanStub implements BaseBean<BeanCollection>, Bean, IEventEmitter {
-    public static EVENT_DESTROYED = 'destroyed';
+export abstract class BeanStub<TLocalEvent extends string = string>
+    implements BaseBean<BeanCollection>, Bean, IEventEmitter<TLocalEvent | 'destroyed'>
+{
+    public static EVENT_DESTROYED = 'destroyed' as const;
 
-    protected localEventService?: LocalEventService;
+    protected localEventService?: LocalEventService<TLocalEvent | 'destroyed'>;
 
     private stubContext: Context; // not named context to allow children to use 'context' as a variable name
     private destroyFunctions: (() => void)[] = [];
@@ -75,7 +77,7 @@ export abstract class BeanStub implements BaseBean<BeanCollection>, Bean, IEvent
         this.dispatchEvent({ type: BeanStub.EVENT_DESTROYED });
     }
 
-    public addEventListener(eventType: string, listener: AgEventListener): void {
+    public addEventListener(eventType: TLocalEvent | 'destroyed', listener: AgEventListener): void {
         if (!this.localEventService) {
             this.localEventService = new LocalEventService();
         }
@@ -83,13 +85,13 @@ export abstract class BeanStub implements BaseBean<BeanCollection>, Bean, IEvent
         this.localEventService!.addEventListener(eventType, listener);
     }
 
-    public removeEventListener(eventType: string, listener: AgEventListener): void {
+    public removeEventListener(eventType: TLocalEvent | 'destroyed', listener: AgEventListener): void {
         if (this.localEventService) {
             this.localEventService.removeEventListener(eventType, listener);
         }
     }
 
-    public dispatchEvent<T extends AgEvent>(event: T): void {
+    public dispatchEvent<T extends AgEvent<TLocalEvent | 'destroyed'>>(event: T): void {
         if (this.localEventService) {
             this.localEventService.dispatchEvent(event);
         }

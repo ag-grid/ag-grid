@@ -396,8 +396,10 @@ export {
     ServerSideTransactionResult,
     ServerSideTransactionResultStatus,
 } from './interfaces/serverSideTransaction';
-export { RowNodeBlock, LoadCompleteEvent, LoadSuccessParams } from './rowNodeCache/rowNodeBlock';
+export { LoadCompleteEvent, LoadSuccessParams } from './rowNodeCache/iRowNodeBlock';
+export { RowNodeBlock } from './rowNodeCache/rowNodeBlock';
 export { RowNodeBlockLoader } from './rowNodeCache/rowNodeBlockLoader';
+export { RowNodeBlockModule } from './rowNodeCache/rowNodeBlockModule';
 export { PaginationProxy } from './pagination/paginationProxy';
 export {
     IClientSideRowModel,
