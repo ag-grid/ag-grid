@@ -1,3 +1,4 @@
+import type { AlignedGridsService } from '../alignedGridsService';
 import type { CellNavigationService } from '../cellNavigationService';
 import type { AutoColService } from '../columns/autoColService';
 import type { ColumnApplyStateService } from '../columns/columnApplyStateService';
@@ -189,6 +190,7 @@ export interface CoreBeanCollection {
     filterMenuFactory: IMenuFactory;
     enterpriseMenuFactory: IMenuFactory;
     contextMenuFactory: IContextMenuFactory;
+    alignedGridsService?: AlignedGridsService;
 }
 
 export type BeanCollection = CoreBeanCollection & {

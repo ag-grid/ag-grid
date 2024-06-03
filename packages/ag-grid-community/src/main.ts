@@ -32,7 +32,7 @@ export { AgProvidedColumnGroup } from '@ag-grid-community/core';
 export { AgRadioButton } from '@ag-grid-community/core';
 export { AgSelect } from '@ag-grid-community/core';
 export { AgToggleButton } from '@ag-grid-community/core';
-export { AlignedGridsService } from '@ag-grid-community/core';
+export { AlignedGridsModule } from '@ag-grid-community/core';
 export { AnimateShowChangeCellRenderer } from '@ag-grid-community/core';
 export { AnimateSlideCellRenderer } from '@ag-grid-community/core';
 export { AnimationFrameService } from '@ag-grid-community/core';

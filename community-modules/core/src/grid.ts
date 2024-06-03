@@ -1,4 +1,3 @@
-import { AlignedGridsService } from './alignedGridsService';
 import { CellNavigationService } from './cellNavigationService';
 import { AutoColService } from './columns/autoColService';
 import { ColumnApplyStateService } from './columns/columnApplyStateService';
@@ -423,7 +422,6 @@ export class GridCoreCreator {
             RowRenderer,
             ExpressionService,
             ColumnFactory,
-            AlignedGridsService,
             NavigationService,
             ValueCache,
             ValueService,
