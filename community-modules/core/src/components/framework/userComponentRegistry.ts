@@ -8,7 +8,6 @@ import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { AnimateShowChangeCellRenderer } from '../../rendering/cellRenderers/animateShowChangeCellRenderer';
 import { AnimateSlideCellRenderer } from '../../rendering/cellRenderers/animateSlideCellRenderer';
 import { CheckboxCellRenderer } from '../../rendering/cellRenderers/checkboxCellRenderer';
-import { GroupCellRenderer } from '../../rendering/cellRenderers/groupCellRenderer';
 import { LoadingCellRenderer } from '../../rendering/cellRenderers/loadingCellRenderer';
 import { SkeletonCellRenderer } from '../../rendering/cellRenderers/skeletonCellRenderer';
 import { LoadingOverlayComponent } from '../../rendering/overlays/loadingOverlayComponent';
@@ -30,8 +29,7 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
         // renderers
         agAnimateShowChangeCellRenderer: AnimateShowChangeCellRenderer,
         agAnimateSlideCellRenderer: AnimateSlideCellRenderer,
-        agGroupCellRenderer: GroupCellRenderer,
-        agGroupRowRenderer: GroupCellRenderer,
+
         agLoadingCellRenderer: LoadingCellRenderer,
         agSkeletonCellRenderer: SkeletonCellRenderer,
         agCheckboxCellRenderer: CheckboxCellRenderer,
@@ -52,6 +50,8 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
         agMultiColumnFloatingFilter: ModuleNames.MultiFilterModule,
         agGroupColumnFilter: ModuleNames.RowGroupingModule,
         agGroupColumnFloatingFilter: ModuleNames.RowGroupingModule,
+        agGroupCellRenderer: ModuleNames.RowGroupingModule, // Actually in enterprise core as used by MasterDetail too but best guess is they are grouping
+        agGroupRowRenderer: ModuleNames.RowGroupingModule, // Actually in enterprise core as used by MasterDetail but best guess is they are grouping
         agRichSelect: ModuleNames.RichSelectModule,
         agRichSelectCellEditor: ModuleNames.RichSelectModule,
         agDetailCellRenderer: ModuleNames.MasterDetailModule,

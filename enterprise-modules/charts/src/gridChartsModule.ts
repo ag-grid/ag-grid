@@ -1,6 +1,6 @@
 import type { Module } from '@ag-grid-community/core';
 import { AgCheckbox, AgInputNumberField, AgSelect, ModuleNames } from '@ag-grid-community/core';
-import { AgGroupComponent, EnterpriseCoreModule } from '@ag-grid-enterprise/core';
+import { AgGroupComponent, AgMenuItemRenderer, EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 
 import { AdvancedSettingsMenuFactory } from './charts/chartComp/menu/advancedSettings/advancedSettingsMenuFactory';
@@ -45,6 +45,12 @@ export const GridChartsModule: Module = {
         AgSelect,
         AgInputNumberField,
         AgCheckbox,
+    ],
+    userComponents: [
+        {
+            componentName: 'agMenuItem',
+            componentClass: AgMenuItemRenderer,
+        },
     ],
     dependantModules: [RangeSelectionModule, EnterpriseCoreModule],
 };

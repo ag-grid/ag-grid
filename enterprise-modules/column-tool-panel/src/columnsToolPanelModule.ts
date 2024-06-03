@@ -1,6 +1,6 @@
 import type { Module } from '@ag-grid-community/core';
 import { ModuleNames } from '@ag-grid-community/core';
-import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
+import { AgMenuItemRenderer, EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 
@@ -16,6 +16,12 @@ export const ColumnsToolPanelModule: Module = {
     moduleName: ModuleNames.ColumnsToolPanelModule,
     beans: [ModelItemUtils],
     agStackComponents: [AgPrimaryColsHeader, AgPrimaryColsList, AgPrimaryCols],
-    userComponents: [{ componentName: 'agColumnsToolPanel', componentClass: ColumnToolPanel }],
+    userComponents: [
+        { componentName: 'agColumnsToolPanel', componentClass: ColumnToolPanel },
+        {
+            componentName: 'agMenuItem',
+            componentClass: AgMenuItemRenderer,
+        },
+    ],
     dependantModules: [EnterpriseCoreModule, RowGroupingModule, SideBarModule],
 };

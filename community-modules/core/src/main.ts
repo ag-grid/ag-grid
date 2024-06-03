@@ -100,7 +100,7 @@ export {
 } from './dragAndDrop/dragAndDropService';
 export { RowDropZoneParams, RowDropZoneEvents } from './gridBodyComp/rowDragFeature';
 export { DragService, DragListenerParams } from './dragAndDrop/dragService';
-export { IRowDragItem } from './rendering/row/rowDragComp';
+export { IRowDragItem, RowDragComp } from './rendering/row/rowDragComp';
 
 // entities
 export { Column, ColumnPinnedType, ColumnGroup, ProvidedColumnGroup, ColumnGroupShowType } from './interfaces/iColumn';
@@ -309,18 +309,17 @@ export {
 } from './rendering/cellRenderers/iCellRenderer';
 export { AnimateShowChangeCellRenderer } from './rendering/cellRenderers/animateShowChangeCellRenderer';
 export { AnimateSlideCellRenderer } from './rendering/cellRenderers/animateSlideCellRenderer';
-export { GroupCellRenderer } from './rendering/cellRenderers/groupCellRenderer';
 export {
     GroupCellRendererParams,
+    IGroupCellRenderer,
     IGroupCellRendererParams,
     IGroupCellRendererFullRowParams,
+    GroupCellRendererCtrl,
     FooterValueGetterFunc,
     TotalValueGetterFunc,
-    IGroupCellRenderer,
-    GroupCellRendererCtrl,
     GroupCheckboxSelectionCallback,
     GroupCheckboxSelectionCallbackParams,
-} from './rendering/cellRenderers/groupCellRendererCtrl';
+} from './interfaces/groupCellRenderer';
 
 // status bar components
 export {
@@ -824,7 +823,12 @@ export {
     _getInnerWidth,
     _isNodeOrElement,
 } from './utils/dom';
-export { _getCtrlForEventTarget, _stopPropagationForAgGrid, _isStopPropagationForAgGrid } from './utils/event';
+export {
+    _getCtrlForEventTarget,
+    _stopPropagationForAgGrid,
+    _isStopPropagationForAgGrid,
+    _isElementInEventPath,
+} from './utils/event';
 export { _warnOnce, _errorOnce, _debounce, _compose, _doOnce, _waitUntil } from './utils/function';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';

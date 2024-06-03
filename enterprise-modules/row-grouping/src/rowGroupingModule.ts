@@ -1,6 +1,6 @@
 import type { Module } from '@ag-grid-community/core';
 import { ColumnFilterModule, FloatingFilterModule, ModuleNames } from '@ag-grid-community/core';
-import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
+import { EnterpriseCoreModule, GroupCellRenderer, GroupCellRendererCtrl } from '@ag-grid-enterprise/core';
 
 import { AggFuncService } from './rowGrouping/aggFuncService';
 import { AggregationStage } from './rowGrouping/aggregationStage';
@@ -18,6 +18,17 @@ export const RowGroupingCoreModule: Module = {
     moduleName: '@ag-grid-enterprise/row-grouping-core',
     beans: [AggregationStage, FilterAggregatesStage, GroupStage, PivotColDefService, PivotStage, AggFuncService],
     agStackComponents: [AgGridHeaderDropZones],
+    userComponents: [
+        {
+            componentName: 'agGroupRowRenderer',
+            componentClass: GroupCellRenderer,
+        },
+        {
+            componentName: 'agGroupCellRenderer',
+            componentClass: GroupCellRenderer,
+        },
+    ],
+    controllers: [{ controllerName: 'groupCellRendererCtrl', controllerClass: GroupCellRendererCtrl }],
     dependantModules: [EnterpriseCoreModule],
 };
 

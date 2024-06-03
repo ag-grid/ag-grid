@@ -96,9 +96,11 @@ export interface ContextParams extends GenericContextParams<BeanName, BeanCollec
 
 export interface SingletonBean extends GenericSingletonBean<BeanName, BeanCollection> {}
 
+export type ControllerName = 'headerFilterCell' | 'detailCellRenderer' | 'groupCellRendererCtrl';
+
 export interface ControllerMeta {
     controllerClass: new (...args: []) => object;
-    controllerName: string;
+    controllerName: ControllerName;
 }
 
 export interface CoreBeanCollection {
