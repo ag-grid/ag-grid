@@ -2,7 +2,7 @@
  * Used for umd bundles without styles, as well as cjs/esm packaging
  */
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import { AdvancedFilterModule } from '@ag-grid-enterprise/advanced-filter';
@@ -26,6 +26,7 @@ import { ViewportRowModelModule } from '@ag-grid-enterprise/viewport-row-model';
 
 ModuleRegistry.__registerModules(
     [
+        CommunityFeaturesModule,
         ClientSideRowModelModule,
         InfiniteRowModelModule,
         CsvExportModule,

@@ -48,8 +48,6 @@ export { BeanStub } from './context/beanStub';
 export { Bean, NamedBean } from './context/bean';
 export { Context, BeanName, SingletonBean, BeanCollection } from './context/context';
 
-export { GridCoreModule, GridBaseModule } from './gridCoreModule';
-
 // excel
 export {
     ColumnWidthCallbackParams,
@@ -853,6 +851,8 @@ export * from './interfaces/iSparklineCellRendererParams';
 export { Module, ModuleValidationResult } from './interfaces/iModule';
 export { ModuleNames } from './modules/moduleNames';
 export { ModuleRegistry } from './modules/moduleRegistry';
+
+export { CommunityFeaturesModule, GridCoreModule } from './gridCoreModule';
 
 //  events
 export * from './events';

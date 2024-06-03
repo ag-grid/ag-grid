@@ -2,7 +2,7 @@
  * Used for umd bundles with styles
  */
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -20,7 +20,11 @@ import '@ag-grid-community/styles/agGridClassicFont.css';
 import '@ag-grid-community/styles/agGridMaterialFont.css';
 import '@ag-grid-community/styles/agGridQuartzFont.css';
 
-ModuleRegistry.__registerModules([ClientSideRowModelModule, InfiniteRowModelModule, CsvExportModule], false, undefined);
+ModuleRegistry.__registerModules(
+    [CommunityFeaturesModule, ClientSideRowModelModule, InfiniteRowModelModule, CsvExportModule],
+    false,
+    undefined
+);
 
 // do not export from "@ag-grid-community/core" - this is handled below
 /** AUTO_GENERATED_START **/
