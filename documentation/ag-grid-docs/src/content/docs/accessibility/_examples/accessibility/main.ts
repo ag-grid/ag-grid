@@ -4,13 +4,7 @@ import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 
-ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
-    CommunityFeaturesModule,
-    ClientSideRowModelModule,
-    MenuModule,
-    SetFilterModule,
-]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, MenuModule, SetFilterModule]);
 
 let gridApi: GridApi<IOlympicData>;
 
