@@ -74,6 +74,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private groupingTreeList = false;
     private hardRefreshVirtualList = false;
     private noValueFormatterSupplied = false;
+    private resolveValueModelInit: () => void;
+    private valueModelInit: Promise<void> = new Promise((resolve) => {
+        this.resolveValueModelInit = resolve;
+    });
 
     private createKey: (value: V | null | undefined, node?: IRowNode | null) => string | null;
 
@@ -190,13 +194,20 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     public override setModel(model: SetFilterModel | null): Promise<void> {
-        if (model == null && this.valueModel?.getModel() == null) {
-            // refreshing is expensive. if new and old model are both null (e.g. nothing set), skip.
-            // mini filter isn't contained within the model, so always reset
-            this.setMiniFilter(null);
-            return Promise.resolve();
+        const setModel = (model: SetFilterModel | null) => {
+            if (model == null && this.valueModel?.getModel() == null) {
+                // refreshing is expensive. if new and old model are both null (e.g. nothing set), skip.
+                // mini filter isn't contained within the model, so always reset
+                this.setMiniFilter(null);
+                return Promise.resolve();
+            }
+            return super.setModel(model);
+        };
+
+        if (this.valueModel?.isInitialised()) {
+            return setModel(model);
         }
-        return super.setModel(model);
+        return this.waitForInit().then(() => setModel(model));
     }
 
     override refresh(params: SetFilterParams<any, V>): boolean {
@@ -346,6 +357,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.initialiseFilterBodyUi();
 
         this.addEventListenersForDataChanges();
+
+        this.resolveValueModelInit();
     }
 
     private onAddCurrentSelectionToFilterChange(newValue: boolean) {
@@ -1273,6 +1286,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private checkAndRefreshVirtualList() {
+        if (!this.isAlive()) {
+            return;
+        }
         if (!this.virtualList) {
             throw new Error('Virtual list has not been created.');
         }
@@ -1416,6 +1432,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     protected override getPositionableElement(): HTMLElement {
         return this.eSetFilterList;
+    }
+
+    private waitForInit(): Promise<void> {
+        return this.valueModelInit.then(() => this.valueModel?.waitForInit);
     }
 }
 

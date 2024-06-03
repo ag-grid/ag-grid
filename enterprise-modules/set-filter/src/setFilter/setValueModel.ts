@@ -98,6 +98,10 @@ export class SetValueModel<V> implements IEventEmitter {
     private filteringKeys: SetValueModelFilteringKeys;
 
     private initialised: boolean = false;
+    private resolveWaitForInit: () => void;
+    public readonly waitForInit: Promise<void> = new Promise((resolve) => {
+        this.resolveWaitForInit = resolve;
+    });
 
     constructor(params: SetValueModelParams<V>) {
         const {
@@ -347,7 +351,10 @@ export class SetValueModel<V> implements IEventEmitter {
 
         this.allValuesPromise
             .then((values) => this.updateAvailableKeys(values || [], 'reload'))
-            .then(() => (this.initialised = true));
+            .then(() => {
+                this.initialised = true;
+                this.resolveWaitForInit();
+            });
 
         return this.allValuesPromise;
     }
