@@ -11,12 +11,12 @@ import {
     MarkerFormatterParams,
     createGrid,
 } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
 
 import { getData } from './data';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, SparklinesModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, SparklinesModule]);
 
 const palette = {
     blue: 'rgb(20,94,140)',

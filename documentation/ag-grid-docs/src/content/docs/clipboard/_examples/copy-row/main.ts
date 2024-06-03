@@ -7,11 +7,11 @@ import {
     PasteStartEvent,
     createGrid,
 } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ClipboardModule, MenuModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, ClipboardModule, MenuModule]);
 
 let gridApi: GridApi<IOlympicData>;
 

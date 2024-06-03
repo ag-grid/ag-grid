@@ -2,7 +2,7 @@
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColDef, GridReadyEvent, INumberFilterParams } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
@@ -11,7 +11,7 @@ import { createRoot } from 'react-dom/client';
 
 import SliderFloatingFilter from './sliderFloatingFilter';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
 
 const filterParams: INumberFilterParams = {
     filterOptions: ['greaterThan'],

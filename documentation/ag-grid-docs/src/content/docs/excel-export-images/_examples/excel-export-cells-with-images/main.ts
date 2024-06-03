@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 
@@ -8,7 +8,7 @@ import { CountryCellRenderer } from './countryCellRenderer_typescript';
 import { createBase64FlagsFromResponse } from './imageUtils';
 import { FlagContext } from './interfaces';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ExcelExportModule, MenuModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, ExcelExportModule, MenuModule]);
 
 const countryCodes: any = {};
 const base64flags: any = {};

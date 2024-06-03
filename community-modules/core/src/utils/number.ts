@@ -1,3 +1,28 @@
+export function toNumber(value: any): number | undefined {
+    if (typeof value === 'number') {
+        return value;
+    }
+
+    if (typeof value === 'string') {
+        const parsed = parseInt(value);
+        if (isNaN(parsed)) {
+            return undefined;
+        }
+        return parsed;
+    }
+    return undefined;
+}
+
+export function toConstrainedNum(min: number, max: number = Number.MAX_VALUE): (value: any) => number | undefined {
+    return (value: any) => {
+        const num = toNumber(value);
+        if (num == null || num < min || num > max) {
+            return undefined; // return undefined if outside bounds, this will then be coerced to the default value.
+        }
+        return num;
+    };
+}
+
 export function _padStartWidthZeros(value: number, totalStringSize: number): string {
     return value.toString().padStart(totalStringSize, '0');
 }

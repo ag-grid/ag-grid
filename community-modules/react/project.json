@@ -73,7 +73,8 @@
         "watch": {},
         "production": {
           "sourcemap": false
-        }
+        },
+        "sizing": { "metafile": true }
       }
     },
     "build:umd": {
@@ -98,7 +99,8 @@
       "configurations": {
         "production": {
           "sourcemap": false
-        }
+        },
+        "sizing": { "metafile": true }
       }
     },
     "test": {

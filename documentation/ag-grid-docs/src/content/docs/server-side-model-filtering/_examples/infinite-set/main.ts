@@ -9,14 +9,14 @@ import {
     ValueFormatterParams,
     createGrid,
 } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 
 import { FakeServer } from './fakeServer';
 
-ModuleRegistry.registerModules([MenuModule, ServerSideRowModelModule, SetFilterModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, MenuModule, ServerSideRowModelModule, SetFilterModule]);
 
 const columnDefs: ColDef[] = [
     {

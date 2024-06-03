@@ -204,7 +204,7 @@ export {
 } from './filter/floating/floatingFilter';
 export { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
 export { HeaderFilterCellComp } from './headerRendering/cells/floatingFilter/headerFilterCellComp';
-export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
+export { getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
 
 export {
     AdvancedFilterModel,
@@ -852,6 +852,8 @@ export * from './interfaces/iSparklineCellRendererParams';
 export { Module, ModuleValidationResult } from './interfaces/iModule';
 export { ModuleNames } from './modules/moduleNames';
 export { ModuleRegistry } from './modules/moduleRegistry';
+
+export { CommunityFeaturesModule, GridCoreModule } from './gridCoreModule';
 
 //  events
 export * from './events';

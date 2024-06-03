@@ -8,12 +8,14 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { EventsType } from '../eventKeys';
-import type { AdvancedFilterEnabledChangedEvent, FilterChangedEventSourceType } from '../events';
+import type { AdvancedFilterEnabledChangedEvent, FilterChangedEvent, FilterChangedEventSourceType } from '../events';
 import { Events } from '../events';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
 import { _warnOnce } from '../utils/function';
+import { _mergeDeep } from '../utils/object';
 import type { ColumnFilterService, FilterWrapper } from './columnFilterService';
 import { EVENT_QUICK_FILTER_CHANGED, type QuickFilterService } from './quickFilterService';
 
@@ -180,8 +182,23 @@ export class FilterManager extends BeanStub implements NamedBean {
             columns?: AgColumn[];
         } = {}
     ): void {
+        const { source, additionalEventAttributes, columns = [] } = params;
         this.externalFilterPresent = this.isExternalFilterPresentCallback();
-        this.columnFilterService?.updateForFilterChanged(params);
+        this.columnFilterService?.updateBeforeFilterChanged(params);
+
+        const filterChangedEvent: WithoutGridCommon<FilterChangedEvent> = {
+            source,
+            type: Events.EVENT_FILTER_CHANGED,
+            columns,
+        };
+
+        if (additionalEventAttributes) {
+            _mergeDeep(filterChangedEvent, additionalEventAttributes);
+        }
+
+        this.eventService.dispatchEvent(filterChangedEvent);
+
+        this.columnFilterService?.updateAfterFilterChanged();
     }
 
     public isSuppressFlashingCellsBecauseFiltering(): boolean {

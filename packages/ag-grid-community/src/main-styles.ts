@@ -2,7 +2,7 @@
  * Used for umd bundles with styles
  */
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -20,7 +20,11 @@ import '@ag-grid-community/styles/agGridClassicFont.css';
 import '@ag-grid-community/styles/agGridMaterialFont.css';
 import '@ag-grid-community/styles/agGridQuartzFont.css';
 
-ModuleRegistry.__registerModules([ClientSideRowModelModule, InfiniteRowModelModule, CsvExportModule], false, undefined);
+ModuleRegistry.__registerModules(
+    [CommunityFeaturesModule, ClientSideRowModelModule, InfiniteRowModelModule, CsvExportModule],
+    false,
+    undefined
+);
 
 // do not export from "@ag-grid-community/core" - this is handled below
 /** AUTO_GENERATED_START **/
@@ -73,6 +77,7 @@ export { ColumnModel } from '@ag-grid-community/core';
 export { ColumnMoveService } from '@ag-grid-community/core';
 export { ColumnNameService } from '@ag-grid-community/core';
 export { ColumnSizeService } from '@ag-grid-community/core';
+export { CommunityFeaturesModule } from '@ag-grid-community/core';
 export { Component } from '@ag-grid-community/core';
 export { ComponentUtil } from '@ag-grid-community/core';
 export { Context } from '@ag-grid-community/core';
@@ -98,7 +103,6 @@ export { FilterCoreModule } from '@ag-grid-community/core';
 export { FilterManager } from '@ag-grid-community/core';
 export { FilterModule } from '@ag-grid-community/core';
 export { FilterWrapperComp } from '@ag-grid-community/core';
-export { FloatingFilterMapper } from '@ag-grid-community/core';
 export { FloatingFilterModule } from '@ag-grid-community/core';
 export { FocusService } from '@ag-grid-community/core';
 export { FuncColsService } from '@ag-grid-community/core';
@@ -108,6 +112,7 @@ export { GridBodyComp } from '@ag-grid-community/core';
 export { GridBodyCtrl } from '@ag-grid-community/core';
 export { GridComp } from '@ag-grid-community/core';
 export { GridCoreCreator } from '@ag-grid-community/core';
+export { GridCoreModule } from '@ag-grid-community/core';
 export { GridCtrl } from '@ag-grid-community/core';
 export { GridHeaderComp } from '@ag-grid-community/core';
 export { GridHeaderCtrl } from '@ag-grid-community/core';
@@ -290,6 +295,7 @@ export { _values } from '@ag-grid-community/core';
 export { _waitUntil } from '@ag-grid-community/core';
 export { _warnOnce } from '@ag-grid-community/core';
 export { createGrid } from '@ag-grid-community/core';
+export { getDefaultFloatingFilterType } from '@ag-grid-community/core';
 export { getRowContainerTypeForName } from '@ag-grid-community/core';
 export { isColumn } from '@ag-grid-community/core';
 export { isColumnGroup } from '@ag-grid-community/core';
