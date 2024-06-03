@@ -611,7 +611,7 @@ export class CellCtrl extends BeanStub {
 
             // we don't want to flash the cells when processing a filter change, as otherwise the UI would
             // be to busy. see comment in FilterManager with regards processingFilterChange
-            const processingFilterChange = this.beans.filterManager.isSuppressFlashingCellsBecauseFiltering();
+            const processingFilterChange = this.beans.filterManager?.isSuppressFlashingCellsBecauseFiltering();
 
             const flashCell =
                 !suppressFlash &&

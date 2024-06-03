@@ -5,7 +5,7 @@ import type { PositionableFeature } from '../../rendering/features/positionableF
 import { mock } from '../../test-utils/mock';
 import type { AgPromise } from '../../utils/promise';
 import type { ComponentClass } from '../../widgets/component';
-import type { ProvidedFilterParams } from './providedFilter';
+import type { ProvidedFilterParams } from './iProvidedFilter';
 import { ProvidedFilter } from './providedFilter';
 
 class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {

@@ -1,4 +1,9 @@
-export { RowGroupingModule } from './rowGroupingModule';
+export {
+    GroupFilterModule,
+    GroupFloatingFilterModule,
+    RowGroupingCoreModule,
+    RowGroupingModule,
+} from './rowGroupingModule';
 export { RowGroupDropZonePanel } from './rowGrouping/columnDropZones/rowGroupDropZonePanel';
 export { ValuesDropZonePanel } from './rowGrouping/columnDropZones/valueDropZonePanel';
 export { PivotDropZonePanel } from './rowGrouping/columnDropZones/pivotDropZonePanel';

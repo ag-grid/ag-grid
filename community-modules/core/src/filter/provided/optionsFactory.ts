@@ -1,6 +1,6 @@
 import type { IFilterOptionDef } from '../../interfaces/iFilter';
-import type { ScalarFilterParams } from './scalarFilter';
-import type { SimpleFilterParams } from './simpleFilter';
+import type { ScalarFilterParams } from './iScalarFilter';
+import type { SimpleFilterParams } from './iSimpleFilter';
 
 /* Common logic for options, used by both filters and floating filters. */
 export class OptionsFactory {

@@ -1,11 +1,12 @@
 import { EditModule } from '../edit/editModules';
+import { FilterModule } from '../filter/filterModules';
 import type { Module, ModuleValidationInvalidResult } from '../interfaces/iModule';
 import { _doOnce } from '../utils/function';
 import { _values } from '../utils/generic';
 import { ModuleNames } from './moduleNames';
 
 // TODO - remove - temp code for backwards compatibility
-export const INTERNAL_MODULES = [EditModule] as const;
+export const INTERNAL_MODULES = [FilterModule, EditModule] as const;
 
 export class ModuleRegistry {
     // having in a map a) removes duplicates and b) allows fast lookup
@@ -135,6 +136,7 @@ export class ModuleRegistry {
 For more info see: https://ag-grid.com/javascript-data-grid/getting-started/#getting-started-with-ag-grid-enterprise`;
             }
         } else if (ModuleRegistry.moduleBased || ModuleRegistry.moduleBased === undefined) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const modName = Object.entries(ModuleNames).find(([k, v]) => v === moduleName)?.[0];
             warningMessage = `AG Grid: unable to use ${reason} as the ${modName} is not registered${ModuleRegistry.areGridScopedModules ? ` for gridId: ${gridId}` : ''}. Check if you have registered the module:
            

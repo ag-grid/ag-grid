@@ -36,8 +36,6 @@ import { RowNodeEventThrottle } from './entities/rowNodeEventThrottle';
 import { RowPositionUtils } from './entities/rowPositionUtils';
 import { Environment } from './environment';
 import { EventService } from './eventService';
-import { FilterManager } from './filter/filterManager';
-import { QuickFilterService } from './filter/quickFilterService';
 import { FocusService } from './focusService';
 import type { GridApi } from './gridApi';
 import { GridApiService } from './gridApiService';
@@ -424,7 +422,6 @@ export class GridCoreCreator {
             GridOptionsService,
             PopupService,
             SelectionService,
-            FilterManager,
             ColumnModel,
             HeaderNavigationService,
             PaginationProxy,
@@ -462,7 +459,6 @@ export class GridCoreCreator {
             RowNodeEventThrottle,
             CtrlsFactory,
             DataTypeService,
-            QuickFilterService,
             SyncService,
             OverlayService,
             StateService,

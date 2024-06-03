@@ -100,11 +100,6 @@ export {
 export { RowDropZoneParams, RowDropZoneEvents } from './gridBodyComp/rowDragFeature';
 export { DragService, DragListenerParams } from './dragAndDrop/dragService';
 export { IRowDragItem } from './rendering/row/rowDragComp';
-export {
-    VirtualListDragFeature,
-    VirtualListDragItem,
-    VirtualListDragParams,
-} from './dragAndDrop/virtualListDragFeature';
 
 // entities
 export { Column, ColumnPinnedType, ColumnGroup, ProvidedColumnGroup, ColumnGroupShowType } from './interfaces/iColumn';
@@ -140,7 +135,8 @@ export {
     SetFilterValuesFuncParams,
     ISetFilterTreeListTooltipParams,
 } from './interfaces/iSetFilter';
-export { FilterManager, FilterWrapper, FilterRequestSource } from './filter/filterManager';
+export { FilterManager } from './filter/filterManager';
+export { FilterRequestSource } from './filter/iColumnFilter';
 export {
     IMultiFilter,
     IMultiFilterModel,
@@ -151,15 +147,10 @@ export {
 } from './interfaces/iMultiFilter';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 
-export {
-    ProvidedFilter,
-    IProvidedFilter,
-    IProvidedFilterParams,
-    ProvidedFilterParams,
-} from './filter/provided/providedFilter';
+export { IProvidedFilter, IProvidedFilterParams, ProvidedFilterParams } from './filter/provided/iProvidedFilter';
+export { ProvidedFilter } from './filter/provided/providedFilter';
 export {
     ISimpleFilter,
-    SimpleFilter,
     ISimpleFilterParams,
     SimpleFilterParams,
     ISimpleFilterModel,
@@ -167,25 +158,40 @@ export {
     JoinOperator,
     IFilterPlaceholderFunctionParams,
     FilterPlaceholderFunction,
-} from './filter/provided/simpleFilter';
-export { ScalarFilter, IScalarFilterParams, ScalarFilterParams } from './filter/provided/scalarFilter';
+} from './filter/provided/iSimpleFilter';
+export { SimpleFilter } from './filter/provided/simpleFilter';
+export { IScalarFilterParams, ScalarFilterParams } from './filter/provided/iScalarFilter';
+export { ScalarFilter } from './filter/provided/scalarFilter';
 
 export {
-    NumberFilter,
     INumberFilterParams,
     NumberFilterParams,
     NumberFilterModel,
-} from './filter/provided/number/numberFilter';
+    INumberFloatingFilterParams,
+} from './filter/provided/number/iNumberFilter';
+export { NumberFilter } from './filter/provided/number/numberFilter';
 export {
-    TextFilter,
     ITextFilterParams,
     TextFilterParams,
     TextFilterModel,
     TextFormatter,
     TextMatcherParams,
     TextMatcher,
-} from './filter/provided/text/textFilter';
-export { DateFilter, IDateFilterParams, DateFilterParams, DateFilterModel } from './filter/provided/date/dateFilter';
+    ITextFloatingFilterParams,
+} from './filter/provided/text/iTextFilter';
+export { TextFilter } from './filter/provided/text/textFilter';
+export { IDateFilterParams, DateFilterParams, DateFilterModel } from './filter/provided/date/iDateFilter';
+export { DateFilter } from './filter/provided/date/dateFilter';
+export {
+    ColumnFilterModule,
+    FilterCoreModule,
+    FilterModule,
+    FloatingFilterModule,
+    QuickFilterModule,
+    ReadOnlyFloatingFilterModule,
+    SimpleFilterModule,
+    SimpleFloatingFilterModule,
+} from './filter/filterModules';
 
 export {
     IFloatingFilter,
@@ -196,8 +202,7 @@ export {
     IFloatingFilterParentCallback,
     BaseFloatingFilter,
 } from './filter/floating/floatingFilter';
-export { TextFloatingFilter, ITextFloatingFilterParams } from './filter/provided/text/textFloatingFilter';
-export { INumberFloatingFilterParams } from './filter/provided/number/numberFloatingFilter';
+export { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
 export { HeaderFilterCellComp } from './headerRendering/cells/floatingFilter/headerFilterCellComp';
 export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
 
@@ -249,10 +254,8 @@ export { HeaderRowComp, HeaderRowType } from './headerRendering/row/headerRowCom
 export { HeaderRowCtrl, IHeaderRowComp } from './headerRendering/row/headerRowCtrl';
 export { HeaderCellCtrl, IHeaderCellComp } from './headerRendering/cells/column/headerCellCtrl';
 export { SortIndicatorComp } from './headerRendering/cells/column/sortIndicatorComp';
-export {
-    HeaderFilterCellCtrl,
-    IHeaderFilterCellComp,
-} from './headerRendering/cells/floatingFilter/headerFilterCellCtrl';
+export { IHeaderFilterCellComp } from './headerRendering/cells/floatingFilter/iHeaderFilterCellComp';
+export { HeaderFilterCellCtrl } from './headerRendering/cells/floatingFilter/headerFilterCellCtrl';
 export { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerRendering/cells/columnGroup/headerGroupCellCtrl';
 export {
     AbstractHeaderCellCtrl,
@@ -446,7 +449,6 @@ export { AgInputTextArea } from './widgets/agInputTextArea';
 export { AgInputNumberField, AgInputNumberFieldParams } from './widgets/agInputNumberField';
 export { AgInputDateField } from './widgets/agInputDateField';
 export { AgSelect, AgSelectParams } from './widgets/agSelect';
-export { AgMenuItemRenderer } from './widgets/agMenuItemRenderer';
 export { ListOption } from './widgets/agList';
 export { Component, VisibleChangedEvent } from './widgets/component';
 export { ManagedFocusFeature, ManagedFocusCallbacks } from './widgets/managedFocusFeature';
@@ -455,7 +457,6 @@ export { TabGuardCtrl, ITabGuard, TabGuardClassNames } from './widgets/tabGuardC
 export { PopupComponent } from './widgets/popupComponent';
 export { PopupService, AgPopup, PopupPositionParams, PopupEventParams } from './widgets/popupService';
 export { TouchListener, TapEvent, LongTapEvent } from './widgets/touchListener';
-export { VirtualList, VirtualListModel } from './widgets/virtualList';
 
 export { AgAbstractLabel } from './widgets/agAbstractLabel';
 export { AgPickerField } from './widgets/agPickerField';
@@ -789,6 +790,7 @@ export {
     _setAriaPosInSet,
     _setAriaSetSize,
     _setAriaHidden,
+    _getAriaPosInSet,
 } from './utils/aria';
 export {
     _removeFromArray,
@@ -824,7 +826,7 @@ export {
     _isNodeOrElement,
 } from './utils/dom';
 export { _getCtrlForEventTarget, _stopPropagationForAgGrid, _isStopPropagationForAgGrid } from './utils/event';
-export { _warnOnce, _errorOnce, _debounce, _compose, _doOnce } from './utils/function';
+export { _warnOnce, _errorOnce, _debounce, _compose, _doOnce, _waitUntil } from './utils/function';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export {

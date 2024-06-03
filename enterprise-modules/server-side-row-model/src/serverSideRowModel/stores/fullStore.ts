@@ -50,7 +50,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private sortController: SortController;
     private selectionService: ISelectionService;
     private nodeManager: NodeManager;
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private transactionManager: TransactionManager;
     private serverSideRowModel: ServerSideRowModel;
 
@@ -376,9 +376,9 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             return;
         }
 
-        this.nodesAfterFilter = this.allRowNodes.filter((rowNode) =>
-            this.filterManager.doesRowPassFilter({ rowNode: rowNode })
-        );
+        this.nodesAfterFilter = this.filterManager
+            ? this.allRowNodes.filter((rowNode) => this.filterManager!.doesRowPassFilter({ rowNode: rowNode }))
+            : this.allRowNodes;
     }
 
     public clearDisplayIndexes(): void {

@@ -120,7 +120,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
     private context: Context;
     private rowRenderer: RowRenderer;
     private navigationService: NavigationService;
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
     private pivotResultColsService: PivotResultColsService;
@@ -427,15 +427,15 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
     }
 
     public isAnyFilterPresent(): boolean {
-        return this.filterManager.isAnyFilterPresent();
+        return !!this.filterManager?.isAnyFilterPresent();
     }
 
     public isColumnFilterPresent(): boolean {
-        return this.filterManager.isColumnFilterPresent() || this.filterManager.isAggregateFilterPresent();
+        return !!this.filterManager?.isColumnFilterPresent() || !!this.filterManager?.isAggregateFilterPresent();
     }
 
     public isQuickFilterPresent(): boolean {
-        return this.filterManager.isQuickFilterPresent();
+        return !!this.filterManager?.isQuickFilterPresent();
     }
 
     public getModel(): IRowModel {
@@ -520,13 +520,13 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
                 this.gridId
             )
         ) {
-            return this.filterManager.getAdvancedFilterModel();
+            return this.filterManager?.getAdvancedFilterModel() ?? null;
         }
         return null;
     }
 
     public setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void {
-        this.filterManager.setAdvancedFilterModel(advancedFilterModel);
+        this.filterManager?.setAdvancedFilterModel(advancedFilterModel);
     }
 
     public showAdvancedFilterBuilder(): void {
@@ -537,7 +537,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
                 this.gridId
             )
         ) {
-            this.filterManager.showAdvancedFilterBuilder('api');
+            this.filterManager?.showAdvancedFilterBuilder('api');
         }
     }
 
@@ -700,17 +700,17 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
         _warnOnce(
             `'getFilterInstance' is deprecated. To get/set individual filter models, use 'getColumnFilterModel' or 'setColumnFilterModel' instead. To get hold of the filter instance, use 'getColumnFilterInstance' which returns the instance asynchronously.`
         );
-        return this.filterManager.getFilterInstance(key as string | AgColumn, callback);
+        return this.filterManager?.getFilterInstance(key as string | AgColumn, callback);
     }
 
     public getColumnFilterInstance<TFilter extends IFilter>(key: string | Column): Promise<TFilter | null | undefined> {
-        return this.filterManager.getColumnFilterInstance(key as string | AgColumn);
+        return this.filterManager?.getColumnFilterInstance(key as string | AgColumn) ?? Promise.resolve(undefined);
     }
 
     public destroyFilter(key: string | Column) {
         const column = this.columnModel.getColDefCol(key);
         if (column) {
-            return this.filterManager.destroyFilter(column, 'api');
+            return this.filterManager?.destroyFilter(column, 'api');
         }
     }
 
@@ -735,7 +735,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
     }
 
     public onFilterChanged(source: FilterChangedEventSourceType = 'api') {
-        this.filterManager.onFilterChanged({ source });
+        this.filterManager?.onFilterChanged({ source });
     }
 
     public onSortChanged() {
@@ -743,19 +743,19 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
     }
 
     public setFilterModel(model: FilterModel | null): void {
-        this.frameworkOverrides.wrapIncoming(() => this.filterManager.setFilterModel(model));
+        this.frameworkOverrides.wrapIncoming(() => this.filterManager?.setFilterModel(model));
     }
 
     public getFilterModel(): FilterModel {
-        return this.filterManager.getFilterModel();
+        return this.filterManager?.getFilterModel() ?? {};
     }
 
     public getColumnFilterModel<TModel>(column: string | Column): TModel | null {
-        return this.filterManager.getColumnFilterModel(column as string | AgColumn);
+        return this.filterManager?.getColumnFilterModel(column as string | AgColumn) ?? null;
     }
 
     public setColumnFilterModel<TModel>(column: string | Column, model: TModel | null): Promise<void> {
-        return this.filterManager.setColumnFilterModel(column as string | AgColumn, model);
+        return this.filterManager?.setColumnFilterModel(column as string | AgColumn, model) ?? Promise.resolve();
     }
 
     public getFocusedCell(): CellPosition | null {
@@ -969,7 +969,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
     }
 
     public resetQuickFilter(): void {
-        this.filterManager.resetQuickFilterCache();
+        this.filterManager?.resetQuickFilterCache();
     }
 
     public getCellRanges(): CellRange[] | null {

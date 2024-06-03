@@ -713,8 +713,8 @@ export class RowCtrl extends BeanStub {
 
     private addListeners(): void {
         this.addManagedListeners(this.rowNode, {
-            [RowNode.EVENT_HEIGHT_CHANGED]: this.onRowHeightChanged.bind(this),
-            [RowNode.EVENT_ROW_SELECTED]: this.onRowSelected.bind(this),
+            [RowNode.EVENT_HEIGHT_CHANGED]: () => this.onRowHeightChanged(),
+            [RowNode.EVENT_ROW_SELECTED]: () => this.onRowSelected(),
             [RowNode.EVENT_ROW_INDEX_CHANGED]: this.onRowIndexChanged.bind(this),
             [RowNode.EVENT_TOP_CHANGED]: this.onTopChanged.bind(this),
             [RowNode.EVENT_EXPANDED_CHANGED]: this.updateExpandedCss.bind(this),
@@ -747,7 +747,7 @@ export class RowCtrl extends BeanStub {
             [Events.EVENT_CELL_FOCUS_CLEARED]: this.onCellFocusChanged.bind(this),
             [Events.EVENT_PAGINATION_CHANGED]: this.onPaginationChanged.bind(this),
             [Events.EVENT_MODEL_UPDATED]: this.refreshFirstAndLastRowStyles.bind(this),
-            [Events.EVENT_COLUMN_MOVED]: this.updateColumnLists.bind(this),
+            [Events.EVENT_COLUMN_MOVED]: () => this.updateColumnLists(),
         });
 
         this.addDestroyFunc(() => {
@@ -1756,7 +1756,8 @@ export class RowCtrl extends BeanStub {
     private updateRowIndexes(gui?: RowGui): void {
         const rowIndexStr = this.rowNode.getRowIndexString();
         const headerRowCount =
-            this.beans.headerNavigationService.getHeaderRowCount() + this.beans.filterManager.getHeaderRowCount();
+            this.beans.headerNavigationService.getHeaderRowCount() +
+            (this.beans.filterManager?.getHeaderRowCount() ?? 0);
         const rowIsEven = this.rowNode.rowIndex! % 2 === 0;
         const ariaRowIndex = headerRowCount + this.rowNode.rowIndex! + 1;
 

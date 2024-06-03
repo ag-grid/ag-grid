@@ -1,7 +1,7 @@
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import { Events } from './eventKeys';
-import type { FilterRequestSource } from './filter/filterManager';
+import type { FilterRequestSource } from './filter/iColumnFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
 import type { AgChartThemeOverrides } from './interfaces/iAgChartOptions';
