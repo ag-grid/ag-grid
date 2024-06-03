@@ -145,7 +145,7 @@ export interface CoreBeanCollection {
     ariaAnnouncementService: AriaAnnouncementService;
     rangeService: IRangeService;
     selectionHandleFactory: ISelectionHandleFactory;
-    validationService: ValidationService;
+    validationService?: ValidationService;
     gridApi: GridApiService;
     gridOptions: GridOptions;
     eGridDiv: HTMLElement;
