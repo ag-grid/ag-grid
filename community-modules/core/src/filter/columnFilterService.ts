@@ -27,6 +27,7 @@ import { AgPromise } from '../utils/promise';
 import type { ValueService } from '../valueService/valueService';
 import type { FilterManager } from './filterManager';
 import type { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
+import { getDefaultFloatingFilterType } from './floating/floatingFilterMapper';
 
 export class ColumnFilterService extends BeanStub {
     beanName: BeanName = 'columnFilterService';
@@ -610,7 +611,7 @@ export class ColumnFilterService extends BeanStub {
             filterParams
         );
 
-        let defaultFloatingFilterType = this.userComponentFactory.getDefaultFloatingFilterType(colDef, () =>
+        let defaultFloatingFilterType = getDefaultFloatingFilterType(this.frameworkOverrides, colDef, () =>
             this.getDefaultFloatingFilter(column)
         );
 

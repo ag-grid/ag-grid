@@ -204,7 +204,7 @@ export {
 } from './filter/floating/floatingFilter';
 export { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
 export { HeaderFilterCellComp } from './headerRendering/cells/floatingFilter/headerFilterCellComp';
-export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
+export { getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
 
 export {
     AdvancedFilterModel,
