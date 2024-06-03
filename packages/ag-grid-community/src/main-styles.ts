@@ -197,7 +197,6 @@ export { StylingService } from '@ag-grid-community/core';
 export { TabGuardClassNames } from '@ag-grid-community/core';
 export { TabGuardComp } from '@ag-grid-community/core';
 export { TabGuardCtrl } from '@ag-grid-community/core';
-export { TabbedLayout } from '@ag-grid-community/core';
 export { TextCellEditor } from '@ag-grid-community/core';
 export { TextFilter } from '@ag-grid-community/core';
 export { TextFloatingFilter } from '@ag-grid-community/core';

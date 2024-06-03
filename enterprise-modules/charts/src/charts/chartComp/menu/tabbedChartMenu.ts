@@ -1,5 +1,7 @@
-import type { BeanCollection, ChartToolPanelMenuOptions, TabbedItem } from '@ag-grid-community/core';
-import { AgPromise, Component, TabbedLayout } from '@ag-grid-community/core';
+import type { BeanCollection, ChartToolPanelMenuOptions } from '@ag-grid-community/core';
+import { AgPromise, Component } from '@ag-grid-community/core';
+import type { TabbedItem } from '@ag-grid-enterprise/core';
+import { TabbedLayout } from '@ag-grid-enterprise/core';
 
 import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
 import type { ChartMenuContext } from './chartMenuContext';

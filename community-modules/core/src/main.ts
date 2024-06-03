@@ -266,9 +266,6 @@ export { HorizontalResizeService } from './headerRendering/common/horizontalResi
 export { MoveColumnFeature } from './headerRendering/columnDrag/moveColumnFeature';
 export { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 
-// layout
-export { TabbedLayout, TabbedItem } from './layout/tabbedLayout';
-
 // misc
 export { ResizeObserverService } from './misc/resizeObserverService';
 export { IImmutableService } from './interfaces/iImmutableService';

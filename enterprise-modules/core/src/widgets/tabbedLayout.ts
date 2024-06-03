@@ -1,13 +1,20 @@
-import { KeyCode } from '../constants/keyCode';
-import type { BeanCollection } from '../context/context';
-import type { FocusService } from '../focusService';
-import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
-import { _setAriaLabel, _setAriaRole } from '../utils/aria';
-import { _clearElement } from '../utils/dom';
-import { _createIconNoSpan } from '../utils/icon';
-import type { AgPromise } from '../utils/promise';
-import { RefPlaceholder } from '../widgets/component';
-import { TabGuardComp } from '../widgets/tabGuardComp';
+import type { BeanCollection, FocusService, IAfterGuiAttachedParams } from '@ag-grid-community/core';
+import {
+    KeyCode,
+    RefPlaceholder,
+    TabGuardComp,
+    _clearElement,
+    _createIconNoSpan,
+    _setAriaLabel,
+    _setAriaRole,
+} from '@ag-grid-community/core';
+
+import type { TabbedItem, TabbedLayoutParams } from './iTabbedLayout';
+
+interface TabbedItemWrapper {
+    tabbedItem: TabbedItem;
+    eHeaderButton: HTMLElement;
+}
 
 export class TabbedLayout extends TabGuardComp {
     private focusService: FocusService;
@@ -98,7 +105,7 @@ export class TabbedLayout extends TabGuardComp {
     protected handleKeyDown(e: KeyboardEvent): void {
         switch (e.key) {
             case KeyCode.RIGHT:
-            case KeyCode.LEFT:
+            case KeyCode.LEFT: {
                 if (!this.eTabHeader.contains(this.gos.getActiveDomElement())) {
                     return;
                 }
@@ -121,6 +128,7 @@ export class TabbedLayout extends TabGuardComp {
                 this.showItemWrapper(nextItem);
                 nextItem.eHeaderButton.focus();
                 break;
+            }
             case KeyCode.UP:
             case KeyCode.DOWN:
                 e.stopPropagation();
@@ -294,32 +302,4 @@ export class TabbedLayout extends TabGuardComp {
 
         this.activeItem = wrapper;
     }
-}
-
-export interface TabbedLayoutParams {
-    items: TabbedItem[];
-    cssClass?: string;
-    keepScrollPosition?: boolean;
-    onItemClicked?: (event: { item: TabbedItem }) => void;
-    onActiveItemClicked?: () => void;
-    suppressFocusBodyOnOpen?: boolean;
-    suppressTrapFocus?: boolean;
-    enableCloseButton?: boolean;
-    closeButtonAriaLabel?: string;
-    onCloseClicked?: () => void;
-}
-
-export interface TabbedItem {
-    title: Element;
-    titleLabel: string;
-    bodyPromise: AgPromise<HTMLElement>;
-    name: string;
-    getScrollableContainer?: () => HTMLElement;
-    afterAttachedCallback?: (params: IAfterGuiAttachedParams) => void;
-    afterDetachedCallback?: () => void;
-}
-
-interface TabbedItemWrapper {
-    tabbedItem: TabbedItem;
-    eHeaderButton: HTMLElement;
 }

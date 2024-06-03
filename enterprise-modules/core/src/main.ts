@@ -19,3 +19,6 @@ export { AgMenuItemRenderer } from './widgets/agMenuItemRenderer';
 
 export { VirtualListDragItem, VirtualListDragParams } from './features/iVirtualListDragFeature';
 export { VirtualListDragFeature } from './features/virtualListDragFeature';
+
+export { TabbedItem } from './widgets/iTabbedLayout';
+export { TabbedLayout } from './widgets/tabbedLayout';
