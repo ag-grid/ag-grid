@@ -187,7 +187,16 @@ export {
 export { TextFilter } from './filter/provided/text/textFilter';
 export { IDateFilterParams, DateFilterParams, DateFilterModel } from './filter/provided/date/iDateFilter';
 export { DateFilter } from './filter/provided/date/dateFilter';
-export * from './filter/filterModules';
+export {
+    ColumnFilterModule,
+    FilterCoreModule,
+    FilterModule,
+    FloatingFilterModule,
+    QuickFilterModule,
+    ReadOnlyFloatingFilterModule,
+    SimpleFilterModule,
+    SimpleFloatingFilterModule,
+} from './filter/filterModules';
 
 export {
     IFloatingFilter,

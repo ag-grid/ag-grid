@@ -15,8 +15,7 @@ import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterServic
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
 import { _warnOnce } from '../utils/function';
 import type { ColumnFilterService, FilterWrapper } from './columnFilterService';
-import { EVENT_QUICK_FILTER_CHANGED } from './quickFilterConstants';
-import type { QuickFilterService } from './quickFilterService';
+import { EVENT_QUICK_FILTER_CHANGED, type QuickFilterService } from './quickFilterService';
 
 export class FilterManager extends BeanStub implements NamedBean {
     beanName = 'filterManager' as const;
