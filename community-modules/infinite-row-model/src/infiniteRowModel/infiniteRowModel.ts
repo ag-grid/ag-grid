@@ -34,7 +34,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
         this.sortController = beans.sortController;
         this.selectionService = beans.selectionService;
         this.rowRenderer = beans.rowRenderer;
-        this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
+        this.rowNodeBlockLoader = beans.rowNodeBlockLoader!;
     }
 
     private infiniteCache: InfiniteCache | null | undefined;
@@ -50,12 +50,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
     }
 
     // we don't implement as lazy row heights is not supported in this row model
-    public ensureRowHeightsValid(
-        startPixel: number,
-        endPixel: number,
-        startLimitIndex: number,
-        endLimitIndex: number
-    ): boolean {
+    public ensureRowHeightsValid(): boolean {
         return false;
     }
 

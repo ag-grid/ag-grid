@@ -103,7 +103,7 @@ import type {
     RefreshCellsParams,
     RowRenderer,
 } from './rendering/rowRenderer';
-import type { LoadSuccessParams } from './rowNodeCache/rowNodeBlock';
+import type { LoadSuccessParams } from './rowNodeCache/iRowNodeBlock';
 import type { RowNodeBlockLoader } from './rowNodeCache/rowNodeBlockLoader';
 import type { SortController } from './sortController';
 import type { UndoRedoService } from './undoRedo/undoRedoService';
@@ -150,7 +150,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
     private expansionService: IExpansionService;
     private apiEventService: ApiEventService;
     private undoRedoService?: UndoRedoService;
-    private rowNodeBlockLoader: RowNodeBlockLoader;
+    private rowNodeBlockLoader?: RowNodeBlockLoader;
 
     private csvCreator?: ICsvCreator;
     private excelCreator?: IExcelCreator;
@@ -1391,7 +1391,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
     }
 
     public getCacheBlockState(): any {
-        return this.rowNodeBlockLoader.getBlockState();
+        return this.rowNodeBlockLoader?.getBlockState() ?? {};
     }
 
     public getFirstDisplayedRow(): number {

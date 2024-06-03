@@ -1,41 +1,12 @@
 import { BeanStub } from '../context/beanStub';
-import type { AgEvent } from '../events';
+import type { LoadCompleteEvent, LoadSuccessParams } from './iRowNodeBlock';
 
-export interface LoadCompleteEvent extends AgEvent {
-    success: boolean;
-    block: RowNodeBlock;
-}
+type RowNodeBlockState = 'needsLoading' | 'loading' | 'loaded' | 'failed';
 
-export interface LoadSuccessParams {
-    /**
-     * Data retrieved from the server as requested by the grid.
-     */
-    rowData: any[];
-    /**
-     * The last row, if known, to help Infinite Scroll.
-     */
-    rowCount?: number;
-    /**
-     * Any extra information for the grid to associate with this load.
-     */
-    groupLevelInfo?: any;
-    /**
-     * The pivot fields in the response - if provided the grid will attempt to generate secondary columns.
-     */
-    pivotResultFields?: string[];
-}
-
-export abstract class RowNodeBlock extends BeanStub {
-    public static EVENT_LOAD_COMPLETE = 'loadComplete';
-
-    public static STATE_WAITING_TO_LOAD = 'needsLoading';
-    public static STATE_LOADING = 'loading';
-    public static STATE_LOADED = 'loaded';
-    public static STATE_FAILED = 'failed';
-
+export abstract class RowNodeBlock extends BeanStub<'loadComplete'> {
     private readonly id: number;
 
-    private state = RowNodeBlock.STATE_WAITING_TO_LOAD;
+    private state: RowNodeBlockState = 'needsLoading';
 
     private version = 0;
 
@@ -57,7 +28,7 @@ export abstract class RowNodeBlock extends BeanStub {
     }
 
     public load(): void {
-        this.state = RowNodeBlock.STATE_LOADING;
+        this.state = 'loading';
         this.loadFromDatasource();
     }
 
@@ -68,17 +39,17 @@ export abstract class RowNodeBlock extends BeanStub {
     public setStateWaitingToLoad(): void {
         // in case any current loads in progress, this will have their results ignored
         this.version++;
-        this.state = RowNodeBlock.STATE_WAITING_TO_LOAD;
+        this.state = 'needsLoading';
     }
 
-    public getState(): string {
+    public getState(): RowNodeBlockState {
         return this.state;
     }
 
     protected pageLoadFailed(version: number) {
         const requestMostRecentAndLive = this.isRequestMostRecentAndLive(version);
         if (requestMostRecentAndLive) {
-            this.state = RowNodeBlock.STATE_FAILED;
+            this.state = 'failed';
             this.processServerFail();
         }
 
@@ -114,7 +85,7 @@ export abstract class RowNodeBlock extends BeanStub {
         const requestMostRecentAndLive = this.isRequestMostRecentAndLive(version);
 
         if (requestMostRecentAndLive) {
-            this.state = RowNodeBlock.STATE_LOADED;
+            this.state = 'loaded';
             this.processServerResult(params);
         }
     }
@@ -123,7 +94,7 @@ export abstract class RowNodeBlock extends BeanStub {
         // we fire event regardless of processing data or now, as we want
         // the concurrentLoadRequests count to be reduced in BlockLoader
         const event: LoadCompleteEvent = {
-            type: RowNodeBlock.EVENT_LOAD_COMPLETE,
+            type: 'loadComplete',
             success: success,
             block: this,
         };

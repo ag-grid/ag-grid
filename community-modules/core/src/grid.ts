@@ -71,7 +71,6 @@ import { OverlayService } from './rendering/overlays/overlayService';
 import { RowCssClassCalculator } from './rendering/row/rowCssClassCalculator';
 import { RowContainerHeightService } from './rendering/rowContainerHeightService';
 import { RowRenderer } from './rendering/rowRenderer';
-import { RowNodeBlockLoader } from './rowNodeCache/rowNodeBlockLoader';
 import { RowNodeSorter } from './rowNodes/rowNodeSorter';
 import { SelectableService } from './rowNodes/selectableService';
 import { SelectionService } from './selectionService';
@@ -444,7 +443,6 @@ export class GridCoreCreator {
             AgStackComponentsRegistry,
             ColumnDefFactory,
             RowCssClassCalculator,
-            RowNodeBlockLoader,
             RowNodeSorter,
             CtrlsService,
             PinnedWidthService,

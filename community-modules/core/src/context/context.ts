@@ -175,7 +175,7 @@ export interface CoreBeanCollection {
     menuService: MenuService;
     apiEventService: ApiEventService;
     undoRedoService?: UndoRedoService;
-    rowNodeBlockLoader: RowNodeBlockLoader;
+    rowNodeBlockLoader?: RowNodeBlockLoader;
     csvCreator: ICsvCreator;
     excelCreator: IExcelCreator;
     clipboardService: IClipboardService;
