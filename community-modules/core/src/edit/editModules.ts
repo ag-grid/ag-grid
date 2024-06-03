@@ -21,6 +21,7 @@ export const UndoRedoEditModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-community/undo-redo-edit',
     beans: [UndoRedoService],
+    dependantModules: [EditCoreModule],
 };
 
 export const FullRowEditModule: Module = {
