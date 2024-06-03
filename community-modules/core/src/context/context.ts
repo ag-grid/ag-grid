@@ -1,3 +1,4 @@
+import type { AlignedGridsService } from '../alignedGridsService';
 import type { CellNavigationService } from '../cellNavigationService';
 import type { AutoColService } from '../columns/autoColService';
 import type { ColumnApplyStateService } from '../columns/columnApplyStateService';
@@ -164,10 +165,10 @@ export interface CoreBeanCollection {
     quickFilterService?: QuickFilterService;
     showRowGroupColsService: ShowRowGroupColsService;
     headerPositionUtils: HeaderPositionUtils;
-    dataTypeService: DataTypeService;
+    dataTypeService?: DataTypeService;
     globalEventListener: AgGlobalEventListener;
     globalSyncEventListener: AgGlobalEventListener;
-    stateService: StateService;
+    stateService?: StateService;
     overlayService: OverlayService;
     columnGetStateService: ColumnGetStateService;
     pinnedRowModel: PinnedRowModel;
@@ -193,6 +194,7 @@ export interface CoreBeanCollection {
     contextMenuFactory: IContextMenuFactory;
     editService?: EditService;
     rowEditService?: RowEditService;
+    alignedGridsService?: AlignedGridsService;
 }
 
 export type BeanCollection = CoreBeanCollection & {

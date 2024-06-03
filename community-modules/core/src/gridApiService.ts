@@ -146,7 +146,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
     private animationFrameService: AnimationFrameService;
     private ctrlsService: CtrlsService;
     private overlayService: OverlayService;
-    private stateService: StateService;
+    private stateService?: StateService;
     private expansionService: IExpansionService;
     private apiEventService: ApiEventService;
     private undoRedoService?: UndoRedoService;
@@ -1749,7 +1749,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
     }
 
     public getState(): GridState {
-        return this.stateService.getState();
+        return this.stateService?.getState() ?? {};
     }
 
     public getGridOption<Key extends keyof GridOptions<TData>>(key: Key): GridOptions<TData>[Key] {

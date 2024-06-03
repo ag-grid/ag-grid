@@ -16,7 +16,6 @@ import type {
     NamedBean,
     PopupEventParams,
     PopupService,
-    TabbedItem,
     VisibleColsService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
@@ -29,11 +28,10 @@ import {
     ModuleNames,
     ModuleRegistry,
     RefPlaceholder,
-    TabbedLayout,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
-import type { AgMenuList, CloseMenuEvent } from '@ag-grid-enterprise/core';
-import { AgMenuItemComponent } from '@ag-grid-enterprise/core';
+import type { AgMenuList, CloseMenuEvent, TabbedItem } from '@ag-grid-enterprise/core';
+import { AgMenuItemComponent, TabbedLayout } from '@ag-grid-enterprise/core';
 
 import type { ColumnChooserFactory } from './columnChooserFactory';
 import type { ColumnMenuFactory } from './columnMenuFactory';

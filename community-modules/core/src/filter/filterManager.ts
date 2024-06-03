@@ -23,7 +23,7 @@ export class FilterManager extends BeanStub implements NamedBean {
     beanName = 'filterManager' as const;
 
     private columnModel: ColumnModel;
-    private dataTypeService: DataTypeService;
+    private dataTypeService?: DataTypeService;
     private quickFilterService?: QuickFilterService;
     private advancedFilterService: IAdvancedFilterService;
     private columnFilterService?: ColumnFilterService;
@@ -334,7 +334,7 @@ export class FilterManager extends BeanStub implements NamedBean {
         if (!this.isAdvancedFilterEnabled()) {
             return;
         }
-        if (this.dataTypeService.isPendingInference()) {
+        if (this.dataTypeService?.isPendingInference()) {
             this.advancedFilterModelUpdateQueue.push(expression);
             return;
         }

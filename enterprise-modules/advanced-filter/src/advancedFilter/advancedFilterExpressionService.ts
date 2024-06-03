@@ -33,7 +33,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     private valueService: ValueService;
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
-    private dataTypeService: DataTypeService;
+    private dataTypeService?: DataTypeService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueService = beans.valueService;
@@ -89,10 +89,12 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             case 'dateString': {
                 // displayed string format may be different from data string format, so parse before converting to date
                 const parsedDateString = this.valueService.parseValue(column, null, operand, undefined);
-                return _serialiseDate(
-                    this.dataTypeService.getDateParserFunction(column)(parsedDateString) ?? null,
-                    false
-                );
+                return this.dataTypeService
+                    ? _serialiseDate(
+                          this.dataTypeService.getDateParserFunction(column)(parsedDateString) ?? null,
+                          false
+                      )
+                    : parsedDateString;
             }
         }
         return operand;
@@ -114,11 +116,16 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                     break;
                 }
                 case 'dateString': {
-                    // need to convert from ISO date string to Date to data string format to formatted string format
-                    const dateStringDateValue = _parseDateTimeFromString(filter);
-                    const dateStringStringValue = column
-                        ? this.dataTypeService.getDateFormatterFunction(column)(dateStringDateValue ?? undefined)
-                        : null;
+                    let dateStringStringValue;
+                    if (this.dataTypeService) {
+                        // need to convert from ISO date string to Date to data string format to formatted string format
+                        const dateStringDateValue = _parseDateTimeFromString(filter);
+                        dateStringStringValue = column
+                            ? this.dataTypeService?.getDateFormatterFunction(column)(dateStringDateValue ?? undefined)
+                            : null;
+                    } else {
+                        dateStringStringValue = filter;
+                    }
                     operand1 = column ? this.valueService.formatValue(column, null, dateStringStringValue) : null;
                     break;
                 }
@@ -267,11 +274,11 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             return { valueConverter: (v: any) => v };
         }
 
-        const baseCellDataType = this.dataTypeService.getBaseDataType(column);
+        const baseCellDataType = this.dataTypeService?.getBaseDataType(column);
         switch (baseCellDataType) {
             case 'dateString':
                 params = {
-                    valueConverter: this.dataTypeService.getDateParserFunction(column),
+                    valueConverter: this.dataTypeService?.getDateParserFunction(column) ?? ((v: any) => v),
                 };
                 break;
             case 'object':
@@ -312,7 +319,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
 
     public getColumnDetails(colId: string): { column?: AgColumn; baseCellDataType: BaseCellDataType } {
         const column = this.columnModel.getColDefCol(colId) ?? undefined;
-        const baseCellDataType = (column ? this.dataTypeService.getBaseDataType(column) : undefined) ?? 'text';
+        const baseCellDataType = (column ? this.dataTypeService?.getBaseDataType(column) : undefined) ?? 'text';
         return { column, baseCellDataType };
     }
 

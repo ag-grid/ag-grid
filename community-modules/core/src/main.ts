@@ -34,6 +34,7 @@ export {
     SizeColumnsToFitProvidedWidthStrategy,
     SizeColumnsToFitGridStrategy,
 } from './interfaces/autoSizeStrategy';
+export { DataTypeModule } from './columns/columnModules';
 
 // components
 export { ComponentUtil } from './components/componentUtil';
@@ -266,9 +267,6 @@ export { HorizontalResizeService } from './headerRendering/common/horizontalResi
 export { MoveColumnFeature } from './headerRendering/columnDrag/moveColumnFeature';
 export { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 
-// layout
-export { TabbedLayout, TabbedItem } from './layout/tabbedLayout';
-
 // misc
 export { ResizeObserverService } from './misc/resizeObserverService';
 export { IImmutableService } from './interfaces/iImmutableService';
@@ -276,6 +274,7 @@ export { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
 export { ExpansionService } from './misc/expansionService';
 export { MenuService, IContextMenuParams } from './misc/menuService';
+export { StateModule } from './misc/stateModule';
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams, BaseCellEditor } from './interfaces/iCellEditor';
@@ -525,7 +524,7 @@ export { ICsvCreator } from './interfaces/iCsvCreator';
 export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 export { CellNavigationService } from './cellNavigationService';
-export { AlignedGridsService } from './alignedGridsService';
+export { AlignedGridsModule } from './alignedGridsModule';
 export { KeyCode } from './constants/keyCode';
 export { VerticalDirection, HorizontalDirection } from './constants/direction';
 export { Grid, GridParams, Params, GridCoreCreator, createGrid, provideGlobalGridOptions } from './grid';

@@ -1,4 +1,3 @@
-import { AlignedGridsService } from './alignedGridsService';
 import { CellNavigationService } from './cellNavigationService';
 import { AutoColService } from './columns/autoColService';
 import { ColumnApplyStateService } from './columns/columnApplyStateService';
@@ -13,7 +12,6 @@ import { ColumnMoveService } from './columns/columnMoveService';
 import { ColumnNameService } from './columns/columnNameService';
 import { ColumnSizeService } from './columns/columnSizeService';
 import { ColumnViewportService } from './columns/columnViewportService';
-import { DataTypeService } from './columns/dataTypeService';
 import { FuncColsService } from './columns/funcColsService';
 import { PivotResultColsService } from './columns/pivotResultColsService';
 import { ShowRowGroupColsService } from './columns/showRowGroupColsService';
@@ -60,7 +58,6 @@ import { ApiEventService } from './misc/apiEventService';
 import { ExpansionService } from './misc/expansionService';
 import { MenuService } from './misc/menuService';
 import { ResizeObserverService } from './misc/resizeObserverService';
-import { StateService } from './misc/stateService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PaginationAutoPageSizeService } from './pagination/paginationAutoPageSizeService';
@@ -424,7 +421,6 @@ export class GridCoreCreator {
             RowRenderer,
             ExpressionService,
             ColumnFactory,
-            AlignedGridsService,
             NavigationService,
             ValueCache,
             ValueService,
@@ -454,10 +450,8 @@ export class GridCoreCreator {
             PinnedWidthService,
             RowNodeEventThrottle,
             CtrlsFactory,
-            DataTypeService,
             SyncService,
             OverlayService,
-            StateService,
             ExpansionService,
             ApiEventService,
             AriaAnnouncementService,
