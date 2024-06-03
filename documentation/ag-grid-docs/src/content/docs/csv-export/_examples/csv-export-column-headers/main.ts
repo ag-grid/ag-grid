@@ -1,10 +1,10 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { GridApi, GridOptions, GridReadyEvent, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule, MenuModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, CsvExportModule, MenuModule]);
 
 let gridApi: GridApi;
 

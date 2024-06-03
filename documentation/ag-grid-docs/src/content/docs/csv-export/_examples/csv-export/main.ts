@@ -1,9 +1,9 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, CsvExportModule]);
 
 let gridApi: GridApi;
 

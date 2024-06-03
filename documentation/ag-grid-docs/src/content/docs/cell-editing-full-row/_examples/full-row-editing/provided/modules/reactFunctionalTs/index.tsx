@@ -13,7 +13,7 @@ import { createRoot } from 'react-dom/client';
 import NumericCellEditor from './numericCellEditor';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule]);
 
 function getRowData(): any[] {
     const rowData: any[] = [];

@@ -1,10 +1,15 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RangeSelectionModule, StatusBarModule]);
+ModuleRegistry.registerModules([
+    CommunityFeaturesModule,
+    ClientSideRowModelModule,
+    RangeSelectionModule,
+    StatusBarModule,
+]);
 
 let gridApi: GridApi<IOlympicData>;
 

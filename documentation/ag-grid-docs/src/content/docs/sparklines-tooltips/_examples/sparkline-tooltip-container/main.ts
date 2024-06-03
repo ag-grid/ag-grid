@@ -1,11 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { GridApi, GridOptions, LineSparklineOptions, TooltipRendererParams, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
 
 import { getData } from './data';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, SparklinesModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, SparklinesModule]);
 
 const body = document.body;
 

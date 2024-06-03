@@ -1,12 +1,13 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { FirstDataRenderedEvent, GridApi, GridOptions, IFiltersToolPanel, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 
 ModuleRegistry.registerModules([
+    CommunityFeaturesModule,
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
     FiltersToolPanelModule,

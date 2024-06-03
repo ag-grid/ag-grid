@@ -1,11 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 
 import { CustomButtonComponent } from './customButtonComponent_typescript';
 import { MissionResultRenderer } from './missionResultRenderer_typescript';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
 
 // Grid API: Access to Grid API methods
 let gridApi: GridApi;
