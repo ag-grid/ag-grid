@@ -1,5 +1,6 @@
 import { AlignedGridsModule } from './alignedGridsModule';
 import { DataTypeModule } from './columns/columnModules';
+import { EditModule } from './edit/editModules';
 import { FilterModule } from './filter/filterModules';
 import type { Module } from './interfaces/iModule';
 import { StateModule } from './main';
@@ -24,6 +25,7 @@ export const CommunityFeaturesModule: Module = {
     dependantModules: [
         GridCoreModule,
         ValidationsModule,
+        EditModule,
         FilterModule,
         StateModule,
         DataTypeModule,

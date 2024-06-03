@@ -1,39 +1,23 @@
 import { KeyCode } from '../../constants/keyCode';
-import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { ICellEditorComp } from '../../interfaces/iCellEditor';
 import { _exists } from '../../utils/generic';
 import { AgInputTextArea } from '../../widgets/agInputTextArea';
 import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
-
-export interface ILargeTextEditorParams extends ICellEditorParams {
-    /**
-     * Max number of characters to allow.
-     * @default 200
-     */
-    maxLength: number;
-    /**
-     * Number of character rows to display.
-     * @default 10
-     */
-    rows: number;
-    /**
-     * Number of character columns to display.
-     * @default 60
-     */
-    cols: number;
-}
+import type { ILargeTextEditorParams } from './iLargeTextCellEditor';
 
 export class LargeTextCellEditor extends PopupComponent implements ICellEditorComp {
-    private static TEMPLATE /* html */ = `<div class="ag-large-text">
-            <ag-input-text-area data-ref="eTextArea" class="ag-large-text-input"></ag-input-text-area>
-        </div>`;
-
     private readonly eTextArea: AgInputTextArea = RefPlaceholder;
     private params: ILargeTextEditorParams;
     private focusAfterAttached: boolean;
 
     constructor() {
-        super(LargeTextCellEditor.TEMPLATE, [AgInputTextArea]);
+        super(
+            /* html */ `<div class="ag-large-text">
+        <ag-input-text-area data-ref="eTextArea" class="ag-large-text-input"></ag-input-text-area>
+        </div>`,
+            [AgInputTextArea]
+        );
     }
 
     public init(params: ILargeTextEditorParams): void {

@@ -5,13 +5,6 @@ import { SortIndicatorComp } from '../../headerRendering/cells/column/sortIndica
 import { HeaderGroupComp } from '../../headerRendering/cells/columnGroup/headerGroupComp';
 import { ModuleNames } from '../../modules/moduleNames';
 import { ModuleRegistry } from '../../modules/moduleRegistry';
-import { CheckboxCellEditor } from '../../rendering/cellEditors/checkboxCellEditor';
-import { DateCellEditor } from '../../rendering/cellEditors/dateCellEditor';
-import { DateStringCellEditor } from '../../rendering/cellEditors/dateStringCellEditor';
-import { LargeTextCellEditor } from '../../rendering/cellEditors/largeTextCellEditor';
-import { NumberCellEditor } from '../../rendering/cellEditors/numberCellEditor';
-import { SelectCellEditor } from '../../rendering/cellEditors/selectCellEditor';
-import { TextCellEditor } from '../../rendering/cellEditors/textCellEditor';
 import { AnimateShowChangeCellRenderer } from '../../rendering/cellRenderers/animateShowChangeCellRenderer';
 import { AnimateSlideCellRenderer } from '../../rendering/cellRenderers/animateSlideCellRenderer';
 import { CheckboxCellRenderer } from '../../rendering/cellRenderers/checkboxCellRenderer';
@@ -42,16 +35,6 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
         agLoadingCellRenderer: LoadingCellRenderer,
         agSkeletonCellRenderer: SkeletonCellRenderer,
         agCheckboxCellRenderer: CheckboxCellRenderer,
-
-        //editors
-        agCellEditor: TextCellEditor,
-        agTextCellEditor: TextCellEditor,
-        agNumberCellEditor: NumberCellEditor,
-        agDateCellEditor: DateCellEditor,
-        agDateStringCellEditor: DateStringCellEditor,
-        agSelectCellEditor: SelectCellEditor,
-        agLargeTextCellEditor: LargeTextCellEditor,
-        agCheckboxCellEditor: CheckboxCellEditor,
 
         //overlays
         agLoadingOverlay: LoadingOverlayComponent,

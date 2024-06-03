@@ -1,27 +1,12 @@
 import type { DataTypeService } from '../../columns/dataTypeService';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
-import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _parseDateTimeFromString, _serialiseDate } from '../../utils/date';
 import { _exists } from '../../utils/generic';
 import { AgInputDateField } from '../../widgets/agInputDateField';
-import type { CellEditorInput } from './simpleCellEditor';
+import type { CellEditorInput } from './iCellEditorInput';
+import type { IDateStringCellEditorParams } from './iDateStringCellEditor';
 import { SimpleCellEditor } from './simpleCellEditor';
-
-export interface IDateStringCellEditorParams<TData = any, TContext = any>
-    extends ICellEditorParams<TData, string, TContext> {
-    /** Min allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */
-    min?: string | Date;
-    /** Max allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */
-    max?: string | Date;
-    /**
-     * Size of the value change when stepping up/down, starting from `min` or the initial value if provided.
-     * Step is also the difference between valid values.
-     * If the user-provided value isn't a multiple of the step value from the starting value, it will be considered invalid.
-     * Defaults to any value allowed.
-     */
-    step?: number;
-}
 
 class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCellEditorParams, AgInputDateField> {
     private eInput: AgInputDateField;

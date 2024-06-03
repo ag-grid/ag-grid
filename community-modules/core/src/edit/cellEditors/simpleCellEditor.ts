@@ -2,18 +2,9 @@ import { KeyCode } from '../../constants/keyCode';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _isBrowserSafari } from '../../utils/browser';
 import type { AgInputTextField } from '../../widgets/agInputTextField';
-import type { ComponentClass } from '../../widgets/component';
 import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
-
-export interface CellEditorInput<TValue, P extends ICellEditorParams, I extends AgInputTextField> {
-    getTemplate(): string;
-    getAgComponents(): ComponentClass[];
-    init(eInput: I, params: P): void;
-    getValue(): TValue | null | undefined;
-    getStartValue(): string | null | undefined;
-    setCaret?(): void;
-}
+import type { CellEditorInput } from './iCellEditorInput';
 
 export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgInputTextField>
     extends PopupComponent
