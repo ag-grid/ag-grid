@@ -62,7 +62,7 @@ import { MenuService } from './misc/menuService';
 import { ResizeObserverService } from './misc/resizeObserverService';
 import { StateService } from './misc/stateService';
 import { ModuleNames } from './modules/moduleNames';
-import { INTERNAL_MODULES, ModuleRegistry } from './modules/moduleRegistry';
+import { ModuleRegistry } from './modules/moduleRegistry';
 import { PaginationAutoPageSizeService } from './pagination/paginationAutoPageSizeService';
 import { PaginationProxy } from './pagination/paginationProxy';
 import { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
@@ -85,7 +85,6 @@ import { UndoRedoService } from './undoRedo/undoRedoService';
 import { _errorOnce, _warnOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
-import { ValidationService } from './validation/validationService';
 import { ChangeDetectionService } from './valueService/changeDetectionService';
 import { ExpressionService } from './valueService/expressionService';
 import { ValueCache } from './valueService/valueCache';
@@ -324,8 +323,6 @@ export class GridCoreCreator {
 
         if (passedViaConstructor) {
             passedViaConstructor.forEach((m) => addModule(true, m, gridId));
-            // TODO - remove - temp code for backwards compatibility
-            INTERNAL_MODULES.forEach((m) => addModule(true, m, gridId));
         }
 
         if (registered) {
@@ -415,7 +412,6 @@ export class GridCoreCreator {
             RowContainerHeightService,
             HorizontalResizeService,
             LocaleService,
-            ValidationService,
             PinnedRowModel,
             DragService,
             VisibleColsService,

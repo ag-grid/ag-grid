@@ -23,6 +23,7 @@ import { IOlympicData } from './interfaces';
 import './styles.css';
 
 ModuleRegistry.registerModules([
+    CommunityFeaturesModule,
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
     FiltersToolPanelModule,

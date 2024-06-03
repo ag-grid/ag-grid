@@ -1,5 +1,5 @@
 import { ColDef, GridApi, GridOptions, IServerSideDatasource, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -12,6 +12,7 @@ import { CustomAgeFilter } from './customAgeFilter';
 import { createFakeServer, createServerSideDatasource } from './server';
 
 ModuleRegistry.registerModules([
+    CommunityFeaturesModule,
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
     MenuModule,

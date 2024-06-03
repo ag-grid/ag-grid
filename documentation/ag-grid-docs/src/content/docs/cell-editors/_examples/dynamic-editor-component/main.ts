@@ -10,7 +10,7 @@ import {
     RowEditingStoppedEvent,
     createGrid,
 } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
@@ -19,7 +19,13 @@ import { IRow, getData } from './data';
 import { MoodEditor } from './moodEditor_typescript';
 import { NumericCellEditor } from './numericCellEditor_typescript';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule, RichSelectModule]);
+ModuleRegistry.registerModules([
+    CommunityFeaturesModule,
+    ClientSideRowModelModule,
+    ColumnsToolPanelModule,
+    MenuModule,
+    RichSelectModule,
+]);
 
 let gridApi: GridApi<IRow>;
 

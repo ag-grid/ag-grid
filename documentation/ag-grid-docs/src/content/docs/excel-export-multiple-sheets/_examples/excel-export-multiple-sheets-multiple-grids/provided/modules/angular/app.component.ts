@@ -18,7 +18,7 @@ import { Component, ViewChild } from '@angular/core';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ExcelExportModule, MenuModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, ExcelExportModule, MenuModule]);
 
 @Component({
     standalone: true,

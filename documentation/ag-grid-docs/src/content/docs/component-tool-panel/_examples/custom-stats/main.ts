@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CellValueChangedEvent, ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
@@ -8,6 +8,7 @@ import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { CustomStatsToolPanel } from './customStatsToolPanel_typescript';
 
 ModuleRegistry.registerModules([
+    CommunityFeaturesModule,
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
