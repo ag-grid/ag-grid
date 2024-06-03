@@ -79,14 +79,13 @@
         "platform": "browser",
         "target": "es6",
         "format": ["cjs", "esm"],
-        "sourcemap": true,
-        "metafile": true
+        "sourcemap": true
       },
       "configurations": {
         "production": {
-          "sourcemap": false,
-          "metafile": false
-        }
+          "sourcemap": false
+        },
+        "sizing": { "metafile": true }
       }
     },
     "build:umd": {
@@ -106,14 +105,13 @@
         "skipTypeCheck": true,
         "external": ["ag-grid-community", "react", "react-dom"],
         "format": ["cjs"],
-        "sourcemap": true,
-        "metafile": true
+        "sourcemap": true
       },
       "configurations": {
         "production": {
-          "sourcemap": false,
-          "metafile": false
-        }
+          "sourcemap": false
+        },
+        "sizing": { "metafile": true }
       }
     },
     "test": {

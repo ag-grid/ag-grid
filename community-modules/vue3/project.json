@@ -72,17 +72,16 @@
         "platform": "browser",
         "target": "es6",
         "format": ["cjs", "esm"],
-        "sourcemap": true,
-        "metafile": true
+        "sourcemap": true
       },
       "configurations": {
         "watch": {
           "tsConfig": "community-modules/vue3/tsconfig.watch.json"
         },
         "production": {
-          "sourcemap": false,
-          "metafile": false
-        }
+          "sourcemap": false
+        },
+        "sizing": { "metafile": true }
       }
     },
     "test": {

@@ -66,17 +66,16 @@
         "platform": "browser",
         "target": "es6",
         "format": ["cjs", "esm"],
-        "sourcemap": true,
-        "metafile": true
+        "sourcemap": true
       },
       "configurations": {
         "watch": {
           "tsConfig": "enterprise-modules/advanced-filter/tsconfig.watch.json"
         },
         "production": {
-          "sourcemap": false,
-          "metafile": false
-        }
+          "sourcemap": false
+        },
+        "sizing": { "metafile": true }
       }
     },
     "lint": {
