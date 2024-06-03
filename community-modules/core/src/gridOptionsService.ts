@@ -20,7 +20,8 @@ import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
 import { _getScrollbarWidth } from './utils/browser';
 import { _warnOnce } from './utils/function';
-import { _exists, _missing } from './utils/generic';
+import { _exists, _missing, toBoolean } from './utils/generic';
+import { toConstrainedNum, toNumber } from './utils/number';
 import { GRID_OPTION_DEFAULTS } from './validation/rules/gridOptionsValidations';
 import type { ValidationService } from './validation/validationService';
 
@@ -84,7 +85,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
 
     private gridOptions: GridOptions;
     private eGridDiv: HTMLElement;
-    private validationService: ValidationService;
+    private validationService?: ValidationService;
     private environment: Environment;
     private api: GridApi;
 
@@ -181,63 +182,24 @@ export class GridOptionsService extends BeanStub implements NamedBean {
      */
     private static PROPERTY_COERCIONS: Map<keyof GridOptions, (value: any) => GridOptions[keyof GridOptions]> = new Map(
         [
-            ...PropertyKeys.BOOLEAN_PROPERTIES.map((key) => [key as keyof GridOptions, GridOptionsService.toBoolean]),
-            ...PropertyKeys.NUMBER_PROPERTIES.map((key) => [key as keyof GridOptions, GridOptionsService.toNumber]),
-            ['groupAggFiltering', (val: any) => (typeof val === 'function' ? val : GridOptionsService.toBoolean(val))],
-            ['pageSize', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
-            ['autoSizePadding', GridOptionsService.toConstrainedNum(0, Number.MAX_VALUE)],
-            ['keepDetailRowsCount', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
-            ['rowBuffer', GridOptionsService.toConstrainedNum(0, Number.MAX_VALUE)],
-            ['infiniteInitialRowCount', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
-            ['cacheOverflowSize', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
-            ['cacheBlockSize', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
-            ['serverSideInitialRowCount', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
-            ['viewportRowModelPageSize', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
-            ['viewportRowModelBufferSize', GridOptionsService.toConstrainedNum(0, Number.MAX_VALUE)],
+            ...PropertyKeys.BOOLEAN_PROPERTIES.map((key) => [key as keyof GridOptions, toBoolean]),
+            ...PropertyKeys.NUMBER_PROPERTIES.map((key) => [key as keyof GridOptions, toNumber]),
+            ['groupAggFiltering', (val: any) => (typeof val === 'function' ? val : toBoolean(val))],
+            ['pageSize', toConstrainedNum(1)],
+            ['autoSizePadding', toConstrainedNum(0)],
+            ['keepDetailRowsCount', toConstrainedNum(1)],
+            ['rowBuffer', toConstrainedNum(0)],
+            ['infiniteInitialRowCount', toConstrainedNum(1)],
+            ['cacheOverflowSize', toConstrainedNum(1)],
+            ['cacheBlockSize', toConstrainedNum(1)],
+            ['serverSideInitialRowCount', toConstrainedNum(1)],
+            ['viewportRowModelPageSize', toConstrainedNum(1)],
+            ['viewportRowModelBufferSize', toConstrainedNum(0)],
         ] as [keyof GridOptions, (value: any) => GridOptions[keyof GridOptions]][]
     );
 
-    private static toBoolean(value: any): boolean {
-        if (typeof value === 'boolean') {
-            return value;
-        }
-
-        if (typeof value === 'string') {
-            // for boolean, compare to empty String to allow attributes appearing with
-            // no value to be treated as 'true'
-            return value.toUpperCase() === 'TRUE' || value == '';
-        }
-
-        return false;
-    }
-
-    private static toNumber(value: any): number | undefined {
-        if (typeof value === 'number') {
-            return value;
-        }
-
-        if (typeof value === 'string') {
-            const parsed = parseInt(value);
-            if (isNaN(parsed)) {
-                return undefined;
-            }
-            return parsed;
-        }
-        return undefined;
-    }
-
-    private static toConstrainedNum(min: number, max: number): (value: any) => number | undefined {
-        return (value: any) => {
-            const num = GridOptionsService.toNumber(value);
-            if (num == null || num < min || num > max) {
-                return undefined; // return undefined if outside bounds, this will then be coerced to the default value.
-            }
-            return num;
-        };
-    }
-
     private static getCoercedValue<K extends keyof GridOptions>(key: K, value: GridOptions[K]): GridOptions[K] {
-        const coerceFunc = GridOptionsService.PROPERTY_COERCIONS.get(key);
+        const coerceFunc = this.PROPERTY_COERCIONS.get(key);
 
         if (!coerceFunc) {
             return value;
@@ -289,7 +251,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             }
         });
 
-        this.validationService.processGridOptions(this.gridOptions);
+        this.validationService?.processGridOptions(this.gridOptions);
 
         // changeSet should just include the properties that have changed.
         changeSet.properties = events.map((event) => event.type);

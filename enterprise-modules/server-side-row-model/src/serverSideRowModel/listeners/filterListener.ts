@@ -15,7 +15,7 @@ export class FilterListener extends BeanStub implements NamedBean {
     beanName = 'ssrmFilterListener' as const;
 
     private serverSideRowModel: ServerSideRowModel;
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private listenerUtils: ListenerUtils;
 
     public wireBeans(beans: BeanCollection) {
@@ -46,7 +46,7 @@ export class FilterListener extends BeanStub implements NamedBean {
         let newModel: FilterModel | AdvancedFilterModel | null;
         let changedColumns: string[];
 
-        if (this.filterManager.isAdvancedFilterEnabled()) {
+        if (this.filterManager?.isAdvancedFilterEnabled()) {
             newModel = this.filterManager.getAdvancedFilterModel();
             // if advancedFilterEnabledChanged, old model is of type `FilterModel`
             const oldColumns = advancedFilterEnabledChanged
@@ -56,7 +56,7 @@ export class FilterListener extends BeanStub implements NamedBean {
             oldColumns.forEach((column) => newColumns.add(column));
             changedColumns = Array.from(newColumns);
         } else {
-            newModel = this.filterManager.getFilterModel();
+            newModel = this.filterManager?.getFilterModel() ?? {};
             if (advancedFilterEnabledChanged) {
                 // old model is of type `AdvancedFilterModel | null`
                 const oldColumns = this.getAdvancedFilterColumns(oldModel as AdvancedFilterModel | null);

@@ -12,7 +12,7 @@ import { createRoot } from 'react-dom/client';
 import { getData } from './data';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule]);
 
 const COUNTRY_CODES: Record<string, string> = {
     Ireland: 'ie',

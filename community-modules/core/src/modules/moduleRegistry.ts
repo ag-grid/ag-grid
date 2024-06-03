@@ -129,6 +129,7 @@ export class ModuleRegistry {
 For more info see: https://ag-grid.com/javascript-data-grid/getting-started/#getting-started-with-ag-grid-enterprise`;
             }
         } else if (ModuleRegistry.moduleBased || ModuleRegistry.moduleBased === undefined) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const modName = Object.entries(ModuleNames).find(([k, v]) => v === moduleName)?.[0];
             warningMessage = `AG Grid: unable to use ${reason} as the ${modName} is not registered${ModuleRegistry.areGridScopedModules ? ` for gridId: ${gridId}` : ''}. Check if you have registered the module:
            

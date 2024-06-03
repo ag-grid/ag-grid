@@ -1,17 +1,14 @@
 import { BeanStub } from '../../../context/beanStub';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import type {
-    FloatingFilterInputService,
-    ITextInputFloatingFilterParams,
-} from '../../floating/provided/textInputFloatingFilter';
-import {
-    FloatingFilterTextInputService,
-    TextInputFloatingFilter,
-} from '../../floating/provided/textInputFloatingFilter';
-import type { SimpleFilterModelFormatter } from '../simpleFilter';
-import type { NumberFilterModel, NumberFilterParams } from './numberFilter';
-import { NumberFilter, NumberFilterModelFormatter, getAllowedCharPattern } from './numberFilter';
+import { FloatingFilterTextInputService } from '../../floating/provided/floatingFilterTextInputService';
+import type { FloatingFilterInputService } from '../../floating/provided/iFloatingFilterInputService';
+import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
+import type { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
+import type { INumberFloatingFilterParams, NumberFilterModel, NumberFilterParams } from './iNumberFilter';
+import { DEFAULT_NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
+import { NumberFilterModelFormatter } from './numberFilterModelFormatter';
+import { getAllowedCharPattern } from './numberFilterUtils';
 
 class FloatingFilterNumberInputService extends BeanStub implements FloatingFilterInputService {
     private eFloatingFilterTextInput: AgInputTextField;
@@ -82,8 +79,6 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
     }
 }
 
-export interface INumberFloatingFilterParams extends ITextInputFloatingFilterParams {}
-
 export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterModel> {
     private filterModelFormatter: SimpleFilterModelFormatter;
     private allowedCharPattern: string | null;
@@ -111,7 +106,7 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterMo
     }
 
     protected getDefaultFilterOptions(): string[] {
-        return NumberFilter.DEFAULT_FILTER_OPTIONS;
+        return DEFAULT_NUMBER_FILTER_OPTIONS;
     }
 
     protected getFilterModelFormatter(): SimpleFilterModelFormatter {

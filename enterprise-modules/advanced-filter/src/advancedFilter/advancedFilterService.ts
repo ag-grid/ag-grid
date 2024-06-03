@@ -29,7 +29,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 
     private valueService: ValueService;
     private columnModel: ColumnModel;
-    private dataTypeService: DataTypeService;
+    private dataTypeService?: DataTypeService;
     private rowModel: IRowModel;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
@@ -230,7 +230,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     }
 
     private onNewColumnsLoaded(event: NewColumnsLoadedEvent): void {
-        if (event.source !== 'gridInitializing' || !this.dataTypeService.isPendingInference()) {
+        if (event.source !== 'gridInitializing' || !this.dataTypeService?.isPendingInference()) {
             return;
         }
 

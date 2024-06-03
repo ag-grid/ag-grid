@@ -23,7 +23,7 @@ import { InfiniteCache } from './infiniteCache';
 export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRowModel {
     beanName = 'rowModel' as const;
 
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private sortController: SortController;
     private selectionService: ISelectionService;
     private rowRenderer: RowRenderer;
@@ -34,7 +34,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
         this.sortController = beans.sortController;
         this.selectionService = beans.selectionService;
         this.rowRenderer = beans.rowRenderer;
-        this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
+        this.rowNodeBlockLoader = beans.rowNodeBlockLoader!;
     }
 
     private infiniteCache: InfiniteCache | null | undefined;
@@ -50,12 +50,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
     }
 
     // we don't implement as lazy row heights is not supported in this row model
-    public ensureRowHeightsValid(
-        startPixel: number,
-        endPixel: number,
-        startLimitIndex: number,
-        endLimitIndex: number
-    ): boolean {
+    public ensureRowHeightsValid(): boolean {
         return false;
     }
 
@@ -211,7 +206,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
             datasource: this.datasource,
 
             // sort and filter model
-            filterModel: this.filterManager.getFilterModel(),
+            filterModel: this.filterManager?.getFilterModel() ?? {},
             sortModel: this.sortController.getSortModel(),
 
             rowNodeBlockLoader: this.rowNodeBlockLoader,

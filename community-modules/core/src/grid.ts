@@ -1,4 +1,3 @@
-import { AlignedGridsService } from './alignedGridsService';
 import { CellNavigationService } from './cellNavigationService';
 import { AutoColService } from './columns/autoColService';
 import { ColumnApplyStateService } from './columns/columnApplyStateService';
@@ -13,7 +12,6 @@ import { ColumnMoveService } from './columns/columnMoveService';
 import { ColumnNameService } from './columns/columnNameService';
 import { ColumnSizeService } from './columns/columnSizeService';
 import { ColumnViewportService } from './columns/columnViewportService';
-import { DataTypeService } from './columns/dataTypeService';
 import { FuncColsService } from './columns/funcColsService';
 import { PivotResultColsService } from './columns/pivotResultColsService';
 import { ShowRowGroupColsService } from './columns/showRowGroupColsService';
@@ -36,8 +34,6 @@ import { RowNodeEventThrottle } from './entities/rowNodeEventThrottle';
 import { RowPositionUtils } from './entities/rowPositionUtils';
 import { Environment } from './environment';
 import { EventService } from './eventService';
-import { FilterManager } from './filter/filterManager';
-import { QuickFilterService } from './filter/quickFilterService';
 import { FocusService } from './focusService';
 import type { GridApi } from './gridApi';
 import { GridApiService } from './gridApiService';
@@ -62,7 +58,6 @@ import { ApiEventService } from './misc/apiEventService';
 import { ExpansionService } from './misc/expansionService';
 import { MenuService } from './misc/menuService';
 import { ResizeObserverService } from './misc/resizeObserverService';
-import { StateService } from './misc/stateService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PaginationAutoPageSizeService } from './pagination/paginationAutoPageSizeService';
@@ -76,18 +71,15 @@ import { OverlayService } from './rendering/overlays/overlayService';
 import { RowCssClassCalculator } from './rendering/row/rowCssClassCalculator';
 import { RowContainerHeightService } from './rendering/rowContainerHeightService';
 import { RowRenderer } from './rendering/rowRenderer';
-import { RowNodeBlockLoader } from './rowNodeCache/rowNodeBlockLoader';
 import { RowNodeSorter } from './rowNodes/rowNodeSorter';
 import { SelectableService } from './rowNodes/selectableService';
 import { SelectionService } from './selectionService';
 import { SortController } from './sortController';
 import { StylingService } from './styling/stylingService';
 import { SyncService } from './syncService';
-import { UndoRedoService } from './undoRedo/undoRedoService';
 import { _errorOnce, _warnOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
-import { ValidationService } from './validation/validationService';
 import { ChangeDetectionService } from './valueService/changeDetectionService';
 import { ExpressionService } from './valueService/expressionService';
 import { ValueCache } from './valueService/valueCache';
@@ -415,7 +407,6 @@ export class GridCoreCreator {
             RowContainerHeightService,
             HorizontalResizeService,
             LocaleService,
-            ValidationService,
             PinnedRowModel,
             DragService,
             VisibleColsService,
@@ -423,14 +414,12 @@ export class GridCoreCreator {
             GridOptionsService,
             PopupService,
             SelectionService,
-            FilterManager,
             ColumnModel,
             HeaderNavigationService,
             PaginationProxy,
             RowRenderer,
             ExpressionService,
             ColumnFactory,
-            AlignedGridsService,
             NavigationService,
             ValueCache,
             ValueService,
@@ -451,21 +440,16 @@ export class GridCoreCreator {
             AutoColService,
             ChangeDetectionService,
             AnimationFrameService,
-            UndoRedoService,
             AgStackComponentsRegistry,
             ColumnDefFactory,
             RowCssClassCalculator,
-            RowNodeBlockLoader,
             RowNodeSorter,
             CtrlsService,
             PinnedWidthService,
             RowNodeEventThrottle,
             CtrlsFactory,
-            DataTypeService,
-            QuickFilterService,
             SyncService,
             OverlayService,
-            StateService,
             ExpansionService,
             ApiEventService,
             AriaAnnouncementService,

@@ -1,7 +1,7 @@
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import { Events } from './eventKeys';
-import type { FilterRequestSource } from './filter/filterManager';
+import type { FilterRequestSource } from './filter/iColumnFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
 import type { AgChartThemeOverrides } from './interfaces/iAgChartOptions';
@@ -15,12 +15,14 @@ import type { ServerSideTransactionResult } from './interfaces/serverSideTransac
 
 export { Events } from './eventKeys';
 
-export interface AgEvent {
+export interface AgEvent<T extends string = string> {
     /** Event identifier */
-    type: string;
+    type: T;
 }
 
-export interface AgGridEvent<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, AgEvent {}
+export interface AgGridEvent<TData = any, TContext = any, TEventType extends string = string>
+    extends AgGridCommon<TData, TContext>,
+        AgEvent<TEventType> {}
 
 export type AgEventListener<TData = any, TContext = any> = (event: AgGridEvent<TData, TContext>) => void;
 export type AgGlobalEventListener<TData = any, TContext = any> = (

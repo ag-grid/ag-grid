@@ -10,7 +10,7 @@ import {
     createGrid,
 } from '@ag-grid-community/core';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
 
 var rowIdSequence = 100;
 

@@ -15,6 +15,18 @@ The example below demonstrates replacing the Provided Loading Component with a C
 
 {% gridExampleRunner title="Custom Loading Cell Renderer" name="custom-loading-cell-renderer" /%}
 
+### Failed Loading
+
+When using a Custom Loading Component, you can add handling for loading failures in the component directly.
+
+In the example below, note that:
+
+* **Custom Loading Component** is supplied by name via `gridOptions.loadingCellRenderer`.
+* **Custom Loading Component Parameters** are supplied using `gridOptions.loadingCellRendererParams`.
+* The example stimulates a long delay to display the spinner clearly and stimulates a loading failure.
+
+{% gridExampleRunner title="Custom Loading Cell Renderer Failed" name="custom-loading-cell-renderer-failed" /%}
+
 ### Custom Loading Row
 
 {% partial file="./_component-interface-javascript.mdoc" /%}

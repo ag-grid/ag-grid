@@ -73,7 +73,8 @@
         },
         "production": {
           "sourcemap": false
-        }
+        },
+        "sizing": { "metafile": true }
       }
     },
     "lint": {

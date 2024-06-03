@@ -3,7 +3,7 @@
  * @param {T} value
  * @returns {T | null}
  */
-export function _makeNull<T extends unknown>(value?: T): T | null {
+export function _makeNull<T>(value?: T): T | null {
     if (value == null || value === '') {
         return null;
     }
@@ -62,13 +62,21 @@ export function _attrToBoolean(value?: boolean | string | null): boolean | undef
         return false;
     }
 
+    return toBoolean(value);
+}
+
+export function toBoolean(value: any): boolean {
     if (typeof value === 'boolean') {
-        // if simple boolean, return the boolean
         return value;
     }
 
-    // if equal to the string 'true' (ignoring case) then return true
-    return /true/i.test(value);
+    if (typeof value === 'string') {
+        // for boolean, compare to empty String to allow attributes appearing with
+        // no value to be treated as 'true'
+        return value.toUpperCase() === 'TRUE' || value == '';
+    }
+
+    return false;
 }
 
 // for parsing html attributes, where we want empty strings and missing attributes to be undefined

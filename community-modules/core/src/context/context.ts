@@ -1,3 +1,4 @@
+import type { AlignedGridsService } from '../alignedGridsService';
 import type { CellNavigationService } from '../cellNavigationService';
 import type { AutoColService } from '../columns/autoColService';
 import type { ColumnApplyStateService } from '../columns/columnApplyStateService';
@@ -27,6 +28,8 @@ import type { CtrlsFactory } from '../ctrlsFactory';
 import type { CtrlsService } from '../ctrlsService';
 import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
 import type { DragService } from '../dragAndDrop/dragService';
+import type { EditService } from '../edit/editService';
+import type { RowEditService } from '../edit/rowEditService';
 import type { CellPositionUtils } from '../entities/cellPositionUtils';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNodeEventThrottle } from '../entities/rowNodeEventThrottle';
@@ -34,6 +37,7 @@ import type { RowPositionUtils } from '../entities/rowPositionUtils';
 import type { Environment } from '../environment';
 import type { EventService } from '../eventService';
 import type { AgGlobalEventListener } from '../events';
+import type { ColumnFilterService } from '../filter/columnFilterService';
 import type { FilterManager } from '../filter/filterManager';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { FocusService } from '../focusService';
@@ -93,7 +97,7 @@ export interface ContextParams extends GenericContextParams<BeanName, BeanCollec
 export interface SingletonBean extends GenericSingletonBean<BeanName, BeanCollection> {}
 
 export interface ControllerMeta {
-    controllerClass: new () => object;
+    controllerClass: new (...args: []) => object;
     controllerName: string;
 }
 
@@ -125,7 +129,8 @@ export interface CoreBeanCollection {
     dragService: DragService;
     dragAndDropService: DragAndDropService;
     sortController: SortController;
-    filterManager: FilterManager;
+    columnFilterService?: ColumnFilterService;
+    filterManager?: FilterManager;
     rowContainerHeightService: RowContainerHeightService;
     frameworkOverrides: IFrameworkOverrides;
     cellPositionUtils: CellPositionUtils;
@@ -143,7 +148,7 @@ export interface CoreBeanCollection {
     ariaAnnouncementService: AriaAnnouncementService;
     rangeService: IRangeService;
     selectionHandleFactory: ISelectionHandleFactory;
-    validationService: ValidationService;
+    validationService?: ValidationService;
     gridApi: GridApiService;
     gridOptions: GridOptions;
     eGridDiv: HTMLElement;
@@ -157,20 +162,20 @@ export interface CoreBeanCollection {
     columnEventDispatcher: ColumnEventDispatcher;
     columnAutosizeService: ColumnAutosizeService;
     funcColsService: FuncColsService;
-    quickFilterService: QuickFilterService;
+    quickFilterService?: QuickFilterService;
     showRowGroupColsService: ShowRowGroupColsService;
     headerPositionUtils: HeaderPositionUtils;
-    dataTypeService: DataTypeService;
+    dataTypeService?: DataTypeService;
     globalEventListener: AgGlobalEventListener;
     globalSyncEventListener: AgGlobalEventListener;
-    stateService: StateService;
+    stateService?: StateService;
     overlayService: OverlayService;
     columnGetStateService: ColumnGetStateService;
     pinnedRowModel: PinnedRowModel;
     menuService: MenuService;
     apiEventService: ApiEventService;
-    undoRedoService: UndoRedoService;
-    rowNodeBlockLoader: RowNodeBlockLoader;
+    undoRedoService?: UndoRedoService;
+    rowNodeBlockLoader?: RowNodeBlockLoader;
     csvCreator: ICsvCreator;
     excelCreator: IExcelCreator;
     clipboardService: IClipboardService;
@@ -187,6 +192,9 @@ export interface CoreBeanCollection {
     filterMenuFactory: IMenuFactory;
     enterpriseMenuFactory: IMenuFactory;
     contextMenuFactory: IContextMenuFactory;
+    editService?: EditService;
+    rowEditService?: RowEditService;
+    alignedGridsService?: AlignedGridsService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -252,6 +260,7 @@ export type BeanName =
     | 'columnDefFactory'
     | 'columnEditorFactory'
     | 'columnEventDispatcher'
+    | 'columnFilterService'
     | 'columnGetStateService'
     | 'columnSizeService'
     | 'columnFactory'
@@ -277,6 +286,7 @@ export type BeanName =
     | 'visibleColsService'
     | 'dragAndDropService'
     | 'dragService'
+    | 'editService'
     | 'excelCreator'
     | 'enterpriseMenuFactory'
     | 'environment'
@@ -287,7 +297,6 @@ export type BeanName =
     | 'filterAggregatesStage'
     | 'filterManager'
     | 'filterMenuFactory'
-    | 'filterService'
     | 'filterStage'
     | 'flattenStage'
     | 'focusService'
@@ -329,6 +338,7 @@ export type BeanName =
     | 'resizeObserverService'
     | 'rowContainerHeightService'
     | 'rowCssClassCalculator'
+    | 'rowEditService'
     | 'rowModel'
     | 'rowNodeBlockLoader'
     | 'rowNodeEventThrottle'

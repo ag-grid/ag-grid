@@ -47,7 +47,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private paginationProxy: PaginationProxy;
     private focusService: FocusService;
     private sortController: SortController;
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private selectionService: ISelectionService;
     private mouseEventService: MouseEventService;
     private ctrlsService: CtrlsService;
@@ -120,7 +120,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         if (rowGroupCols.length) {
             return true;
         }
-        const isFilterPresent = this.filterManager.isAnyFilterPresent();
+        const isFilterPresent = this.filterManager?.isAnyFilterPresent();
         if (isFilterPresent) {
             return true;
         }

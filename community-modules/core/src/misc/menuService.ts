@@ -77,7 +77,7 @@ export class MenuService extends BeanStub implements NamedBean {
     private filterMenuFactory: IMenuFactory;
     private ctrlsService: CtrlsService;
     private animationFrameService: AnimationFrameService;
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private rowRenderer: RowRenderer;
     private columnChooserFactory?: IColumnChooserFactory;
     private contextMenuFactory?: IContextMenuFactory;
@@ -184,7 +184,7 @@ export class MenuService extends BeanStub implements NamedBean {
     }
 
     public isFilterMenuInHeaderEnabled(column: AgColumn): boolean {
-        return !column.getColDef().suppressHeaderFilterButton && this.filterManager.isFilterAllowed(column);
+        return !column.getColDef().suppressHeaderFilterButton && !!this.filterManager?.isFilterAllowed(column);
     }
 
     public isHeaderContextMenuEnabled(column?: AgColumn): boolean {
@@ -217,7 +217,7 @@ export class MenuService extends BeanStub implements NamedBean {
 
     public isFilterMenuItemEnabled(column: AgColumn): boolean {
         return (
-            this.filterManager.isFilterAllowed(column) &&
+            !!this.filterManager?.isFilterAllowed(column) &&
             !this.isLegacyMenuEnabled() &&
             !this.isFilterMenuInHeaderEnabled(column) &&
             !this.isFloatingFilterButtonDisplayed(column)

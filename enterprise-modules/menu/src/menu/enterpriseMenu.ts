@@ -16,7 +16,6 @@ import type {
     NamedBean,
     PopupEventParams,
     PopupService,
-    TabbedItem,
     VisibleColsService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
@@ -29,11 +28,10 @@ import {
     ModuleNames,
     ModuleRegistry,
     RefPlaceholder,
-    TabbedLayout,
     _createIconNoSpan,
 } from '@ag-grid-community/core';
-import type { AgMenuList, CloseMenuEvent } from '@ag-grid-enterprise/core';
-import { AgMenuItemComponent } from '@ag-grid-enterprise/core';
+import type { AgMenuList, CloseMenuEvent, TabbedItem } from '@ag-grid-enterprise/core';
+import { AgMenuItemComponent, TabbedLayout } from '@ag-grid-enterprise/core';
 
 import type { ColumnChooserFactory } from './columnChooserFactory';
 import type { ColumnMenuFactory } from './columnMenuFactory';
@@ -57,7 +55,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
     private focusService: FocusService;
     private ctrlsService: CtrlsService;
     private visibleColsService: VisibleColsService;
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private menuUtils: MenuUtils;
     private menuService: MenuService;
 
@@ -310,7 +308,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             return true;
         }
         // Determine whether there are any tabs to show in the menu, given that the filter tab may be hidden
-        const isFilterDisabled = !this.filterManager.isFilterAllowed(column);
+        const isFilterDisabled = !this.filterManager?.isFilterAllowed(column);
         const tabs = column.getColDef().menuTabs ?? TabbedColumnMenu.TABS_DEFAULT;
         const numActiveTabs =
             isFilterDisabled && tabs.includes(TabbedColumnMenu.TAB_FILTER) ? tabs.length - 1 : tabs.length;
@@ -330,7 +328,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
 }
 
 class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private columnChooserFactory: ColumnChooserFactory;
     private columnMenuFactory: ColumnMenuFactory;
     private menuUtils: MenuUtils;
@@ -377,7 +375,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
 
         this.includeChecks[TabbedColumnMenu.TAB_GENERAL] = () => true;
         this.includeChecks[TabbedColumnMenu.TAB_FILTER] = () =>
-            column ? this.filterManager.isFilterAllowed(column) : false;
+            column ? !!this.filterManager?.isFilterAllowed(column) : false;
         this.includeChecks[TabbedColumnMenu.TAB_COLUMNS] = () => true;
     }
 

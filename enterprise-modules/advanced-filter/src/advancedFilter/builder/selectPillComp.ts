@@ -5,7 +5,7 @@ import {
     _setAriaLabelledBy,
     _stopPropagationForAgGrid,
 } from '@ag-grid-community/core';
-import { AgRichSelect } from '@ag-grid-enterprise/core';
+import { AgRichSelect, type VirtualList } from '@ag-grid-enterprise/core';
 
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 

@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import { AdvancedFilterModule } from '@ag-grid-enterprise/advanced-filter';
 import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
@@ -27,6 +27,7 @@ import { withErrorBoundary } from './ErrorBoundary';
 import { InfoTooltip } from './Tooltip';
 
 ModuleRegistry.registerModules([
+    CommunityFeaturesModule,
     ClientSideRowModelModule,
     AdvancedFilterModule,
     ClipboardModule,

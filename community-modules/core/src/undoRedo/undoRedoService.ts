@@ -23,7 +23,7 @@ import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import type { CellRange, CellRangeParams, IRangeService } from '../interfaces/IRangeService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import type { CellValueChange, LastFocusedCell } from './undoRedoStack';
+import type { CellValueChange, LastFocusedCell } from './iUndoRedo';
 import { RangeUndoRedoAction, UndoRedoAction, UndoRedoStack } from './undoRedoStack';
 
 export class UndoRedoService extends BeanStub implements NamedBean {

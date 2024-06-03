@@ -14,7 +14,7 @@ import type { PaginationProxy } from './paginationProxy';
 
 export class PaginationComp extends Component {
     private paginationProxy: PaginationProxy;
-    private rowNodeBlockLoader: RowNodeBlockLoader;
+    private rowNodeBlockLoader?: RowNodeBlockLoader;
 
     public wireBeans(beans: BeanCollection): void {
         this.paginationProxy = beans.paginationProxy;
@@ -245,7 +245,7 @@ export class PaginationComp extends Component {
         }
 
         this.lbFirstRowOnPage.textContent = this.formatNumber(startRow);
-        if (this.rowNodeBlockLoader.isLoading()) {
+        if (this.rowNodeBlockLoader?.isLoading()) {
             const translate = this.localeService.getLocaleTextFunc();
             this.lbLastRowOnPage.innerHTML = translate('pageLastRowUnknown', '?');
         } else {

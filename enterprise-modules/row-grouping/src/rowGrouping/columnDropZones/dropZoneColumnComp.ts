@@ -17,10 +17,9 @@ import {
     KeyCode,
     RefPlaceholder,
     SortIndicatorComp,
-    VirtualList,
     _loadTemplate,
 } from '@ag-grid-community/core';
-import { PillDragComp } from '@ag-grid-enterprise/core';
+import { PillDragComp, VirtualList } from '@ag-grid-enterprise/core';
 
 import type { TDropZone } from './baseDropZonePanel';
 

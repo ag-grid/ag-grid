@@ -28,7 +28,7 @@ export class GridHeaderCtrl extends BeanStub {
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
     private ctrlsService: CtrlsService;
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private menuService: MenuService;
 
     public wireBeans(beans: BeanCollection) {
@@ -102,7 +102,7 @@ export class GridHeaderCtrl extends BeanStub {
         let headerRowCount = columnModel.getHeaderRowCount();
         let totalHeaderHeight: number;
 
-        const hasFloatingFilters = this.filterManager.hasFloatingFilters();
+        const hasFloatingFilters = this.filterManager?.hasFloatingFilters();
 
         if (hasFloatingFilters) {
             headerRowCount++;

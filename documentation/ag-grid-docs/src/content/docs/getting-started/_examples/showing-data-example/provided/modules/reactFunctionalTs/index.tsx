@@ -8,7 +8,7 @@ import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
 
 const CustomButtonComponent = () => {
     return <button onClick={() => window.alert('clicked')}>Push Me!</button>;

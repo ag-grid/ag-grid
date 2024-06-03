@@ -35,6 +35,7 @@ import type { ValueService } from '../valueService/valueService';
 import type { ColumnApplyStateService, ColumnState, ColumnStateParams } from './columnApplyStateService';
 import type { ColumnModel } from './columnModel';
 import { convertSourceType } from './columnModel';
+import { convertColumnTypes } from './columnUtils';
 import type { FuncColsService } from './funcColsService';
 
 interface GroupSafeValueFormatter {
@@ -186,8 +187,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
             (childDataTypeDefinition as any).appendColumnTypes
         ) {
             mergedDataTypeDefinition.columnTypes = [
-                ...this.convertColumnTypes(parentDataTypeDefinition.columnTypes),
-                ...this.convertColumnTypes(childDataTypeDefinition.columnTypes),
+                ...convertColumnTypes(parentDataTypeDefinition.columnTypes),
+                ...convertColumnTypes(childDataTypeDefinition.columnTypes),
             ];
         }
         return mergedDataTypeDefinition;
@@ -329,7 +330,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         };
     }
 
-    private updateColDefAndGetDataTypeDefinitionColumnType(
+    public updateColDefAndGetColumnType(
         colDef: ColDef,
         userColDef: ColDef,
         colId: string
@@ -364,17 +365,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return dataTypeDefinition.columnTypes;
     }
 
-    public updateColDefAndGetColumnType(colDef: ColDef, userColDef: ColDef, colId: string): string[] | undefined {
-        const dataTypeDefinitionColumnType = this.updateColDefAndGetDataTypeDefinitionColumnType(
-            colDef,
-            userColDef,
-            colId
-        );
-        const columnTypes = userColDef.type ?? dataTypeDefinitionColumnType ?? colDef.type;
-        colDef.type = columnTypes;
-        return columnTypes ? this.convertColumnTypes(columnTypes) : undefined;
-    }
-
     public addColumnListeners(column: AgColumn): void {
         if (!this.isWaitingForRowData) {
             return;
@@ -403,7 +393,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const columnTypes = userColDef.type === null ? colDef.type : userColDef.type;
         if (columnTypes) {
             const columnTypeDefs = this.gos.get('columnTypes') ?? {};
-            const hasPropsPreventingInference = this.convertColumnTypes(columnTypes).some((columnType) => {
+            const hasPropsPreventingInference = convertColumnTypes(columnTypes).some((columnType) => {
                 const columnTypeDef = columnTypeDefs[columnType.trim()];
                 return columnTypeDef && this.doColDefPropsPreventInference(columnTypeDef, propsToCheckForInference);
             });
@@ -582,24 +572,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
             resolvedObjectDataTypeDefinition.valueParser !== defaultObjectDataTypeDefinition.valueParser;
         this.hasObjectValueFormatter =
             resolvedObjectDataTypeDefinition.valueFormatter !== defaultObjectDataTypeDefinition.valueFormatter;
-    }
-
-    public convertColumnTypes(type: string | string[]): string[] {
-        let typeKeys: string[] = [];
-
-        if (type instanceof Array) {
-            const invalidArray = type.some((a) => typeof a !== 'string');
-            if (invalidArray) {
-                console.warn("if colDef.type is supplied an array it should be of type 'string[]'");
-            } else {
-                typeKeys = type;
-            }
-        } else if (typeof type === 'string') {
-            typeKeys = type.split(',');
-        } else {
-            console.warn("colDef.type should be of type 'string' | 'string[]'");
-        }
-        return typeKeys;
     }
 
     private getDateStringTypeDefinition(column?: AgColumn | null): DateStringDataTypeDefinition {

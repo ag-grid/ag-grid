@@ -27,7 +27,7 @@ export class ValueService extends BeanStub implements NamedBean {
     private expressionService: ExpressionService;
     private columnModel: ColumnModel;
     private valueCache: ValueCache;
-    private dataTypeService: DataTypeService;
+    private dataTypeService?: DataTypeService;
 
     public wireBeans(beans: BeanCollection): void {
         this.expressionService = beans.expressionService;
@@ -257,7 +257,7 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
 
-        if (!this.dataTypeService.checkType(column, newValue)) {
+        if (this.dataTypeService && !this.dataTypeService.checkType(column, newValue)) {
             console.warn(`AG Grid: Data type of the new value does not match the cell data type of the column`);
             return false;
         }

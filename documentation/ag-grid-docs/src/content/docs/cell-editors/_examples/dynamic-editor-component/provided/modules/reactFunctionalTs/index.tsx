@@ -10,7 +10,7 @@ import {
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
 } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
@@ -25,7 +25,13 @@ import MoodEditor from './moodEditor';
 import NumericCellEditor from './numericCellEditor';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ColumnsToolPanelModule, RichSelectModule]);
+ModuleRegistry.registerModules([
+    CommunityFeaturesModule,
+    ClientSideRowModelModule,
+    MenuModule,
+    ColumnsToolPanelModule,
+    RichSelectModule,
+]);
 
 const cellEditorSelector: (params: ICellEditorParams<IRow>) => CellEditorSelectorResult | undefined = (
     params: ICellEditorParams<IRow>

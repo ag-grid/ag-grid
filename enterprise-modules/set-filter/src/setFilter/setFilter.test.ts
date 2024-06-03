@@ -12,8 +12,8 @@ import type {
     SetFilterModel,
     SetFilterParams,
     ValueService,
-    VirtualList,
 } from '@ag-grid-community/core';
+import type { VirtualList } from '@ag-grid-enterprise/core';
 
 import { mock } from '../test-utils/mock';
 import { SetFilter } from './setFilter';

@@ -1,15 +1,22 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { SizeColumnsToFitGridStrategy } from '@ag-grid-community/core';
-import { ColDef, ColGroupDef, FirstDataRenderedEvent, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
+import {
+    ColDef,
+    ColGroupDef,
+    CommunityFeaturesModule,
+    FirstDataRenderedEvent,
+    GridReadyEvent,
+    ModuleRegistry,
+    SizeColumnsToFitGridStrategy,
+} from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import React, { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
 
 const GridExample = () => {
     const topGridRef = useRef<AgGridReact>(null);

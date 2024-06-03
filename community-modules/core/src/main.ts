@@ -34,6 +34,7 @@ export {
     SizeColumnsToFitProvidedWidthStrategy,
     SizeColumnsToFitGridStrategy,
 } from './interfaces/autoSizeStrategy';
+export { DataTypeModule } from './columns/columnModules';
 
 // components
 export { ComponentUtil } from './components/componentUtil';
@@ -100,11 +101,6 @@ export {
 export { RowDropZoneParams, RowDropZoneEvents } from './gridBodyComp/rowDragFeature';
 export { DragService, DragListenerParams } from './dragAndDrop/dragService';
 export { IRowDragItem } from './rendering/row/rowDragComp';
-export {
-    VirtualListDragFeature,
-    VirtualListDragItem,
-    VirtualListDragParams,
-} from './dragAndDrop/virtualListDragFeature';
 
 // entities
 export { Column, ColumnPinnedType, ColumnGroup, ProvidedColumnGroup, ColumnGroupShowType } from './interfaces/iColumn';
@@ -140,7 +136,8 @@ export {
     SetFilterValuesFuncParams,
     ISetFilterTreeListTooltipParams,
 } from './interfaces/iSetFilter';
-export { FilterManager, FilterWrapper, FilterRequestSource } from './filter/filterManager';
+export { FilterManager } from './filter/filterManager';
+export { FilterRequestSource } from './filter/iColumnFilter';
 export {
     IMultiFilter,
     IMultiFilterModel,
@@ -151,15 +148,10 @@ export {
 } from './interfaces/iMultiFilter';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 
-export {
-    ProvidedFilter,
-    IProvidedFilter,
-    IProvidedFilterParams,
-    ProvidedFilterParams,
-} from './filter/provided/providedFilter';
+export { IProvidedFilter, IProvidedFilterParams, ProvidedFilterParams } from './filter/provided/iProvidedFilter';
+export { ProvidedFilter } from './filter/provided/providedFilter';
 export {
     ISimpleFilter,
-    SimpleFilter,
     ISimpleFilterParams,
     SimpleFilterParams,
     ISimpleFilterModel,
@@ -167,25 +159,40 @@ export {
     JoinOperator,
     IFilterPlaceholderFunctionParams,
     FilterPlaceholderFunction,
-} from './filter/provided/simpleFilter';
-export { ScalarFilter, IScalarFilterParams, ScalarFilterParams } from './filter/provided/scalarFilter';
+} from './filter/provided/iSimpleFilter';
+export { SimpleFilter } from './filter/provided/simpleFilter';
+export { IScalarFilterParams, ScalarFilterParams } from './filter/provided/iScalarFilter';
+export { ScalarFilter } from './filter/provided/scalarFilter';
 
 export {
-    NumberFilter,
     INumberFilterParams,
     NumberFilterParams,
     NumberFilterModel,
-} from './filter/provided/number/numberFilter';
+    INumberFloatingFilterParams,
+} from './filter/provided/number/iNumberFilter';
+export { NumberFilter } from './filter/provided/number/numberFilter';
 export {
-    TextFilter,
     ITextFilterParams,
     TextFilterParams,
     TextFilterModel,
     TextFormatter,
     TextMatcherParams,
     TextMatcher,
-} from './filter/provided/text/textFilter';
-export { DateFilter, IDateFilterParams, DateFilterParams, DateFilterModel } from './filter/provided/date/dateFilter';
+    ITextFloatingFilterParams,
+} from './filter/provided/text/iTextFilter';
+export { TextFilter } from './filter/provided/text/textFilter';
+export { IDateFilterParams, DateFilterParams, DateFilterModel } from './filter/provided/date/iDateFilter';
+export { DateFilter } from './filter/provided/date/dateFilter';
+export {
+    ColumnFilterModule,
+    FilterCoreModule,
+    FilterModule,
+    FloatingFilterModule,
+    QuickFilterModule,
+    ReadOnlyFloatingFilterModule,
+    SimpleFilterModule,
+    SimpleFloatingFilterModule,
+} from './filter/filterModules';
 
 export {
     IFloatingFilter,
@@ -196,10 +203,9 @@ export {
     IFloatingFilterParentCallback,
     BaseFloatingFilter,
 } from './filter/floating/floatingFilter';
-export { TextFloatingFilter, ITextFloatingFilterParams } from './filter/provided/text/textFloatingFilter';
-export { INumberFloatingFilterParams } from './filter/provided/number/numberFloatingFilter';
+export { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
 export { HeaderFilterCellComp } from './headerRendering/cells/floatingFilter/headerFilterCellComp';
-export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
+export { getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
 
 export {
     AdvancedFilterModel,
@@ -249,10 +255,8 @@ export { HeaderRowComp, HeaderRowType } from './headerRendering/row/headerRowCom
 export { HeaderRowCtrl, IHeaderRowComp } from './headerRendering/row/headerRowCtrl';
 export { HeaderCellCtrl, IHeaderCellComp } from './headerRendering/cells/column/headerCellCtrl';
 export { SortIndicatorComp } from './headerRendering/cells/column/sortIndicatorComp';
-export {
-    HeaderFilterCellCtrl,
-    IHeaderFilterCellComp,
-} from './headerRendering/cells/floatingFilter/headerFilterCellCtrl';
+export { IHeaderFilterCellComp } from './headerRendering/cells/floatingFilter/iHeaderFilterCellComp';
+export { HeaderFilterCellCtrl } from './headerRendering/cells/floatingFilter/headerFilterCellCtrl';
 export { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerRendering/cells/columnGroup/headerGroupCellCtrl';
 export {
     AbstractHeaderCellCtrl,
@@ -263,9 +267,6 @@ export { HorizontalResizeService } from './headerRendering/common/horizontalResi
 export { MoveColumnFeature } from './headerRendering/columnDrag/moveColumnFeature';
 export { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 
-// layout
-export { TabbedLayout, TabbedItem } from './layout/tabbedLayout';
-
 // misc
 export { ResizeObserverService } from './misc/resizeObserverService';
 export { IImmutableService } from './interfaces/iImmutableService';
@@ -273,22 +274,30 @@ export { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
 export { ExpansionService } from './misc/expansionService';
 export { MenuService, IContextMenuParams } from './misc/menuService';
+export { StateModule } from './misc/stateModule';
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams, BaseCellEditor } from './interfaces/iCellEditor';
-export { LargeTextCellEditor, ILargeTextEditorParams } from './rendering/cellEditors/largeTextCellEditor';
-export { PopupEditorWrapper } from './rendering/cellEditors/popupEditorWrapper';
-export { SelectCellEditor, ISelectCellEditorParams } from './rendering/cellEditors/selectCellEditor';
-export { TextCellEditor, ITextCellEditorParams } from './rendering/cellEditors/textCellEditor';
-export { NumberCellEditor, INumberCellEditorParams } from './rendering/cellEditors/numberCellEditor';
-export { DateCellEditor, IDateCellEditorParams } from './rendering/cellEditors/dateCellEditor';
-export { DateStringCellEditor, IDateStringCellEditorParams } from './rendering/cellEditors/dateStringCellEditor';
+export { ILargeTextEditorParams } from './edit/cellEditors/iLargeTextCellEditor';
+export { LargeTextCellEditor } from './edit/cellEditors/largeTextCellEditor';
+export { PopupEditorWrapper } from './edit/cellEditors/popupEditorWrapper';
+export { ISelectCellEditorParams } from './edit/cellEditors/iSelectCellEditor';
+export { SelectCellEditor } from './edit/cellEditors/selectCellEditor';
+export { ITextCellEditorParams } from './edit/cellEditors/iTextCellEditor';
+export { TextCellEditor } from './edit/cellEditors/textCellEditor';
+export { INumberCellEditorParams } from './edit/cellEditors/iNumberCellEditor';
+export { NumberCellEditor } from './edit/cellEditors/numberCellEditor';
+export { IDateCellEditorParams } from './edit/cellEditors/iDateCellEditor';
+export { DateCellEditor } from './edit/cellEditors/dateCellEditor';
+export { IDateStringCellEditorParams } from './edit/cellEditors/iDateStringCellEditor';
+export { DateStringCellEditor } from './edit/cellEditors/dateStringCellEditor';
 export {
     IRichCellEditorParams,
     RichCellEditorValuesCallback,
     RichCellEditorParams,
 } from './interfaces/iRichCellEditorParams';
-export { CheckboxCellEditor } from './rendering/cellEditors/checkboxCellEditor';
+export { CheckboxCellEditor } from './edit/cellEditors/checkboxCellEditor';
+export * from './edit/editModules';
 
 // rendering / cellRenderers
 export {
@@ -387,8 +396,10 @@ export {
     ServerSideTransactionResult,
     ServerSideTransactionResultStatus,
 } from './interfaces/serverSideTransaction';
-export { RowNodeBlock, LoadCompleteEvent, LoadSuccessParams } from './rowNodeCache/rowNodeBlock';
+export { LoadCompleteEvent, LoadSuccessParams } from './rowNodeCache/iRowNodeBlock';
+export { RowNodeBlock } from './rowNodeCache/rowNodeBlock';
 export { RowNodeBlockLoader } from './rowNodeCache/rowNodeBlockLoader';
+export { RowNodeBlockModule } from './rowNodeCache/rowNodeBlockModule';
 export { PaginationProxy } from './pagination/paginationProxy';
 export {
     IClientSideRowModel,
@@ -439,7 +450,6 @@ export { AgInputTextArea } from './widgets/agInputTextArea';
 export { AgInputNumberField, AgInputNumberFieldParams } from './widgets/agInputNumberField';
 export { AgInputDateField } from './widgets/agInputDateField';
 export { AgSelect, AgSelectParams } from './widgets/agSelect';
-export { AgMenuItemRenderer } from './widgets/agMenuItemRenderer';
 export { ListOption } from './widgets/agList';
 export { Component, VisibleChangedEvent } from './widgets/component';
 export { ManagedFocusFeature, ManagedFocusCallbacks } from './widgets/managedFocusFeature';
@@ -448,7 +458,6 @@ export { TabGuardCtrl, ITabGuard, TabGuardClassNames } from './widgets/tabGuardC
 export { PopupComponent } from './widgets/popupComponent';
 export { PopupService, AgPopup, PopupPositionParams, PopupEventParams } from './widgets/popupService';
 export { TouchListener, TapEvent, LongTapEvent } from './widgets/touchListener';
-export { VirtualList, VirtualListModel } from './widgets/virtualList';
 
 export { AgAbstractLabel } from './widgets/agAbstractLabel';
 export { AgPickerField } from './widgets/agPickerField';
@@ -517,7 +526,7 @@ export { ICsvCreator } from './interfaces/iCsvCreator';
 export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 export { CellNavigationService } from './cellNavigationService';
-export { AlignedGridsService } from './alignedGridsService';
+export { AlignedGridsModule } from './alignedGridsModule';
 export { KeyCode } from './constants/keyCode';
 export { VerticalDirection, HorizontalDirection } from './constants/direction';
 export { Grid, GridParams, Params, GridCoreCreator, createGrid, provideGlobalGridOptions } from './grid';
@@ -782,6 +791,7 @@ export {
     _setAriaPosInSet,
     _setAriaSetSize,
     _setAriaHidden,
+    _getAriaPosInSet,
 } from './utils/aria';
 export {
     _removeFromArray,
@@ -817,7 +827,7 @@ export {
     _isNodeOrElement,
 } from './utils/dom';
 export { _getCtrlForEventTarget, _stopPropagationForAgGrid, _isStopPropagationForAgGrid } from './utils/event';
-export { _warnOnce, _errorOnce, _debounce, _compose, _doOnce } from './utils/function';
+export { _warnOnce, _errorOnce, _debounce, _compose, _doOnce, _waitUntil } from './utils/function';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export {
@@ -849,6 +859,8 @@ export * from './interfaces/iSparklineCellRendererParams';
 export { Module, ModuleValidationResult } from './interfaces/iModule';
 export { ModuleNames } from './modules/moduleNames';
 export { ModuleRegistry } from './modules/moduleRegistry';
+
+export { CommunityFeaturesModule, GridCoreModule } from './gridCoreModule';
 
 //  events
 export * from './events';
