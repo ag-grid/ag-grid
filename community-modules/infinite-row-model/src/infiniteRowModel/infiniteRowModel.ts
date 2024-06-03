@@ -23,7 +23,7 @@ import { InfiniteCache } from './infiniteCache';
 export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRowModel {
     beanName = 'rowModel' as const;
 
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private sortController: SortController;
     private selectionService: ISelectionService;
     private rowRenderer: RowRenderer;
@@ -211,7 +211,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
             datasource: this.datasource,
 
             // sort and filter model
-            filterModel: this.filterManager.getFilterModel(),
+            filterModel: this.filterManager?.getFilterModel() ?? {},
             sortModel: this.sortController.getSortModel(),
 
             rowNodeBlockLoader: this.rowNodeBlockLoader,

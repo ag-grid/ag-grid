@@ -33,7 +33,7 @@ import { ToolPanelWrapper } from './toolPanelWrapper';
 
 export class AgSideBar extends Component implements ISideBar {
     private focusService: FocusService;
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private sideBarService: SideBarService;
 
     public wireBeans(beans: BeanCollection) {
@@ -307,7 +307,7 @@ export class AgSideBar extends Component implements ISideBar {
             if (moduleMissing) {
                 return false;
             }
-            if (this.filterManager.isAdvancedFilterEnabled()) {
+            if (this.filterManager?.isAdvancedFilterEnabled()) {
                 _warnOnce(
                     'Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.'
                 );

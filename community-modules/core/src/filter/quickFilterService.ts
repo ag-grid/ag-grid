@@ -12,6 +12,8 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import { _exists } from '../utils/generic';
 import type { ValueService } from '../valueService/valueService';
 
+export const EVENT_QUICK_FILTER_CHANGED = 'quickFilterChanged' as const;
+
 export class QuickFilterService extends BeanStub implements NamedBean {
     beanName = 'quickFilterService' as const;
 
@@ -26,9 +28,6 @@ export class QuickFilterService extends BeanStub implements NamedBean {
         this.rowModel = beans.rowModel;
         this.pivotResultColsService = beans.pivotResultColsService;
     }
-
-    public static readonly EVENT_QUICK_FILTER_CHANGED = 'quickFilterChanged';
-    private static readonly QUICK_FILTER_SEPARATOR = '\n';
 
     // the columns the quick filter should use. this will be all primary columns plus the autoGroupColumns if any exist
     private colsForQuickFilter: AgColumn[];
@@ -145,7 +144,7 @@ export class QuickFilterService extends BeanStub implements NamedBean {
         if (this.quickFilter !== parsedFilter) {
             this.quickFilter = parsedFilter;
             this.setQuickFilterParts();
-            this.dispatchEvent({ type: QuickFilterService.EVENT_QUICK_FILTER_CHANGED });
+            this.dispatchEvent({ type: EVENT_QUICK_FILTER_CHANGED });
         }
     }
 
@@ -157,7 +156,7 @@ export class QuickFilterService extends BeanStub implements NamedBean {
         this.matcher = matcher;
         if (hasChanged) {
             this.setQuickFilterParts();
-            this.dispatchEvent({ type: QuickFilterService.EVENT_QUICK_FILTER_CHANGED });
+            this.dispatchEvent({ type: EVENT_QUICK_FILTER_CHANGED });
         }
     }
 
@@ -165,7 +164,7 @@ export class QuickFilterService extends BeanStub implements NamedBean {
         this.refreshQuickFilterCols();
         this.resetQuickFilterCache();
         if (this.isQuickFilterPresent()) {
-            this.dispatchEvent({ type: QuickFilterService.EVENT_QUICK_FILTER_CHANGED });
+            this.dispatchEvent({ type: EVENT_QUICK_FILTER_CHANGED });
         }
     }
 
@@ -231,6 +230,6 @@ export class QuickFilterService extends BeanStub implements NamedBean {
             }
         });
 
-        return stringParts.join(QuickFilterService.QUICK_FILTER_SEPARATOR);
+        return stringParts.join('\n');
     }
 }

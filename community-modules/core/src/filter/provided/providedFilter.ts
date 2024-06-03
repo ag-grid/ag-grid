@@ -1,7 +1,7 @@
 import type { BeanCollection } from '../../context/context';
 import type { FilterChangedEventSourceType } from '../../events';
 import type { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import type { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
+import type { IDoesFilterPassParams, IFilterComp } from '../../interfaces/iFilter';
 import type { IRowModel } from '../../interfaces/iRowModel';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
@@ -13,65 +13,8 @@ import { Component, RefPlaceholder } from '../../widgets/component';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import type { PopupEventParams } from '../../widgets/popupService';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
-
-type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
-
-/**
- * Parameters provided by the grid to the `init` method of a `ProvidedFilter`.
- * Do not use in `colDef.filterParams` - see `IProvidedFilterParams` instead.
- */
-export type ProvidedFilterParams<TData = any> = IProvidedFilterParams & IFilterParams<TData>;
-
-/**
- * Common parameters in `colDef.filterParams` used by all provided filters. Extended by the specific filter types.
- */
-export interface IProvidedFilterParams {
-    /**
-     * Specifies the buttons to be shown in the filter, in the order they should be displayed in.
-     * The options are:
-     *
-     *  - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.
-     *  - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.
-     *  - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.
-     *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model.
-     */
-    buttons?: FilterButtonType[];
-    /**
-     * If the Apply button is present, the filter popup will be closed immediately when the Apply
-     * or Reset button is clicked if this is set to `true`.
-     *
-     * @default false
-     */
-    closeOnApply?: boolean;
-    /**
-     * Overrides the default debounce time in milliseconds for the filter. Defaults are:
-     * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).
-     * - `DateFilter` and `SetFilter`: 0ms
-     */
-    debounceMs?: number;
-    /**
-     * If set to `true`, disables controls in the filter to mutate its state. Normally this would
-     * be used in conjunction with the Filter API.
-     *
-     * @default false
-     */
-    readOnly?: boolean;
-}
-
-/** Interface contract for the public aspects of the ProvidedFilter implementation(s). */
-export interface IProvidedFilter extends IFilter {
-    /**
-     * Applies the model shown in the UI (so that `getModel()` will now return what was in the UI
-     * when `applyModel()` was called).
-     * @param source The source of the method call. Default 'api'.
-     */
-    applyModel(source?: 'api' | 'ui' | 'rowDataUpdated'): boolean;
-    /**
-     * Returns the filter model from the UI. If changes have been made to the UI but not yet
-     * applied, this model will reflect those changes.
-     */
-    getModelFromUi(): any;
-}
+import { getDebounceMs, isUseApplyButton } from '../floating/provided/providedFilterUtils';
+import type { IProvidedFilter, ProvidedFilterParams } from './iProvidedFilter';
 
 /**
  * Contains common logic to all provided filters (apply button, clear button, etc).
@@ -146,6 +89,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     // override
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected handleKeyDown(e: KeyboardEvent): void {}
 
     public abstract getModelFromUi(): M | null;
@@ -195,14 +139,14 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     protected setParams(params: ProvidedFilterParams): void {
         this.providedFilterParams = params;
-        this.applyActive = ProvidedFilter.isUseApplyButton(params);
+        this.applyActive = isUseApplyButton(params);
 
         this.resetButtonsPanel();
     }
 
     protected updateParams(params: ProvidedFilterParams): void {
         this.providedFilterParams = params;
-        this.applyActive = ProvidedFilter.isUseApplyButton(params);
+        this.applyActive = isUseApplyButton(params);
 
         this.resetUiToActiveModel(this.getModel(), () => {
             this.updateUiVisibility();
@@ -242,7 +186,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         // to the DOM once. This is much faster than appending each button individually.
         const fragment = document.createDocumentFragment();
 
-        const addButton = (type: FilterButtonType): void => {
+        const addButton = (type: 'apply' | 'clear' | 'reset' | 'cancel'): void => {
             let text;
             let clickListener: (e?: Event) => void;
 
@@ -297,7 +241,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     private setupOnBtApplyDebounce(): void {
-        const debounceMs = ProvidedFilter.getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
+        const debounceMs = getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
         const debounceFunc = _debounce(this.checkApplyDebounce.bind(this), debounceMs);
         this.onBtApplyDebounce = () => {
             this.debouncePending = true;
@@ -368,6 +312,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     /**
      * Applies changes made in the UI to the filter, and returns true if the model has changed.
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public applyModel(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
         const newModel = this.getModelFromUi();
 
@@ -384,6 +329,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         return !this.areModelsEqual(previousModel!, newModel!);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected isModelValid(model: M): boolean {
         return true;
     }
@@ -493,24 +439,6 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         if (this.positionableFeature) {
             this.positionableFeature.constrainSizeToAvailableHeight(false);
         }
-    }
-
-    // static, as used by floating filter also
-    public static getDebounceMs(params: ProvidedFilterParams, debounceDefault: number): number {
-        if (ProvidedFilter.isUseApplyButton(params)) {
-            if (params.debounceMs != null) {
-                console.warn('AG Grid: debounceMs is ignored when apply button is present');
-            }
-
-            return 0;
-        }
-
-        return params.debounceMs != null ? params.debounceMs : debounceDefault;
-    }
-
-    // static, as used by floating filter also
-    public static isUseApplyButton(params: ProvidedFilterParams): boolean {
-        return !!params.buttons && params.buttons.indexOf('apply') >= 0;
     }
 
     public refresh(newParams: ProvidedFilterParams): boolean {

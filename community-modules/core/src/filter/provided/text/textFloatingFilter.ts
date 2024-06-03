@@ -1,16 +1,10 @@
-import type {
-    FloatingFilterInputService,
-    ITextInputFloatingFilterParams,
-} from '../../floating/provided/textInputFloatingFilter';
-import {
-    FloatingFilterTextInputService,
-    TextInputFloatingFilter,
-} from '../../floating/provided/textInputFloatingFilter';
-import type { SimpleFilterModelFormatter } from '../simpleFilter';
-import type { TextFilterModel } from './textFilter';
-import { TextFilter, TextFilterModelFormatter } from './textFilter';
-
-export interface ITextFloatingFilterParams extends ITextInputFloatingFilterParams {}
+import { FloatingFilterTextInputService } from '../../floating/provided/floatingFilterTextInputService';
+import type { FloatingFilterInputService } from '../../floating/provided/iFloatingFilterInputService';
+import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
+import type { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
+import type { ITextFloatingFilterParams, TextFilterModel } from './iTextFilter';
+import { DEFAULT_TEXT_FILTER_OPTIONS } from './textFilterConstants';
+import { TextFilterModelFormatter } from './textFilterModelFormatter';
 
 export class TextFloatingFilter extends TextInputFloatingFilter<TextFilterModel> {
     private filterModelFormatter: SimpleFilterModelFormatter;
@@ -30,7 +24,7 @@ export class TextFloatingFilter extends TextInputFloatingFilter<TextFilterModel>
     }
 
     protected getDefaultFilterOptions(): string[] {
-        return TextFilter.DEFAULT_FILTER_OPTIONS;
+        return DEFAULT_TEXT_FILTER_OPTIONS;
     }
 
     protected getFilterModelFormatter(): SimpleFilterModelFormatter {

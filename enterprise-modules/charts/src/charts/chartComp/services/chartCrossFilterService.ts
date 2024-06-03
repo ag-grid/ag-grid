@@ -15,7 +15,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
 
     private columnModel: ColumnModel;
     private valueService: ValueService;
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private clientSideRowModel?: IClientSideRowModel;
 
     public wireBeans(beans: BeanCollection) {
@@ -28,7 +28,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
     }
 
     public filter(event: any, reset: boolean = false): void {
-        const filterModel = this.filterManager.getFilterModel();
+        const filterModel = this.filterManager?.getFilterModel() ?? {};
 
         // filters should be reset when user clicks on canvas background
         if (reset) {
@@ -54,8 +54,8 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
         const filtersExist = Object.keys(filterModel).length > 0;
         if (filtersExist) {
             // only reset filters / charts when necessary to prevent undesirable flickering effect
-            this.filterManager.setFilterModel(null);
-            this.filterManager.onFilterChanged({ source: 'api' });
+            this.filterManager?.setFilterModel(null);
+            this.filterManager?.onFilterChanged({ source: 'api' });
         }
     }
 
@@ -86,7 +86,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
             filterModel = { [colId]: this.getUpdatedFilterModel(colId, updatedValues) };
         }
 
-        this.filterManager.setFilterModel(filterModel);
+        this.filterManager?.setFilterModel(filterModel);
     }
 
     private getUpdatedFilterModel(colId: any, updatedValues: any[]) {

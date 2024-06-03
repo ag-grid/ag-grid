@@ -65,7 +65,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private columnMoveService: ColumnMoveService;
     private columnAutosizeService: ColumnAutosizeService;
     private funcColsService: FuncColsService;
-    private quickFilterService: QuickFilterService;
+    private quickFilterService?: QuickFilterService;
     private showRowGroupColsService: ShowRowGroupColsService;
     private environment: Environment;
 
@@ -233,7 +233,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         this.positionLockedCols();
         this.showRowGroupColsService.refresh();
-        this.quickFilterService.refreshQuickFilterCols();
+        this.quickFilterService?.refreshQuickFilterCols();
 
         this.setColSpanActive();
         this.setAutoHeightActive();

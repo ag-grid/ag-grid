@@ -34,6 +34,7 @@ import type { RowPositionUtils } from '../entities/rowPositionUtils';
 import type { Environment } from '../environment';
 import type { EventService } from '../eventService';
 import type { AgGlobalEventListener } from '../events';
+import type { ColumnFilterService } from '../filter/columnFilterService';
 import type { FilterManager } from '../filter/filterManager';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { FocusService } from '../focusService';
@@ -93,7 +94,7 @@ export interface ContextParams extends GenericContextParams<BeanName, BeanCollec
 export interface SingletonBean extends GenericSingletonBean<BeanName, BeanCollection> {}
 
 export interface ControllerMeta {
-    controllerClass: new () => object;
+    controllerClass: new (...args: []) => object;
     controllerName: string;
 }
 
@@ -125,7 +126,8 @@ export interface CoreBeanCollection {
     dragService: DragService;
     dragAndDropService: DragAndDropService;
     sortController: SortController;
-    filterManager: FilterManager;
+    columnFilterService?: ColumnFilterService;
+    filterManager?: FilterManager;
     rowContainerHeightService: RowContainerHeightService;
     frameworkOverrides: IFrameworkOverrides;
     cellPositionUtils: CellPositionUtils;
@@ -157,7 +159,7 @@ export interface CoreBeanCollection {
     columnEventDispatcher: ColumnEventDispatcher;
     columnAutosizeService: ColumnAutosizeService;
     funcColsService: FuncColsService;
-    quickFilterService: QuickFilterService;
+    quickFilterService?: QuickFilterService;
     showRowGroupColsService: ShowRowGroupColsService;
     headerPositionUtils: HeaderPositionUtils;
     dataTypeService: DataTypeService;
@@ -252,6 +254,7 @@ export type BeanName =
     | 'columnDefFactory'
     | 'columnEditorFactory'
     | 'columnEventDispatcher'
+    | 'columnFilterService'
     | 'columnGetStateService'
     | 'columnSizeService'
     | 'columnFactory'
@@ -287,7 +290,6 @@ export type BeanName =
     | 'filterAggregatesStage'
     | 'filterManager'
     | 'filterMenuFactory'
-    | 'filterService'
     | 'filterStage'
     | 'flattenStage'
     | 'focusService'

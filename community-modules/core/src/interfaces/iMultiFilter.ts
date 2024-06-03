@@ -1,4 +1,4 @@
-import type { IProvidedFilter } from '../filter/provided/providedFilter';
+import type { IProvidedFilter } from '../filter/provided/iProvidedFilter';
 import type { AgPromise } from '../utils/promise';
 import type {
     IFilter,

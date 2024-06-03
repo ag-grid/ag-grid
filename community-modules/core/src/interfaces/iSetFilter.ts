@@ -1,5 +1,5 @@
 import type { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
-import type { IProvidedFilter, IProvidedFilterParams } from '../filter/provided/providedFilter';
+import type { IProvidedFilter, IProvidedFilterParams } from '../filter/provided/iProvidedFilter';
 import type { GridApi } from '../gridApi';
 import type { Column } from '../interfaces/iColumn';
 import type { ITooltipParams } from '../rendering/tooltipComponent';

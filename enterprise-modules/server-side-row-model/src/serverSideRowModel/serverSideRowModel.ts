@@ -64,7 +64,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     private columnNameService: ColumnNameService;
     private pivotResultColsService: PivotResultColsService;
     private funcColsService: FuncColsService;
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private sortController: SortController;
     private rowRenderer: RowRenderer;
     private nodeManager: NodeManager;
@@ -401,9 +401,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             pivotMode: this.columnModel.isPivotMode(),
 
             // sort and filter model
-            filterModel: this.filterManager.isAdvancedFilterEnabled()
-                ? this.filterManager.getAdvancedFilterModel()
-                : this.filterManager.getFilterModel(),
+            filterModel: this.filterManager?.isAdvancedFilterEnabled()
+                ? this.filterManager?.getAdvancedFilterModel()
+                : this.filterManager?.getFilterModel() ?? {},
             sortModel: this.sortController.getSortModel(),
 
             datasource: this.datasource,

@@ -22,7 +22,7 @@ import type {
 import { AdvancedFilterBuilderEvents } from './iAdvancedFilterBuilder';
 
 export class AdvancedFilterBuilderComp extends Component {
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private advancedFilterService: AdvancedFilterService;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
@@ -132,7 +132,7 @@ export class AdvancedFilterBuilderComp extends Component {
         this.activateTabIndex([this.eApplyFilterButton]);
         this.addManagedListener(this.eApplyFilterButton, 'click', () => {
             this.advancedFilterService.setModel(this.filterModel);
-            this.filterManager.onFilterChanged({ source: 'advancedFilter' });
+            this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
             this.close();
         });
 
