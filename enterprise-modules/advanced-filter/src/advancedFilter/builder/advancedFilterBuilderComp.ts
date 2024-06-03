@@ -4,9 +4,9 @@ import type {
     ColumnAdvancedFilterModel,
     FilterManager,
     JoinAdvancedFilterModel,
-    VirtualListDragItem,
 } from '@ag-grid-community/core';
-import { Component, RefPlaceholder, TooltipFeature, VirtualList, _exists, _setDisabled } from '@ag-grid-community/core';
+import { Component, RefPlaceholder, TooltipFeature, _exists, _setDisabled } from '@ag-grid-community/core';
+import { VirtualList, type VirtualListDragItem } from '@ag-grid-enterprise/core';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AdvancedFilterService } from '../advancedFilterService';

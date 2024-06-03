@@ -100,11 +100,6 @@ export {
 export { RowDropZoneParams, RowDropZoneEvents } from './gridBodyComp/rowDragFeature';
 export { DragService, DragListenerParams } from './dragAndDrop/dragService';
 export { IRowDragItem } from './rendering/row/rowDragComp';
-export {
-    VirtualListDragFeature,
-    VirtualListDragItem,
-    VirtualListDragParams,
-} from './dragAndDrop/virtualListDragFeature';
 
 // entities
 export { Column, ColumnPinnedType, ColumnGroup, ProvidedColumnGroup, ColumnGroupShowType } from './interfaces/iColumn';
@@ -439,7 +434,6 @@ export { AgInputTextArea } from './widgets/agInputTextArea';
 export { AgInputNumberField, AgInputNumberFieldParams } from './widgets/agInputNumberField';
 export { AgInputDateField } from './widgets/agInputDateField';
 export { AgSelect, AgSelectParams } from './widgets/agSelect';
-export { AgMenuItemRenderer } from './widgets/agMenuItemRenderer';
 export { ListOption } from './widgets/agList';
 export { Component, VisibleChangedEvent } from './widgets/component';
 export { ManagedFocusFeature, ManagedFocusCallbacks } from './widgets/managedFocusFeature';
@@ -448,7 +442,6 @@ export { TabGuardCtrl, ITabGuard, TabGuardClassNames } from './widgets/tabGuardC
 export { PopupComponent } from './widgets/popupComponent';
 export { PopupService, AgPopup, PopupPositionParams, PopupEventParams } from './widgets/popupService';
 export { TouchListener, TapEvent, LongTapEvent } from './widgets/touchListener';
-export { VirtualList, VirtualListModel } from './widgets/virtualList';
 
 export { AgAbstractLabel } from './widgets/agAbstractLabel';
 export { AgPickerField } from './widgets/agPickerField';
@@ -782,6 +775,7 @@ export {
     _setAriaPosInSet,
     _setAriaSetSize,
     _setAriaHidden,
+    _getAriaPosInSet,
 } from './utils/aria';
 export {
     _removeFromArray,
@@ -817,7 +811,7 @@ export {
     _isNodeOrElement,
 } from './utils/dom';
 export { _getCtrlForEventTarget, _stopPropagationForAgGrid, _isStopPropagationForAgGrid } from './utils/event';
-export { _warnOnce, _errorOnce, _debounce, _compose, _doOnce } from './utils/function';
+export { _warnOnce, _errorOnce, _debounce, _compose, _doOnce, _waitUntil } from './utils/function';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export {

@@ -1,23 +1,26 @@
-import { KeyCode } from '../constants/keyCode';
-import type { BeanCollection } from '../context/context';
-import type { Environment } from '../environment';
-import { Events } from '../eventKeys';
-import type { CssVariablesChanged } from '../events';
-import type { AnimationFrameService } from '../misc/animationFrameService';
-import type { ResizeObserverService } from '../misc/resizeObserverService';
-import { _getAriaPosInSet, _setAriaLabel, _setAriaPosInSet, _setAriaRole, _setAriaSetSize } from '../utils/aria';
-import { _stopPropagationForAgGrid } from '../utils/event';
-import { _waitUntil } from '../utils/function';
-import type { Component } from './component';
-import { RefPlaceholder } from './component';
-import { TabGuardComp } from './tabGuardComp';
+import type {
+    AnimationFrameService,
+    BeanCollection,
+    Component,
+    CssVariablesChanged,
+    Environment,
+    ResizeObserverService,
+} from '@ag-grid-community/core';
+import {
+    Events,
+    KeyCode,
+    RefPlaceholder,
+    TabGuardComp,
+    _getAriaPosInSet,
+    _setAriaLabel,
+    _setAriaPosInSet,
+    _setAriaRole,
+    _setAriaSetSize,
+    _stopPropagationForAgGrid,
+    _waitUntil,
+} from '@ag-grid-community/core';
 
-export interface VirtualListModel {
-    getRowCount(): number;
-    getRow(index: number): any;
-    /** Required if using soft refresh. If rows are equal, componentUpdater will be called instead of remove/create */
-    areRowsEqual?(oldRow: any, newRow: any): boolean;
-}
+import type { VirtualListModel } from './iVirtualList';
 
 interface VirtualListParams {
     cssIdentifier?: string;
