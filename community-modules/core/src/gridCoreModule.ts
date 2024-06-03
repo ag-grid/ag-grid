@@ -6,7 +6,7 @@ import { VERSION } from './version';
 
 export const GridCoreModule = {
     version: VERSION,
-    moduleName: '@ag-grid-community/core-base',
+    moduleName: ModuleNames.CommunityCoreModule,
 };
 
 export const ValidationsModule = {
@@ -17,6 +17,6 @@ export const ValidationsModule = {
 
 export const CommunityFeaturesModule: Module = {
     version: VERSION,
-    moduleName: ModuleNames.CommunityCoreModule,
+    moduleName: '@ag-grid-community/core-community-features',
     dependantModules: [GridCoreModule, ValidationsModule, FilterModule],
 };
