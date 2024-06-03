@@ -84,7 +84,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
 
     private gridOptions: GridOptions;
     private eGridDiv: HTMLElement;
-    private validationService: ValidationService;
+    private validationService?: ValidationService;
     private environment: Environment;
     private api: GridApi;
 
@@ -289,7 +289,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             }
         });
 
-        this.validationService.processGridOptions(this.gridOptions);
+        this.validationService?.processGridOptions(this.gridOptions);
 
         // changeSet should just include the properties that have changed.
         changeSet.properties = events.map((event) => event.type);

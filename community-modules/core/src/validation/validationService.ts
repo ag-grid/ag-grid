@@ -25,7 +25,7 @@ export class ValidationService extends BeanStub implements NamedBean {
     }
 
     public processGridOptions(options: GridOptions): void {
-        this.processOptions(options, GRID_OPTIONS_VALIDATORS);
+        this.processOptions(options, GRID_OPTIONS_VALIDATORS());
     }
 
     public processColumnDefs(options: ColDef | ColGroupDef): void {

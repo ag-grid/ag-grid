@@ -48,6 +48,8 @@ export { BeanStub } from './context/beanStub';
 export { Bean, NamedBean } from './context/bean';
 export { Context, BeanName, SingletonBean, BeanCollection } from './context/context';
 
+export { GridCoreModule, GridBaseModule } from './gridCoreModule';
+
 // excel
 export {
     ColumnWidthCallbackParams,
