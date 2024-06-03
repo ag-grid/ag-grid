@@ -1,3 +1,4 @@
+import { EditModule } from './edit/editModules';
 import { FilterModule } from './filter/filterModules';
 import type { Module } from './interfaces/iModule';
 import { ModuleNames } from './modules/moduleNames';
@@ -18,5 +19,5 @@ export const ValidationsModule = {
 export const CommunityFeaturesModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-community/core-community-features',
-    dependantModules: [GridCoreModule, ValidationsModule, FilterModule],
+    dependantModules: [GridCoreModule, ValidationsModule, FilterModule, EditModule],
 };

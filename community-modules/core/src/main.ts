@@ -279,19 +279,26 @@ export { MenuService, IContextMenuParams } from './misc/menuService';
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams, BaseCellEditor } from './interfaces/iCellEditor';
-export { LargeTextCellEditor, ILargeTextEditorParams } from './rendering/cellEditors/largeTextCellEditor';
-export { PopupEditorWrapper } from './rendering/cellEditors/popupEditorWrapper';
-export { SelectCellEditor, ISelectCellEditorParams } from './rendering/cellEditors/selectCellEditor';
-export { TextCellEditor, ITextCellEditorParams } from './rendering/cellEditors/textCellEditor';
-export { NumberCellEditor, INumberCellEditorParams } from './rendering/cellEditors/numberCellEditor';
-export { DateCellEditor, IDateCellEditorParams } from './rendering/cellEditors/dateCellEditor';
-export { DateStringCellEditor, IDateStringCellEditorParams } from './rendering/cellEditors/dateStringCellEditor';
+export { ILargeTextEditorParams } from './edit/cellEditors/iLargeTextCellEditor';
+export { LargeTextCellEditor } from './edit/cellEditors/largeTextCellEditor';
+export { PopupEditorWrapper } from './edit/cellEditors/popupEditorWrapper';
+export { ISelectCellEditorParams } from './edit/cellEditors/iSelectCellEditor';
+export { SelectCellEditor } from './edit/cellEditors/selectCellEditor';
+export { ITextCellEditorParams } from './edit/cellEditors/iTextCellEditor';
+export { TextCellEditor } from './edit/cellEditors/textCellEditor';
+export { INumberCellEditorParams } from './edit/cellEditors/iNumberCellEditor';
+export { NumberCellEditor } from './edit/cellEditors/numberCellEditor';
+export { IDateCellEditorParams } from './edit/cellEditors/iDateCellEditor';
+export { DateCellEditor } from './edit/cellEditors/dateCellEditor';
+export { IDateStringCellEditorParams } from './edit/cellEditors/iDateStringCellEditor';
+export { DateStringCellEditor } from './edit/cellEditors/dateStringCellEditor';
 export {
     IRichCellEditorParams,
     RichCellEditorValuesCallback,
     RichCellEditorParams,
 } from './interfaces/iRichCellEditorParams';
-export { CheckboxCellEditor } from './rendering/cellEditors/checkboxCellEditor';
+export { CheckboxCellEditor } from './edit/cellEditors/checkboxCellEditor';
+export * from './edit/editModules';
 
 // rendering / cellRenderers
 export {
