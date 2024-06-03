@@ -58,7 +58,7 @@ import { _jsonEquals } from '../utils/generic';
 export class StateService extends BeanStub implements NamedBean {
     beanName = 'stateService' as const;
 
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private ctrlsService: CtrlsService;
     private pivotResultColsService: PivotResultColsService;
     private focusService: FocusService;
@@ -536,11 +536,11 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private getFilterState(): FilterState | undefined {
-        let filterModel: FilterModel | undefined = this.filterManager.getFilterModel();
+        let filterModel: FilterModel | undefined = this.filterManager?.getFilterModel();
         if (filterModel && Object.keys(filterModel).length === 0) {
             filterModel = undefined;
         }
-        const advancedFilterModel = this.filterManager.getAdvancedFilterModel() ?? undefined;
+        const advancedFilterModel = this.filterManager?.getAdvancedFilterModel() ?? undefined;
         return filterModel || advancedFilterModel ? { filterModel, advancedFilterModel } : undefined;
     }
 
@@ -552,10 +552,10 @@ export class StateService extends BeanStub implements NamedBean {
             advancedFilterModel: gridOptionAdvancedFilterModel,
         };
         if (filterModel) {
-            this.filterManager.setFilterModel(filterModel, 'columnFilter');
+            this.filterManager?.setFilterModel(filterModel, 'columnFilter');
         }
         if (advancedFilterModel) {
-            this.filterManager.setAdvancedFilterModel(advancedFilterModel);
+            this.filterManager?.setAdvancedFilterModel(advancedFilterModel);
         }
     }
 

@@ -135,7 +135,8 @@ export {
     SetFilterValuesFuncParams,
     ISetFilterTreeListTooltipParams,
 } from './interfaces/iSetFilter';
-export { FilterManager, FilterWrapper, FilterRequestSource } from './filter/filterManager';
+export { FilterManager } from './filter/filterManager';
+export { FilterRequestSource } from './filter/iColumnFilter';
 export {
     IMultiFilter,
     IMultiFilterModel,
@@ -146,15 +147,10 @@ export {
 } from './interfaces/iMultiFilter';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 
-export {
-    ProvidedFilter,
-    IProvidedFilter,
-    IProvidedFilterParams,
-    ProvidedFilterParams,
-} from './filter/provided/providedFilter';
+export { IProvidedFilter, IProvidedFilterParams, ProvidedFilterParams } from './filter/provided/iProvidedFilter';
+export { ProvidedFilter } from './filter/provided/providedFilter';
 export {
     ISimpleFilter,
-    SimpleFilter,
     ISimpleFilterParams,
     SimpleFilterParams,
     ISimpleFilterModel,
@@ -162,25 +158,40 @@ export {
     JoinOperator,
     IFilterPlaceholderFunctionParams,
     FilterPlaceholderFunction,
-} from './filter/provided/simpleFilter';
-export { ScalarFilter, IScalarFilterParams, ScalarFilterParams } from './filter/provided/scalarFilter';
+} from './filter/provided/iSimpleFilter';
+export { SimpleFilter } from './filter/provided/simpleFilter';
+export { IScalarFilterParams, ScalarFilterParams } from './filter/provided/iScalarFilter';
+export { ScalarFilter } from './filter/provided/scalarFilter';
 
 export {
-    NumberFilter,
     INumberFilterParams,
     NumberFilterParams,
     NumberFilterModel,
-} from './filter/provided/number/numberFilter';
+    INumberFloatingFilterParams,
+} from './filter/provided/number/iNumberFilter';
+export { NumberFilter } from './filter/provided/number/numberFilter';
 export {
-    TextFilter,
     ITextFilterParams,
     TextFilterParams,
     TextFilterModel,
     TextFormatter,
     TextMatcherParams,
     TextMatcher,
-} from './filter/provided/text/textFilter';
-export { DateFilter, IDateFilterParams, DateFilterParams, DateFilterModel } from './filter/provided/date/dateFilter';
+    ITextFloatingFilterParams,
+} from './filter/provided/text/iTextFilter';
+export { TextFilter } from './filter/provided/text/textFilter';
+export { IDateFilterParams, DateFilterParams, DateFilterModel } from './filter/provided/date/iDateFilter';
+export { DateFilter } from './filter/provided/date/dateFilter';
+export {
+    ColumnFilterModule,
+    FilterCoreModule,
+    FilterModule,
+    FloatingFilterModule,
+    QuickFilterModule,
+    ReadOnlyFloatingFilterModule,
+    SimpleFilterModule,
+    SimpleFloatingFilterModule,
+} from './filter/filterModules';
 
 export {
     IFloatingFilter,
@@ -191,8 +202,7 @@ export {
     IFloatingFilterParentCallback,
     BaseFloatingFilter,
 } from './filter/floating/floatingFilter';
-export { TextFloatingFilter, ITextFloatingFilterParams } from './filter/provided/text/textFloatingFilter';
-export { INumberFloatingFilterParams } from './filter/provided/number/numberFloatingFilter';
+export { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
 export { HeaderFilterCellComp } from './headerRendering/cells/floatingFilter/headerFilterCellComp';
 export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
 
@@ -244,10 +254,8 @@ export { HeaderRowComp, HeaderRowType } from './headerRendering/row/headerRowCom
 export { HeaderRowCtrl, IHeaderRowComp } from './headerRendering/row/headerRowCtrl';
 export { HeaderCellCtrl, IHeaderCellComp } from './headerRendering/cells/column/headerCellCtrl';
 export { SortIndicatorComp } from './headerRendering/cells/column/sortIndicatorComp';
-export {
-    HeaderFilterCellCtrl,
-    IHeaderFilterCellComp,
-} from './headerRendering/cells/floatingFilter/headerFilterCellCtrl';
+export { IHeaderFilterCellComp } from './headerRendering/cells/floatingFilter/iHeaderFilterCellComp';
+export { HeaderFilterCellCtrl } from './headerRendering/cells/floatingFilter/headerFilterCellCtrl';
 export { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerRendering/cells/columnGroup/headerGroupCellCtrl';
 export {
     AbstractHeaderCellCtrl,

@@ -29,7 +29,7 @@ import type { MenuItemActivatedEvent } from '@ag-grid-enterprise/core';
 import { AgGroupComponent, AgMenuItemComponent, AgMenuItemRenderer } from '@ag-grid-enterprise/core';
 
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private userComponentFactory: UserComponentFactory;
 
     public wireBeans(beans: BeanCollection) {
@@ -458,7 +458,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         let filterInstance: IFilterComp;
 
         const filterParams: IFilterParams = {
-            ...this.filterManager.createFilterParams(this.column, this.column.getColDef()),
+            ...this.filterManager!.createFilterParams(this.column, this.column.getColDef()),
             filterModifiedCallback,
             filterChangedCallback: (additionalEventAttributes) => {
                 this.executeWhenAllFiltersReady(() => this.filterChanged(index, additionalEventAttributes));

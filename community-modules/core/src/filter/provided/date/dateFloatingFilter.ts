@@ -9,12 +9,15 @@ import { _debounce } from '../../../utils/function';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { RefPlaceholder } from '../../../widgets/component';
 import type { IFloatingFilterParams } from '../../floating/floatingFilter';
+import { getDebounceMs } from '../../floating/provided/providedFilterUtils';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
-import { ProvidedFilter } from '../providedFilter';
-import type { ISimpleFilterModel, SimpleFilterModelFormatter } from '../simpleFilter';
+import type { ISimpleFilterModel } from '../iSimpleFilter';
+import type { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
 import { DateCompWrapper } from './dateCompWrapper';
-import type { DateFilterModel, DateFilterParams } from './dateFilter';
-import { DateFilter, DateFilterModelFormatter } from './dateFilter';
+import type { DateFilter } from './dateFilter';
+import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
+import { DateFilterModelFormatter } from './dateFilterModelFormatter';
+import type { DateFilterModel, DateFilterParams } from './iDateFilter';
 
 export class DateFloatingFilter extends SimpleFloatingFilter {
     private userComponentFactory: UserComponentFactory;
@@ -46,7 +49,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     protected getDefaultFilterOptions(): string[] {
-        return DateFilter.DEFAULT_FILTER_OPTIONS;
+        return DEFAULT_DATE_FILTER_OPTIONS;
     }
 
     public override init(params: IFloatingFilterParams<DateFilter>): void {
@@ -132,7 +135,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     private getDateComponentParams(): WithoutGridCommon<IDateParams> {
-        const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
+        const debounceMs = getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
         return {
             onDateChanged: _debounce(this.onDateChanged.bind(this), debounceMs),
             filterParams: this.params.column.getColDef().filterParams,

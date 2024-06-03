@@ -4,7 +4,8 @@ import { _setDisplayed } from '../../../utils/dom';
 import type { AgPromise } from '../../../utils/promise';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
-import type { HeaderFilterCellCtrl, IHeaderFilterCellComp } from './headerFilterCellCtrl';
+import type { HeaderFilterCellCtrl } from './headerFilterCellCtrl';
+import type { IHeaderFilterCellComp } from './iHeaderFilterCellComp';
 
 export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCellCtrl> {
     private static TEMPLATE /* html */ = `<div class="ag-header-cell ag-floating-filter" role="gridcell">

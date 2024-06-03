@@ -27,7 +27,7 @@ interface FilterColumnPair {
 }
 
 export class GroupFilter extends TabGuardComp implements IFilterComp {
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private columnNameService: ColumnNameService;
     private funcColsService: FuncColsService;
 
@@ -179,7 +179,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         const filterPromises: AgPromise<IFilterComp>[] = [];
         const filterColumnPairs: FilterColumnPair[] = [];
         sourceColumns.forEach((column) => {
-            const filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
+            const filterWrapper = this.filterManager!.getOrCreateFilterWrapper(column);
             if (filterWrapper?.filterPromise) {
                 filterPromises.push(
                     filterWrapper.filterPromise.then((filter) => {

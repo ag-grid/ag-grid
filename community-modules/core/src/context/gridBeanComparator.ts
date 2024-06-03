@@ -33,6 +33,7 @@ const orderedCoreBeans: BeanName[] = [
     'gos',
     'popupService',
     'selectionService',
+    'columnFilterService',
     'filterManager',
     'columnModel',
     'headerNavigationService',

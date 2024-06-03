@@ -20,7 +20,7 @@ import {
 } from '@ag-grid-community/core';
 
 export class ToolPanelFilterComp extends Component {
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private columnNameService: ColumnNameService;
 
     public wireBeans(beans: BeanCollection) {
@@ -130,7 +130,7 @@ export class ToolPanelFilterComp extends Component {
     }
 
     public isFilterActive(): boolean {
-        return this.filterManager.isFilterActive(this.column);
+        return !!this.filterManager?.isFilterActive(this.column);
     }
 
     private onFilterChanged(): void {
