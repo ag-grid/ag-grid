@@ -24,7 +24,6 @@ import { TooltipComponent } from '../../rendering/tooltipComponent';
 import { _doOnce } from '../../utils/function';
 import { _fuzzySuggestions } from '../../utils/fuzzyMatch';
 import { _iterateObject } from '../../utils/object';
-import { AgMenuItemRenderer } from '../../widgets/agMenuItemRenderer';
 
 export class UserComponentRegistry extends BeanStub implements NamedBean {
     beanName = 'userComponentRegistry' as const;
@@ -60,9 +59,6 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
 
         // tooltips
         agTooltipComponent: TooltipComponent,
-
-        // menu item
-        agMenuItem: AgMenuItemRenderer,
     };
 
     /** Used to provide useful error messages if a user is trying to use an enterprise component without loading the module. */

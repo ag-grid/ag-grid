@@ -11,7 +11,8 @@ import { Events } from '../eventKeys';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _exists } from '../utils/generic';
 import type { ValueService } from '../valueService/valueService';
-import { EVENT_QUICK_FILTER_CHANGED } from './quickFilterConstants';
+
+export const EVENT_QUICK_FILTER_CHANGED = 'quickFilterChanged' as const;
 
 export class QuickFilterService extends BeanStub implements NamedBean {
     beanName = 'quickFilterService' as const;
@@ -27,8 +28,6 @@ export class QuickFilterService extends BeanStub implements NamedBean {
         this.rowModel = beans.rowModel;
         this.pivotResultColsService = beans.pivotResultColsService;
     }
-
-    private static readonly QUICK_FILTER_SEPARATOR = '\n';
 
     // the columns the quick filter should use. this will be all primary columns plus the autoGroupColumns if any exist
     private colsForQuickFilter: AgColumn[];
@@ -231,6 +230,6 @@ export class QuickFilterService extends BeanStub implements NamedBean {
             }
         });
 
-        return stringParts.join(QuickFilterService.QUICK_FILTER_SEPARATOR);
+        return stringParts.join('\n');
     }
 }

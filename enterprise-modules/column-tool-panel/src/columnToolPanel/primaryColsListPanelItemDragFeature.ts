@@ -5,16 +5,9 @@ import type {
     ColumnModel,
     ColumnMoveService,
     ColumnPanelItemDragStartEvent,
-    VirtualList,
-    VirtualListDragItem,
 } from '@ag-grid-community/core';
-import {
-    BeanStub,
-    DragSourceType,
-    Events,
-    VirtualListDragFeature,
-    isProvidedColumnGroup,
-} from '@ag-grid-community/core';
+import { BeanStub, DragSourceType, Events, isProvidedColumnGroup } from '@ag-grid-community/core';
+import { type VirtualList, VirtualListDragFeature, type VirtualListDragItem } from '@ag-grid-enterprise/core';
 
 import type { AgPrimaryColsList } from './agPrimaryColsList';
 import type { ToolPanelColumnComp } from './toolPanelColumnComp';

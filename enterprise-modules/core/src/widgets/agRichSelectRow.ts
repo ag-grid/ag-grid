@@ -6,7 +6,6 @@ import type {
     RichSelectParams,
     UserCompDetails,
     UserComponentFactory,
-    VirtualList,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
@@ -18,6 +17,8 @@ import {
     _setAriaActiveDescendant,
     _setAriaSelected,
 } from '@ag-grid-community/core';
+
+import type { VirtualList } from './virtualList';
 
 export class RichSelectRow<TValue> extends Component {
     private userComponentFactory: UserComponentFactory;

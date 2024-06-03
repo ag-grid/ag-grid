@@ -17,7 +17,6 @@ import type {
     UserComponentFactory,
 } from '@ag-grid-community/core';
 import {
-    AgMenuItemRenderer,
     AgPromise,
     KeyCode,
     ProvidedFilter,
@@ -27,7 +26,7 @@ import {
     _removeFromArray,
 } from '@ag-grid-community/core';
 import type { MenuItemActivatedEvent } from '@ag-grid-enterprise/core';
-import { AgGroupComponent, AgMenuItemComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponent, AgMenuItemComponent, AgMenuItemRenderer } from '@ag-grid-enterprise/core';
 
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
     private filterManager?: FilterManager;
