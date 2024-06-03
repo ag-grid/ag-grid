@@ -4,10 +4,11 @@ import type {
     RichSelectParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Events, VirtualList, _setAriaControls, _setAriaLabel } from '@ag-grid-community/core';
+import { Events, _setAriaControls, _setAriaLabel } from '@ag-grid-community/core';
 import { KeyCode } from '@ag-grid-community/core';
 
 import { RichSelectRow } from './agRichSelectRow';
+import { VirtualList } from './virtualList';
 
 export class AgRichSelectList<TValue> extends VirtualList {
     private eLoading: HTMLElement | undefined;
