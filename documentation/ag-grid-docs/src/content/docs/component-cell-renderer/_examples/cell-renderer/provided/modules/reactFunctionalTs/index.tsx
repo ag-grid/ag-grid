@@ -1,7 +1,13 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, ColGroupDef, ICellRendererParams, ModuleRegistry } from '@ag-grid-community/core';
+import {
+    ColDef,
+    ColGroupDef,
+    CommunityFeaturesModule,
+    ICellRendererParams,
+    ModuleRegistry,
+} from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import { CustomCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -11,7 +17,7 @@ import { createRoot } from 'react-dom/client';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
 
 export interface ImageCellRendererParams extends CustomCellRendererProps {
     rendererImage: string;

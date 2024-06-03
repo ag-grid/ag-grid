@@ -11,7 +11,7 @@ import {
     ProcessRowGroupForExportParams,
     createGrid,
 } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
@@ -19,6 +19,7 @@ import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 
 ModuleRegistry.registerModules([
+    CommunityFeaturesModule,
     ClientSideRowModelModule,
     ClipboardModule,
     ColumnsToolPanelModule,

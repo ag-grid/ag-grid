@@ -1,11 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { AreaSparklineOptions, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
 
 import { getStockData } from './data';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, SparklinesModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, SparklinesModule]);
 
 let gridApi: GridApi;
 

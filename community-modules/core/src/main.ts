@@ -859,5 +859,7 @@ export { Module, ModuleValidationResult } from './interfaces/iModule';
 export { ModuleNames } from './modules/moduleNames';
 export { ModuleRegistry } from './modules/moduleRegistry';
 
+export { CommunityFeaturesModule, GridCoreModule } from './gridCoreModule';
+
 //  events
 export * from './events';

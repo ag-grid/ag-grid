@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { GridApi, GridOptions, IMultiFilterParams, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -11,6 +11,7 @@ import { YearFilter } from './YearFilter_typescript';
 import { YearFloatingFilter } from './YearFloatingFilter_typescript';
 
 ModuleRegistry.registerModules([
+    CommunityFeaturesModule,
     ClientSideRowModelModule,
     ClipboardModule,
     FiltersToolPanelModule,

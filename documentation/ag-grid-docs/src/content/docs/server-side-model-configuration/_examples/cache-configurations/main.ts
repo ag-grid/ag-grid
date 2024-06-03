@@ -5,10 +5,10 @@ import {
     IServerSideGetRowsRequest,
     createGrid,
 } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
 
-ModuleRegistry.registerModules([ServerSideRowModelModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ServerSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicDataWithId>;
 

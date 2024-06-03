@@ -9,7 +9,7 @@ import {
     ICellRendererParams,
     IGroupCellRendererParams,
 } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
@@ -20,7 +20,13 @@ import { Component } from '@angular/core';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, SetFilterModule, FiltersToolPanelModule]);
+ModuleRegistry.registerModules([
+    CommunityFeaturesModule,
+    ClientSideRowModelModule,
+    RowGroupingModule,
+    SetFilterModule,
+    FiltersToolPanelModule,
+]);
 
 @Component({
     standalone: true,

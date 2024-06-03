@@ -2,11 +2,15 @@
  * Used for umd bundles without styles, as well as cjs/esm packaging
  */
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 
-ModuleRegistry.__registerModules([ClientSideRowModelModule, InfiniteRowModelModule, CsvExportModule], false, undefined);
+ModuleRegistry.__registerModules(
+    [CommunityFeaturesModule, ClientSideRowModelModule, InfiniteRowModelModule, CsvExportModule],
+    false,
+    undefined
+);
 
 // do not export from "@ag-grid-community/core" - this is handled below
 /** AUTO_GENERATED_START **/
@@ -59,6 +63,7 @@ export { ColumnModel } from '@ag-grid-community/core';
 export { ColumnMoveService } from '@ag-grid-community/core';
 export { ColumnNameService } from '@ag-grid-community/core';
 export { ColumnSizeService } from '@ag-grid-community/core';
+export { CommunityFeaturesModule } from '@ag-grid-community/core';
 export { Component } from '@ag-grid-community/core';
 export { ComponentUtil } from '@ag-grid-community/core';
 export { Context } from '@ag-grid-community/core';
@@ -99,6 +104,7 @@ export { GridBodyComp } from '@ag-grid-community/core';
 export { GridBodyCtrl } from '@ag-grid-community/core';
 export { GridComp } from '@ag-grid-community/core';
 export { GridCoreCreator } from '@ag-grid-community/core';
+export { GridCoreModule } from '@ag-grid-community/core';
 export { GridCtrl } from '@ag-grid-community/core';
 export { GridHeaderComp } from '@ag-grid-community/core';
 export { GridHeaderCtrl } from '@ag-grid-community/core';
