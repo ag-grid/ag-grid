@@ -1,3 +1,4 @@
+import { DataTypeModule } from '../columns/columnModules';
 import { FilterModule } from '../filter/filterModules';
 import type { Module, ModuleValidationInvalidResult } from '../interfaces/iModule';
 import { StateModule } from '../misc/stateServiceModule';
@@ -6,7 +7,7 @@ import { _values } from '../utils/generic';
 import { ModuleNames } from './moduleNames';
 
 // TODO - remove - temp code for backwards compatibility
-export const INTERNAL_MODULES = [FilterModule, StateModule] as const;
+export const INTERNAL_MODULES = [FilterModule, StateModule, DataTypeModule] as const;
 
 export class ModuleRegistry {
     // having in a map a) removes duplicates and b) allows fast lookup

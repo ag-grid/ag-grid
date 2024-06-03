@@ -51,7 +51,7 @@ import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> implements ISetFilter<V> {
     private funcColsService: FuncColsService;
     private valueService: ValueService;
-    private dataTypeService: DataTypeService;
+    private dataTypeService?: DataTypeService;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
@@ -250,7 +250,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return (
             colDef.filterValueGetter !== existingColDef?.filterValueGetter ||
             processedKeyCreator !== (existingKeyCreator ?? existingColDef?.keyCreator) ||
-            (this.dataTypeService.getFormatValue(colDef.cellDataType as string) === processedKeyCreator &&
+            (!!this.dataTypeService &&
+                this.dataTypeService.getFormatValue(colDef.cellDataType as string) === processedKeyCreator &&
                 colDef.valueFormatter !== existingColDef?.valueFormatter)
         );
     }

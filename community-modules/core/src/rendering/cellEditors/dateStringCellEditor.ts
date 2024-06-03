@@ -2,7 +2,7 @@ import type { DataTypeService } from '../../columns/dataTypeService';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
-import { _serialiseDate } from '../../utils/date';
+import { _parseDateTimeFromString, _serialiseDate } from '../../utils/date';
 import { _exists } from '../../utils/generic';
 import { AgInputDateField } from '../../widgets/agInputDateField';
 import type { CellEditorInput } from './simpleCellEditor';
@@ -27,7 +27,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     private eInput: AgInputDateField;
     private params: IDateStringCellEditorParams;
 
-    constructor(private getDataTypeService: () => DataTypeService) {}
+    constructor(private getDataTypeService: () => DataTypeService | undefined) {}
 
     public getTemplate() {
         return /* html */ `<ag-input-date-field class="ag-cell-editor" data-ref="eInput"></ag-input-date-field>`;
@@ -63,16 +63,22 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     }
 
     private parseDate(value: string | undefined): Date | undefined {
-        return this.getDataTypeService().getDateParserFunction(this.params.column as AgColumn)(value);
+        const dataTypeService = this.getDataTypeService();
+        return dataTypeService
+            ? dataTypeService.getDateParserFunction(this.params.column as AgColumn)(value)
+            : _parseDateTimeFromString(value) ?? undefined;
     }
 
     private formatDate(value: Date | undefined): string | undefined {
-        return this.getDataTypeService().getDateFormatterFunction(this.params.column as AgColumn)(value);
+        const dataTypeService = this.getDataTypeService();
+        return dataTypeService
+            ? dataTypeService.getDateFormatterFunction(this.params.column as AgColumn)(value)
+            : _serialiseDate(value ?? null, false) ?? undefined;
     }
 }
 
 export class DateStringCellEditor extends SimpleCellEditor<string, IDateStringCellEditorParams, AgInputDateField> {
-    private dataTypeService: DataTypeService;
+    private dataTypeService?: DataTypeService;
 
     public wireBeans(beans: BeanCollection): void {
         this.dataTypeService = beans.dataTypeService;

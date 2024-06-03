@@ -162,7 +162,7 @@ export interface CoreBeanCollection {
     quickFilterService?: QuickFilterService;
     showRowGroupColsService: ShowRowGroupColsService;
     headerPositionUtils: HeaderPositionUtils;
-    dataTypeService: DataTypeService;
+    dataTypeService?: DataTypeService;
     globalEventListener: AgGlobalEventListener;
     globalSyncEventListener: AgGlobalEventListener;
     stateService?: StateService;

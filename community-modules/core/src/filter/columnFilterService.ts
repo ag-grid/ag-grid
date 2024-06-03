@@ -37,7 +37,7 @@ export class ColumnFilterService extends BeanStub {
     private rowModel: IRowModel;
     private userComponentFactory: UserComponentFactory;
     private rowRenderer: RowRenderer;
-    private dataTypeService: DataTypeService;
+    private dataTypeService?: DataTypeService;
     private filterManager?: FilterManager;
 
     public wireBeans(beans: BeanCollection): void {
@@ -81,7 +81,7 @@ export class ColumnFilterService extends BeanStub {
     }
 
     public setFilterModel(model: FilterModel | null, source: FilterChangedEventSourceType = 'api'): void {
-        if (this.dataTypeService.isPendingInference()) {
+        if (this.dataTypeService?.isPendingInference()) {
             this.filterModelUpdateQueue.push({ model, source });
             return;
         }
@@ -444,7 +444,7 @@ export class ColumnFilterService extends BeanStub {
         if (ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.gridId)) {
             defaultFilter = 'agSetColumnFilter';
         } else {
-            const cellDataType = this.dataTypeService.getBaseDataType(column);
+            const cellDataType = this.dataTypeService?.getBaseDataType(column);
             if (cellDataType === 'number') {
                 defaultFilter = 'agNumberColumnFilter';
             } else if (cellDataType === 'date' || cellDataType === 'dateString') {
@@ -461,7 +461,7 @@ export class ColumnFilterService extends BeanStub {
         if (ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.gridId)) {
             defaultFloatingFilterType = 'agSetColumnFloatingFilter';
         } else {
-            const cellDataType = this.dataTypeService.getBaseDataType(column);
+            const cellDataType = this.dataTypeService?.getBaseDataType(column);
             if (cellDataType === 'number') {
                 defaultFloatingFilterType = 'agNumberColumnFloatingFilter';
             } else if (cellDataType === 'date' || cellDataType === 'dateString') {
@@ -862,7 +862,7 @@ export class ColumnFilterService extends BeanStub {
     }
 
     public setColumnFilterModel(key: string | AgColumn, model: any): Promise<void> {
-        if (this.dataTypeService.isPendingInference()) {
+        if (this.dataTypeService?.isPendingInference()) {
             let resolve: () => void = () => {};
             const promise = new Promise<void>((res) => {
                 resolve = res;

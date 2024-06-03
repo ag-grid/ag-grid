@@ -13,7 +13,6 @@ import { ColumnMoveService } from './columns/columnMoveService';
 import { ColumnNameService } from './columns/columnNameService';
 import { ColumnSizeService } from './columns/columnSizeService';
 import { ColumnViewportService } from './columns/columnViewportService';
-import { DataTypeService } from './columns/dataTypeService';
 import { FuncColsService } from './columns/funcColsService';
 import { PivotResultColsService } from './columns/pivotResultColsService';
 import { ShowRowGroupColsService } from './columns/showRowGroupColsService';
@@ -459,7 +458,6 @@ export class GridCoreCreator {
             PinnedWidthService,
             RowNodeEventThrottle,
             CtrlsFactory,
-            DataTypeService,
             SyncService,
             OverlayService,
             ExpansionService,

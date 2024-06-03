@@ -11,13 +11,14 @@ import { _warnOnce } from '../utils/function';
 import { _attrToBoolean, _attrToNumber } from '../utils/generic';
 import { _iterateObject, _mergeDeep } from '../utils/object';
 import { ColumnKeyCreator } from './columnKeyCreator';
+import { convertColumnTypes } from './columnUtils';
 import type { DataTypeService } from './dataTypeService';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 export class ColumnFactory extends BeanStub implements NamedBean {
     beanName = 'columnFactory' as const;
 
-    private dataTypeService: DataTypeService;
+    private dataTypeService?: DataTypeService;
 
     private logger: Logger;
 
@@ -336,7 +337,7 @@ export class ColumnFactory extends BeanStub implements NamedBean {
             this.applyColumnState(column, colDefMerged, source);
         }
 
-        this.dataTypeService.addColumnListeners(column);
+        this.dataTypeService?.addColumnListeners(column);
 
         return column;
     }
@@ -454,7 +455,7 @@ export class ColumnFactory extends BeanStub implements NamedBean {
         const defaultColDef = this.gos.get('defaultColDef');
         _mergeDeep(res, defaultColDef, false, true);
 
-        const columnType = this.dataTypeService.updateColDefAndGetColumnType(res, colDef, colId);
+        const columnType = this.updateColDefAndGetColumnType(res, colDef, colId);
 
         if (columnType) {
             this.assignColumnTypes(columnType, res);
@@ -475,9 +476,20 @@ export class ColumnFactory extends BeanStub implements NamedBean {
             );
         }
 
-        this.dataTypeService.validateColDef(res);
+        this.dataTypeService?.validateColDef(res);
 
         return res;
+    }
+
+    private updateColDefAndGetColumnType(colDef: ColDef, userColDef: ColDef, colId: string): string[] | undefined {
+        const dataTypeDefinitionColumnType = this.dataTypeService?.updateColDefAndGetColumnType(
+            colDef,
+            userColDef,
+            colId
+        );
+        const columnTypes = userColDef.type ?? dataTypeDefinitionColumnType ?? colDef.type;
+        colDef.type = columnTypes;
+        return columnTypes ? convertColumnTypes(columnTypes) : undefined;
     }
 
     private assignColumnTypes(typeKeys: string[], colDefMerged: ColDef) {
