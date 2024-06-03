@@ -34,6 +34,7 @@ export {
     SizeColumnsToFitProvidedWidthStrategy,
     SizeColumnsToFitGridStrategy,
 } from './interfaces/autoSizeStrategy';
+export { DataTypeModule } from './columns/columnModules';
 
 // components
 export { ComponentUtil } from './components/componentUtil';

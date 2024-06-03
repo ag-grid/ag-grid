@@ -111,6 +111,7 @@ export { Context } from '@ag-grid-community/core';
 export { CssClassApplier } from '@ag-grid-community/core';
 export { CssClassManager } from '@ag-grid-community/core';
 export { CtrlsService } from '@ag-grid-community/core';
+export { DataTypeModule } from '@ag-grid-community/core';
 export { DataTypeService } from '@ag-grid-community/core';
 export { DateCellEditor } from '@ag-grid-community/core';
 export { DateFilter } from '@ag-grid-community/core';
