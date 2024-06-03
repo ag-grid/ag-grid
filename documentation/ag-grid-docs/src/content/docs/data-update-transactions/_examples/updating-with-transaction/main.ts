@@ -1,10 +1,10 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { GridApi, GridOptions, RowNodeTransaction, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 
 import { getData } from './data';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
 
 let gridApi: GridApi;
 

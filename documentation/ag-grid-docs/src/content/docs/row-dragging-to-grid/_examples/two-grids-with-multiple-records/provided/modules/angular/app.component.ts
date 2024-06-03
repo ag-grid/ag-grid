@@ -16,7 +16,7 @@ import { Component, ViewChild } from '@angular/core';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
 @Component({
     standalone: true,
     template: ` <i class="far fa-trash-alt" style="cursor: pointer" (click)="applyTransaction()"></i>`,

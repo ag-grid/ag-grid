@@ -1,7 +1,7 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import { CustomCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -11,7 +11,7 @@ import { createRoot } from 'react-dom/client';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
 
 const SquareRenderer = (props: CustomCellRendererProps) => {
     const valueSquared = (value: any) => {

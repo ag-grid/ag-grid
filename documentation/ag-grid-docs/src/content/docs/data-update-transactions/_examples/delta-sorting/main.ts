@@ -1,9 +1,9 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { GetRowIdParams, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule]);
 
 let lastGen = 0;
 const generateItem = (id = lastGen++) => {

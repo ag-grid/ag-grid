@@ -17,7 +17,7 @@ import { createRoot } from 'react-dom/client';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule]);
 
 const MIN_BOOK_COUNT = 10;
 const MAX_BOOK_COUNT = 20;

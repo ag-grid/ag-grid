@@ -1,7 +1,14 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GetRowIdParams, GridApi, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
+import {
+    ColDef,
+    CommunityFeaturesModule,
+    GetRowIdParams,
+    GridApi,
+    GridReadyEvent,
+    ModuleRegistry,
+} from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
@@ -11,7 +18,13 @@ import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, StatusBarModule, RangeSelectionModule]);
+ModuleRegistry.registerModules([
+    CommunityFeaturesModule,
+    ClientSideRowModelModule,
+    RowGroupingModule,
+    StatusBarModule,
+    RangeSelectionModule,
+]);
 
 // creates a unique symbol, eg 'ADG' or 'ZJD'
 function createUniqueRandomSymbol(data: any[]) {

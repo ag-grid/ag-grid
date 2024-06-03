@@ -10,7 +10,6 @@ import type { RowNode } from '../entities/rowNode';
 import { Events, type EventsType } from '../eventKeys';
 import type {
     ColumnEventType,
-    FilterChangedEvent,
     FilterChangedEventSourceType,
     FilterDestroyedEvent,
     FilterModifiedEvent,
@@ -24,7 +23,7 @@ import { ModuleRegistry } from '../modules/moduleRegistry';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import { _warnOnce } from '../utils/function';
 import { _exists, _jsonEquals } from '../utils/generic';
-import { _cloneObject, _mergeDeep } from '../utils/object';
+import { _cloneObject } from '../utils/object';
 import { AgPromise } from '../utils/promise';
 import type { ValueService } from '../valueService/valueService';
 import type { FilterManager } from './filterManager';
@@ -342,18 +341,16 @@ export class ColumnFilterService extends BeanStub {
         }
     }
 
-    public updateForFilterChanged(
+    public updateBeforeFilterChanged(
         params: {
-            source?: FilterChangedEventSourceType;
             filterInstance?: IFilterComp;
             additionalEventAttributes?: any;
-            columns?: AgColumn[];
         } = {}
-    ): void {
-        const { source, filterInstance, additionalEventAttributes, columns } = params;
+    ): AgPromise<void> {
+        const { filterInstance, additionalEventAttributes } = params;
 
         this.updateDependentFilters();
-        this.updateActiveFilters().then(() =>
+        return this.updateActiveFilters().then(() =>
             this.updateFilterFlagInColumns('filterChanged', additionalEventAttributes).then(() => {
                 this.allColumnFilters.forEach((filterWrapper) => {
                     if (!filterWrapper.filterPromise) {
@@ -366,25 +363,15 @@ export class ColumnFilterService extends BeanStub {
                     });
                 });
 
-                const filterChangedEvent: WithoutGridCommon<FilterChangedEvent> = {
-                    source,
-                    type: Events.EVENT_FILTER_CHANGED,
-                    columns: columns || [],
-                };
-
-                if (additionalEventAttributes) {
-                    _mergeDeep(filterChangedEvent, additionalEventAttributes);
-                }
-
                 // because internal events are not async in ag-grid, when the dispatchEvent
                 // method comes back, we know all listeners have finished executing.
                 this.processingFilterChange = true;
-
-                this.eventService.dispatchEvent(filterChangedEvent);
-
-                this.processingFilterChange = false;
             })
-        );
+        ) as AgPromise<void>;
+    }
+
+    public updateAfterFilterChanged(): void {
+        this.processingFilterChange = false;
     }
 
     public isSuppressFlashingCellsBecauseFiltering(): boolean {

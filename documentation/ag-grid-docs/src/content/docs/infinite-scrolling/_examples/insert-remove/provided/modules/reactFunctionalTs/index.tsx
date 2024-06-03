@@ -16,7 +16,7 @@ import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-ModuleRegistry.registerModules([InfiniteRowModelModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, InfiniteRowModelModule]);
 
 const valueFormatter = function (params: ValueFormatterParams) {
     if (typeof params.value === 'number') {

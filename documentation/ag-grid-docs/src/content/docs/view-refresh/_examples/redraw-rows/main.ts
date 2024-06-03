@@ -1,8 +1,8 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { GridApi, GridOptions, RowClassParams, RowStyle, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
 
 var colorIndex = 0;
 var colors = ['#99999944', '#CC333344', '#33CC3344', '#2244CC44'];

@@ -1,11 +1,7 @@
-import { FilterModule } from '../filter/filterModules';
 import type { Module, ModuleValidationInvalidResult } from '../interfaces/iModule';
 import { _doOnce } from '../utils/function';
 import { _values } from '../utils/generic';
 import { ModuleNames } from './moduleNames';
-
-// TODO - remove - temp code for backwards compatibility
-export const INTERNAL_MODULES = [FilterModule] as const;
 
 export class ModuleRegistry {
     // having in a map a) removes duplicates and b) allows fast lookup
@@ -60,8 +56,6 @@ export class ModuleRegistry {
             return;
         }
         modules.forEach((module) => ModuleRegistry.__register(module, moduleBased, gridId));
-        // TODO - remove - temp code for backwards compatibility
-        INTERNAL_MODULES.forEach((module) => ModuleRegistry.__register(module, moduleBased, gridId));
     }
 
     private static isValidModuleVersion(module: Module): boolean {

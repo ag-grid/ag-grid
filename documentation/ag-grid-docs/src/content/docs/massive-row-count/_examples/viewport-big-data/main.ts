@@ -6,10 +6,10 @@ import {
     IViewportDatasourceParams,
     createGrid,
 } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { ViewportRowModelModule } from '@ag-grid-enterprise/viewport-row-model';
 
-ModuleRegistry.registerModules([ViewportRowModelModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ViewportRowModelModule]);
 
 const columnDefs: ColDef[] = [
     {

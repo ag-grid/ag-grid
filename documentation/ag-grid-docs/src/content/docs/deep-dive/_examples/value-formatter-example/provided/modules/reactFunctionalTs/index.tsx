@@ -9,7 +9,7 @@ import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
 
 // Row Data Interface
 interface IRow {

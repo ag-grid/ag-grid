@@ -1,14 +1,14 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
 
 const gridDiv = document.querySelector('#myGrid');
 
