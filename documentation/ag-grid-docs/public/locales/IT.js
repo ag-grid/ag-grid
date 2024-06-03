@@ -84,7 +84,7 @@ const AG_GRID_LOCALE_IT = {
     advancedFilterValidationNotANumber: 'Il valore non è un numero',
     advancedFilterValidationInvalidDate: 'Il valore non è una data valida',
     advancedFilterValidationMissingCondition: 'Condizione mancante',
-    advancedFilterValidationJoinOperatorMismatch: 'Gli operatori di unione all'interno di una condizione devono essere gli stessi',
+    advancedFilterValidationJoinOperatorMismatch: 'Gli operatori di unione all\'interno di una condizione devono essere gli stessi',
     advancedFilterValidationInvalidJoinOperator: 'Operatore di unione non trovato',
     advancedFilterValidationMissingEndBracket: 'Manca la parentesi di chiusura',
     advancedFilterValidationExtraEndBracket: 'Troppe parentesi di chiusura',
