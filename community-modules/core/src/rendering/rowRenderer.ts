@@ -526,7 +526,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.cachedRowCtrls.removeRow(rowNode);
             return;
         } else {
-            const destroyAndRecreateCtrl = (dataStruct: RowCtrl[] | { [idx: number]: RowCtrl }) => {
+            const destroyAndRecreateCtrl = (dataStruct: RowCtrl[] | RowCtrlByRowIndex) => {
                 const ctrl = dataStruct[rowNode.rowIndex!];
                 if (!ctrl) {
                     return;
