@@ -11,6 +11,10 @@ The example below shows some Provided Editor Components and some Custom Editor C
 
 ## Custom Components
 
+{% if isFramework("react") %}
+{% metaTag tags=["useGridCellEditor"] /%}
+{% /if %}
+
 {% partial file="./_component-interface-javascript.mdoc" /%}
 {% partial file="./_component-interface-angular.mdoc" /%}
 {% partial file="./_component-interface-react.mdoc" /%}
