@@ -5,9 +5,10 @@ import type {
     LoadSuccessParams,
     NamedBean,
     RowNode,
+    RowNodeBlockLoader,
     RowRenderer,
 } from '@ag-grid-community/core';
-import { BeanStub, RowNodeBlockLoader } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
 import type { ServerSideRowModel } from '../../serverSideRowModel';
 import type { LazyCache } from './lazyCache';
@@ -21,7 +22,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     private rowModel: ServerSideRowModel;
 
     public wireBeans(beans: BeanCollection) {
-        this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
+        this.rowNodeBlockLoader = beans.rowNodeBlockLoader!;
         this.rowRenderer = beans.rowRenderer;
         this.rowModel = beans.rowModel as ServerSideRowModel;
     }
@@ -41,9 +42,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     public postConstruct() {
         // after a block is loaded, check if we have a block to load now that
         // `maxConcurrentDatasourceRequests` has changed
-        this.addManagedListener(this.rowNodeBlockLoader, RowNodeBlockLoader.BLOCK_LOADED_EVENT, () =>
-            this.queueLoadCheck()
-        );
+        this.addManagedListener(this.rowNodeBlockLoader, 'blockLoaded', () => this.queueLoadCheck());
     }
 
     public subscribe(cache: LazyCache) {

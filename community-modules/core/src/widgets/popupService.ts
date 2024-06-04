@@ -433,17 +433,18 @@ export class PopupService extends BeanStub implements NamedBean {
         const isVertical = direction === DIRECTION.vertical;
         const sizeProperty = isVertical ? 'clientHeight' : 'clientWidth';
         const anchorProperty = isVertical ? 'top' : 'left';
-        const offsetProperty = isVertical ? 'offsetHeight' : 'offsetWidth';
+        const offsetProperty = isVertical ? 'height' : 'width';
         const scrollPositionProperty = isVertical ? 'scrollTop' : 'scrollLeft';
 
         const eDocument = this.gos.getDocument();
         const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
+        const popupRect = ePopup.getBoundingClientRect();
         const parentRect = popupParent.getBoundingClientRect();
         const documentRect = eDocument.documentElement.getBoundingClientRect();
         const isBody = popupParent === eDocument.body;
 
-        const offsetSize = ePopup[offsetProperty];
+        const offsetSize = Math.ceil(popupRect[offsetProperty]);
         const getSize = isVertical ? _getAbsoluteHeight : _getAbsoluteWidth;
 
         let sizeOfParent = isBody

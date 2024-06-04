@@ -2,6 +2,7 @@ import { AgGridAngular, ICellRendererAngularComp } from '@ag-grid-community/angu
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
     ColDef,
+    CommunityFeaturesModule,
     GridReadyEvent,
     ICellRendererParams,
     ModuleRegistry,

@@ -3,6 +3,7 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
     ColDef,
+    CommunityFeaturesModule,
     GetRowIdParams,
     ModuleRegistry,
     ValueFormatterParams,

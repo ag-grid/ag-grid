@@ -222,6 +222,7 @@ export { RowHighlightPosition } from '@ag-grid-community/core';
 export { RowNode } from '@ag-grid-community/core';
 export { RowNodeBlock } from '@ag-grid-community/core';
 export { RowNodeBlockLoader } from '@ag-grid-community/core';
+export { RowNodeBlockModule } from '@ag-grid-community/core';
 export { RowNodeSorter } from '@ag-grid-community/core';
 export { RowPositionUtils } from '@ag-grid-community/core';
 export { RowRenderer } from '@ag-grid-community/core';

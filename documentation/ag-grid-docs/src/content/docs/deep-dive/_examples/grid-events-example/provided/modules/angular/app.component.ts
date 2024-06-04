@@ -3,6 +3,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import {
     CellValueChangedEvent,
     ColDef,
+    CommunityFeaturesModule,
     GridReadyEvent,
     ICellRendererParams,
     ModuleRegistry,

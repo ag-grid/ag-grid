@@ -151,8 +151,7 @@ export class InfiniteCache extends BeanStub {
         const emptyBlocksToKeep = InfiniteCache.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
 
         blocksForPurging.forEach((block: InfiniteBlock, index: number) => {
-            const purgeBecauseBlockEmpty =
-                block.getState() === InfiniteBlock.STATE_WAITING_TO_LOAD && index >= emptyBlocksToKeep;
+            const purgeBecauseBlockEmpty = block.getState() === 'needsLoading' && index >= emptyBlocksToKeep;
 
             const purgeBecauseCacheFull = maxBlocksProvided ? index >= blocksToKeep! : false;
 

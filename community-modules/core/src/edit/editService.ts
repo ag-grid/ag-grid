@@ -194,11 +194,11 @@ export class EditService extends BeanStub implements NamedBean {
             node: rowNode,
             data: rowNode.data,
             cellStartedEdit: cellStartedEdit,
-            onKeyDown: cellCtrl.onKeyDown,
-            stopEditing: cellCtrl.stopEditingAndFocus,
+            onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
+            stopEditing: cellCtrl.stopEditingAndFocus.bind(cellCtrl),
             eGridCell: cellCtrl.getGui(),
             parseValue: (newValue: any) => this.valueService.parseValue(column, rowNode, newValue, cellCtrl.getValue()),
-            formatValue: cellCtrl.formatValue,
+            formatValue: cellCtrl.formatValue.bind(cellCtrl),
         });
     }
 

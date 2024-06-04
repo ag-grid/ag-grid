@@ -2,6 +2,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import {
     ColDef,
     ColGroupDef,
+    CommunityFeaturesModule,
     GridReadyEvent,
     ModuleRegistry,
     SizeColumnsToFitGridStrategy,
