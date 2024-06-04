@@ -13,6 +13,7 @@ import type { IFloatingFilterParams } from '../../filter/floating/floatingFilter
 import type { IHeaderParams } from '../../headerRendering/cells/column/headerComp';
 import type { IHeaderGroupParams } from '../../headerRendering/cells/columnGroup/headerGroupComp';
 import type { IDateParams } from '../../interfaces/dateComponent';
+import type { GroupCellRendererParams } from '../../interfaces/groupCellRenderer';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { AgGridCommon, WithoutGridCommon } from '../../interfaces/iCommon';
 import type { IFilterDef, IFilterParams } from '../../interfaces/iFilter';
@@ -23,7 +24,6 @@ import type { ToolPanelDef } from '../../interfaces/iSideBar';
 import type { IStatusPanelParams, StatusPanelDef } from '../../interfaces/iStatusPanel';
 import type { IToolPanelParams } from '../../interfaces/iToolPanel';
 import type { IMenuItemParams, MenuItemDef } from '../../interfaces/menuItem';
-import type { GroupCellRendererParams } from '../../rendering/cellRenderers/groupCellRendererCtrl';
 import type { ICellRendererParams, ISetFilterCellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
 import type { ILoadingOverlayParams } from '../../rendering/overlays/loadingOverlayComponent';
 import type { INoRowsOverlayParams } from '../../rendering/overlays/noRowsOverlayComponent';

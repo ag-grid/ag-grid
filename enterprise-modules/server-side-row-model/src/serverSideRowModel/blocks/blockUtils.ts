@@ -19,7 +19,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     beanName = 'ssrmBlockUtils' as const;
 
     private valueService: ValueService;
-    private showRowGroupColsService: ShowRowGroupColsService;
+    private showRowGroupColsService?: ShowRowGroupColsService;
     private nodeManager: NodeManager;
     private beans: BeanCollection;
     private expansionService: ServerSideExpansionService;
@@ -215,7 +215,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
-        const groupDisplayCols = this.showRowGroupColsService.getShowRowGroupCols();
+        const groupDisplayCols = this.showRowGroupColsService?.getShowRowGroupCols() ?? [];
 
         const usingTreeData = this.gos.get('treeData');
 

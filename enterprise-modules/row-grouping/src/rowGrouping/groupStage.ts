@@ -77,7 +77,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         this.selectableService = beans.selectableService;
         this.valueService = beans.valueService;
         this.selectionService = beans.selectionService;
-        this.showRowGroupColsService = beans.showRowGroupColsService;
+        this.showRowGroupColsService = beans.showRowGroupColsService!;
     }
 
     // when grouping, these items are of note:

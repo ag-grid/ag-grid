@@ -9,15 +9,20 @@ import React, {
     useState,
 } from 'react';
 
-import type { GroupCellRendererParams, IGroupCellRenderer, UserCompDetails } from 'ag-grid-community';
-import { GroupCellRendererCtrl, _escapeString } from 'ag-grid-community';
+import type {
+    GroupCellRendererCtrl,
+    GroupCellRendererParams,
+    IGroupCellRenderer,
+    UserCompDetails,
+} from 'ag-grid-community';
+import { _escapeString } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
 import { CssClasses } from '../utils';
 
 const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
-    const context = useContext(BeansContext).context!;
+    const { ctrlsFactory, context } = useContext(BeansContext);
 
     const eGui = useRef<HTMLElement | null>(null);
     const eValueRef = useRef<HTMLElement>(null);
@@ -68,16 +73,19 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
             setCheckboxVisible: (visible) => setCheckboxCssClasses((prev) => prev.setClass('ag-invisible', !visible)),
         };
 
-        ctrlRef.current = context.createBean(new GroupCellRendererCtrl());
-        ctrlRef.current.init(
-            compProxy,
-            eGui.current,
-            eCheckboxRef.current!,
-            eExpandedRef.current!,
-            eContractedRef.current!,
-            GroupCellRenderer,
-            props
-        );
+        const groupCellRendererCtrl = ctrlsFactory.getInstance('groupCellRendererCtrl') as GroupCellRendererCtrl;
+        if (groupCellRendererCtrl) {
+            ctrlRef.current = context.createBean(groupCellRendererCtrl);
+            ctrlRef.current.init(
+                compProxy,
+                eGui.current,
+                eCheckboxRef.current!,
+                eExpandedRef.current!,
+                eContractedRef.current!,
+                GroupCellRenderer,
+                props
+            );
+        }
     }, []);
 
     const className = useMemo(() => `ag-cell-wrapper ${cssClasses.toString()}`, [cssClasses]);

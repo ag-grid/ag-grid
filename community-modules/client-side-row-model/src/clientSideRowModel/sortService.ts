@@ -22,7 +22,7 @@ export class SortService extends BeanStub implements NamedBean {
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
     private rowNodeSorter: RowNodeSorter;
-    private showRowGroupColsService: ShowRowGroupColsService;
+    private showRowGroupColsService?: ShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
@@ -249,7 +249,7 @@ export class SortService extends BeanStub implements NamedBean {
         }
 
         rowNodes.forEach((childRowNode) => {
-            const groupDisplayCols = this.showRowGroupColsService.getShowRowGroupCols();
+            const groupDisplayCols = this.showRowGroupColsService?.getShowRowGroupCols() ?? [];
             groupDisplayCols.forEach((groupDisplayCol) => {
                 const showRowGroup = groupDisplayCol.getColDef().showRowGroup;
                 if (typeof showRowGroup !== 'string') {

@@ -1,11 +1,14 @@
-import type { NamedBean } from '../context/bean';
-import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
-import type { AgColumn } from '../entities/agColumn';
-import type { ColumnModel } from './columnModel';
-import type { FuncColsService } from './funcColsService';
+import { BeanStub } from '@ag-grid-community/core';
+import type {
+    AgColumn,
+    BeanCollection,
+    ColumnModel,
+    FuncColsService,
+    IShowRowGroupColsService,
+    NamedBean,
+} from '@ag-grid-community/core';
 
-export class ShowRowGroupColsService extends BeanStub implements NamedBean {
+export class ShowRowGroupColsService extends BeanStub implements NamedBean, IShowRowGroupColsService {
     beanName = 'showRowGroupColsService' as const;
 
     private columnModel: ColumnModel;

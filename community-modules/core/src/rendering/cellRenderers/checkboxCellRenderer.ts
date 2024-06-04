@@ -1,4 +1,4 @@
-import { GROUP_AUTO_COLUMN_ID } from '../../columns/autoColService';
+import { GROUP_AUTO_COLUMN_ID } from '../../columns/columnUtils';
 import { KeyCode } from '../../constants/keyCode';
 import type { CellEditingStartedEvent, CellEditingStoppedEvent } from '../../events';
 import { Events } from '../../events';

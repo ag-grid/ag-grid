@@ -11,11 +11,10 @@ import type { ColumnAnimationService } from '../rendering/columnAnimationService
 import type { SortController } from '../sortController';
 import { _areEqual, _removeFromArray } from '../utils/array';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
-import { GROUP_AUTO_COLUMN_ID } from './autoColService';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColumnGetStateService } from './columnGetStateService';
 import type { ColumnModel } from './columnModel';
-import { getColumnsFromTree } from './columnUtils';
+import { GROUP_AUTO_COLUMN_ID, getColumnsFromTree } from './columnUtils';
 import type { FuncColsService } from './funcColsService';
 import type { PivotResultColsService } from './pivotResultColsService';
 import type { VisibleColsService } from './visibleColsService';

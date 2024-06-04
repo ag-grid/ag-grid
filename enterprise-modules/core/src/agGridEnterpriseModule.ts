@@ -15,8 +15,8 @@ export const EnterpriseCoreModule: Module = {
     agStackComponents: [AgWatermark],
     userComponents: [
         {
-            componentName: 'agMenuItem',
-            componentClass: AgMenuItemRenderer,
+            name: 'agMenuItem',
+            classImp: AgMenuItemRenderer,
         },
     ],
 };

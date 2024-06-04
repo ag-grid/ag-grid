@@ -1,99 +1,34 @@
-import type { ColumnModel } from '../../columns/columnModel';
-import type { FuncColsService } from '../../columns/funcColsService';
-import type { VisibleColsService } from '../../columns/visibleColsService';
-import type { UserCompDetails, UserComponentFactory } from '../../components/framework/userComponentFactory';
-import { KeyCode } from '../../constants/keyCode';
-import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection } from '../../context/context';
-import type { CtrlsService } from '../../ctrlsService';
-import type { AgColumn } from '../../entities/agColumn';
-import type { CellRendererSelectorFunc, ColumnFunctionCallbackParams } from '../../entities/colDef';
-import { RowNode } from '../../entities/rowNode';
-import type { IRowNode } from '../../interfaces/iRowNode';
-import { _removeAriaExpanded, _setAriaExpanded } from '../../utils/aria';
-import { _isElementInEventPath, _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../utils/event';
-import { _warnOnce } from '../../utils/function';
-import { _missing } from '../../utils/generic';
-import { _createIconNoSpan } from '../../utils/icon';
-import { _cloneObject } from '../../utils/object';
-import type { ExpressionService } from '../../valueService/expressionService';
-import type { ValueService } from '../../valueService/valueService';
-import { CheckboxSelectionComponent } from '../checkboxSelectionComponent';
-import { RowDragComp } from '../row/rowDragComp';
-import type { ICellRendererParams } from './iCellRenderer';
-
-export interface IGroupCellRenderer {
-    setInnerRenderer(compDetails: UserCompDetails | undefined, valueToDisplay: any): void;
-    setChildCount(count: string): void;
-    setCheckboxVisible(value: boolean): void;
-    setExpandedDisplayed(value: boolean): void;
-    setContractedDisplayed(value: boolean): void;
-    addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-}
-
-export interface FooterValueGetterFunc {
-    (params: GroupCellRendererParams): any;
-}
-
-export interface TotalValueGetterFunc {
-    (params: GroupCellRendererParams): any;
-}
-
-export type GroupCheckboxSelectionCallbackParams<TData = any, TValue = any> = ColumnFunctionCallbackParams<TData> &
-    GroupCellRendererParams<TData, TValue>;
-
-export interface GroupCheckboxSelectionCallback<TData = any, TValue = any> {
-    (params: GroupCheckboxSelectionCallbackParams<TData, TValue>): boolean;
-}
-
-/**
- * Parameters used in `colDef.cellRendererParams` to configure a  Group Cell Renderer (`agGroupCellRenderer`).
- */
-export interface IGroupCellRendererParams<TData = any, TValue = any> {
-    /** Set to `true` to not include any padding (indentation) in the child rows. */
-    suppressPadding?: boolean;
-    /** Set to `true` to suppress expand on double click. */
-    suppressDoubleClickExpand?: boolean;
-    /** Set to `true` to suppress expand on <kbd>↵ Enter</kbd> */
-    suppressEnterExpand?: boolean;
-    /** The value getter for the footer text. Can be a function or expression. @deprecated v31.2 use `totalValueGetter` */
-    footerValueGetter?: string | FooterValueGetterFunc;
-    /** The value getter for the total row text. Can be a function or expression. */
-    totalValueGetter?: string | TotalValueGetterFunc;
-    /** If `true`, count is not displayed beside the name. */
-    suppressCount?: boolean;
-    /**
-     * Set to `true`, or a function that returns `true`, if a checkbox should be included.
-     */
-    checkbox?: boolean | GroupCheckboxSelectionCallback<TData, TValue>;
-
-    /** The renderer to use for inside the cell (after grouping functions are added) */
-    innerRenderer?: any;
-    /** Additional params to customise to the `innerRenderer`. */
-    innerRendererParams?: any;
-    /** Callback to enable different innerRenderers to be used based of value of params. */
-    innerRendererSelector?: CellRendererSelectorFunc;
-}
-
-export interface IGroupCellRendererFullRowParams {
-    /**
-     * Only when in fullWidth, this gives whether the comp is pinned or not.
-     * If not doing fullWidth, then this is not provided, as pinned can be got from the column.
-     */
-    pinned?: 'left' | 'right' | null;
-    /** 'true' if comp is showing full width. */
-    fullWidth: boolean;
-
-    rowDrag?: boolean;
-}
-
-/**
- * Parameters provided by the grid to the `init` method of a `agGroupCellRenderer`.
- * Do not use in `colDef.cellRendererParams` - see `IGroupCellRendererParams` instead.
- */
-export type GroupCellRendererParams<TData = any, TValue = any> = IGroupCellRendererParams &
-    ICellRendererParams<TData, TValue> &
-    IGroupCellRendererFullRowParams;
+import type {
+    AgColumn,
+    BeanCollection,
+    ColumnModel,
+    CtrlsService,
+    ExpressionService,
+    FuncColsService,
+    GroupCellRendererParams,
+    IGroupCellRenderer,
+    IRowNode,
+    UserCompDetails,
+    UserComponentFactory,
+    ValueService,
+    VisibleColsService,
+} from '@ag-grid-community/core';
+import {
+    BeanStub,
+    CheckboxSelectionComponent,
+    KeyCode,
+    RowDragComp,
+    RowNode,
+    _cloneObject,
+    _createIconNoSpan,
+    _isElementInEventPath,
+    _isStopPropagationForAgGrid,
+    _missing,
+    _removeAriaExpanded,
+    _setAriaExpanded,
+    _stopPropagationForAgGrid,
+    _warnOnce,
+} from '@ag-grid-community/core';
 
 export class GroupCellRendererCtrl extends BeanStub {
     private expressionService: ExpressionService;

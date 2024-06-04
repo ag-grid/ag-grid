@@ -22,3 +22,6 @@ export { VirtualListDragFeature } from './features/virtualListDragFeature';
 
 export { TabbedItem } from './widgets/iTabbedLayout';
 export { TabbedLayout } from './widgets/tabbedLayout';
+
+export { GroupCellRenderer } from './rendering/groupCellRenderer';
+export { GroupCellRendererCtrl } from './rendering/groupCellRendererCtrl';

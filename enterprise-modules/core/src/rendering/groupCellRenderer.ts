@@ -1,20 +1,24 @@
-import type { UserCompDetails } from '../../components/framework/userComponentFactory';
-import { _setAriaRole } from '../../utils/aria';
-import { _setDisplayed } from '../../utils/dom';
-import { Component, RefPlaceholder } from '../../widgets/component';
-import type { GroupCellRendererParams, IGroupCellRenderer } from './groupCellRendererCtrl';
+import type {
+    GroupCellRendererParams,
+    ICellRendererComp,
+    IGroupCellRenderer,
+    UserCompDetails,
+} from '@ag-grid-community/core';
+import { Component, RefPlaceholder, _setAriaRole, _setDisplayed } from '@ag-grid-community/core';
+
 import { GroupCellRendererCtrl } from './groupCellRendererCtrl';
-import type { ICellRendererComp } from './iCellRenderer';
+
+const groupTemplate =
+    /* html */
+    `<span class="ag-cell-wrapper">
+    <span class="ag-group-expanded" data-ref="eExpanded"></span>
+    <span class="ag-group-contracted" data-ref="eContracted"></span>
+    <span class="ag-group-checkbox ag-invisible" data-ref="eCheckbox"></span>
+    <span class="ag-group-value" data-ref="eValue"></span>
+    <span class="ag-group-child-count" data-ref="eChildCount"></span>
+</span>`;
 
 export class GroupCellRenderer extends Component implements ICellRendererComp {
-    private static TEMPLATE /* html */ = `<span class="ag-cell-wrapper">
-            <span class="ag-group-expanded" data-ref="eExpanded"></span>
-            <span class="ag-group-contracted" data-ref="eContracted"></span>
-            <span class="ag-group-checkbox ag-invisible" data-ref="eCheckbox"></span>
-            <span class="ag-group-value" data-ref="eValue"></span>
-            <span class="ag-group-child-count" data-ref="eChildCount"></span>
-        </span>`;
-
     private readonly eExpanded: HTMLElement = RefPlaceholder;
     private readonly eContracted: HTMLElement = RefPlaceholder;
     private readonly eCheckbox: HTMLElement = RefPlaceholder;
@@ -25,7 +29,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     private innerCellRenderer: ICellRendererComp;
 
     constructor() {
-        super(GroupCellRenderer.TEMPLATE);
+        super(groupTemplate);
     }
 
     public init(params: GroupCellRendererParams): void {
