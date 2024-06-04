@@ -8,7 +8,7 @@ export class CtrlsFactory extends BeanStub implements NamedBean {
     private registry: { [K in ControllerName]?: new (args?: any[]) => object } = {};
 
     public register(meta: ControllerMeta): void {
-        this.registry[meta.controllerName] = meta.controllerClass;
+        this.registry[meta.name] = meta.classImp;
     }
 
     public getInstance<T>(name: ControllerName, ...args: any[]): T | undefined {

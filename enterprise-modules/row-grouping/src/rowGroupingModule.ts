@@ -20,29 +20,29 @@ export const RowGroupingCoreModule: Module = {
     agStackComponents: [AgGridHeaderDropZones],
     userComponents: [
         {
-            componentName: 'agGroupRowRenderer',
-            componentClass: GroupCellRenderer,
+            name: 'agGroupRowRenderer',
+            classImp: GroupCellRenderer,
         },
         {
-            componentName: 'agGroupCellRenderer',
-            componentClass: GroupCellRenderer,
+            name: 'agGroupCellRenderer',
+            classImp: GroupCellRenderer,
         },
     ],
-    controllers: [{ controllerName: 'groupCellRendererCtrl', controllerClass: GroupCellRendererCtrl }],
+    controllers: [{ name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl }],
     dependantModules: [EnterpriseCoreModule],
 };
 
 export const GroupFilterModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-enterprise/group-filter',
-    userComponents: [{ componentName: 'agGroupColumnFilter', componentClass: GroupFilter }],
+    userComponents: [{ name: 'agGroupColumnFilter', classImp: GroupFilter }],
     dependantModules: [RowGroupingCoreModule, ColumnFilterModule],
 };
 
 export const GroupFloatingFilterModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-enterprise/group-floating-filter',
-    userComponents: [{ componentName: 'agGroupColumnFloatingFilter', componentClass: GroupFloatingFilterComp }],
+    userComponents: [{ name: 'agGroupColumnFloatingFilter', classImp: GroupFloatingFilterComp }],
     dependantModules: [GroupFilterModule, FloatingFilterModule],
 };
 

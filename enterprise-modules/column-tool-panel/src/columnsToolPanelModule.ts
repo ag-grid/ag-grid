@@ -17,10 +17,10 @@ export const ColumnsToolPanelModule: Module = {
     beans: [ModelItemUtils],
     agStackComponents: [AgPrimaryColsHeader, AgPrimaryColsList, AgPrimaryCols],
     userComponents: [
-        { componentName: 'agColumnsToolPanel', componentClass: ColumnToolPanel },
+        { name: 'agColumnsToolPanel', classImp: ColumnToolPanel },
         {
-            componentName: 'agMenuItem',
-            componentClass: AgMenuItemRenderer,
+            name: 'agMenuItem',
+            classImp: AgMenuItemRenderer,
         },
     ],
     dependantModules: [EnterpriseCoreModule, RowGroupingModule, SideBarModule],

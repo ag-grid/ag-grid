@@ -10,10 +10,10 @@ export const MultiFilterCoreModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-enterprise/multi-filter-core',
     userComponents: [
-        { componentName: 'agMultiColumnFilter', componentClass: MultiFilter },
+        { name: 'agMultiColumnFilter', classImp: MultiFilter },
         {
-            componentName: 'agMenuItem',
-            componentClass: AgMenuItemRenderer,
+            name: 'agMenuItem',
+            classImp: AgMenuItemRenderer,
         },
     ],
     dependantModules: [EnterpriseCoreModule, ColumnFilterModule],
@@ -22,7 +22,7 @@ export const MultiFilterCoreModule: Module = {
 const MultiFloatingFilterModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-enterprise/multi-floating-filter',
-    userComponents: [{ componentName: 'agMultiColumnFloatingFilter', componentClass: MultiFloatingFilterComp }],
+    userComponents: [{ name: 'agMultiColumnFloatingFilter', classImp: MultiFloatingFilterComp }],
     dependantModules: [MultiFilterCoreModule, ReadOnlyFloatingFilterModule],
 };
 

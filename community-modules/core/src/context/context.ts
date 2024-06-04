@@ -97,11 +97,60 @@ export interface ContextParams extends GenericContextParams<BeanName, BeanCollec
 export interface SingletonBean extends GenericSingletonBean<BeanName, BeanCollection> {}
 
 export type ControllerName = 'headerFilterCell' | 'detailCellRenderer' | 'groupCellRendererCtrl';
-
-export interface ControllerMeta {
-    controllerClass: new (...args: []) => object;
-    controllerName: ControllerName;
+export type UserComponentName =
+    | 'agColumnHeader'
+    | 'agColumnGroupHeader'
+    | 'agSortIndicator'
+    | 'agAnimateShowChangeCellRenderer'
+    | 'agAnimateSlideCellRenderer'
+    | 'agLoadingCellRenderer'
+    | 'agSkeletonCellRenderer'
+    | 'agCheckboxCellRenderer'
+    | 'agLoadingOverlay'
+    | 'agNoRowsOverlay'
+    | 'agTooltipComponent'
+    | 'agReadOnlyFloatingFilter'
+    | 'agTextColumnFilter'
+    | 'agNumberColumnFilter'
+    | 'agDateColumnFilter'
+    | 'agDateInput'
+    | 'agTextColumnFloatingFilter'
+    | 'agNumberColumnFloatingFilter'
+    | 'agDateColumnFloatingFilter'
+    | 'agMultiColumnFilter'
+    | 'agMultiColumnFloatingFilter'
+    | 'agGroupColumnFilter'
+    | 'agGroupColumnFloatingFilter'
+    | 'agSetColumnFilter'
+    | 'agSetColumnFloatingFilter'
+    | 'agCellEditor'
+    | 'agSelectCellEditor'
+    | 'agTextCellEditor'
+    | 'agNumberCellEditor'
+    | 'agDateCellEditor'
+    | 'agDateStringCellEditor'
+    | 'agCheckboxCellEditor'
+    | 'agLargeTextCellEditor'
+    | 'agRichSelect'
+    | 'agRichSelectCellEditor'
+    | 'agMenuItem'
+    | 'agColumnsToolPanel'
+    | 'agFiltersToolPanel'
+    | 'agGroupRowRenderer'
+    | 'agGroupCellRenderer'
+    | 'agDetailCellRenderer'
+    | 'agSparklineCellRenderer'
+    | 'agAggregationComponent'
+    | 'agSelectedRowCountComponent'
+    | 'agTotalRowCountComponent'
+    | 'agFilteredRowCountComponent'
+    | 'agTotalAndFilteredRowCountComponent';
+export interface NamedClass<TName = string> {
+    classImp: new (...args: []) => object;
+    name: TName;
 }
+export type ControllerMeta = NamedClass<ControllerName>;
+export type ComponentMeta = NamedClass<UserComponentName>;
 
 export interface CoreBeanCollection {
     context: Context;

@@ -26,8 +26,8 @@ export const MenuModule: Module = {
     dependantModules: [EnterpriseCoreModule],
     userComponents: [
         {
-            componentName: 'agMenuItem',
-            componentClass: AgMenuItemRenderer,
+            name: 'agMenuItem',
+            classImp: AgMenuItemRenderer,
         },
     ],
 };

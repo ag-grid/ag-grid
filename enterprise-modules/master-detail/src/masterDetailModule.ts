@@ -12,18 +12,18 @@ export const MasterDetailModule: Module = {
     beans: [],
     userComponents: [
         {
-            componentName: 'agGroupRowRenderer',
-            componentClass: GroupCellRenderer,
+            name: 'agGroupRowRenderer',
+            classImp: GroupCellRenderer,
         },
         {
-            componentName: 'agGroupCellRenderer',
-            componentClass: GroupCellRenderer,
+            name: 'agGroupCellRenderer',
+            classImp: GroupCellRenderer,
         },
-        { componentName: 'agDetailCellRenderer', componentClass: DetailCellRenderer },
+        { name: 'agDetailCellRenderer', classImp: DetailCellRenderer },
     ],
     controllers: [
-        { controllerName: 'detailCellRenderer', controllerClass: DetailCellRendererCtrl },
-        { controllerName: 'groupCellRendererCtrl', controllerClass: GroupCellRendererCtrl },
+        { name: 'detailCellRenderer', classImp: DetailCellRendererCtrl },
+        { name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl },
     ],
     dependantModules: [EnterpriseCoreModule],
 };

@@ -34,7 +34,7 @@ export const FullRowEditModule: Module = {
 export const DefaultEditorModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-community/default-editor',
-    userComponents: [{ componentName: 'agCellEditor', componentClass: TextCellEditor }],
+    userComponents: [{ name: 'agCellEditor', classImp: TextCellEditor }],
     dependantModules: [EditCoreModule],
 };
 
@@ -42,11 +42,11 @@ export const DataTypeEditorsModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-community/data-type-editors',
     userComponents: [
-        { componentName: 'agTextCellEditor', componentClass: TextCellEditor },
-        { componentName: 'agNumberCellEditor', componentClass: NumberCellEditor },
-        { componentName: 'agDateCellEditor', componentClass: DateCellEditor },
-        { componentName: 'agDateStringCellEditor', componentClass: DateStringCellEditor },
-        { componentName: 'agCheckboxCellEditor', componentClass: CheckboxCellEditor },
+        { name: 'agTextCellEditor', classImp: TextCellEditor },
+        { name: 'agNumberCellEditor', classImp: NumberCellEditor },
+        { name: 'agDateCellEditor', classImp: DateCellEditor },
+        { name: 'agDateStringCellEditor', classImp: DateStringCellEditor },
+        { name: 'agCheckboxCellEditor', classImp: CheckboxCellEditor },
     ],
     dependantModules: [DefaultEditorModule],
 };
@@ -54,14 +54,14 @@ export const DataTypeEditorsModule: Module = {
 export const SelectEditorModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-community/select-editor',
-    userComponents: [{ componentName: 'agSelectCellEditor', componentClass: SelectCellEditor }],
+    userComponents: [{ name: 'agSelectCellEditor', classImp: SelectCellEditor }],
     dependantModules: [EditCoreModule],
 };
 
 export const LargeTextEditorModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-community/large-text-editor',
-    userComponents: [{ componentName: 'agLargeTextCellEditor', componentClass: LargeTextCellEditor }],
+    userComponents: [{ name: 'agLargeTextCellEditor', classImp: LargeTextCellEditor }],
     dependantModules: [EditCoreModule],
 };
 

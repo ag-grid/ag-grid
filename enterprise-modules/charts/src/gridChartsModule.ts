@@ -48,8 +48,8 @@ export const GridChartsModule: Module = {
     ],
     userComponents: [
         {
-            componentName: 'agMenuItem',
-            componentClass: AgMenuItemRenderer,
+            name: 'agMenuItem',
+            classImp: AgMenuItemRenderer,
         },
     ],
     dependantModules: [RangeSelectionModule, EnterpriseCoreModule],

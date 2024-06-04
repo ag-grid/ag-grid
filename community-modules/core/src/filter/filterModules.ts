@@ -29,7 +29,7 @@ export const ColumnFilterModule: Module = {
 export const FloatingFilterModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-community/floating-filter',
-    controllers: [{ controllerName: 'headerFilterCell', controllerClass: HeaderFilterCellCtrl as any }],
+    controllers: [{ name: 'headerFilterCell', classImp: HeaderFilterCellCtrl as any }],
     dependantModules: [ColumnFilterModule],
 };
 
@@ -37,7 +37,7 @@ export const ReadOnlyFloatingFilterModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-community/read-only-floating-filter',
     dependantModules: [FloatingFilterModule],
-    userComponents: [{ componentName: 'agReadOnlyFloatingFilter', componentClass: ReadOnlyFloatingFilter }],
+    userComponents: [{ name: 'agReadOnlyFloatingFilter', classImp: ReadOnlyFloatingFilter }],
 };
 
 export const SimpleFilterModule: Module = {
@@ -45,10 +45,10 @@ export const SimpleFilterModule: Module = {
     moduleName: '@ag-grid-community/simple-filter',
     dependantModules: [ColumnFilterModule],
     userComponents: [
-        { componentName: 'agTextColumnFilter', componentClass: TextFilter },
-        { componentName: 'agNumberColumnFilter', componentClass: NumberFilter },
-        { componentName: 'agDateColumnFilter', componentClass: DateFilter },
-        { componentName: 'agDateInput', componentClass: DefaultDateComponent },
+        { name: 'agTextColumnFilter', classImp: TextFilter },
+        { name: 'agNumberColumnFilter', classImp: NumberFilter },
+        { name: 'agDateColumnFilter', classImp: DateFilter },
+        { name: 'agDateInput', classImp: DefaultDateComponent },
     ],
 };
 
@@ -57,9 +57,9 @@ export const SimpleFloatingFilterModule: Module = {
     moduleName: '@ag-grid-community/simple-floating-filter',
     dependantModules: [SimpleFilterModule, FloatingFilterModule],
     userComponents: [
-        { componentName: 'agTextColumnFloatingFilter', componentClass: TextFloatingFilter },
-        { componentName: 'agNumberColumnFloatingFilter', componentClass: NumberFloatingFilter },
-        { componentName: 'agDateColumnFloatingFilter', componentClass: DateFloatingFilter },
+        { name: 'agTextColumnFloatingFilter', classImp: TextFloatingFilter },
+        { name: 'agNumberColumnFloatingFilter', classImp: NumberFloatingFilter },
+        { name: 'agDateColumnFloatingFilter', classImp: DateFloatingFilter },
     ],
 };
 
