@@ -1,6 +1,7 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
     CellValueChangedEvent,
+    CommunityFeaturesModule,
     GridApi,
     GridOptions,
     ModuleRegistry,

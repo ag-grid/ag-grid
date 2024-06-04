@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 // Theme
-import { ColDef, ModuleRegistry, ValueFormatterParams } from '@ag-grid-community/core';
+import { ColDef, CommunityFeaturesModule, ModuleRegistry, ValueFormatterParams } from '@ag-grid-community/core';
 import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 // React Grid Logic
 import '@ag-grid-community/styles/ag-grid.css';

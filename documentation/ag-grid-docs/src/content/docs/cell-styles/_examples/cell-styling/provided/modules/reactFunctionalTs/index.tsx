@@ -5,6 +5,7 @@ import {
     CellClassParams,
     CellClassRules,
     ColDef,
+    CommunityFeaturesModule,
     GridReadyEvent,
     ModuleRegistry,
     ValueParserParams,
