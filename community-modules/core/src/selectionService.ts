@@ -27,6 +27,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
 
     private selectedNodes: Map<string, RowNode> = new Map();
     private lastRowNode: RowNode | null = null;
+    private selectionCtx: SelectionContext = new SelectionContext();
 
     private groupSelectsChildren: boolean;
     private rowSelection?: 'single' | 'multiple';
@@ -71,31 +72,27 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         const filteredNodes = nodes.map((node) => (node.footer ? node.sibling! : node));
 
         if (rangeSelect) {
-            if (nodes.length > 1) {
+            if (filteredNodes.length > 1) {
                 console.warn('AG Grid: cannot range select while selecting multiple rows');
                 return 0;
             }
 
-            let toNode: RowNode | null = null;
-            if (source === 'checkboxSelected' && newValue === false && this.lastRowNode) {
-                if (this.lastRowNode.id) {
-                    toNode = this.lastRowNode;
-                } else {
-                    this.lastRowNode = null;
+            const node = filteredNodes[0];
+
+            if (this.selectionCtx.isInRange(node)) {
+                const toUnselect = this.selectionCtx.getNotBetweenRootAnd(node);
+                return this.selectRange(toUnselect[0], _last(toUnselect), false, source);
+            } else {
+                const fromNode = this.selectionCtx.getRoot();
+                const toNode = node;
+                if (fromNode !== toNode && this.isMultiselect()) {
+                    return this.selectRange(toNode, fromNode, newValue, source);
                 }
             }
+        }
 
-            if (toNode == null) {
-                toNode = this.getLastSelectedNode();
-            }
-
-            if (toNode) {
-                const fromNode = filteredNodes[0];
-                const newRowClicked = fromNode !== toNode;
-                if (newRowClicked && this.isMultiselect()) {
-                    return this.selectRange(fromNode, toNode, newValue, source);
-                }
-            }
+        if (newValue) {
+            this.selectionCtx.reset(filteredNodes[0]);
         }
 
         // when deselecting nodes, we want to use the last deselected node
@@ -151,8 +148,19 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
     // selects all rows between this node and the last selected node (or the top if this is the first selection).
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
-    private selectRange(fromNode: RowNode, toNode: RowNode, value: boolean, source: SelectionEventSourceType): number {
+    private selectRange(
+        fromNode: RowNode,
+        toNode: RowNode | null,
+        value: boolean,
+        source: SelectionEventSourceType
+    ): number {
         const nodesToSelect = this.rowModel.getNodesInRangeForSelection(fromNode, toNode);
+
+        if (value) {
+            this.selectionCtx.extend(nodesToSelect);
+        } else {
+            this.selectionCtx.remove(nodesToSelect);
+        }
 
         let updatedCount = 0;
 
@@ -653,5 +661,79 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             nodes,
             source,
         });
+    }
+}
+
+class SelectionContext {
+    private root: RowNode | null = null;
+    private range: RowNode[] = [];
+    private rangeLookup: Record<string, number> = {};
+
+    public reset(node: RowNode): void {
+        this.range.length = 0;
+        this.rangeLookup = {};
+        this.root = node;
+    }
+
+    public extend(nodes: RowNode[]): void {
+        for (const node of nodes) {
+            if (this.rangeLookup[node.id!] === undefined) {
+                this.range.push(node);
+                this.rangeLookup[node.id!] = this.range.length - 1;
+            }
+        }
+    }
+
+    public isInRange(node: RowNode): boolean {
+        return node.id !== undefined && node.id in this.rangeLookup;
+    }
+
+    public getRoot(): RowNode | null {
+        return this.root;
+    }
+
+    public getBetween(nodeA: RowNode, nodeB: RowNode): RowNode[] {
+        if (nodeA.id === undefined || nodeB.id === undefined) {
+            return [];
+        }
+
+        const [first, second] = [nodeA, nodeB].sort((a, b) => a.rowIndex ?? 0 - (b.rowIndex ?? 0));
+
+        const firstIdx = this.rangeLookup[first.id!];
+        const secondIdx = this.rangeLookup[second.id!];
+
+        return this.range.slice(firstIdx, secondIdx);
+    }
+
+    public getBetweenRootAnd(node: RowNode): RowNode[] {
+        return this.root === null ? [] : this.getBetween(this.root, node);
+    }
+
+    public getNotBetween(nodeA: RowNode, nodeB: RowNode): RowNode[] {
+        if (nodeA.id === undefined || nodeB.id === undefined) {
+            return [];
+        }
+
+        const [first, second] = [nodeA, nodeB].sort((a, b) => this.rangeLookup[a.id!] - this.rangeLookup[b.id!]);
+
+        const firstIdx = this.rangeLookup[first.id!];
+        const secondIdx = this.rangeLookup[second.id!];
+
+        return this.range.slice(0, firstIdx).concat(this.range.slice(secondIdx + 1));
+    }
+
+    public getNotBetweenRootAnd(node: RowNode): RowNode[] {
+        return this.root === null ? [] : this.getNotBetween(this.root, node);
+    }
+
+    public remove(nodes: RowNode[]): void {
+        const firstIdx = this.rangeLookup[nodes[0].id!];
+        const lastIdx = this.rangeLookup[_last(nodes).id!];
+
+        this.range.splice(firstIdx, lastIdx - firstIdx + 1);
+
+        for (const node of nodes) {
+            delete this.rangeLookup[node.id!];
+        }
     }
 }
