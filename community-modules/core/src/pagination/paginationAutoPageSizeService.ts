@@ -6,17 +6,17 @@ import type { EventsType } from '../eventKeys';
 import { Events } from '../events';
 import type { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
 import { _debounce } from '../utils/function';
-import type { PaginationProxy } from './paginationProxy';
+import type { PaginationService } from './paginationService';
 
 export class PaginationAutoPageSizeService extends BeanStub implements NamedBean {
     beanName = 'paginationAutoPageSizeService' as const;
 
     private ctrlsService: CtrlsService;
-    private paginationProxy: PaginationProxy;
+    private paginationService: PaginationService;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
-        this.paginationProxy = beans.paginationProxy;
+        this.paginationService = beans.paginationService!;
     }
 
     private centerRowsCtrl: RowContainerCtrl;
@@ -45,7 +45,7 @@ export class PaginationAutoPageSizeService extends BeanStub implements NamedBean
 
     private onPaginationAutoSizeChanged(): void {
         if (this.notActive()) {
-            this.paginationProxy.unsetAutoCalculatedPageSize();
+            this.paginationService.unsetAutoCalculatedPageSize();
         } else {
             this.checkPageSize();
         }
@@ -62,7 +62,7 @@ export class PaginationAutoPageSizeService extends BeanStub implements NamedBean
             const update = () => {
                 const rowHeight = Math.max(this.gos.getRowHeightAsNumber(), 1); // prevent divide by zero error if row height is 0
                 const newPageSize = Math.floor(bodyHeight / rowHeight);
-                this.paginationProxy.setPageSize(newPageSize, 'autoCalculated');
+                this.paginationService.setPageSize(newPageSize, 'autoCalculated');
             };
 
             if (!this.isBodyRendered) {

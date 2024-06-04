@@ -10,7 +10,8 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, VerticalScrollPosition } from '../interfaces/iRowNode';
 import type { AnimationFrameService } from '../misc/animationFrameService';
-import type { PaginationProxy } from '../pagination/paginationProxy';
+import type { PaginationService } from '../pagination/paginationService';
+import type { RowBoundsService } from '../pagination/rowBoundsService';
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import { _isIOSUserAgent } from '../utils/browser';
@@ -31,7 +32,8 @@ enum ScrollSource {
 export class GridBodyScrollFeature extends BeanStub {
     private ctrlsService: CtrlsService;
     private animationFrameService: AnimationFrameService;
-    private paginationProxy: PaginationProxy;
+    private paginationService?: PaginationService;
+    private rowBoundsService: RowBoundsService;
     private rowModel: IRowModel;
     private heightScaler: RowContainerHeightService;
     private rowRenderer: RowRenderer;
@@ -41,7 +43,8 @@ export class GridBodyScrollFeature extends BeanStub {
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
         this.animationFrameService = beans.animationFrameService;
-        this.paginationProxy = beans.paginationProxy;
+        this.paginationService = beans.paginationService;
+        this.rowBoundsService = beans.rowBoundsService;
         this.rowModel = beans.rowModel;
         this.heightScaler = beans.rowContainerHeightService;
         this.rowRenderer = beans.rowRenderer;
@@ -487,7 +490,7 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
 
-        const rowCount = this.paginationProxy.getRowCount();
+        const rowCount = this.rowModel.getRowCount();
 
         if (typeof index !== 'number' || index < 0 || index >= rowCount) {
             console.warn('AG Grid: Invalid row index for ensureIndexVisible: ' + index);
@@ -499,21 +502,21 @@ export class GridBodyScrollFeature extends BeanStub {
 
         this.getFrameworkOverrides().wrapIncoming(() => {
             if (!paginationPanelEnabled) {
-                this.paginationProxy.goToPageWithIndex(index);
+                this.paginationService?.goToPageWithIndex(index);
             }
 
             const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
             const stickyTopHeight = gridBodyCtrl.getStickyTopHeight();
             const stickyBottomHeight = gridBodyCtrl.getStickyBottomHeight();
 
-            const rowNode = this.paginationProxy.getRow(index);
+            const rowNode = this.rowModel.getRow(index);
             let rowGotShiftedDuringOperation: boolean;
 
             do {
                 const startingRowTop = rowNode!.rowTop;
                 const startingRowHeight = rowNode!.rowHeight;
 
-                const paginationOffset = this.paginationProxy.getPixelOffset();
+                const paginationOffset = this.rowBoundsService.getPixelOffset();
                 const rowTopPixel = rowNode!.rowTop! - paginationOffset;
                 const rowBottomPixel = rowTopPixel + rowNode!.rowHeight!;
 

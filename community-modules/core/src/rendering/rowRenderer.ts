@@ -28,7 +28,8 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { AnimationFrameService } from '../misc/animationFrameService';
-import type { PaginationProxy } from '../pagination/paginationProxy';
+import type { PaginationService } from '../pagination/paginationService';
+import type { RowBoundsService } from '../pagination/rowBoundsService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _removeFromArray } from '../utils/array';
 import { _browserSupportsPreventScroll } from '../utils/browser';
@@ -90,7 +91,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
     beanName = 'rowRenderer' as const;
 
     private animationFrameService: AnimationFrameService;
-    private paginationProxy: PaginationProxy;
+    private paginationService?: PaginationService;
+    private rowBoundsService: RowBoundsService;
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
     private pinnedRowModel: PinnedRowModel;
@@ -103,7 +105,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.animationFrameService = beans.animationFrameService;
-        this.paginationProxy = beans.paginationProxy;
+        this.paginationService = beans.paginationService;
+        this.rowBoundsService = beans.rowBoundsService;
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
         this.pinnedRowModel = beans.pinnedRowModel;
@@ -659,7 +662,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             return;
         }
 
-        let containerHeight = this.paginationProxy.getCurrentPageHeight();
+        let containerHeight = this.rowBoundsService.getCurrentPageHeight();
         // we need at least 1 pixel for the horizontal scroll to work. so if there are now rows,
         // we still want the scroll to be present, otherwise there would be no way to scroll the header
         // which might be needed us user wants to access columns
@@ -1087,7 +1090,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         for (let i = 0; i < indexesToDraw.length; i++) {
             const currRow = indexesToDraw[i];
-            const rowNode = this.paginationProxy.getRow(currRow);
+            const rowNode = this.rowModel.getRow(currRow);
             if (rowNode && !rowNode.sticky) {
                 ret.push(currRow);
             }
@@ -1211,7 +1214,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         // if no row comp, see if we can get it from the previous rowComps
         if (!rowCtrl) {
-            rowNode = this.paginationProxy.getRow(rowIndex);
+            rowNode = this.rowModel.getRow(rowIndex);
             if (_exists(rowNode) && _exists(rowsToRecycle) && rowsToRecycle[rowNode.id!] && rowNode.alreadyRendered) {
                 rowCtrl = rowsToRecycle[rowNode.id!];
                 rowsToRecycle[rowNode.id!] = null;
@@ -1223,7 +1226,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (creatingNewRowCtrl) {
             // create a new one
             if (!rowNode) {
-                rowNode = this.paginationProxy.getRow(rowIndex);
+                rowNode = this.rowModel.getRow(rowIndex);
             }
 
             if (_exists(rowNode)) {
@@ -1297,13 +1300,13 @@ export class RowRenderer extends BeanStub implements NamedBean {
         let newFirst: number;
         let newLast: number;
 
-        if (!this.paginationProxy.isRowsToRender()) {
+        if (!this.rowModel.isRowsToRender()) {
             newFirst = 0;
             newLast = -1; // setting to -1 means nothing in range
         } else if (this.printLayout) {
             this.environment.refreshRowHeightVariable();
-            newFirst = this.paginationProxy.getPageFirstRow();
-            newLast = this.paginationProxy.getPageLastRow();
+            newFirst = this.rowBoundsService.getFirstRow();
+            newLast = this.rowBoundsService.getLastRow();
         } else {
             const bufferPixels = this.getRowBufferInPixels();
             const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
@@ -1313,8 +1316,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
             let firstPixel: number;
             let lastPixel: number;
             do {
-                const paginationOffset = this.paginationProxy.getPixelOffset();
-                const { pageFirstPixel, pageLastPixel } = this.paginationProxy.getCurrentPagePixelRange();
+                const paginationOffset = this.rowBoundsService.getPixelOffset();
+                const { pageFirstPixel, pageLastPixel } = this.rowBoundsService.getCurrentPagePixelRange();
                 const divStretchOffset = this.rowContainerHeightService.getDivStretchOffset();
 
                 const bodyVRange = gridBodyCtrl.getScrollFeature().getVScrollPosition();
@@ -1338,11 +1341,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 rowHeightsChanged = this.ensureAllRowsInRangeHaveHeightsCalculated(firstPixel, lastPixel);
             } while (rowHeightsChanged);
 
-            let firstRowIndex = this.paginationProxy.getRowIndexAtPixel(firstPixel);
-            let lastRowIndex = this.paginationProxy.getRowIndexAtPixel(lastPixel);
+            let firstRowIndex = this.rowModel.getRowIndexAtPixel(firstPixel);
+            let lastRowIndex = this.rowModel.getRowIndexAtPixel(lastPixel);
 
-            const pageFirstRow = this.paginationProxy.getPageFirstRow();
-            const pageLastRow = this.paginationProxy.getPageLastRow();
+            const pageFirstRow = this.rowBoundsService.getFirstRow();
+            const pageLastRow = this.rowBoundsService.getLastRow();
 
             // adjust, in case buffer extended actual size
             if (firstRowIndex < pageFirstRow) {
@@ -1418,13 +1421,17 @@ export class RowRenderer extends BeanStub implements NamedBean {
         const stickyHeightsChanged = this.stickyRowFeature?.ensureRowHeightsValid();
         // ensureRowHeightsVisible only works with CSRM, as it's the only row model that allows lazy row height calcs.
         // all the other row models just hard code so the method just returns back false
-        const rowModelHeightsChanged = this.paginationProxy.ensureRowHeightsValid(
+        const rowModelHeightsChanged = this.rowModel.ensureRowHeightsValid(
             topPixel,
             bottomPixel,
-            -1,
-            -1,
-            stickyHeightsChanged
+            this.rowBoundsService.getFirstRow(),
+            this.rowBoundsService.getLastRow()
         );
+        if (rowModelHeightsChanged || stickyHeightsChanged) {
+            this.eventService.dispatchEvent({
+                type: Events.EVENT_RECALCULATE_ROW_BOUNDS,
+            });
+        }
 
         if (stickyHeightsChanged || rowModelHeightsChanged || pinnedRowHeightsChanged) {
             this.updateContainerHeights();
@@ -1479,8 +1486,15 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // editing row, only remove if it is no longer rendered, eg filtered out or new data set.
         // the reason we want to keep is if user is scrolling up and down, we don't want to loose
         // the context of the editing in process.
-        const rowNodePresent = this.paginationProxy.isRowPresent(rowNode);
+        const rowNodePresent = this.isRowPresent(rowNode);
         return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
+    }
+
+    private isRowPresent(rowNode: RowNode): boolean {
+        if (!this.rowModel.isRowPresent(rowNode)) {
+            return false;
+        }
+        return this.paginationService ? this.paginationService.isRowPresent(rowNode) : true;
     }
 
     private createRowCon(rowNode: RowNode, animate: boolean, afterScroll: boolean): RowCtrl {

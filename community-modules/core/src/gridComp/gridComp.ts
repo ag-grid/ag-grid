@@ -2,7 +2,7 @@ import type { BeanCollection } from '../context/context';
 import { GridBodyComp } from '../gridBodyComp/gridBodyComp';
 import type { ISideBar } from '../interfaces/iSideBar';
 import type { Logger, LoggerFactory } from '../logger';
-import { PaginationComp } from '../pagination/paginationComp';
+import type { PaginationService } from '../pagination/paginationService';
 import type { UpdateLayoutClassesParams } from '../styling/layoutFeature';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import { _isVisible } from '../utils/dom';
@@ -13,9 +13,11 @@ import { GridCtrl } from './gridCtrl';
 
 export class GridComp extends TabGuardComp {
     private loggerFactory: LoggerFactory;
+    private paginationService?: PaginationService;
 
     public wireBeans(beans: BeanCollection) {
         this.loggerFactory = beans.loggerFactory;
+        this.paginationService = beans.paginationService;
     }
 
     private readonly gridBody: GridBodyComp = RefPlaceholder;
@@ -51,8 +53,9 @@ export class GridComp extends TabGuardComp {
 
         this.ctrl = this.createManagedBean(new GridCtrl());
 
-        const template = this.createTemplate();
-        this.setTemplate(template, [GridBodyComp, PaginationComp]);
+        const paginationComp = this.paginationService?.getPaginationComp();
+        const template = this.createTemplate(!!paginationComp);
+        this.setTemplate(template, [GridBodyComp, ...(paginationComp ? [paginationComp] : [])]);
 
         this.ctrl.setComp(compProxy, this.eGridDiv, this.getGui());
 
@@ -86,11 +89,12 @@ export class GridComp extends TabGuardComp {
         this.addOrRemoveCssClass(LayoutCssClasses.PRINT, params.print);
     }
 
-    private createTemplate(): string {
+    private createTemplate(hasPagination: boolean): string {
         const dropZones = this.ctrl.showDropZones() ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
         const sideBar = this.ctrl.showSideBar() ? '<ag-side-bar data-ref="sideBar"></ag-side-bar>' : '';
         const statusBar = this.ctrl.showStatusBar() ? '<ag-status-bar></ag-status-bar>' : '';
         const watermark = this.ctrl.showWatermark() ? '<ag-watermark></ag-watermark>' : '';
+        const pagination = hasPagination ? '<ag-pagination></ag-pagination>' : '';
 
         const template =
             /* html */
@@ -101,7 +105,7 @@ export class GridComp extends TabGuardComp {
                     ${sideBar}
                 </div>
                 ${statusBar}
-                <ag-pagination></ag-pagination>
+                ${pagination}
                 ${watermark}
             </div>`;
 

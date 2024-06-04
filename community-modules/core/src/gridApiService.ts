@@ -90,7 +90,7 @@ import type { IContextMenuParams, MenuService } from './misc/menuService';
 import type { StateService } from './misc/stateService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
-import type { PaginationProxy } from './pagination/paginationProxy';
+import type { PaginationService } from './pagination/paginationService';
 import type { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 import type { ManagedGridOptionKey, ManagedGridOptions } from './propertyKeys';
 import type { ICellRenderer } from './rendering/cellRenderers/iCellRenderer';
@@ -138,7 +138,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
     private pinnedRowModel: PinnedRowModel;
     private rowModel: IRowModel;
     private sortController: SortController;
-    private paginationProxy: PaginationProxy;
+    private paginationService?: PaginationService;
     private focusService: FocusService;
     private dragAndDropService: DragAndDropService;
     private menuService: MenuService;
@@ -195,7 +195,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
         this.pinnedRowModel = beans.pinnedRowModel;
         this.rowModel = beans.rowModel;
         this.sortController = beans.sortController;
-        this.paginationProxy = beans.paginationProxy;
+        this.paginationService = beans.paginationService;
         this.focusService = beans.focusService;
         this.dragAndDropService = beans.dragAndDropService;
         this.menuService = beans.menuService;
@@ -1421,43 +1421,43 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
     }
 
     public paginationIsLastPageFound(): boolean {
-        return this.paginationProxy.isLastPageFound();
+        return this.rowModel.isLastRowIndexKnown();
     }
 
     public paginationGetPageSize(): number {
-        return this.paginationProxy.getPageSize();
+        return this.paginationService?.getPageSize() ?? 100;
     }
 
     public paginationGetCurrentPage(): number {
-        return this.paginationProxy.getCurrentPage();
+        return this.paginationService?.getCurrentPage() ?? 0;
     }
 
     public paginationGetTotalPages(): number {
-        return this.paginationProxy.getTotalPages();
+        return this.paginationService?.getTotalPages() ?? 1;
     }
 
     public paginationGetRowCount(): number {
-        return this.paginationProxy.getMasterRowCount();
+        return this.paginationService ? this.paginationService.getMasterRowCount() : this.rowModel.getRowCount();
     }
 
     public paginationGoToNextPage(): void {
-        this.paginationProxy.goToNextPage();
+        this.paginationService?.goToNextPage();
     }
 
     public paginationGoToPreviousPage(): void {
-        this.paginationProxy.goToPreviousPage();
+        this.paginationService?.goToPreviousPage();
     }
 
     public paginationGoToFirstPage(): void {
-        this.paginationProxy.goToFirstPage();
+        this.paginationService?.goToFirstPage();
     }
 
     public paginationGoToLastPage(): void {
-        this.paginationProxy.goToLastPage();
+        this.paginationService?.goToLastPage();
     }
 
     public paginationGoToPage(page: number): void {
-        this.paginationProxy.goToPage(page);
+        this.paginationService?.goToPage(page);
     }
 
     public sizeColumnsToFit(paramsOrGridWidth?: ISizeColumnsToFitParams | number) {
