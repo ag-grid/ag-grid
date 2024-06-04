@@ -1,0 +1,82 @@
+@use 'design-system' as *;
+
+.hasLicenseInput {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-size-5;
+
+    label {
+        display: flex;
+        flex-direction: row;
+        gap: $spacing-size-2;
+        cursor: pointer;
+    }
+}
+
+.license {
+    margin-top: $spacing-size-4;
+    padding: $spacing-size-3;
+    width: 100%;
+    height: 8em;
+    border-radius: var(--radius-md);
+}
+
+.licenseData {
+    margin-top: $spacing-size-4;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-3;
+    width: 600px;
+
+    > div {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+.frameworkContainer {
+    display: flex;
+    align-items: center;
+    gap: $spacing-size-2;
+}
+
+.frameworkLogo {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+.licensedProductsContainer {
+    width: 315px;
+
+    .inputList {
+        justify-content: end;
+    }
+}
+
+.error {
+    border: 1px solid var(--color-input-error);
+    background-color: var(--color-util-warning-100);
+}
+
+.invalidLicense {
+    color: var(--color-input-error);
+}
+
+.inputList {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-size-5;
+
+    label {
+        display: flex;
+        flex-direction: row;
+        gap: $spacing-size-2;
+        cursor: pointer;
+    }
+}
+
+.results {
+    margin-top: $spacing-size-4;
+}

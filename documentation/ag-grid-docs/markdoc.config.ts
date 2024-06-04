@@ -6,6 +6,7 @@ import { enterpriseIcon } from '@ag-website-shared/markdoc/tags/enterpriseIcon';
 import { idea } from '@ag-website-shared/markdoc/tags/idea';
 import { image } from '@ag-website-shared/markdoc/tags/image';
 import { kbd } from '@ag-website-shared/markdoc/tags/kbd';
+import { licenseSetup } from '@ag-website-shared/markdoc/tags/licenseSetup';
 import { note } from '@ag-website-shared/markdoc/tags/note';
 import { oneTrustCookies } from '@ag-website-shared/markdoc/tags/oneTrustCookies';
 import { openInCTA } from '@ag-website-shared/markdoc/tags/openInCTA';
@@ -60,6 +61,7 @@ export default defineMarkdocConfig({
         idea,
         openInCTA,
         enterpriseIcon,
+        licenseSetup,
         gridExampleRunner: {
             render: component('./src/features/docs/components/DocsExampleRunner.astro'),
             attributes: {

@@ -1,0 +1,8 @@
+---
+import { LicenseSetup } from './LicenseSetup';
+import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
+
+const framework = getFrameworkFromPath(Astro.url.pathname);
+---
+
+<LicenseSetup client:only framework={framework} />
