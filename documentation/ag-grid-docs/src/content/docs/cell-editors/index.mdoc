@@ -9,6 +9,11 @@ The example below shows some Provided Editor Components and some Custom Editor C
 
 {% gridExampleRunner title="Simple Editor Components" name="component-editor-2"  exampleHeight=370 /%}
 
+{% if isFramework("react") %}
+{% metaTag tags=["useGridCellEditor"]%}
+{% /metaTag %}
+{% /if %}
+
 ## Custom Components
 
 {% partial file="./_component-interface-javascript.mdoc" /%}
