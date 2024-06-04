@@ -473,11 +473,30 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
     }
 
-    private onListValueSelected(valueSet: Set<TValue>, fromEnterKey: boolean): void {
+    private onTabKeyDown(): void {
+        const { config, isPickerDisplayed, listComponent } = this;
+        const { multiSelect } = config;
+
+        if (!isPickerDisplayed || !listComponent) {
+            return;
+        }
+
+        if (multiSelect) {
+            const values = this.getValueFromSet(listComponent.getSelectedItems());
+            if (values) {
+                this.setValue(values, false, true);
+            }
+        } else {
+            this.setValue(listComponent.getLastItemHovered(), false, true);
+        }
+    }
+
+    private getValueFromSet(valueSet: Set<TValue>): TValue[] | TValue | undefined {
+        const { multiSelect } = this.config;
         let newValue: TValue[] | TValue | undefined;
 
         for (const value of valueSet) {
-            if (valueSet.size === 1) {
+            if (valueSet.size === 1 && !multiSelect) {
                 newValue = value;
                 break;
             }
@@ -486,6 +505,16 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             }
             (newValue as TValue[]).push(value);
         }
+
+        if (Array.isArray(newValue)) {
+            newValue.sort();
+        }
+
+        return newValue;
+    }
+
+    private onListValueSelected(valueSet: Set<TValue>, fromEnterKey: boolean): void {
+        const newValue = this.getValueFromSet(valueSet);
 
         if (newValue === undefined) {
             return;
@@ -506,14 +535,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.dispatchEvent(event);
     }
 
-    private onTabKeyDown(): void {
-        if (!this.isPickerDisplayed || this.config.multiSelect) {
-            return;
-        }
-
-        this.setValue(this.listComponent!.getLastItemHovered(), false, true);
-    }
-
     public override getFocusableElement(): HTMLElement {
         const { allowTyping } = this.config;
 
@@ -527,7 +548,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     protected override onKeyDown(event: KeyboardEvent): void {
         const key = event.key;
 
-        const { allowTyping } = this.config;
+        const { isPickerDisplayed, config, listComponent, pickerComponent } = this;
+        const { allowTyping, multiSelect } = config;
 
         switch (key) {
             case KeyCode.LEFT:
@@ -550,8 +572,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             case KeyCode.PAGE_UP:
             case KeyCode.PAGE_DOWN:
                 event.preventDefault();
-                if (this.pickerComponent) {
-                    this.listComponent?.navigateToPage(key);
+                if (pickerComponent) {
+                    listComponent?.navigateToPage(key);
                 }
                 break;
             case KeyCode.DOWN:
@@ -559,7 +581,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 this.onNavigationKeyDown(event, key);
                 break;
             case KeyCode.ESCAPE:
-                if (this.isPickerDisplayed) {
+                if (isPickerDisplayed) {
                     if (_isVisible(this.listComponent!.getGui())) {
                         event.preventDefault();
                         _stopPropagationForAgGrid(event);
@@ -569,6 +591,16 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 break;
             case KeyCode.ENTER:
                 this.onEnterKeyDown(event);
+                break;
+            case KeyCode.SPACE:
+                if (isPickerDisplayed && multiSelect && listComponent) {
+                    event.preventDefault();
+                    const lastItemHovered = listComponent.getLastItemHovered();
+
+                    if (lastItemHovered) {
+                        listComponent.toggleListItemSelection(lastItemHovered);
+                    }
+                }
                 break;
             case KeyCode.TAB:
                 this.onTabKeyDown();

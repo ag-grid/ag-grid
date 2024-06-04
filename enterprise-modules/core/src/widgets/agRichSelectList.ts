@@ -70,16 +70,17 @@ export class AgRichSelectList<TValue> extends VirtualList {
     }
 
     public onNavigationKeyDown(key: string): void {
-        if (!this.currentList) {
-            return;
-        }
-        const len = this.currentList.length;
-        const oldIndex = this.lastRowHovered;
+        this.animationFrameService.requestAnimationFrame(() => {
+            if (!this.currentList || !this.isAlive()) {
+                return;
+            }
+            const len = this.currentList.length;
+            const oldIndex = this.lastRowHovered;
 
-        const diff = key === KeyCode.DOWN ? 1 : -1;
-        const newIndex = Math.min(Math.max(oldIndex === -1 ? 0 : oldIndex + diff, 0), len - 1);
-
-        this.highlightIndex(newIndex);
+            const diff = key === KeyCode.DOWN ? 1 : -1;
+            const newIndex = Math.min(Math.max(oldIndex === -1 ? 0 : oldIndex + diff, 0), len - 1);
+            this.highlightIndex(newIndex);
+        });
     }
 
     public override navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): number | null {
@@ -217,7 +218,7 @@ export class AgRichSelectList<TValue> extends VirtualList {
         return positions;
     }
 
-    private toggleListItemSelection(value: TValue): void {
+    public toggleListItemSelection(value: TValue): void {
         if (this.selectedItems.has(value)) {
             this.selectedItems.delete(value);
         } else {
