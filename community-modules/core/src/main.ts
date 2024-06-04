@@ -315,7 +315,7 @@ export {
     IGroupCellRenderer,
     IGroupCellRendererParams,
     IGroupCellRendererFullRowParams,
-    GroupCellRendererCtrl,
+    IGroupCellRendererCtrl,
     FooterValueGetterFunc,
     TotalValueGetterFunc,
     GroupCheckboxSelectionCallback,

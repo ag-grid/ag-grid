@@ -7,6 +7,7 @@ import type {
     FuncColsService,
     GroupCellRendererParams,
     IGroupCellRenderer,
+    IGroupCellRendererCtrl,
     IRowNode,
     UserCompDetails,
     UserComponentFactory,
@@ -30,7 +31,7 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
-export class GroupCellRendererCtrl extends BeanStub {
+export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendererCtrl {
     private expressionService: ExpressionService;
     private valueService: ValueService;
     private columnModel: ColumnModel;

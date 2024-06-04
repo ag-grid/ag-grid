@@ -1,7 +1,7 @@
 import type {
-    GroupCellRendererCtrl,
     GroupCellRendererParams,
     IGroupCellRenderer,
+    IGroupCellRendererCtrl,
     UserCompDetails,
 } from '@ag-grid-community/core';
 import { _escapeString } from '@ag-grid-community/core';
@@ -28,7 +28,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
     const eCheckboxRef = useRef<HTMLElement>(null);
     const eExpandedRef = useRef<HTMLElement>(null);
     const eContractedRef = useRef<HTMLElement>(null);
-    const ctrlRef = useRef<GroupCellRendererCtrl | null>();
+    const ctrlRef = useRef<IGroupCellRendererCtrl | null>();
 
     const [innerCompDetails, setInnerCompDetails] = useState<UserCompDetails>();
     const [childCount, setChildCount] = useState<string>();
@@ -72,7 +72,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
             setCheckboxVisible: (visible) => setCheckboxCssClasses((prev) => prev.setClass('ag-invisible', !visible)),
         };
 
-        const groupCellRendererCtrl = ctrlsFactory.getInstance('groupCellRendererCtrl') as GroupCellRendererCtrl;
+        const groupCellRendererCtrl = ctrlsFactory.getInstance('groupCellRendererCtrl') as IGroupCellRendererCtrl;
         if (groupCellRendererCtrl) {
             ctrlRef.current = context.createBean(groupCellRendererCtrl);
             ctrlRef.current.init(

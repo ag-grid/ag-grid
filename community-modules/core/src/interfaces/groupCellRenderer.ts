@@ -75,7 +75,7 @@ export interface IGroupCellRenderer {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
 }
 
-export interface GroupCellRendererCtrl {
+export interface IGroupCellRendererCtrl {
     init(
         comp: IGroupCellRenderer,
         eGui: HTMLElement,
