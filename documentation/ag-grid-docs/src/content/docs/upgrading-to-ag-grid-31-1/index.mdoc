@@ -50,8 +50,7 @@ Please note that enabling this setting affects all custom components and you can
 {% /if %}
 
 {% if isFramework("react") %}
-{% metaTag tags=["useGridCellEditor"]%}
-{% /metaTag %}
+{% metaTag tags=["useGridCellEditor"] /%}
 - `getValue` is no longer used. The component will be passed `value` as a prop with the latest value (and `initialValue` with the value when editing started). When the value is updated in the UI, the component should call the prop `onValueChange` with the updated value.
 - Any other date methods defined via `useImperativeHandle` should now be defined as callbacks, and passed to the new hook `useGridCellEditor`. These are all optional; the hook is only needed if the callbacks are required.
 - If using `api.getCellEditorInstances`, the instance returned will now be a wrapper. To get the React custom cell editor component, use the helper function `getInstance` with the returned wrapper instance. See [Accessing Cell Editor Instances](./cell-editors).
