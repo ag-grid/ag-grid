@@ -178,15 +178,15 @@ export function _getInnerWidth(el: HTMLElement): number {
 }
 
 export function _getAbsoluteHeight(el: HTMLElement): number {
-    const { height, paddingTop, paddingBottom, marginBottom, marginTop } = _getElementSize(el);
+    const { height, marginBottom, marginTop } = _getElementSize(el);
 
-    return Math.floor(height + paddingTop + paddingBottom + marginBottom + marginTop);
+    return Math.floor(height + marginBottom + marginTop);
 }
 
 export function _getAbsoluteWidth(el: HTMLElement): number {
-    const { width, paddingLeft, paddingRight, marginLeft, marginRight } = _getElementSize(el);
+    const { width, marginLeft, marginRight } = _getElementSize(el);
 
-    return Math.floor(width + paddingLeft + paddingRight + marginLeft + marginRight);
+    return Math.floor(width + marginLeft + marginRight);
 }
 
 export function _getElementRectWithOffset(el: HTMLElement): {
