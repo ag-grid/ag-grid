@@ -21,13 +21,14 @@ export {
 } from './columns/columnApplyStateService';
 export { ColumnMoveService } from './columns/columnMoveService';
 export { ColumnNameService } from './columns/columnNameService';
-export { ShowRowGroupColsService } from './columns/showRowGroupColsService';
+export { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
 export { PivotResultColsService } from './columns/pivotResultColsService';
 export { ColumnSizeService, IColumnLimit, ISizeColumnsToFitParams } from './columns/columnSizeService';
 export { ColumnKeyCreator } from './columns/columnKeyCreator';
 export { VisibleColsService } from './columns/visibleColsService';
 export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
-export { GROUP_AUTO_COLUMN_ID } from './columns/autoColService';
+export { GROUP_AUTO_COLUMN_ID } from './columns/columnUtils';
+export { IAutoColService } from './interfaces/iAutoColService';
 export {
     SizeColumnsToFitGridColumnLimits,
     SizeColumnsToContentStrategy,
@@ -100,7 +101,7 @@ export {
 } from './dragAndDrop/dragAndDropService';
 export { RowDropZoneParams, RowDropZoneEvents } from './gridBodyComp/rowDragFeature';
 export { DragService, DragListenerParams } from './dragAndDrop/dragService';
-export { IRowDragItem } from './rendering/row/rowDragComp';
+export { IRowDragItem, RowDragComp } from './rendering/row/rowDragComp';
 
 // entities
 export { Column, ColumnPinnedType, ColumnGroup, ProvidedColumnGroup, ColumnGroupShowType } from './interfaces/iColumn';
@@ -309,18 +310,17 @@ export {
 } from './rendering/cellRenderers/iCellRenderer';
 export { AnimateShowChangeCellRenderer } from './rendering/cellRenderers/animateShowChangeCellRenderer';
 export { AnimateSlideCellRenderer } from './rendering/cellRenderers/animateSlideCellRenderer';
-export { GroupCellRenderer } from './rendering/cellRenderers/groupCellRenderer';
 export {
     GroupCellRendererParams,
+    IGroupCellRenderer,
     IGroupCellRendererParams,
     IGroupCellRendererFullRowParams,
+    IGroupCellRendererCtrl,
     FooterValueGetterFunc,
     TotalValueGetterFunc,
-    IGroupCellRenderer,
-    GroupCellRendererCtrl,
     GroupCheckboxSelectionCallback,
     GroupCheckboxSelectionCallbackParams,
-} from './rendering/cellRenderers/groupCellRendererCtrl';
+} from './interfaces/groupCellRenderer';
 
 // status bar components
 export {
@@ -826,7 +826,12 @@ export {
     _getInnerWidth,
     _isNodeOrElement,
 } from './utils/dom';
-export { _getCtrlForEventTarget, _stopPropagationForAgGrid, _isStopPropagationForAgGrid } from './utils/event';
+export {
+    _getCtrlForEventTarget,
+    _stopPropagationForAgGrid,
+    _isStopPropagationForAgGrid,
+    _isElementInEventPath,
+} from './utils/event';
 export { _warnOnce, _errorOnce, _debounce, _compose, _doOnce, _waitUntil } from './utils/function';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';

@@ -1,4 +1,4 @@
-const AG_GRID_LOCALE_SD = {
+const AG_GRID_LOCALE_EG = {
     // Set Filter
     selectAll: '(اختيار الكل)',
     selectAllSearchResults: '(اختيار كل نتائج البحث)',

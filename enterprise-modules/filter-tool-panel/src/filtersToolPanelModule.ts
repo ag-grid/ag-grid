@@ -13,6 +13,6 @@ export const FiltersToolPanelModule: Module = {
     moduleName: ModuleNames.FiltersToolPanelModule,
     beans: [],
     agStackComponents: [AgFiltersToolPanelHeader, AgFiltersToolPanelList, AgGroupComponent],
-    userComponents: [{ componentName: 'agFiltersToolPanel', componentClass: FiltersToolPanel }],
+    userComponents: [{ name: 'agFiltersToolPanel', classImp: FiltersToolPanel }],
     dependantModules: [SideBarModule, EnterpriseCoreModule, ColumnFilterModule],
 };

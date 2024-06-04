@@ -1,5 +1,6 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
+import type { UserComponentName } from '../../context/context';
 import { HeaderComp } from '../../headerRendering/cells/column/headerComp';
 import { SortIndicatorComp } from '../../headerRendering/cells/column/sortIndicatorComp';
 import { HeaderGroupComp } from '../../headerRendering/cells/columnGroup/headerGroupComp';
@@ -8,7 +9,6 @@ import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { AnimateShowChangeCellRenderer } from '../../rendering/cellRenderers/animateShowChangeCellRenderer';
 import { AnimateSlideCellRenderer } from '../../rendering/cellRenderers/animateSlideCellRenderer';
 import { CheckboxCellRenderer } from '../../rendering/cellRenderers/checkboxCellRenderer';
-import { GroupCellRenderer } from '../../rendering/cellRenderers/groupCellRenderer';
 import { LoadingCellRenderer } from '../../rendering/cellRenderers/loadingCellRenderer';
 import { SkeletonCellRenderer } from '../../rendering/cellRenderers/skeletonCellRenderer';
 import { LoadingOverlayComponent } from '../../rendering/overlays/loadingOverlayComponent';
@@ -21,7 +21,7 @@ import { _iterateObject } from '../../utils/object';
 export class UserComponentRegistry extends BeanStub implements NamedBean {
     beanName = 'userComponentRegistry' as const;
 
-    private agGridDefaults: { [key: string]: any } = {
+    private agGridDefaults: { [key in UserComponentName]?: any } = {
         //header
         agColumnHeader: HeaderComp,
         agColumnGroupHeader: HeaderGroupComp,
@@ -30,8 +30,7 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
         // renderers
         agAnimateShowChangeCellRenderer: AnimateShowChangeCellRenderer,
         agAnimateSlideCellRenderer: AnimateSlideCellRenderer,
-        agGroupCellRenderer: GroupCellRenderer,
-        agGroupRowRenderer: GroupCellRenderer,
+
         agLoadingCellRenderer: LoadingCellRenderer,
         agSkeletonCellRenderer: SkeletonCellRenderer,
         agCheckboxCellRenderer: CheckboxCellRenderer,
@@ -52,6 +51,8 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
         agMultiColumnFloatingFilter: ModuleNames.MultiFilterModule,
         agGroupColumnFilter: ModuleNames.RowGroupingModule,
         agGroupColumnFloatingFilter: ModuleNames.RowGroupingModule,
+        agGroupCellRenderer: ModuleNames.RowGroupingModule, // Actually in enterprise core as used by MasterDetail too but best guess is they are grouping
+        agGroupRowRenderer: ModuleNames.RowGroupingModule, // Actually in enterprise core as used by MasterDetail but best guess is they are grouping
         agRichSelect: ModuleNames.RichSelectModule,
         agRichSelectCellEditor: ModuleNames.RichSelectModule,
         agDetailCellRenderer: ModuleNames.MasterDetailModule,
@@ -67,12 +68,7 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
         }
     }
 
-    public registerDefaultComponent(name: string, component: any) {
-        if (this.agGridDefaults[name]) {
-            console.error(`Trying to overwrite a default component. You should call registerComponent`);
-            return;
-        }
-
+    public registerDefaultComponent(name: UserComponentName, component: any) {
         this.agGridDefaults[name] = component;
     }
 
@@ -103,7 +99,7 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
             return createResult(jsComponent, isFwkComp);
         }
 
-        const defaultComponent = this.agGridDefaults[name];
+        const defaultComponent = this.agGridDefaults[name as UserComponentName];
         if (defaultComponent) {
             return createResult(defaultComponent, false);
         }

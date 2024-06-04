@@ -1,6 +1,6 @@
 import type { Module } from '@ag-grid-community/core';
 import { ModuleNames } from '@ag-grid-community/core';
-import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
+import { AgMenuItemRenderer, EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
 import { ChartMenuItemMapper } from './menu/chartMenuItemMapper';
 import { ColumnChooserFactory } from './menu/columnChooserFactory';
@@ -24,4 +24,10 @@ export const MenuModule: Module = {
         MenuUtils,
     ],
     dependantModules: [EnterpriseCoreModule],
+    userComponents: [
+        {
+            name: 'agMenuItem',
+            classImp: AgMenuItemRenderer,
+        },
+    ],
 };

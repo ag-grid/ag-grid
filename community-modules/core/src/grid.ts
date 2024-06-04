@@ -1,5 +1,4 @@
 import { CellNavigationService } from './cellNavigationService';
-import { AutoColService } from './columns/autoColService';
 import { ColumnApplyStateService } from './columns/columnApplyStateService';
 import { ColumnAutosizeService } from './columns/columnAutosizeService';
 import { ColumnDefFactory } from './columns/columnDefFactory';
@@ -14,14 +13,13 @@ import { ColumnSizeService } from './columns/columnSizeService';
 import { ColumnViewportService } from './columns/columnViewportService';
 import { FuncColsService } from './columns/funcColsService';
 import { PivotResultColsService } from './columns/pivotResultColsService';
-import { ShowRowGroupColsService } from './columns/showRowGroupColsService';
 import { VisibleColsService } from './columns/visibleColsService';
 import { AgStackComponentsRegistry } from './components/agStackComponentsRegistry';
 import { AgComponentUtils } from './components/framework/agComponentUtils';
 import { ComponentMetadataProvider } from './components/framework/componentMetadataProvider';
 import { UserComponentFactory } from './components/framework/userComponentFactory';
 import { UserComponentRegistry } from './components/framework/userComponentRegistry';
-import type { ContextParams, SingletonBean } from './context/context';
+import type { ComponentMeta, ContextParams, SingletonBean } from './context/context';
 import { Context } from './context/context';
 import { gridBeanComparator } from './context/gridBeanComparator';
 import { CtrlsFactory } from './ctrlsFactory';
@@ -328,14 +326,13 @@ export class GridCoreCreator {
     }
 
     private registerModuleUserComponents(context: Context, registeredModules: Module[]): void {
-        const moduleUserComps: { componentName: string; componentClass: any }[] = this.extractModuleEntity(
-            registeredModules,
-            (module) => (module.userComponents ? module.userComponents : [])
+        const moduleUserComps: ComponentMeta[] = this.extractModuleEntity<ComponentMeta>(registeredModules, (module) =>
+            module.userComponents ? module.userComponents : []
         );
 
         const registry = context.getBean('userComponentRegistry');
         moduleUserComps.forEach((compMeta) => {
-            registry.registerDefaultComponent(compMeta.componentName, compMeta.componentClass);
+            registry.registerDefaultComponent(compMeta.name, compMeta.classImp);
         });
     }
 
@@ -437,7 +434,6 @@ export class GridCoreCreator {
             ColumnHoverService,
             ColumnAnimationService,
             SelectableService,
-            AutoColService,
             ChangeDetectionService,
             AnimationFrameService,
             AgStackComponentsRegistry,
@@ -465,7 +461,6 @@ export class GridCoreCreator {
             ColumnNameService,
             ColumnViewportService,
             PivotResultColsService,
-            ShowRowGroupColsService,
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => (module.beans ? module.beans : []));

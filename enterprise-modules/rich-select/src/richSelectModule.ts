@@ -10,8 +10,8 @@ export const RichSelectModule: Module = {
     moduleName: ModuleNames.RichSelectModule,
     beans: [],
     userComponents: [
-        { componentName: 'agRichSelect', componentClass: RichSelectCellEditor },
-        { componentName: 'agRichSelectCellEditor', componentClass: RichSelectCellEditor },
+        { name: 'agRichSelect', classImp: RichSelectCellEditor },
+        { name: 'agRichSelectCellEditor', classImp: RichSelectCellEditor },
     ],
     dependantModules: [EnterpriseCoreModule, EditCoreModule],
 };

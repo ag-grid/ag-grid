@@ -43,6 +43,7 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
     let subHeading = undefined;
     let text = '';
     let position = 0;
+    let metaTag = undefined;
 
     const createPreviousRecord = () => {
         // Because content for the header comes after the header
@@ -63,6 +64,7 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
             text: cleanContents(text),
             rank,
             positionInPage: position++,
+            metaTag,
         });
     };
 
@@ -93,6 +95,10 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
                     }
 
                     case 'DIV': {
+                        createPreviousRecord();
+                        if (currentTag.getAttribute('data-meta')) {
+                            metaTag = JSON.parse(currentTag.getAttribute('data-meta').replaceAll('&quot;', '"'));
+                        }
                         // process content inside div containers
                         recursivelyParseContent(currentTag.firstChild);
                         break;

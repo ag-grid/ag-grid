@@ -45,9 +45,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowModelType: 'serverSide',
 
     // fetch 20 rows per at a time
-    cacheBlockSize: 1,
+    cacheBlockSize: 10,
 
-    serverSideInitialRowCount: 2,
+    serverSideInitialRowCount: 10,
 };
 
 // setup the grid after the page has finished loading
@@ -75,14 +75,8 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
         getRows: (params) => {
             // adding delay to simulate real server call
             setTimeout(() => {
-                const response = server.getResponse(params.request);
-
-                if (response.success && params.request.startRow === 0) {
-                    // Keep loading to display loading spinner
-                } else {
-                    // Fail loading to display failed loading cell renderer
-                    params.fail();
-                }
+                // Fail loading to display failed loading cell renderer
+                params.fail();
             }, 4000);
         },
     };

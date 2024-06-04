@@ -9,14 +9,14 @@ import { VERSION } from './version';
 export const SetFilterCoreModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-enterprise/set-filter-core',
-    userComponents: [{ componentName: 'agSetColumnFilter', componentClass: SetFilter }],
+    userComponents: [{ name: 'agSetColumnFilter', classImp: SetFilter }],
     dependantModules: [EnterpriseCoreModule, ColumnFilterModule],
 };
 
 const SetFloatingFilterModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-enterprise/set-floating-filter',
-    userComponents: [{ componentName: 'agSetColumnFloatingFilter', componentClass: SetFloatingFilterComp }],
+    userComponents: [{ name: 'agSetColumnFloatingFilter', classImp: SetFloatingFilterComp }],
     dependantModules: [SetFilterCoreModule, FloatingFilterModule],
 };
 

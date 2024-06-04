@@ -18,11 +18,11 @@ export const StatusBarModule: Module = {
     beans: [StatusBarService],
     agStackComponents: [AgStatusBar, AgNameValue],
     userComponents: [
-        { componentName: 'agAggregationComponent', componentClass: AggregationComp },
-        { componentName: 'agSelectedRowCountComponent', componentClass: SelectedRowsComp },
-        { componentName: 'agTotalRowCountComponent', componentClass: TotalRowsComp },
-        { componentName: 'agFilteredRowCountComponent', componentClass: FilteredRowsComp },
-        { componentName: 'agTotalAndFilteredRowCountComponent', componentClass: TotalAndFilteredRowsComp },
+        { name: 'agAggregationComponent', classImp: AggregationComp },
+        { name: 'agSelectedRowCountComponent', classImp: SelectedRowsComp },
+        { name: 'agTotalRowCountComponent', classImp: TotalRowsComp },
+        { name: 'agFilteredRowCountComponent', classImp: FilteredRowsComp },
+        { name: 'agTotalAndFilteredRowCountComponent', classImp: TotalAndFilteredRowsComp },
     ],
     dependantModules: [EnterpriseCoreModule],
 };

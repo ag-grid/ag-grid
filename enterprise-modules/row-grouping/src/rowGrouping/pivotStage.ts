@@ -215,8 +215,13 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         }
     }
 
-    private bucketChildren(children: RowNode[], pivotColumns: AgColumn[], pivotIndex: number, uniqueValues: any): any {
-        const mappedChildren: any = {};
+    private bucketChildren(
+        children: RowNode[],
+        pivotColumns: AgColumn[],
+        pivotIndex: number,
+        uniqueValues: any
+    ): Record<string, any> {
+        const mappedChildren: Record<string, any> = {};
         const pivotColumn = pivotColumns[pivotIndex];
 
         // map the children out based on the pivot column
@@ -249,7 +254,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         if (pivotIndex === pivotColumns.length - 1) {
             return mappedChildren;
         } else {
-            const result: any = {};
+            const result: Record<string, any> = {};
 
             _iterateObject(mappedChildren, (key: string, value: RowNode[]) => {
                 result[key] = this.bucketChildren(value, pivotColumns, pivotIndex + 1, uniqueValues[key]);

@@ -3,8 +3,9 @@ import { type AgColumn, isColumn } from '../entities/agColumn';
 import { type AgProvidedColumnGroup, isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
 import { _warnOnce } from '../utils/function';
-import { GROUP_AUTO_COLUMN_ID } from './autoColService';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
+
+export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn' as const;
 
 // Possible candidate for reuse (alot of recursive traversal duplication)
 export function getColumnsFromTree(rootColumns: (AgColumn | AgProvidedColumnGroup)[]): AgColumn[] {

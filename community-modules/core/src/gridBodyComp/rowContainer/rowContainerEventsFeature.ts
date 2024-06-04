@@ -333,7 +333,7 @@ export class RowContainerEventsFeature extends BeanStub {
                 rowEnd = this.paginationProxy.getRowCount() - 1;
             } else {
                 floatingEnd = 'bottom';
-                rowEnd = pinnedRowModel.getPinnedBottomRowData().length - 1;
+                rowEnd = pinnedRowModel.getPinnedBottomRowNodes().length - 1;
             }
 
             const allDisplayedColumns = this.visibleColsService.getAllCols();

@@ -148,6 +148,16 @@ export const iconNameClassMap: { [key: string]: string } = {
     chartsMenuAdvancedSettings: 'settings',
     // shown in Integrated Charts menu add fields
     chartsMenuAdd: 'plus',
+    // checked checkbox
+    checkboxChecked: 'checkbox-checked',
+    // indeterminate checkbox
+    checkboxIndeterminate: 'checkbox-indeterminate',
+    // unchecked checkbox
+    checkboxUnchecked: 'checkbox-unchecked',
+    // radio button on
+    radioButtonOn: 'radio-button-on',
+    // radio button off
+    radioButtonOff: 'radio-button-off',
 };
 
 /**

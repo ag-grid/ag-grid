@@ -1,6 +1,5 @@
 import type { AlignedGridsService } from '../alignedGridsService';
 import type { CellNavigationService } from '../cellNavigationService';
-import type { AutoColService } from '../columns/autoColService';
 import type { ColumnApplyStateService } from '../columns/columnApplyStateService';
 import type { ColumnAutosizeService } from '../columns/columnAutosizeService';
 import type { ColumnDefFactory } from '../columns/columnDefFactory';
@@ -16,7 +15,6 @@ import type { ColumnViewportService } from '../columns/columnViewportService';
 import type { DataTypeService } from '../columns/dataTypeService';
 import type { FuncColsService } from '../columns/funcColsService';
 import type { PivotResultColsService } from '../columns/pivotResultColsService';
-import type { ShowRowGroupColsService } from '../columns/showRowGroupColsService';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
 import type { AgComponentUtils } from '../components/framework/agComponentUtils';
@@ -51,6 +49,7 @@ import type { HeaderNavigationService } from '../headerRendering/common/headerNa
 import type { HeaderPositionUtils } from '../headerRendering/common/headerPosition';
 import type { HorizontalResizeService } from '../headerRendering/common/horizontalResizeService';
 import type { IRangeService, ISelectionHandleFactory } from '../interfaces/IRangeService';
+import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
@@ -59,6 +58,7 @@ import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
+import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { LocaleService } from '../localeService';
 import type { LoggerFactory } from '../logger';
 import type { AnimationFrameService } from '../misc/animationFrameService';
@@ -96,10 +96,61 @@ export interface ContextParams extends GenericContextParams<BeanName, BeanCollec
 
 export interface SingletonBean extends GenericSingletonBean<BeanName, BeanCollection> {}
 
-export interface ControllerMeta {
-    controllerClass: new (...args: []) => object;
-    controllerName: string;
+export type ControllerName = 'headerFilterCell' | 'detailCellRenderer' | 'groupCellRendererCtrl';
+export type UserComponentName =
+    | 'agColumnHeader'
+    | 'agColumnGroupHeader'
+    | 'agSortIndicator'
+    | 'agAnimateShowChangeCellRenderer'
+    | 'agAnimateSlideCellRenderer'
+    | 'agLoadingCellRenderer'
+    | 'agSkeletonCellRenderer'
+    | 'agCheckboxCellRenderer'
+    | 'agLoadingOverlay'
+    | 'agNoRowsOverlay'
+    | 'agTooltipComponent'
+    | 'agReadOnlyFloatingFilter'
+    | 'agTextColumnFilter'
+    | 'agNumberColumnFilter'
+    | 'agDateColumnFilter'
+    | 'agDateInput'
+    | 'agTextColumnFloatingFilter'
+    | 'agNumberColumnFloatingFilter'
+    | 'agDateColumnFloatingFilter'
+    | 'agMultiColumnFilter'
+    | 'agMultiColumnFloatingFilter'
+    | 'agGroupColumnFilter'
+    | 'agGroupColumnFloatingFilter'
+    | 'agSetColumnFilter'
+    | 'agSetColumnFloatingFilter'
+    | 'agCellEditor'
+    | 'agSelectCellEditor'
+    | 'agTextCellEditor'
+    | 'agNumberCellEditor'
+    | 'agDateCellEditor'
+    | 'agDateStringCellEditor'
+    | 'agCheckboxCellEditor'
+    | 'agLargeTextCellEditor'
+    | 'agRichSelect'
+    | 'agRichSelectCellEditor'
+    | 'agMenuItem'
+    | 'agColumnsToolPanel'
+    | 'agFiltersToolPanel'
+    | 'agGroupRowRenderer'
+    | 'agGroupCellRenderer'
+    | 'agDetailCellRenderer'
+    | 'agSparklineCellRenderer'
+    | 'agAggregationComponent'
+    | 'agSelectedRowCountComponent'
+    | 'agTotalRowCountComponent'
+    | 'agFilteredRowCountComponent'
+    | 'agTotalAndFilteredRowCountComponent';
+export interface NamedClass<TName = string> {
+    classImp: new (...args: []) => object;
+    name: TName;
 }
+export type ControllerMeta = NamedClass<ControllerName>;
+export type ComponentMeta = NamedClass<UserComponentName>;
 
 export interface CoreBeanCollection {
     context: Context;
@@ -156,14 +207,14 @@ export interface CoreBeanCollection {
     columnApplyStateService: ColumnApplyStateService;
     columnFactory: ColumnFactory;
     pivotResultColsService: PivotResultColsService;
-    autoColService: AutoColService;
+    autoColService?: IAutoColService;
     columnDefFactory: ColumnDefFactory;
     columnGroupStateService: ColumnGroupStateService;
     columnEventDispatcher: ColumnEventDispatcher;
     columnAutosizeService: ColumnAutosizeService;
     funcColsService: FuncColsService;
     quickFilterService?: QuickFilterService;
-    showRowGroupColsService: ShowRowGroupColsService;
+    showRowGroupColsService?: IShowRowGroupColsService;
     headerPositionUtils: HeaderPositionUtils;
     dataTypeService?: DataTypeService;
     globalEventListener: AgGlobalEventListener;
@@ -376,4 +427,5 @@ export type BeanName =
     | 'userComponentRegistry'
     | 'valueCache'
     | 'valueService'
+    | 'validationLogger'
     | 'validationService';

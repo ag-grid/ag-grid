@@ -1,4 +1,4 @@
-import type { ControllerMeta, SingletonBean } from '../context/context';
+import type { ComponentMeta, ControllerMeta, SingletonBean } from '../context/context';
 import type { ComponentClass } from '../widgets/component';
 import type { RowModelType } from './iRowModel';
 
@@ -25,7 +25,7 @@ export interface Module {
     beans?: SingletonBean[];
     agStackComponents?: ComponentClass[];
     controllers?: ControllerMeta[];
-    userComponents?: { componentName: string; componentClass: any }[];
+    userComponents?: ComponentMeta[];
     rowModel?: RowModelType;
     dependantModules?: Module[]; // Niall / Sean - my addition
 }
