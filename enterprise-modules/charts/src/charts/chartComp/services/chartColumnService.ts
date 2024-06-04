@@ -5,10 +5,10 @@ import type {
     ColumnNameService,
     EventsType,
     FuncColsService,
+    IShowRowGroupColsService,
     NamedBean,
     RowNode,
     RowPositionUtils,
-    ShowRowGroupColsService,
     ValueService,
     VisibleColsService,
 } from '@ag-grid-community/core';
@@ -18,7 +18,7 @@ export class ChartColumnService extends BeanStub implements NamedBean {
     beanName = 'chartColumnService' as const;
 
     private columnModel: ColumnModel;
-    private showRowGroupColsService?: ShowRowGroupColsService;
+    private showRowGroupColsService?: IShowRowGroupColsService;
     private columnNameService: ColumnNameService;
     private visibleColsService: VisibleColsService;
     private funcColsService: FuncColsService;

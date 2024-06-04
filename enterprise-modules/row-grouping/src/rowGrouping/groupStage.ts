@@ -7,13 +7,13 @@ import type {
     GetDataPath,
     IRowNodeStage,
     ISelectionService,
+    IShowRowGroupColsService,
     InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
     KeyCreatorParams,
     NamedBean,
     RowNodeTransaction,
     SelectableService,
-    ShowRowGroupColsService,
     StageExecuteParams,
     ValueService,
     WithoutGridCommon,
@@ -68,7 +68,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     private valueService: ValueService;
     private beans: BeanCollection;
     private selectionService: ISelectionService;
-    private showRowGroupColsService: ShowRowGroupColsService;
+    private showRowGroupColsService: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.beans = beans;

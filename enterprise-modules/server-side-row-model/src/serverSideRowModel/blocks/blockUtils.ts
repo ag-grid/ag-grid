@@ -2,10 +2,10 @@ import type {
     AgColumn,
     BeanCollection,
     IRowNode,
+    IShowRowGroupColsService,
     NamedBean,
     NumberSequence,
     RowBounds,
-    ShowRowGroupColsService,
     ValueService,
 } from '@ag-grid-community/core';
 import { BeanStub, RowNode, _doOnce, _exists, _missing } from '@ag-grid-community/core';
@@ -19,7 +19,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     beanName = 'ssrmBlockUtils' as const;
 
     private valueService: ValueService;
-    private showRowGroupColsService?: ShowRowGroupColsService;
+    private showRowGroupColsService?: IShowRowGroupColsService;
     private nodeManager: NodeManager;
     private beans: BeanCollection;
     private expansionService: ServerSideExpansionService;

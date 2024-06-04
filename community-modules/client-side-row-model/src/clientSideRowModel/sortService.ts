@@ -4,12 +4,12 @@ import type {
     ColumnModel,
     FuncColsService,
     IRowNode,
+    IShowRowGroupColsService,
     NamedBean,
     PostSortRowsParams,
     RowNode,
     RowNodeSorter,
     RowNodeTransaction,
-    ShowRowGroupColsService,
     SortOption,
     SortedRowNode,
     WithoutGridCommon,
@@ -22,7 +22,7 @@ export class SortService extends BeanStub implements NamedBean {
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
     private rowNodeSorter: RowNodeSorter;
-    private showRowGroupColsService?: ShowRowGroupColsService;
+    private showRowGroupColsService?: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
