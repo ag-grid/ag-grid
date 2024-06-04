@@ -18,11 +18,12 @@ export class AgRichSelectList<TValue> extends VirtualList {
 
     constructor(
         private readonly params: RichSelectParams,
-        private readonly eWrapper: HTMLElement
+        private readonly eWrapper: HTMLElement,
+        private readonly getSearchString: () => string
     ) {
         super({ cssIdentifier: 'rich-select' });
         this.params = params;
-        this.setComponentCreator(this.createRowComponent.bind(this));
+        this.setComponentCreator((value: TValue) => this.createRowComponent(value));
         /* nothing to update but method required to soft refresh */
         this.setComponentUpdater(() => {});
     }
@@ -237,7 +238,7 @@ export class AgRichSelectList<TValue> extends VirtualList {
         this.eLoading = el;
     }
 
-    private createRowComponent(value: TValue, searchString: string): Component {
+    private createRowComponent(value: TValue): Component {
         const row = new RichSelectRow<TValue>(this.params, this.eWrapper);
         row.setParentComponent(this);
 
@@ -247,7 +248,7 @@ export class AgRichSelectList<TValue> extends VirtualList {
         const { highlightMatch, searchType = 'fuzzy' } = this.params;
 
         if (highlightMatch && searchType !== 'fuzzy') {
-            row.highlightString(searchString);
+            row.highlightString(this.getSearchString());
         }
 
         return row;
