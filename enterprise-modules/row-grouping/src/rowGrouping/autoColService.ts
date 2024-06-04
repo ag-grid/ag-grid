@@ -1,17 +1,16 @@
-import type { NamedBean } from '../context/bean';
-import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
-import { AgColumn } from '../entities/agColumn';
-import type { ColDef } from '../entities/colDef';
-import type { ColumnEventType } from '../events';
-import { _missing } from '../utils/generic';
-import { _mergeDeep } from '../utils/object';
-import type { ColumnFactory } from './columnFactory';
-import type { ColumnModel } from './columnModel';
-import type { ColumnNameService } from './columnNameService';
+import { AgColumn, BeanStub, GROUP_AUTO_COLUMN_ID, _mergeDeep, _missing } from '@ag-grid-community/core';
+import type {
+    BeanCollection,
+    ColDef,
+    ColumnEventType,
+    ColumnFactory,
+    ColumnModel,
+    ColumnNameService,
+    AutoColService as IAutoColService,
+    NamedBean,
+} from '@ag-grid-community/core';
 
-export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn' as const;
-export class AutoColService extends BeanStub implements NamedBean {
+export class AutoColService extends BeanStub implements NamedBean, IAutoColService {
     beanName = 'autoColService' as const;
 
     private columnModel: ColumnModel;

@@ -179,7 +179,6 @@ export { SelectableService } from '@ag-grid-community/core';
 export { SelectionHandleType } from '@ag-grid-community/core';
 export { ServerSideTransactionResultStatus } from '@ag-grid-community/core';
 export { SetLeftFeature } from '@ag-grid-community/core';
-export { ShowRowGroupColsService } from '@ag-grid-community/core';
 export { SimpleFilter } from '@ag-grid-community/core';
 export { SimpleFilterModule } from '@ag-grid-community/core';
 export { SimpleFloatingFilterModule } from '@ag-grid-community/core';

@@ -4,6 +4,7 @@ import { EnterpriseCoreModule, GroupCellRenderer, GroupCellRendererCtrl } from '
 
 import { AggFuncService } from './rowGrouping/aggFuncService';
 import { AggregationStage } from './rowGrouping/aggregationStage';
+import { AutoColService } from './rowGrouping/autoColService';
 import { AgGridHeaderDropZones } from './rowGrouping/columnDropZones/agGridHeaderDropZones';
 import { FilterAggregatesStage } from './rowGrouping/filterAggregatesStage';
 import { GroupFilter } from './rowGrouping/groupFilter/groupFilter';
@@ -11,12 +12,22 @@ import { GroupFloatingFilterComp } from './rowGrouping/groupFilter/groupFloating
 import { GroupStage } from './rowGrouping/groupStage';
 import { PivotColDefService } from './rowGrouping/pivotColDefService';
 import { PivotStage } from './rowGrouping/pivotStage';
+import { ShowRowGroupColsService } from './rowGrouping/showRowGroupColsService';
 import { VERSION } from './version';
 
 export const RowGroupingCoreModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-enterprise/row-grouping-core',
-    beans: [AggregationStage, FilterAggregatesStage, GroupStage, PivotColDefService, PivotStage, AggFuncService],
+    beans: [
+        AggregationStage,
+        FilterAggregatesStage,
+        GroupStage,
+        PivotColDefService,
+        PivotStage,
+        AggFuncService,
+        AutoColService,
+        ShowRowGroupColsService,
+    ],
     agStackComponents: [AgGridHeaderDropZones],
     userComponents: [
         {

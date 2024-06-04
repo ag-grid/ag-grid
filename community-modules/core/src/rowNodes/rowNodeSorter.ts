@@ -1,11 +1,11 @@
 import type { ColumnModel } from '../columns/columnModel';
-import type { ShowRowGroupColsService } from '../columns/showRowGroupColsService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { Column } from '../interfaces/iColumn';
+import type { ShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import { _defaultComparator } from '../utils/generic';
 import type { ValueService } from '../valueService/valueService';
 
@@ -26,7 +26,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
     private valueService: ValueService;
     private columnModel: ColumnModel;
-    private showRowGroupColsService: ShowRowGroupColsService;
+    private showRowGroupColsService?: ShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueService = beans.valueService;
@@ -142,7 +142,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
                 return undefined;
             }
 
-            const displayCol = this.showRowGroupColsService.getShowRowGroupCol(column.getId());
+            const displayCol = this.showRowGroupColsService?.getShowRowGroupCol(column.getId());
             if (!displayCol) {
                 return undefined;
             }
