@@ -29,7 +29,8 @@ export class RichSelectRow<TValue> extends Component {
 
     constructor(
         private readonly params: RichSelectParams<TValue>,
-        private readonly wrapperEl: HTMLElement
+        private readonly wrapperEl: HTMLElement,
+        private readonly isItemSelected: (value: TValue) => boolean
     ) {
         super(/* html */ `<div class="ag-rich-select-row" role="presentation"></div>`);
     }
@@ -37,8 +38,11 @@ export class RichSelectRow<TValue> extends Component {
     public setState(value: TValue): void {
         let formattedValue: string = '';
 
-        if (this.params.valueFormatter) {
-            formattedValue = this.params.valueFormatter(value);
+        const { params } = this;
+        const { multiSelect } = params;
+
+        if (params.valueFormatter) {
+            formattedValue = params.valueFormatter(value);
         }
         const rendererSuccessful = this.populateWithRenderer(value, formattedValue);
         if (!rendererSuccessful) {
@@ -46,6 +50,14 @@ export class RichSelectRow<TValue> extends Component {
         }
 
         this.value = value;
+
+        if (!multiSelect) {
+            return;
+        }
+
+        if (this.isItemSelected(value)) {
+            this.updateSelected(true);
+        }
     }
 
     public highlightString(matchString: string): void {

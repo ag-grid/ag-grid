@@ -220,22 +220,21 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     public override showPicker() {
         super.showPicker();
-        const { listComponent, config, value } = this;
-        const { multiSelect } = config;
+        const { listComponent, value } = this;
 
         if (!listComponent) {
             return;
         }
 
-        listComponent.selectValue(this.value);
-        if (multiSelect) {
-            listComponent.highlightIndex(0);
-        } else {
-            const idx = listComponent.getIndicesForValues([value as TValue])[0];
+        if (this.value != null) {
+            listComponent.selectValue(this.value);
+            const idx = listComponent.getIndicesForValues(Array.isArray(value) ? value : [value])[0];
+
             if (idx != null) {
                 listComponent.highlightIndex(idx);
             }
         }
+
         this.displayOrHidePicker();
     }
 
@@ -507,6 +506,14 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.dispatchEvent(event);
     }
 
+    private onTabKeyDown(): void {
+        if (!this.isPickerDisplayed || this.config.multiSelect) {
+            return;
+        }
+
+        this.setValue(this.listComponent!.getLastItemHovered(), false, true);
+    }
+
     public override getFocusableElement(): HTMLElement {
         const { allowTyping } = this.config;
 
@@ -562,6 +569,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 break;
             case KeyCode.ENTER:
                 this.onEnterKeyDown(event);
+                break;
+            case KeyCode.TAB:
+                this.onTabKeyDown();
                 break;
             default:
                 if (!allowTyping) {

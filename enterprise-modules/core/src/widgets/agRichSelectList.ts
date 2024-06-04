@@ -42,6 +42,9 @@ export class AgRichSelectList<TValue> extends VirtualList {
         const eListAriaEl = this.getAriaElement();
 
         this.addManagedListener(eGui, 'mousemove', this.onPickerMouseMove.bind(this));
+        this.addManagedListener(eGui, 'mouseout', () => {
+            this.highlightIndex(-1);
+        });
         this.addManagedListener(eGui, 'mousedown', (e) => {
             e.preventDefault();
         });
@@ -106,6 +109,10 @@ export class AgRichSelectList<TValue> extends VirtualList {
             this.eLoading.parentElement?.removeChild(this.eLoading);
         }
 
+        if (value == null) {
+            return;
+        }
+
         const selectedPositions = this.getIndicesForValues(value);
         const len = selectedPositions.length;
 
@@ -113,15 +120,14 @@ export class AgRichSelectList<TValue> extends VirtualList {
             return;
         }
 
-        if (len === 1) {
-            // make sure the virtual list has been sized correctly
-            this.refresh();
-            this.ensureIndexVisible(selectedPositions[0]);
-            // this second call to refresh is necessary to force scrolled elements
-            // to be rendered with the correct index info.
-            this.refresh(true);
-            this.selectListItems([value as TValue]);
-        }
+        // make sure the virtual list has been sized correctly
+        this.refresh();
+        this.ensureIndexVisible(selectedPositions[0]);
+        // this second call to refresh is necessary to force scrolled elements
+        // to be rendered with the correct index info.
+        this.refresh(true);
+
+        this.selectListItems(Array.isArray(value) ? value : [value]);
     }
 
     public getCurrentList(): TValue[] | undefined {
@@ -239,7 +245,7 @@ export class AgRichSelectList<TValue> extends VirtualList {
     }
 
     private createRowComponent(value: TValue): Component {
-        const row = new RichSelectRow<TValue>(this.params, this.eWrapper);
+        const row = new RichSelectRow<TValue>(this.params, this.eWrapper, (value) => this.selectedItems.has(value));
         row.setParentComponent(this);
 
         this.createBean(row);

@@ -80,6 +80,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             highlightMatch,
             valuePlaceholder,
             eventKey,
+            multiSelect,
         } = this.params;
 
         const ret: RichSelectParams = {
@@ -100,6 +101,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             maxPickerWidth: valueListMaxWidth,
             placeholder: valuePlaceholder,
             initialInputValue: eventKey?.length === 1 ? eventKey : undefined,
+            multiSelect,
         };
 
         let valuesResult;
