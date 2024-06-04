@@ -4,7 +4,7 @@ import type {
     BeanCollection,
     ColumnModel,
     FuncColsService,
-    ShowRowGroupColsService as IShowRowGroupColsService,
+    IShowRowGroupColsService,
     NamedBean,
 } from '@ag-grid-community/core';
 

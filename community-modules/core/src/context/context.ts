@@ -49,7 +49,7 @@ import type { HeaderNavigationService } from '../headerRendering/common/headerNa
 import type { HeaderPositionUtils } from '../headerRendering/common/headerPosition';
 import type { HorizontalResizeService } from '../headerRendering/common/horizontalResizeService';
 import type { IRangeService, ISelectionHandleFactory } from '../interfaces/IRangeService';
-import type { AutoColService } from '../interfaces/iAutoColService';
+import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
@@ -58,7 +58,7 @@ import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
-import type { ShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
+import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { LocaleService } from '../localeService';
 import type { LoggerFactory } from '../logger';
 import type { AnimationFrameService } from '../misc/animationFrameService';
@@ -207,14 +207,14 @@ export interface CoreBeanCollection {
     columnApplyStateService: ColumnApplyStateService;
     columnFactory: ColumnFactory;
     pivotResultColsService: PivotResultColsService;
-    autoColService?: AutoColService;
+    autoColService?: IAutoColService;
     columnDefFactory: ColumnDefFactory;
     columnGroupStateService: ColumnGroupStateService;
     columnEventDispatcher: ColumnEventDispatcher;
     columnAutosizeService: ColumnAutosizeService;
     funcColsService: FuncColsService;
     quickFilterService?: QuickFilterService;
-    showRowGroupColsService?: ShowRowGroupColsService;
+    showRowGroupColsService?: IShowRowGroupColsService;
     headerPositionUtils: HeaderPositionUtils;
     dataTypeService?: DataTypeService;
     globalEventListener: AgGlobalEventListener;
@@ -427,4 +427,5 @@ export type BeanName =
     | 'userComponentRegistry'
     | 'valueCache'
     | 'valueService'
+    | 'validationLogger'
     | 'validationService';

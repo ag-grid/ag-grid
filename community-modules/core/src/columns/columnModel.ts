@@ -9,9 +9,9 @@ import type { ColumnEventType } from '../events';
 import { Events } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { PropertyChangedSource } from '../gridOptionsService';
-import type { AutoColService } from '../interfaces/iAutoColService';
+import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { Column, ColumnPinnedType } from '../interfaces/iColumn';
-import type { ShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
+import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { _areEqual, _includes, _insertIntoArray, _moveInArray } from '../utils/array';
 import { _warnOnce } from '../utils/function';
@@ -56,7 +56,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private columnViewportService: ColumnViewportService;
     private pivotResultColsService: PivotResultColsService;
     private columnAnimationService: ColumnAnimationService;
-    private autoColService?: AutoColService;
+    private autoColService?: IAutoColService;
     private valueCache: ValueCache;
     private columnDefFactory: ColumnDefFactory;
     private columnApplyStateService: ColumnApplyStateService;
@@ -66,7 +66,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private columnAutosizeService: ColumnAutosizeService;
     private funcColsService: FuncColsService;
     private quickFilterService?: QuickFilterService;
-    private showRowGroupColsService?: ShowRowGroupColsService;
+    private showRowGroupColsService?: IShowRowGroupColsService;
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {

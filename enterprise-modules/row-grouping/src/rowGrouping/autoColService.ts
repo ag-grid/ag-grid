@@ -6,7 +6,7 @@ import type {
     ColumnFactory,
     ColumnModel,
     ColumnNameService,
-    AutoColService as IAutoColService,
+    IAutoColService,
     NamedBean,
 } from '@ag-grid-community/core';
 

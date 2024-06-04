@@ -5,7 +5,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { Column } from '../interfaces/iColumn';
-import type { ShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
+import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import { _defaultComparator } from '../utils/generic';
 import type { ValueService } from '../valueService/valueService';
 
@@ -26,7 +26,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
     private valueService: ValueService;
     private columnModel: ColumnModel;
-    private showRowGroupColsService?: ShowRowGroupColsService;
+    private showRowGroupColsService?: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueService = beans.valueService;

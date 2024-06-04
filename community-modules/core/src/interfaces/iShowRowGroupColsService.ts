@@ -1,6 +1,6 @@
 import type { AgColumn } from '../entities/agColumn';
 
-export interface ShowRowGroupColsService {
+export interface IShowRowGroupColsService {
     refresh(): void;
 
     getShowRowGroupCols(): AgColumn[];

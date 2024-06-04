@@ -21,14 +21,14 @@ export {
 } from './columns/columnApplyStateService';
 export { ColumnMoveService } from './columns/columnMoveService';
 export { ColumnNameService } from './columns/columnNameService';
-export { ShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
+export { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
 export { PivotResultColsService } from './columns/pivotResultColsService';
 export { ColumnSizeService, IColumnLimit, ISizeColumnsToFitParams } from './columns/columnSizeService';
 export { ColumnKeyCreator } from './columns/columnKeyCreator';
 export { VisibleColsService } from './columns/visibleColsService';
 export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
 export { GROUP_AUTO_COLUMN_ID } from './columns/columnUtils';
-export { AutoColService } from './interfaces/iAutoColService';
+export { IAutoColService } from './interfaces/iAutoColService';
 export {
     SizeColumnsToFitGridColumnLimits,
     SizeColumnsToContentStrategy,

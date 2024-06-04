@@ -8,7 +8,7 @@ import type { SortDirection } from './entities/colDef';
 import type { ColumnEventType, SortChangedEvent } from './events';
 import { Events } from './events';
 import type { WithoutGridCommon } from './interfaces/iCommon';
-import type { ShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
+import type { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
 import type { SortOption } from './rowNodes/rowNodeSorter';
 
 export interface SortModelItem {
@@ -25,7 +25,7 @@ export class SortController extends BeanStub implements NamedBean {
 
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
-    private showRowGroupColsService?: ShowRowGroupColsService;
+    private showRowGroupColsService?: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
