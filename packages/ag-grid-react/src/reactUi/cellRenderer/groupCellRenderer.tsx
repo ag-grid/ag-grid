@@ -73,16 +73,19 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
             setCheckboxVisible: (visible) => setCheckboxCssClasses((prev) => prev.setClass('ag-invisible', !visible)),
         };
 
-        ctrlRef.current = ctrlsFactory.getInstance('groupCellRendererCtrl') as GroupCellRendererCtrl;
-        ctrlRef.current.init(
-            compProxy,
-            eGui.current,
-            eCheckboxRef.current!,
-            eExpandedRef.current!,
-            eContractedRef.current!,
-            GroupCellRenderer,
-            props
-        );
+        const groupCellRendererCtrl = ctrlsFactory.getInstance('groupCellRendererCtrl') as GroupCellRendererCtrl;
+        if (groupCellRendererCtrl) {
+            ctrlRef.current = context.createBean(groupCellRendererCtrl);
+            ctrlRef.current.init(
+                compProxy,
+                eGui.current,
+                eCheckboxRef.current!,
+                eExpandedRef.current!,
+                eContractedRef.current!,
+                GroupCellRenderer,
+                props
+            );
+        }
     }, []);
 
     const className = useMemo(() => `ag-cell-wrapper ${cssClasses.toString()}`, [cssClasses]);
