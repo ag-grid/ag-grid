@@ -530,7 +530,7 @@ export { AlignedGridsModule } from './alignedGridsModule';
 export { KeyCode } from './constants/keyCode';
 export { VerticalDirection, HorizontalDirection } from './constants/direction';
 export { Grid, GridParams, Params, GridCoreCreator, createGrid, provideGlobalGridOptions } from './grid';
-export { GridApi, DetailGridInfo, StartEditingCellParams, GetCellValueParams } from './gridApi';
+export { GridApi, DetailGridInfo, StartEditingCellParams, GetCellValueParams } from './api/gridApi';
 export { Events, EventsType } from './eventKeys';
 export { FocusService } from './focusService';
 export { GridOptionsService, PropertyChangedEvent } from './gridOptionsService';

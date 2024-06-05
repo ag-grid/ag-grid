@@ -1,4 +1,9 @@
 import type { AlignedGridsService } from '../alignedGridsService';
+import type { ApiFunctionService } from '../api/apiFunctionService';
+import type { DetailGridApiService } from '../api/detailGridApiService';
+import type { GridApi } from '../api/gridApi';
+import type { GridDestroyService } from '../api/gridDestroyService';
+import type { RowModelHelperService } from '../api/rowModelHelperService';
 import type { CellNavigationService } from '../cellNavigationService';
 import type { ColumnApplyStateService } from '../columns/columnApplyStateService';
 import type { ColumnAutosizeService } from '../columns/columnAutosizeService';
@@ -39,7 +44,6 @@ import type { ColumnFilterService } from '../filter/columnFilterService';
 import type { FilterManager } from '../filter/filterManager';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { FocusService } from '../focusService';
-import type { GridApiService } from '../gridApiService';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
 import type { NavigationService } from '../gridBodyComp/navigationService';
 import type { PinnedWidthService } from '../gridBodyComp/pinnedWidthService';
@@ -203,7 +207,7 @@ export interface CoreBeanCollection {
     rangeService: IRangeService;
     selectionHandleFactory: ISelectionHandleFactory;
     validationService?: ValidationService;
-    gridApi: GridApiService;
+    gridApi: GridApi;
     gridOptions: GridOptions;
     eGridDiv: HTMLElement;
     loggerFactory: LoggerFactory;
@@ -252,6 +256,10 @@ export interface CoreBeanCollection {
     paginationAutoPageSizeService?: PaginationAutoPageSizeService;
     paginationService?: PaginationService;
     rowBoundsService: RowBoundsService;
+    apiFunctionService?: ApiFunctionService;
+    rowModelHelperService?: RowModelHelperService;
+    detailGridApiService?: DetailGridApiService;
+    gridDestroyService: GridDestroyService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -292,6 +300,7 @@ export type BeanName =
     | 'aggregationStage'
     | 'alignedGridsService'
     | 'animationFrameService'
+    | 'apiFunctionService'
     | 'ariaAnnouncementService'
     | 'apiEventService'
     | 'autoColService'
@@ -341,6 +350,7 @@ export type BeanName =
     | 'csvCreator'
     | 'dataTypeService'
     | 'visibleColsService'
+    | 'detailGridApiService'
     | 'dragAndDropService'
     | 'dragService'
     | 'editService'
@@ -363,6 +373,7 @@ export type BeanName =
     | 'globalEventListener'
     | 'globalSyncEventListener'
     | 'gridApi'
+    | 'gridDestroyService'
     | 'gridOptions'
     | 'gos'
     | 'gridOptionsWrapper'
@@ -401,6 +412,7 @@ export type BeanName =
     | 'rowModel'
     | 'rowNodeBlockLoader'
     | 'rowNodeEventThrottle'
+    | 'rowModelHelperService'
     | 'rowNodeSorter'
     | 'rowPositionUtils'
     | 'rowRenderer'

@@ -1,8 +1,8 @@
+import type { DetailGridInfo } from '../api/gridApi';
 import type { BeanCollection } from '../context/context';
 import type { AgEvent, AgEventListener, RowEvent, RowSelectedEvent, SelectionEventSourceType } from '../events';
 import { Events } from '../events';
 import type { CellEditRequestEvent } from '../events';
-import type { DetailGridInfo } from '../gridApi';
 import type { IServerSideStore } from '../interfaces/IServerSideStore';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';

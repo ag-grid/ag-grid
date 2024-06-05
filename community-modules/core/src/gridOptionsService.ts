@@ -1,3 +1,4 @@
+import type { GridApi } from './api/gridApi';
 import { ComponentUtil } from './components/componentUtil';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
@@ -6,7 +7,6 @@ import type { DomLayoutType, GridOptions } from './entities/gridOptions';
 import type { Environment } from './environment';
 import type { AgEvent, GridOptionsChangedEvent } from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS, Events } from './events';
-import type { GridApi } from './gridApi';
 import type {
     GetGroupAggFilteringParams,
     GetGroupIncludeFooterParams,

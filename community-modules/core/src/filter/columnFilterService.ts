@@ -1,6 +1,7 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { DataTypeService } from '../columns/dataTypeService';
 import { FilterComponent } from '../components/framework/componentTypes';
+import { unwrapUserComp } from '../components/framework/userComponentFactory';
 import type { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
@@ -14,7 +15,6 @@ import type {
     FilterDestroyedEvent,
     FilterModifiedEvent,
 } from '../events';
-import { unwrapUserComp } from '../gridApi';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
 import type { IRowModel } from '../interfaces/iRowModel';

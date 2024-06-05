@@ -78,6 +78,12 @@ export interface UserCompDetails {
     newAgStackInstance: () => AgPromise<any>;
 }
 
+export function unwrapUserComp<T>(comp: T): T {
+    const compAsAny = comp as any;
+    const isProxy = compAsAny != null && compAsAny.getFrameworkComponentInstance != null;
+    return isProxy ? compAsAny.getFrameworkComponentInstance() : comp;
+}
+
 export class UserComponentFactory extends BeanStub implements NamedBean {
     beanName = 'userComponentFactory' as const;
 

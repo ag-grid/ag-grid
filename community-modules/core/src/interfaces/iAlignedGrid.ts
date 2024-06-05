@@ -1,4 +1,4 @@
-import type { GridApi } from '../gridApi';
+import type { GridApi } from '../api/gridApi';
 
 type TypeOrNull<T> = T | null;
 type ApiRef = {

@@ -1,3 +1,4 @@
+import type { GridApi } from './api/gridApi';
 import type { ColumnApplyStateService } from './columns/columnApplyStateService';
 import type { ColumnModel } from './columns/columnModel';
 import type { ColumnSizeService } from './columns/columnSizeService';
@@ -21,7 +22,6 @@ import type {
     ColumnVisibleEvent,
 } from './events';
 import { Events } from './events';
-import type { GridApi } from './gridApi';
 import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { Logger } from './logger';
 import { _errorOnce } from './utils/function';

@@ -1,4 +1,5 @@
 import { AlignedGridsModule } from './alignedGridsModule';
+import { ApiAllModule, ApiModule } from './api/apiModule';
 import { DataTypeModule } from './columns/columnModules';
 import { EditModule } from './edit/editModules';
 import { FilterModule } from './filter/filterModules';
@@ -32,5 +33,7 @@ export const CommunityFeaturesModule: Module = {
         DataTypeModule,
         AlignedGridsModule,
         PaginationModule,
+        ApiModule,
+        ApiAllModule,
     ],
 };

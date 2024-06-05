@@ -1,3 +1,7 @@
+import { createApiProxy } from './api/apiUtils';
+import type { GridApi } from './api/gridApi';
+import { GridDestroyService } from './api/gridDestroyService';
+import type { ApiFunctionName } from './api/iApiFunction';
 import { CellNavigationService } from './cellNavigationService';
 import { ColumnApplyStateService } from './columns/columnApplyStateService';
 import { ColumnAutosizeService } from './columns/columnAutosizeService';
@@ -21,7 +25,7 @@ import { UserComponentFactory } from './components/framework/userComponentFactor
 import { UserComponentRegistry } from './components/framework/userComponentRegistry';
 import type { ComponentMeta, ContextParams, SingletonBean } from './context/context';
 import { Context } from './context/context';
-import { gridBeanComparator } from './context/gridBeanComparator';
+import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import { CtrlsFactory } from './ctrlsFactory';
 import { CtrlsService } from './ctrlsService';
 import { DragAndDropService } from './dragAndDrop/dragAndDropService';
@@ -33,8 +37,6 @@ import { RowPositionUtils } from './entities/rowPositionUtils';
 import { Environment } from './environment';
 import { EventService } from './eventService';
 import { FocusService } from './focusService';
-import type { GridApi } from './gridApi';
-import { GridApiService } from './gridApiService';
 import { MouseEventService } from './gridBodyComp/mouseEventService';
 import { NavigationService } from './gridBodyComp/navigationService';
 import { PinnedWidthService } from './gridBodyComp/pinnedWidthService';
@@ -254,13 +256,16 @@ export class GridCoreCreator {
             providedBeanInstances: providedBeanInstances,
             beanClasses: beanClasses,
             gridId: gridId,
-            beanComparator: gridBeanComparator,
+            beanInitComparator: gridBeanInitComparator,
+            beanDestroyComparator: gridBeanDestroyComparator,
+            derivedBeans: [createApiProxy],
         };
 
         const context = new Context(contextParams);
         this.registerModuleUserComponents(context, registeredModules);
         this.registerModuleStackComponents(context, registeredModules);
         this.registerControllers(context, registeredModules);
+        this.registerModuleApiFunctions(context, registeredModules);
 
         createUi(context);
 
@@ -270,8 +275,7 @@ export class GridCoreCreator {
             acceptChanges(context);
         }
 
-        const gridApi = context.getBean('gridApi') as GridApi;
-        return gridApi;
+        return context.getBean('gridApi');
     }
 
     private registerControllers(context: Context, registeredModules: Module[]): void {
@@ -336,6 +340,17 @@ export class GridCoreCreator {
         });
     }
 
+    private registerModuleApiFunctions(context: Context, registeredModules: Module[]): void {
+        const apiFunctionService = context.getBean('apiFunctionService');
+        registeredModules.forEach((module) => {
+            const apiFunctions = module.apiFunctions ?? {};
+            const names = Object.keys(apiFunctions) as ApiFunctionName[];
+            names.forEach((name) => {
+                apiFunctionService?.addFunction(name, apiFunctions[name]!);
+            });
+        });
+    }
+
     private createProvidedBeans(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams): any {
         let frameworkOverrides = params ? params.frameworkOverrides : null;
         if (_missing(frameworkOverrides)) {
@@ -394,7 +409,7 @@ export class GridCoreCreator {
             RowPositionUtils,
             CellPositionUtils,
             HeaderPositionUtils,
-            GridApiService,
+            GridDestroyService,
             UserComponentRegistry,
             AgComponentUtils,
             ComponentMetadataProvider,
