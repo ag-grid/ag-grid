@@ -11,14 +11,7 @@ import type {
     SelectionEventSourceType,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import {
-    ColumnModel,
-    Events,
-    RowNode,
-    _cloneObject,
-    _missingOrEmpty,
-    _sortRowNodesByOrder,
-} from '@ag-grid-community/core';
+import { Events, RowNode, _cloneObject, _missingOrEmpty, _sortRowNodesByOrder } from '@ag-grid-community/core';
 
 export class ClientSideNodeManager {
     private static TOP_LEVEL = 0;

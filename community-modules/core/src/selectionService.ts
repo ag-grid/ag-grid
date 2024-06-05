@@ -90,8 +90,6 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             }
 
             if (toNode) {
-                // if node is a footer, we don't do selection, just pass the info
-                // to the sibling (the parent of the group)
                 const fromNode = filteredNodes[0];
                 const newRowClicked = fromNode !== toNode;
                 if (newRowClicked && this.isMultiselect()) {
@@ -153,12 +151,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
     // selects all rows between this node and the last selected node (or the top if this is the first selection).
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
-    private selectRange(
-        fromNode: RowNode,
-        toNode: RowNode,
-        value: boolean = true,
-        source: SelectionEventSourceType
-    ): number {
+    private selectRange(fromNode: RowNode, toNode: RowNode, value: boolean, source: SelectionEventSourceType): number {
         const nodesToSelect = this.rowModel.getNodesInRangeForSelection(fromNode, toNode);
 
         let updatedCount = 0;

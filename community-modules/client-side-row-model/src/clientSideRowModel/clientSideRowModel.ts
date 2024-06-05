@@ -733,7 +733,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return _exists(this.rowsToDisplay) && this.rowsToDisplay.length > 0;
     }
 
-    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode | null): RowNode[] {
         // if lastSelectedNode is missing, we start at the first row
         let started = !lastInRange;
         let finished = false;
@@ -840,8 +840,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
 
             // infinite loops happen when there is space between rows. this can happen
-            // when Auto Height is active, cos we re-calculate row tops asyncronously
-            // when row heights change, which can temporarly result in gaps between rows.
+            // when Auto Height is active, cos we re-calculate row tops asynchronously
+            // when row heights change, which can temporarily result in gaps between rows.
             const caughtInInfiniteLoop = oldBottomPointer === bottomPointer && oldTopPointer === topPointer;
             if (caughtInInfiniteLoop) {
                 return midPointer;
