@@ -106,7 +106,7 @@ const GridComp = ({ context }: GridCompProps) => {
         const SideBarClass = agStackComponentsRegistry.getComponent('AG-SIDE-BAR', true);
         const StatusBarClass = agStackComponentsRegistry.getComponent('AG-STATUS-BAR', true);
         const WatermarkClass = agStackComponentsRegistry.getComponent('AG-WATERMARK', true);
-        const PaginationClass = agStackComponentsRegistry.getComponent('AG-PAGINATION', true);
+        const PaginationClass = context.getBean('paginationService')?.getPaginationComp();
         const additionalEls: HTMLElement[] = [];
         const eRootWrapper = eRootWrapperRef.current;
 

@@ -536,10 +536,6 @@
         &:focus-visible::after {
             content: none;
         }
-
-        &:hover {
-            background-color: var(--ag-row-hover-color);
-        }
     }
 
     .ag-rich-select-row {
@@ -552,6 +548,10 @@
 
     .ag-rich-select-row-selected {
         background-color: var(--ag-selected-row-background-color);
+    }
+
+    .ag-rich-select-row-highlighted {
+        background-color: var(--ag-row-hover-color);
     }
 
     .ag-rich-select-row-text-highlight {

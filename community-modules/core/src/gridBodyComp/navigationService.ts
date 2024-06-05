@@ -17,7 +17,7 @@ import type { IRangeService } from '../interfaces/IRangeService';
 import type { NavigateToNextCellParams, TabToNextCellParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
-import type { PaginationProxy } from '../pagination/paginationProxy';
+import type { RowBoundsService } from '../pagination/rowBoundsService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import { RowCtrl } from '../rendering/row/rowCtrl';
@@ -45,7 +45,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     beanName = 'navigationService' as const;
 
     private mouseEventService: MouseEventService;
-    private paginationProxy: PaginationProxy;
+    private rowBoundsService: RowBoundsService;
     private focusService: FocusService;
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
@@ -60,7 +60,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.mouseEventService = beans.mouseEventService;
-        this.paginationProxy = beans.paginationProxy;
+        this.rowBoundsService = beans.rowBoundsService;
         this.focusService = beans.focusService;
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
@@ -193,12 +193,10 @@ export class NavigationService extends BeanStub implements NamedBean {
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
         const pixelsInOnePage = this.getViewportHeight();
 
-        const pagingPixelOffset = this.paginationProxy.getPixelOffset();
+        const pagingPixelOffset = this.rowBoundsService.getPixelOffset();
 
         const currentPageBottomPixel = scrollPosition.top + pixelsInOnePage;
-        const currentPageBottomRow = this.paginationProxy.getRowIndexAtPixel(
-            currentPageBottomPixel + pagingPixelOffset
-        );
+        const currentPageBottomRow = this.rowModel.getRowIndexAtPixel(currentPageBottomPixel + pagingPixelOffset);
 
         if (this.columnModel.isAutoRowHeightActive()) {
             this.navigateToNextPageWithAutoHeight(gridCell, currentPageBottomRow);
@@ -212,10 +210,10 @@ export class NavigationService extends BeanStub implements NamedBean {
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
 
-        const pagingPixelOffset = this.paginationProxy.getPixelOffset();
+        const pagingPixelOffset = this.rowBoundsService.getPixelOffset();
 
         const currentPageTopPixel = scrollPosition.top;
-        const currentPageTopRow = this.paginationProxy.getRowIndexAtPixel(currentPageTopPixel + pagingPixelOffset);
+        const currentPageTopRow = this.rowModel.getRowIndexAtPixel(currentPageTopPixel + pagingPixelOffset);
 
         if (this.columnModel.isAutoRowHeightActive()) {
             this.navigateToNextPageWithAutoHeight(gridCell, currentPageTopRow, true);
@@ -226,10 +224,10 @@ export class NavigationService extends BeanStub implements NamedBean {
 
     private navigateToNextPage(gridCell: CellPosition, scrollIndex: number, up: boolean = false): void {
         const pixelsInOnePage = this.getViewportHeight();
-        const firstRow = this.paginationProxy.getPageFirstRow();
-        const lastRow = this.paginationProxy.getPageLastRow();
-        const pagingPixelOffset = this.paginationProxy.getPixelOffset();
-        const currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex);
+        const firstRow = this.rowBoundsService.getFirstRow();
+        const lastRow = this.rowBoundsService.getLastRow();
+        const pagingPixelOffset = this.rowBoundsService.getPixelOffset();
+        const currentRowNode = this.rowModel.getRow(gridCell.rowIndex);
 
         const rowPixelDiff = up
             ? // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
@@ -239,7 +237,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
         const nextCellPixel = currentRowNode?.rowTop! + rowPixelDiff;
 
-        let focusIndex = this.paginationProxy.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
+        let focusIndex = this.rowModel.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
 
         if (focusIndex === gridCell.rowIndex) {
             const diff = up ? -1 : 1;
@@ -312,13 +310,13 @@ export class NavigationService extends BeanStub implements NamedBean {
     private getNextFocusIndexForAutoHeight(gridCell: CellPosition, up: boolean = false): number {
         const step = up ? -1 : 1;
         const pixelsInOnePage = this.getViewportHeight();
-        const lastRowIndex = this.paginationProxy.getPageLastRow();
+        const lastRowIndex = this.rowBoundsService.getLastRow();
 
         let pixelSum = 0;
         let currentIndex = gridCell.rowIndex;
 
         while (currentIndex >= 0 && currentIndex <= lastRowIndex) {
-            const currentCell = this.paginationProxy.getRow(currentIndex);
+            const currentCell = this.rowModel.getRow(currentIndex);
 
             if (currentCell) {
                 const currentCellHeight = currentCell.rowHeight ?? 0;
@@ -349,7 +347,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     private isRowTallerThanView(rowIndex: number): boolean {
-        const rowNode = this.paginationProxy.getRow(rowIndex);
+        const rowNode = this.rowModel.getRow(rowIndex);
         if (!rowNode) {
             return false;
         }
@@ -383,7 +381,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         const homeKey = key === KeyCode.PAGE_HOME;
         const allColumns: AgColumn[] = this.visibleColsService.getAllCols();
         const columnToSelect = homeKey ? allColumns[0] : _last(allColumns);
-        const scrollIndex = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
+        const scrollIndex = homeKey ? this.rowBoundsService.getFirstRow() : this.rowBoundsService.getLastRow();
 
         this.navigateTo({
             scrollIndex: scrollIndex,
@@ -412,7 +410,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         // backwards)
         if (backwards) {
             const { rowIndex, rowPinned } = previous.getRowPosition();
-            const firstRow = rowPinned ? rowIndex === 0 : rowIndex === this.paginationProxy.getPageFirstRow();
+            const firstRow = rowPinned ? rowIndex === 0 : rowIndex === this.rowBoundsService.getFirstRow();
             if (firstRow) {
                 if (this.gos.get('headerHeight') === 0 || this.gos.get('suppressHeaderFocus')) {
                     this.focusService.focusNextGridCoreContainer(true, true);
@@ -751,7 +749,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             return this.pinnedRowModel.getPinnedBottomRow(cell.rowIndex);
         }
 
-        return this.paginationProxy.getRow(cell.rowIndex);
+        return this.rowModel.getRow(cell.rowIndex);
     }
 
     // we use index for rows, but column object for columns, as the next column (by index) might not

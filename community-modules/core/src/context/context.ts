@@ -67,7 +67,10 @@ import type { MenuService } from '../misc/menuService';
 import type { ResizeObserverService } from '../misc/resizeObserverService';
 import type { StateService } from '../misc/stateService';
 import { ModuleRegistry } from '../modules/moduleRegistry';
-import type { PaginationProxy } from '../pagination/paginationProxy';
+import type { PaginationAutoPageSizeService } from '../pagination/paginationAutoPageSizeService';
+import type { PaginationService } from '../pagination/paginationService';
+import type { RowBoundsListener } from '../pagination/rowBoundsListener';
+import type { RowBoundsService } from '../pagination/rowBoundsService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
@@ -155,7 +158,7 @@ export type ComponentMeta = NamedClass<UserComponentName>;
 export interface CoreBeanCollection {
     context: Context;
     resizeObserverService: ResizeObserverService;
-    paginationProxy: PaginationProxy;
+    rowBoundsListener: RowBoundsListener;
     gos: GridOptionsService;
     environment: Environment;
     rowRenderer: RowRenderer;
@@ -246,6 +249,9 @@ export interface CoreBeanCollection {
     editService?: EditService;
     rowEditService?: RowEditService;
     alignedGridsService?: AlignedGridsService;
+    paginationAutoPageSizeService?: PaginationAutoPageSizeService;
+    paginationService?: PaginationService;
+    rowBoundsService: RowBoundsService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -378,7 +384,7 @@ export type BeanName =
     | 'navigationService'
     | 'overlayService'
     | 'paginationAutoPageSizeService'
-    | 'paginationProxy'
+    | 'paginationService'
     | 'pinnedRowModel'
     | 'pinnedWidthService'
     | 'pivotColDefService'
@@ -387,6 +393,8 @@ export type BeanName =
     | 'quickFilterService'
     | 'rangeService'
     | 'resizeObserverService'
+    | 'rowBoundsListener'
+    | 'rowBoundsService'
     | 'rowContainerHeightService'
     | 'rowCssClassCalculator'
     | 'rowEditService'

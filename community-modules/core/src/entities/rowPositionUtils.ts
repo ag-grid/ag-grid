@@ -3,7 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
-import type { PaginationProxy } from '../pagination/paginationProxy';
+import type { RowBoundsService } from '../pagination/rowBoundsService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _exists } from '../utils/generic';
 import type { RowNode } from './rowNode';
@@ -22,12 +22,12 @@ export class RowPositionUtils extends BeanStub implements NamedBean {
 
     private rowModel: IRowModel;
     private pinnedRowModel: PinnedRowModel;
-    private paginationProxy: PaginationProxy;
+    private rowBoundsService: RowBoundsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
         this.pinnedRowModel = beans.pinnedRowModel;
-        this.paginationProxy = beans.paginationProxy;
+        this.rowBoundsService = beans.rowBoundsService;
     }
 
     public getFirstRow(): RowPosition | null {
@@ -38,7 +38,7 @@ export class RowPositionUtils extends BeanStub implements NamedBean {
             rowPinned = 'top';
         } else if (this.rowModel.getRowCount()) {
             rowPinned = null;
-            rowIndex = this.paginationProxy.getPageFirstRow();
+            rowIndex = this.rowBoundsService.getFirstRow();
         } else if (this.pinnedRowModel.getPinnedBottomRowCount()) {
             rowPinned = 'bottom';
         }
@@ -58,7 +58,7 @@ export class RowPositionUtils extends BeanStub implements NamedBean {
             rowIndex = pinnedBottomCount - 1;
         } else if (this.rowModel.getRowCount()) {
             rowPinned = null;
-            rowIndex = this.paginationProxy.getPageLastRow();
+            rowIndex = this.rowBoundsService.getLastRow();
         } else if (pinnedTopCount) {
             rowPinned = 'top';
             rowIndex = pinnedTopCount - 1;

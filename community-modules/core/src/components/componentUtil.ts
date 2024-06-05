@@ -56,6 +56,7 @@ export class ComponentUtil {
         Events.EVENT_ALIGNED_GRID_COLUMN,
         Events.EVENT_ALIGNED_GRID_SCROLL,
         Events.EVENT_GRID_OPTIONS_CHANGED,
+        Events.EVENT_RECALCULATE_ROW_BOUNDS,
     ];
 
     // events that are available for use by users of AG Grid and so should be documented

@@ -3,8 +3,9 @@ import { DataTypeModule } from './columns/columnModules';
 import { EditModule } from './edit/editModules';
 import { FilterModule } from './filter/filterModules';
 import type { Module } from './interfaces/iModule';
-import { StateModule } from './main';
+import { StateModule } from './misc/stateModule';
 import { ModuleNames } from './modules/moduleNames';
+import { PaginationModule } from './pagination/paginationModule';
 import { ValidationService } from './validation/validationService';
 import { VERSION } from './version';
 
@@ -30,5 +31,6 @@ export const CommunityFeaturesModule: Module = {
         StateModule,
         DataTypeModule,
         AlignedGridsModule,
+        PaginationModule,
     ],
 };

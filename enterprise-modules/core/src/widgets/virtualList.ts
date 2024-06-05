@@ -30,7 +30,7 @@ interface VirtualListParams {
 
 export class VirtualList<C extends Component = Component> extends TabGuardComp {
     private resizeObserverService: ResizeObserverService;
-    private animationFrameService: AnimationFrameService;
+    protected animationFrameService: AnimationFrameService;
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {

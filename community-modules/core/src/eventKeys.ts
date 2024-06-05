@@ -276,6 +276,8 @@ export class Events {
 
     public static EVENT_GRID_OPTIONS_CHANGED = 'gridOptionsChanged' as const;
 
+    public static EVENT_RECALCULATE_ROW_BOUNDS = 'recalculateRowBounds' as const;
+
     /*****************************  INTERNAL EVENTS: END ******************************************* */
 }
 

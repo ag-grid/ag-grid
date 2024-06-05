@@ -56,14 +56,14 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
         _setAriaLabel(this.eWrapper, ariaLabel);
     }
 
-    protected override createPickerComponent(): VirtualList {
+    protected override createPickerComponent() {
         if (!this.values) {
             const { values } = this.params.getEditorParams();
             this.values = values!;
-            const key = this.value.key;
+            const key = (this.value as AutocompleteEntry).key;
             const value = values!.find((value) => value.key === key) ?? {
                 key,
-                displayValue: this.value.displayValue,
+                displayValue: (this.value as AutocompleteEntry).displayValue,
             };
             this.value = value;
         }
