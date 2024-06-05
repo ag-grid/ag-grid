@@ -204,6 +204,7 @@ export { ValueService } from '@ag-grid-community/core';
 export { VanillaFrameworkOverrides } from '@ag-grid-community/core';
 export { VerticalDirection } from '@ag-grid-community/core';
 export { VisibleColsService } from '@ag-grid-community/core';
+export { _RowRangeSelectionContext } from '@ag-grid-community/core';
 export { _areEqual } from '@ag-grid-community/core';
 export { _bindCellRendererToHtmlElement } from '@ag-grid-community/core';
 export { _capitalise } from '@ag-grid-community/core';
