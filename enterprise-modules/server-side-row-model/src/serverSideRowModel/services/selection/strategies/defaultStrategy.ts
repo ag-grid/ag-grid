@@ -214,26 +214,18 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         return !this.selectedState.selectAll && !this.selectedState.toggledNodes?.size;
     }
 
-    public selectAllRowNodes(params: {
-        source: SelectionEventSourceType;
-        justFiltered?: boolean | undefined;
-        justCurrentPage?: boolean | undefined;
-    }): void {
+    public selectAllRowNodes(): void {
         this.selectedState = { selectAll: true, toggledNodes: new Set() };
         this.selectedNodes = {};
         this.selectAllUsed = true;
     }
 
-    public deselectAllRowNodes(params: {
-        source: SelectionEventSourceType;
-        justFiltered?: boolean | undefined;
-        justCurrentPage?: boolean | undefined;
-    }): void {
+    public deselectAllRowNodes(): void {
         this.selectedState = { selectAll: false, toggledNodes: new Set() };
         this.selectedNodes = {};
     }
 
-    public getSelectAllState(justFiltered?: boolean, justCurrentPage?: boolean): boolean | null {
+    public getSelectAllState(): boolean | null {
         if (this.selectedState.selectAll) {
             if (this.selectedState.toggledNodes.size > 0) {
                 return null;

@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    ChangedPath,
     IRowModel,
     ISelectionService,
     ISetNodesSelectedParams,
@@ -34,8 +33,8 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         this.addManagedPropertyListener('groupSelectsChildren', (propChange) => {
             this.destroyBean(this.selectionStrategy);
 
-            const StrategyClazz = !propChange.currentValue ? DefaultStrategy : GroupSelectsChildrenStrategy;
-            this.selectionStrategy = this.createManagedBean(new StrategyClazz());
+            const Strategy = !propChange.currentValue ? DefaultStrategy : GroupSelectsChildrenStrategy;
+            this.selectionStrategy = this.createManagedBean(new Strategy());
 
             this.shotgunResetNodeSelectionState();
             const event: WithoutGridCommon<SelectionChangedEvent> = {
@@ -47,8 +46,8 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
 
         this.addManagedPropertyListener('rowSelection', () => this.deselectAllRowNodes({ source: 'api' }));
 
-        const StrategyClazz = !groupSelectsChildren ? DefaultStrategy : GroupSelectsChildrenStrategy;
-        this.selectionStrategy = this.createManagedBean(new StrategyClazz());
+        const Strategy = !groupSelectsChildren ? DefaultStrategy : GroupSelectsChildrenStrategy;
+        this.selectionStrategy = this.createManagedBean(new Strategy());
     }
 
     public getSelectionState(): string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | null {
@@ -186,7 +185,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         return this.selectionStrategy.isEmpty();
     }
 
-    public hasNodesToSelect(justFiltered = false, justCurrentPage = false) {
+    public hasNodesToSelect() {
         return true;
     }
 
@@ -247,10 +246,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
     }
 
     // used by CSRM
-    public updateGroupsFromChildrenSelections(
-        source: SelectionEventSourceType,
-        changedPath?: ChangedPath | undefined
-    ): boolean {
+    public updateGroupsFromChildrenSelections(): boolean {
         return false;
     }
 
