@@ -232,7 +232,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
             if (idx != null) {
                 listComponent.highlightIndex(idx);
+            } else {
+                listComponent.refresh();
             }
+        } else {
+            listComponent.refresh();
         }
 
         this.displayOrHidePicker();
