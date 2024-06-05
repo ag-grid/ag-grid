@@ -1,9 +1,22 @@
 import type { RowNode } from '../entities/rowNode';
 import type { IRowModel } from '../interfaces/iRowModel';
 
+/**
+ * The context of a row range selection operation.
+ *
+ * Used to model the stateful range selection behaviour found in Excel, where
+ * a given cell/row represents the "root" of a selection range, and subsequent
+ * selections are based off that root.
+ *
+ * See AG-9620 for more
+ */
 export class RowRangeSelectionContext {
     private root: RowNode | null = null;
-    private tail: RowNode | null = null;
+    /**
+     * Note that the "end" `RowNode` may come before or after the "root" `RowNode` in the
+     * actual grid.
+     */
+    private end: RowNode | null = null;
     private rowModel: IRowModel;
     private cachedRange: RowNode[] = [];
 
@@ -13,24 +26,24 @@ export class RowRangeSelectionContext {
 
     public destroy(): void {
         this.root = null;
-        this.tail = null;
+        this.end = null;
         this.cachedRange.length = 0;
     }
 
     public reset(node: RowNode): void {
         this.root = node;
-        this.tail = null;
+        this.end = null;
         this.cachedRange.length = 0;
     }
 
-    public setTail(tail: RowNode): void {
-        this.tail = tail;
+    public setEndRange(end: RowNode): void {
+        this.end = end;
         this.cachedRange.length = 0;
     }
 
     private getRange(): RowNode[] {
         if (this.cachedRange.length === 0 && this.root !== null) {
-            this.cachedRange = this.rowModel.getNodesInRangeForSelection(this.root, this.tail);
+            this.cachedRange = this.rowModel.getNodesInRangeForSelection(this.root, this.end);
         }
 
         return this.cachedRange;
@@ -48,7 +61,14 @@ export class RowRangeSelectionContext {
         return this.root;
     }
 
-    public splitRangeAt(node: RowNode): [left: RowNode[], right: RowNode[]] {
+    /**
+     * Finds the given node in the range describe by this context. If the node exists,
+     * splits the range at that node (inclusive).
+     *
+     * @param node - Node at which to bisect the range
+     * @returns Tuple of arrays containing nodes to either side of the given node
+     */
+    public splitRangeAt(node: RowNode): [RowNode[], RowNode[]] {
         const range = this.getRange();
 
         const idx = range.findIndex((rowNode) => rowNode.id === node.id);

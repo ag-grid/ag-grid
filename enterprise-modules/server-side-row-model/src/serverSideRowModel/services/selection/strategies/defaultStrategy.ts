@@ -155,7 +155,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
             if (this.selectionContext.isInRange(node)) {
                 const [nodesToSet, nodesToUnset] = this.selectionContext.splitRangeAt(node);
-                this.selectionContext.setTail(node);
+                this.selectionContext.setEndRange(node);
 
                 // When we are selecting a range, we may need to de-select part of the previously
                 // selected range (see AG-9620)
@@ -166,7 +166,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 }
                 nodesToSet.forEach((node) => updateNodeState(node));
             } else {
-                this.selectionContext.setTail(node);
+                this.selectionContext.setEndRange(node);
                 const fromNode = this.selectionContext.getRoot();
                 const toNode = node;
                 if (fromNode !== toNode) {

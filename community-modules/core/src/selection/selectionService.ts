@@ -81,7 +81,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
 
             if (this.selectionCtx.isInRange(node)) {
                 const [nodesToSet, nodesToUnset] = this.selectionCtx.splitRangeAt(node);
-                this.selectionCtx.setTail(node);
+                this.selectionCtx.setEndRange(node);
 
                 // When we are selecting a range, we may need to de-select part of the previously
                 // selected range (see AG-9620)
@@ -92,7 +92,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
                 }
                 return this.selectRange(nodesToSet, newValue, source);
             } else {
-                this.selectionCtx.setTail(node);
+                this.selectionCtx.setEndRange(node);
                 const fromNode = this.selectionCtx.getRoot();
                 const toNode = node;
                 if (fromNode !== toNode && this.isMultiselect()) {
