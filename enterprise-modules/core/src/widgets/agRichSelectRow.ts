@@ -39,7 +39,6 @@ export class RichSelectRow<TValue> extends Component {
         let formattedValue: string = '';
 
         const { params } = this;
-        const { multiSelect } = params;
 
         if (params.valueFormatter) {
             formattedValue = params.valueFormatter(value);
@@ -50,10 +49,6 @@ export class RichSelectRow<TValue> extends Component {
         }
 
         this.value = value;
-
-        if (!multiSelect) {
-            return;
-        }
 
         if (this.isItemSelected(value)) {
             this.updateSelected(true);

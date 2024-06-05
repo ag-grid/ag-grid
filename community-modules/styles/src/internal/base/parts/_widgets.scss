@@ -550,6 +550,7 @@
         background-color: var(--ag-selected-row-background-color);
     }
 
+    .ag-rich-select-row:hover,
     .ag-rich-select-row-highlighted {
         background-color: var(--ag-row-hover-color);
     }
