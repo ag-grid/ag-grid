@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { PaginationProxy } from '../pagination/paginationProxy';
+import type { PaginationService } from '../pagination/paginationService';
 
 interface TaskItem {
     task: () => void;
@@ -19,11 +19,11 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     beanName = 'animationFrameService' as const;
 
     private ctrlsService: CtrlsService;
-    private paginationProxy: PaginationProxy;
+    private paginationService?: PaginationService;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
-        this.paginationProxy = beans.paginationProxy;
+        this.paginationService = beans.paginationService;
     }
 
     // p1 and p2 are create tasks are to do with row and cell creation.
@@ -53,7 +53,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
         this.scrollGoingDown = scrollTop >= this.lastScrollTop;
 
         if (isPaginationActive && scrollTop === 0) {
-            const currentPage = this.paginationProxy.getCurrentPage();
+            const currentPage = this.paginationService?.getCurrentPage() ?? 0;
             if (currentPage !== this.lastPage) {
                 this.lastPage = currentPage;
                 this.scrollGoingDown = true;

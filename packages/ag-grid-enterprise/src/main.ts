@@ -184,7 +184,7 @@ export { NumberCellEditor } from '@ag-grid-community/core';
 export { NumberFilter } from '@ag-grid-community/core';
 export { NumberSequence } from '@ag-grid-community/core';
 export { OverlayWrapperComponent } from '@ag-grid-community/core';
-export { PaginationProxy } from '@ag-grid-community/core';
+export { PaginationModule } from '@ag-grid-community/core';
 export { PinnedRowModel } from '@ag-grid-community/core';
 export { PivotResultColsService } from '@ag-grid-community/core';
 export { PopupComponent } from '@ag-grid-community/core';

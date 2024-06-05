@@ -49,7 +49,7 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { ISideBarService } from '../interfaces/iSideBar';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../interfaces/selectionState';
-import type { PaginationProxy } from '../pagination/paginationProxy';
+import type { PaginationService } from '../pagination/paginationService';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { SortModelItem } from '../sortController';
 import { _debounce } from '../utils/function';
@@ -66,7 +66,7 @@ export class StateService extends BeanStub implements NamedBean {
     private visibleColsService: VisibleColsService;
     private columnGroupStateService: ColumnGroupStateService;
     private columnGetStateService: ColumnGetStateService;
-    private paginationProxy: PaginationProxy;
+    private paginationService?: PaginationService;
     private rowModel: IRowModel;
     private selectionService: ISelectionService;
     private expansionService: IExpansionService;
@@ -84,7 +84,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.visibleColsService = beans.visibleColsService;
         this.columnGroupStateService = beans.columnGroupStateService;
         this.columnGetStateService = beans.columnGetStateService;
-        this.paginationProxy = beans.paginationProxy;
+        this.paginationService = beans.paginationService;
         this.rowModel = beans.rowModel;
         this.selectionService = beans.selectionService;
         this.expansionService = beans.expansionService;
@@ -666,8 +666,11 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private getPaginationState(): PaginationState | undefined {
-        const page = this.paginationProxy.getCurrentPage();
-        const pageSize = !this.gos.get('paginationAutoPageSize') ? this.paginationProxy.getPageSize() : undefined;
+        if (!this.paginationService) {
+            return undefined;
+        }
+        const page = this.paginationService.getCurrentPage();
+        const pageSize = !this.gos.get('paginationAutoPageSize') ? this.paginationService.getPageSize() : undefined;
 
         if (!page && !pageSize) {
             return;
@@ -676,12 +679,15 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setPaginationState(paginationState: PaginationState): void {
+        if (!this.paginationService) {
+            return;
+        }
         if (paginationState.pageSize && !this.gos.get('paginationAutoPageSize')) {
-            this.paginationProxy.setPageSize(paginationState.pageSize, 'initialState');
+            this.paginationService.setPageSize(paginationState.pageSize, 'initialState');
         }
 
         if (typeof paginationState.page === 'number') {
-            this.paginationProxy.setPage(paginationState.page);
+            this.paginationService.setPage(paginationState.page);
         }
     }
 

@@ -1,0 +1,70 @@
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import { Events } from '../eventKeys';
+import type { IRowModel, RowBounds } from '../interfaces/iRowModel';
+import { _exists, _missing } from '../utils/generic';
+
+export class RowBoundsService extends BeanStub implements NamedBean {
+    beanName = 'rowBoundsService' as const;
+
+    private rowModel: IRowModel;
+
+    private topRowBounds: RowBounds;
+    private bottomRowBounds: RowBounds;
+    private pixelOffset = 0;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.rowModel = beans.rowModel;
+    }
+
+    public getFirstRow(): number {
+        return this.topRowBounds ? this.topRowBounds.rowIndex! : -1;
+    }
+
+    public getLastRow(): number {
+        return this.bottomRowBounds ? this.bottomRowBounds.rowIndex! : -1;
+    }
+
+    public getCurrentPageHeight(): number {
+        if (_missing(this.topRowBounds) || _missing(this.bottomRowBounds)) {
+            return 0;
+        }
+        return Math.max(this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight - this.topRowBounds.rowTop, 0);
+    }
+
+    public getCurrentPagePixelRange(): { pageFirstPixel: number; pageLastPixel: number } {
+        const pageFirstPixel = this.topRowBounds ? this.topRowBounds.rowTop : 0;
+        const pageLastPixel = this.bottomRowBounds ? this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight : 0;
+        return { pageFirstPixel, pageLastPixel };
+    }
+
+    public calculateBounds(topDisplayedRowIndex: number, bottomDisplayedRowIndex: number): void {
+        this.topRowBounds = this.rowModel.getRowBounds(topDisplayedRowIndex)!;
+        if (this.topRowBounds) {
+            this.topRowBounds.rowIndex = topDisplayedRowIndex;
+        }
+
+        this.bottomRowBounds = this.rowModel.getRowBounds(bottomDisplayedRowIndex)!;
+        if (this.bottomRowBounds) {
+            this.bottomRowBounds.rowIndex = bottomDisplayedRowIndex;
+        }
+
+        this.calculatePixelOffset();
+    }
+
+    public getPixelOffset(): number {
+        return this.pixelOffset;
+    }
+
+    private calculatePixelOffset(): void {
+        const value = _exists(this.topRowBounds) ? this.topRowBounds.rowTop : 0;
+
+        if (this.pixelOffset === value) {
+            return;
+        }
+
+        this.pixelOffset = value;
+        this.eventService.dispatchEvent({ type: Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED });
+    }
+}
