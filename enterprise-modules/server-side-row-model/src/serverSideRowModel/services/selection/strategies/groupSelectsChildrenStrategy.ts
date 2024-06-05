@@ -102,7 +102,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 recursivelyDeserializeState(innerState, isThisNodeSelected),
             ]);
             const doesRedundantStateExist = convertedChildren?.some(
-                ([_, innerState]) =>
+                ([, innerState]) =>
                     isThisNodeSelected === innerState.selectAllChildren && innerState.toggledNodes.size === 0
             );
             if (doesRedundantStateExist) {
@@ -349,7 +349,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         return selectedNodes;
     }
 
-    public processNewRow(node: RowNode<any>): void {
+    public processNewRow(): void {
         // This is used for updating outdated node refs, as this model entirely uses ids it's irrelevant
     }
 
@@ -365,23 +365,15 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         return !this.selectedState.selectAllChildren && !this.selectedState.toggledNodes?.size;
     }
 
-    public selectAllRowNodes(params: {
-        source: SelectionEventSourceType;
-        justFiltered?: boolean | undefined;
-        justCurrentPage?: boolean | undefined;
-    }): void {
+    public selectAllRowNodes(): void {
         this.selectedState = { selectAllChildren: true, toggledNodes: new Map() };
     }
 
-    public deselectAllRowNodes(params: {
-        source: SelectionEventSourceType;
-        justFiltered?: boolean | undefined;
-        justCurrentPage?: boolean | undefined;
-    }): void {
+    public deselectAllRowNodes(): void {
         this.selectedState = { selectAllChildren: false, toggledNodes: new Map() };
     }
 
-    public getSelectAllState(justFiltered?: boolean, justCurrentPage?: boolean): boolean | null {
+    public getSelectAllState(): boolean | null {
         if (this.selectedState.selectAllChildren) {
             if (this.selectedState.toggledNodes.size > 0) {
                 return null;
