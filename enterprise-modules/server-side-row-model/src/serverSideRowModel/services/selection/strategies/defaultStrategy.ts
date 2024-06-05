@@ -8,7 +8,12 @@ import type {
     SelectionEventSourceType,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, Events } from '@ag-grid-community/core';
+import {
+    BeanStub,
+    Events,
+    _RowRangeSelectionContext as RowRangeSelectionContext,
+    _last,
+} from '@ag-grid-community/core';
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
@@ -19,13 +24,13 @@ interface SelectedState {
 
 export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     private rowModel: IRowModel;
+    private selectionContext = new RowRangeSelectionContext();
 
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
     }
 
     private selectedState: SelectedState = { selectAll: false, toggledNodes: new Set() };
-    private lastSelected: string | null = null;
 
     private selectAllUsed: boolean = false;
     // this is to prevent regressions, default selectionService retains reference of clicked nodes.
@@ -38,6 +43,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         this.addManagedPropertyListener('rowSelection', (propChange) => {
             this.rowSelection = propChange.currentValue;
         });
+        this.selectionContext.init(this.rowModel);
     }
 
     public getSelectedState(): IServerSideSelectionState {
@@ -99,15 +105,16 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     }
 
     public setNodesSelected(params: ISetNodesSelectedParams): number {
-        if (params.nodes.length === 0) return 0;
+        const { nodes, clearSelection, newValue, rangeSelect } = params;
+        if (nodes.length === 0) return 0;
 
-        const onlyThisNode = params.clearSelection && params.newValue && !params.rangeSelect;
+        const onlyThisNode = clearSelection && newValue && !rangeSelect;
         if (this.rowSelection !== 'multiple' || onlyThisNode) {
-            if (params.nodes.length > 1) {
+            if (nodes.length > 1) {
                 throw new Error("AG Grid: cannot select multiple rows when rowSelection is set to 'single'");
             }
-            const node = params.nodes[0];
-            if (params.newValue) {
+            const node = nodes[0];
+            if (newValue) {
                 this.selectedNodes = { [node.id!]: node };
                 this.selectedState = {
                     selectAll: false,
@@ -120,19 +127,19 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                     toggledNodes: new Set(),
                 };
             }
-            this.lastSelected = node.id!;
+            this.selectionContext.reset(node);
             return 1;
         }
 
-        const updateNodeState = (node: RowNode) => {
-            if (params.newValue) {
+        const updateNodeState = (node: RowNode, value = newValue) => {
+            if (value) {
                 this.selectedNodes[node.id!] = node;
             } else {
                 delete this.selectedNodes[node.id!];
             }
 
             const isNodeSelectable = node.selectable;
-            const doesNodeConform = params.newValue === this.selectedState.selectAll;
+            const doesNodeConform = value === this.selectedState.selectAll;
             if (doesNodeConform || !isNodeSelectable) {
                 this.selectedState.toggledNodes.delete(node.id!);
                 return;
@@ -140,19 +147,37 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
             this.selectedState.toggledNodes.add(node.id!);
         };
 
-        if (params.rangeSelect && this.lastSelected) {
-            if (params.nodes.length > 1) {
+        if (rangeSelect) {
+            if (nodes.length > 1) {
                 throw new Error('AG Grid: cannot select multiple rows when using rangeSelect');
             }
-            const node = params.nodes[0];
-            const lastSelectedNode = this.rowModel.getRowNode(this.lastSelected);
-            this.rowModel.getNodesInRangeForSelection(node, lastSelectedNode ?? null).forEach(updateNodeState);
-            this.lastSelected = node.id!;
+            const node = nodes[0];
+
+            if (this.selectionContext.isInRange(node)) {
+                const [left, right] = this.selectionContext.splitRangeAt(node);
+                this.selectionContext.setTail(node);
+
+                if (newValue) {
+                    right.forEach((node) => updateNodeState(node, false));
+                    left.forEach((node) => updateNodeState(node));
+                } else {
+                    left.forEach((node) => updateNodeState(node));
+                }
+            } else {
+                this.selectionContext.setTail(node);
+                const fromNode = this.selectionContext.getRoot();
+                const toNode = node;
+                if (fromNode !== toNode) {
+                    this.rowModel
+                        .getNodesInRangeForSelection(toNode, fromNode)
+                        .forEach((node) => updateNodeState(node));
+                }
+            }
             return 1;
         }
 
-        params.nodes.forEach(updateNodeState);
-        this.lastSelected = params.nodes[params.nodes.length - 1].id!;
+        nodes.forEach((node) => updateNodeState(node));
+        this.selectionContext.reset(_last(nodes));
         return 1;
     }
 
