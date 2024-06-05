@@ -1,145 +1,38 @@
-import type { BaseColDefParams } from '../../../entities/colDef';
-import type { IDoesFilterPassParams, IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
+import type { IDoesFilterPassParams } from '../../../interfaces/iFilter';
 import { _setAriaRole } from '../../../utils/aria';
 import { _warnOnce } from '../../../utils/function';
 import { _makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import type { ISimpleFilterModel, ISimpleFilterModelType, ISimpleFilterParams, Tuple } from '../simpleFilter';
-import { SimpleFilter, SimpleFilterModelFormatter } from '../simpleFilter';
-
-export interface TextFilterModel extends ISimpleFilterModel {
-    /** Filter type is always `'text'` */
-    filterType?: 'text';
-    /**
-     * The text value associated with the filter.
-     * It's optional as custom filters may not have a text value.
-     */
-    filter?: string | null;
-    /**
-     * The 2nd text value associated with the filter, if supported.
-     */
-    filterTo?: string | null;
-}
-
-export interface TextMatcherParams extends BaseColDefParams {
-    /**
-     * The applicable filter option being tested.
-     * One of: `equals`, `notEqual`, `contains`, `notContains`, `startsWith`, `endsWith`.
-     */
-    filterOption: string | null | undefined;
-    /**
-     * The value about to be filtered.
-     * If this column has a value getter, this value will be coming from the value getter,
-     * otherwise it is the raw value injected into the grid.
-     * If a `textFormatter` is provided, this value will have been formatted.
-     * If no `textFormatter` is provided and `caseSensitive` is not provided or is `false`,
-     * the value will have been converted to lower case.
-     */
-    value: any;
-    /**
-     * The value to filter by.
-     * If a `textFormatter` is provided, this value will have been formatted.
-     * If no `textFormatter` is provided and `caseSensitive` is not provided or is `false`,
-     * the value will have been converted to lower case.
-     */
-    filterText: string | null;
-    textFormatter?: TextFormatter;
-}
-
-export interface TextMatcher {
-    (params: TextMatcherParams): boolean;
-}
-
-export interface TextFormatter {
-    (from?: string | null): string | null;
-}
-
-/**
- * Parameters provided by the grid to the `init` method of a `TextFilter`.
- * Do not use in `colDef.filterParams` - see `ITextFilterParams` instead.
- */
-export type TextFilterParams<TData = any> = ITextFilterParams & IFilterParams<TData>;
-
-/**
- * Parameters used in `colDef.filterParams` to configure a  Text Filter (`agTextColumnFilter`).
- */
-export interface ITextFilterParams extends ISimpleFilterParams {
-    /**
-     * Used to override how to filter based on the user input.
-     * Returns `true` if the value passes the filter, otherwise `false`.
-     */
-    textMatcher?: TextMatcher;
-    /**
-     * By default, text filtering is case-insensitive. Set this to `true` to make text filtering case-sensitive.
-     * @default false
-     */
-    caseSensitive?: boolean;
-    /**
-     * Formats the text before applying the filter compare logic.
-     * Useful if you want to substitute accented characters, for example.
-     */
-    textFormatter?: (from: string) => string | null;
-    /**
-     * If `true`, the input that the user enters will be trimmed when the filter is applied, so any leading or trailing whitespace will be removed.
-     * If only whitespace is entered, it will be left as-is.
-     * If you enable `trimInput`, it is best to also increase the `debounceMs` to give users more time to enter text.
-     * @default false
-     */
-    trimInput?: boolean;
-}
-
-export class TextFilterModelFormatter extends SimpleFilterModelFormatter {
-    protected conditionToString(condition: TextFilterModel, options?: IFilterOptionDef): string {
-        const { numberOfInputs } = options || {};
-        const isRange = condition.type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
-
-        if (isRange) {
-            return `${condition.filter}-${condition.filterTo}`;
-        }
-
-        // cater for when the type doesn't need a value
-        if (condition.filter != null) {
-            return `${condition.filter}`;
-        }
-
-        return `${condition.type}`;
-    }
-}
+import type { ISimpleFilterModel, ISimpleFilterModelType, Tuple } from '../iSimpleFilter';
+import { SimpleFilter } from '../simpleFilter';
+import type { TextFilterModel, TextFilterParams, TextFormatter, TextMatcher } from './iTextFilter';
+import { DEFAULT_TEXT_FILTER_OPTIONS } from './textFilterConstants';
+import { TextFilterModelFormatter } from './textFilterModelFormatter';
+import { trimInputForFilter } from './textFilterUtils';
 
 export class TextFilter extends SimpleFilter<TextFilterModel, string> {
-    public static DEFAULT_FILTER_OPTIONS = [
-        SimpleFilter.CONTAINS,
-        SimpleFilter.NOT_CONTAINS,
-        SimpleFilter.EQUALS,
-        SimpleFilter.NOT_EQUAL,
-        SimpleFilter.STARTS_WITH,
-        SimpleFilter.ENDS_WITH,
-        SimpleFilter.BLANK,
-        SimpleFilter.NOT_BLANK,
-    ];
+    private readonly defaultFormatter: TextFormatter = (from: string) => from;
 
-    static DEFAULT_FORMATTER: TextFormatter = (from: string) => from;
-
-    static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string) =>
+    private readonly defaultLowercaseFormatter: TextFormatter = (from: string) =>
         from == null ? null : from.toString().toLowerCase();
 
-    static DEFAULT_MATCHER: TextMatcher = ({ filterOption, value, filterText }) => {
+    private readonly defaultMatcher: TextMatcher = ({ filterOption, value, filterText }) => {
         if (filterText == null) {
             return false;
         }
 
         switch (filterOption) {
-            case TextFilter.CONTAINS:
+            case 'contains':
                 return value.indexOf(filterText) >= 0;
-            case TextFilter.NOT_CONTAINS:
+            case 'notContains':
                 return value.indexOf(filterText) < 0;
-            case TextFilter.EQUALS:
+            case 'equals':
                 return value === filterText;
-            case TextFilter.NOT_EQUAL:
+            case 'notEqual':
                 return value != filterText;
-            case TextFilter.STARTS_WITH:
+            case 'startsWith':
                 return value.indexOf(filterText) === 0;
-            case TextFilter.ENDS_WITH: {
+            case 'endsWith': {
                 const index = value.lastIndexOf(filterText);
                 return index >= 0 && index === value.length - filterText.length;
             }
@@ -161,13 +54,6 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         super('textFilter');
     }
 
-    public static trimInput(value?: string | null): string | null | undefined {
-        const trimmedInput = value && value.trim();
-
-        // trim the input, unless it is all whitespace (this is consistent with Excel behaviour)
-        return trimmedInput === '' ? value : trimmedInput;
-    }
-
     protected override getDefaultDebounceMs(): number {
         return 500;
     }
@@ -180,9 +66,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         this.matcher = this.getTextMatcher();
         this.formatter =
             this.textFilterParams.textFormatter ||
-            (this.textFilterParams.caseSensitive
-                ? TextFilter.DEFAULT_FORMATTER
-                : TextFilter.DEFAULT_LOWERCASE_FORMATTER);
+            (this.textFilterParams.caseSensitive ? this.defaultFormatter : this.defaultLowercaseFormatter);
         this.filterModelFormatter = new TextFilterModelFormatter(this.localeService, this.optionsFactory);
     }
 
@@ -192,7 +76,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
             _warnOnce('textCustomComparator is deprecated, use textMatcher instead.');
             return ({ filterOption, value, filterText }) => legacyComparator(filterOption, value, filterText);
         }
-        return this.textFilterParams.textMatcher || TextFilter.DEFAULT_MATCHER;
+        return this.textFilterParams.textMatcher || this.defaultMatcher;
     }
 
     protected createCondition(position: number): TextFilterModel {
@@ -241,7 +125,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
             if (index < numberOfInputs) {
                 let value = _makeNull(element.getValue());
                 if (applySideEffects && this.textFilterParams.trimInput) {
-                    value = TextFilter.trimInput(value) ?? null;
+                    value = trimInputForFilter(value) ?? null;
                     element.setValue(value, true); // ensure clean value is visible
                 }
                 result.push(value);
@@ -252,7 +136,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     }
 
     protected getDefaultFilterOptions(): string[] {
-        return TextFilter.DEFAULT_FILTER_OPTIONS;
+        return DEFAULT_TEXT_FILTER_OPTIONS;
     }
 
     protected createValueElement(): HTMLElement {
@@ -285,7 +169,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     }
 
     protected evaluateNullValue(filterType: ISimpleFilterModelType | null) {
-        const filterTypesAllowNulls = [SimpleFilter.NOT_EQUAL, SimpleFilter.NOT_CONTAINS, SimpleFilter.BLANK];
+        const filterTypesAllowNulls: ISimpleFilterModelType[] = ['notEqual', 'notContains', 'blank'];
 
         return filterType ? filterTypesAllowNulls.indexOf(filterType) >= 0 : false;
     }
@@ -300,9 +184,9 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         const cellValueFormatted = this.formatter(cellValue);
         const { api, colDef, column, context, textFormatter } = this.textFilterParams;
 
-        if (filterModel.type === SimpleFilter.BLANK) {
+        if (filterModel.type === 'blank') {
             return this.isBlank(cellValue);
-        } else if (filterModel.type === SimpleFilter.NOT_BLANK) {
+        } else if (filterModel.type === 'notBlank') {
             return !this.isBlank(cellValue);
         }
 

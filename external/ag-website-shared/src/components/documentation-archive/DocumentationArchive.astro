@@ -1,0 +1,73 @@
+---
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import styles from './DocumentationArchive.module.scss';
+import type { Library } from '@ag-grid-types';
+
+interface Props {
+    site: Library;
+    versionsData: any[];
+}
+
+const { site, versionsData } = Astro.props as Props;
+
+const removeDay = (date) => {
+    const splitDate = date.split(' ');
+
+    if (splitDate.length < 3) return date;
+
+    return `${splitDate[0]} ${splitDate[2]}`;
+};
+
+const getVersionType = (version) => {
+    const [_, minor, patch] = version.split('.');
+
+    if (patch !== '0') {
+        return 'Patch';
+    } else if (minor !== '0') {
+        return 'Minor';
+    } else {
+        return 'Major';
+    }
+};
+
+const isMajor = (version) => {
+    return getVersionType(version) === 'Major';
+};
+---
+
+<div class={styles.docsArchiveContainer}>
+    <h1>Documentation Archive</h1>
+    <p class={styles.description}>Review documentation for previous AG {site} versions.</p>
+
+    <table class={styles.archiveTable}>
+        {
+            versionsData.slice(1).map((versionInfo) => {
+                return (
+                    <tr>
+                        <td class="text-base text-monospace text-semibold">{versionInfo.version}</td>
+
+                        <td>{removeDay(versionInfo.date)}</td>
+
+                        <td>
+                            <span class={isMajor(versionInfo.version) ? styles.major : undefined}>
+                                {getVersionType(versionInfo.version)}
+                            </span>
+                        </td>
+
+                        <td>
+                            <a href={`https://www.ag-grid.com/changelog/?fixVersion=${versionInfo.version}`}>
+                                Changelog <Icon name="arrowRight" />
+                            </a>
+                        </td>
+
+                        <td>
+                            <a href={`https://www.ag-grid.com/archive/${versionInfo.version}/`}>
+                                Documentation <Icon name="arrowRight" />
+                            </a>
+                        </td>
+                    </tr>
+                );
+            })
+        }
+    </table>
+</div>

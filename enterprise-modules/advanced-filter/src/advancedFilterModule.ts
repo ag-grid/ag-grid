@@ -1,5 +1,5 @@
 import type { Module } from '@ag-grid-community/core';
-import { ModuleNames } from '@ag-grid-community/core';
+import { FilterCoreModule, ModuleNames } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
 import { AdvancedFilterComp } from './advancedFilter/advancedFilterComp';
@@ -13,5 +13,5 @@ export const AdvancedFilterModule: Module = {
     moduleName: ModuleNames.AdvancedFilterModule,
     beans: [AdvancedFilterService, AdvancedFilterExpressionService],
     agStackComponents: [AgAutocomplete, AdvancedFilterComp],
-    dependantModules: [EnterpriseCoreModule],
+    dependantModules: [EnterpriseCoreModule, FilterCoreModule],
 };

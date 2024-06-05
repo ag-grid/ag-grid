@@ -1,23 +1,21 @@
 import type {
     AgPromise,
     BeanCollection,
-    FieldPickerValueSelectedEvent,
     ICellRendererParams,
     RichSelectParams,
     UserCompDetails,
     UserComponentFactory,
-    VirtualList,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
     Component,
-    Events,
     _bindCellRendererToHtmlElement,
     _escapeString,
     _exists,
     _setAriaActiveDescendant,
     _setAriaSelected,
 } from '@ag-grid-community/core';
+
+import type { VirtualList } from './virtualList';
 
 export class RichSelectRow<TValue> extends Component {
     private userComponentFactory: UserComponentFactory;
@@ -31,20 +29,20 @@ export class RichSelectRow<TValue> extends Component {
 
     constructor(
         private readonly params: RichSelectParams<TValue>,
-        private readonly wrapperEl: HTMLElement
+        private readonly wrapperEl: HTMLElement,
+        private readonly isItemSelected: (value: TValue) => boolean
     ) {
         super(/* html */ `<div class="ag-rich-select-row" role="presentation"></div>`);
-    }
-
-    public postConstruct(): void {
-        this.addManagedListener(this.getGui(), 'click', this.onClick.bind(this));
     }
 
     public setState(value: TValue): void {
         let formattedValue: string = '';
 
-        if (this.params.valueFormatter) {
-            formattedValue = this.params.valueFormatter(value);
+        const { params } = this;
+        const { multiSelect } = params;
+
+        if (params.valueFormatter) {
+            formattedValue = params.valueFormatter(value);
         }
         const rendererSuccessful = this.populateWithRenderer(value, formattedValue);
         if (!rendererSuccessful) {
@@ -52,6 +50,14 @@ export class RichSelectRow<TValue> extends Component {
         }
 
         this.value = value;
+
+        if (!multiSelect) {
+            return;
+        }
+
+        if (this.isItemSelected(value)) {
+            this.updateSelected(true);
+        }
     }
 
     public highlightString(matchString: string): void {
@@ -83,6 +89,17 @@ export class RichSelectRow<TValue> extends Component {
         }
     }
 
+    public updateSelected(selected: boolean): void {
+        const eGui = this.getGui();
+        _setAriaSelected(eGui.parentElement!, selected);
+
+        this.addOrRemoveCssClass('ag-rich-select-row-selected', selected);
+    }
+
+    public getValue(): TValue {
+        return this.value;
+    }
+
     public updateHighlighted(highlighted: boolean): void {
         const eGui = this.getGui();
         const parentId = `ag-rich-select-row-${this.getCompId()}`;
@@ -95,8 +112,7 @@ export class RichSelectRow<TValue> extends Component {
             this.wrapperEl.setAttribute('data-active-option', parentId);
         }
 
-        _setAriaSelected(eGui.parentElement!, highlighted);
-        this.addOrRemoveCssClass('ag-rich-select-row-selected', highlighted);
+        this.addOrRemoveCssClass('ag-rich-select-row-highlighted', highlighted);
     }
 
     private populateWithoutRenderer(value: any, valueFormatted: any) {
@@ -157,16 +173,5 @@ export class RichSelectRow<TValue> extends Component {
             return true;
         }
         return false;
-    }
-
-    private onClick(): void {
-        const parent = this.getParentComponent();
-        const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
-            type: Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
-            fromEnterKey: false,
-            value: this.value,
-        };
-
-        parent?.dispatchEvent(event);
     }
 }

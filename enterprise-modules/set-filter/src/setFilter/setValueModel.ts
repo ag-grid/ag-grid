@@ -18,7 +18,6 @@ import type {
 import {
     AgPromise,
     LocalEventService,
-    TextFilter,
     _defaultComparator,
     _doOnce,
     _exists,
@@ -142,7 +141,7 @@ export class SetValueModel<V> implements IEventEmitter {
         this.caseFormat = params.caseFormat;
         this.createKey = params.createKey;
         this.usingComplexObjects = !!params.usingComplexObjects;
-        this.formatter = textFormatter || TextFilter.DEFAULT_FORMATTER;
+        this.formatter = textFormatter ?? ((value) => value ?? null);
         this.doesRowPassOtherFilters = doesRowPassOtherFilter;
         this.suppressSorting = suppressSorting || false;
         this.filteringKeys = new SetValueModelFilteringKeys({ caseFormat: this.caseFormat });
@@ -236,7 +235,7 @@ export class SetValueModel<V> implements IEventEmitter {
             const currentSuppressSorting = this.suppressSorting;
 
             this.filterParams = filterParams;
-            this.formatter = textFormatter || TextFilter.DEFAULT_FORMATTER;
+            this.formatter = textFormatter ?? ((value) => value ?? null);
 
             this.suppressSorting = suppressSorting || false;
             this.providedValues = values ?? null;

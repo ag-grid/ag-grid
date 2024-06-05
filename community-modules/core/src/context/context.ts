@@ -1,5 +1,5 @@
+import type { AlignedGridsService } from '../alignedGridsService';
 import type { CellNavigationService } from '../cellNavigationService';
-import type { AutoColService } from '../columns/autoColService';
 import type { ColumnApplyStateService } from '../columns/columnApplyStateService';
 import type { ColumnAutosizeService } from '../columns/columnAutosizeService';
 import type { ColumnDefFactory } from '../columns/columnDefFactory';
@@ -15,7 +15,6 @@ import type { ColumnViewportService } from '../columns/columnViewportService';
 import type { DataTypeService } from '../columns/dataTypeService';
 import type { FuncColsService } from '../columns/funcColsService';
 import type { PivotResultColsService } from '../columns/pivotResultColsService';
-import type { ShowRowGroupColsService } from '../columns/showRowGroupColsService';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
 import type { AgComponentUtils } from '../components/framework/agComponentUtils';
@@ -27,6 +26,8 @@ import type { CtrlsFactory } from '../ctrlsFactory';
 import type { CtrlsService } from '../ctrlsService';
 import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
 import type { DragService } from '../dragAndDrop/dragService';
+import type { EditService } from '../edit/editService';
+import type { RowEditService } from '../edit/rowEditService';
 import type { CellPositionUtils } from '../entities/cellPositionUtils';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNodeEventThrottle } from '../entities/rowNodeEventThrottle';
@@ -34,6 +35,7 @@ import type { RowPositionUtils } from '../entities/rowPositionUtils';
 import type { Environment } from '../environment';
 import type { EventService } from '../eventService';
 import type { AgGlobalEventListener } from '../events';
+import type { ColumnFilterService } from '../filter/columnFilterService';
 import type { FilterManager } from '../filter/filterManager';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { FocusService } from '../focusService';
@@ -47,6 +49,7 @@ import type { HeaderNavigationService } from '../headerRendering/common/headerNa
 import type { HeaderPositionUtils } from '../headerRendering/common/headerPosition';
 import type { HorizontalResizeService } from '../headerRendering/common/horizontalResizeService';
 import type { IRangeService, ISelectionHandleFactory } from '../interfaces/IRangeService';
+import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
@@ -55,6 +58,7 @@ import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
+import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { LocaleService } from '../localeService';
 import type { LoggerFactory } from '../logger';
 import type { AnimationFrameService } from '../misc/animationFrameService';
@@ -92,10 +96,61 @@ export interface ContextParams extends GenericContextParams<BeanName, BeanCollec
 
 export interface SingletonBean extends GenericSingletonBean<BeanName, BeanCollection> {}
 
-export interface ControllerMeta {
-    controllerClass: new () => object;
-    controllerName: string;
+export type ControllerName = 'headerFilterCell' | 'detailCellRenderer' | 'groupCellRendererCtrl';
+export type UserComponentName =
+    | 'agColumnHeader'
+    | 'agColumnGroupHeader'
+    | 'agSortIndicator'
+    | 'agAnimateShowChangeCellRenderer'
+    | 'agAnimateSlideCellRenderer'
+    | 'agLoadingCellRenderer'
+    | 'agSkeletonCellRenderer'
+    | 'agCheckboxCellRenderer'
+    | 'agLoadingOverlay'
+    | 'agNoRowsOverlay'
+    | 'agTooltipComponent'
+    | 'agReadOnlyFloatingFilter'
+    | 'agTextColumnFilter'
+    | 'agNumberColumnFilter'
+    | 'agDateColumnFilter'
+    | 'agDateInput'
+    | 'agTextColumnFloatingFilter'
+    | 'agNumberColumnFloatingFilter'
+    | 'agDateColumnFloatingFilter'
+    | 'agMultiColumnFilter'
+    | 'agMultiColumnFloatingFilter'
+    | 'agGroupColumnFilter'
+    | 'agGroupColumnFloatingFilter'
+    | 'agSetColumnFilter'
+    | 'agSetColumnFloatingFilter'
+    | 'agCellEditor'
+    | 'agSelectCellEditor'
+    | 'agTextCellEditor'
+    | 'agNumberCellEditor'
+    | 'agDateCellEditor'
+    | 'agDateStringCellEditor'
+    | 'agCheckboxCellEditor'
+    | 'agLargeTextCellEditor'
+    | 'agRichSelect'
+    | 'agRichSelectCellEditor'
+    | 'agMenuItem'
+    | 'agColumnsToolPanel'
+    | 'agFiltersToolPanel'
+    | 'agGroupRowRenderer'
+    | 'agGroupCellRenderer'
+    | 'agDetailCellRenderer'
+    | 'agSparklineCellRenderer'
+    | 'agAggregationComponent'
+    | 'agSelectedRowCountComponent'
+    | 'agTotalRowCountComponent'
+    | 'agFilteredRowCountComponent'
+    | 'agTotalAndFilteredRowCountComponent';
+export interface NamedClass<TName = string> {
+    classImp: new (...args: []) => object;
+    name: TName;
 }
+export type ControllerMeta = NamedClass<ControllerName>;
+export type ComponentMeta = NamedClass<UserComponentName>;
 
 export interface CoreBeanCollection {
     context: Context;
@@ -125,7 +180,8 @@ export interface CoreBeanCollection {
     dragService: DragService;
     dragAndDropService: DragAndDropService;
     sortController: SortController;
-    filterManager: FilterManager;
+    columnFilterService?: ColumnFilterService;
+    filterManager?: FilterManager;
     rowContainerHeightService: RowContainerHeightService;
     frameworkOverrides: IFrameworkOverrides;
     cellPositionUtils: CellPositionUtils;
@@ -143,7 +199,7 @@ export interface CoreBeanCollection {
     ariaAnnouncementService: AriaAnnouncementService;
     rangeService: IRangeService;
     selectionHandleFactory: ISelectionHandleFactory;
-    validationService: ValidationService;
+    validationService?: ValidationService;
     gridApi: GridApiService;
     gridOptions: GridOptions;
     eGridDiv: HTMLElement;
@@ -151,26 +207,26 @@ export interface CoreBeanCollection {
     columnApplyStateService: ColumnApplyStateService;
     columnFactory: ColumnFactory;
     pivotResultColsService: PivotResultColsService;
-    autoColService: AutoColService;
+    autoColService?: IAutoColService;
     columnDefFactory: ColumnDefFactory;
     columnGroupStateService: ColumnGroupStateService;
     columnEventDispatcher: ColumnEventDispatcher;
     columnAutosizeService: ColumnAutosizeService;
     funcColsService: FuncColsService;
-    quickFilterService: QuickFilterService;
-    showRowGroupColsService: ShowRowGroupColsService;
+    quickFilterService?: QuickFilterService;
+    showRowGroupColsService?: IShowRowGroupColsService;
     headerPositionUtils: HeaderPositionUtils;
-    dataTypeService: DataTypeService;
+    dataTypeService?: DataTypeService;
     globalEventListener: AgGlobalEventListener;
     globalSyncEventListener: AgGlobalEventListener;
-    stateService: StateService;
+    stateService?: StateService;
     overlayService: OverlayService;
     columnGetStateService: ColumnGetStateService;
     pinnedRowModel: PinnedRowModel;
     menuService: MenuService;
     apiEventService: ApiEventService;
-    undoRedoService: UndoRedoService;
-    rowNodeBlockLoader: RowNodeBlockLoader;
+    undoRedoService?: UndoRedoService;
+    rowNodeBlockLoader?: RowNodeBlockLoader;
     csvCreator: ICsvCreator;
     excelCreator: IExcelCreator;
     clipboardService: IClipboardService;
@@ -187,6 +243,9 @@ export interface CoreBeanCollection {
     filterMenuFactory: IMenuFactory;
     enterpriseMenuFactory: IMenuFactory;
     contextMenuFactory: IContextMenuFactory;
+    editService?: EditService;
+    rowEditService?: RowEditService;
+    alignedGridsService?: AlignedGridsService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -252,6 +311,7 @@ export type BeanName =
     | 'columnDefFactory'
     | 'columnEditorFactory'
     | 'columnEventDispatcher'
+    | 'columnFilterService'
     | 'columnGetStateService'
     | 'columnSizeService'
     | 'columnFactory'
@@ -277,6 +337,7 @@ export type BeanName =
     | 'visibleColsService'
     | 'dragAndDropService'
     | 'dragService'
+    | 'editService'
     | 'excelCreator'
     | 'enterpriseMenuFactory'
     | 'environment'
@@ -287,7 +348,6 @@ export type BeanName =
     | 'filterAggregatesStage'
     | 'filterManager'
     | 'filterMenuFactory'
-    | 'filterService'
     | 'filterStage'
     | 'flattenStage'
     | 'focusService'
@@ -329,6 +389,7 @@ export type BeanName =
     | 'resizeObserverService'
     | 'rowContainerHeightService'
     | 'rowCssClassCalculator'
+    | 'rowEditService'
     | 'rowModel'
     | 'rowNodeBlockLoader'
     | 'rowNodeEventThrottle'
@@ -366,4 +427,5 @@ export type BeanName =
     | 'userComponentRegistry'
     | 'valueCache'
     | 'valueService'
+    | 'validationLogger'
     | 'validationService';

@@ -50,7 +50,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private sortController: SortController;
     private selectionService: ISelectionService;
     private nodeManager: NodeManager;
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private transactionManager: TransactionManager;
     private serverSideRowModel: ServerSideRowModel;
 
@@ -58,7 +58,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.storeUtils = beans.ssrmStoreUtils;
         this.blockUtils = beans.ssrmBlockUtils;
         this.funcColsService = beans.funcColsService;
-        this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
+        this.rowNodeBlockLoader = beans.rowNodeBlockLoader!;
         this.rowNodeSorter = beans.rowNodeSorter;
         this.sortController = beans.sortController;
         this.selectionService = beans.selectionService;
@@ -376,9 +376,9 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             return;
         }
 
-        this.nodesAfterFilter = this.allRowNodes.filter((rowNode) =>
-            this.filterManager.doesRowPassFilter({ rowNode: rowNode })
-        );
+        this.nodesAfterFilter = this.filterManager
+            ? this.allRowNodes.filter((rowNode) => this.filterManager!.doesRowPassFilter({ rowNode: rowNode }))
+            : this.allRowNodes;
     }
 
     public clearDisplayIndexes(): void {
@@ -592,11 +592,11 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
         // we only apply transactions to loaded state
         switch (this.getState()) {
-            case RowNodeBlock.STATE_FAILED:
+            case 'failed':
                 return { status: ServerSideTransactionResultStatus.StoreLoadingFailed };
-            case RowNodeBlock.STATE_LOADING:
+            case 'loading':
                 return { status: ServerSideTransactionResultStatus.StoreLoading };
-            case RowNodeBlock.STATE_WAITING_TO_LOAD:
+            case 'needsLoading':
                 return { status: ServerSideTransactionResultStatus.StoreWaitingToLoad };
         }
 
@@ -792,7 +792,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public retryLoads(): void {
-        if (this.getState() === RowNodeBlock.STATE_FAILED) {
+        if (this.getState() === 'failed') {
             this.initialiseRowNodes(1);
             this.scheduleLoad();
         }
@@ -825,7 +825,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public isLastRowIndexKnown(): boolean {
-        return this.getState() == RowNodeBlock.STATE_LOADED;
+        return this.getState() == 'loaded';
     }
 
     public getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {

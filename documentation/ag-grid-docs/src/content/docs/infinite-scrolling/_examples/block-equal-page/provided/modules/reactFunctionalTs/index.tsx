@@ -1,6 +1,13 @@
 'use strict';
 
-import { ColDef, GetRowIdParams, GridReadyEvent, IDatasource, ModuleRegistry } from '@ag-grid-community/core';
+import {
+    ColDef,
+    CommunityFeaturesModule,
+    GetRowIdParams,
+    GridReadyEvent,
+    IDatasource,
+    ModuleRegistry,
+} from '@ag-grid-community/core';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -14,7 +21,13 @@ import { createRoot } from 'react-dom/client';
 import { countries } from './countries';
 import './styles.css';
 
-ModuleRegistry.registerModules([InfiniteRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule]);
+ModuleRegistry.registerModules([
+    CommunityFeaturesModule,
+    InfiniteRowModelModule,
+    SetFilterModule,
+    MenuModule,
+    ColumnsToolPanelModule,
+]);
 
 const filterParams = { values: countries() };
 

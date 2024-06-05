@@ -6,9 +6,9 @@ import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
 import type { Logger } from '../logger';
 import { _removeFromArray } from '../utils/array';
 import { _debounce } from '../utils/function';
-import { RowNodeBlock } from './rowNodeBlock';
+import type { RowNodeBlock } from './rowNodeBlock';
 
-export class RowNodeBlockLoader extends BeanStub implements NamedBean {
+export class RowNodeBlockLoader extends BeanStub<'blockLoaded' | 'blockLoaderFinished'> implements NamedBean {
     beanName = 'rowNodeBlockLoader' as const;
 
     private rowModel: IRowModel;
@@ -19,9 +19,6 @@ export class RowNodeBlockLoader extends BeanStub implements NamedBean {
         this.rowModel = beans.rowModel;
         this.logger = beans.loggerFactory.create('RowNodeBlockLoader');
     }
-
-    public static BLOCK_LOADED_EVENT = 'blockLoaded';
-    public static BLOCK_LOADER_FINISHED_EVENT = 'blockLoaderFinished';
 
     private maxConcurrentRequests: number | undefined;
     private checkBlockToLoadDebounce: () => void;
@@ -59,7 +56,7 @@ export class RowNodeBlockLoader extends BeanStub implements NamedBean {
         // note that we do not remove this listener when removing the block. this is because the
         // cache can get destroyed (and containing blocks) when a block is loading. however the loading block
         // is still counted as an active loading block and we must decrement activeBlockLoadsCount when it finishes.
-        block.addEventListener(RowNodeBlock.EVENT_LOAD_COMPLETE, this.loadComplete.bind(this));
+        block.addEventListener('loadComplete', this.loadComplete.bind(this));
 
         this.checkBlockToLoad();
     }
@@ -76,9 +73,9 @@ export class RowNodeBlockLoader extends BeanStub implements NamedBean {
     public loadComplete(): void {
         this.activeBlockLoadsCount--;
         this.checkBlockToLoad();
-        this.dispatchEvent({ type: RowNodeBlockLoader.BLOCK_LOADED_EVENT });
+        this.dispatchEvent({ type: 'blockLoaded' });
         if (this.activeBlockLoadsCount == 0) {
-            this.dispatchEvent({ type: RowNodeBlockLoader.BLOCK_LOADER_FINISHED_EVENT });
+            this.dispatchEvent({ type: 'blockLoaderFinished' });
         }
     }
 
@@ -104,7 +101,7 @@ export class RowNodeBlockLoader extends BeanStub implements NamedBean {
 
         const loadAvailability = this.getAvailableLoadingCount();
         const blocksToLoad: RowNodeBlock[] = this.blocks
-            .filter((block) => block.getState() === RowNodeBlock.STATE_WAITING_TO_LOAD)
+            .filter((block) => block.getState() === 'needsLoading')
             .slice(0, loadAvailability);
 
         this.registerLoads(blocksToLoad.length);

@@ -3,6 +3,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import {
     CellValueChangedEvent,
     ColDef,
+    CommunityFeaturesModule,
     GridReadyEvent,
     ICellRendererParams,
     ModuleRegistry,
@@ -13,7 +14,7 @@ import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
 
 // Row Data Interface
 interface IRow {

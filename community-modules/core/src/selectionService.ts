@@ -107,10 +107,12 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         let updatedCount = 0;
         for (let i = 0; i < filteredNodes.length; i++) {
             const node = filteredNodes[i];
-            // when groupSelectsFiltered, then this node may end up intermediate despite
+            // when groupSelectsFiltered, then this node may end up indeterminate despite
             // trying to set it to true / false. this group will be calculated further on
-            // down when we call calculatedSelectedForAllGroupNodes(). we need to skip it
+            // down when we call updateGroupsFromChildrenSelections(). we need to skip it
             // here, otherwise the updatedCount would include it.
+            // (note: `hasChildren` is used in the tree data case as `RowNode.group` isn't
+            // set correctly on rows with user data)
             const skipThisNode = groupSelectsFiltered && node.group;
 
             if (!skipThisNode) {

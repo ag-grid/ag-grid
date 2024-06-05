@@ -1,6 +1,7 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
     ColDef,
+    CommunityFeaturesModule,
     GetRowIdParams,
     GridApi,
     GridReadyEvent,
@@ -17,7 +18,7 @@ import { createRoot } from 'react-dom/client';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule, ExcelExportModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, CsvExportModule, ExcelExportModule]);
 
 const SportRenderer = (props: CustomCellRendererProps) => {
     return (

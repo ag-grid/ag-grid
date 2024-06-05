@@ -2,9 +2,9 @@ import type { AgEvent, AgEventListener, AgGlobalEventListener, AgGridEvent } fro
 import type { IEventEmitter } from './interfaces/iEventEmitter';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 
-export class LocalEventService implements IEventEmitter {
-    private allSyncListeners = new Map<string, Set<AgEventListener>>();
-    private allAsyncListeners = new Map<string, Set<AgEventListener>>();
+export class LocalEventService<TEventType extends string = string> implements IEventEmitter<TEventType> {
+    private allSyncListeners = new Map<TEventType, Set<AgEventListener>>();
+    private allAsyncListeners = new Map<TEventType, Set<AgEventListener>>();
 
     private globalSyncListeners = new Set<AgGlobalEventListener>();
     private globalAsyncListeners = new Set<AgGlobalEventListener>();
@@ -15,14 +15,14 @@ export class LocalEventService implements IEventEmitter {
     private scheduled = false;
 
     // using an object performs better than a Set for the number of different events we have
-    private firedEvents: { [key: string]: boolean } = {};
+    private firedEvents: { [key in TEventType]?: boolean } = {};
 
     public setFrameworkOverrides(frameworkOverrides: IFrameworkOverrides): void {
         this.frameworkOverrides = frameworkOverrides;
     }
 
     private getListeners(
-        eventType: string,
+        eventType: TEventType,
         async: boolean,
         autoCreateListenerCollection: boolean
     ): Set<AgEventListener> | undefined {
@@ -50,11 +50,11 @@ export class LocalEventService implements IEventEmitter {
         );
     }
 
-    public addEventListener(eventType: string, listener: AgEventListener, async = false): void {
+    public addEventListener(eventType: TEventType, listener: AgEventListener, async = false): void {
         this.getListeners(eventType, async, true)!.add(listener);
     }
 
-    public removeEventListener(eventType: string, listener: AgEventListener, async = false): void {
+    public removeEventListener(eventType: TEventType, listener: AgEventListener, async = false): void {
         const listeners = this.getListeners(eventType, async, false);
         if (!listeners) {
             return;
@@ -76,8 +76,8 @@ export class LocalEventService implements IEventEmitter {
         (async ? this.globalAsyncListeners : this.globalSyncListeners).delete(listener);
     }
 
-    public dispatchEvent(event: AgEvent): void {
-        const agEvent = event as AgGridEvent<any>;
+    public dispatchEvent(event: AgEvent<TEventType>): void {
+        const agEvent = event as AgGridEvent<any, any, TEventType>;
 
         this.dispatchToListeners(agEvent, true);
         this.dispatchToListeners(agEvent, false);
@@ -85,13 +85,13 @@ export class LocalEventService implements IEventEmitter {
         this.firedEvents[agEvent.type] = true;
     }
 
-    public dispatchEventOnce(event: AgEvent): void {
+    public dispatchEventOnce(event: AgEvent<TEventType>): void {
         if (!this.firedEvents[event.type]) {
             this.dispatchEvent(event);
         }
     }
 
-    private dispatchToListeners(event: AgGridEvent, async: boolean) {
+    private dispatchToListeners(event: AgGridEvent<any, any, TEventType>, async: boolean) {
         const eventType = event.type;
 
         if (async && 'event' in event) {

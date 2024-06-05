@@ -1,14 +1,14 @@
 import type { AgEventListener } from '../events';
 
-export interface IEventEmitter {
+export interface IEventEmitter<TEventType extends string = string> {
     addEventListener(
-        eventType: string,
+        eventType: TEventType,
         listener: AgEventListener,
         async?: boolean,
         options?: AddEventListenerOptions
     ): void;
     removeEventListener(
-        eventType: string,
+        eventType: TEventType,
         listener: AgEventListener,
         async?: boolean,
         options?: AddEventListenerOptions

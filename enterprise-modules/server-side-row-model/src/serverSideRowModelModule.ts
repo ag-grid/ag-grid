@@ -1,5 +1,5 @@
 import type { Module } from '@ag-grid-community/core';
-import { ModuleNames } from '@ag-grid-community/core';
+import { ModuleNames, RowNodeBlockModule } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
 import { BlockUtils } from './serverSideRowModel/blocks/blockUtils';
@@ -36,5 +36,5 @@ export const ServerSideRowModelModule: Module = {
         ServerSideExpansionService,
         LazyBlockLoadingService,
     ],
-    dependantModules: [EnterpriseCoreModule],
+    dependantModules: [EnterpriseCoreModule, RowNodeBlockModule],
 };

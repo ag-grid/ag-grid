@@ -2,6 +2,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import {
     ColDef,
     ColGroupDef,
+    CommunityFeaturesModule,
     GridReadyEvent,
     ModuleRegistry,
     SizeColumnsToFitGridStrategy,
@@ -14,7 +15,7 @@ import { createRoot } from 'react-dom/client';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
 
 const GridExample = () => {
     const topGrid = useRef<AgGridReact>(null);

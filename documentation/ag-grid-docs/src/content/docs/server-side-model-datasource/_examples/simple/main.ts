@@ -5,12 +5,12 @@ import {
     IServerSideGetRowsRequest,
     createGrid,
 } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
 
-ModuleRegistry.registerModules([ColumnsToolPanelModule, MenuModule, ServerSideRowModelModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ColumnsToolPanelModule, MenuModule, ServerSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicData>;
 

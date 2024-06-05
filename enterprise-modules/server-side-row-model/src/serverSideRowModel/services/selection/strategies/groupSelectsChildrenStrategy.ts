@@ -22,7 +22,7 @@ interface SelectionState {
 export class GroupSelectsChildrenStrategy extends BeanStub implements ISelectionStrategy {
     private rowModel: IRowModel;
     private funcColsService: FuncColsService;
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private selectionService: ISelectionService;
 
     public wireBeans(beans: BeanCollection) {
@@ -229,7 +229,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     private removeRedundantState() {
-        if (this.filterManager.isAnyFilterPresent()) {
+        if (this.filterManager?.isAnyFilterPresent()) {
             return;
         }
 

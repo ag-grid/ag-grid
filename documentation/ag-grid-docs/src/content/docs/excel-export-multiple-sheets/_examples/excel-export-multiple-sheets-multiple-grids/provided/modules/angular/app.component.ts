@@ -3,6 +3,7 @@ import { AgGridAngular } from '@ag-grid-community/angular';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
     ColDef,
+    CommunityFeaturesModule,
     GetRowIdParams,
     GridApi,
     GridReadyEvent,
@@ -18,7 +19,7 @@ import { Component, ViewChild } from '@angular/core';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ExcelExportModule, MenuModule]);
+ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, ExcelExportModule, MenuModule]);
 
 @Component({
     standalone: true,

@@ -246,7 +246,7 @@ export abstract class AbstractHeaderCellCtrl<
         this.isResizing = false;
         this.resizeMultiplier = 1;
 
-        this.resizeToggleTimeout = setTimeout(() => {
+        this.resizeToggleTimeout = window.setTimeout(() => {
             this.resizeFeature?.toggleColumnResizing(false);
         }, 150);
     }

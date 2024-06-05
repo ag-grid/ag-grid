@@ -266,7 +266,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             [Events.EVENT_CELL_FOCUSED]: (event: CellFocusedEvent) => {
                 this.onCellFocusChanged(event);
             },
-            [Events.EVENT_CELL_FOCUS_CLEARED]: this.onCellFocusChanged.bind(this),
+            [Events.EVENT_CELL_FOCUS_CLEARED]: () => this.onCellFocusChanged(),
             [Events.EVENT_FLASH_CELLS]: (event) => {
                 this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onFlashCells(event));
             },
@@ -449,9 +449,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     public refreshFloatingRowComps(): void {
-        this.refreshFloatingRows(this.topRowCtrls, this.pinnedRowModel.getPinnedTopRowData());
+        this.refreshFloatingRows(this.topRowCtrls, this.pinnedRowModel.getPinnedTopRowNodes());
 
-        this.refreshFloatingRows(this.bottomRowCtrls, this.pinnedRowModel.getPinnedBottomRowData());
+        this.refreshFloatingRows(this.bottomRowCtrls, this.pinnedRowModel.getPinnedBottomRowNodes());
     }
 
     public getTopRowCtrls(): RowCtrl[] {
@@ -466,23 +466,45 @@ export class RowRenderer extends BeanStub implements NamedBean {
         return this.bottomRowCtrls;
     }
 
-    private refreshFloatingRows(rowComps: RowCtrl[], rowNodes: RowNode[]): void {
-        rowComps.forEach((row: RowCtrl) => {
-            row.destroyFirstPass();
-            row.destroySecondPass();
-        });
+    /**
+     * Determines which row controllers need to be destroyed and re-created vs which ones can
+     * be re-used.
+     *
+     * This is operation is to pinned/floating rows as `this.recycleRows` is to normal/body rows.
+     *
+     * All `RowCtrl` instances in `rowCtrls` that don't correspond to `RowNode` instances in `rowNodes` are destroyed.
+     * All `RowNode` instances in `rowNodes` that don't correspond to `RowCtrl` instances in `rowCtrls` are created.
+     * All instances in `rowCtrls` must be in the same order as their corresponding nodes in `rowNodes`.
+     *
+     * @param rowCtrls The list of existing row controllers
+     * @param rowNodes The canonical list of row nodes that should have associated controllers
+     */
+    private refreshFloatingRows(rowCtrls: RowCtrl[], rowNodes: RowNode[]): void {
+        const nodeMap = Object.fromEntries(rowNodes.map((node) => [node.id!, node]));
+        const rowCtrlMap = Object.fromEntries(rowCtrls.map((ctrl) => [ctrl.getRowNode().id!, ctrl]));
 
-        rowComps.length = 0;
+        for (let i = 0; i < rowNodes.length; i++) {
+            const node = rowNodes[i];
+            const rowCtrl = rowCtrls[i];
 
-        if (!rowNodes) {
-            return;
+            if (rowCtrl && nodeMap[rowCtrl.getRowNode().id!] === undefined) {
+                // ctrl not in new nodes list, destroy
+                rowCtrl.destroyFirstPass();
+                rowCtrl.destroySecondPass();
+            }
+
+            if (node.id! in rowCtrlMap) {
+                // ctrl exists already, re-use it
+                rowCtrls[i] = rowCtrlMap[node.id!];
+                delete rowCtrlMap[node.id!];
+            } else {
+                // ctrl doesn't exist, create it
+                rowCtrls[i] = new RowCtrl(node, this.beans, false, false, this.printLayout);
+            }
         }
 
-        rowNodes.forEach((rowNode) => {
-            const rowCtrl = new RowCtrl(rowNode, this.beans, false, false, this.printLayout);
-
-            rowComps.push(rowCtrl);
-        });
+        // Truncate array if rowCtrls is longer than rowNodes
+        rowCtrls.length = rowNodes.length;
     }
 
     private onPinnedRowDataChanged(): void {
@@ -504,7 +526,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.cachedRowCtrls.removeRow(rowNode);
             return;
         } else {
-            const destroyAndRecreateCtrl = (dataStruct: RowCtrl[] | { [idx: number]: RowCtrl }) => {
+            const destroyAndRecreateCtrl = (dataStruct: RowCtrl[] | RowCtrlByRowIndex) => {
                 const ctrl = dataStruct[rowNode.rowIndex!];
                 if (!ctrl) {
                     return;
@@ -580,14 +602,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
         this.getLockOnRefresh();
 
-        const focusedCell: CellPosition | null = this.getCellToRestoreFocusToAfterRefresh(params);
+        const focusedCell = this.getCellToRestoreFocusToAfterRefresh(params);
 
         this.updateContainerHeights();
         this.scrollToTopIfNewData(params);
 
         // never recycle rows on layout change as rows could change from normal DOM layout
         // back to the grid's row positioning.
-        const recycleRows: boolean = !params.domLayoutChanged && !!params.recycleRows;
+        const recycleRows = !params.domLayoutChanged && !!params.recycleRows;
         const animate = params.animate && this.gos.isAnimateRows();
 
         // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
@@ -939,7 +961,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private getRowsToRecycle(): RowCtrlByRowNodeIdMap {
         // remove all stub nodes, they can't be reused, as no rowNode id
         const stubNodeIndexes: string[] = [];
-        _iterateObject(this.rowCtrlsByRowIndex, (index: string, rowCtrl: RowCtrl) => {
+        _iterateObject(this.rowCtrlsByRowIndex, (index, rowCtrl) => {
             const stubNode = rowCtrl.getRowNode().id == null;
             if (stubNode) {
                 stubNodeIndexes.push(index);
@@ -949,7 +971,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         // then clear out rowCompsByIndex, but before that take a copy, but index by id, not rowIndex
         const ctrlsByIdMap: RowCtrlByRowNodeIdMap = {};
-        _iterateObject(this.rowCtrlsByRowIndex, (index: string, rowCtrl: RowCtrl) => {
+        _iterateObject(this.rowCtrlsByRowIndex, (_, rowCtrl) => {
             const rowNode = rowCtrl.getRowNode();
             ctrlsByIdMap[rowNode.id!] = rowCtrl;
         });

@@ -16,7 +16,6 @@ import type {
     SetFilterParams,
     ValueFormatterParams,
     ValueService,
-    VirtualListModel,
 } from '@ag-grid-community/core';
 import {
     AgInputTextField,
@@ -26,7 +25,6 @@ import {
     KeyCode,
     ProvidedFilter,
     RefPlaceholder,
-    VirtualList,
     _areEqual,
     _last,
     _makeNull,
@@ -34,6 +32,7 @@ import {
     _toStringOrNull,
     _warnOnce,
 } from '@ag-grid-community/core';
+import { VirtualList, type VirtualListModel } from '@ag-grid-enterprise/core';
 
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { SetFilterDisplayValue } from './iSetDisplayValueModel';
@@ -52,7 +51,7 @@ import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> implements ISetFilter<V> {
     private funcColsService: FuncColsService;
     private valueService: ValueService;
-    private dataTypeService: DataTypeService;
+    private dataTypeService?: DataTypeService;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
@@ -251,7 +250,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return (
             colDef.filterValueGetter !== existingColDef?.filterValueGetter ||
             processedKeyCreator !== (existingKeyCreator ?? existingColDef?.keyCreator) ||
-            (this.dataTypeService.getFormatValue(colDef.cellDataType as string) === processedKeyCreator &&
+            (!!this.dataTypeService &&
+                this.dataTypeService.getFormatValue(colDef.cellDataType as string) === processedKeyCreator &&
                 colDef.valueFormatter !== existingColDef?.valueFormatter)
         );
     }

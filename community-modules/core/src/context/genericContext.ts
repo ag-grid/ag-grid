@@ -1,6 +1,6 @@
 import type { GenericBean } from './genericBean';
 
-export interface GenericContextParams<TBeanName extends string, TBeanCollection extends Record<TBeanName, any>> {
+export interface GenericContextParams<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
     providedBeanInstances: Partial<{ [key in TBeanName]: GenericBean<TBeanName, TBeanCollection> }>;
     beanClasses: GenericSingletonBean<TBeanName, TBeanCollection>[];
     beanComparator?: (
@@ -9,7 +9,7 @@ export interface GenericContextParams<TBeanName extends string, TBeanCollection 
     ) => number;
 }
 
-export interface GenericSingletonBean<TBeanName extends string, TBeanCollection extends Record<TBeanName, any>> {
+export interface GenericSingletonBean<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
     new (): GenericBean<TBeanName, TBeanCollection>;
 }
 
@@ -25,7 +25,7 @@ export interface BaseBean<TBeanCollection> {
     preWireBeans?(beans: TBeanCollection): void;
 }
 
-export class GenericContext<TBeanName extends string, TBeanCollection extends Record<TBeanName, any>> {
+export class GenericContext<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
     protected beans: TBeanCollection = {} as TBeanCollection;
     private createdBeans: GenericBean<TBeanName, TBeanCollection>[] = [];
 

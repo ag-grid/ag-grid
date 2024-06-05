@@ -20,7 +20,7 @@ import { GroupFilter } from './groupFilter';
 
 export class GroupFloatingFilterComp extends Component implements IFloatingFilterComp<GroupFilter> {
     private columnNameService: ColumnNameService;
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
 
     public wireBeans(beans: BeanCollection) {
         this.columnNameService = beans.columnNameService;
@@ -111,7 +111,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         const column = this.parentFilterInstance.getSelectedColumn();
         // we can only show the underlying filter if there is one instance (e.g. the underlying column is not visible)
         if (column && !column.isVisible()) {
-            const compDetails = this.filterManager.getFloatingFilterCompDetails(column, this.params.showParentFilter);
+            const compDetails = this.filterManager!.getFloatingFilterCompDetails(column, this.params.showParentFilter);
             if (compDetails) {
                 if (!this.haveAddedColumnListeners) {
                     this.haveAddedColumnListeners = true;
@@ -145,7 +145,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         if (!event.column) {
             return;
         }
-        const compDetails = this.filterManager.getFloatingFilterCompDetails(
+        const compDetails = this.filterManager!.getFloatingFilterCompDetails(
             event.column as AgColumn,
             this.params.showParentFilter
         );

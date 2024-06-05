@@ -38,7 +38,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private ctrlsService: CtrlsService;
     private navigationService: NavigationService;
     private focusService: FocusService;
-    private undoRedoService: UndoRedoService;
+    private undoRedoService?: UndoRedoService;
     private visibleColsService: VisibleColsService;
     private paginationProxy: PaginationProxy;
     private pinnedRowModel: PinnedRowModel;
@@ -333,7 +333,7 @@ export class RowContainerEventsFeature extends BeanStub {
                 rowEnd = this.paginationProxy.getRowCount() - 1;
             } else {
                 floatingEnd = 'bottom';
-                rowEnd = pinnedRowModel.getPinnedBottomRowData().length - 1;
+                rowEnd = pinnedRowModel.getPinnedBottomRowNodes().length - 1;
             }
 
             const allDisplayedColumns = this.visibleColsService.getAllCols();
@@ -406,7 +406,7 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndZ(event: KeyboardEvent): void {
-        if (!this.gos.get('undoRedoCellEditing')) {
+        if (!this.gos.get('undoRedoCellEditing') || !this.undoRedoService) {
             return;
         }
         event.preventDefault();
@@ -419,6 +419,6 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndY(): void {
-        this.undoRedoService.redo('ui');
+        this.undoRedoService?.redo('ui');
     }
 }

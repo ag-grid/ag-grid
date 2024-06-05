@@ -10,10 +10,12 @@ import { _clearElement } from '../utils/dom';
 import { _exists } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { Component } from '../widgets/component';
-import type { FilterManager, FilterRequestSource, FilterWrapper } from './filterManager';
+import type { FilterWrapper } from './columnFilterService';
+import type { FilterManager } from './filterManager';
+import type { FilterRequestSource } from './iColumnFilter';
 
 export class FilterWrapperComp extends Component {
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
     private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection): void {
@@ -62,7 +64,7 @@ export class FilterWrapperComp extends Component {
 
     private createFilter(init?: boolean): void {
         const { column, source } = this;
-        this.filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, source);
+        this.filterWrapper = this.filterManager?.getOrCreateFilterWrapper(column) ?? null;
         if (!this.filterWrapper?.filterPromise) {
             return;
         }

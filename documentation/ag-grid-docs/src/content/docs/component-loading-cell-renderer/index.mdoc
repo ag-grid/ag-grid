@@ -30,6 +30,18 @@ The example below demonstrates replacing the Provided Loading Component with a C
 {% interfaceDocumentation interfaceName="CustomLoadingCellRendererProps" names=["api", "context", "node"] /%}
 {% /if %}
 
+### Failed Loading
+
+When using a Custom Loading Component, you can add handling for loading failures in the component directly.
+
+In the example below, note that:
+
+* **Custom Loading Component** is supplied by name via `gridOptions.loadingCellRenderer`.
+* **Custom Loading Component Parameters** are supplied using `gridOptions.loadingCellRendererParams`.
+* The example stimulates a long delay to display the spinner clearly and stimulates a loading failure.
+
+{% gridExampleRunner title="Custom Loading Cell Renderer Failed" name="custom-loading-cell-renderer-failed" /%}
+
 ### Dynamic Loading Row Selection
 
 It's possible to determine what Loading Cell Renderer to use dynamically - i.e. at runtime. This requires providing a `loadingCellRendererSelector`.

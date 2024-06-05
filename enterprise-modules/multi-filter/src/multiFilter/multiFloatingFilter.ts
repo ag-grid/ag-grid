@@ -12,13 +12,20 @@ import type {
     UserCompDetails,
     UserComponentFactory,
 } from '@ag-grid-community/core';
-import { AgPromise, Component, _clearElement, _mergeDeep, _setDisplayed } from '@ag-grid-community/core';
+import {
+    AgPromise,
+    Component,
+    _clearElement,
+    _mergeDeep,
+    _setDisplayed,
+    getDefaultFloatingFilterType,
+} from '@ag-grid-community/core';
 
 import { MultiFilter } from './multiFilter';
 
 export class MultiFloatingFilterComp extends Component implements IFloatingFilterComp<MultiFilter> {
     private userComponentFactory: UserComponentFactory;
-    private filterManager: FilterManager;
+    private filterManager?: FilterManager;
 
     public wireBeans(beans: BeanCollection) {
         this.userComponentFactory = beans.userComponentFactory;
@@ -78,7 +85,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
             newCompDetailsList.length === this.compDetailsList.length &&
             newCompDetailsList.every(
                 (newCompDetails, index) =>
-                    !this.filterManager.areFilterCompsDifferent(this.compDetailsList[index], newCompDetails)
+                    !this.filterManager?.areFilterCompsDifferent(this.compDetailsList[index], newCompDetails)
             );
 
         if (allFloatingFilterCompsUnchanged) {
@@ -179,8 +186,8 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
 
     private getCompDetails(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): UserCompDetails | undefined {
         const defaultComponentName =
-            this.userComponentFactory.getDefaultFloatingFilterType(filterDef, () =>
-                this.filterManager.getDefaultFloatingFilter(this.params.column as AgColumn)
+            getDefaultFloatingFilterType(this.frameworkOverrides, filterDef, () =>
+                this.filterManager!.getDefaultFloatingFilter(this.params.column as AgColumn)
             ) ?? 'agReadOnlyFloatingFilter';
 
         return this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);

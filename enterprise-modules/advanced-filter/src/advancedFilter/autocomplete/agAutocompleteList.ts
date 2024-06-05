@@ -1,12 +1,6 @@
 import type { Component } from '@ag-grid-community/core';
-import {
-    KeyCode,
-    PopupComponent,
-    RefPlaceholder,
-    VirtualList,
-    _exists,
-    _fuzzySuggestions,
-} from '@ag-grid-community/core';
+import { KeyCode, PopupComponent, RefPlaceholder, _exists, _fuzzySuggestions } from '@ag-grid-community/core';
+import { VirtualList } from '@ag-grid-enterprise/core';
 
 import { AgAutocompleteRow } from './agAutocompleteRow';
 import type { AutocompleteEntry } from './autocompleteParams';
