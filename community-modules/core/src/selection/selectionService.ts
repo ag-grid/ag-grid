@@ -10,7 +10,6 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService, ISetNodesSelectedParams } from '../interfaces/iSelectionService';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../interfaces/selectionState';
 import type { RowBoundsService } from '../pagination/rowBoundsService';
-import { _last } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _exists, _missing } from '../utils/generic';
 import { RowRangeSelectionContext } from './rowRangeSelectionContext';
@@ -27,7 +26,6 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
     }
 
     private selectedNodes: Map<string, RowNode> = new Map();
-    private lastRowNode: RowNode | null = null;
     private selectionCtx: RowRangeSelectionContext = new RowRangeSelectionContext();
 
     private groupSelectsChildren: boolean;
@@ -50,7 +48,6 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         super.destroy();
         this.resetNodes();
         this.selectionCtx.destroy();
-        this.lastRowNode = null;
     }
 
     private isMultiselect() {
@@ -59,7 +56,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
 
     public setNodesSelected(params: ISetNodesSelectedParams): number {
         const { newValue, clearSelection, suppressFinishActions, rangeSelect, nodes, event, source = 'api' } = params;
-        console.log(this.selectionCtx.getRoot()?.data.athlete);
+
         if (nodes.length === 0) return 0;
 
         if (nodes.length > 1 && !this.isMultiselect()) {
@@ -83,15 +80,17 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             const node = filteredNodes[0];
 
             if (this.selectionCtx.isInRange(node)) {
-                const [left, right] = this.selectionCtx.splitRangeAt(node);
+                const [nodesToSet, nodesToUnset] = this.selectionCtx.splitRangeAt(node);
                 this.selectionCtx.setTail(node);
 
+                // When we are selecting a range, we may need to de-select part of the previously
+                // selected range (see AG-9620)
+                // When we are de-selecting a range, we can/should leave the other nodes unchanged
+                // (i.e. selected nodes outside the current range should remain selected - see AG-10215)
                 if (newValue) {
-                    this.selectRange(right, false, source);
-                    return this.selectRange(left, newValue, source);
-                } else {
-                    return this.selectRange(left, newValue, source);
+                    this.selectRange(nodesToUnset, false, source);
                 }
+                return this.selectRange(nodesToSet, newValue, source);
             } else {
                 this.selectionCtx.setTail(node);
                 const fromNode = this.selectionCtx.getRoot();
@@ -102,13 +101,12 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             }
         }
 
+        // Avoid re-setting here because if `suppressFinishActions` is true then this
+        // call is not a result of a user action, but rather a follow-on call (e.g
+        // in this.clearOtherNodes).
         if (!suppressFinishActions) {
             this.selectionCtx.reset(filteredNodes[0]);
         }
-
-        // when deselecting nodes, we want to use the last deselected node
-        // as starting point for deselection
-        this.lastRowNode = newValue ? null : filteredNodes[0];
 
         let updatedCount = 0;
         for (let i = 0; i < filteredNodes.length; i++) {
@@ -218,22 +216,6 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             source,
             nodes: children,
         });
-    }
-
-    private getLastSelectedNode(): RowNode | null {
-        const selectedKeys = Array.from(this.selectedNodes.keys());
-
-        if (selectedKeys.length == 0) {
-            return null;
-        }
-
-        const node = this.selectedNodes.get(_last(selectedKeys));
-
-        if (node) {
-            return node;
-        }
-
-        return null;
     }
 
     public getSelectedNodes() {
