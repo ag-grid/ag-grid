@@ -226,15 +226,14 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             return;
         }
 
+        let idx = null;
         if (this.value != null) {
             listComponent.selectValue(this.value);
-            const idx = listComponent.getIndicesForValues(Array.isArray(value) ? value : [value])[0];
+            idx = listComponent.getIndicesForValues(Array.isArray(value) ? value : [value])[0];
+        }
 
-            if (idx != null) {
-                listComponent.highlightIndex(idx);
-            } else {
-                listComponent.refresh();
-            }
+        if (idx != null) {
+            listComponent.highlightIndex(idx);
         } else {
             listComponent.refresh();
         }
