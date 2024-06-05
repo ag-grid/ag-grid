@@ -1,7 +1,7 @@
 import type { RowNode } from '../entities/rowNode';
 import type { IRowModel } from '../interfaces/iRowModel';
 
-export class SelectionContext {
+export class RowRangeSelectionContext {
     private root: RowNode | null = null;
     private tail: RowNode | null = null;
     private rowModel: IRowModel;

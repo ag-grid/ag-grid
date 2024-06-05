@@ -13,7 +13,7 @@ import type { RowBoundsService } from '../pagination/rowBoundsService';
 import { _last } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _exists, _missing } from '../utils/generic';
-import { SelectionContext } from './selectionContext';
+import { RowRangeSelectionContext } from './rowRangeSelectionContext';
 
 export class SelectionService extends BeanStub implements NamedBean, ISelectionService {
     beanName = 'selectionService' as const;
@@ -28,7 +28,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
 
     private selectedNodes: Map<string, RowNode> = new Map();
     private lastRowNode: RowNode | null = null;
-    private selectionCtx: SelectionContext = new SelectionContext();
+    private selectionCtx: RowRangeSelectionContext = new RowRangeSelectionContext();
 
     private groupSelectsChildren: boolean;
     private rowSelection?: 'single' | 'multiple';
