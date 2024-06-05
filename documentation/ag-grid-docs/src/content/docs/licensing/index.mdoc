@@ -101,20 +101,20 @@ public modules: Module[] = [ServerSideRowModelModule, RowGroupingModule];
 
 {% if isFramework("react") %}
 ```jsx
-<ag-grid-react
+<AgGridReact
    rowData={rowData}
    columnDefs={columnDefs}
    modules={[ServerSideRowModelModule, RowGroupingModule]}>
-</ag-grid-react>
+</AgGridReact>
 ```
 {% /if %}
 
 {% if isFramework("vue") %}
-```js
+```html
 <ag-grid-vue
    :rowData="rowData"
    :columnDefs="columnDefs"
-   :modules="[ServerSideRowModelModule, RowGroupingModule]"
+   :modules="[ServerSideRowModelModule, RowGroupingModule]">
 </ag-grid-vue>
 ```
 {% /if %}
