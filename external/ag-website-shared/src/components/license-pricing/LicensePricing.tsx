@@ -78,6 +78,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                 <div className={styles.topSection}>
                     <div className={styles.intro}>
                         <div className={styles.introSection}>
+                            <h1>License & Pricing</h1>
                             <div className={styles.switchContainer}>
                                 <div className={styles.gradient}></div>
                                 <div className={styles.toggleWrapper}>
