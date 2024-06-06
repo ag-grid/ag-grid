@@ -1,22 +1,14 @@
 import React from 'react';
 
-export default (props) => {
-    const { value } = props;
-
-    if (value === null) {
-        return;
-    }
-
-    const values = Array.isArray(value) ? value : [value];
-
-    return (
+export default (props) =>
+    props.value && (
         <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {values.map((value, idx) => (
+            {(Array.isArray(props.value) ? props.value : [props.value]).map((value, idx, values) => (
                 <React.Fragment key={value}>
                     <span
                         style={{
                             borderLeft: '10px solid ' + value,
-                            paddingRight: '5px',
+                            paddingRight: '2px',
                         }}
                     ></span>
                     {value}
@@ -25,4 +17,3 @@ export default (props) => {
             ))}
         </div>
     );
-};
