@@ -34,7 +34,7 @@
 
 .limitedTimePill,
 .limitedTimeSpacer {
-    height: 30px;
+    height: 43px;
     margin-bottom: $spacing-size-4;
 }
 
@@ -48,6 +48,14 @@
     #{$selector-darkmode} & {
         background-color: color-mix(in srgb, var(--color-text-brand-primary), var(--color-bg-primary) 90%);
     }
+}
+
+.limitedTimeEnd {
+    display: block;
+    margin: $spacing-size-2 $spacing-size-2 $spacing-size-3;
+    font-size: var(--text-fs-xs);
+    color: var(--color-text-tertiary);
+    opacity: 0.9;
 }
 
 .licenseMeta {
