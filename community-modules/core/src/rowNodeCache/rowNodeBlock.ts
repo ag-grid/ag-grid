@@ -3,7 +3,8 @@ import type { LoadCompleteEvent, LoadSuccessParams } from './iRowNodeBlock';
 
 type RowNodeBlockState = 'needsLoading' | 'loading' | 'loaded' | 'failed';
 
-export abstract class RowNodeBlock extends BeanStub<'loadComplete'> {
+export type RowNodeBlockEvent = 'loadComplete';
+export abstract class RowNodeBlock extends BeanStub<RowNodeBlockEvent> {
     private readonly id: number;
 
     private state: RowNodeBlockState = 'needsLoading';

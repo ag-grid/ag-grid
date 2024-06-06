@@ -8,7 +8,8 @@ import { _removeFromArray } from '../utils/array';
 import { _debounce } from '../utils/function';
 import type { RowNodeBlock } from './rowNodeBlock';
 
-export class RowNodeBlockLoader extends BeanStub<'blockLoaded' | 'blockLoaderFinished'> implements NamedBean {
+export type RowNodeBlockLoaderEvent = 'blockLoaded' | 'blockLoaderFinished';
+export class RowNodeBlockLoader extends BeanStub<RowNodeBlockLoaderEvent> implements NamedBean {
     beanName = 'rowNodeBlockLoader' as const;
 
     private rowModel: IRowModel;
