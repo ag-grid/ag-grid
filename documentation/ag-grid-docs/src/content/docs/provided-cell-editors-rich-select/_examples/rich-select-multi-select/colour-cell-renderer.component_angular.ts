@@ -27,7 +27,7 @@ import { Component } from '@angular/core';
 })
 export class ColourCellRenderer implements ICellRendererAngularComp {
     public params!: ICellRendererParams;
-    private values: string[];
+    public values!: string[];
 
     agInit(params: ICellRendererParams): void {
         const { value } = params;
