@@ -10,6 +10,8 @@ interface Props {
 
 const { site, versionsData } = Astro.props as Props;
 
+const baseUrl = site === 'Grid' ? 'https://www.ag-grid.com/' : 'https://charts.ag-grid.com/';
+
 const removeDay = (date) => {
     const splitDate = date.split(' ');
 
@@ -42,6 +44,8 @@ const isMajor = (version) => {
     <table class={styles.archiveTable}>
         {
             versionsData.slice(1).map((versionInfo) => {
+                if (versionInfo.noArchive) return;
+
                 return (
                     <tr>
                         <td class="text-base text-monospace text-semibold">{versionInfo.version}</td>
@@ -55,13 +59,13 @@ const isMajor = (version) => {
                         </td>
 
                         <td>
-                            <a href={`https://www.ag-grid.com/changelog/?fixVersion=${versionInfo.version}`}>
+                            <a href={`${baseUrl}changelog/?fixVersion=${versionInfo.version}`}>
                                 Changelog <Icon name="arrowRight" />
                             </a>
                         </td>
 
                         <td>
-                            <a href={`https://www.ag-grid.com/archive/${versionInfo.version}/`}>
+                            <a href={`${baseUrl}archive/${versionInfo.version}/`}>
                                 Documentation <Icon name="arrowRight" />
                             </a>
                         </td>
