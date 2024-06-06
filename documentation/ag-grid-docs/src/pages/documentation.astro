@@ -1,6 +1,14 @@
 ---
+import Layout from '../layouts/Layout.astro';
 import { DOCS_FRAMEWORK_REDIRECT_PAGE } from '@features/docs/constants';
 import FrameworkRedirectPage from '@components/FrameworkRedirectPage.astro';
 ---
 
-<FrameworkRedirectPage redirectPageName={DOCS_FRAMEWORK_REDIRECT_PAGE} />
+<Layout
+    title="AG Grid: Documentation"
+    description={'View the AG Grid Documentation - a feature-rich datagrid for major JavaScript frameworks, offering filtering, grouping, pivoting, and more.'}
+    showSearchBar={false}
+    showDocsNav={false}
+>
+    <FrameworkRedirectPage redirectPageName={DOCS_FRAMEWORK_REDIRECT_PAGE} />
+</Layout>
