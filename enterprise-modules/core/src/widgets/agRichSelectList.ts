@@ -41,16 +41,10 @@ export class AgRichSelectList<TValue> extends VirtualList {
         const eGui = this.getGui();
         const eListAriaEl = this.getAriaElement();
 
-        this.addManagedListener(eGui, 'mousemove', this.onPickerMouseMove.bind(this));
-        this.addManagedListener(eGui, 'mouseout', () => {
-            this.highlightIndex(-1);
-        });
-        this.addManagedListener(eGui, 'mousedown', (e) => {
-            e.preventDefault();
-        });
-        this.addManagedListener(eGui, 'click', () => {
-            this.onClick();
-        });
+        this.addManagedListener(eGui, 'mousemove', this.onMouseMove.bind(this));
+        this.addManagedListener(eGui, 'mouseout', this.onMouseOut.bind(this));
+        this.addManagedListener(eGui, 'mousedown', this.onMouseDown.bind(this));
+        this.addManagedListener(eGui, 'click', this.onClick.bind(this));
 
         eGui.classList.add('ag-rich-select-list');
 
@@ -270,12 +264,24 @@ export class AgRichSelectList<TValue> extends VirtualList {
         return Math.floor(mouseY / this.getRowHeight());
     }
 
-    private onPickerMouseMove(e: MouseEvent): void {
+    private onMouseMove(e: MouseEvent): void {
         const row = this.getRowForMouseEvent(e);
 
         if (row !== -1 && row != this.lastRowHovered) {
             this.lastRowHovered = row;
             this.highlightIndex(row, true);
+        }
+    }
+
+    private onMouseDown(e: MouseEvent): void {
+        // this prevents the list from receiving focus as it
+        // should be controlled by the agRichSelect component
+        e.preventDefault();
+    }
+
+    private onMouseOut(e: MouseEvent): void {
+        if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
+            this.highlightIndex(-1);
         }
     }
 
