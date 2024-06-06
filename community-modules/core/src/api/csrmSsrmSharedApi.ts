@@ -1,20 +1,11 @@
 import type { BeanCollection } from '../context/context';
-import { _logMissingRowModel } from './apiUtils';
 
 export function expandAll(beans: BeanCollection) {
-    if (beans.rowModelHelperService?.getClientSideRowModel() || beans.rowModelHelperService?.getServerSideRowModel()) {
-        beans.expansionService.expandAll(true);
-    } else {
-        _logMissingRowModel('expandAll', 'clientSide', 'serverSide');
-    }
+    beans.expansionService.expandAll(true);
 }
 
 export function collapseAll(beans: BeanCollection) {
-    if (beans.rowModelHelperService?.getClientSideRowModel() || beans.rowModelHelperService?.getServerSideRowModel()) {
-        beans.expansionService.expandAll(false);
-    } else {
-        _logMissingRowModel('collapseAll', 'clientSide', 'serverSide');
-    }
+    beans.expansionService.expandAll(false);
 }
 
 export function onRowHeightChanged(beans: BeanCollection) {

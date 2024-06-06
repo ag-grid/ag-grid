@@ -2,20 +2,17 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { Column } from '../interfaces/iColumn';
 import type { FilterModel, IFilter } from '../interfaces/iFilter';
-import { _warnOnce } from '../utils/function';
 
 export function isColumnFilterPresent(beans: BeanCollection): boolean {
     return !!beans.filterManager?.isColumnFilterPresent() || !!beans.filterManager?.isAggregateFilterPresent();
 }
 
+/** @deprecated v31.1 */
 export function getFilterInstance<TFilter extends IFilter>(
     beans: BeanCollection,
     key: string | Column,
     callback?: (filter: TFilter | null) => void
 ): TFilter | null | undefined {
-    _warnOnce(
-        `'getFilterInstance' is deprecated. To get/set individual filter models, use 'getColumnFilterModel' or 'setColumnFilterModel' instead. To get hold of the filter instance, use 'getColumnFilterInstance' which returns the instance asynchronously.`
-    );
     return beans.filterManager?.getFilterInstance(key as string | AgColumn, callback);
 }
 

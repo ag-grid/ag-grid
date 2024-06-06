@@ -28,8 +28,8 @@ export class AdvancedFilterBuilderComp extends Component {
 
     public wireBeans(beans: BeanCollection): void {
         this.filterManager = beans.filterManager;
-        this.advancedFilterService = beans.advancedFilterService;
-        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+        this.advancedFilterService = beans.advancedFilterService as AdvancedFilterService;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
     }
 
     private readonly eList: HTMLElement = RefPlaceholder;

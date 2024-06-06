@@ -17,7 +17,7 @@ export class AgStatusBar extends Component {
 
     public wireBeans(beans: BeanCollection) {
         this.userComponentFactory = beans.userComponentFactory;
-        this.statusBarService = beans.statusBarService;
+        this.statusBarService = beans.statusBarService as StatusBarService;
     }
 
     static readonly selector: AgComponentSelector = 'AG-STATUS-BAR';

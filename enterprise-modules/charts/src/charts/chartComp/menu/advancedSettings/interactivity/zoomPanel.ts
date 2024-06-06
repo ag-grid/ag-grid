@@ -19,7 +19,7 @@ export class ZoomPanel extends Component {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
 
     private readonly zoomScrollingStepInput: AgSlider = RefPlaceholder;

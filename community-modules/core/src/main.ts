@@ -524,7 +524,6 @@ export { KeyCode } from './constants/keyCode';
 export { VerticalDirection, HorizontalDirection } from './constants/direction';
 export { Grid, GridParams, Params, GridCoreCreator, createGrid, provideGlobalGridOptions } from './grid';
 export { GridApi, DetailGridInfo, StartEditingCellParams, GetCellValueParams } from './api/gridApi';
-export { _logMissingRowModel, _logDeprecation } from './api/apiUtils';
 export { IDetailGridApiService } from './interfaces/iDetailGridApiService';
 export { RowModelHelperService } from './api/rowModelHelperService';
 export {

@@ -42,7 +42,7 @@ export class ChartController extends BeanStub {
     private rangeService: IRangeService;
 
     public wireBeans(beans: BeanCollection) {
-        this.rangeService = beans.rangeService;
+        this.rangeService = beans.rangeService!;
     }
 
     public static EVENT_CHART_UPDATED = 'chartUpdated';

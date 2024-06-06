@@ -24,18 +24,30 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
     }
 
     public callFunction(functionName: ApiFunctionName, args: any[]): any {
+        const func = this.functions[functionName];
+
+        if (func) {
+            return func.apply(func, [this.beans, ...args]);
+        }
+
         if (this.isDestroyed) {
             return this.destroyedHandler(functionName);
         }
-        const func = this.functions[functionName];
-
-        return func ? func.apply(func, [this.beans, ...args]) : undefined;
+        if (this.isFrameworkMethod(functionName)) {
+            return undefined;
+        }
+        this.beans.validationService?.warnMissingApiFunction(functionName);
+        return undefined;
     }
 
     public addFunction<TFunctionName extends ApiFunctionName>(
         functionName: TFunctionName,
         func: ApiFunction<TFunctionName>
     ): void {
+        const { validationService } = this.beans;
+        if (validationService) {
+            func = validationService.validateApiFunction(functionName, func);
+        }
         this.functions[functionName] = func;
     }
 
@@ -60,7 +72,11 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
         return;
     }
 
-    private dispatchApiEvent(event: AgEvent): void {
-        this.beans.eventService.dispatchEvent(event);
+    private dispatchApiEvent(beans: BeanCollection, event: AgEvent): void {
+        beans.eventService.dispatchEvent(event);
+    }
+
+    private isFrameworkMethod(functionName: string): boolean {
+        return ['preWireBeans', 'wireBeans', 'preConstruct', 'postConstruct'].includes(functionName);
     }
 }

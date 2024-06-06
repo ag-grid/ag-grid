@@ -134,7 +134,7 @@ export class MiniChartsContainer extends Component {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
 
     static TEMPLATE = /* html */ `<div class="ag-chart-settings-mini-wrapper"></div>`;

@@ -233,8 +233,6 @@ export { _iterateObject } from '@ag-grid-community/core';
 export { _jsonEquals } from '@ag-grid-community/core';
 export { _last } from '@ag-grid-community/core';
 export { _loadTemplate } from '@ag-grid-community/core';
-export { _logDeprecation } from '@ag-grid-community/core';
-export { _logMissingRowModel } from '@ag-grid-community/core';
 export { _makeNull } from '@ag-grid-community/core';
 export { _mergeDeep } from '@ag-grid-community/core';
 export { _missing } from '@ag-grid-community/core';

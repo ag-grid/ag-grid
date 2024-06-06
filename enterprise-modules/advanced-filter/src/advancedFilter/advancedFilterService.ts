@@ -38,7 +38,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.columnModel = beans.columnModel;
         this.dataTypeService = beans.dataTypeService;
         this.rowModel = beans.rowModel;
-        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
     }
 
     private enabled: boolean;

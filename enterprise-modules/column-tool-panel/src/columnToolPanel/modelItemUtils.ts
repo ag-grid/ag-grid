@@ -16,7 +16,7 @@ import type { ColumnModelItem } from './columnModelItem';
 export class ModelItemUtils extends BeanStub implements NamedBean {
     beanName = 'modelItemUtils' as const;
 
-    private aggFuncService: IAggFuncService;
+    private aggFuncService?: IAggFuncService;
     private columnModel: ColumnModel;
     private columnApplyStateService: ColumnApplyStateService;
 
@@ -101,7 +101,7 @@ export class ModelItemUtils extends BeanStub implements NamedBean {
                 const aggFunc =
                     typeof col.getAggFunc() === 'string'
                         ? col.getAggFunc()
-                        : this.aggFuncService.getDefaultAggFunc(col);
+                        : this.aggFuncService?.getDefaultAggFunc(col);
                 colStateItems.push({
                     colId: col.getId(),
                     aggFunc: aggFunc,

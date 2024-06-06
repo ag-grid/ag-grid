@@ -61,8 +61,8 @@ export class AgPrimaryColsList extends Component {
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
-        this.colDefService = beans.toolPanelColDefService;
-        this.modelItemUtils = beans.modelItemUtils;
+        this.colDefService = beans.toolPanelColDefService as ToolPanelColDefService;
+        this.modelItemUtils = beans.modelItemUtils as ModelItemUtils;
     }
 
     private allowDragging: boolean;

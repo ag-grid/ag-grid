@@ -18,7 +18,7 @@ export class NavigatorPanel extends Component {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
 
     constructor(private readonly chartMenuParamsFactory: ChartMenuParamsFactory) {

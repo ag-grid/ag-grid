@@ -39,7 +39,7 @@ export class AgSideBar extends Component implements ISideBar {
     public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
         this.filterManager = beans.filterManager;
-        this.sideBarService = beans.sideBarService;
+        this.sideBarService = beans.sideBarService as SideBarService;
     }
 
     static readonly selector: AgComponentSelector = 'AG-SIDE-BAR';

@@ -9,7 +9,7 @@ export class ChartTitlePanel extends TitlePanel {
 
     public override wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
-        this.chartMenuService = beans.chartMenuService;
+        this.chartMenuService = beans.chartMenuService as ChartMenuService;
     }
 
     private titlePlaceholder: string;

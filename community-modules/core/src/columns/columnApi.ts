@@ -1,4 +1,3 @@
-import { _logDeprecation } from '../api/apiUtils';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
@@ -115,8 +114,8 @@ export function getDisplayedColBefore(beans: BeanCollection, col: Column): Colum
     return beans.visibleColsService.getColBefore(col as AgColumn);
 }
 
+/** @deprecated v31.1 */
 export function setColumnVisible(beans: BeanCollection, key: string | Column, visible: boolean): void {
-    _logDeprecation('v31.1', 'setColumnVisible(key,visible)', 'setColumnsVisible([key],visible)');
     beans.columnModel.setColsVisible([key as string | AgColumn], visible, 'api');
 }
 
@@ -124,8 +123,8 @@ export function setColumnsVisible(beans: BeanCollection, keys: (string | Column)
     beans.columnModel.setColsVisible(keys as (string | AgColumn)[], visible, 'api');
 }
 
+/** @deprecated v31.1 */
 export function setColumnPinned(beans: BeanCollection, key: string | ColDef | Column, pinned: ColumnPinnedType): void {
-    _logDeprecation('v31.1', 'setColumnPinned(key,pinned)', 'setColumnsPinned([key],pinned)');
     beans.columnModel.setColsPinned([key], pinned, 'api');
 }
 
@@ -161,8 +160,8 @@ export function getAllDisplayedVirtualColumns(beans: BeanCollection): Column[] {
     return beans.columnViewportService.getViewportColumns();
 }
 
+/** @deprecated v31.1 */
 export function moveColumn(beans: BeanCollection, key: string | ColDef | Column, toIndex: number): void {
-    _logDeprecation('v31.1', 'moveColumn(key, toIndex)', 'moveColumns([key], toIndex)');
     beans.columnMoveService.moveColumns([key], toIndex, 'api');
 }
 
@@ -174,6 +173,7 @@ export function moveColumns(beans: BeanCollection, columnsToMoveKeys: (string | 
     beans.columnMoveService.moveColumns(columnsToMoveKeys, toIndex, 'api');
 }
 
+/** @deprecated v31.1 */
 export function setColumnWidth(
     beans: BeanCollection,
     key: string | ColDef | Column,
@@ -181,7 +181,6 @@ export function setColumnWidth(
     finished: boolean = true,
     source: ColumnEventType = 'api'
 ): void {
-    _logDeprecation('v31.1', 'setColumnWidth(col, width)', 'setColumnWidths([{key: col, newWidth: width}])');
     beans.columnSizeService.setColumnWidths([{ key, newWidth }], false, finished, source);
 }
 
@@ -210,8 +209,8 @@ export function getAllDisplayedColumnGroups(beans: BeanCollection): (Column | Co
     return beans.visibleColsService.getAllTrees();
 }
 
+/** @deprecated v31.1 */
 export function autoSizeColumn(beans: BeanCollection, key: string | ColDef | Column, skipHeader?: boolean): void {
-    _logDeprecation('v31.1', 'autoSizeColumn(key, skipHeader)', 'autoSizeColumns([key], skipHeader)');
     return beans.columnAutosizeService.autoSizeCols({ colKeys: [key], skipHeader: skipHeader, source: 'api' });
 }
 

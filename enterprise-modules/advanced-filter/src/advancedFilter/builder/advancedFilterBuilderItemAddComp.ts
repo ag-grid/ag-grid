@@ -19,7 +19,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     public wireBeans(beans: BeanCollection) {
-        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
     }
 
     private readonly eItem: HTMLElement = RefPlaceholder;

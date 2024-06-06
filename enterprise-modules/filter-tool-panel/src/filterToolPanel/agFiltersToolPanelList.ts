@@ -31,7 +31,7 @@ export class AgFiltersToolPanelList extends Component {
     private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection) {
-        this.toolPanelColDefService = beans.toolPanelColDefService;
+        this.toolPanelColDefService = beans.toolPanelColDefService as ToolPanelColDefService;
         this.columnModel = beans.columnModel;
     }
 

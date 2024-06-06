@@ -21,7 +21,7 @@ export class FilterListener extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection) {
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.filterManager = beans.filterManager;
-        this.listenerUtils = beans.ssrmListenerUtils;
+        this.listenerUtils = beans.ssrmListenerUtils as ListenerUtils;
     }
 
     public postConstruct(): void {

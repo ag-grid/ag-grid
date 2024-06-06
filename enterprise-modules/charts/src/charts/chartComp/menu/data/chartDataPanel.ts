@@ -1,7 +1,11 @@
-import type { BeanCollection, ChartDataPanel as ChartDataPanelType, ChartType } from '@ag-grid-community/core';
+import type {
+    BeanCollection,
+    ChartDataPanel as ChartDataPanelType,
+    ChartType,
+    IChartService,
+} from '@ag-grid-community/core';
 import { AgToggleButton, Component, _setDisplayed, _warnOnce } from '@ag-grid-community/core';
 
-import type { ChartService } from '../../../chartService';
 import { ChartController } from '../../chartController';
 import type { ColState } from '../../model/chartDataModel';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
@@ -25,11 +29,11 @@ export class ChartDataPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper ag-scrollable-container"></div>`;
 
     protected chartTranslationService: ChartTranslationService;
-    private chartService: ChartService;
+    private chartService: IChartService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
-        this.chartService = beans.chartService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
+        this.chartService = beans.chartService!;
     }
 
     private readonly chartController: ChartController;

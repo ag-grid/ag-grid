@@ -80,8 +80,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.filterManager = beans.filterManager;
         this.sortController = beans.sortController;
         this.rowRenderer = beans.rowRenderer;
-        this.nodeManager = beans.ssrmNodeManager;
-        this.storeFactory = beans.ssrmStoreFactory;
+        this.nodeManager = beans.ssrmNodeManager as NodeManager;
+        this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
         this.beans = beans;
         this.pivotColDefService = beans.pivotColDefService;
     }

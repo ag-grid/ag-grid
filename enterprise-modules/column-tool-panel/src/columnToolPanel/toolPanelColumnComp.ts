@@ -42,7 +42,7 @@ export class ToolPanelColumnComp extends Component {
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.dragAndDropService = beans.dragAndDropService;
-        this.modelItemUtils = beans.modelItemUtils;
+        this.modelItemUtils = beans.modelItemUtils as ModelItemUtils;
     }
 
     private readonly eLabel: HTMLElement = RefPlaceholder;

@@ -51,18 +51,28 @@ import type { GridOptionsService } from '../gridOptionsService';
 import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
 import type { HeaderPositionUtils } from '../headerRendering/common/headerPosition';
 import type { HorizontalResizeService } from '../headerRendering/common/horizontalResizeService';
+import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService, ISelectionHandleFactory } from '../interfaces/IRangeService';
+import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
+import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { IClipboardService } from '../interfaces/iClipboardService';
+import type { IColumnChooserFactory } from '../interfaces/iColumnChooserFactory';
 import type { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
 import type { IDetailGridApiService } from '../interfaces/iDetailGridApiService';
 import type { IExcelCreator } from '../interfaces/iExcelCreator';
+import type { IExpansionService } from '../interfaces/iExpansionService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
+import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IRowModel } from '../interfaces/iRowModel';
+import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
+import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
+import type { ISideBarService } from '../interfaces/iSideBar';
+import type { IStatusBarService } from '../interfaces/iStatusBarService';
 import type { LocaleService } from '../localeService';
 import type { LoggerFactory } from '../logger';
 import type { AnimationFrameService } from '../misc/animationFrameService';
@@ -85,6 +95,8 @@ import type { RowCssClassCalculator } from '../rendering/row/rowCssClassCalculat
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
+import type { RowNodeSorter } from '../rowNodes/rowNodeSorter';
+import type { SelectableService } from '../rowNodes/selectableService';
 import type { SortController } from '../sortController';
 import type { StylingService } from '../styling/stylingService';
 import type { SyncService } from '../syncService';
@@ -204,7 +216,7 @@ export interface CoreBeanCollection {
     localeService: LocaleService;
     syncService: SyncService;
     ariaAnnouncementService: AriaAnnouncementService;
-    rangeService: IRangeService;
+    rangeService?: IRangeService;
     selectionHandleFactory: ISelectionHandleFactory;
     validationService?: ValidationService;
     gridApi: GridApi;
@@ -234,9 +246,9 @@ export interface CoreBeanCollection {
     apiEventService: ApiEventService;
     undoRedoService?: UndoRedoService;
     rowNodeBlockLoader?: RowNodeBlockLoader;
-    csvCreator: ICsvCreator;
-    excelCreator: IExcelCreator;
-    clipboardService: IClipboardService;
+    csvCreator?: ICsvCreator;
+    excelCreator?: IExcelCreator;
+    clipboardService?: IClipboardService;
     mouseEventService: MouseEventService;
     cellNavigationService: CellNavigationService;
     scrollVisibleService: ScrollVisibleService;
@@ -248,8 +260,8 @@ export interface CoreBeanCollection {
     frameworkComponentWrapper: FrameworkComponentWrapper;
     horizontalResizeService: HorizontalResizeService;
     filterMenuFactory: IMenuFactory;
-    enterpriseMenuFactory: IMenuFactory;
-    contextMenuFactory: IContextMenuFactory;
+    enterpriseMenuFactory?: IMenuFactory;
+    contextMenuFactory?: IContextMenuFactory;
     editService?: EditService;
     rowEditService?: RowEditService;
     alignedGridsService?: AlignedGridsService;
@@ -260,10 +272,29 @@ export interface CoreBeanCollection {
     rowModelHelperService?: RowModelHelperService;
     detailGridApiService?: IDetailGridApiService;
     gridDestroyService: GridDestroyService;
+    expansionService: IExpansionService;
+    sideBarService?: ISideBarService;
+    ssrmTransactionManager?: IServerSideTransactionManager;
+    columnChooserFactory?: IColumnChooserFactory;
+    aggFuncService?: IAggFuncService;
+    advancedFilterService: IAdvancedFilterService;
+    filterStage?: IRowNodeStage;
+    sortStage?: IRowNodeStage;
+    flattenStage?: IRowNodeStage;
+    groupStage?: IRowNodeStage;
+    aggregationStage?: IRowNodeStage;
+    pivotStage?: IRowNodeStage;
+    filterAggregatesStage?: IRowNodeStage;
+    rowNodeSorter: RowNodeSorter;
+    pivotColDefService?: IPivotColDefService;
+    statusBarService?: IStatusBarService;
+    chartService?: IChartService;
+    selectableService: SelectableService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
-    [key in Exclude<BeanName, keyof CoreBeanCollection>]: any;
+    // `unknown | undefined` to make sure the type is handled correctly when used
+    [key in Exclude<BeanName, keyof CoreBeanCollection>]?: unknown;
 };
 
 export class Context extends GenericContext<BeanName, BeanCollection> {

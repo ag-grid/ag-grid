@@ -237,7 +237,7 @@ export class ExcelCreator
         this.funcColsService = beans.funcColsService;
         this.valueService = beans.valueService;
         this.stylingService = beans.stylingService;
-        this.gridSerializer = beans.gridSerializer;
+        this.gridSerializer = beans.gridSerializer as GridSerializer;
         this.gos = beans.gos;
     }
 

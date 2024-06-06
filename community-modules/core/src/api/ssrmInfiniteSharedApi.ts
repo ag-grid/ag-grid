@@ -1,5 +1,4 @@
 import type { BeanCollection } from '../context/context';
-import { _logMissingRowModel } from './apiUtils';
 
 export function setRowCount(beans: BeanCollection, rowCount: number, maxRowFound?: boolean): void {
     const serverSideRowModel = beans.rowModelHelperService?.getServerSideRowModel();
@@ -17,8 +16,6 @@ export function setRowCount(beans: BeanCollection, rowCount: number, maxRowFound
         infiniteRowModel.setRowCount(rowCount, maxRowFound);
         return;
     }
-
-    _logMissingRowModel('setRowCount', 'infinite', 'serverSide');
 }
 
 export function getCacheBlockState(beans: BeanCollection): any {

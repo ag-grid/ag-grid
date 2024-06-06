@@ -2,8 +2,6 @@ import type { BeanCollection } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { RedrawRowsParams } from '../rendering/rowRenderer';
-import { _warnOnce } from '../utils/function';
-import { _logDeprecation } from './apiUtils';
 
 export function redrawRows<TData = any>(beans: BeanCollection, params: RedrawRowsParams<TData> = {}): void {
     const rowNodes = params ? params.rowNodes : undefined;
@@ -45,8 +43,8 @@ export function forEachNode<TData = any>(
     beans.rowModel.forEachNode(callback, includeFooterNodes);
 }
 
+/** @deprecated v31.1 */
 export function getFirstDisplayedRow(beans: BeanCollection): number {
-    _logDeprecation('v31.1', 'getFirstDisplayedRow', 'getFirstDisplayedRowIndex');
     return getFirstDisplayedRowIndex(beans);
 }
 
@@ -54,8 +52,8 @@ export function getFirstDisplayedRowIndex(beans: BeanCollection): number {
     return beans.rowRenderer.getFirstVirtualRenderedRow();
 }
 
+/** @deprecated v31.1 */
 export function getLastDisplayedRow(beans: BeanCollection): number {
-    _logDeprecation('v31.1', 'getLastDisplayedRow', 'getLastDisplayedRowIndex');
     return getLastDisplayedRowIndex(beans);
 }
 
@@ -71,7 +69,7 @@ export function getDisplayedRowCount(beans: BeanCollection): number {
     return beans.rowModel.getRowCount();
 }
 
+/** @deprecated v31.1 */
 export function getModel(beans: BeanCollection): IRowModel {
-    _warnOnce('Since v31.1 getModel() is deprecated. Please use the appropriate grid API methods instead.');
     return beans.rowModel;
 }

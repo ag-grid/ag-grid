@@ -1,15 +1,12 @@
 import type { BeanCollection } from '../context/context';
 import type { Column } from '../interfaces/iColumn';
-import { _warnOnce } from '../utils/function';
 
+/** @deprecated v31.1 */
 export function showColumnMenuAfterButtonClick(
     beans: BeanCollection,
     colKey: string | Column,
     buttonElement: HTMLElement
 ): void {
-    _warnOnce(
-        `'showColumnMenuAfterButtonClick' is deprecated. Use 'IHeaderParams.showColumnMenu' within a header component, or 'api.showColumnMenu' elsewhere.`
-    );
     // use grid column so works with pivot mode
     const column = beans.columnModel.getCol(colKey)!;
     beans.menuService.showColumnMenu({
@@ -19,14 +16,12 @@ export function showColumnMenuAfterButtonClick(
     });
 }
 
+/** @deprecated v31.1 */
 export function showColumnMenuAfterMouseClick(
     beans: BeanCollection,
     colKey: string | Column,
     mouseEvent: MouseEvent | Touch
 ): void {
-    _warnOnce(
-        `'showColumnMenuAfterMouseClick' is deprecated. Use 'IHeaderParams.showColumnMenuAfterMouseClick' within a header component, or 'api.showColumnMenu' elsewhere.`
-    );
     // use grid column so works with pivot mode
     let column = beans.columnModel.getCol(colKey);
     if (!column) {
