@@ -247,7 +247,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                                 <ul>
                                     {selectedSeedRepos.map(({ name, url, importType }) => {
                                         return (
-                                            <li>
+                                            <li key={url}>
                                                 <a href={url}>{name}</a> ({importType})
                                             </li>
                                         );
