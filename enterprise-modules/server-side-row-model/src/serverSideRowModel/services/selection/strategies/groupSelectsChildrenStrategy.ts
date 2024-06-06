@@ -8,9 +8,13 @@ import type {
     IServerSideGroupSelectionState,
     ISetNodesSelectedParams,
     RowNode,
-    SelectionEventSourceType,
 } from '@ag-grid-community/core';
-import { BeanStub, Events } from '@ag-grid-community/core';
+import {
+    BeanStub,
+    Events,
+    _RowRangeSelectionContext as RowRangeSelectionContext,
+    _last,
+} from '@ag-grid-community/core';
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
@@ -24,6 +28,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     private funcColsService: FuncColsService;
     private filterManager?: FilterManager;
     private selectionService: ISelectionService;
+    private selectionContext = new RowRangeSelectionContext();
 
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
@@ -33,7 +38,6 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     private selectedState: SelectionState = { selectAllChildren: false, toggledNodes: new Map() };
-    private lastSelected: RowNode | null = null;
 
     public postConstruct(): void {
         // if model has updated, a store may now be fully loaded to clean up indeterminate states
@@ -43,6 +47,8 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>
             this.selectionService.reset('rowGroupChanged')
         );
+
+        this.selectionContext.init(this.rowModel);
     }
 
     public getSelectedState() {
@@ -149,44 +155,65 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         return anyStateChanged;
     }
 
-    public setNodesSelected(params: ISetNodesSelectedParams): number {
-        const { nodes, ...other } = params;
-
+    public setNodesSelected({ nodes, newValue, rangeSelect }: ISetNodesSelectedParams): number {
         if (nodes.length === 0) return 0;
 
-        if (params.rangeSelect) {
+        if (rangeSelect) {
             if (nodes.length > 1) {
                 throw new Error('AG Grid: cannot select multiple rows when using rangeSelect');
             }
             const node = nodes[0];
-            const rangeOfNodes = this.rowModel.getNodesInRangeForSelection(node, this.lastSelected);
-            // sort the routes by route length, high to low, this means we can do the lowest level children first
-            const routes = rangeOfNodes.map(this.getRouteToNode).sort((a, b) => b.length - a.length);
 
-            // skip routes if we've already done a descendent
-            const completedRoutes: Set<IRowNode> = new Set();
-            routes.forEach((route) => {
-                // skip routes if we've already selected a descendent
-                if (completedRoutes.has(route[route.length - 1])) {
-                    return;
+            if (this.selectionContext.isInRange(node)) {
+                const [nodesToSet, nodesToUnset] = this.selectionContext.splitRangeAt(node);
+                this.selectionContext.setEndRange(node);
+
+                if (newValue) {
+                    this.selectRange(nodesToUnset, false);
                 }
-
-                route.forEach((part) => completedRoutes.add(part));
-                this.recursivelySelectNode(route, this.selectedState, { node, ...other });
-            });
-
-            this.removeRedundantState();
-            this.lastSelected = node;
+                this.selectRange(nodesToSet, newValue);
+                return 1;
+            } else {
+                this.selectionContext.setEndRange(node);
+                const fromNode = this.selectionContext.getRoot();
+                const toNode = node;
+                if (fromNode !== toNode) {
+                    this.selectBetween(toNode, fromNode, newValue);
+                    return 1;
+                }
+            }
             return 1;
         }
 
-        params.nodes.forEach((node) => {
+        nodes.forEach((node) => {
             const idPathToNode = this.getRouteToNode(node);
-            this.recursivelySelectNode(idPathToNode, this.selectedState, { ...other, node });
+            this.recursivelySelectNode(idPathToNode, this.selectedState, newValue);
         });
         this.removeRedundantState();
-        this.lastSelected = params.nodes[params.nodes.length - 1];
+        this.selectionContext.reset(_last(nodes));
         return 1;
+    }
+
+    private selectBetween(from: RowNode, to: RowNode | null, newValue: boolean) {
+        return this.selectRange(this.rowModel.getNodesInRangeForSelection(from, to), newValue);
+    }
+
+    private selectRange(nodes: RowNode[], newValue: boolean) {
+        // sort routes longest to shortest, meaning we can do the lowest level children first
+        const routes = nodes.map(this.getRouteToNode).sort((a, b) => a.length - b.length);
+
+        // keep track of nodes we've seen so we can skip branches we've visited already
+        const seen = new Set<RowNode>();
+        routes.forEach((route) => {
+            if (seen.has(_last(route))) {
+                return;
+            }
+            route.forEach((part) => seen.add(part));
+
+            this.recursivelySelectNode(route, this.selectedState, newValue);
+        });
+
+        this.removeRedundantState();
     }
 
     public isNodeSelected(node: RowNode): boolean | undefined {
@@ -215,7 +242,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         }
 
         // no deeper custom state, respect the closest default
-        return !!state.selectAllChildren;
+        return state.selectAllChildren;
     }
 
     private getRouteToNode(node: RowNode) {
@@ -287,11 +314,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         forEachNodeStateDepthFirst();
     }
 
-    private recursivelySelectNode(
-        [nextNode, ...nodes]: IRowNode[],
-        selectedState: SelectionState,
-        params: { newValue: boolean; source: SelectionEventSourceType; event?: Event; node: RowNode }
-    ) {
+    private recursivelySelectNode([nextNode, ...nodes]: IRowNode[], selectedState: SelectionState, newValue: boolean) {
         if (!nextNode) {
             return;
         }
@@ -301,13 +324,13 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         if (isLastNode) {
             // if the node is not selectable, we should never have it in selection state
             const isNodeSelectable = nextNode.selectable;
-            const doesNodeConform = selectedState.selectAllChildren === params.newValue;
+            const doesNodeConform = selectedState.selectAllChildren === newValue;
             if (doesNodeConform || !isNodeSelectable) {
                 selectedState.toggledNodes.delete(nextNode.id!);
                 return;
             }
             const newState: SelectionState = {
-                selectAllChildren: params.newValue,
+                selectAllChildren: newValue,
                 toggledNodes: new Map(),
             };
             selectedState.toggledNodes.set(nextNode.id!, newState);
@@ -315,18 +338,16 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         }
 
         const doesStateAlreadyExist = selectedState.toggledNodes.has(nextNode.id!);
-        const childState: SelectionState = doesStateAlreadyExist
-            ? selectedState.toggledNodes.get(nextNode.id!)!
-            : {
-                  selectAllChildren: selectedState.selectAllChildren,
-                  toggledNodes: new Map(),
-              };
+        const childState: SelectionState = selectedState.toggledNodes.get(nextNode.id!) ?? {
+            selectAllChildren: selectedState.selectAllChildren,
+            toggledNodes: new Map(),
+        };
 
         if (!doesStateAlreadyExist) {
             selectedState.toggledNodes.set(nextNode.id!, childState);
         }
 
-        this.recursivelySelectNode(nodes, childState, params);
+        this.recursivelySelectNode(nodes, childState, newValue);
 
         // cleans out groups which have no toggled nodes and an equivalent default to its parent
         if (selectedState.selectAllChildren === childState.selectAllChildren && childState.toggledNodes.size === 0) {
