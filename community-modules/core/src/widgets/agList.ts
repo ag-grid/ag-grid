@@ -1,5 +1,4 @@
 import { KeyCode } from '../constants/keyCode';
-import { Events } from '../eventKeys';
 import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/aria';
 import { _isVisible, _removeFromParent } from '../utils/dom';
 import { Component } from './component';
@@ -10,9 +9,10 @@ export interface ListOption<TValue = string> {
     text?: string;
 }
 
-export class AgList<TValue = string> extends Component {
-    public static EVENT_ITEM_SELECTED = 'selectedItem';
-    private static ACTIVE_CLASS = 'ag-active-item';
+export type AgListEvent = 'fieldValueChanged' | 'selectedItem';
+
+export class AgList<TValue = string> extends Component<AgListEvent> {
+    private readonly activeClass = 'ag-active-item';
 
     private options: ListOption<TValue>[] = [];
     private itemEls: HTMLElement[] = [];
@@ -243,7 +243,7 @@ export class AgList<TValue = string> extends Component {
         this.clearHighlighted();
         this.highlightedEl = el;
 
-        this.highlightedEl.classList.add(AgList.ACTIVE_CLASS);
+        this.highlightedEl.classList.add(this.activeClass);
         _setAriaSelected(this.highlightedEl, true);
 
         const eGui = this.getGui();
@@ -265,18 +265,18 @@ export class AgList<TValue = string> extends Component {
             return;
         }
 
-        this.highlightedEl.classList.remove(AgList.ACTIVE_CLASS);
+        this.highlightedEl.classList.remove(this.activeClass);
         _setAriaSelected(this.highlightedEl, false);
 
         this.highlightedEl = null;
     }
 
     private fireChangeEvent(): void {
-        this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
+        this.dispatchLocalEvent({ type: 'fieldValueChanged' });
         this.fireItemSelected();
     }
 
     private fireItemSelected(): void {
-        this.dispatchEvent({ type: AgList.EVENT_ITEM_SELECTED });
+        this.dispatchLocalEvent({ type: 'selectedItem' });
     }
 }

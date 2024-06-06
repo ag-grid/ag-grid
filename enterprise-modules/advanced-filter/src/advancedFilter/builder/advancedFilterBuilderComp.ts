@@ -15,13 +15,13 @@ import { AdvancedFilterBuilderItemAddComp } from './advancedFilterBuilderItemAdd
 import { AdvancedFilterBuilderItemComp } from './advancedFilterBuilderItemComp';
 import type {
     AdvancedFilterBuilderAddEvent,
+    AdvancedFilterBuilderEvents,
     AdvancedFilterBuilderItem,
     AdvancedFilterBuilderMoveEvent,
     AdvancedFilterBuilderRemoveEvent,
 } from './iAdvancedFilterBuilder';
-import { AdvancedFilterBuilderEvents } from './iAdvancedFilterBuilder';
 
-export class AdvancedFilterBuilderComp extends Component {
+export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEvents> {
     private filterManager?: FilterManager;
     private advancedFilterService: AdvancedFilterService;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
@@ -304,7 +304,10 @@ export class AdvancedFilterBuilderComp extends Component {
         });
     }
 
-    private createItemComponent(item: AdvancedFilterBuilderItem, focusWrapper: HTMLElement): Component {
+    private createItemComponent(
+        item: AdvancedFilterBuilderItem,
+        focusWrapper: HTMLElement
+    ): Component<AdvancedFilterBuilderEvents> {
         const itemComp = this.createBean(
             item.filterModel
                 ? new AdvancedFilterBuilderItemComp(item, this.dragFeature, focusWrapper)
@@ -313,18 +316,18 @@ export class AdvancedFilterBuilderComp extends Component {
 
         itemComp.addManagedListener(
             itemComp,
-            AdvancedFilterBuilderEvents.EVENT_REMOVED,
+            'advancedFilterBuilderRemoved',
             ({ item }: AdvancedFilterBuilderRemoveEvent) => this.removeItem(item)
         );
-        itemComp.addManagedListener(itemComp, AdvancedFilterBuilderEvents.EVENT_VALUE_CHANGED, () => this.validate());
+        itemComp.addManagedListener(itemComp, 'advancedFilterBuilderValueChanged', () => this.validate());
         itemComp.addManagedListener(
             itemComp,
-            AdvancedFilterBuilderEvents.EVENT_ADDED,
+            'advancedFilterBuilderAdded',
             ({ item, isJoin }: AdvancedFilterBuilderAddEvent) => this.addItem(item, isJoin)
         );
         itemComp.addManagedListener(
             itemComp,
-            AdvancedFilterBuilderEvents.EVENT_MOVED,
+            'advancedFilterBuilderMoved',
             ({ item, backwards }: AdvancedFilterBuilderMoveEvent) => this.moveItemUpDown(item, backwards)
         );
 

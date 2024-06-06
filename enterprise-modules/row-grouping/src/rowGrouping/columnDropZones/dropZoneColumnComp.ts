@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     BeanCollection,
     ColumnModel,
     ColumnNameService,
@@ -10,7 +11,6 @@ import type {
     SortController,
 } from '@ag-grid-community/core';
 import {
-    AgColumn,
     Component,
     DragAndDropService,
     DragSourceType,
@@ -76,8 +76,10 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
 
         this.setupSort();
 
-        this.addManagedListener(this.eventService, AgColumn.EVENT_SORT_CHANGED, () => {
-            this.setupAria();
+        this.addManagedEventListeners({
+            sortChanged: () => {
+                this.setupAria();
+            },
         });
 
         if (this.isGroupingZone()) {

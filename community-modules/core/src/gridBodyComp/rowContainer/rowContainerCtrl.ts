@@ -3,8 +3,6 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { DragService } from '../../dragAndDrop/dragService';
-import { Events } from '../../eventKeys';
-import type { EventsType } from '../../eventKeys';
 import type { DisplayedRowsChangedEvent } from '../../events';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { ResizeObserverService } from '../../misc/resizeObserverService';
@@ -295,15 +293,11 @@ export class RowContainerCtrl extends BeanStub {
 
         this.forContainers(allLeft, () => {
             this.pinnedWidthFeature = this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer));
-            this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, () =>
-                this.onPinnedWidthChanged()
-            );
+            this.addManagedEventListeners({ leftPinnedWidthChanged: () => this.onPinnedWidthChanged() });
         });
         this.forContainers(allRight, () => {
             this.pinnedWidthFeature = this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer));
-            this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, () =>
-                this.onPinnedWidthChanged()
-            );
+            this.addManagedEventListeners({ rightPinnedWidthChanged: () => this.onPinnedWidthChanged() });
         });
         this.forContainers(allMiddle, () =>
             this.createManagedBean(
@@ -321,10 +315,10 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private addListeners(): void {
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
-            [Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED]: this.onDisplayedColumnsWidthChanged.bind(this),
-            [Events.EVENT_DISPLAYED_ROWS_CHANGED]: (params: DisplayedRowsChangedEvent) =>
+        this.addManagedEventListeners({
+            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
+            displayedColumnsWidthChanged: this.onDisplayedColumnsWidthChanged.bind(this),
+            displayedRowsChanged: (params: DisplayedRowsChangedEvent) =>
                 this.onDisplayedRowsChanged(params.afterScroll),
         });
 

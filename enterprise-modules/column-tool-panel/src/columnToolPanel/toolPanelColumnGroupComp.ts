@@ -18,7 +18,6 @@ import {
     CssClassApplier,
     DragAndDropService,
     DragSourceType,
-    Events,
     KeyCode,
     RefPlaceholder,
     TouchListener,
@@ -100,14 +99,10 @@ export class ToolPanelColumnGroupComp extends Component {
 
         this.addCssClass('ag-column-select-indent-' + this.columnDept);
 
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
-            this.onColumnStateChanged.bind(this)
-        );
+        this.addManagedEventListeners({ columnPivotModeChanged: this.onColumnStateChanged.bind(this) });
 
         this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
-        this.addManagedListener(this.cbSelect, Events.EVENT_FIELD_VALUE_CHANGED, this.onCheckboxChanged.bind(this));
+        this.addManagedListener(this.cbSelect, 'fieldValueChanged', this.onCheckboxChanged.bind(this));
         this.addManagedListener(
             this.modelItem,
             ColumnModelItem.EVENT_EXPANDED_CHANGED,
@@ -159,7 +154,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
         refresh();
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+        this.addManagedEventListeners({ newColumnsLoaded: refresh });
     }
 
     public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
@@ -203,11 +198,14 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private addVisibilityListenersToAllChildren(): void {
+        const listener = this.onColumnStateChanged.bind(this);
         this.columnGroup.getLeafColumns().forEach((column) => {
-            this.addManagedListener(column, AgColumn.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
-            this.addManagedListener(column, AgColumn.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
-            this.addManagedListener(column, AgColumn.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
-            this.addManagedListener(column, AgColumn.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
+            this.addManagedListeners(column, {
+                visibleChanged: listener,
+                columnValueChanged: listener,
+                columnPivotChanged: listener,
+                columnRowGroupChanged: listener,
+            });
         });
     }
 
@@ -228,14 +226,14 @@ export class ToolPanelColumnGroupComp extends Component {
             onDragStarted: () => {
                 hideColumnOnExit = !this.gos.get('suppressDragLeaveHidesColumns');
                 const event: WithoutGridCommon<ColumnPanelItemDragStartEvent> = {
-                    type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
+                    type: 'columnPanelItemDragStart',
                     column: this.columnGroup,
                 };
                 this.eventService.dispatchEvent(event);
             },
             onDragStopped: () => {
                 const event: WithoutGridCommon<ColumnPanelItemDragEndEvent> = {
-                    type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END,
+                    type: 'columnPanelItemDragEnd',
                 };
                 this.eventService.dispatchEvent(event);
             },

@@ -73,9 +73,9 @@ export class RowNodeBlockLoader extends BeanStub<'blockLoaded' | 'blockLoaderFin
     public loadComplete(): void {
         this.activeBlockLoadsCount--;
         this.checkBlockToLoad();
-        this.dispatchEvent({ type: 'blockLoaded' });
+        this.dispatchLocalEvent({ type: 'blockLoaded' });
         if (this.activeBlockLoadsCount == 0) {
-            this.dispatchEvent({ type: 'blockLoaderFinished' });
+            this.dispatchLocalEvent({ type: 'blockLoaderFinished' });
         }
     }
 

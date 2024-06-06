@@ -1,6 +1,5 @@
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import { Events } from '../eventKeys';
 import { _isVisible, _setFixedWidth } from '../utils/dom';
 import type { AgComponentSelector } from '../widgets/component';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
@@ -37,7 +36,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
 
         this.addManagedListener(
             this.eventService,
-            Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED,
+            'rowContainerHeightChanged',
             this.onRowContainerHeightChanged.bind(this)
         );
     }

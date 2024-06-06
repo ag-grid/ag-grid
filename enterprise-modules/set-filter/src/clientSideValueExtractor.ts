@@ -7,7 +7,7 @@ import type {
     SetFilterParams,
     ValueService,
 } from '@ag-grid-community/core';
-import { AgPromise, Events, _makeNull, _toStringOrNull } from '@ag-grid-community/core';
+import { AgPromise, _makeNull, _toStringOrNull } from '@ag-grid-community/core';
 
 /** @param V type of value in the Set Filter */
 export class ClientSideValuesExtractor<V> {
@@ -36,7 +36,7 @@ export class ClientSideValuesExtractor<V> {
             if (this.rowModel.isRowDataLoaded()) {
                 resolve(this.extractUniqueValues(predicate, existingValues));
             } else {
-                const destroyFunc = this.addManagedListener(Events.EVENT_ROW_COUNT_READY, () => {
+                const destroyFunc = this.addManagedListener('rowCountReady', () => {
                     destroyFunc?.();
                     resolve(this.extractUniqueValues(predicate, existingValues));
                 });

@@ -57,7 +57,8 @@ interface MappedResizer {
     dragSource?: DragListenerParams;
 }
 
-export class PositionableFeature extends BeanStub {
+export type PositionableFeatureEvent = 'resize';
+export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
     protected popupService: PopupService;
     private resizeObserverService: ResizeObserverService;
     private dragService: DragService;
@@ -813,13 +814,13 @@ export class PositionableFeature extends BeanStub {
         this.boundaryEl = null;
 
         const params = {
-            type: 'resize',
+            type: 'resize' as const,
         };
 
         this.element.classList.remove('ag-resizing');
         this.resizerMap![side].element.classList.remove('ag-active');
 
-        this.dispatchEvent(params);
+        this.dispatchLocalEvent(params);
     }
 
     private refreshSize() {

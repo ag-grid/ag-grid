@@ -1,5 +1,4 @@
 import type { BeanCollection } from '../../context/context';
-import { Events } from '../../eventKeys';
 import type { PaginationChangedEvent } from '../../events';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import { _clearElement } from '../../utils/dom';
@@ -30,9 +29,7 @@ export class PageSizeSelectorComp extends Component {
             this.onPageSizeSelectorValuesChange();
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, (event) =>
-            this.handlePaginationChanged(event)
-        );
+        this.addManagedEventListeners({ paginationChanged: (event) => this.handlePaginationChanged(event) });
     }
 
     private handlePageSizeItemSelected = (): void => {

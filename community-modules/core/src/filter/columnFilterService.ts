@@ -7,7 +7,7 @@ import type { BeanCollection, BeanName } from '../context/context';
 import { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import { Events, type EventsType } from '../eventKeys';
+import type { EventsType } from '../eventKeys';
 import type {
     ColumnEventType,
     FilterChangedEventSourceType,
@@ -69,10 +69,10 @@ export class ColumnFilterService extends BeanStub {
     private initialFilterModel: FilterModel;
 
     public postConstruct(): void {
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_GRID_COLUMNS_CHANGED]: this.onColumnsChanged.bind(this),
-            [Events.EVENT_ROW_DATA_UPDATED]: () => this.onNewRowsLoaded('rowDataUpdated'),
-            [Events.EVENT_DATA_TYPES_INFERRED]: this.processFilterModelUpdateQueue.bind(this),
+        this.addManagedEventListeners({
+            gridColumnsChanged: this.onColumnsChanged.bind(this),
+            rowDataUpdated: () => this.onNewRowsLoaded('rowDataUpdated'),
+            dataTypesInferred: this.processFilterModelUpdateQueue.bind(this),
         });
 
         this.initialFilterModel = {
@@ -676,7 +676,7 @@ export class ColumnFilterService extends BeanStub {
             this.allColumnFilters.delete(filterWrapper.column.getColId());
 
             const event: WithoutGridCommon<FilterDestroyedEvent> = {
-                type: Events.EVENT_FILTER_DESTROYED,
+                type: 'filterDestroyed',
                 source,
                 column: filterWrapper.column,
             };
@@ -687,7 +687,7 @@ export class ColumnFilterService extends BeanStub {
     private filterModifiedCallbackFactory(filter: IFilterComp<any>, column: AgColumn<any>) {
         return () => {
             const event: WithoutGridCommon<FilterModifiedEvent> = {
-                type: Events.EVENT_FILTER_MODIFIED,
+                type: 'filterModified',
                 column,
                 filterInstance: filter,
             };
@@ -758,7 +758,7 @@ export class ColumnFilterService extends BeanStub {
         this.allColumnFilters.set(colId, filterWrapper);
         this.allColumnListeners.set(
             colId,
-            this.addManagedListener(column, AgColumn.EVENT_COL_DEF_CHANGED, () => this.checkDestroyFilter(colId))
+            this.addManagedListener(column, 'colDefChanged', () => this.checkDestroyFilter(colId))
         );
     }
 

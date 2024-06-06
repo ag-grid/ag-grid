@@ -4,6 +4,7 @@ import type {
     BeanCollection,
     ColumnModel,
     DataTypeService,
+    EventsType,
     IAdvancedFilterService,
     IRowModel,
     IRowNode,
@@ -12,7 +13,7 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, Events, _exists, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, _exists, _warnOnce } from '@ag-grid-community/core';
 
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
@@ -65,9 +66,9 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         };
 
         this.addManagedPropertyListener('enableAdvancedFilter', (event) => this.setEnabled(!!event.currentValue));
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, (event: NewColumnsLoadedEvent) =>
-            this.onNewColumnsLoaded(event)
-        );
+        this.addManagedEventListeners({
+            newColumnsLoaded: (event: NewColumnsLoadedEvent) => this.onNewColumnsLoaded(event),
+        });
         this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', () => this.updateValidity());
     }
 
@@ -166,7 +167,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.enabled = enabled && isValidRowModel;
         if (!silent && this.enabled !== previousValue) {
             const event: WithoutGridCommon<AdvancedFilterEnabledChangedEvent> = {
-                type: Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
+                type: 'advancedFilterEnabledChanged',
                 enabled: this.enabled,
             };
             this.eventService.dispatchEvent(event);
@@ -235,7 +236,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         }
 
         this.ctrl.setInputDisabled(true);
-        const destroyFunc = this.addManagedListener(this.eventService, Events.EVENT_DATA_TYPES_INFERRED, () => {
+        const destroyFunc = this.addManagedListener<EventsType>(this.eventService, 'dataTypesInferred', () => {
             destroyFunc?.();
             this.ctrl.setInputDisabled(false);
         });

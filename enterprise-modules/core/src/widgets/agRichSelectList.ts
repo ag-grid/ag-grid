@@ -4,7 +4,7 @@ import type {
     RichSelectParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Events, _setAriaControls, _setAriaLabel } from '@ag-grid-community/core';
+import { _setAriaControls, _setAriaLabel } from '@ag-grid-community/core';
 import { KeyCode } from '@ag-grid-community/core';
 
 import { RichSelectRow } from './agRichSelectRow';
@@ -298,12 +298,12 @@ export class AgRichSelectList<TValue> extends VirtualList {
 
     private dispatchValueSelected(): void {
         const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
-            type: Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
+            type: 'fieldPickerValueSelected',
             fromEnterKey: false,
             value: this.selectedItems,
         };
 
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent(event);
     }
 
     public override destroy(): void {

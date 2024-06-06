@@ -1,5 +1,4 @@
 import { BeanStub } from '../context/beanStub';
-import type { AgEvent } from '../events';
 import type { Column, ColumnGroup, ColumnGroupShowType, ColumnPinnedType, HeaderColumnId } from '../interfaces/iColumn';
 import { _last } from '../utils/array';
 import type { AgColumn } from './agColumn';
@@ -17,10 +16,10 @@ export function isColumnGroup(col: Column | ColumnGroup | string): col is AgColu
 
 export const EVENT_COLUMN_GROUP_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged' as const;
 
-export class AgColumnGroup<TValue = any> extends BeanStub implements ColumnGroup<TValue> {
-    public readonly isColumn = false as const;
+export type AgColumnGroupEvent = 'leftChanged' | 'displayedChildrenChanged';
 
-    public static EVENT_LEFT_CHANGED = 'leftChanged';
+export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> implements ColumnGroup<TValue> {
+    public readonly isColumn = false as const;
 
     // all the children of this group, regardless of whether they are opened or closed
     private children: (AgColumn | AgColumnGroup)[] | null;
@@ -36,7 +35,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub implements ColumnGroup
     private left: number | null;
     private oldLeft: number | null;
 
-    private parent: AgColumnGroup | null = null;
+    private parent: AgColumnGroup<TValue> | null = null;
 
     constructor(providedColumnGroup: AgProvidedColumnGroup, groupId: string, partId: number, pinned: ColumnPinnedType) {
         super();
@@ -54,7 +53,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub implements ColumnGroup
         this.displayedChildren = null;
     }
 
-    public getParent(): AgColumnGroup | null {
+    public getParent(): AgColumnGroup<TValue> | null {
         return this.parent;
     }
 
@@ -116,16 +115,12 @@ export class AgColumnGroup<TValue = any> extends BeanStub implements ColumnGroup
         this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
-            this.dispatchEvent(this.createAgEvent(AgColumnGroup.EVENT_LEFT_CHANGED));
+            this.dispatchLocalEvent({ type: 'leftChanged' });
         }
     }
 
     public getPinned(): ColumnPinnedType {
         return this.pinned;
-    }
-
-    private createAgEvent(type: string): AgEvent {
-        return { type };
     }
 
     public getGroupId(): string {
@@ -274,7 +269,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub implements ColumnGroup
         // it not expandable, everything is visible
         if (!isExpandable) {
             this.displayedChildren = this.children;
-            this.dispatchEvent(this.createAgEvent(EVENT_COLUMN_GROUP_DISPLAYED_CHILDREN_CHANGED));
+            this.dispatchLocalEvent({ type: 'displayedChildrenChanged' });
             return;
         }
 
@@ -308,6 +303,6 @@ export class AgColumnGroup<TValue = any> extends BeanStub implements ColumnGroup
             }
         });
 
-        this.dispatchEvent(this.createAgEvent(EVENT_COLUMN_GROUP_DISPLAYED_CHILDREN_CHANGED));
+        this.dispatchLocalEvent({ type: 'displayedChildrenChanged' });
     }
 }

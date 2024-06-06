@@ -4,7 +4,6 @@ import {
     AgInputNumberField,
     AgInputTextField,
     Component,
-    Events,
     KeyCode,
     RefPlaceholder,
     _exists,
@@ -16,7 +15,8 @@ import {
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 
-export class InputPillComp extends Component {
+export type InputPillCompEvent = 'fieldValueChanged';
+export class InputPillComp extends Component<InputPillCompEvent> {
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -165,8 +165,8 @@ export class InputPillComp extends Component {
             return;
         }
         const value = this.eEditor!.getValue() ?? '';
-        this.dispatchEvent<WithoutGridCommon<FieldValueEvent>>({
-            type: Events.EVENT_FIELD_VALUE_CHANGED,
+        this.dispatchLocalEvent<WithoutGridCommon<FieldValueEvent>>({
+            type: 'fieldValueChanged',
             value,
         });
         this.value = value;

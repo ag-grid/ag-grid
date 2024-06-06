@@ -1,14 +1,15 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
+import type { EventsType } from '../eventKeys';
 import type { AgEventListener, AgGlobalEventListener } from '../events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from '../events';
 import { FrameworkEventListenerService } from './frameworkEventListenerService';
 
-export class ApiEventService extends BeanStub implements NamedBean {
+export class ApiEventService extends BeanStub<EventsType> implements NamedBean {
     beanName = 'apiEventService' as const;
 
-    private syncEventListeners: Map<string, Set<AgEventListener>> = new Map();
-    private asyncEventListeners: Map<string, Set<AgEventListener>> = new Map();
+    private syncEventListeners: Map<EventsType, Set<AgEventListener>> = new Map();
+    private asyncEventListeners: Map<EventsType, Set<AgEventListener>> = new Map();
     private syncGlobalEventListeners: Set<AgGlobalEventListener> = new Set();
     private globalEventListenerPairs = new Map<
         AgGlobalEventListener,
@@ -20,7 +21,10 @@ export class ApiEventService extends BeanStub implements NamedBean {
         this.frameworkEventWrappingService = new FrameworkEventListenerService(this.getFrameworkOverrides());
     }
 
-    public override addEventListener(eventType: string, userListener: AgEventListener): void {
+    public override addEventListener<T extends EventsType>(
+        eventType: T,
+        userListener: AgEventListener<any, any, T>
+    ): void {
         const listener = this.frameworkEventWrappingService.wrap(userListener);
 
         const async = this.gos.useAsyncEvents() && !ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType);
@@ -31,7 +35,10 @@ export class ApiEventService extends BeanStub implements NamedBean {
         listeners.get(eventType)!.add(listener);
         this.eventService.addEventListener(eventType, listener, async);
     }
-    public override removeEventListener(eventType: string, userListener: AgEventListener): void {
+    public override removeEventListener<T extends EventsType>(
+        eventType: T,
+        userListener: AgEventListener<any, any, T>
+    ): void {
         const listener = this.frameworkEventWrappingService.unwrap(userListener);
         const asyncListeners = this.asyncEventListeners.get(eventType);
         const hasAsync = !!asyncListeners?.delete(listener);
@@ -83,7 +90,7 @@ export class ApiEventService extends BeanStub implements NamedBean {
         }
     }
 
-    private destroyEventListeners(map: Map<string, Set<AgEventListener>>, async: boolean): void {
+    private destroyEventListeners(map: Map<EventsType, Set<AgEventListener>>, async: boolean): void {
         map.forEach((listeners, eventType) => {
             listeners.forEach((listener) => this.eventService.removeEventListener(eventType, listener, async));
             listeners.clear();

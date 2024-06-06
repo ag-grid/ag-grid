@@ -1,21 +1,17 @@
 import type { BeanCollection, FieldPickerValueSelectedEvent } from '@ag-grid-community/core';
-import {
-    Component,
-    Events,
-    RefPlaceholder,
-    TooltipFeature,
-    _setAriaLabel,
-    _setAriaLevel,
-} from '@ag-grid-community/core';
+import { Component, RefPlaceholder, TooltipFeature, _setAriaLabel, _setAriaLevel } from '@ag-grid-community/core';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import { AddDropdownComp } from './addDropdownComp';
 import { AdvancedFilterBuilderItemNavigationFeature } from './advancedFilterBuilderItemNavigationFeature';
 import { getAdvancedFilterBuilderAddButtonParams } from './advancedFilterBuilderUtils';
-import type { AdvancedFilterBuilderAddEvent, AdvancedFilterBuilderItem } from './iAdvancedFilterBuilder';
-import { AdvancedFilterBuilderEvents } from './iAdvancedFilterBuilder';
+import type {
+    AdvancedFilterBuilderAddEvent,
+    AdvancedFilterBuilderEvents,
+    AdvancedFilterBuilderItem,
+} from './iAdvancedFilterBuilder';
 
-export class AdvancedFilterBuilderItemAddComp extends Component {
+export class AdvancedFilterBuilderItemAddComp extends Component<AdvancedFilterBuilderEvents> {
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     public wireBeans(beans: BeanCollection) {
@@ -47,17 +43,13 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
             this.gos.get('advancedFilterBuilderParams')?.addSelectWidth
         );
         const eAddButton = this.createManagedBean(new AddDropdownComp(addButtonParams));
-        this.addManagedListener(
-            eAddButton,
-            Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
-            ({ value }: FieldPickerValueSelectedEvent) => {
-                this.dispatchEvent<AdvancedFilterBuilderAddEvent>({
-                    type: AdvancedFilterBuilderEvents.EVENT_ADDED,
-                    item: this.item,
-                    isJoin: value.key === 'join',
-                });
-            }
-        );
+        this.addManagedListener(eAddButton, 'fieldPickerValueSelected', ({ value }: FieldPickerValueSelectedEvent) => {
+            this.dispatchLocalEvent<AdvancedFilterBuilderAddEvent>({
+                type: 'advancedFilterBuilderAdded',
+                item: this.item,
+                isJoin: value.key === 'join',
+            });
+        });
         this.eItem.appendChild(eAddButton.getGui());
 
         this.createManagedBean(

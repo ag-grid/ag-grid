@@ -1,7 +1,7 @@
 import type { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaLabel } from '../utils/aria';
 import { _addOrRemoveAttribute, _setDisabled, _setElementWidth } from '../utils/dom';
-import type { FieldElement } from './agAbstractField';
+import type { AgAbstractLabelEvent, FieldElement } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
 import { RefPlaceholder } from './component';
 
@@ -9,7 +9,8 @@ export abstract class AgAbstractInputField<
     TElement extends FieldElement,
     TValue,
     TConfig extends AgInputFieldParams = AgInputFieldParams,
-> extends AgAbstractField<TValue, TConfig> {
+    TEventType extends string = AgAbstractLabelEvent,
+> extends AgAbstractField<TValue, TConfig, AgAbstractLabelEvent | TEventType> {
     protected readonly eLabel: HTMLElement = RefPlaceholder;
     protected readonly eWrapper: HTMLElement = RefPlaceholder;
     protected readonly eInput: TElement = RefPlaceholder;

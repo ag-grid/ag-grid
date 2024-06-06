@@ -4,7 +4,6 @@ import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
 import type { AgColumn } from '../../../entities/agColumn';
-import { Events } from '../../../eventKeys';
 import type { ColumnMenuVisibleChangedEvent } from '../../../events';
 import { FilterWrapperComp } from '../../../filter/filterWrapperComp';
 import type { FocusService } from '../../../focusService';
@@ -202,7 +201,7 @@ export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFac
 
     private dispatchVisibleChangedEvent(visible: boolean, containerType: ContainerType, column?: AgColumn): void {
         const displayedEvent: WithoutGridCommon<ColumnMenuVisibleChangedEvent> = {
-            type: Events.EVENT_COLUMN_MENU_VISIBLE_CHANGED,
+            type: 'columnMenuVisibleChanged',
             visible,
             switchingTab: false,
             key: containerType as 'columnMenu' | 'columnFilter' | 'floatingFilter',

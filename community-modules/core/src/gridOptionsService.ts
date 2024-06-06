@@ -4,8 +4,9 @@ import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { DomLayoutType, GridOptions } from './entities/gridOptions';
 import type { Environment } from './environment';
+import type { EventsType } from './eventKeys';
 import type { AgEvent, GridOptionsChangedEvent } from './events';
-import { ALWAYS_SYNC_GLOBAL_EVENTS, Events } from './events';
+import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
 import type { GridApi } from './gridApi';
 import type {
     GetGroupAggFilteringParams,
@@ -118,9 +119,9 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
 
-        this.addManagedListener(
+        this.addManagedListener<EventsType>(
             this.eventService,
-            Events.EVENT_GRID_OPTIONS_CHANGED,
+            'gridOptionsChanged',
             ({ options }: GridOptionsChangedEvent) => {
                 this.updateGridOptions({ options, force: true, source: 'gridOptionsUpdated' });
             }
@@ -318,7 +319,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
                 this.scrollbarWidth = scrollbarWidth;
 
                 this.eventService.dispatchEvent({
-                    type: Events.EVENT_SCROLLBAR_WIDTH_CHANGED,
+                    type: 'scrollbarWidthChanged',
                 });
             }
         }

@@ -12,7 +12,6 @@ import type {
 } from '@ag-grid-community/core';
 import {
     Component,
-    Events,
     _exists,
     _includes,
     _setAriaLabel,
@@ -48,7 +47,8 @@ class UIColumnModel implements VirtualListModel {
 
 const PRIMARY_COLS_LIST_PANEL_CLASS = 'ag-column-select-list';
 
-export class AgPrimaryColsList extends Component {
+export type AgPrimaryColsListEvent = 'groupExpanded' | 'selectionChanged';
+export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     static readonly selector: AgComponentSelector = 'AG-PRIMARY-COLS-LIST';
 
     public static TEMPLATE = /* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="presentation"></div>`;
@@ -102,23 +102,21 @@ export class AgPrimaryColsList extends Component {
         this.eventType = eventType;
 
         if (!this.params.suppressSyncLayoutWithGrid) {
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
+            this.addManagedEventListeners({ columnMoved: this.onColumnsChanged.bind(this) });
         }
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnsChanged.bind(this));
+        this.addManagedEventListeners({
+            newColumnsLoaded: this.onColumnsChanged.bind(this),
+        });
 
-        const eventsImpactingCheckedState: string[] = [
-            Events.EVENT_COLUMN_PIVOT_CHANGED,
-            Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
-            Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
-            Events.EVENT_COLUMN_VALUE_CHANGED,
-            Events.EVENT_COLUMN_VISIBLE,
-            Events.EVENT_NEW_COLUMNS_LOADED,
-        ];
-
-        eventsImpactingCheckedState.forEach((event) => {
-            // update header select all checkbox with current selection state
-            this.addManagedListener(this.eventService, event, this.fireSelectionChangedEvent.bind(this));
+        const listener = this.fireSelectionChangedEvent.bind(this);
+        this.addManagedEventListeners({
+            columnPivotChanged: listener,
+            columnPivotModeChanged: listener,
+            columnRowGroupChanged: listener,
+            columnValueChanged: listener,
+            columnVisible: listener,
+            newColumnsLoaded: listener,
         });
 
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
@@ -565,7 +563,7 @@ export class AgPrimaryColsList extends Component {
 
     private fireGroupExpandedEvent(): void {
         const expandState = this.getExpandState();
-        this.dispatchEvent({ type: 'groupExpanded', state: expandState });
+        this.dispatchLocalEvent({ type: 'groupExpanded', state: expandState });
     }
 
     private fireSelectionChangedEvent(): void {
@@ -573,7 +571,7 @@ export class AgPrimaryColsList extends Component {
             return;
         }
         const selectionState = this.getSelectionState();
-        this.dispatchEvent({ type: 'selectionChanged', state: selectionState });
+        this.dispatchLocalEvent({ type: 'selectionChanged', state: selectionState });
     }
 
     public getExpandedGroups(): string[] {

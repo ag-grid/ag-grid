@@ -2,7 +2,6 @@ import type { VisibleColsService } from '../columns/visibleColsService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { Events } from '../eventKeys';
 import type { EventsType } from '../eventKeys';
 
 export class PinnedWidthService extends BeanStub implements NamedBean {
@@ -19,9 +18,9 @@ export class PinnedWidthService extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         const listener = this.checkContainerWidths.bind(this);
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: listener,
-            [Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED]: listener,
+        this.addManagedEventListeners({
+            displayedColumnsChanged: listener,
+            displayedColumnsWidthChanged: listener,
         });
         this.addManagedPropertyListener('domLayout', listener);
     }
@@ -34,12 +33,12 @@ export class PinnedWidthService extends BeanStub implements NamedBean {
 
         if (newLeftWidth != this.leftWidth) {
             this.leftWidth = newLeftWidth;
-            this.eventService.dispatchEvent({ type: Events.EVENT_LEFT_PINNED_WIDTH_CHANGED });
+            this.eventService.dispatchEvent({ type: 'leftPinnedWidthChanged' });
         }
 
         if (newRightWidth != this.rightWidth) {
             this.rightWidth = newRightWidth;
-            this.eventService.dispatchEvent({ type: Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED });
+            this.eventService.dispatchEvent({ type: 'rightPinnedWidthChanged' });
         }
     }
 

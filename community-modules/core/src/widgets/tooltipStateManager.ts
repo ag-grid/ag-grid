@@ -1,7 +1,6 @@
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { Events } from '../eventKeys';
 import type { TooltipHideEvent, TooltipShowEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ITooltipComp, ITooltipParams } from '../rendering/tooltipComponent';
@@ -299,7 +298,7 @@ export class TooltipStateManager extends BeanStub {
         }
 
         const event: WithoutGridCommon<TooltipHideEvent> = {
-            type: Events.EVENT_TOOLTIP_HIDE,
+            type: 'tooltipHide',
             parentGui: this.parentComp.getGui(),
         };
         this.eventService.dispatchEvent(event);
@@ -347,12 +346,12 @@ export class TooltipStateManager extends BeanStub {
         if (this.tooltipTrigger === TooltipTrigger.FOCUS) {
             this.onBodyScrollEventCallback = this.addManagedListener(
                 this.eventService,
-                Events.EVENT_BODY_SCROLL,
+                'bodyScroll',
                 this.setToDoNothing.bind(this)
             );
             this.onColumnMovedEventCallback = this.addManagedListener(
                 this.eventService,
-                Events.EVENT_COLUMN_MOVED,
+                'columnMoved',
                 this.setToDoNothing.bind(this)
             );
         }
@@ -372,7 +371,7 @@ export class TooltipStateManager extends BeanStub {
         }
 
         const event: WithoutGridCommon<TooltipShowEvent> = {
-            type: Events.EVENT_TOOLTIP_SHOW,
+            type: 'tooltipShow',
             tooltipGui: eGui,
             parentGui: this.parentComp.getGui(),
         };

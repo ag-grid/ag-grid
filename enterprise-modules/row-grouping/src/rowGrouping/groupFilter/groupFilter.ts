@@ -11,7 +11,6 @@ import type {
 import {
     AgPromise,
     AgSelect,
-    Events,
     FilterWrapperComp,
     RefPlaceholder,
     TabGuardComp,
@@ -69,9 +68,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         this.params = params;
         this.validateParams();
         return this.updateGroups().then(() => {
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>
-                this.onColumnRowGroupChanged()
-            );
+            this.addManagedEventListeners({ columnRowGroupChanged: () => this.onColumnRowGroupChanged() });
         });
     }
 
@@ -239,7 +236,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         this.selectedColumn = selectedFilterColumnPair?.column;
         this.selectedFilter = selectedFilterColumnPair?.filter;
 
-        this.dispatchEvent({
+        this.dispatchLocalEvent({
             type: GroupFilter.EVENT_SELECTED_COLUMN_CHANGED,
         });
         this.addUnderlyingFilterElement();
@@ -273,11 +270,8 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
 
     private onColumnRowGroupChanged(): void {
         this.updateGroups().then(() => {
-            this.dispatchEvent({
+            this.dispatchLocalEvent({
                 type: GroupFilter.EVENT_COLUMN_ROW_GROUP_CHANGED,
-            });
-            this.eventService.dispatchEvent({
-                type: 'filterAllowedUpdated',
             });
         });
     }

@@ -14,7 +14,8 @@ export interface SideBarButtonClickedEvent extends AgEvent {
     toolPanelId: string;
 }
 
-export class AgSideBarButtons extends Component {
+export type AgSideBarButtonsEvent = 'sideBarButtonClicked';
+export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
     private focusService: FocusService;
     private visibleColsService: VisibleColsService;
 
@@ -60,9 +61,9 @@ export class AgSideBarButtons extends Component {
         this.buttonComps.push(buttonComp);
         this.appendChild(buttonComp);
 
-        buttonComp.addEventListener(SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED, () => {
-            this.dispatchEvent({
-                type: AgSideBarButtons.EVENT_SIDE_BAR_BUTTON_CLICKED,
+        buttonComp.addEventListener('toggleButtonClicked', () => {
+            this.dispatchLocalEvent({
+                type: 'sideBarButtonClicked',
                 toolPanelId: def.id,
             });
         });

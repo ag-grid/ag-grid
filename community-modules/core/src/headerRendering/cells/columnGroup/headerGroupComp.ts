@@ -1,10 +1,6 @@
 import type { ColumnModel } from '../../../columns/columnModel';
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
-import {
-    EVENT_PROVIDED_COLUMN_GROUP_EXPANDABLE_CHANGED,
-    EVENT_PROVIDED_COLUMN_GROUP_EXPANDED_CHANGED,
-} from '../../../entities/agProvidedColumnGroup';
 import type { ColumnGroup } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { IComponent } from '../../../interfaces/iComponent';
@@ -125,16 +121,8 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         this.updateIconVisibility();
 
         const providedColumnGroup = this.params.columnGroup.getProvidedColumnGroup();
-        this.addManagedListener(
-            providedColumnGroup,
-            EVENT_PROVIDED_COLUMN_GROUP_EXPANDED_CHANGED,
-            this.updateIconVisibility.bind(this)
-        );
-        this.addManagedListener(
-            providedColumnGroup,
-            EVENT_PROVIDED_COLUMN_GROUP_EXPANDABLE_CHANGED,
-            this.updateIconVisibility.bind(this)
-        );
+        this.addManagedListener(providedColumnGroup, 'expandedChanged', this.updateIconVisibility.bind(this));
+        this.addManagedListener(providedColumnGroup, 'expandableChanged', this.updateIconVisibility.bind(this));
     }
 
     private addTouchAndClickListeners(eElement: HTMLElement, action: (event: MouseEvent) => void): void {

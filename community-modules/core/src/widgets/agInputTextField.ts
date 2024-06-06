@@ -10,7 +10,8 @@ export interface AgInputTextFieldParams extends AgInputFieldParams {
 
 export class AgInputTextField<
     TConfig extends AgInputTextFieldParams = AgInputTextFieldParams,
-> extends AgAbstractInputField<HTMLInputElement, string, TConfig> {
+    TEventType extends string = string,
+> extends AgAbstractInputField<HTMLInputElement, string, TConfig, TEventType> {
     static readonly selector: AgComponentSelector = 'AG-INPUT-TEXT-FIELD';
 
     constructor(config?: TConfig, className = 'ag-text-field', inputType = 'text') {

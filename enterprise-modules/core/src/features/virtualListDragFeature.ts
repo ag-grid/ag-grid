@@ -13,7 +13,12 @@ import type { VirtualListDragItem, VirtualListDragParams } from './iVirtualListD
 
 const LIST_ITEM_HOVERED = 'ag-list-item-hovered';
 
-export class VirtualListDragFeature<C extends Component, R extends Component, V, E extends AgEvent> extends BeanStub {
+export class VirtualListDragFeature<
+    C extends Component<any>,
+    R extends Component<any>,
+    V,
+    E extends AgEvent,
+> extends BeanStub {
     private dragAndDropService: DragAndDropService;
 
     public wireBeans(beans: BeanCollection): void {

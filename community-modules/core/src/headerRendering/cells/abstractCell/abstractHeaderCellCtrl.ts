@@ -8,7 +8,6 @@ import type { AgColumn } from '../../../entities/agColumn';
 import { isColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
-import { Events } from '../../../eventKeys';
 import type { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent } from '../../../events';
 import type { FocusService } from '../../../focusService';
 import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
@@ -111,7 +110,7 @@ export abstract class AbstractHeaderCellCtrl<
         this.addDomData();
         this.addManagedListener(
             this.beans.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
+            'displayedColumnsChanged',
             this.onDisplayedColumnsChanged.bind(this)
         );
         this.onDisplayedColumnsChanged();
@@ -326,7 +325,7 @@ export abstract class AbstractHeaderCellCtrl<
             this.menuService.showHeaderContextMenu(columnToUse, mouseEvent, touchEvent);
         }
 
-        this.dispatchColumnMouseEvent(Events.EVENT_COLUMN_HEADER_CONTEXT_MENU, column);
+        this.dispatchColumnMouseEvent('columnHeaderContextMenu', column);
     }
 
     protected dispatchColumnMouseEvent(

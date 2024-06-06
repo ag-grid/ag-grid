@@ -44,7 +44,7 @@ import type {
     DisplayedColumnsChangedEvent,
     DragStartedEvent,
     DragStoppedEvent,
-    ExpandCollapseAllEvent,
+    ExpandOrCollapseAllEvent,
     FillEndEvent,
     FillStartEvent,
     FilterChangedEvent,
@@ -71,7 +71,10 @@ import type {
     RowClickedEvent,
     RowDataUpdatedEvent,
     RowDoubleClickedEvent,
-    RowDragEvent,
+    RowDragEndEvent,
+    RowDragEnterEvent,
+    RowDragLeaveEvent,
+    RowDragMoveEvent,
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
     RowGroupOpenedEvent,
@@ -2132,19 +2135,19 @@ export interface GridOptions<TData = any> {
     /**
      * A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid.
      */
-    onRowDragEnter?(event: RowDragEvent<TData>): void;
+    onRowDragEnter?(event: RowDragEnterEvent<TData>): void;
     /**
      * The mouse has moved while dragging.
      */
-    onRowDragMove?(event: RowDragEvent<TData>): void;
+    onRowDragMove?(event: RowDragMoveEvent<TData>): void;
     /**
      * The mouse has left the grid while dragging.
      */
-    onRowDragLeave?(event: RowDragEvent<TData>): void;
+    onRowDragLeave?(event: RowDragLeaveEvent<TData>): void;
     /**
      * The drag has finished over the grid.
      */
-    onRowDragEnd?(event: RowDragEvent<TData>): void;
+    onRowDragEnd?(event: RowDragEndEvent<TData>): void;
 
     // *** Row Grouping *** //
     /**
@@ -2158,7 +2161,7 @@ export interface GridOptions<TData = any> {
     /**
      * Fired when calling either of the API methods `expandAll()` or `collapseAll()`.
      */
-    onExpandOrCollapseAll?(event: ExpandCollapseAllEvent<TData>): void;
+    onExpandOrCollapseAll?(event: ExpandOrCollapseAllEvent<TData>): void;
     /**
      * Exceeded the `pivotMaxGeneratedColumns` limit when generating columns.
      */

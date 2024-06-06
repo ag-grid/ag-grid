@@ -5,7 +5,7 @@ import type {
     EventsType,
     FuncColsService,
 } from '@ag-grid-community/core';
-import { Component, Events, _setAriaRole } from '@ag-grid-community/core';
+import { Component, _setAriaRole } from '@ag-grid-community/core';
 
 import { PivotDropZonePanel } from './pivotDropZonePanel';
 import { RowGroupDropZonePanel } from './rowGroupDropZonePanel';
@@ -31,9 +31,9 @@ export class AgGridHeaderDropZones extends Component {
     public postConstruct(): void {
         this.setGui(this.createNorthPanel());
 
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: this.onRowGroupChanged.bind(this),
-            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onRowGroupChanged.bind(this),
+        this.addManagedEventListeners({
+            columnRowGroupChanged: this.onRowGroupChanged.bind(this),
+            newColumnsLoaded: this.onRowGroupChanged.bind(this),
         });
         this.addManagedPropertyListener('rowGroupPanelShow', () => this.onRowGroupChanged());
         this.addManagedPropertyListener('pivotPanelShow', () => this.onPivotPanelShow());
@@ -56,8 +56,8 @@ export class AgGridHeaderDropZones extends Component {
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());
 
-        this.addManagedListener(this.rowGroupComp, Component.EVENT_DISPLAYED_CHANGED, () => this.onDropPanelVisible());
-        this.addManagedListener(this.pivotComp, Component.EVENT_DISPLAYED_CHANGED, () => this.onDropPanelVisible());
+        this.addManagedListener<'displayChanged'>(this.rowGroupComp, 'displayChanged', () => this.onDropPanelVisible());
+        this.addManagedListener<'displayChanged'>(this.pivotComp, 'displayChanged', () => this.onDropPanelVisible());
 
         this.onDropPanelVisible();
 

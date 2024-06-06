@@ -4,7 +4,7 @@ import { Component } from './component';
 import type { ITabGuard } from './tabGuardCtrl';
 import { TabGuardClassNames, TabGuardCtrl } from './tabGuardCtrl';
 
-export class TabGuardComp extends Component {
+export class TabGuardComp<TLocalEvent extends string = string> extends Component<TLocalEvent> {
     private eTopGuard: HTMLElement;
     private eBottomGuard: HTMLElement;
     private eFocusableElement: HTMLElement;

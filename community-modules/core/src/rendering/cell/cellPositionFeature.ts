@@ -2,7 +2,6 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
-import { Events } from '../../eventKeys';
 import { _areEqual, _last } from '../../utils/array';
 import { _missing } from '../../utils/generic';
 import type { CellCtrl } from './cellCtrl';
@@ -38,9 +37,7 @@ export class CellPositionFeature extends BeanStub {
     private setupRowSpan(): void {
         this.rowSpan = this.column.getRowSpan(this.rowNode);
 
-        this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () =>
-            this.onNewColumnsLoaded()
-        );
+        this.addManagedListener(this.beans.eventService, 'newColumnsLoaded', () => this.onNewColumnsLoaded());
     }
 
     public setComp(eGui: HTMLElement): void {
@@ -87,7 +84,7 @@ export class CellPositionFeature extends BeanStub {
         // because we are col spanning, a reorder of the cols can change what cols we are spanning over
         this.addManagedListener(
             this.beans.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
+            'displayedColumnsChanged',
             this.onDisplayColumnsChanged.bind(this)
         );
         // because we are spanning over multiple cols, we check for width any time any cols width changes.
@@ -96,7 +93,7 @@ export class CellPositionFeature extends BeanStub {
         // because hardly anyone will be using colSpan, am favouring this easier way for more maintainable code.
         this.addManagedListener(
             this.beans.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
+            'displayedColumnsWidthChanged',
             this.onWidthChanged.bind(this)
         );
     }

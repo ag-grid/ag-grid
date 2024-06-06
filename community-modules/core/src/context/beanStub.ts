@@ -1,4 +1,5 @@
 import type { GridOptions } from '../entities/gridOptions';
+import type { EventsType } from '../eventKeys';
 import type { EventService } from '../eventService';
 import type { AgEvent, AgEventListener } from '../events';
 import type {
@@ -17,13 +18,11 @@ import type { Bean } from './bean';
 import type { BeanCollection, Context } from './context';
 import type { BaseBean } from './genericContext';
 
-type LocalEventOrDestroyed<TLocalEvent extends string> = TLocalEvent | 'destroyed';
+export type LocalEventOrDestroyed<TLocalEvent extends string> = TLocalEvent | 'destroyed';
 
-export abstract class BeanStub<TLocalEvent extends string = string>
+export abstract class BeanStub<TLocalEvent extends string = 'destroyed'>
     implements BaseBean<BeanCollection>, Bean, IEventEmitter<LocalEventOrDestroyed<TLocalEvent>>
 {
-    public static EVENT_DESTROYED = 'destroyed' as const;
-
     protected localEventService?: LocalEventService<LocalEventOrDestroyed<TLocalEvent>>;
 
     private stubContext: Context; // not named context to allow children to use 'context' as a variable name
@@ -76,10 +75,12 @@ export abstract class BeanStub<TLocalEvent extends string = string>
         this.destroyFunctions.length = 0;
         this.destroyed = true;
 
-        this.dispatchEvent({ type: BeanStub.EVENT_DESTROYED });
+        // cast destroy type as we do not want to expose destroy event type to the dispatchLocalEvent method
+        // as no one else should be firing destroyed at the bean stub.
+        this.dispatchLocalEvent({ type: 'destroyed' });
     }
 
-    public addEventListener(eventType: LocalEventOrDestroyed<TLocalEvent>, listener: AgEventListener): void {
+    public addEventListener<T extends TLocalEvent>(eventType: T, listener: AgEventListener<any, any, T>): void {
         if (!this.localEventService) {
             this.localEventService = new LocalEventService();
         }
@@ -87,20 +88,20 @@ export abstract class BeanStub<TLocalEvent extends string = string>
         this.localEventService!.addEventListener(eventType, listener);
     }
 
-    public removeEventListener(eventType: LocalEventOrDestroyed<TLocalEvent>, listener: AgEventListener): void {
+    public removeEventListener<T extends TLocalEvent>(eventType: T, listener: AgEventListener<any, any, T>): void {
         if (this.localEventService) {
             this.localEventService.removeEventListener(eventType, listener);
         }
     }
 
-    public dispatchEvent<T extends AgEvent<LocalEventOrDestroyed<TLocalEvent>>>(event: T): void {
+    public dispatchLocalEvent<TEventType extends AgEvent<LocalEventOrDestroyed<TLocalEvent>>>(event: TEventType): void {
         if (this.localEventService) {
             this.localEventService.dispatchEvent(event);
         }
     }
 
-    public addManagedListeners<TEvent extends string>(
-        object: Window | HTMLElement | IEventEmitter,
+    public addManagedListeners<TEvent extends string = TLocalEvent>(
+        object: Window | HTMLElement | IEventEmitter<TEvent>,
         handlers: Partial<Record<TEvent, (event?: any) => void>>
     ): void {
         for (const k in handlers) {
@@ -111,9 +112,13 @@ export abstract class BeanStub<TLocalEvent extends string = string>
         }
     }
 
-    public addManagedListener(
-        object: Window | HTMLElement | IEventEmitter,
-        event: string,
+    public addManagedEventListeners(handlers: Partial<Record<EventsType, (event?: any) => void>>): void {
+        this.addManagedListeners<EventsType>(this.eventService, handlers);
+    }
+
+    public addManagedListener<T extends string = TLocalEvent>(
+        object: Window | HTMLElement | IEventEmitter<T>,
+        event: T,
         listener: (event?: any) => void
     ): (() => null) | undefined {
         if (this.destroyed) {

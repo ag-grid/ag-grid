@@ -1,6 +1,5 @@
 import { KeyCode } from '../constants/keyCode';
 import type { BeanCollection } from '../context/context';
-import { Events } from '../events';
 import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -96,11 +95,7 @@ export class PaginationComp extends Component {
 
     private setupListeners() {
         if (!this.areListenersSetup) {
-            this.addManagedListener(
-                this.eventService,
-                Events.EVENT_PAGINATION_CHANGED,
-                this.onPaginationChanged.bind(this)
-            );
+            this.addManagedEventListeners({ paginationChanged: this.onPaginationChanged.bind(this) });
 
             [
                 { el: this.btFirst, fn: this.onBtFirst.bind(this) },

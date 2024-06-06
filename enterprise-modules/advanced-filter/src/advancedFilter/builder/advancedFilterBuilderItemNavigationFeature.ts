@@ -1,16 +1,11 @@
 import type { Component } from '@ag-grid-community/core';
-import {
-    BeanStub,
-    KeyCode,
-    _isStopPropagationForAgGrid,
-    _stopPropagationForAgGrid,
-} from '@ag-grid-community/core';
+import { BeanStub, KeyCode, _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '@ag-grid-community/core';
 
 export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
     constructor(
         private readonly eGui: HTMLElement,
         private readonly focusWrapper: HTMLElement,
-        private readonly eFocusableComp: Component
+        private readonly eFocusableComp: Component<any>
     ) {
         super();
     }

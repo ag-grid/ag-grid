@@ -1,8 +1,7 @@
 import { KeyCode } from '../constants/keyCode';
-import { Events } from '../eventKeys';
 import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaControls } from '../utils/aria';
-import type { ListOption } from './agList';
+import type { AgListEvent, ListOption } from './agList';
 import { AgList } from './agList';
 import { AgPickerField } from './agPickerField';
 import type { AgComponentSelector } from './component';
@@ -19,11 +18,11 @@ export interface AgSelectParams<TValue = string>
 export class AgSelect<TValue = string | null> extends AgPickerField<
     TValue,
     AgSelectParams<TValue> & AgPickerFieldParams,
+    'selectedItem' | AgListEvent,
     AgList<TValue>
 > {
     static readonly selector: AgComponentSelector = 'AG-SELECT';
 
-    public static EVENT_ITEM_SELECTED = 'selectedItem';
     protected listComponent: AgList<TValue> | undefined;
 
     constructor(config?: AgSelectParams<TValue>) {
@@ -74,12 +73,12 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
         eListAriaEl.setAttribute('id', listId);
         _setAriaControls(this.getAriaElement(), eListAriaEl);
 
-        this.listComponent.addManagedListener(this.listComponent, AgList.EVENT_ITEM_SELECTED, () => {
+        this.listComponent.addManagedListener(this.listComponent, 'selectedItem', () => {
             this.hidePicker();
-            this.dispatchEvent({ type: AgSelect.EVENT_ITEM_SELECTED });
+            this.dispatchLocalEvent({ type: 'selectedItem' });
         });
 
-        this.listComponent.addManagedListener(this.listComponent, Events.EVENT_FIELD_VALUE_CHANGED, () => {
+        this.listComponent.addManagedListener(this.listComponent, 'fieldValueChanged', () => {
             if (!this.listComponent) {
                 return;
             }

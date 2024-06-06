@@ -1,6 +1,7 @@
 import type {
     AgColumn,
     AgEventListener,
+    EventsType,
     FuncColsService,
     GridOptionsService,
     IClientSideRowModel,
@@ -51,7 +52,7 @@ export interface SetValueModelParams<V> {
     usingComplexObjects?: boolean;
     treeDataTreeList?: boolean;
     groupingTreeList?: boolean;
-    addManagedListener: (event: string, listener: (event?: any) => void) => (() => null) | undefined;
+    addManagedListener: (event: EventsType, listener: (event?: any) => void) => (() => null) | undefined;
 }
 
 /** @param V type of value in the Set Filter */

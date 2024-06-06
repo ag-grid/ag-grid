@@ -2,7 +2,7 @@ import type { BeanCollection, ChartDataPanel as ChartDataPanelType, ChartType } 
 import { AgToggleButton, Component, _setDisplayed, _warnOnce } from '@ag-grid-community/core';
 
 import type { ChartService } from '../../../chartService';
-import { ChartController } from '../../chartController';
+import type { ChartController } from '../../chartController';
 import type { ColState } from '../../model/chartDataModel';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { getMaxNumCategories, getMaxNumSeries, supportsInvertedCategorySeries } from '../../utils/seriesTypeMapper';
@@ -54,16 +54,8 @@ export class ChartDataPanel extends Component {
         this.isSwitchCategorySeriesToggled = this.chartController.isCategorySeriesSwitched();
 
         this.updatePanels();
-        this.addManagedListener(
-            this.chartController,
-            ChartController.EVENT_CHART_MODEL_UPDATE,
-            this.updatePanels.bind(this)
-        );
-        this.addManagedListener(
-            this.chartController,
-            ChartController.EVENT_CHART_API_UPDATE,
-            this.updatePanels.bind(this)
-        );
+        this.addManagedListener(this.chartController, 'chartModelUpdate', this.updatePanels.bind(this));
+        this.addManagedListener(this.chartController, 'chartApiUpdate', this.updatePanels.bind(this));
     }
 
     public override destroy(): void {

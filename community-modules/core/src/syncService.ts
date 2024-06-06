@@ -5,7 +5,6 @@ import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { CtrlsService } from './ctrlsService';
 import type { ColDef, ColGroupDef } from './entities/colDef';
-import { Events } from './eventKeys';
 import type { GridReadyEvent } from './events';
 import type { PropertyValueChangedEvent } from './gridOptionsService';
 import type { WithoutGridCommon } from './interfaces/iCommon';
@@ -60,7 +59,7 @@ export class SyncService extends BeanStub implements NamedBean {
 
     private dispatchGridReadyEvent(): void {
         const readyEvent: WithoutGridCommon<GridReadyEvent> = {
-            type: Events.EVENT_GRID_READY,
+            type: 'gridReady',
         };
         this.eventService.dispatchEvent(readyEvent);
     }

@@ -2,7 +2,6 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
-import { Events } from '../../eventKeys';
 import type { EventsType } from '../../eventKeys';
 import type { VirtualColumnsChangedEvent } from '../../events';
 import type { BrandedType } from '../../interfaces/brandedType';
@@ -94,14 +93,14 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private addEventListeners(): void {
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_COLUMN_RESIZED]: this.onColumnResized.bind(this),
-            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
-            [Events.EVENT_VIRTUAL_COLUMNS_CHANGED]: (params: VirtualColumnsChangedEvent) =>
+        this.addManagedEventListeners({
+            columnResized: this.onColumnResized.bind(this),
+            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
+            virtualColumnsChanged: (params: VirtualColumnsChangedEvent) =>
                 this.onVirtualColumnsChanged(params.afterScroll),
-            [Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED]: this.onRowHeightChanged.bind(this),
-            [Events.EVENT_GRID_STYLES_CHANGED]: this.onRowHeightChanged.bind(this),
-            [Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED]: this.onRowHeightChanged.bind(this),
+            columnHeaderHeightChanged: this.onRowHeightChanged.bind(this),
+            gridStylesChanged: this.onRowHeightChanged.bind(this),
+            advancedFilterEnabledChanged: this.onRowHeightChanged.bind(this),
         });
 
         // when print layout changes, it changes what columns are in what section

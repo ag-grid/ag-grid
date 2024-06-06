@@ -5,14 +5,7 @@ import type {
     DragListenerParams,
     DragService,
 } from '@ag-grid-community/core';
-import {
-    AgAbstractLabel,
-    AgInputNumberField,
-    Events,
-    RefPlaceholder,
-    _exists,
-    _setFixedWidth,
-} from '@ag-grid-community/core';
+import { AgAbstractLabel, AgInputNumberField, RefPlaceholder, _exists, _setFixedWidth } from '@ag-grid-community/core';
 
 export interface AgAngleSelectParams extends AgLabelParams {
     value?: number;
@@ -105,7 +98,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
             this.eAngleValue.setValue(this.normalizeNegativeValue(this.getValue()).toString());
         }
 
-        this.addManagedListener(this, Events.EVENT_FIELD_VALUE_CHANGED, () => {
+        this.addManagedListener(this, 'fieldValueChanged', () => {
             if (this.eAngleValue.getInputElement().contains(this.gos.getActiveDomElement())) {
                 return;
             }
@@ -219,7 +212,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     }
 
     public onValueChange(callbackFn: (newValue: number) => void): this {
-        this.addManagedListener(this, Events.EVENT_FIELD_VALUE_CHANGED, () => {
+        this.addManagedListener(this, 'fieldValueChanged', () => {
             callbackFn(this.degrees);
         });
         return this;
@@ -244,7 +237,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
             this.calculateCartesian();
             this.positionChildCircle(radiansValue);
             if (!silent) {
-                this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
+                this.dispatchLocalEvent({ type: 'fieldValueChanged' });
             }
         }
 

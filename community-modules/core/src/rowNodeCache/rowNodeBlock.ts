@@ -99,6 +99,6 @@ export abstract class RowNodeBlock extends BeanStub<'loadComplete'> {
             block: this,
         };
 
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent(event);
     }
 }

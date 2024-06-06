@@ -9,7 +9,6 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
-import { Events } from '../eventKeys';
 import type { EventsType } from '../eventKeys';
 import type {
     NewColumnsLoadedEvent,
@@ -123,7 +122,7 @@ export class StateService extends BeanStub implements NamedBean {
 
         const newColumnsLoadedDestroyFunc = this.addManagedListener(
             this.eventService,
-            Events.EVENT_NEW_COLUMNS_LOADED,
+            'newColumnsLoaded',
             ({ source }: NewColumnsLoadedEvent) => {
                 if (source === 'gridInitializing') {
                     newColumnsLoadedDestroyFunc?.();
@@ -131,17 +130,13 @@ export class StateService extends BeanStub implements NamedBean {
                 }
             }
         );
-        const rowCountReadyDestroyFunc = this.addManagedListener(
+        const rowCountReadyDestroyFunc = this.addManagedListener<EventsType>(this.eventService, 'rowCountReady', () => {
+            rowCountReadyDestroyFunc?.();
+            this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnRowCountReady());
+        });
+        const firstDataRenderedDestroyFunc = this.addManagedListener<EventsType>(
             this.eventService,
-            Events.EVENT_ROW_COUNT_READY,
-            () => {
-                rowCountReadyDestroyFunc?.();
-                this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnRowCountReady());
-            }
-        );
-        const firstDataRenderedDestroyFunc = this.addManagedListener(
-            this.eventService,
-            Events.EVENT_FIRST_DATA_RENDERED,
+            'firstDataRendered',
             () => {
                 firstDataRenderedDestroyFunc?.();
                 this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnFirstDataRendered());
@@ -161,9 +156,9 @@ export class StateService extends BeanStub implements NamedBean {
 
         this.updateCachedState('sideBar', this.getSideBarState());
         const stateUpdater = () => this.updateCachedState('sideBar', this.getSideBarState());
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED]: stateUpdater,
-            [Events.EVENT_SIDE_BAR_UPDATED]: stateUpdater,
+        this.addManagedEventListeners({
+            toolPanelVisibleChanged: stateUpdater,
+            sideBarUpdated: stateUpdater,
         });
     }
 
@@ -185,17 +180,17 @@ export class StateService extends BeanStub implements NamedBean {
         ]);
         this.updateCachedState('columnGroup', this.getColumnGroupState());
 
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_COLUMN_VALUE_CHANGED]: () => this.updateColumnState(['aggregation']),
-            [Events.EVENT_COLUMN_MOVED]: () => this.updateColumnState(['columnOrder']),
-            [Events.EVENT_COLUMN_PINNED]: () => this.updateColumnState(['columnPinning']),
-            [Events.EVENT_COLUMN_RESIZED]: () => this.updateColumnState(['columnSizing']),
-            [Events.EVENT_COLUMN_VISIBLE]: () => this.updateColumnState(['columnVisibility']),
-            [Events.EVENT_COLUMN_PIVOT_CHANGED]: () => this.updateColumnState(['pivot']),
-            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: () => this.updateColumnState(['pivot']),
-            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: () => this.updateColumnState(['rowGroup']),
-            [Events.EVENT_SORT_CHANGED]: () => this.updateColumnState(['sort']),
-            [Events.EVENT_NEW_COLUMNS_LOADED]: () =>
+        this.addManagedEventListeners({
+            columnValueChanged: () => this.updateColumnState(['aggregation']),
+            columnMoved: () => this.updateColumnState(['columnOrder']),
+            columnPinned: () => this.updateColumnState(['columnPinning']),
+            columnResized: () => this.updateColumnState(['columnSizing']),
+            columnVisible: () => this.updateColumnState(['columnVisibility']),
+            columnPivotChanged: () => this.updateColumnState(['pivot']),
+            columnPivotModeChanged: () => this.updateColumnState(['pivot']),
+            columnRowGroupChanged: () => this.updateColumnState(['rowGroup']),
+            sortChanged: () => this.updateColumnState(['sort']),
+            newColumnsLoaded: () =>
                 this.updateColumnState([
                     'aggregation',
                     'columnOrder',
@@ -206,7 +201,7 @@ export class StateService extends BeanStub implements NamedBean {
                     'rowGroup',
                     'sort',
                 ]),
-            [Events.EVENT_COLUMN_GROUP_OPENED]: () => this.updateCachedState('columnGroup', this.getColumnGroupState()),
+            columnGroupOpened: () => this.updateCachedState('columnGroup', this.getColumnGroupState()),
         });
     }
 
@@ -236,16 +231,15 @@ export class StateService extends BeanStub implements NamedBean {
         this.updateCachedState('rowSelection', this.getRowSelectionState());
         this.updateCachedState('pagination', this.getPaginationState());
 
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_FILTER_CHANGED]: () => this.updateCachedState('filter', this.getFilterState()),
-            [Events.EVENT_ROW_GROUP_OPENED]: () => this.onRowGroupOpenedDebounced(),
-            [Events.EVENT_EXPAND_COLLAPSE_ALL]: () =>
-                this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()),
-            [Events.EVENT_SELECTION_CHANGED]: () => {
+        this.addManagedEventListeners({
+            filterChanged: () => this.updateCachedState('filter', this.getFilterState()),
+            rowGroupOpened: () => this.onRowGroupOpenedDebounced(),
+            expandOrCollapseAll: () => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()),
+            selectionChanged: () => {
                 this.staleStateKeys.add('rowSelection');
                 this.onRowSelectedDebounced();
             },
-            [Events.EVENT_PAGINATION_CHANGED]: (event: PaginationChangedEvent) => {
+            paginationChanged: (event: PaginationChangedEvent) => {
                 if (event.newPage || event.newPageSize) {
                     this.updateCachedState('pagination', this.getPaginationState());
                 }
@@ -277,14 +271,14 @@ export class StateService extends BeanStub implements NamedBean {
         this.updateCachedState('rangeSelection', this.getRangeSelectionState());
         this.updateCachedState('scroll', this.getScrollState());
 
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_CELL_FOCUSED]: () => this.updateCachedState('focusedCell', this.getFocusedCellState()),
-            [Events.EVENT_RANGE_SELECTION_CHANGED]: (event: RangeSelectionChangedEvent) => {
+        this.addManagedEventListeners({
+            cellFocused: () => this.updateCachedState('focusedCell', this.getFocusedCellState()),
+            rangeSelectionChanged: (event: RangeSelectionChangedEvent) => {
                 if (event.finished) {
                     this.updateCachedState('rangeSelection', this.getRangeSelectionState());
                 }
             },
-            [Events.EVENT_BODY_SCROLL_END]: () => this.updateCachedState('scroll', this.getScrollState()),
+            bodyScrollEnd: () => this.updateCachedState('scroll', this.getScrollState()),
         });
     }
 
@@ -781,7 +775,7 @@ export class StateService extends BeanStub implements NamedBean {
         const sources = Array.from(this.queuedUpdateSources);
         this.queuedUpdateSources.clear();
         const event: WithoutGridCommon<StateUpdatedEvent> = {
-            type: Events.EVENT_STATE_UPDATED,
+            type: 'stateUpdated',
             sources,
             state: this.cachedState,
         };

@@ -15,10 +15,9 @@ import type {
     RowEvent,
     VirtualRowRemovedEvent,
 } from '../../events';
-import { Events } from '../../events';
 import { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { BrandedType } from '../../interfaces/brandedType';
-import type { ProcessRowParams } from '../../interfaces/iCallbackParams';
+import type { ProcessRowParams, RenderedRowEvent } from '../../interfaces/iCallbackParams';
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { ColumnInstanceId, ColumnPinnedType } from '../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
@@ -78,7 +77,8 @@ interface CellCtrlListAndMap {
     map: { [key: ColumnInstanceId]: CellCtrl };
 }
 
-export class RowCtrl extends BeanStub {
+export type RowCtrlEvent = RenderedRowEvent;
+export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public static DOM_DATA_KEY_ROW_CTRL = 'renderedRow';
 
     private instanceId: RowCtrlInstanceId;
@@ -123,7 +123,7 @@ export class RowCtrl extends BeanStub {
         fullWidth: false,
     };
 
-    private rowDragComps: BeanStub[] = [];
+    private rowDragComps: RowDragComp[] = [];
 
     private readonly useAnimationFrameForCreate: boolean;
 
@@ -739,15 +739,15 @@ export class RowCtrl extends BeanStub {
         });
 
         this.addManagedListeners<EventsType>(this.beans.eventService, {
-            [Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED]: this.onPaginationPixelOffsetChanged.bind(this),
-            [Events.EVENT_HEIGHT_SCALE_CHANGED]: this.onTopChanged.bind(this),
-            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
-            [Events.EVENT_VIRTUAL_COLUMNS_CHANGED]: this.onVirtualColumnsChanged.bind(this),
-            [Events.EVENT_CELL_FOCUSED]: this.onCellFocusChanged.bind(this),
-            [Events.EVENT_CELL_FOCUS_CLEARED]: this.onCellFocusChanged.bind(this),
-            [Events.EVENT_PAGINATION_CHANGED]: this.onPaginationChanged.bind(this),
-            [Events.EVENT_MODEL_UPDATED]: this.refreshFirstAndLastRowStyles.bind(this),
-            [Events.EVENT_COLUMN_MOVED]: () => this.updateColumnLists(),
+            paginationPixelOffsetChanged: this.onPaginationPixelOffsetChanged.bind(this),
+            heightScaleChanged: this.onTopChanged.bind(this),
+            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
+            virtualColumnsChanged: this.onVirtualColumnsChanged.bind(this),
+            cellFocused: this.onCellFocusChanged.bind(this),
+            cellFocusCleared: this.onCellFocusChanged.bind(this),
+            paginationChanged: this.onPaginationChanged.bind(this),
+            modelUpdated: this.refreshFirstAndLastRowStyles.bind(this),
+            columnMoved: () => this.updateColumnLists(),
         });
 
         this.addDestroyFunc(() => {
@@ -1001,7 +1001,7 @@ export class RowCtrl extends BeanStub {
         }
     }
 
-    public createRowEvent(type: string, domEvent?: Event): RowEvent {
+    public createRowEvent<T extends EventsType>(type: T, domEvent?: Event): RowEvent<T> {
         return this.gos.addGridCommonParams({
             type: type,
             node: this.rowNode,
@@ -1012,7 +1012,7 @@ export class RowCtrl extends BeanStub {
         });
     }
 
-    private createRowEventWithSource(type: string, domEvent: Event): RowEvent {
+    private createRowEventWithSource<T extends EventsType>(type: T, domEvent: Event): RowEvent<T> {
         const event = this.createRowEvent(type, domEvent);
         // when first developing this, we included the rowComp in the event.
         // this seems very weird. so when introducing the event types, i left the 'source'
@@ -1029,10 +1029,7 @@ export class RowCtrl extends BeanStub {
             return;
         }
 
-        const agEvent: RowDoubleClickedEvent = this.createRowEventWithSource(
-            Events.EVENT_ROW_DOUBLE_CLICKED,
-            mouseEvent
-        );
+        const agEvent: RowDoubleClickedEvent = this.createRowEventWithSource('rowDoubleClicked', mouseEvent);
 
         this.beans.eventService.dispatchEvent(agEvent);
     }
@@ -1066,7 +1063,7 @@ export class RowCtrl extends BeanStub {
             return;
         }
 
-        const agEvent: RowClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_CLICKED, mouseEvent);
+        const agEvent: RowClickedEvent = this.createRowEventWithSource('rowClicked', mouseEvent);
 
         this.beans.eventService.dispatchEvent(agEvent);
 
@@ -1535,11 +1532,17 @@ export class RowCtrl extends BeanStub {
         });
     }
 
-    public override addEventListener(eventType: string, listener: AgEventListener): void {
+    public override addEventListener<T extends RowCtrlEvent>(
+        eventType: T,
+        listener: AgEventListener<any, any, T>
+    ): void {
         super.addEventListener(eventType, listener);
     }
 
-    public override removeEventListener(eventType: string, listener: AgEventListener): void {
+    public override removeEventListener<T extends RowCtrlEvent>(
+        eventType: T,
+        listener: AgEventListener<any, any, T>
+    ): void {
         super.removeEventListener(eventType, listener);
     }
 
@@ -1566,9 +1569,9 @@ export class RowCtrl extends BeanStub {
 
         this.rowNode.setHovered(false);
 
-        const event: VirtualRowRemovedEvent = this.createRowEvent(Events.EVENT_VIRTUAL_ROW_REMOVED);
+        const event: VirtualRowRemovedEvent = this.createRowEvent('virtualRowRemoved');
 
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent(event);
         this.beans.eventService.dispatchEvent(event);
         super.destroy();
     }

@@ -10,7 +10,7 @@ import type {
     VisibleColsService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, Events } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 import { AgPrimaryCols } from '@ag-grid-enterprise/column-tool-panel';
 import { AgDialog } from '@ag-grid-enterprise/core';
 
@@ -33,7 +33,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean, IColumn
     private activeColumnChooserDialog: AgDialog | undefined;
 
     public createColumnSelectPanel(
-        parent: BeanStub,
+        parent: BeanStub<any>,
         column?: AgColumn | null,
         draggable?: boolean,
         params?: ColumnChooserParams
@@ -128,7 +128,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean, IColumn
 
     private dispatchVisibleChangedEvent(visible: boolean, column?: AgColumn | null): void {
         const event: WithoutGridCommon<ColumnMenuVisibleChangedEvent> = {
-            type: Events.EVENT_COLUMN_MENU_VISIBLE_CHANGED,
+            type: 'columnMenuVisibleChanged',
             visible,
             switchingTab: false,
             key: 'columnChooser',

@@ -9,7 +9,6 @@ import type {
 import {
     AgColumn,
     Component,
-    Events,
     RefPlaceholder,
     _clearElement,
     _createIconNoSpan,
@@ -115,7 +114,7 @@ export class ToolPanelFilterGroupComp extends Component {
 
         refresh();
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+        this.addManagedEventListeners({ newColumnsLoaded: refresh });
     }
 
     public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
@@ -191,8 +190,8 @@ export class ToolPanelFilterGroupComp extends Component {
             ? () => this.expandedCallback()
             : () => this.forEachToolPanelFilterChild((filterComp) => filterComp.collapse());
 
-        this.addManagedListener(this.filterGroupComp, AgGroupComponent.EVENT_EXPANDED, expandListener);
-        this.addManagedListener(this.filterGroupComp, AgGroupComponent.EVENT_COLLAPSED, collapseListener);
+        this.addManagedListener(this.filterGroupComp, 'expanded', expandListener);
+        this.addManagedListener(this.filterGroupComp, 'collapsed', collapseListener);
     }
 
     private getColumns(): AgColumn[] {
@@ -205,11 +204,11 @@ export class ToolPanelFilterGroupComp extends Component {
 
     private addFilterChangedListeners() {
         this.getColumns().forEach((column) => {
-            this.addManagedListener(column, AgColumn.EVENT_FILTER_CHANGED, () => this.refreshFilterClass());
+            this.addManagedListener(column, 'filterChanged', () => this.refreshFilterClass());
         });
 
         if (!isProvidedColumnGroup(this.columnGroup)) {
-            this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
+            this.addManagedEventListeners({ filterOpened: this.onFilterOpened.bind(this) });
         }
     }
 

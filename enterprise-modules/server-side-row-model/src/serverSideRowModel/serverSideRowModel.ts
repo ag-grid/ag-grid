@@ -29,7 +29,6 @@ import type {
 } from '@ag-grid-community/core';
 import {
     BeanStub,
-    Events,
     ModuleNames,
     ModuleRegistry,
     NumberSequence,
@@ -124,13 +123,13 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     public postConstruct(): void {
         const resetListener = this.resetRootStore.bind(this);
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onColumnEverything.bind(this),
-            [Events.EVENT_STORE_UPDATED]: this.onStoreUpdated.bind(this),
-            [Events.EVENT_COLUMN_VALUE_CHANGED]: resetListener,
-            [Events.EVENT_COLUMN_PIVOT_CHANGED]: resetListener,
-            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: resetListener,
-            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: resetListener,
+        this.addManagedEventListeners({
+            newColumnsLoaded: this.onColumnEverything.bind(this),
+            storeUpdated: this.onStoreUpdated.bind(this),
+            columnValueChanged: resetListener,
+            columnPivotChanged: resetListener,
+            columnRowGroupChanged: resetListener,
+            columnPivotModeChanged: resetListener,
         });
 
         this.addManagedPropertyListeners(
@@ -421,7 +420,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     private dispatchModelUpdated(reset = false): void {
         const modelUpdatedEvent: WithoutGridCommon<ModelUpdatedEvent> = {
-            type: Events.EVENT_MODEL_UPDATED,
+            type: 'modelUpdated',
             animate: !reset,
             keepRenderedRows: !reset,
             newPage: false,

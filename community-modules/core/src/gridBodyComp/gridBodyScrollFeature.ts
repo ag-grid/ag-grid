@@ -4,7 +4,6 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
-import { Events } from '../eventKeys';
 import type { BodyScrollEndEvent, BodyScrollEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -88,7 +87,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.enableRtl = this.gos.get('enableRtl');
         this.addManagedListener(
             this.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
+            'displayedColumnsWidthChanged',
             this.onDisplayedColumnsWidthChanged.bind(this)
         );
 
@@ -273,7 +272,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private fireScrollEvent(direction: ScrollDirection): void {
         const bodyScrollEvent: WithoutGridCommon<BodyScrollEvent> = {
-            type: Events.EVENT_BODY_SCROLL,
+            type: 'bodyScroll',
             direction: direction === ScrollDirection.Horizontal ? 'horizontal' : 'vertical',
             left: this.scrollLeft,
             top: this.scrollTop,
@@ -287,7 +286,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.scrollTimer = window.setTimeout(() => {
             const bodyScrollEndEvent: WithoutGridCommon<BodyScrollEndEvent> = {
                 ...bodyScrollEvent,
-                type: Events.EVENT_BODY_SCROLL_END,
+                type: 'bodyScrollEnd',
             };
 
             this.eventService.dispatchEvent(bodyScrollEndEvent);

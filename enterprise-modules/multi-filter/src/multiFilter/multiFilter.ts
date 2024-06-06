@@ -241,7 +241,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         group.toggleGroupExpand(false);
 
         if (filter.afterGuiAttached) {
-            group.addManagedListener(group, AgGroupComponent.EVENT_EXPANDED, () =>
+            group.addManagedListener(group, 'expanded', () =>
                 filter.afterGuiAttached!({
                     container: this.lastOpenedInContainer!,
                     suppressFocus: true,

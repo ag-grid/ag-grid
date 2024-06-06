@@ -4,7 +4,6 @@ import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import { Events } from '../eventKeys';
 import type { EventsType } from '../eventKeys';
 import type { FilterManager } from '../filter/filterManager';
 import type { FocusService } from '../focusService';
@@ -58,9 +57,9 @@ export class GridHeaderCtrl extends BeanStub {
         );
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: this.onPivotModeChanged.bind(this),
-            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+        this.addManagedEventListeners({
+            columnPivotModeChanged: this.onPivotModeChanged.bind(this),
+            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
         });
 
         this.onPivotModeChanged();
@@ -83,11 +82,11 @@ export class GridHeaderCtrl extends BeanStub {
         this.addManagedPropertyListener('pivotGroupHeaderHeight', listener);
         this.addManagedPropertyListener('floatingFiltersHeight', listener);
 
-        this.addManagedListeners(this.eventService, {
-            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: listener,
-            [Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED]: listener,
-            [Events.EVENT_GRID_STYLES_CHANGED]: listener,
-            [Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED]: listener,
+        this.addManagedEventListeners({
+            displayedColumnsChanged: listener,
+            columnHeaderHeightChanged: listener,
+            gridStylesChanged: listener,
+            advancedFilterEnabledChanged: listener,
         });
     }
 
@@ -131,7 +130,7 @@ export class GridHeaderCtrl extends BeanStub {
         this.comp.setHeightAndMinHeight(px);
 
         this.eventService.dispatchEvent({
-            type: Events.EVENT_HEADER_HEIGHT_CHANGED,
+            type: 'headerHeightChanged',
         });
     }
 

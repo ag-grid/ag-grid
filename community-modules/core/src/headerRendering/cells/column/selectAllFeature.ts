@@ -4,7 +4,6 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderCheckboxSelectionCallbackParams } from '../../../entities/colDef';
 import type { EventsType } from '../../../eventKeys';
 import type { SelectionEventSourceType } from '../../../events';
-import { Events } from '../../../events';
 import type { IRowModel } from '../../../interfaces/iRowModel';
 import type { ISelectionService } from '../../../interfaces/iSelectionService';
 import { _setAriaHidden, _setAriaRole } from '../../../utils/aria';
@@ -52,15 +51,15 @@ export class SelectAllFeature extends BeanStub {
         _setAriaRole(this.cbSelectAll.getGui(), 'presentation');
         this.showOrHideSelectAll();
 
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onNewColumnsLoaded.bind(this),
-            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
-            [Events.EVENT_SELECTION_CHANGED]: this.onSelectionChanged.bind(this),
-            [Events.EVENT_PAGINATION_CHANGED]: this.onSelectionChanged.bind(this),
-            [Events.EVENT_MODEL_UPDATED]: this.onModelChanged.bind(this),
+        this.addManagedEventListeners({
+            newColumnsLoaded: this.onNewColumnsLoaded.bind(this),
+            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
+            selectionChanged: this.onSelectionChanged.bind(this),
+            paginationChanged: this.onSelectionChanged.bind(this),
+            modelUpdated: this.onModelChanged.bind(this),
         });
 
-        this.addManagedListener(this.cbSelectAll, Events.EVENT_FIELD_VALUE_CHANGED, this.onCbSelectAll.bind(this));
+        this.addManagedListener(this.cbSelectAll, 'fieldValueChanged', this.onCbSelectAll.bind(this));
         _setAriaHidden(this.cbSelectAll.getGui(), true);
         this.cbSelectAll.getInputElement().setAttribute('tabindex', '-1');
         this.refreshSelectAllLabel();

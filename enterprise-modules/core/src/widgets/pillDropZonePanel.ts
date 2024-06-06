@@ -25,7 +25,7 @@ import {
     _setAriaSetSize,
 } from '@ag-grid-community/core';
 
-import { PillDragComp } from './pillDragComp';
+import type { PillDragComp } from './pillDragComp';
 
 export interface PillDropZonePanelParams {
     emptyMessage?: string;
@@ -494,7 +494,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
     private createItemComponent(item: TItem, ghost: boolean): TPill {
         const itemComponent = this.createPillComponent(item, this.dropTarget, ghost, this.horizontal);
-        itemComponent.addEventListener(PillDragComp.EVENT_COLUMN_REMOVE, this.removeItems.bind(this, [item]));
+        itemComponent.addEventListener('columnRemove', this.removeItems.bind(this, [item]));
 
         this.createBean(itemComponent);
         this.guiDestroyFunctions.push(() => this.destroyBean(itemComponent));

@@ -10,7 +10,7 @@ import {
 } from '@ag-grid-community/core';
 import type { AgChartThemePalette } from 'ag-charts-community';
 
-import { ChartController } from '../../chartController';
+import type { ChartController } from '../../chartController';
 import { isStockTheme } from '../../chartProxies/chartTheme';
 import { MiniChartsContainer } from './miniChartsContainer';
 
@@ -59,12 +59,8 @@ export class ChartSettingsPanel extends Component {
         this.addManagedListener(this.eNextBtn, 'click', () => this.setActivePalette(this.getNext(), 'right'));
 
         // change the selected chart when a combo chart is modified via the data panel, i.e. the custom combo should be selected
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_TYPE_CHANGED, () =>
-            this.resetPalettes(true)
-        );
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, () =>
-            this.resetPalettes(true)
-        );
+        this.addManagedListener(this.chartController, 'chartTypeChanged', () => this.resetPalettes(true));
+        this.addManagedListener(this.chartController, 'chartApiUpdate', () => this.resetPalettes(true));
         this.scrollSelectedIntoView();
     }
 

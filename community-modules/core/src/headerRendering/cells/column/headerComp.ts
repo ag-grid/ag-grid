@@ -2,7 +2,6 @@ import type { FuncColsService } from '../../../columns/funcColsService';
 import type { BeanCollection } from '../../../context/context';
 import { AgColumn } from '../../../entities/agColumn';
 import type { SortDirection } from '../../../entities/colDef';
-import { Events } from '../../../eventKeys';
 import type { EventsType } from '../../../eventKeys';
 import type { Column } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
@@ -344,7 +343,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
 
         // keep track of last time the moving changed flag was set
-        this.addManagedListener(this.params.column, AgColumn.EVENT_MOVING_CHANGED, () => {
+        this.addManagedListener(this.params.column, 'movingChanged', () => {
             this.lastMovingChanged = new Date().getTime();
         });
 
@@ -386,9 +385,9 @@ export class HeaderComp extends Component implements IHeaderComp {
                 this.addOrRemoveCssClass('ag-header-cell-sorted-mixed', isMultiSorting);
             }
         };
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_SORT_CHANGED]: onSortingChanged,
-            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: onSortingChanged,
+        this.addManagedEventListeners({
+            sortChanged: onSortingChanged,
+            columnRowGroupChanged: onSortingChanged,
         });
     }
 
@@ -424,7 +423,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         const column = this.params.column as AgColumn;
         this.addInIcon('filter', element, column);
 
-        this.addManagedListener(column, AgColumn.EVENT_FILTER_CHANGED, filterChangedCallback);
+        this.addManagedListener(column, 'filterChanged', filterChangedCallback);
         filterChangedCallback();
         return true;
     }

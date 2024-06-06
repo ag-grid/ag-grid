@@ -21,6 +21,7 @@ import type { ServerSideGroupLevelState } from './interfaces/IServerSideStore';
 import type { AdvancedFilterModel } from './interfaces/advancedFilterModel';
 import type { CsvExportParams } from './interfaces/exportParams';
 import type { GridState } from './interfaces/gridState';
+import type { RenderedRowEvent } from './interfaces/iCallbackParams';
 import type { ICellEditor } from './interfaces/iCellEditor';
 import type { ClientSideRowModelStep } from './interfaces/iClientSideRowModel';
 import type { IClipboardCopyParams, IClipboardCopyRowsParams } from './interfaces/iClipboardService';
@@ -243,7 +244,7 @@ export interface GridApi<TData = any> {
      * When the rendered row is removed from the grid, all associated rendered row listeners will also be removed.
      * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists.
      */
-    addRenderedRowListener(eventName: string, rowIndex: number, callback: (...args: any[]) => any): void;
+    addRenderedRowListener(eventName: RenderedRowEvent, rowIndex: number, callback: (...args: any[]) => any): void;
 
     /** Get the current Quick Filter text from the grid, or `undefined` if none is set. */
     getQuickFilter(): string | undefined;

@@ -11,7 +11,6 @@ import type {
 import {
     AgInputTextField,
     AgPickerField,
-    Events,
     KeyCode,
     RefPlaceholder,
     _bindCellRendererToHtmlElement,
@@ -41,6 +40,7 @@ const TEMPLATE = /* html */ `
 export class AgRichSelect<TValue = any> extends AgPickerField<
     TValue[] | TValue,
     RichSelectParams<TValue>,
+    string,
     AgRichSelectList<TValue>
 > {
     private userComponentFactory: UserComponentFactory;
@@ -120,13 +120,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         this.listComponent.setParentComponent(this);
 
-        this.addManagedListener(
-            this.listComponent,
-            Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
-            (e: FieldPickerValueSelectedEvent) => {
-                this.onListValueSelected(e.value, e.fromEnterKey);
-            }
-        );
+        this.addManagedListener(this.listComponent, 'fieldPickerValueSelected', (e: FieldPickerValueSelectedEvent) => {
+            this.onListValueSelected(e.value, e.fromEnterKey);
+        });
     }
 
     private renderSelectedValue(): void {
@@ -530,12 +526,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     private dispatchPickerEvent(value: TValue[] | TValue, fromEnterKey: boolean): void {
         const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
-            type: Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
+            type: 'fieldPickerValueSelected',
             fromEnterKey,
             value,
         };
 
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent(event);
     }
 
     public override getFocusableElement(): HTMLElement {

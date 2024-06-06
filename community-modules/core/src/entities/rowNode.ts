@@ -1,6 +1,6 @@
 import type { BeanCollection } from '../context/context';
+import type { EventsType } from '../eventKeys';
 import type { AgEvent, AgEventListener, RowEvent, RowSelectedEvent, SelectionEventSourceType } from '../events';
-import { Events } from '../events';
 import type { CellEditRequestEvent } from '../events';
 import type { DetailGridInfo } from '../gridApi';
 import type { IServerSideStore } from '../interfaces/IServerSideStore';
@@ -748,7 +748,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
             this.localEventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_EXPANDED_CHANGED));
         }
 
-        const event = Object.assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED), {
+        const event = Object.assign({}, this.createGlobalRowEvent('rowGroupOpened'), {
             expanded,
             event: e || null,
         });
@@ -761,7 +761,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.beans.rowRenderer.refreshCells({ rowNodes: [this] });
     }
 
-    private createGlobalRowEvent(type: string): RowEvent<TData> {
+    private createGlobalRowEvent<T extends EventsType>(type: T): RowEvent<T, TData> {
         return this.beans.gos.addGridCommonParams({
             type: type,
             node: this,
@@ -855,7 +855,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         eventSource?: string
     ): void {
         const event: CellEditRequestEvent = this.beans.gos.addGridCommonParams({
-            type: Events.EVENT_CELL_EDIT_REQUEST,
+            type: 'cellEditRequest',
             event: null,
             rowIndex: this.rowIndex!,
             rowPinned: this.rowPinned,
@@ -1100,7 +1100,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         }
 
         const event: RowSelectedEvent = {
-            ...this.createGlobalRowEvent(Events.EVENT_ROW_SELECTED),
+            ...this.createGlobalRowEvent('rowSelected'),
             event: e || null,
             source,
         };

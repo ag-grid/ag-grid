@@ -1,6 +1,6 @@
 import type { CheckboxChangedEvent } from '../events';
-import { Events } from '../events';
 import type { AgCheckboxParams, LabelAlignment } from '../interfaces/agFieldParams';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { AgAbstractInputField } from './agAbstractInputField';
 import type { AgComponentSelector } from './component';
 
@@ -112,11 +112,11 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
     }
 
     private dispatchChange(selected: boolean | undefined, previousValue: boolean | undefined, event?: MouseEvent) {
-        this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED, selected, previousValue, event });
+        this.dispatchLocalEvent({ type: 'fieldValueChanged', selected, previousValue, event });
 
         const input = this.getInputElement();
-        const checkboxChangedEvent: CheckboxChangedEvent = {
-            type: Events.EVENT_CHECKBOX_CHANGED,
+        const checkboxChangedEvent: WithoutGridCommon<CheckboxChangedEvent> = {
+            type: 'checkboxChanged',
             id: input.id,
             name: input.name,
             selected,

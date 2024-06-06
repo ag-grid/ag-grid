@@ -4,7 +4,6 @@ import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { GridOptions } from '../../entities/gridOptions';
-import { Events } from '../../eventKeys';
 import type { EventsType } from '../../eventKeys';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { IRowModel } from '../../interfaces/iRowModel';
@@ -29,9 +28,9 @@ export class OverlayService extends BeanStub implements NamedBean {
     private manuallyDisplayed: boolean = false;
 
     public postConstruct(): void {
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_ROW_DATA_UPDATED]: () => this.onRowDataUpdated(),
-            [Events.EVENT_NEW_COLUMNS_LOADED]: () => this.onNewColumnsLoaded(),
+        this.addManagedEventListeners({
+            rowDataUpdated: () => this.onRowDataUpdated(),
+            newColumnsLoaded: () => this.onNewColumnsLoaded(),
         });
     }
 

@@ -5,7 +5,6 @@ import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellKeyDownEvent, FullWidthCellKeyDownEvent } from '../../events';
-import { Events } from '../../events';
 import type { FocusService } from '../../focusService';
 import type { IRangeService } from '../../interfaces/IRangeService';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
@@ -228,7 +227,7 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         if (eventName === 'keydown') {
-            const cellKeyDownEvent: CellKeyDownEvent = cellCtrl.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_DOWN);
+            const cellKeyDownEvent: CellKeyDownEvent = cellCtrl.createEvent(keyboardEvent, 'cellKeyDown');
             this.eventService.dispatchEvent(cellKeyDownEvent);
         }
     }
@@ -263,10 +262,7 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         if (eventName === 'keydown') {
-            const cellKeyDownEvent: FullWidthCellKeyDownEvent = rowComp.createRowEvent(
-                Events.EVENT_CELL_KEY_DOWN,
-                keyboardEvent
-            );
+            const cellKeyDownEvent: FullWidthCellKeyDownEvent = rowComp.createRowEvent('cellKeyDown', keyboardEvent);
             this.eventService.dispatchEvent(cellKeyDownEvent);
         }
     }

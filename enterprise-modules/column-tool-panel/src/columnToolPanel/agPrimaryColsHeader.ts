@@ -3,7 +3,6 @@ import {
     AgCheckbox,
     AgInputTextField,
     Component,
-    Events,
     KeyCode,
     RefPlaceholder,
     _createIconNoSpan,
@@ -19,7 +18,8 @@ export enum ExpandState {
     INDETERMINATE,
 }
 
-export class AgPrimaryColsHeader extends Component {
+export type AgPrimaryColsHeaderEvent = 'unselectAll' | 'selectAll' | 'collapseAll' | 'expandAll' | 'filterChanged';
+export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     static readonly selector: AgComponentSelector = 'AG-PRIMARY-COLS-HEADER';
 
     private columnModel: ColumnModel;
@@ -77,7 +77,7 @@ export class AgPrimaryColsHeader extends Component {
             this.onMiniFilterKeyDown.bind(this)
         );
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
+        this.addManagedEventListeners({ newColumnsLoaded: this.showOrHideOptions.bind(this) });
 
         const translate = this.localeService.getLocaleTextFunc();
 
@@ -136,7 +136,7 @@ export class AgPrimaryColsHeader extends Component {
         if (!this.onFilterTextChangedDebounced) {
             this.onFilterTextChangedDebounced = _debounce(() => {
                 const filterText = this.eFilterTextField.getValue();
-                this.dispatchEvent({ type: 'filterChanged', filterText: filterText });
+                this.dispatchLocalEvent({ type: 'filterChanged', filterText: filterText });
             }, AgPrimaryColsHeader.DEBOUNCE_DELAY);
         }
 
@@ -152,11 +152,11 @@ export class AgPrimaryColsHeader extends Component {
     }
 
     private onSelectClicked(): void {
-        this.dispatchEvent({ type: this.selectState ? 'unselectAll' : 'selectAll' });
+        this.dispatchLocalEvent({ type: this.selectState ? 'unselectAll' : 'selectAll' });
     }
 
     private onExpandClicked(): void {
-        this.dispatchEvent({ type: this.expandState === ExpandState.EXPANDED ? 'collapseAll' : 'expandAll' });
+        this.dispatchLocalEvent({ type: this.expandState === ExpandState.EXPANDED ? 'collapseAll' : 'expandAll' });
     }
 
     public setExpandState(state: ExpandState): void {

@@ -6,8 +6,8 @@ import type { CellPosition } from '../../entities/cellPositionUtils';
 import type { CellStyle } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
+import { EventsType } from '../../eventKeys';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent, FlashCellsEvent } from '../../events';
-import { Events } from '../../events';
 import { CssClassApplier } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
@@ -753,8 +753,8 @@ export class CellCtrl extends BeanStub {
         this.addDestroyFunc(() => this.beans.gos.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
     }
 
-    public createEvent(domEvent: Event | null, eventType: string): CellEvent {
-        const event: CellEvent = this.beans.gos.addGridCommonParams({
+    public createEvent<T extends EventsType>(domEvent: Event | null, eventType: T): CellEvent<T> {
+        const event: CellEvent<T> = this.beans.gos.addGridCommonParams({
             type: eventType,
             node: this.rowNode,
             data: this.rowNode.data,
@@ -1030,7 +1030,7 @@ export class CellCtrl extends BeanStub {
 
     public dispatchCellContextMenuEvent(event: Event | null) {
         const colDef = this.column.getColDef();
-        const cellContextMenuEvent: CellContextMenuEvent = this.createEvent(event, Events.EVENT_CELL_CONTEXT_MENU);
+        const cellContextMenuEvent: CellContextMenuEvent = this.createEvent(event, 'cellContextMenu');
 
         this.beans.eventService.dispatchEvent(cellContextMenuEvent);
 

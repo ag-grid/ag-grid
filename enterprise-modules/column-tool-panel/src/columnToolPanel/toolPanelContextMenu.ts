@@ -10,7 +10,7 @@ import type {
     PopupService,
 } from '@ag-grid-community/core';
 import { Component, _createIconNoSpan, isColumn, isProvidedColumnGroup } from '@ag-grid-community/core';
-import { AgMenuItemComponent, AgMenuList } from '@ag-grid-enterprise/core';
+import { AgMenuList } from '@ag-grid-enterprise/core';
 
 type MenuItemName = 'rowGroup' | 'value' | 'pivot';
 
@@ -171,7 +171,7 @@ export class ToolPanelContextMenu extends Component {
 
         eGui.appendChild(menuList.getGui());
         menuList.addMenuItems(menuItemsMapped);
-        menuList.addManagedListener(menuList, AgMenuItemComponent.EVENT_CLOSE_MENU, () => {
+        menuList.addManagedListener(menuList, 'closeMenu', () => {
             this.parentEl.focus();
             hideFunc();
         });

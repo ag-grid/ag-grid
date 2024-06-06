@@ -3,7 +3,6 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { EventsType } from '../eventKeys';
-import { Events } from '../events';
 import type { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
 import { _debounce } from '../utils/function';
 import type { PaginationService } from './paginationService';
@@ -29,9 +28,9 @@ export class PaginationAutoPageSizeService extends BeanStub implements NamedBean
         this.ctrlsService.whenReady((p) => {
             this.centerRowsCtrl = p.center;
 
-            this.addManagedListeners<EventsType>(this.eventService, {
-                [Events.EVENT_BODY_HEIGHT_CHANGED]: this.checkPageSize.bind(this),
-                [Events.EVENT_SCROLL_VISIBILITY_CHANGED]: this.checkPageSize.bind(this),
+            this.addManagedEventListeners({
+                bodyHeightChanged: this.checkPageSize.bind(this),
+                scrollVisibilityChanged: this.checkPageSize.bind(this),
             });
             this.addManagedPropertyListener('paginationAutoPageSize', this.onPaginationAutoSizeChanged.bind(this));
 

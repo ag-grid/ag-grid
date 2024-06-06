@@ -39,7 +39,7 @@ export { DataTypeModule } from './columns/columnModules';
 
 // components
 export { ComponentUtil } from './components/componentUtil';
-export { ComponentClass, AgComponentSelector, RefPlaceholder } from './widgets/component';
+export { ComponentClass, AgComponentSelector, RefPlaceholder, ComponentEvent } from './widgets/component';
 
 export { UserComponentRegistry } from './components/framework/userComponentRegistry';
 export { UserComponentFactory, UserCompDetails } from './components/framework/userComponentFactory';
@@ -531,7 +531,7 @@ export { KeyCode } from './constants/keyCode';
 export { VerticalDirection, HorizontalDirection } from './constants/direction';
 export { Grid, GridParams, Params, GridCoreCreator, createGrid, provideGlobalGridOptions } from './grid';
 export { GridApi, DetailGridInfo, StartEditingCellParams, GetCellValueParams } from './gridApi';
-export { Events, EventsType } from './eventKeys';
+export { EventsType } from './eventKeys';
 export { FocusService } from './focusService';
 export { GridOptionsService, PropertyChangedEvent } from './gridOptionsService';
 export { LocalEventService } from './localEventService';

@@ -1,10 +1,10 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { AgColumn } from '../entities/agColumn';
+import type { AgColumn } from '../entities/agColumn';
+import { DEFAULT_COLUMN_MIN_WIDTH } from '../entities/agColumn';
 import type { IAggFunc } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType } from '../events';
-import { Events } from '../events';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
@@ -385,7 +385,7 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
         }
 
         // if width provided and valid, use it, otherwise stick with the old width
-        const minColWidth = column.getColDef().minWidth ?? AgColumn.DEFAULT_MIN_WIDTH;
+        const minColWidth = column.getColDef().minWidth ?? DEFAULT_COLUMN_MIN_WIDTH;
 
         // flex
         const flex = getValue('flex').value1;
@@ -574,14 +574,14 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
             const columnIdMapper = (c: AgColumn) => c.getColId();
 
             dispatchWhenListsDifferent(
-                Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
+                'columnRowGroupChanged',
                 startState.rowGroupColumns,
                 this.funcColsService.getRowGroupColumns(),
                 columnIdMapper
             );
 
             dispatchWhenListsDifferent(
-                Events.EVENT_COLUMN_PIVOT_CHANGED,
+                'columnPivotChanged',
                 startState.pivotColumns,
                 this.funcColsService.getPivotColumns(),
                 columnIdMapper
@@ -598,7 +598,7 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
             };
             const changedValues = getChangedColumns(valueChangePredicate);
             if (changedValues.length > 0) {
-                this.eventDispatcher.columnChanged(Events.EVENT_COLUMN_VALUE_CHANGED, changedValues, source);
+                this.eventDispatcher.columnChanged('columnValueChanged', changedValues, source);
             }
 
             const resizeChangePredicate = (cs: ColumnState, c: AgColumn) => cs.width != c.getActualWidth();

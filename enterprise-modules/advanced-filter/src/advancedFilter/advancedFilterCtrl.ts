@@ -8,7 +8,7 @@ import type {
     PopupService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, Events, _getAbsoluteHeight, _getAbsoluteWidth, _removeFromParent } from '@ag-grid-community/core';
+import { BeanStub, _getAbsoluteHeight, _getAbsoluteWidth, _removeFromParent } from '@ag-grid-community/core';
 import { AgDialog } from '@ag-grid-enterprise/core';
 
 import { AdvancedFilterComp } from './advancedFilterComp';
@@ -16,7 +16,8 @@ import type { AdvancedFilterExpressionService } from './advancedFilterExpression
 import { AdvancedFilterHeaderComp } from './advancedFilterHeaderComp';
 import { AdvancedFilterBuilderComp } from './builder/advancedFilterBuilderComp';
 
-export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl {
+export type AdvancedFilterCtrlEvent = 'advancedFilterBuilderClosed';
+export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implements IAdvancedFilterCtrl {
     private ctrlsService: CtrlsService;
     private popupService: PopupService;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
@@ -28,8 +29,6 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
         this.environment = beans.environment;
     }
-
-    public static readonly EVENT_BUILDER_CLOSED = 'advancedFilterBuilderClosed';
 
     private eHeaderComp: AdvancedFilterHeaderComp | undefined;
     private eFilterComp: AdvancedFilterComp | undefined;
@@ -49,7 +48,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
 
         this.addManagedListener(
             this.eventService,
-            Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
+            'advancedFilterEnabledChanged',
             ({ enabled }: AdvancedFilterEnabledChangedEvent) => this.onEnabledChanged(enabled)
         );
 
@@ -131,13 +130,13 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
 
         this.dispatchFilterBuilderVisibleChangedEvent(source, true);
 
-        this.eBuilderDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => {
+        this.eBuilderDialog.addEventListener('destroyed', () => {
             this.destroyBean(this.eBuilderComp);
             this.eBuilderComp = undefined;
             this.eBuilderDialog = undefined;
             this.setInputDisabled(false);
-            this.dispatchEvent({
-                type: AdvancedFilterCtrl.EVENT_BUILDER_CLOSED,
+            this.dispatchLocalEvent({
+                type: 'advancedFilterBuilderClosed',
             });
             this.dispatchFilterBuilderVisibleChangedEvent(this.builderDestroySource ?? 'ui', false);
             this.builderDestroySource = undefined;
@@ -146,7 +145,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
 
     private dispatchFilterBuilderVisibleChangedEvent(source: 'api' | 'ui', visible: boolean): void {
         const event: WithoutGridCommon<AdvancedFilterBuilderVisibleChangedEvent> = {
-            type: Events.EVENT_ADVANCED_FILTER_BUILDER_VISIBLE_CHANGED,
+            type: 'advancedFilterBuilderVisibleChanged',
             source,
             visible,
         };
@@ -174,7 +173,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
         this.setAdvancedFilterComp();
         this.setHeaderCompEnabled();
         this.eventService.dispatchEvent({
-            type: Events.EVENT_HEADER_HEIGHT_CHANGED,
+            type: 'headerHeightChanged',
         });
     }
 

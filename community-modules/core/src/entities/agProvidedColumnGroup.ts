@@ -9,11 +9,8 @@ export function isProvidedColumnGroup(col: Column | ProvidedColumnGroup | string
     return col instanceof AgProvidedColumnGroup;
 }
 
-export const EVENT_PROVIDED_COLUMN_GROUP_EXPANDED_CHANGED = 'expandedChanged' as const;
-
-export const EVENT_PROVIDED_COLUMN_GROUP_EXPANDABLE_CHANGED = 'expandableChanged' as const;
-
-export class AgProvidedColumnGroup extends BeanStub implements ProvidedColumnGroup {
+export type AgProvidedColumnGroupEvent = 'expandedChanged' | 'expandableChanged';
+export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> implements ProvidedColumnGroup {
     public readonly isColumn = false as const;
 
     private colGroupDef: ColGroupDef | null;
@@ -97,10 +94,10 @@ export class AgProvidedColumnGroup extends BeanStub implements ProvidedColumnGro
 
     public setExpanded(expanded: boolean | undefined): void {
         this.expanded = expanded === undefined ? false : expanded;
-        const event: AgEvent = {
-            type: EVENT_PROVIDED_COLUMN_GROUP_EXPANDED_CHANGED,
+        const event: AgEvent<'expandedChanged'> = {
+            type: 'expandedChanged',
         };
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent(event);
     }
 
     public isExpandable(): boolean {
@@ -217,10 +214,10 @@ export class AgProvidedColumnGroup extends BeanStub implements ProvidedColumnGro
 
         if (this.expandable !== expandable) {
             this.expandable = expandable;
-            const event: AgEvent = {
-                type: EVENT_PROVIDED_COLUMN_GROUP_EXPANDABLE_CHANGED,
+            const event: AgEvent<'expandableChanged'> = {
+                type: 'expandableChanged',
             };
-            this.dispatchEvent(event);
+            this.dispatchLocalEvent(event);
         }
     }
 

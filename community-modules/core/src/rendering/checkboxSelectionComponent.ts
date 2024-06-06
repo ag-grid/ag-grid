@@ -1,7 +1,6 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { CheckboxSelectionCallback } from '../entities/colDef';
 import { RowNode } from '../entities/rowNode';
-import { Events } from '../events';
 import type { GroupCheckboxSelectionCallback } from '../interfaces/groupCellRenderer';
 import { _getAriaCheckboxStateName } from '../utils/aria';
 import { _stopPropagationForAgGrid } from '../utils/event';
@@ -120,11 +119,7 @@ export class CheckboxSelectionComponent extends Component {
 
         if (checkboxVisibleIsDynamic) {
             const showOrHideSelectListener = this.showOrHideSelect.bind(this);
-            this.addManagedListener(
-                this.eventService,
-                Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
-                showOrHideSelectListener
-            );
+            this.addManagedEventListeners({ displayedColumnsChanged: showOrHideSelectListener });
             this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, showOrHideSelectListener);
             this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, showOrHideSelectListener);
             this.showOrHideSelect();

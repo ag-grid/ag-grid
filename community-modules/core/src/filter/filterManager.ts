@@ -7,9 +7,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import type { EventsType } from '../eventKeys';
 import type { AdvancedFilterEnabledChangedEvent, FilterChangedEvent, FilterChangedEventSourceType } from '../events';
-import { Events } from '../events';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -17,7 +15,7 @@ import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interf
 import { _warnOnce } from '../utils/function';
 import { _mergeDeep } from '../utils/object';
 import type { ColumnFilterService, FilterWrapper } from './columnFilterService';
-import { EVENT_QUICK_FILTER_CHANGED, type QuickFilterService } from './quickFilterService';
+import type { QuickFilterService } from './quickFilterService';
 
 export class FilterManager extends BeanStub implements NamedBean {
     beanName = 'filterManager' as const;
@@ -45,15 +43,15 @@ export class FilterManager extends BeanStub implements NamedBean {
     private advancedFilterModelUpdateQueue: (AdvancedFilterModel | null | undefined)[] = [];
 
     public postConstruct(): void {
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_COLUMN_VALUE_CHANGED]: this.refreshFiltersForAggregations.bind(this),
-            [Events.EVENT_COLUMN_PIVOT_CHANGED]: this.refreshFiltersForAggregations.bind(this),
-            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: this.refreshFiltersForAggregations.bind(this),
-            [Events.EVENT_NEW_COLUMNS_LOADED]: this.updateAdvancedFilterColumns.bind(this),
-            [Events.EVENT_COLUMN_VISIBLE]: this.updateAdvancedFilterColumns.bind(this),
-            [Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED]: ({ enabled }: AdvancedFilterEnabledChangedEvent) =>
+        this.addManagedEventListeners({
+            columnValueChanged: this.refreshFiltersForAggregations.bind(this),
+            columnPivotChanged: this.refreshFiltersForAggregations.bind(this),
+            columnPivotModeChanged: this.refreshFiltersForAggregations.bind(this),
+            newColumnsLoaded: this.updateAdvancedFilterColumns.bind(this),
+            columnVisible: this.updateAdvancedFilterColumns.bind(this),
+            advancedFilterEnabledChanged: ({ enabled }: AdvancedFilterEnabledChangedEvent) =>
                 this.onAdvancedFilterEnabledChanged(enabled),
-            [Events.EVENT_DATA_TYPES_INFERRED]: this.processFilterModelUpdateQueue.bind(this),
+            dataTypesInferred: this.processFilterModelUpdateQueue.bind(this),
         });
 
         this.externalFilterPresent = this.isExternalFilterPresentCallback();
@@ -72,7 +70,7 @@ export class FilterManager extends BeanStub implements NamedBean {
         );
 
         if (this.quickFilterService) {
-            this.addManagedListener(this.quickFilterService, EVENT_QUICK_FILTER_CHANGED, () =>
+            this.addManagedListener(this.quickFilterService, 'quickFilterChanged', () =>
                 this.onFilterChanged({ source: 'quickFilter' })
             );
         }
@@ -188,7 +186,7 @@ export class FilterManager extends BeanStub implements NamedBean {
 
         const filterChangedEvent: WithoutGridCommon<FilterChangedEvent> = {
             source,
-            type: Events.EVENT_FILTER_CHANGED,
+            type: 'filterChanged',
             columns,
         };
 

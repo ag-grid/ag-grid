@@ -7,7 +7,6 @@ import type {
 } from '@ag-grid-community/core';
 import { Component, RefPlaceholder, _createIconNoSpan, _makeNull, _setDisabled } from '@ag-grid-community/core';
 
-import { AdvancedFilterCtrl } from './advancedFilterCtrl';
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import type { AdvancedFilterService } from './advancedFilterService';
 import type {
@@ -71,25 +70,23 @@ export class AdvancedFilterComp extends Component {
 
         this.refresh();
 
-        this.addManagedListener(
-            this.eAutocomplete,
-            AgAutocomplete.EVENT_VALUE_CHANGED,
-            ({ value }: AutocompleteValueChangedEvent) => this.onValueChanged(value)
+        this.addManagedListener(this.eAutocomplete, 'eventValueChanged', ({ value }: AutocompleteValueChangedEvent) =>
+            this.onValueChanged(value)
         );
         this.addManagedListener(
             this.eAutocomplete,
-            AgAutocomplete.EVENT_VALUE_CONFIRMED,
+            'eventValueConfirmed',
             ({ isValid }: AutocompleteValueConfirmedEvent) => this.onValueConfirmed(isValid)
         );
         this.addManagedListener(
             this.eAutocomplete,
-            AgAutocomplete.EVENT_OPTION_SELECTED,
+            'eventOptionSelected',
             ({ position, updateEntry, autocompleteType }: AutocompleteOptionSelectedEvent) =>
                 this.onOptionSelected(position, updateEntry, autocompleteType)
         );
         this.addManagedListener(
             this.eAutocomplete,
-            AgAutocomplete.EVENT_VALID_CHANGED,
+            'eventValidChanged',
             ({ isValid, validationMessage }: AutocompleteValidChangedEvent) =>
                 this.onValidChanged(isValid, validationMessage)
         );
@@ -133,7 +130,7 @@ export class AdvancedFilterComp extends Component {
             this.advancedFilterExpressionService.translate('advancedFilterBuilder');
         this.activateTabIndex([this.eBuilderFilterButton]);
         this.addManagedListener(this.eBuilderFilterButton, 'click', () => this.openBuilder());
-        this.addManagedListener(this.advancedFilterService.getCtrl(), AdvancedFilterCtrl.EVENT_BUILDER_CLOSED, () =>
+        this.addManagedListener(this.advancedFilterService.getCtrl(), 'advancedFilterBuilderClosed', () =>
             this.closeBuilder()
         );
     }

@@ -8,7 +8,6 @@ import type {
 import {
     DragAndDropService,
     DragSourceType,
-    Events,
     KeyCode,
     RefPlaceholder,
     TabGuardComp,
@@ -28,23 +27,23 @@ import type { AdvancedFilterExpressionService } from '../advancedFilterExpressio
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 import { AddDropdownComp } from './addDropdownComp';
 import type { AdvancedFilterBuilderDragStartedEvent } from './advancedFilterBuilderDragFeature';
-import { AdvancedFilterBuilderDragFeature } from './advancedFilterBuilderDragFeature';
+import type { AdvancedFilterBuilderDragFeature } from './advancedFilterBuilderDragFeature';
 import { AdvancedFilterBuilderItemNavigationFeature } from './advancedFilterBuilderItemNavigationFeature';
 import { getAdvancedFilterBuilderAddButtonParams } from './advancedFilterBuilderUtils';
 import { ConditionPillWrapperComp } from './conditionPillWrapperComp';
 import type {
     AdvancedFilterBuilderAddEvent,
+    AdvancedFilterBuilderEvents,
     AdvancedFilterBuilderItem,
     AdvancedFilterBuilderMoveEvent,
     AdvancedFilterBuilderRemoveEvent,
     CreatePillParams,
 } from './iAdvancedFilterBuilder';
-import { AdvancedFilterBuilderEvents } from './iAdvancedFilterBuilder';
 import { InputPillComp } from './inputPillComp';
 import { JoinPillWrapperComp } from './joinPillWrapperComp';
 import { SelectPillComp } from './selectPillComp';
 
-export class AdvancedFilterBuilderItemComp extends TabGuardComp {
+export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBuilderEvents> {
     private dragAndDropService: DragAndDropService;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
@@ -131,14 +130,12 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
 
         this.updateAriaLabel();
 
-        this.addManagedListener(this.ePillWrapper, AdvancedFilterBuilderEvents.EVENT_VALUE_CHANGED, () =>
-            this.dispatchEvent({
-                type: AdvancedFilterBuilderEvents.EVENT_VALUE_CHANGED,
+        this.addManagedListener(this.ePillWrapper, 'advancedFilterBuilderValueChanged', () =>
+            this.dispatchLocalEvent({
+                type: 'advancedFilterBuilderValueChanged',
             })
         );
-        this.addManagedListener(this.ePillWrapper, AdvancedFilterBuilderEvents.EVENT_VALID_CHANGED, () =>
-            this.updateValidity()
-        );
+        this.addManagedListener(this.ePillWrapper, 'advancedFilterBuilderValidChanged', () => this.updateValidity());
     }
 
     public setState(params: {
@@ -223,15 +220,12 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             this.gos.get('advancedFilterBuilderParams')?.addSelectWidth
         );
         const eAddButton = this.createManagedBean(new AddDropdownComp(addButtonParams));
-        this.addManagedListener(
-            eAddButton,
-            Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
-            ({ value }: FieldPickerValueSelectedEvent) =>
-                this.dispatchEvent<AdvancedFilterBuilderAddEvent>({
-                    type: AdvancedFilterBuilderEvents.EVENT_ADDED,
-                    item: this.item,
-                    isJoin: value.key === 'join',
-                })
+        this.addManagedListener(eAddButton, 'fieldPickerValueSelected', ({ value }: FieldPickerValueSelectedEvent) =>
+            this.dispatchLocalEvent<AdvancedFilterBuilderAddEvent>({
+                type: 'advancedFilterBuilderAdded',
+                item: this.item,
+                isJoin: value.key === 'join',
+            })
         );
         this.eAddButton.appendChild(eAddButton.getGui());
 
@@ -354,8 +348,8 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
                 return;
             }
             update(key);
-            this.dispatchEvent({
-                type: AdvancedFilterBuilderEvents.EVENT_VALUE_CHANGED,
+            this.dispatchLocalEvent({
+                type: 'advancedFilterBuilderValueChanged',
             });
         };
         if (params.isSelect) {
@@ -382,10 +376,8 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
                     ariaLabel,
                 })
             );
-            this.addManagedListener(
-                comp,
-                Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
-                ({ value }: FieldPickerValueSelectedEvent) => onUpdated(value?.key)
+            this.addManagedListener(comp, 'fieldPickerValueSelected', ({ value }: FieldPickerValueSelectedEvent) =>
+                onUpdated(value?.key)
             );
             return comp;
         } else {
@@ -397,9 +389,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
                     ariaLabel,
                 })
             );
-            this.addManagedListener(comp, Events.EVENT_FIELD_VALUE_CHANGED, ({ value }: FieldValueEvent) =>
-                onUpdated(value)
-            );
+            this.addManagedListener(comp, 'fieldValueChanged', ({ value }: FieldValueEvent) => onUpdated(value));
             return comp;
         }
     }
@@ -426,13 +416,13 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             getDefaultIconName: () => DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => ({}),
             onDragStarted: () =>
-                this.dragFeature.dispatchEvent<AdvancedFilterBuilderDragStartedEvent>({
-                    type: AdvancedFilterBuilderDragFeature.EVENT_DRAG_STARTED,
+                this.dragFeature.dispatchLocalEvent<AdvancedFilterBuilderDragStartedEvent>({
+                    type: 'advancedFilterBuilderDragStarted',
                     item: this.item,
                 }),
             onDragStopped: () =>
-                this.dragFeature.dispatchEvent({
-                    type: AdvancedFilterBuilderDragFeature.EVENT_DRAG_ENDED,
+                this.dragFeature.dispatchLocalEvent({
+                    type: 'advancedFilterBuilderDragEnded',
                 }),
         };
 
@@ -469,15 +459,15 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     }
 
     private removeItem(): void {
-        this.dispatchEvent<AdvancedFilterBuilderRemoveEvent>({
-            type: AdvancedFilterBuilderEvents.EVENT_REMOVED,
+        this.dispatchLocalEvent<AdvancedFilterBuilderRemoveEvent>({
+            type: 'advancedFilterBuilderRemoved',
             item: this.item,
         });
     }
 
     private moveItem(backwards: boolean): void {
-        this.dispatchEvent<AdvancedFilterBuilderMoveEvent>({
-            type: AdvancedFilterBuilderEvents.EVENT_MOVED,
+        this.dispatchLocalEvent<AdvancedFilterBuilderMoveEvent>({
+            type: 'advancedFilterBuilderMoved',
             item: this.item,
             backwards,
         });

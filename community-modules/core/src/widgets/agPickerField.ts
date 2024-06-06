@@ -1,6 +1,6 @@
 import { KeyCode } from '../constants/keyCode';
 import type { BeanCollection } from '../context/context';
-import { Events } from '../eventKeys';
+import type { EventsType } from '../eventKeys';
 import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaExpanded, _setAriaRole } from '../utils/aria';
 import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/dom';
@@ -22,8 +22,9 @@ const TEMPLATE = /* html */ `
 export abstract class AgPickerField<
     TValue,
     TConfig extends AgPickerFieldParams = AgPickerFieldParams,
-    TComponent extends Component = Component,
-> extends AgAbstractField<TValue, TConfig> {
+    TEventType extends string = string,
+    TComponent extends Component<TEventType> = Component<TEventType>,
+> extends AgAbstractField<TValue, TConfig, TEventType> {
     protected popupService: PopupService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -199,7 +200,7 @@ export abstract class AgPickerField<
         const ePicker = this.pickerComponent!.getGui();
 
         if (!this.gos.get('suppressScrollWhenPopupsAreOpen')) {
-            this.destroyMouseWheelFunc = this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, () => {
+            this.destroyMouseWheelFunc = this.addManagedListener<EventsType>(this.eventService, 'bodyScroll', () => {
                 this.hidePicker();
             });
         }

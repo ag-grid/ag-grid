@@ -10,26 +10,33 @@ import { AgInputTextField, Component, KeyCode, RefPlaceholder, _makeNull } from 
 import { AgAutocompleteList } from './agAutocompleteList';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocompleteParams';
 
-export interface AutocompleteValueChangedEvent extends AgEvent {
+interface AutoCompleteEvent<T extends AgAutocompleteEvent> extends AgEvent<T> {
     value: string | null;
 }
 
-export interface AutocompleteValueConfirmedEvent extends AutocompleteValueChangedEvent {
+export interface AutocompleteValueChangedEvent extends AutoCompleteEvent<'eventValueChanged'> {}
+
+export interface AutocompleteValueConfirmedEvent extends AutoCompleteEvent<'eventValueConfirmed'> {
     isValid: boolean;
 }
 
-export interface AutocompleteOptionSelectedEvent extends AutocompleteValueChangedEvent {
+export interface AutocompleteOptionSelectedEvent extends AutoCompleteEvent<'eventOptionSelected'> {
     position: number;
     updateEntry: AutocompleteEntry;
     autocompleteType?: string;
 }
 
-export interface AutocompleteValidChangedEvent extends AgEvent {
+export interface AutocompleteValidChangedEvent extends AgEvent<'eventValidChanged'> {
     isValid: boolean;
     validationMessage: string | null;
 }
 
-export class AgAutocomplete extends Component {
+export type AgAutocompleteEvent =
+    | 'eventValueChanged'
+    | 'eventValueConfirmed'
+    | 'eventOptionSelected'
+    | 'eventValidChanged';
+export class AgAutocomplete extends Component<AgAutocompleteEvent> {
     private popupService: PopupService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -37,11 +44,6 @@ export class AgAutocomplete extends Component {
     }
 
     static readonly selector: AgComponentSelector = 'AG-AUTOCOMPLETE';
-
-    public static EVENT_VALUE_CHANGED = 'eventValueChanged';
-    public static EVENT_VALUE_CONFIRMED = 'eventValueConfirmed';
-    public static EVENT_OPTION_SELECTED = 'eventOptionSelected';
-    public static EVENT_VALID_CHANGED = 'eventValidChanged';
 
     private eAutocompleteInput: AgInputTextField = RefPlaceholder;
 
@@ -90,8 +92,8 @@ export class AgAutocomplete extends Component {
 
     private updateValue(value: string | null): void {
         this.updateLastPosition();
-        this.dispatchEvent<AutocompleteValueChangedEvent>({
-            type: AgAutocomplete.EVENT_VALUE_CHANGED,
+        this.dispatchLocalEvent<AutocompleteValueChangedEvent>({
+            type: 'eventValueChanged',
             value,
         });
         this.validate(value);
@@ -159,8 +161,8 @@ export class AgAutocomplete extends Component {
         const selectedValue = this.autocompleteList?.getSelectedValue();
         if (selectedValue) {
             this.closeList();
-            this.dispatchEvent<AutocompleteOptionSelectedEvent>({
-                type: AgAutocomplete.EVENT_OPTION_SELECTED,
+            this.dispatchLocalEvent<AutocompleteOptionSelectedEvent>({
+                type: 'eventOptionSelected',
                 value: this.getValue()!,
                 position: this.lastPosition,
                 updateEntry: selectedValue,
@@ -245,8 +247,8 @@ export class AgAutocomplete extends Component {
         this.validationMessage = this.validator(value);
         this.eAutocompleteInput.getInputElement().setCustomValidity(this.validationMessage ?? '');
         this.valid = !this.validationMessage;
-        this.dispatchEvent<AutocompleteValidChangedEvent>({
-            type: AgAutocomplete.EVENT_VALID_CHANGED,
+        this.dispatchLocalEvent<AutocompleteValidChangedEvent>({
+            type: 'eventValidChanged',
             isValid: this.valid,
             validationMessage: this.validationMessage,
         });
@@ -295,8 +297,8 @@ export class AgAutocomplete extends Component {
         if (this.isListOpen) {
             this.closeList();
         }
-        this.dispatchEvent<AutocompleteValueConfirmedEvent>({
-            type: AgAutocomplete.EVENT_VALUE_CONFIRMED,
+        this.dispatchLocalEvent<AutocompleteValueConfirmedEvent>({
+            type: 'eventValueConfirmed',
             value: this.getValue(),
             isValid: this.isValid(),
         });

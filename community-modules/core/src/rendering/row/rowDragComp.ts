@@ -4,7 +4,6 @@ import type { DragItem, DragSource } from '../../dragAndDrop/dragAndDropService'
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../entities/agColumn';
 import { RowNode } from '../../entities/rowNode';
-import { Events } from '../../eventKeys';
 import type { EventsType } from '../../eventKeys';
 import { _isFunction, _warnOnce } from '../../utils/function';
 import { _createIconNoSpan } from '../../utils/icon';
@@ -207,7 +206,7 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
             [RowNode.EVENT_CELL_CHANGED]: listener,
         });
 
-        this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, listener);
+        this.addManagedListener(this.beans.eventService, 'newColumnsLoaded', listener);
 
         this.workOutVisibility();
     }
@@ -236,10 +235,10 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         const listener = this.workOutVisibility.bind(this);
         // we do not show the component if sort, filter or grouping is active
         this.addManagedListeners<EventsType>(this.beans.eventService, {
-            [Events.EVENT_SORT_CHANGED]: listener,
-            [Events.EVENT_FILTER_CHANGED]: listener,
-            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: listener,
-            [Events.EVENT_NEW_COLUMNS_LOADED]: listener,
+            sortChanged: listener,
+            filterChanged: listener,
+            columnRowGroupChanged: listener,
+            newColumnsLoaded: listener,
         });
 
         // in case data changes, then we need to update visibility of drag item

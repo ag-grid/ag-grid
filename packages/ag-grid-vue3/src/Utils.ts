@@ -47,7 +47,7 @@ export const getAgGridProperties = (): [Properties, Properties, Properties] => {
                     }
                 }
 
-                ComponentUtil.processOnChange({ rowData: currentValue }, this.api, true);
+                ComponentUtil.processOnChange({ rowData: currentValue }, this.api);
             },
             deep: true,
         },
@@ -66,7 +66,7 @@ export const getAgGridProperties = (): [Properties, Properties, Properties] => {
                         currentValue === ComponentUtil.VUE_OMITTED_PROPERTY ? undefined : currentValue;
                     if (timeout == null) {
                         timeout = setTimeout(() => {
-                            ComponentUtil.processOnChange(changes, this.api, true);
+                            ComponentUtil.processOnChange(changes, this.api);
                             timeout = null;
                             changes = {};
                         }, 0);

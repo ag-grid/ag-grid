@@ -1,5 +1,4 @@
 import type { BeanCollection } from '../context/context';
-import { Events } from '../eventKeys';
 import type { BodyScrollEvent } from '../events';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import { _isIOSUserAgent, _isInvisibleScrollbar, _isMacOsUserAgent } from '../utils/browser';
@@ -35,7 +34,7 @@ export abstract class AbstractFakeScrollComp extends Component {
     public postConstruct(): void {
         this.addManagedListener(
             this.eventService,
-            Events.EVENT_SCROLL_VISIBILITY_CHANGED,
+            'scrollVisibilityChanged',
             this.onScrollVisibilityChanged.bind(this)
         );
         this.onScrollVisibilityChanged();
@@ -80,20 +79,22 @@ export abstract class AbstractFakeScrollComp extends Component {
     }
 
     protected hideAndShowInvisibleScrollAsNeeded(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, (params: BodyScrollEvent) => {
-            if (params.direction === this.direction) {
-                if (this.hideTimeout !== null) {
-                    window.clearTimeout(this.hideTimeout);
-                    this.hideTimeout = null;
+        this.addManagedEventListeners({
+            bodyScroll: (params: BodyScrollEvent) => {
+                if (params.direction === this.direction) {
+                    if (this.hideTimeout !== null) {
+                        window.clearTimeout(this.hideTimeout);
+                        this.hideTimeout = null;
+                    }
+                    this.addOrRemoveCssClass('ag-scrollbar-scrolling', true);
                 }
-                this.addOrRemoveCssClass('ag-scrollbar-scrolling', true);
-            }
-        });
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL_END, () => {
-            this.hideTimeout = window.setTimeout(() => {
-                this.addOrRemoveCssClass('ag-scrollbar-scrolling', false);
-                this.hideTimeout = null;
-            }, 400);
+            },
+            bodyScrollEnd: () => {
+                this.hideTimeout = window.setTimeout(() => {
+                    this.addOrRemoveCssClass('ag-scrollbar-scrolling', false);
+                    this.hideTimeout = null;
+                }, 400);
+            },
         });
     }
 

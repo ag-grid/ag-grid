@@ -12,7 +12,7 @@ import type {
     ServerSideRowSelectionState,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, Events } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
 import { DefaultStrategy } from './selection/strategies/defaultStrategy';
 import { GroupSelectsChildrenStrategy } from './selection/strategies/groupSelectsChildrenStrategy';
@@ -39,7 +39,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
 
             this.shotgunResetNodeSelectionState();
             const event: WithoutGridCommon<SelectionChangedEvent> = {
-                type: Events.EVENT_SELECTION_CHANGED,
+                type: 'selectionChanged',
                 source: 'api',
             };
             this.eventService.dispatchEvent(event);
@@ -66,7 +66,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         this.shotgunResetNodeSelectionState();
 
         const event: WithoutGridCommon<SelectionChangedEvent> = {
-            type: Events.EVENT_SELECTION_CHANGED,
+            type: 'selectionChanged',
             source,
         };
         this.eventService.dispatchEvent(event);
@@ -99,7 +99,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         const changedNodes = this.selectionStrategy.setNodesSelected(adjustedParams);
         this.shotgunResetNodeSelectionState(adjustedParams.source);
         const event: WithoutGridCommon<SelectionChangedEvent> = {
-            type: Events.EVENT_SELECTION_CHANGED,
+            type: 'selectionChanged',
             source: adjustedParams.source,
         };
         this.eventService.dispatchEvent(event);
@@ -119,7 +119,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         this.shotgunResetNodeSelectionState();
 
         const event: WithoutGridCommon<SelectionChangedEvent> = {
-            type: Events.EVENT_SELECTION_CHANGED,
+            type: 'selectionChanged',
             source: 'api',
         };
         this.eventService.dispatchEvent(event);
@@ -169,7 +169,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
             // may be changing from indeterminate to unchecked.
             this.shotgunResetNodeSelectionState();
             const event: WithoutGridCommon<SelectionChangedEvent> = {
-                type: Events.EVENT_SELECTION_CHANGED,
+                type: 'selectionChanged',
                 source: 'api',
             };
             this.eventService.dispatchEvent(event);
@@ -210,7 +210,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         });
 
         const event: WithoutGridCommon<SelectionChangedEvent> = {
-            type: Events.EVENT_SELECTION_CHANGED,
+            type: 'selectionChanged',
             source: params.source,
         };
         this.eventService.dispatchEvent(event);
@@ -236,7 +236,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         });
 
         const event: WithoutGridCommon<SelectionChangedEvent> = {
-            type: Events.EVENT_SELECTION_CHANGED,
+            type: 'selectionChanged',
             source: params.source,
         };
         this.eventService.dispatchEvent(event);

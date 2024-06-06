@@ -10,7 +10,7 @@ import type {
     RowRenderer,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, Events, RowNode, _iterateObject, _missing } from '@ag-grid-community/core';
+import { BeanStub, RowNode, _iterateObject, _missing } from '@ag-grid-community/core';
 
 export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
@@ -47,7 +47,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
 
     public postConstruct(): void {
         this.rowHeight = this.gos.getRowHeightAsNumber();
-        this.addManagedListener(this.eventService, Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
+        this.addManagedEventListeners({ viewportChanged: this.onViewportChanged.bind(this) });
         this.addManagedPropertyListener('viewportDatasource', () => this.updateDatasource());
         this.addManagedPropertyListener('rowHeight', () => {
             this.rowHeight = this.gos.getRowHeightAsNumber();
@@ -229,7 +229,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         });
 
         const event: WithoutGridCommon<ModelUpdatedEvent> = {
-            type: Events.EVENT_MODEL_UPDATED,
+            type: 'modelUpdated',
             newData: false,
             newPage: false,
             keepRenderedRows: true,
@@ -330,11 +330,11 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         this.rowCount = rowCount;
 
         this.eventService.dispatchEventOnce({
-            type: Events.EVENT_ROW_COUNT_READY,
+            type: 'rowCountReady',
         });
 
         const event: WithoutGridCommon<ModelUpdatedEvent> = {
-            type: Events.EVENT_MODEL_UPDATED,
+            type: 'modelUpdated',
             newData: false,
             newPage: false,
             keepRenderedRows: keepRenderedRows,

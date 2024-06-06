@@ -3,7 +3,6 @@ import {
     AgCheckbox,
     AgSelect,
     Component,
-    Events,
     RefPlaceholder,
     _removeFromParent,
     _setDisplayed,
@@ -17,7 +16,6 @@ import type { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
 import { AgColorPicker } from '../../../../../widgets/agColorPicker';
 import type { AgSliderParams } from '../../../../../widgets/agSlider';
 import { AgSlider } from '../../../../../widgets/agSlider';
-import { ChartController } from '../../../chartController';
 import type { ChartOptionsProxy } from '../../../services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
@@ -120,8 +118,10 @@ export class CartesianAxisPanel extends Component {
             // Conditionally hide the time format input based on the currently selected axis type
             updateTimeFormatVisibility();
             // Update the visibility whenever the axis type changes
-            this.addManagedListener(this.eventService, Events.EVENT_CHART_OPTIONS_CHANGED, () => {
-                updateTimeFormatVisibility();
+            this.addManagedEventListeners({
+                chartOptionsChanged: () => {
+                    updateTimeFormatVisibility();
+                },
             });
         }
 
@@ -130,8 +130,8 @@ export class CartesianAxisPanel extends Component {
         this.initAxisLabels(chartAxisThemeOverrides);
 
         const updateAxisLabelRotations = () => this.axisLabelUpdateFuncs.forEach((func) => func());
-        this.addManagedListener(chartController, ChartController.EVENT_CHART_UPDATED, updateAxisLabelRotations);
-        this.addManagedListener(chartController, ChartController.EVENT_CHART_MODEL_UPDATE, () =>
+        this.addManagedListener(chartController, 'chartUpdated', updateAxisLabelRotations);
+        this.addManagedListener(chartController, 'chartModelUpdated', () =>
             setTimeout(() => {
                 // make sure this runs after the actual chart update has happened
                 this.refreshAxisTypeSelect(chartAxisOptions);
@@ -443,7 +443,7 @@ export class CartesianAxisPanel extends Component {
         return this.chartTranslationService.translate(key);
     }
 
-    private removeTemplateComponent(component: Component): void {
+    private removeTemplateComponent(component: Component<any>): void {
         _removeFromParent(component.getGui());
         this.destroyBean(component);
     }

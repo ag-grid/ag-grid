@@ -58,7 +58,7 @@ export class AgColorPanel extends Component {
     private readonly colorInput: AgColorInput = RefPlaceholder;
     private readonly recentColors: HTMLElement = RefPlaceholder;
 
-    constructor(config: { picker: Component }) {
+    constructor(config: { picker: Component<any> }) {
         super(AgColorPanel.TEMPLATE, [AgColorInput]);
         this.picker = config.picker;
     }

@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     BeanCollection,
     ColumnNameService,
     FilterManager,
@@ -6,9 +7,7 @@ import type {
     IFilterComp,
 } from '@ag-grid-community/core';
 import {
-    AgColumn,
     Component,
-    Events,
     FilterWrapperComp,
     KeyCode,
     RefPlaceholder,
@@ -19,7 +18,8 @@ import {
     _setDisplayed,
 } from '@ag-grid-community/core';
 
-export class ToolPanelFilterComp extends Component {
+export type ToolPanelFilterCompEvent = 'filterChanged';
+export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
     private filterManager?: FilterManager;
     private columnNameService: ColumnNameService;
 
@@ -73,7 +73,7 @@ export class ToolPanelFilterComp extends Component {
             this.columnNameService.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', this.onKeyDown.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
+        this.addManagedEventListeners({ filterOpened: this.onFilterOpened.bind(this) });
         this.addInIcon('filter', this.eFilterIcon, this.column);
 
         _setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
@@ -86,7 +86,7 @@ export class ToolPanelFilterComp extends Component {
             this.eFilterToolPanelHeader.setAttribute('tabindex', '0');
         }
 
-        this.addManagedListener(this.column, AgColumn.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedListener(this.column, 'filterChanged', this.onFilterChanged.bind(this));
     }
 
     private onKeyDown(e: KeyboardEvent): void {
@@ -135,7 +135,7 @@ export class ToolPanelFilterComp extends Component {
 
     private onFilterChanged(): void {
         _setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
-        this.dispatchEvent({ type: AgColumn.EVENT_FILTER_CHANGED });
+        this.dispatchLocalEvent({ type: 'filterChanged' });
     }
 
     public toggleExpanded(): void {

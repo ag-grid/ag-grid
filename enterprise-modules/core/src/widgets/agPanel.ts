@@ -11,7 +11,7 @@ import {
 } from '@ag-grid-community/core';
 
 export interface PanelOptions extends PositionableOptions {
-    component?: Component;
+    component?: Component<any>;
     hideTitleBar?: boolean | null;
     closable?: boolean | null;
     resizable?: boolean | ResizableStructure;
@@ -171,7 +171,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         }
     }
 
-    public setBodyComponent(bodyComponent: Component) {
+    public setBodyComponent(bodyComponent: Component<any>) {
         bodyComponent.setParentComponent(this);
         this.eContentWrapper.appendChild(bodyComponent.getGui());
     }

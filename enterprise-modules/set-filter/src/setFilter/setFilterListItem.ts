@@ -34,14 +34,14 @@ import type { ISetFilterLocaleText } from './localeText';
 
 export interface SetFilterListItemSelectionChangedEvent<
     I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null,
-> extends AgEvent {
+> extends AgEvent<'selectionChanged'> {
     isSelected: boolean;
     item: I;
 }
 
 export interface SetFilterListItemExpandedChangedEvent<
     I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null,
-> extends AgEvent {
+> extends AgEvent<'expandedChanged'> {
     isExpanded: boolean;
     item: I;
 }
@@ -62,8 +62,9 @@ export interface SetFilterListItemParams<V> {
     hasIndeterminateExpandState?: boolean;
 }
 
+export type SetFilterListItemEvent = 'selectionChanged' | 'expandedChanged';
 /** @param V type of value in the Set Filter */
-export class SetFilterListItem<V> extends Component {
+export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private valueService: ValueService;
     private userComponentFactory: UserComponentFactory;
 
@@ -202,13 +203,13 @@ export class SetFilterListItem<V> extends Component {
             this.isExpanded = isExpanded;
 
             const event: SetFilterListItemExpandedChangedEvent = {
-                type: SetFilterListItem.EVENT_EXPANDED_CHANGED,
+                type: 'expandedChanged',
                 isExpanded: !!isExpanded,
                 item: this.item,
             };
 
             if (!silent) {
-                this.dispatchEvent(event);
+                this.dispatchLocalEvent(event);
             }
 
             this.setExpandedIcons();
@@ -231,12 +232,12 @@ export class SetFilterListItem<V> extends Component {
         this.isSelected = isSelected;
 
         const event: SetFilterListItemSelectionChangedEvent = {
-            type: SetFilterListItem.EVENT_SELECTION_CHANGED,
+            type: 'selectionChanged',
             isSelected,
             item: this.item,
         };
 
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent(event);
         this.refreshVariableAriaLabels();
         this.refreshAriaChecked();
     }

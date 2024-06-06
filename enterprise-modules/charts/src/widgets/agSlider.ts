@@ -1,5 +1,5 @@
 import type { AgComponentSelector, AgLabelParams, LabelAlignment } from '@ag-grid-community/core';
-import { AgAbstractLabel, AgInputNumberField, Events, RefPlaceholder } from '@ag-grid-community/core';
+import { AgAbstractLabel, AgInputNumberField, RefPlaceholder } from '@ag-grid-community/core';
 
 import { AgInputRange } from './agInputRange';
 
@@ -58,7 +58,7 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams> {
     }
 
     public onValueChange(callbackFn: (newValue: number) => void) {
-        const eventChanged = Events.EVENT_FIELD_VALUE_CHANGED;
+        const eventChanged = 'fieldValueChanged';
         this.addManagedListener(this.eText, eventChanged, () => {
             const textValue = parseFloat(this.eText.getValue()!);
             this.eSlider.setValue(textValue.toString(), true);
@@ -110,7 +110,7 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams> {
         this.eSlider.setValue(value, true);
 
         if (!silent) {
-            this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
+            this.dispatchLocalEvent({ type: 'fieldValueChanged' });
         }
 
         return this;

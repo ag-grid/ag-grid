@@ -22,7 +22,7 @@ import type { CellPosition } from './entities/cellPositionUtils';
 import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from './entities/colDef';
 import type { ChartRef, GridOptions } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
-import { Events } from './eventKeys';
+import type { PublicEvents } from './eventKeys';
 import type {
     AgEvent,
     AgEventListener,
@@ -57,6 +57,7 @@ import type { AdvancedFilterModel } from './interfaces/advancedFilterModel';
 import type { CsvExportParams } from './interfaces/exportParams';
 import type { GridState } from './interfaces/gridState';
 import type { IAggFuncService } from './interfaces/iAggFuncService';
+import type { RenderedRowEvent } from './interfaces/iCallbackParams';
 import type { ICellEditor } from './interfaces/iCellEditor';
 import type { ClientSideRowModelStep, IClientSideRowModel } from './interfaces/iClientSideRowModel';
 import type { IClipboardCopyParams, IClipboardCopyRowsParams, IClipboardService } from './interfaces/iClipboardService';
@@ -114,7 +115,7 @@ import { _escapeString } from './utils/string';
 import type { ValueCache } from './valueService/valueCache';
 import type { ValueService } from './valueService/valueService';
 
-export class GridApiService<TData = any> extends BeanStub implements GridApi, NamedBean {
+export class GridApiService<TData = any> extends BeanStub<PublicEvents> implements GridApi, NamedBean {
     beanName = 'gridApi' as const;
 
     private context: Context;
@@ -504,7 +505,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
         }
     }
 
-    public addRenderedRowListener(eventName: string, rowIndex: number, callback: (...args: any[]) => any) {
+    public addRenderedRowListener(eventName: RenderedRowEvent, rowIndex: number, callback: (...args: any[]) => any) {
         this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback as any);
     }
 
@@ -911,7 +912,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
         return value;
     }
 
-    public override addEventListener(eventType: string, listener: (...args: any[]) => any): void {
+    public override addEventListener(eventType: PublicEvents, listener: (...args: any[]) => any): void {
         this.apiEventService.addEventListener(eventType, listener as AgEventListener);
     }
 
@@ -919,7 +920,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
         this.apiEventService.addGlobalListener(listener as AgGlobalEventListener);
     }
 
-    public override removeEventListener(eventType: string, listener: (...args: any[]) => any): void {
+    public override removeEventListener(eventType: PublicEvents, listener: (...args: any[]) => any): void {
         this.apiEventService.removeEventListener(eventType, listener as AgEventListener);
     }
 
@@ -927,7 +928,7 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
         this.apiEventService.removeGlobalListener(listener as AgGlobalEventListener);
     }
 
-    public override dispatchEvent(event: AgEvent): void {
+    public dispatchEvent(event: AgEvent<PublicEvents>): void {
         this.eventService.dispatchEvent(event);
     }
 
@@ -942,10 +943,10 @@ export class GridApiService<TData = any> extends BeanStub implements GridApi, Na
         }
 
         const event: WithoutGridCommon<GridPreDestroyedEvent<TData>> = {
-            type: Events.EVENT_GRID_PRE_DESTROYED,
+            type: 'gridPreDestroyed',
             state: this.getState(),
         };
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent(event);
 
         // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.
         this.destroyCalled = true;

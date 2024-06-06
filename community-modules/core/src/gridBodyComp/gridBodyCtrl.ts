@@ -6,7 +6,6 @@ import type { CtrlsService } from '../ctrlsService';
 import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
 import type { Environment } from '../environment';
 import type { EventsType } from '../eventKeys';
-import { Events } from '../eventKeys';
 import type { FilterManager } from '../filter/filterManager';
 import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -163,12 +162,12 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private addEventListeners(): void {
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_GRID_COLUMNS_CHANGED]: this.onGridColumnsChanged.bind(this),
-            [Events.EVENT_SCROLL_VISIBILITY_CHANGED]: this.onScrollVisibilityChanged.bind(this),
-            [Events.EVENT_PINNED_ROW_DATA_CHANGED]: this.setFloatingHeights.bind(this),
-            [Events.EVENT_PINNED_HEIGHT_CHANGED]: this.setFloatingHeights.bind(this),
-            [Events.EVENT_HEADER_HEIGHT_CHANGED]: this.onHeaderHeightChanged.bind(this),
+        this.addManagedEventListeners({
+            gridColumnsChanged: this.onGridColumnsChanged.bind(this),
+            scrollVisibilityChanged: this.onScrollVisibilityChanged.bind(this),
+            pinnedRowDataChanged: this.setFloatingHeights.bind(this),
+            pinnedHeightChanged: this.setFloatingHeights.bind(this),
+            headerHeightChanged: this.onHeaderHeightChanged.bind(this),
         });
     }
 
@@ -324,14 +323,16 @@ export class GridBodyCtrl extends BeanStub {
 
         updateAnimationClass();
 
-        this.addManagedListener(this.eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, updateAnimationClass);
+        this.addManagedEventListeners({ heightScaleChanged: updateAnimationClass });
         this.addManagedPropertyListener('animateRows', updateAnimationClass);
 
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, () => {
-            if (!initialSizeMeasurementComplete && this.environment.hasMeasuredSizes()) {
-                initialSizeMeasurementComplete = true;
-                updateAnimationClass();
-            }
+        this.addManagedEventListeners({
+            gridStylesChanged: () => {
+                if (!initialSizeMeasurementComplete && this.environment.hasMeasuredSizes()) {
+                    initialSizeMeasurementComplete = true;
+                    updateAnimationClass();
+                }
+            },
         });
     }
 

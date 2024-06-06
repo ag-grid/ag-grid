@@ -1,7 +1,6 @@
 import { GROUP_AUTO_COLUMN_ID } from '../../columns/columnUtils';
 import { KeyCode } from '../../constants/keyCode';
 import type { CellEditingStartedEvent, CellEditingStoppedEvent } from '../../events';
-import { Events } from '../../events';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import { _getAriaCheckboxStateName, _setAriaLive } from '../../utils/aria';
 import { _stopPropagationForAgGrid } from '../../utils/event';
@@ -105,7 +104,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
     private onCheckboxChanged(isSelected?: boolean): void {
         const { column, node, value } = this.params;
         const eventStarted: WithoutGridCommon<CellEditingStartedEvent> = {
-            type: Events.EVENT_CELL_EDITING_STARTED,
+            type: 'cellEditingStarted',
             column: column!,
             colDef: column?.getColDef()!,
             data: node.data,
@@ -119,7 +118,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         const valueChanged = this.params.node.setDataValue(this.params.column!, isSelected, 'edit');
 
         const eventStopped: WithoutGridCommon<CellEditingStoppedEvent> = {
-            type: Events.EVENT_CELL_EDITING_STOPPED,
+            type: 'cellEditingStopped',
             column: column!,
             colDef: column?.getColDef()!,
             data: node.data,

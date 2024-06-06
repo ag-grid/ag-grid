@@ -1,6 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import { Events } from '../../eventKeys';
 import { _setDisplayed, _setFixedWidth } from '../../utils/dom';
 import type { PinnedWidthService } from '../pinnedWidthService';
 
@@ -21,7 +20,7 @@ export class SetPinnedRightWidthFeature extends BeanStub {
     public postConstruct(): void {
         this.addManagedListener(
             this.eventService,
-            Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED,
+            'rightPinnedWidthChanged',
             this.onPinnedRightWidthChanged.bind(this)
         );
     }

@@ -1,3 +1,4 @@
+import type { AgProvidedColumnGroupEvent } from '../entities/agProvidedColumnGroup';
 import type { AbstractColDef, ColDef, ColGroupDef, IAggFunc, SortDirection } from '../entities/colDef';
 import type { BrandedType } from '../interfaces/brandedType';
 import type { IEventEmitter } from './iEventEmitter';
@@ -22,7 +23,7 @@ interface IHeaderColumn<TValue = any> extends IEventEmitter {
     getColumnGroupShow(): ColumnGroupShowType | undefined;
 
     /** Returns the parent column group, if column grouping is active. */
-    getParent(): ColumnGroup | null;
+    getParent(): ColumnGroup<TValue> | null;
     isResizable(): boolean;
     isEmptyGroup(): boolean;
     isMoving(): boolean;
@@ -43,7 +44,9 @@ interface IProvidedColumn {
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 export type ColumnEventName =
+    // + renderedHeaderCell - for making header cell transparent when moving
     | 'movingChanged'
+    // + renderedCell - changing left position
     | 'leftChanged'
     | 'widthChanged'
     | 'lastLeftPinnedChanged'
@@ -61,7 +64,7 @@ export type ColumnEventName =
 
 export type ColumnInstanceId = BrandedType<number, 'ColumnInstanceId'>;
 
-export interface Column<TValue = any> extends IHeaderColumn<TValue>, IProvidedColumn, IEventEmitter {
+export interface Column<TValue = any> extends IHeaderColumn<TValue>, IProvidedColumn, IEventEmitter<ColumnEventName> {
     /**
      * Returns the column definition provided by the application.
      * This may not be correct, as items can be superseded by default column options.
@@ -233,7 +236,7 @@ export interface ColumnGroup<TValue = any> extends IHeaderColumn<TValue> {
     isColumn: false;
 }
 
-export interface ProvidedColumnGroup extends IProvidedColumn, IEventEmitter {
+export interface ProvidedColumnGroup extends IProvidedColumn, IEventEmitter<AgProvidedColumnGroupEvent> {
     /**
      * Used for marryChildren, helps with comparing when duplicate groups have been created to manage split groups.
      *
