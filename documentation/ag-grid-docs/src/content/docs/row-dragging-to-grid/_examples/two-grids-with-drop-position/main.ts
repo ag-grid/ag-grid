@@ -11,7 +11,7 @@ import {
 } from '@ag-grid-community/core';
 
 // Register the required feature modules with the Grid
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 var rowIdSequence = 100;
 

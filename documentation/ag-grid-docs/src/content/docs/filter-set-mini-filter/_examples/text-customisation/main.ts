@@ -1,10 +1,10 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, MenuModule, SetFilterModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, SetFilterModule]);
 
 let gridApi: GridApi<IOlympicData>;
 

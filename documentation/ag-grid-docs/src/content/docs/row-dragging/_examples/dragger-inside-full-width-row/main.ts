@@ -7,12 +7,12 @@ import {
     RowHeightParams,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
 import { getData } from './data';
 import { FullWidthCellRenderer } from './fullWidthCellRenderer_typescript';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 let gridApi: GridApi;
 

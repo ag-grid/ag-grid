@@ -1,6 +1,6 @@
 import { AgGridAngular } from '@ag-grid-community/angular';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
@@ -13,7 +13,7 @@ import { Component } from '@angular/core';
 import './styles.css';
 
 // Register shared Modules globally
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, MenuModule, GridChartsModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, GridChartsModule]);
 
 @Component({
     selector: 'my-app',

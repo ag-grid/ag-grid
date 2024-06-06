@@ -6,18 +6,12 @@ import {
     ProcessRowGroupForExportParams,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
-    ClientSideRowModelModule,
-    ExcelExportModule,
-    MenuModule,
-    RowGroupingModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ExcelExportModule, MenuModule, RowGroupingModule]);
 
 let gridApi: GridApi<IOlympicData>;
 

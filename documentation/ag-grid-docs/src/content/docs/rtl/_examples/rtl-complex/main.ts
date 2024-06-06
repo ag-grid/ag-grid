@@ -15,7 +15,7 @@ import {
     ValueSetterParams,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
@@ -36,7 +36,6 @@ import { PersonFilter } from './person-filter_typescript';
 import { WinningsFilter } from './winnings-filter_typescript';
 
 ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
     ClientSideRowModelModule,
     ClipboardModule,
     ColumnsToolPanelModule,

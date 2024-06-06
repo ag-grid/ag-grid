@@ -3,7 +3,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
     ColDef,
-    CommunityFeaturesModule,
     GetRowIdParams,
     ModuleRegistry,
     ValueFormatterParams,
@@ -18,7 +17,7 @@ import { createRoot } from 'react-dom/client';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 const MIN_BOOK_COUNT = 10;
 const MAX_BOOK_COUNT = 20;
