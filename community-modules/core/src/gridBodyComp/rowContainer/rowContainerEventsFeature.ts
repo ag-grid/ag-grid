@@ -9,9 +9,9 @@ import { Events } from '../../events';
 import type { FocusService } from '../../focusService';
 import type { IRangeService } from '../../interfaces/IRangeService';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
+import type { IRowModel } from '../../interfaces/iRowModel';
 import type { RowPinnedType } from '../../interfaces/iRowNode';
 import type { EventShowContextMenuParams, MenuService } from '../../misc/menuService';
-import type { PaginationProxy } from '../../pagination/paginationProxy';
 import type { PinnedRowModel } from '../../pinnedRowModel/pinnedRowModel';
 import { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -40,7 +40,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private focusService: FocusService;
     private undoRedoService?: UndoRedoService;
     private visibleColsService: VisibleColsService;
-    private paginationProxy: PaginationProxy;
+    private rowModel: IRowModel;
     private pinnedRowModel: PinnedRowModel;
     private rangeService?: IRangeService;
     private clipboardService?: IClipboardService;
@@ -54,7 +54,7 @@ export class RowContainerEventsFeature extends BeanStub {
         this.focusService = beans.focusService;
         this.undoRedoService = beans.undoRedoService;
         this.visibleColsService = beans.visibleColsService;
-        this.paginationProxy = beans.paginationProxy;
+        this.rowModel = beans.rowModel;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.rangeService = beans.rangeService;
         this.clipboardService = beans.clipboardService;
@@ -316,9 +316,9 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndA(event: KeyboardEvent): void {
-        const { pinnedRowModel, paginationProxy, rangeService } = this;
+        const { pinnedRowModel, rowModel, rangeService } = this;
 
-        if (rangeService && paginationProxy.isRowsToRender()) {
+        if (rangeService && rowModel.isRowsToRender()) {
             const [isEmptyPinnedTop, isEmptyPinnedBottom] = [
                 pinnedRowModel.isEmpty('top'),
                 pinnedRowModel.isEmpty('bottom'),
@@ -330,7 +330,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
             if (isEmptyPinnedBottom) {
                 floatingEnd = null;
-                rowEnd = this.paginationProxy.getRowCount() - 1;
+                rowEnd = rowModel.getRowCount() - 1;
             } else {
                 floatingEnd = 'bottom';
                 rowEnd = pinnedRowModel.getPinnedBottomRowNodes().length - 1;

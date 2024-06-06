@@ -7,7 +7,7 @@ import type { GridOptions } from '../../entities/gridOptions';
 import { Events } from '../../eventKeys';
 import type { EventsType } from '../../eventKeys';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
-import type { PaginationProxy } from '../../pagination/paginationProxy';
+import type { IRowModel } from '../../interfaces/iRowModel';
 import type { ILoadingOverlayParams } from './loadingOverlayComponent';
 import type { INoRowsOverlayParams } from './noRowsOverlayComponent';
 import type { OverlayWrapperComponent } from './overlayWrapperComponent';
@@ -16,12 +16,12 @@ export class OverlayService extends BeanStub implements NamedBean {
     beanName = 'overlayService' as const;
 
     private userComponentFactory: UserComponentFactory;
-    private paginationProxy: PaginationProxy;
+    private rowModel: IRowModel;
     private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection): void {
         this.userComponentFactory = beans.userComponentFactory;
-        this.paginationProxy = beans.paginationProxy;
+        this.rowModel = beans.rowModel;
         this.columnModel = beans.columnModel;
     }
 
@@ -79,7 +79,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             });
         });
 
-        this.manuallyDisplayed = this.columnModel.isReady() && !this.paginationProxy.isEmpty();
+        this.manuallyDisplayed = this.columnModel.isReady() && !this.rowModel.isEmpty();
         this.overlayWrapperComp.showOverlay(promise, wrapperCssClass, listenerDestroyFunc);
     }
 
@@ -89,7 +89,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     }
 
     private showOrHideOverlay(): void {
-        const isEmpty = this.paginationProxy.isEmpty();
+        const isEmpty = this.rowModel.isEmpty();
         const isSuppressNoRowsOverlay = this.gos.get('suppressNoRowsOverlay');
         if (isEmpty && !isSuppressNoRowsOverlay) {
             this.showNoRowsOverlay();
@@ -107,7 +107,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         // this problem exists before of the race condition between the services (column controller in this case)
         // and the view (grid panel). if the model beans were all initialised first, and then the view beans second,
         // this race condition would not happen.
-        if (this.columnModel.isReady() && !this.paginationProxy.isEmpty() && !this.manuallyDisplayed) {
+        if (this.columnModel.isReady() && !this.rowModel.isEmpty() && !this.manuallyDisplayed) {
             this.hideOverlay();
         }
     }

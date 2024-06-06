@@ -400,7 +400,7 @@ export { LoadCompleteEvent, LoadSuccessParams } from './rowNodeCache/iRowNodeBlo
 export { RowNodeBlock } from './rowNodeCache/rowNodeBlock';
 export { RowNodeBlockLoader } from './rowNodeCache/rowNodeBlockLoader';
 export { RowNodeBlockModule } from './rowNodeCache/rowNodeBlockModule';
-export { PaginationProxy } from './pagination/paginationProxy';
+export { PaginationModule } from './pagination/paginationModule';
 export {
     IClientSideRowModel,
     ClientSideRowModelSteps,

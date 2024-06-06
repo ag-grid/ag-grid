@@ -40,6 +40,7 @@ import { NavigationService } from './gridBodyComp/navigationService';
 import { PinnedWidthService } from './gridBodyComp/pinnedWidthService';
 import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridComp } from './gridComp/gridComp';
+import { CommunityFeaturesModule } from './gridCoreModule';
 import { GridOptionsService } from './gridOptionsService';
 import { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 import { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
@@ -58,8 +59,8 @@ import { MenuService } from './misc/menuService';
 import { ResizeObserverService } from './misc/resizeObserverService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
-import { PaginationAutoPageSizeService } from './pagination/paginationAutoPageSizeService';
-import { PaginationProxy } from './pagination/paginationProxy';
+import { RowBoundsListener } from './pagination/rowBoundsListener';
+import { RowBoundsService } from './pagination/rowBoundsService';
 import { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 import { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
 import { AutoWidthCalculator } from './rendering/autoWidthCalculator';
@@ -295,7 +296,7 @@ export class GridCoreCreator {
         const passedViaConstructor: Module[] | undefined | null = params ? params.modules : null;
         const registered = ModuleRegistry.__getRegisteredModules(gridId);
 
-        const allModules: Module[] = [];
+        const allModules: Module[] = [CommunityFeaturesModule];
         const mapNames: { [name: string]: boolean } = {};
 
         // adds to list and removes duplicates
@@ -394,7 +395,6 @@ export class GridCoreCreator {
             RowPositionUtils,
             CellPositionUtils,
             HeaderPositionUtils,
-            PaginationAutoPageSizeService,
             GridApiService,
             UserComponentRegistry,
             AgComponentUtils,
@@ -413,7 +413,8 @@ export class GridCoreCreator {
             SelectionService,
             ColumnModel,
             HeaderNavigationService,
-            PaginationProxy,
+            RowBoundsService,
+            RowBoundsListener,
             RowRenderer,
             ExpressionService,
             ColumnFactory,

@@ -7,7 +7,7 @@ import {
     IServerSideGetRowsRequest,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
@@ -15,13 +15,7 @@ import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-mo
 
 import { FakeServer } from './fakeServer';
 
-ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
-    ColumnsToolPanelModule,
-    MenuModule,
-    RowGroupingModule,
-    ServerSideRowModelModule,
-]);
+ModuleRegistry.registerModules([ColumnsToolPanelModule, MenuModule, RowGroupingModule, ServerSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {

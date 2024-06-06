@@ -5,7 +5,6 @@ import {
     CellClassParams,
     CellClassRules,
     ColDef,
-    CommunityFeaturesModule,
     GridReadyEvent,
     ModuleRegistry,
     ValueParserParams,
@@ -18,7 +17,7 @@ import { createRoot } from 'react-dom/client';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const ragCellClassRules: CellClassRules = {
     'rag-green-outer': (params) => params.value === 2008,

@@ -11,7 +11,7 @@ import {
     ValueGetterParams,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
@@ -21,7 +21,6 @@ import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { FakeServer } from './fakeServer';
 
 ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
     ColumnsToolPanelModule,
     MenuModule,
     RowGroupingModule,

@@ -155,7 +155,7 @@ export class RowCtrl extends BeanStub {
         this.beans = beans;
         this.gos = beans.gos;
         this.rowNode = rowNode;
-        this.paginationPage = beans.paginationProxy.getCurrentPage();
+        this.paginationPage = beans.paginationService?.getCurrentPage() ?? 0;
         this.useAnimationFrameForCreate = useAnimationFrameForCreate;
         this.printLayout = printLayout;
         this.suppressRowTransform = this.gos.get('suppressRowTransform');
@@ -1255,11 +1255,11 @@ export class RowCtrl extends BeanStub {
     }
 
     private isFirstRowOnPage(): boolean {
-        return this.rowNode.rowIndex === this.beans.paginationProxy.getPageFirstRow();
+        return this.rowNode.rowIndex === this.beans.rowBoundsService.getFirstRow();
     }
 
     private isLastRowOnPage(): boolean {
-        return this.rowNode.rowIndex === this.beans.paginationProxy.getPageLastRow();
+        return this.rowNode.rowIndex === this.beans.rowBoundsService.getLastRow();
     }
 
     private refreshFirstAndLastRowStyles(): void {
@@ -1611,7 +1611,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private onPaginationChanged(): void {
-        const currentPage = this.beans.paginationProxy.getCurrentPage();
+        const currentPage = this.beans.paginationService?.getCurrentPage() ?? 0;
         // it is possible this row is in the new page, but the page number has changed, which means
         // it needs to reposition itself relative to the new page
         if (this.paginationPage !== currentPage) {
@@ -1639,7 +1639,7 @@ export class RowCtrl extends BeanStub {
             return topPx;
         }
 
-        const pixelOffset = this.beans.paginationProxy.getPixelOffset();
+        const pixelOffset = this.beans.rowBoundsService.getPixelOffset();
         const multiplier = reverse ? 1 : -1;
 
         return topPx + pixelOffset * multiplier;

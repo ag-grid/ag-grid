@@ -3,19 +3,24 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
 import type { RowPosition } from '../entities/rowPositionUtils';
-import type { ModelUpdatedEvent, PaginationChangedEvent } from '../events';
-import { Events } from '../events';
+import { Events } from '../eventKeys';
+import type { PaginationChangedEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import type { IRowModel, RowBounds, RowModelType } from '../interfaces/iRowModel';
-import { _exists, _missing } from '../utils/generic';
+import type { IRowModel } from '../interfaces/iRowModel';
+import { _exists } from '../utils/generic';
+import type { ComponentClass } from '../widgets/component';
+import { PaginationComp } from './paginationComp';
+import type { RowBoundsService } from './rowBoundsService';
 
-export class PaginationProxy extends BeanStub implements NamedBean {
-    beanName = 'paginationProxy' as const;
+export class PaginationService extends BeanStub implements NamedBean {
+    beanName = 'paginationService' as const;
 
     private rowModel: IRowModel;
+    private rowBoundsService: RowBoundsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
+        this.rowBoundsService = beans.rowBoundsService;
     }
 
     private active: boolean;
@@ -37,9 +42,6 @@ export class PaginationProxy extends BeanStub implements NamedBean {
 
     private topDisplayedRowIndex = 0;
     private bottomDisplayedRowIndex = 0;
-    private pixelOffset = 0;
-    private topRowBounds: RowBounds;
-    private bottomRowBounds: RowBounds;
 
     private masterRowCount: number = 0;
 
@@ -48,30 +50,12 @@ export class PaginationProxy extends BeanStub implements NamedBean {
         this.pageSizeFromGridOptions = this.gos.get('paginationPageSize');
         this.paginateChildRows = this.isPaginateChildRows();
 
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
         this.addManagedPropertyListener('pagination', this.onPaginationGridOptionChanged.bind(this));
         this.addManagedPropertyListener('paginationPageSize', this.onPageSizeGridOptionChanged.bind(this));
-
-        this.onModelUpdated();
     }
 
-    public ensureRowHeightsValid(
-        startPixel: number,
-        endPixel: number,
-        startLimitIndex: number,
-        endLimitIndex: number,
-        force = false
-    ): boolean {
-        const res = this.rowModel.ensureRowHeightsValid(
-            startPixel,
-            endPixel,
-            this.getPageFirstRow(),
-            this.getPageLastRow()
-        );
-        if (res || force) {
-            this.calculatePages();
-        }
-        return res;
+    public getPaginationComp(): ComponentClass {
+        return PaginationComp;
     }
 
     private isPaginateChildRows(): boolean {
@@ -83,33 +67,13 @@ export class PaginationProxy extends BeanStub implements NamedBean {
         return this.gos.get('paginateChildRows');
     }
 
-    private onModelUpdated(modelUpdatedEvent?: WithoutGridCommon<ModelUpdatedEvent>): void {
-        this.calculatePages();
-        const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
-            type: Events.EVENT_PAGINATION_CHANGED,
-            animate: modelUpdatedEvent ? modelUpdatedEvent.animate : false,
-            newData: modelUpdatedEvent ? modelUpdatedEvent.newData : false,
-            newPage: modelUpdatedEvent ? modelUpdatedEvent.newPage : false,
-            newPageSize: modelUpdatedEvent ? modelUpdatedEvent.newPageSize : false,
-            keepRenderedRows: modelUpdatedEvent ? modelUpdatedEvent.keepRenderedRows : false,
-        };
-        this.eventService.dispatchEvent(paginationChangedEvent);
-    }
-
     private onPaginationGridOptionChanged(): void {
         this.active = this.gos.get('pagination');
         this.calculatePages();
-        const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
-            type: Events.EVENT_PAGINATION_CHANGED,
-            animate: false,
-            newData: false,
-            newPage: false,
-            newPageSize: false,
-            // important to keep rendered rows, otherwise every time grid is resized,
-            // we would destroy all the rows.
-            keepRenderedRows: true,
-        };
-        this.eventService.dispatchEvent(paginationChangedEvent);
+
+        // important to keep rendered rows, otherwise every time grid is resized,
+        // we would destroy all the rows.
+        this.dispatchPaginationChangedEvent({ keepRenderedRows: true });
     }
 
     private onPageSizeGridOptionChanged(): void {
@@ -123,101 +87,17 @@ export class PaginationProxy extends BeanStub implements NamedBean {
 
         this.currentPage = page;
         this.calculatePages();
-        const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
-            type: Events.EVENT_PAGINATION_CHANGED,
-            animate: false,
-            newData: false,
-            newPage: true,
-            newPageSize: false,
-            keepRenderedRows: false,
-        };
-        this.eventService.dispatchEvent(paginationChangedEvent);
-    }
 
-    public getPixelOffset(): number {
-        return this.pixelOffset;
-    }
-
-    public getRow(index: number): RowNode | undefined {
-        return this.rowModel.getRow(index);
-    }
-
-    public getRowNode(id: string): RowNode | undefined {
-        return this.rowModel.getRowNode(id);
-    }
-
-    public getRowIndexAtPixel(pixel: number): number {
-        return this.rowModel.getRowIndexAtPixel(pixel);
-    }
-
-    public getCurrentPageHeight(): number {
-        if (_missing(this.topRowBounds) || _missing(this.bottomRowBounds)) {
-            return 0;
-        }
-        return Math.max(this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight - this.topRowBounds.rowTop, 0);
-    }
-
-    public getCurrentPagePixelRange(): { pageFirstPixel: number; pageLastPixel: number } {
-        const pageFirstPixel = this.topRowBounds ? this.topRowBounds.rowTop : 0;
-        const pageLastPixel = this.bottomRowBounds ? this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight : 0;
-        return { pageFirstPixel, pageLastPixel };
+        this.dispatchPaginationChangedEvent({ newPage: true });
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
-        if (!this.rowModel.isRowPresent(rowNode)) {
-            return false;
-        }
         const nodeIsInPage =
             rowNode.rowIndex! >= this.topDisplayedRowIndex && rowNode.rowIndex! <= this.bottomDisplayedRowIndex;
         return nodeIsInPage;
     }
 
-    public isEmpty(): boolean {
-        return this.rowModel.isEmpty();
-    }
-
-    public isRowsToRender(): boolean {
-        return this.rowModel.isRowsToRender();
-    }
-
-    public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
-        return this.rowModel.forEachNode(callback);
-    }
-
-    public forEachNodeOnPage(callback: (rowNode: RowNode) => void) {
-        const firstRow = this.getPageFirstRow();
-        const lastRow = this.getPageLastRow();
-        for (let i = firstRow; i <= lastRow; i++) {
-            const node = this.getRow(i);
-            if (node) {
-                callback(node);
-            }
-        }
-    }
-
-    public getType(): RowModelType {
-        return this.rowModel.getType();
-    }
-
-    public getRowBounds(index: number): RowBounds {
-        const res = this.rowModel.getRowBounds(index)!;
-        res.rowIndex = index;
-        return res;
-    }
-
-    public getPageFirstRow(): number {
-        return this.topRowBounds ? this.topRowBounds.rowIndex! : -1;
-    }
-
-    public getPageLastRow(): number {
-        return this.bottomRowBounds ? this.bottomRowBounds.rowIndex! : -1;
-    }
-
-    public getRowCount(): number {
-        return this.rowModel.getRowCount();
-    }
-
-    public getPageForIndex(index: number): number {
+    private getPageForIndex(index: number): number {
         return Math.floor(index / this.pageSize);
     }
 
@@ -236,10 +116,6 @@ export class PaginationProxy extends BeanStub implements NamedBean {
         }
         const rowPage = this.getPageForIndex(row.rowIndex);
         return rowPage === this.currentPage;
-    }
-
-    public isLastPageFound(): boolean {
-        return this.rowModel.isLastRowIndexKnown();
     }
 
     public getCurrentPage(): number {
@@ -293,6 +169,20 @@ export class PaginationProxy extends BeanStub implements NamedBean {
         return this.defaultPageSize;
     }
 
+    public calculatePages(): void {
+        if (this.active) {
+            if (this.paginateChildRows) {
+                this.calculatePagesAllRows();
+            } else {
+                this.calculatePagesMasterRowsOnly();
+            }
+        } else {
+            this.calculatedPagesNotActive();
+        }
+
+        this.rowBoundsService.calculateBounds(this.topDisplayedRowIndex, this.bottomDisplayedRowIndex);
+    }
+
     public unsetAutoCalculatedPageSize(): void {
         if (this.pageSizeAutoCalculated === undefined) {
             return;
@@ -306,15 +196,8 @@ export class PaginationProxy extends BeanStub implements NamedBean {
         }
 
         this.calculatePages();
-        const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
-            type: Events.EVENT_PAGINATION_CHANGED,
-            animate: false,
-            newData: false,
-            newPage: false,
-            newPageSize: true,
-            keepRenderedRows: false,
-        };
-        this.eventService.dispatchEvent(paginationChangedEvent);
+
+        this.dispatchPaginationChangedEvent({ newPageSize: true });
     }
 
     public setPageSize(
@@ -347,49 +230,9 @@ export class PaginationProxy extends BeanStub implements NamedBean {
 
         if (currentSize !== this.pageSize) {
             this.calculatePages();
-            const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
-                type: Events.EVENT_PAGINATION_CHANGED,
-                animate: false,
-                newData: false,
-                newPage: false,
-                newPageSize: true,
-                keepRenderedRows: true,
-            };
-            this.eventService.dispatchEvent(paginationChangedEvent);
+
+            this.dispatchPaginationChangedEvent({ newPageSize: true, keepRenderedRows: true });
         }
-    }
-
-    private calculatePages(): void {
-        if (this.active) {
-            if (this.paginateChildRows) {
-                this.calculatePagesAllRows();
-            } else {
-                this.calculatePagesMasterRowsOnly();
-            }
-        } else {
-            this.calculatedPagesNotActive();
-        }
-
-        this.topRowBounds = this.rowModel.getRowBounds(this.topDisplayedRowIndex)!;
-        if (this.topRowBounds) {
-            this.topRowBounds.rowIndex = this.topDisplayedRowIndex;
-        }
-
-        this.bottomRowBounds = this.rowModel.getRowBounds(this.bottomDisplayedRowIndex)!;
-        if (this.bottomRowBounds) {
-            this.bottomRowBounds.rowIndex = this.bottomDisplayedRowIndex;
-        }
-
-        this.setPixelOffset(_exists(this.topRowBounds) ? this.topRowBounds.rowTop : 0);
-    }
-
-    private setPixelOffset(value: number): void {
-        if (this.pixelOffset === value) {
-            return;
-        }
-
-        this.pixelOffset = value;
-        this.eventService.dispatchEvent({ type: Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED });
     }
 
     private setZeroRows(): void {
@@ -483,5 +326,22 @@ export class PaginationProxy extends BeanStub implements NamedBean {
         this.currentPage = 0;
         this.topDisplayedRowIndex = 0;
         this.bottomDisplayedRowIndex = this.rowModel.getRowCount() - 1;
+    }
+
+    private dispatchPaginationChangedEvent(params: {
+        newPage?: boolean;
+        newPageSize?: boolean;
+        keepRenderedRows?: boolean;
+    }): void {
+        const { keepRenderedRows = false, newPage = false, newPageSize = false } = params;
+        const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
+            type: Events.EVENT_PAGINATION_CHANGED,
+            animate: false,
+            newData: false,
+            newPage,
+            newPageSize,
+            keepRenderedRows,
+        };
+        this.eventService.dispatchEvent(paginationChangedEvent);
     }
 }

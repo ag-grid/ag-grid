@@ -9,7 +9,7 @@ import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { IRowModel } from './interfaces/iRowModel';
 import type { ISelectionService, ISetNodesSelectedParams } from './interfaces/iSelectionService';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './interfaces/selectionState';
-import type { PaginationProxy } from './pagination/paginationProxy';
+import type { RowBoundsService } from './pagination/rowBoundsService';
 import { _last } from './utils/array';
 import { ChangedPath } from './utils/changedPath';
 import { _exists, _missing } from './utils/generic';
@@ -18,11 +18,11 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
     beanName = 'selectionService' as const;
 
     private rowModel: IRowModel;
-    private paginationProxy: PaginationProxy;
+    private rowBoundsService: RowBoundsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
-        this.paginationProxy = beans.paginationProxy;
+        this.rowBoundsService = beans.rowBoundsService;
     }
 
     private selectedNodes: Map<string, RowNode> = new Map();
@@ -548,7 +548,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
 
         const nodes: RowNode[] = [];
         if (justCurrentPage) {
-            this.paginationProxy.forEachNodeOnPage((node) => {
+            this.forEachNodeOnPage((node) => {
                 if (!node.group) {
                     nodes.push(node);
                     return;
@@ -587,6 +587,17 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             nodes.push(node);
         });
         return nodes;
+    }
+
+    private forEachNodeOnPage(callback: (rowNode: RowNode) => void) {
+        const firstRow = this.rowBoundsService.getFirstRow();
+        const lastRow = this.rowBoundsService.getLastRow();
+        for (let i = firstRow; i <= lastRow; i++) {
+            const node = this.rowModel.getRow(i);
+            if (node) {
+                callback(node);
+            }
+        }
     }
 
     public selectAllRowNodes(params: {

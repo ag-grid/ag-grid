@@ -2,6 +2,10 @@
 
 .cta {
     position: relative;
+}
+
+.cta a,
+.cta button {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,6 +19,13 @@
 
     &:hover {
         background-color: var(--color-util-brand-100);
+    }
+
+    &:focus-visible {
+        outline: none;
+        box-shadow:
+            0 0 0 $spacing-size-1 var(--color-button-primary-shadow-focus),
+            var(--shadow-xs);
     }
 
     svg {
@@ -43,12 +54,13 @@
     display: block;
     color: var(--color-bg-primary);
     top: -44px;
+    left: 50%;
     padding: $spacing-size-1 $spacing-size-4;
     white-space: nowrap;
     font-weight: 600;
     background-color: var(--tooltip-background);
     border-radius: 6px;
-    transform: translateY($spacing-size-1);
+    transform: translate(-50%, $spacing-size-1);
     opacity: 0;
     pointer-events: none;
     transition-delay: 0;
@@ -74,7 +86,7 @@
 
     .cta:hover & {
         opacity: 1;
-        transform: translateY(0);
+        transform: translate(-50%, 0);
         transition:
             opacity 0.33s ease-in,
             transform 0.33s ease-in;

@@ -3,6 +3,7 @@ import type { BeanCollection } from '../context/context';
 import { Events } from '../events';
 import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IRowModel } from '../interfaces/iRowModel';
 import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
 import { _setAriaDisabled } from '../utils/aria';
 import { _createIconNoSpan } from '../utils/icon';
@@ -10,15 +11,17 @@ import { _formatNumberCommas } from '../utils/number';
 import type { AgComponentSelector } from '../widgets/component';
 import { Component, RefPlaceholder } from '../widgets/component';
 import { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
-import type { PaginationProxy } from './paginationProxy';
+import type { PaginationService } from './paginationService';
 
 export class PaginationComp extends Component {
-    private paginationProxy: PaginationProxy;
     private rowNodeBlockLoader?: RowNodeBlockLoader;
+    private rowModel: IRowModel;
+    private paginationService: PaginationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.paginationProxy = beans.paginationProxy;
         this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
+        this.rowModel = beans.rowModel;
+        this.paginationService = beans.paginationService!;
     }
 
     static readonly selector: AgComponentSelector = 'AG-PAGINATION';
@@ -120,13 +123,13 @@ export class PaginationComp extends Component {
 
     private onBtFirst() {
         if (!this.previousAndFirstButtonsDisabled) {
-            this.paginationProxy.goToFirstPage();
+            this.paginationService.goToFirstPage();
         }
     }
 
     private setCurrentPageLabel(): void {
-        const pagesExist = this.paginationProxy.getTotalPages() > 0;
-        const currentPage = this.paginationProxy.getCurrentPage();
+        const pagesExist = this.paginationService.getTotalPages() > 0;
+        const currentPage = this.paginationService.getCurrentPage();
         const toDisplay = pagesExist ? currentPage + 1 : 0;
 
         this.lbCurrent.textContent = this.formatNumber(toDisplay);
@@ -185,26 +188,26 @@ export class PaginationComp extends Component {
 
     private onBtNext() {
         if (!this.nextButtonDisabled) {
-            this.paginationProxy.goToNextPage();
+            this.paginationService.goToNextPage();
         }
     }
 
     private onBtPrevious() {
         if (!this.previousAndFirstButtonsDisabled) {
-            this.paginationProxy.goToPreviousPage();
+            this.paginationService.goToPreviousPage();
         }
     }
 
     private onBtLast() {
         if (!this.lastButtonDisabled) {
-            this.paginationProxy.goToLastPage();
+            this.paginationService.goToLastPage();
         }
     }
 
     private enableOrDisableButtons() {
-        const currentPage = this.paginationProxy.getCurrentPage();
-        const maxRowFound = this.paginationProxy.isLastPageFound();
-        const totalPages = this.paginationProxy.getTotalPages();
+        const currentPage = this.paginationService.getCurrentPage();
+        const maxRowFound = this.rowModel.isLastRowIndexKnown();
+        const totalPages = this.paginationService.getTotalPages();
 
         this.previousAndFirstButtonsDisabled = currentPage === 0;
         this.toggleButtonDisabled(this.btFirst, this.previousAndFirstButtonsDisabled);
@@ -226,10 +229,10 @@ export class PaginationComp extends Component {
     }
 
     private updateRowLabels() {
-        const currentPage = this.paginationProxy.getCurrentPage();
-        const pageSize = this.paginationProxy.getPageSize();
-        const maxRowFound = this.paginationProxy.isLastPageFound();
-        const rowCount = this.paginationProxy.isLastPageFound() ? this.paginationProxy.getMasterRowCount() : null;
+        const currentPage = this.paginationService.getCurrentPage();
+        const pageSize = this.paginationService.getPageSize();
+        const maxRowFound = this.rowModel.isLastRowIndexKnown();
+        const rowCount = this.rowModel.isLastRowIndexKnown() ? this.paginationService.getMasterRowCount() : null;
 
         let startRow: any;
         let endRow: any;
@@ -254,21 +257,21 @@ export class PaginationComp extends Component {
     }
 
     private isZeroPagesToDisplay() {
-        const maxRowFound = this.paginationProxy.isLastPageFound();
-        const totalPages = this.paginationProxy.getTotalPages();
+        const maxRowFound = this.rowModel.isLastRowIndexKnown();
+        const totalPages = this.paginationService.getTotalPages();
         return maxRowFound && totalPages === 0;
     }
 
     private setTotalLabels() {
-        const lastPageFound = this.paginationProxy.isLastPageFound();
-        const totalPages = this.paginationProxy.getTotalPages();
-        const rowCount = lastPageFound ? this.paginationProxy.getMasterRowCount() : null;
+        const lastPageFound = this.rowModel.isLastRowIndexKnown();
+        const totalPages = this.paginationService.getTotalPages();
+        const rowCount = lastPageFound ? this.paginationService.getMasterRowCount() : null;
 
         // When `pivotMode=true` and no grouping or value columns exist, a single 'hidden' group row (root node) is in
         // the grid and the pagination totals will correctly display total = 1. However this is confusing to users as
         // they can't see it. To address this UX issue we simply set the totals to zero in the pagination panel.
         if (rowCount === 1) {
-            const firstRow = this.paginationProxy.getRow(0);
+            const firstRow = this.rowModel.getRow(0);
 
             // a group node with no group or agg data will not be visible to users
             const hiddenGroupRow = firstRow && firstRow.group && !(firstRow.groupData || firstRow.aggData);
