@@ -188,7 +188,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                     </div>
                 </div>
                 <div>
-                    <label>Build type</label>
                     <label>Import type</label>
                     <select
                         name="importType"
