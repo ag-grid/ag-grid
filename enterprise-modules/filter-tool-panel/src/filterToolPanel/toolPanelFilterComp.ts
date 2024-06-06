@@ -71,8 +71,10 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
         this.column = column;
         this.eFilterName.innerText =
             this.columnNameService.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
-        this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
-        this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', this.onKeyDown.bind(this));
+        this.addManagedListeners(this.eFilterToolPanelHeader, {
+            click: this.toggleExpanded.bind(this),
+            keydown: this.onKeyDown.bind(this),
+        });
         this.addManagedEventListeners({ filterOpened: this.onFilterOpened.bind(this) });
         this.addInIcon('filter', this.eFilterIcon, this.column);
 
@@ -86,7 +88,7 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
             this.eFilterToolPanelHeader.setAttribute('tabindex', '0');
         }
 
-        this.addManagedListener(this.column, 'filterChanged', this.onFilterChanged.bind(this));
+        this.addManagedListeners(this.column, { filterChanged: this.onFilterChanged.bind(this) });
     }
 
     private onKeyDown(e: KeyboardEvent): void {

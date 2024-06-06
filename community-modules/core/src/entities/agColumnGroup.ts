@@ -1,5 +1,12 @@
 import { BeanStub } from '../context/beanStub';
-import type { Column, ColumnGroup, ColumnGroupShowType, ColumnPinnedType, HeaderColumnId } from '../interfaces/iColumn';
+import type {
+    AgColumnGroupEvent,
+    Column,
+    ColumnGroup,
+    ColumnGroupShowType,
+    ColumnPinnedType,
+    HeaderColumnId,
+} from '../interfaces/iColumn';
 import { _last } from '../utils/array';
 import type { AgColumn } from './agColumn';
 import { isColumn } from './agColumn';
@@ -13,8 +20,6 @@ export function createUniqueColumnGroupId(groupId: string, instanceId: number): 
 export function isColumnGroup(col: Column | ColumnGroup | string): col is AgColumnGroup {
     return col instanceof AgColumnGroup;
 }
-
-export type AgColumnGroupEvent = 'leftChanged' | 'displayedChildrenChanged';
 
 export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> implements ColumnGroup<TValue> {
     public readonly isColumn = false as const;

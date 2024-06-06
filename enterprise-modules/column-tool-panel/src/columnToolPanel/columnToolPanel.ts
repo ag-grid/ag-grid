@@ -2,7 +2,6 @@ import type {
     ColDef,
     ColGroupDef,
     ColumnToolPanelState,
-    EventsType,
     IColumnToolPanel,
     IToolPanelColumnCompParams,
     IToolPanelComp,
@@ -100,14 +99,12 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             }
 
             this.setLastVisible();
-            const pivotModeListener = this.addManagedListener<EventsType>(
-                this.eventService,
-                'columnPivotModeChanged',
-                () => {
+            const [pivotModeListener] = this.addManagedEventListeners({
+                columnPivotModeChanged: () => {
                     this.resetChildrenHeight();
                     this.setLastVisible();
-                }
-            );
+                },
+            });
             this.childDestroyFuncs.push(() => pivotModeListener!());
         }
 

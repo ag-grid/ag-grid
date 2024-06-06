@@ -723,7 +723,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (this.rowNode.detail) {
             // if the master row node has updated data, we also want to try to refresh the detail row
-            this.addManagedListener(this.rowNode.parent!, 'dataChanged', this.onRowNodeDataChanged.bind(this));
+            this.addManagedListeners(this.rowNode.parent!, { dataChanged: this.onRowNodeDataChanged.bind(this) });
         }
 
         this.addManagedListeners(this.rowNode, {
@@ -1452,23 +1452,26 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // all are listening for event on the row node.
 
         // step 1 - add listener, to set flag on row node
-        this.addManagedListener(eRow, 'mouseenter', () => this.rowNode.onMouseEnter());
-        this.addManagedListener(eRow, 'mouseleave', () => this.rowNode.onMouseLeave());
-
-        // step 2 - listen for changes on row node (which any eRow can trigger)
-        this.addManagedListener(this.rowNode, 'mouseEnter', () => {
-            // if hover turned off, we don't add the class. we do this here so that if the application
-            // toggles this property mid way, we remove the hover form the last row, but we stop
-            // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
-            if (!this.beans.dragService.isDragging() && !this.gos.get('suppressRowHoverHighlight')) {
-                eRow.classList.add('ag-row-hover');
-                this.rowNode.setHovered(true);
-            }
+        this.addManagedListeners(eRow, {
+            mouseenter: () => this.rowNode.onMouseEnter(),
+            mouseleave: () => this.rowNode.onMouseLeave(),
         });
 
-        this.addManagedListener(this.rowNode, 'mouseLeave', () => {
-            eRow.classList.remove('ag-row-hover');
-            this.rowNode.setHovered(false);
+        // step 2 - listen for changes on row node (which any eRow can trigger)
+        this.addManagedListeners(this.rowNode, {
+            mouseEnter: () => {
+                // if hover turned off, we don't add the class. we do this here so that if the application
+                // toggles this property mid way, we remove the hover form the last row, but we stop
+                // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
+                if (!this.beans.dragService.isDragging() && !this.gos.get('suppressRowHoverHighlight')) {
+                    eRow.classList.add('ag-row-hover');
+                    this.rowNode.setHovered(true);
+                }
+            },
+            mouseLeave: () => {
+                eRow.classList.remove('ag-row-hover');
+                this.rowNode.setHovered(false);
+            },
         });
     }
 

@@ -2,6 +2,7 @@ import type {
     AnimationFrameService,
     BeanCollection,
     Component,
+    ComponentEvent,
     CssVariablesChanged,
     Environment,
     ResizeObserverService,
@@ -27,7 +28,10 @@ interface VirtualListParams {
     listName?: string;
 }
 
-export class VirtualList<C extends Component<any> = Component<any>> extends TabGuardComp {
+export class VirtualList<
+    C extends Component<any> = Component<any>,
+    TEventType extends string = ComponentEvent,
+> extends TabGuardComp<TEventType> {
     private resizeObserverService: ResizeObserverService;
     protected animationFrameService: AnimationFrameService;
     private environment: Environment;

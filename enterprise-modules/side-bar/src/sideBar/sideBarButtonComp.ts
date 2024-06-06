@@ -23,7 +23,7 @@ export class SideBarButtonComp extends Component<SideBarButtonCompEvent> {
         this.setTemplate(template, []);
         this.setLabel();
         this.setIcon();
-        this.addManagedListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
+        this.addManagedElementListeners(this.eToggleButton, { click: this.onButtonPressed.bind(this) });
         this.eToggleButton.setAttribute('id', `ag-${this.getCompId()}-button`);
     }
 

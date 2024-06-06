@@ -46,11 +46,10 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
 
         this.ctrlsService.whenReady(() => this.setAdvancedFilterComp());
 
-        this.addManagedListener(
-            this.eventService,
-            'advancedFilterEnabledChanged',
-            ({ enabled }: AdvancedFilterEnabledChangedEvent) => this.onEnabledChanged(enabled)
-        );
+        this.addManagedEventListeners({
+            advancedFilterEnabledChanged: ({ enabled }: AdvancedFilterEnabledChangedEvent) =>
+                this.onEnabledChanged(enabled),
+        });
 
         this.addManagedPropertyListener('advancedFilterParent', () => this.updateComps());
 

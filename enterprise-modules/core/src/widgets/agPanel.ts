@@ -92,21 +92,25 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
             _setDisplayed(this.eTitleBar, false);
         }
 
-        this.addManagedListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {
-            if (
-                eGui.contains(e.relatedTarget as HTMLElement) ||
-                eGui.contains(this.gos.getActiveDomElement()) ||
-                this.eTitleBarButtons.contains(e.target as HTMLElement)
-            ) {
-                e.preventDefault();
-                return;
-            }
+        this.addManagedElementListeners(this.eTitleBar, {
+            mousedown: (e: MouseEvent) => {
+                if (
+                    eGui.contains(e.relatedTarget as HTMLElement) ||
+                    eGui.contains(this.gos.getActiveDomElement()) ||
+                    this.eTitleBarButtons.contains(e.target as HTMLElement)
+                ) {
+                    e.preventDefault();
+                    return;
+                }
 
-            const focusEl = this.eContentWrapper.querySelector('button, [href], input, select, textarea, [tabindex]');
+                const focusEl = this.eContentWrapper.querySelector(
+                    'button, [href], input, select, textarea, [tabindex]'
+                );
 
-            if (focusEl) {
-                (focusEl as HTMLElement).focus();
-            }
+                if (focusEl) {
+                    (focusEl as HTMLElement).focus();
+                }
+            },
         });
 
         if (popup && this.positionableFeature.isPositioned()) {

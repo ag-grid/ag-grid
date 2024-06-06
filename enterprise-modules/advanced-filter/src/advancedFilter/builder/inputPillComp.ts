@@ -59,18 +59,20 @@ export class InputPillComp extends Component<InputPillCompEvent> {
 
         this.renderValue();
 
-        this.addManagedListener(this.ePill, 'click', (event: MouseEvent) => {
-            event.preventDefault();
-            this.showEditor();
-        });
-        this.addManagedListener(this.ePill, 'keydown', (event: KeyboardEvent) => {
-            switch (event.key) {
-                case KeyCode.ENTER:
-                    event.preventDefault();
-                    _stopPropagationForAgGrid(event);
-                    this.showEditor();
-                    break;
-            }
+        this.addManagedListeners(this.ePill, {
+            click: (event: MouseEvent) => {
+                event.preventDefault();
+                this.showEditor();
+            },
+            keydown: (event: KeyboardEvent) => {
+                switch (event.key) {
+                    case KeyCode.ENTER:
+                        event.preventDefault();
+                        _stopPropagationForAgGrid(event);
+                        this.showEditor();
+                        break;
+                }
+            },
         });
         this.addDestroyFunc(() => this.destroyBean(this.eEditor));
     }

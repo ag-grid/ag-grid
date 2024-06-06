@@ -195,7 +195,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             _setAriaExpanded(eGridCell, !!node.expanded);
         };
 
-        this.expandListener = this.addManagedListener(node, 'expandedChanged', listener) || null;
+        [this.expandListener] = this.addManagedListeners(node, { expandedChanged: listener }) || null;
         listener();
     }
 
@@ -490,7 +490,9 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return;
         }
 
-        this.addManagedListener(this.displayedGroupNode, 'allChildrenCountChanged', this.updateChildCount.bind(this));
+        this.addManagedListeners(this.displayedGroupNode, {
+            allChildrenCountChanged: this.updateChildCount.bind(this),
+        });
 
         // filtering changes the child count, so need to cater for it
         this.updateChildCount();
@@ -540,15 +542,15 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         // if editing groups, then double click is to start editing
         const isDoubleClickEdit = this.params.column?.isCellEditable(params.node) && this.gos.get('enableGroupEdit');
         if (!isDoubleClickEdit && this.isExpandable() && !params.suppressDoubleClickExpand) {
-            this.addManagedListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
+            this.addManagedListeners(eGroupCell, { dblclick: this.onCellDblClicked.bind(this) });
         }
 
-        this.addManagedListener(this.eExpanded, 'click', this.onExpandClicked.bind(this));
-        this.addManagedListener(this.eContracted, 'click', this.onExpandClicked.bind(this));
+        this.addManagedListeners(this.eExpanded, { click: this.onExpandClicked.bind(this) });
+        this.addManagedListeners(this.eContracted, { click: this.onExpandClicked.bind(this) });
 
         // expand / contract as the user hits enter
-        this.addManagedListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
-        this.addManagedListener(params.node, 'expandedChanged', this.showExpandAndContractIcons.bind(this));
+        this.addManagedListeners(eGroupCell, { keydown: this.onKeyDown.bind(this) });
+        this.addManagedListeners(params.node, { expandedChanged: this.showExpandAndContractIcons.bind(this) });
 
         this.showExpandAndContractIcons();
 
@@ -670,7 +672,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         const suppressPadding = this.params.suppressPadding;
 
         if (!suppressPadding) {
-            this.addManagedListener(node, 'uiLevelChanged', this.setIndent.bind(this));
+            this.addManagedListeners(node, { uiLevelChanged: this.setIndent.bind(this) });
             this.setIndent();
         }
     }

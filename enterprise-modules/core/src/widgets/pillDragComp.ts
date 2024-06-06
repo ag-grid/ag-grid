@@ -6,7 +6,6 @@ import type {
     DragSource,
     DragSourceType,
     DropTarget,
-    TouchListenerEvent,
 } from '@ag-grid-community/core';
 import {
     Component,
@@ -170,14 +169,16 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
 
         this.addGuiEventListener('keydown', (e: KeyboardEvent) => this.onKeyDown(e));
 
-        this.addManagedListener(this.eButton, 'click', (mouseEvent: MouseEvent) => {
-            this.dispatchLocalEvent(agEvent);
-            mouseEvent.stopPropagation();
+        this.addManagedElementListeners(this.eButton, {
+            click: (mouseEvent: MouseEvent) => {
+                this.dispatchLocalEvent(agEvent);
+                mouseEvent.stopPropagation();
+            },
         });
 
         const touchListener = new TouchListener(this.eButton);
-        this.addManagedListener<TouchListenerEvent>(touchListener, 'tap', () => {
-            this.dispatchLocalEvent(agEvent);
+        this.addManagedListeners(touchListener, {
+            tap: () => this.dispatchLocalEvent(agEvent),
         });
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     }

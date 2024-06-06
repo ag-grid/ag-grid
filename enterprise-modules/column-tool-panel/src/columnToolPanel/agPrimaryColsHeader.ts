@@ -58,24 +58,24 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     public postConstruct(): void {
         this.createExpandIcons();
 
-        this.addManagedListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
-        this.addManagedListener(this.eExpand, 'keydown', (e: KeyboardEvent) => {
-            if (e.key === KeyCode.SPACE) {
-                e.preventDefault();
-                this.onExpandClicked();
-            }
+        this.addManagedListeners(this.eExpand, {
+            click: this.onExpandClicked.bind(this),
+            keydown: (e: KeyboardEvent) => {
+                if (e.key === KeyCode.SPACE) {
+                    e.preventDefault();
+                    this.onExpandClicked();
+                }
+            },
         });
 
-        this.addManagedListener(this.eSelect.getInputElement(), 'click', this.onSelectClicked.bind(this));
+        this.addManagedElementListeners(this.eSelect.getInputElement(), { click: this.onSelectClicked.bind(this) });
         this.addManagedPropertyListener('functionsReadOnly', () => this.onFunctionsReadOnlyPropChanged());
 
         this.eFilterTextField.setAutoComplete(false).onValueChange(() => this.onFilterTextChanged());
 
-        this.addManagedListener(
-            this.eFilterTextField.getInputElement(),
-            'keydown',
-            this.onMiniFilterKeyDown.bind(this)
-        );
+        this.addManagedElementListeners(this.eFilterTextField.getInputElement(), {
+            keydown: this.onMiniFilterKeyDown.bind(this),
+        });
 
         this.addManagedEventListeners({ newColumnsLoaded: this.showOrHideOptions.bind(this) });
 

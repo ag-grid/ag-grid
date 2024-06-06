@@ -11,7 +11,6 @@ import { _exists } from '../../../utils/generic';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _escapeString } from '../../../utils/string';
 import { Component, RefPlaceholder } from '../../../widgets/component';
-import type { TouchListenerEvent } from '../../../widgets/touchListener';
 import { TouchListener } from '../../../widgets/touchListener';
 
 export interface IHeaderGroupParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -114,24 +113,27 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         // then close again straight away. if we also listened to double click, then the group would open,
         // close, then open, which is not what we want. double click should only action if the user double
         // clicks outside of the icons.
-        this.addManagedListener(this.agClosed, 'dblclick', stopPropagationAction);
-        this.addManagedListener(this.agOpened, 'dblclick', stopPropagationAction);
+        this.addManagedElementListeners(this.agClosed, { dblclick: stopPropagationAction });
+        this.addManagedElementListeners(this.agOpened, { dblclick: stopPropagationAction });
 
-        this.addManagedListener(this.getGui(), 'dblclick', expandAction);
+        this.addManagedElementListeners(this.getGui(), { dblclick: expandAction });
 
         this.updateIconVisibility();
 
         const providedColumnGroup = this.params.columnGroup.getProvidedColumnGroup();
-        this.addManagedListener(providedColumnGroup, 'expandedChanged', this.updateIconVisibility.bind(this));
-        this.addManagedListener(providedColumnGroup, 'expandableChanged', this.updateIconVisibility.bind(this));
+        const updateIcon = this.updateIconVisibility.bind(this);
+        this.addManagedListeners(providedColumnGroup, {
+            expandedChanged: updateIcon,
+            expandableChanged: updateIcon,
+        });
     }
 
     private addTouchAndClickListeners(eElement: HTMLElement, action: (event: MouseEvent) => void): void {
         const touchListener = new TouchListener(eElement, true);
 
-        this.addManagedListener<TouchListenerEvent>(touchListener, 'tap', action);
+        this.addManagedListeners(touchListener, { tap: action });
         this.addDestroyFunc(() => touchListener.destroy());
-        this.addManagedListener(eElement, 'click', action);
+        this.addManagedElementListeners(eElement, { click: action });
     }
 
     private updateIconVisibility(): void {

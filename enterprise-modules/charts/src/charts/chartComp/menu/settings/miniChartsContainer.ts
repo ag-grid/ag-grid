@@ -251,12 +251,14 @@ export class MiniChartsContainer extends Component {
                     this.chartController.setChartType(miniClassChartType);
                     this.updateSelectedMiniChart();
                 };
-                this.addManagedListener(miniWrapper, 'click', listener);
-                this.addManagedListener(miniWrapper, 'keydown', (event) => {
-                    if (event.key == KeyCode.ENTER || event.key === KeyCode.SPACE) {
-                        event.preventDefault();
-                        listener();
-                    }
+                this.addManagedListeners(miniWrapper, {
+                    click: listener,
+                    keydown: (event) => {
+                        if (event.key == KeyCode.ENTER || event.key === KeyCode.SPACE) {
+                            event.preventDefault();
+                            listener();
+                        }
+                    },
                 });
 
                 this.wrappers.set(miniClassChartType, miniWrapper);

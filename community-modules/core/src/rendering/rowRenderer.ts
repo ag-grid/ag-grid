@@ -295,11 +295,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // add listeners to the grid columns
         this.refreshListenersToColumnsForCellComps();
         // if the grid columns change, then refresh the listeners again
-        this.addManagedListener(
-            this.eventService,
-            'gridColumnsChanged',
-            this.refreshListenersToColumnsForCellComps.bind(this)
-        );
+        this.addManagedEventListeners({
+            gridColumnsChanged: this.refreshListenersToColumnsForCellComps.bind(this),
+        });
 
         this.addDestroyFunc(this.removeGridColumnListeners.bind(this));
     }

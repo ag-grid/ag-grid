@@ -1,5 +1,6 @@
 import type {
     AgColumn,
+    EventsType,
     FuncColsService,
     GetDataPath,
     IClientSideRowModel,
@@ -22,10 +23,9 @@ export class ClientSideValuesExtractor<V> {
         private readonly treeData: boolean,
         private readonly getDataPath: GetDataPath | undefined,
         private readonly groupAllowUnbalanced: boolean,
-        private readonly addManagedListener: (
-            event: string,
-            listener: (event?: any) => void
-        ) => (() => null) | undefined
+        private readonly addManagedEventListeners: (
+            handlers: Partial<Record<EventsType, (event?: any) => void>>
+        ) => (() => null)[]
     ) {}
 
     public extractUniqueValuesAsync(
@@ -36,9 +36,11 @@ export class ClientSideValuesExtractor<V> {
             if (this.rowModel.isRowDataLoaded()) {
                 resolve(this.extractUniqueValues(predicate, existingValues));
             } else {
-                const destroyFunc = this.addManagedListener('rowCountReady', () => {
-                    destroyFunc?.();
-                    resolve(this.extractUniqueValues(predicate, existingValues));
+                const [destroyFunc] = this.addManagedEventListeners({
+                    rowCountReady: () => {
+                        destroyFunc?.();
+                        resolve(this.extractUniqueValues(predicate, existingValues));
+                    },
                 });
             }
         });

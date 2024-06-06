@@ -108,11 +108,9 @@ export abstract class AbstractHeaderCellCtrl<
     protected setGui(eGui: HTMLElement): void {
         this.eGui = eGui;
         this.addDomData();
-        this.addManagedListener(
-            this.beans.eventService,
-            'displayedColumnsChanged',
-            this.onDisplayedColumnsChanged.bind(this)
-        );
+        this.addManagedListeners(this.beans.eventService, {
+            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
+        });
         this.onDisplayedColumnsChanged();
         this.refreshTabIndex();
     }
@@ -142,8 +140,10 @@ export abstract class AbstractHeaderCellCtrl<
             return;
         }
 
-        this.addManagedListener(this.eGui, 'keydown', this.onGuiKeyDown.bind(this));
-        this.addManagedListener(this.eGui, 'keyup', this.onGuiKeyUp.bind(this));
+        this.addManagedListeners(this.eGui, {
+            keydown: this.onGuiKeyDown.bind(this),
+            keyup: this.onGuiKeyUp.bind(this),
+        });
     }
 
     private refreshTabIndex(): void {

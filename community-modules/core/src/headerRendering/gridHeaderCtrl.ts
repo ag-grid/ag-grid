@@ -10,7 +10,7 @@ import type { MenuService } from '../misc/menuService';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _exists } from '../utils/generic';
 import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
-import type { LongTapEvent, TouchListenerEvent } from '../widgets/touchListener';
+import type { LongTapEvent } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
 import type { HeaderNavigationService } from './common/headerNavigationService';
 import { HeaderNavigationDirection } from './common/headerNavigationService';
@@ -65,7 +65,7 @@ export class GridHeaderCtrl extends BeanStub {
         this.setupHeaderHeight();
 
         const listener = this.onHeaderContextMenu.bind(this);
-        this.addManagedListener(this.eGui, 'contextmenu', listener);
+        this.addManagedElementListeners(this.eGui, { contextmenu: listener });
         this.mockContextMenuForIPad(listener);
 
         this.ctrlsService.register('gridHeaderCtrl', this);
@@ -227,7 +227,7 @@ export class GridHeaderCtrl extends BeanStub {
             listener(undefined, event.touchStart, event.touchEvent);
         };
 
-        this.addManagedListener<TouchListenerEvent>(touchListener, 'longTap', longTapListener);
+        this.addManagedListeners(touchListener, { longTap: longTapListener });
         this.addDestroyFunc(() => touchListener.destroy());
     }
 }

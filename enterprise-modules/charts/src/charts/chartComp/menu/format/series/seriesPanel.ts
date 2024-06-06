@@ -117,7 +117,7 @@ export class SeriesPanel extends Component {
             new ChartMenuParamsFactory(chartOptionsService.getSeriesOptionsProxy(() => this.seriesType))
         );
 
-        this.addManagedListener(chartController, 'chartSeriesChartTypeChanged', this.refreshWidgets.bind(this));
+        this.addManagedListeners(chartController, { chartSeriesChartTypeChanged: this.refreshWidgets.bind(this) });
 
         this.refreshWidgets();
     }

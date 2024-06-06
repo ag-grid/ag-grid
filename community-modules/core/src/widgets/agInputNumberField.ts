@@ -25,16 +25,17 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
 
     public override postConstruct() {
         super.postConstruct();
-        this.addManagedListener(this.eInput, 'blur', () => {
-            const floatedValue = parseFloat(this.eInput.value);
-            const value = isNaN(floatedValue) ? '' : this.normalizeValue(floatedValue.toString());
+        this.addManagedListeners(this.eInput, {
+            blur: () => {
+                const floatedValue = parseFloat(this.eInput.value);
+                const value = isNaN(floatedValue) ? '' : this.normalizeValue(floatedValue.toString());
 
-            if (this.value !== value) {
-                this.setValue(value);
-            }
+                if (this.value !== value) {
+                    this.setValue(value);
+                }
+            },
+            wheel: this.onWheel.bind(this),
         });
-
-        this.addManagedListener(this.eInput, 'wheel', this.onWheel.bind(this));
 
         this.eInput.step = 'any';
 

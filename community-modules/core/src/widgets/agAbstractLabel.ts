@@ -6,7 +6,7 @@ import { Component } from './component';
 
 export abstract class AgAbstractLabel<
     TConfig extends AgLabelParams = AgLabelParams,
-    TEventType extends string = string,
+    TEventType extends string = ComponentEvent,
 > extends Component<TEventType | ComponentEvent> {
     protected abstract eLabel: HTMLElement;
 

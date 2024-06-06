@@ -25,7 +25,7 @@ export class PivotModePanel extends Component {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         this.cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
 
-        this.addManagedListener(this.cbPivotMode, 'fieldValueChanged', this.onBtPivotMode.bind(this));
+        this.addManagedListeners(this.cbPivotMode, { fieldValueChanged: this.onBtPivotMode.bind(this) });
         this.addManagedEventListeners({
             newColumnsLoaded: this.onPivotModeChanged.bind(this),
             columnPivotModeChanged: this.onPivotModeChanged.bind(this),

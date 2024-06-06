@@ -98,14 +98,15 @@ export class ToolPanelColumnComp extends Component {
             columnRowGroupChanged: onColStateChanged,
             visibleChanged: onColStateChanged,
         });
-
-        this.addManagedListener(this.focusWrapper, 'keydown', this.handleKeyDown.bind(this));
-        this.addManagedListener(this.focusWrapper, 'contextmenu', this.onContextMenu.bind(this));
+        this.addManagedListeners(this.focusWrapper, {
+            keydown: this.handleKeyDown.bind(this),
+            contextmenu: this.onContextMenu.bind(this),
+        });
 
         this.addManagedPropertyListener('functionsReadOnly', this.onColumnStateChanged.bind(this));
 
-        this.addManagedListener(this.cbSelect, 'fieldValueChanged', this.onCheckboxChanged.bind(this));
-        this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
+        this.addManagedListeners(this.cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
+        this.addManagedElementListeners(this.eLabel, { click: this.onLabelClicked.bind(this) });
 
         this.onColumnStateChanged();
         this.refreshAriaLabel();

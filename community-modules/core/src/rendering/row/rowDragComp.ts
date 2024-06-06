@@ -206,7 +206,7 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
             cellChanged: listener,
         });
 
-        this.addManagedListener(this.beans.eventService, 'newColumnsLoaded', listener);
+        this.addManagedListeners(this.beans.eventService, { newColumnsLoaded: listener });
 
         this.workOutVisibility();
     }

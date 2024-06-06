@@ -31,7 +31,7 @@ export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFac
     }
 
     private hidePopup: () => void;
-    private tabListener: () => null;
+    private tabListener: null | (() => null);
     private activeMenu?: FilterWrapperComp;
 
     public hideActiveMenu(): void {
@@ -119,7 +119,9 @@ export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFac
             eMenu.classList.add('ag-filter-menu');
         }
 
-        this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu))!;
+        [this.tabListener] = this.addManagedElementListeners(eMenu, {
+            keydown: (e: KeyboardEvent) => this.trapFocusWithin(e, eMenu),
+        });
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
         eMenu.appendChild(comp?.getGui()!);
@@ -136,7 +138,7 @@ export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFac
             const isKeyboardEvent = e instanceof KeyboardEvent;
 
             if (this.tabListener) {
-                this.tabListener = this.tabListener()!;
+                this.tabListener = this.tabListener();
             }
 
             if (isKeyboardEvent && eventSource && _isVisible(eventSource)) {

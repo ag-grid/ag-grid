@@ -7,7 +7,7 @@ export interface VirtualListDragItem<R extends Component<any>> {
 }
 
 export interface VirtualListDragParams<C extends Component, R extends Component, V, E extends AgEvent> {
-    eventSource: Window | HTMLElement | IEventEmitter;
+    eventSource: Window | HTMLElement | IEventEmitter<any>;
     listItemDragStartEvent: 'columnPanelItemDragStart' | 'advancedFilterBuilderDragStarted';
     listItemDragEndEvent: 'columnPanelItemDragEnd' | 'advancedFilterBuilderDragEnded';
     dragSourceType: DragSourceType;

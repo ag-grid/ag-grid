@@ -4,7 +4,6 @@ import type {
     CellValueChangedEvent,
     ComponentClass,
     DataTypeService,
-    EventsType,
     FuncColsService,
     GetDataPath,
     IAfterGuiAttachedParams,
@@ -67,7 +66,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     private valueModel: SetValueModel<V> | null = null;
     private setFilterParams: SetFilterParams<any, V> | null = null;
-    private virtualList: VirtualList | null = null;
+    private virtualList: VirtualList<any> | null = null;
     private caseSensitive: boolean = false;
     private treeDataTreeList = false;
     private getDataPath?: GetDataPath<any>;
@@ -341,8 +340,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             valueService: this.valueService,
             treeDataTreeList: this.treeDataTreeList,
             groupingTreeList: this.groupingTreeList,
-            addManagedListener: (event, listener) =>
-                this.addManagedListener<EventsType>(this.eventService, event, listener),
+            addManagedEventListeners: (handlers) => this.addManagedEventListeners(handlers),
         });
 
         this.initialiseFilterBodyUi();
@@ -791,7 +789,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         eMiniFilter.onValueChange(() => this.onMiniFilterInput());
         eMiniFilter.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
 
-        this.addManagedListener(eMiniFilter.getInputElement(), 'keydown', (e) => this.onMiniFilterKeyDown(e));
+        this.addManagedElementListeners(eMiniFilter.getInputElement(), {
+            keydown: (e) => this.onMiniFilterKeyDown(e!),
+        });
     }
 
     private updateMiniFilter() {

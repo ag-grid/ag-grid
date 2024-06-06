@@ -57,7 +57,7 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
 
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);
-        this.addManagedListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
+        this.addManagedElementListeners(this.eExpand, { click: this.onExpandClicked.bind(this) });
         this.addManagedEventListeners({ newColumnsLoaded: this.showOrHideOptions.bind(this) });
     }
 

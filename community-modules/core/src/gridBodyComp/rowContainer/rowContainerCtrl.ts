@@ -368,7 +368,7 @@ export class RowContainerCtrl extends BeanStub {
             ],
             () => {
                 const resetScrollLeft = () => (this.eViewport.scrollLeft = 0);
-                this.addManagedListener(this.eViewport, 'scroll', resetScrollLeft);
+                this.addManagedElementListeners(this.eViewport, { scroll: resetScrollLeft });
             }
         );
     }

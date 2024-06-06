@@ -1,12 +1,11 @@
 import { KeyCode } from '../constants/keyCode';
 import type { BeanCollection } from '../context/context';
-import type { EventsType } from '../eventKeys';
 import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaExpanded, _setAriaRole } from '../utils/aria';
 import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
 import { AgAbstractField } from './agAbstractField';
-import type { Component } from './component';
+import type { Component, ComponentEvent } from './component';
 import { RefPlaceholder } from './component';
 import type { AddPopupParams, PopupService } from './popupService';
 
@@ -22,7 +21,7 @@ const TEMPLATE = /* html */ `
 export abstract class AgPickerField<
     TValue,
     TConfig extends AgPickerFieldParams = AgPickerFieldParams,
-    TEventType extends string = string,
+    TEventType extends string = ComponentEvent,
     TComponent extends Component<TEventType> = Component<TEventType>,
 > extends AgAbstractField<TValue, TConfig, TEventType> {
     protected popupService: PopupService;
@@ -95,10 +94,10 @@ export abstract class AgPickerField<
         this.eDisplayField.setAttribute('id', displayId);
 
         const ariaEl = this.getAriaElement();
-        this.addManagedListener(ariaEl, 'keydown', this.onKeyDown.bind(this));
+        this.addManagedElementListeners(ariaEl, { keydown: this.onKeyDown.bind(this) });
 
-        this.addManagedListener(this.eLabel, 'mousedown', this.onLabelOrWrapperMouseDown.bind(this));
-        this.addManagedListener(this.eWrapper, 'mousedown', this.onLabelOrWrapperMouseDown.bind(this));
+        this.addManagedElementListeners(this.eLabel, { mousedown: this.onLabelOrWrapperMouseDown.bind(this) });
+        this.addManagedElementListeners(this.eWrapper, { mousedown: this.onLabelOrWrapperMouseDown.bind(this) });
 
         const { pickerIcon, inputWidth } = this.config;
 
@@ -200,8 +199,10 @@ export abstract class AgPickerField<
         const ePicker = this.pickerComponent!.getGui();
 
         if (!this.gos.get('suppressScrollWhenPopupsAreOpen')) {
-            this.destroyMouseWheelFunc = this.addManagedListener<EventsType>(this.eventService, 'bodyScroll', () => {
-                this.hidePicker();
+            [this.destroyMouseWheelFunc] = this.addManagedEventListeners({
+                bodyScroll: () => {
+                    this.hidePicker();
+                },
             });
         }
 

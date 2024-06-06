@@ -107,8 +107,10 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
             if (compDetails) {
                 if (!this.haveAddedColumnListeners) {
                     this.haveAddedColumnListeners = true;
-                    this.addManagedListener(column, 'visibleChanged', this.onColumnVisibleChanged.bind(this));
-                    this.addManagedListener(column, 'colDefChanged', this.onColDefChanged.bind(this));
+                    this.addManagedListeners(column, {
+                        visibleChanged: this.onColumnVisibleChanged.bind(this),
+                        colDefChanged: this.onColDefChanged.bind(this),
+                    });
                 }
                 return compDetails.newAgStackInstance().then((floatingFilter) => {
                     this.underlyingFloatingFilter = floatingFilter;

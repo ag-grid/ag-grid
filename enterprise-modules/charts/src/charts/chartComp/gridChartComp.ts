@@ -156,8 +156,8 @@ export class GridChartComp extends Component {
         this.addMenu();
         this.addTitleEditComp();
 
-        this.addManagedListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
-        this.addManagedListener(this.chartController, 'chartModelUpdate', this.update.bind(this));
+        this.addManagedElementListeners(this.getGui(), { focusin: this.setActiveChartCellRange.bind(this) });
+        this.addManagedListeners(this.chartController, { chartModelUpdate: this.update.bind(this) });
 
         this.addManagedPropertyListeners(
             ['chartThemeOverrides', 'chartThemes'],

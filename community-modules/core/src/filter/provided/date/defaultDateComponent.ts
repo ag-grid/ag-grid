@@ -34,24 +34,25 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
         const inputElement = this.eDateInput.getInputElement();
 
-        // ensures that the input element is focussed when a clear button is clicked,
-        // unless using safari as there is no clear button and focus does not work properly
-        this.addManagedListener(inputElement, 'mousedown', () => {
-            if (this.eDateInput.isDisabled() || this.usingSafariDatePicker) {
-                return;
-            }
-            inputElement.focus();
-        });
+        this.addManagedListeners(inputElement, {
+            // ensures that the input element is focussed when a clear button is clicked,
+            // unless using safari as there is no clear button and focus does not work properly
+            mouseDown: () => {
+                if (this.eDateInput.isDisabled() || this.usingSafariDatePicker) {
+                    return;
+                }
+                inputElement.focus();
+            },
+            input: (e) => {
+                if (e.target !== this.gos.getActiveDomElement()) {
+                    return;
+                }
+                if (this.eDateInput.isDisabled()) {
+                    return;
+                }
 
-        this.addManagedListener(inputElement, 'input', (e) => {
-            if (e.target !== this.gos.getActiveDomElement()) {
-                return;
-            }
-            if (this.eDateInput.isDisabled()) {
-                return;
-            }
-
-            this.params.onDateChanged();
+                this.params.onDateChanged();
+            },
         });
     }
 

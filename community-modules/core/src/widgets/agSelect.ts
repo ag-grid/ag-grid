@@ -54,7 +54,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
             this.eDisplayField.textContent = placeholder;
         }
 
-        this.addManagedListener(this.eWrapper, 'focusout', this.onWrapperFocusOut.bind(this));
+        this.addManagedElementListeners(this.eWrapper, { focusout: this.onWrapperFocusOut.bind(this) });
     }
 
     private onWrapperFocusOut(e: FocusEvent): void {

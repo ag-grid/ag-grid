@@ -34,11 +34,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         this.createManagedBean(new SetHeightFeature(this.eContainer));
         this.ctrlsService.register('fakeVScrollComp', this);
 
-        this.addManagedListener(
-            this.eventService,
-            'rowContainerHeightChanged',
-            this.onRowContainerHeightChanged.bind(this)
-        );
+        this.addManagedEventListeners({ rowContainerHeightChanged: this.onRowContainerHeightChanged.bind(this) });
     }
 
     protected setScrollVisible(): void {

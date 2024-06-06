@@ -43,12 +43,14 @@ export class AdvancedFilterBuilderItemAddComp extends Component<AdvancedFilterBu
             this.gos.get('advancedFilterBuilderParams')?.addSelectWidth
         );
         const eAddButton = this.createManagedBean(new AddDropdownComp(addButtonParams));
-        this.addManagedListener(eAddButton, 'fieldPickerValueSelected', ({ value }: FieldPickerValueSelectedEvent) => {
-            this.dispatchLocalEvent<AdvancedFilterBuilderAddEvent>({
-                type: 'advancedFilterBuilderAdded',
-                item: this.item,
-                isJoin: value.key === 'join',
-            });
+        this.addManagedListeners(eAddButton, {
+            fieldPickerValueSelected: ({ value }: FieldPickerValueSelectedEvent) => {
+                this.dispatchLocalEvent<AdvancedFilterBuilderAddEvent>({
+                    type: 'advancedFilterBuilderAdded',
+                    item: this.item,
+                    isJoin: value.key === 'join',
+                });
+            },
         });
         this.eItem.appendChild(eAddButton.getGui());
 

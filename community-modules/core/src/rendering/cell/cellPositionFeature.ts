@@ -37,7 +37,7 @@ export class CellPositionFeature extends BeanStub {
     private setupRowSpan(): void {
         this.rowSpan = this.column.getRowSpan(this.rowNode);
 
-        this.addManagedListener(this.beans.eventService, 'newColumnsLoaded', () => this.onNewColumnsLoaded());
+        this.addManagedListeners(this.beans.eventService, { newColumnsLoaded: () => this.onNewColumnsLoaded() });
     }
 
     public setComp(eGui: HTMLElement): void {
@@ -81,21 +81,15 @@ export class CellPositionFeature extends BeanStub {
 
         this.colsSpanning = this.getColSpanningList();
 
-        // because we are col spanning, a reorder of the cols can change what cols we are spanning over
-        this.addManagedListener(
-            this.beans.eventService,
-            'displayedColumnsChanged',
-            this.onDisplayColumnsChanged.bind(this)
-        );
-        // because we are spanning over multiple cols, we check for width any time any cols width changes.
-        // this is expensive - really we should be explicitly checking only the cols we are spanning over
-        // instead of every col, however it would be tricky code to track the cols we are spanning over, so
-        // because hardly anyone will be using colSpan, am favouring this easier way for more maintainable code.
-        this.addManagedListener(
-            this.beans.eventService,
-            'displayedColumnsWidthChanged',
-            this.onWidthChanged.bind(this)
-        );
+        this.addManagedListeners(this.beans.eventService, {
+            // because we are col spanning, a reorder of the cols can change what cols we are spanning over
+            displayedColumnsChanged: this.onDisplayColumnsChanged.bind(this),
+            // because we are spanning over multiple cols, we check for width any time any cols width changes.
+            // this is expensive - really we should be explicitly checking only the cols we are spanning over
+            // instead of every col, however it would be tricky code to track the cols we are spanning over, so
+            // because hardly anyone will be using colSpan, am favouring this easier way for more maintainable code.
+            displayedColumnsWidthChanged: this.onWidthChanged.bind(this),
+        });
     }
 
     public onWidthChanged(): void {

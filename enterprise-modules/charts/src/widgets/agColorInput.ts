@@ -44,6 +44,6 @@ export class AgColorInput extends AgInputTextField<AgInputTextFieldParams, AgCol
     }
 
     public onColorChanged(callback: (color: _Util.Color) => void): void {
-        this.addManagedListener(this, 'colorChanged', () => callback(_Util.Color.fromString(this.value!)));
+        this.addManagedListeners(this, { colorChanged: () => callback(_Util.Color.fromString(this.value!)) });
     }
 }

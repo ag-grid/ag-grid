@@ -20,11 +20,9 @@ export class GroupWidthFeature extends BeanStub {
         this.addListenersToChildrenColumns();
 
         // the children belonging to this group can change, so we need to add and remove listeners as they change
-        this.addManagedListener(
-            this.columnGroup,
-            'displayedChildrenChanged',
-            this.onDisplayedChildrenChanged.bind(this)
-        );
+        this.addManagedListeners(this.columnGroup, {
+            displayedChildrenChanged: this.onDisplayedChildrenChanged.bind(this),
+        });
 
         this.onWidthChanged();
 

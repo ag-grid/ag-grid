@@ -18,11 +18,9 @@ export class SetPinnedRightWidthFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.addManagedListener(
-            this.eventService,
-            'rightPinnedWidthChanged',
-            this.onPinnedRightWidthChanged.bind(this)
-        );
+        this.addManagedEventListeners({
+            rightPinnedWidthChanged: this.onPinnedRightWidthChanged.bind(this),
+        });
     }
 
     private onPinnedRightWidthChanged(): void {

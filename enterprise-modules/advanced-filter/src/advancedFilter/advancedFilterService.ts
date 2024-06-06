@@ -236,9 +236,11 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         }
 
         this.ctrl.setInputDisabled(true);
-        const destroyFunc = this.addManagedListener<EventsType>(this.eventService, 'dataTypesInferred', () => {
-            destroyFunc?.();
-            this.ctrl.setInputDisabled(false);
+        const [destroyFunc] = this.addManagedEventListeners({
+            dataTypesInferred: () => {
+                destroyFunc?.();
+                this.ctrl.setInputDisabled(false);
+            },
         });
     }
 }

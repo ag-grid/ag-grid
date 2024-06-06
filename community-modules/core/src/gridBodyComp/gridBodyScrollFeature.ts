@@ -85,11 +85,9 @@ export class GridBodyScrollFeature extends BeanStub {
 
     public postConstruct(): void {
         this.enableRtl = this.gos.get('enableRtl');
-        this.addManagedListener(
-            this.eventService,
-            'displayedColumnsWidthChanged',
-            this.onDisplayedColumnsWidthChanged.bind(this)
-        );
+        this.addManagedEventListeners({
+            displayedColumnsWidthChanged: this.onDisplayedColumnsWidthChanged.bind(this),
+        });
 
         this.ctrlsService.whenReady((p) => {
             this.centerRowsCtrl = p.center;
@@ -101,7 +99,9 @@ export class GridBodyScrollFeature extends BeanStub {
     private addScrollListener() {
         const { fakeHScrollComp, fakeVScrollComp } = this.ctrlsService.getParams();
 
-        this.addManagedListener(this.centerRowsCtrl.getViewportElement(), 'scroll', this.onHScroll.bind(this));
+        this.addManagedElementListeners(this.centerRowsCtrl.getViewportElement(), {
+            scroll: this.onHScroll.bind(this),
+        });
         fakeHScrollComp.onScrollCallback(this.onFakeHScroll.bind(this));
 
         const isDebounce = this.gos.get('debounceVerticalScrollbar');
@@ -111,7 +111,7 @@ export class GridBodyScrollFeature extends BeanStub {
             ? _debounce(this.onFakeVScroll.bind(this), 100)
             : this.onFakeVScroll.bind(this);
 
-        this.addManagedListener(this.eBodyViewport, 'scroll', onVScroll);
+        this.addManagedElementListeners(this.eBodyViewport, { scroll: onVScroll });
         fakeVScrollComp.onScrollCallback(onFakeVScroll);
     }
 

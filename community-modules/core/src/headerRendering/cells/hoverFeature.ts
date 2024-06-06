@@ -27,8 +27,10 @@ export class HoverFeature extends BeanStub {
     }
 
     private addMouseHoverListeners(): void {
-        this.addManagedListener(this.element, 'mouseout', this.onMouseOut.bind(this));
-        this.addManagedListener(this.element, 'mouseover', this.onMouseOver.bind(this));
+        this.addManagedListeners(this.element, {
+            mouseout: this.onMouseOut.bind(this),
+            mouseover: this.onMouseOver.bind(this),
+        });
     }
 
     private onMouseOut(): void {

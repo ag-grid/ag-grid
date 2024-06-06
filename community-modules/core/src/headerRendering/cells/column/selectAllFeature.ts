@@ -2,7 +2,6 @@ import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderCheckboxSelectionCallbackParams } from '../../../entities/colDef';
-import type { EventsType } from '../../../eventKeys';
 import type { SelectionEventSourceType } from '../../../events';
 import type { IRowModel } from '../../../interfaces/iRowModel';
 import type { ISelectionService } from '../../../interfaces/iSelectionService';
@@ -59,7 +58,7 @@ export class SelectAllFeature extends BeanStub {
             modelUpdated: this.onModelChanged.bind(this),
         });
 
-        this.addManagedListener(this.cbSelectAll, 'fieldValueChanged', this.onCbSelectAll.bind(this));
+        this.addManagedListeners(this.cbSelectAll, { fieldValueChanged: this.onCbSelectAll.bind(this) });
         _setAriaHidden(this.cbSelectAll.getGui(), true);
         this.cbSelectAll.getInputElement().setAttribute('tabindex', '-1');
         this.refreshSelectAllLabel();

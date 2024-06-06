@@ -29,11 +29,11 @@ export class AgList<TValue = string> extends Component<AgListEvent> {
 
     public postConstruct(): void {
         const eGui = this.getGui();
-        this.addManagedListener(eGui, 'mouseleave', () => this.clearHighlighted());
+        this.addManagedElementListeners(eGui, { mouseleave: () => this.clearHighlighted() });
         if (this.unFocusable) {
             return;
         }
-        this.addManagedListener(eGui, 'keydown', this.handleKeyDown.bind(this));
+        this.addManagedElementListeners(eGui, { keydown: this.handleKeyDown.bind(this) });
     }
 
     public handleKeyDown(e: KeyboardEvent): void {
@@ -156,14 +156,17 @@ export class AgList<TValue = string> extends Component<AgListEvent> {
 
         this.itemEls.push(itemEl);
 
-        this.addManagedListener(itemEl, 'mousemove', () => this.highlightItem(itemEl));
-        this.addManagedListener(itemEl, 'mousedown', (e: MouseEvent) => {
-            e.preventDefault();
-            // `setValue` will already close the list popup, without stopPropagation
-            // the mousedown event will close popups that own AgSelect
-            e.stopPropagation();
-            this.setValue(value);
+        this.addManagedListeners(itemEl, {
+            mouseover: () => this.highlightItem(itemEl),
+            mousedown: (e: MouseEvent) => {
+                e.preventDefault();
+                // `setValue` will already close the list popup, without stopPropagation
+                // the mousedown event will close popups that own AgSelect
+                e.stopPropagation();
+                this.setValue(value);
+            },
         });
+
         this.createManagedBean(
             new TooltipFeature({
                 getTooltipValue: () => text,

@@ -1,7 +1,6 @@
 import type { BeanCollection } from '../context/context';
 import type { EventsType } from '../eventKeys';
 import type {
-    AgEvent,
     AgEventListener,
     CellEditRequestEvent,
     RowEvent,
@@ -17,7 +16,6 @@ import type {
     DataChangedEvent,
     IRowNode,
     RowHighlightPosition,
-    RowNodeEvent,
     RowNodeEventType,
     RowPinnedType,
     SetSelectedParams,
@@ -217,7 +215,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     private hovered: boolean = false;
 
     private selected: boolean | undefined = false;
-    private localEventService: LocalEventService | null;
+    private localEventService: LocalEventService<RowNodeEventType> | null;
     private frameworkEventListenerService: FrameworkEventListenerService | null;
 
     private beans: BeanCollection;
@@ -259,7 +257,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, update);
 
-        this.dispatchLocalEvent(event);
+        this.localEventService?.dispatchEvent(event);
     }
 
     // when we are doing master / detail, the detail node is lazy created, but then kept around.
@@ -282,13 +280,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             oldData: oldData,
             newData: newData,
             update: update,
-        };
-    }
-
-    private createLocalRowEvent<T extends RowNodeEventType>(type: T): RowNodeEvent<T> {
-        return {
-            type: type,
-            node: this,
         };
     }
 
@@ -331,7 +322,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, false);
 
-        this.dispatchLocalEvent(event);
+        this.localEventService?.dispatchEvent(event);
     }
 
     private checkRowSelectable() {
@@ -342,9 +333,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public setRowSelectable(newVal: boolean, suppressSelectionUpdate?: boolean) {
         if (this.selectable !== newVal) {
             this.selectable = newVal;
-            if (this.localEventService) {
-                this.localEventService.dispatchEvent(this.createLocalRowEvent('selectableChanged'));
-            }
+            this.dispatchRowEvent('selectableChanged');
 
             if (suppressSelectionUpdate) {
                 return;
@@ -444,9 +433,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         this.firstChild = firstChild;
 
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(this.createLocalRowEvent('firstChildChanged'));
-        }
+        this.dispatchRowEvent('firstChildChanged');
     }
 
     public setLastChild(lastChild: boolean): void {
@@ -456,9 +443,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         this.lastChild = lastChild;
 
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(this.createLocalRowEvent('lastChildChanged'));
-        }
+        this.dispatchRowEvent('lastChildChanged');
     }
 
     public setChildIndex(childIndex: number): void {
@@ -468,9 +453,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         this.childIndex = childIndex;
 
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(this.createLocalRowEvent('childIndexChanged'));
-        }
+        this.dispatchRowEvent('childIndexChanged');
     }
 
     public setRowTop(rowTop: number | null): void {
@@ -482,9 +465,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         this.rowTop = rowTop;
 
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(this.createLocalRowEvent('topChanged'));
-        }
+        this.dispatchRowEvent('topChanged');
 
         this.setDisplayed(rowTop !== null);
     }
@@ -501,10 +482,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         }
 
         this.displayed = displayed;
-
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(this.createLocalRowEvent('displayedChanged'));
-        }
+        this.dispatchRowEvent('displayedChanged');
     }
 
     public setDragging(dragging: boolean): void {
@@ -513,10 +491,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         }
 
         this.dragging = dragging;
-
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(this.createLocalRowEvent('draggingChanged'));
-        }
+        this.dispatchRowEvent('draggingChanged');
     }
 
     public setHighlighted(highlighted: RowHighlightPosition | null): void {
@@ -525,10 +500,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         }
 
         this.highlighted = highlighted;
-
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(this.createLocalRowEvent('rowHighlightChanged'));
-        }
+        this.dispatchRowEvent('rowHighlightChanged');
     }
 
     public setHovered(hovered: boolean): void {
@@ -549,10 +521,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         }
 
         this.allChildrenCount = allChildrenCount;
-
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(this.createLocalRowEvent('allChildrenCountChanged'));
-        }
+        this.dispatchRowEvent('allChildrenCountChanged');
     }
 
     public setMaster(master: boolean): void {
@@ -567,10 +536,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         }
 
         this.master = master;
-
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(this.createLocalRowEvent('masterChanged'));
-        }
+        this.dispatchRowEvent('masterChanged');
     }
 
     public setGroup(group: boolean): void {
@@ -585,10 +551,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         this.group = group;
         this.updateHasChildren();
-
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(this.createLocalRowEvent('groupChanged'));
-        }
+        this.dispatchRowEvent('groupChanged');
     }
 
     /**
@@ -599,9 +562,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.rowHeight = rowHeight;
         this.rowHeightEstimated = estimated;
 
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(this.createLocalRowEvent('heightChanged'));
-        }
+        this.dispatchRowEvent('heightChanged');
     }
 
     public setRowAutoHeight(cellHeight: number | undefined, column: AgColumn): void {
@@ -701,9 +662,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         this.rowIndex = rowIndex;
 
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(this.createLocalRowEvent('rowIndexChanged'));
-        }
+        this.dispatchRowEvent('rowIndexChanged');
     }
 
     public setUiLevel(uiLevel: number): void {
@@ -713,9 +672,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         this.uiLevel = uiLevel;
 
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(this.createLocalRowEvent('uiLevelChanged'));
-        }
+        this.dispatchRowEvent('uiLevelChanged');
     }
 
     /**
@@ -728,9 +685,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         this.expanded = expanded;
 
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(this.createLocalRowEvent('expandedChanged'));
-        }
+        this.dispatchRowEvent('expandedChanged');
 
         const event = Object.assign({}, this.createGlobalRowEvent('rowGroupOpened'), {
             expanded,
@@ -753,12 +708,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             rowIndex: this.rowIndex,
             rowPinned: this.rowPinned,
         });
-    }
-
-    private dispatchLocalEvent(event: AgEvent): void {
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(event);
-        }
     }
 
     /**
@@ -927,9 +876,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         if (newValue !== this.__hasChildren) {
             this.__hasChildren = !!newValue;
-            if (this.localEventService) {
-                this.localEventService.dispatchEvent(this.createLocalRowEvent('hasChildrenChanged'));
-            }
+            this.dispatchRowEvent('hasChildrenChanged');
         }
     }
 
@@ -952,7 +899,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             newValue: newValue,
             oldValue: oldValue,
         };
-        this.dispatchLocalEvent(cellChangedEvent);
+        this.localEventService?.dispatchEvent(cellChangedEvent);
     }
 
     /**
@@ -1061,6 +1008,14 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.selected = selected;
     }
 
+    public dispatchRowEvent<T extends RowNodeEventType>(type: T): void {
+        const event = {
+            type: type,
+            node: this,
+        };
+        this.localEventService?.dispatchEvent(event);
+    }
+
     public selectThisNode(newValue?: boolean, e?: Event, source: SelectionEventSourceType = 'api'): boolean {
         // we only check selectable when newValue=true (ie selecting) to allow unselecting values,
         // as selectable is dynamic, need a way to unselect rows when selectable becomes false.
@@ -1073,14 +1028,12 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         this.selected = newValue;
 
-        if (this.localEventService) {
-            this.dispatchLocalEvent(this.createLocalRowEvent('rowSelected'));
-        }
+        this.dispatchRowEvent('rowSelected');
 
         // in case of root node, sibling may have service while this row may not
         const sibling = this.sibling;
         if (sibling && sibling.footer && sibling.localEventService) {
-            sibling.dispatchLocalEvent(sibling.createLocalRowEvent('rowSelected'));
+            sibling.dispatchRowEvent('rowSelected');
         }
 
         const event: RowSelectedEvent = {
@@ -1181,11 +1134,11 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     public onMouseEnter(): void {
-        this.dispatchLocalEvent(this.createLocalRowEvent('mouseEnter'));
+        this.dispatchRowEvent('mouseEnter');
     }
 
     public onMouseLeave(): void {
-        this.dispatchLocalEvent(this.createLocalRowEvent('mouseLeave'));
+        this.dispatchRowEvent('mouseLeave');
     }
 
     public getFirstChildOfFirstChild(rowGroupColumn: AgColumn | null): RowNode | null {

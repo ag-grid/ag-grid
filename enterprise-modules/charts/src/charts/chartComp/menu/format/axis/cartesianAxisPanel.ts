@@ -130,14 +130,15 @@ export class CartesianAxisPanel extends Component {
         this.initAxisLabels(chartAxisThemeOverrides);
 
         const updateAxisLabelRotations = () => this.axisLabelUpdateFuncs.forEach((func) => func());
-        this.addManagedListener(chartController, 'chartUpdated', updateAxisLabelRotations);
-        this.addManagedListener(chartController, 'chartModelUpdated', () =>
-            setTimeout(() => {
-                // make sure this runs after the actual chart update has happened
-                this.refreshAxisTypeSelect(chartAxisOptions);
-                updateTimeFormatVisibility();
-            })
-        );
+        this.addManagedListeners(chartController, {
+            chartUpdated: updateAxisLabelRotations,
+            chartModelUpdate: () =>
+                setTimeout(() => {
+                    // make sure this runs after the actual chart update has happened
+                    this.refreshAxisTypeSelect(chartAxisOptions);
+                    updateTimeFormatVisibility();
+                }),
+        });
     }
 
     private getAxisTypeSelectParams(

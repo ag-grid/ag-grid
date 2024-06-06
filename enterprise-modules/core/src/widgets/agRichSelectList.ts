@@ -10,7 +10,8 @@ import { KeyCode } from '@ag-grid-community/core';
 import { RichSelectRow } from './agRichSelectRow';
 import { VirtualList } from './virtualList';
 
-export class AgRichSelectList<TValue> extends VirtualList {
+export type AgRichSelectListEvent = 'fieldPickerValueSelected';
+export class AgRichSelectList<TValue> extends VirtualList<Component<AgRichSelectListEvent>, AgRichSelectListEvent> {
     private eLoading: HTMLElement | undefined;
     private lastRowHovered: number = -1;
     private currentList: TValue[] | undefined;
@@ -41,10 +42,12 @@ export class AgRichSelectList<TValue> extends VirtualList {
         const eGui = this.getGui();
         const eListAriaEl = this.getAriaElement();
 
-        this.addManagedListener(eGui, 'mousemove', this.onMouseMove.bind(this));
-        this.addManagedListener(eGui, 'mouseout', this.onMouseOut.bind(this));
-        this.addManagedListener(eGui, 'mousedown', this.onMouseDown.bind(this));
-        this.addManagedListener(eGui, 'click', this.onClick.bind(this));
+        this.addManagedListeners(eGui, {
+            mousemove: this.onMouseMove.bind(this),
+            mouseout: this.onMouseOut.bind(this),
+            mousedown: this.onMouseDown.bind(this),
+            click: this.onClick.bind(this),
+        });
 
         eGui.classList.add('ag-rich-select-list');
 
@@ -239,7 +242,7 @@ export class AgRichSelectList<TValue> extends VirtualList {
         this.eLoading = el;
     }
 
-    private createRowComponent(value: TValue): Component {
+    private createRowComponent(value: TValue): Component<AgRichSelectListEvent> {
         const row = new RichSelectRow<TValue>(this.params, this.eWrapper, (value) => this.selectedItems.has(value));
         row.setParentComponent(this);
 

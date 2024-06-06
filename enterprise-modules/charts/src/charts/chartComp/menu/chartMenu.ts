@@ -82,11 +82,11 @@ export class ChartMenu extends Component {
                 }
             },
         });
-        this.addManagedListener(this.chartController, 'chartLinkedChanged', this.refreshToolbarAndPanels.bind(this));
+        this.addManagedListeners(this.chartController, { chartLinkedChanged: this.refreshToolbarAndPanels.bind(this) });
 
         this.refreshMenuClasses();
 
-        this.addManagedListener(this.chartController, 'chartApiUpdate', this.refreshToolbarAndPanels.bind(this));
+        this.addManagedListeners(this.chartController, { chartApiUpdate: this.refreshToolbarAndPanels.bind(this) });
     }
 
     public isVisible(): boolean {
@@ -144,11 +144,13 @@ export class ChartMenu extends Component {
 
         this.tabbedMenu = this.createBean(new TabbedChartMenu(this.panels, this.chartMenuContext));
 
-        this.addManagedListener(this.tabbedMenu, 'closed', () => {
-            this.hideMenu();
+        this.addManagedListeners(this.tabbedMenu, {
+            closed: () => {
+                this.hideMenu();
+            },
         });
 
-        this.addManagedListener(menuPanel, 'destroyed', () => this.destroyBean(this.tabbedMenu));
+        this.addManagedListeners(menuPanel, { destroyed: () => this.destroyBean(this.tabbedMenu) });
 
         return new AgPromise((res: (arg0: any) => void) => {
             window.setTimeout(() => {

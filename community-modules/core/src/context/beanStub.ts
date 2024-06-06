@@ -18,9 +18,9 @@ import type { Bean } from './bean';
 import type { BeanCollection, Context } from './context';
 import type { BaseBean } from './genericContext';
 
+export type BeanStubEvent = 'destroyed';
 export type LocalEventOrDestroyed<TLocalEvent extends string> = TLocalEvent | 'destroyed';
-
-export abstract class BeanStub<TLocalEvent extends string = 'destroyed'>
+export abstract class BeanStub<TLocalEvent extends string = BeanStubEvent>
     implements BaseBean<BeanCollection>, Bean, IEventEmitter<LocalEventOrDestroyed<TLocalEvent>>
 {
     protected localEventService?: LocalEventService<LocalEventOrDestroyed<TLocalEvent>>;
@@ -77,52 +77,62 @@ export abstract class BeanStub<TLocalEvent extends string = 'destroyed'>
 
         // cast destroy type as we do not want to expose destroy event type to the dispatchLocalEvent method
         // as no one else should be firing destroyed at the bean stub.
-        this.dispatchLocalEvent({ type: 'destroyed' });
+        this.dispatchLocalEvent({ type: 'destroyed' } as { type: TLocalEvent });
     }
 
+    /** Add a local event listener against this BeanStub */
     public addEventListener<T extends TLocalEvent>(eventType: T, listener: AgEventListener<any, any, T>): void {
         if (!this.localEventService) {
             this.localEventService = new LocalEventService();
         }
-
         this.localEventService!.addEventListener(eventType, listener);
     }
 
+    /** Remove a local event listener from this BeanStub */
     public removeEventListener<T extends TLocalEvent>(eventType: T, listener: AgEventListener<any, any, T>): void {
         if (this.localEventService) {
             this.localEventService.removeEventListener(eventType, listener);
         }
     }
 
-    public dispatchLocalEvent<TEventType extends AgEvent<LocalEventOrDestroyed<TLocalEvent>>>(event: TEventType): void {
+    public dispatchLocalEvent<TEventType extends AgEvent<TLocalEvent>>(event: TEventType): void {
         if (this.localEventService) {
             this.localEventService.dispatchEvent(event);
         }
     }
 
-    public addManagedListeners<TEvent extends string = TLocalEvent>(
-        object: Window | HTMLElement | IEventEmitter<TEvent>,
+    public addManagedElementListeners<TEvent extends keyof HTMLElementEventMap>(
+        object: Element | Document,
+        handlers: Partial<Record<TEvent, (event?: HTMLElementEventMap[TEvent]) => void>>
+    ) {
+        return this.addManagedListeners<keyof HTMLElementEventMap>(object, handlers);
+    }
+
+    public addManagedListeners<TEvent extends string>(
+        object: HTMLElement | IEventEmitter<TEvent>,
         handlers: Partial<Record<TEvent, (event?: any) => void>>
-    ): void {
+    ) {
+        const destroyFuncs: (() => null)[] = [];
         for (const k in handlers) {
             const handler = handlers[k];
             if (handler) {
-                this.addManagedListener(object, k, handler);
+                destroyFuncs.push(this.addManagedListener(object, k, handler));
             }
         }
+        return destroyFuncs;
     }
 
-    public addManagedEventListeners(handlers: Partial<Record<EventsType, (event?: any) => void>>): void {
-        this.addManagedListeners<EventsType>(this.eventService, handlers);
+    public addManagedEventListeners(handlers: Partial<Record<EventsType, (event?: any) => void>>) {
+        return this.addManagedListeners<EventsType>(this.eventService, handlers);
     }
 
     public addManagedListener<const T extends string>(
         object: Window | HTMLElement | IEventEmitter<T>,
         event: T,
         listener: (event?: any) => void
-    ): (() => null) | undefined {
+    ): () => null {
         if (this.destroyed) {
-            return;
+            return () => null;
         }
 
         if (object instanceof HTMLElement) {

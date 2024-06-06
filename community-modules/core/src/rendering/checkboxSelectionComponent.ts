@@ -84,30 +84,29 @@ export class CheckboxSelectionComponent extends Component {
 
         this.onSelectionChanged();
 
-        // we don't want double click on this icon to open a group
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'dblclick', (event) => {
-            _stopPropagationForAgGrid(event);
-        });
+        this.addManagedListeners(this.eCheckbox.getInputElement(), {
+            // we don't want double click on this icon to open a group
+            dblclick: (event) => _stopPropagationForAgGrid(event),
+            click: (event) => {
+                // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
+                // would possibly get selected twice
+                _stopPropagationForAgGrid(event);
 
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', (event) => {
-            // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
-            // would possibly get selected twice
-            _stopPropagationForAgGrid(event);
+                const groupSelectsFiltered = this.gos.get('groupSelectsFiltered');
+                const isSelected = this.eCheckbox.getValue();
 
-            const groupSelectsFiltered = this.gos.get('groupSelectsFiltered');
-            const isSelected = this.eCheckbox.getValue();
-
-            if (this.shouldHandleIndeterminateState(isSelected, groupSelectsFiltered)) {
-                // try toggling children to determine action.
-                const result = this.onClicked(true, groupSelectsFiltered, event || {});
-                if (result === 0) {
+                if (this.shouldHandleIndeterminateState(isSelected, groupSelectsFiltered)) {
+                    // try toggling children to determine action.
+                    const result = this.onClicked(true, groupSelectsFiltered, event || {});
+                    if (result === 0) {
+                        this.onClicked(false, groupSelectsFiltered, event);
+                    }
+                } else if (isSelected) {
                     this.onClicked(false, groupSelectsFiltered, event);
+                } else {
+                    this.onClicked(true, groupSelectsFiltered, event || {});
                 }
-            } else if (isSelected) {
-                this.onClicked(false, groupSelectsFiltered, event);
-            } else {
-                this.onClicked(true, groupSelectsFiltered, event || {});
-            }
+            },
         });
 
         this.addManagedListeners(this.rowNode, {

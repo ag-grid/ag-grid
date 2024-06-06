@@ -110,9 +110,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (allowTyping) {
             this.eInput.onValueChange((value) => this.searchTextFromString(value));
-            this.addManagedListener(this.eWrapper, 'focus', this.onWrapperFocus.bind(this));
+            this.addManagedElementListeners(this.eWrapper, { focus: this.onWrapperFocus.bind(this) });
         }
-        this.addManagedListener(this.eWrapper, 'focusout', this.onWrapperFocusOut.bind(this));
+        this.addManagedElementListeners(this.eWrapper, { focusout: this.onWrapperFocusOut.bind(this) });
     }
 
     private createListComponent(): void {
@@ -120,8 +120,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         this.listComponent.setParentComponent(this);
 
-        this.addManagedListener(this.listComponent, 'fieldPickerValueSelected', (e: FieldPickerValueSelectedEvent) => {
-            this.onListValueSelected(e.value, e.fromEnterKey);
+        this.addManagedListeners(this.listComponent, {
+            fieldPickerValueSelected: (e: FieldPickerValueSelectedEvent) => {
+                this.onListValueSelected(e.value, e.fromEnterKey);
+            },
         });
     }
 

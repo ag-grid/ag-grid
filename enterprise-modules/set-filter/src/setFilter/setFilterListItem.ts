@@ -179,12 +179,14 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private setupExpansion(): void {
         this.eGroupClosedIcon.appendChild(_createIcon('setFilterGroupClosed', this.gos, null));
         this.eGroupOpenedIcon.appendChild(_createIcon('setFilterGroupOpen', this.gos, null));
-        this.addManagedListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
-        this.addManagedListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
+        this.addManagedElementListeners(this.eGroupClosedIcon, { click: this.onExpandOrContractClicked.bind(this) });
+        this.addManagedElementListeners(this.eGroupOpenedIcon, { click: this.onExpandOrContractClicked.bind(this) });
 
         if (this.hasIndeterminateExpandState) {
             this.eGroupIndeterminateIcon.appendChild(_createIcon('setFilterGroupIndeterminate', this.gos, null));
-            this.addManagedListener(this.eGroupIndeterminateIcon, 'click', this.onExpandOrContractClicked.bind(this));
+            this.addManagedElementListeners(this.eGroupIndeterminateIcon, {
+                click: this.onExpandOrContractClicked.bind(this),
+            });
         }
 
         this.setExpandedIcons();

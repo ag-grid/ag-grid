@@ -25,7 +25,7 @@ import {
     _normaliseQwertyAzerty,
 } from '../../utils/keyboard';
 import type { ValueService } from '../../valueService/valueService';
-import type { LongTapEvent, TouchListenerEvent } from '../../widgets/touchListener';
+import type { LongTapEvent } from '../../widgets/touchListener';
 import { TouchListener } from '../../widgets/touchListener';
 import type { MouseEventService } from './../mouseEventService';
 import type { NavigationService } from './../navigationService';
@@ -75,7 +75,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private addKeyboardListeners(): void {
         const eventName = 'keydown';
         const listener = this.processKeyboardEvent.bind(this, eventName);
-        this.addManagedListener(this.element, eventName, listener);
+        this.addManagedElementListeners(this.element, { [eventName]: listener });
     }
 
     private addMouseListeners(): void {
@@ -84,7 +84,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
         eventNames.forEach((eventName) => {
             const listener = this.processMouseEvent.bind(this, eventName);
-            this.addManagedListener(this.element, eventName, listener);
+            this.addManagedElementListeners(this.element, { [eventName]: listener });
         });
     }
 
@@ -122,7 +122,7 @@ export class RowContainerEventsFeature extends BeanStub {
             this.handleContextMenuMouseEvent(undefined, event.touchEvent, rowComp, cellComp);
         };
 
-        this.addManagedListener<TouchListenerEvent>(touchListener, 'longTap', longTapListener);
+        this.addManagedListeners(touchListener, { longTap: longTapListener });
         this.addDestroyFunc(() => touchListener.destroy());
     }
 

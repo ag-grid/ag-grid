@@ -24,6 +24,6 @@ export class PopupEditorWrapper extends PopupComponent {
             }
         };
 
-        this.addManagedListener(eGui, 'keydown', listener);
+        this.addManagedElementListeners(eGui, { keydown: listener });
     }
 }

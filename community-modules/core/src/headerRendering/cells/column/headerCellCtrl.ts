@@ -5,7 +5,7 @@ import { HorizontalDirection } from '../../../constants/direction';
 import { KeyCode } from '../../../constants/keyCode';
 import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
 import { DragAndDropService, DragSourceType } from '../../../dragAndDrop/dragAndDropService';
-import { AgColumn } from '../../../entities/agColumn';
+import type { AgColumn } from '../../../entities/agColumn';
 import type { SortDirection } from '../../../entities/colDef';
 import type { ColumnHeaderMouseLeaveEvent } from '../../../events';
 import type { WithoutGridCommon } from '../../../interfaces/iCommon';
@@ -105,7 +105,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             ['suppressMovableColumns', 'suppressMenuHide', 'suppressAggFuncInHeader'],
             this.refresh.bind(this)
         );
-        this.addManagedListener(this.column, 'colDefChanged', this.refresh.bind(this));
+        this.addManagedListeners(this.column, { colDefChanged: this.refresh.bind(this) });
 
         this.addManagedEventListeners({
             columnValueChanged: this.onColumnValueChanged.bind(this),
@@ -505,7 +505,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             this.comp.setWidth(`${columnWidth}px`);
         };
 
-        this.addManagedListener(this.column, 'widthChanged', listener);
+        this.addManagedListeners(this.column, { widthChanged: listener });
         listener();
     }
 
@@ -516,7 +516,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             this.comp.addOrRemoveCssClass('ag-header-cell-moving', this.column.isMoving());
         };
 
-        this.addManagedListener(this.column, 'movingChanged', listener);
+        this.addManagedListeners(this.column, { movingChanged: listener });
         listener();
     }
 
@@ -525,7 +525,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             this.comp.addOrRemoveCssClass('ag-column-menu-visible', this.column.isMenuVisible());
         };
 
-        this.addManagedListener(this.column, 'menuVisibleChanged', listener);
+        this.addManagedListeners(this.column, { menuVisibleChanged: listener });
         listener();
     }
 
@@ -547,7 +547,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             this.refreshAria();
         };
 
-        this.addManagedListener(this.column, 'filterActiveChanged', listener);
+        this.addManagedListeners(this.column, { filterActiveChanged: listener });
         listener();
     }
 
@@ -678,7 +678,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         // In theory we could rely on the resize observer for everything - but since it's debounced
         // it can be a little janky for smooth movement. in this case its better to react to our own events
         // And unfortunately we cant _just_ rely on our own events, since custom components can change whenever
-        this.addManagedListener(this.column, 'widthChanged', () => isMeasuring && measureHeight(0));
+        this.addManagedListeners(this.column, { widthChanged: () => isMeasuring && measureHeight(0) });
         // Displaying the sort icon changes the available area for text, so sort changes can affect height
         this.addManagedEventListeners({
             sortChanged: () => {
@@ -785,10 +785,12 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const contextMenuListener = (event: MouseEvent) =>
             this.handleContextMenuMouseEvent(event, undefined, this.column);
 
-        this.addManagedListener(this.getGui(), 'mouseenter', listener);
-        this.addManagedListener(this.getGui(), 'mouseleave', listener);
-        this.addManagedListener(this.getGui(), 'click', clickListener);
-        this.addManagedListener(this.getGui(), 'contextmenu', contextMenuListener);
+        this.addManagedListeners(this.getGui(), {
+            mouseenter: listener,
+            mouseleave: listener,
+            click: clickListener,
+            contextmenu: contextMenuListener,
+        });
     }
 
     private handleMouseOverChange(isMouseOver: boolean): void {

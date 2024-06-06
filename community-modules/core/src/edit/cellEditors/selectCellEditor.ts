@@ -84,7 +84,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
         // we don't want to add this if full row editing, otherwise selecting will stop the
         // full row editing.
         if (gos.get('editType') !== 'fullRow') {
-            this.addManagedListener(this.eSelect, 'selectedItem', () => params.stopEditing());
+            this.addManagedListeners(this.eSelect, { selectedItem: () => params.stopEditing() });
         }
     }
 

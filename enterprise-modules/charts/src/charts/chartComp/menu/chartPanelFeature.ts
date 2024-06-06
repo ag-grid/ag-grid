@@ -20,8 +20,10 @@ export class ChartPanelFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.addManagedListener(this.chartController, 'chartUpdated', () => this.refreshPanels(true));
-        this.addManagedListener(this.chartController, 'chartApiUpdate', () => this.refreshPanels(false));
+        this.addManagedListeners(this.chartController, {
+            chartUpdated: () => this.refreshPanels(true),
+            chartApiUpdate: () => this.refreshPanels(false),
+        });
     }
 
     public addComponent(component: Component): void {

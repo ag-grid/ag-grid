@@ -33,7 +33,7 @@ export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
     }
 
     public postConstruct(): void {
-        this.addManagedListener(this.getFocusableElement(), 'keydown', this.handleKeyDown.bind(this));
+        this.addManagedElementListeners(this.getFocusableElement(), { keydown: this.handleKeyDown.bind(this) });
     }
 
     private handleKeyDown(e: KeyboardEvent): void {

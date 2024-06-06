@@ -104,12 +104,14 @@ export class PaginationComp extends Component {
                 { el: this.btLast, fn: this.onBtLast.bind(this) },
             ].forEach((item) => {
                 const { el, fn } = item;
-                this.addManagedListener(el, 'click', fn);
-                this.addManagedListener(el, 'keydown', (e: KeyboardEvent) => {
-                    if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
-                        e.preventDefault();
-                        fn();
-                    }
+                this.addManagedListeners(el, {
+                    click: fn,
+                    keydown: (e: KeyboardEvent) => {
+                        if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
+                            e.preventDefault();
+                            fn();
+                        }
+                    },
                 });
             });
             this.areListenersSetup = true;

@@ -70,26 +70,14 @@ export class AdvancedFilterComp extends Component {
 
         this.refresh();
 
-        this.addManagedListener(this.eAutocomplete, 'eventValueChanged', ({ value }: AutocompleteValueChangedEvent) =>
-            this.onValueChanged(value)
-        );
-        this.addManagedListener(
-            this.eAutocomplete,
-            'eventValueConfirmed',
-            ({ isValid }: AutocompleteValueConfirmedEvent) => this.onValueConfirmed(isValid)
-        );
-        this.addManagedListener(
-            this.eAutocomplete,
-            'eventOptionSelected',
-            ({ position, updateEntry, autocompleteType }: AutocompleteOptionSelectedEvent) =>
-                this.onOptionSelected(position, updateEntry, autocompleteType)
-        );
-        this.addManagedListener(
-            this.eAutocomplete,
-            'eventValidChanged',
-            ({ isValid, validationMessage }: AutocompleteValidChangedEvent) =>
-                this.onValidChanged(isValid, validationMessage)
-        );
+        this.addManagedListeners(this.eAutocomplete, {
+            eventValueChanged: ({ value }: AutocompleteValueChangedEvent) => this.onValueChanged(value),
+            eventValueConfirmed: ({ isValid }: AutocompleteValueConfirmedEvent) => this.onValueConfirmed(isValid),
+            eventOptionSelected: ({ position, updateEntry, autocompleteType }: AutocompleteOptionSelectedEvent) =>
+                this.onOptionSelected(position, updateEntry, autocompleteType),
+            eventValidChanged: ({ isValid, validationMessage }: AutocompleteValidChangedEvent) =>
+                this.onValidChanged(isValid, validationMessage),
+        });
 
         this.setupApplyButton();
         this.setupBuilderButton();
@@ -118,9 +106,9 @@ export class AdvancedFilterComp extends Component {
     private setupApplyButton(): void {
         this.eApplyFilterButton.innerText = this.advancedFilterExpressionService.translate('advancedFilterApply');
         this.activateTabIndex([this.eApplyFilterButton]);
-        this.addManagedListener(this.eApplyFilterButton, 'click', () =>
-            this.onValueConfirmed(this.eAutocomplete.isValid())
-        );
+        this.addManagedElementListeners(this.eApplyFilterButton, {
+            click: () => this.onValueConfirmed(this.eAutocomplete.isValid()),
+        });
         _setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
     }
 
@@ -129,10 +117,10 @@ export class AdvancedFilterComp extends Component {
         this.eBuilderFilterButtonLabel.innerText =
             this.advancedFilterExpressionService.translate('advancedFilterBuilder');
         this.activateTabIndex([this.eBuilderFilterButton]);
-        this.addManagedListener(this.eBuilderFilterButton, 'click', () => this.openBuilder());
-        this.addManagedListener(this.advancedFilterService.getCtrl(), 'advancedFilterBuilderClosed', () =>
-            this.closeBuilder()
-        );
+        this.addManagedElementListeners(this.eBuilderFilterButton, { click: () => this.openBuilder() });
+        this.addManagedListeners(this.advancedFilterService.getCtrl(), {
+            advancedFilterBuilderClosed: () => this.closeBuilder(),
+        });
     }
 
     private onValueChanged(value: string | null): void {

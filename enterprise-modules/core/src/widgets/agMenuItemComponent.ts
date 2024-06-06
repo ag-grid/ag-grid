@@ -108,27 +108,31 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
 
     private addListeners(eGui: HTMLElement, params?: IMenuConfigParams): void {
         if (!params?.suppressClick) {
-            this.addManagedListener(eGui, 'click', (e) => this.onItemSelected(e));
+            this.addManagedElementListeners(eGui, { click: (e) => this.onItemSelected(e!) });
         }
         if (!params?.suppressKeyboardSelect) {
-            this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
-                if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
-                    e.preventDefault();
-                    this.onItemSelected(e);
-                }
+            this.addManagedElementListeners(eGui, {
+                keydown: (e: KeyboardEvent) => {
+                    if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
+                        e.preventDefault();
+                        this.onItemSelected(e);
+                    }
+                },
             });
         }
         if (!params?.suppressMouseDown) {
-            this.addManagedListener(eGui, 'mousedown', (e) => {
-                // Prevent event bubbling to other event handlers such as PopupService triggering
-                // premature closing of any open sub-menu popup.
-                e.stopPropagation();
-                e.preventDefault();
+            this.addManagedElementListeners(eGui, {
+                mousedown: (e: MouseEvent) => {
+                    // Prevent event bubbling to other event handlers such as PopupService triggering
+                    // premature closing of any open sub-menu popup.
+                    e.stopPropagation();
+                    e.preventDefault();
+                },
             });
         }
         if (!params?.suppressMouseOver) {
-            this.addManagedListener(eGui, 'mouseenter', () => this.onMouseEnter());
-            this.addManagedListener(eGui, 'mouseleave', () => this.onMouseLeave());
+            this.addManagedElementListeners(eGui, { mouseenter: () => this.onMouseEnter() });
+            this.addManagedElementListeners(eGui, { mouseleave: () => this.onMouseLeave() });
         }
     }
 
@@ -180,7 +184,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
             ePopup.appendChild(childMenu.getGui());
 
             // bubble menu item selected events
-            this.addManagedListener(childMenu, 'closeMenu', (e) => this.dispatchLocalEvent(e));
+            this.addManagedListeners(childMenu, { closeMenu: (e) => this.dispatchLocalEvent(e) });
             childMenu.addGuiEventListener('mouseenter', () => this.cancelDeactivate());
 
             destroySubMenu = () => this.destroyBean(childMenu);

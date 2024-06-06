@@ -2,7 +2,7 @@ import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { AgColumn } from '../entities/agColumn';
+import type { AgColumn } from '../entities/agColumn';
 import type {
     ColDef,
     SuppressKeyboardEventParams,
@@ -482,10 +482,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (columnTypeOverridesExist) {
             this.columnModel.queueResizeOperations();
         }
-        const destroyFunc = this.addManagedListener(
-            this.eventService,
-            'rowDataUpdateStarted',
-            (event: RowDataUpdateStartedEvent) => {
+        const [destroyFunc] = this.addManagedEventListeners({
+            rowDataUpdateStarted: (event: RowDataUpdateStartedEvent) => {
                 const { firstRowData } = event;
                 if (!firstRowData) {
                     return;
@@ -501,8 +499,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     type: 'dataTypesInferred',
                 };
                 this.eventService.dispatchEvent(dataTypesInferredEvent);
-            }
-        );
+            },
+        });
     }
 
     public isPendingInference(): boolean {

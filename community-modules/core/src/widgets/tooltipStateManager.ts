@@ -90,20 +90,26 @@ export class TooltipStateManager extends BeanStub {
         const el = this.parentComp.getGui();
 
         if (this.tooltipTrigger === TooltipTrigger.HOVER) {
-            this.addManagedListener(el, 'mouseenter', this.onMouseEnter.bind(this));
-            this.addManagedListener(el, 'mouseleave', this.onMouseLeave.bind(this));
+            this.addManagedListeners(el, {
+                mouseenter: this.onMouseEnter.bind(this),
+                mouseleave: this.onMouseLeave.bind(this),
+            });
         }
 
         if (this.tooltipTrigger === TooltipTrigger.FOCUS) {
-            this.addManagedListener(el, 'focusin', this.onFocusIn.bind(this));
-            this.addManagedListener(el, 'focusout', this.onFocusOut.bind(this));
+            this.addManagedListeners(el, {
+                focusin: this.onFocusIn.bind(this),
+                focusout: this.onFocusOut.bind(this),
+            });
         }
 
-        this.addManagedListener(el, 'mousemove', this.onMouseMove.bind(this));
+        this.addManagedListeners(el, { mousemove: this.onMouseMove.bind(this) });
 
         if (!this.interactionEnabled) {
-            this.addManagedListener(el, 'mousedown', this.onMouseDown.bind(this));
-            this.addManagedListener(el, 'keydown', this.onKeyDown.bind(this));
+            this.addManagedListeners(el, {
+                mousedown: this.onMouseDown.bind(this),
+                keydown: this.onKeyDown.bind(this),
+            });
         }
     }
 
@@ -344,29 +350,27 @@ export class TooltipStateManager extends BeanStub {
         this.positionTooltip();
 
         if (this.tooltipTrigger === TooltipTrigger.FOCUS) {
-            this.onBodyScrollEventCallback = this.addManagedListener(
-                this.eventService,
-                'bodyScroll',
-                this.setToDoNothing.bind(this)
-            );
-            this.onColumnMovedEventCallback = this.addManagedListener(
-                this.eventService,
-                'columnMoved',
-                this.setToDoNothing.bind(this)
-            );
+            const listener = this.setToDoNothing.bind(this);
+            [this.onBodyScrollEventCallback, this.onColumnMovedEventCallback] = this.addManagedEventListeners({
+                bodyScroll: listener,
+                columnMoved: listener,
+            });
         }
 
         if (this.interactionEnabled) {
             if (this.tooltipTrigger === TooltipTrigger.HOVER) {
-                this.tooltipMouseEnterListener =
-                    this.addManagedListener(eGui, 'mouseenter', this.onTooltipMouseEnter.bind(this)) || null;
-                this.tooltipMouseLeaveListener =
-                    this.addManagedListener(eGui, 'mouseleave', this.onTooltipMouseLeave.bind(this)) || null;
+                [this.tooltipMouseEnterListener, this.tooltipMouseLeaveListener] = this.addManagedElementListeners(
+                    eGui,
+                    {
+                        mouseenter: this.onTooltipMouseEnter.bind(this),
+                        mouseleave: this.onTooltipMouseLeave.bind(this),
+                    }
+                );
             } else {
-                this.tooltipFocusInListener =
-                    this.addManagedListener(eGui, 'focusin', this.onTooltipFocusIn.bind(this)) || null;
-                this.tooltipFocusOutListener =
-                    this.addManagedListener(eGui, 'focusout', this.onTooltipFocusOut.bind(this)) || null;
+                [this.tooltipFocusInListener, this.tooltipFocusOutListener] = this.addManagedElementListeners(eGui, {
+                    focusin: this.onTooltipFocusIn.bind(this),
+                    focusout: this.onTooltipFocusOut.bind(this),
+                });
             }
         }
 

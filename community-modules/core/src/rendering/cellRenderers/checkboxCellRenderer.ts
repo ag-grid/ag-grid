@@ -34,31 +34,34 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         inputEl.setAttribute('tabindex', '-1');
         _setAriaLive(inputEl, 'polite');
 
-        this.addManagedListener(inputEl, 'click', (event: Event) => {
-            _stopPropagationForAgGrid(event);
+        this.addManagedListeners(inputEl, {
+            click: (event: Event) => {
+                _stopPropagationForAgGrid(event);
 
-            if (this.eCheckbox.isDisabled()) {
-                return;
-            }
-
-            const isSelected = this.eCheckbox.getValue();
-
-            this.onCheckboxChanged(isSelected);
-        });
-
-        this.addManagedListener(inputEl, 'dblclick', (event: Event) => {
-            _stopPropagationForAgGrid(event);
-        });
-
-        this.addManagedListener(this.params.eGridCell, 'keydown', (event: KeyboardEvent) => {
-            if (event.key === KeyCode.SPACE && !this.eCheckbox.isDisabled()) {
-                if (this.params.eGridCell === this.gos.getActiveDomElement()) {
-                    this.eCheckbox.toggle();
+                if (this.eCheckbox.isDisabled()) {
+                    return;
                 }
+
                 const isSelected = this.eCheckbox.getValue();
+
                 this.onCheckboxChanged(isSelected);
-                event.preventDefault();
-            }
+            },
+            dblclick: (event: Event) => {
+                _stopPropagationForAgGrid(event);
+            },
+        });
+
+        this.addManagedElementListeners(this.params.eGridCell, {
+            keydown: (event: KeyboardEvent) => {
+                if (event.key === KeyCode.SPACE && !this.eCheckbox.isDisabled()) {
+                    if (this.params.eGridCell === this.gos.getActiveDomElement()) {
+                        this.eCheckbox.toggle();
+                    }
+                    const isSelected = this.eCheckbox.getValue();
+                    this.onCheckboxChanged(isSelected);
+                    event.preventDefault();
+                }
+            },
         });
     }
 

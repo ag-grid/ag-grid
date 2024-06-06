@@ -10,7 +10,6 @@ import type {
     DragSource,
     IAggFunc,
     ITooltipParams,
-    TouchListenerEvent,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
@@ -102,11 +101,11 @@ export class ToolPanelColumnGroupComp extends Component {
 
         this.addManagedEventListeners({ columnPivotModeChanged: this.onColumnStateChanged.bind(this) });
 
-        this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
-        this.addManagedListener(this.cbSelect, 'fieldValueChanged', this.onCheckboxChanged.bind(this));
-        this.addManagedListener(this.modelItem, 'expandedChanged', this.onExpandChanged.bind(this));
-        this.addManagedListener(this.focusWrapper, 'keydown', this.handleKeyDown.bind(this));
-        this.addManagedListener(this.focusWrapper, 'contextmenu', this.onContextMenu.bind(this));
+        this.addManagedElementListeners(this.eLabel, { click: this.onLabelClicked.bind(this) });
+        this.addManagedListeners(this.cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
+        this.addManagedListeners(this.modelItem, { expandedChanged: this.onExpandChanged.bind(this) });
+        this.addManagedListeners(this.focusWrapper, { keydown: this.handleKeyDown.bind(this) });
+        this.addManagedListeners(this.focusWrapper, { contextmenu: this.onContextMenu.bind(this) });
 
         this.setOpenClosedIcons();
         this.setupDragging();
@@ -285,11 +284,11 @@ export class ToolPanelColumnGroupComp extends Component {
         this.eGroupClosedIcon.appendChild(_createIcon('columnSelectClosed', this.gos, null));
         this.eGroupOpenedIcon.appendChild(_createIcon('columnSelectOpen', this.gos, null));
 
-        this.addManagedListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
-        this.addManagedListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
+        this.addManagedElementListeners(this.eGroupClosedIcon, { click: this.onExpandOrContractClicked.bind(this) });
+        this.addManagedElementListeners(this.eGroupOpenedIcon, { click: this.onExpandOrContractClicked.bind(this) });
 
         const touchListener = new TouchListener(this.eColumnGroupIcons, true);
-        this.addManagedListener<TouchListenerEvent>(touchListener, 'tap', this.onExpandOrContractClicked.bind(this));
+        this.addManagedListeners(touchListener, { tap: this.onExpandOrContractClicked.bind(this) });
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     }
 

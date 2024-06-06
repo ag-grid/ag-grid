@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     AgProvidedColumnGroup,
     BeanCollection,
     ColumnNameService,
@@ -7,7 +8,6 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    AgColumn,
     Component,
     RefPlaceholder,
     _clearElement,
@@ -190,8 +190,10 @@ export class ToolPanelFilterGroupComp extends Component {
             ? () => this.expandedCallback()
             : () => this.forEachToolPanelFilterChild((filterComp) => filterComp.collapse());
 
-        this.addManagedListener(this.filterGroupComp, 'expanded', expandListener);
-        this.addManagedListener(this.filterGroupComp, 'collapsed', collapseListener);
+        this.addManagedListeners(this.filterGroupComp, {
+            expanded: expandListener,
+            collapsed: collapseListener,
+        });
     }
 
     private getColumns(): AgColumn[] {
@@ -204,7 +206,7 @@ export class ToolPanelFilterGroupComp extends Component {
 
     private addFilterChangedListeners() {
         this.getColumns().forEach((column) => {
-            this.addManagedListener(column, 'filterChanged', () => this.refreshFilterClass());
+            this.addManagedListeners(column, { filterChanged: () => this.refreshFilterClass() });
         });
 
         if (!isProvidedColumnGroup(this.columnGroup)) {

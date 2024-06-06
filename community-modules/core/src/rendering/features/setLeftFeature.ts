@@ -46,7 +46,7 @@ export class SetLeftFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.addManagedListener(this.columnOrGroup, 'leftChanged', this.onLeftChanged.bind(this));
+        this.addManagedListeners(this.columnOrGroup, { leftChanged: this.onLeftChanged.bind(this) });
         this.setLeftFirstTime();
 
         // when in print layout, the left position is also dependent on the width of the pinned sections.

@@ -18,7 +18,7 @@ import { LayoutFeature } from '../styling/layoutFeature';
 import { _getTabIndex, _isIOSUserAgent, _isInvisibleScrollbar } from '../utils/browser';
 import { _getInnerWidth, _isElementChildOfClass, _isVerticalScrollShowing } from '../utils/dom';
 import type { PopupService } from '../widgets/popupService';
-import type { LongTapEvent, TouchListenerEvent } from '../widgets/touchListener';
+import type { LongTapEvent } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
 import type { MouseEventService } from './mouseEventService';
@@ -172,31 +172,36 @@ export class GridBodyCtrl extends BeanStub {
 
     private addFocusListeners(elements: HTMLElement[]): void {
         elements.forEach((element) => {
-            this.addManagedListener(element, 'focusin', (e: FocusEvent) => {
-                const { target } = e;
-                // element being focused is nested?
-                const isFocusedElementNested = _isElementChildOfClass(target as HTMLElement, 'ag-root', element);
+            this.addManagedElementListeners(element, {
+                focusin: (e: FocusEvent) => {
+                    const { target } = e;
+                    // element being focused is nested?
+                    const isFocusedElementNested = _isElementChildOfClass(target as HTMLElement, 'ag-root', element);
 
-                element.classList.toggle('ag-has-focus', !isFocusedElementNested);
-            });
+                    element.classList.toggle('ag-has-focus', !isFocusedElementNested);
+                },
+                focusout: (e: FocusEvent) => {
+                    const { target, relatedTarget } = e;
+                    const gridContainRelatedTarget = element.contains(relatedTarget as HTMLElement);
+                    const isNestedRelatedTarget = _isElementChildOfClass(
+                        relatedTarget as HTMLElement,
+                        'ag-root',
+                        element
+                    );
+                    const isNestedTarget = _isElementChildOfClass(target as HTMLElement, 'ag-root', element);
 
-            this.addManagedListener(element, 'focusout', (e: FocusEvent) => {
-                const { target, relatedTarget } = e;
-                const gridContainRelatedTarget = element.contains(relatedTarget as HTMLElement);
-                const isNestedRelatedTarget = _isElementChildOfClass(relatedTarget as HTMLElement, 'ag-root', element);
-                const isNestedTarget = _isElementChildOfClass(target as HTMLElement, 'ag-root', element);
+                    // element losing focus belongs to a nested grid,
+                    // it should not be handled here.
+                    if (isNestedTarget) {
+                        return;
+                    }
 
-                // element losing focus belongs to a nested grid,
-                // it should not be handled here.
-                if (isNestedTarget) {
-                    return;
-                }
-
-                // the grid does not contain, or the focus element is within
-                // a nested grid
-                if (!gridContainRelatedTarget || isNestedRelatedTarget) {
-                    element.classList.remove('ag-has-focus');
-                }
+                    // the grid does not contain, or the focus element is within
+                    // a nested grid
+                    if (!gridContainRelatedTarget || isNestedRelatedTarget) {
+                        element.classList.remove('ag-has-focus');
+                    }
+                },
             });
         });
     }
@@ -231,11 +236,13 @@ export class GridBodyCtrl extends BeanStub {
     // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)
     // and then that will start the browser native drag n' drop, which messes up with our own drag and drop.
     private disableBrowserDragging(): void {
-        this.addManagedListener(this.eGridBody, 'dragstart', (event: MouseEvent) => {
-            if (event.target instanceof HTMLImageElement) {
-                event.preventDefault();
-                return false;
-            }
+        this.addManagedElementListeners(this.eGridBody, {
+            dragstart: (event: DragEvent) => {
+                if (event.target instanceof HTMLImageElement) {
+                    event.preventDefault();
+                    return false;
+                }
+            },
         });
     }
 
@@ -274,7 +281,7 @@ export class GridBodyCtrl extends BeanStub {
 
         const viewports = [this.eBodyViewport, this.eBottom, this.eTop, this.eStickyTop, this.eStickyBottom];
 
-        viewports.forEach((viewport) => this.addManagedListener(viewport, 'focusout', focusOutListener));
+        viewports.forEach((viewport) => this.addManagedElementListeners(viewport, { focusout: focusOutListener }));
     }
 
     public updateRowCount(): void {
@@ -343,12 +350,12 @@ export class GridBodyCtrl extends BeanStub {
         // we want to listen for clicks directly on the eBodyViewport, so the user has a way of showing
         // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
         const listener = this.onBodyViewportContextMenu.bind(this);
-        this.addManagedListener(this.eBodyViewport, 'contextmenu', listener);
+        this.addManagedElementListeners(this.eBodyViewport, { contextmenu: listener });
         this.mockContextMenuForIPad(listener);
 
-        this.addManagedListener(this.eBodyViewport, 'wheel', this.onBodyViewportWheel.bind(this));
-        this.addManagedListener(this.eStickyTop, 'wheel', this.onStickyWheel.bind(this));
-        this.addManagedListener(this.eStickyBottom, 'wheel', this.onStickyWheel.bind(this));
+        this.addManagedElementListeners(this.eBodyViewport, { wheel: this.onBodyViewportWheel.bind(this) });
+        this.addManagedElementListeners(this.eStickyTop, { wheel: this.onStickyWheel.bind(this) });
+        this.addManagedElementListeners(this.eStickyBottom, { wheel: this.onStickyWheel.bind(this) });
 
         // allow mouseWheel on the Full Width Container to Scroll the Viewport
         this.addFullWidthContainerWheelListener();
@@ -359,9 +366,9 @@ export class GridBodyCtrl extends BeanStub {
         const eCenterColsViewport = this.eBodyViewport.querySelector('.ag-center-cols-viewport');
 
         if (fullWidthContainer && eCenterColsViewport) {
-            this.addManagedListener(fullWidthContainer, 'wheel', (e: WheelEvent) =>
-                this.onFullWidthContainerWheel(e, eCenterColsViewport)
-            );
+            this.addManagedElementListeners(fullWidthContainer, {
+                wheel: (e: WheelEvent) => this.onFullWidthContainerWheel(e, eCenterColsViewport),
+            });
         }
     }
 
@@ -410,7 +417,7 @@ export class GridBodyCtrl extends BeanStub {
             listener(undefined, event.touchStart, event.touchEvent);
         };
 
-        this.addManagedListener<TouchListenerEvent>(touchListener, 'longTap', longTapListener);
+        this.addManagedListeners(touchListener, { longTap: longTapListener });
         this.addDestroyFunc(() => touchListener.destroy());
     }
 

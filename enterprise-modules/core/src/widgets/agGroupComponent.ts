@@ -275,14 +275,16 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
     }
 
     public onEnableChange(callbackFn: (enabled: boolean) => void): this {
-        this.addManagedListener(this, 'enableChange', (event: EnableChangeEvent) => callbackFn(event.enabled));
+        this.addManagedListeners(this, { enableChange: (event: EnableChangeEvent) => callbackFn(event.enabled) });
 
         return this;
     }
 
     public onExpandedChange(callbackFn: (expanded: boolean) => void): this {
-        this.addManagedListener(this, 'expanded', () => callbackFn(true));
-        this.addManagedListener(this, 'collapsed', () => callbackFn(false));
+        this.addManagedListeners(this, {
+            expanded: () => callbackFn(true),
+            collapsed: () => callbackFn(false),
+        });
 
         return this;
     }
@@ -316,9 +318,9 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
         const titleBar = this.createManagedBean(new DefaultTitleBar(this.params));
         this.eTitleBar = titleBar;
         titleBar.refreshOnExpand(this.expanded);
-        this.addManagedListener(titleBar, 'expandedChanged', (event: ExpandChangedEvent) =>
-            this.toggleGroupExpand(event.expanded)
-        );
+        this.addManagedListeners(titleBar, {
+            expandedChanged: (event: ExpandChangedEvent) => this.toggleGroupExpand(event.expanded),
+        });
         return titleBar;
     }
 
@@ -395,20 +397,22 @@ class DefaultTitleBar extends Component<ExpandedChangedEvent> {
     private setupExpandContract(): void {
         this.eGroupClosedIcon.appendChild(_createIcon('columnSelectClosed', this.gos, null));
         this.eGroupOpenedIcon.appendChild(_createIcon('columnSelectOpen', this.gos, null));
-        this.addManagedListener(this.getGui(), 'click', () => this.dispatchExpandChanged());
-        this.addManagedListener(this.getGui(), 'keydown', (e: KeyboardEvent) => {
-            switch (e.key) {
-                case KeyCode.ENTER:
-                case KeyCode.SPACE:
-                    e.preventDefault();
-                    this.dispatchExpandChanged();
-                    break;
-                case KeyCode.RIGHT:
-                case KeyCode.LEFT:
-                    e.preventDefault();
-                    this.dispatchExpandChanged(e.key === KeyCode.RIGHT);
-                    break;
-            }
+        this.addManagedElementListeners(this.getGui(), {
+            click: () => this.dispatchExpandChanged(),
+            keydown: (e: KeyboardEvent) => {
+                switch (e.key) {
+                    case KeyCode.ENTER:
+                    case KeyCode.SPACE:
+                        e.preventDefault();
+                        this.dispatchExpandChanged();
+                        break;
+                    case KeyCode.RIGHT:
+                    case KeyCode.LEFT:
+                        e.preventDefault();
+                        this.dispatchExpandChanged(e.key === KeyCode.RIGHT);
+                        break;
+                }
+            },
         });
     }
 

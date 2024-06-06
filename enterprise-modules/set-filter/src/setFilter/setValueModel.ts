@@ -52,7 +52,7 @@ export interface SetValueModelParams<V> {
     usingComplexObjects?: boolean;
     treeDataTreeList?: boolean;
     groupingTreeList?: boolean;
-    addManagedListener: (event: EventsType, listener: (event?: any) => void) => (() => null) | undefined;
+    addManagedEventListeners: (handlers: Partial<Record<EventsType, (event?: any) => void>>) => (() => null)[];
 }
 
 export type SetValueModelEvent = 'availableValuesChanged';
@@ -117,7 +117,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
             filterParams,
             gos,
             valueFormatter,
-            addManagedListener,
+            addManagedEventListeners,
         } = params;
         const {
             column,
@@ -188,7 +188,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
                 !!treeDataTreeList,
                 getDataPath,
                 groupAllowUnbalanced,
-                addManagedListener
+                addManagedEventListeners
             );
         }
 

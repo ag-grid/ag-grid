@@ -5,7 +5,7 @@ import { HorizontalDirection } from '../../../constants/direction';
 import { KeyCode } from '../../../constants/keyCode';
 import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
 import { DragAndDropService, DragSourceType } from '../../../dragAndDrop/dragAndDropService';
-import { AgColumn } from '../../../entities/agColumn';
+import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { ColumnEventType, ColumnHeaderMouseLeaveEvent, ColumnHeaderMouseOverEvent } from '../../../events';
 import type { HeaderColumnId } from '../../../interfaces/iColumn';
@@ -216,10 +216,12 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         const contextMenuListener = (event: MouseEvent) =>
             this.handleContextMenuMouseEvent(event, undefined, this.column.getProvidedColumnGroup());
 
-        this.addManagedListener(this.getGui(), 'mouseenter', listener);
-        this.addManagedListener(this.getGui(), 'mouseleave', listener);
-        this.addManagedListener(this.getGui(), 'click', clickListener);
-        this.addManagedListener(this.getGui(), 'contextmenu', contextMenuListener);
+        this.addManagedListeners(this.getGui(), {
+            mouseenter: listener,
+            mouseleave: listener,
+            click: clickListener,
+            contextmenu: contextMenuListener,
+        });
     }
 
     private handleMouseOverChange(isMouseOver: boolean): void {
@@ -273,8 +275,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         this.refreshExpanded();
 
-        this.addManagedListener(providedColGroup, 'expandedChanged', this.refreshExpanded.bind(this));
-        this.addManagedListener(providedColGroup, 'expandableChanged', this.refreshExpanded.bind(this));
+        const listener = this.refreshExpanded.bind(this);
+        this.addManagedListeners(providedColGroup, {
+            expandedChanged: listener,
+            expandableChanged: listener,
+        });
     }
 
     private refreshExpanded(): void {
@@ -322,7 +327,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         const listener = () => this.comp.addOrRemoveCssClass('ag-header-cell-moving', this.column.isMoving());
 
         leafColumns.forEach((col) => {
-            this.addManagedListener(col, 'movingChanged', listener);
+            this.addManagedListeners(col, { movingChanged: listener });
         });
 
         listener();

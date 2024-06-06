@@ -149,16 +149,17 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
             .then(() => {
                 menuItem.setParentComponent(this);
 
-                this.addManagedListener<AgMenuItemComponentEvent>(menuItem, 'closeMenu', (event: CloseMenuEvent) => {
-                    this.dispatchLocalEvent(event);
-                });
+                this.addManagedListeners(menuItem, {
+                    closeMenu: (event: CloseMenuEvent) => {
+                        this.dispatchLocalEvent(event);
+                    },
+                    menuItemActivated: (event: MenuItemActivatedEvent) => {
+                        if (this.activeMenuItem && this.activeMenuItem !== event.menuItem) {
+                            this.activeMenuItem.deactivate();
+                        }
 
-                this.addManagedListener(menuItem, 'menuItemActivated', (event: MenuItemActivatedEvent) => {
-                    if (this.activeMenuItem && this.activeMenuItem !== event.menuItem) {
-                        this.activeMenuItem.deactivate();
-                    }
-
-                    this.activeMenuItem = event.menuItem;
+                        this.activeMenuItem = event.menuItem;
+                    },
                 });
 
                 return {

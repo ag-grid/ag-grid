@@ -266,10 +266,12 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         ePopup.appendChild(virtualListGui);
         ePopup.style.width = `${eGui.clientWidth}px`;
 
-        const focusoutListener = this.addManagedListener(ePopup, 'focusout', (e: FocusEvent) => {
-            if (!ePopup.contains(e.relatedTarget as HTMLElement) && addPopupRes) {
-                addPopupRes.hideFunc();
-            }
+        const [focusoutListener] = this.addManagedElementListeners(ePopup, {
+            focusout: (e: FocusEvent) => {
+                if (!ePopup.contains(e.relatedTarget as HTMLElement) && addPopupRes) {
+                    addPopupRes.hideFunc();
+                }
+            },
         });
 
         const popupHiddenFunc = (callbackEvent?: KeyboardEvent) => {

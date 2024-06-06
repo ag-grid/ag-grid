@@ -54,8 +54,11 @@ export class ChartDataPanel extends Component {
         this.isSwitchCategorySeriesToggled = this.chartController.isCategorySeriesSwitched();
 
         this.updatePanels();
-        this.addManagedListener(this.chartController, 'chartModelUpdate', this.updatePanels.bind(this));
-        this.addManagedListener(this.chartController, 'chartApiUpdate', this.updatePanels.bind(this));
+        const listener = this.updatePanels.bind(this);
+        this.addManagedListeners(this.chartController, {
+            chartModelUpdate: listener,
+            chartApiUpdate: listener,
+        });
     }
 
     public override destroy(): void {

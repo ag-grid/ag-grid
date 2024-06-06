@@ -130,10 +130,12 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
         this.eApplyFilterButton.innerText =
             this.advancedFilterExpressionService.translate('advancedFilterBuilderApply');
         this.activateTabIndex([this.eApplyFilterButton]);
-        this.addManagedListener(this.eApplyFilterButton, 'click', () => {
-            this.advancedFilterService.setModel(this.filterModel);
-            this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
-            this.close();
+        this.addManagedElementListeners(this.eApplyFilterButton, {
+            click: () => {
+                this.advancedFilterService.setModel(this.filterModel);
+                this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
+                this.close();
+            },
         });
 
         this.validationTooltipFeature = this.createManagedBean(
@@ -146,17 +148,17 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
         );
         this.validate();
 
-        this.addManagedListener(this.eApplyFilterButton, 'mouseenter', () =>
-            this.addOrRemoveCssClass('ag-advanced-filter-builder-validation', true)
-        );
-        this.addManagedListener(this.eApplyFilterButton, 'mouseleave', () =>
-            this.addOrRemoveCssClass('ag-advanced-filter-builder-validation', false)
-        );
+        const mouseListener = (isEnter: boolean) =>
+            this.addOrRemoveCssClass('ag-advanced-filter-builder-validation', isEnter);
+        this.addManagedListeners(this.eApplyFilterButton, {
+            mouseenter: () => mouseListener(true),
+            mouseleave: () => mouseListener(false),
+        });
 
         this.eCancelFilterButton.innerText =
             this.advancedFilterExpressionService.translate('advancedFilterBuilderCancel');
         this.activateTabIndex([this.eCancelFilterButton]);
-        this.addManagedListener(this.eCancelFilterButton, 'click', () => this.close());
+        this.addManagedElementListeners(this.eCancelFilterButton, { click: () => this.close() });
     }
 
     private removeItemFromParent(item: AdvancedFilterBuilderItem): number {

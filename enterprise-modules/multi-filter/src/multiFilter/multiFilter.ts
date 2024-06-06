@@ -188,12 +188,14 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
 
                 this.guiDestroyFuncs.push(() => this.destroyBean(menuItem));
 
-                this.addManagedListener(menuItem, 'menuItemActivated', (event: MenuItemActivatedEvent) => {
-                    if (this.lastActivatedMenuItem && this.lastActivatedMenuItem !== event.menuItem) {
-                        this.lastActivatedMenuItem.deactivate();
-                    }
+                this.addManagedListeners(menuItem, {
+                    menuItemActivated: (event: MenuItemActivatedEvent) => {
+                        if (this.lastActivatedMenuItem && this.lastActivatedMenuItem !== event.menuItem) {
+                            this.lastActivatedMenuItem.deactivate();
+                        }
 
-                    this.lastActivatedMenuItem = event.menuItem;
+                        this.lastActivatedMenuItem = event.menuItem;
+                    },
                 });
 
                 const menuItemGui = menuItem.getGui();

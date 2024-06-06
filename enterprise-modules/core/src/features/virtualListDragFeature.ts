@@ -32,23 +32,17 @@ export class VirtualListDragFeature<
 
     constructor(
         private readonly comp: C,
-        private readonly virtualList: VirtualList,
+        private readonly virtualList: VirtualList<any>,
         private readonly params: VirtualListDragParams<C, R, V, E>
     ) {
         super();
     }
 
     public postConstruct(): void {
-        this.addManagedListener(
-            this.params.eventSource,
-            this.params.listItemDragStartEvent,
-            this.listItemDragStart.bind(this)
-        );
-        this.addManagedListener(
-            this.params.eventSource,
-            this.params.listItemDragEndEvent,
-            this.listItemDragEnd.bind(this)
-        );
+        this.addManagedListeners(this.params.eventSource, {
+            [this.params.listItemDragStartEvent]: this.listItemDragStart.bind(this),
+            [this.params.listItemDragEndEvent]: this.listItemDragEnd.bind(this),
+        });
 
         this.createDropTarget();
         this.createAutoScrollService();

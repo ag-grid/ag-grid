@@ -25,8 +25,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     private iconCreated: boolean = false;
 
     private userCompDetails?: UserCompDetails | null;
-    private destroySyncListener: (() => null) | undefined;
-    private destroyFilterChangedListener: (() => null) | undefined;
+    private destroySyncListener: () => null;
+    private destroyFilterChangedListener: () => null;
 
     constructor(column: AgColumn, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
         super(column, beans, parentRowCtrl);
@@ -56,9 +56,9 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.setupSyncWithFilter();
         this.setupUi();
 
-        this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
+        this.addManagedElementListeners(this.eButtonShowMainFilter, { click: this.showParentFilter.bind(this) });
         this.setupFilterChangedListener();
-        this.addManagedListener(this.column, 'colDefChanged', this.onColDefChanged.bind(this));
+        this.addManagedListeners(this.column, { colDefChanged: this.onColDefChanged.bind(this) });
     }
 
     // empty abstract method
@@ -309,7 +309,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             });
         };
 
-        this.destroySyncListener = this.addManagedListener(this.column, 'filterChanged', syncWithFilter);
+        [this.destroySyncListener] = this.addManagedListeners(this.column, { filterChanged: syncWithFilter });
 
         if (filterManager?.isFilterActive(this.column)) {
             syncWithFilter(null);
@@ -322,17 +322,15 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             this.comp.setWidth(width);
         };
 
-        this.addManagedListener(this.column, 'widthChanged', listener);
+        this.addManagedListeners(this.column, { widthChanged: listener });
         listener();
     }
 
     private setupFilterChangedListener(): void {
         if (this.active) {
-            this.destroyFilterChangedListener = this.addManagedListener(
-                this.column,
-                'filterChanged',
-                this.updateFilterButton.bind(this)
-            );
+            [this.destroyFilterChangedListener] = this.addManagedListeners(this.column, {
+                filterChanged: this.updateFilterButton.bind(this),
+            });
             this.updateFilterButton();
         }
     }
@@ -352,8 +350,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.setupActive();
         const becomeActive = !wasActive && this.active;
         if (wasActive && !this.active) {
-            this.destroySyncListener?.();
-            this.destroyFilterChangedListener?.();
+            this.destroySyncListener();
+            this.destroyFilterChangedListener();
         }
 
         const newCompDetails = this.active

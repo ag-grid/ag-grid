@@ -30,8 +30,8 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
     }
 
     protected override addInputListeners() {
-        this.addManagedListener(this.eInput, 'click', this.onCheckboxClick.bind(this));
-        this.addManagedListener(this.eLabel, 'click', this.toggle.bind(this));
+        this.addManagedElementListeners(this.eInput, { click: this.onCheckboxClick.bind(this) });
+        this.addManagedElementListeners(this.eLabel, { click: this.toggle.bind(this) });
     }
 
     public getNextValue(): boolean {

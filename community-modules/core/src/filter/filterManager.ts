@@ -70,9 +70,9 @@ export class FilterManager extends BeanStub implements NamedBean {
         );
 
         if (this.quickFilterService) {
-            this.addManagedListener(this.quickFilterService, 'quickFilterChanged', () =>
-                this.onFilterChanged({ source: 'quickFilter' })
-            );
+            this.addManagedListeners(this.quickFilterService, {
+                quickFilterChanged: () => this.onFilterChanged({ source: 'quickFilter' }),
+            });
         }
     }
 

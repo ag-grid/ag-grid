@@ -1,10 +1,4 @@
-import type {
-    AgComponentSelector,
-    BeanCollection,
-    ColumnModel,
-    EventsType,
-    FuncColsService,
-} from '@ag-grid-community/core';
+import type { AgComponentSelector, BeanCollection, ColumnModel, FuncColsService } from '@ag-grid-community/core';
 import { Component, _setAriaRole } from '@ag-grid-community/core';
 
 import { PivotDropZonePanel } from './pivotDropZonePanel';
@@ -56,8 +50,12 @@ export class AgGridHeaderDropZones extends Component {
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());
 
-        this.addManagedListener<'displayChanged'>(this.rowGroupComp, 'displayChanged', () => this.onDropPanelVisible());
-        this.addManagedListener<'displayChanged'>(this.pivotComp, 'displayChanged', () => this.onDropPanelVisible());
+        this.addManagedListeners(this.rowGroupComp, {
+            displayChanged: this.onDropPanelVisible.bind(this),
+        });
+        this.addManagedListeners(this.pivotComp, {
+            displayChanged: this.onDropPanelVisible.bind(this),
+        });
 
         this.onDropPanelVisible();
 

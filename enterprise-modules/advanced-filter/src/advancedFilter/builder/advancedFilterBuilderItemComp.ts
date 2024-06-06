@@ -130,12 +130,13 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
 
         this.updateAriaLabel();
 
-        this.addManagedListener(this.ePillWrapper, 'advancedFilterBuilderValueChanged', () =>
-            this.dispatchLocalEvent({
-                type: 'advancedFilterBuilderValueChanged',
-            })
-        );
-        this.addManagedListener(this.ePillWrapper, 'advancedFilterBuilderValidChanged', () => this.updateValidity());
+        this.addManagedListeners(this.ePillWrapper, {
+            advancedFilterBuilderValueChanged: () =>
+                this.dispatchLocalEvent({
+                    type: 'advancedFilterBuilderValueChanged',
+                }),
+            advancedFilterBuilderValidChanged: () => this.updateValidity(),
+        });
     }
 
     public setState(params: {
@@ -220,13 +221,14 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             this.gos.get('advancedFilterBuilderParams')?.addSelectWidth
         );
         const eAddButton = this.createManagedBean(new AddDropdownComp(addButtonParams));
-        this.addManagedListener(eAddButton, 'fieldPickerValueSelected', ({ value }: FieldPickerValueSelectedEvent) =>
-            this.dispatchLocalEvent<AdvancedFilterBuilderAddEvent>({
-                type: 'advancedFilterBuilderAdded',
-                item: this.item,
-                isJoin: value.key === 'join',
-            })
-        );
+        this.addManagedListeners(eAddButton, {
+            fieldPickerValueSelected: ({ value }: FieldPickerValueSelectedEvent) =>
+                this.dispatchLocalEvent<AdvancedFilterBuilderAddEvent>({
+                    type: 'advancedFilterBuilderAdded',
+                    item: this.item,
+                    isJoin: value.key === 'join',
+                }),
+        });
         this.eAddButton.appendChild(eAddButton.getGui());
 
         this.createManagedBean(
@@ -241,15 +243,17 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
 
     private setupRemoveButton(): void {
         this.eRemoveButton.appendChild(_createIconNoSpan('advancedFilterBuilderRemove', this.gos)!);
-        this.addManagedListener(this.eRemoveButton, 'click', () => this.removeItem());
-        this.addManagedListener(this.eRemoveButton, 'keydown', (event: KeyboardEvent) => {
-            switch (event.key) {
-                case KeyCode.ENTER:
-                    event.preventDefault();
-                    _stopPropagationForAgGrid(event);
-                    this.removeItem();
-                    break;
-            }
+        this.addManagedListeners(this.eRemoveButton, {
+            click: () => this.removeItem(),
+            keydown: (event: KeyboardEvent) => {
+                switch (event.key) {
+                    case KeyCode.ENTER:
+                        event.preventDefault();
+                        _stopPropagationForAgGrid(event);
+                        this.removeItem();
+                        break;
+                }
+            },
         });
 
         this.createManagedBean(
@@ -271,15 +275,18 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
     private setupMoveButtons(showMove?: boolean): void {
         if (showMove) {
             this.eMoveUpButton.appendChild(_createIconNoSpan('advancedFilterBuilderMoveUp', this.gos)!);
-            this.addManagedListener(this.eMoveUpButton, 'click', () => this.moveItem(true));
-            this.addManagedListener(this.eMoveUpButton, 'keydown', (event: KeyboardEvent) => {
-                switch (event.key) {
-                    case KeyCode.ENTER:
-                        event.preventDefault();
-                        _stopPropagationForAgGrid(event);
-                        this.moveItem(true);
-                        break;
-                }
+
+            this.addManagedListeners(this.eMoveUpButton, {
+                click: () => this.moveItem(true),
+                keydown: (event: KeyboardEvent) => {
+                    switch (event.key) {
+                        case KeyCode.ENTER:
+                            event.preventDefault();
+                            _stopPropagationForAgGrid(event);
+                            this.moveItem(true);
+                            break;
+                    }
+                },
             });
 
             this.moveUpTooltipFeature = this.createManagedBean(
@@ -300,15 +307,17 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             );
 
             this.eMoveDownButton.appendChild(_createIconNoSpan('advancedFilterBuilderMoveDown', this.gos)!);
-            this.addManagedListener(this.eMoveDownButton, 'click', () => this.moveItem(false));
-            this.addManagedListener(this.eMoveDownButton, 'keydown', (event: KeyboardEvent) => {
-                switch (event.key) {
-                    case KeyCode.ENTER:
-                        event.preventDefault();
-                        _stopPropagationForAgGrid(event);
-                        this.moveItem(false);
-                        break;
-                }
+            this.addManagedListeners(this.eMoveDownButton, {
+                click: () => this.moveItem(false),
+                keydown: (event: KeyboardEvent) => {
+                    switch (event.key) {
+                        case KeyCode.ENTER:
+                            event.preventDefault();
+                            _stopPropagationForAgGrid(event);
+                            this.moveItem(false);
+                            break;
+                    }
+                },
             });
 
             this.moveDownTooltipFeature = this.createManagedBean(
@@ -376,9 +385,9 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
                     ariaLabel,
                 })
             );
-            this.addManagedListener(comp, 'fieldPickerValueSelected', ({ value }: FieldPickerValueSelectedEvent) =>
-                onUpdated(value?.key)
-            );
+            this.addManagedListeners(comp, {
+                fieldPickerValueSelected: ({ value }: FieldPickerValueSelectedEvent) => onUpdated(value?.key),
+            });
             return comp;
         } else {
             const comp = this.createBean(
@@ -389,7 +398,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
                     ariaLabel,
                 })
             );
-            this.addManagedListener(comp, 'fieldValueChanged', ({ value }: FieldValueEvent) => onUpdated(value));
+            this.addManagedListeners(comp, { fieldValueChanged: ({ value }: FieldValueEvent) => onUpdated(value) });
             return comp;
         }
     }

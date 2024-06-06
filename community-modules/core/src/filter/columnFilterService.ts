@@ -758,7 +758,7 @@ export class ColumnFilterService extends BeanStub {
         this.allColumnFilters.set(colId, filterWrapper);
         this.allColumnListeners.set(
             colId,
-            this.addManagedListener(column, 'colDefChanged', () => this.checkDestroyFilter(colId))
+            this.addManagedListeners(column, { colDefChanged: () => this.checkDestroyFilter(colId) })[0]
         );
     }
 

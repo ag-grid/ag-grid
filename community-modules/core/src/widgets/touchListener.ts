@@ -30,7 +30,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
 
     private lastTapTime: number | null;
 
-    private localEventService: LocalEventService = new LocalEventService();
+    private localEventService: LocalEventService<TouchListenerEvent> = new LocalEventService();
 
     // private mostRecentTouch: Touch;
 

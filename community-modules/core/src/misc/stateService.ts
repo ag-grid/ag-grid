@@ -9,7 +9,6 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
-import type { EventsType } from '../eventKeys';
 import type {
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
@@ -120,28 +119,23 @@ export class StateService extends BeanStub implements NamedBean {
 
         this.ctrlsService.whenReady(() => this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnGridReady()));
 
-        const newColumnsLoadedDestroyFunc = this.addManagedListener(
-            this.eventService,
-            'newColumnsLoaded',
-            ({ source }: NewColumnsLoadedEvent) => {
-                if (source === 'gridInitializing') {
-                    newColumnsLoadedDestroyFunc?.();
-                    this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnColumnsInitialised());
-                }
-            }
-        );
-        const rowCountReadyDestroyFunc = this.addManagedListener<EventsType>(this.eventService, 'rowCountReady', () => {
-            rowCountReadyDestroyFunc?.();
-            this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnRowCountReady());
-        });
-        const firstDataRenderedDestroyFunc = this.addManagedListener<EventsType>(
-            this.eventService,
-            'firstDataRendered',
-            () => {
-                firstDataRenderedDestroyFunc?.();
-                this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnFirstDataRendered());
-            }
-        );
+        const [newColumnsLoadedDestroyFunc, rowCountReadyDestroyFunc, firstDataRenderedDestroyFunc] =
+            this.addManagedEventListeners({
+                newColumnsLoaded: ({ source }: NewColumnsLoadedEvent) => {
+                    if (source === 'gridInitializing') {
+                        newColumnsLoadedDestroyFunc();
+                        this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnColumnsInitialised());
+                    }
+                },
+                rowCountReady: () => {
+                    rowCountReadyDestroyFunc?.();
+                    this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnRowCountReady());
+                },
+                firstDataRendered: () => {
+                    firstDataRenderedDestroyFunc?.();
+                    this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnFirstDataRendered());
+                },
+            });
     }
 
     public getState(): GridState {
