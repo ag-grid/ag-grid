@@ -40,6 +40,7 @@ import { NavigationService } from './gridBodyComp/navigationService';
 import { PinnedWidthService } from './gridBodyComp/pinnedWidthService';
 import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridComp } from './gridComp/gridComp';
+import { CommunityFeaturesModule } from './gridCoreModule';
 import { GridOptionsService } from './gridOptionsService';
 import { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 import { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
@@ -295,7 +296,7 @@ export class GridCoreCreator {
         const passedViaConstructor: Module[] | undefined | null = params ? params.modules : null;
         const registered = ModuleRegistry.__getRegisteredModules(gridId);
 
-        const allModules: Module[] = [];
+        const allModules: Module[] = [CommunityFeaturesModule];
         const mapNames: { [name: string]: boolean } = {};
 
         // adds to list and removes duplicates
