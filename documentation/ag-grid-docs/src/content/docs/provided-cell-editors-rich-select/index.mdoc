@@ -121,6 +121,30 @@ columnDefs: [
 ]
 ```
 
+## Multi Selection
+
+The editor can be configured to allow the selection of multiple values as shown below: 
+
+{% gridExampleRunner title="Rich Select Editor" name="rich-select-multi-select" /%}
+
+```js
+columnDefs: [
+    {
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            values: ['AliceBlue', 'AntiqueWhite', 'Aqua', /* .... many colours */ ],
+            multiSelect: true,
+            searchType: 'matchAny',
+            filterList: true,
+            highlightMatch: true,
+            valueListMaxHeight: 220
+        }
+        // ...other props
+    }
+]
+```
+
+
 ## Async Values
 
 List values can be provided asynchronously to the editor as shown below:
@@ -152,6 +176,6 @@ columnDefs: [
 ## API Reference
 
 
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" names=["values", "cellHeight", "cellRenderer", "allowTyping", "filterList", "searchType", "highlightMatch", "valuePlaceholder", "valueListGap", "valueListMaxHeight", "valueListMaxWidth", "formatValue", "searchDebounceDelay" ] /%}
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" names=["values", "cellHeight", "cellRenderer", "multiSelect", "allowTyping", "filterList", "searchType", "highlightMatch", "valuePlaceholder", "valueListGap", "valueListMaxHeight", "valueListMaxWidth", "formatValue", "searchDebounceDelay" ] /%}
 
 Continue to the next section: [Number Cell Editor](./provided-cell-editors-number/).

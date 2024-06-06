@@ -4,13 +4,15 @@ import type {
     RichSelectParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Events, _setAriaControls, _setAriaLabel } from '@ag-grid-community/core';
+import { _setAriaControls, _setAriaLabel } from '@ag-grid-community/core';
 import { KeyCode } from '@ag-grid-community/core';
 
 import { RichSelectRow } from './agRichSelectRow';
 import { VirtualList } from './virtualList';
 
 export class AgRichSelectList<TValue> extends VirtualList {
+    public static EVENT_LIST_ROW_SELECTED = 'richSelectListRowSelected';
+
     private eLoading: HTMLElement | undefined;
     private lastRowHovered: number = -1;
     private currentList: TValue[] | undefined;
@@ -298,13 +300,14 @@ export class AgRichSelectList<TValue> extends VirtualList {
             this.toggleListItemSelection(item);
         } else {
             this.selectListItems([item]);
-            this.dispatchValueSelected();
         }
+
+        this.dispatchValueSelected();
     }
 
     private dispatchValueSelected(): void {
         const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
-            type: Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
+            type: AgRichSelectList.EVENT_LIST_ROW_SELECTED,
             fromEnterKey: false,
             value: this.selectedItems,
         };
