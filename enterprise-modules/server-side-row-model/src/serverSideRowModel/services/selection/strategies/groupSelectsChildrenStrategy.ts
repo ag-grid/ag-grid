@@ -155,7 +155,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         return anyStateChanged;
     }
 
-    public setNodesSelected({ nodes, newValue, rangeSelect }: ISetNodesSelectedParams): number {
+    public setNodesSelected({ nodes, newValue, rangeSelect, clearSelection }: ISetNodesSelectedParams): number {
         if (nodes.length === 0) return 0;
 
         if (rangeSelect) {
@@ -183,6 +183,14 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 }
             }
             return 1;
+        }
+
+        const onlyThisNode = clearSelection && newValue && !rangeSelect;
+        if (this.gos.get('rowSelection') !== 'multiple' || onlyThisNode) {
+            if (nodes.length > 1) {
+                throw new Error("AG Grid: cannot select multiple rows when rowSelection is set to 'single'");
+            }
+            this.deselectAllRowNodes();
         }
 
         nodes.forEach((node) => {
