@@ -1,8 +1,6 @@
 import type { AlignedGridsService } from '../alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
-import type { DetailGridApiService } from '../api/detailGridApiService';
 import type { GridApi } from '../api/gridApi';
-import type { GridDestroyService } from '../api/gridDestroyService';
 import type { RowModelHelperService } from '../api/rowModelHelperService';
 import type { CellNavigationService } from '../cellNavigationService';
 import type { ColumnApplyStateService } from '../columns/columnApplyStateService';
@@ -48,6 +46,7 @@ import type { MouseEventService } from '../gridBodyComp/mouseEventService';
 import type { NavigationService } from '../gridBodyComp/navigationService';
 import type { PinnedWidthService } from '../gridBodyComp/pinnedWidthService';
 import type { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
+import type { GridDestroyService } from '../gridDestroyService';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
 import type { HeaderPositionUtils } from '../headerRendering/common/headerPosition';
@@ -57,6 +56,7 @@ import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
+import type { IDetailGridApiService } from '../interfaces/iDetailGridApiService';
 import type { IExcelCreator } from '../interfaces/iExcelCreator';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
@@ -69,7 +69,7 @@ import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEventService';
 import type { MenuService } from '../misc/menuService';
 import type { ResizeObserverService } from '../misc/resizeObserverService';
-import type { StateService } from '../misc/stateService';
+import type { StateService } from '../misc/state/stateService';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import type { PaginationAutoPageSizeService } from '../pagination/paginationAutoPageSizeService';
 import type { PaginationService } from '../pagination/paginationService';
@@ -256,9 +256,9 @@ export interface CoreBeanCollection {
     paginationAutoPageSizeService?: PaginationAutoPageSizeService;
     paginationService?: PaginationService;
     rowBoundsService: RowBoundsService;
-    apiFunctionService?: ApiFunctionService;
+    apiFunctionService: ApiFunctionService;
     rowModelHelperService?: RowModelHelperService;
-    detailGridApiService?: DetailGridApiService;
+    detailGridApiService?: IDetailGridApiService;
     gridDestroyService: GridDestroyService;
 }
 

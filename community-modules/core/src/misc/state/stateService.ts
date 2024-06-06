@@ -1,26 +1,26 @@
-import type { ColumnApplyStateService, ColumnState, ColumnStateParams } from '../columns/columnApplyStateService';
-import type { ColumnGetStateService } from '../columns/columnGetStateService';
-import type { ColumnGroupStateService } from '../columns/columnGroupStateService';
-import type { ColumnModel } from '../columns/columnModel';
-import type { PivotResultColsService } from '../columns/pivotResultColsService';
-import type { VisibleColsService } from '../columns/visibleColsService';
-import type { NamedBean } from '../context/bean';
-import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
-import type { CtrlsService } from '../ctrlsService';
-import type { AgColumn } from '../entities/agColumn';
-import { Events } from '../eventKeys';
-import type { EventsType } from '../eventKeys';
+import type { ColumnApplyStateService, ColumnState, ColumnStateParams } from '../../columns/columnApplyStateService';
+import type { ColumnGetStateService } from '../../columns/columnGetStateService';
+import type { ColumnGroupStateService } from '../../columns/columnGroupStateService';
+import type { ColumnModel } from '../../columns/columnModel';
+import type { PivotResultColsService } from '../../columns/pivotResultColsService';
+import type { VisibleColsService } from '../../columns/visibleColsService';
+import type { NamedBean } from '../../context/bean';
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { CtrlsService } from '../../ctrlsService';
+import type { AgColumn } from '../../entities/agColumn';
+import { Events } from '../../eventKeys';
+import type { EventsType } from '../../eventKeys';
 import type {
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
     RangeSelectionChangedEvent,
     StateUpdatedEvent,
-} from '../events';
-import type { FilterManager } from '../filter/filterManager';
-import type { FocusService } from '../focusService';
-import type { CellRange, IRangeService } from '../interfaces/IRangeService';
-import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
+} from '../../events';
+import type { FilterManager } from '../../filter/filterManager';
+import type { FocusService } from '../../focusService';
+import type { CellRange, IRangeService } from '../../interfaces/IRangeService';
+import type { AdvancedFilterModel } from '../../interfaces/advancedFilterModel';
 import type {
     AggregationColumnState,
     AggregationState,
@@ -41,19 +41,19 @@ import type {
     ScrollState,
     SideBarState,
     SortState,
-} from '../interfaces/gridState';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
-import type { IExpansionService } from '../interfaces/iExpansionService';
-import type { FilterModel } from '../interfaces/iFilter';
-import type { IRowModel } from '../interfaces/iRowModel';
-import type { ISelectionService } from '../interfaces/iSelectionService';
-import type { ISideBarService } from '../interfaces/iSideBar';
-import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../interfaces/selectionState';
-import type { PaginationService } from '../pagination/paginationService';
-import type { ColumnAnimationService } from '../rendering/columnAnimationService';
-import type { SortModelItem } from '../sortController';
-import { _debounce } from '../utils/function';
-import { _jsonEquals } from '../utils/generic';
+} from '../../interfaces/gridState';
+import type { WithoutGridCommon } from '../../interfaces/iCommon';
+import type { IExpansionService } from '../../interfaces/iExpansionService';
+import type { FilterModel } from '../../interfaces/iFilter';
+import type { IRowModel } from '../../interfaces/iRowModel';
+import type { ISelectionService } from '../../interfaces/iSelectionService';
+import type { ISideBarService } from '../../interfaces/iSideBar';
+import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../../interfaces/selectionState';
+import type { PaginationService } from '../../pagination/paginationService';
+import type { ColumnAnimationService } from '../../rendering/columnAnimationService';
+import type { SortModelItem } from '../../sortController';
+import { _debounce } from '../../utils/function';
+import { _jsonEquals } from '../../utils/generic';
 
 export class StateService extends BeanStub implements NamedBean {
     beanName = 'stateService' as const;

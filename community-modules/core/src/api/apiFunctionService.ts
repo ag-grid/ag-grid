@@ -1,13 +1,17 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import type { AgEvent } from '../events';
 import type { ApiFunction, ApiFunctionName } from './iApiFunction';
 
 export class ApiFunctionService extends BeanStub implements NamedBean {
     beanName = 'apiFunctionService' as const;
 
     private beans: BeanCollection;
-    private functions: { [key in ApiFunctionName]?: (beans: BeanCollection, ...args: any[]) => any } = {};
+    private functions: { [key in ApiFunctionName]?: (beans: BeanCollection, ...args: any[]) => any } = {
+        // this is used by frameworks
+        dispatchEvent: this.dispatchApiEvent.bind(this),
+    };
     private isDestroyed = false;
     private preDestroyLink: string;
 
@@ -54,5 +58,9 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
                 `To run logic when the grid is about to be destroyed use the gridPreDestroy event. See: ${this.preDestroyLink}`
         );
         return;
+    }
+
+    private dispatchApiEvent(event: AgEvent): void {
+        this.beans.eventService.dispatchEvent(event);
     }
 }

@@ -1,10 +1,7 @@
-import type { NamedBean } from '../context/bean';
-import { BeanStub } from '../context/beanStub';
-import { _exists } from '../utils/generic';
-import { _iterateObject } from '../utils/object';
-import type { DetailGridInfo } from './gridApi';
+import type { DetailGridInfo, IDetailGridApiService, NamedBean } from '@ag-grid-community/core';
+import { BeanStub, _exists, _iterateObject } from '@ag-grid-community/core';
 
-export class DetailGridApiService extends BeanStub implements NamedBean {
+export class DetailGridApiService extends BeanStub implements NamedBean, IDetailGridApiService {
     beanName = 'detailGridApiService' as const;
 
     private detailGridInfoMap: { [id: string]: DetailGridInfo | undefined } = {};

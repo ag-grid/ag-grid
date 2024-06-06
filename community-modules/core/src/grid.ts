@@ -1,6 +1,6 @@
+import { ApiFunctionService } from './api/apiFunctionService';
 import { createApiProxy } from './api/apiUtils';
 import type { GridApi } from './api/gridApi';
-import { GridDestroyService } from './api/gridDestroyService';
 import type { ApiFunctionName } from './api/iApiFunction';
 import { CellNavigationService } from './cellNavigationService';
 import { ColumnApplyStateService } from './columns/columnApplyStateService';
@@ -42,6 +42,7 @@ import { NavigationService } from './gridBodyComp/navigationService';
 import { PinnedWidthService } from './gridBodyComp/pinnedWidthService';
 import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridComp } from './gridComp/gridComp';
+import { GridDestroyService } from './gridDestroyService';
 import { GridOptionsService } from './gridOptionsService';
 import { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 import { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
@@ -410,6 +411,7 @@ export class GridCoreCreator {
             CellPositionUtils,
             HeaderPositionUtils,
             GridDestroyService,
+            ApiFunctionService,
             UserComponentRegistry,
             AgComponentUtils,
             ComponentMetadataProvider,

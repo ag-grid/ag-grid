@@ -1,10 +1,10 @@
 import { AlignedGridsModule } from './alignedGridsModule';
-import { ApiAllModule, ApiModule } from './api/apiModule';
-import { DataTypeModule } from './columns/columnModules';
-import { EditModule } from './edit/editModules';
-import { FilterModule } from './filter/filterModules';
+import { CommunityApiModule } from './api/apiModule';
+import { DataTypeModule } from './columns/columnModule';
+import { EditModule } from './edit/editModule';
+import { FilterModule } from './filter/filterModule';
 import type { Module } from './interfaces/iModule';
-import { StateModule } from './misc/stateModule';
+import { StateModule } from './misc/state/stateModule';
 import { ModuleNames } from './modules/moduleNames';
 import { PaginationModule } from './pagination/paginationModule';
 import { ValidationService } from './validation/validationService';
@@ -33,7 +33,6 @@ export const CommunityFeaturesModule: Module = {
         DataTypeModule,
         AlignedGridsModule,
         PaginationModule,
-        ApiModule,
-        ApiAllModule,
+        CommunityApiModule,
     ],
 };
