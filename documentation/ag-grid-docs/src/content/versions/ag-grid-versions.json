@@ -1,5 +1,10 @@
 [
     {
+        "version": "32.0.0",
+        "date": "July 1st 2024",
+        "highlights": []
+    },
+    {
         "version": "31.3.1",
         "date": "April 30th 2024",
         "highlights": [
@@ -24,6 +29,7 @@
                 "path": "./keyboard-navigation/"
             }
         ],
+        "versionType": "Minor",
         "notesPath": "./upgrading-to-ag-grid-31-3"
     },
     {
