@@ -8,7 +8,12 @@ const xmlSitemap = await response.text();
 const parsedSitemap = parseSitemap(xmlSitemap);
 ---
 
-<Layout title={'AG Grid Sitemap'} showDocsNav={false} showSearchBar={true}>
+<Layout
+    title={'AG Grid Sitemap'}
+    description={'The AG Grid sitemap. Contains links to every page on the site, including docs.'}
+    showDocsNav={false}
+    showSearchBar={true}
+>
     <div class:list={['contentViewport layout-grid']}>
         <Sitemap client:load sitemap={parsedSitemap} />
     </div>
