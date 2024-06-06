@@ -1,0 +1,98 @@
+[
+    {
+        "name": "Angular CLI",
+        "framework": "angular",
+        "importType": "modules",
+        "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/modules/angular-cli"
+    },
+    {
+        "name": "Create React App (CRA)",
+        "framework": "react",
+        "importType": "modules",
+        "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/modules/create-react-app"
+    },
+    {
+        "name": "Nuxt / Vue3",
+        "framework": "vue",
+        "importType": "modules",
+        "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/modules/nuxt-vue3"
+    },
+    {
+        "name": "Vite / React",
+        "framework": "react",
+        "importType": "modules",
+        "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/modules/vite-react"
+    },
+    {
+        "name": "Vite / TypeScript",
+        "framework": "javascript",
+        "importType": "modules",
+        "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/modules/vite-typescript"
+    },
+    {
+        "name": "Vite / Vue 3",
+        "framework": "vue",
+        "importType": "modules",
+        "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/modules/vite-vue3"
+    },
+    {
+        "name": "Webpack 5 / JavaScript",
+        "framework": "javascript",
+        "importType": "modules",
+        "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/modules/webpack5-javascript"
+    },
+    {
+        "name": "Webpack 5 / TypeScript",
+        "framework": "javascript",
+        "importType": "modules",
+        "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/modules/webpack5-typescript"
+    },
+    {
+        "name": "Angular CLI",
+        "framework": "angular",
+        "importType": "packages",
+        "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/packages/angular-cli"
+    },
+    {
+        "name": "Create React App (CRA)",
+        "framework": "react",
+        "importType": "packages",
+        "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/packages/create-react-app"
+    },
+    {
+        "name": "Nuxt / Vue",
+        "framework": "vue",
+        "importType": "packages",
+        "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/packages/nuxt-vue3"
+    },
+    {
+        "name": "Vite / React",
+        "framework": "react",
+        "importType": "packages",
+        "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/packages/vite-react"
+    },
+    {
+        "name": "Vite / TypeScript",
+        "framework": "javascript",
+        "importType": "packages",
+        "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/packages/vite-typescript"
+    },
+    {
+        "name": "Vite / Vue 3",
+        "framework": "vue",
+        "importType": "packages",
+        "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/packages/vite-vue3"
+    },
+    {
+        "name": "Webpack 5 / JavaScript",
+        "framework": "javascript",
+        "importType": "packages",
+        "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/packages/webpack5-javascript"
+    },
+    {
+        "name": "Webpack 5 / TypeScript",
+        "framework": "javascript",
+        "importType": "packages",
+        "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/packages/webpack5-typescript"
+    }
+]

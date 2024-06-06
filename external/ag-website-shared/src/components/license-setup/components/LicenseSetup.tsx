@@ -12,11 +12,19 @@ import { hasValue } from '../utils/hasValue';
 import { useFormData } from '../utils/useFormData';
 import styles from './LicenseSetup.module.scss';
 
-interface Props {
+interface SeedRepo {
+    name: string;
     framework: Framework;
+    importType: ImportType;
+    url: string;
 }
 
-export const LicenseSetup: FunctionComponent<Props> = ({ framework }) => {
+interface Props {
+    framework: Framework;
+    seedRepos: SeedRepo[];
+}
+
+export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos }) => {
     const {
         hasLicense,
         setHasLicense,
@@ -52,6 +60,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework }) => {
 
     const licenseIsValid = valid || (suppliedLicenseType === 'CHARTS' && incorrectLicenseType);
     const licenseHasError = hasValue(hasLicense) && hasValue(license) && !licenseIsValid;
+    const selectedSeedRepos = seedRepos.filter((seedRepo) => {
+        return seedRepo.framework === framework && seedRepo.importType === importType;
+    });
 
     useEffect(() => {
         const licensedForGrid =
@@ -178,6 +189,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework }) => {
                 </div>
                 <div>
                     <label>Build type</label>
+                    <label>Import type</label>
                     <select
                         name="importType"
                         defaultValue={importType}
@@ -229,6 +241,21 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework }) => {
                     <>
                         <p>An example of how to set up your license:</p>
                         {bootstrapSnippet && <Snippet framework={framework} content={bootstrapSnippet} />}
+
+                        {selectedSeedRepos.length ? (
+                            <>
+                                <p>Here are some seed code repositories to get you started:</p>
+                                <ul>
+                                    {selectedSeedRepos.map(({ name, url, importType }) => {
+                                        return (
+                                            <li>
+                                                <a href={url}>{name}</a> ({importType})
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            </>
+                        ) : undefined}
                     </>
                 )}
                 {!licensedProducts.grid && (
