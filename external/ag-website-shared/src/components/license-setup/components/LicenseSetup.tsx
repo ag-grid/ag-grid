@@ -183,7 +183,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                             </label>
                         </div>
                         {!licensedProducts.grid && licensedProducts.charts && (
-                            <Warning>You must have "Grid Enterprise" to use "Charts Enterprise"</Warning>
+                            <Warning>
+                                You must have a "Grid Enterprise" license to use "Charts Enterprise" within AG Grid
+                            </Warning>
                         )}
                     </div>
                 </div>
