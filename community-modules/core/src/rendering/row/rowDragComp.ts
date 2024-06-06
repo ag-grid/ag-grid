@@ -3,7 +3,7 @@ import type { BeanCollection } from '../../context/context';
 import type { DragItem, DragSource } from '../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../entities/agColumn';
-import { RowNode } from '../../entities/rowNode';
+import type { RowNode } from '../../entities/rowNode';
 import type { EventsType } from '../../eventKeys';
 import { _isFunction, _warnOnce } from '../../utils/function';
 import { _createIconNoSpan } from '../../utils/icon';
@@ -202,8 +202,8 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
         // in case data changes, then we need to update visibility of drag item
         const listener = this.workOutVisibility.bind(this);
         this.addManagedListeners(this.rowNode, {
-            [RowNode.EVENT_DATA_CHANGED]: listener,
-            [RowNode.EVENT_CELL_CHANGED]: listener,
+            dataChanged: listener,
+            cellChanged: listener,
         });
 
         this.addManagedListener(this.beans.eventService, 'newColumnsLoaded', listener);
@@ -243,8 +243,8 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
 
         // in case data changes, then we need to update visibility of drag item
         this.addManagedListeners(this.rowNode, {
-            [RowNode.EVENT_DATA_CHANGED]: listener,
-            [RowNode.EVENT_CELL_CHANGED]: listener,
+            dataChanged: listener,
+            cellChanged: listener,
         });
 
         this.addManagedPropertyListener('suppressRowDrag', this.onSuppressRowDrag.bind(this));

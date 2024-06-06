@@ -1,8 +1,7 @@
 import type { FuncColsService } from '../../../columns/funcColsService';
 import type { BeanCollection } from '../../../context/context';
-import { AgColumn } from '../../../entities/agColumn';
+import type { AgColumn } from '../../../entities/agColumn';
 import type { SortDirection } from '../../../entities/colDef';
-import type { EventsType } from '../../../eventKeys';
 import type { Column } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { IComponent } from '../../../interfaces/iComponent';
@@ -13,7 +12,7 @@ import { _exists } from '../../../utils/generic';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _escapeString } from '../../../utils/string';
 import { Component, RefPlaceholder } from '../../../widgets/component';
-import type { LongTapEvent, TapEvent } from '../../../widgets/touchListener';
+import type { LongTapEvent, TapEvent, TouchListenerEvent } from '../../../widgets/touchListener';
 import { TouchListener } from '../../../widgets/touchListener';
 import { SortIndicatorComp } from './sortIndicatorComp';
 
@@ -230,10 +229,10 @@ export class HeaderComp extends Component implements IHeaderComp {
         const menuTouchListener = tapMenuButton ? new TouchListener(this.eMenu!, true) : touchListener;
 
         if (this.params.enableMenu) {
-            const eventType = tapMenuButton ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
+            const eventType: TouchListenerEvent = tapMenuButton ? 'tap' : 'longTap';
             const showMenuFn = (event: TapEvent | LongTapEvent) =>
                 this.params.showColumnMenuAfterMouseClick(event.touchStart);
-            this.addManagedListener(menuTouchListener, TouchListener[eventType], showMenuFn);
+            this.addManagedListener<TouchListenerEvent>(menuTouchListener, eventType, showMenuFn);
         }
 
         if (this.params.enableSorting) {
@@ -248,7 +247,7 @@ export class HeaderComp extends Component implements IHeaderComp {
                 this.sortController.progressSort(this.params.column as AgColumn, false, 'uiColumnSorted');
             };
 
-            this.addManagedListener(touchListener, TouchListener.EVENT_TAP, tapListener);
+            this.addManagedListener<TouchListenerEvent>(touchListener, 'tap', tapListener);
         }
 
         if (this.params.enableFilterButton) {

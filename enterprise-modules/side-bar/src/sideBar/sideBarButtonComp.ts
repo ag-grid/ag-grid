@@ -3,8 +3,6 @@ import { Component, RefPlaceholder, _createIconNoSpan, _setAriaExpanded } from '
 
 export type SideBarButtonCompEvent = 'toggleButtonClicked';
 export class SideBarButtonComp extends Component<SideBarButtonCompEvent> {
-    public static EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';
-
     private readonly eToggleButton: HTMLButtonElement = RefPlaceholder;
     private readonly eIconWrapper: HTMLElement = RefPlaceholder;
     private readonly eLabel: HTMLElement = RefPlaceholder;

@@ -25,7 +25,7 @@ import {
     _normaliseQwertyAzerty,
 } from '../../utils/keyboard';
 import type { ValueService } from '../../valueService/valueService';
-import type { LongTapEvent } from '../../widgets/touchListener';
+import type { LongTapEvent, TouchListenerEvent } from '../../widgets/touchListener';
 import { TouchListener } from '../../widgets/touchListener';
 import type { MouseEventService } from './../mouseEventService';
 import type { NavigationService } from './../navigationService';
@@ -122,7 +122,7 @@ export class RowContainerEventsFeature extends BeanStub {
             this.handleContextMenuMouseEvent(undefined, event.touchEvent, rowComp, cellComp);
         };
 
-        this.addManagedListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
+        this.addManagedListener<TouchListenerEvent>(touchListener, 'longTap', longTapListener);
         this.addDestroyFunc(() => touchListener.destroy());
     }
 

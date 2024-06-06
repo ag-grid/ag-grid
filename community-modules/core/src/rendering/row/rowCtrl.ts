@@ -4,7 +4,7 @@ import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellPosition } from '../../entities/cellPositionUtils';
 import type { RowClassParams, RowStyle } from '../../entities/gridOptions';
-import { RowNode } from '../../entities/rowNode';
+import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
 import type { EventsType } from '../../eventKeys';
 import type {
@@ -713,32 +713,28 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private addListeners(): void {
         this.addManagedListeners(this.rowNode, {
-            [RowNode.EVENT_HEIGHT_CHANGED]: () => this.onRowHeightChanged(),
-            [RowNode.EVENT_ROW_SELECTED]: () => this.onRowSelected(),
-            [RowNode.EVENT_ROW_INDEX_CHANGED]: this.onRowIndexChanged.bind(this),
-            [RowNode.EVENT_TOP_CHANGED]: this.onTopChanged.bind(this),
-            [RowNode.EVENT_EXPANDED_CHANGED]: this.updateExpandedCss.bind(this),
-            [RowNode.EVENT_HAS_CHILDREN_CHANGED]: this.updateExpandedCss.bind(this),
+            heightChanged: () => this.onRowHeightChanged(),
+            rowSelected: () => this.onRowSelected(),
+            rowIndexChanged: this.onRowIndexChanged.bind(this),
+            topChanged: this.onTopChanged.bind(this),
+            expandedChanged: this.updateExpandedCss.bind(this),
+            hasChildrenChanged: this.updateExpandedCss.bind(this),
         });
 
         if (this.rowNode.detail) {
             // if the master row node has updated data, we also want to try to refresh the detail row
-            this.addManagedListener(
-                this.rowNode.parent!,
-                RowNode.EVENT_DATA_CHANGED,
-                this.onRowNodeDataChanged.bind(this)
-            );
+            this.addManagedListener(this.rowNode.parent!, 'dataChanged', this.onRowNodeDataChanged.bind(this));
         }
 
         this.addManagedListeners(this.rowNode, {
-            [RowNode.EVENT_DATA_CHANGED]: this.onRowNodeDataChanged.bind(this),
-            [RowNode.EVENT_CELL_CHANGED]: this.postProcessCss.bind(this),
-            [RowNode.EVENT_HIGHLIGHT_CHANGED]: this.onRowNodeHighlightChanged.bind(this),
-            [RowNode.EVENT_DRAGGING_CHANGED]: this.postProcessRowDragging.bind(this),
-            [RowNode.EVENT_UI_LEVEL_CHANGED]: this.onUiLevelChanged.bind(this),
+            dataChanged: this.onRowNodeDataChanged.bind(this),
+            cellChanged: this.postProcessCss.bind(this),
+            rowHighlightChanged: this.onRowNodeHighlightChanged.bind(this),
+            draggingChanged: this.postProcessRowDragging.bind(this),
+            uiLevelChanged: this.onUiLevelChanged.bind(this),
         });
 
-        this.addManagedListeners<EventsType>(this.beans.eventService, {
+        this.addManagedListeners(this.beans.eventService, {
             paginationPixelOffsetChanged: this.onPaginationPixelOffsetChanged.bind(this),
             heightScaleChanged: this.onTopChanged.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
@@ -771,11 +767,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private addListenersForCellComps(): void {
-        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, () => {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onRowIndexChanged());
-        });
-        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, (event) => {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellChanged(event));
+        this.addManagedListeners(this.rowNode, {
+            rowIndexChanged: () => {
+                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onRowIndexChanged());
+            },
+            cellChanged: (event) => {
+                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellChanged(event));
+            },
         });
     }
 
@@ -1458,7 +1456,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.addManagedListener(eRow, 'mouseleave', () => this.rowNode.onMouseLeave());
 
         // step 2 - listen for changes on row node (which any eRow can trigger)
-        this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, () => {
+        this.addManagedListener(this.rowNode, 'mouseEnter', () => {
             // if hover turned off, we don't add the class. we do this here so that if the application
             // toggles this property mid way, we remove the hover form the last row, but we stop
             // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
@@ -1468,7 +1466,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             }
         });
 
-        this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, () => {
+        this.addManagedListener(this.rowNode, 'mouseLeave', () => {
             eRow.classList.remove('ag-row-hover');
             this.rowNode.setHovered(false);
         });

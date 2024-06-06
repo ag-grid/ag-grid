@@ -11,6 +11,7 @@ import { _exists } from '../../../utils/generic';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _escapeString } from '../../../utils/string';
 import { Component, RefPlaceholder } from '../../../widgets/component';
+import type { TouchListenerEvent } from '../../../widgets/touchListener';
 import { TouchListener } from '../../../widgets/touchListener';
 
 export interface IHeaderGroupParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -128,7 +129,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private addTouchAndClickListeners(eElement: HTMLElement, action: (event: MouseEvent) => void): void {
         const touchListener = new TouchListener(eElement, true);
 
-        this.addManagedListener(touchListener, TouchListener.EVENT_TAP, action);
+        this.addManagedListener<TouchListenerEvent>(touchListener, 'tap', action);
         this.addDestroyFunc(() => touchListener.destroy());
         this.addManagedListener(eElement, 'click', action);
     }

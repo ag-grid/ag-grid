@@ -271,12 +271,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private buildListModel(columnTree: (AgColumn | AgProvidedColumnGroup)[]): void {
         const columnExpandedListener = this.onColumnExpanded.bind(this);
         const addListeners = (item: ColumnModelItem) => {
-            item.addEventListener(ColumnModelItem.EVENT_EXPANDED_CHANGED, columnExpandedListener);
-            const removeFunc = item.removeEventListener.bind(
-                item,
-                ColumnModelItem.EVENT_EXPANDED_CHANGED,
-                columnExpandedListener
-            );
+            item.addEventListener('expandedChanged', columnExpandedListener);
+            const removeFunc = item.removeEventListener.bind(item, 'expandedChanged', columnExpandedListener);
             this.destroyColumnItemFuncs.push(removeFunc);
         };
 

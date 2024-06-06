@@ -116,7 +116,7 @@ export abstract class BeanStub<TLocalEvent extends string = 'destroyed'>
         this.addManagedListeners<EventsType>(this.eventService, handlers);
     }
 
-    public addManagedListener<T extends string = TLocalEvent>(
+    public addManagedListener<const T extends string>(
         object: Window | HTMLElement | IEventEmitter<T>,
         event: T,
         listener: (event?: any) => void

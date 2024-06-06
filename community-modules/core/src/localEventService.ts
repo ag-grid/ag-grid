@@ -50,11 +50,19 @@ export class LocalEventService<TEventType extends string = string> implements IE
         );
     }
 
-    public addEventListener(eventType: TEventType, listener: AgEventListener, async = false): void {
+    public addEventListener<T extends TEventType>(
+        eventType: T,
+        listener: AgEventListener<any, any, T>,
+        async = false
+    ): void {
         this.getListeners(eventType, async, true)!.add(listener);
     }
 
-    public removeEventListener(eventType: TEventType, listener: AgEventListener, async = false): void {
+    public removeEventListener<T extends TEventType>(
+        eventType: T,
+        listener: AgEventListener<any, any, T>,
+        async = false
+    ): void {
         const listeners = this.getListeners(eventType, async, false);
         if (!listeners) {
             return;

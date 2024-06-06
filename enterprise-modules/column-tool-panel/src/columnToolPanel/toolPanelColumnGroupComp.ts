@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     AgProvidedColumnGroup,
     BeanCollection,
     ColumnEventType,
@@ -9,11 +10,11 @@ import type {
     DragSource,
     IAggFunc,
     ITooltipParams,
+    TouchListenerEvent,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
     AgCheckbox,
-    AgColumn,
     Component,
     CssClassApplier,
     DragAndDropService,
@@ -29,7 +30,7 @@ import {
     _setDisplayed,
 } from '@ag-grid-community/core';
 
-import { ColumnModelItem } from './columnModelItem';
+import type { ColumnModelItem } from './columnModelItem';
 import type { ModelItemUtils } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
@@ -103,11 +104,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
         this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
         this.addManagedListener(this.cbSelect, 'fieldValueChanged', this.onCheckboxChanged.bind(this));
-        this.addManagedListener(
-            this.modelItem,
-            ColumnModelItem.EVENT_EXPANDED_CHANGED,
-            this.onExpandChanged.bind(this)
-        );
+        this.addManagedListener(this.modelItem, 'expandedChanged', this.onExpandChanged.bind(this));
         this.addManagedListener(this.focusWrapper, 'keydown', this.handleKeyDown.bind(this));
         this.addManagedListener(this.focusWrapper, 'contextmenu', this.onContextMenu.bind(this));
 
@@ -292,7 +289,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.addManagedListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
 
         const touchListener = new TouchListener(this.eColumnGroupIcons, true);
-        this.addManagedListener(touchListener, TouchListener.EVENT_TAP, this.onExpandOrContractClicked.bind(this));
+        this.addManagedListener<TouchListenerEvent>(touchListener, 'tap', this.onExpandOrContractClicked.bind(this));
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     }
 

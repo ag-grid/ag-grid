@@ -346,8 +346,6 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
 const TITLE_BAR_DISABLED_CLASS = 'ag-disabled-group-title-bar';
 
 class DefaultTitleBar extends Component<ExpandedChangedEvent> {
-    public static EVENT_EXPAND_CHANGED = 'expandedChanged';
-
     private title: string | undefined;
     private suppressOpenCloseIcons: boolean = false;
     private suppressKeyboardNavigation: boolean = false;

@@ -14,8 +14,6 @@ export function isColumnGroup(col: Column | ColumnGroup | string): col is AgColu
     return col instanceof AgColumnGroup;
 }
 
-export const EVENT_COLUMN_GROUP_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged' as const;
-
 export type AgColumnGroupEvent = 'leftChanged' | 'displayedChildrenChanged';
 
 export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> implements ColumnGroup<TValue> {

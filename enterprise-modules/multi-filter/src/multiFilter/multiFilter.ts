@@ -188,17 +188,13 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
 
                 this.guiDestroyFuncs.push(() => this.destroyBean(menuItem));
 
-                this.addManagedListener(
-                    menuItem,
-                    AgMenuItemComponent.EVENT_MENU_ITEM_ACTIVATED,
-                    (event: MenuItemActivatedEvent) => {
-                        if (this.lastActivatedMenuItem && this.lastActivatedMenuItem !== event.menuItem) {
-                            this.lastActivatedMenuItem.deactivate();
-                        }
-
-                        this.lastActivatedMenuItem = event.menuItem;
+                this.addManagedListener(menuItem, 'menuItemActivated', (event: MenuItemActivatedEvent) => {
+                    if (this.lastActivatedMenuItem && this.lastActivatedMenuItem !== event.menuItem) {
+                        this.lastActivatedMenuItem.deactivate();
                     }
-                );
+
+                    this.lastActivatedMenuItem = event.menuItem;
+                });
 
                 const menuItemGui = menuItem.getGui();
                 // `AgMenuList` normally handles keyboard navigation, so need to do here

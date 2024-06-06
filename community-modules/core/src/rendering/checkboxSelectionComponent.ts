@@ -1,6 +1,6 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { CheckboxSelectionCallback } from '../entities/colDef';
-import { RowNode } from '../entities/rowNode';
+import type { RowNode } from '../entities/rowNode';
 import type { GroupCheckboxSelectionCallback } from '../interfaces/groupCellRenderer';
 import { _getAriaCheckboxStateName } from '../utils/aria';
 import { _stopPropagationForAgGrid } from '../utils/event';
@@ -110,9 +110,11 @@ export class CheckboxSelectionComponent extends Component {
             }
         });
 
-        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_SELECTABLE_CHANGED, this.onSelectableChanged.bind(this));
+        this.addManagedListeners(this.rowNode, {
+            rowSelected: this.onSelectionChanged.bind(this),
+            dataChanged: this.onDataChanged.bind(this),
+            selectableChanged: this.onSelectableChanged.bind(this),
+        });
 
         const isRowSelectableFunc = this.gos.get('isRowSelectable');
         const checkboxVisibleIsDynamic = isRowSelectableFunc || typeof this.getIsVisible() === 'function';
@@ -120,8 +122,12 @@ export class CheckboxSelectionComponent extends Component {
         if (checkboxVisibleIsDynamic) {
             const showOrHideSelectListener = this.showOrHideSelect.bind(this);
             this.addManagedEventListeners({ displayedColumnsChanged: showOrHideSelectListener });
-            this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, showOrHideSelectListener);
-            this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, showOrHideSelectListener);
+
+            this.addManagedListeners(this.rowNode, {
+                dataChanged: showOrHideSelectListener,
+                cellChanged: showOrHideSelectListener,
+            });
+
             this.showOrHideSelect();
         }
 

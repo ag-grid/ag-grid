@@ -30,7 +30,7 @@ import {
     _createIconNoSpan,
 } from '@ag-grid-community/core';
 import type { AgMenuList, CloseMenuEvent, TabbedItem } from '@ag-grid-enterprise/core';
-import { AgMenuItemComponent, TabbedLayout } from '@ag-grid-enterprise/core';
+import { TabbedLayout } from '@ag-grid-enterprise/core';
 
 import type { ColumnChooserFactory } from './columnChooserFactory';
 import type { ColumnMenuFactory } from './columnMenuFactory';
@@ -601,7 +601,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
             this.column,
             () => this.sourceElement ?? this.getGui()
         );
-        this.mainMenuList.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, this.onHidePopup.bind(this));
+        this.mainMenuList.addEventListener('closeMenu', this.onHidePopup.bind(this));
         this.eColumnMenu.appendChild(this.mainMenuList.getGui());
     }
 

@@ -10,7 +10,7 @@ import { Component, KeyCode, _clearElement, _last } from '@ag-grid-community/cor
 
 import { SideBarButtonComp } from './sideBarButtonComp';
 
-export interface SideBarButtonClickedEvent extends AgEvent {
+export interface SideBarButtonClickedEvent extends AgEvent<'sideBarButtonClicked'> {
     toolPanelId: string;
 }
 
@@ -26,12 +26,10 @@ export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
 
     static readonly selector: AgComponentSelector = 'AG-SIDE-BAR-BUTTONS';
 
-    public static EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
-    private static readonly TEMPLATE: string = /* html */ `<div class="ag-side-buttons" role="tablist"></div>`;
     private buttonComps: SideBarButtonComp[] = [];
 
     constructor() {
-        super(AgSideBarButtons.TEMPLATE);
+        super(/* html */ `<div class="ag-side-buttons" role="tablist"></div>`);
     }
 
     public postConstruct(): void {

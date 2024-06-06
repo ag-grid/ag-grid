@@ -25,7 +25,8 @@ interface FilterColumnPair {
     column: AgColumn;
 }
 
-export class GroupFilter extends TabGuardComp implements IFilterComp {
+export type GroupFilterEvent = 'columnRowGroupChanged' | 'selectedColumnChanged';
+export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilterComp {
     private filterManager?: FilterManager;
     private columnNameService: ColumnNameService;
     private funcColsService: FuncColsService;
@@ -35,9 +36,6 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         this.columnNameService = beans.columnNameService;
         this.funcColsService = beans.funcColsService;
     }
-
-    public static EVENT_COLUMN_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
-    public static EVENT_SELECTED_COLUMN_CHANGED = 'selectedColumnChanged';
 
     private readonly eGroupField: HTMLElement = RefPlaceholder;
     private readonly eUnderlyingFilter: HTMLElement = RefPlaceholder;
@@ -237,7 +235,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         this.selectedFilter = selectedFilterColumnPair?.filter;
 
         this.dispatchLocalEvent({
-            type: GroupFilter.EVENT_SELECTED_COLUMN_CHANGED,
+            type: 'selectedColumnChanged',
         });
         this.addUnderlyingFilterElement();
     }
@@ -271,7 +269,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
     private onColumnRowGroupChanged(): void {
         this.updateGroups().then(() => {
             this.dispatchLocalEvent({
-                type: GroupFilter.EVENT_COLUMN_ROW_GROUP_CHANGED,
+                type: 'columnRowGroupChanged',
             });
         });
     }

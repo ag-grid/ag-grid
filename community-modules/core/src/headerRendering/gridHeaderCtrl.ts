@@ -4,14 +4,13 @@ import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { EventsType } from '../eventKeys';
 import type { FilterManager } from '../filter/filterManager';
 import type { FocusService } from '../focusService';
 import type { MenuService } from '../misc/menuService';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _exists } from '../utils/generic';
 import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
-import type { LongTapEvent } from '../widgets/touchListener';
+import type { LongTapEvent, TouchListenerEvent } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
 import type { HeaderNavigationService } from './common/headerNavigationService';
 import { HeaderNavigationDirection } from './common/headerNavigationService';
@@ -166,15 +165,18 @@ export class GridHeaderCtrl extends BeanStub {
         switch (e.key) {
             case KeyCode.LEFT:
                 direction = HeaderNavigationDirection.LEFT;
-            case KeyCode.RIGHT:
+            // eslint-disable-next-line no-fallthrough
+            case KeyCode.RIGHT: {
                 if (!_exists(direction)) {
                     direction = HeaderNavigationDirection.RIGHT;
                 }
                 this.headerNavigationService.navigateHorizontally(direction, false, e);
                 break;
+            }
             case KeyCode.UP:
                 direction = HeaderNavigationDirection.UP;
-            case KeyCode.DOWN:
+            // eslint-disable-next-line no-fallthrough
+            case KeyCode.DOWN: {
                 if (!_exists(direction)) {
                     direction = HeaderNavigationDirection.DOWN;
                 }
@@ -182,6 +184,7 @@ export class GridHeaderCtrl extends BeanStub {
                     e.preventDefault();
                 }
                 break;
+            }
             default:
                 return;
         }
@@ -224,7 +227,7 @@ export class GridHeaderCtrl extends BeanStub {
             listener(undefined, event.touchStart, event.touchEvent);
         };
 
-        this.addManagedListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
+        this.addManagedListener<TouchListenerEvent>(touchListener, 'longTap', longTapListener);
         this.addDestroyFunc(() => touchListener.destroy());
     }
 }

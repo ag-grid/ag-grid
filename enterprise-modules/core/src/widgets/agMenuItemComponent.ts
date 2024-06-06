@@ -54,9 +54,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
         this.userComponentFactory = beans.userComponentFactory;
     }
 
-    public static EVENT_CLOSE_MENU = 'closeMenu' as const;
-    public static EVENT_MENU_ITEM_ACTIVATED = 'menuItemActivated' as const;
-    public static ACTIVATION_DELAY = 80;
+    private ACTIVATION_DELAY = 80;
 
     private eGui?: HTMLElement;
     private params: MenuItemDef;
@@ -346,7 +344,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
 
     private onItemActivated(): void {
         const event: MenuItemActivatedEvent = {
-            type: AgMenuItemComponent.EVENT_MENU_ITEM_ACTIVATED,
+            type: 'menuItemActivated',
             menuItem: this,
         };
 
@@ -372,7 +370,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
 
         if (this.isAnotherSubMenuOpen()) {
             // wait to see if the user enters the open sub-menu
-            this.activateTimeoutId = window.setTimeout(() => this.activate(true), AgMenuItemComponent.ACTIVATION_DELAY);
+            this.activateTimeoutId = window.setTimeout(() => this.activate(true), this.ACTIVATION_DELAY);
         } else {
             // activate immediately
             this.activate(true);
@@ -384,7 +382,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
 
         if (this.isSubMenuOpen()) {
             // wait to see if the user enters the sub-menu
-            this.deactivateTimeoutId = window.setTimeout(() => this.deactivate(), AgMenuItemComponent.ACTIVATION_DELAY);
+            this.deactivateTimeoutId = window.setTimeout(() => this.deactivate(), this.ACTIVATION_DELAY);
         } else {
             // de-activate immediately
             this.deactivate();

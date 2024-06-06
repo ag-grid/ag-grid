@@ -5,7 +5,6 @@ import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
 import type { Environment } from '../environment';
-import type { EventsType } from '../eventKeys';
 import type { FilterManager } from '../filter/filterManager';
 import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -19,7 +18,7 @@ import { LayoutFeature } from '../styling/layoutFeature';
 import { _getTabIndex, _isIOSUserAgent, _isInvisibleScrollbar } from '../utils/browser';
 import { _getInnerWidth, _isElementChildOfClass, _isVerticalScrollShowing } from '../utils/dom';
 import type { PopupService } from '../widgets/popupService';
-import type { LongTapEvent } from '../widgets/touchListener';
+import type { LongTapEvent, TouchListenerEvent } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
 import type { MouseEventService } from './mouseEventService';
@@ -411,7 +410,7 @@ export class GridBodyCtrl extends BeanStub {
             listener(undefined, event.touchStart, event.touchEvent);
         };
 
-        this.addManagedListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
+        this.addManagedListener<TouchListenerEvent>(touchListener, 'longTap', longTapListener);
         this.addDestroyFunc(() => touchListener.destroy());
     }
 

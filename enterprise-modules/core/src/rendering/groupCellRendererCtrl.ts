@@ -9,6 +9,7 @@ import type {
     IGroupCellRenderer,
     IGroupCellRendererCtrl,
     IRowNode,
+    RowNode,
     UserCompDetails,
     UserComponentFactory,
     ValueService,
@@ -19,7 +20,6 @@ import {
     CheckboxSelectionComponent,
     KeyCode,
     RowDragComp,
-    RowNode,
     _cloneObject,
     _createIconNoSpan,
     _isElementInEventPath,
@@ -195,7 +195,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             _setAriaExpanded(eGridCell, !!node.expanded);
         };
 
-        this.expandListener = this.addManagedListener(node, RowNode.EVENT_EXPANDED_CHANGED, listener) || null;
+        this.expandListener = this.addManagedListener(node, 'expandedChanged', listener) || null;
         listener();
     }
 
@@ -490,11 +490,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return;
         }
 
-        this.addManagedListener(
-            this.displayedGroupNode,
-            RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED,
-            this.updateChildCount.bind(this)
-        );
+        this.addManagedListener(this.displayedGroupNode, 'allChildrenCountChanged', this.updateChildCount.bind(this));
 
         // filtering changes the child count, so need to cater for it
         this.updateChildCount();
@@ -552,25 +548,19 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
 
         // expand / contract as the user hits enter
         this.addManagedListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
-        this.addManagedListener(
-            params.node,
-            RowNode.EVENT_EXPANDED_CHANGED,
-            this.showExpandAndContractIcons.bind(this)
-        );
+        this.addManagedListener(params.node, 'expandedChanged', this.showExpandAndContractIcons.bind(this));
 
         this.showExpandAndContractIcons();
 
         // because we don't show the expand / contract when there are no children, we need to check every time
         // the number of children change.
         const expandableChangedListener = this.onRowNodeIsExpandableChanged.bind(this);
-        this.addManagedListener(
-            this.displayedGroupNode,
-            RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED,
-            expandableChangedListener
-        );
-        this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_MASTER_CHANGED, expandableChangedListener);
-        this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_GROUP_CHANGED, expandableChangedListener);
-        this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_HAS_CHILDREN_CHANGED, expandableChangedListener);
+        this.addManagedListeners(this.displayedGroupNode, {
+            allChildrenCountChanged: expandableChangedListener,
+            masterChanged: expandableChangedListener,
+            groupChanged: expandableChangedListener,
+            hasChildrenChanged: expandableChangedListener,
+        });
     }
 
     private onExpandClicked(mouseEvent: MouseEvent): void {
@@ -676,11 +666,11 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         // only do this if an indent - as this overwrites the padding that
         // the theme set, which will make things look 'not aligned' for the
         // first group level.
-        const node: IRowNode = this.params.node;
+        const node: RowNode = this.params.node as RowNode;
         const suppressPadding = this.params.suppressPadding;
 
         if (!suppressPadding) {
-            this.addManagedListener(node, RowNode.EVENT_UI_LEVEL_CHANGED, this.setIndent.bind(this));
+            this.addManagedListener(node, 'uiLevelChanged', this.setIndent.bind(this));
             this.setIndent();
         }
     }
