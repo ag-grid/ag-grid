@@ -2,7 +2,7 @@ import { LicenseManager } from '@ag-grid-enterprise/core';
 import type { Framework, ImportType } from '@ag-grid-types';
 import Warning from '@ag-website-shared/components/alert/Warning';
 import { Snippet } from '@components/snippet/Snippet';
-import { FRAMEWORK_DISPLAY_TEXT } from '@constants';
+import { CHARTS_SITE_URL, FRAMEWORK_DISPLAY_TEXT } from '@constants';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import { type FunctionComponent, useEffect } from 'react';
@@ -204,7 +204,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                 </div>
 
                 <div>
-                    <div>Using standalone charts?</div>
+                    <div>
+                        Use AG Charts outside of AG Grid (<a href={CHARTS_SITE_URL}>Standalone Charts</a>)
+                    </div>
                     <div className={styles.inputList}>
                         <label>
                             <input
