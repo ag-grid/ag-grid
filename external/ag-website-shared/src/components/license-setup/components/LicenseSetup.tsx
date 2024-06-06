@@ -2,6 +2,7 @@ import { LicenseManager } from '@ag-grid-enterprise/core';
 import type { Framework, ImportType } from '@ag-grid-types';
 import Warning from '@ag-website-shared/components/alert/Warning';
 import { Snippet } from '@components/snippet/Snippet';
+import { InfoTooltip } from '@components/theme-builder/components/general/Tooltip';
 import { CHARTS_SITE_URL, FRAMEWORK_DISPLAY_TEXT } from '@constants';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
@@ -205,7 +206,8 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
 
                 <div>
                     <div>
-                        Use AG Charts outside of AG Grid (<a href={CHARTS_SITE_URL}>Standalone Charts</a>)
+                        Use AG Charts outside of AG Grid (<a href={CHARTS_SITE_URL}>Standalone Charts</a>){' '}
+                        <InfoTooltip title="AG Charts will be included inside AG Grid Enterprise, but if you want to use AG Charts in your own application, you will need to import it separately" />
                     </div>
                     <div className={styles.inputList}>
                         <label>
