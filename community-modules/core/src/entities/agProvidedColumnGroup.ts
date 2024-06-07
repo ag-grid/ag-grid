@@ -94,10 +94,7 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
 
     public setExpanded(expanded: boolean | undefined): void {
         this.expanded = expanded === undefined ? false : expanded;
-        const event: AgEvent<'expandedChanged'> = {
-            type: 'expandedChanged',
-        };
-        this.dispatchLocalEvent(event);
+        this.dispatchLocalEvent({ type: 'expandedChanged' });
     }
 
     public isExpandable(): boolean {
@@ -214,10 +211,7 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
 
         if (this.expandable !== expandable) {
             this.expandable = expandable;
-            const event: AgEvent<'expandableChanged'> = {
-                type: 'expandableChanged',
-            };
-            this.dispatchLocalEvent(event);
+            this.dispatchLocalEvent({ type: 'expandableChanged' });
         }
     }
 

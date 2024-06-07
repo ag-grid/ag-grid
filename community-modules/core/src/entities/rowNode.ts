@@ -687,10 +687,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         this.dispatchRowEvent('expandedChanged');
 
-        const event = Object.assign({}, this.createGlobalRowEvent('rowGroupOpened'), {
-            expanded,
-            event: e || null,
-        });
+        const event = { ...this.createGlobalRowEvent('rowGroupOpened'), expanded, event: e || null };
 
         this.beans.rowNodeEventThrottle.dispatchExpanded(event, forceSync);
 

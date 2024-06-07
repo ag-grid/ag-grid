@@ -1,6 +1,5 @@
 import type { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
-import { BeanStub } from '../context/beanStub';
-import type { LocalEventOrDestroyed } from '../context/beanStub';
+import { BeanStub, BeanStubEvent } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { BaseBean, ComponentBean } from '../context/genericContext';
 import type { AgColumn } from '../entities/agColumn';
@@ -32,9 +31,8 @@ const compIdSequence = new NumberSequence();
  */
 export const RefPlaceholder: any = null;
 
-export const ComponentDisplayChangedEvent = 'displayChanged' as const;
-export type ComponentEvent = LocalEventOrDestroyed<'displayChanged'>;
-export interface VisibleChangedEvent extends AgEvent<typeof ComponentDisplayChangedEvent> {
+export type ComponentEvent = 'displayChanged' | BeanStubEvent;
+export interface VisibleChangedEvent extends AgEvent<ComponentEvent> {
     visible: boolean;
 }
 

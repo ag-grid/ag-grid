@@ -19,9 +19,10 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
 
         parentElement.appendChild(eInput);
 
+        const listener = (e: KeyboardEvent) => this.valueChangedListener(e);
         this.addManagedListeners(eInput, {
-            input: (e: KeyboardEvent) => this.valueChangedListener(e),
-            keydown: (e: KeyboardEvent) => this.valueChangedListener(e),
+            input: listener,
+            keydown: listener,
         });
     }
 

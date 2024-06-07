@@ -18,14 +18,14 @@ import type { Bean } from './bean';
 import type { BeanCollection, Context } from './context';
 import type { BaseBean } from './genericContext';
 
-type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
-
 export type BeanStubEvent = 'destroyed';
+export type EventOrDestroyed<TEventType extends string> = TEventType | BeanStubEvent;
 
-export abstract class BeanStub<TEvent extends string = BeanStubEvent>
-    implements BaseBean<BeanCollection>, Bean, IEventEmitter<TEvent | BeanStubEvent>
+type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
+export abstract class BeanStub<TEventType extends string = BeanStubEvent>
+    implements BaseBean<BeanCollection>, Bean, IEventEmitter<EventOrDestroyed<TEventType>>
 {
-    protected localEventService?: LocalEventService<TEvent | BeanStubEvent>;
+    protected localEventService?: LocalEventService<EventOrDestroyed<TEventType>>;
 
     private stubContext: Context; // not named context to allow children to use 'context' as a variable name
     private destroyFunctions: (() => void)[] = [];
@@ -79,14 +79,11 @@ export abstract class BeanStub<TEvent extends string = BeanStubEvent>
 
         // cast destroy type as we do not want to expose destroy event type to the dispatchLocalEvent method
         // as no one else should be firing destroyed at the bean stub.
-        this.dispatchLocalEvent({ type: 'destroyed' } as { type: TEvent });
+        this.dispatchLocalEvent({ type: 'destroyed' } as { type: BeanStubEvent } as any);
     }
 
     /** Add a local event listener against this BeanStub */
-    public addEventListener<T extends TEvent | BeanStubEvent>(
-        eventType: T,
-        listener: AgEventListener<any, any, T>
-    ): void {
+    public addEventListener<T extends TEventType>(eventType: T, listener: AgEventListener<any, any, T>): void {
         if (!this.localEventService) {
             this.localEventService = new LocalEventService();
         }
@@ -94,16 +91,13 @@ export abstract class BeanStub<TEvent extends string = BeanStubEvent>
     }
 
     /** Remove a local event listener from this BeanStub */
-    public removeEventListener<T extends TEvent | BeanStubEvent>(
-        eventType: T,
-        listener: AgEventListener<any, any, T>
-    ): void {
+    public removeEventListener<T extends TEventType>(eventType: T, listener: AgEventListener<any, any, T>): void {
         if (this.localEventService) {
             this.localEventService.removeEventListener(eventType, listener);
         }
     }
 
-    public dispatchLocalEvent<TEventType extends AgEvent<TEvent>>(event: TEventType): void {
+    public dispatchLocalEvent<TEvent extends AgEvent<TEventType>>(event: TEvent): void {
         if (this.localEventService) {
             this.localEventService.dispatchEvent(event);
         }
