@@ -6,4 +6,4 @@ import seedRepos from '../../../content/seed-projects/grid-seed-projects.json';
 const framework = getFrameworkFromPath(Astro.url.pathname);
 ---
 
-<LicenseSetup client:only framework={framework} seedRepos={seedRepos} />
+<LicenseSetup client:only="react" framework={framework} seedRepos={seedRepos} />
