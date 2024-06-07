@@ -107,11 +107,16 @@ export class HeaderRowCtrl extends BeanStub {
         this.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
         this.addManagedPropertyListener('ensureDomOrder', (e) => (this.isEnsureDomOrder = e.currentValue));
 
-        this.addManagedPropertyListener('headerHeight', onHeightChanged);
-        this.addManagedPropertyListener('pivotHeaderHeight', onHeightChanged);
-        this.addManagedPropertyListener('groupHeaderHeight', onHeightChanged);
-        this.addManagedPropertyListener('pivotGroupHeaderHeight', onHeightChanged);
-        this.addManagedPropertyListener('floatingFiltersHeight', onHeightChanged);
+        this.addManagedPropertyListeners(
+            [
+                'headerHeight',
+                'pivotHeaderHeight',
+                'groupHeaderHeight',
+                'pivotGroupHeaderHeight',
+                'floatingFiltersHeight',
+            ],
+            onHeightChanged
+        );
     }
 
     public getHeaderCellCtrl(column: AgColumnGroup): HeaderGroupCellCtrl | undefined;
