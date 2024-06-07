@@ -41,8 +41,8 @@ export class RowRangeSelectionContext {
         this.cachedRange.length = 0;
     }
 
-    private getRange(): RowNode[] {
-        if (this.cachedRange.length === 0 && this.root !== null) {
+    public getRange(): RowNode[] {
+        if (this.cachedRange.length === 0 && this.end !== null) {
             this.cachedRange = this.rowModel.getNodesInRangeForSelection(this.root, this.end);
         }
 

@@ -171,7 +171,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 const toNode = node;
                 if (fromNode !== toNode) {
                     this.rowModel
-                        .getNodesInRangeForSelection(toNode, fromNode)
+                        .getNodesInRangeForSelection(fromNode, toNode)
                         .forEach((node) => updateNodeState(node));
                 }
             }

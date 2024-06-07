@@ -178,7 +178,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 const fromNode = this.selectionContext.getRoot();
                 const toNode = node;
                 if (fromNode !== toNode) {
-                    this.selectBetween(toNode, fromNode, newValue);
+                    this.selectBetween(fromNode, toNode, newValue);
                     return 1;
                 }
             }
@@ -202,7 +202,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         return 1;
     }
 
-    private selectBetween(from: RowNode, to: RowNode | null, newValue: boolean) {
+    private selectBetween(from: RowNode | null, to: RowNode, newValue: boolean) {
         return this.selectRange(this.rowModel.getNodesInRangeForSelection(from, to), newValue);
     }
 

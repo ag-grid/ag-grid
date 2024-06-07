@@ -254,7 +254,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         return this.rowCount > 0;
     }
 
-    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+    public getNodesInRangeForSelection(firstInRange: RowNode | null, lastInRange: RowNode): RowNode[] {
         const firstIndex = _missing(firstInRange) ? 0 : firstInRange.rowIndex!;
         const lastIndex = lastInRange.rowIndex!;
 

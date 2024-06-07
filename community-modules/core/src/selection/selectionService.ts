@@ -96,7 +96,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
                 const fromNode = this.selectionCtx.getRoot();
                 const toNode = node;
                 if (fromNode !== toNode && this.isMultiselect()) {
-                    return this.selectRangeBetween(toNode, fromNode, newValue, source);
+                    return this.selectRangeBetween(fromNode, toNode, newValue, source);
                 }
             }
         }
@@ -158,8 +158,8 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
     private selectRangeBetween(
-        fromNode: RowNode,
-        toNode: RowNode | null,
+        fromNode: RowNode | null,
+        toNode: RowNode,
         value: boolean,
         source: SelectionEventSourceType
     ): number {

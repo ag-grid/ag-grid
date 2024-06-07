@@ -659,7 +659,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         return res;
     }
 
-    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode | null): RowNode[] {
+    public getNodesInRangeForSelection(firstInRange: RowNode | null, lastInRange: RowNode): RowNode[] {
         if (!_exists(firstInRange)) {
             return [];
         }

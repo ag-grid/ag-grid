@@ -160,7 +160,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
         return !!this.infiniteCache;
     }
 
-    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+    public getNodesInRangeForSelection(firstInRange: RowNode | null, lastInRange: RowNode): RowNode[] {
         return this.infiniteCache ? this.infiniteCache.getRowNodesInRange(firstInRange, lastInRange) : [];
     }
 
