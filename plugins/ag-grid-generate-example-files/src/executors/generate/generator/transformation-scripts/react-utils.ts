@@ -1,6 +1,6 @@
 import * as JSON5 from 'json5';
 
-import { ALL_EVENTS } from '../_copiedFromCore/eventKeys';
+import { ALL_EVENTS } from '../_copiedFromCore/eventTypes';
 import { PropertyKeys } from '../_copiedFromCore/propertyKeys';
 import { getFunctionName, recognizedDomEvents } from './parser-utils';
 

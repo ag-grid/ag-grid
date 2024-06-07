@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio';
 import ts from 'typescript';
 
-import { ALL_EVENTS } from '../_copiedFromCore/eventKeys';
+import { ALL_EVENTS } from '../_copiedFromCore/eventTypes';
 import { PropertyKeys } from '../_copiedFromCore/propertyKeys';
 import type { GridOptionsType, InlineGridStyles, ParsedBindings } from '../types';
 import {
