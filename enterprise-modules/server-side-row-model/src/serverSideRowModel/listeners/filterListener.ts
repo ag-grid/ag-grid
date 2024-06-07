@@ -6,7 +6,7 @@ import type {
     NamedBean,
     StoreRefreshAfterParams,
 } from '@ag-grid-community/core';
-import { BeanStub, Events } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { ListenerUtils } from './listenerUtils';
@@ -30,10 +30,10 @@ export class FilterListener extends BeanStub implements NamedBean {
             return;
         }
 
-        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, () =>
-            this.onFilterChanged(true)
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, () => this.onFilterChanged());
+        this.addManagedEventListeners({
+            advancedFilterEnabledChanged: () => this.onFilterChanged(true),
+            filterChanged: () => this.onFilterChanged(),
+        });
     }
 
     private onFilterChanged(advancedFilterEnabledChanged?: boolean): void {

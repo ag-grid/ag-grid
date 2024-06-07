@@ -20,9 +20,9 @@ archive*.zip
 tmp
 
 plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/modules.ts
-plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/eventKeys.ts
+plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/eventTypes.ts
 plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/propertyKeys.ts
-plugins/ag-grid-generate-code-reference-files/src/executors/generate/_copiedFromCore/eventKeys.ts
+plugins/ag-grid-generate-code-reference-files/src/executors/generate/_copiedFromCore/eventTypes.ts
 plugins/ag-grid-generate-code-reference-files/dist/
 plugins/ag-grid-task-autogen/dist/
 plugins/ag-grid-generate-code-reference-files/dist

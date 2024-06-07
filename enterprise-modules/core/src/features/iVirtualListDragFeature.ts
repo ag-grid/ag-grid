@@ -1,15 +1,15 @@
 import type { AgEvent, Component, DragSourceType, IEventEmitter } from '@ag-grid-community/core';
 
-export interface VirtualListDragItem<R extends Component> {
+export interface VirtualListDragItem<R extends Component<any>> {
     rowIndex: number;
     position: 'top' | 'bottom';
     component: R;
 }
 
 export interface VirtualListDragParams<C extends Component, R extends Component, V, E extends AgEvent> {
-    eventSource: Window | HTMLElement | IEventEmitter;
-    listItemDragStartEvent: string;
-    listItemDragEndEvent: string;
+    eventSource: Window | HTMLElement | IEventEmitter<any>;
+    listItemDragStartEvent: 'columnPanelItemDragStart' | 'advancedFilterBuilderDragStarted';
+    listItemDragEndEvent: 'columnPanelItemDragEnd' | 'advancedFilterBuilderDragEnded';
     dragSourceType: DragSourceType;
     getCurrentDragValue: (listItemDragStartEvent: E) => V;
     isMoveBlocked: (currentDragValue: V | null) => boolean;

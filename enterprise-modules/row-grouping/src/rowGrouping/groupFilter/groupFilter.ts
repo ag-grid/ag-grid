@@ -11,7 +11,6 @@ import type {
 import {
     AgPromise,
     AgSelect,
-    Events,
     FilterWrapperComp,
     RefPlaceholder,
     TabGuardComp,
@@ -26,7 +25,8 @@ interface FilterColumnPair {
     column: AgColumn;
 }
 
-export class GroupFilter extends TabGuardComp implements IFilterComp {
+export type GroupFilterEvent = 'columnRowGroupChanged' | 'selectedColumnChanged';
+export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilterComp {
     private filterManager?: FilterManager;
     private columnNameService: ColumnNameService;
     private funcColsService: FuncColsService;
@@ -36,9 +36,6 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         this.columnNameService = beans.columnNameService;
         this.funcColsService = beans.funcColsService;
     }
-
-    public static EVENT_COLUMN_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
-    public static EVENT_SELECTED_COLUMN_CHANGED = 'selectedColumnChanged';
 
     private readonly eGroupField: HTMLElement = RefPlaceholder;
     private readonly eUnderlyingFilter: HTMLElement = RefPlaceholder;
@@ -69,9 +66,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         this.params = params;
         this.validateParams();
         return this.updateGroups().then(() => {
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>
-                this.onColumnRowGroupChanged()
-            );
+            this.addManagedEventListeners({ columnRowGroupChanged: () => this.onColumnRowGroupChanged() });
         });
     }
 
@@ -239,8 +234,8 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         this.selectedColumn = selectedFilterColumnPair?.column;
         this.selectedFilter = selectedFilterColumnPair?.filter;
 
-        this.dispatchEvent({
-            type: GroupFilter.EVENT_SELECTED_COLUMN_CHANGED,
+        this.dispatchLocalEvent({
+            type: 'selectedColumnChanged',
         });
         this.addUnderlyingFilterElement();
     }
@@ -273,11 +268,8 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
 
     private onColumnRowGroupChanged(): void {
         this.updateGroups().then(() => {
-            this.dispatchEvent({
-                type: GroupFilter.EVENT_COLUMN_ROW_GROUP_CHANGED,
-            });
-            this.eventService.dispatchEvent({
-                type: 'filterAllowedUpdated',
+            this.dispatchLocalEvent({
+                type: 'columnRowGroupChanged',
             });
         });
     }

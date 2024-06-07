@@ -1,4 +1,5 @@
 import type { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
+import type { BeanStubEvent } from '../context/beanStub';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { BaseBean, ComponentBean } from '../context/genericContext';
@@ -31,13 +32,17 @@ const compIdSequence = new NumberSequence();
  */
 export const RefPlaceholder: any = null;
 
-export interface VisibleChangedEvent extends AgEvent {
+export type ComponentEvent = 'displayChanged' | BeanStubEvent;
+export interface VisibleChangedEvent extends AgEvent<ComponentEvent> {
     visible: boolean;
 }
 
-export type ComponentClass = { new (params?: any): Component; selector: AgComponentSelector };
+export type ComponentClass = { new (params?: any): Component<any>; selector: AgComponentSelector };
 
-export class Component extends BeanStub implements ComponentBean, BaseBean<BeanCollection> {
+export class Component<TLocalEvent extends string = ComponentEvent>
+    extends BeanStub<TLocalEvent | ComponentEvent>
+    implements ComponentBean, BaseBean<BeanCollection>
+{
     protected agStackComponentsRegistry: AgStackComponentsRegistry;
 
     public override preWireBeans(beans: BeanCollection): void {
@@ -47,7 +52,6 @@ export class Component extends BeanStub implements ComponentBean, BaseBean<BeanC
 
     public static elementGettingCreated: any;
 
-    public static EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     private eGui: HTMLElement;
     private components: ComponentClass[];
 
@@ -234,7 +238,7 @@ export class Component extends BeanStub implements ComponentBean, BaseBean<BeanC
             Component.elementGettingCreated = element;
             const componentParams = paramsMap && elementRef ? paramsMap[elementRef] : undefined;
             newComponent = new ComponentClass(componentParams);
-            newComponent.setParentComponent(this);
+            newComponent.setParentComponent(this as Component);
 
             this.createBean(newComponent, null, afterPreCreateCallback);
         }
@@ -302,7 +306,7 @@ export class Component extends BeanStub implements ComponentBean, BaseBean<BeanC
         return this.getFocusableElement();
     }
 
-    public setParentComponent(component: Component) {
+    public setParentComponent(component: Component<any>) {
         this.parentComponent = component;
     }
 
@@ -320,7 +324,7 @@ export class Component extends BeanStub implements ComponentBean, BaseBean<BeanC
         return this.eGui.querySelector(cssSelector) as HTMLElement;
     }
 
-    public appendChild(newChild: HTMLElement | Component, container?: HTMLElement): void {
+    public appendChild(newChild: HTMLElement | Component<any>, container?: HTMLElement): void {
         if (newChild == null) {
             return;
         }
@@ -356,11 +360,11 @@ export class Component extends BeanStub implements ComponentBean, BaseBean<BeanC
             _setDisplayed(this.eGui, displayed, { skipAriaHidden });
 
             const event: VisibleChangedEvent = {
-                type: Component.EVENT_DISPLAYED_CHANGED,
+                type: 'displayChanged',
                 visible: this.displayed,
             };
 
-            this.dispatchEvent(event);
+            this.dispatchLocalEvent(event);
         }
     }
 

@@ -6,7 +6,6 @@ import type { BeanCollection } from './context/context';
 import type { AgColumn } from './entities/agColumn';
 import type { SortDirection } from './entities/colDef';
 import type { ColumnEventType, SortChangedEvent } from './events';
-import { Events } from './events';
 import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
 import type { SortOption } from './rowNodes/rowNodeSorter';
@@ -113,7 +112,7 @@ export class SortController extends BeanStub implements NamedBean {
 
     public dispatchSortChangedEvents(source: string, columns?: AgColumn[]): void {
         const event: WithoutGridCommon<SortChangedEvent> = {
-            type: Events.EVENT_SORT_CHANGED,
+            type: 'sortChanged',
             source,
         };
 

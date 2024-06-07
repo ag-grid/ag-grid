@@ -8,7 +8,7 @@ import type {
     SelectionEventSourceType,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, Events } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
@@ -202,7 +202,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         });
 
         const event: WithoutGridCommon<SelectionChangedEvent> = {
-            type: Events.EVENT_SELECTION_CHANGED,
+            type: 'selectionChanged',
             source,
         };
         this.eventService.dispatchEvent(event);

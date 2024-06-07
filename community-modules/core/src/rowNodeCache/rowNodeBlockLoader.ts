@@ -8,7 +8,8 @@ import { _removeFromArray } from '../utils/array';
 import { _debounce } from '../utils/function';
 import type { RowNodeBlock } from './rowNodeBlock';
 
-export class RowNodeBlockLoader extends BeanStub<'blockLoaded' | 'blockLoaderFinished'> implements NamedBean {
+export type RowNodeBlockLoaderEvent = 'blockLoaded' | 'blockLoaderFinished';
+export class RowNodeBlockLoader extends BeanStub<RowNodeBlockLoaderEvent> implements NamedBean {
     beanName = 'rowNodeBlockLoader' as const;
 
     private rowModel: IRowModel;
@@ -73,9 +74,9 @@ export class RowNodeBlockLoader extends BeanStub<'blockLoaded' | 'blockLoaderFin
     public loadComplete(): void {
         this.activeBlockLoadsCount--;
         this.checkBlockToLoad();
-        this.dispatchEvent({ type: 'blockLoaded' });
+        this.dispatchLocalEvent({ type: 'blockLoaded' });
         if (this.activeBlockLoadsCount == 0) {
-            this.dispatchEvent({ type: 'blockLoaderFinished' });
+            this.dispatchLocalEvent({ type: 'blockLoaderFinished' });
         }
     }
 

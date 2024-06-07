@@ -11,14 +11,7 @@ import type {
     SelectionEventSourceType,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import {
-    ColumnModel,
-    Events,
-    RowNode,
-    _cloneObject,
-    _missingOrEmpty,
-    _sortRowNodesByOrder,
-} from '@ag-grid-community/core';
+import { RowNode, _cloneObject, _missingOrEmpty, _sortRowNodesByOrder } from '@ag-grid-community/core';
 
 export class ClientSideNodeManager {
     private static TOP_LEVEL = 0;
@@ -152,7 +145,7 @@ export class ClientSideNodeManager {
 
     private dispatchRowDataUpdateStartedEvent(rowData?: any[] | null): void {
         const event: WithoutGridCommon<RowDataUpdateStartedEvent> = {
-            type: Events.EVENT_ROW_DATA_UPDATE_STARTED,
+            type: 'rowDataUpdateStarted',
             firstRowData: rowData?.length ? rowData[0] : null,
         };
         this.eventService.dispatchEvent(event);
@@ -177,7 +170,7 @@ export class ClientSideNodeManager {
 
         if (selectionChanged) {
             const event: WithoutGridCommon<SelectionChangedEvent> = {
-                type: Events.EVENT_SELECTION_CHANGED,
+                type: 'selectionChanged',
                 source: source,
             };
             this.eventService.dispatchEvent(event);

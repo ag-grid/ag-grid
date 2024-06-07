@@ -34,14 +34,14 @@ import type { ISetFilterLocaleText } from './localeText';
 
 export interface SetFilterListItemSelectionChangedEvent<
     I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null,
-> extends AgEvent {
+> extends AgEvent<'selectionChanged'> {
     isSelected: boolean;
     item: I;
 }
 
 export interface SetFilterListItemExpandedChangedEvent<
     I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null,
-> extends AgEvent {
+> extends AgEvent<'expandedChanged'> {
     isExpanded: boolean;
     item: I;
 }
@@ -62,8 +62,24 @@ export interface SetFilterListItemParams<V> {
     hasIndeterminateExpandState?: boolean;
 }
 
+const GROUP_TEMPLATE = /* html */ `
+<div class="ag-set-filter-item" aria-hidden="true">
+    <span class="ag-set-filter-group-icons">
+        <span class="ag-set-filter-group-closed-icon" data-ref="eGroupClosedIcon"></span>
+        <span class="ag-set-filter-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
+        <span class="ag-set-filter-group-indeterminate-icon" data-ref="eGroupIndeterminateIcon"></span>
+    </span>
+    <ag-checkbox data-ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
+</div>`;
+
+const TEMPLATE = /* html */ `
+<div class="ag-set-filter-item">
+    <ag-checkbox data-ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
+</div>`;
+
+export type SetFilterListItemEvent = 'selectionChanged' | 'expandedChanged';
 /** @param V type of value in the Set Filter */
-export class SetFilterListItem<V> extends Component {
+export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private valueService: ValueService;
     private userComponentFactory: UserComponentFactory;
 
@@ -71,24 +87,6 @@ export class SetFilterListItem<V> extends Component {
         this.valueService = beans.valueService;
         this.userComponentFactory = beans.userComponentFactory;
     }
-
-    public static EVENT_SELECTION_CHANGED = 'selectionChanged';
-    public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
-
-    private static GROUP_TEMPLATE = /* html */ `
-        <div class="ag-set-filter-item" aria-hidden="true">
-            <span class="ag-set-filter-group-icons">
-                <span class="ag-set-filter-group-closed-icon" data-ref="eGroupClosedIcon"></span>
-                <span class="ag-set-filter-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
-                <span class="ag-set-filter-group-indeterminate-icon" data-ref="eGroupIndeterminateIcon"></span>
-            </span>
-            <ag-checkbox data-ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
-        </div>`;
-
-    private static TEMPLATE = /* html */ `
-        <div class="ag-set-filter-item">
-            <ag-checkbox data-ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
-        </div>`;
 
     private readonly eCheckbox: AgCheckbox = RefPlaceholder;
 
@@ -118,7 +116,7 @@ export class SetFilterListItem<V> extends Component {
     private destroyCellRendererComponent?: () => void;
 
     constructor(params: SetFilterListItemParams<V>) {
-        super(params.isGroup ? SetFilterListItem.GROUP_TEMPLATE : SetFilterListItem.TEMPLATE, [AgCheckbox]);
+        super(params.isGroup ? GROUP_TEMPLATE : TEMPLATE, [AgCheckbox]);
         this.focusWrapper = params.focusWrapper;
         this.value = params.value;
         this.params = params.params;
@@ -181,12 +179,15 @@ export class SetFilterListItem<V> extends Component {
     private setupExpansion(): void {
         this.eGroupClosedIcon.appendChild(_createIcon('setFilterGroupClosed', this.gos, null));
         this.eGroupOpenedIcon.appendChild(_createIcon('setFilterGroupOpen', this.gos, null));
-        this.addManagedListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
-        this.addManagedListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
+        const listener = this.onExpandOrContractClicked.bind(this);
+        this.addManagedElementListeners(this.eGroupClosedIcon, { click: listener });
+        this.addManagedElementListeners(this.eGroupOpenedIcon, { click: listener });
 
         if (this.hasIndeterminateExpandState) {
             this.eGroupIndeterminateIcon.appendChild(_createIcon('setFilterGroupIndeterminate', this.gos, null));
-            this.addManagedListener(this.eGroupIndeterminateIcon, 'click', this.onExpandOrContractClicked.bind(this));
+            this.addManagedElementListeners(this.eGroupIndeterminateIcon, {
+                click: listener,
+            });
         }
 
         this.setExpandedIcons();
@@ -202,13 +203,13 @@ export class SetFilterListItem<V> extends Component {
             this.isExpanded = isExpanded;
 
             const event: SetFilterListItemExpandedChangedEvent = {
-                type: SetFilterListItem.EVENT_EXPANDED_CHANGED,
+                type: 'expandedChanged',
                 isExpanded: !!isExpanded,
                 item: this.item,
             };
 
             if (!silent) {
-                this.dispatchEvent(event);
+                this.dispatchLocalEvent(event);
             }
 
             this.setExpandedIcons();
@@ -231,12 +232,12 @@ export class SetFilterListItem<V> extends Component {
         this.isSelected = isSelected;
 
         const event: SetFilterListItemSelectionChangedEvent = {
-            type: SetFilterListItem.EVENT_SELECTION_CHANGED,
+            type: 'selectionChanged',
             isSelected,
             item: this.item,
         };
 
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent(event);
         this.refreshVariableAriaLabels();
         this.refreshAriaChecked();
     }

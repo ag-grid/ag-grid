@@ -1,9 +1,6 @@
 import type { VisibleColsService } from '../columns/visibleColsService';
-import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { Events } from '../eventKeys';
-import type { EventsType } from '../eventKeys';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 export class CenterWidthFeature extends BeanStub {
@@ -26,17 +23,17 @@ export class CenterWidthFeature extends BeanStub {
         const listener = this.setWidth.bind(this);
         this.addManagedPropertyListener('domLayout', listener);
 
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_COLUMN_CONTAINER_WIDTH_CHANGED]: listener,
-            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: listener,
-            [Events.EVENT_LEFT_PINNED_WIDTH_CHANGED]: listener,
+        this.addManagedEventListeners({
+            columnContainerWidthChanged: listener,
+            displayedColumnsChanged: listener,
+            leftPinnedWidthChanged: listener,
         });
 
         if (this.addSpacer) {
-            this.addManagedListeners<EventsType>(this.eventService, {
-                [Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED]: listener,
-                [Events.EVENT_SCROLL_VISIBILITY_CHANGED]: listener,
-                [Events.EVENT_SCROLLBAR_WIDTH_CHANGED]: listener,
+            this.addManagedEventListeners({
+                rightPinnedWidthChanged: listener,
+                scrollVisibilityChanged: listener,
+                scrollbarWidthChanged: listener,
             });
         }
 

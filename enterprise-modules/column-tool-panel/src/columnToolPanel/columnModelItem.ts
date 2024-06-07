@@ -6,10 +6,9 @@ import {
     LocalEventService,
 } from '@ag-grid-community/core';
 
-export class ColumnModelItem implements IEventEmitter {
-    private localEventService: LocalEventService = new LocalEventService();
-
-    public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
+export type ColumnModelItemEvent = 'expandedChanged';
+export class ColumnModelItem implements IEventEmitter<ColumnModelItemEvent> {
+    private localEventService: LocalEventService<ColumnModelItemEvent> = new LocalEventService();
 
     private readonly group: boolean;
     private readonly displayName: string | null;
@@ -71,18 +70,24 @@ export class ColumnModelItem implements IEventEmitter {
             return;
         }
         this.expanded = expanded;
-        this.localEventService.dispatchEvent({ type: ColumnModelItem.EVENT_EXPANDED_CHANGED });
+        this.localEventService.dispatchEvent({ type: 'expandedChanged' });
     }
 
     public setPassesFilter(passesFilter: boolean): void {
         this.passesFilter = passesFilter;
     }
 
-    public addEventListener(eventType: string, listener: AgEventListener): void {
+    public addEventListener<T extends ColumnModelItemEvent>(
+        eventType: T,
+        listener: AgEventListener<any, any, T>
+    ): void {
         this.localEventService.addEventListener(eventType, listener);
     }
 
-    public removeEventListener(eventType: string, listener: AgEventListener): void {
+    public removeEventListener<T extends ColumnModelItemEvent>(
+        eventType: T,
+        listener: AgEventListener<any, any, T>
+    ): void {
         this.localEventService.removeEventListener(eventType, listener);
     }
 }

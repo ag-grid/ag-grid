@@ -16,7 +16,7 @@ import type {
     VisibleColsService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Events, SelectionHandleType, _last, _toStringOrNull, _warnOnce } from '@ag-grid-community/core';
+import { SelectionHandleType, _last, _toStringOrNull, _warnOnce } from '@ag-grid-community/core';
 
 import { AbstractSelectionHandle } from './abstractSelectionHandle';
 import { findLineByLeastSquares } from './utils';
@@ -177,14 +177,14 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
     private raiseFillStartEvent() {
         const fillStartEvent: WithoutGridCommon<FillStartEvent> = {
-            type: Events.EVENT_FILL_START,
+            type: 'fillStart',
         };
         this.eventService.dispatchEvent(fillStartEvent);
     }
 
     private raiseFillEndEvent(initialRange: CellRange, finalRange: CellRange) {
         const fillEndEvent: WithoutGridCommon<FillEndEvent> = {
-            type: Events.EVENT_FILL_END,
+            type: 'fillEnd',
             initialRange: initialRange,
             finalRange: finalRange,
         };

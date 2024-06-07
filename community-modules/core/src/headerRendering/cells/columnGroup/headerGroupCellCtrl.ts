@@ -5,14 +5,9 @@ import { HorizontalDirection } from '../../../constants/direction';
 import { KeyCode } from '../../../constants/keyCode';
 import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
 import { DragAndDropService, DragSourceType } from '../../../dragAndDrop/dragAndDropService';
-import { AgColumn } from '../../../entities/agColumn';
+import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
-import {
-    EVENT_PROVIDED_COLUMN_GROUP_EXPANDABLE_CHANGED,
-    EVENT_PROVIDED_COLUMN_GROUP_EXPANDED_CHANGED,
-} from '../../../entities/agProvidedColumnGroup';
 import type { ColumnEventType, ColumnHeaderMouseLeaveEvent, ColumnHeaderMouseOverEvent } from '../../../events';
-import { Events } from '../../../events';
 import type { HeaderColumnId } from '../../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
@@ -88,7 +83,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             })
         );
 
-        this.addManagedPropertyListener(Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED, this.onSuppressColMoveChange);
+        this.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
         this.addResizeAndMoveKeyboardListeners();
     }
 
@@ -217,18 +212,20 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private addHeaderMouseListeners(): void {
         const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
         const clickListener = () =>
-            this.dispatchColumnMouseEvent(Events.EVENT_COLUMN_HEADER_CLICKED, this.column.getProvidedColumnGroup());
+            this.dispatchColumnMouseEvent('columnHeaderClicked', this.column.getProvidedColumnGroup());
         const contextMenuListener = (event: MouseEvent) =>
             this.handleContextMenuMouseEvent(event, undefined, this.column.getProvidedColumnGroup());
 
-        this.addManagedListener(this.getGui(), 'mouseenter', listener);
-        this.addManagedListener(this.getGui(), 'mouseleave', listener);
-        this.addManagedListener(this.getGui(), 'click', clickListener);
-        this.addManagedListener(this.getGui(), 'contextmenu', contextMenuListener);
+        this.addManagedListeners(this.getGui(), {
+            mouseenter: listener,
+            mouseleave: listener,
+            click: clickListener,
+            contextmenu: contextMenuListener,
+        });
     }
 
     private handleMouseOverChange(isMouseOver: boolean): void {
-        const eventType = isMouseOver ? Events.EVENT_COLUMN_HEADER_MOUSE_OVER : Events.EVENT_COLUMN_HEADER_MOUSE_LEAVE;
+        const eventType = isMouseOver ? 'columnHeaderMouseOver' : 'columnHeaderMouseLeave';
 
         const event: WithoutGridCommon<ColumnHeaderMouseOverEvent> | WithoutGridCommon<ColumnHeaderMouseLeaveEvent> = {
             type: eventType,
@@ -278,16 +275,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         this.refreshExpanded();
 
-        this.addManagedListener(
-            providedColGroup,
-            EVENT_PROVIDED_COLUMN_GROUP_EXPANDED_CHANGED,
-            this.refreshExpanded.bind(this)
-        );
-        this.addManagedListener(
-            providedColGroup,
-            EVENT_PROVIDED_COLUMN_GROUP_EXPANDABLE_CHANGED,
-            this.refreshExpanded.bind(this)
-        );
+        const listener = this.refreshExpanded.bind(this);
+        this.addManagedListeners(providedColGroup, {
+            expandedChanged: listener,
+            expandableChanged: listener,
+        });
     }
 
     private refreshExpanded(): void {
@@ -335,7 +327,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         const listener = () => this.comp.addOrRemoveCssClass('ag-header-cell-moving', this.column.isMoving());
 
         leafColumns.forEach((col) => {
-            this.addManagedListener(col, AgColumn.EVENT_MOVING_CHANGED, listener);
+            this.addManagedListeners(col, { movingChanged: listener });
         });
 
         listener();

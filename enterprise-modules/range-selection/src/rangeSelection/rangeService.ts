@@ -10,7 +10,6 @@ import type {
     ColumnModel,
     CtrlsService,
     DragService,
-    EventsType,
     IRangeService,
     IRowModel,
     NamedBean,
@@ -30,7 +29,6 @@ import {
     AutoScrollService,
     BeanStub,
     CellCtrl,
-    Events,
     _areEqual,
     _exists,
     _existsAndNotEmpty,
@@ -89,16 +87,19 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     public autoScrollService: AutoScrollService;
 
     public postConstruct(): void {
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onColumnsChanged.bind(this),
-            [Events.EVENT_COLUMN_VISIBLE]: this.onColumnsChanged.bind(this),
-            [Events.EVENT_COLUMN_VALUE_CHANGED]: this.onColumnsChanged.bind(this),
-            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: () => this.removeAllCellRanges(),
-            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: () => this.removeAllCellRanges(),
-            [Events.EVENT_COLUMN_PIVOT_CHANGED]: () => this.removeAllCellRanges(),
-            [Events.EVENT_COLUMN_GROUP_OPENED]: this.refreshLastRangeStart.bind(this),
-            [Events.EVENT_COLUMN_MOVED]: this.refreshLastRangeStart.bind(this),
-            [Events.EVENT_COLUMN_PINNED]: this.refreshLastRangeStart.bind(this),
+        const onColumnsChanged = this.onColumnsChanged.bind(this);
+        const removeAllCellRanges = () => this.removeAllCellRanges();
+        const refreshLastRangeStart = this.refreshLastRangeStart.bind(this);
+        this.addManagedEventListeners({
+            newColumnsLoaded: onColumnsChanged,
+            columnVisible: onColumnsChanged,
+            columnValueChanged: onColumnsChanged,
+            columnPivotModeChanged: removeAllCellRanges,
+            columnRowGroupChanged: removeAllCellRanges,
+            columnPivotChanged: removeAllCellRanges,
+            columnGroupOpened: refreshLastRangeStart,
+            columnMoved: refreshLastRangeStart,
+            columnPinned: refreshLastRangeStart,
         });
 
         this.ctrlsService.whenReady((p) => {
@@ -392,7 +393,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         if (dispatchWrapperEvents) {
             const startEvent: WithoutGridCommon<RangeDeleteStartEvent> = {
-                type: Events.EVENT_RANGE_DELETE_START,
+                type: 'rangeDeleteStart',
                 source: wrapperEventSource,
             };
             this.eventService.dispatchEvent(startEvent);
@@ -423,7 +424,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         if (dispatchWrapperEvents) {
             const endEvent: WithoutGridCommon<RangeDeleteEndEvent> = {
-                type: Events.EVENT_RANGE_DELETE_END,
+                type: 'rangeDeleteEnd',
                 source: wrapperEventSource,
             };
             this.eventService.dispatchEvent(endEvent);
@@ -928,7 +929,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     private dispatchChangedEvent(started: boolean, finished: boolean, id?: string): void {
         const event: WithoutGridCommon<RangeSelectionChangedEvent> = {
-            type: Events.EVENT_RANGE_SELECTION_CHANGED,
+            type: 'rangeSelectionChanged',
             started,
             finished,
             id,

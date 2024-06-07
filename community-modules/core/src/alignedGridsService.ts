@@ -7,7 +7,6 @@ import type { BeanCollection } from './context/context';
 import type { CtrlsService } from './ctrlsService';
 import type { AgColumn } from './entities/agColumn';
 import type { AgProvidedColumnGroup } from './entities/agProvidedColumnGroup';
-import type { EventsType } from './eventKeys';
 import type {
     AgEvent,
     AlignedGridColumnEvent,
@@ -20,7 +19,6 @@ import type {
     ColumnResizedEvent,
     ColumnVisibleEvent,
 } from './events';
-import { Events } from './events';
 import type { GridApi } from './gridApi';
 import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { Logger } from './logger';
@@ -91,15 +89,15 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         const fireColumnEvent = this.fireColumnEvent.bind(this);
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_COLUMN_MOVED]: fireColumnEvent,
-            [Events.EVENT_COLUMN_VISIBLE]: fireColumnEvent,
-            [Events.EVENT_COLUMN_PINNED]: fireColumnEvent,
-            [Events.EVENT_COLUMN_GROUP_OPENED]: fireColumnEvent,
-            [Events.EVENT_COLUMN_RESIZED]: fireColumnEvent,
-            [Events.EVENT_BODY_SCROLL]: this.fireScrollEvent.bind(this),
-            [Events.EVENT_ALIGNED_GRID_COLUMN]: ({ event }: AlignedGridColumnEvent) => this.onColumnEvent(event),
-            [Events.EVENT_ALIGNED_GRID_SCROLL]: ({ event }: AlignedGridScrollEvent) => this.onScrollEvent(event),
+        this.addManagedEventListeners({
+            columnMoved: fireColumnEvent,
+            columnVisible: fireColumnEvent,
+            columnPinned: fireColumnEvent,
+            columnGroupOpened: fireColumnEvent,
+            columnResized: fireColumnEvent,
+            bodyScroll: this.fireScrollEvent.bind(this),
+            alignedGridColumn: ({ event }: AlignedGridColumnEvent) => this.onColumnEvent(event),
+            alignedGridScroll: ({ event }: AlignedGridScrollEvent) => this.onScrollEvent(event),
         });
     }
 
@@ -129,7 +127,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
 
     private fireColumnEvent(columnEvent: ColumnEvent): void {
         const event: WithoutGridCommon<AlignedGridColumnEvent> = {
-            type: Events.EVENT_ALIGNED_GRID_COLUMN,
+            type: 'alignedGridColumn',
             event: columnEvent,
         };
         this.fireEvent(event);
@@ -140,7 +138,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
             return;
         }
         const event: WithoutGridCommon<AlignedGridScrollEvent> = {
-            type: Events.EVENT_ALIGNED_GRID_SCROLL,
+            type: 'alignedGridScroll',
             event: scrollEvent,
         };
         this.fireEvent(event);
@@ -180,20 +178,20 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
     public onColumnEvent(event: AgEvent): void {
         this.onEvent(() => {
             switch (event.type) {
-                case Events.EVENT_COLUMN_MOVED:
-                case Events.EVENT_COLUMN_VISIBLE:
-                case Events.EVENT_COLUMN_PINNED:
-                case Events.EVENT_COLUMN_RESIZED: {
+                case 'columnMoved':
+                case 'columnVisible':
+                case 'columnPinned':
+                case 'columnResized': {
                     const colEvent = event as ColumnEvent;
                     this.processColumnEvent(colEvent);
                     break;
                 }
-                case Events.EVENT_COLUMN_GROUP_OPENED: {
+                case 'columnGroupOpened': {
                     const groupOpenedEvent = event as ColumnGroupOpenedEvent;
                     this.processGroupOpenedEvent(groupOpenedEvent);
                     break;
                 }
-                case Events.EVENT_COLUMN_PIVOT_CHANGED:
+                case 'columnPivotChanged':
                     // we cannot support pivoting with aligned grids as the columns will be out of sync as the
                     // grids will have columns created based on the row data of the grid.
                     console.warn(
@@ -246,7 +244,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         const masterColumns = this.getMasterColumns(colEvent);
 
         switch (colEvent.type) {
-            case Events.EVENT_COLUMN_MOVED:
+            case 'columnMoved':
                 // when the user moves columns via applyColumnState, we can't depend on moving specific columns
                 // to an index, as there maybe be many indexes columns moved to (as wasn't result of a mouse drag).
                 // so only way to be sure is match the order of all columns using Column State.
@@ -261,7 +259,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} toIndex = ${movedEvent.toIndex}`);
                 }
                 break;
-            case Events.EVENT_COLUMN_VISIBLE:
+            case 'columnVisible':
                 // when the user changes visibility via applyColumnState, we can't depend on visibility flag in event
                 // as there maybe be mix of true/false (as wasn't result of a mouse click to set visiblity).
                 // so only way to be sure is match the visibility of all columns using Column State.
@@ -273,7 +271,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} visible = ${visibleEvent.visible}`);
                 }
                 break;
-            case Events.EVENT_COLUMN_PINNED:
+            case 'columnPinned':
                 {
                     const pinnedEvent = colEvent as ColumnPinnedEvent;
                     const srcColState = colEvent.api.getColumnState();
@@ -282,7 +280,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} pinned = ${pinnedEvent.pinned}`);
                 }
                 break;
-            case Events.EVENT_COLUMN_RESIZED: {
+            case 'columnResized': {
                 const resizedEvent = colEvent as ColumnResizedEvent;
 
                 const columnWidths: {

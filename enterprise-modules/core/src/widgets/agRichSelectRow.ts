@@ -102,7 +102,7 @@ export class RichSelectRow<TValue> extends Component {
         eGui.parentElement?.setAttribute('id', parentId);
 
         if (highlighted) {
-            const parentAriaEl = (this.getParentComponent() as VirtualList).getAriaElement();
+            const parentAriaEl = (this.getParentComponent() as VirtualList<any>).getAriaElement();
             _setAriaActiveDescendant(parentAriaEl, parentId);
             this.wrapperEl.setAttribute('data-active-option', parentId);
         }

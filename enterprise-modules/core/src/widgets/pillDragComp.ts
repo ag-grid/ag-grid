@@ -10,7 +10,6 @@ import type {
 import {
     Component,
     DragAndDropService,
-    Events,
     KeyCode,
     RefPlaceholder,
     TouchListener,
@@ -20,16 +19,15 @@ import {
     _setDisplayed,
 } from '@ag-grid-community/core';
 
-export abstract class PillDragComp<TItem> extends Component {
+export type PillDragCompEvent = 'columnRemove';
+export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
     private dragAndDropService: DragAndDropService;
 
     public wireBeans(beans: BeanCollection) {
         this.dragAndDropService = beans.dragAndDropService;
     }
 
-    public static EVENT_COLUMN_REMOVE = 'columnRemove';
-
-    private static TEMPLATE /* html */ = `<span role="option">
+    private TEMPLATE /* html */ = `<span role="option">
           <span data-ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
           <span data-ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
           <span data-ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
@@ -57,7 +55,7 @@ export abstract class PillDragComp<TItem> extends Component {
     }
 
     public postConstruct(): void {
-        this.setTemplate(this.template ?? PillDragComp.TEMPLATE, this.agComponents);
+        this.setTemplate(this.template ?? this.TEMPLATE, this.agComponents);
         const eGui = this.getGui();
 
         this.addElementClasses(eGui);
@@ -119,7 +117,7 @@ export abstract class PillDragComp<TItem> extends Component {
 
         refresh();
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+        this.addManagedEventListeners({ newColumnsLoaded: refresh });
     }
 
     protected getDragSourceId(): string | undefined {
@@ -167,18 +165,20 @@ export abstract class PillDragComp<TItem> extends Component {
     private setupRemove(): void {
         this.refreshRemove();
 
-        const agEvent: AgEvent = { type: PillDragComp.EVENT_COLUMN_REMOVE };
+        const agEvent: AgEvent<PillDragCompEvent> = { type: 'columnRemove' };
 
         this.addGuiEventListener('keydown', (e: KeyboardEvent) => this.onKeyDown(e));
 
-        this.addManagedListener(this.eButton, 'click', (mouseEvent: MouseEvent) => {
-            this.dispatchEvent(agEvent);
-            mouseEvent.stopPropagation();
+        this.addManagedElementListeners(this.eButton, {
+            click: (mouseEvent: MouseEvent) => {
+                this.dispatchLocalEvent(agEvent);
+                mouseEvent.stopPropagation();
+            },
         });
 
         const touchListener = new TouchListener(this.eButton);
-        this.addManagedListener(touchListener, TouchListener.EVENT_TAP, () => {
-            this.dispatchEvent(agEvent);
+        this.addManagedListeners(touchListener, {
+            tap: () => this.dispatchLocalEvent(agEvent),
         });
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     }
@@ -189,7 +189,7 @@ export abstract class PillDragComp<TItem> extends Component {
         if (isDelete) {
             if (this.isRemovable()) {
                 e.preventDefault();
-                this.dispatchEvent({ type: PillDragComp.EVENT_COLUMN_REMOVE });
+                this.dispatchLocalEvent({ type: 'columnRemove' });
             }
         }
     }

@@ -37,7 +37,7 @@ import type {
     VisibleColsService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, ChangedPath, Events, _exists, _last, _removeFromArray, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, ChangedPath, _exists, _last, _removeFromArray, _warnOnce } from '@ag-grid-community/core';
 
 interface RowCallback {
     (
@@ -327,7 +327,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const source = 'clipboard';
 
         this.eventService.dispatchEvent({
-            type: Events.EVENT_PASTE_START,
+            type: 'pasteStart',
             source,
         } as WithoutGridCommon<PasteStartEvent>);
 
@@ -366,7 +366,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         // navigation stops.
         this.refocusLastFocusedCell();
         const event: WithoutGridCommon<PasteEndEvent> = {
-            type: Events.EVENT_PASTE_END,
+            type: 'pasteEnd',
             source,
         };
         this.eventService.dispatchEvent(event);
@@ -605,7 +605,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         rowNodes.forEach((rowNode) => {
             const event: WithoutGridCommon<RowValueChangedEvent> = {
-                type: Events.EVENT_ROW_VALUE_CHANGED,
+                type: 'rowValueChanged',
                 node: rowNode,
                 data: rowNode.data,
                 rowIndex: rowNode.rowIndex!,
@@ -721,7 +721,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
 
         const startEvent: WithoutGridCommon<CutStartEvent> = {
-            type: Events.EVENT_CUT_START,
+            type: 'cutStart',
             source,
         };
         this.eventService.dispatchEvent(startEvent);
@@ -729,7 +729,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         this.copyOrCutToClipboard(params, true);
 
         const endEvent: WithoutGridCommon<CutEndEvent> = {
-            type: Events.EVENT_CUT_END,
+            type: 'cutEnd',
             source,
         };
         this.eventService.dispatchEvent(endEvent);
@@ -770,7 +770,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private clearCellsAfterCopy(type: CellClearType) {
-        this.eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
+        this.eventService.dispatchEvent({ type: 'keyShortcutChangedCellStart' });
         if (type === CellClearType.CellRange) {
             this.rangeService!.clearCellRangeCellValues({ cellEventSource: 'clipboardService' });
         } else if (type === CellClearType.SelectedRows) {
@@ -786,7 +786,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 this.clearCellValue(rowNode, focusedCell.column as AgColumn);
             }
         }
-        this.eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END });
+        this.eventService.dispatchEvent({ type: 'keyShortcutChangedCellEnd' });
     }
 
     private clearSelectedRows(): void {
@@ -1101,7 +1101,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private dispatchFlashCells(cellsToFlash: {}): void {
         window.setTimeout(() => {
             const event: WithoutGridCommon<FlashCellsEvent> = {
-                type: Events.EVENT_FLASH_CELLS,
+                type: 'flashCells',
                 cells: cellsToFlash,
             };
 

@@ -1,8 +1,6 @@
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { EventsType } from '../eventKeys';
-import { Events } from '../eventKeys';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from '../utils/dom';
 import type { AgComponentSelector } from '../widgets/component';
@@ -50,10 +48,10 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         // When doing printing, this changes whether cols are pinned or not
         const spacerWidthsListener = this.setFakeHScrollSpacerWidths.bind(this);
 
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: spacerWidthsListener,
-            [Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED]: spacerWidthsListener,
-            [Events.EVENT_PINNED_ROW_DATA_CHANGED]: this.onPinnedRowDataChanged.bind(this),
+        this.addManagedEventListeners({
+            displayedColumnsChanged: spacerWidthsListener,
+            displayedColumnsWidthChanged: spacerWidthsListener,
+            pinnedRowDataChanged: this.onPinnedRowDataChanged.bind(this),
         });
 
         this.addManagedPropertyListener('domLayout', spacerWidthsListener);

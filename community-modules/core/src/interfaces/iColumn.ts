@@ -1,3 +1,4 @@
+import type { AgProvidedColumnGroupEvent } from '../entities/agProvidedColumnGroup';
 import type { AbstractColDef, ColDef, ColGroupDef, IAggFunc, SortDirection } from '../entities/colDef';
 import type { BrandedType } from '../interfaces/brandedType';
 import type { IEventEmitter } from './iEventEmitter';
@@ -7,7 +8,7 @@ export type HeaderColumnId = BrandedType<string, 'HeaderColumnId'>;
 
 // Implemented by Column and ColumnGroup. Allows the groups to contain a list of this type for it's children.
 // See the note at the top of Column class.
-interface IHeaderColumn<TValue = any> extends IEventEmitter {
+interface IHeaderColumn<TValue, TEventType extends string> extends IEventEmitter<TEventType> {
     /**
      * Returns the unique ID for the column.
      *
@@ -61,7 +62,10 @@ export type ColumnEventName =
 
 export type ColumnInstanceId = BrandedType<number, 'ColumnInstanceId'>;
 
-export interface Column<TValue = any> extends IHeaderColumn<TValue>, IProvidedColumn, IEventEmitter {
+export interface Column<TValue = any>
+    extends IHeaderColumn<TValue, ColumnEventName>,
+        IProvidedColumn,
+        IEventEmitter<ColumnEventName> {
     /**
      * Returns the column definition provided by the application.
      * This may not be correct, as items can be superseded by default column options.
@@ -203,7 +207,8 @@ export interface Column<TValue = any> extends IHeaderColumn<TValue>, IProvidedCo
 
 export type ColumnGroupShowType = 'open' | 'closed';
 
-export interface ColumnGroup<TValue = any> extends IHeaderColumn<TValue> {
+export type AgColumnGroupEvent = 'leftChanged' | 'displayedChildrenChanged';
+export interface ColumnGroup<TValue = any> extends IHeaderColumn<TValue, AgColumnGroupEvent> {
     getGroupId(): string;
 
     getPartId(): number;
@@ -233,7 +238,7 @@ export interface ColumnGroup<TValue = any> extends IHeaderColumn<TValue> {
     isColumn: false;
 }
 
-export interface ProvidedColumnGroup extends IProvidedColumn, IEventEmitter {
+export interface ProvidedColumnGroup extends IProvidedColumn, IEventEmitter<AgProvidedColumnGroupEvent> {
     /**
      * Used for marryChildren, helps with comparing when duplicate groups have been created to manage split groups.
      *

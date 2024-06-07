@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     BeanCollection,
     ColumnEvent,
     ColumnNameService,
@@ -7,16 +8,9 @@ import type {
     IFloatingFilterComp,
     IFloatingFilterParams,
 } from '@ag-grid-community/core';
-import {
-    AgColumn,
-    AgInputTextField,
-    AgPromise,
-    Component,
-    RefPlaceholder,
-    _clearElement,
-} from '@ag-grid-community/core';
+import { AgInputTextField, AgPromise, Component, RefPlaceholder, _clearElement } from '@ag-grid-community/core';
 
-import { GroupFilter } from './groupFilter';
+import type { GroupFilter } from './groupFilter';
 
 export class GroupFloatingFilterComp extends Component implements IFloatingFilterComp<GroupFilter> {
     private columnNameService: ColumnNameService;
@@ -60,12 +54,10 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
                 }
             });
         }).then(() => {
-            this.addManagedListener(this.parentFilterInstance, GroupFilter.EVENT_SELECTED_COLUMN_CHANGED, () =>
-                this.onSelectedColumnChanged()
-            );
-            this.addManagedListener(this.parentFilterInstance, GroupFilter.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>
-                this.onColumnRowGroupChanged()
-            );
+            this.addManagedListeners(this.parentFilterInstance, {
+                selectedColumnChanged: this.onSelectedColumnChanged.bind(this),
+                columnRowGroupChanged: this.onColumnRowGroupChanged.bind(this),
+            });
         });
     }
 
@@ -115,12 +107,10 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
             if (compDetails) {
                 if (!this.haveAddedColumnListeners) {
                     this.haveAddedColumnListeners = true;
-                    this.addManagedListener(
-                        column,
-                        AgColumn.EVENT_VISIBLE_CHANGED,
-                        this.onColumnVisibleChanged.bind(this)
-                    );
-                    this.addManagedListener(column, AgColumn.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
+                    this.addManagedListeners(column, {
+                        visibleChanged: this.onColumnVisibleChanged.bind(this),
+                        colDefChanged: this.onColDefChanged.bind(this),
+                    });
                 }
                 return compDetails.newAgStackInstance().then((floatingFilter) => {
                     this.underlyingFloatingFilter = floatingFilter;

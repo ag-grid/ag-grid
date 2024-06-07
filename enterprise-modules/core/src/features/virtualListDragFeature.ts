@@ -13,7 +13,12 @@ import type { VirtualListDragItem, VirtualListDragParams } from './iVirtualListD
 
 const LIST_ITEM_HOVERED = 'ag-list-item-hovered';
 
-export class VirtualListDragFeature<C extends Component, R extends Component, V, E extends AgEvent> extends BeanStub {
+export class VirtualListDragFeature<
+    C extends Component<any>,
+    R extends Component<any>,
+    V,
+    E extends AgEvent,
+> extends BeanStub {
     private dragAndDropService: DragAndDropService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -27,23 +32,17 @@ export class VirtualListDragFeature<C extends Component, R extends Component, V,
 
     constructor(
         private readonly comp: C,
-        private readonly virtualList: VirtualList,
+        private readonly virtualList: VirtualList<any>,
         private readonly params: VirtualListDragParams<C, R, V, E>
     ) {
         super();
     }
 
     public postConstruct(): void {
-        this.addManagedListener(
-            this.params.eventSource,
-            this.params.listItemDragStartEvent,
-            this.listItemDragStart.bind(this)
-        );
-        this.addManagedListener(
-            this.params.eventSource,
-            this.params.listItemDragEndEvent,
-            this.listItemDragEnd.bind(this)
-        );
+        this.addManagedListeners(this.params.eventSource, {
+            [this.params.listItemDragStartEvent]: this.listItemDragStart.bind(this),
+            [this.params.listItemDragEndEvent]: this.listItemDragEnd.bind(this),
+        });
 
         this.createDropTarget();
         this.createAutoScrollService();

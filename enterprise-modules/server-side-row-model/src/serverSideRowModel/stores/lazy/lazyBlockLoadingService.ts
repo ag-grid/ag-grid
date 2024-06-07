@@ -42,7 +42,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     public postConstruct() {
         // after a block is loaded, check if we have a block to load now that
         // `maxConcurrentDatasourceRequests` has changed
-        this.addManagedListener(this.rowNodeBlockLoader, 'blockLoaded', () => this.queueLoadCheck());
+        this.addManagedListeners(this.rowNodeBlockLoader, { blockLoaded: () => this.queueLoadCheck() });
     }
 
     public subscribe(cache: LazyCache) {

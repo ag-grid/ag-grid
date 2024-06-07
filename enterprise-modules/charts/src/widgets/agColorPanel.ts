@@ -58,7 +58,7 @@ export class AgColorPanel extends Component {
     private readonly colorInput: AgColorInput = RefPlaceholder;
     private readonly recentColors: HTMLElement = RefPlaceholder;
 
-    constructor(config: { picker: Component }) {
+    constructor(config: { picker: Component<any> }) {
         super(AgColorPanel.TEMPLATE, [AgColorInput]);
         this.picker = config.picker;
     }
@@ -74,13 +74,13 @@ export class AgColorPanel extends Component {
             }
         });
 
-        this.addManagedListener(this.spectrumColor, 'keydown', (e) => this.moveDragger(e));
-        this.addManagedListener(this.spectrumAlphaSlider, 'keydown', (e) => this.moveAlphaSlider(e));
-        this.addManagedListener(this.spectrumHueSlider, 'keydown', (e) => this.moveHueSlider(e));
+        this.addManagedListeners(this.spectrumColor, { keydown: (e) => this.moveDragger(e) });
+        this.addManagedListeners(this.spectrumAlphaSlider, { keydown: (e) => this.moveAlphaSlider(e) });
+        this.addManagedListeners(this.spectrumHueSlider, { keydown: (e) => this.moveHueSlider(e) });
 
-        this.addManagedListener(this.spectrumVal, 'mousedown', this.onSpectrumDraggerDown.bind(this));
-        this.addManagedListener(this.spectrumHue, 'mousedown', this.onSpectrumHueDown.bind(this));
-        this.addManagedListener(this.spectrumAlpha, 'mousedown', this.onSpectrumAlphaDown.bind(this));
+        this.addManagedListeners(this.spectrumVal, { mousedown: this.onSpectrumDraggerDown.bind(this) });
+        this.addManagedListeners(this.spectrumHue, { mousedown: this.onSpectrumHueDown.bind(this) });
+        this.addManagedListeners(this.spectrumAlpha, { mousedown: this.onSpectrumAlphaDown.bind(this) });
 
         this.addGuiEventListener('mousemove', (e: MouseEvent) => {
             this.onSpectrumDraggerMove(e);
@@ -91,16 +91,18 @@ export class AgColorPanel extends Component {
         // Listening to `mouseup` on the document on purpose. The user might release the mouse button
         // outside the UI control. When the mouse returns back to the control's area, the dragging
         // of the thumb is not expected and seen as a bug.
-        this.addManagedListener(document, 'mouseup', this.onMouseUp.bind(this));
+        this.addManagedListeners(document, { mouseup: this.onMouseUp.bind(this) });
 
         this.colorInput.onColorChanged(this.setColor.bind(this));
 
-        this.addManagedListener(this.recentColors, 'click', this.onRecentColorClick.bind(this));
-        this.addManagedListener(this.recentColors, 'keydown', (e: KeyboardEvent) => {
-            if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
-                e.preventDefault();
-                this.onRecentColorClick(e);
-            }
+        this.addManagedListeners(this.recentColors, {
+            click: this.onRecentColorClick.bind(this),
+            keydown: (e: KeyboardEvent) => {
+                if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
+                    e.preventDefault();
+                    this.onRecentColorClick(e);
+                }
+            },
         });
     }
 

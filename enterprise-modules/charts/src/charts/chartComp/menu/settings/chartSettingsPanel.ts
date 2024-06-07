@@ -10,7 +10,7 @@ import {
 } from '@ag-grid-community/core';
 import type { AgChartThemePalette } from 'ag-charts-community';
 
-import { ChartController } from '../../chartController';
+import type { ChartController } from '../../chartController';
 import { isStockTheme } from '../../chartProxies/chartTheme';
 import { MiniChartsContainer } from './miniChartsContainer';
 
@@ -55,16 +55,16 @@ export class ChartSettingsPanel extends Component {
         this.ePrevBtn.insertAdjacentElement('afterbegin', _createIconNoSpan('previous', this.gos)!);
         this.eNextBtn.insertAdjacentElement('afterbegin', _createIconNoSpan('next', this.gos)!);
 
-        this.addManagedListener(this.ePrevBtn, 'click', () => this.setActivePalette(this.getPrev(), 'left'));
-        this.addManagedListener(this.eNextBtn, 'click', () => this.setActivePalette(this.getNext(), 'right'));
+        this.addManagedElementListeners(this.ePrevBtn, { click: () => this.setActivePalette(this.getPrev(), 'left') });
+        this.addManagedElementListeners(this.eNextBtn, { click: () => this.setActivePalette(this.getNext(), 'right') });
 
         // change the selected chart when a combo chart is modified via the data panel, i.e. the custom combo should be selected
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_TYPE_CHANGED, () =>
-            this.resetPalettes(true)
-        );
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, () =>
-            this.resetPalettes(true)
-        );
+        const reset = () => this.resetPalettes(true);
+        this.addManagedListeners(this.chartController, {
+            chartTypeChanged: reset,
+            chartApiUpdate: reset,
+        });
+
         this.scrollSelectedIntoView();
     }
 
@@ -142,8 +142,10 @@ export class ChartSettingsPanel extends Component {
         const link = document.createElement('div');
         link.classList.add('ag-chart-settings-card-item');
 
-        this.addManagedListener(link, 'click', () => {
-            this.setActivePalette(index, index < this.activePaletteIndex ? 'left' : 'right');
+        this.addManagedElementListeners(link, {
+            click: () => {
+                this.setActivePalette(index, index < this.activePaletteIndex ? 'left' : 'right');
+            },
         });
 
         this.eCardSelector.appendChild(link);

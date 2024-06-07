@@ -8,7 +8,7 @@ import type {
     DropTarget,
     FuncColsService,
 } from '@ag-grid-community/core';
-import { DragSourceType, Events } from '@ag-grid-community/core';
+import { DragSourceType } from '@ag-grid-community/core';
 import type { PillDropZonePanelParams } from '@ag-grid-enterprise/core';
 import { PillDropZonePanel } from '@ag-grid-enterprise/core';
 
@@ -36,7 +36,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     public override init(params: PillDropZonePanelParams): void {
         super.init(params);
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.refreshGui.bind(this));
+        this.addManagedEventListeners({ newColumnsLoaded: this.refreshGui.bind(this) });
 
         this.addManagedPropertyListeners(
             ['functionsReadOnly', 'rowGroupPanelSuppressSort', 'groupLockGroupColumns'],

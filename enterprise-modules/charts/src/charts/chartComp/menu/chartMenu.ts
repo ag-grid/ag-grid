@@ -5,10 +5,10 @@ import type {
     ChartToolbarMenuItemOptions,
     Environment,
 } from '@ag-grid-community/core';
-import { AgPromise, Component, Events } from '@ag-grid-community/core';
+import { AgPromise, Component } from '@ag-grid-community/core';
 import { AgPanel } from '@ag-grid-enterprise/core';
 
-import { ChartController } from '../chartController';
+import type { ChartController } from '../chartController';
 import type { ExtraPaddingDirection } from '../chartProxies/chartProxy';
 import type { ChartMenuService } from '../services/chartMenuService';
 import type { ChartMenuContext } from './chartMenuContext';
@@ -72,27 +72,21 @@ export class ChartMenu extends Component {
 
         this.refreshToolbarAndPanels();
 
-        this.addManagedListener(this.eventService, Events.EVENT_CHART_CREATED, (e: ChartCreated) => {
-            if (e.chartId === this.chartController.getChartId()) {
-                const showDefaultToolPanel = Boolean(this.gos.get('chartToolPanelsDef')?.defaultToolPanel);
-                if (showDefaultToolPanel) {
-                    this.showMenu({ panel: this.defaultPanel, suppressFocus: true });
+        this.addManagedEventListeners({
+            chartCreated: (e: ChartCreated) => {
+                if (e.chartId === this.chartController.getChartId()) {
+                    const showDefaultToolPanel = Boolean(this.gos.get('chartToolPanelsDef')?.defaultToolPanel);
+                    if (showDefaultToolPanel) {
+                        this.showMenu({ panel: this.defaultPanel, suppressFocus: true });
+                    }
                 }
-            }
+            },
         });
-        this.addManagedListener(
-            this.chartController,
-            ChartController.EVENT_CHART_LINKED_CHANGED,
-            this.refreshToolbarAndPanels.bind(this)
-        );
+        this.addManagedListeners(this.chartController, { chartLinkedChanged: this.refreshToolbarAndPanels.bind(this) });
 
         this.refreshMenuClasses();
 
-        this.addManagedListener(
-            this.chartController,
-            ChartController.EVENT_CHART_API_UPDATE,
-            this.refreshToolbarAndPanels.bind(this)
-        );
+        this.addManagedListeners(this.chartController, { chartApiUpdate: this.refreshToolbarAndPanels.bind(this) });
     }
 
     public isVisible(): boolean {
@@ -150,11 +144,13 @@ export class ChartMenu extends Component {
 
         this.tabbedMenu = this.createBean(new TabbedChartMenu(this.panels, this.chartMenuContext));
 
-        this.addManagedListener(this.tabbedMenu, TabbedChartMenu.EVENT_CLOSED, () => {
-            this.hideMenu();
+        this.addManagedListeners(this.tabbedMenu, {
+            closed: () => {
+                this.hideMenu();
+            },
         });
 
-        this.addManagedListener(menuPanel, Component.EVENT_DESTROYED, () => this.destroyBean(this.tabbedMenu));
+        this.addManagedListeners(menuPanel, { destroyed: () => this.destroyBean(this.tabbedMenu) });
 
         return new AgPromise((res: (arg0: any) => void) => {
             window.setTimeout(() => {

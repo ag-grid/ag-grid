@@ -3,7 +3,6 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
-import { Events } from '../../eventKeys';
 import { _isDeleteKey } from '../../utils/keyboard';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellCtrl } from './cellCtrl';
@@ -96,7 +95,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
             return;
         }
 
-        eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
+        eventService.dispatchEvent({ type: 'keyShortcutChangedCellStart' });
 
         if (_isDeleteKey(key, gos.get('enableCellEditingOnBackspace'))) {
             if (rangeService && gos.get('enableRangeSelection')) {
@@ -112,7 +111,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
             cellCtrl.startRowOrCellEdit(key, event);
         }
 
-        eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END });
+        eventService.dispatchEvent({ type: 'keyShortcutChangedCellEnd' });
     }
 
     private onEnterKeyDown(e: KeyboardEvent): void {

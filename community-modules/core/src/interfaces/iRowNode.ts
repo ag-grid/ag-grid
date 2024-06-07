@@ -39,23 +39,40 @@ export interface SetSelectedParams {
     source: SelectionEventSourceType;
 }
 
-export interface RowNodeEvent<TData = any> extends AgEvent {
-    /** Event identifier */
-    type: RowNodeEventType;
+export interface RowNodeEvent<T extends RowNodeEventType, TData = any> extends AgEvent<T> {
     node: IRowNode<TData>;
 }
 
-export interface DataChangedEvent<TData = any> extends RowNodeEvent<TData> {
+export interface RowSelectedEvent<TData = any> extends RowNodeEvent<'rowSelected', TData> {}
+export interface MouseEnterEvent<TData = any> extends RowNodeEvent<'mouseEnter', TData> {}
+export interface MouseLeaveEvent<TData = any> extends RowNodeEvent<'mouseLeave', TData> {}
+export interface HeightChangedEvent<TData = any> extends RowNodeEvent<'heightChanged', TData> {}
+export interface RowIndexChangedEvent<TData = any> extends RowNodeEvent<'rowIndexChanged', TData> {}
+export interface TopChangedEvent<TData = any> extends RowNodeEvent<'topChanged', TData> {}
+export interface ExpandedChangedEvent<TData = any> extends RowNodeEvent<'expandedChanged', TData> {}
+export interface FirstChildChangedEvent<TData = any> extends RowNodeEvent<'firstChildChanged', TData> {}
+export interface LastChildChangedEvent<TData = any> extends RowNodeEvent<'lastChildChanged', TData> {}
+export interface ChildIndexChangedEvent<TData = any> extends RowNodeEvent<'childIndexChanged', TData> {}
+export interface AllChildrenCountChangedEvent<TData = any> extends RowNodeEvent<'allChildrenCountChanged', TData> {}
+export interface UiLevelChangedEvent<TData = any> extends RowNodeEvent<'uiLevelChanged', TData> {}
+export interface DataChangedEvent<TData = any> extends RowNodeEvent<'dataChanged', TData> {
     oldData: TData | undefined;
     newData: TData | undefined;
     update: boolean;
 }
-
-export interface CellChangedEvent<TData = any> extends RowNodeEvent<TData> {
+export interface CellChangedEvent<TData = any> extends RowNodeEvent<'cellChanged', TData> {
     column: Column;
     newValue: TData | undefined;
     oldValue: TData | undefined;
 }
+
+export interface SelectableChangedEvent<TData = any> extends RowNodeEvent<'selectableChanged', TData> {}
+export interface DisplayedChangedEvent<TData = any> extends RowNodeEvent<'displayedChanged', TData> {}
+export interface MasterChangedEvent<TData = any> extends RowNodeEvent<'masterChanged', TData> {}
+export interface GroupChangedEvent<TData = any> extends RowNodeEvent<'groupChanged', TData> {}
+export interface HasChildrenChangedEvent<TData = any> extends RowNodeEvent<'hasChildrenChanged', TData> {}
+export interface RowHighlightChangedEvent<TData = any> extends RowNodeEvent<'rowHighlightChanged', TData> {}
+export interface DraggingChangedEvent<TData = any> extends RowNodeEvent<'draggingChanged', TData> {}
 
 export enum RowHighlightPosition {
     Above,

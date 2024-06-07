@@ -554,7 +554,11 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         removedElements.forEach((element) => _removeFromParent(element));
     }
 
-    protected removeComponents(components: Component[], startPosition: number, deleteCount?: number): void {
+    protected removeComponents<TEventType extends string>(
+        components: Component<TEventType>[],
+        startPosition: number,
+        deleteCount?: number
+    ): void {
         const removedComponents = this.removeItems(components, startPosition, deleteCount);
         removedComponents.forEach((comp) => {
             _removeFromParent(comp.getGui());

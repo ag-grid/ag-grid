@@ -6,15 +6,12 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import type { EventsType } from '../eventKeys';
-import { Events } from '../eventKeys';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _exists } from '../utils/generic';
 import type { ValueService } from '../valueService/valueService';
 
-export const EVENT_QUICK_FILTER_CHANGED = 'quickFilterChanged' as const;
-
-export class QuickFilterService extends BeanStub implements NamedBean {
+export type QuickFilterServiceEvent = 'quickFilterChanged';
+export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implements NamedBean {
     beanName = 'quickFilterService' as const;
 
     private valueService: ValueService;
@@ -39,11 +36,11 @@ export class QuickFilterService extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         const resetListener = this.resetQuickFilterCache.bind(this);
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: resetListener,
-            [Events.EVENT_NEW_COLUMNS_LOADED]: resetListener,
-            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: resetListener,
-            [Events.EVENT_COLUMN_VISIBLE]: () => {
+        this.addManagedEventListeners({
+            columnPivotModeChanged: resetListener,
+            newColumnsLoaded: resetListener,
+            columnRowGroupChanged: resetListener,
+            columnVisible: () => {
                 if (!this.gos.get('includeHiddenColumnsInQuickFilter')) {
                     this.resetQuickFilterCache();
                 }
@@ -144,7 +141,7 @@ export class QuickFilterService extends BeanStub implements NamedBean {
         if (this.quickFilter !== parsedFilter) {
             this.quickFilter = parsedFilter;
             this.setQuickFilterParts();
-            this.dispatchEvent({ type: EVENT_QUICK_FILTER_CHANGED });
+            this.dispatchLocalEvent({ type: 'quickFilterChanged' });
         }
     }
 
@@ -156,7 +153,7 @@ export class QuickFilterService extends BeanStub implements NamedBean {
         this.matcher = matcher;
         if (hasChanged) {
             this.setQuickFilterParts();
-            this.dispatchEvent({ type: EVENT_QUICK_FILTER_CHANGED });
+            this.dispatchLocalEvent({ type: 'quickFilterChanged' });
         }
     }
 
@@ -164,7 +161,7 @@ export class QuickFilterService extends BeanStub implements NamedBean {
         this.refreshQuickFilterCols();
         this.resetQuickFilterCache();
         if (this.isQuickFilterPresent()) {
-            this.dispatchEvent({ type: EVENT_QUICK_FILTER_CHANGED });
+            this.dispatchLocalEvent({ type: 'quickFilterChanged' });
         }
     }
 

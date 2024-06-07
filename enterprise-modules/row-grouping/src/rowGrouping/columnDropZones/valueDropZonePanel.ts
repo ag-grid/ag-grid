@@ -1,5 +1,5 @@
 import type { AgColumn, DraggingEvent, ITooltipParams, WithoutGridCommon } from '@ag-grid-community/core';
-import { DragAndDropService, Events, _createIconNoSpan } from '@ag-grid-community/core';
+import { DragAndDropService, _createIconNoSpan } from '@ag-grid-community/core';
 
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
@@ -19,7 +19,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
             title: title,
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
+        this.addManagedEventListeners({ columnValueChanged: this.refreshGui.bind(this) });
     }
 
     protected getAriaLabel(): string {
