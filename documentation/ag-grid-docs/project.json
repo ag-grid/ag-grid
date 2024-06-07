@@ -6,7 +6,7 @@
   "targets": {
     "build": {
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
-      "dependsOn": ["generate-doc-references", "generate-examples"],
+      "dependsOn": ["generate-doc-references", "generate-examples", "^build"],
       "inputs": ["^production", "production", "!{projectRoot}/vitest.config.mjs", { "env": "PUBLIC_PACKAGE_VERSION" }],
       "cache": true,
       "command": "astro build",

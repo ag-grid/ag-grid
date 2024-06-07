@@ -102,7 +102,12 @@ const License: FunctionComponent<LicenseData> = (props: LicenseData) => {
     return (
         <>
             <div className={styles.top}>
-                {launchPrice && <span className={styles.limitedTimePill}>Limited time offer</span>}
+                {launchPrice && (
+                    <span>
+                        <span className={styles.limitedTimePill}>Limited time offer</span>
+                        <span className={styles.limitedTimeEnd}>Offer ends 30th June 2024</span>
+                    </span>
+                )}
                 {!launchPrice && <span className={styles.limitedTimeSpacer}></span>}
 
                 <div className={styles.licenseMeta}>

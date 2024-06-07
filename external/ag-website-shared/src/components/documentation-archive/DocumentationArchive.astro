@@ -54,7 +54,7 @@ const isMajor = (version) => {
 
                         <td>
                             <span class={isMajor(versionInfo.version) ? styles.major : undefined}>
-                                {getVersionType(versionInfo.version)}
+                                {versionInfo.versionType || getVersionType(versionInfo.version)}
                             </span>
                         </td>
 
