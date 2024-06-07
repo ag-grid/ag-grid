@@ -92,10 +92,14 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
                 }
                 return this.selectRange(nodesToSet, newValue, source);
             } else {
-                this.selectionCtx.setEndRange(node);
                 const fromNode = this.selectionCtx.getRoot();
                 const toNode = node;
+                const currentRange = this.selectionCtx.getRange().slice();
+                this.selectionCtx.setEndRange(node);
                 if (fromNode !== toNode && this.isMultiselect()) {
+                    if (newValue) {
+                        this.selectRange(currentRange, false, source);
+                    }
                     return this.selectRangeBetween(fromNode, toNode, newValue, source);
                 }
             }
