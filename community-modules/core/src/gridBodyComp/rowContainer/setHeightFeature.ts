@@ -1,6 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import { Events } from '../../eventKeys';
 import type { RowContainerHeightService } from '../../rendering/rowContainerHeightService';
 
 export class SetHeightFeature extends BeanStub {
@@ -20,11 +19,7 @@ export class SetHeightFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED,
-            this.onHeightChanged.bind(this)
-        );
+        this.addManagedEventListeners({ rowContainerHeightChanged: this.onHeightChanged.bind(this) });
     }
 
     private onHeightChanged(): void {

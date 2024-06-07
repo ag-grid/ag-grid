@@ -1,4 +1,3 @@
-import { Events } from '../eventKeys';
 import type { AgFieldParams } from '../interfaces/agFieldParams';
 import { _getAriaLabel, _setAriaLabel, _setAriaLabelledBy } from '../utils/aria';
 import { _setFixedWidth } from '../utils/dom';
@@ -6,10 +5,13 @@ import { AgAbstractLabel } from './agAbstractLabel';
 import type { ComponentClass } from './component';
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+export type AgAbstractFieldEvent = 'fieldValueChanged';
+
 export abstract class AgAbstractField<
     TValue,
     TConfig extends AgFieldParams = AgFieldParams,
-> extends AgAbstractLabel<TConfig> {
+    TEventType extends string = AgAbstractFieldEvent,
+> extends AgAbstractLabel<TConfig, TEventType | AgAbstractFieldEvent> {
     protected previousValue: TValue | null | undefined;
     protected value: TValue | null | undefined;
 
@@ -62,7 +64,7 @@ export abstract class AgAbstractField<
     }
 
     public onValueChange(callbackFn: (newValue?: TValue | null) => void) {
-        this.addManagedListener(this, Events.EVENT_FIELD_VALUE_CHANGED, () => callbackFn(this.getValue()));
+        this.addManagedListeners<AgAbstractFieldEvent>(this, { fieldValueChanged: () => callbackFn(this.getValue()) });
 
         return this;
     }
@@ -94,7 +96,7 @@ export abstract class AgAbstractField<
         this.value = value;
 
         if (!silent) {
-            this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
+            this.dispatchLocalEvent({ type: 'fieldValueChanged' });
         }
 
         return this;

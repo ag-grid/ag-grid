@@ -6,7 +6,7 @@ import type {
     RichCellEditorParams,
     RichSelectParams,
 } from '@ag-grid-community/core';
-import { Events, PopupComponent, _missing, _warnOnce } from '@ag-grid-community/core';
+import { PopupComponent, _missing, _warnOnce } from '@ag-grid-community/core';
 import { AgRichSelect } from '@ag-grid-enterprise/core';
 
 export class RichSelectCellEditor<TData = any, TValue = any> extends PopupComponent implements ICellEditor<TValue> {
@@ -43,12 +43,10 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             });
         }
 
-        this.addManagedListener(
-            this.richSelect,
-            Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
-            this.onEditorPickerValueSelected.bind(this)
-        );
-        this.addManagedListener(this.richSelect.getGui(), 'focusout', this.onEditorFocusOut.bind(this));
+        this.addManagedListeners(this.richSelect, {
+            fieldPickerValueSelected: this.onEditorPickerValueSelected.bind(this),
+        });
+        this.addManagedElementListeners(this.richSelect.getGui(), { focusout: this.onEditorFocusOut.bind(this) });
         this.focusAfterAttached = cellStartedEdit;
     }
 

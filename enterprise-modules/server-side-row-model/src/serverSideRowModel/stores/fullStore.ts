@@ -24,7 +24,6 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    Events,
     NumberSequence,
     RowNodeBlock,
     ServerSideTransactionResultStatus,
@@ -134,7 +133,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
         if (userInitialRowCount != null) {
             this.eventService.dispatchEventOnce({
-                type: Events.EVENT_ROW_COUNT_READY,
+                type: 'rowCountReady',
             });
         }
     }
@@ -276,7 +275,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
         if (this.level === 0) {
             this.eventService.dispatchEventOnce({
-                type: Events.EVENT_ROW_COUNT_READY,
+                type: 'rowCountReady',
             });
         }
 
@@ -645,7 +644,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             });
 
             const event: WithoutGridCommon<SelectionChangedEvent> = {
-                type: Events.EVENT_SELECTION_CHANGED,
+                type: 'selectionChanged',
                 source: 'rowDataChanged',
             };
             this.eventService.dispatchEvent(event);
@@ -810,7 +809,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         // this results in row model firing ModelUpdated.
         // server side row model also updates the row indexes first
         const event: WithoutGridCommon<StoreUpdatedEvent> = {
-            type: Events.EVENT_STORE_UPDATED,
+            type: 'storeUpdated',
         };
         this.eventService.dispatchEvent(event);
     }

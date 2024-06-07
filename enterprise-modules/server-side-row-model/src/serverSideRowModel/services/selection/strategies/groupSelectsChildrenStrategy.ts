@@ -9,12 +9,7 @@ import type {
     ISetNodesSelectedParams,
     RowNode,
 } from '@ag-grid-community/core';
-import {
-    BeanStub,
-    Events,
-    _RowRangeSelectionContext as RowRangeSelectionContext,
-    _last,
-} from '@ag-grid-community/core';
+import { BeanStub, _RowRangeSelectionContext as RowRangeSelectionContext, _last } from '@ag-grid-community/core';
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
@@ -40,13 +35,12 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     private selectedState: SelectionState = { selectAllChildren: false, toggledNodes: new Map() };
 
     public postConstruct(): void {
-        // if model has updated, a store may now be fully loaded to clean up indeterminate states
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, () => this.removeRedundantState());
-
-        // when the grouping changes, the state no longer makes sense, so reset the state.
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () =>
-            this.selectionService.reset('rowGroupChanged')
-        );
+        this.addManagedEventListeners({
+            // if model has updated, a store may now be fully loaded to clean up indeterminate states
+            modelUpdated: () => this.removeRedundantState(),
+            // when the grouping changes, the state no longer makes sense, so reset the state.
+            columnRowGroupChanged: () => this.selectionService.reset('rowGroupChanged'),
+        });
 
         this.selectionContext.init(this.rowModel);
     }

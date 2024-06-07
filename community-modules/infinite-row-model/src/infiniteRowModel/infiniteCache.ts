@@ -10,7 +10,7 @@ import type {
     StoreUpdatedEvent,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, Events, NumberSequence, _exists, _getAllValuesInObject, _missing } from '@ag-grid-community/core';
+import { BeanStub, NumberSequence, _exists, _getAllValuesInObject, _missing } from '@ag-grid-community/core';
 
 import { InfiniteBlock } from './infiniteBlock';
 
@@ -277,7 +277,7 @@ export class InfiniteCache extends BeanStub {
             // this results in both row models (infinite and server side) firing ModelUpdated,
             // however server side row model also updates the row indexes first
             const event: WithoutGridCommon<StoreUpdatedEvent> = {
-                type: Events.EVENT_STORE_UPDATED,
+                type: 'storeUpdated',
             };
             this.eventService.dispatchEvent(event);
         }

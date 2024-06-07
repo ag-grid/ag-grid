@@ -3,6 +3,7 @@ import type { ISizeColumnsToFitParams } from './columns/columnSizeService';
 import type { CellPosition } from './entities/cellPositionUtils';
 import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from './entities/colDef';
 import type { ChartRef, GridOptions } from './entities/gridOptions';
+import type { AgPublicEventType } from './eventTypes';
 import type { AgEvent, ColumnEventType, FilterChangedEventSourceType, SelectionEventSourceType } from './events';
 import type { RowDropZoneEvents, RowDropZoneParams } from './gridBodyComp/rowDragFeature';
 import type {
@@ -21,6 +22,7 @@ import type { ServerSideGroupLevelState } from './interfaces/IServerSideStore';
 import type { AdvancedFilterModel } from './interfaces/advancedFilterModel';
 import type { CsvExportParams } from './interfaces/exportParams';
 import type { GridState } from './interfaces/gridState';
+import type { RenderedRowEvent } from './interfaces/iCallbackParams';
 import type { ICellEditor } from './interfaces/iCellEditor';
 import type { ClientSideRowModelStep } from './interfaces/iClientSideRowModel';
 import type { IClipboardCopyParams, IClipboardCopyRowsParams } from './interfaces/iClipboardService';
@@ -243,7 +245,7 @@ export interface GridApi<TData = any> {
      * When the rendered row is removed from the grid, all associated rendered row listeners will also be removed.
      * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists.
      */
-    addRenderedRowListener(eventName: string, rowIndex: number, callback: (...args: any[]) => any): void;
+    addRenderedRowListener(eventName: RenderedRowEvent, rowIndex: number, callback: (...args: any[]) => any): void;
 
     /** Get the current Quick Filter text from the grid, or `undefined` if none is set. */
     getQuickFilter(): string | undefined;
@@ -553,7 +555,7 @@ export interface GridApi<TData = any> {
      * Works similar to `addEventListener` for a browser DOM element.
      * Listeners will be automatically removed when the grid is destroyed.
      */
-    addEventListener(eventType: string, listener: (...args: any[]) => any): void;
+    addEventListener(eventType: AgPublicEventType, listener: (...args: any[]) => any): void;
 
     /**
      * Add an event listener for all event types coming from the grid.
@@ -562,7 +564,7 @@ export interface GridApi<TData = any> {
     addGlobalListener(listener: (...args: any[]) => any): void;
 
     /** Remove an event listener. */
-    removeEventListener(eventType: string, listener: (...args: any[]) => any): void;
+    removeEventListener(eventType: AgPublicEventType, listener: (...args: any[]) => any): void;
 
     /** Remove a global event listener. */
     removeGlobalListener(listener: (...args: any[]) => any): void;

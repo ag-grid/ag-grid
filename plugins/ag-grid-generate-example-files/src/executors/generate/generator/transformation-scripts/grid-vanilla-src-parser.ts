@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio';
 import ts from 'typescript';
 
-import { Events } from '../_copiedFromCore/eventKeys';
+import { ALL_EVENTS } from '../_copiedFromCore/eventTypes';
 import { PropertyKeys } from '../_copiedFromCore/propertyKeys';
 import type { GridOptionsType, InlineGridStyles, ParsedBindings } from '../types';
 import {
@@ -29,7 +29,7 @@ import {
 } from './parser-utils';
 
 export const templatePlaceholder = 'GRID_TEMPLATE_PLACEHOLDER';
-const EVENTS = (<any>Object).values(Events);
+const EVENTS = ALL_EVENTS;
 const PROPERTIES: any = PropertyKeys.ALL_PROPERTIES;
 const FUNCTION_PROPERTIES: any = PropertyKeys.FUNCTION_PROPERTIES;
 

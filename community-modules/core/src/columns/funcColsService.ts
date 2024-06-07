@@ -4,7 +4,6 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, IAggFunc } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
-import { Events } from '../events';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import { _removeFromArray } from '../utils/array';
 import { _attrToBoolean, _attrToNumber, _exists, _missingOrEmpty } from '../utils/generic';
@@ -100,14 +99,14 @@ export class FuncColsService extends BeanStub implements NamedBean {
 
         column.setAggFunc(aggFunc);
 
-        this.eventDispatcher.columnChanged(Events.EVENT_COLUMN_VALUE_CHANGED, [column], source);
+        this.eventDispatcher.columnChanged('columnValueChanged', [column], source);
     }
 
     public setRowGroupColumns(colKeys: ColKey[], source: ColumnEventType): void {
         this.setColList(
             colKeys,
             this.rowGroupCols,
-            Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
+            'columnRowGroupChanged',
             true,
             true,
             this.setRowGroupActive.bind(this),
@@ -137,7 +136,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             true,
             true,
             this.setRowGroupActive.bind(this, true),
-            Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
+            'columnRowGroupChanged',
             source
         );
     }
@@ -149,7 +148,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             false,
             true,
             this.setRowGroupActive.bind(this, false),
-            Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
+            'columnRowGroupChanged',
             source
         );
     }
@@ -161,7 +160,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             true,
             false,
             (column) => column.setPivotActive(true, source),
-            Events.EVENT_COLUMN_PIVOT_CHANGED,
+            'columnPivotChanged',
             source
         );
     }
@@ -170,7 +169,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
         this.setColList(
             colKeys,
             this.pivotCols,
-            Events.EVENT_COLUMN_PIVOT_CHANGED,
+            'columnPivotChanged',
             true,
             false,
             (added, column) => {
@@ -187,7 +186,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             false,
             false,
             (column) => column.setPivotActive(false, source),
-            Events.EVENT_COLUMN_PIVOT_CHANGED,
+            'columnPivotChanged',
             source
         );
     }
@@ -196,7 +195,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
         this.setColList(
             colKeys,
             this.valueCols,
-            Events.EVENT_COLUMN_VALUE_CHANGED,
+            'columnValueChanged',
             false,
             false,
             this.setValueActive.bind(this),
@@ -224,7 +223,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             true,
             false,
             this.setValueActive.bind(this, true),
-            Events.EVENT_COLUMN_VALUE_CHANGED,
+            'columnValueChanged',
             source
         );
     }
@@ -236,7 +235,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             false,
             false,
             this.setValueActive.bind(this, false),
-            Events.EVENT_COLUMN_VALUE_CHANGED,
+            'columnValueChanged',
             source
         );
     }
@@ -258,7 +257,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
     private setColList(
         colKeys: ColKey[],
         masterList: AgColumn[],
-        eventName: string,
+        eventName: 'columnValueChanged' | 'columnPivotChanged' | 'columnRowGroupChanged',
         detectOrderChange: boolean,
         autoGroupsNeedBuilding: boolean,
         columnCallback: (added: boolean, column: AgColumn) => void,

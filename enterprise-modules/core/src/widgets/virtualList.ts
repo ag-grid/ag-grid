@@ -2,12 +2,12 @@ import type {
     AnimationFrameService,
     BeanCollection,
     Component,
+    ComponentEvent,
     CssVariablesChanged,
     Environment,
     ResizeObserverService,
 } from '@ag-grid-community/core';
 import {
-    Events,
     KeyCode,
     RefPlaceholder,
     TabGuardComp,
@@ -28,7 +28,10 @@ interface VirtualListParams {
     listName?: string;
 }
 
-export class VirtualList<C extends Component = Component> extends TabGuardComp {
+export class VirtualList<
+    C extends Component<any> = Component<any>,
+    TEventType extends string = ComponentEvent,
+> extends TabGuardComp<TEventType> {
     private resizeObserverService: ResizeObserverService;
     protected animationFrameService: AnimationFrameService;
     private environment: Environment;
@@ -78,11 +81,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         });
 
         this.setAriaProperties();
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_GRID_STYLES_CHANGED,
-            this.onGridStylesChanged.bind(this)
-        );
+        this.addManagedEventListeners({ gridStylesChanged: this.onGridStylesChanged.bind(this) });
     }
 
     private onGridStylesChanged(e: CssVariablesChanged): void {

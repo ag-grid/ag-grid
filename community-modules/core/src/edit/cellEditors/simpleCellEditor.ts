@@ -57,12 +57,14 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
             eInput.setStartValue(startValue);
         }
 
-        this.addManagedListener(eInput.getGui(), 'keydown', (event: KeyboardEvent) => {
-            const { key } = event;
+        this.addManagedElementListeners(eInput.getGui(), {
+            keydown: (event: KeyboardEvent) => {
+                const { key } = event;
 
-            if (key === KeyCode.PAGE_UP || key === KeyCode.PAGE_DOWN) {
-                event.preventDefault();
-            }
+                if (key === KeyCode.PAGE_UP || key === KeyCode.PAGE_DOWN) {
+                    event.preventDefault();
+                }
+            },
         });
     }
 

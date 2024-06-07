@@ -1,7 +1,6 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import { Events } from '../eventKeys';
 import type { FilterDestroyedEvent, FilterOpenedEvent } from '../events';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -35,7 +34,7 @@ export class FilterWrapperComp extends Component {
     public postConstruct(): void {
         this.createFilter(true);
 
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_DESTROYED, this.onFilterDestroyed.bind(this));
+        this.addManagedEventListeners({ filterDestroyed: this.onFilterDestroyed.bind(this) });
     }
 
     public hasFilter(): boolean {
@@ -80,7 +79,7 @@ export class FilterWrapperComp extends Component {
             this.appendChild(guiFromFilter);
             if (init) {
                 const event: WithoutGridCommon<FilterOpenedEvent> = {
-                    type: Events.EVENT_FILTER_OPENED,
+                    type: 'filterOpened',
                     column,
                     source,
                     eGui: this.getGui(),

@@ -11,7 +11,7 @@ import type {
     RowNode,
     RowPositionUtils,
 } from '@ag-grid-community/core';
-import { BeanStub, Events, _missing } from '@ag-grid-community/core';
+import { BeanStub, _missing } from '@ag-grid-community/core';
 
 export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRendererCtrl {
     private rowPositionUtils: RowPositionUtils;
@@ -47,11 +47,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         this.createDetailGrid();
         this.loadRowData();
 
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_FULL_WIDTH_ROW_FOCUSED,
-            this.onFullWidthRowFocused.bind(this)
-        );
+        this.addManagedEventListeners({ fullWidthRowFocused: this.onFullWidthRowFocused.bind(this) });
     }
 
     private onFullWidthRowFocused(e: FullWidthRowFocusedEvent): void {

@@ -15,7 +15,7 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, Events, _iterateObject, _missing } from '@ag-grid-community/core';
+import { BeanStub, _iterateObject, _missing } from '@ag-grid-community/core';
 
 import type { PivotColDefService } from './pivotColDefService';
 
@@ -91,7 +91,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
             if (e.message === PivotStage.EXCEEDED_MAX_UNIQUE_VALUES) {
                 this.pivotResultColsService.setPivotResultCols([], 'rowModelUpdated');
                 const event: WithoutGridCommon<PivotMaxColumnsExceededEvent> = {
-                    type: Events.EVENT_PIVOT_MAX_COLUMNS_EXCEEDED,
+                    type: 'pivotMaxColumnsExceeded',
                     message: e.message,
                 };
                 this.eventService.dispatchEvent(event);

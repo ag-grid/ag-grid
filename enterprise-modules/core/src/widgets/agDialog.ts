@@ -58,8 +58,8 @@ export class AgDialog extends AgPanel<DialogOptions> {
 
         super.postConstruct();
 
-        this.addManagedListener(eGui, 'focusin', (e: FocusEvent) => {
-            this.popupService.bringPopupToFront(eGui);
+        this.addManagedElementListeners(eGui, {
+            focusin: () => this.popupService.bringPopupToFront(eGui),
         });
 
         if (movable) {
@@ -171,15 +171,23 @@ export class AgDialog extends AgPanel<DialogOptions> {
         const maximizeButtonComp = this.buildMaximizeAndMinimizeElements();
         this.refreshMaximizeIcon();
 
-        maximizeButtonComp.addManagedListener(maximizeButtonComp.getGui(), 'click', this.toggleMaximize.bind(this));
+        maximizeButtonComp.addManagedElementListeners(maximizeButtonComp.getGui(), {
+            click: this.toggleMaximize.bind(this),
+        });
 
         this.addTitleBarButton(maximizeButtonComp, 0);
 
-        this.maximizeListeners.push(this.addManagedListener(eTitleBar, 'dblclick', this.toggleMaximize.bind(this))!);
+        this.maximizeListeners.push(
+            ...this.addManagedElementListeners(eTitleBar, {
+                dblclick: this.toggleMaximize.bind(this),
+            })
+        );
 
-        this.resizeListenerDestroy = this.addManagedListener(this, 'resize', () => {
-            this.isMaximized = false;
-            this.refreshMaximizeIcon();
+        [this.resizeListenerDestroy] = this.addManagedListeners(this.positionableFeature, {
+            resize: () => {
+                this.isMaximized = false;
+                this.refreshMaximizeIcon();
+            },
         });
     }
 

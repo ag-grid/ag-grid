@@ -139,7 +139,6 @@ export { EditCoreModule } from '@ag-grid-community/core';
 export { EditModule } from '@ag-grid-community/core';
 export { Environment } from '@ag-grid-community/core';
 export { EventService } from '@ag-grid-community/core';
-export { Events } from '@ag-grid-community/core';
 export { ExcelFactoryMode } from '@ag-grid-community/core';
 export { ExpansionService } from '@ag-grid-community/core';
 export { ExpressionService } from '@ag-grid-community/core';

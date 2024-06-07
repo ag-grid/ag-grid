@@ -1,10 +1,14 @@
 import type { AgLabelParams, LabelAlignment } from '../interfaces/agFieldParams';
 import { _setAriaRole } from '../utils/aria';
 import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from '../utils/dom';
-import type { ComponentClass } from './component';
+import type { ComponentClass, ComponentEvent } from './component';
 import { Component } from './component';
 
-export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelParams> extends Component {
+export type AgAbstractLabelEvent = ComponentEvent;
+export abstract class AgAbstractLabel<
+    TConfig extends AgLabelParams = AgLabelParams,
+    TEventType extends string = AgAbstractLabelEvent,
+> extends Component<TEventType | AgAbstractLabelEvent> {
     protected abstract eLabel: HTMLElement;
 
     protected readonly config: TConfig;

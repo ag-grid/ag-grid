@@ -9,7 +9,6 @@ import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import type { CellPosition } from '../entities/cellPositionUtils';
 import type { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
-import { Events } from '../eventKeys';
 import type { FullWidthRowFocusedEvent } from '../events';
 import type { FocusService } from '../focusService';
 import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
@@ -890,7 +889,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             currentCellFocused != null ? this.rowPositionUtils.before(cellPosition, currentCellFocused) : false;
 
         const focusEvent: WithoutGridCommon<FullWidthRowFocusedEvent> = {
-            type: Events.EVENT_FULL_WIDTH_ROW_FOCUSED,
+            type: 'fullWidthRowFocused',
             rowIndex: cellPosition.rowIndex,
             rowPinned: cellPosition.rowPinned,
             column: cellPosition.column,

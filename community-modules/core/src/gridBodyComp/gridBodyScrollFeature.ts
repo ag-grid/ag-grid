@@ -4,7 +4,6 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
-import { Events } from '../eventKeys';
 import type { BodyScrollEndEvent, BodyScrollEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -86,11 +85,9 @@ export class GridBodyScrollFeature extends BeanStub {
 
     public postConstruct(): void {
         this.enableRtl = this.gos.get('enableRtl');
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
-            this.onDisplayedColumnsWidthChanged.bind(this)
-        );
+        this.addManagedEventListeners({
+            displayedColumnsWidthChanged: this.onDisplayedColumnsWidthChanged.bind(this),
+        });
 
         this.ctrlsService.whenReady((p) => {
             this.centerRowsCtrl = p.center;
@@ -102,7 +99,9 @@ export class GridBodyScrollFeature extends BeanStub {
     private addScrollListener() {
         const { fakeHScrollComp, fakeVScrollComp } = this.ctrlsService.getParams();
 
-        this.addManagedListener(this.centerRowsCtrl.getViewportElement(), 'scroll', this.onHScroll.bind(this));
+        this.addManagedElementListeners(this.centerRowsCtrl.getViewportElement(), {
+            scroll: this.onHScroll.bind(this),
+        });
         fakeHScrollComp.onScrollCallback(this.onFakeHScroll.bind(this));
 
         const isDebounce = this.gos.get('debounceVerticalScrollbar');
@@ -112,7 +111,7 @@ export class GridBodyScrollFeature extends BeanStub {
             ? _debounce(this.onFakeVScroll.bind(this), 100)
             : this.onFakeVScroll.bind(this);
 
-        this.addManagedListener(this.eBodyViewport, 'scroll', onVScroll);
+        this.addManagedElementListeners(this.eBodyViewport, { scroll: onVScroll });
         fakeVScrollComp.onScrollCallback(onFakeVScroll);
     }
 
@@ -273,7 +272,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private fireScrollEvent(direction: ScrollDirection): void {
         const bodyScrollEvent: WithoutGridCommon<BodyScrollEvent> = {
-            type: Events.EVENT_BODY_SCROLL,
+            type: 'bodyScroll',
             direction: direction === ScrollDirection.Horizontal ? 'horizontal' : 'vertical',
             left: this.scrollLeft,
             top: this.scrollTop,
@@ -287,7 +286,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.scrollTimer = window.setTimeout(() => {
             const bodyScrollEndEvent: WithoutGridCommon<BodyScrollEndEvent> = {
                 ...bodyScrollEvent,
-                type: Events.EVENT_BODY_SCROLL_END,
+                type: 'bodyScrollEnd',
             };
 
             this.eventService.dispatchEvent(bodyScrollEndEvent);

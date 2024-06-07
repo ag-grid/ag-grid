@@ -289,7 +289,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             createChartContainerFunc(chartRef);
         } else {
             // add listener to remove from active charts list when charts are destroyed, e.g. closing chart dialog
-            chartComp.addEventListener(GridChartComp.EVENT_DESTROYED, () => {
+            chartComp.addEventListener('destroyed', () => {
                 this.activeChartComps.delete(chartComp);
                 this.activeCharts.delete(chartRef);
             });

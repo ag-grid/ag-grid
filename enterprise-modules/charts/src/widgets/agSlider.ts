@@ -1,5 +1,5 @@
 import type { AgComponentSelector, AgLabelParams, LabelAlignment } from '@ag-grid-community/core';
-import { AgAbstractLabel, AgInputNumberField, Events, RefPlaceholder } from '@ag-grid-community/core';
+import { AgAbstractLabel, AgInputNumberField, RefPlaceholder } from '@ag-grid-community/core';
 
 import { AgInputRange } from './agInputRange';
 
@@ -12,7 +12,8 @@ export interface AgSliderParams extends AgLabelParams {
     onValueChange?: (newValue: number) => void;
 }
 
-export class AgSlider extends AgAbstractLabel<AgSliderParams> {
+export type AgSliderEvent = 'fieldValueChanged';
+export class AgSlider extends AgAbstractLabel<AgSliderParams, AgSliderEvent> {
     static readonly selector: AgComponentSelector = 'AG-SLIDER';
 
     private static TEMPLATE /* html */ = `<div class="ag-slider">
@@ -58,17 +59,20 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams> {
     }
 
     public onValueChange(callbackFn: (newValue: number) => void) {
-        const eventChanged = Events.EVENT_FIELD_VALUE_CHANGED;
-        this.addManagedListener(this.eText, eventChanged, () => {
-            const textValue = parseFloat(this.eText.getValue()!);
-            this.eSlider.setValue(textValue.toString(), true);
-            callbackFn(textValue || 0);
+        this.addManagedListeners(this.eText, {
+            fieldValueChanged: () => {
+                const textValue = parseFloat(this.eText.getValue()!);
+                this.eSlider.setValue(textValue.toString(), true);
+                callbackFn(textValue || 0);
+            },
         });
 
-        this.addManagedListener(this.eSlider, eventChanged, () => {
-            const sliderValue = this.eSlider.getValue()!;
-            this.eText.setValue(sliderValue, true);
-            callbackFn(parseFloat(sliderValue));
+        this.addManagedListeners(this.eSlider, {
+            fieldValueChanged: () => {
+                const sliderValue = this.eSlider.getValue()!;
+                this.eText.setValue(sliderValue, true);
+                callbackFn(parseFloat(sliderValue));
+            },
         });
 
         return this;
@@ -110,7 +114,7 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams> {
         this.eSlider.setValue(value, true);
 
         if (!silent) {
-            this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
+            this.dispatchLocalEvent({ type: 'fieldValueChanged' });
         }
 
         return this;

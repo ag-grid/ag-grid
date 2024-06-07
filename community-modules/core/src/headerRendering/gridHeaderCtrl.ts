@@ -4,8 +4,6 @@ import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import { Events } from '../eventKeys';
-import type { EventsType } from '../eventKeys';
 import type { FilterManager } from '../filter/filterManager';
 import type { FocusService } from '../focusService';
 import type { MenuService } from '../misc/menuService';
@@ -58,16 +56,16 @@ export class GridHeaderCtrl extends BeanStub {
         );
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: this.onPivotModeChanged.bind(this),
-            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
+        this.addManagedEventListeners({
+            columnPivotModeChanged: this.onPivotModeChanged.bind(this),
+            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
         });
 
         this.onPivotModeChanged();
         this.setupHeaderHeight();
 
         const listener = this.onHeaderContextMenu.bind(this);
-        this.addManagedListener(this.eGui, 'contextmenu', listener);
+        this.addManagedElementListeners(this.eGui, { contextmenu: listener });
         this.mockContextMenuForIPad(listener);
 
         this.ctrlsService.register('gridHeaderCtrl', this);
@@ -83,11 +81,11 @@ export class GridHeaderCtrl extends BeanStub {
         this.addManagedPropertyListener('pivotGroupHeaderHeight', listener);
         this.addManagedPropertyListener('floatingFiltersHeight', listener);
 
-        this.addManagedListeners(this.eventService, {
-            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: listener,
-            [Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED]: listener,
-            [Events.EVENT_GRID_STYLES_CHANGED]: listener,
-            [Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED]: listener,
+        this.addManagedEventListeners({
+            displayedColumnsChanged: listener,
+            columnHeaderHeightChanged: listener,
+            gridStylesChanged: listener,
+            advancedFilterEnabledChanged: listener,
         });
     }
 
@@ -131,7 +129,7 @@ export class GridHeaderCtrl extends BeanStub {
         this.comp.setHeightAndMinHeight(px);
 
         this.eventService.dispatchEvent({
-            type: Events.EVENT_HEADER_HEIGHT_CHANGED,
+            type: 'headerHeightChanged',
         });
     }
 
@@ -167,15 +165,18 @@ export class GridHeaderCtrl extends BeanStub {
         switch (e.key) {
             case KeyCode.LEFT:
                 direction = HeaderNavigationDirection.LEFT;
-            case KeyCode.RIGHT:
+            // eslint-disable-next-line no-fallthrough
+            case KeyCode.RIGHT: {
                 if (!_exists(direction)) {
                     direction = HeaderNavigationDirection.RIGHT;
                 }
                 this.headerNavigationService.navigateHorizontally(direction, false, e);
                 break;
+            }
             case KeyCode.UP:
                 direction = HeaderNavigationDirection.UP;
-            case KeyCode.DOWN:
+            // eslint-disable-next-line no-fallthrough
+            case KeyCode.DOWN: {
                 if (!_exists(direction)) {
                     direction = HeaderNavigationDirection.DOWN;
                 }
@@ -183,6 +184,7 @@ export class GridHeaderCtrl extends BeanStub {
                     e.preventDefault();
                 }
                 break;
+            }
             default:
                 return;
         }
@@ -225,7 +227,7 @@ export class GridHeaderCtrl extends BeanStub {
             listener(undefined, event.touchStart, event.touchEvent);
         };
 
-        this.addManagedListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
+        this.addManagedListeners(touchListener, { longTap: longTapListener });
         this.addDestroyFunc(() => touchListener.destroy());
     }
 }

@@ -78,7 +78,7 @@ export class LegendPanel extends Component {
         registerGroupComponent(this.legendGroup);
     }
 
-    private getItems(chartMenuParamsFactory: ChartMenuParamsFactory): Component[] {
+    private getItems(chartMenuParamsFactory: ChartMenuParamsFactory): Component<any>[] {
         const createSlider = (expression: string, labelKey: ChartTranslationKey, defaultMaxValue: number) =>
             this.createManagedBean(
                 new AgSlider(

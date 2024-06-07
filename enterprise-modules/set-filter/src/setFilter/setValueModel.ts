@@ -1,6 +1,7 @@
 import type {
     AgColumn,
     AgEventListener,
+    AgEventType,
     FuncColsService,
     GridOptionsService,
     IClientSideRowModel,
@@ -51,15 +52,14 @@ export interface SetValueModelParams<V> {
     usingComplexObjects?: boolean;
     treeDataTreeList?: boolean;
     groupingTreeList?: boolean;
-    addManagedListener: (event: string, listener: (event?: any) => void) => (() => null) | undefined;
+    addManagedEventListeners: (handlers: Partial<Record<AgEventType, (event?: any) => void>>) => (() => null)[];
 }
 
+export type SetValueModelEvent = 'availableValuesChanged';
 /** @param V type of value in the Set Filter */
-export class SetValueModel<V> implements IEventEmitter {
-    public static EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
-
+export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
     private readonly gos: GridOptionsService;
-    private readonly localEventService = new LocalEventService();
+    private readonly localEventService = new LocalEventService<SetValueModelEvent>();
     private formatter: TextFormatter;
     private suppressSorting: boolean;
     private readonly clientSideValuesExtractor: ClientSideValuesExtractor<V>;
@@ -117,7 +117,7 @@ export class SetValueModel<V> implements IEventEmitter {
             filterParams,
             gos,
             valueFormatter,
-            addManagedListener,
+            addManagedEventListeners,
         } = params;
         const {
             column,
@@ -188,7 +188,7 @@ export class SetValueModel<V> implements IEventEmitter {
                 !!treeDataTreeList,
                 getDataPath,
                 groupAllowUnbalanced,
-                addManagedListener
+                addManagedEventListeners
             );
         }
 
@@ -219,11 +219,19 @@ export class SetValueModel<V> implements IEventEmitter {
         this.updateAllValues().then((updatedKeys) => this.resetSelectionState(updatedKeys || []));
     }
 
-    public addEventListener(eventType: string, listener: AgEventListener, async?: boolean): void {
+    public addEventListener<T extends SetValueModelEvent>(
+        eventType: T,
+        listener: AgEventListener<any, any, T>,
+        async?: boolean
+    ): void {
         this.localEventService.addEventListener(eventType, listener, async);
     }
 
-    public removeEventListener(eventType: string, listener: AgEventListener, async?: boolean): void {
+    public removeEventListener<T extends SetValueModelEvent>(
+        eventType: T,
+        listener: AgEventListener<any, any, T>,
+        async?: boolean
+    ): void {
         this.localEventService.removeEventListener(eventType, listener, async);
     }
 
@@ -407,7 +415,7 @@ export class SetValueModel<V> implements IEventEmitter {
         const availableKeys = this.showAvailableOnly() ? this.sortKeys(this.getValuesFromRows(true)) : allKeys;
 
         this.availableKeys = new Set(availableKeys);
-        this.localEventService.dispatchEvent({ type: SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED });
+        this.localEventService.dispatchEvent({ type: 'availableValuesChanged' });
 
         this.updateDisplayedValues(source, allKeys);
     }

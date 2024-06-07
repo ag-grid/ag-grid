@@ -6,7 +6,6 @@ import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import type { Environment } from '../environment';
 import type { CssVariablesChanged } from '../events';
-import { Events } from '../events';
 import type { GridCtrl } from '../gridComp/gridCtrl';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { PostProcessPopupParams } from '../interfaces/iCallbackParams';
@@ -115,7 +114,7 @@ export class PopupService extends BeanStub implements NamedBean {
         this.ctrlsService.whenReady((p) => {
             this.gridCtrl = p.gridCtrl;
         });
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.handleThemeChange.bind(this));
+        this.addManagedEventListeners({ gridStylesChanged: this.handleThemeChange.bind(this) });
     }
 
     public getPopupParent(): HTMLElement {
@@ -589,7 +588,7 @@ export class PopupService extends BeanStub implements NamedBean {
             eDocument.removeEventListener('touchstart', hidePopupOnTouchEvent);
             eDocument.removeEventListener('contextmenu', hidePopupOnMouseEvent);
 
-            this.eventService.removeEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent as any);
+            this.eventService.removeEventListener('dragStarted', hidePopupOnMouseEvent as any);
 
             if (closedCallback) {
                 closedCallback(mouseEvent || touchEvent || keyboardEvent);
@@ -611,7 +610,7 @@ export class PopupService extends BeanStub implements NamedBean {
 
             if (modal) {
                 eDocument.addEventListener('mousedown', hidePopupOnMouseEvent);
-                this.eventService.addEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent as any);
+                this.eventService.addEventListener('dragStarted', hidePopupOnMouseEvent as any);
                 eDocument.addEventListener('touchstart', hidePopupOnTouchEvent);
                 eDocument.addEventListener('contextmenu', hidePopupOnMouseEvent);
             }

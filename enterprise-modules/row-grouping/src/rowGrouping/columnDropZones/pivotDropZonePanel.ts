@@ -1,5 +1,5 @@
 import type { AgColumn, DraggingEvent, ITooltipParams, WithoutGridCommon } from '@ag-grid-community/core';
-import { DragAndDropService, Events, _createIconNoSpan } from '@ag-grid-community/core';
+import { DragAndDropService, _createIconNoSpan } from '@ag-grid-community/core';
 
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
@@ -19,13 +19,11 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
             title: title,
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.refresh.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.refresh.bind(this));
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
-            this.checkVisibility.bind(this)
-        );
+        this.addManagedEventListeners({
+            newColumnsLoaded: this.refresh.bind(this),
+            columnPivotChanged: this.refresh.bind(this),
+            columnPivotModeChanged: this.checkVisibility.bind(this),
+        });
 
         this.refresh();
     }

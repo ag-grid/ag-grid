@@ -3,7 +3,6 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
 import type { RowPosition } from '../entities/rowPositionUtils';
-import { Events } from '../eventKeys';
 import type { PaginationChangedEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -335,7 +334,7 @@ export class PaginationService extends BeanStub implements NamedBean {
     }): void {
         const { keepRenderedRows = false, newPage = false, newPageSize = false } = params;
         const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
-            type: Events.EVENT_PAGINATION_CHANGED,
+            type: 'paginationChanged',
             animate: false,
             newData: false,
             newPage,

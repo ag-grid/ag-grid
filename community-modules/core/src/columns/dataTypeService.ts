@@ -2,7 +2,7 @@ import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { AgColumn } from '../entities/agColumn';
+import type { AgColumn } from '../entities/agColumn';
 import type {
     ColDef,
     SuppressKeyboardEventParams,
@@ -18,7 +18,6 @@ import type {
     ValueFormatterLiteParams,
     ValueParserLiteParams,
 } from '../entities/dataType';
-import { Events } from '../eventKeys';
 import type { AgEventListener, AgGridEvent, DataTypesInferredEvent, RowDataUpdateStartedEvent } from '../events';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { Column } from '../interfaces/iColumn';
@@ -376,9 +375,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const columnListener: AgEventListener = (event: AgGridEvent & { key: keyof ColumnStateParams }) => {
             columnStateUpdates.add(event.key);
         };
-        column.addEventListener(AgColumn.EVENT_STATE_UPDATED, columnListener);
+        column.addEventListener('columnStateUpdated', columnListener);
         this.columnStateUpdateListenerDestroyFuncs.push(() =>
-            column.removeEventListener(AgColumn.EVENT_STATE_UPDATED, columnListener)
+            column.removeEventListener('columnStateUpdated', columnListener)
         );
     }
 
@@ -483,10 +482,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (columnTypeOverridesExist) {
             this.columnModel.queueResizeOperations();
         }
-        const destroyFunc = this.addManagedListener(
-            this.eventService,
-            Events.EVENT_ROW_DATA_UPDATE_STARTED,
-            (event: RowDataUpdateStartedEvent) => {
+        const [destroyFunc] = this.addManagedEventListeners({
+            rowDataUpdateStarted: (event: RowDataUpdateStartedEvent) => {
                 const { firstRowData } = event;
                 if (!firstRowData) {
                     return;
@@ -499,11 +496,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     this.columnModel.processResizeOperations();
                 }
                 const dataTypesInferredEvent: WithoutGridCommon<DataTypesInferredEvent> = {
-                    type: Events.EVENT_DATA_TYPES_INFERRED,
+                    type: 'dataTypesInferred',
                 };
                 this.eventService.dispatchEvent(dataTypesInferredEvent);
-            }
-        );
+            },
+        });
     }
 
     public isPendingInference(): boolean {

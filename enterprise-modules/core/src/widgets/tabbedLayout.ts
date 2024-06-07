@@ -93,7 +93,7 @@ export class TabbedLayout extends TabGuardComp {
         const eIcon = _createIconNoSpan('close', this.gos, undefined, true)!;
         _setAriaLabel(eCloseButton, this.params.closeButtonAriaLabel);
         eCloseButton.appendChild(eIcon);
-        this.addManagedListener(eCloseButton, 'click', () => this.params.onCloseClicked?.());
+        this.addManagedElementListeners(eCloseButton, { click: () => this.params.onCloseClicked?.() });
         const eCloseButtonWrapper = eDocument.createElement('div');
         addCssClasses(eCloseButtonWrapper, 'close-button-wrapper');
         _setAriaRole(eCloseButtonWrapper, 'presentation');
@@ -280,8 +280,10 @@ export class TabbedLayout extends TabGuardComp {
             if (this.params.keepScrollPosition) {
                 const scrollableContainer =
                     (tabbedItem.getScrollableContainer && tabbedItem.getScrollableContainer()) || body;
-                this.lastScrollListener = this.addManagedListener(scrollableContainer, 'scroll', () => {
-                    this.tabbedItemScrollMap.set(tabbedItem.name, scrollableContainer.scrollTop);
+                [this.lastScrollListener] = this.addManagedElementListeners(scrollableContainer, {
+                    scroll: () => {
+                        this.tabbedItemScrollMap.set(tabbedItem.name, scrollableContainer.scrollTop);
+                    },
                 });
                 const scrollPosition = this.tabbedItemScrollMap.get(tabbedItem.name);
                 if (scrollPosition !== undefined) {

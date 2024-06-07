@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import ts from 'typescript';
 
-import { Events } from './_copiedFromCore/eventKeys';
+import { ALL_EVENTS } from './_copiedFromCore/eventTypes';
 import { getFormatterForTS } from './formatAST';
 
 const { formatNode, findNode, getFullJsDoc, getJsDoc } = getFormatterForTS(ts);
@@ -12,7 +12,7 @@ function getCallbackForEvent(eventName: string): string {
     }
     return 'on' + eventName[0].toUpperCase() + eventName.substring(1);
 }
-const EVENTS = Object.values(Events);
+const EVENTS = ALL_EVENTS;
 const EVENT_LOOKUP = new Set(EVENTS.map((event) => getCallbackForEvent(event)));
 
 function findAllInNodesTree(node) {
@@ -358,18 +358,6 @@ function extractInterfaces(srcFile, extension) {
     return iLookup;
 }
 
-function getClassProperties(filePath, className) {
-    const srcFile = parseFile(filePath);
-    const classNode = findNode(className, srcFile, 'ClassDeclaration');
-
-    let members = {};
-    ts.forEachChild(classNode, (n) => {
-        members = { ...members, ...extractMethodsAndPropsFromNode(n, srcFile) };
-    });
-
-    return members;
-}
-
 /** Build the interface file in the format that can be used by <interface-documentation> */
 export function buildInterfaceProps(globs) {
     const interfaces = {
@@ -410,39 +398,6 @@ export function buildInterfaceProps(globs) {
     applyInheritance(extensions, interfaces, true);
 
     return interfaces;
-}
-
-function hasPublicModifier(node) {
-    if (node.modifiers) {
-        return node.modifiers.some((m) => ts.SyntaxKind[m.kind] == 'PublicKeyword');
-    }
-    return false;
-}
-
-function extractMethodsAndPropsFromNode(node, srcFile) {
-    const nodeMembers = {};
-    const kind = ts.SyntaxKind[node.kind];
-    const name = node && node.name && node.name.escapedText;
-    const returnType = node && node.type && node.type.getFullText().trim();
-
-    if (!hasPublicModifier(node)) {
-        return nodeMembers;
-    }
-
-    if (kind == 'MethodDeclaration') {
-        const methodArgs = getArgTypes(node.parameters, srcFile);
-
-        nodeMembers[name] = {
-            meta: getJsDoc(node),
-            type: { arguments: methodArgs, returnType },
-        };
-    } else if (kind == 'PropertyDeclaration') {
-        nodeMembers[name] = {
-            meta: getJsDoc(node),
-            type: { returnType: returnType },
-        };
-    }
-    return nodeMembers;
 }
 
 export function getGridOptions(gridOpsFile: string) {
