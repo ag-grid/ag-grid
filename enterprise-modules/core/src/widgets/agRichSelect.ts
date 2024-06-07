@@ -3,6 +3,7 @@ import type {
     BeanCollection,
     FieldPickerValueSelectedEvent,
     ICellRendererParams,
+    RichSelectListRowSelectedEvent,
     RichSelectParams,
     UserCompDetails,
     UserComponentFactory,
@@ -25,6 +26,7 @@ import {
     _stopPropagationForAgGrid,
 } from '@ag-grid-community/core';
 
+import type { AgRichSelectListEvent } from './agRichSelectList';
 import { AgRichSelectList } from './agRichSelectList';
 
 const TEMPLATE = /* html */ `
@@ -36,7 +38,7 @@ const TEMPLATE = /* html */ `
             <div data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
         </div>
     </div>`;
-export type AgRichSelectEvent = 'fieldPickerValueSelected';
+export type AgRichSelectEvent = AgRichSelectListEvent;
 export class AgRichSelect<TValue = any> extends AgPickerField<
     TValue[] | TValue,
     RichSelectParams<TValue>,
@@ -123,8 +125,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         if (!this.config.multiSelect) {
             this.addManagedListener(
                 this.listComponent,
-                AgRichSelectList.EVENT_LIST_ROW_SELECTED,
-                (e: FieldPickerValueSelectedEvent) => {
+                'richSelectListRowSelected',
+                (e: RichSelectListRowSelectedEvent) => {
                     this.onListValueSelected(e.value, e.fromEnterKey);
                 }
             );

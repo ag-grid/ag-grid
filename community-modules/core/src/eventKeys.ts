@@ -132,6 +132,7 @@ export const INTERNAL_EVENTS = [
     'dataTypesInferred',
     'fieldValueChanged',
     'fieldPickerValueSelected',
+    'richSelectListRowSelected',
     'sideBarUpdated',
     'alignedGridScroll',
     'alignedGridColumn',

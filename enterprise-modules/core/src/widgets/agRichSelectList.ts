@@ -1,6 +1,6 @@
 import type {
     Component,
-    FieldPickerValueSelectedEvent,
+    RichSelectListRowSelectedEvent,
     RichSelectParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
@@ -10,13 +10,11 @@ import { KeyCode } from '@ag-grid-community/core';
 import { RichSelectRow } from './agRichSelectRow';
 import { VirtualList } from './virtualList';
 
-export type AgRichSelectListEvent = 'fieldPickerValueSelected';
+export type AgRichSelectListEvent = 'fieldPickerValueSelected' | 'richSelectListRowSelected';
 export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectListEvent> extends VirtualList<
     Component<TEventType | AgRichSelectListEvent>,
     TEventType | AgRichSelectListEvent
 > {
-    public static EVENT_LIST_ROW_SELECTED = 'richSelectListRowSelected';
-
     private eLoading: HTMLElement | undefined;
     private lastRowHovered: number = -1;
     private currentList: TValue[] | undefined;
@@ -312,8 +310,8 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     private dispatchValueSelected(): void {
-        const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
-            type: AgRichSelectList.EVENT_LIST_ROW_SELECTED,
+        const event: WithoutGridCommon<RichSelectListRowSelectedEvent> = {
+            type: 'richSelectListRowSelected',
             fromEnterKey: false,
             value: this.selectedItems,
         };

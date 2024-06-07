@@ -852,6 +852,9 @@ export interface FieldValueEvent<T extends EventsType = 'fieldValueChanged', TDa
 export interface FieldPickerValueSelectedEvent extends FieldValueEvent<'fieldPickerValueSelected'> {
     fromEnterKey: boolean;
 }
+export interface RichSelectListRowSelectedEvent extends FieldValueEvent<'richSelectListRowSelected'> {
+    fromEnterKey: boolean;
+}
 
 export interface AlignedGridColumnEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'alignedGridColumn', TData, TContext> {
