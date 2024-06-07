@@ -23,7 +23,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
     private menuService: MenuService;
 
     public wireBeans(beans: BeanCollection) {
-        this.menuItemMapper = beans.menuItemMapper;
+        this.menuItemMapper = beans.menuItemMapper as MenuItemMapper;
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;
         this.rowModel = beans.rowModel;

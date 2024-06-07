@@ -47,7 +47,7 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
         this.popupService = beans.popupService;
         this.ctrlsService = beans.ctrlsService;
         this.columnModel = beans.columnModel;
-        this.menuUtils = beans.menuUtils;
+        this.menuUtils = beans.menuUtils as MenuUtils;
         this.rangeService = beans.rangeService;
     }
 
@@ -250,7 +250,7 @@ class ContextMenu extends Component<ContextMenuEvent> {
 
     public wireBeans(beans: BeanCollection): void {
         this.focusService = beans.focusService;
-        this.menuItemMapper = beans.menuItemMapper;
+        this.menuItemMapper = beans.menuItemMapper as MenuItemMapper;
         this.cellPositionUtils = beans.cellPositionUtils;
     }
 

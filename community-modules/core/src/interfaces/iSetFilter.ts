@@ -1,9 +1,9 @@
 import type { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
 import type { IProvidedFilter, IProvidedFilterParams } from '../filter/provided/iProvidedFilter';
-import type { GridApi } from '../gridApi';
 import type { Column } from '../interfaces/iColumn';
 import type { ITooltipParams } from '../rendering/tooltipComponent';
 import type { AgPromise } from '../utils/promise';
+import type { AgGridCommon } from './iCommon';
 import type { IFilterParams, ProvidedFilterModel } from './iFilter';
 
 export type SetFilterModelValue = (string | null)[];
@@ -67,16 +67,13 @@ export interface ISetFilter<V = string> extends IProvidedFilter {
  * @param TData type of data row
  * @param V type of value in the Set Filter
  */
-export interface SetFilterValuesFuncParams<TData = any, V = string> {
+export interface SetFilterValuesFuncParams<TData = any, V = string> extends AgGridCommon<TData, any> {
     /** The function to call with the values to load into the filter once they are ready. */
     success: (values: (V | null)[]) => void;
     /** The column definition from which the set filter is invoked. */
     colDef: ColDef<TData>;
     /** Column from which the set filter is invoked. */
     column: Column;
-    api: GridApi<TData>;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
 }
 
 /**

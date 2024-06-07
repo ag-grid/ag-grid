@@ -33,7 +33,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         this.columnModel = beans.columnModel;
         this.pivotResultColsService = beans.pivotResultColsService;
         this.funcColsService = beans.funcColsService;
-        this.pivotColDefService = beans.pivotColDefService;
+        this.pivotColDefService = beans.pivotColDefService as PivotColDefService;
     }
 
     private uniqueValues: any = {};

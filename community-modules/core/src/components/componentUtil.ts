@@ -1,7 +1,7 @@
+import type { GridApi } from '../api/gridApi';
 import type { GridOptions } from '../entities/gridOptions';
 import { ALL_EVENTS, INTERNAL_EVENTS, PUBLIC_EVENTS } from '../eventTypes';
 import type { ComponentStateChangedEvent, GridOptionsChangedEvent } from '../events';
-import type { GridApi } from '../gridApi';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { PropertyKeys } from '../propertyKeys';
 import { _iterateObject } from '../utils/object';

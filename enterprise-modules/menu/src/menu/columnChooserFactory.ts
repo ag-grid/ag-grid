@@ -25,7 +25,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean, IColumn
 
     public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
-        this.menuUtils = beans.menuUtils;
+        this.menuUtils = beans.menuUtils as MenuUtils;
         this.visibleColsService = beans.visibleColsService;
     }
 

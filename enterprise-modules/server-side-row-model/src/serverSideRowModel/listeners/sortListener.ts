@@ -20,7 +20,7 @@ export class SortListener extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection) {
         this.sortController = beans.sortController;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
-        this.listenerUtils = beans.ssrmListenerUtils;
+        this.listenerUtils = beans.ssrmListenerUtils as ListenerUtils;
     }
 
     public postConstruct(): void {

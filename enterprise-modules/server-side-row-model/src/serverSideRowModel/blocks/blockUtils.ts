@@ -27,9 +27,9 @@ export class BlockUtils extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection) {
         this.valueService = beans.valueService;
         this.showRowGroupColsService = beans.showRowGroupColsService;
-        this.nodeManager = beans.ssrmNodeManager;
+        this.nodeManager = beans.ssrmNodeManager as NodeManager;
         this.beans = beans;
-        this.expansionService = beans.expansionService;
+        this.expansionService = beans.expansionService as ServerSideExpansionService;
     }
 
     public createRowNode(params: {

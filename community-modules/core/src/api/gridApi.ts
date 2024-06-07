@@ -1,11 +1,11 @@
-import type { ApplyColumnStateParams, ColumnState } from './columns/columnApplyStateService';
-import type { ISizeColumnsToFitParams } from './columns/columnSizeService';
-import type { CellPosition } from './entities/cellPositionUtils';
-import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from './entities/colDef';
-import type { ChartRef, GridOptions } from './entities/gridOptions';
-import type { AgPublicEventType } from './eventTypes';
-import type { AgEvent, ColumnEventType, FilterChangedEventSourceType, SelectionEventSourceType } from './events';
-import type { RowDropZoneEvents, RowDropZoneParams } from './gridBodyComp/rowDragFeature';
+import type { ApplyColumnStateParams, ColumnState } from '../columns/columnApplyStateService';
+import type { ISizeColumnsToFitParams } from '../columns/columnSizeService';
+import type { CellPosition } from '../entities/cellPositionUtils';
+import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from '../entities/colDef';
+import type { ChartRef, GridOptions } from '../entities/gridOptions';
+import type { AgPublicEventType } from '../eventTypes';
+import type { AgEvent, ColumnEventType, FilterChangedEventSourceType, SelectionEventSourceType } from '../events';
+import type { RowDropZoneEvents, RowDropZoneParams } from '../gridBodyComp/rowDragFeature';
 import type {
     ChartDownloadParams,
     ChartModel,
@@ -16,42 +16,42 @@ import type {
     GetChartImageDataUrlParams,
     OpenChartToolPanelParams,
     UpdateChartParams,
-} from './interfaces/IChartService';
-import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
-import type { ServerSideGroupLevelState } from './interfaces/IServerSideStore';
-import type { AdvancedFilterModel } from './interfaces/advancedFilterModel';
-import type { CsvExportParams } from './interfaces/exportParams';
-import type { GridState } from './interfaces/gridState';
-import type { RenderedRowEvent } from './interfaces/iCallbackParams';
-import type { ICellEditor } from './interfaces/iCellEditor';
-import type { ClientSideRowModelStep } from './interfaces/iClientSideRowModel';
-import type { IClipboardCopyParams, IClipboardCopyRowsParams } from './interfaces/iClipboardService';
-import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
-import type { IColumnToolPanel } from './interfaces/iColumnToolPanel';
-import type { ExcelExportMultipleSheetParams, ExcelExportParams } from './interfaces/iExcelCreator';
-import type { FilterModel, IFilter } from './interfaces/iFilter';
-import type { IFiltersToolPanel } from './interfaces/iFiltersToolPanel';
-import type { IRowModel } from './interfaces/iRowModel';
-import type { IRowNode, RowPinnedType } from './interfaces/iRowNode';
-import type { RefreshServerSideParams } from './interfaces/iServerSideRowModel';
-import type { IServerSideGroupSelectionState, IServerSideSelectionState } from './interfaces/iServerSideSelection';
-import type { SideBarDef } from './interfaces/iSideBar';
-import type { IStatusPanel } from './interfaces/iStatusPanel';
-import type { IToolPanel } from './interfaces/iToolPanel';
-import type { RowDataTransaction } from './interfaces/rowDataTransaction';
-import type { RowNodeTransaction } from './interfaces/rowNodeTransaction';
-import type { ServerSideTransaction, ServerSideTransactionResult } from './interfaces/serverSideTransaction';
-import type { IContextMenuParams } from './misc/menuService';
-import type { ManagedGridOptionKey, ManagedGridOptions } from './propertyKeys';
-import type { ICellRenderer } from './rendering/cellRenderers/iCellRenderer';
+} from '../interfaces/IChartService';
+import type { CellRange, CellRangeParams } from '../interfaces/IRangeService';
+import type { ServerSideGroupLevelState } from '../interfaces/IServerSideStore';
+import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
+import type { CsvExportParams } from '../interfaces/exportParams';
+import type { GridState } from '../interfaces/gridState';
+import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
+import type { ICellEditor } from '../interfaces/iCellEditor';
+import type { ClientSideRowModelStep } from '../interfaces/iClientSideRowModel';
+import type { IClipboardCopyParams, IClipboardCopyRowsParams } from '../interfaces/iClipboardService';
+import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from '../interfaces/iColumn';
+import type { IColumnToolPanel } from '../interfaces/iColumnToolPanel';
+import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../interfaces/iExcelCreator';
+import type { FilterModel, IFilter } from '../interfaces/iFilter';
+import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
+import type { RefreshServerSideParams } from '../interfaces/iServerSideRowModel';
+import type { IServerSideGroupSelectionState, IServerSideSelectionState } from '../interfaces/iServerSideSelection';
+import type { SideBarDef } from '../interfaces/iSideBar';
+import type { IStatusPanel } from '../interfaces/iStatusPanel';
+import type { IToolPanel } from '../interfaces/iToolPanel';
+import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
+import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
+import type { ServerSideTransaction, ServerSideTransactionResult } from '../interfaces/serverSideTransaction';
+import type { IContextMenuParams } from '../misc/menuService';
+import type { ManagedGridOptionKey, ManagedGridOptions } from '../propertyKeys';
+import type { ICellRenderer } from '../rendering/cellRenderers/iCellRenderer';
 import type {
     FlashCellsParams,
     GetCellEditorInstancesParams,
     GetCellRendererInstancesParams,
     RedrawRowsParams,
     RefreshCellsParams,
-} from './rendering/rowRenderer';
-import type { LoadSuccessParams } from './rowNodeCache/iRowNodeBlock';
+} from '../rendering/rowRenderer';
+import type { LoadSuccessParams } from '../rowNodeCache/iRowNodeBlock';
 
 export interface DetailGridInfo {
     /**
@@ -81,12 +81,6 @@ export interface GetCellValueParams<TValue = any> {
     colKey: string | Column<TValue>;
     /** If `true` formatted value will be returned. */
     useFormatter?: boolean;
-}
-
-export function unwrapUserComp<T>(comp: T): T {
-    const compAsAny = comp as any;
-    const isProxy = compAsAny != null && compAsAny.getFrameworkComponentInstance != null;
-    return isProxy ? compAsAny.getFrameworkComponentInstance() : comp;
 }
 
 export interface GridApi<TData = any> {

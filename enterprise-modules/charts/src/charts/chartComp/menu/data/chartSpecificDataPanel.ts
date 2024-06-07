@@ -1,9 +1,8 @@
-import type { BeanCollection } from '@ag-grid-community/core';
+import type { BeanCollection, IChartService } from '@ag-grid-community/core';
 import { AgSelect, ChartMappings, Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import type { ChartService } from '../../../chartService';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { canSwitchDirection, getFullChartNameTranslationKey, getSeriesType } from '../../utils/seriesTypeMapper';
 import type { ChartMenuContext } from '../chartMenuContext';
@@ -16,11 +15,11 @@ export class ChartSpecificDataPanel extends Component {
         </div>`;
 
     private chartTranslationService: ChartTranslationService;
-    private chartService: ChartService;
+    private chartService: IChartService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
-        this.chartService = beans.chartService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
+        this.chartService = beans.chartService!;
     }
 
     private readonly chartSpecificGroup: AgGroupComponent = RefPlaceholder;

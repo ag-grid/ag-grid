@@ -20,7 +20,7 @@ export function _iterateObject<T>(
     }
 }
 
-export function _cloneObject<T extends {}>(object: T): T {
+export function _cloneObject<T extends object>(object: T): T {
     const copy = {} as T;
     const keys = Object.keys(object);
 
@@ -68,7 +68,7 @@ export function _deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | u
     return res;
 }
 
-export function _getAllValuesInObject<T extends Object, K extends keyof T, O extends T[K]>(obj: T): O[] {
+export function _getAllValuesInObject<T extends object, K extends keyof T, O extends T[K]>(obj: T): O[] {
     if (!obj) {
         return [];
     }
@@ -149,39 +149,6 @@ export function _getValueUsingField(data: any, field: string, fieldContainsDots:
     }
 
     return currentObject;
-}
-
-// used by GridAPI to remove all references, so keeping grid in memory resulting in a
-// memory leak if user is not disposing of the GridAPI references
-export function _removeAllReferences<T>(obj: any, preserveKeys: (keyof T)[] = [], preDestroyLink: string): void {
-    Object.keys(obj).forEach((key) => {
-        const value = obj[key];
-        // we want to replace all the @autowired services, which are objects. any simple types (boolean, string etc)
-        // we don't care about
-        if (typeof value === 'object' && !preserveKeys.includes(key as any)) {
-            obj[key] = undefined;
-        }
-    });
-    const proto = Object.getPrototypeOf(obj);
-    const properties: any = {};
-
-    const msgFunc = (key: string) =>
-        `AG Grid: Grid API function ${key}() cannot be called as the grid has been destroyed.
-    It is recommended to remove local references to the grid api. Alternatively, check gridApi.isDestroyed() to avoid calling methods against a destroyed grid.
-    To run logic when the grid is about to be destroyed use the gridPreDestroy event. See: ${preDestroyLink}`;
-
-    Object.getOwnPropertyNames(proto).forEach((key) => {
-        const value = proto[key];
-        // leave all basic types and preserveKeys this is needed for GridAPI to leave the "destroyed: boolean" attribute and isDestroyed() function.
-        if (typeof value === 'function' && !preserveKeys.includes(key as any)) {
-            const func = () => {
-                console.warn(msgFunc(key));
-            };
-            properties[key] = { value: func, writable: true };
-        }
-    });
-
-    Object.defineProperties(obj, properties);
 }
 
 export function _isNonNullObject(value: any): boolean {

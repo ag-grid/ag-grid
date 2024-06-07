@@ -64,7 +64,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         this.ctrlsService = beans.ctrlsService;
         this.visibleColsService = beans.visibleColsService;
         this.filterManager = beans.filterManager;
-        this.menuUtils = beans.menuUtils;
+        this.menuUtils = beans.menuUtils as MenuUtils;
         this.menuService = beans.menuService;
     }
 
@@ -335,9 +335,9 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
 
     public wireBeans(beans: BeanCollection): void {
         this.filterManager = beans.filterManager;
-        this.columnChooserFactory = beans.columnChooserFactory;
-        this.columnMenuFactory = beans.columnMenuFactory;
-        this.menuUtils = beans.menuUtils;
+        this.columnChooserFactory = beans.columnChooserFactory as ColumnChooserFactory;
+        this.columnMenuFactory = beans.columnMenuFactory as ColumnMenuFactory;
+        this.menuUtils = beans.menuUtils as MenuUtils;
     }
 
     public static TAB_FILTER = 'filterMenuTab' as const;
@@ -575,8 +575,8 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
     private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection) {
-        this.columnMenuFactory = beans.columnMenuFactory;
-        this.menuUtils = beans.menuUtils;
+        this.columnMenuFactory = beans.columnMenuFactory as ColumnMenuFactory;
+        this.menuUtils = beans.menuUtils as MenuUtils;
         this.focusService = beans.focusService;
     }
 

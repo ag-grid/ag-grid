@@ -14,7 +14,7 @@ export class AdvancedSettingsMenuFactory extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.focusService = beans.focusService;
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
 
     private activeMenu?: AdvancedSettingsMenu;

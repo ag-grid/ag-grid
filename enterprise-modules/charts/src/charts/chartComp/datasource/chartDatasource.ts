@@ -7,6 +7,7 @@ import type {
     IAggregationStage,
     IClientSideRowModel,
     IRowModel,
+    IRowNodeStage,
     PartialCellRange,
     PivotResultColsService,
     RowNode,
@@ -45,7 +46,7 @@ export class ChartDatasource extends BeanStub {
     private columnModel: ColumnModel;
     private rowNodeSorter: RowNodeSorter;
     private sortController: SortController;
-    private aggregationStage?: IAggregationStage;
+    private aggregationStage?: IRowNodeStage & IAggregationStage;
 
     public wireBeans(beans: BeanCollection): void {
         this.sortController = beans.sortController;
@@ -54,7 +55,7 @@ export class ChartDatasource extends BeanStub {
         this.valueService = beans.valueService;
         this.pivotResultColsService = beans.pivotResultColsService;
         this.rowNodeSorter = beans.rowNodeSorter;
-        this.aggregationStage = beans.aggregationStage;
+        this.aggregationStage = beans.aggregationStage as (IRowNodeStage & IAggregationStage) | undefined;
     }
 
     public getData(params: ChartDatasourceParams): IData {

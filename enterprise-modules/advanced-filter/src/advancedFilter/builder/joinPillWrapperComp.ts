@@ -14,7 +14,7 @@ export class JoinPillWrapperComp extends Component<AdvancedFilterBuilderEvents> 
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
     }
 
     private filterModel: JoinAdvancedFilterModel;
