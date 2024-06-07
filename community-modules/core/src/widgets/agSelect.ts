@@ -1,7 +1,7 @@
 import { KeyCode } from '../constants/keyCode';
 import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaControls } from '../utils/aria';
-import type { AgListEvent, ListOption } from './agList';
+import type { ListOption } from './agList';
 import { AgList } from './agList';
 import { AgPickerField } from './agPickerField';
 import type { AgComponentSelector } from './component';
@@ -14,16 +14,16 @@ export interface AgSelectParams<TValue = string>
     pickerAriaLabelValue?: string;
     placeholder?: string;
 }
-
+export type AgSelectEvent = 'selectedItem';
 export class AgSelect<TValue = string | null> extends AgPickerField<
     TValue,
     AgSelectParams<TValue> & AgPickerFieldParams,
-    'selectedItem' | AgListEvent,
-    AgList<TValue>
+    AgSelectEvent,
+    AgList<AgSelectEvent, TValue>
 > {
     static readonly selector: AgComponentSelector = 'AG-SELECT';
 
-    protected listComponent: AgList<TValue> | undefined;
+    protected listComponent: AgList<AgSelectEvent, TValue> | undefined;
 
     constructor(config?: AgSelectParams<TValue>) {
         super({
@@ -64,7 +64,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
     }
 
     private createListComponent(): void {
-        this.listComponent = this.createBean(new AgList<TValue>('select', true));
+        this.listComponent = this.createBean(new AgList<AgSelectEvent, TValue>('select', true));
         this.listComponent.setParentComponent(this);
 
         const eListAriaEl = this.listComponent.getAriaElement();

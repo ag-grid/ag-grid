@@ -4,8 +4,9 @@ import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaExpanded, _setAriaRole } from '../utils/aria';
 import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
+import type { AgAbstractFieldEvent } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
-import type { Component, ComponentEvent } from './component';
+import type { Component } from './component';
 import { RefPlaceholder } from './component';
 import type { AddPopupParams, PopupService } from './popupService';
 
@@ -18,12 +19,13 @@ const TEMPLATE = /* html */ `
         </div>
     </div>`;
 
+export type AgPickerFieldEvent = AgAbstractFieldEvent;
 export abstract class AgPickerField<
     TValue,
     TConfig extends AgPickerFieldParams = AgPickerFieldParams,
-    TEventType extends string = ComponentEvent,
-    TComponent extends Component<TEventType> = Component<TEventType>,
-> extends AgAbstractField<TValue, TConfig, TEventType> {
+    TEventType extends string = AgPickerFieldEvent,
+    TComponent extends Component<TEventType | AgPickerFieldEvent> = Component<TEventType | AgPickerFieldEvent>,
+> extends AgAbstractField<TValue, TConfig, TEventType | AgPickerFieldEvent> {
     protected popupService: PopupService;
 
     public wireBeans(beans: BeanCollection): void {

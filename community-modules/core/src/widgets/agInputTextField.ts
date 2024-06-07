@@ -1,18 +1,18 @@
 import type { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { _exists } from '../utils/generic';
 import { _isEventFromPrintableCharacter } from '../utils/keyboard';
-import type { AgAbstractLabelEvent } from './agAbstractField';
+import type { AgAbstractInputFieldEvent } from './agAbstractInputField';
 import { AgAbstractInputField } from './agAbstractInputField';
 import type { AgComponentSelector } from './component';
 
 export interface AgInputTextFieldParams extends AgInputFieldParams {
     allowedCharPattern?: string;
 }
-
+export type AgInputTextFieldEvent = AgAbstractInputFieldEvent;
 export class AgInputTextField<
     TConfig extends AgInputTextFieldParams = AgInputTextFieldParams,
-    TEventType extends string = AgAbstractLabelEvent,
-> extends AgAbstractInputField<HTMLInputElement, string, TConfig, TEventType> {
+    TEventType extends string = AgInputTextFieldEvent,
+> extends AgAbstractInputField<HTMLInputElement, string, TConfig, AgInputTextFieldEvent | TEventType> {
     static readonly selector: AgComponentSelector = 'AG-INPUT-TEXT-FIELD';
 
     constructor(config?: TConfig, className = 'ag-text-field', inputType = 'text') {

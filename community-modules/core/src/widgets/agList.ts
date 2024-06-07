@@ -11,7 +11,9 @@ export interface ListOption<TValue = string> {
 
 export type AgListEvent = 'fieldValueChanged' | 'selectedItem';
 
-export class AgList<TValue = string> extends Component<AgListEvent> {
+export class AgList<TEventType extends string = AgListEvent, TValue = string> extends Component<
+    TEventType | AgListEvent
+> {
     private readonly activeClass = 'ag-active-item';
 
     private options: ListOption<TValue>[] = [];

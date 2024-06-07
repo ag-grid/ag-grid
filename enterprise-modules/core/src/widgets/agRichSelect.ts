@@ -36,12 +36,12 @@ const TEMPLATE = /* html */ `
             <div data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
         </div>
     </div>`;
-
+export type AgRichSelectEvent = 'fieldPickerValueSelected';
 export class AgRichSelect<TValue = any> extends AgPickerField<
     TValue[] | TValue,
     RichSelectParams<TValue>,
-    string,
-    AgRichSelectList<TValue>
+    AgRichSelectEvent,
+    AgRichSelectList<TValue, AgRichSelectEvent>
 > {
     private userComponentFactory: UserComponentFactory;
 

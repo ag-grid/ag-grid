@@ -5,13 +5,13 @@ import { AgAbstractLabel } from './agAbstractLabel';
 import type { ComponentClass } from './component';
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-export type AgAbstractLabelEvent = 'fieldValueChanged';
+export type AgAbstractFieldEvent = 'fieldValueChanged';
 
 export abstract class AgAbstractField<
     TValue,
     TConfig extends AgFieldParams = AgFieldParams,
-    TEventType extends string = AgAbstractLabelEvent,
-> extends AgAbstractLabel<TConfig, TEventType | AgAbstractLabelEvent> {
+    TEventType extends string = AgAbstractFieldEvent,
+> extends AgAbstractLabel<TConfig, TEventType | AgAbstractFieldEvent> {
     protected previousValue: TValue | null | undefined;
     protected value: TValue | null | undefined;
 
@@ -64,7 +64,7 @@ export abstract class AgAbstractField<
     }
 
     public onValueChange(callbackFn: (newValue?: TValue | null) => void) {
-        this.addManagedListener(this, 'fieldValueChanged', () => callbackFn(this.getValue()));
+        this.addManagedListeners<AgAbstractFieldEvent>(this, { fieldValueChanged: () => callbackFn(this.getValue()) });
 
         return this;
     }

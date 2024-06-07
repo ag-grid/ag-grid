@@ -4,10 +4,11 @@ import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from '..
 import type { ComponentClass, ComponentEvent } from './component';
 import { Component } from './component';
 
+export type AgAbstractLabelEvent = ComponentEvent;
 export abstract class AgAbstractLabel<
     TConfig extends AgLabelParams = AgLabelParams,
-    TEventType extends string = ComponentEvent,
-> extends Component<TEventType | ComponentEvent> {
+    TEventType extends string = AgAbstractLabelEvent,
+> extends Component<TEventType | AgAbstractLabelEvent> {
     protected abstract eLabel: HTMLElement;
 
     protected readonly config: TConfig;

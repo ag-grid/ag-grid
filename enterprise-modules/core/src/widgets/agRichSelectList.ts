@@ -11,7 +11,10 @@ import { RichSelectRow } from './agRichSelectRow';
 import { VirtualList } from './virtualList';
 
 export type AgRichSelectListEvent = 'fieldPickerValueSelected';
-export class AgRichSelectList<TValue> extends VirtualList<Component<AgRichSelectListEvent>, AgRichSelectListEvent> {
+export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectListEvent> extends VirtualList<
+    Component<TEventType | AgRichSelectListEvent>,
+    TEventType | AgRichSelectListEvent
+> {
     private eLoading: HTMLElement | undefined;
     private lastRowHovered: number = -1;
     private currentList: TValue[] | undefined;

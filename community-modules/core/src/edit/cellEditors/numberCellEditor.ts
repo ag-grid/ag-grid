@@ -34,7 +34,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
 
         const inputEl = eInput.getInputElement();
         if (params.preventStepping) {
-            eInput.addManagedListener(inputEl, 'keydown', this.preventStepping);
+            eInput.addManagedElementListeners(inputEl, { keydown: this.preventStepping });
         } else if (params.showStepperButtons) {
             inputEl.classList.add('ag-number-field-input-stepper');
         }
