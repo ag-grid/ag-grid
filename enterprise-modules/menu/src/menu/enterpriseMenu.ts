@@ -220,7 +220,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             }
         }
 
-        menu.addEventListener('and', (event: any) => {
+        menu.addEventListener('tabSelected', (event: any) => {
             this.dispatchVisibleChangedEvent(false, true, column);
             this.lastSelectedTab = event.key;
             this.dispatchVisibleChangedEvent(true, true, column);
