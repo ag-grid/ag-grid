@@ -1,4 +1,3 @@
-import { LicenseManager } from '@ag-grid-enterprise/core';
 import type { Framework, ImportType } from '@ag-grid-types';
 import Warning from '@ag-website-shared/components/alert/Warning';
 import { Snippet } from '@components/snippet/Snippet';
@@ -6,11 +5,11 @@ import { InfoTooltip } from '@components/theme-builder/components/general/Toolti
 import { CHARTS_SITE_URL, FRAMEWORK_DISPLAY_TEXT } from '@constants';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
-import { type FunctionComponent, useEffect } from 'react';
+import { type FunctionComponent } from 'react';
 
 import { getBootstrapSnippet, getDependenciesSnippet } from '../utils/getSnippets';
 import { hasValue } from '../utils/hasValue';
-import { useFormData } from '../utils/useFormData';
+import { useLicenseData } from '../utils/useLicenseData';
 import styles from './LicenseSetup.module.scss';
 
 interface SeedRepo {
@@ -34,14 +33,19 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
         setUserLicense,
         importType,
         setImportType,
-        licensedProducts,
-        setLicensedProducts,
+        userLicensedProducts,
+        setUserLicensedProducts,
         useStandaloneCharts,
         setUseStandaloneCharts,
-    } = useFormData();
+
+        userLicenseVersion,
+        userLicenseIsTrial,
+        userLicenseExpiry,
+        userLicenseHasError,
+    } = useLicenseData();
     const dependenciesSnippet = getDependenciesSnippet({
         framework,
-        licensedProducts,
+        licensedProducts: userLicensedProducts,
         importType,
         useStandaloneCharts,
     });
@@ -50,32 +54,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
         importType,
         license: license || 'your license key',
     });
-    const licenseDetails = LicenseManager.getLicenseDetails(license);
-    const {
-        valid,
-        suppliedLicenseType,
-        version: licenseVersion,
-        isTrial,
-        expiry,
-        incorrectLicenseType,
-    } = licenseDetails;
-
-    const licenseIsValid = valid || (suppliedLicenseType === 'CHARTS' && incorrectLicenseType);
-    const licenseHasError = hasValue(hasLicense) && hasValue(license) && !licenseIsValid;
     const selectedSeedRepos = seedRepos.filter((seedRepo) => {
         return seedRepo.framework === framework && seedRepo.importType === importType;
     });
-
-    useEffect(() => {
-        const licensedForGrid =
-            suppliedLicenseType === undefined ? true : suppliedLicenseType === 'GRID' || suppliedLicenseType === 'BOTH';
-        const licensedForCharts = suppliedLicenseType === 'CHARTS' || suppliedLicenseType === 'BOTH';
-
-        setLicensedProducts({
-            grid: licensedForGrid,
-            charts: licensedForCharts,
-        });
-    }, [suppliedLicenseType]);
 
     return (
         <form>
@@ -106,7 +87,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
             {hasLicense && (
                 <textarea
                     className={classnames(styles.license, {
-                        [styles.error]: licenseHasError,
+                        [styles.error]: userLicenseHasError,
                     })}
                     placeholder="Paste your license here..."
                     value={userLicense}
@@ -115,7 +96,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                     }}
                 ></textarea>
             )}
-            {licenseHasError && <p className={styles.invalidLicense}>License is invalid</p>}
+            {userLicenseHasError && <p className={styles.invalidLicense}>License is invalid</p>}
             <div className={styles.licenseData}>
                 <div>
                     <label>Framework</label>
@@ -133,15 +114,15 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                     <>
                         <div>
                             <label>License version</label>
-                            <div>{licenseVersion ? `v${licenseVersion}` : '-'}</div>
+                            <div>{userLicenseVersion ? `v${userLicenseVersion}` : '-'}</div>
                         </div>
                         <div>
                             <label>Trial?</label>
-                            <div>{isTrial ? 'yes' : 'no'}</div>
+                            <div>{userLicenseIsTrial ? 'yes' : 'no'}</div>
                         </div>
                         <div>
                             <label>Expiry</label>
-                            <div>{expiry ? expiry : '-'}</div>
+                            <div>{userLicenseExpiry ? userLicenseExpiry : '-'}</div>
                         </div>
                     </>
                 )}
@@ -154,9 +135,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                                     type="checkbox"
                                     name="licensedProducts"
                                     value="grid"
-                                    checked={licensedProducts.grid}
+                                    checked={userLicensedProducts.grid}
                                     onChange={() => {
-                                        setLicensedProducts((prevLicensedProducts) => {
+                                        setUserLicensedProducts((prevLicensedProducts) => {
                                             return {
                                                 ...prevLicensedProducts,
                                                 grid: !prevLicensedProducts.grid,
@@ -171,9 +152,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                                     type="checkbox"
                                     name="licensedProducts"
                                     value="charts"
-                                    checked={licensedProducts.charts}
+                                    checked={userLicensedProducts.charts}
                                     onChange={() => {
-                                        setLicensedProducts((prevLicensedProducts) => {
+                                        setUserLicensedProducts((prevLicensedProducts) => {
                                             return {
                                                 ...prevLicensedProducts,
                                                 charts: !prevLicensedProducts.charts,
@@ -184,7 +165,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                                 Charts Enterprise
                             </label>
                         </div>
-                        {!licensedProducts.grid && licensedProducts.charts && (
+                        {!userLicensedProducts.grid && userLicensedProducts.charts && (
                             <Warning>
                                 You must have a "Grid Enterprise" license to use "Charts Enterprise" within AG Grid
                             </Warning>
@@ -243,7 +224,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                 {dependenciesSnippet && <Snippet framework={framework} content={dependenciesSnippet} />}
 
                 <h3>Set Up License Example</h3>
-                {licensedProducts.grid && (
+                {userLicensedProducts.grid && (
                     <>
                         <p>An example of how to set up your license:</p>
                         {bootstrapSnippet && <Snippet framework={framework} content={bootstrapSnippet} />}
@@ -264,7 +245,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                         ) : undefined}
                     </>
                 )}
-                {!licensedProducts.grid && (
+                {!userLicensedProducts.grid && (
                     <Warning>A license is only required if you use the "Grid Enterprise" product</Warning>
                 )}
             </div>
