@@ -7,10 +7,10 @@ import {
     IRichCellEditorParams,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, RichSelectModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RichSelectModule]);
 
 const languages = ['English', 'Spanish', 'French', 'Portuguese', '(other)'];
 

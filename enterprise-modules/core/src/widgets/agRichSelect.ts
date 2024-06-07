@@ -120,11 +120,15 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         this.listComponent.setParentComponent(this);
 
-        this.addManagedListeners(this.listComponent, {
-            fieldPickerValueSelected: (e: FieldPickerValueSelectedEvent) => {
-                this.onListValueSelected(e.value, e.fromEnterKey);
-            },
-        });
+        if (!this.config.multiSelect) {
+            this.addManagedListener(
+                this.listComponent,
+                AgRichSelectList.EVENT_LIST_ROW_SELECTED,
+                (e: FieldPickerValueSelectedEvent) => {
+                    this.onListValueSelected(e.value, e.fromEnterKey);
+                }
+            );
+        }
     }
 
     private renderSelectedValue(): void {

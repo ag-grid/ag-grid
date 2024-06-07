@@ -15,6 +15,8 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     Component<TEventType | AgRichSelectListEvent>,
     TEventType | AgRichSelectListEvent
 > {
+    public static EVENT_LIST_ROW_SELECTED = 'richSelectListRowSelected';
+
     private eLoading: HTMLElement | undefined;
     private lastRowHovered: number = -1;
     private currentList: TValue[] | undefined;
@@ -304,13 +306,14 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
             this.toggleListItemSelection(item);
         } else {
             this.selectListItems([item]);
-            this.dispatchValueSelected();
         }
+
+        this.dispatchValueSelected();
     }
 
     private dispatchValueSelected(): void {
         const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
-            type: 'fieldPickerValueSelected',
+            type: AgRichSelectList.EVENT_LIST_ROW_SELECTED,
             fromEnterKey: false,
             value: this.selectedItems,
         };

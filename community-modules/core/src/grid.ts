@@ -40,6 +40,7 @@ import { NavigationService } from './gridBodyComp/navigationService';
 import { PinnedWidthService } from './gridBodyComp/pinnedWidthService';
 import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridComp } from './gridComp/gridComp';
+import { CommunityFeaturesModule } from './gridCoreModule';
 import { GridOptionsService } from './gridOptionsService';
 import { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 import { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
@@ -313,6 +314,8 @@ export class GridCoreCreator {
                 mod.dependantModules.forEach((m) => addModule(moduleBased, m, gridId));
             }
         };
+
+        addModule(!ModuleRegistry.__isPackageBased(), CommunityFeaturesModule, undefined);
 
         if (passedViaConstructor) {
             passedViaConstructor.forEach((m) => addModule(true, m, gridId));

@@ -9,7 +9,7 @@ import {
     SortModelItem,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -17,13 +17,7 @@ import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 
 import { countries } from './countries';
 
-ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
-    ColumnsToolPanelModule,
-    InfiniteRowModelModule,
-    MenuModule,
-    SetFilterModule,
-]);
+ModuleRegistry.registerModules([ColumnsToolPanelModule, InfiniteRowModelModule, MenuModule, SetFilterModule]);
 
 const filterParams = { values: countries() };
 const columnDefs: ColDef[] = [
