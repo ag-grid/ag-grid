@@ -226,6 +226,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         }
 
         this.refreshSelectedItems();
+        this.dispatchValueSelected();
     }
 
     private refreshSelectedItems(): void {
@@ -291,22 +292,22 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         }
     }
 
-    private onClick(): void {
+    private onClick(e: MouseEvent): void {
         const { multiSelect } = this.params;
 
         if (!this.currentList) {
             return;
         }
 
-        const item = this.currentList[this.lastRowHovered];
+        const row = this.getRowForMouseEvent(e);
+        const item = this.currentList[row];
 
         if (multiSelect) {
             this.toggleListItemSelection(item);
         } else {
             this.selectListItems([item]);
+            this.dispatchValueSelected();
         }
-
-        this.dispatchValueSelected();
     }
 
     private dispatchValueSelected(): void {
