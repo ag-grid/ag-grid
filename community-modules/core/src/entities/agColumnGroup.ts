@@ -38,7 +38,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     private left: number | null;
     private oldLeft: number | null;
 
-    private parent: AgColumnGroup<TValue> | null = null;
+    private parent: AgColumnGroup | null = null;
 
     constructor(providedColumnGroup: AgProvidedColumnGroup, groupId: string, partId: number, pinned: ColumnPinnedType) {
         super();
@@ -56,7 +56,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
         this.displayedChildren = null;
     }
 
-    public getParent(): AgColumnGroup<TValue> | null {
+    public getParent(): AgColumnGroup | null {
         return this.parent;
     }
 
