@@ -1,10 +1,11 @@
 import type { ImportType } from '@ag-grid-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import type { LicensedProducts } from '../types';
 
 export const useFormData = () => {
     const [hasLicense, setHasLicense] = useState<boolean>(false);
+    const [userLicense, setUserLicense] = useState<string>('');
     const [license, setLicense] = useState<string>('');
     const [importType, setImportType] = useState<ImportType>('packages');
     const [licensedProducts, setLicensedProducts] = useState<LicensedProducts>({
@@ -13,11 +14,20 @@ export const useFormData = () => {
     });
     const [useStandaloneCharts, setUseStandaloneCharts] = useState<boolean>(false);
 
+    useEffect(() => {
+        if (hasLicense) {
+            setLicense(userLicense);
+        } else {
+            setLicense('');
+        }
+    }, [hasLicense, userLicense]);
+
     return {
         hasLicense,
         setHasLicense,
         license,
-        setLicense,
+        userLicense,
+        setUserLicense,
         importType,
         setImportType,
         licensedProducts,

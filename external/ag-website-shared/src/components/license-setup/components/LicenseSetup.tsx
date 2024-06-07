@@ -30,7 +30,8 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
         hasLicense,
         setHasLicense,
         license,
-        setLicense,
+        userLicense,
+        setUserLicense,
         importType,
         setImportType,
         licensedProducts,
@@ -108,9 +109,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                         [styles.error]: licenseHasError,
                     })}
                     placeholder="Paste your license here..."
-                    value={license}
+                    value={userLicense}
                     onChange={(e) => {
-                        setLicense(e.target.value);
+                        setUserLicense(e.target.value);
                     }}
                 ></textarea>
             )}
