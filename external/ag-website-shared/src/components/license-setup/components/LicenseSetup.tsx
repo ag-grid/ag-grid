@@ -41,7 +41,8 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
         userLicenseVersion,
         userLicenseIsTrial,
         userLicenseExpiry,
-        userLicenseHasError,
+
+        errors,
     } = useLicenseData();
     const dependenciesSnippet = getDependenciesSnippet({
         framework,
@@ -87,7 +88,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
             {hasLicense && (
                 <textarea
                     className={classnames(styles.license, {
-                        [styles.error]: userLicenseHasError,
+                        [styles.error]: errors.userLicenseError,
                     })}
                     placeholder="Paste your license here..."
                     value={userLicense}
@@ -96,7 +97,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                     }}
                 ></textarea>
             )}
-            {userLicenseHasError && <p className={styles.invalidLicense}>License is invalid</p>}
+            {errors.userLicenseError && <Warning>{errors.userLicenseError}</Warning>}
             <div className={styles.licenseData}>
                 <div>
                     <label>Framework</label>
@@ -165,11 +166,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                                 Charts Enterprise
                             </label>
                         </div>
-                        {!userLicensedProducts.grid && userLicensedProducts.charts && (
-                            <Warning>
-                                You must have a "Grid Enterprise" license to use "Charts Enterprise" within AG Grid
-                            </Warning>
-                        )}
+                        {errors.chartsNoGridEnterprise && <Warning>{errors.chartsNoGridEnterprise}</Warning>}
                     </div>
                 </div>
                 <div>
@@ -245,9 +242,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                         ) : undefined}
                     </>
                 )}
-                {!userLicensedProducts.grid && (
-                    <Warning>A license is only required if you use the "Grid Enterprise" product</Warning>
-                )}
+                {errors.noLicenseExample && <Warning>{errors.noLicenseExample}</Warning>}
             </div>
         </form>
     );
