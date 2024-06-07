@@ -144,6 +144,6 @@ export const INTERNAL_EVENTS = [
 
 export const ALL_EVENTS = [...PUBLIC_EVENTS, ...INTERNAL_EVENTS] as const;
 
-export type PublicEvents = (typeof PUBLIC_EVENTS)[number];
-export type InternalEvents = (typeof INTERNAL_EVENTS)[number];
-export type EventsType = PublicEvents | InternalEvents;
+export type AgPublicEventType = (typeof PUBLIC_EVENTS)[number];
+export type AgInternalEventType = (typeof INTERNAL_EVENTS)[number];
+export type AgEventType = AgPublicEventType | AgInternalEventType;

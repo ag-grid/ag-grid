@@ -22,7 +22,7 @@ import type { CellPosition } from './entities/cellPositionUtils';
 import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from './entities/colDef';
 import type { ChartRef, GridOptions } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
-import type { PublicEvents } from './eventKeys';
+import type { AgPublicEventType } from './eventTypes';
 import type {
     AgEvent,
     AgEventListener,
@@ -115,7 +115,7 @@ import { _escapeString } from './utils/string';
 import type { ValueCache } from './valueService/valueCache';
 import type { ValueService } from './valueService/valueService';
 
-export class GridApiService<TData = any> extends BeanStub<PublicEvents> implements GridApi, NamedBean {
+export class GridApiService<TData = any> extends BeanStub<AgPublicEventType> implements GridApi, NamedBean {
     beanName = 'gridApi' as const;
 
     private context: Context;
@@ -912,7 +912,7 @@ export class GridApiService<TData = any> extends BeanStub<PublicEvents> implemen
         return value;
     }
 
-    public override addEventListener(eventType: PublicEvents, listener: (...args: any[]) => any): void {
+    public override addEventListener(eventType: AgPublicEventType, listener: (...args: any[]) => any): void {
         this.apiEventService.addEventListener(eventType, listener as AgEventListener);
     }
 
@@ -920,7 +920,7 @@ export class GridApiService<TData = any> extends BeanStub<PublicEvents> implemen
         this.apiEventService.addGlobalListener(listener as AgGlobalEventListener);
     }
 
-    public override removeEventListener(eventType: PublicEvents, listener: (...args: any[]) => any): void {
+    public override removeEventListener(eventType: AgPublicEventType, listener: (...args: any[]) => any): void {
         this.apiEventService.removeEventListener(eventType, listener as AgEventListener);
     }
 
@@ -928,7 +928,7 @@ export class GridApiService<TData = any> extends BeanStub<PublicEvents> implemen
         this.apiEventService.removeGlobalListener(listener as AgGlobalEventListener);
     }
 
-    public dispatchEvent(event: AgEvent<PublicEvents>): void {
+    public dispatchEvent(event: AgEvent<AgPublicEventType>): void {
         this.eventService.dispatchEvent(event);
     }
 

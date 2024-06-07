@@ -1,5 +1,5 @@
 import type { BeanCollection } from '../context/context';
-import type { EventsType } from '../eventKeys';
+import type { AgEventType } from '../eventTypes';
 import type {
     AgEventListener,
     CellEditRequestEvent,
@@ -700,7 +700,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.beans.rowRenderer.refreshCells({ rowNodes: [this] });
     }
 
-    private createGlobalRowEvent<T extends EventsType>(type: T): RowEvent<T, TData> {
+    private createGlobalRowEvent<T extends AgEventType>(type: T): RowEvent<T, TData> {
         return this.beans.gos.addGridCommonParams({
             type: type,
             node: this,

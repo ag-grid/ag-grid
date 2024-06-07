@@ -1,6 +1,6 @@
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
-import type { EventsType } from './eventKeys';
+import type { AgEventType } from './eventTypes';
 import type { FilterRequestSource } from './filter/iColumnFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
@@ -24,7 +24,7 @@ export interface AgGridEvent<TData = any, TContext = any, TEventType extends str
     extends AgGridCommon<TData, TContext>,
         AgEvent<TEventType> {}
 
-export interface AgGlobalEvent<T extends EventsType, TData = any, TContext = any>
+export interface AgGlobalEvent<T extends AgEventType, TData = any, TContext = any>
     extends AgGridEvent<TData, TContext, T> {}
 
 export type AgEventListener<TData = any, TContext = any, TEventType extends string = string> = (
@@ -240,7 +240,7 @@ export interface ColumnPanelItemDragStartEvent<TData = any, TContext = any>
 export interface ColumnPanelItemDragEndEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'columnPanelItemDragEnd', TData, TContext> {}
 
-export interface AgDragEvent<T extends EventsType, TData = any, TContext = any>
+export interface AgDragEvent<T extends AgEventType, TData = any, TContext = any>
     extends AgGlobalEvent<T, TData, TContext> {
     /** The DOM element that started the event. */
     target: Element;
@@ -277,7 +277,7 @@ export interface PivotMaxColumnsExceededEvent<TData = any, TContext = any>
     message: string;
 }
 
-export interface RowDragEvent<T extends EventsType, TData = any, TContext = any>
+export interface RowDragEvent<T extends AgEventType, TData = any, TContext = any>
     extends AgGlobalEvent<T, TData, TContext> {
     /** The row node getting dragged. Also the node that started the drag when multi-row dragging. */
     node: IRowNode<TData>;
@@ -431,7 +431,7 @@ export interface ColumnGroupOpenedEvent<TData = any, TContext = any>
 
 export type ScrollDirection = 'horizontal' | 'vertical';
 
-interface BaseBodyScrollEvent<T extends EventsType, TData = any, TContext = any>
+interface BaseBodyScrollEvent<T extends AgEventType, TData = any, TContext = any>
     extends AgGlobalEvent<T, TData, TContext> {
     direction: ScrollDirection;
     left: number;
@@ -535,7 +535,7 @@ export type ColumnEventType =
     | 'cellDataTypeInferred'
     | 'viewportSizeFeature';
 
-export interface ColumnEvent<T extends EventsType = any, TData = any, TContext = any>
+export interface ColumnEvent<T extends AgEventType = any, TData = any, TContext = any>
     extends AgGlobalEvent<T, TData, TContext> {
     /** The impacted column, only set if action was on one column */
     column: Column | null;
@@ -665,7 +665,7 @@ export interface ColumnMenuVisibleChangedEvent<TData = any, TContext = any>
 /**------------*/
 /** ROW EVENTS */
 /**------------*/
-interface BaseRowEvent<T extends EventsType, TData, TContext> extends AgGlobalEvent<T, TData, TContext> {
+interface BaseRowEvent<T extends AgEventType, TData, TContext> extends AgGlobalEvent<T, TData, TContext> {
     /** The row node. */
     node: IRowNode<TData>;
     /** The visible row index for the row */
@@ -678,13 +678,14 @@ interface BaseRowEvent<T extends EventsType, TData, TContext> extends AgGlobalEv
     eventPath?: EventTarget[];
 }
 
-export interface RowEvent<T extends EventsType, TData = any, TContext = any> extends BaseRowEvent<T, TData, TContext> {
+export interface RowEvent<T extends AgEventType, TData = any, TContext = any> extends BaseRowEvent<T, TData, TContext> {
     /** The user provided data for the row. Data is `undefined` for row groups. */
     data: TData | undefined;
 }
 
 /** Base interface for row events that always have data set. */
-interface RowWithDataEvent<T extends EventsType, TData = any, TContext = any> extends BaseRowEvent<T, TData, TContext> {
+interface RowWithDataEvent<T extends AgEventType, TData = any, TContext = any>
+    extends BaseRowEvent<T, TData, TContext> {
     /** The user provided data for the row. */
     data: TData;
 }
@@ -722,7 +723,7 @@ export interface FullWidthCellKeyDownEvent<TData = any, TContext = any>
 
 /** CELL EVENTS */
 /**------------*/
-export interface CellEvent<T extends EventsType, TData = any, TValue = any> extends RowEvent<T, TData> {
+export interface CellEvent<T extends AgEventType, TData = any, TValue = any> extends RowEvent<T, TData> {
     column: Column<TValue>;
     colDef: ColDef<TData, TValue>;
     /** The value for the cell if available otherwise undefined. */
@@ -730,7 +731,7 @@ export interface CellEvent<T extends EventsType, TData = any, TValue = any> exte
 }
 
 /** Use for cell events that will always have a data property. */
-interface CellWithDataEvent<T extends EventsType, TData = any, TValue = any> extends RowWithDataEvent<T, TData> {
+interface CellWithDataEvent<T extends AgEventType, TData = any, TValue = any> extends RowWithDataEvent<T, TData> {
     column: Column<TValue>;
     colDef: ColDef<TData, TValue>;
     /** The value for the cell */
@@ -845,7 +846,7 @@ export interface AdvancedFilterEnabledChangedEvent<TData = any, TContext = any>
 export interface DataTypesInferredEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'dataTypesInferred', TData, TContext> {}
 
-export interface FieldValueEvent<T extends EventsType = 'fieldValueChanged', TData = any, TContext = any>
+export interface FieldValueEvent<T extends AgEventType = 'fieldValueChanged', TData = any, TContext = any>
     extends AgGlobalEvent<T, TData, TContext> {
     value: any;
 }

@@ -5,7 +5,6 @@ import type {
     ColumnModel,
     ColumnNameService,
     ColumnVO,
-    EventsType,
     FilterManager,
     FilterModel,
     FuncColsService,

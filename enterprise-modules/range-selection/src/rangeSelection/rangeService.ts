@@ -10,7 +10,6 @@ import type {
     ColumnModel,
     CtrlsService,
     DragService,
-    EventsType,
     IRangeService,
     IRowModel,
     NamedBean,

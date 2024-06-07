@@ -4,7 +4,7 @@ import type { DragItem, DragSource } from '../../dragAndDrop/dragAndDropService'
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
-import type { EventsType } from '../../eventKeys';
+import type { AgEventType } from '../../eventTypes';
 import { _isFunction, _warnOnce } from '../../utils/function';
 import { _createIconNoSpan } from '../../utils/icon';
 import { Component } from '../../widgets/component';
@@ -234,7 +234,7 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
     public postConstruct(): void {
         const listener = this.workOutVisibility.bind(this);
         // we do not show the component if sort, filter or grouping is active
-        this.addManagedListeners<EventsType>(this.beans.eventService, {
+        this.addManagedListeners<AgEventType>(this.beans.eventService, {
             sortChanged: listener,
             filterChanged: listener,
             columnRowGroupChanged: listener,

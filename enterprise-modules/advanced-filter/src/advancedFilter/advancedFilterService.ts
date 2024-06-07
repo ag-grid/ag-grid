@@ -4,7 +4,6 @@ import type {
     BeanCollection,
     ColumnModel,
     DataTypeService,
-    EventsType,
     IAdvancedFilterService,
     IRowModel,
     IRowNode,

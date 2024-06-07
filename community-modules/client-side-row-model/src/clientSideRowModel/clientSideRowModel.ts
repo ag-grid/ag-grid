@@ -5,7 +5,6 @@ import type {
     ColumnModel,
     CssVariablesChanged,
     Environment,
-    EventsType,
     ExpandOrCollapseAllEvent,
     FilterChangedEvent,
     FuncColsService,

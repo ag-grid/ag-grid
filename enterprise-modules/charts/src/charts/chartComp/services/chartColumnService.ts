@@ -3,7 +3,6 @@ import type {
     BeanCollection,
     ColumnModel,
     ColumnNameService,
-    EventsType,
     FuncColsService,
     IShowRowGroupColsService,
     NamedBean,

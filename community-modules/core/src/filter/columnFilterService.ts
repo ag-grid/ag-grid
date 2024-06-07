@@ -4,10 +4,9 @@ import { FilterComponent } from '../components/framework/componentTypes';
 import type { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
-import { AgColumn } from '../entities/agColumn';
+import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import type { EventsType } from '../eventKeys';
 import type {
     ColumnEventType,
     FilterChangedEventSourceType,

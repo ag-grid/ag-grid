@@ -1,8 +1,6 @@
 import type { VisibleColsService } from '../columns/visibleColsService';
-import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { EventsType } from '../eventKeys';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 export class CenterWidthFeature extends BeanStub {

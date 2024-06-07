@@ -6,7 +6,7 @@ import type { CellPosition } from '../../entities/cellPositionUtils';
 import type { CellStyle } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
-import { EventsType } from '../../eventKeys';
+import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent, FlashCellsEvent } from '../../events';
 import { CssClassApplier } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
@@ -753,7 +753,7 @@ export class CellCtrl extends BeanStub {
         this.addDestroyFunc(() => this.beans.gos.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
     }
 
-    public createEvent<T extends EventsType>(domEvent: Event | null, eventType: T): CellEvent<T> {
+    public createEvent<T extends AgEventType>(domEvent: Event | null, eventType: T): CellEvent<T> {
         const event: CellEvent<T> = this.beans.gos.addGridCommonParams({
             type: eventType,
             node: this.rowNode,

@@ -1,7 +1,7 @@
 import type {
     AgColumn,
     AgEventListener,
-    EventsType,
+    AgEventType,
     FuncColsService,
     GridOptionsService,
     IClientSideRowModel,
@@ -52,7 +52,7 @@ export interface SetValueModelParams<V> {
     usingComplexObjects?: boolean;
     treeDataTreeList?: boolean;
     groupingTreeList?: boolean;
-    addManagedEventListeners: (handlers: Partial<Record<EventsType, (event?: any) => void>>) => (() => null)[];
+    addManagedEventListeners: (handlers: Partial<Record<AgEventType, (event?: any) => void>>) => (() => null)[];
 }
 
 export type SetValueModelEvent = 'availableValuesChanged';

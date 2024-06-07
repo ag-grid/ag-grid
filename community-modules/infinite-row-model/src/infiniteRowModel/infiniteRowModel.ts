@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    EventsType,
     FilterManager,
     IDatasource,
     IInfiniteRowModel,

@@ -4,7 +4,6 @@ import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { GridOptions } from '../../entities/gridOptions';
-import type { EventsType } from '../../eventKeys';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { IRowModel } from '../../interfaces/iRowModel';
 import type { ILoadingOverlayParams } from './loadingOverlayComponent';

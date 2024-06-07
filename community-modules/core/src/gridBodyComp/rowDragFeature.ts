@@ -7,7 +7,7 @@ import type { CtrlsService } from '../ctrlsService';
 import type { DraggingEvent, DropTarget } from '../dragAndDrop/dragAndDropService';
 import { DragAndDropService, DragSourceType } from '../dragAndDrop/dragAndDropService';
 import type { RowNode } from '../entities/rowNode';
-import type { EventsType } from '../eventKeys';
+import type { AgEventType } from '../eventTypes';
 import type { RowDragEndEvent, RowDragEnterEvent, RowDragEvent, RowDragLeaveEvent, RowDragMoveEvent } from '../events';
 import type { FilterManager } from '../filter/filterManager';
 import type { FocusService } from '../focusService';
@@ -376,7 +376,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         } as RowDropZoneParams;
     }
 
-    private draggingToRowDragEvent<T extends EventsType>(type: T, draggingEvent: DraggingEvent): RowDragEvent<T> {
+    private draggingToRowDragEvent<T extends AgEventType>(type: T, draggingEvent: DraggingEvent): RowDragEvent<T> {
         const yNormalised = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
         const mouseIsPastLastRow = yNormalised > this.rowBoundsService.getCurrentPageHeight();
 
@@ -416,7 +416,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return event;
     }
 
-    private dispatchGridEvent<T extends EventsType>(type: T, draggingEvent: DraggingEvent): void {
+    private dispatchGridEvent<T extends AgEventType>(type: T, draggingEvent: DraggingEvent): void {
         const event = this.draggingToRowDragEvent(type, draggingEvent);
 
         this.eventService.dispatchEvent(event);

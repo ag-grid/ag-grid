@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { EventsType } from '../eventKeys';
+import type { AgEventType } from '../eventTypes';
 import type {
     ColumnEvent,
     ColumnEventType,
@@ -197,7 +197,7 @@ export class ColumnEventDispatcher extends BeanStub implements NamedBean {
         return firstValue;
     }
 
-    public columnChanged<T extends EventsType>(type: T, columns: AgColumn[], source: ColumnEventType): void {
+    public columnChanged<T extends AgEventType>(type: T, columns: AgColumn[], source: ColumnEventType): void {
         const event: WithoutGridCommon<ColumnEvent<T>> = {
             type: type,
             columns: columns,

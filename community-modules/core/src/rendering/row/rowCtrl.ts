@@ -6,7 +6,7 @@ import type { CellPosition } from '../../entities/cellPositionUtils';
 import type { RowClassParams, RowStyle } from '../../entities/gridOptions';
 import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
-import type { EventsType } from '../../eventKeys';
+import type { AgEventType } from '../../eventTypes';
 import type {
     AgEventListener,
     CellFocusedEvent,
@@ -999,7 +999,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
-    public createRowEvent<T extends EventsType>(type: T, domEvent?: Event): RowEvent<T> {
+    public createRowEvent<T extends AgEventType>(type: T, domEvent?: Event): RowEvent<T> {
         return this.gos.addGridCommonParams({
             type: type,
             node: this.rowNode,
@@ -1010,7 +1010,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         });
     }
 
-    private createRowEventWithSource<T extends EventsType>(type: T, domEvent: Event): RowEvent<T> {
+    private createRowEventWithSource<T extends AgEventType>(type: T, domEvent: Event): RowEvent<T> {
         const event = this.createRowEvent(type, domEvent);
         // when first developing this, we included the rowComp in the event.
         // this seems very weird. so when introducing the event types, i left the 'source'

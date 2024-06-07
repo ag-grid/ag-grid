@@ -1,6 +1,6 @@
 import type {
     AgColumn,
-    EventsType,
+    AgEventType,
     FuncColsService,
     GetDataPath,
     IClientSideRowModel,
@@ -24,7 +24,7 @@ export class ClientSideValuesExtractor<V> {
         private readonly getDataPath: GetDataPath | undefined,
         private readonly groupAllowUnbalanced: boolean,
         private readonly addManagedEventListeners: (
-            handlers: Partial<Record<EventsType, (event?: any) => void>>
+            handlers: Partial<Record<AgEventType, (event?: any) => void>>
         ) => (() => null)[]
     ) {}
 

@@ -1,12 +1,12 @@
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
-import type { EventsType } from './eventKeys';
+import type { AgEventType } from './eventTypes';
 import type { AgEvent, AgEventListener, AgGlobalEventListener } from './events';
 import { LocalEventService } from './localEventService';
 import type { IEventEmitter } from './main';
 
-export class EventService extends BeanStub<EventsType> implements NamedBean, IEventEmitter<EventsType> {
+export class EventService extends BeanStub<AgEventType> implements NamedBean, IEventEmitter<AgEventType> {
     beanName = 'eventService' as const;
 
     private globalEventListener?: AgGlobalEventListener;
@@ -17,7 +17,7 @@ export class EventService extends BeanStub<EventsType> implements NamedBean, IEv
         this.globalSyncEventListener = beans.globalSyncEventListener;
     }
 
-    private readonly globalEventService: LocalEventService<EventsType> = new LocalEventService();
+    private readonly globalEventService: LocalEventService<AgEventType> = new LocalEventService();
 
     public postConstruct(): void {
         if (this.globalEventListener) {
@@ -30,7 +30,7 @@ export class EventService extends BeanStub<EventsType> implements NamedBean, IEv
         }
     }
 
-    public override addEventListener<T extends EventsType>(
+    public override addEventListener<T extends AgEventType>(
         eventType: T,
         listener: AgEventListener<any, any, T>,
         async?: boolean
@@ -38,7 +38,7 @@ export class EventService extends BeanStub<EventsType> implements NamedBean, IEv
         this.globalEventService.addEventListener(eventType, listener, async);
     }
 
-    public override removeEventListener<T extends EventsType>(
+    public override removeEventListener<T extends AgEventType>(
         eventType: T,
         listener: AgEventListener<any, any, T>,
         async?: boolean
@@ -59,11 +59,11 @@ export class EventService extends BeanStub<EventsType> implements NamedBean, IEv
         throw new Error('Do not fire local events off Event Service!');
     }
 
-    public dispatchEvent(event: AgEvent<EventsType>): void {
+    public dispatchEvent(event: AgEvent<AgEventType>): void {
         this.globalEventService.dispatchEvent(this.gos.addGridCommonParams<any>(event));
     }
 
-    public dispatchEventOnce(event: AgEvent<EventsType>): void {
+    public dispatchEventOnce(event: AgEvent<AgEventType>): void {
         this.globalEventService.dispatchEventOnce(event);
     }
 }

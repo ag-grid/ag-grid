@@ -1,6 +1,6 @@
 import type { GridOptions } from '../entities/gridOptions';
-import type { EventsType } from '../eventKeys';
 import type { EventService } from '../eventService';
+import type { AgEventType } from '../eventTypes';
 import type { AgEvent, AgEventListener } from '../events';
 import type {
     GridOptionsService,
@@ -109,8 +109,8 @@ export abstract class BeanStub<TLocalEvent extends string = BeanStubEvent>
     ) {
         return this._setupListeners<keyof HTMLElementEventMap>(object, handlers);
     }
-    public addManagedEventListeners(handlers: EventHandlers<EventsType>) {
-        return this._setupListeners<EventsType>(this.eventService, handlers);
+    public addManagedEventListeners(handlers: EventHandlers<AgEventType>) {
+        return this._setupListeners<AgEventType>(this.eventService, handlers);
     }
     public addManagedListeners<TEvent extends string>(object: IEventEmitter<TEvent>, handlers: EventHandlers<TEvent>) {
         return this._setupListeners<TEvent>(object, handlers);
