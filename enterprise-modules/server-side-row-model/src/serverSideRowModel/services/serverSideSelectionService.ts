@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    ChangedPath,
     IRowModel,
     ISelectionService,
     ISetNodesSelectedParams,
@@ -38,11 +37,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
             this.selectionStrategy = this.createManagedBean(new StrategyClazz());
 
             this.shotgunResetNodeSelectionState();
-            const event: WithoutGridCommon<SelectionChangedEvent> = {
-                type: 'selectionChanged',
-                source: 'api',
-            };
-            this.eventService.dispatchEvent(event);
+            this.dispatchSelectionChanged('api');
         });
 
         this.addManagedPropertyListener('rowSelection', () => this.deselectAllRowNodes({ source: 'api' }));
@@ -65,11 +60,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         this.selectionStrategy.setSelectedState(state);
         this.shotgunResetNodeSelectionState();
 
-        const event: WithoutGridCommon<SelectionChangedEvent> = {
-            type: 'selectionChanged',
-            source,
-        };
-        this.eventService.dispatchEvent(event);
+        this.dispatchSelectionChanged(source);
     }
 
     public setNodesSelected(params: ISetNodesSelectedParams): number {
@@ -98,11 +89,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
 
         const changedNodes = this.selectionStrategy.setNodesSelected(adjustedParams);
         this.shotgunResetNodeSelectionState(adjustedParams.source);
-        const event: WithoutGridCommon<SelectionChangedEvent> = {
-            type: 'selectionChanged',
-            source: adjustedParams.source,
-        };
-        this.eventService.dispatchEvent(event);
+        this.dispatchSelectionChanged(adjustedParams.source);
         return changedNodes;
     }
 
@@ -117,12 +104,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         }
 
         this.shotgunResetNodeSelectionState();
-
-        const event: WithoutGridCommon<SelectionChangedEvent> = {
-            type: 'selectionChanged',
-            source: 'api',
-        };
-        this.eventService.dispatchEvent(event);
+        this.dispatchSelectionChanged('api');
     }
 
     private shotgunResetNodeSelectionState(source?: SelectionEventSourceType) {
@@ -150,7 +132,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         return this.selectionStrategy.getSelectionCount();
     }
 
-    public syncInRowNode(rowNode: RowNode<any>, oldNode: RowNode<any> | null): void {
+    public syncInRowNode(rowNode: RowNode<any>): void {
         // update any refs being held in the strategies
         this.selectionStrategy.processNewRow(rowNode);
 
@@ -168,11 +150,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
             // we need to shotgun reset here as if this was hierarchical, some group nodes
             // may be changing from indeterminate to unchecked.
             this.shotgunResetNodeSelectionState();
-            const event: WithoutGridCommon<SelectionChangedEvent> = {
-                type: 'selectionChanged',
-                source: 'api',
-            };
-            this.eventService.dispatchEvent(event);
+            this.dispatchSelectionChanged('api');
             return;
         }
         rowNode.setSelectedInitialValue(isNodeSelected);
@@ -186,7 +164,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         return this.selectionStrategy.isEmpty();
     }
 
-    public hasNodesToSelect(justFiltered = false, justCurrentPage = false) {
+    public hasNodesToSelect() {
         return true;
     }
 
@@ -209,11 +187,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
             node.selectThisNode(true, undefined, params.source);
         });
 
-        const event: WithoutGridCommon<SelectionChangedEvent> = {
-            type: 'selectionChanged',
-            source: params.source,
-        };
-        this.eventService.dispatchEvent(event);
+        this.dispatchSelectionChanged(params.source);
     }
 
     public deselectAllRowNodes(params: {
@@ -235,11 +209,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
             node.selectThisNode(false, undefined, params.source);
         });
 
-        const event: WithoutGridCommon<SelectionChangedEvent> = {
-            type: 'selectionChanged',
-            source: params.source,
-        };
-        this.eventService.dispatchEvent(event);
+        this.dispatchSelectionChanged(params.source);
     }
 
     public getSelectAllState(justFiltered?: boolean, justCurrentPage?: boolean): boolean | null {
@@ -247,10 +217,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
     }
 
     // used by CSRM
-    public updateGroupsFromChildrenSelections(
-        source: SelectionEventSourceType,
-        changedPath?: ChangedPath | undefined
-    ): boolean {
+    public updateGroupsFromChildrenSelections(): boolean {
         return false;
     }
 
@@ -265,5 +232,13 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
     // used by CSRM
     public filterFromSelection(): void {
         return;
+    }
+
+    private dispatchSelectionChanged(source: SelectionEventSourceType): void {
+        const event: WithoutGridCommon<SelectionChangedEvent> = {
+            type: 'selectionChanged',
+            source,
+        };
+        this.eventService.dispatchEvent(event);
     }
 }
