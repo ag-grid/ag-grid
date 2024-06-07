@@ -551,6 +551,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         this.group = group;
         this.updateHasChildren();
+        this.checkRowSelectable();
         this.dispatchRowEvent('groupChanged');
     }
 
