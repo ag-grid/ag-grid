@@ -13,7 +13,6 @@ import type {
 } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
-import { Events } from '../events';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
@@ -60,10 +59,8 @@ export class ValueService extends BeanStub implements NamedBean {
         // this way the handler calls are correctly interleaved with other global events
         const listener = (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event);
         const async = this.gos.useAsyncEvents();
-        this.eventService.addEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async);
-        this.addDestroyFunc(() =>
-            this.eventService.removeEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async)
-        );
+        this.eventService.addEventListener('cellValueChanged', listener, async);
+        this.addDestroyFunc(() => this.eventService.removeEventListener('cellValueChanged', listener, async));
 
         this.addManagedPropertyListener('treeData', (propChange) => (this.isTreeData = propChange.currentValue));
     }
@@ -306,7 +303,7 @@ export class ValueService extends BeanStub implements NamedBean {
         params.newValue = this.getValue(column, rowNode);
 
         const event: CellValueChangedEvent = {
-            type: Events.EVENT_CELL_VALUE_CHANGED,
+            type: 'cellValueChanged',
             event: null,
             rowIndex: rowNode.rowIndex!,
             rowPinned: rowNode.rowPinned,

@@ -6,7 +6,6 @@ import { type AgProvidedColumnGroup, isProvidedColumnGroup } from '../entities/a
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { Environment } from '../environment';
 import type { ColumnEventType } from '../events';
-import { Events } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { PropertyChangedSource } from '../gridOptionsService';
 import type { IAutoColService } from '../interfaces/iAutoColService';
@@ -148,7 +147,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('pivotMode', (event) =>
             this.setPivotMode(this.gos.get('pivotMode'), convertSourceType(event.source))
         );
-        this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => this.onFirstDataRendered());
+        this.addManagedEventListeners({ firstDataRendered: () => this.onFirstDataRendered() });
     }
 
     // called from SyncService, when grid has finished initialising

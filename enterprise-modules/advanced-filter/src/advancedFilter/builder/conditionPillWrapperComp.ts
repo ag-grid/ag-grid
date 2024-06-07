@@ -1,14 +1,17 @@
-import { Component, _exists, _removeFromParent } from '@ag-grid-community/core';
 import type { AgColumn, BaseCellDataType, BeanCollection, ColumnAdvancedFilterModel } from '@ag-grid-community/core';
+import { Component, _exists, _removeFromParent } from '@ag-grid-community/core';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
-import type { AdvancedFilterBuilderItem, CreatePillParams } from './iAdvancedFilterBuilder';
-import { AdvancedFilterBuilderEvents } from './iAdvancedFilterBuilder';
+import type {
+    AdvancedFilterBuilderEvents,
+    AdvancedFilterBuilderItem,
+    CreatePillParams,
+} from './iAdvancedFilterBuilder';
 import type { InputPillComp } from './inputPillComp';
 import type { SelectPillComp } from './selectPillComp';
 
-export class ConditionPillWrapperComp extends Component {
+export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEvents> {
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     public wireBeans(beans: BeanCollection) {
@@ -237,8 +240,8 @@ export class ConditionPillWrapperComp extends Component {
         this.item.valid = !validationMessage;
         if (validationMessage !== this.validationMessage) {
             this.validationMessage = validationMessage;
-            this.dispatchEvent({
-                type: AdvancedFilterBuilderEvents.EVENT_VALID_CHANGED,
+            this.dispatchLocalEvent({
+                type: 'advancedFilterBuilderValidChanged',
             });
         }
     }

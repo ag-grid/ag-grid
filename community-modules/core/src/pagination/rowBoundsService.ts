@@ -1,7 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { Events } from '../eventKeys';
 import type { IRowModel, RowBounds } from '../interfaces/iRowModel';
 import { _exists, _missing } from '../utils/generic';
 
@@ -65,6 +64,6 @@ export class RowBoundsService extends BeanStub implements NamedBean {
         }
 
         this.pixelOffset = value;
-        this.eventService.dispatchEvent({ type: Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED });
+        this.eventService.dispatchEvent({ type: 'paginationPixelOffsetChanged' });
     }
 }

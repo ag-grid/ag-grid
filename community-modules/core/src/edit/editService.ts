@@ -7,7 +7,6 @@ import type { AgColumn } from '../entities/agColumn';
 import type { CellPosition } from '../entities/cellPositionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { CellEditingStartedEvent, CellEditingStoppedEvent } from '../events';
-import { Events } from '../events';
 import type { NavigationService } from '../gridBodyComp/navigationService';
 import type { ICellEditorParams } from '../interfaces/iCellEditor';
 import type { CellCtrl, ICellComp } from '../rendering/cell/cellCtrl';
@@ -47,7 +46,7 @@ export class EditService extends BeanStub implements NamedBean {
         cellCtrl.setEditing(true, compDetails);
         cellCtrl.getComp().setEditDetails(compDetails, popup, position, this.gos.get('reactiveCustomComponents'));
 
-        const e: CellEditingStartedEvent = cellCtrl.createEvent(event, Events.EVENT_CELL_EDITING_STARTED);
+        const e: CellEditingStartedEvent = cellCtrl.createEvent(event, 'cellEditingStarted');
         this.eventService.dispatchEvent(e);
     }
 
@@ -70,7 +69,7 @@ export class EditService extends BeanStub implements NamedBean {
         cellCtrl.refreshCell({ forceRefresh: true, suppressFlash: true });
 
         const event: CellEditingStoppedEvent = {
-            ...cellCtrl.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED),
+            ...cellCtrl.createEvent(null, 'cellEditingStopped'),
             oldValue,
             newValue,
             valueChanged,

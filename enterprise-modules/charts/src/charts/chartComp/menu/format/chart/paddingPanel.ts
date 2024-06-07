@@ -1,5 +1,5 @@
 import type { BeanCollection, ChartOptionsChanged } from '@ag-grid-community/core';
-import { Component, Events, RefPlaceholder } from '@ag-grid-community/core';
+import { Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 import type { AgChartPaddingOptions, AgChartThemeOverrides } from 'ag-charts-community';
@@ -53,8 +53,10 @@ export class PaddingPanel extends Component {
             paddingLeftSlider: getSliderParams('left'),
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_CHART_OPTIONS_CHANGED, (e: ChartOptionsChanged) => {
-            this.updateTopPadding(e.chartOptions);
+        this.addManagedEventListeners({
+            chartOptionsChanged: (e: ChartOptionsChanged) => {
+                this.updateTopPadding(e.chartOptions);
+            },
         });
     }
 

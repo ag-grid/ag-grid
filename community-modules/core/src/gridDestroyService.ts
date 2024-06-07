@@ -1,7 +1,6 @@
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
-import { Events } from './eventKeys';
 import type { GridPreDestroyedEvent } from './events';
 import type { WithoutGridCommon } from './interfaces/iCommon';
 
@@ -23,7 +22,7 @@ export class GridDestroyService extends BeanStub implements NamedBean {
         }
 
         const event: WithoutGridCommon<GridPreDestroyedEvent> = {
-            type: Events.EVENT_GRID_PRE_DESTROYED,
+            type: 'gridPreDestroyed',
             state: this.beans.stateService?.getState() ?? {},
         };
         this.eventService.dispatchEvent(event);

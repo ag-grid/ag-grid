@@ -5,7 +5,7 @@ import type {
     SortModelItem,
     StoreRefreshAfterParams,
 } from '@ag-grid-community/core';
-import { BeanStub, Events } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { ListenerUtils } from './listenerUtils';
@@ -29,7 +29,7 @@ export class SortListener extends BeanStub implements NamedBean {
             return;
         }
 
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.addManagedEventListeners({ sortChanged: this.onSortChanged.bind(this) });
     }
 
     private onSortChanged(): void {

@@ -320,7 +320,11 @@ export class GridCoreCreator {
             }
         };
 
-        addModule(!ModuleRegistry.__isPackageBased(), CommunityFeaturesModule, undefined);
+        addModule(
+            !!passedViaConstructor?.length || !ModuleRegistry.__isPackageBased(),
+            CommunityFeaturesModule,
+            undefined
+        );
 
         if (passedViaConstructor) {
             passedViaConstructor.forEach((m) => addModule(true, m, gridId));

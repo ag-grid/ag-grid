@@ -11,7 +11,7 @@ import {
 } from '@ag-grid-community/core';
 
 export interface PanelOptions extends PositionableOptions {
-    component?: Component;
+    component?: Component<any>;
     hideTitleBar?: boolean | null;
     closable?: boolean | null;
     resizable?: boolean | ResizableStructure;
@@ -92,21 +92,25 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
             _setDisplayed(this.eTitleBar, false);
         }
 
-        this.addManagedListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {
-            if (
-                eGui.contains(e.relatedTarget as HTMLElement) ||
-                eGui.contains(this.gos.getActiveDomElement()) ||
-                this.eTitleBarButtons.contains(e.target as HTMLElement)
-            ) {
-                e.preventDefault();
-                return;
-            }
+        this.addManagedElementListeners(this.eTitleBar, {
+            mousedown: (e: MouseEvent) => {
+                if (
+                    eGui.contains(e.relatedTarget as HTMLElement) ||
+                    eGui.contains(this.gos.getActiveDomElement()) ||
+                    this.eTitleBarButtons.contains(e.target as HTMLElement)
+                ) {
+                    e.preventDefault();
+                    return;
+                }
 
-            const focusEl = this.eContentWrapper.querySelector('button, [href], input, select, textarea, [tabindex]');
+                const focusEl = this.eContentWrapper.querySelector(
+                    'button, [href], input, select, textarea, [tabindex]'
+                );
 
-            if (focusEl) {
-                (focusEl as HTMLElement).focus();
-            }
+                if (focusEl) {
+                    (focusEl as HTMLElement).focus();
+                }
+            },
         });
 
         if (popup && this.positionableFeature.isPositioned()) {
@@ -162,7 +166,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
             eGui.appendChild(child);
 
             this.addTitleBarButton(closeButtonComp);
-            closeButtonComp.addManagedListener(eGui, 'click', this.onBtClose.bind(this));
+            closeButtonComp.addManagedElementListeners(eGui, { click: this.onBtClose.bind(this) });
         } else if (this.closeButtonComp) {
             const eGui = this.closeButtonComp.getGui();
             eGui.parentElement!.removeChild(eGui);
@@ -171,7 +175,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         }
     }
 
-    public setBodyComponent(bodyComponent: Component) {
+    public setBodyComponent(bodyComponent: Component<any>) {
         bodyComponent.setParentComponent(this);
         this.eContentWrapper.appendChild(bodyComponent.getGui());
     }

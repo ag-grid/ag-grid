@@ -8,10 +8,12 @@ import {
     _stopPropagationForAgGrid,
 } from '@ag-grid-community/core';
 
-import type { CloseMenuEvent, MenuItemActivatedEvent } from './agMenuItemComponent';
+import type { AgMenuItemComponentEvent, CloseMenuEvent, MenuItemActivatedEvent } from './agMenuItemComponent';
 import { AgMenuItemComponent } from './agMenuItemComponent';
 
-export class AgMenuList extends TabGuardComp {
+export type AgMenuListEvent = AgMenuItemComponentEvent;
+
+export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
     private menuItems: AgMenuItemComponent[] = [];
     private activeMenuItem: AgMenuItemComponent | null;
     private params: WithoutGridCommon<IMenuActionParams>;
@@ -147,21 +149,18 @@ export class AgMenuList extends TabGuardComp {
             .then(() => {
                 menuItem.setParentComponent(this);
 
-                this.addManagedListener(menuItem, AgMenuItemComponent.EVENT_CLOSE_MENU, (event: CloseMenuEvent) => {
-                    this.dispatchEvent(event);
-                });
-
-                this.addManagedListener(
-                    menuItem,
-                    AgMenuItemComponent.EVENT_MENU_ITEM_ACTIVATED,
-                    (event: MenuItemActivatedEvent) => {
+                this.addManagedListeners(menuItem, {
+                    closeMenu: (event: CloseMenuEvent) => {
+                        this.dispatchLocalEvent(event);
+                    },
+                    menuItemActivated: (event: MenuItemActivatedEvent) => {
                         if (this.activeMenuItem && this.activeMenuItem !== event.menuItem) {
                             this.activeMenuItem.deactivate();
                         }
 
                         this.activeMenuItem = event.menuItem;
-                    }
-                );
+                    },
+                });
 
                 return {
                     comp: menuItem,
@@ -195,7 +194,7 @@ export class AgMenuList extends TabGuardComp {
     private handleNavKey(key: string): void {
         switch (key) {
             case KeyCode.UP:
-            case KeyCode.DOWN:
+            case KeyCode.DOWN: {
                 const nextItem = this.findNextItem(key === KeyCode.UP);
 
                 if (nextItem && nextItem !== this.activeMenuItem) {
@@ -203,6 +202,7 @@ export class AgMenuList extends TabGuardComp {
                 }
 
                 return;
+            }
         }
 
         const left = this.gos.get('enableRtl') ? KeyCode.RIGHT : KeyCode.LEFT;

@@ -4,9 +4,9 @@ import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellPosition } from '../../entities/cellPositionUtils';
 import type { RowClassParams, RowStyle } from '../../entities/gridOptions';
-import { RowNode } from '../../entities/rowNode';
+import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
-import type { EventsType } from '../../eventKeys';
+import type { AgEventType } from '../../eventTypes';
 import type {
     AgEventListener,
     CellFocusedEvent,
@@ -15,10 +15,9 @@ import type {
     RowEvent,
     VirtualRowRemovedEvent,
 } from '../../events';
-import { Events } from '../../events';
 import { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { BrandedType } from '../../interfaces/brandedType';
-import type { ProcessRowParams } from '../../interfaces/iCallbackParams';
+import type { ProcessRowParams, RenderedRowEvent } from '../../interfaces/iCallbackParams';
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { ColumnInstanceId, ColumnPinnedType } from '../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
@@ -78,7 +77,8 @@ interface CellCtrlListAndMap {
     map: { [key: ColumnInstanceId]: CellCtrl };
 }
 
-export class RowCtrl extends BeanStub {
+export type RowCtrlEvent = RenderedRowEvent;
+export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public static DOM_DATA_KEY_ROW_CTRL = 'renderedRow';
 
     private instanceId: RowCtrlInstanceId;
@@ -123,7 +123,7 @@ export class RowCtrl extends BeanStub {
         fullWidth: false,
     };
 
-    private rowDragComps: BeanStub[] = [];
+    private rowDragComps: RowDragComp[] = [];
 
     private readonly useAnimationFrameForCreate: boolean;
 
@@ -713,41 +713,37 @@ export class RowCtrl extends BeanStub {
 
     private addListeners(): void {
         this.addManagedListeners(this.rowNode, {
-            [RowNode.EVENT_HEIGHT_CHANGED]: () => this.onRowHeightChanged(),
-            [RowNode.EVENT_ROW_SELECTED]: () => this.onRowSelected(),
-            [RowNode.EVENT_ROW_INDEX_CHANGED]: this.onRowIndexChanged.bind(this),
-            [RowNode.EVENT_TOP_CHANGED]: this.onTopChanged.bind(this),
-            [RowNode.EVENT_EXPANDED_CHANGED]: this.updateExpandedCss.bind(this),
-            [RowNode.EVENT_HAS_CHILDREN_CHANGED]: this.updateExpandedCss.bind(this),
+            heightChanged: () => this.onRowHeightChanged(),
+            rowSelected: () => this.onRowSelected(),
+            rowIndexChanged: this.onRowIndexChanged.bind(this),
+            topChanged: this.onTopChanged.bind(this),
+            expandedChanged: this.updateExpandedCss.bind(this),
+            hasChildrenChanged: this.updateExpandedCss.bind(this),
         });
 
         if (this.rowNode.detail) {
             // if the master row node has updated data, we also want to try to refresh the detail row
-            this.addManagedListener(
-                this.rowNode.parent!,
-                RowNode.EVENT_DATA_CHANGED,
-                this.onRowNodeDataChanged.bind(this)
-            );
+            this.addManagedListeners(this.rowNode.parent!, { dataChanged: this.onRowNodeDataChanged.bind(this) });
         }
 
         this.addManagedListeners(this.rowNode, {
-            [RowNode.EVENT_DATA_CHANGED]: this.onRowNodeDataChanged.bind(this),
-            [RowNode.EVENT_CELL_CHANGED]: this.postProcessCss.bind(this),
-            [RowNode.EVENT_HIGHLIGHT_CHANGED]: this.onRowNodeHighlightChanged.bind(this),
-            [RowNode.EVENT_DRAGGING_CHANGED]: this.postProcessRowDragging.bind(this),
-            [RowNode.EVENT_UI_LEVEL_CHANGED]: this.onUiLevelChanged.bind(this),
+            dataChanged: this.onRowNodeDataChanged.bind(this),
+            cellChanged: this.postProcessCss.bind(this),
+            rowHighlightChanged: this.onRowNodeHighlightChanged.bind(this),
+            draggingChanged: this.postProcessRowDragging.bind(this),
+            uiLevelChanged: this.onUiLevelChanged.bind(this),
         });
 
-        this.addManagedListeners<EventsType>(this.beans.eventService, {
-            [Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED]: this.onPaginationPixelOffsetChanged.bind(this),
-            [Events.EVENT_HEIGHT_SCALE_CHANGED]: this.onTopChanged.bind(this),
-            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
-            [Events.EVENT_VIRTUAL_COLUMNS_CHANGED]: this.onVirtualColumnsChanged.bind(this),
-            [Events.EVENT_CELL_FOCUSED]: this.onCellFocusChanged.bind(this),
-            [Events.EVENT_CELL_FOCUS_CLEARED]: this.onCellFocusChanged.bind(this),
-            [Events.EVENT_PAGINATION_CHANGED]: this.onPaginationChanged.bind(this),
-            [Events.EVENT_MODEL_UPDATED]: this.refreshFirstAndLastRowStyles.bind(this),
-            [Events.EVENT_COLUMN_MOVED]: () => this.updateColumnLists(),
+        this.addManagedListeners(this.beans.eventService, {
+            paginationPixelOffsetChanged: this.onPaginationPixelOffsetChanged.bind(this),
+            heightScaleChanged: this.onTopChanged.bind(this),
+            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
+            virtualColumnsChanged: this.onVirtualColumnsChanged.bind(this),
+            cellFocused: this.onCellFocusChanged.bind(this),
+            cellFocusCleared: this.onCellFocusChanged.bind(this),
+            paginationChanged: this.onPaginationChanged.bind(this),
+            modelUpdated: this.refreshFirstAndLastRowStyles.bind(this),
+            columnMoved: () => this.updateColumnLists(),
         });
 
         this.addDestroyFunc(() => {
@@ -771,11 +767,13 @@ export class RowCtrl extends BeanStub {
     }
 
     private addListenersForCellComps(): void {
-        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, () => {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onRowIndexChanged());
-        });
-        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, (event) => {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellChanged(event));
+        this.addManagedListeners(this.rowNode, {
+            rowIndexChanged: () => {
+                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onRowIndexChanged());
+            },
+            cellChanged: (event) => {
+                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellChanged(event));
+            },
         });
     }
 
@@ -1001,7 +999,7 @@ export class RowCtrl extends BeanStub {
         }
     }
 
-    public createRowEvent(type: string, domEvent?: Event): RowEvent {
+    public createRowEvent<T extends AgEventType>(type: T, domEvent?: Event): RowEvent<T> {
         return this.gos.addGridCommonParams({
             type: type,
             node: this.rowNode,
@@ -1012,7 +1010,7 @@ export class RowCtrl extends BeanStub {
         });
     }
 
-    private createRowEventWithSource(type: string, domEvent: Event): RowEvent {
+    private createRowEventWithSource<T extends AgEventType>(type: T, domEvent: Event): RowEvent<T> {
         const event = this.createRowEvent(type, domEvent);
         // when first developing this, we included the rowComp in the event.
         // this seems very weird. so when introducing the event types, i left the 'source'
@@ -1029,10 +1027,7 @@ export class RowCtrl extends BeanStub {
             return;
         }
 
-        const agEvent: RowDoubleClickedEvent = this.createRowEventWithSource(
-            Events.EVENT_ROW_DOUBLE_CLICKED,
-            mouseEvent
-        );
+        const agEvent: RowDoubleClickedEvent = this.createRowEventWithSource('rowDoubleClicked', mouseEvent);
 
         this.beans.eventService.dispatchEvent(agEvent);
     }
@@ -1066,7 +1061,7 @@ export class RowCtrl extends BeanStub {
             return;
         }
 
-        const agEvent: RowClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_CLICKED, mouseEvent);
+        const agEvent: RowClickedEvent = this.createRowEventWithSource('rowClicked', mouseEvent);
 
         this.beans.eventService.dispatchEvent(agEvent);
 
@@ -1457,23 +1452,26 @@ export class RowCtrl extends BeanStub {
         // all are listening for event on the row node.
 
         // step 1 - add listener, to set flag on row node
-        this.addManagedListener(eRow, 'mouseenter', () => this.rowNode.onMouseEnter());
-        this.addManagedListener(eRow, 'mouseleave', () => this.rowNode.onMouseLeave());
-
-        // step 2 - listen for changes on row node (which any eRow can trigger)
-        this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, () => {
-            // if hover turned off, we don't add the class. we do this here so that if the application
-            // toggles this property mid way, we remove the hover form the last row, but we stop
-            // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
-            if (!this.beans.dragService.isDragging() && !this.gos.get('suppressRowHoverHighlight')) {
-                eRow.classList.add('ag-row-hover');
-                this.rowNode.setHovered(true);
-            }
+        this.addManagedListeners(eRow, {
+            mouseenter: () => this.rowNode.onMouseEnter(),
+            mouseleave: () => this.rowNode.onMouseLeave(),
         });
 
-        this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, () => {
-            eRow.classList.remove('ag-row-hover');
-            this.rowNode.setHovered(false);
+        // step 2 - listen for changes on row node (which any eRow can trigger)
+        this.addManagedListeners(this.rowNode, {
+            mouseEnter: () => {
+                // if hover turned off, we don't add the class. we do this here so that if the application
+                // toggles this property mid way, we remove the hover form the last row, but we stop
+                // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
+                if (!this.beans.dragService.isDragging() && !this.gos.get('suppressRowHoverHighlight')) {
+                    eRow.classList.add('ag-row-hover');
+                    this.rowNode.setHovered(true);
+                }
+            },
+            mouseLeave: () => {
+                eRow.classList.remove('ag-row-hover');
+                this.rowNode.setHovered(false);
+            },
         });
     }
 
@@ -1535,11 +1533,17 @@ export class RowCtrl extends BeanStub {
         });
     }
 
-    public override addEventListener(eventType: string, listener: AgEventListener): void {
+    public override addEventListener<T extends RowCtrlEvent>(
+        eventType: T,
+        listener: AgEventListener<any, any, T>
+    ): void {
         super.addEventListener(eventType, listener);
     }
 
-    public override removeEventListener(eventType: string, listener: AgEventListener): void {
+    public override removeEventListener<T extends RowCtrlEvent>(
+        eventType: T,
+        listener: AgEventListener<any, any, T>
+    ): void {
         super.removeEventListener(eventType, listener);
     }
 
@@ -1566,9 +1570,9 @@ export class RowCtrl extends BeanStub {
 
         this.rowNode.setHovered(false);
 
-        const event: VirtualRowRemovedEvent = this.createRowEvent(Events.EVENT_VIRTUAL_ROW_REMOVED);
+        const event: VirtualRowRemovedEvent = this.createRowEvent('virtualRowRemoved');
 
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent(event);
         this.beans.eventService.dispatchEvent(event);
         super.destroy();
     }

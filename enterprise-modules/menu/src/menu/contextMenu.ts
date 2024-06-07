@@ -1,6 +1,5 @@
 import type {
     AgColumn,
-    AgEvent,
     BeanCollection,
     CellPosition,
     CellPositionUtils,
@@ -20,7 +19,6 @@ import type {
 import {
     BeanStub,
     Component,
-    Events,
     ModuleNames,
     ModuleRegistry,
     _exists,
@@ -28,7 +26,7 @@ import {
     _missingOrEmpty,
 } from '@ag-grid-community/core';
 import type { CloseMenuEvent } from '@ag-grid-enterprise/core';
-import { AgMenuItemComponent, AgMenuList } from '@ag-grid-enterprise/core';
+import { AgMenuList } from '@ag-grid-enterprise/core';
 
 import type { MenuItemMapper } from './menuItemMapper';
 import type { MenuUtils } from './menuUtils';
@@ -208,7 +206,7 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
 
         this.activeMenu = menu;
 
-        menu.addEventListener(BeanStub.EVENT_DESTROYED, () => {
+        menu.addEventListener('destroyed', () => {
             if (this.activeMenu === menu) {
                 this.activeMenu = null;
             }
@@ -216,7 +214,7 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
 
         // hide the popup if something gets selected
         if (addPopupRes) {
-            menu.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, (e: CloseMenuEvent) =>
+            menu.addEventListener('closeMenu', (e: CloseMenuEvent) =>
                 addPopupRes.hideFunc({
                     mouseEvent: e.mouseEvent ?? undefined,
                     keyboardEvent: e.keyboardEvent ?? undefined,
@@ -235,7 +233,7 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
 
     private dispatchVisibleChangedEvent(visible: boolean, source: 'api' | 'ui' = 'ui'): void {
         const displayedEvent: WithoutGridCommon<ContextMenuVisibleChangedEvent> = {
-            type: Events.EVENT_CONTEXT_MENU_VISIBLE_CHANGED,
+            type: 'contextMenuVisibleChanged',
             visible,
             source,
         };
@@ -243,7 +241,9 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
     }
 }
 
-class ContextMenu extends Component {
+export type ContextMenuEvent = 'closeMenu';
+
+class ContextMenu extends Component<ContextMenuEvent> {
     private focusService: FocusService;
     private menuItemMapper: MenuItemMapper;
     private cellPositionUtils: CellPositionUtils;
@@ -281,7 +281,7 @@ class ContextMenu extends Component {
         this.appendChild(menuList);
         this.menuList = menuList;
 
-        menuList.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, (e: AgEvent) => this.dispatchEvent(e));
+        menuList.addEventListener('closeMenu', (e) => this.dispatchLocalEvent(e));
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {

@@ -6,7 +6,7 @@ import type { BeanCollection } from './context/context';
 import type { DomLayoutType, GridOptions } from './entities/gridOptions';
 import type { Environment } from './environment';
 import type { AgEvent, GridOptionsChangedEvent } from './events';
-import { ALWAYS_SYNC_GLOBAL_EVENTS, Events } from './events';
+import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
 import type {
     GetGroupAggFilteringParams,
     GetGroupIncludeFooterParams,
@@ -106,7 +106,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return this.gridOptions['context'];
     }
 
-    private propertyEventService: LocalEventService = new LocalEventService();
+    private propertyEventService: LocalEventService<keyof GridOptions> = new LocalEventService();
 
     public postConstruct(): void {
         const async = !this.get('suppressAsyncEvents');
@@ -118,13 +118,11 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
 
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_GRID_OPTIONS_CHANGED,
-            ({ options }: GridOptionsChangedEvent) => {
+        this.addManagedEventListeners({
+            gridOptionsChanged: ({ options }: GridOptionsChangedEvent) => {
                 this.updateGridOptions({ options, force: true, source: 'gridOptionsUpdated' });
-            }
-        );
+            },
+        });
     }
 
     /**
@@ -318,7 +316,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
                 this.scrollbarWidth = scrollbarWidth;
 
                 this.eventService.dispatchEvent({
-                    type: Events.EVENT_SCROLLBAR_WIDTH_CHANGED,
+                    type: 'scrollbarWidthChanged',
                 });
             }
         }

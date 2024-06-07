@@ -45,47 +45,15 @@ export function isColumn(col: Column | ColumnGroup | ProvidedColumnGroup): col i
     return col instanceof AgColumn;
 }
 
+export const DEFAULT_COLUMN_MIN_WIDTH = 20;
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
 // This class implements both interfaces ColumnGroupChild and ProvidedColumnGroupChild as the class can
 // appear as a child of either the original tree or the displayed tree. However the relevant group classes
 // for each type only implements one, as each group can only appear in it's associated tree (eg ProvidedColumnGroup
 // can only appear in OriginalColumn tree).
-export class AgColumn<TValue = any> extends BeanStub implements Column {
+export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements Column {
     public readonly isColumn = true as const;
-
-    public static DEFAULT_MIN_WIDTH = 20;
-
-    // + renderedHeaderCell - for making header cell transparent when moving
-    public static EVENT_MOVING_CHANGED: ColumnEventName = 'movingChanged';
-    // + renderedCell - changing left position
-    public static EVENT_LEFT_CHANGED: ColumnEventName = 'leftChanged';
-    // + renderedCell - changing width
-    public static EVENT_WIDTH_CHANGED: ColumnEventName = 'widthChanged';
-    // + renderedCell - for changing pinned classes
-    public static EVENT_LAST_LEFT_PINNED_CHANGED: ColumnEventName = 'lastLeftPinnedChanged';
-    public static EVENT_FIRST_RIGHT_PINNED_CHANGED: ColumnEventName = 'firstRightPinnedChanged';
-    // + renderedColumn - for changing visibility icon
-    public static EVENT_VISIBLE_CHANGED: ColumnEventName = 'visibleChanged';
-    // + every time the filter changes, used in the floating filters
-    public static EVENT_FILTER_CHANGED: ColumnEventName = 'filterChanged';
-    // + renderedHeaderCell - marks the header with filter icon
-    public static EVENT_FILTER_ACTIVE_CHANGED: ColumnEventName = 'filterActiveChanged';
-    // + renderedHeaderCell - marks the header with sort icon
-    public static EVENT_SORT_CHANGED: ColumnEventName = 'sortChanged';
-    // + renderedHeaderCell - marks the header with sort icon
-    public static EVENT_COL_DEF_CHANGED: ColumnEventName = 'colDefChanged';
-
-    public static EVENT_MENU_VISIBLE_CHANGED: ColumnEventName = 'menuVisibleChanged';
-
-    // + toolpanel, for gui updates
-    public static EVENT_ROW_GROUP_CHANGED: ColumnEventName = 'columnRowGroupChanged';
-    // + toolpanel, for gui updates
-    public static EVENT_PIVOT_CHANGED: ColumnEventName = 'columnPivotChanged';
-    // + toolpanel, for gui updates
-    public static EVENT_VALUE_CHANGED: ColumnEventName = 'columnValueChanged';
-    // + dataTypeService - when waiting to infer cell data types
-    public static EVENT_STATE_UPDATED: ColumnEventName = 'columnStateUpdated';
 
     private columnHoverService: ColumnHoverService;
 
@@ -131,7 +99,7 @@ export class AgColumn<TValue = any> extends BeanStub implements Column {
 
     private filterActive = false;
 
-    private columnEventService: LocalEventService = new LocalEventService();
+    private columnEventService: LocalEventService<ColumnEventName> = new LocalEventService();
 
     private fieldContainsDots: boolean;
     private tooltipFieldContainsDots: boolean;
@@ -274,7 +242,7 @@ export class AgColumn<TValue = any> extends BeanStub implements Column {
     private initMinAndMaxWidths(): void {
         const colDef = this.colDef;
 
-        this.minWidth = colDef.minWidth ?? AgColumn.DEFAULT_MIN_WIDTH;
+        this.minWidth = colDef.minWidth ?? DEFAULT_COLUMN_MIN_WIDTH;
         this.maxWidth = colDef.maxWidth ?? Number.MAX_SAFE_INTEGER;
     }
 
@@ -291,7 +259,7 @@ export class AgColumn<TValue = any> extends BeanStub implements Column {
     }
 
     private calculateColInitialWidth(colDef: ColDef): number {
-        const minColWidth = colDef.minWidth ?? AgColumn.DEFAULT_MIN_WIDTH;
+        const minColWidth = colDef.minWidth ?? DEFAULT_COLUMN_MIN_WIDTH;
         const maxColWidth = colDef.maxWidth ?? Number.MAX_SAFE_INTEGER;
 
         let width: number;
@@ -347,7 +315,10 @@ export class AgColumn<TValue = any> extends BeanStub implements Column {
         return this.tooltipFieldContainsDots;
     }
 
-    public override addEventListener(eventType: ColumnEventName, userListener: AgEventListener): void {
+    public override addEventListener<T extends ColumnEventName>(
+        eventType: T,
+        userListener: AgEventListener<any, any, T>
+    ): void {
         if (this.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
             // Only construct if we need it, as it's an overhead for column construction
             this.columnEventService.setFrameworkOverrides(this.frameworkOverrides);
@@ -358,7 +329,10 @@ export class AgColumn<TValue = any> extends BeanStub implements Column {
         this.columnEventService.addEventListener(eventType, listener);
     }
 
-    public override removeEventListener(eventType: ColumnEventName, userListener: AgEventListener): void {
+    public override removeEventListener<T extends ColumnEventName>(
+        eventType: T,
+        userListener: AgEventListener<any, any, T>
+    ): void {
         const listener = this.frameworkEventListenerService?.unwrap(userListener) ?? userListener;
         this.columnEventService.removeEventListener(eventType, listener);
     }
@@ -848,8 +822,8 @@ export class AgColumn<TValue = any> extends BeanStub implements Column {
 
     private dispatchStateUpdatedEvent(key: keyof ColumnState): void {
         this.columnEventService.dispatchEvent({
-            type: AgColumn.EVENT_STATE_UPDATED,
+            type: 'columnStateUpdated',
             key,
-        } as AgEvent);
+        } as AgEvent<'columnStateUpdated'>);
     }
 }

@@ -38,7 +38,7 @@ export {
 
 // components
 export { ComponentUtil } from './components/componentUtil';
-export { ComponentClass, AgComponentSelector, RefPlaceholder } from './widgets/component';
+export { ComponentClass, AgComponentSelector, RefPlaceholder, ComponentEvent } from './widgets/component';
 
 export { UserComponentRegistry } from './components/framework/userComponentRegistry';
 export { UserComponentFactory, UserCompDetails } from './components/framework/userComponentFactory';
@@ -109,7 +109,32 @@ export { AgColumn, isColumn } from './entities/agColumn';
 export { AgColumnGroup, isColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup, isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 export { RowNode } from './entities/rowNode';
-export { RowHighlightPosition, RowPinnedType, IRowNode } from './interfaces/iRowNode';
+export {
+    RowHighlightPosition,
+    RowPinnedType,
+    IRowNode,
+    RowSelectedEvent,
+    MouseEnterEvent,
+    MouseLeaveEvent,
+    HeightChangedEvent,
+    RowIndexChangedEvent,
+    TopChangedEvent,
+    ExpandedChangedEvent,
+    FirstChildChangedEvent,
+    LastChildChangedEvent,
+    ChildIndexChangedEvent,
+    AllChildrenCountChangedEvent,
+    UiLevelChangedEvent,
+    DataChangedEvent,
+    CellChangedEvent,
+    SelectableChangedEvent,
+    DisplayedChangedEvent,
+    MasterChangedEvent,
+    GroupChangedEvent,
+    HasChildrenChangedEvent,
+    RowHighlightChangedEvent,
+    DraggingChangedEvent,
+} from './interfaces/iRowNode';
 
 // filter
 export {
@@ -451,7 +476,7 @@ export { TabGuardComp } from './widgets/tabGuardComp';
 export { TabGuardCtrl, ITabGuard, TabGuardClassNames } from './widgets/tabGuardCtrl';
 export { PopupComponent } from './widgets/popupComponent';
 export { PopupService, AgPopup, PopupPositionParams, PopupEventParams } from './widgets/popupService';
-export { TouchListener, TapEvent, LongTapEvent } from './widgets/touchListener';
+export { TouchListener, TapEvent, LongTapEvent, TouchListenerEvent } from './widgets/touchListener';
 
 export { AgAbstractLabel } from './widgets/agAbstractLabel';
 export { AgPickerField } from './widgets/agPickerField';
@@ -531,7 +556,7 @@ export {
     SsrmInfiniteSharedApiModule as _SsrmInfiniteSharedApiModule,
 } from './api/sharedApiModule';
 export { CommunityMenuApiModule as _CommunityMenuApiModule } from './api/apiModule';
-export { Events, EventsType } from './eventKeys';
+export { AgEventType } from './eventTypes';
 export { FocusService } from './focusService';
 export { GridOptionsService, PropertyChangedEvent } from './gridOptionsService';
 export { LocalEventService } from './localEventService';

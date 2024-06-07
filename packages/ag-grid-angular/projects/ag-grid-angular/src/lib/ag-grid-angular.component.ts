@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-imports */
 // @START_IMPORTS@
 import {
     AfterViewInit,
@@ -12,7 +13,7 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 
-import {
+import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterModel,
     AgChartTheme,
@@ -71,7 +72,7 @@ import {
     DragStoppedEvent,
     ExcelExportParams,
     ExcelStyle,
-    ExpandCollapseAllEvent,
+    ExpandOrCollapseAllEvent,
     FillEndEvent,
     FillOperationParams,
     FillStartEvent,
@@ -143,7 +144,10 @@ import {
     RowClickedEvent,
     RowDataUpdatedEvent,
     RowDoubleClickedEvent,
-    RowDragEvent,
+    RowDragEndEvent,
+    RowDragEnterEvent,
+    RowDragLeaveEvent,
+    RowDragMoveEvent,
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
     RowGroupOpenedEvent,
@@ -181,7 +185,8 @@ import {
     VirtualRowRemovedEvent,
 } from 'ag-grid-community';
 // @END_IMPORTS@
-import { AgPromise, ComponentUtil, GridApi, GridOptions, GridParams, Module, createGrid } from 'ag-grid-community';
+import { AgPromise, ComponentUtil, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions, GridParams, Module } from 'ag-grid-community';
 
 import { AngularFrameworkComponentWrapper } from './angularFrameworkComponentWrapper';
 import { AngularFrameworkOverrides } from './angularFrameworkOverrides';
@@ -1869,16 +1874,20 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     >();
     /** A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid.
      */
-    @Output() public rowDragEnter: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
+    @Output() public rowDragEnter: EventEmitter<RowDragEnterEvent<TData>> = new EventEmitter<
+        RowDragEnterEvent<TData>
+    >();
     /** The mouse has moved while dragging.
      */
-    @Output() public rowDragMove: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
+    @Output() public rowDragMove: EventEmitter<RowDragMoveEvent<TData>> = new EventEmitter<RowDragMoveEvent<TData>>();
     /** The mouse has left the grid while dragging.
      */
-    @Output() public rowDragLeave: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
+    @Output() public rowDragLeave: EventEmitter<RowDragLeaveEvent<TData>> = new EventEmitter<
+        RowDragLeaveEvent<TData>
+    >();
     /** The drag has finished over the grid.
      */
-    @Output() public rowDragEnd: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
+    @Output() public rowDragEnd: EventEmitter<RowDragEndEvent<TData>> = new EventEmitter<RowDragEndEvent<TData>>();
     /** A row group column was added, removed or reordered.
      */
     @Output() public columnRowGroupChanged: EventEmitter<ColumnRowGroupChangedEvent<TData>> = new EventEmitter<
@@ -1891,8 +1900,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     >();
     /** Fired when calling either of the API methods `expandAll()` or `collapseAll()`.
      */
-    @Output() public expandOrCollapseAll: EventEmitter<ExpandCollapseAllEvent<TData>> = new EventEmitter<
-        ExpandCollapseAllEvent<TData>
+    @Output() public expandOrCollapseAll: EventEmitter<ExpandOrCollapseAllEvent<TData>> = new EventEmitter<
+        ExpandOrCollapseAllEvent<TData>
     >();
     /** Exceeded the `pivotMaxGeneratedColumns` limit when generating columns.
      */

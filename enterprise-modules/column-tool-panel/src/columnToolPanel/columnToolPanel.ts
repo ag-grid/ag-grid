@@ -7,7 +7,7 @@ import type {
     IToolPanelComp,
     IToolPanelParams,
 } from '@ag-grid-community/core';
-import { Component, Events, ModuleNames, ModuleRegistry, _clearElement, _last } from '@ag-grid-community/core';
+import { Component, ModuleNames, ModuleRegistry, _clearElement, _last } from '@ag-grid-community/core';
 import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from '@ag-grid-enterprise/row-grouping';
 
 import { AgPrimaryCols } from './agPrimaryCols';
@@ -99,14 +99,12 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             }
 
             this.setLastVisible();
-            const pivotModeListener = this.addManagedListener(
-                this.eventService,
-                Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
-                () => {
+            const [pivotModeListener] = this.addManagedEventListeners({
+                columnPivotModeChanged: () => {
                     this.resetChildrenHeight();
                     this.setLastVisible();
-                }
-            );
+                },
+            });
             this.childDestroyFuncs.push(() => pivotModeListener!());
         }
 

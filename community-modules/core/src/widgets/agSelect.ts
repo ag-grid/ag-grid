@@ -1,5 +1,4 @@
 import { KeyCode } from '../constants/keyCode';
-import { Events } from '../eventKeys';
 import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaControls } from '../utils/aria';
 import type { ListOption } from './agList';
@@ -15,16 +14,16 @@ export interface AgSelectParams<TValue = string>
     pickerAriaLabelValue?: string;
     placeholder?: string;
 }
-
+export type AgSelectEvent = 'selectedItem';
 export class AgSelect<TValue = string | null> extends AgPickerField<
     TValue,
     AgSelectParams<TValue> & AgPickerFieldParams,
-    AgList<TValue>
+    AgSelectEvent,
+    AgList<AgSelectEvent, TValue>
 > {
     static readonly selector: AgComponentSelector = 'AG-SELECT';
 
-    public static EVENT_ITEM_SELECTED = 'selectedItem';
-    protected listComponent: AgList<TValue> | undefined;
+    protected listComponent: AgList<AgSelectEvent, TValue> | undefined;
 
     constructor(config?: AgSelectParams<TValue>) {
         super({
@@ -55,7 +54,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
             this.eDisplayField.textContent = placeholder;
         }
 
-        this.addManagedListener(this.eWrapper, 'focusout', this.onWrapperFocusOut.bind(this));
+        this.addManagedElementListeners(this.eWrapper, { focusout: this.onWrapperFocusOut.bind(this) });
     }
 
     private onWrapperFocusOut(e: FocusEvent): void {
@@ -65,7 +64,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
     }
 
     private createListComponent(): void {
-        this.listComponent = this.createBean(new AgList<TValue>('select', true));
+        this.listComponent = this.createBean(new AgList<AgSelectEvent, TValue>('select', true));
         this.listComponent.setParentComponent(this);
 
         const eListAriaEl = this.listComponent.getAriaElement();
@@ -74,17 +73,21 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
         eListAriaEl.setAttribute('id', listId);
         _setAriaControls(this.getAriaElement(), eListAriaEl);
 
-        this.listComponent.addManagedListener(this.listComponent, AgList.EVENT_ITEM_SELECTED, () => {
-            this.hidePicker();
-            this.dispatchEvent({ type: AgSelect.EVENT_ITEM_SELECTED });
+        this.listComponent.addManagedListeners(this.listComponent, {
+            selectedItem: () => {
+                this.hidePicker();
+                this.dispatchLocalEvent({ type: 'selectedItem' });
+            },
         });
 
-        this.listComponent.addManagedListener(this.listComponent, Events.EVENT_FIELD_VALUE_CHANGED, () => {
-            if (!this.listComponent) {
-                return;
-            }
-            this.setValue(this.listComponent.getValue()!, false, true);
-            this.hidePicker();
+        this.listComponent.addManagedListeners(this.listComponent, {
+            fieldValueChanged: () => {
+                if (!this.listComponent) {
+                    return;
+                }
+                this.setValue(this.listComponent.getValue()!, false, true);
+                this.hidePicker();
+            },
         });
     }
 

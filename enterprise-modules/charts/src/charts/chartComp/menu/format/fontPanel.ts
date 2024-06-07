@@ -84,7 +84,7 @@ export class FontPanel extends Component {
         });
     }
 
-    public addItem(comp: Component, prepend?: boolean) {
+    public addItem(comp: Component<any>, prepend?: boolean) {
         if (prepend) {
             this.fontGroup.prependItem(comp);
         } else {

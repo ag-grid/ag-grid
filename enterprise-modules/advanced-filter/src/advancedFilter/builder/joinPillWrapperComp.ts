@@ -2,11 +2,15 @@ import type { BeanCollection, JoinAdvancedFilterModel } from '@ag-grid-community
 import { Component } from '@ag-grid-community/core';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
-import type { AdvancedFilterBuilderItem, CreatePillParams } from './iAdvancedFilterBuilder';
+import type {
+    AdvancedFilterBuilderEvents,
+    AdvancedFilterBuilderItem,
+    CreatePillParams,
+} from './iAdvancedFilterBuilder';
 import type { InputPillComp } from './inputPillComp';
 import type { SelectPillComp } from './selectPillComp';
 
-export class JoinPillWrapperComp extends Component {
+export class JoinPillWrapperComp extends Component<AdvancedFilterBuilderEvents> {
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     public wireBeans(beans: BeanCollection): void {

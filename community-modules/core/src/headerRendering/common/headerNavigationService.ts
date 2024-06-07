@@ -38,7 +38,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         });
 
         const eDocument = this.gos.getDocument();
-        this.addManagedListener(eDocument, 'mousedown', () => this.setCurrentHeaderRowWithoutSpan(-1));
+        this.addManagedElementListeners(eDocument, { mousedown: () => this.setCurrentHeaderRowWithoutSpan(-1) });
     }
 
     public getHeaderRowCount(): number {

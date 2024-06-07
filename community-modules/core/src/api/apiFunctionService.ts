@@ -1,6 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import type { AgEventType } from '../eventTypes';
 import type { AgEvent } from '../events';
 import type { ApiFunction, ApiFunctionName } from './iApiFunction';
 
@@ -72,7 +73,7 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
         return;
     }
 
-    private dispatchApiEvent(beans: BeanCollection, event: AgEvent): void {
+    private dispatchApiEvent(beans: BeanCollection, event: AgEvent<AgEventType>): void {
         beans.eventService.dispatchEvent(event);
     }
 

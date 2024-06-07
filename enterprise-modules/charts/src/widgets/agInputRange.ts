@@ -33,10 +33,12 @@ export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string,
     }
 
     protected override addInputListeners() {
-        this.addManagedListener(this.eInput, 'input', (e) => {
-            const value = e.target.value;
+        this.addManagedElementListeners(this.eInput, {
+            input: (e: any) => {
+                const value = e.target.value;
 
-            this.setValue(value);
+                this.setValue(value);
+            },
         });
     }
 

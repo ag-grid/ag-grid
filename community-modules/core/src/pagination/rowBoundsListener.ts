@@ -2,7 +2,6 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { ModelUpdatedEvent, PaginationChangedEvent } from '../events';
-import { Events } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { PaginationService } from './paginationService';
@@ -22,8 +21,10 @@ export class RowBoundsListener extends BeanStub implements NamedBean {
     }
 
     public postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_RECALCULATE_ROW_BOUNDS, this.calculatePages.bind(this));
+        this.addManagedEventListeners({
+            modelUpdated: this.onModelUpdated.bind(this),
+            recalculateRowBounds: this.calculatePages.bind(this),
+        });
 
         this.onModelUpdated();
     }
@@ -32,7 +33,7 @@ export class RowBoundsListener extends BeanStub implements NamedBean {
         this.calculatePages();
 
         const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
-            type: Events.EVENT_PAGINATION_CHANGED,
+            type: 'paginationChanged',
             animate: modelUpdatedEvent ? modelUpdatedEvent.animate : false,
             newData: modelUpdatedEvent ? modelUpdatedEvent.newData : false,
             newPage: modelUpdatedEvent ? modelUpdatedEvent.newPage : false,

@@ -12,7 +12,7 @@ export interface AgColorPickerParams
     pickerAriaLabelValue?: string;
 }
 
-export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & AgPickerFieldParams, AgDialog> {
+export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & AgPickerFieldParams, string, AgDialog> {
     static readonly selector: AgComponentSelector = 'AG-COLOR-PICKER';
 
     private isDestroyingPicker: boolean;

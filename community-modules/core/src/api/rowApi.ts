@@ -1,4 +1,5 @@
 import type { BeanCollection } from '../context/context';
+import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { RedrawRowsParams } from '../rendering/rowRenderer';
@@ -24,7 +25,7 @@ export function getRowNode<TData = any>(beans: BeanCollection, id: string): IRow
 
 export function addRenderedRowListener(
     beans: BeanCollection,
-    eventName: string,
+    eventName: RenderedRowEvent,
     rowIndex: number,
     callback: (...args: any[]) => any
 ) {

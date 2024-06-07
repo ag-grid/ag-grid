@@ -98,7 +98,7 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
         valueFormatter: (params) => _toStringOrNull(params.value)!,
         gos,
         valueService,
-        addManagedListener: () => undefined,
+        addManagedEventListeners: () => undefined,
         funcColsService,
     });
 }

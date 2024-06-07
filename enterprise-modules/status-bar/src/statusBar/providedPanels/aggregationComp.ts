@@ -14,7 +14,6 @@ import type {
 } from '@ag-grid-community/core';
 import {
     Component,
-    Events,
     RefPlaceholder,
     _exists,
     _formatNumberTwoDecimalPlacesAndCommas,
@@ -81,12 +80,10 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         this.maxAggregationComp.setLabel('max', 'Max');
         this.sumAggregationComp.setLabel('sum', 'Sum');
 
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_RANGE_SELECTION_CHANGED,
-            this.onRangeSelectionChanged.bind(this)
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
+        this.addManagedEventListeners({
+            rangeSelectionChanged: this.onRangeSelectionChanged.bind(this),
+            modelUpdated: this.onRangeSelectionChanged.bind(this),
+        });
     }
 
     private isValidRowModel() {
