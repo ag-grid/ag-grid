@@ -131,8 +131,10 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
             });
         }
         if (!params?.suppressMouseOver) {
-            this.addManagedElementListeners(eGui, { mouseenter: () => this.onMouseEnter() });
-            this.addManagedElementListeners(eGui, { mouseleave: () => this.onMouseLeave() });
+            this.addManagedElementListeners(eGui, {
+                mouseenter: () => this.onMouseEnter(),
+                mouseleave: () => this.onMouseLeave(),
+            });
         }
     }
 

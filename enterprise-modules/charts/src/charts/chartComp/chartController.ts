@@ -634,27 +634,15 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     }
 
     public raiseChartModelUpdateEvent(): void {
-        const event = {
-            type: 'chartModelUpdate' as const,
-        };
-
-        this.dispatchLocalEvent(event);
+        this.dispatchLocalEvent({ type: 'chartModelUpdate' });
     }
 
     public raiseChartUpdatedEvent(): void {
-        const event = {
-            type: 'chartUpdated' as const,
-        };
-
-        this.dispatchLocalEvent(event);
+        this.dispatchLocalEvent({ type: 'chartUpdated' });
     }
 
     public raiseChartApiUpdateEvent(): void {
-        const event = {
-            type: 'chartApiUpdate' as const,
-        };
-
-        this.dispatchLocalEvent(event);
+        this.dispatchLocalEvent({ type: 'chartApiUpdate' });
     }
 
     private raiseChartOptionsChangedEvent(): void {

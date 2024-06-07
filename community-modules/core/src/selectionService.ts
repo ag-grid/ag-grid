@@ -139,11 +139,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
 
                 // this is the very end of the 'action node', so we are finished all the updates,
                 // include any parent / child changes that this method caused
-                const event: WithoutGridCommon<SelectionChangedEvent> = {
-                    type: 'selectionChanged',
-                    source,
-                };
-                this.eventService.dispatchEvent(event);
+                this.dispatchSelectionChanged(source);
             }
         }
         return updatedCount;
@@ -175,12 +171,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
 
         this.updateGroupsFromChildrenSelections(source);
 
-        const event: WithoutGridCommon<SelectionChangedEvent> = {
-            type: 'selectionChanged',
-            source,
-        };
-
-        this.eventService.dispatchEvent(event);
+        this.dispatchSelectionChanged(source);
 
         return updatedCount;
     }
@@ -377,11 +368,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         const selectionCount = this.getSelectionCount();
         this.resetNodes();
         if (selectionCount) {
-            const event: WithoutGridCommon<SelectionChangedEvent> = {
-                type: 'selectionChanged',
-                source,
-            };
-            this.eventService.dispatchEvent(event);
+            this.dispatchSelectionChanged(source);
         }
     }
 
@@ -474,12 +461,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             this.updateGroupsFromChildrenSelections(source);
         }
 
-        const event: WithoutGridCommon<SelectionChangedEvent> = {
-            type: 'selectionChanged',
-            source,
-        };
-
-        this.eventService.dispatchEvent(event);
+        this.dispatchSelectionChanged(source);
     }
 
     private getSelectedCounts(
@@ -621,11 +603,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             this.updateGroupsFromChildrenSelections(source);
         }
 
-        const event: WithoutGridCommon<SelectionChangedEvent> = {
-            type: 'selectionChanged',
-            source,
-        };
-        this.eventService.dispatchEvent(event);
+        this.dispatchSelectionChanged(source);
     }
 
     public getSelectionState(): string[] | null {
@@ -657,5 +635,13 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             nodes,
             source,
         });
+    }
+
+    private dispatchSelectionChanged(source: SelectionEventSourceType): void {
+        const event: WithoutGridCommon<SelectionChangedEvent> = {
+            type: 'selectionChanged',
+            source,
+        };
+        this.eventService.dispatchEvent(event);
     }
 }
