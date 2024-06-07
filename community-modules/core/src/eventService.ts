@@ -56,7 +56,7 @@ export class EventService extends BeanStub<AgEventType> implements NamedBean, IE
 
     /** @deprecated DO NOT FIRE LOCAL EVENTS OFF THE EVENT SERVICE */
     public override dispatchLocalEvent(): void {
-        throw new Error('Do not fire local events off Event Service!');
+        // only the destroy event from BeanStub should flow through here
     }
 
     public dispatchEvent(event: AgEvent<AgEventType>): void {
