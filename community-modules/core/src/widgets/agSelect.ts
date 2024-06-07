@@ -73,17 +73,21 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
         eListAriaEl.setAttribute('id', listId);
         _setAriaControls(this.getAriaElement(), eListAriaEl);
 
-        this.listComponent.addManagedListener(this.listComponent, 'selectedItem', () => {
-            this.hidePicker();
-            this.dispatchLocalEvent({ type: 'selectedItem' });
+        this.listComponent.addManagedListeners(this.listComponent, {
+            selectedItem: () => {
+                this.hidePicker();
+                this.dispatchLocalEvent({ type: 'selectedItem' });
+            },
         });
 
-        this.listComponent.addManagedListener(this.listComponent, 'fieldValueChanged', () => {
-            if (!this.listComponent) {
-                return;
-            }
-            this.setValue(this.listComponent.getValue()!, false, true);
-            this.hidePicker();
+        this.listComponent.addManagedListeners(this.listComponent, {
+            fieldValueChanged: () => {
+                if (!this.listComponent) {
+                    return;
+                }
+                this.setValue(this.listComponent.getValue()!, false, true);
+                this.hidePicker();
+            },
         });
     }
 

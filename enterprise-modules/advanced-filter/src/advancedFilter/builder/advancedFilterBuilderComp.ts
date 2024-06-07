@@ -316,22 +316,13 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
                 : new AdvancedFilterBuilderItemAddComp(item, focusWrapper)
         );
 
-        itemComp.addManagedListener(
-            itemComp,
-            'advancedFilterBuilderRemoved',
-            ({ item }: AdvancedFilterBuilderRemoveEvent) => this.removeItem(item)
-        );
-        itemComp.addManagedListener(itemComp, 'advancedFilterBuilderValueChanged', () => this.validate());
-        itemComp.addManagedListener(
-            itemComp,
-            'advancedFilterBuilderAdded',
-            ({ item, isJoin }: AdvancedFilterBuilderAddEvent) => this.addItem(item, isJoin)
-        );
-        itemComp.addManagedListener(
-            itemComp,
-            'advancedFilterBuilderMoved',
-            ({ item, backwards }: AdvancedFilterBuilderMoveEvent) => this.moveItemUpDown(item, backwards)
-        );
+        itemComp.addManagedListeners(itemComp, {
+            advancedFilterBuilderRemoved: ({ item }: AdvancedFilterBuilderRemoveEvent) => this.removeItem(item),
+            advancedFilterBuilderValueChanged: () => this.validate(),
+            advancedFilterBuilderAdded: ({ item, isJoin }: AdvancedFilterBuilderAddEvent) => this.addItem(item, isJoin),
+            advancedFilterBuilderMoved: ({ item, backwards }: AdvancedFilterBuilderMoveEvent) =>
+                this.moveItemUpDown(item, backwards),
+        });
 
         if (itemComp instanceof AdvancedFilterBuilderItemComp) {
             this.updateItemComponent(item, itemComp);

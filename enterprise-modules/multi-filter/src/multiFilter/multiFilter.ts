@@ -199,26 +199,28 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
                 });
 
                 const menuItemGui = menuItem.getGui();
-                // `AgMenuList` normally handles keyboard navigation, so need to do here
-                menuItem.addManagedListener(menuItemGui, 'keydown', (e: KeyboardEvent) => {
-                    const { key } = e;
-                    switch (key) {
-                        case KeyCode.UP:
-                        case KeyCode.RIGHT:
-                        case KeyCode.DOWN:
-                        case KeyCode.LEFT:
-                            e.preventDefault();
-                            if (key === KeyCode.RIGHT) {
-                                menuItem.openSubMenu(true);
-                            }
-                            break;
-                    }
-                });
-                menuItem.addManagedListener(menuItemGui, 'focusin', () => menuItem.activate());
-                menuItem.addManagedListener(menuItemGui, 'focusout', () => {
-                    if (!menuItem.isSubMenuOpen() && !menuItem.isSubMenuOpening()) {
-                        menuItem.deactivate();
-                    }
+                menuItem.addManagedElementListeners(menuItemGui, {
+                    // `AgMenuList` normally handles keyboard navigation, so need to do here
+                    keydown: (e: KeyboardEvent) => {
+                        const { key } = e;
+                        switch (key) {
+                            case KeyCode.UP:
+                            case KeyCode.RIGHT:
+                            case KeyCode.DOWN:
+                            case KeyCode.LEFT:
+                                e.preventDefault();
+                                if (key === KeyCode.RIGHT) {
+                                    menuItem.openSubMenu(true);
+                                }
+                                break;
+                        }
+                    },
+                    focusin: () => menuItem.activate(),
+                    focusout: () => {
+                        if (!menuItem.isSubMenuOpen()) {
+                            menuItem.deactivate();
+                        }
+                    },
                 });
 
                 return menuItem;
@@ -239,13 +241,14 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         group.toggleGroupExpand(false);
 
         if (filter.afterGuiAttached) {
-            group.addManagedListener(group, 'expanded', () =>
-                filter.afterGuiAttached!({
-                    container: this.lastOpenedInContainer!,
-                    suppressFocus: true,
-                    hidePopup: this.hidePopup,
-                })
-            );
+            group.addManagedListeners(group, {
+                expanded: () =>
+                    filter.afterGuiAttached!({
+                        container: this.lastOpenedInContainer!,
+                        suppressFocus: true,
+                        hidePopup: this.hidePopup,
+                    }),
+            });
         }
 
         return group;

@@ -171,7 +171,9 @@ export class AgDialog extends AgPanel<DialogOptions> {
         const maximizeButtonComp = this.buildMaximizeAndMinimizeElements();
         this.refreshMaximizeIcon();
 
-        maximizeButtonComp.addManagedListener(maximizeButtonComp.getGui(), 'click', this.toggleMaximize.bind(this));
+        maximizeButtonComp.addManagedElementListeners(maximizeButtonComp.getGui(), {
+            click: this.toggleMaximize.bind(this),
+        });
 
         this.addTitleBarButton(maximizeButtonComp, 0);
 

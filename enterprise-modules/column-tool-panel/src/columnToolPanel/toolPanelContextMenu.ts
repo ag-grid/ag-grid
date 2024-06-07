@@ -171,9 +171,11 @@ export class ToolPanelContextMenu extends Component {
 
         eGui.appendChild(menuList.getGui());
         menuList.addMenuItems(menuItemsMapped);
-        menuList.addManagedListener(menuList, 'closeMenu', () => {
-            this.parentEl.focus();
-            hideFunc();
+        menuList.addManagedListeners(menuList, {
+            closeMenu: () => {
+                this.parentEl.focus();
+                hideFunc();
+            },
         });
 
         const addPopupRes = this.popupService.addPopup({

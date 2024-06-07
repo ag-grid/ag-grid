@@ -89,22 +89,22 @@ export class InputPillComp extends Component<InputPillCompEvent> {
         this.eEditor = this.createEditorComp(this.params.type);
         this.eEditor.setValue(this.value);
         const eEditorGui = this.eEditor.getGui();
-        this.eEditor.addManagedListener(eEditorGui, 'keydown', (event: KeyboardEvent) => {
-            switch (event.key) {
-                case KeyCode.ENTER:
-                    event.preventDefault();
-                    _stopPropagationForAgGrid(event);
-                    this.updateValue(true);
-                    break;
-                case KeyCode.ESCAPE:
-                    event.preventDefault();
-                    _stopPropagationForAgGrid(event);
-                    this.hideEditor(true);
-                    break;
-            }
-        });
-        this.eEditor.addManagedListener(eEditorGui, 'focusout', () => {
-            this.updateValue(false);
+        this.eEditor.addManagedElementListeners(eEditorGui, {
+            keydown: (event: KeyboardEvent) => {
+                switch (event.key) {
+                    case KeyCode.ENTER:
+                        event.preventDefault();
+                        _stopPropagationForAgGrid(event);
+                        this.updateValue(true);
+                        break;
+                    case KeyCode.ESCAPE:
+                        event.preventDefault();
+                        _stopPropagationForAgGrid(event);
+                        this.hideEditor(true);
+                        break;
+                }
+            },
+            focusout: () => this.updateValue(false),
         });
         this.getGui().appendChild(eEditorGui);
         this.eEditor.getFocusableElement().focus();
