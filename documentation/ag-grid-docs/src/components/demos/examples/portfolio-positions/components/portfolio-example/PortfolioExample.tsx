@@ -57,6 +57,7 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             pivot: true,
             aggFunc: 'sum',
             suppressHeaderFilterButton: true,
+            suppressHeaderMenuButton: true,
         },
         {
             headerName: 'Last',
@@ -132,14 +133,17 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             cellDataType: 'text',
             enableRowGroup: true,
             width: 100,
-            suppressHeaderFilterButton: true,
+            filter: 'agSetColumnFilter',
+            suppressHeaderMenuButton: true,
+
         },
         {
             headerName: 'Purchase Date',
             field: 'buyDate',
             cellDataType: 'dateString',
             width: 180,
-            suppressHeaderFilterButton: true,
+            filter: 'agDateColumnFilter',
+            suppressHeaderMenuButton: true,
         },
         {
             headerName: 'Quantity',
@@ -167,7 +171,7 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             valueFormatter: currencyFormatter,
             width: 150,
             aggFunc: 'sum',
-            suppressHeaderFilterButton: true,
+            filter: 'agNumberColumnFilter',
         },
         {
             headerName: 'Total Value',
@@ -178,6 +182,7 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             width: 150,
             aggFunc: 'sum',
             suppressHeaderFilterButton: true,
+            cellRenderer: "agAnimateShowChangeCellRenderer",
         },
         {
             headerName: '52w Change %',
@@ -193,6 +198,7 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             },
             aggFunc: 'avg',
             suppressHeaderFilterButton: true,
+            suppressHeaderContextMenu: true,
         },
     ]);
     const getRowId = useCallback<GetRowIdFunc>((params: GetRowIdParams) => {
@@ -239,6 +245,7 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
                         groupDisplayType="groupRows"
                         groupDefaultExpanded={1}
                         columnMenu="new"
+                        rowGroupPanelShow={"always"}
                     />
                 </div>
             </div>
