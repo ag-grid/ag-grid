@@ -30,7 +30,7 @@ export const getDependencies = ({
             } else {
                 dependencies.push('ag-grid-enterprise');
             }
-        } else if (!licensedProducts.grid && framework === 'javascript') {
+        } else {
             dependencies.push('ag-grid-community');
         }
     } else if (importType === 'modules') {
@@ -48,8 +48,12 @@ export const getDependencies = ({
             if (licensedProducts.charts) {
                 dependencies.push('@ag-grid-enterprise/charts-enterprise');
             }
-        } else if (!licensedProducts.grid && framework === 'javascript') {
+        } else {
             dependencies.push('@ag-grid-community/core');
+
+            if (licensedProducts.charts) {
+                // Invalid state - need grid to be enabled
+            }
         }
     }
 
