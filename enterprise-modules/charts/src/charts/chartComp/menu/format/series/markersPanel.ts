@@ -37,39 +37,43 @@ export class MarkersPanel extends Component {
         // scatter charts should always show markers
         const chartType = this.chartOptionsService.getChartType();
         const shouldHideEnabledCheckbox = _includes(['scatter', 'bubble'], chartType);
-        const seriesMarkersGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>('marker.enabled', {
-            cssIdentifier: 'charts-format-sub-level',
-            direction: 'vertical',
-            title: this.chartTranslationService.translate('markers'),
-            suppressEnabledCheckbox: true,
-            useToggle: !shouldHideEnabledCheckbox,
-            suppressOpenCloseIcons: true,
-        });
+        const basePath = shouldHideEnabledCheckbox ? '' : 'marker.';
+        const seriesMarkersGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
+            `${basePath}enabled`,
+            {
+                cssIdentifier: 'charts-format-sub-level',
+                direction: 'vertical',
+                title: this.chartTranslationService.translate('markers'),
+                suppressEnabledCheckbox: true,
+                useToggle: !shouldHideEnabledCheckbox,
+                suppressOpenCloseIcons: true,
+            }
+        );
 
         const isBubble = chartType === 'bubble';
         let seriesMarkerMinSizeSliderParams: AgSliderParams;
         let seriesMarkerSizeSliderParams: AgSliderParams;
         if (isBubble) {
-            seriesMarkerMinSizeSliderParams = this.getSliderParams('marker.maxSize', 'maxSize', 60);
-            seriesMarkerSizeSliderParams = this.getSliderParams('marker.size', 'minSize', 60);
+            seriesMarkerMinSizeSliderParams = this.getSliderParams(`${basePath}maxSize`, 'maxSize', 60);
+            seriesMarkerSizeSliderParams = this.getSliderParams(`${basePath}size`, 'minSize', 60);
         } else {
             seriesMarkerMinSizeSliderParams = {};
-            seriesMarkerSizeSliderParams = this.getSliderParams('marker.size', 'size', 60);
+            seriesMarkerSizeSliderParams = this.getSliderParams(`${basePath}size`, 'size', 60);
         }
 
         this.setTemplate(MarkersPanel.TEMPLATE, [AgGroupComponent, AgSelect, AgSlider], {
             seriesMarkersGroup: seriesMarkersGroupParams,
-            seriesMarkerShapeSelect: this.getMarkerShapeSelectParams(),
+            seriesMarkerShapeSelect: this.getMarkerShapeSelectParams(basePath),
             seriesMarkerMinSizeSlider: seriesMarkerMinSizeSliderParams,
             seriesMarkerSizeSlider: seriesMarkerSizeSliderParams,
-            seriesMarkerStrokeWidthSlider: this.getSliderParams('marker.strokeWidth', 'strokeWidth', 10),
+            seriesMarkerStrokeWidthSlider: this.getSliderParams(`${basePath}strokeWidth`, 'strokeWidth', 10),
         });
         if (!isBubble) {
             this.seriesMarkerMinSizeSlider.setDisplayed(false);
         }
     }
 
-    private getMarkerShapeSelectParams(): AgSelectParams {
+    private getMarkerShapeSelectParams(basePath: string): AgSelectParams {
         const options = [
             {
                 value: 'square',
@@ -100,7 +104,7 @@ export class MarkersPanel extends Component {
                 text: 'Heart',
             },
         ];
-        return this.chartMenuUtils.getDefaultSelectParams('marker.shape', 'shape', options);
+        return this.chartMenuUtils.getDefaultSelectParams(`${basePath}shape`, 'shape', options);
     }
 
     private getSliderParams(

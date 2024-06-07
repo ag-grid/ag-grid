@@ -36,7 +36,7 @@ export class AxisTicksPanel extends Component {
             suppressEnabledCheckbox: true,
             useToggle: true,
         });
-        const axisTicksColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams('tick.color');
+        const axisTicksColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams('tick.stroke');
         const axisTicksWidthSliderParams = this.chartMenuUtils.getDefaultSliderParams('tick.width', 'width', 10);
         const axisTicksSizeSliderParams = this.chartMenuUtils.getDefaultSliderParams('tick.size', 'length', 30);
         this.setTemplate(AxisTicksPanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
