@@ -64,6 +64,6 @@ export class EventService extends BeanStub<AgEventType> implements NamedBean, IE
     }
 
     public dispatchEventOnce(event: AgEvent<AgEventType>): void {
-        this.globalEventService.dispatchEventOnce(event);
+        this.globalEventService.dispatchEventOnce(this.gos.addGridCommonParams<any>(event));
     }
 }

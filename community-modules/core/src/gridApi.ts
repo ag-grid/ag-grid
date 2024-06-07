@@ -3,6 +3,7 @@ import type { ISizeColumnsToFitParams } from './columns/columnSizeService';
 import type { CellPosition } from './entities/cellPositionUtils';
 import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from './entities/colDef';
 import type { ChartRef, GridOptions } from './entities/gridOptions';
+import type { AgPublicEventType } from './eventTypes';
 import type { AgEvent, ColumnEventType, FilterChangedEventSourceType, SelectionEventSourceType } from './events';
 import type { RowDropZoneEvents, RowDropZoneParams } from './gridBodyComp/rowDragFeature';
 import type {
@@ -554,7 +555,7 @@ export interface GridApi<TData = any> {
      * Works similar to `addEventListener` for a browser DOM element.
      * Listeners will be automatically removed when the grid is destroyed.
      */
-    addEventListener(eventType: string, listener: (...args: any[]) => any): void;
+    addEventListener(eventType: AgPublicEventType, listener: (...args: any[]) => any): void;
 
     /**
      * Add an event listener for all event types coming from the grid.
@@ -563,7 +564,7 @@ export interface GridApi<TData = any> {
     addGlobalListener(listener: (...args: any[]) => any): void;
 
     /** Remove an event listener. */
-    removeEventListener(eventType: string, listener: (...args: any[]) => any): void;
+    removeEventListener(eventType: AgPublicEventType, listener: (...args: any[]) => any): void;
 
     /** Remove a global event listener. */
     removeGlobalListener(listener: (...args: any[]) => any): void;

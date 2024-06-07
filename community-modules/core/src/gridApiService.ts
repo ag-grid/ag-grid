@@ -946,7 +946,7 @@ export class GridApiService<TData = any> extends BeanStub<AgPublicEventType> imp
             type: 'gridPreDestroyed',
             state: this.getState(),
         };
-        this.dispatchLocalEvent(event);
+        this.dispatchEvent(event);
 
         // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.
         this.destroyCalled = true;

@@ -277,7 +277,7 @@ export interface PivotMaxColumnsExceededEvent<TData = any, TContext = any>
     message: string;
 }
 
-export interface RowDragEvent<T extends AgEventType, TData = any, TContext = any>
+export interface RowDragEvent<TData = any, TContext = any, T extends AgEventType = any>
     extends AgGlobalEvent<T, TData, TContext> {
     /** The row node getting dragged. Also the node that started the drag when multi-row dragging. */
     node: IRowNode<TData>;
@@ -301,13 +301,13 @@ export interface RowDragEvent<T extends AgEventType, TData = any, TContext = any
     y: number;
 }
 
-export interface RowDragEnterEvent<TData = any, TContext = any> extends RowDragEvent<'rowDragEnter', TData, TContext> {}
+export interface RowDragEnterEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragEnter'> {}
 
-export interface RowDragEndEvent<TData = any, TContext = any> extends RowDragEvent<'rowDragEnd', TData, TContext> {}
+export interface RowDragEndEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragEnd'> {}
 
-export interface RowDragMoveEvent<TData = any, TContext = any> extends RowDragEvent<'rowDragMove', TData, TContext> {}
+export interface RowDragMoveEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragMove'> {}
 
-export interface RowDragLeaveEvent<TData = any, TContext = any> extends RowDragEvent<'rowDragLeave', TData, TContext> {}
+export interface RowDragLeaveEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragLeave'> {}
 
 export interface CutStartEvent<TData = any, TContext = any> extends AgGlobalEvent<'cutStart', TData, TContext> {
     source: 'api' | 'ui' | 'contextMenu';
@@ -497,12 +497,15 @@ export interface FullWidthRowFocusedEvent<TData = any, TContext = any>
     fromBelow: boolean;
 }
 
+/**
+ * @deprecated v32 Please use `ExpandOrCollapseAllEvent` instead.
+ */
 export interface ExpandCollapseAllEvent<TData = any, TContext = any>
+    extends ExpandOrCollapseAllEvent<TData, TContext> {}
+export interface ExpandOrCollapseAllEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'expandOrCollapseAll', TData, TContext> {
     source: string;
 }
-export interface ExpandOrCollapseAllEvent<TData = any, TContext = any>
-    extends ExpandCollapseAllEvent<TData, TContext> {}
 
 /**---------------*/
 /** COLUMN EVENTS */
