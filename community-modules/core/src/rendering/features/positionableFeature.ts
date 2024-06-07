@@ -813,14 +813,10 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
         this.currentResizer = null;
         this.boundaryEl = null;
 
-        const params = {
-            type: 'resize' as const,
-        };
-
         this.element.classList.remove('ag-resizing');
         this.resizerMap![side].element.classList.remove('ag-active');
 
-        this.dispatchLocalEvent(params);
+        this.dispatchLocalEvent({ type: 'resize' });
     }
 
     private refreshSize() {

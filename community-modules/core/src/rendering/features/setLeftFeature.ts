@@ -1,6 +1,6 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import { AgColumn } from '../../entities/agColumn';
+import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import { isColumnGroup } from '../../entities/agColumnGroup';
 import { _setAriaColSpan } from '../../utils/aria';
@@ -46,15 +46,16 @@ export class SetLeftFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.addManagedListeners(this.columnOrGroup, { leftChanged: this.onLeftChanged.bind(this) });
+        const onLeftChanged = this.onLeftChanged.bind(this);
+        this.addManagedListeners(this.columnOrGroup, { leftChanged: onLeftChanged });
         this.setLeftFirstTime();
 
         // when in print layout, the left position is also dependent on the width of the pinned sections.
         // so additionally update left if any column width changes.
-        this.addManagedEventListeners({ displayedColumnsWidthChanged: this.onLeftChanged.bind(this) });
+        this.addManagedEventListeners({ displayedColumnsWidthChanged: onLeftChanged });
 
         // setting left has a dependency on print layout
-        this.addManagedPropertyListener('domLayout', this.onLeftChanged.bind(this));
+        this.addManagedPropertyListener('domLayout', onLeftChanged);
     }
 
     private setLeftFirstTime(): void {

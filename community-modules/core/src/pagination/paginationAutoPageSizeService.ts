@@ -27,9 +27,10 @@ export class PaginationAutoPageSizeService extends BeanStub implements NamedBean
         this.ctrlsService.whenReady((p) => {
             this.centerRowsCtrl = p.center;
 
+            const listener = this.checkPageSize.bind(this);
             this.addManagedEventListeners({
-                bodyHeightChanged: this.checkPageSize.bind(this),
-                scrollVisibilityChanged: this.checkPageSize.bind(this),
+                bodyHeightChanged: listener,
+                scrollVisibilityChanged: listener,
             });
             this.addManagedPropertyListener('paginationAutoPageSize', this.onPaginationAutoSizeChanged.bind(this));
 
