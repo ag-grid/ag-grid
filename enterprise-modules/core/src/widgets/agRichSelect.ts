@@ -123,13 +123,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.listComponent.setParentComponent(this);
 
         if (!this.config.multiSelect) {
-            this.addManagedListener(
-                this.listComponent,
-                'richSelectListRowSelected',
-                (e: RichSelectListRowSelectedEvent) => {
+            this.addManagedListeners(this.listComponent, {
+                richSelectListRowSelected: (e: RichSelectListRowSelectedEvent) => {
                     this.onListValueSelected(e.value, e.fromEnterKey);
-                }
-            );
+                },
+            });
         }
     }
 

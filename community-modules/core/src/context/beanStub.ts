@@ -20,6 +20,8 @@ import type { BaseBean } from './genericContext';
 
 export type BeanStubEvent = 'destroyed';
 export type LocalEventOrDestroyed<TLocalEvent extends string> = TLocalEvent | 'destroyed';
+
+type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
 export abstract class BeanStub<TLocalEvent extends string = BeanStubEvent>
     implements BaseBean<BeanCollection>, Bean, IEventEmitter<LocalEventOrDestroyed<TLocalEvent>>
 {
@@ -103,30 +105,32 @@ export abstract class BeanStub<TLocalEvent extends string = BeanStubEvent>
 
     public addManagedElementListeners<TEvent extends keyof HTMLElementEventMap>(
         object: Element | Document,
-        handlers: Partial<Record<TEvent, (event?: HTMLElementEventMap[TEvent]) => void>>
+        handlers: EventHandlers<TEvent, HTMLElementEventMap[TEvent]>
     ) {
-        return this.addManagedListeners<keyof HTMLElementEventMap>(object, handlers);
+        return this._setupListeners<keyof HTMLElementEventMap>(object, handlers);
+    }
+    public addManagedEventListeners(handlers: EventHandlers<EventsType>) {
+        return this._setupListeners<EventsType>(this.eventService, handlers);
+    }
+    public addManagedListeners<TEvent extends string>(object: IEventEmitter<TEvent>, handlers: EventHandlers<TEvent>) {
+        return this._setupListeners<TEvent>(object, handlers);
     }
 
-    public addManagedListeners<TEvent extends string>(
+    private _setupListeners<TEvent extends string>(
         object: HTMLElement | IEventEmitter<TEvent>,
-        handlers: Partial<Record<TEvent, (event?: any) => void>>
+        handlers: EventHandlers<TEvent>
     ) {
         const destroyFuncs: (() => null)[] = [];
         for (const k in handlers) {
             const handler = handlers[k];
             if (handler) {
-                destroyFuncs.push(this.addManagedListener(object, k, handler));
+                destroyFuncs.push(this._setupListener(object, k, handler));
             }
         }
         return destroyFuncs;
     }
 
-    public addManagedEventListeners(handlers: Partial<Record<EventsType, (event?: any) => void>>) {
-        return this.addManagedListeners<EventsType>(this.eventService, handlers);
-    }
-
-    public addManagedListener<const T extends string>(
+    private _setupListener<const T extends string>(
         object: Window | HTMLElement | IEventEmitter<T>,
         event: T,
         listener: (event?: any) => void
