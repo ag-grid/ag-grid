@@ -8,12 +8,13 @@ export type CategorizedSitemap = {
 
 interface Props {
     sitemap: CategorizedSitemap;
+    site: string;
 }
 
 export const Sitemap = (props: Props) => {
     return (
         <div className={classnames('layout-max-width-small', styles.container)}>
-            <h1>AG Grid Sitemap</h1>
+            <h1>AG {props?.site} Sitemap</h1>
             {Object.keys(props.sitemap).map((category, categoryIndex) => (
                 <div className={styles.categoryContainer} key={categoryIndex}>
                     <h2 className={styles.categoryTitle}>{category}</h2>

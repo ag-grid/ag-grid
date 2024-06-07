@@ -15,6 +15,6 @@ const parsedSitemap = parseSitemap(xmlSitemap);
     showSearchBar={true}
 >
     <div class:list={['contentViewport layout-grid']}>
-        <Sitemap client:load sitemap={parsedSitemap} />
+        <Sitemap client:load sitemap={parsedSitemap} site={'Grid'} />
     </div>
 </Layout>
