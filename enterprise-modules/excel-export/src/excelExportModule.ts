@@ -15,14 +15,14 @@ import { VERSION } from './version';
 
 export const _ExcelExportCoreModule: Module = {
     version: VERSION,
-    moduleName: '@ag-grid-enterprise/excel-export-core',
+    moduleName: `${ModuleNames.ExcelExportModule}-core`,
     beans: [ExcelCreator],
     dependantModules: [_CsvExportCoreModule, EnterpriseCoreModule],
 };
 
 export const _ExcelExportApiModule: Module = {
     version: VERSION,
-    moduleName: '@ag-grid-enterprise/excel-export-api',
+    moduleName: `${ModuleNames.ExcelExportModule}-api`,
     apiFunctions: {
         getDataAsExcel,
         exportDataAsExcel,

@@ -36,7 +36,7 @@ import { VERSION } from './version';
 
 export const ServerSideRowModelCoreModule: Module = {
     version: VERSION,
-    moduleName: '@ag-grid-enterprise/server-side-row-model-core',
+    moduleName: `${ModuleNames.ServerSideRowModelModule}-core`,
     rowModel: 'serverSide',
     beans: [
         ServerSideRowModel,
@@ -58,7 +58,7 @@ export const ServerSideRowModelCoreModule: Module = {
 
 export const ServerSideRowModelApiModule: Module = {
     version: VERSION,
-    moduleName: '@ag-grid-enterprise/server-side-row-model-api',
+    moduleName: `${ModuleNames.ServerSideRowModelModule}-api`,
     beans: [RowModelHelperService],
     apiFunctions: {
         getServerSideSelectionState,

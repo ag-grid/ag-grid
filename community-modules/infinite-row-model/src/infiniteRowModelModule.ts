@@ -17,7 +17,7 @@ import { VERSION } from './version';
 
 export const InfiniteRowModelCoreModule: Module = {
     version: VERSION,
-    moduleName: '@ag-grid-community/infinite-row-model-core',
+    moduleName: `${ModuleNames.InfiniteRowModelModule}-core`,
     rowModel: 'infinite',
     beans: [InfiniteRowModel],
     dependantModules: [_RowNodeBlockModule],
@@ -25,7 +25,7 @@ export const InfiniteRowModelCoreModule: Module = {
 
 export const InfiniteRowModelApiModule: Module = {
     version: VERSION,
-    moduleName: '@ag-grid-community/infinite-row-model-api',
+    moduleName: `${ModuleNames.InfiniteRowModelModule}-api`,
     beans: [RowModelHelperService],
     apiFunctions: {
         refreshInfiniteCache,

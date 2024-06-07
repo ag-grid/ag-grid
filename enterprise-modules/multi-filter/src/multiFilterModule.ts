@@ -8,7 +8,7 @@ import { VERSION } from './version';
 
 export const MultiFilterCoreModule: Module = {
     version: VERSION,
-    moduleName: '@ag-grid-enterprise/multi-filter-core',
+    moduleName: `${ModuleNames.MultiFilterModule}-core`,
     userComponents: [
         { name: 'agMultiColumnFilter', classImp: MultiFilter },
         {

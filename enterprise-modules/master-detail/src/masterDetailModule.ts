@@ -15,7 +15,7 @@ import { VERSION } from './version';
 
 export const MasterDetailCoreModule: Module = {
     version: VERSION,
-    moduleName: '@ag-grid-enterprise/master-detail-core',
+    moduleName: `${ModuleNames.MasterDetailModule}-core`,
     userComponents: [
         {
             name: 'agGroupRowRenderer',
@@ -36,7 +36,7 @@ export const MasterDetailCoreModule: Module = {
 
 export const MasterDetailApiModule: Module = {
     version: VERSION,
-    moduleName: '@ag-grid-enterprise/master-detail-api',
+    moduleName: `${ModuleNames.MasterDetailModule}-api`,
     beans: [DetailGridApiService],
     apiFunctions: {
         addDetailGridInfo,

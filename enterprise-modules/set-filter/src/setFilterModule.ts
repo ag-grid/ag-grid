@@ -8,7 +8,7 @@ import { VERSION } from './version';
 
 export const SetFilterCoreModule: Module = {
     version: VERSION,
-    moduleName: '@ag-grid-enterprise/set-filter-core',
+    moduleName: `${ModuleNames.SetFilterModule}-core`,
     userComponents: [{ name: 'agSetColumnFilter', classImp: SetFilter }],
     dependantModules: [EnterpriseCoreModule, _ColumnFilterModule],
 };

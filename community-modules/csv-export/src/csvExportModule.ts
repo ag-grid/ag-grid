@@ -8,13 +8,13 @@ import { VERSION } from './version';
 
 export const CsvExportCoreModule: Module = {
     version: VERSION,
-    moduleName: '@ag-grid-community/csv-export-core',
+    moduleName: `${ModuleNames.CsvExportModule}-core`,
     beans: [CsvCreator, GridSerializer],
 };
 
 export const CsvExportApiModule: Module = {
     version: VERSION,
-    moduleName: '@ag-grid-community/csv-export-api',
+    moduleName: `${ModuleNames.CsvExportModule}-api`,
     apiFunctions: {
         getDataAsCsv,
         exportDataAsCsv,
