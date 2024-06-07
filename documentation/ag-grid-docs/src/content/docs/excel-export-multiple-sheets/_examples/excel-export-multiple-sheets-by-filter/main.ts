@@ -1,17 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 
-ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
-    ClientSideRowModelModule,
-    ExcelExportModule,
-    MenuModule,
-    SetFilterModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ExcelExportModule, MenuModule, SetFilterModule]);
 
 const columnDefs: ColDef[] = [
     { field: 'athlete', minWidth: 200 },

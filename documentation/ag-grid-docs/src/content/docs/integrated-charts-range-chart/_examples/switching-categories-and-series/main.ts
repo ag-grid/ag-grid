@@ -6,13 +6,7 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 import { generateData } from './data';
 
-ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
-    ClientSideRowModelModule,
-    GridChartsModule,
-    MenuModule,
-    RowGroupingModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, MenuModule, RowGroupingModule]);
 
 let gridApi: GridApi;
 

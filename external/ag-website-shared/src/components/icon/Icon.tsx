@@ -3,6 +3,7 @@ import BoldChevronDown from '@ag-website-shared/images/inline-svgs/bold-chevron-
 import BoldChevronLeft from '@ag-website-shared/images/inline-svgs/bold-chevron-left.svg?react';
 import BoldChevronRight from '@ag-website-shared/images/inline-svgs/bold-chevron-right.svg?react';
 import BoldChevronUp from '@ag-website-shared/images/inline-svgs/bold-chevron-up.svg?react';
+import Chord from '@ag-website-shared/images/inline-svgs/chord.svg?react';
 import CodeResult from '@ag-website-shared/images/inline-svgs/code-result.svg?react';
 import CodeSandboxIcon from '@ag-website-shared/images/inline-svgs/codesandbox.svg?react';
 import ColumnsIcon from '@ag-website-shared/images/inline-svgs/columns.svg?react';
@@ -21,6 +22,7 @@ import RadarArea from '@ag-website-shared/images/inline-svgs/radar-area.svg?reac
 import RadialColumn from '@ag-website-shared/images/inline-svgs/radial-column.svg?react';
 import ReplayDemoIcon from '@ag-website-shared/images/inline-svgs/replay-demo-icon.svg?react';
 import RowsIcon from '@ag-website-shared/images/inline-svgs/rows.svg?react';
+import Sankey from '@ag-website-shared/images/inline-svgs/sankey.svg?react';
 import StackBlitzIcon from '@ag-website-shared/images/inline-svgs/stack-blitz.svg?react';
 import StackOverflowMonochromeIcon from '@ag-website-shared/images/inline-svgs/stack-overflow-monochrome.svg?react';
 import StackOverflowIcon from '@ag-website-shared/images/inline-svgs/stack-overflow.svg?react';
@@ -111,6 +113,8 @@ const CHARTS_ICON_MAP = {
     chartsWaterfall: CarbonIcon.ChartWaterfall,
     chartsRadar: CarbonIcon.ChartRadar,
     chartsRadarArea: RadarArea,
+    chartsSankey: Sankey,
+    chartsChord: Chord,
     chartsNightingale: CarbonIcon.ChartRose,
     chartsRadialColumn: RadialColumn,
     chartsRadialBar: CarbonIcon.ChartRadial,
