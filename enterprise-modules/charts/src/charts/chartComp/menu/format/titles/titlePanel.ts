@@ -15,7 +15,7 @@ export class TitlePanel extends Component {
     protected chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
 
     protected readonly chartOptions: ChartOptionsProxy;

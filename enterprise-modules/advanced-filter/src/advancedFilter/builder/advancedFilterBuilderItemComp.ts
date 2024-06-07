@@ -49,7 +49,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
 
     public wireBeans(beans: BeanCollection): void {
         this.dragAndDropService = beans.dragAndDropService;
-        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
     }
 
     private readonly eTreeLines: HTMLElement = RefPlaceholder;

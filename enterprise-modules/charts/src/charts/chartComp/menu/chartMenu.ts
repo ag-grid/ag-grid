@@ -29,8 +29,8 @@ export class ChartMenu extends Component {
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection) {
-        this.chartMenuService = beans.chartMenuService;
-        this.chartMenuListFactory = beans.chartMenuListFactory;
+        this.chartMenuService = beans.chartMenuService as ChartMenuService;
+        this.chartMenuListFactory = beans.chartMenuListFactory as ChartMenuListFactory;
         this.environment = beans.environment;
     }
 

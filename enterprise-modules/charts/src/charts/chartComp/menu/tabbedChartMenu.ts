@@ -14,7 +14,7 @@ export class TabbedChartMenu extends Component<TabbedChartMenuEvent> {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
 
     public static TAB_DATA = 'data';

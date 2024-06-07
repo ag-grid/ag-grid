@@ -15,7 +15,7 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     public wireBeans(beans: BeanCollection) {
-        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
     }
 
     private item: AdvancedFilterBuilderItem;

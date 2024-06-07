@@ -88,9 +88,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.valueCache = beans.valueCache;
         this.environment = beans.environment;
 
-        this.filterStage = beans.filterStage;
-        this.sortStage = beans.sortStage;
-        this.flattenStage = beans.flattenStage;
+        this.filterStage = beans.filterStage!;
+        this.sortStage = beans.sortStage!;
+        this.flattenStage = beans.flattenStage!;
 
         this.groupStage = beans.groupStage;
         this.aggregationStage = beans.aggregationStage;

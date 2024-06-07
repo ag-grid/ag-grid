@@ -16,7 +16,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
 
     public wireBeans(beans: BeanCollection) {
         this.resizeObserverService = beans.resizeObserverService;
-        this.sparklineTooltipSingleton = beans.sparklineTooltipSingleton;
+        this.sparklineTooltipSingleton = beans.sparklineTooltipSingleton as SparklineTooltipSingleton;
     }
 
     private static TEMPLATE /* html */ = `<div class="ag-sparkline-wrapper">

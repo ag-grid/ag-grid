@@ -23,13 +23,12 @@ export class ColourCellRenderer implements ICellRendererComp {
 
             const text = document.createTextNode(textValue);
 
-            if (currentValue != null) {
+            if (currentValue != null && currentValue !== '') {
                 colorSpan.style.borderLeft = '10px solid ' + currentValue;
                 colorSpan.style.paddingRight = '2px';
+                eGui.appendChild(colorSpan);
+                eGui.append(text);
             }
-
-            eGui.appendChild(colorSpan);
-            eGui.append(text);
         }
     }
 

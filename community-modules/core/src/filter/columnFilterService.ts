@@ -1,6 +1,7 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { DataTypeService } from '../columns/dataTypeService';
 import { FilterComponent } from '../components/framework/componentTypes';
+import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import type { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
@@ -13,7 +14,6 @@ import type {
     FilterDestroyedEvent,
     FilterModifiedEvent,
 } from '../events';
-import { unwrapUserComp } from '../gridApi';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -592,7 +592,7 @@ export class ColumnFilterService extends BeanStub {
             }
 
             filterComponent.then((instance) => {
-                callback(unwrapUserComp(instance!));
+                callback(_unwrapUserComp(instance!));
             });
         };
 
@@ -792,10 +792,10 @@ export class ColumnFilterService extends BeanStub {
             if (!callback) {
                 return;
             }
-            const unwrapped = unwrapUserComp(instance) as any;
+            const unwrapped = _unwrapUserComp(instance) as any;
             callback(unwrapped);
         });
-        const unwrapped = unwrapUserComp(res);
+        const unwrapped = _unwrapUserComp(res);
         return unwrapped as any;
     }
 

@@ -40,7 +40,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
-        this.aggFuncService = beans.aggFuncService;
+        this.aggFuncService = beans.aggFuncService as AggFuncService;
         this.funcColsService = beans.funcColsService;
         this.pivotResultColsService = beans.pivotResultColsService;
         this.valueService = beans.valueService;

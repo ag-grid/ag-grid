@@ -48,7 +48,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     private rangeService: IRangeService;
 
     public wireBeans(beans: BeanCollection) {
-        this.rangeService = beans.rangeService;
+        this.rangeService = beans.rangeService!;
     }
 
     private chartProxy: ChartProxy;

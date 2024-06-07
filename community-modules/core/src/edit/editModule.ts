@@ -8,6 +8,16 @@ import { LargeTextCellEditor } from './cellEditors/largeTextCellEditor';
 import { NumberCellEditor } from './cellEditors/numberCellEditor';
 import { SelectCellEditor } from './cellEditors/selectCellEditor';
 import { TextCellEditor } from './cellEditors/textCellEditor';
+import {
+    getCellEditorInstances,
+    getCurrentRedoSize,
+    getCurrentUndoSize,
+    getEditingCells,
+    redoCellEditing,
+    startEditingCell,
+    stopEditing,
+    undoCellEditing,
+} from './editApi';
 import { EditService } from './editService';
 import { RowEditService } from './rowEditService';
 
@@ -15,6 +25,22 @@ export const EditCoreModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-community/edit-core',
     beans: [EditService],
+};
+
+export const EditApiModule: Module = {
+    version: VERSION,
+    moduleName: '@ag-grid-community/edit-api',
+    apiFunctions: {
+        undoCellEditing,
+        redoCellEditing,
+        getCellEditorInstances,
+        getEditingCells,
+        stopEditing,
+        startEditingCell,
+        getCurrentUndoSize,
+        getCurrentRedoSize,
+    },
+    dependantModules: [EditCoreModule],
 };
 
 export const UndoRedoEditModule: Module = {
@@ -74,5 +100,5 @@ const AllCommunityEditorsModule: Module = {
 export const EditModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-community/editing',
-    dependantModules: [EditCoreModule, UndoRedoEditModule, FullRowEditModule, AllCommunityEditorsModule],
+    dependantModules: [EditCoreModule, UndoRedoEditModule, FullRowEditModule, AllCommunityEditorsModule, EditApiModule],
 };

@@ -93,7 +93,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.csvCreator = beans.csvCreator;
+        this.csvCreator = beans.csvCreator!;
         this.loggerFactory = beans.loggerFactory;
         this.selectionService = beans.selectionService;
         this.rowModel = beans.rowModel;
