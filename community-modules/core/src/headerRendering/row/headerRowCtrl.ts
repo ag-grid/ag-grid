@@ -92,25 +92,26 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private addEventListeners(): void {
+        const onHeightChanged = this.onRowHeightChanged.bind(this);
         this.addManagedEventListeners({
             columnResized: this.onColumnResized.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             virtualColumnsChanged: (params: VirtualColumnsChangedEvent) =>
                 this.onVirtualColumnsChanged(params.afterScroll),
-            columnHeaderHeightChanged: this.onRowHeightChanged.bind(this),
-            gridStylesChanged: this.onRowHeightChanged.bind(this),
-            advancedFilterEnabledChanged: this.onRowHeightChanged.bind(this),
+            columnHeaderHeightChanged: onHeightChanged,
+            gridStylesChanged: onHeightChanged,
+            advancedFilterEnabledChanged: onHeightChanged,
         });
 
         // when print layout changes, it changes what columns are in what section
         this.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
         this.addManagedPropertyListener('ensureDomOrder', (e) => (this.isEnsureDomOrder = e.currentValue));
 
-        this.addManagedPropertyListener('headerHeight', this.onRowHeightChanged.bind(this));
-        this.addManagedPropertyListener('pivotHeaderHeight', this.onRowHeightChanged.bind(this));
-        this.addManagedPropertyListener('groupHeaderHeight', this.onRowHeightChanged.bind(this));
-        this.addManagedPropertyListener('pivotGroupHeaderHeight', this.onRowHeightChanged.bind(this));
-        this.addManagedPropertyListener('floatingFiltersHeight', this.onRowHeightChanged.bind(this));
+        this.addManagedPropertyListener('headerHeight', onHeightChanged);
+        this.addManagedPropertyListener('pivotHeaderHeight', onHeightChanged);
+        this.addManagedPropertyListener('groupHeaderHeight', onHeightChanged);
+        this.addManagedPropertyListener('pivotGroupHeaderHeight', onHeightChanged);
+        this.addManagedPropertyListener('floatingFiltersHeight', onHeightChanged);
     }
 
     public getHeaderCellCtrl(column: AgColumnGroup): HeaderGroupCellCtrl | undefined;

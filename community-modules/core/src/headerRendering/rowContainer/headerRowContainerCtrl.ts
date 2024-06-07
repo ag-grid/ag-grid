@@ -68,10 +68,11 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
         this.setupDragAndDrop(this.eViewport);
 
+        const onDisplayedColsChanged = this.onDisplayedColumnsChanged.bind(this);
         this.addManagedEventListeners({
             gridColumnsChanged: this.onGridColumnsChanged.bind(this),
-            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
-            advancedFilterEnabledChanged: this.onDisplayedColumnsChanged.bind(this),
+            displayedColumnsChanged: onDisplayedColsChanged,
+            advancedFilterEnabledChanged: onDisplayedColsChanged,
         });
 
         this.ctrlsService.registerHeaderContainer(this, this.pinned);

@@ -23,7 +23,7 @@ interface IHeaderColumn<TValue, TEventType extends string> extends IEventEmitter
     getColumnGroupShow(): ColumnGroupShowType | undefined;
 
     /** Returns the parent column group, if column grouping is active. */
-    getParent(): ColumnGroup<TValue> | null;
+    getParent(): ColumnGroup | null;
     isResizable(): boolean;
     isEmptyGroup(): boolean;
     isMoving(): boolean;
@@ -44,9 +44,7 @@ interface IProvidedColumn {
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 export type ColumnEventName =
-    // + renderedHeaderCell - for making header cell transparent when moving
     | 'movingChanged'
-    // + renderedCell - changing left position
     | 'leftChanged'
     | 'widthChanged'
     | 'lastLeftPinnedChanged'
