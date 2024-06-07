@@ -77,7 +77,7 @@ const useErrors = ({ hasLicense, license, userLicensedProducts, licenseDetails }
 };
 
 export const useLicenseData = () => {
-    const [hasLicense, setHasLicense] = useState<boolean>(false);
+    const [hasLicense, setHasLicense] = useState<boolean>(true);
     /**
      * User input license
      */

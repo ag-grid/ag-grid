@@ -71,7 +71,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                         defaultChecked={hasValue(hasLicense) && hasLicense}
                         onChange={() => setHasLicense(true)}
                     />{' '}
-                    I already have a license
+                    Existing license key
                 </label>
 
                 <label>
@@ -82,7 +82,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                         defaultChecked={hasValue(hasLicense) && !hasLicense}
                         onChange={() => setHasLicense(false)}
                     />{' '}
-                    I do not have a license
+                    No license key yet
                 </label>
             </div>
             {hasLicense && (
