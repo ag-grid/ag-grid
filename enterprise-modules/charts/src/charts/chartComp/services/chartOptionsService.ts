@@ -10,7 +10,6 @@ import type {
     AgPolarAxesTheme,
     AgPolarAxisType,
 } from 'ag-charts-community';
-import { AgCharts } from 'ag-charts-community';
 
 import type { ChartController } from '../chartController';
 import type { AgChartActual, AgChartAxisType } from '../utils/integration';

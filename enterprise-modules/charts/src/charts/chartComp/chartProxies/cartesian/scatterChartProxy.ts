@@ -107,16 +107,12 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                 const { sizeKey } = series;
                 markerDomain = calcMarkerDomain(data, sizeKey);
             }
-            const marker = {
-                ...series.marker,
-                fill,
-                stroke,
-                domain: markerDomain,
-            };
 
             return {
                 ...series,
-                marker,
+                fill,
+                stroke,
+                domain: markerDomain,
                 highlightStyle: { item: { fill: 'yellow' } },
                 listeners: {
                     ...series.listeners,
@@ -138,11 +134,8 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                 ...alteredSizeKey,
                 yKey: filteredOutKey(yKey!),
                 xKey: filteredOutKey(xKey!),
-                marker: {
-                    ...series.marker,
-                    fillOpacity: 0.3,
-                    strokeOpacity: 0.3,
-                },
+                fillOpacity: 0.3,
+                strokeOpacity: 0.3,
                 showInLegend: false,
                 listeners: {
                     ...series.listeners,
