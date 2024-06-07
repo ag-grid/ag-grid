@@ -24,12 +24,12 @@ export class AgGridHeaderDropZones extends Component {
 
     public postConstruct(): void {
         this.setGui(this.createNorthPanel());
-
+        const onRowGroupChanged = this.onRowGroupChanged.bind(this);
         this.addManagedEventListeners({
-            columnRowGroupChanged: this.onRowGroupChanged.bind(this),
-            newColumnsLoaded: this.onRowGroupChanged.bind(this),
+            columnRowGroupChanged: onRowGroupChanged,
+            newColumnsLoaded: onRowGroupChanged,
         });
-        this.addManagedPropertyListener('rowGroupPanelShow', () => this.onRowGroupChanged());
+        this.addManagedPropertyListener('rowGroupPanelShow', onRowGroupChanged);
         this.addManagedPropertyListener('pivotPanelShow', () => this.onPivotPanelShow());
 
         this.onRowGroupChanged();
@@ -50,11 +50,12 @@ export class AgGridHeaderDropZones extends Component {
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());
 
+        const listener = this.onDropPanelVisible.bind(this);
         this.addManagedListeners(this.rowGroupComp, {
-            displayChanged: this.onDropPanelVisible.bind(this),
+            displayChanged: listener,
         });
         this.addManagedListeners(this.pivotComp, {
-            displayChanged: this.onDropPanelVisible.bind(this),
+            displayChanged: listener,
         });
 
         this.onDropPanelVisible();
@@ -64,8 +65,9 @@ export class AgGridHeaderDropZones extends Component {
 
     private onDropPanelVisible(): void {
         const bothDisplayed = this.rowGroupComp.isDisplayed() && this.pivotComp.isDisplayed();
-        this.rowGroupComp.addOrRemoveCssClass('ag-column-drop-horizontal-half-width', bothDisplayed);
-        this.pivotComp.addOrRemoveCssClass('ag-column-drop-horizontal-half-width', bothDisplayed);
+        const classStr = 'ag-column-drop-horizontal-half-width';
+        this.rowGroupComp.addOrRemoveCssClass(classStr, bothDisplayed);
+        this.pivotComp.addOrRemoveCssClass(classStr, bothDisplayed);
     }
 
     private onRowGroupChanged(): void {

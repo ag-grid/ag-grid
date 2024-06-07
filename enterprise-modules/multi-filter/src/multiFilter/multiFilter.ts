@@ -217,7 +217,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
                     },
                     focusin: () => menuItem.activate(),
                     focusout: () => {
-                        if (!menuItem.isSubMenuOpen()) {
+                        if (!menuItem.isSubMenuOpen() && !menuItem.isSubMenuOpening()) {
                             menuItem.deactivate();
                         }
                     },

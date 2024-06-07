@@ -87,16 +87,19 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     public autoScrollService: AutoScrollService;
 
     public postConstruct(): void {
+        const onColumnsChanged = this.onColumnsChanged.bind(this);
+        const removeAllCellRanges = () => this.removeAllCellRanges();
+        const refreshLastRangeStart = this.refreshLastRangeStart.bind(this);
         this.addManagedEventListeners({
-            newColumnsLoaded: this.onColumnsChanged.bind(this),
-            columnVisible: this.onColumnsChanged.bind(this),
-            columnValueChanged: this.onColumnsChanged.bind(this),
-            columnPivotModeChanged: () => this.removeAllCellRanges(),
-            columnRowGroupChanged: () => this.removeAllCellRanges(),
-            columnPivotChanged: () => this.removeAllCellRanges(),
-            columnGroupOpened: this.refreshLastRangeStart.bind(this),
-            columnMoved: this.refreshLastRangeStart.bind(this),
-            columnPinned: this.refreshLastRangeStart.bind(this),
+            newColumnsLoaded: onColumnsChanged,
+            columnVisible: onColumnsChanged,
+            columnValueChanged: onColumnsChanged,
+            columnPivotModeChanged: removeAllCellRanges,
+            columnRowGroupChanged: removeAllCellRanges,
+            columnPivotChanged: removeAllCellRanges,
+            columnGroupOpened: refreshLastRangeStart,
+            columnMoved: refreshLastRangeStart,
+            columnPinned: refreshLastRangeStart,
         });
 
         this.ctrlsService.whenReady((p) => {
