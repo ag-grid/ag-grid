@@ -33,7 +33,7 @@ export class ColourCellRenderer implements ICellRendererAngularComp {
         const { value } = params;
 
         this.params = params;
-        this.values = Array.isArray(value) ? value : [value];
+        this.values = (Array.isArray(value) ? value : [value]).filter((value) => value != null && value !== '');
     }
 
     refresh() {
