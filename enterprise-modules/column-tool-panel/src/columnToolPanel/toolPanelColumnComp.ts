@@ -12,7 +12,6 @@ import type {
 import {
     AgCheckbox,
     Component,
-    CssClassApplier,
     DragAndDropService,
     DragSourceType,
     KeyCode,
@@ -22,18 +21,18 @@ import {
     _setAriaDescribedBy,
     _setAriaLabel,
     _setDisplayed,
+    getToolPanelClassesFromColDef,
 } from '@ag-grid-community/core';
 
 import type { ColumnModelItem } from './columnModelItem';
 import type { ModelItemUtils } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
+const TEMPLATE = /* html */ `<div class="ag-column-select-column" aria-hidden="true">
+        <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
+        <span class="ag-column-select-column-label" data-ref="eLabel"></span>
+    </div>`;
 export class ToolPanelColumnComp extends Component {
-    private static TEMPLATE /* html */ = `<div class="ag-column-select-column" aria-hidden="true">
-            <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-select-column-label" data-ref="eLabel"></span>
-        </div>`;
-
     private columnModel: ColumnModel;
     private dragAndDropService: DragAndDropService;
     private modelItemUtils: ModelItemUtils;
@@ -66,7 +65,7 @@ export class ToolPanelColumnComp extends Component {
     }
 
     public postConstruct(): void {
-        this.setTemplate(ToolPanelColumnComp.TEMPLATE, [AgCheckbox]);
+        this.setTemplate(TEMPLATE, [AgCheckbox]);
         this.eDragHandle = _createIconNoSpan('columnDrag', this.gos)!;
         this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-drag-handle');
 
@@ -113,12 +112,7 @@ export class ToolPanelColumnComp extends Component {
 
         this.setupTooltip();
 
-        const classes = CssClassApplier.getToolPanelClassesFromColDef(
-            this.column.getColDef(),
-            this.gos,
-            this.column,
-            null
-        );
+        const classes = getToolPanelClassesFromColDef(this.column.getColDef(), this.gos, this.column, null);
         classes.forEach((c) => this.addOrRemoveCssClass(c, true));
     }
 
@@ -228,8 +222,7 @@ export class ToolPanelColumnComp extends Component {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            getDefaultIconName: () =>
-                hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: () => (hideColumnOnExit ? 'hide' : 'notAllowed'),
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
                 hideColumnOnExit = !this.gos.get('suppressDragLeaveHidesColumns');

@@ -98,6 +98,7 @@ export {
     DragSource,
     DragItem,
     DraggingEvent,
+    DragAndDropIcon,
 } from './dragAndDrop/dragAndDropService';
 export { RowDropZoneParams, RowDropZoneEvents } from './gridBodyComp/rowDragFeature';
 export { DragService, DragListenerParams } from './dragAndDrop/dragService';
@@ -269,7 +270,7 @@ export {
 // headerRendering
 export { BodyDropPivotTarget } from './headerRendering/columnDrag/bodyDropPivotTarget';
 export { BodyDropTarget } from './headerRendering/columnDrag/bodyDropTarget';
-export { CssClassApplier } from './headerRendering/cells/cssClassApplier';
+export { getHeaderClassesFromColDef, getToolPanelClassesFromColDef } from './headerRendering/cells/cssClassApplier';
 export { HeaderRowContainerComp } from './headerRendering/rowContainer/headerRowContainerComp';
 export { GridHeaderComp } from './headerRendering/gridHeaderComp';
 export { GridHeaderCtrl, IGridHeaderComp } from './headerRendering/gridHeaderCtrl';

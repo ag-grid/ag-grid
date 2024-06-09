@@ -1,21 +1,21 @@
-import type {
-    AgColumn,
-    AgColumnGroup,
-    BeanCollection,
-    ColumnModel,
-    ColumnNameService,
-    ExcelExportMultipleSheetParams,
-    ExcelExportParams,
-    ExcelFactoryMode,
-    ExcelRow,
-    ExcelStyle,
-    FuncColsService,
-    IExcelCreator,
-    NamedBean,
-    StylingService,
-    ValueService,
+import {
+    type AgColumn,
+    type AgColumnGroup,
+    type BeanCollection,
+    type ColumnModel,
+    type ColumnNameService,
+    type ExcelExportMultipleSheetParams,
+    type ExcelExportParams,
+    type ExcelFactoryMode,
+    type ExcelRow,
+    type ExcelStyle,
+    type FuncColsService,
+    type IExcelCreator,
+    type NamedBean,
+    type StylingService,
+    type ValueService,
+    getHeaderClassesFromColDef,
 } from '@ag-grid-community/core';
-import { CssClassApplier } from '@ag-grid-community/core';
 import type { GridSerializer } from '@ag-grid-community/csv-export';
 import { BaseCreator, Downloader, RowType, ZipContainer } from '@ag-grid-community/csv-export';
 
@@ -369,7 +369,7 @@ export class ExcelCreator
 
             if (col) {
                 headerClasses = headerClasses.concat(
-                    CssClassApplier.getHeaderClassesFromColDef(
+                    getHeaderClassesFromColDef(
                         col.getDefinition(),
                         this.gos,
                         (column as AgColumn) || null,

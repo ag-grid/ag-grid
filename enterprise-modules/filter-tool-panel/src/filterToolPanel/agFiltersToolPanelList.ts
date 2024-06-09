@@ -37,8 +37,6 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
     static readonly selector: AgComponentSelector = 'AG-FILTERS-TOOL-PANEL-LIST';
 
-    private static TEMPLATE = /* html */ `<div class="ag-filter-list-panel"></div>`;
-
     private initialised = false;
     private hasLoadedInitialState = false;
     private isInitialState = false;
@@ -54,7 +52,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     private onColumnsChangedPending: boolean = false;
 
     constructor() {
-        super(AgFiltersToolPanelList.TEMPLATE);
+        super(/* html */ `<div class="ag-filter-list-panel"></div>`);
     }
 
     public init(params: ToolPanelFiltersCompParams): void {

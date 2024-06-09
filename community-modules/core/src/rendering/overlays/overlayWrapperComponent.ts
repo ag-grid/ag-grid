@@ -10,14 +10,6 @@ import type { OverlayService } from './overlayService';
 export class OverlayWrapperComponent extends Component implements LayoutView {
     static readonly selector: AgComponentSelector = 'AG-OVERLAY-WRAPPER';
 
-    // wrapping in outer div, and wrapper, is needed to center the loading icon
-    private static TEMPLATE = /* html */ `
-        <div class="ag-overlay" role="presentation">
-            <div class="ag-overlay-panel" role="presentation">
-                <div class="ag-overlay-wrapper" data-ref="eOverlayWrapper" role="presentation"></div>
-            </div>
-        </div>`;
-
     private overlayService: OverlayService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -33,7 +25,13 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     private updateListenerDestroyFunc?: () => null;
 
     constructor() {
-        super(OverlayWrapperComponent.TEMPLATE);
+        // wrapping in outer div, and wrapper, is needed to center the loading icon
+        super(/* html */ `
+            <div class="ag-overlay" role="presentation">
+                <div class="ag-overlay-panel" role="presentation">
+                    <div class="ag-overlay-wrapper" data-ref="eOverlayWrapper" role="presentation"></div>
+                </div>
+            </div>`);
     }
 
     public updateLayoutClasses(cssClass: string, params: UpdateLayoutClassesParams): void {

@@ -21,11 +21,6 @@ export class AgStatusBar extends Component {
     }
 
     static readonly selector: AgComponentSelector = 'AG-STATUS-BAR';
-    private static TEMPLATE /* html */ = `<div class="ag-status-bar">
-            <div data-ref="eStatusBarLeft" class="ag-status-bar-left" role="status"></div>
-            <div data-ref="eStatusBarCenter" class="ag-status-bar-center" role="status"></div>
-            <div data-ref="eStatusBarRight" class="ag-status-bar-right" role="status"></div>
-        </div>`;
 
     private readonly eStatusBarLeft: HTMLElement = RefPlaceholder;
     private readonly eStatusBarCenter: HTMLElement = RefPlaceholder;
@@ -34,7 +29,11 @@ export class AgStatusBar extends Component {
     private compDestroyFunctions: { [key: string]: () => void } = {};
 
     constructor() {
-        super(AgStatusBar.TEMPLATE);
+        super(/* html */ `<div class="ag-status-bar">
+            <div data-ref="eStatusBarLeft" class="ag-status-bar-left" role="status"></div>
+            <div data-ref="eStatusBarCenter" class="ag-status-bar-center" role="status"></div>
+            <div data-ref="eStatusBarRight" class="ag-status-bar-right" role="status"></div>
+        </div>`);
     }
 
     public postConstruct(): void {

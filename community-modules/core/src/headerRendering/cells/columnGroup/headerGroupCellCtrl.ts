@@ -15,12 +15,12 @@ import { _last, _removeFromArray } from '../../../utils/array';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { ITooltipFeatureCtrl } from '../../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../../widgets/tooltipFeature';
-import { ColumnMoveHelper } from '../../columnMoveHelper';
+import { attemptMoveColumns, normaliseX } from '../../columnMoveHelper';
 import type { HeaderPosition } from '../../common/headerPosition';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
-import { CssClassApplier } from '../cssClassApplier';
+import { getHeaderClassesFromColDef } from '../cssClassApplier';
 import { HoverFeature } from '../hoverFeature';
 import { GroupResizeFeature } from './groupResizeFeature';
 import { GroupWidthFeature } from './groupWidthFeature';
@@ -113,18 +113,12 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         const left = rect.left;
         const width = rect.width;
 
-        const xPosition = ColumnMoveHelper.normaliseX(
-            isLeft !== isRtl ? left - 20 : left + width + 20,
-            pinned,
-            true,
-            gos,
-            ctrlsService
-        );
+        const xPosition = normaliseX(isLeft !== isRtl ? left - 20 : left + width + 20, pinned, true, gos, ctrlsService);
 
         const id = column.getGroupId();
         const headerPosition = this.focusService.getFocusedHeader();
 
-        ColumnMoveHelper.attemptMoveColumns({
+        attemptMoveColumns({
             allMovingColumns: this.column.getLeafColumns(),
             isFromHeader: true,
             hDirection,
@@ -300,7 +294,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
     private addClasses(): void {
         const colGroupDef = this.column.getColGroupDef();
-        const classes = CssClassApplier.getHeaderClassesFromColDef(colGroupDef, this.gos, null, this.column);
+        const classes = getHeaderClassesFromColDef(colGroupDef, this.gos, null, this.column);
 
         // having different classes below allows the style to not have a bottom border
         // on the group header, if no group is specified
@@ -394,8 +388,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         const dragSource = (this.dragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eHeaderGroup,
-            getDefaultIconName: () =>
-                hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: () => (hideColumnOnExit ? 'hide' : 'notAllowed'),
             dragItemName: displayName,
             // we add in the original group leaf columns, so we move both visible and non-visible items
             getDragItem: () => this.getDragItemForGroup(column),

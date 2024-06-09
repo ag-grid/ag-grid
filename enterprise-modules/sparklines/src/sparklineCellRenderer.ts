@@ -19,16 +19,14 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         this.sparklineTooltipSingleton = beans.sparklineTooltipSingleton as SparklineTooltipSingleton;
     }
 
-    private static TEMPLATE /* html */ = `<div class="ag-sparkline-wrapper">
-            <span data-ref="eSparkline"></span>
-        </div>`;
-
     private readonly eSparkline: HTMLElement = RefPlaceholder;
 
     private sparkline?: any;
 
     constructor() {
-        super(SparklineCellRenderer.TEMPLATE);
+        super(/* html */ `<div class="ag-sparkline-wrapper">
+            <span data-ref="eSparkline"></span>
+        </div>`);
     }
 
     public init(params: ISparklineCellRendererParams): void {

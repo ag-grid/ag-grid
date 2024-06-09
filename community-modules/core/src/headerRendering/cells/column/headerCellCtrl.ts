@@ -4,7 +4,7 @@ import type { UserCompDetails } from '../../../components/framework/userComponen
 import { HorizontalDirection } from '../../../constants/direction';
 import { KeyCode } from '../../../constants/keyCode';
 import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
-import { DragAndDropService, DragSourceType } from '../../../dragAndDrop/dragAndDropService';
+import { DragSourceType } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { SortDirection } from '../../../entities/colDef';
 import type { ColumnHeaderMouseLeaveEvent } from '../../../events';
@@ -16,11 +16,11 @@ import { _getElementSize } from '../../../utils/dom';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { ITooltipFeatureCtrl } from '../../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../../widgets/tooltipFeature';
-import { ColumnMoveHelper } from '../../columnMoveHelper';
+import { attemptMoveColumns, normaliseX } from '../../columnMoveHelper';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
-import { CssClassApplier } from '../cssClassApplier';
+import { getHeaderClassesFromColDef } from '../cssClassApplier';
 import { HoverFeature } from '../hoverFeature';
 import type { IHeader, IHeaderParams } from './headerComp';
 import { HeaderComp } from './headerComp';
@@ -142,15 +142,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const isRtl = gos.get('enableRtl');
         const isLeft = (hDirection === HorizontalDirection.Left) !== isRtl;
 
-        const xPosition = ColumnMoveHelper.normaliseX(
-            isLeft ? left - 20 : left + width + 20,
-            pinned,
-            true,
-            gos,
-            ctrlsService
-        );
+        const xPosition = normaliseX(isLeft ? left - 20 : left + width + 20, pinned, true, gos, ctrlsService);
 
-        ColumnMoveHelper.attemptMoveColumns({
+        attemptMoveColumns({
             allMovingColumns: [column],
             isFromHeader: true,
             hDirection,
@@ -335,7 +329,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private setupClassesFromColDef(): void {
         const refreshHeaderClasses = () => {
             const colDef = this.column.getColDef();
-            const classes = CssClassApplier.getHeaderClassesFromColDef(colDef, this.gos, this.column, null);
+            const classes = getHeaderClassesFromColDef(colDef, this.gos, this.column, null);
 
             const oldClasses = this.userHeaderClasses;
             this.userHeaderClasses = new Set(classes);
@@ -373,8 +367,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const dragSource = (this.dragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eSource,
-            getDefaultIconName: () =>
-                hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: () => (hideColumnOnExit ? 'hide' : 'notAllowed'),
             getDragItem: () => this.createDragItem(column),
             dragItemName: displayName,
             onDragStarted: () => {

@@ -2,6 +2,8 @@ import type {
     AgEvent,
     BeanCollection,
     ComponentClass,
+    DragAndDropIcon,
+    DragAndDropService,
     DragItem,
     DragSource,
     DragSourceType,
@@ -9,7 +11,6 @@ import type {
 } from '@ag-grid-community/core';
 import {
     Component,
-    DragAndDropService,
     KeyCode,
     RefPlaceholder,
     TouchListener,
@@ -124,8 +125,8 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         return undefined;
     }
 
-    protected getDefaultIconName(): string {
-        return DragAndDropService.ICON_NOT_ALLOWED;
+    protected getDefaultIconName(): DragAndDropIcon {
+        return 'notAllowed';
     }
 
     private addDragSource(): void {

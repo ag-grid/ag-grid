@@ -7,8 +7,6 @@ import type { ColState } from '../../model/chartDataModel';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 
 export class SeriesChartTypePanel extends Component {
-    private static TEMPLATE = /* html */ `<div id="seriesChartTypeGroup"></div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -25,7 +23,7 @@ export class SeriesChartTypePanel extends Component {
         private columns: ColState[],
         private isOpen?: boolean
     ) {
-        super(SeriesChartTypePanel.TEMPLATE);
+        super(/* html */ `<div id="seriesChartTypeGroup"></div>`);
     }
 
     public postConstruct() {

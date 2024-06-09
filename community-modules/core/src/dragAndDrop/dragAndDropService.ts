@@ -12,7 +12,7 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import { _flatten, _removeFromArray } from '../utils/array';
 import { _getBodyHeight, _getBodyWidth } from '../utils/browser';
 import { _clearElement, _getElementRectWithOffset, _loadTemplate } from '../utils/dom';
-import { _isFunction } from '../utils/function';
+import { _isFunction, _warnOnce } from '../utils/function';
 import { _createIcon } from '../utils/icon';
 import { _escapeString } from '../utils/string';
 import type { DragListenerParams, DragService } from './dragService';
@@ -77,7 +77,7 @@ export interface DragSource {
     /**
      * Icon to show when not over a drop zone
      */
-    getDefaultIconName?: () => string;
+    getDefaultIconName?: () => DragAndDropIcon;
     /**
      * The drag source DOM Data Key, this is useful to detect if the origin grid is the same
      * as the target grid.
@@ -112,7 +112,7 @@ export interface DropTarget {
      * in the header as well as the body (main rows and pinned rows) of the grid. */
     getSecondaryContainers?(): HTMLElement[][];
     /** Icon to show when drag is over */
-    getIconName?(): string | null;
+    getIconName?(): DragAndDropIcon | null;
 
     isInterestedIn(type: DragSourceType, el: Element): boolean;
 
@@ -146,6 +146,22 @@ export interface DraggingEvent<TData = any, TContext = any> extends AgGridCommon
     dropZoneTarget: HTMLElement;
 }
 
+const GHOST_TEMPLATE /* html */ = `<div class="ag-dnd-ghost ag-unselectable">
+<span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>
+<div class="ag-dnd-ghost-label"></div>
+</div>`;
+
+export type DragAndDropIcon =
+    | 'pinned'
+    | 'move'
+    | 'left'
+    | 'right'
+    | 'group'
+    | 'aggregate'
+    | 'pivot'
+    | 'notAllowed'
+    | 'hide';
+
 export class DragAndDropService extends BeanStub implements NamedBean {
     beanName = 'dragAndDropService' as const;
 
@@ -158,21 +174,6 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         this.mouseEventService = beans.mouseEventService;
         this.environment = beans.environment;
     }
-
-    public static ICON_PINNED = 'pinned';
-    public static ICON_MOVE = 'move';
-    public static ICON_LEFT = 'left';
-    public static ICON_RIGHT = 'right';
-    public static ICON_GROUP = 'group';
-    public static ICON_AGGREGATE = 'aggregate';
-    public static ICON_PIVOT = 'pivot';
-    public static ICON_NOT_ALLOWED = 'notAllowed';
-    public static ICON_HIDE = 'hide';
-
-    public static GHOST_TEMPLATE /* html */ = `<div class="ag-dnd-ghost ag-unselectable">
-            <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>
-            <div class="ag-dnd-ghost-label"></div>
-        </div>`;
 
     private dragSourceAndParamsList: { params: DragListenerParams; dragSource: DragSource }[] = [];
 
@@ -188,26 +189,20 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     private dropTargets: DropTarget[] = [];
     private lastDropTarget: DropTarget | null | undefined;
 
-    private ePinnedIcon: Element;
-    private eHideIcon: Element;
-    private eMoveIcon: Element;
-    private eLeftIcon: Element;
-    private eRightIcon: Element;
-    private eGroupIcon: Element;
-    private eAggregateIcon: Element;
-    private ePivotIcon: Element;
-    private eDropNotAllowedIcon: Element;
+    private dropIconMap: { [key in DragAndDropIcon]: Element };
 
     public postConstruct(): void {
-        this.ePinnedIcon = _createIcon('columnMovePin', this.gos, null);
-        this.eHideIcon = _createIcon('columnMoveHide', this.gos, null);
-        this.eMoveIcon = _createIcon('columnMoveMove', this.gos, null);
-        this.eLeftIcon = _createIcon('columnMoveLeft', this.gos, null);
-        this.eRightIcon = _createIcon('columnMoveRight', this.gos, null);
-        this.eGroupIcon = _createIcon('columnMoveGroup', this.gos, null);
-        this.eAggregateIcon = _createIcon('columnMoveValue', this.gos, null);
-        this.ePivotIcon = _createIcon('columnMovePivot', this.gos, null);
-        this.eDropNotAllowedIcon = _createIcon('dropNotAllowed', this.gos, null);
+        this.dropIconMap = {
+            pinned: _createIcon('columnMovePin', this.gos, null),
+            hide: _createIcon('columnMoveHide', this.gos, null),
+            move: _createIcon('columnMoveMove', this.gos, null),
+            left: _createIcon('columnMoveLeft', this.gos, null),
+            right: _createIcon('columnMoveRight', this.gos, null),
+            group: _createIcon('columnMoveGroup', this.gos, null),
+            aggregate: _createIcon('columnMoveValue', this.gos, null),
+            pivot: _createIcon('columnMovePivot', this.gos, null),
+            notAllowed: _createIcon('dropNotAllowed', this.gos, null),
+        };
     }
 
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
@@ -558,7 +553,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     }
 
     private createGhost(): void {
-        this.eGhost = _loadTemplate(DragAndDropService.GHOST_TEMPLATE);
+        this.eGhost = _loadTemplate(GHOST_TEMPLATE);
         this.mouseEventService.stampTopLevelGridCompWithGridInstance(this.eGhost);
 
         this.environment.applyThemeClasses(this.eGhost);
@@ -607,55 +602,25 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         this.eGhostParent = targetEl;
 
         if (!this.eGhostParent) {
-            console.warn('AG Grid: could not find document body, it is needed for dragging columns');
+            _warnOnce('Could not find document body, it is needed for dragging columns');
         } else {
             this.eGhostParent.appendChild(this.eGhost);
         }
     }
 
-    public setGhostIcon(iconName: string | null, shake = false): void {
+    public setGhostIcon(iconName: DragAndDropIcon | null, shake = false): void {
         _clearElement(this.eGhostIcon);
 
         let eIcon: Element | null = null;
 
         if (!iconName) {
-            iconName = this.dragSource.getDefaultIconName
-                ? this.dragSource.getDefaultIconName()
-                : DragAndDropService.ICON_NOT_ALLOWED;
+            iconName = this.dragSource.getDefaultIconName ? this.dragSource.getDefaultIconName() : 'notAllowed';
         }
-        switch (iconName) {
-            case DragAndDropService.ICON_PINNED:
-                eIcon = this.ePinnedIcon;
-                break;
-            case DragAndDropService.ICON_MOVE:
-                eIcon = this.eMoveIcon;
-                break;
-            case DragAndDropService.ICON_LEFT:
-                eIcon = this.eLeftIcon;
-                break;
-            case DragAndDropService.ICON_RIGHT:
-                eIcon = this.eRightIcon;
-                break;
-            case DragAndDropService.ICON_GROUP:
-                eIcon = this.eGroupIcon;
-                break;
-            case DragAndDropService.ICON_AGGREGATE:
-                eIcon = this.eAggregateIcon;
-                break;
-            case DragAndDropService.ICON_PIVOT:
-                eIcon = this.ePivotIcon;
-                break;
-            case DragAndDropService.ICON_NOT_ALLOWED:
-                eIcon = this.eDropNotAllowedIcon;
-                break;
-            case DragAndDropService.ICON_HIDE:
-                eIcon = this.eHideIcon;
-                break;
-        }
+        eIcon = this.dropIconMap[iconName];
 
         this.eGhostIcon.classList.toggle('ag-shake-left-to-right', shake);
 
-        if (eIcon === this.eHideIcon && this.gos.get('suppressDragLeaveHidesColumns')) {
+        if (eIcon === this.dropIconMap['hide'] && this.gos.get('suppressDragLeaveHidesColumns')) {
             return;
         }
         if (eIcon) {

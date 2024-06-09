@@ -16,6 +16,13 @@ interface TabbedItemWrapper {
     eHeaderButton: HTMLElement;
 }
 
+function getTabbedLayoutTemplate(cssClass?: string) {
+    return /* html */ `<div class="ag-tabs ${cssClass}">
+        <div data-ref="eHeader"></div>
+        <div data-ref="eBody" role="presentation" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
+    </div>`;
+}
+
 export class TabbedLayout extends TabGuardComp {
     private focusService: FocusService;
 
@@ -37,7 +44,7 @@ export class TabbedLayout extends TabGuardComp {
     private readonly tabbedItemScrollMap = new Map<string, number>();
 
     constructor(params: TabbedLayoutParams) {
-        super(TabbedLayout.getTemplate(params.cssClass));
+        super(getTabbedLayoutTemplate(params.cssClass));
         this.params = params;
     }
 
@@ -56,13 +63,6 @@ export class TabbedLayout extends TabGuardComp {
         });
 
         this.addDestroyFunc(() => this.activeItem?.tabbedItem?.afterDetachedCallback?.());
-    }
-
-    private static getTemplate(cssClass?: string) {
-        return /* html */ `<div class="ag-tabs ${cssClass}">
-            <div data-ref="eHeader"></div>
-            <div data-ref="eBody" role="presentation" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
-        </div>`;
     }
 
     private setupHeader(): void {

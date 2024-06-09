@@ -4,8 +4,8 @@ import { VerticalDirection } from '../constants/direction';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { DraggingEvent, DropTarget } from '../dragAndDrop/dragAndDropService';
-import { DragAndDropService, DragSourceType } from '../dragAndDrop/dragAndDropService';
+import type { DragAndDropIcon, DragAndDropService, DraggingEvent, DropTarget } from '../dragAndDrop/dragAndDropService';
+import { DragSourceType } from '../dragAndDrop/dragAndDropService';
 import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
 import type { RowDragEndEvent, RowDragEnterEvent, RowDragEvent, RowDragLeaveEvent, RowDragMoveEvent } from '../events';
@@ -105,14 +105,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return type === DragSourceType.RowDrag;
     }
 
-    public getIconName(): string {
+    public getIconName(): DragAndDropIcon {
         const managedDrag = this.gos.get('rowDragManaged');
 
         if (managedDrag && this.shouldPreventRowMove()) {
-            return DragAndDropService.ICON_NOT_ALLOWED;
+            return 'notAllowed';
         }
 
-        return DragAndDropService.ICON_MOVE;
+        return 'move';
     }
 
     public shouldPreventRowMove(): boolean {
@@ -322,7 +322,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         this.dragAndDropService.addDropTarget({
             isInterestedIn: (type: DragSourceType) => type === DragSourceType.RowDrag,
-            getIconName: () => DragAndDropService.ICON_MOVE,
+            getIconName: () => 'move',
             external: true,
             ...(processedParams as any),
         });

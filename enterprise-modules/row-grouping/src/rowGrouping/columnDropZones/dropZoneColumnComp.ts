@@ -3,6 +3,7 @@ import type {
     BeanCollection,
     ColumnModel,
     ColumnNameService,
+    DragAndDropIcon,
     DragItem,
     DropTarget,
     FuncColsService,
@@ -12,7 +13,6 @@ import type {
 } from '@ag-grid-community/core';
 import {
     Component,
-    DragAndDropService,
     DragSourceType,
     KeyCode,
     RefPlaceholder,
@@ -198,8 +198,8 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         }
     }
 
-    protected override getDefaultIconName(): string {
-        return DragAndDropService.ICON_HIDE;
+    protected override getDefaultIconName(): DragAndDropIcon {
+        return 'hide';
     }
 
     protected createGetDragItem(): () => DragItem {

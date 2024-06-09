@@ -57,7 +57,7 @@ export class GridCtrl extends BeanStub {
         this.dragAndDropService.addDropTarget({
             getContainer: () => this.eGui,
             isInterestedIn: (type) => type === DragSourceType.HeaderCell || type === DragSourceType.ToolPanel,
-            getIconName: () => DragAndDropService.ICON_NOT_ALLOWED,
+            getIconName: () => 'notAllowed',
         });
 
         this.mouseEventService.stampTopLevelGridCompWithGridInstance(eGridDiv);

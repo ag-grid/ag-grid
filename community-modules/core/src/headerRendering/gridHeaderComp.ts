@@ -6,10 +6,9 @@ import { HeaderRowContainerComp } from './rowContainer/headerRowContainerComp';
 
 export class GridHeaderComp extends Component {
     static readonly selector: AgComponentSelector = 'AG-HEADER-ROOT';
-    private static TEMPLATE /* html */ = `<div class="ag-header" role="presentation"/>`;
 
     constructor() {
-        super(GridHeaderComp.TEMPLATE);
+        super(/* html */ `<div class="ag-header" role="presentation"/>`);
     }
 
     public postConstruct(): void {

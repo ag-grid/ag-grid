@@ -9,11 +9,6 @@ import type { ChartMenuContext } from '../chartMenuContext';
 import { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
 
 export class ChartSpecificDataPanel extends Component {
-    private static TEMPLATE = /* html */ `
-        <div id="chartSpecificGroup">
-            <ag-group-component data-ref="chartSpecificGroup"></ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
     private chartService: IChartService;
 
@@ -46,9 +41,16 @@ export class ChartSpecificDataPanel extends Component {
             expanded: this.isOpen,
             items: [...this.createDirectionSelect(), this.createGroupTypeSelect()],
         };
-        this.setTemplate(ChartSpecificDataPanel.TEMPLATE, [AgGroupComponent], {
-            chartSpecificGroup: chartSpecificGroupParams,
-        });
+        this.setTemplate(
+            /* html */ `
+            <div id="chartSpecificGroup">
+                <ag-group-component data-ref="chartSpecificGroup"></ag-group-component>
+            </div>`,
+            [AgGroupComponent],
+            {
+                chartSpecificGroup: chartSpecificGroupParams,
+            }
+        );
         this.setDisplayed(this.hasContent);
     }
 

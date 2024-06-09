@@ -12,17 +12,16 @@ export interface AgSliderParams extends AgLabelParams {
     onValueChange?: (newValue: number) => void;
 }
 
+const TEMPLATE = /* html */ `<div class="ag-slider">
+        <label data-ref="eLabel"></label>
+        <div class="ag-wrapper ag-slider-wrapper">
+            <ag-input-range data-ref="eSlider"></ag-input-range>
+            <ag-input-number-field data-ref="eText"></ag-input-number-field>
+        </div>
+    </div>`;
 export type AgSliderEvent = 'fieldValueChanged';
 export class AgSlider extends AgAbstractLabel<AgSliderParams, AgSliderEvent> {
     static readonly selector: AgComponentSelector = 'AG-SLIDER';
-
-    private static TEMPLATE /* html */ = `<div class="ag-slider">
-            <label data-ref="eLabel"></label>
-            <div class="ag-wrapper ag-slider-wrapper">
-                <ag-input-range data-ref="eSlider"></ag-input-range>
-                <ag-input-number-field data-ref="eText"></ag-input-number-field>
-            </div>
-        </div>`;
 
     protected readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eSlider: AgInputRange = RefPlaceholder;
@@ -31,7 +30,7 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams, AgSliderEvent> {
     protected override labelAlignment: LabelAlignment = 'top';
 
     constructor(config?: AgSliderParams) {
-        super(config, AgSlider.TEMPLATE, [AgInputRange, AgInputNumberField]);
+        super(config, TEMPLATE, [AgInputRange, AgInputNumberField]);
     }
 
     public override postConstruct() {

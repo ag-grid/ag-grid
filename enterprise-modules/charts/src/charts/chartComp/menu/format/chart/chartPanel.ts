@@ -9,10 +9,6 @@ import { BackgroundPanel } from './backgroundPanel';
 import { PaddingPanel } from './paddingPanel';
 
 export class ChartPanel extends Component {
-    private static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="chartGroup"></ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -43,7 +39,13 @@ export class ChartPanel extends Component {
                 this.createManagedBean(new BackgroundPanel(chartMenuParamsFactory)),
             ],
         };
-        this.setTemplate(ChartPanel.TEMPLATE, [AgGroupComponent], { chartGroup: chartGroupParams });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="chartGroup"></ag-group-component>
+        </div>`,
+            [AgGroupComponent],
+            { chartGroup: chartGroupParams }
+        );
         registerGroupComponent(this.chartGroup);
     }
 }

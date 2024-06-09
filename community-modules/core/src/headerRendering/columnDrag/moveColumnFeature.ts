@@ -5,14 +5,14 @@ import { HorizontalDirection } from '../../constants/direction';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
-import type { DraggingEvent } from '../../dragAndDrop/dragAndDropService';
-import { DragAndDropService, DragSourceType } from '../../dragAndDrop/dragAndDropService';
+import type { DragAndDropIcon, DragAndDropService, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
+import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColumnEventType } from '../../events';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { _exists, _missing } from '../../utils/generic';
-import { ColumnMoveHelper } from '../columnMoveHelper';
+import { attemptMoveColumns, moveColumns, normaliseX } from '../columnMoveHelper';
 import type { DropListener } from './bodyDropTarget';
 
 export class MoveColumnFeature extends BeanStub implements DropListener {
@@ -60,8 +60,8 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         });
     }
 
-    public getIconName(): string {
-        return this.pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;
+    public getIconName(): DragAndDropIcon {
+        return this.pinned ? 'pinned' : 'move';
     }
 
     public onDragEnter(draggingEvent: DraggingEvent): void {
@@ -145,7 +145,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         if (finished) {
             if (this.lastMovedInfo) {
                 const { columns, toIndex } = this.lastMovedInfo;
-                ColumnMoveHelper.moveColumns(columns, toIndex, 'uiColumnMoved', true, this.columnMoveService);
+                moveColumns(columns, toIndex, 'uiColumnMoved', true, this.columnMoveService);
             }
             return;
         }
@@ -156,7 +156,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             return;
         }
 
-        const mouseX = ColumnMoveHelper.normaliseX(draggingEvent.x, this.pinned, false, this.gos, this.ctrlsService);
+        const mouseX = normaliseX(draggingEvent.x, this.pinned, false, this.gos, this.ctrlsService);
 
         // if the user is dragging into the panel, ie coming from the side panel into the main grid,
         // we don't want to scroll the grid this time, it would appear like the table is jumping
@@ -179,7 +179,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             return true;
         }) || []) as AgColumn[];
 
-        const lastMovedInfo = ColumnMoveHelper.attemptMoveColumns({
+        const lastMovedInfo = attemptMoveColumns({
             allMovingColumns,
             isFromHeader: dragSourceType === DragSourceType.HeaderCell,
             hDirection,
@@ -218,11 +218,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             this.intervalCount = 0;
             this.failedMoveAttempts = 0;
             this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), 100);
-            if (this.needToMoveLeft) {
-                this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_LEFT, true);
-            } else {
-                this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_RIGHT, true);
-            }
+            this.dragAndDropService.setGhostIcon(this.needToMoveLeft ? 'left' : 'right', true);
         }
     }
 
@@ -230,7 +226,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         if (this.movingIntervalId) {
             window.clearInterval(this.movingIntervalId);
             this.movingIntervalId = null;
-            this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_MOVE);
+            this.dragAndDropService.setGhostIcon('move');
         }
     }
 
@@ -264,7 +260,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             const columnsThatCanPin = columns!.filter((c) => !c.getColDef().lockPinned);
 
             if (columnsThatCanPin.length > 0) {
-                this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
+                this.dragAndDropService.setGhostIcon('pinned');
                 if (this.failedMoveAttempts > 7) {
                     const pinType = this.needToMoveLeft ? 'left' : 'right';
                     this.setColumnsPinned(columnsThatCanPin, pinType, 'uiColumnDragged');
