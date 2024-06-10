@@ -497,8 +497,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return 1;
         }
 
+        const totalFooterInc = this.rootNode.sibling ? 1 : 0;
+
         const filteredChildren = this.rootNode.childrenAfterAggFilter;
-        return filteredChildren ? filteredChildren.length : 0;
+        return (filteredChildren ? filteredChildren.length : 0) + totalFooterInc;
     }
 
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
