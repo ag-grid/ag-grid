@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { LicensedProducts } from '../types';
 import { hasValue } from './hasValue';
 
-type ErrorKey = keyof typeof ERRORS;
+type ErrorKey = keyof typeof errorConditions;
 type Errors = Record<ErrorKey, string | undefined>;
 interface ErrorData {
     hasLicense: boolean;
@@ -14,91 +14,69 @@ interface ErrorData {
     licenseDetails: ReturnType<typeof LicenseManager.getLicenseDetails>;
 }
 
-const ERRORS = {
-    chartsNoGridEnterprise: `You must have a "Grid Enterprise" license to use "Charts Enterprise" within AG Grid`,
-    noLicenseExample: `A license is only required if you use the "Grid Enterprise" product`,
-    userLicenseError: 'License is not valid. Make sure you are copying the whole license which was originally provided',
-    v2License: 'This license is not valid for v30+',
-    chartsSupported: 'Enterprise Charts is not supported on this license',
-    expired: 'This license is expired',
-};
+const errorConditions = {
+    chartsNoGridEnterprise: {
+        getIsError: ({ userLicensedProducts }: ErrorData) => !userLicensedProducts.grid && userLicensedProducts.charts,
+        message: `You must have a "Grid Enterprise" license to use "Charts Enterprise" within AG Grid`,
+    },
+    noLicenseExample: {
+        getIsError: ({ userLicensedProducts }: ErrorData) => !userLicensedProducts.grid,
+        message: `A license is only required if you use the "Grid Enterprise" product`,
+    },
+    userLicenseError: {
+        getIsError: ({ hasLicense, license, licenseDetails }: ErrorData) => {
+            const { valid, suppliedLicenseType, incorrectLicenseType } = licenseDetails;
+            const licenseIsValid = valid || (suppliedLicenseType === 'CHARTS' && incorrectLicenseType);
+            return hasValue(hasLicense) && hasValue(license) && !licenseIsValid;
+        },
+        message: 'License is not valid. Make sure you are copying the whole license which was originally provided',
+    },
+    v2License: {
+        getIsError: ({ licenseDetails }: ErrorData) => licenseDetails.version === '2',
+        message: 'This license is not valid for v30+',
+    },
+    chartsSupported: {
+        getIsError: ({ license, userLicensedProducts, licenseDetails }: ErrorData) =>
+            hasValue(license) &&
+            userLicensedProducts.charts &&
+            !(licenseDetails.suppliedLicenseType === 'CHARTS' || licenseDetails.suppliedLicenseType === 'BOTH'),
 
-const updateError = ({ key, condition, setErrors }: { key: ErrorKey; condition: boolean; setErrors: any }) => {
-    if (condition) {
-        const message = ERRORS[key];
-        setErrors((prevErrors: Errors) => {
-            return {
-                ...prevErrors,
-                [key]: message,
-            };
-        });
-    } else {
-        setErrors((prevErrors: Errors) => {
-            return {
-                ...prevErrors,
-                [key]: undefined,
-            };
-        });
-    }
+        message: 'Enterprise Charts is not supported on this license',
+    },
+    expired: {
+        getIsError: ({ license, licenseDetails }: ErrorData) => {
+            const { expired, trialExpired } = licenseDetails;
+            return hasValue(license) && (Boolean(expired) || Boolean(trialExpired));
+        },
+        message: 'This license is expired',
+    },
 };
 
 const useErrors = ({ hasLicense, license, userLicensedProducts, licenseDetails }: ErrorData) => {
     const [errors, setErrors] = useState<Errors>({} as Errors);
-    const { valid, suppliedLicenseType, incorrectLicenseType, version, expired, trialExpired } = licenseDetails;
 
     useEffect(() => {
-        updateError({
-            key: 'chartsNoGridEnterprise',
-            condition: !userLicensedProducts.grid && userLicensedProducts.charts,
-            setErrors,
-        });
-    }, [userLicensedProducts]);
+        (Object.keys(errorConditions) as ErrorKey[]).forEach((key) => {
+            const { getIsError, message } = errorConditions[key];
+            const isError = getIsError({ hasLicense, license, userLicensedProducts, licenseDetails });
 
-    useEffect(() => {
-        updateError({
-            key: 'noLicenseExample',
-            condition: !userLicensedProducts.grid,
-            setErrors,
+            if (isError) {
+                setErrors((prevErrors: Errors) => {
+                    return {
+                        ...prevErrors,
+                        [key]: message,
+                    };
+                });
+            } else {
+                setErrors((prevErrors: Errors) => {
+                    return {
+                        ...prevErrors,
+                        [key]: undefined,
+                    };
+                });
+            }
         });
-    }, [userLicensedProducts]);
-
-    useEffect(() => {
-        const licenseIsValid = valid || (suppliedLicenseType === 'CHARTS' && incorrectLicenseType);
-        const userLicenseHasError = hasValue(hasLicense) && hasValue(license) && !licenseIsValid;
-
-        updateError({
-            key: 'userLicenseError',
-            condition: userLicenseHasError,
-            setErrors,
-        });
-    }, [valid, hasLicense, license, suppliedLicenseType, incorrectLicenseType]);
-
-    useEffect(() => {
-        updateError({
-            key: 'v2License',
-            condition: version === '2',
-            setErrors,
-        });
-    }, [version]);
-
-    useEffect(() => {
-        updateError({
-            key: 'chartsSupported',
-            condition:
-                hasValue(license) &&
-                userLicensedProducts.charts &&
-                !(suppliedLicenseType === 'CHARTS' || suppliedLicenseType === 'BOTH'),
-            setErrors,
-        });
-    }, [license, suppliedLicenseType, userLicensedProducts]);
-
-    useEffect(() => {
-        updateError({
-            key: 'expired',
-            condition: hasValue(license) && (Boolean(expired) || Boolean(trialExpired)),
-            setErrors,
-        });
-    }, [license, expired, trialExpired]);
+    }, [hasLicense, license, userLicensedProducts, licenseDetails]);
 
     return {
         errors,
