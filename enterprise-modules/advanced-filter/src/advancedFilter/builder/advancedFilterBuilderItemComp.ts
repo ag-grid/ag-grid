@@ -1,12 +1,12 @@
 import type {
     BaseCellDataType,
     BeanCollection,
+    DragAndDropService,
     DragSource,
     FieldPickerValueSelectedEvent,
     FieldValueEvent,
 } from '@ag-grid-community/core';
 import {
-    DragAndDropService,
     DragSourceType,
     KeyCode,
     RefPlaceholder,

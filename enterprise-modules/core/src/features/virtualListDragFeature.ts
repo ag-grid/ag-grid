@@ -2,11 +2,12 @@ import type {
     AgEvent,
     BeanCollection,
     Component,
+    DragAndDropService,
     DragSourceType,
     DraggingEvent,
     DropTarget,
 } from '@ag-grid-community/core';
-import { AutoScrollService, BeanStub, DragAndDropService, _radioCssClass } from '@ag-grid-community/core';
+import { AutoScrollService, BeanStub, _radioCssClass } from '@ag-grid-community/core';
 
 import type { VirtualList } from '../widgets/virtualList';
 import type { VirtualListDragItem, VirtualListDragParams } from './iVirtualListDragFeature';

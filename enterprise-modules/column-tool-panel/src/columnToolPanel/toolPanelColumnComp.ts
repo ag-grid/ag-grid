@@ -4,6 +4,7 @@ import type {
     ColumnModel,
     ColumnPanelItemDragEndEvent,
     ColumnPanelItemDragStartEvent,
+    DragAndDropService,
     DragItem,
     DragSource,
     ITooltipParams,
@@ -12,7 +13,6 @@ import type {
 import {
     AgCheckbox,
     Component,
-    DragAndDropService,
     DragSourceType,
     KeyCode,
     RefPlaceholder,
