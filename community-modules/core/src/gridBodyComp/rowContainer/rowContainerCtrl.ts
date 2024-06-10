@@ -187,10 +187,23 @@ export function getRowContainerOptions(name: RowContainerName): RowContainerOpti
 }
 
 const allTopNoFW: RowContainerName[] = ['topCenter', 'topLeft', 'topRight'];
-const allStickyTopNoFW: RowContainerName[] = ['stickyTopCenter', 'stickyTopLeft', 'stickyTopRight'];
-const allStickyBottomNoFW: RowContainerName[] = ['stickyBottomCenter', 'stickyBottomLeft', 'stickyBottomRight'];
 const allBottomNoFW: RowContainerName[] = ['bottomCenter', 'bottomLeft', 'bottomRight'];
 const allMiddleNoFW: RowContainerName[] = ['center', 'left', 'right'];
+
+const allMiddle: RowContainerName[] = ['center', 'left', 'right', 'fullWidth'];
+const allCenter: RowContainerName[] = ['stickyTopCenter', 'stickyBottomCenter', 'center', 'topCenter', 'bottomCenter'];
+const allLeft: RowContainerName[] = ['left', 'bottomLeft', 'topLeft', 'stickyTopLeft', 'stickyBottomLeft'];
+const allRight: RowContainerName[] = ['right', 'bottomRight', 'topRight', 'stickyTopRight', 'stickyBottomRight'];
+
+// sticky section must show rows in set order
+const allStickyTopNoFW: RowContainerName[] = ['stickyTopCenter', 'stickyTopLeft', 'stickyTopRight'];
+const allStickyBottomNoFW: RowContainerName[] = ['stickyBottomCenter', 'stickyBottomLeft', 'stickyBottomRight'];
+const allStickyContainers: RowContainerName[] = [
+    ...allStickyTopNoFW,
+    'stickyTopFullWidth',
+    ...allStickyBottomNoFW,
+    'stickyBottomFullWidth',
+];
 const allNoFW: RowContainerName[] = [
     ...allTopNoFW,
     ...allBottomNoFW,
@@ -198,11 +211,6 @@ const allNoFW: RowContainerName[] = [
     ...allStickyTopNoFW,
     ...allStickyBottomNoFW,
 ];
-
-const allMiddle: RowContainerName[] = ['center', 'left', 'right', 'fullWidth'];
-const allCenter: RowContainerName[] = ['stickyTopCenter', 'stickyBottomCenter', 'center', 'topCenter', 'bottomCenter'];
-const allLeft: RowContainerName[] = ['left', 'bottomLeft', 'topLeft', 'stickyTopLeft', 'stickyBottomLeft'];
-const allRight: RowContainerName[] = ['right', 'bottomRight', 'topRight', 'stickyTopRight', 'stickyBottomRight'];
 
 export interface IRowContainerComp {
     setViewportHeight(height: string): void;
@@ -322,17 +330,6 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private listenOnDomOrder(): void {
-        // sticky section must show rows in set order
-        const allStickyContainers = [
-            'stickyTopCenter',
-            'stickyTopLeft',
-            'stickyTopRight',
-            'stickyTopFullWidth',
-            'stickyBottomCenter',
-            'stickyBottomLeft',
-            'stickyBottomRight',
-            'stickyBottomFullWidth',
-        ];
         const isStickContainer = allStickyContainers.indexOf(this.name) >= 0;
         if (isStickContainer) {
             this.comp.setDomOrder(true);
