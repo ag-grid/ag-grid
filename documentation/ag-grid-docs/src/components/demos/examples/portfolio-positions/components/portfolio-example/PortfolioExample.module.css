@@ -11,7 +11,7 @@
     --ag-header-height: 40px;
 
     --ag-background-color: #001223;
-    --ag-foreground-color: #b1c0cf;
+    --ag-foreground-color: #d8e0e8;
 
     --ag-borders: 1px solid;
     --ag-border-color: rgba(255, 255, 255, 0.144);
@@ -19,18 +19,20 @@
     --ag-odd-row-background-color: #001223;
 
     --ag-header-background-color: #001223;
-    --ag-header-foreground-color: rgba(255, 255, 255, 0.7);
+    --ag-header-foreground-color: #8fa0b2;
 
     --input-background-color: #001223;
     --input-focus-box-shadow-color: rgba(255, 255, 255, 0.25);
 
     height: calc(100vh - var(--layout-grid-header-height));
-
-    .ag-header {
-        font-size: 10px !important;
-    }
 }
 
+:global(.ag-theme-quartz .ag-row-group),
+:global(.ag-theme-quartz-dark .ag-row-group) {
+    color: #8097ad;
+    text-transform: uppercase;
+    font-size: 12px;
+}
 .container {
     width: 100%;
 }
