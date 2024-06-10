@@ -20,6 +20,7 @@ const ERRORS = {
     userLicenseError: 'License is not valid. Make sure you are copying the whole license which was originally provided',
     v2License: 'This license is not valid for v30+',
     chartsSupported: 'Enterprise Charts is not supported on this license',
+    expired: 'This license is expired',
 };
 
 const updateError = ({ key, condition, setErrors }: { key: ErrorKey; condition: boolean; setErrors: any }) => {
@@ -43,7 +44,7 @@ const updateError = ({ key, condition, setErrors }: { key: ErrorKey; condition: 
 
 const useErrors = ({ hasLicense, license, userLicensedProducts, licenseDetails }: ErrorData) => {
     const [errors, setErrors] = useState<Errors>({} as Errors);
-    const { valid, suppliedLicenseType, incorrectLicenseType, version } = licenseDetails;
+    const { valid, suppliedLicenseType, incorrectLicenseType, version, expired, trialExpired } = licenseDetails;
 
     useEffect(() => {
         updateError({
@@ -90,6 +91,14 @@ const useErrors = ({ hasLicense, license, userLicensedProducts, licenseDetails }
             setErrors,
         });
     }, [license, suppliedLicenseType, userLicensedProducts]);
+
+    useEffect(() => {
+        updateError({
+            key: 'expired',
+            condition: hasValue(license) && (Boolean(expired) || Boolean(trialExpired)),
+            setErrors,
+        });
+    }, [license, expired, trialExpired]);
 
     return {
         errors,
