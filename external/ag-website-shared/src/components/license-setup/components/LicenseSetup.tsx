@@ -46,6 +46,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
         setUserLicensedProducts,
         useStandaloneCharts,
         setUseStandaloneCharts,
+        userLicenseExpiry,
 
         errors,
     } = useLicenseData();
@@ -130,6 +131,13 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                         {FRAMEWORK_DISPLAY_TEXT[framework]}
                     </div>
                 </div>
+                {hasLicense && (
+                    <div>
+                        <label>Expiry</label>
+                        <div>{userLicenseExpiry ? userLicenseExpiry : '-'}</div>
+                    </div>
+                )}
+
                 <div>
                     <div>Licensed products</div>
                     <div className={styles.licensedProductsContainer}>
