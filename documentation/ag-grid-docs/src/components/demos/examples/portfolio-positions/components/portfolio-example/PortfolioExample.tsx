@@ -15,6 +15,7 @@ import {
 import { TickerCellRenderer } from '../ticker-cell-renderer/TickerCellRenderer';
 import styles from './PortfolioExample.module.css';
 import { generatePortfolio } from './data';
+import { toCurrency, toTime } from './formatters.ts';
 import { useDataGenerator } from './useDataGenerator';
 
 interface Props {
@@ -23,6 +24,15 @@ interface Props {
 }
 
 const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
+    const timelineTooltipRenderer = ({ xValue, yValue }: TooltipRendererParams): TooltipRendererResult => {
+        return {
+            title: toTime({ value: xValue }),
+            content: toCurrency({ value: yValue }),
+            color: '#94b2d0',
+            backgroundColor: '#07161b',
+        };
+    };
+
     const gridRef = useRef<AgGridReact>(null);
     const [rowData, setRowData] = useState<PortfolioItem[]>(generatePortfolio());
     const [colDefs] = useState<ColDef[]>([
@@ -95,6 +105,9 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
                     highlightStyle: {
                         fill: '#94b2d0',
                         strokeWidth: 0,
+                    },
+                    tooltip: {
+                        renderer: timelineTooltipRenderer,
                     },
                     axis: {
                         stroke: 'rgba(0,0,0,0.2)', // sets the axis line stroke
