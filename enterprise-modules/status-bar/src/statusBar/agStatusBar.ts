@@ -14,6 +14,8 @@ import type { StatusBarService } from './statusBarService';
 export class AgStatusBar extends Component {
     private userComponentFactory: UserComponentFactory;
     private statusBarService: StatusBarService;
+    private updateQueued: boolean = false;
+    private panelsPromise: AgPromise<(void | null)[]> = AgPromise.resolve();
 
     public wireBeans(beans: BeanCollection) {
         this.userComponentFactory = beans.userComponentFactory;
@@ -42,37 +44,52 @@ export class AgStatusBar extends Component {
         this.addManagedPropertyListeners(['statusBar'], this.handleStatusBarChanged.bind(this));
     }
 
-    private processStatusPanels(existingStatusPanelsToReuse: Map<string, IStatusPanelComp>) {
+    private processStatusPanels(existingStatusPanelsToReuse: Map<string, IStatusPanelComp>): void {
         const statusPanels = this.gos.get('statusBar')?.statusPanels;
         if (statusPanels) {
             const leftStatusPanelComponents = statusPanels.filter(
                 (componentConfig) => componentConfig.align === 'left'
             );
-            this.createAndRenderComponents(leftStatusPanelComponents, this.eStatusBarLeft, existingStatusPanelsToReuse);
-
             const centerStatusPanelComponents = statusPanels.filter(
                 (componentConfig) => componentConfig.align === 'center'
             );
-            this.createAndRenderComponents(
-                centerStatusPanelComponents,
-                this.eStatusBarCenter,
-                existingStatusPanelsToReuse
-            );
-
             const rightStatusPanelComponents = statusPanels.filter(
                 (componentConfig) => !componentConfig.align || componentConfig.align === 'right'
             );
-            this.createAndRenderComponents(
-                rightStatusPanelComponents,
-                this.eStatusBarRight,
-                existingStatusPanelsToReuse
-            );
+            this.panelsPromise = AgPromise.all([
+                this.createAndRenderComponents(
+                    leftStatusPanelComponents,
+                    this.eStatusBarLeft,
+                    existingStatusPanelsToReuse
+                ),
+                this.createAndRenderComponents(
+                    centerStatusPanelComponents,
+                    this.eStatusBarCenter,
+                    existingStatusPanelsToReuse
+                ),
+                this.createAndRenderComponents(
+                    rightStatusPanelComponents,
+                    this.eStatusBarRight,
+                    existingStatusPanelsToReuse
+                ),
+            ]);
         } else {
             this.setDisplayed(false);
         }
     }
 
-    private handleStatusBarChanged() {
+    private handleStatusBarChanged(): void {
+        if (this.updateQueued) {
+            return;
+        }
+        this.updateQueued = true;
+        this.panelsPromise.then(() => {
+            this.updateStatusBar();
+            this.updateQueued = false;
+        });
+    }
+
+    private updateStatusBar(): void {
         const statusPanels = this.gos.get('statusBar')?.statusPanels;
         const validStatusBarPanelsProvided = Array.isArray(statusPanels) && statusPanels.length > 0;
         this.setDisplayed(validStatusBarPanelsProvided);
@@ -101,7 +118,7 @@ export class AgStatusBar extends Component {
         }
     }
 
-    resetStatusBar() {
+    resetStatusBar(): void {
         this.eStatusBarLeft.innerHTML = '';
         this.eStatusBarCenter.innerHTML = '';
         this.eStatusBarRight.innerHTML = '';
@@ -115,7 +132,7 @@ export class AgStatusBar extends Component {
         super.destroy();
     }
 
-    private destroyComponents() {
+    private destroyComponents(): void {
         Object.values(this.compDestroyFunctions).forEach((func) => func());
         this.compDestroyFunctions = {};
     }
@@ -124,7 +141,7 @@ export class AgStatusBar extends Component {
         statusBarComponents: StatusPanelDef[],
         ePanelComponent: HTMLElement,
         existingStatusPanelsToReuse: Map<string, IStatusPanelComp>
-    ) {
+    ): AgPromise<void> {
         const componentDetails: { key: string; promise: AgPromise<IStatusPanelComp> }[] = [];
 
         statusBarComponents.forEach((componentConfig) => {
@@ -151,7 +168,7 @@ export class AgStatusBar extends Component {
             });
         });
 
-        AgPromise.all(componentDetails.map((details) => details.promise)).then(() => {
+        return AgPromise.all(componentDetails.map((details) => details.promise)).then(() => {
             componentDetails.forEach((componentDetail) => {
                 componentDetail.promise.then((component: IStatusPanelComp) => {
                     const destroyFunc = () => {
