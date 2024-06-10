@@ -83,7 +83,7 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
                         stroke: 'rgb(185,173,77)',
                     },
                     highlightStyle: {
-                        fill: '#94b2d0',
+                        fill: '#D7E4F2',
                         strokeWidth: 0,
                     },
                     tooltip: {
