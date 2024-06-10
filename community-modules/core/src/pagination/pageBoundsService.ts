@@ -4,8 +4,8 @@ import type { BeanCollection } from '../context/context';
 import type { IRowModel, RowBounds } from '../interfaces/iRowModel';
 import { _exists, _missing } from '../utils/generic';
 
-export class RowBoundsService extends BeanStub implements NamedBean {
-    beanName = 'rowBoundsService' as const;
+export class PageBoundsService extends BeanStub implements NamedBean {
+    beanName = 'pageBoundsService' as const;
 
     private rowModel: IRowModel;
 

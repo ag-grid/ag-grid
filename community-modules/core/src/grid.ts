@@ -62,8 +62,8 @@ import { MenuService } from './misc/menuService';
 import { ResizeObserverService } from './misc/resizeObserverService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
-import { RowBoundsListener } from './pagination/rowBoundsListener';
-import { RowBoundsService } from './pagination/rowBoundsService';
+import { PageBoundsListener } from './pagination/pageBoundsListener';
+import { PageBoundsService } from './pagination/pageBoundsService';
 import { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 import { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
 import { AutoWidthCalculator } from './rendering/autoWidthCalculator';
@@ -436,8 +436,8 @@ export class GridCoreCreator {
             SelectionService,
             ColumnModel,
             HeaderNavigationService,
-            RowBoundsService,
-            RowBoundsListener,
+            PageBoundsService,
+            PageBoundsListener,
             RowRenderer,
             ExpressionService,
             ColumnFactory,

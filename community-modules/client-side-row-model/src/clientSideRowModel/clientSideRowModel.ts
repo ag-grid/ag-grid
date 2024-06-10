@@ -508,7 +508,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return topLevelIndex;
         }
 
-        let rowNode = this.rootNode.childrenAfterSort![topLevelIndex];
+        // if first row is footer, any following rows are pushed down by one
+        let adjustedIndex = topLevelIndex;
+        if (this.rowsToDisplay[0].footer) {
+            if (topLevelIndex === 0) {
+                return 0;
+            }
+            adjustedIndex -= 1;
+        }
+
+        let rowNode = this.rootNode.childrenAfterSort![adjustedIndex];
 
         if (this.gos.get('groupHideOpenParents')) {
             // if hideOpenParents, and this row open, then this row is now displayed at this index, first child is

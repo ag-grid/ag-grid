@@ -118,6 +118,13 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             valuesPromise = valuesResult;
         }
 
+        if (multiSelect && allowTyping) {
+            ret.allowTyping = false;
+            _warnOnce(
+                'agRichSelectCellEditor cannot have `multiSelect` and `allowTyping` set to `true`. AllowTyping has been turned off.'
+            );
+        }
+
         return { params: ret, valuesPromise };
     }
 
