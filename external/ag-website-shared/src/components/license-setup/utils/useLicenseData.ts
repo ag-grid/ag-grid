@@ -18,6 +18,7 @@ const ERRORS = {
     chartsNoGridEnterprise: `You must have a "Grid Enterprise" license to use "Charts Enterprise" within AG Grid`,
     noLicenseExample: `A license is only required if you use the "Grid Enterprise" product`,
     userLicenseError: 'License is invalid',
+    v2License: 'This license is not valid for v30+',
 };
 
 const updateError = ({ key, condition, setErrors }: { key: ErrorKey; condition: boolean; setErrors: any }) => {
@@ -41,7 +42,7 @@ const updateError = ({ key, condition, setErrors }: { key: ErrorKey; condition: 
 
 const useErrors = ({ hasLicense, license, userLicensedProducts, licenseDetails }: ErrorData) => {
     const [errors, setErrors] = useState<Errors>({} as Errors);
-    const { valid, suppliedLicenseType, incorrectLicenseType } = licenseDetails;
+    const { valid, suppliedLicenseType, incorrectLicenseType, version } = licenseDetails;
 
     useEffect(() => {
         updateError({
@@ -69,6 +70,14 @@ const useErrors = ({ hasLicense, license, userLicensedProducts, licenseDetails }
             setErrors,
         });
     }, [valid, hasLicense, license, suppliedLicenseType, incorrectLicenseType]);
+
+    useEffect(() => {
+        updateError({
+            key: 'v2License',
+            condition: version === '2',
+            setErrors,
+        });
+    }, [version]);
 
     return {
         errors,

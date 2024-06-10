@@ -24,6 +24,14 @@ interface Props {
     seedRepos: SeedRepo[];
 }
 
+const EmailSales = () => {
+    return (
+        <>
+            Please email <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>
+        </>
+    );
+};
+
 export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos }) => {
     const {
         hasLicense,
@@ -98,6 +106,11 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                 ></textarea>
             )}
             {errors.userLicenseError && <Warning>{errors.userLicenseError}</Warning>}
+            {errors.v2License && (
+                <Warning>
+                    {errors.v2License}. <EmailSales />
+                </Warning>
+            )}
             <div className={styles.licenseData}>
                 <div>
                     <label>Framework</label>
@@ -112,16 +125,10 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                 </div>
 
                 {hasLicense && (
-                    <>
-                        <div>
-                            <label>License version</label>
-                            <div>{userLicenseVersion ? `v${userLicenseVersion}` : '-'}</div>
-                        </div>
-                        <div>
-                            <label>Expiry</label>
-                            <div>{userLicenseExpiry ? userLicenseExpiry : '-'}</div>
-                        </div>
-                    </>
+                    <div>
+                        <label>Expiry</label>
+                        <div>{userLicenseExpiry ? userLicenseExpiry : '-'}</div>
+                    </div>
                 )}
                 <div>
                     <div>Licensed products</div>
