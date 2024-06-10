@@ -17,6 +17,7 @@ interface SeedRepo {
     name: string;
     framework: Framework;
     importType: ImportType;
+    licenseType: 'enterprise' | 'enterprise-bundle';
     url: string;
 }
 
@@ -62,9 +63,19 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
         license: license || 'your license key',
         userLicensedProducts,
     });
-    const selectedSeedRepos = seedRepos.filter((seedRepo) => {
-        return seedRepo.framework === framework && seedRepo.importType === importType;
-    });
+    const selectedSeedRepos = seedRepos
+        .filter(({ licenseType }) => {
+            if (userLicensedProducts.charts && userLicensedProducts.grid) {
+                return licenseType === 'enterprise-bundle';
+            } else if (userLicensedProducts.charts || userLicensedProducts.grid) {
+                return licenseType === 'enterprise';
+            }
+
+            return false;
+        })
+        .filter((seedRepo) => {
+            return seedRepo.framework === framework && seedRepo.importType === importType;
+        });
 
     return (
         <form>
