@@ -182,7 +182,7 @@ const ContainerCssClasses: Record<RowContainerName, RowContainerOptions> = {
         getRowCtrls: getBottomRowCtrls,
     },
 };
-export function getRowContainerOptions(name: RowContainerName): RowContainerOptions {
+export function _getRowContainerOptions(name: RowContainerName): RowContainerOptions {
     return ContainerCssClasses[name];
 }
 
@@ -251,7 +251,7 @@ export class RowContainerCtrl extends BeanStub {
     constructor(name: RowContainerName) {
         super();
         this.name = name;
-        this.options = getRowContainerOptions(name);
+        this.options = _getRowContainerOptions(name);
     }
 
     public postConstruct(): void {

@@ -4,7 +4,7 @@ import type { UserCompDetails } from '../../../components/framework/userComponen
 import { HorizontalDirection } from '../../../constants/direction';
 import { KeyCode } from '../../../constants/keyCode';
 import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
-import { DragAndDropService, DragSourceType } from '../../../dragAndDrop/dragAndDropService';
+import { DragSourceType } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { ColumnEventType, ColumnHeaderMouseLeaveEvent, ColumnHeaderMouseOverEvent } from '../../../events';
@@ -20,7 +20,7 @@ import type { HeaderPosition } from '../../common/headerPosition';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
-import { getHeaderClassesFromColDef } from '../cssClassApplier';
+import { _getHeaderClassesFromColDef } from '../cssClassApplier';
 import { HoverFeature } from '../hoverFeature';
 import { GroupResizeFeature } from './groupResizeFeature';
 import { GroupWidthFeature } from './groupWidthFeature';
@@ -294,7 +294,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
     private addClasses(): void {
         const colGroupDef = this.column.getColGroupDef();
-        const classes = getHeaderClassesFromColDef(colGroupDef, this.gos, null, this.column);
+        const classes = _getHeaderClassesFromColDef(colGroupDef, this.gos, null, this.column);
 
         // having different classes below allows the style to not have a bottom border
         // on the group header, if no group is specified

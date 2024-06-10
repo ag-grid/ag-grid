@@ -7,7 +7,7 @@ import { _getAllValuesInObject } from '../../utils/object';
 import type { AgComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import type { IRowContainerComp, RowContainerName, RowContainerOptions } from './rowContainerCtrl';
-import { RowContainerCtrl, getRowContainerOptions } from './rowContainerCtrl';
+import { RowContainerCtrl, _getRowContainerOptions } from './rowContainerCtrl';
 
 function templateFactory(options: RowContainerOptions): string {
     let res: string;
@@ -49,7 +49,7 @@ export class RowContainerComp extends Component {
     constructor() {
         super();
         this.name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
-        this.options = getRowContainerOptions(this.name);
+        this.options = _getRowContainerOptions(this.name);
         this.setTemplate(templateFactory(this.options));
     }
 

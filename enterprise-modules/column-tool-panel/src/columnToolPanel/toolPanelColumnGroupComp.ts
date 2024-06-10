@@ -22,11 +22,11 @@ import {
     TouchListener,
     _createIcon,
     _createIconNoSpan,
+    _getToolPanelClassesFromColDef,
     _setAriaDescribedBy,
     _setAriaExpanded,
     _setAriaLabel,
     _setDisplayed,
-    getToolPanelClassesFromColDef,
 } from '@ag-grid-community/core';
 
 import type { ColumnModelItem } from './columnModelItem';
@@ -116,7 +116,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.refreshAriaLabel();
         this.setupTooltip();
 
-        const classes = getToolPanelClassesFromColDef(
+        const classes = _getToolPanelClassesFromColDef(
             this.columnGroup.getColGroupDef(),
             this.gos,
             null,

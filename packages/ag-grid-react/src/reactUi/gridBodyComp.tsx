@@ -1,13 +1,12 @@
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
-import type { ComponentClass, IGridBodyComp } from 'ag-grid-community';
+import type { ComponentClass, IGridBodyComp, RowContainerName } from 'ag-grid-community';
 import {
     CssClassManager,
     FakeHScrollComp,
     FakeVScrollComp,
     GridBodyCtrl,
     OverlayWrapperComponent,
-    RowContainerName,
     _setAriaColCount,
     _setAriaRowCount,
 } from 'ag-grid-community';
@@ -111,12 +110,12 @@ const GridBodyComp = () => {
         }
         const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
-            setColumnCount: (count) => {
+            setColumnCount: (count: number) => {
                 if (eRoot.current) {
                     _setAriaColCount(eRoot.current, count);
                 }
             },
-            setRowCount: (count) => {
+            setRowCount: (count: number) => {
                 if (eRoot.current) {
                     _setAriaRowCount(eRoot.current, count);
                 }
@@ -128,17 +127,18 @@ const GridBodyComp = () => {
             setStickyTopWidth,
             setTopDisplay,
             setBottomDisplay,
-            setColumnMovingCss: (cssClass, flag) => cssClassManager.current!.addOrRemoveCssClass(cssClass, flag),
+            setColumnMovingCss: (cssClass: string, flag: boolean) =>
+                cssClassManager.current!.addOrRemoveCssClass(cssClass, flag),
             updateLayoutClasses: setLayoutClass,
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
-            setCellSelectableCss: (cssClass, flag) => setCellSelectableCss(flag ? cssClass : null),
-            setBodyViewportWidth: (width) => {
+            setCellSelectableCss: (cssClass: string, flag: boolean) => setCellSelectableCss(flag ? cssClass : null),
+            setBodyViewportWidth: (width: string) => {
                 if (eBodyViewport.current) {
                     eBodyViewport.current.style.width = width;
                 }
             },
-            registerBodyViewportResizeListener: (listener) => {
+            registerBodyViewportResizeListener: (listener: () => void) => {
                 if (eBodyViewport.current) {
                     const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current, listener);
                     destroyFuncs.current.push(() => unsubscribeFromResize());

@@ -18,10 +18,10 @@ import {
     RefPlaceholder,
     _createIconNoSpan,
     _escapeString,
+    _getToolPanelClassesFromColDef,
     _setAriaDescribedBy,
     _setAriaLabel,
     _setDisplayed,
-    getToolPanelClassesFromColDef,
 } from '@ag-grid-community/core';
 
 import type { ColumnModelItem } from './columnModelItem';
@@ -114,7 +114,7 @@ export class ToolPanelColumnComp extends Component {
 
         this.setupTooltip();
 
-        const classes = getToolPanelClassesFromColDef(this.column.getColDef(), this.gos, this.column, null);
+        const classes = _getToolPanelClassesFromColDef(this.column.getColDef(), this.gos, this.column, null);
         classes.forEach((c) => this.addOrRemoveCssClass(c, true));
     }
 

@@ -1,5 +1,5 @@
 import type { IRowContainerComp, RowContainerName, RowCtrl } from '@ag-grid-community/core';
-import { RowContainerCtrl, getRowContainerOptions } from '@ag-grid-community/core';
+import { RowContainerCtrl, _getRowContainerOptions } from '@ag-grid-community/core';
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import { BeansContext } from '../beansContext';
@@ -11,7 +11,7 @@ const RowContainerComp = (params: { name: RowContainerName }) => {
     const { context } = useContext(BeansContext);
 
     const { name } = params;
-    const containerOptions = getRowContainerOptions(name);
+    const containerOptions = useMemo(() => _getRowContainerOptions(name), [name]);
 
     const eViewport = useRef<HTMLDivElement | null>(null);
     const eContainer = useRef<HTMLDivElement | null>(null);

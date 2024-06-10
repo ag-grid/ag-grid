@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import type { IRowContainerComp, RowContainerName, RowCtrl } from 'ag-grid-community';
-import { RowContainerCtrl, getRowContainerOptions } from 'ag-grid-community';
+import { RowContainerCtrl, _getRowContainerOptions } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import useReactCommentEffect from '../reactComment';
@@ -12,7 +12,7 @@ const RowContainerComp = (params: { name: RowContainerName }) => {
     const { context } = useContext(BeansContext);
 
     const { name } = params;
-    const containerType = useMemo(() => getRowContainerOptions(name).type, [name]);
+    const containerOptions = useMemo(() => _getRowContainerOptions(name), [name]);
 
     const eViewport = useRef<HTMLDivElement | null>(null);
     const eContainer = useRef<HTMLDivElement | null>(null);
@@ -23,7 +23,6 @@ const RowContainerComp = (params: { name: RowContainerName }) => {
     const domOrderRef = useRef<boolean>(false);
     const rowContainerCtrlRef = useRef<RowContainerCtrl | null>();
 
-    const containerOptions = getRowContainerOptions(name);
     const viewportClasses = useMemo(() => classesList(containerOptions.viewport), [containerOptions]);
     const containerClasses = useMemo(() => classesList(containerOptions.container), [containerOptions]);
 
@@ -77,13 +76,13 @@ const RowContainerComp = (params: { name: RowContainerName }) => {
                     rowCtrlsRef.current = rowCtrls;
                     updateRowCtrlsOrdered(useFlush);
                 },
-                setDomOrder: (domOrder) => {
+                setDomOrder: (domOrder: boolean) => {
                     if (domOrderRef.current != domOrder) {
                         domOrderRef.current = domOrder;
                         updateRowCtrlsOrdered(false);
                     }
                 },
-                setContainerWidth: (width) => {
+                setContainerWidth: (width: string) => {
                     if (eContainer.current) {
                         eContainer.current.style.width = width;
                     }
@@ -113,7 +112,11 @@ const RowContainerComp = (params: { name: RowContainerName }) => {
     const buildContainer = () => (
         <div className={containerClasses} ref={setContainerRef} role={'rowgroup'}>
             {rowCtrlsOrdered.map((rowCtrl) => (
-                <RowComp rowCtrl={rowCtrl} containerType={containerType} key={rowCtrl.getInstanceId()}></RowComp>
+                <RowComp
+                    rowCtrl={rowCtrl}
+                    containerType={containerOptions.type}
+                    key={rowCtrl.getInstanceId()}
+                ></RowComp>
             ))}
         </div>
     );

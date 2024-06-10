@@ -12,7 +12,7 @@ import type { IAbstractHeaderCellComp } from './abstractCell/abstractHeaderCellC
 const CSS_FIRST_COLUMN = 'ag-column-first';
 const CSS_LAST_COLUMN = 'ag-column-last';
 
-export function getHeaderClassesFromColDef(
+export function _getHeaderClassesFromColDef(
     abstractColDef: AbstractColDef | null,
     gos: GridOptionsService,
     column: AgColumn | null,
@@ -25,7 +25,7 @@ export function getHeaderClassesFromColDef(
     return getColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, gos, column, columnGroup);
 }
 
-export function getToolPanelClassesFromColDef(
+export function _getToolPanelClassesFromColDef(
     abstractColDef: AbstractColDef | null,
     gos: GridOptionsService,
     column: AgColumn | null,

@@ -15,7 +15,7 @@ import type {
     StylingService,
     ValueService,
 } from '@ag-grid-community/core';
-import { getHeaderClassesFromColDef } from '@ag-grid-community/core';
+import { _getHeaderClassesFromColDef } from '@ag-grid-community/core';
 import type { GridSerializer } from '@ag-grid-community/csv-export';
 import { BaseCreator, Downloader, RowType, ZipContainer } from '@ag-grid-community/csv-export';
 
@@ -369,7 +369,7 @@ export class ExcelCreator
 
             if (col) {
                 headerClasses = headerClasses.concat(
-                    getHeaderClassesFromColDef(
+                    _getHeaderClassesFromColDef(
                         col.getDefinition(),
                         this.gos,
                         (column as AgColumn) || null,
