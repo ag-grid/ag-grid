@@ -9,11 +9,19 @@ import { FlagRenderer } from '../flag-renderer/FlagRenderer';
 import { TagCellRenderer } from '../tag-cell-renderer/TagCellRenderer';
 import styles from './HRExample.module.css';
 import { getData } from './data';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
+
+ModuleRegistry.registerModules([ RichSelectModule ]);
 
 interface Props {
     gridTheme?: string;
     isDarkMode?: boolean;
 }
+
+const employmentType = ['Permanent', 'Contract'];
+const paymentMethod = ['Cash', 'Check', 'Bank Transfer'];
+const paymentStatus = ['Paid', 'Pending'];
 
 export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
     const gridRef = useRef<AgGridReact>(null);
@@ -23,7 +31,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             headerName: 'Employee',
             field: 'name',
             cellDataType: 'text',
-            width: 220,
+            width: 250,
             cellRenderer: 'agGroupCellRenderer',
             cellRendererParams: {
                 innerRenderer: EmployeeCellRenderer,
@@ -35,19 +43,57 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             cellDataType: 'text',
             width: 200,
             cellRenderer: FlagRenderer,
+            editable: true,
         },
         {
-            headerName: 'Title',
             field: 'department',
             cellDataType: 'text',
             width: 200,
             cellRenderer: TagCellRenderer,
         },
-        { field: 'employmentType' },
-        { field: 'basicMonthlySalary', cellDataType: 'number', valueFormatter: currencyFormatter },
-        { field: 'employeeId', cellDataType: 'number' },
-        { field: 'paymentMethod', cellDataType: 'text' },
-        { field: 'paymentStatus', cellDataType: 'text' },
+        { 
+            field: 'employmentType',
+            editable: true,
+            width: 180,
+            cellEditor: "agRichSelectCellEditor",
+            cellEditorParams: {
+                values: employmentType,
+            },
+        },
+        { 
+            field: 'joinDate',
+            editable: true,
+            width: 120,
+        },
+        {   field: 'basicMonthlySalary',
+            cellDataType: 'number',
+            valueFormatter: currencyFormatter
+        },
+        {
+            field: 'employeeId',
+            cellDataType: 'number',
+            width: 120,
+        },
+        { 
+            field: 'paymentMethod', 
+            cellDataType: 'text',
+            editable: true,
+            width: 180,
+            cellEditor: "agRichSelectCellEditor",
+            cellEditorParams: {
+                values: paymentMethod,
+            },
+        },
+        { 
+            field: 'paymentStatus', 
+            cellDataType: 'text',
+            editable: true,
+            width: 150,
+            cellEditor: "agRichSelectCellEditor",
+            cellEditorParams: {
+                values: paymentStatus,
+            },
+        },
     ]);
     const [rowData] = useState(getData());
     const getDataPath = useCallback<GetDataPath>((data) => {
