@@ -31,7 +31,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             headerName: 'Employee',
             field: 'name',
             cellDataType: 'text',
-            width: 250,
+            width: 400,
             cellRenderer: 'agGroupCellRenderer',
             cellRendererParams: {
                 innerRenderer: EmployeeCellRenderer,
@@ -48,7 +48,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
         {
             field: 'department',
             cellDataType: 'text',
-            width: 200,
+            width: 250,
             cellRenderer: TagCellRenderer,
         },
         { 
