@@ -64,26 +64,6 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             suppressHeaderMenuButton: true,
         },
         {
-            headerName: 'Last',
-            type: 'rightAligned',
-            cellDataType: 'number',
-            field: 'currentPrice',
-            valueFormatter: currencyFormatter,
-            width: 120,
-            aggFunc: 'avg',
-            suppressHeaderFilterButton: true,
-        },
-
-        {
-            headerName: 'P/L %',
-            type: 'rightAligned',
-            valueGetter: pnlPercentCalculator,
-            valueFormatter: percentageFormatter,
-            width: 100,
-            aggFunc: 'avg',
-            suppressHeaderFilterButton: true,
-        },
-        {
             headerName: 'Change',
             field: 'timeline',
             cellRenderer: 'agSparklineCellRenderer',
@@ -128,6 +108,26 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
                 },
             },
             flex: 1,
+            suppressHeaderFilterButton: true,
+        },
+        {
+            headerName: 'Last',
+            type: 'rightAligned',
+            cellDataType: 'number',
+            field: 'currentPrice',
+            valueFormatter: currencyFormatter,
+            width: 120,
+            aggFunc: 'avg',
+            suppressHeaderFilterButton: true,
+        },
+
+        {
+            headerName: 'P/L %',
+            type: 'rightAligned',
+            valueGetter: pnlPercentCalculator,
+            valueFormatter: percentageFormatter,
+            width: 100,
+            aggFunc: 'avg',
             suppressHeaderFilterButton: true,
         },
         {
