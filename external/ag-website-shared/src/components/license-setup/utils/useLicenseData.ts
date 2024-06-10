@@ -17,7 +17,7 @@ interface ErrorData {
 const ERRORS = {
     chartsNoGridEnterprise: `You must have a "Grid Enterprise" license to use "Charts Enterprise" within AG Grid`,
     noLicenseExample: `A license is only required if you use the "Grid Enterprise" product`,
-    userLicenseError: 'License is invalid',
+    userLicenseError: 'License is not valid. Make sure you are copying the whole license which was originally provided',
     v2License: 'This license is not valid for v30+',
     chartsSupported: 'Enterprise Charts is not supported on this license',
 };

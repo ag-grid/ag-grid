@@ -102,7 +102,11 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                     }}
                 ></textarea>
             )}
-            {errors.userLicenseError && <Warning>{errors.userLicenseError}</Warning>}
+            {errors.userLicenseError && (
+                <Warning>
+                    {errors.userLicenseError}. <EmailSales />
+                </Warning>
+            )}
             {errors.v2License && (
                 <Warning>
                     {errors.v2License}. <EmailSales />
