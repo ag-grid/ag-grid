@@ -68,14 +68,41 @@ export class RowRangeSelectionContext {
      * @param node - Node at which to bisect the range
      * @returns Tuple of arrays containing nodes to either side of the given node
      */
-    public splitRangeAt(node: RowNode): [RowNode[], RowNode[]] {
+    public truncate(node: RowNode): { keep: RowNode[]; discard: RowNode[] } {
         const range = this.getRange();
+
+        if (range.length === 0) {
+            return { keep: [], discard: [] };
+        }
+
+        // if root is first, then selection range goes "down" the table
+        // so we should be unselecting the range _after_ the given `node`
+        const discardAfter = range[0].id === this.root!.id;
 
         const idx = range.findIndex((rowNode) => rowNode.id === node.id);
         if (idx > -1) {
-            return [range.slice(0, idx), range.slice(idx + 1)];
+            const above = range.slice(0, idx);
+            const below = range.slice(idx + 1);
+            this.setEndRange(node);
+            return discardAfter ? { keep: above, discard: below } : { keep: below, discard: above };
         } else {
-            return [range, []];
+            return { keep: range, discard: [] };
+        }
+    }
+
+    public extend(node: RowNode): { keep: RowNode[]; discard: RowNode[] } {
+        const newRange = this.rowModel.getNodesInRangeForSelection(this.root, node);
+
+        if (newRange.find((newRangeNode) => newRangeNode.id === this.end?.id)) {
+            // Range between root and given node contains the current "end"
+            // so this is an extension of the current range direction
+            this.setEndRange(node);
+            return { keep: this.getRange(), discard: [] };
+        } else {
+            // otherwise, this is an inversion
+            const discard = this.getRange().slice();
+            this.setEndRange(node);
+            return { keep: this.getRange(), discard };
         }
     }
 }

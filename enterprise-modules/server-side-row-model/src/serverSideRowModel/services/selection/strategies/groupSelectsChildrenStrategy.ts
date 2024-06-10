@@ -159,17 +159,16 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             const node = nodes[0];
 
             if (this.selectionContext.isInRange(node)) {
-                const [nodesToSet, nodesToUnset] = this.selectionContext.splitRangeAt(node);
-                this.selectionContext.setEndRange(node);
+                const partition = this.selectionContext.truncate(node);
 
                 // When we are selecting a range, we may need to de-select part of the previously
                 // selected range (see AG-9620)
                 // When we are de-selecting a range, we can/should leave the other nodes unchanged
                 // (i.e. selected nodes outside the current range should remain selected - see AG-10215)
                 if (newValue) {
-                    this.selectRange(nodesToUnset, false);
+                    this.selectRange(partition.discard, false);
                 }
-                this.selectRange(nodesToSet, newValue);
+                this.selectRange(partition.keep, newValue);
                 return 1;
             } else {
                 this.selectionContext.setEndRange(node);

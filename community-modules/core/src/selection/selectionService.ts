@@ -79,17 +79,16 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             const node = filteredNodes[0];
 
             if (this.selectionCtx.isInRange(node)) {
-                const [nodesToSet, nodesToUnset] = this.selectionCtx.splitRangeAt(node);
-                this.selectionCtx.setEndRange(node);
+                const partition = this.selectionCtx.truncate(node);
 
                 // When we are selecting a range, we may need to de-select part of the previously
                 // selected range (see AG-9620)
                 // When we are de-selecting a range, we can/should leave the other nodes unchanged
                 // (i.e. selected nodes outside the current range should remain selected - see AG-10215)
                 if (newValue) {
-                    this.selectRange(nodesToUnset, false, source);
+                    this.selectRange(partition.discard, false, source);
                 }
-                return this.selectRange(nodesToSet, newValue, source);
+                return this.selectRange(partition.keep, newValue, source);
             } else {
                 const fromNode = this.selectionCtx.getRoot();
                 const toNode = node;

@@ -149,25 +149,25 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
             const node = nodes[0];
 
             if (this.selectionContext.isInRange(node)) {
-                const [nodesToSet, nodesToUnset] = this.selectionContext.splitRangeAt(node);
-                this.selectionContext.setEndRange(node);
+                const partition = this.selectionContext.truncate(node);
 
                 // When we are selecting a range, we may need to de-select part of the previously
                 // selected range (see AG-9620)
                 // When we are de-selecting a range, we can/should leave the other nodes unchanged
                 // (i.e. selected nodes outside the current range should remain selected - see AG-10215)
                 if (newValue) {
-                    nodesToUnset.forEach((node) => updateNodeState(node, false));
+                    partition.discard.forEach((node) => updateNodeState(node, false));
                 }
-                nodesToSet.forEach((node) => updateNodeState(node));
+                partition.keep.forEach((node) => updateNodeState(node));
             } else {
-                this.selectionContext.setEndRange(node);
                 const fromNode = this.selectionContext.getRoot();
                 const toNode = node;
                 if (fromNode !== toNode) {
-                    this.rowModel
-                        .getNodesInRangeForSelection(fromNode, toNode)
-                        .forEach((node) => updateNodeState(node));
+                    const partition = this.selectionContext.extend(node);
+                    if (newValue) {
+                        partition.discard.forEach((node) => updateNodeState(node, false));
+                    }
+                    partition.keep.forEach((node) => updateNodeState(node));
                 }
             }
             return 1;
