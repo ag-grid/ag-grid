@@ -4,6 +4,7 @@ import { Snippet } from '@components/snippet/Snippet';
 import { InfoTooltip } from '@components/theme-builder/components/general/Tooltip';
 import { CHARTS_SITE_URL, FRAMEWORK_DISPLAY_TEXT } from '@constants';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { type FunctionComponent } from 'react';
 
@@ -172,7 +173,16 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                     </div>
                 </div>
                 <div>
-                    <label>Import type</label>
+                    <label>
+                        <a
+                            href={urlWithPrefix({
+                                framework,
+                                url: './modules/#packages-vs-modules',
+                            })}
+                        >
+                            Import type
+                        </a>
+                    </label>
                     <select
                         name="importType"
                         defaultValue={importType}
