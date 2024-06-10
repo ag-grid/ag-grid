@@ -9,6 +9,12 @@ import { ProductCellRenderer } from '../product-cell-renderer/ProductCellRendere
 import { StatusCellRenderer } from '../status-cell-renderer/StatusCellRenderer';
 import styles from './EcommerceExample.module.css';
 import { getData } from './data';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+
+ModuleRegistry.registerModules([ SetFilterModule ]);
+ModuleRegistry.registerModules([ MultiFilterModule ]);
 
 interface Props {
     gridTheme?: string;
@@ -16,6 +22,8 @@ interface Props {
 }
 
 const whenSoldOut = ['Discontinued', 'Back order', 'Email when available'];
+const paginationPageSizeSelector = [5, 10, 20];
+
 
 export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
     const gridRef = useRef<AgGridReact>(null);
@@ -34,15 +42,29 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             headerName: 'Product',
             cellRenderer: ProductCellRenderer,
             wrapText: true,
-            filter: true,
+            filter: 'agMultiColumnFilter',
+            filterParams: {
+                filters: [
+                    {
+                        filter: 'agTextColumnFilter',
+                        filterParams: {
+                            defaultOption: 'startsWith',
+                        }
+                    },
+                    {
+                        filter: 'agSetColumnFilter',
+                    },
+                ],
+            },
+            width: 600
         },
         {
             field: 'status',
             headerName: 'Status',
             cellRenderer: StatusCellRenderer,
-            filter: true,
+            filter: 'agSetColumnFilter',
         },
-        { field: 'sku', headerName: 'SKU' },
+        { field: 'sku', headerName: 'SKU', width: 500 },
 
         {
             field: 'whenSoldOut',
@@ -90,7 +112,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
     ]);
     const [rowData] = useState(getData());
     const [defaultColDef] = useState({
-        flex: 1,
+        floatingFilter: true,
     });
     const [autoSizeStrategy] = useState<SizeColumnsToContentStrategy>({
         type: 'fitCellContents',
@@ -109,6 +131,9 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                         rowSelection="multiple"
                         autoSizeStrategy={autoSizeStrategy}
                         columnMenu="new"
+                        pagination={true}
+                        paginationPageSize={10}
+                        paginationPageSizeSelector={paginationPageSizeSelector}
                     />
                 </div>
             </div>

@@ -109,6 +109,7 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             },
             flex: 1,
             suppressHeaderFilterButton: true,
+            sortable: false,
         },
         {
             headerName: 'Last',
