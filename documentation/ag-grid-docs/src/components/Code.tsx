@@ -35,28 +35,8 @@ const GrammarMap = {
 
 export type Language = keyof typeof GrammarMap;
 
-/**
- * This uses Prism to highlight a provided code snippet.
- */
-function Code({
-    code,
-    language = 'ts',
-    className,
-    keepMarkup = false,
-    lineNumbers = false,
-    ...props
-}: {
-    code: string | string[];
-    language?: Language;
-    className?: string;
-    keepMarkup?: boolean;
-    lineNumbers?: boolean;
-}) {
+function CopyToClipboardButton({ code }: { code: string | string[] }) {
     const [hasCopied, setHasCopied] = useState(false);
-
-    if (Array.isArray(code)) {
-        code = code.join('\n');
-    }
 
     const copyToClipboard = async (code) => {
         await navigator.clipboard.writeText(code);
@@ -67,23 +47,51 @@ function Code({
     };
 
     return (
+        <span
+            className={classnames(styles.clipboardButtonOuter, hasCopied ? styles.hasCopied : '')}
+            onClick={() => {
+                copyToClipboard(code);
+            }}
+        >
+            <span className={styles.clipboardButtonCopiedOuter}>
+                <span className={styles.clipboardButtonCopied}>Copied</span>
+            </span>
+            <span className={styles.clipboardButton}>
+                <Icon name={'feature-clipboard'} />
+            </span>
+        </span>
+    );
+}
+
+/**
+ * This uses Prism to highlight a provided code snippet.
+ */
+function Code({
+    code,
+    language = 'ts',
+    className,
+    keepMarkup = false,
+    lineNumbers = false,
+    copyToClipboard = false,
+    ...props
+}: {
+    code: string | string[];
+    language?: Language;
+    className?: string;
+    keepMarkup?: boolean;
+    lineNumbers?: boolean;
+    copyToClipboard?: boolean;
+}) {
+    if (Array.isArray(code)) {
+        code = code.join('\n');
+    }
+
+    return (
         <pre
             className={classnames('code', `language-${language}`, className, lineNumbers ? 'line-numbers' : null)}
             {...props}
         >
-            <span
-                className={classnames(styles.clipboardButtonOuter, hasCopied ? styles.hasCopied : '')}
-                onClick={() => {
-                    copyToClipboard(code);
-                }}
-            >
-                <span className={styles.clipboardButtonCopiedOuter}>
-                    <span className={styles.clipboardButtonCopied}>Copied</span>
-                </span>
-                <span className={styles.clipboardButton}>
-                    <Icon name={'feature-clipboard'} />
-                </span>
-            </span>
+            {copyToClipboard && <CopyToClipboardButton code={code} />}
 
             {keepMarkup || lineNumbers ? (
                 <CodeWithPrismPlugins code={code} keepMarkup={keepMarkup} />
