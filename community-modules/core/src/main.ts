@@ -264,7 +264,8 @@ export {
     IRowContainerComp,
     RowContainerCtrl,
     RowContainerType,
-    getRowContainerTypeForName,
+    RowContainerOptions,
+    getRowContainerOptions,
 } from './gridBodyComp/rowContainer/rowContainerCtrl';
 
 // headerRendering

@@ -15,7 +15,7 @@ import type {
     RowEvent,
     VirtualRowRemovedEvent,
 } from '../../events';
-import { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
+import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ProcessRowParams, RenderedRowEvent } from '../../interfaces/iCallbackParams';
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
@@ -211,19 +211,22 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return this.instanceId;
     }
 
-    public setComp(rowComp: IRowComp, element: HTMLElement, containerType: RowContainerType): void {
-        const gui: RowGui = { rowComp, element, containerType };
-        this.allRowGuis.push(gui);
-
-        if (containerType === RowContainerType.LEFT) {
+    private updateGui(containerType: RowContainerType, gui: RowGui | undefined) {
+        if (containerType === 'left') {
             this.leftGui = gui;
-        } else if (containerType === RowContainerType.RIGHT) {
+        } else if (containerType === 'right') {
             this.rightGui = gui;
-        } else if (containerType === RowContainerType.FULL_WIDTH) {
+        } else if (containerType === 'fullWidth') {
             this.fullWidthGui = gui;
         } else {
             this.centerGui = gui;
         }
+    }
+
+    public setComp(rowComp: IRowComp, element: HTMLElement, containerType: RowContainerType): void {
+        const gui: RowGui = { rowComp, element, containerType };
+        this.allRowGuis.push(gui);
+        this.updateGui(containerType, gui);
 
         this.initialiseRowComp(gui);
 
@@ -238,22 +241,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     public unsetComp(containerType: RowContainerType): void {
         this.allRowGuis = this.allRowGuis.filter((rowGui) => rowGui.containerType !== containerType);
-
-        switch (containerType) {
-            case RowContainerType.LEFT:
-                this.leftGui = undefined;
-                break;
-            case RowContainerType.RIGHT:
-                this.rightGui = undefined;
-                break;
-            case RowContainerType.FULL_WIDTH:
-                this.fullWidthGui = undefined;
-                break;
-            case RowContainerType.CENTER:
-                this.centerGui = undefined;
-                break;
-            default:
-        }
+        this.updateGui(containerType, undefined);
     }
 
     public isCacheable(): boolean {
@@ -574,18 +562,14 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private getCellCtrlsForContainer(containerType: RowContainerType) {
         switch (containerType) {
-            case RowContainerType.LEFT:
+            case 'left':
                 return this.leftCellCtrls.list;
-            case RowContainerType.RIGHT:
+            case 'right':
                 return this.rightCellCtrls.list;
-            case RowContainerType.FULL_WIDTH:
+            case 'fullWidth':
                 return [];
-            case RowContainerType.CENTER:
+            case 'center':
                 return this.centerCellCtrls.list;
-            default: {
-                const exhaustiveCheck: never = containerType;
-                throw new Error(`Unhandled case: ${exhaustiveCheck}`);
-            }
         }
     }
 
@@ -1344,13 +1328,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private getPinnedForContainer(rowContainerType: RowContainerType): ColumnPinnedType {
-        const pinned =
-            rowContainerType === RowContainerType.LEFT
-                ? 'left'
-                : rowContainerType === RowContainerType.RIGHT
-                  ? 'right'
-                  : null;
-        return pinned;
+        if (rowContainerType === 'left' || rowContainerType === 'right') {
+            return rowContainerType;
+        }
+        return null;
     }
 
     private getInitialRowClasses(rowContainerType: RowContainerType): string[] {

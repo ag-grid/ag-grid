@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
-import type { IRowContainerComp, RowCtrl } from 'ag-grid-community';
-import { RowContainerCtrl, RowContainerName, getRowContainerTypeForName } from 'ag-grid-community';
+import type { IRowContainerComp, RowContainerName, RowCtrl } from 'ag-grid-community';
+import { RowContainerCtrl, getRowContainerOptions } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import useReactCommentEffect from '../reactComment';
@@ -12,7 +12,7 @@ const RowContainerComp = (params: { name: RowContainerName }) => {
     const { context } = useContext(BeansContext);
 
     const { name } = params;
-    const containerType = useMemo(() => getRowContainerTypeForName(name), [name]);
+    const containerType = useMemo(() => getRowContainerOptions(name).type, [name]);
 
     const eViewport = useRef<HTMLDivElement | null>(null);
     const eContainer = useRef<HTMLDivElement | null>(null);
@@ -23,31 +23,25 @@ const RowContainerComp = (params: { name: RowContainerName }) => {
     const domOrderRef = useRef<boolean>(false);
     const rowContainerCtrlRef = useRef<RowContainerCtrl | null>();
 
-    const cssClasses = useMemo(() => RowContainerCtrl.getRowContainerCssClasses(name), [name]);
-    const viewportClasses = useMemo(() => classesList(cssClasses.viewport), [cssClasses]);
-    const containerClasses = useMemo(() => classesList(cssClasses.container), [cssClasses]);
+    const containerOptions = getRowContainerOptions(name);
+    const viewportClasses = useMemo(() => classesList(containerOptions.viewport), [containerOptions]);
+    const containerClasses = useMemo(() => classesList(containerOptions.container), [containerOptions]);
 
-    // no need to useMemo for boolean types
-    const centerTemplate =
-        name === RowContainerName.CENTER ||
-        name === RowContainerName.TOP_CENTER ||
-        name === RowContainerName.BOTTOM_CENTER ||
-        name === RowContainerName.STICKY_TOP_CENTER ||
-        name === RowContainerName.STICKY_BOTTOM_CENTER;
+    const isCenter = containerOptions.type === 'center';
 
-    const topLevelRef = centerTemplate ? eViewport : eContainer;
+    const topLevelRef = isCenter ? eViewport : eContainer;
 
     useReactCommentEffect(' AG Row Container ' + name + ' ', topLevelRef);
 
     const areElementsReady = useCallback(() => {
-        if (centerTemplate) {
+        if (isCenter) {
             return eViewport.current != null && eContainer.current != null;
         }
         return eContainer.current != null;
     }, []);
 
     const areElementsRemoved = useCallback(() => {
-        if (centerTemplate) {
+        if (isCenter) {
             return eViewport.current == null && eContainer.current == null;
         }
         return eContainer.current == null;
@@ -126,7 +120,7 @@ const RowContainerComp = (params: { name: RowContainerName }) => {
 
     return (
         <>
-            {centerTemplate ? (
+            {isCenter ? (
                 <div className={viewportClasses} ref={setViewportRef} role="presentation">
                     {buildContainer()}
                 </div>

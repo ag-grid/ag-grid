@@ -12,44 +12,32 @@ import { FakeVScrollComp } from './fakeVScrollComp';
 import type { IGridBodyComp } from './gridBodyCtrl';
 import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl, RowAnimationCssClasses } from './gridBodyCtrl';
 import { RowContainerComp } from './rowContainer/rowContainerComp';
-import { RowContainerName } from './rowContainer/rowContainerCtrl';
+import type { RowContainerName } from './rowContainer/rowContainerCtrl';
 
+function makeRowContainers(names: RowContainerName[]): string {
+    return names.map((name) => `<ag-row-container name="${name}"></ag-row-container>`).join('');
+}
 const GRID_BODY_TEMPLATE =
     /* html */
     `<div class="ag-root ag-unselectable" role="treegrid">
         <ag-header-root></ag-header-root>
         <div class="ag-floating-top" data-ref="eTop" role="presentation">
-            <ag-row-container name="${RowContainerName.TOP_LEFT}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.TOP_CENTER}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.TOP_RIGHT}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.TOP_FULL_WIDTH}"></ag-row-container>
+            ${makeRowContainers(['topLeft', 'topCenter', 'topRight', 'topFullWidth'])}
         </div>
         <div class="ag-body" data-ref="eBody" role="presentation">
             <div class="ag-body-viewport" data-ref="eBodyViewport" role="presentation">
-                <ag-row-container name="${RowContainerName.LEFT}"></ag-row-container>
-                <ag-row-container name="${RowContainerName.CENTER}"></ag-row-container>
-                <ag-row-container name="${RowContainerName.RIGHT}"></ag-row-container>
-                <ag-row-container name="${RowContainerName.FULL_WIDTH}"></ag-row-container>
+            ${makeRowContainers(['left', 'center', 'right', 'fullWidth'])}
             </div>
             <ag-fake-vertical-scroll></ag-fake-vertical-scroll>
         </div>
         <div class="ag-sticky-top" data-ref="eStickyTop" role="presentation">
-            <ag-row-container name="${RowContainerName.STICKY_TOP_LEFT}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.STICKY_TOP_CENTER}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.STICKY_TOP_RIGHT}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.STICKY_TOP_FULL_WIDTH}"></ag-row-container>
+            ${makeRowContainers(['stickyTopLeft', 'stickyTopCenter', 'stickyTopRight', 'stickyTopFullWidth'])}
         </div>
         <div class="ag-sticky-bottom" data-ref="eStickyBottom" role="presentation">
-            <ag-row-container name="${RowContainerName.STICKY_BOTTOM_LEFT}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.STICKY_BOTTOM_CENTER}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.STICKY_BOTTOM_RIGHT}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.STICKY_BOTTOM_FULL_WIDTH}"></ag-row-container>
+            ${makeRowContainers(['stickyBottomLeft', 'stickyBottomCenter', 'stickyBottomRight', 'stickyBottomFullWidth'])}
         </div>
         <div class="ag-floating-bottom" data-ref="eBottom" role="presentation">
-            <ag-row-container name="${RowContainerName.BOTTOM_LEFT}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.BOTTOM_CENTER}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.BOTTOM_RIGHT}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.BOTTOM_FULL_WIDTH}"></ag-row-container>
+            ${makeRowContainers(['bottomLeft', 'bottomCenter', 'bottomRight', 'bottomFullWidth'])}
         </div>
         <ag-fake-horizontal-scroll></ag-fake-horizontal-scroll>
         <ag-overlay-wrapper></ag-overlay-wrapper>

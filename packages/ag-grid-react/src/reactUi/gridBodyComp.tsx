@@ -239,57 +239,32 @@ const GridBodyComp = () => {
                 section: eTop,
                 className: topClasses,
                 style: topStyle,
-                children: [
-                    RowContainerName.TOP_LEFT,
-                    RowContainerName.TOP_CENTER,
-                    RowContainerName.TOP_RIGHT,
-                    RowContainerName.TOP_FULL_WIDTH,
-                ],
+                children: ['topLeft', 'topCenter', 'topRight', 'topFullWidth'],
             })}
             <div className={bodyClasses} ref={eBody} role="presentation">
                 {createSection({
                     section: eBodyViewport,
                     className: bodyViewportClasses,
-                    children: [
-                        RowContainerName.LEFT,
-                        RowContainerName.CENTER,
-                        RowContainerName.RIGHT,
-                        RowContainerName.FULL_WIDTH,
-                    ],
+                    children: ['left', 'center', 'right', 'fullWidth'],
                 })}
             </div>
             {createSection({
                 section: eStickyTop,
                 className: stickyTopClasses,
                 style: stickyTopStyle,
-                children: [
-                    RowContainerName.STICKY_TOP_LEFT,
-                    RowContainerName.STICKY_TOP_CENTER,
-                    RowContainerName.STICKY_TOP_RIGHT,
-                    RowContainerName.STICKY_TOP_FULL_WIDTH,
-                ],
+                children: ['stickyTopLeft', 'stickyTopCenter', 'stickyTopRight', 'stickyTopFullWidth'],
             })}
             {createSection({
                 section: eStickyBottom,
                 className: stickyBottomClasses,
                 style: stickyBottomStyle,
-                children: [
-                    RowContainerName.STICKY_BOTTOM_LEFT,
-                    RowContainerName.STICKY_BOTTOM_CENTER,
-                    RowContainerName.STICKY_BOTTOM_RIGHT,
-                    RowContainerName.STICKY_BOTTOM_FULL_WIDTH,
-                ],
+                children: ['stickyBottomLeft', 'stickyBottomCenter', 'stickyBottomRight', 'stickyBottomFullWidth'],
             })}
             {createSection({
                 section: eBottom,
                 className: bottomClasses,
                 style: bottomStyle,
-                children: [
-                    RowContainerName.BOTTOM_LEFT,
-                    RowContainerName.BOTTOM_CENTER,
-                    RowContainerName.BOTTOM_RIGHT,
-                    RowContainerName.BOTTOM_FULL_WIDTH,
-                ],
+                children: ['bottomLeft', 'bottomCenter', 'bottomRight', 'bottomFullWidth'],
             })}
         </div>
     );
