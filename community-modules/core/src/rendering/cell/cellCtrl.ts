@@ -8,7 +8,7 @@ import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent, FlashCellsEvent } from '../../events';
-import { CssClassApplier } from '../../headerRendering/cells/cssClassApplier';
+import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
@@ -806,7 +806,7 @@ export class CellCtrl extends BeanStub {
 
     private refreshFirstAndLastStyles(): void {
         const { cellComp, column, beans } = this;
-        CssClassApplier.refreshFirstAndLastStyles(cellComp, column, beans.visibleColsService);
+        refreshFirstAndLastStyles(cellComp, column, beans.visibleColsService);
     }
 
     private refreshAriaColIndex(): void {

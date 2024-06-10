@@ -1,4 +1,4 @@
-import { AgCheckbox, AgToggleButton, _clearElement } from '@ag-grid-community/core';
+import { AgToggleButton } from '@ag-grid-community/core';
 import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
 import type { ChartController } from '../../chartController';
@@ -7,8 +7,6 @@ import type { ChartOptionsService } from '../../services/chartOptionsService';
 import { DragDataPanel } from './dragDataPanel';
 
 export class SeriesDataPanel extends DragDataPanel {
-    private static TEMPLATE = /* html */ `<div id="seriesGroup"></div>`;
-
     constructor(
         chartController: ChartController,
         private readonly chartOptionsService: ChartOptionsService,
@@ -18,7 +16,7 @@ export class SeriesDataPanel extends DragDataPanel {
         private valueCols: ColState[],
         private isOpen?: boolean
     ) {
-        super(chartController, allowMultipleSelect, maxSelection, SeriesDataPanel.TEMPLATE);
+        super(chartController, allowMultipleSelect, maxSelection, /* html */ `<div id="seriesGroup"></div>`);
     }
 
     public postConstruct() {

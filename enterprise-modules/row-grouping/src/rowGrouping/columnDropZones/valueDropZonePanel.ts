@@ -1,5 +1,11 @@
-import type { AgColumn, DraggingEvent, ITooltipParams, WithoutGridCommon } from '@ag-grid-community/core';
-import { DragAndDropService, _createIconNoSpan } from '@ag-grid-community/core';
+import type {
+    AgColumn,
+    DragAndDropIcon,
+    DraggingEvent,
+    ITooltipParams,
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
+import { _createIconNoSpan } from '@ag-grid-community/core';
 
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
@@ -35,8 +41,8 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
         return res;
     }
 
-    protected getIconName(): string {
-        return this.isPotentialDndItems() ? DragAndDropService.ICON_AGGREGATE : DragAndDropService.ICON_NOT_ALLOWED;
+    protected getIconName(): DragAndDropIcon {
+        return this.isPotentialDndItems() ? 'aggregate' : 'notAllowed';
     }
 
     protected isItemDroppable(column: AgColumn, draggingEvent: DraggingEvent): boolean {

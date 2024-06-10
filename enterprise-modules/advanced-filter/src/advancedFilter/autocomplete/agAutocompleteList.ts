@@ -6,10 +6,6 @@ import { AgAutocompleteRow } from './agAutocompleteRow';
 import type { AutocompleteEntry } from './autocompleteParams';
 
 export class AgAutocompleteList extends PopupComponent {
-    private static TEMPLATE /* html */ = `<div class="ag-autocomplete-list-popup">
-            <div data-ref="eList" class="ag-autocomplete-list"></div>
-        <div>`;
-
     private readonly eList: HTMLElement = RefPlaceholder;
 
     private virtualList: VirtualList<any>;
@@ -29,7 +25,9 @@ export class AgAutocompleteList extends PopupComponent {
             forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
         }
     ) {
-        super(AgAutocompleteList.TEMPLATE);
+        super(/* html */ `<div class="ag-autocomplete-list-popup">
+            <div data-ref="eList" class="ag-autocomplete-list"></div>
+        <div>`);
     }
 
     public override destroy(): void {

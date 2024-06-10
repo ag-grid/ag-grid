@@ -6,6 +6,13 @@ import { _createIconNoSpan } from '../../../utils/icon';
 import type { AgComponentSelector } from '../../../widgets/component';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 
+const SortIndicatorTemplate /* html */ = `<span class="ag-sort-indicator-container">
+        <span data-ref="eSortOrder" class="ag-sort-indicator-icon ag-sort-order ag-hidden" aria-hidden="true"></span>
+        <span data-ref="eSortAsc" class="ag-sort-indicator-icon ag-sort-ascending-icon ag-hidden" aria-hidden="true"></span>
+        <span data-ref="eSortDesc" class="ag-sort-indicator-icon ag-sort-descending-icon ag-hidden" aria-hidden="true"></span>
+        <span data-ref="eSortMixed" class="ag-sort-indicator-icon ag-sort-mixed-icon ag-hidden" aria-hidden="true"></span>
+        <span data-ref="eSortNone" class="ag-sort-indicator-icon ag-sort-none-icon ag-hidden" aria-hidden="true"></span>
+    </span>`;
 export class SortIndicatorComp extends Component {
     private sortController: SortController;
 
@@ -14,14 +21,6 @@ export class SortIndicatorComp extends Component {
     }
 
     static readonly selector: AgComponentSelector = 'AG-SORT-INDICATOR';
-
-    private static TEMPLATE /* html */ = `<span class="ag-sort-indicator-container">
-            <span data-ref="eSortOrder" class="ag-sort-indicator-icon ag-sort-order ag-hidden" aria-hidden="true"></span>
-            <span data-ref="eSortAsc" class="ag-sort-indicator-icon ag-sort-ascending-icon ag-hidden" aria-hidden="true"></span>
-            <span data-ref="eSortDesc" class="ag-sort-indicator-icon ag-sort-descending-icon ag-hidden" aria-hidden="true"></span>
-            <span data-ref="eSortMixed" class="ag-sort-indicator-icon ag-sort-mixed-icon ag-hidden" aria-hidden="true"></span>
-            <span data-ref="eSortNone" class="ag-sort-indicator-icon ag-sort-none-icon ag-hidden" aria-hidden="true"></span>
-        </span>`;
 
     private eSortOrder: HTMLElement = RefPlaceholder;
     private eSortAsc: HTMLElement = RefPlaceholder;
@@ -36,7 +35,7 @@ export class SortIndicatorComp extends Component {
         super();
 
         if (!skipTemplate) {
-            this.setTemplate(SortIndicatorComp.TEMPLATE);
+            this.setTemplate(SortIndicatorTemplate);
         }
     }
 

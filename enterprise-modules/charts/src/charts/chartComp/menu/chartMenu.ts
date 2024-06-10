@@ -49,8 +49,6 @@ export class ChartMenu extends Component {
     private panels: ChartToolPanelMenuOptions[] = [];
     private defaultPanel: ChartToolPanelMenuOptions;
 
-    private static TEMPLATE = /* html */ `<div class="ag-chart-menu-wrapper"></div>`;
-
     private chartToolbar: ChartToolbar;
     private tabbedMenu: TabbedChartMenu;
     private menuPanel?: AgPanel;
@@ -62,7 +60,7 @@ export class ChartMenu extends Component {
         private readonly eMenuPanelContainer: HTMLElement,
         private readonly chartMenuContext: ChartMenuContext
     ) {
-        super(ChartMenu.TEMPLATE);
+        super(/* html */ `<div class="ag-chart-menu-wrapper"></div>`);
         this.chartController = chartMenuContext.chartController;
     }
 
@@ -82,7 +80,9 @@ export class ChartMenu extends Component {
                 }
             },
         });
-        this.addManagedListeners(this.chartController, { chartLinkedChanged: this.refreshToolbarAndPanels.bind(this) });
+        this.addManagedListeners(this.chartController, {
+            chartLinkedChanged: this.refreshToolbarAndPanels.bind(this),
+        });
 
         this.refreshMenuClasses();
 

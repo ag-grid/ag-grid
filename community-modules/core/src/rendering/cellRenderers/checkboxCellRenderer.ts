@@ -15,16 +15,17 @@ export interface ICheckboxCellRendererParams<TData = any, TContext = any>
 }
 
 export class CheckboxCellRenderer extends Component implements ICellRenderer {
-    private static TEMPLATE = /* html*/ `
-        <div class="ag-cell-wrapper ag-checkbox-cell" role="presentation">
-            <ag-checkbox role="presentation" data-ref="eCheckbox"></ag-checkbox>
-        </div>`;
-
     private readonly eCheckbox: AgCheckbox = RefPlaceholder;
     private params: ICheckboxCellRendererParams;
 
     constructor() {
-        super(CheckboxCellRenderer.TEMPLATE, [AgCheckbox]);
+        super(
+            /* html*/ `
+            <div class="ag-cell-wrapper ag-checkbox-cell" role="presentation">
+                <ag-checkbox role="presentation" data-ref="eCheckbox"></ag-checkbox>
+            </div>`,
+            [AgCheckbox]
+        );
     }
 
     public init(params: ICheckboxCellRendererParams): void {

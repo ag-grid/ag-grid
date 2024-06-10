@@ -445,7 +445,7 @@ export class ChartOptionsService extends BeanStub {
         // N.B. 'calculated' here refers to the fact that the property exists on the internal series object itself,
         // rather than the properties object. This is due to us needing to reach inside the chart itself to retrieve
         // the value, and will likely be cleaned up in a future release
-        const series = this.getChart().series.find((s: any) => ChartOptionsService.isMatchingSeries(seriesType, s));
+        const series = this.getChart().series.find((s: any) => isMatchingSeries(seriesType, s));
         return get(calculated ? series : series?.properties.toJson(), expression, undefined) as T;
     }
 
@@ -648,11 +648,11 @@ export class ChartOptionsService extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    private static isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {
-        return isSeriesType(seriesType) && series.type === seriesType;
-    }
-
     public override destroy(): void {
         super.destroy();
     }
+}
+
+function isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {
+    return isSeriesType(seriesType) && series.type === seriesType;
 }

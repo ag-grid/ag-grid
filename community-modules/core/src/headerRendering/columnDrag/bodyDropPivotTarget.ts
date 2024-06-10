@@ -1,8 +1,7 @@
 import type { FuncColsService } from '../../columns/funcColsService';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import type { DraggingEvent } from '../../dragAndDrop/dragAndDropService';
-import { DragAndDropService } from '../../dragAndDrop/dragAndDropService';
+import type { DragAndDropIcon, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { DropListener } from './bodyDropTarget';
@@ -60,10 +59,10 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
         });
     }
 
-    public getIconName(): string | null {
+    public getIconName(): DragAndDropIcon | null {
         const totalColumns = this.columnsToAggregate.length + this.columnsToGroup.length + this.columnsToPivot.length;
         if (totalColumns > 0) {
-            return this.pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;
+            return this.pinned ? 'pinned' : 'move';
         }
 
         return null;

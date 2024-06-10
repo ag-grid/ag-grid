@@ -17,8 +17,6 @@ export class ToolPanelWrapper extends Component {
         this.userComponentFactory = beans.userComponentFactory;
     }
 
-    private static TEMPLATE /* html */ = `<div class="ag-tool-panel-wrapper" role="tabpanel"/>`;
-
     private toolPanelCompInstance: IToolPanelComp | undefined;
     private toolPanelId: string;
     private resizeBar: AgHorizontalResize;
@@ -26,7 +24,7 @@ export class ToolPanelWrapper extends Component {
     private params: IToolPanelParams;
 
     constructor() {
-        super(ToolPanelWrapper.TEMPLATE);
+        super(/* html */ `<div class="ag-tool-panel-wrapper" role="tabpanel"/>`);
     }
 
     public postConstruct(): void {

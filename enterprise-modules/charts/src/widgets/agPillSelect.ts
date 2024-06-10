@@ -28,8 +28,6 @@ export interface AgPillSelectChangeParams<TValue> {
 }
 
 export class AgPillSelect<TValue = string | null> extends Component {
-    private static TEMPLATE = /* html */ `<div class="ag-pill-select" role="presentation"></div>`;
-
     private dropZonePanel: PillSelectDropZonePanel<TValue>;
     private eSelect?: AgSelect<TValue>;
 
@@ -40,7 +38,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
     private onValuesChange?: (params: AgPillSelectChangeParams<TValue>) => void;
 
     constructor(config?: AgPillSelectParams<TValue>) {
-        super(AgPillSelect.TEMPLATE);
+        super(/* html */ `<div class="ag-pill-select" role="presentation"></div>`);
         this.config = config ?? {};
 
         const { selectedValueList, valueFormatter, valueList } = this.config;
@@ -259,7 +257,7 @@ class PillSelectDropZonePanel<TValue> extends PillDropZonePanel<PillSelectDragCo
     }
 
     protected getIconName(): string {
-        return this.isPotentialDndItems() ? DragAndDropService.ICON_MOVE : DragAndDropService.ICON_NOT_ALLOWED;
+        return this.isPotentialDndItems() ? 'move' : 'notAllowed';
     }
 
     protected getAriaLabel(): string {

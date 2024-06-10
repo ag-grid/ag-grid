@@ -12,14 +12,6 @@ import type { ScrollVisibleService } from './scrollVisibleService';
 export class FakeHScrollComp extends AbstractFakeScrollComp {
     static readonly selector: AgComponentSelector = 'AG-FAKE-HORIZONTAL-SCROLL';
 
-    private static TEMPLATE /* html */ = `<div class="ag-body-horizontal-scroll" aria-hidden="true">
-            <div class="ag-horizontal-left-spacer" data-ref="eLeftSpacer"></div>
-            <div class="ag-body-horizontal-scroll-viewport" data-ref="eViewport">
-                <div class="ag-body-horizontal-scroll-container" data-ref="eContainer"></div>
-            </div>
-            <div class="ag-horizontal-right-spacer" data-ref="eRightSpacer"></div>
-        </div>`;
-
     private visibleColsService: VisibleColsService;
     private pinnedRowModel: PinnedRowModel;
     private ctrlsService: CtrlsService;
@@ -39,7 +31,16 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     private enableRtl: boolean;
 
     constructor() {
-        super(FakeHScrollComp.TEMPLATE, 'horizontal');
+        super(
+            /* html */ `<div class="ag-body-horizontal-scroll" aria-hidden="true">
+            <div class="ag-horizontal-left-spacer" data-ref="eLeftSpacer"></div>
+            <div class="ag-body-horizontal-scroll-viewport" data-ref="eViewport">
+                <div class="ag-body-horizontal-scroll-container" data-ref="eContainer"></div>
+            </div>
+            <div class="ag-horizontal-right-spacer" data-ref="eRightSpacer"></div>
+        </div>`,
+            'horizontal'
+        );
     }
 
     public override postConstruct(): void {

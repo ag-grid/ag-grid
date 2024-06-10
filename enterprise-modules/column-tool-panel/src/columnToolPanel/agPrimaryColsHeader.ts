@@ -18,6 +18,7 @@ export enum ExpandState {
     INDETERMINATE,
 }
 
+const DEBOUNCE_DELAY = 300;
 export type AgPrimaryColsHeaderEvent = 'unselectAll' | 'selectAll' | 'collapseAll' | 'expandAll' | 'filterChanged';
 export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     static readonly selector: AgComponentSelector = 'AG-PRIMARY-COLS-HEADER';
@@ -32,8 +33,6 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     private readonly eSelect: AgCheckbox = RefPlaceholder;
     private readonly eFilterTextField: AgInputTextField = RefPlaceholder;
 
-    private static DEBOUNCE_DELAY = 300;
-
     private eExpandChecked: Element;
     private eExpandUnchecked: Element;
     private eExpandIndeterminate: Element;
@@ -45,14 +44,15 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
 
     private params: ToolPanelColumnCompParams;
 
-    private static TEMPLATE /* html */ = `<div class="ag-column-select-header" role="presentation">
+    constructor() {
+        super(
+            /* html */ `<div class="ag-column-select-header" role="presentation">
             <div data-ref="eExpand" class="ag-column-select-header-icon"></div>
             <ag-checkbox data-ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
             <ag-input-text-field class="ag-column-select-header-filter-wrapper" data-ref="eFilterTextField"></ag-input-text-field>
-        </div>`;
-
-    constructor() {
-        super(AgPrimaryColsHeader.TEMPLATE, [AgCheckbox, AgInputTextField]);
+        </div>`,
+            [AgCheckbox, AgInputTextField]
+        );
     }
 
     public postConstruct(): void {
@@ -137,7 +137,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
             this.onFilterTextChangedDebounced = _debounce(() => {
                 const filterText = this.eFilterTextField.getValue();
                 this.dispatchLocalEvent({ type: 'filterChanged', filterText: filterText });
-            }, AgPrimaryColsHeader.DEBOUNCE_DELAY);
+            }, DEBOUNCE_DELAY);
         }
 
         this.onFilterTextChangedDebounced();
@@ -147,7 +147,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
         if (e.key === KeyCode.ENTER) {
             // we need to add a delay that corresponds to the filter text debounce delay to ensure
             // the text filtering has happened, otherwise all columns will be deselected
-            setTimeout(() => this.onSelectClicked(), AgPrimaryColsHeader.DEBOUNCE_DELAY);
+            setTimeout(() => this.onSelectClicked(), DEBOUNCE_DELAY);
         }
     }
 

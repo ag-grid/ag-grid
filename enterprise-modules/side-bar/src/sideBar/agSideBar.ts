@@ -48,12 +48,13 @@ export class AgSideBar extends Component implements ISideBar {
     private sideBar: SideBarDef | undefined;
     private position: 'left' | 'right';
 
-    private static readonly TEMPLATE /* html */ = `<div class="ag-side-bar ag-unselectable">
-            <ag-side-bar-buttons data-ref="sideBarButtons"></ag-side-bar-buttons>
-        </div>`;
-
     constructor() {
-        super(AgSideBar.TEMPLATE, [AgSideBarButtons]);
+        super(
+            /* html */ `<div class="ag-side-bar ag-unselectable">
+            <ag-side-bar-buttons data-ref="sideBarButtons"></ag-side-bar-buttons>
+        </div>`,
+            [AgSideBarButtons]
+        );
     }
 
     public postConstruct(): void {

@@ -14,8 +14,6 @@ export interface INoRowsOverlayComp<TData = any, TContext = any>
         INoRowsOverlay<TData, TContext> {}
 
 export class NoRowsOverlayComponent extends Component implements INoRowsOverlayComp {
-    private static DEFAULT_NO_ROWS_TEMPLATE = /* html */ `<span class="ag-overlay-no-rows-center"></span>`;
-
     constructor() {
         super();
     }
@@ -26,10 +24,10 @@ export class NoRowsOverlayComponent extends Component implements INoRowsOverlayC
         super.destroy();
     }
 
-    public init(params: INoRowsOverlayParams): void {
+    public init(): void {
         const customTemplate = this.gos.get('overlayNoRowsTemplate');
 
-        this.setTemplate(customTemplate ?? NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE);
+        this.setTemplate(customTemplate ?? /* html */ `<span class="ag-overlay-no-rows-center"></span>`);
 
         if (!customTemplate) {
             const localeTextFunc = this.localeService.getLocaleTextFunc();
