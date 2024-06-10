@@ -8,8 +8,8 @@ import type { SortDirection } from './entities/colDef';
 import type { ColumnEventType, SortChangedEvent } from './events';
 import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
-import { _warnOnce } from './main';
 import type { SortOption } from './rowNodes/rowNodeSorter';
+import { _warnOnce } from './utils/function';
 
 export interface SortModelItem {
     /** Column Id to apply the sort to. */
