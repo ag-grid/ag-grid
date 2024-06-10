@@ -153,7 +153,6 @@ export { PropertyKeys } from '@ag-grid-community/core';
 export { ProvidedFilter } from '@ag-grid-community/core';
 export { RefPlaceholder } from '@ag-grid-community/core';
 export { ResizeObserverService } from '@ag-grid-community/core';
-export { RowAnimationCssClasses } from '@ag-grid-community/core';
 export { RowContainerComp } from '@ag-grid-community/core';
 export { RowContainerCtrl } from '@ag-grid-community/core';
 export { RowCtrl } from '@ag-grid-community/core';

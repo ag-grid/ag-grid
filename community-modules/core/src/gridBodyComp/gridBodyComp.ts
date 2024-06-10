@@ -9,8 +9,8 @@ import type { AgComponentSelector } from '../widgets/component';
 import { Component, RefPlaceholder } from '../widgets/component';
 import { FakeHScrollComp } from './fakeHScrollComp';
 import { FakeVScrollComp } from './fakeVScrollComp';
-import type { IGridBodyComp } from './gridBodyCtrl';
-import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl, RowAnimationCssClasses } from './gridBodyCtrl';
+import type { IGridBodyComp, RowAnimationCssClasses } from './gridBodyCtrl';
+import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl } from './gridBodyCtrl';
 import { RowContainerComp } from './rowContainer/rowContainerComp';
 import type { RowContainerName } from './rowContainer/rowContainerCtrl';
 
@@ -144,10 +144,10 @@ export class GridBodyComp extends Component {
         }
     }
 
-    private setRowAnimationCssOnBodyViewport(cssClass: string, animateRows: boolean): void {
+    private setRowAnimationCssOnBodyViewport(cssClass: RowAnimationCssClasses, animateRows: boolean): void {
         const bodyViewportClassList = this.eBodyViewport.classList;
-        bodyViewportClassList.toggle(RowAnimationCssClasses.ANIMATION_ON, animateRows);
-        bodyViewportClassList.toggle(RowAnimationCssClasses.ANIMATION_OFF, !animateRows);
+        bodyViewportClassList.toggle('ag-row-animation' as RowAnimationCssClasses, animateRows);
+        bodyViewportClassList.toggle('ag-row-no-animation' as RowAnimationCssClasses, !animateRows);
     }
 
     public getFloatingTopBottom(): HTMLElement[] {
