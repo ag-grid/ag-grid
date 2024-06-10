@@ -148,7 +148,7 @@ export const useLicenseData = () => {
             suppliedLicenseType === undefined ? true : suppliedLicenseType === 'GRID' || suppliedLicenseType === 'BOTH';
         const licensedForCharts = suppliedLicenseType === 'CHARTS' || suppliedLicenseType === 'BOTH';
 
-        setLicensedProducts({
+        setUserLicensedProducts({
             grid: licensedForGrid,
             charts: licensedForCharts,
         });
