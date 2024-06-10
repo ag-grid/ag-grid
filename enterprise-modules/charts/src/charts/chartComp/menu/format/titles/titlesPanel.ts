@@ -1,7 +1,7 @@
 import type { BeanCollection } from '@ag-grid-community/core';
 import { Component, RefPlaceholder } from '@ag-grid-community/core';
-import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import type { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponentClass } from '@ag-grid-enterprise/core';
 
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import { isCartesian, isPolar } from '../../../utils/seriesTypeMapper';
@@ -64,7 +64,7 @@ export class TitlesPanel extends Component {
             /* html */ `<div>
             <ag-group-component data-ref="titleGroup"></ag-group-component>
         </div>`,
-            [AgGroupComponent],
+            [AgGroupComponentClass],
             { titleGroup: titleGroupParams }
         );
         registerGroupComponent(this.titleGroup);

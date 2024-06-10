@@ -1,10 +1,10 @@
 import type { BeanCollection, ListOption } from '@ag-grid-community/core';
 import { AgSelect, Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponent, AgGroupComponentClass } from '@ag-grid-enterprise/core';
 
-import { AgColorPicker } from '../../../../../widgets/agColorPicker';
-import { AgSlider } from '../../../../../widgets/agSlider';
+import { AgColorPickerClass } from '../../../../../widgets/agColorPicker';
+import { AgSlider, AgSliderClass } from '../../../../../widgets/agSlider';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { getSeriesType, isRadial } from '../../../utils/seriesTypeMapper';
 import type { FontPanelParams } from '../fontPanel';
@@ -45,7 +45,7 @@ export class PolarAxisPanel extends Component {
             'thickness',
             10
         );
-        this.setTemplate(PolarAxisPanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
+        this.setTemplate(PolarAxisPanel.TEMPLATE, [AgGroupComponentClass, AgColorPickerClass, AgSliderClass], {
             axisGroup: axisGroupParams,
             axisColorInput: axisColorInputParams,
             axisLineWidthSlider: axisLineWidthSliderParams,

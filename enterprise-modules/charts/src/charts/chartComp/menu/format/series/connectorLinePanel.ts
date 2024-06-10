@@ -1,11 +1,11 @@
 import type { BeanCollection } from '@ag-grid-community/core';
 import { Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponentClass } from '@ag-grid-enterprise/core';
 
-import { AgColorPicker } from '../../../../../widgets/agColorPicker';
+import { AgColorPickerClass } from '../../../../../widgets/agColorPicker';
 import type { AgSliderParams } from '../../../../../widgets/agSlider';
-import { AgSlider } from '../../../../../widgets/agSlider';
+import { AgSliderClass } from '../../../../../widgets/agSlider';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -37,7 +37,7 @@ export class ConnectorLinePanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(ConnectorLinePanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
+        this.setTemplate(ConnectorLinePanel.TEMPLATE, [AgGroupComponentClass, AgColorPickerClass, AgSliderClass], {
             lineGroup: lineGroupParams,
             lineColorPicker: this.chartMenuUtils.getDefaultColorPickerParams('line.stroke'),
             lineStrokeWidthSlider: this.getSliderParams('strokeWidth', 10, 'line.strokeWidth'),

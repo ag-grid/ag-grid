@@ -14,8 +14,8 @@ import {
     _createIconNoSpan,
     isProvidedColumnGroup,
 } from '@ag-grid-community/core';
-import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import type { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponentClass } from '@ag-grid-enterprise/core';
 
 import { ToolPanelFilterComp } from './toolPanelFilterComp';
 
@@ -61,7 +61,7 @@ export class ToolPanelFilterGroupComp extends Component {
             /* html */ `<div class="ag-filter-toolpanel-group-wrapper">
             <ag-group-component data-ref="filterGroupComp"></ag-group-component>
         </div>`,
-            [AgGroupComponent],
+            [AgGroupComponentClass],
             { filterGroupComp: groupParams }
         );
 

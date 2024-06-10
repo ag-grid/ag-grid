@@ -118,7 +118,7 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
     }
 }
 
-export const agColorPickerClass: ComponentClass = {
-    class: AgColorPicker,
+export const AgColorPickerClass: ComponentClass = {
     selector: 'AG-COLOR-PICKER',
+    class: AgColorPicker,
 };

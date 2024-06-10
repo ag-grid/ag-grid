@@ -1,5 +1,6 @@
 import type {
     AgColumn,
+    AgInputTextField,
     BeanCollection,
     CellValueChangedEvent,
     ComponentClass,
@@ -18,7 +19,7 @@ import type {
     ValueService,
 } from '@ag-grid-community/core';
 import {
-    AgInputTextField,
+    AgInputTextFieldClass,
     AgPromise,
     GROUP_AUTO_COLUMN_ID,
     KeyCode,
@@ -101,7 +102,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             </div>`;
     }
     protected getAgComponents(): ComponentClass[] {
-        return [AgInputTextField];
+        return [AgInputTextFieldClass];
     }
 
     protected override handleKeyDown(e: KeyboardEvent): void {

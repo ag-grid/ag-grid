@@ -11,6 +11,7 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
+    AgInputTextFieldClass,
     AgPickerField,
     KeyCode,
     RefPlaceholder,
@@ -25,7 +26,6 @@ import {
     _setAriaActiveDescendant,
     _stopPropagationForAgGrid,
 } from '@ag-grid-community/core';
-import { AgInputTextFieldClass } from 'community-modules/core/src/widgets/agInputTextField';
 
 import type { AgRichSelectListEvent } from './agRichSelectList';
 import { AgRichSelectList } from './agRichSelectList';

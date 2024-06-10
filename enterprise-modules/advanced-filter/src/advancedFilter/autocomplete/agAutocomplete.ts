@@ -6,8 +6,7 @@ import type {
     PopupPositionParams,
     PopupService,
 } from '@ag-grid-community/core';
-import { Component, KeyCode, RefPlaceholder, _makeNull } from '@ag-grid-community/core';
-import { AgInputTextFieldClass } from 'community-modules/core/src/widgets/agInputTextField';
+import { AgInputTextFieldClass, Component, KeyCode, RefPlaceholder, _makeNull } from '@ag-grid-community/core';
 
 import { AgAutocompleteList } from './agAutocompleteList';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocompleteParams';

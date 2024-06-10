@@ -1,7 +1,7 @@
 import type { AgSelectParams, AgToggleButtonParams, BeanCollection, ListOption } from '@ag-grid-community/core';
 import { AgSelect, AgToggleButton, Component, RefPlaceholder, _removeFromParent } from '@ag-grid-community/core';
-import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import type { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponentClass } from '@ag-grid-enterprise/core';
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
 
 import { AgColorPicker } from '../../../../../widgets/agColorPicker';
@@ -109,7 +109,7 @@ export class SeriesPanel extends Component {
             expanded,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(SeriesPanel.TEMPLATE, [AgGroupComponent], { seriesGroup: seriesGroupParams });
+        this.setTemplate(SeriesPanel.TEMPLATE, [AgGroupComponentClass], { seriesGroup: seriesGroupParams });
 
         registerGroupComponent(this.seriesGroup);
 

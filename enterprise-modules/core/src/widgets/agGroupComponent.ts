@@ -1,5 +1,6 @@
 import type { AgCheckbox, AgEvent, ComponentClass } from '@ag-grid-community/core';
 import {
+    AgCheckboxClass,
     AgToggleButton,
     Component,
     KeyCode,
@@ -8,7 +9,6 @@ import {
     _setAriaExpanded,
     _setDisplayed,
 } from '@ag-grid-community/core';
-import { AgCheckboxClass } from 'community-modules/core/src/widgets/agCheckbox';
 
 type GroupItem = Component<any> | HTMLElement;
 type Align = 'start' | 'end' | 'center' | 'stretch';

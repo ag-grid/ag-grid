@@ -10,13 +10,14 @@ import type {
     IAggFuncService,
     PopupService,
     SortController,
+    SortIndicatorComp,
 } from '@ag-grid-community/core';
 import {
     Component,
     DragSourceType,
     KeyCode,
     RefPlaceholder,
-    SortIndicatorComp,
+    SortIndicatorCompClass,
     _loadTemplate,
 } from '@ag-grid-community/core';
 import { PillDragComp, VirtualList } from '@ag-grid-enterprise/core';
@@ -65,7 +66,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
                     <span data-ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
                 </span>
             `,
-            [SortIndicatorComp]
+            [SortIndicatorCompClass]
         );
     }
 

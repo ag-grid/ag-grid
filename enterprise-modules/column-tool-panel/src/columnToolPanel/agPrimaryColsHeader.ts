@@ -6,6 +6,8 @@ import type {
     ComponentClass,
 } from '@ag-grid-community/core';
 import {
+    AgCheckboxClass,
+    AgInputTextFieldClass,
     Component,
     KeyCode,
     RefPlaceholder,
@@ -13,8 +15,6 @@ import {
     _debounce,
     _setDisplayed,
 } from '@ag-grid-community/core';
-import { AgCheckboxClass } from 'community-modules/core/src/widgets/agCheckbox';
-import { AgInputTextFieldClass } from 'community-modules/core/src/widgets/agInputTextField';
 
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
 

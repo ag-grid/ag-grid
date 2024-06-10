@@ -120,7 +120,7 @@ export class AgPrimaryCols extends Component {
     }
 }
 
-export const agPrimaryColsClass: ComponentClass = {
+export const AgPrimaryColsClass: ComponentClass = {
     selector: 'AG-PRIMARY-COLS',
     class: AgPrimaryCols,
 };

@@ -6,8 +6,14 @@ import type {
     ColumnModel,
     ComponentClass,
 } from '@ag-grid-community/core';
-import { Component, RefPlaceholder, _createIconNoSpan, _debounce, _setDisplayed } from '@ag-grid-community/core';
-import { AgInputTextFieldClass } from 'community-modules/core/src/widgets/agInputTextField';
+import {
+    AgInputTextFieldClass,
+    Component,
+    RefPlaceholder,
+    _createIconNoSpan,
+    _debounce,
+    _setDisplayed,
+} from '@ag-grid-community/core';
 
 import type { ToolPanelFiltersCompParams } from './filtersToolPanel';
 

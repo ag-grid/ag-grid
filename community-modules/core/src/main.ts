@@ -278,7 +278,7 @@ export { GridHeaderCtrl, IGridHeaderComp } from './headerRendering/gridHeaderCtr
 export { HeaderRowComp, HeaderRowType } from './headerRendering/row/headerRowComp';
 export { HeaderRowCtrl, IHeaderRowComp } from './headerRendering/row/headerRowCtrl';
 export { HeaderCellCtrl, IHeaderCellComp } from './headerRendering/cells/column/headerCellCtrl';
-export { SortIndicatorComp } from './headerRendering/cells/column/sortIndicatorComp';
+export { SortIndicatorComp, SortIndicatorCompClass } from './headerRendering/cells/column/sortIndicatorComp';
 export { IHeaderFilterCellComp } from './headerRendering/cells/floatingFilter/iHeaderFilterCellComp';
 export { HeaderFilterCellCtrl } from './headerRendering/cells/floatingFilter/headerFilterCellCtrl';
 export { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerRendering/cells/columnGroup/headerGroupCellCtrl';
@@ -463,14 +463,14 @@ export {
 export { RichSelectParams } from './interfaces/iRichCellEditorParams';
 export { AgAbstractField, FieldElement } from './widgets/agAbstractField';
 export { AgAbstractInputField } from './widgets/agAbstractInputField';
-export { AgCheckbox } from './widgets/agCheckbox';
-export { AgRadioButton, AgRadioButtonParams } from './widgets/agRadioButton';
-export { AgToggleButton, AgToggleButtonParams } from './widgets/agToggleButton';
-export { AgInputTextField, AgInputTextFieldParams } from './widgets/agInputTextField';
+export { AgCheckbox, AgCheckboxClass } from './widgets/agCheckbox';
+export { AgRadioButton, AgRadioButtonParams, AgRadioButtonClass } from './widgets/agRadioButton';
+export { AgToggleButton, AgToggleButtonParams, AgToggleButtonClass } from './widgets/agToggleButton';
+export { AgInputTextField, AgInputTextFieldParams, AgInputTextFieldClass } from './widgets/agInputTextField';
 export { AgInputTextArea } from './widgets/agInputTextArea';
 export { AgInputNumberField, AgInputNumberFieldClass, AgInputNumberFieldParams } from './widgets/agInputNumberField';
 export { AgInputDateField } from './widgets/agInputDateField';
-export { AgSelect, AgSelectParams } from './widgets/agSelect';
+export { AgSelect, AgSelectParams, AgSelectClass } from './widgets/agSelect';
 export { ListOption } from './widgets/agList';
 export { Component, VisibleChangedEvent } from './widgets/component';
 export { ManagedFocusFeature, ManagedFocusCallbacks } from './widgets/managedFocusFeature';

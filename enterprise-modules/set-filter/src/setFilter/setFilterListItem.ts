@@ -1,4 +1,5 @@
 import type {
+    AgCheckbox,
     AgColumn,
     AgEvent,
     BeanCollection,
@@ -14,7 +15,7 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    AgCheckbox,
+    AgCheckboxClass,
     Component,
     RefPlaceholder,
     _createIcon,
@@ -116,7 +117,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private destroyCellRendererComponent?: () => void;
 
     constructor(params: SetFilterListItemParams<V>) {
-        super(params.isGroup ? GROUP_TEMPLATE : TEMPLATE, [AgCheckbox]);
+        super(params.isGroup ? GROUP_TEMPLATE : TEMPLATE, [AgCheckboxClass]);
         this.focusWrapper = params.focusWrapper;
         this.value = params.value;
         this.params = params.params;

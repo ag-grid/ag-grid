@@ -1,9 +1,9 @@
 import type { BeanCollection } from '@ag-grid-community/core';
 import { Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponentClass } from '@ag-grid-enterprise/core';
 
-import { AgColorPicker } from '../../../../../widgets/agColorPicker';
+import { AgColorPickerClass } from '../../../../../widgets/agColorPicker';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -36,7 +36,7 @@ export class BackgroundPanel extends Component {
             }
         );
         const colorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams('background.fill');
-        this.setTemplate(BackgroundPanel.TEMPLATE, [AgGroupComponent, AgColorPicker], {
+        this.setTemplate(BackgroundPanel.TEMPLATE, [AgGroupComponentClass, AgColorPickerClass], {
             chartBackgroundGroup: chartBackgroundGroupParams,
             colorPicker: colorPickerParams,
         });

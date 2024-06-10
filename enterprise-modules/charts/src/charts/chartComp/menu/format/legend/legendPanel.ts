@@ -1,7 +1,7 @@
 import type { BeanCollection } from '@ag-grid-community/core';
 import { AgCheckbox, AgSelect, Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponent, AgGroupComponentClass } from '@ag-grid-enterprise/core';
 
 import { AgSlider } from '../../../../../widgets/agSlider';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
@@ -72,7 +72,7 @@ export class LegendPanel extends Component {
             <ag-group-component data-ref="legendGroup">
             </ag-group-component>
         </div>`,
-            [AgGroupComponent],
+            [AgGroupComponentClass],
             {
                 legendGroup: legendGroupParams,
             }

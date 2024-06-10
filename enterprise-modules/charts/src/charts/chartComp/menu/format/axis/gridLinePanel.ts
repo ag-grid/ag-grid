@@ -1,13 +1,13 @@
 import type { BeanCollection } from '@ag-grid-community/core';
 import { Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponentClass } from '@ag-grid-enterprise/core';
 import type { AgAxisGridLineOptions } from 'ag-charts-community';
 
 import type { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
-import { AgColorPicker } from '../../../../../widgets/agColorPicker';
+import { AgColorPickerClass } from '../../../../../widgets/agColorPicker';
 import type { AgSliderParams } from '../../../../../widgets/agSlider';
-import { AgSlider } from '../../../../../widgets/agSlider';
+import { AgSliderClass } from '../../../../../widgets/agSlider';
 import type { ChartOptionsProxy } from '../../../services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
@@ -45,7 +45,7 @@ export class GridLinePanel extends Component {
         const gridLineColorPickerParams = this.getGridLineColorPickerParams('color');
         const gridLineWidthSliderParams = this.getGridLineWidthSliderParams('thickness');
         const gridLineLineDashSliderParams = this.getGridLineDashSliderParams('lineDash');
-        this.setTemplate(GridLinePanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
+        this.setTemplate(GridLinePanel.TEMPLATE, [AgGroupComponentClass, AgColorPickerClass, AgSliderClass], {
             gridLineGroup: gridLineGroupParams,
             gridLineColorPicker: gridLineColorPickerParams,
             gridLineWidthSlider: gridLineWidthSliderParams,
