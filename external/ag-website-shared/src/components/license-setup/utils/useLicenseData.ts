@@ -19,6 +19,7 @@ const ERRORS = {
     noLicenseExample: `A license is only required if you use the "Grid Enterprise" product`,
     userLicenseError: 'License is invalid',
     v2License: 'This license is not valid for v30+',
+    chartsSupported: 'Enterprise Charts is not supported on this license',
 };
 
 const updateError = ({ key, condition, setErrors }: { key: ErrorKey; condition: boolean; setErrors: any }) => {
@@ -78,6 +79,17 @@ const useErrors = ({ hasLicense, license, userLicensedProducts, licenseDetails }
             setErrors,
         });
     }, [version]);
+
+    useEffect(() => {
+        updateError({
+            key: 'chartsSupported',
+            condition:
+                hasValue(license) &&
+                userLicensedProducts.charts &&
+                !(suppliedLicenseType === 'CHARTS' || suppliedLicenseType === 'BOTH'),
+            setErrors,
+        });
+    }, [license, suppliedLicenseType, userLicensedProducts]);
 
     return {
         errors,

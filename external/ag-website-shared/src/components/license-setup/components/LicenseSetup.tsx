@@ -170,6 +170,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                             </label>
                         </div>
                         {errors.chartsNoGridEnterprise && <Warning>{errors.chartsNoGridEnterprise}</Warning>}
+                        {errors.chartsSupported && <Warning>{errors.chartsSupported}</Warning>}
                     </div>
                 </div>
                 <div>
