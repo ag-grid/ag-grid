@@ -34,6 +34,8 @@ export const getDependencies = ({
             dependencies.push('ag-grid-community');
         }
     } else if (importType === 'modules') {
+        dependencies.push('@ag-grid-community/client-side-row-model', '@ag-grid-community/styles');
+
         if (framework === 'react') {
             dependencies.push('@ag-grid-community/react');
         } else if (framework === 'angular') {
@@ -49,8 +51,6 @@ export const getDependencies = ({
                 dependencies.push('@ag-grid-enterprise/charts-enterprise');
             }
         } else {
-            dependencies.push('@ag-grid-community/core');
-
             if (licensedProducts.charts) {
                 // Invalid state - need grid to be enabled
             }
