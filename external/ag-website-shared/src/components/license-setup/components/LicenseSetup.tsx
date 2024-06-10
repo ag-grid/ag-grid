@@ -27,7 +27,7 @@ interface Props {
 const EmailSales = () => {
     return (
         <>
-            Please email <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>
+            Please contact <a href="mailto:info@ag-grid.com">info@ag-grid.com</a> for more assistance
         </>
     );
 };
@@ -45,9 +45,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
         setUserLicensedProducts,
         useStandaloneCharts,
         setUseStandaloneCharts,
-
-        userLicenseVersion,
-        userLicenseIsTrial,
         userLicenseExpiry,
 
         errors,
