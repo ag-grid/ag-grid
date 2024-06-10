@@ -14,7 +14,7 @@ export const TickerCellRenderer: FunctionComponent<CustomCellRendererProps> = ({
     const imgSrc = getResourceUrl(`/example/finance/logos/${ticker}.png`);
 
     return (
-        <div>
+        <div className={styles.ticker}>
             <img className={styles.image} src={imgSrc} alt={ticker} />
             <span>{tickerNormal}</span>
         </div>

@@ -7,9 +7,28 @@
 }
 
 .grid {
-    --ag-header-background-color: transparent !important;
+    --ag-row-height: 36px;
+    --ag-header-height: 40px;
+
+    --ag-background-color: #001223;
+    --ag-foreground-color: #b1c0cf;
+
+    --ag-borders: 1px solid;
+    --ag-border-color: rgba(255, 255, 255, 0.144);
+
+    --ag-odd-row-background-color: #001223;
+
+    --ag-header-background-color: #001223;
+    --ag-header-foreground-color: rgba(255, 255, 255, 0.7);
+
+    --input-background-color: #001223;
+    --input-focus-box-shadow-color: rgba(255, 255, 255, 0.25);
 
     height: calc(100vh - var(--layout-grid-header-height));
+
+    .ag-header {
+        font-size: 10px !important;
+    }
 }
 
 .container {
@@ -75,76 +94,24 @@
     border-radius: 4px;
 }
 
-.activeIcon:hover {
-    cursor: pointer;
-}
-
-.navitems {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.sidebarWrapper {
-    height: 700px;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-}
-
-.breadcrumbs {
-    display: flex;
-    flex-direction: flex-col;
-    font-size: 14px;
-    font-weight: 500;
-    opacity: 1;
-    align-items: center;
-    padding-bottom: 16px;
-    gap: 12px;
-    cursor: pointer;
-}
-
-.inactiveBreadcrumb {
-    opacity: 0.4;
-}
-
-.rightIcon {
-    width: 16px;
-    height: 16px;
-    opacity: 0.4;
-    cursor: pointer;
-    opacity: 0.2;
-}
-
-.activeBreadcrumb {
-    opacity: 0.4;
-}
-
 :global(.ag-right-aligned-cell) {
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.01em;
 }
 
-:global(.ag-theme-quartz .cell-green),
-:global(.ag-theme-quartz .cell-red) {
-    text-align: right;
-}
-
 :global(.ag-theme-quartz .cell-green) {
-    color: green;
+    color: rgb(70, 227, 114);
 }
 
 :global(.ag-theme-quartz .cell-red) {
-    color: red;
+    color: rgb(255, 0, 92);
 }
 
 :global(.ag-theme-quartz-dark .cell-green) {
-    color: rgb(70, 227, 114);
-    background-color: rgb(70, 227, 114, 0.1);
-    border-radius: 100px;
+    color: rgb(62, 201, 102);
 }
 
-:global(.ag-theme-quartz-dark .cell-green)::before {
+:global(.grid .cell-green)::before {
     content: '↑';
     margin-right: 8px;
 }
@@ -155,7 +122,7 @@
     border-radius: 100px;
 }
 
-:global(.ag-theme-quartz-dark .cell-red)::before {
+:global(.grid .cell-red)::before {
     content: '↓';
     margin-right: 8px;
 }

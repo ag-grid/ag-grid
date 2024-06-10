@@ -14,7 +14,6 @@ import {
 } from '../../utils/valueGetters';
 import { TickerCellRenderer } from '../ticker-cell-renderer/TickerCellRenderer';
 import styles from './PortfolioExample.module.css';
-import { INITIAL_UPDATE_INTERVAL_MULTIPLIER, UPDATE_INTERVAL } from './constants';
 import { generatePortfolio } from './data';
 import { useDataGenerator } from './useDataGenerator';
 
@@ -22,12 +21,6 @@ interface Props {
     gridTheme?: string;
     isDarkMode?: boolean;
 }
-
-const rangeConfig = {
-    min: 0,
-    max: 4,
-    step: 0.1,
-};
 
 const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
     const gridRef = useRef<AgGridReact>(null);
@@ -40,6 +33,7 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             pinned: 'left',
             width: 150,
             cellRenderer: TickerCellRenderer,
+            rowDrag: true,
         },
         {
             headerName: 'P/L',
@@ -85,17 +79,22 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
-                    type: 'area',
+                    type: 'column',
                     xKey: 'time',
                     yKey: 'value',
-                    fill: 'rgba(185,173,77,0.3)',
+                    padding: {
+                        top: 2,
+                        bottom: 10,
+                    },
+                    paddingInner: 0.5,
+                    paddingOuter: 0.5,
+                    fill: '#65819c',
                     line: {
                         stroke: 'rgb(185,173,77)',
                     },
                     highlightStyle: {
-                        size: 4,
-                        stroke: 'rgb(185,173,77)',
-                        fill: 'rgb(185,173,77)',
+                        fill: '#94b2d0',
+                        strokeWidth: 0,
                     },
                     axis: {
                         stroke: 'rgba(0,0,0,0.2)', // sets the axis line stroke
@@ -135,7 +134,6 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             width: 100,
             filter: 'agSetColumnFilter',
             suppressHeaderMenuButton: true,
-
         },
         {
             headerName: 'Purchase Date',
@@ -182,7 +180,7 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             width: 150,
             aggFunc: 'sum',
             suppressHeaderFilterButton: true,
-            cellRenderer: "agAnimateShowChangeCellRenderer",
+            cellRenderer: 'agAnimateShowChangeCellRenderer',
         },
         {
             headerName: '52w Change %',
@@ -212,8 +210,6 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
     const onGridReady = useCallback(() => {
         generator.start();
     }, []);
-    const [updateSpeed, setUpdateSpeed] = useState<number>(INITIAL_UPDATE_INTERVAL_MULTIPLIER);
-
     const themeClass = isDarkMode ? `${gridTheme}-dark` : gridTheme;
 
     return (
@@ -245,7 +241,7 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
                         groupDisplayType="groupRows"
                         groupDefaultExpanded={1}
                         columnMenu="new"
-                        rowGroupPanelShow={"always"}
+                        rowGroupPanelShow={'always'}
                     />
                 </div>
             </div>
