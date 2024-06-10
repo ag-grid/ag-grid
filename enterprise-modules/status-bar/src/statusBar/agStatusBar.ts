@@ -1,6 +1,6 @@
 import type {
-    AgComponentSelector,
     BeanCollection,
+    ComponentClass,
     IStatusPanelComp,
     IStatusPanelParams,
     StatusPanelDef,
@@ -21,8 +21,6 @@ export class AgStatusBar extends Component {
         this.userComponentFactory = beans.userComponentFactory;
         this.statusBarService = beans.statusBarService as StatusBarService;
     }
-
-    static readonly selector: AgComponentSelector = 'AG-STATUS-BAR';
 
     private readonly eStatusBarLeft: HTMLElement = RefPlaceholder;
     private readonly eStatusBarCenter: HTMLElement = RefPlaceholder;
@@ -186,3 +184,8 @@ export class AgStatusBar extends Component {
         });
     }
 }
+
+export const AgStatusBarClass: ComponentClass = {
+    selector: 'AG-STATUS-BAR',
+    class: AgStatusBar,
+};

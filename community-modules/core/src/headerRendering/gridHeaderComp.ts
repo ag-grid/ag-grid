@@ -1,12 +1,10 @@
-import type { AgComponentSelector } from '../widgets/component';
+import type { ComponentClass } from '../widgets/component';
 import { Component } from '../widgets/component';
 import type { IGridHeaderComp } from './gridHeaderCtrl';
 import { GridHeaderCtrl } from './gridHeaderCtrl';
 import { HeaderRowContainerComp } from './rowContainer/headerRowContainerComp';
 
 export class GridHeaderComp extends Component {
-    static readonly selector: AgComponentSelector = 'AG-HEADER-ROOT';
-
     constructor() {
         super(/* html */ `<div class="ag-header" role="presentation"/>`);
     }
@@ -33,3 +31,7 @@ export class GridHeaderComp extends Component {
         addContainer(new HeaderRowContainerComp('right'));
     }
 }
+export const GridHeaderCompClass: ComponentClass = {
+    selector: 'AG-HEADER-ROOT',
+    class: GridHeaderComp,
+};

@@ -1,5 +1,6 @@
 import type { BeanCollection } from '../context/context';
-import { GridBodyComp } from '../gridBodyComp/gridBodyComp';
+import type { GridBodyComp } from '../gridBodyComp/gridBodyComp';
+import { GridBodyCompClass } from '../gridBodyComp/gridBodyComp';
 import type { ISideBar } from '../interfaces/iSideBar';
 import type { Logger, LoggerFactory } from '../logger';
 import type { PaginationService } from '../pagination/paginationService';
@@ -55,7 +56,7 @@ export class GridComp extends TabGuardComp {
 
         const paginationComp = this.paginationService?.getPaginationComp();
         const template = this.createTemplate(!!paginationComp);
-        this.setTemplate(template, [GridBodyComp, ...(paginationComp ? [paginationComp] : [])]);
+        this.setTemplate(template, [GridBodyCompClass, ...(paginationComp ? [paginationComp] : [])]);
 
         this.ctrl.setComp(compProxy, this.eGridDiv, this.getGui());
 

@@ -1,6 +1,6 @@
 import type {
-    AgComponentSelector,
     BeanCollection,
+    ComponentClass,
     FilterManager,
     ITooltipParams,
     WithoutGridCommon,
@@ -10,12 +10,13 @@ import { Component, RefPlaceholder, _createIconNoSpan, _makeNull, _setDisabled }
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import type { AdvancedFilterService } from './advancedFilterService';
 import type {
+    AgAutocomplete,
     AutocompleteOptionSelectedEvent,
     AutocompleteValidChangedEvent,
     AutocompleteValueChangedEvent,
     AutocompleteValueConfirmedEvent,
 } from './autocomplete/agAutocomplete';
-import { AgAutocomplete } from './autocomplete/agAutocomplete';
+import { AgAutocompleteClass } from './autocomplete/agAutocomplete';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 import type { FilterExpressionParser } from './filterExpressionParser';
 import type { AutocompleteUpdate } from './filterExpressionUtils';
@@ -30,8 +31,6 @@ export class AdvancedFilterComp extends Component {
         this.advancedFilterService = beans.advancedFilterService as AdvancedFilterService;
         this.filterManager = beans.filterManager;
     }
-
-    static readonly selector: AgComponentSelector = 'AG-ADVANCED-FILTER';
 
     private readonly eAutocomplete: AgAutocomplete = RefPlaceholder;
     private readonly eApplyFilterButton: HTMLElement = RefPlaceholder;
@@ -54,7 +53,7 @@ export class AdvancedFilterComp extends Component {
                     <span class="ag-advanced-filter-builder-button-label" data-ref="eBuilderFilterButtonLabel"></span>
                 </button>
             </div>`,
-            [AgAutocomplete]
+            [AgAutocompleteClass]
         );
     }
 
@@ -201,3 +200,8 @@ export class AdvancedFilterComp extends Component {
         this.eBuilderFilterButton.focus();
     }
 }
+
+export const AdvancedFilterCompClass: ComponentClass = {
+    selector: 'AG-ADVANCED-FILTER',
+    class: AdvancedFilterComp,
+};

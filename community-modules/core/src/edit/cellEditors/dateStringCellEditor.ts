@@ -3,7 +3,8 @@ import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { _parseDateTimeFromString, _serialiseDate } from '../../utils/date';
 import { _exists } from '../../utils/generic';
-import { AgInputDateField } from '../../widgets/agInputDateField';
+import type { AgInputDateField } from '../../widgets/agInputDateField';
+import { AgInputDateFieldClass } from '../../widgets/agInputDateField';
 import type { CellEditorInput } from './iCellEditorInput';
 import type { IDateStringCellEditorParams } from './iDateStringCellEditor';
 import { SimpleCellEditor } from './simpleCellEditor';
@@ -18,7 +19,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
         return /* html */ `<ag-input-date-field class="ag-cell-editor" data-ref="eInput"></ag-input-date-field>`;
     }
     public getAgComponents() {
-        return [AgInputDateField];
+        return [AgInputDateFieldClass];
     }
 
     public init(eInput: AgInputDateField, params: IDateStringCellEditorParams): void {

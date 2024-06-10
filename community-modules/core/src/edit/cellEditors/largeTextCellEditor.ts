@@ -1,7 +1,8 @@
 import { KeyCode } from '../../constants/keyCode';
 import type { ICellEditorComp } from '../../interfaces/iCellEditor';
 import { _exists } from '../../utils/generic';
-import { AgInputTextArea } from '../../widgets/agInputTextArea';
+import type { AgInputTextArea } from '../../widgets/agInputTextArea';
+import { AgInputTextAreaClass } from '../../widgets/agInputTextArea';
 import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
 import type { ILargeTextEditorParams } from './iLargeTextCellEditor';
@@ -16,7 +17,7 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
             /* html */ `<div class="ag-large-text">
         <ag-input-text-area data-ref="eTextArea" class="ag-large-text-input"></ag-input-text-area>
         </div>`,
-            [AgInputTextArea]
+            [AgInputTextAreaClass]
         );
     }
 

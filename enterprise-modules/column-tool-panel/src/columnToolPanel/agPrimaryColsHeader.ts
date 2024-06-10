@@ -1,7 +1,11 @@
-import type { AgComponentSelector, BeanCollection, ColumnModel } from '@ag-grid-community/core';
-import {
+import type {
     AgCheckbox,
     AgInputTextField,
+    BeanCollection,
+    ColumnModel,
+    ComponentClass,
+} from '@ag-grid-community/core';
+import {
     Component,
     KeyCode,
     RefPlaceholder,
@@ -9,6 +13,8 @@ import {
     _debounce,
     _setDisplayed,
 } from '@ag-grid-community/core';
+import { AgCheckboxClass } from 'community-modules/core/src/widgets/agCheckbox';
+import { AgInputTextFieldClass } from 'community-modules/core/src/widgets/agInputTextField';
 
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
 
@@ -21,8 +27,6 @@ export enum ExpandState {
 const DEBOUNCE_DELAY = 300;
 export type AgPrimaryColsHeaderEvent = 'unselectAll' | 'selectAll' | 'collapseAll' | 'expandAll' | 'filterChanged';
 export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
-    static readonly selector: AgComponentSelector = 'AG-PRIMARY-COLS-HEADER';
-
     private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection) {
@@ -51,7 +55,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
             <ag-checkbox data-ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
             <ag-input-text-field class="ag-column-select-header-filter-wrapper" data-ref="eFilterTextField"></ag-input-text-field>
         </div>`,
-            [AgCheckbox, AgInputTextField]
+            [AgCheckboxClass, AgInputTextFieldClass]
         );
     }
 
@@ -172,3 +176,8 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
         this.eSelect.setValue(this.selectState);
     }
 }
+
+export const AgPrimaryColsHeaderClass: ComponentClass = {
+    selector: 'AG-PRIMARY-COLS-HEADER',
+    class: AgPrimaryColsHeader,
+};

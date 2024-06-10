@@ -4,7 +4,8 @@ import type { CellEditingStartedEvent, CellEditingStoppedEvent } from '../../eve
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import { _getAriaCheckboxStateName, _setAriaLive } from '../../utils/aria';
 import { _stopPropagationForAgGrid } from '../../utils/event';
-import { AgCheckbox } from '../../widgets/agCheckbox';
+import type { AgCheckbox } from '../../widgets/agCheckbox';
+import { AgCheckboxClass } from '../../widgets/agCheckbox';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import type { ICellRenderer, ICellRendererParams } from './iCellRenderer';
 
@@ -24,7 +25,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
             <div class="ag-cell-wrapper ag-checkbox-cell" role="presentation">
                 <ag-checkbox role="presentation" data-ref="eCheckbox"></ag-checkbox>
             </div>`,
-            [AgCheckbox]
+            [AgCheckboxClass]
         );
     }
 

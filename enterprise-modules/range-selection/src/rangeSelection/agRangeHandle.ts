@@ -1,19 +1,15 @@
-import type { AgComponentSelector, CellPosition, CellRange } from '@ag-grid-community/core';
+import type { CellPosition, CellRange, ComponentClass } from '@ag-grid-community/core';
 import { CellRangeType, SelectionHandleType, _last } from '@ag-grid-community/core';
 
 import { AbstractSelectionHandle } from './abstractSelectionHandle';
 
 export class AgRangeHandle extends AbstractSelectionHandle {
-    static readonly selector: AgComponentSelector = 'AG-RANGE-HANDLE';
-
-    static TEMPLATE = /* html */ `<div class="ag-range-handle"></div>`;
-
     protected type = SelectionHandleType.RANGE;
     private endPosition: CellPosition;
     private rangeFixed: boolean = false;
 
     constructor() {
-        super(AgRangeHandle.TEMPLATE);
+        super(/* html */ `<div class="ag-range-handle"></div>`);
     }
 
     protected onDrag(e: MouseEvent) {
@@ -81,3 +77,8 @@ export class AgRangeHandle extends AbstractSelectionHandle {
         cellRange.startColumn = column;
     }
 }
+
+export const AgRangeHandleClass: ComponentClass = {
+    selector: 'AG-RANGE-HANDLE',
+    class: AgRangeHandle,
+};

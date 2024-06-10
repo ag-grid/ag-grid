@@ -2,15 +2,13 @@ import type { CheckboxChangedEvent } from '../events';
 import type { AgCheckboxParams, LabelAlignment } from '../interfaces/agFieldParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { AgAbstractInputField } from './agAbstractInputField';
-import type { AgComponentSelector } from './component';
+import type { ComponentClass } from './component';
 
 export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> extends AgAbstractInputField<
     HTMLInputElement,
     boolean,
     TConfig
 > {
-    static readonly selector: AgComponentSelector = 'AG-CHECKBOX';
-
     protected override labelAlignment: LabelAlignment = 'right';
 
     private selected?: boolean = false;
@@ -141,3 +139,8 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
         this.eWrapper.classList.toggle('ag-indeterminate', value == null);
     }
 }
+
+export const AgCheckboxClass: ComponentClass = {
+    selector: 'AG-CHECKBOX',
+    class: AgCheckbox,
+};

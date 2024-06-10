@@ -1,9 +1,7 @@
-import type { AgComponentSelector } from '@ag-grid-community/core';
+import type { ComponentClass } from '@ag-grid-community/core';
 import { Component, RefPlaceholder } from '@ag-grid-community/core';
 
 export class AgNameValue extends Component {
-    static readonly selector: AgComponentSelector = 'AG-NAME-VALUE';
-
     private readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eValue: HTMLElement = RefPlaceholder;
 
@@ -26,3 +24,7 @@ export class AgNameValue extends Component {
         this.eValue.innerHTML = value;
     }
 }
+export const AgNameValueClass: ComponentClass = {
+    selector: 'AG-NAME-VALUE',
+    class: AgNameValue,
+};

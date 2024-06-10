@@ -1,17 +1,17 @@
 import type { BeanCollection } from '../context/context';
-import { GridHeaderComp } from '../headerRendering/gridHeaderComp';
+import { GridHeaderCompClass } from '../headerRendering/gridHeaderComp';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { ResizeObserverService } from '../misc/resizeObserverService';
-import { OverlayWrapperComponent } from '../rendering/overlays/overlayWrapperComponent';
+import { OverlayWrapperComponentClass } from '../rendering/overlays/overlayWrapperComponent';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRowCount } from '../utils/aria';
-import type { AgComponentSelector } from '../widgets/component';
+import type { ComponentClass } from '../widgets/component';
 import { Component, RefPlaceholder } from '../widgets/component';
-import { FakeHScrollComp } from './fakeHScrollComp';
-import { FakeVScrollComp } from './fakeVScrollComp';
+import { FakeHScrollCompClass } from './fakeHScrollComp';
+import { FakeVScrollCompClass } from './fakeVScrollComp';
 import type { IGridBodyComp, RowAnimationCssClasses } from './gridBodyCtrl';
 import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl } from './gridBodyCtrl';
-import { RowContainerComp } from './rowContainer/rowContainerComp';
+import { RowContainerCompClass } from './rowContainer/rowContainerComp';
 import type { RowContainerName } from './rowContainer/rowContainerCtrl';
 
 function makeRowContainers(names: RowContainerName[]): string {
@@ -44,8 +44,6 @@ const GRID_BODY_TEMPLATE =
     </div>`;
 
 export class GridBodyComp extends Component {
-    static readonly selector: AgComponentSelector = 'AG-GRID-BODY';
-
     private resizeObserverService: ResizeObserverService;
     private rangeService?: IRangeService;
 
@@ -65,11 +63,11 @@ export class GridBodyComp extends Component {
 
     constructor() {
         super(GRID_BODY_TEMPLATE, [
-            OverlayWrapperComponent,
-            FakeHScrollComp,
-            FakeVScrollComp,
-            GridHeaderComp,
-            RowContainerComp,
+            OverlayWrapperComponentClass,
+            FakeHScrollCompClass,
+            FakeVScrollCompClass,
+            GridHeaderCompClass,
+            RowContainerCompClass,
         ]);
     }
 
@@ -154,3 +152,7 @@ export class GridBodyComp extends Component {
         return [this.eTop, this.eBottom];
     }
 }
+export const GridBodyCompClass: ComponentClass = {
+    selector: 'AG-GRID-BODY',
+    class: GridBodyComp,
+};

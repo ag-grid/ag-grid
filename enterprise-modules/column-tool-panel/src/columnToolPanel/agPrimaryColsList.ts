@@ -1,7 +1,6 @@
 import type {
     AbstractColDef,
     AgColumn,
-    AgComponentSelector,
     AgProvidedColumnGroup,
     BeanCollection,
     ColGroupDef,
@@ -9,6 +8,7 @@ import type {
     ColumnModel,
     ColumnNameService,
     ColumnToolPanelState,
+    ComponentClass,
 } from '@ag-grid-community/core';
 import {
     Component,
@@ -49,10 +49,6 @@ const PRIMARY_COLS_LIST_PANEL_CLASS = 'ag-column-select-list';
 
 export type AgPrimaryColsListEvent = 'groupExpanded' | 'selectionChanged';
 export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
-    static readonly selector: AgComponentSelector = 'AG-PRIMARY-COLS-LIST';
-
-    public static TEMPLATE = /* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="presentation"></div>`;
-
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
     private colDefService: ToolPanelColDefService;
@@ -82,7 +78,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private isInitialState: boolean = false;
 
     constructor() {
-        super(AgPrimaryColsList.TEMPLATE);
+        super(/* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="presentation"></div>`);
     }
 
     public override destroy(): void {
@@ -586,3 +582,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         return expandedGroupIds;
     }
 }
+
+export const AgPrimaryColsListClass: ComponentClass = {
+    selector: 'AG-PRIMARY-COLS-LIST',
+    class: AgPrimaryColsList,
+};

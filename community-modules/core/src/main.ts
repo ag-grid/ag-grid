@@ -468,7 +468,7 @@ export { AgRadioButton, AgRadioButtonParams } from './widgets/agRadioButton';
 export { AgToggleButton, AgToggleButtonParams } from './widgets/agToggleButton';
 export { AgInputTextField, AgInputTextFieldParams } from './widgets/agInputTextField';
 export { AgInputTextArea } from './widgets/agInputTextArea';
-export { AgInputNumberField, AgInputNumberFieldParams } from './widgets/agInputNumberField';
+export { AgInputNumberField, AgInputNumberFieldClass, AgInputNumberFieldParams } from './widgets/agInputNumberField';
 export { AgInputDateField } from './widgets/agInputDateField';
 export { AgSelect, AgSelectParams } from './widgets/agSelect';
 export { ListOption } from './widgets/agList';

@@ -1,11 +1,13 @@
 import type {
-    AgComponentSelector,
     AgEvent,
+    AgInputTextField,
     BeanCollection,
+    ComponentClass,
     PopupPositionParams,
     PopupService,
 } from '@ag-grid-community/core';
-import { AgInputTextField, Component, KeyCode, RefPlaceholder, _makeNull } from '@ag-grid-community/core';
+import { Component, KeyCode, RefPlaceholder, _makeNull } from '@ag-grid-community/core';
+import { AgInputTextFieldClass } from 'community-modules/core/src/widgets/agInputTextField';
 
 import { AgAutocompleteList } from './agAutocompleteList';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocompleteParams';
@@ -43,8 +45,6 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
         this.popupService = beans.popupService;
     }
 
-    static readonly selector: AgComponentSelector = 'AG-AUTOCOMPLETE';
-
     private eAutocompleteInput: AgInputTextField = RefPlaceholder;
 
     private isListOpen = false;
@@ -65,7 +65,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
             <div class="ag-autocomplete" role="presentation">
                 <ag-input-text-field data-ref="eAutocompleteInput"></ag-input-text-field>
             </div>`,
-            [AgInputTextField]
+            [AgInputTextFieldClass]
         );
     }
 
@@ -367,3 +367,8 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
         return this;
     }
 }
+
+export const AgAutocompleteClass: ComponentClass = {
+    selector: 'AG-AUTOCOMPLETE',
+    class: AgAutocomplete,
+};

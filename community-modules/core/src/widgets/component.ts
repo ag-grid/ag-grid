@@ -37,7 +37,7 @@ export interface VisibleChangedEvent extends AgEvent<ComponentEvent> {
     visible: boolean;
 }
 
-export type ComponentClass = { new (params?: any): Component<any>; selector: AgComponentSelector };
+export type ComponentClass = { class: { new (params?: any): Component<any> }; selector: AgComponentSelector };
 
 export class Component<TLocalEvent extends string = ComponentEvent>
     extends BeanStub<TLocalEvent | ComponentEvent>
@@ -237,7 +237,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
         if (ComponentClass) {
             Component.elementGettingCreated = element;
             const componentParams = paramsMap && elementRef ? paramsMap[elementRef] : undefined;
-            newComponent = new ComponentClass(componentParams);
+            newComponent = new ComponentClass.class(componentParams);
             newComponent.setParentComponent(this as Component);
 
             this.createBean(newComponent, null, afterPreCreateCallback);

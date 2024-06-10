@@ -1,12 +1,13 @@
-import type { AgColumn, AgComponentSelector, AgEvent, BeanCollection, ColumnModel } from '@ag-grid-community/core';
-import {
+import type {
+    AgColumn,
+    AgEvent,
     AgInputTextField,
-    Component,
-    RefPlaceholder,
-    _createIconNoSpan,
-    _debounce,
-    _setDisplayed,
+    BeanCollection,
+    ColumnModel,
+    ComponentClass,
 } from '@ag-grid-community/core';
+import { Component, RefPlaceholder, _createIconNoSpan, _debounce, _setDisplayed } from '@ag-grid-community/core';
+import { AgInputTextFieldClass } from 'community-modules/core/src/widgets/agInputTextField';
 
 import type { ToolPanelFiltersCompParams } from './filtersToolPanel';
 
@@ -22,8 +23,6 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
     }
-
-    static readonly selector: AgComponentSelector = 'AG-FILTERS-TOOL-PANEL-HEADER';
 
     private readonly eExpand: Element = RefPlaceholder;
     private readonly eFilterTextField: AgInputTextField = RefPlaceholder;
@@ -45,7 +44,7 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
                 <div data-ref="eExpand" class="ag-filter-toolpanel-expand"></div>
                 <ag-input-text-field data-ref="eFilterTextField" class="ag-filter-toolpanel-search-input"></ag-input-text-field>
             </div>`,
-            [AgInputTextField]
+            [AgInputTextFieldClass]
         );
 
         const translate = this.localeService.getLocaleTextFunc();
@@ -116,3 +115,8 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
         _setDisplayed(this.eExpandIndeterminate, this.currentExpandState === EXPAND_STATE.INDETERMINATE);
     }
 }
+
+export const AgFiltersToolPanelHeaderClass: ComponentClass = {
+    selector: 'AG-FILTERS-TOOL-PANEL-HEADER',
+    class: AgFiltersToolPanelHeader,
+};

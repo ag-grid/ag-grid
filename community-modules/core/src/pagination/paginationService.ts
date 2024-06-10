@@ -9,7 +9,7 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import { _exists } from '../utils/generic';
 import type { ComponentClass } from '../widgets/component';
 import type { PageBoundsService } from './pageBoundsService';
-import { PaginationComp } from './paginationComp';
+import { PaginationCompClass } from './paginationComp';
 
 export class PaginationService extends BeanStub implements NamedBean {
     beanName = 'paginationService' as const;
@@ -54,7 +54,7 @@ export class PaginationService extends BeanStub implements NamedBean {
     }
 
     public getPaginationComp(): ComponentClass {
-        return PaginationComp;
+        return PaginationCompClass;
     }
 
     private isPaginateChildRows(): boolean {

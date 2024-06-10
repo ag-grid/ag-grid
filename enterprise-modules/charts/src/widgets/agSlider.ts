@@ -1,7 +1,8 @@
-import type { AgComponentSelector, AgLabelParams, LabelAlignment } from '@ag-grid-community/core';
-import { AgAbstractLabel, AgInputNumberField, RefPlaceholder } from '@ag-grid-community/core';
+import type { AgInputNumberField, AgLabelParams, ComponentClass, LabelAlignment } from '@ag-grid-community/core';
+import { AgAbstractLabel, AgInputNumberFieldClass, RefPlaceholder } from '@ag-grid-community/core';
 
-import { AgInputRange } from './agInputRange';
+import type { AgInputRange } from './agInputRange';
+import { AgInputRangeClass } from './agInputRange';
 
 export interface AgSliderParams extends AgLabelParams {
     minValue?: number;
@@ -14,8 +15,6 @@ export interface AgSliderParams extends AgLabelParams {
 
 export type AgSliderEvent = 'fieldValueChanged';
 export class AgSlider extends AgAbstractLabel<AgSliderParams, AgSliderEvent> {
-    static readonly selector: AgComponentSelector = 'AG-SLIDER';
-
     protected readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eSlider: AgInputRange = RefPlaceholder;
     private readonly eText: AgInputNumberField = RefPlaceholder;
@@ -32,7 +31,7 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams, AgSliderEvent> {
                 <ag-input-number-field data-ref="eText"></ag-input-number-field>
             </div>
         </div>`,
-            [AgInputRange, AgInputNumberField]
+            [AgInputRangeClass, AgInputNumberFieldClass]
         );
     }
 
@@ -128,3 +127,8 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams, AgSliderEvent> {
         return this;
     }
 }
+
+export const AgSliderClass: ComponentClass = {
+    selector: 'AG-SLIDER',
+    class: AgSlider,
+};

@@ -1,6 +1,6 @@
 import type {
-    AgComponentSelector,
     BeanCollection,
+    ComponentClass,
     FilterManager,
     FocusService,
     ISideBar,
@@ -24,8 +24,8 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import type { SideBarButtonClickedEvent } from './agSideBarButtons';
-import { AgSideBarButtons } from './agSideBarButtons';
+import { AgSideBarButtonsClass, type SideBarButtonClickedEvent } from './agSideBarButtons';
+import type { AgSideBarButtons } from './agSideBarButtons';
 import { SideBarDefParser } from './sideBarDefParser';
 import type { SideBarService } from './sideBarService';
 import { ToolPanelWrapper } from './toolPanelWrapper';
@@ -41,7 +41,6 @@ export class AgSideBar extends Component implements ISideBar {
         this.sideBarService = beans.sideBarService as SideBarService;
     }
 
-    static readonly selector: AgComponentSelector = 'AG-SIDE-BAR';
     private readonly sideBarButtons: AgSideBarButtons = RefPlaceholder;
 
     private toolPanelWrappers: ToolPanelWrapper[] = [];
@@ -53,7 +52,7 @@ export class AgSideBar extends Component implements ISideBar {
             /* html */ `<div class="ag-side-bar ag-unselectable">
             <ag-side-bar-buttons data-ref="sideBarButtons"></ag-side-bar-buttons>
         </div>`,
-            [AgSideBarButtons]
+            [AgSideBarButtonsClass]
         );
     }
 
@@ -481,3 +480,8 @@ export class AgSideBar extends Component implements ISideBar {
         super.destroy();
     }
 }
+
+export const AgSideBarClass: ComponentClass = {
+    selector: 'AG-SIDE-BAR',
+    class: AgSideBar,
+};

@@ -1,4 +1,5 @@
 import type {
+    AgInputTextField,
     AgPromise,
     BeanCollection,
     FieldPickerValueSelectedEvent,
@@ -10,7 +11,6 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    AgInputTextField,
     AgPickerField,
     KeyCode,
     RefPlaceholder,
@@ -25,6 +25,7 @@ import {
     _setAriaActiveDescendant,
     _stopPropagationForAgGrid,
 } from '@ag-grid-community/core';
+import { AgInputTextFieldClass } from 'community-modules/core/src/widgets/agInputTextField';
 
 import type { AgRichSelectListEvent } from './agRichSelectList';
 import { AgRichSelectList } from './agRichSelectList';
@@ -68,7 +69,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             pickerIcon: 'smallDown',
             ariaRole: 'combobox',
             template: config?.template ?? TEMPLATE,
-            agComponents: [AgInputTextField],
+            agComponents: [AgInputTextFieldClass],
             modalPicker: false,
             ...config,
             // maxPickerHeight needs to be set after expanding `config`
