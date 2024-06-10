@@ -118,10 +118,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                             <div>{userLicenseVersion ? `v${userLicenseVersion}` : '-'}</div>
                         </div>
                         <div>
-                            <label>Trial?</label>
-                            <div>{userLicenseIsTrial ? 'yes' : 'no'}</div>
-                        </div>
-                        <div>
                             <label>Expiry</label>
                             <div>{userLicenseExpiry ? userLicenseExpiry : '-'}</div>
                         </div>
