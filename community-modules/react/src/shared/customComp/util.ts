@@ -19,5 +19,5 @@ export function getInstance<
 }
 
 export function warnReactiveCustomComponents(): void {
-    _warnOnce('Using custom components without `reactiveCustomComponents = true` is deprecated.');
+    _warnOnce('As of v32, using custom components with `reactiveCustomComponents = false` is deprecated.');
 }

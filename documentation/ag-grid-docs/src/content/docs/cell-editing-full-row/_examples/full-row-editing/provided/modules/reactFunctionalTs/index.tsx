@@ -119,7 +119,6 @@ const GridExample = () => {
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                         editType={'fullRow'}
-                        reactiveCustomComponents
                         onCellValueChanged={onCellValueChanged}
                         onRowValueChanged={onRowValueChanged}
                     />

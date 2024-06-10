@@ -206,6 +206,7 @@ export const GRID_OPTION_DEFAULTS = {
     suppressServerSideFullWidthLoadingRow: false,
     pivotMaxGeneratedColumns: -1,
     columnMenu: 'new',
+    reactiveCustomComponents: true,
 } as const;
 /**
  * Used simply to type check the default grid options.
