@@ -1,6 +1,6 @@
 import type { ColDef, SizeColumnsToContentStrategy } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
-import { type FunctionComponent, useRef, useState } from 'react';
+import { useCallback, type FunctionComponent, useRef, useState } from 'react';
 
 import { quantityCalculator } from '../../utils/valueGetters';
 import { ActionsCellRenderer } from '../actions-cell-renderer/ActionsCellRenderer';
@@ -119,9 +119,25 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
     });
     const themeClass = isDarkMode ? `${gridTheme}-dark` : gridTheme;
 
+    const onFilterTextBoxChanged = useCallback(() => {
+        gridRef.current!.api.setGridOption(
+          "quickFilterText",
+          (document.getElementById("filter-text-box") as HTMLInputElement).value,
+        );
+      }, []);
+
     return (
         <div className={styles.wrapper}>
             <div className={styles.container}>
+                <div className="example-header">
+                    <span>Quick Filter:</span>
+                    <input
+                        type="text"
+                        id="filter-text-box"
+                        placeholder="Search..."
+                        onInput={onFilterTextBoxChanged}
+            />
+        </div>
                 <div className={`${themeClass} ${styles.grid}`}>
                     <AgGridReact
                         ref={gridRef}
