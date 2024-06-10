@@ -6,7 +6,7 @@ import { CHARTS_SITE_URL, FRAMEWORK_DISPLAY_TEXT } from '@constants';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
-import { type FunctionComponent } from 'react';
+import { type FunctionComponent, useMemo } from 'react';
 
 import { getBootstrapSnippet, getDependenciesSnippet } from '../utils/getSnippets';
 import { hasValue } from '../utils/hasValue';
@@ -51,31 +51,43 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
 
         errors,
     } = useLicenseData();
-    const dependenciesSnippet = getDependenciesSnippet({
-        framework,
-        licensedProducts: userLicensedProducts,
-        importType,
-        useStandaloneCharts,
-    });
-    const bootstrapSnippet = getBootstrapSnippet({
-        framework,
-        importType,
-        license: license || 'your license key',
-        userLicensedProducts,
-    });
-    const selectedSeedRepos = seedRepos
-        .filter(({ licenseType }) => {
-            if (userLicensedProducts.charts && userLicensedProducts.grid) {
-                return licenseType === 'enterprise-bundle';
-            } else if (userLicensedProducts.charts || userLicensedProducts.grid) {
-                return licenseType === 'enterprise';
-            }
+    const dependenciesSnippet = useMemo(
+        () =>
+            getDependenciesSnippet({
+                framework,
+                licensedProducts: userLicensedProducts,
+                importType,
+                useStandaloneCharts,
+            }),
+        [framework, userLicensedProducts, importType, useStandaloneCharts]
+    );
+    const bootstrapSnippet = useMemo(
+        () =>
+            getBootstrapSnippet({
+                framework,
+                importType,
+                license: license || 'your license key',
+                userLicensedProducts,
+            }),
+        [framework, importType, license, userLicensedProducts]
+    );
+    const selectedSeedRepos = useMemo(
+        () =>
+            seedRepos
+                .filter(({ licenseType }) => {
+                    if (userLicensedProducts.charts && userLicensedProducts.grid) {
+                        return licenseType === 'enterprise-bundle';
+                    } else if (userLicensedProducts.charts || userLicensedProducts.grid) {
+                        return licenseType === 'enterprise';
+                    }
 
-            return false;
-        })
-        .filter((seedRepo) => {
-            return seedRepo.framework === framework && seedRepo.importType === importType;
-        });
+                    return false;
+                })
+                .filter((seedRepo) => {
+                    return seedRepo.framework === framework && seedRepo.importType === importType;
+                }),
+        [seedRepos, userLicensedProducts, framework, importType]
+    );
 
     return (
         <form>

@@ -1,6 +1,6 @@
 import { LicenseManager } from '@ag-grid-enterprise/core';
 import type { ImportType } from '@ag-grid-types';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import type { LicensedProducts } from '../types';
 import { hasValue } from './hasValue';
@@ -133,7 +133,7 @@ export const useLicenseData = () => {
     });
     const [useStandaloneCharts, setUseStandaloneCharts] = useState<boolean>(false);
 
-    const licenseDetails = LicenseManager.getLicenseDetails(license);
+    const licenseDetails = useMemo(() => LicenseManager.getLicenseDetails(license), [license]);
     const {
         suppliedLicenseType,
         version: userLicenseVersion,
