@@ -1,3 +1,4 @@
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import classnames from 'classnames';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-bash';
@@ -12,7 +13,9 @@ import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-xml-doc';
 import 'prismjs/plugins/keep-markup/prism-keep-markup';
 import 'prismjs/plugins/line-numbers/prism-line-numbers';
-import { memo, useEffect, useRef } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
+
+import styles from './Code.module.scss';
 
 const GrammarMap = {
     js: Prism.languages.javascript,
@@ -49,15 +52,39 @@ function Code({
     keepMarkup?: boolean;
     lineNumbers?: boolean;
 }) {
+    const [hasCopied, setHasCopied] = useState(false);
+
     if (Array.isArray(code)) {
         code = code.join('\n');
     }
+
+    const copyToClipboard = async (code) => {
+        await navigator.clipboard.writeText(code);
+        await setHasCopied(true);
+        await setTimeout(() => {
+            setHasCopied(false);
+        }, 2000);
+    };
 
     return (
         <pre
             className={classnames('code', `language-${language}`, className, lineNumbers ? 'line-numbers' : null)}
             {...props}
         >
+            <span
+                className={classnames(styles.clipboardButtonOuter, hasCopied ? styles.hasCopied : '')}
+                onClick={() => {
+                    copyToClipboard(code);
+                }}
+            >
+                <span className={styles.clipboardButtonCopiedOuter}>
+                    <span className={styles.clipboardButtonCopied}>Copied</span>
+                </span>
+                <span className={styles.clipboardButton}>
+                    <Icon name={'feature-clipboard'} />
+                </span>
+            </span>
+
             {keepMarkup || lineNumbers ? (
                 <CodeWithPrismPlugins code={code} keepMarkup={keepMarkup} />
             ) : (

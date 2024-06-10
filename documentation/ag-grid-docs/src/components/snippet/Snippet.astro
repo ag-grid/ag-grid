@@ -17,4 +17,11 @@ const encodedHtmlContent = await Astro.slots.render('default');
 const content = he.decode(encodedHtmlContent);
 ---
 
-<Snippet framework={framework} language={language} content={content} transform={frameworkTransform} {...otherProps} />
+<Snippet
+    client:only="react"
+    framework={framework}
+    language={language}
+    content={content}
+    transform={frameworkTransform}
+    {...otherProps}
+/>
