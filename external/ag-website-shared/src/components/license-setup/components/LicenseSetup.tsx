@@ -218,7 +218,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                                 defaultChecked={useStandaloneCharts !== undefined && useStandaloneCharts}
                                 onChange={() => setUseStandaloneCharts(true)}
                             />{' '}
-                            yes
+                            Yes
                         </label>
                         <label>
                             <input
@@ -228,7 +228,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                                 defaultChecked={useStandaloneCharts !== undefined && !useStandaloneCharts}
                                 onChange={() => setUseStandaloneCharts(false)}
                             />{' '}
-                            no
+                            No
                         </label>
                     </div>
                 </div>
