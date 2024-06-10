@@ -35,10 +35,12 @@ export const getBootstrapSnippet = ({
     framework,
     importType,
     license: rawLicense,
+    userLicensedProducts = {} as LicensedProducts,
 }: {
     framework: Framework;
     license?: string;
     importType?: ImportType;
+    userLicensedProducts?: LicensedProducts;
 }) => {
     const license = rawLicense?.trim();
     const frameworkTemplate = TEMPLATES[framework];
@@ -49,5 +51,5 @@ export const getBootstrapSnippet = ({
 
     const template = frameworkTemplate[importType];
 
-    return (template && template({ license })).trim() || '';
+    return (template && template({ license, userLicensedProducts })).trim() || '';
 };

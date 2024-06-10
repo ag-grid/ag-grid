@@ -59,6 +59,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
         framework,
         importType,
         license: license || 'your license key',
+        userLicensedProducts,
     });
     const selectedSeedRepos = seedRepos.filter((seedRepo) => {
         return seedRepo.framework === framework && seedRepo.importType === importType;
