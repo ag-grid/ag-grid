@@ -45,16 +45,20 @@ export class AgPrimaryCols extends Component {
             this.primaryColsHeaderPanel.setDisplayed(false);
         }
 
-        this.addManagedListener(this.primaryColsListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
-        this.addManagedListener(this.primaryColsListPanel, 'selectionChanged', this.onSelectionChange.bind(this));
+        this.addManagedListeners(this.primaryColsListPanel, {
+            groupExpanded: this.onGroupExpanded.bind(this),
+            selectionChanged: this.onSelectionChange.bind(this),
+        });
 
         this.primaryColsListPanel.init(this.params, this.allowDragging, this.eventType);
 
-        this.addManagedListener(this.primaryColsHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
-        this.addManagedListener(this.primaryColsHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));
-        this.addManagedListener(this.primaryColsHeaderPanel, 'selectAll', this.onSelectAll.bind(this));
-        this.addManagedListener(this.primaryColsHeaderPanel, 'unselectAll', this.onUnselectAll.bind(this));
-        this.addManagedListener(this.primaryColsHeaderPanel, 'filterChanged', this.onFilterChanged.bind(this));
+        this.addManagedListeners(this.primaryColsHeaderPanel, {
+            expandAll: this.onExpandAll.bind(this),
+            collapseAll: this.onCollapseAll.bind(this),
+            selectAll: this.onSelectAll.bind(this),
+            unselectAll: this.onUnselectAll.bind(this),
+            filterChanged: this.onFilterChanged.bind(this),
+        });
 
         this.positionableFeature = new PositionableFeature(this.getGui(), { minHeight: 100 });
         this.createManagedBean(this.positionableFeature);

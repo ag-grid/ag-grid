@@ -2,7 +2,7 @@ import type { AgEvent, AgEventListener, AgGlobalEventListener, AgGridEvent } fro
 import type { IEventEmitter } from './interfaces/iEventEmitter';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 
-export class LocalEventService<TEventType extends string = string> implements IEventEmitter<TEventType> {
+export class LocalEventService<TEventType extends string> implements IEventEmitter<TEventType> {
     private allSyncListeners = new Map<TEventType, Set<AgEventListener>>();
     private allAsyncListeners = new Map<TEventType, Set<AgEventListener>>();
 
@@ -50,11 +50,19 @@ export class LocalEventService<TEventType extends string = string> implements IE
         );
     }
 
-    public addEventListener(eventType: TEventType, listener: AgEventListener, async = false): void {
+    public addEventListener<T extends TEventType>(
+        eventType: T,
+        listener: AgEventListener<any, any, T>,
+        async = false
+    ): void {
         this.getListeners(eventType, async, true)!.add(listener);
     }
 
-    public removeEventListener(eventType: TEventType, listener: AgEventListener, async = false): void {
+    public removeEventListener<T extends TEventType>(
+        eventType: T,
+        listener: AgEventListener<any, any, T>,
+        async = false
+    ): void {
         const listeners = this.getListeners(eventType, async, false);
         if (!listeners) {
             return;

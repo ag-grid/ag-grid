@@ -36,7 +36,7 @@ export class FontPanel extends Component {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
 
     public static TEMPLATE /* html */ = `<div class="ag-font-panel">
@@ -84,7 +84,7 @@ export class FontPanel extends Component {
         });
     }
 
-    public addItem(comp: Component, prepend?: boolean) {
+    public addItem(comp: Component<any>, prepend?: boolean) {
         if (prepend) {
             this.fontGroup.prependItem(comp);
         } else {

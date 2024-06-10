@@ -9,6 +9,19 @@ import { ChartCrossFilterService } from './charts/chartComp/services/chartCrossF
 import { ChartMenuService } from './charts/chartComp/services/chartMenuService';
 import { ChartTranslationService } from './charts/chartComp/services/chartTranslationService';
 import { ChartService } from './charts/chartService';
+import {
+    closeChartToolPanel,
+    createCrossFilterChart,
+    createPivotChart,
+    createRangeChart,
+    downloadChart,
+    getChartImageDataURL,
+    getChartModels,
+    getChartRef,
+    openChartToolPanel,
+    restoreChart,
+    updateChart,
+} from './charts/chartsApi';
 import { validGridChartsVersion } from './utils/validGridChartsVersion';
 import { VERSION as GRID_VERSION } from './version';
 import { AgAngleSelect } from './widgets/agAngleSelect';
@@ -17,7 +30,7 @@ import { AgColorPicker } from './widgets/agColorPicker';
 import { AgInputRange } from './widgets/agInputRange';
 import { AgSlider } from './widgets/agSlider';
 
-export const GridChartsModule: Module = {
+export const GridChartsCoreModule: Module = {
     version: GRID_VERSION,
     validate: () => {
         return validGridChartsVersion({
@@ -25,7 +38,7 @@ export const GridChartsModule: Module = {
             chartsVersion: ChartService.CHARTS_VERSION,
         });
     },
-    moduleName: ModuleNames.GridChartsModule,
+    moduleName: `${ModuleNames.GridChartsModule}-core`,
     beans: [
         ChartService,
         ChartTranslationService,
@@ -53,4 +66,29 @@ export const GridChartsModule: Module = {
         },
     ],
     dependantModules: [RangeSelectionModule, EnterpriseCoreModule],
+};
+
+export const GridChartsApiModule: Module = {
+    version: GRID_VERSION,
+    moduleName: `${ModuleNames.GridChartsModule}-api`,
+    apiFunctions: {
+        getChartModels,
+        getChartRef,
+        getChartImageDataURL,
+        downloadChart,
+        openChartToolPanel,
+        closeChartToolPanel,
+        createRangeChart,
+        createPivotChart,
+        createCrossFilterChart,
+        updateChart,
+        restoreChart,
+    },
+    dependantModules: [GridChartsCoreModule],
+};
+
+export const GridChartsModule: Module = {
+    version: GRID_VERSION,
+    moduleName: ModuleNames.GridChartsModule,
+    dependantModules: [GridChartsCoreModule, GridChartsApiModule],
 };

@@ -12,7 +12,6 @@ type LicenseData = {
     id: string;
     subHeading: string;
     priceFullDollars: string;
-    launchPrice: any;
     buyLink: string;
     description: string;
     tabGroup: string;
@@ -25,7 +24,6 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         subHeading: 'AG Grid Community',
         description: '',
         priceFullDollars: '0',
-        launchPrice: null,
         buyLink: '/javascript-data-grid/getting-started/',
         tabGroup: 'grid',
     },
@@ -35,7 +33,6 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         subHeading: 'AG Grid Enterprise',
         description: '',
         priceFullDollars: '999',
-        launchPrice: null,
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
         tabGroup: 'grid',
     },
@@ -45,7 +42,6 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         subHeading: 'AG Charts Community',
         description: '',
         priceFullDollars: '0',
-        launchPrice: null,
         buyLink: 'https://charts.ag-grid.com/javascript/quick-start/',
         tabGroup: 'charts',
     },
@@ -55,7 +51,6 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         subHeading: 'AG Charts Enterprise',
         description: '',
         priceFullDollars: '499',
-        launchPrice: '199',
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=agcharts',
         tabGroup: 'charts',
     },
@@ -65,31 +60,20 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         subHeading: 'Enterprise Bundle',
         description: 'AG Grid Enterprise &<br />AG Charts Enterprise',
         priceFullDollars: '1498',
-        launchPrice: '1198',
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both',
         tabGroup: 'both',
     },
 ];
 
-const Price: FunctionComponent<{ priceFullDollars: string; launchPrice: string }> = ({
-    priceFullDollars,
-    launchPrice,
-}) => {
-    const price = launchPrice ? launchPrice : priceFullDollars;
-    const hasCost = price !== '0';
+const Price: FunctionComponent<{ priceFullDollars: string }> = ({ priceFullDollars }) => {
+    const hasCost = priceFullDollars !== '0';
 
     return (
         <div className={styles.price}>
             {hasCost && <span className={styles.fromText}>From</span>}
 
             <p className={classnames(styles.priceFullDollars, !hasCost ? styles.freePrice : '')}>
-                <span className={styles.priceCost}>{hasCost ? `$${price}` : 'Free'}</span>
-
-                {launchPrice && (
-                    <>
-                        <span className={styles.standardPrice}>${priceFullDollars}</span>
-                    </>
-                )}
+                <span className={styles.priceCost}>{hasCost ? `$${priceFullDollars}` : 'Free'}</span>
             </p>
             {hasCost && <p className={styles.developerText}>per developer</p>}
         </div>
@@ -97,25 +81,17 @@ const Price: FunctionComponent<{ priceFullDollars: string; launchPrice: string }
 };
 
 const License: FunctionComponent<LicenseData> = (props: LicenseData) => {
-    const { id, description, subHeading, priceFullDollars, launchPrice, buyLink } = props;
+    const { id, description, subHeading, priceFullDollars, buyLink } = props;
 
     return (
         <>
             <div className={styles.top}>
-                {launchPrice && (
-                    <span>
-                        <span className={styles.limitedTimePill}>Limited time offer</span>
-                        <span className={styles.limitedTimeEnd}>Offer ends 30th June 2024</span>
-                    </span>
-                )}
-                {!launchPrice && <span className={styles.limitedTimeSpacer}></span>}
-
                 <div className={styles.licenseMeta}>
                     <h2>{subHeading}</h2>
                     <p dangerouslySetInnerHTML={{ __html: description }}></p>
                 </div>
 
-                <Price priceFullDollars={priceFullDollars} launchPrice={launchPrice} />
+                <Price priceFullDollars={priceFullDollars} />
                 <div className={styles.licenseActions}>
                     <a
                         className={`${id === 'community' ? 'button-tertiary' : 'button'} ${styles.pricing}`}

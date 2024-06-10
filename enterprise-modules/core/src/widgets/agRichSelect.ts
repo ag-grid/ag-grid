@@ -3,6 +3,7 @@ import type {
     BeanCollection,
     FieldPickerValueSelectedEvent,
     ICellRendererParams,
+    RichSelectListRowSelectedEvent,
     RichSelectParams,
     UserCompDetails,
     UserComponentFactory,
@@ -11,7 +12,6 @@ import type {
 import {
     AgInputTextField,
     AgPickerField,
-    Events,
     KeyCode,
     RefPlaceholder,
     _bindCellRendererToHtmlElement,
@@ -26,6 +26,7 @@ import {
     _stopPropagationForAgGrid,
 } from '@ag-grid-community/core';
 
+import type { AgRichSelectListEvent } from './agRichSelectList';
 import { AgRichSelectList } from './agRichSelectList';
 
 const TEMPLATE = /* html */ `
@@ -37,11 +38,12 @@ const TEMPLATE = /* html */ `
             <div data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
         </div>
     </div>`;
-
+export type AgRichSelectEvent = AgRichSelectListEvent;
 export class AgRichSelect<TValue = any> extends AgPickerField<
     TValue[] | TValue,
     RichSelectParams<TValue>,
-    AgRichSelectList<TValue>
+    AgRichSelectEvent,
+    AgRichSelectList<TValue, AgRichSelectEvent>
 > {
     private userComponentFactory: UserComponentFactory;
 
@@ -110,9 +112,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (allowTyping) {
             this.eInput.onValueChange((value) => this.searchTextFromString(value));
-            this.addManagedListener(this.eWrapper, 'focus', this.onWrapperFocus.bind(this));
+            this.addManagedElementListeners(this.eWrapper, { focus: this.onWrapperFocus.bind(this) });
         }
-        this.addManagedListener(this.eWrapper, 'focusout', this.onWrapperFocusOut.bind(this));
+        this.addManagedElementListeners(this.eWrapper, { focusout: this.onWrapperFocusOut.bind(this) });
     }
 
     private createListComponent(): void {
@@ -120,15 +122,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         this.listComponent.setParentComponent(this);
 
-        if (!this.config.multiSelect) {
-            this.addManagedListener(
-                this.listComponent,
-                AgRichSelectList.EVENT_LIST_ROW_SELECTED,
-                (e: FieldPickerValueSelectedEvent) => {
-                    this.onListValueSelected(e.value, e.fromEnterKey);
-                }
-            );
-        }
+        this.addManagedListeners(this.listComponent, {
+            richSelectListRowSelected: (e: RichSelectListRowSelectedEvent) => {
+                this.onListValueSelected(e.value, e.fromEnterKey);
+            },
+        });
     }
 
     private renderSelectedValue(): void {
@@ -419,7 +417,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.searchString = '';
     }
 
-    public override setValue(value: TValue[] | TValue, silent?: boolean, fromPicker?: boolean): this {
+    public override setValue(value: TValue[] | TValue | null, silent?: boolean, fromPicker?: boolean): this {
         if (this.value === value) {
             return this;
         }
@@ -428,7 +426,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             if (!fromPicker) {
                 this.listComponent?.selectValue(value);
             }
-        } else {
+        } else if (value != null) {
             const list = this.listComponent?.getCurrentList();
             const index = list ? list.indexOf(value) : -1;
 
@@ -470,7 +468,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (this.listComponent?.getCurrentList()) {
             if (this.config.multiSelect) {
-                this.onListValueSelected(this.listComponent.getSelectedItems(), true);
+                this.dispatchPickerEventAndHidePicker(this.value, true);
             } else {
                 const lastRowHovered = this.listComponent.getLastItemHovered();
                 this.onListValueSelected(new Set<TValue>([lastRowHovered]), true);
@@ -496,9 +494,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
     }
 
-    private getValueFromSet(valueSet: Set<TValue>): TValue[] | TValue | undefined {
+    private getValueFromSet(valueSet: Set<TValue>): TValue[] | TValue | null {
         const { multiSelect } = this.config;
-        let newValue: TValue[] | TValue | undefined;
+        let newValue: TValue[] | TValue | null = null;
 
         for (const value of valueSet) {
             if (valueSet.size === 1 && !multiSelect) {
@@ -521,23 +519,22 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private onListValueSelected(valueSet: Set<TValue>, fromEnterKey: boolean): void {
         const newValue = this.getValueFromSet(valueSet);
 
-        if (newValue === undefined) {
-            return;
-        }
-
         this.setValue(newValue, false, true);
-        this.dispatchPickerEvent(newValue, fromEnterKey);
-        this.hidePicker();
+
+        if (!this.config.multiSelect) {
+            this.dispatchPickerEventAndHidePicker(newValue, fromEnterKey);
+        }
     }
 
-    private dispatchPickerEvent(value: TValue[] | TValue, fromEnterKey: boolean): void {
+    private dispatchPickerEventAndHidePicker(value: TValue[] | TValue | null, fromEnterKey: boolean): void {
         const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
-            type: Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
+            type: 'fieldPickerValueSelected',
             fromEnterKey,
             value,
         };
 
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent(event);
+        this.hidePicker();
     }
 
     public override getFocusableElement(): HTMLElement {

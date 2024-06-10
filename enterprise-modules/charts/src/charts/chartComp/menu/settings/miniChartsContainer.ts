@@ -134,7 +134,7 @@ export class MiniChartsContainer extends Component {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
 
     static TEMPLATE = /* html */ `<div class="ag-chart-settings-mini-wrapper"></div>`;
@@ -251,12 +251,14 @@ export class MiniChartsContainer extends Component {
                     this.chartController.setChartType(miniClassChartType);
                     this.updateSelectedMiniChart();
                 };
-                this.addManagedListener(miniWrapper, 'click', listener);
-                this.addManagedListener(miniWrapper, 'keydown', (event) => {
-                    if (event.key == KeyCode.ENTER || event.key === KeyCode.SPACE) {
-                        event.preventDefault();
-                        listener();
-                    }
+                this.addManagedListeners(miniWrapper, {
+                    click: listener,
+                    keydown: (event) => {
+                        if (event.key == KeyCode.ENTER || event.key === KeyCode.SPACE) {
+                            event.preventDefault();
+                            listener();
+                        }
+                    },
                 });
 
                 this.wrappers.set(miniClassChartType, miniWrapper);

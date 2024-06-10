@@ -5,8 +5,7 @@ import type {
     ColumnModel,
     CssVariablesChanged,
     Environment,
-    EventsType,
-    ExpandCollapseAllEvent,
+    ExpandOrCollapseAllEvent,
     FilterChangedEvent,
     FuncColsService,
     GridOptions,
@@ -29,7 +28,6 @@ import {
     BeanStub,
     ChangedPath,
     ClientSideRowModelSteps,
-    Events,
     RowHighlightPosition,
     RowNode,
     _debounce,
@@ -90,9 +88,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.valueCache = beans.valueCache;
         this.environment = beans.environment;
 
-        this.filterStage = beans.filterStage;
-        this.sortStage = beans.sortStage;
-        this.flattenStage = beans.flattenStage;
+        this.filterStage = beans.filterStage!;
+        this.sortStage = beans.sortStage!;
+        this.flattenStage = beans.flattenStage!;
 
         this.groupStage = beans.groupStage;
         this.aggregationStage = beans.aggregationStage;
@@ -132,16 +130,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             animate,
         });
 
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_NEW_COLUMNS_LOADED]: refreshEverythingAfterColsChangedFunc,
-            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: refreshEverythingFunc,
-            [Events.EVENT_COLUMN_VALUE_CHANGED]: this.onValueChanged.bind(this),
-            [Events.EVENT_COLUMN_PIVOT_CHANGED]: this.refreshModel.bind(this, { step: ClientSideRowModelSteps.PIVOT }),
-            [Events.EVENT_FILTER_CHANGED]: this.onFilterChanged.bind(this),
-            [Events.EVENT_SORT_CHANGED]: this.onSortChanged.bind(this),
-            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: refreshEverythingFunc,
-            [Events.EVENT_GRID_STYLES_CHANGED]: this.onGridStylesChanges.bind(this),
-            [Events.EVENT_GRID_READY]: this.onGridReady.bind(this),
+        this.addManagedEventListeners({
+            newColumnsLoaded: refreshEverythingAfterColsChangedFunc,
+            columnRowGroupChanged: refreshEverythingFunc,
+            columnValueChanged: this.onValueChanged.bind(this),
+            columnPivotChanged: this.refreshModel.bind(this, { step: ClientSideRowModelSteps.PIVOT }),
+            filterChanged: this.onFilterChanged.bind(this),
+            sortChanged: this.onSortChanged.bind(this),
+            columnPivotModeChanged: refreshEverythingFunc,
+            gridStylesChanged: this.onGridStylesChanges.bind(this),
+            gridReady: this.onGridReady.bind(this),
         });
 
         // doesn't need done if doing full reset
@@ -714,7 +712,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.isRefreshingModel = false;
 
         const event: WithoutGridCommon<ModelUpdatedEvent> = {
-            type: Events.EVENT_MODEL_UPDATED,
+            type: 'modelUpdated',
             animate: params.animate,
             keepRenderedRows: params.keepRenderedRows,
             newData: params.newData,
@@ -1053,8 +1051,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.refreshModel({ step: ClientSideRowModelSteps.MAP });
 
         const eventSource = expand ? 'expandAll' : 'collapseAll';
-        const event: WithoutGridCommon<ExpandCollapseAllEvent> = {
-            type: Events.EVENT_EXPAND_COLLAPSE_ALL,
+        const event: WithoutGridCommon<ExpandOrCollapseAllEvent> = {
+            type: 'expandOrCollapseAll',
             source: eventSource,
         };
         this.eventService.dispatchEvent(event);
@@ -1098,7 +1096,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
                 if (selectionChanged) {
                     const event: WithoutGridCommon<SelectionChangedEvent> = {
-                        type: Events.EVENT_SELECTION_CHANGED,
+                        type: 'selectionChanged',
                         source: 'rowGroupChanged',
                     };
                     this.eventService.dispatchEvent(event);
@@ -1116,7 +1114,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             // only if row data has been set
             this.rowCountReady = true;
             this.eventService.dispatchEventOnce({
-                type: Events.EVENT_ROW_COUNT_READY,
+                type: 'rowCountReady',
             });
         }
     }
@@ -1173,7 +1171,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // this event kicks off:
         // - shows 'no rows' overlay if needed
         const rowDataUpdatedEvent: WithoutGridCommon<RowDataUpdatedEvent> = {
-            type: Events.EVENT_ROW_DATA_UPDATED,
+            type: 'rowDataUpdated',
         };
         this.eventService.dispatchEvent(rowDataUpdatedEvent);
 
@@ -1238,7 +1236,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         if (rowNodeTrans.length > 0) {
             const event: WithoutGridCommon<AsyncTransactionsFlushed> = {
-                type: Events.EVENT_ASYNC_TRANSACTIONS_FLUSHED,
+                type: 'asyncTransactionsFlushed',
                 results: rowNodeTrans,
             };
             this.eventService.dispatchEvent(event);
@@ -1301,7 +1299,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         const event: WithoutGridCommon<RowDataUpdatedEvent> = {
-            type: Events.EVENT_ROW_DATA_UPDATED,
+            type: 'rowDataUpdated',
         };
         this.eventService.dispatchEvent(event);
 

@@ -1,4 +1,7 @@
 import type { AlignedGridsService } from '../alignedGridsService';
+import type { ApiFunctionService } from '../api/apiFunctionService';
+import type { GridApi } from '../api/gridApi';
+import type { RowModelHelperService } from '../api/rowModelHelperService';
 import type { CellNavigationService } from '../cellNavigationService';
 import type { ColumnApplyStateService } from '../columns/columnApplyStateService';
 import type { ColumnAutosizeService } from '../columns/columnAutosizeService';
@@ -39,33 +42,44 @@ import type { ColumnFilterService } from '../filter/columnFilterService';
 import type { FilterManager } from '../filter/filterManager';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { FocusService } from '../focusService';
-import type { GridApiService } from '../gridApiService';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
 import type { NavigationService } from '../gridBodyComp/navigationService';
 import type { PinnedWidthService } from '../gridBodyComp/pinnedWidthService';
 import type { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
+import type { GridDestroyService } from '../gridDestroyService';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
 import type { HeaderPositionUtils } from '../headerRendering/common/headerPosition';
 import type { HorizontalResizeService } from '../headerRendering/common/horizontalResizeService';
+import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService, ISelectionHandleFactory } from '../interfaces/IRangeService';
+import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
+import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { IClipboardService } from '../interfaces/iClipboardService';
+import type { IColumnChooserFactory } from '../interfaces/iColumnChooserFactory';
 import type { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
+import type { IDetailGridApiService } from '../interfaces/iDetailGridApiService';
 import type { IExcelCreator } from '../interfaces/iExcelCreator';
+import type { IExpansionService } from '../interfaces/iExpansionService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
+import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IRowModel } from '../interfaces/iRowModel';
+import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
+import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
+import type { ISideBarService } from '../interfaces/iSideBar';
+import type { IStatusBarService } from '../interfaces/iStatusBarService';
 import type { LocaleService } from '../localeService';
 import type { LoggerFactory } from '../logger';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEventService';
 import type { MenuService } from '../misc/menuService';
 import type { ResizeObserverService } from '../misc/resizeObserverService';
-import type { StateService } from '../misc/stateService';
+import type { StateService } from '../misc/state/stateService';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import type { PaginationAutoPageSizeService } from '../pagination/paginationAutoPageSizeService';
 import type { PaginationService } from '../pagination/paginationService';
@@ -81,6 +95,8 @@ import type { RowCssClassCalculator } from '../rendering/row/rowCssClassCalculat
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
+import type { RowNodeSorter } from '../rowNodes/rowNodeSorter';
+import type { SelectableService } from '../rowNodes/selectableService';
 import type { SortController } from '../sortController';
 import type { StylingService } from '../styling/stylingService';
 import type { SyncService } from '../syncService';
@@ -200,10 +216,10 @@ export interface CoreBeanCollection {
     localeService: LocaleService;
     syncService: SyncService;
     ariaAnnouncementService: AriaAnnouncementService;
-    rangeService: IRangeService;
+    rangeService?: IRangeService;
     selectionHandleFactory: ISelectionHandleFactory;
     validationService?: ValidationService;
-    gridApi: GridApiService;
+    gridApi: GridApi;
     gridOptions: GridOptions;
     eGridDiv: HTMLElement;
     loggerFactory: LoggerFactory;
@@ -230,9 +246,9 @@ export interface CoreBeanCollection {
     apiEventService: ApiEventService;
     undoRedoService?: UndoRedoService;
     rowNodeBlockLoader?: RowNodeBlockLoader;
-    csvCreator: ICsvCreator;
-    excelCreator: IExcelCreator;
-    clipboardService: IClipboardService;
+    csvCreator?: ICsvCreator;
+    excelCreator?: IExcelCreator;
+    clipboardService?: IClipboardService;
     mouseEventService: MouseEventService;
     cellNavigationService: CellNavigationService;
     scrollVisibleService: ScrollVisibleService;
@@ -244,18 +260,41 @@ export interface CoreBeanCollection {
     frameworkComponentWrapper: FrameworkComponentWrapper;
     horizontalResizeService: HorizontalResizeService;
     filterMenuFactory: IMenuFactory;
-    enterpriseMenuFactory: IMenuFactory;
-    contextMenuFactory: IContextMenuFactory;
+    enterpriseMenuFactory?: IMenuFactory;
+    contextMenuFactory?: IContextMenuFactory;
     editService?: EditService;
     rowEditService?: RowEditService;
     alignedGridsService?: AlignedGridsService;
     paginationAutoPageSizeService?: PaginationAutoPageSizeService;
     paginationService?: PaginationService;
     rowBoundsService: RowBoundsService;
+    apiFunctionService: ApiFunctionService;
+    rowModelHelperService?: RowModelHelperService;
+    detailGridApiService?: IDetailGridApiService;
+    gridDestroyService: GridDestroyService;
+    expansionService: IExpansionService;
+    sideBarService?: ISideBarService;
+    ssrmTransactionManager?: IServerSideTransactionManager;
+    columnChooserFactory?: IColumnChooserFactory;
+    aggFuncService?: IAggFuncService;
+    advancedFilterService: IAdvancedFilterService;
+    filterStage?: IRowNodeStage;
+    sortStage?: IRowNodeStage;
+    flattenStage?: IRowNodeStage;
+    groupStage?: IRowNodeStage;
+    aggregationStage?: IRowNodeStage;
+    pivotStage?: IRowNodeStage;
+    filterAggregatesStage?: IRowNodeStage;
+    rowNodeSorter: RowNodeSorter;
+    pivotColDefService?: IPivotColDefService;
+    statusBarService?: IStatusBarService;
+    chartService?: IChartService;
+    selectableService: SelectableService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
-    [key in Exclude<BeanName, keyof CoreBeanCollection>]: any;
+    // `unknown | undefined` to make sure the type is handled correctly when used
+    [key in Exclude<BeanName, keyof CoreBeanCollection>]?: unknown;
 };
 
 export class Context extends GenericContext<BeanName, BeanCollection> {
@@ -292,6 +331,7 @@ export type BeanName =
     | 'aggregationStage'
     | 'alignedGridsService'
     | 'animationFrameService'
+    | 'apiFunctionService'
     | 'ariaAnnouncementService'
     | 'apiEventService'
     | 'autoColService'
@@ -341,6 +381,7 @@ export type BeanName =
     | 'csvCreator'
     | 'dataTypeService'
     | 'visibleColsService'
+    | 'detailGridApiService'
     | 'dragAndDropService'
     | 'dragService'
     | 'editService'
@@ -363,6 +404,7 @@ export type BeanName =
     | 'globalEventListener'
     | 'globalSyncEventListener'
     | 'gridApi'
+    | 'gridDestroyService'
     | 'gridOptions'
     | 'gos'
     | 'gridOptionsWrapper'
@@ -401,6 +443,7 @@ export type BeanName =
     | 'rowModel'
     | 'rowNodeBlockLoader'
     | 'rowNodeEventThrottle'
+    | 'rowModelHelperService'
     | 'rowNodeSorter'
     | 'rowPositionUtils'
     | 'rowRenderer'

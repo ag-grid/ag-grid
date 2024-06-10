@@ -52,7 +52,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     protected readonly eFilterBody: HTMLElement = RefPlaceholder;
 
     private eButtonsPanel: HTMLElement;
-    private buttonListeners: ((() => null) | undefined)[] = [];
+    private buttonListeners: (() => null)[] = [];
 
     constructor(private readonly filterNameKey: keyof typeof FILTER_LOCALE_TEXT) {
         super();
@@ -167,7 +167,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         } else {
             // Always empty the buttons panel before adding new buttons
             _clearElement(this.eButtonsPanel);
-            this.buttonListeners.forEach((destroyFunc) => destroyFunc?.());
+            this.buttonListeners.forEach((destroyFunc) => destroyFunc());
             this.buttonListeners = [];
         }
 
@@ -225,7 +225,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                 </button>`
             );
 
-            this.buttonListeners.push(this.addManagedListener(button, 'click', clickListener));
+            this.buttonListeners.push(...this.addManagedElementListeners(button, { click: clickListener }));
             fragment.append(button);
         };
 

@@ -2,9 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { EventsType } from '../eventKeys';
 import type { ScrollVisibilityChangedEvent } from '../events';
-import { Events } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 
@@ -28,9 +26,9 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     private verticalScrollShowing: boolean;
 
     public postConstruct(): void {
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
-            [Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED]: this.onDisplayedColumnsWidthChanged.bind(this),
+        this.addManagedEventListeners({
+            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
+            displayedColumnsWidthChanged: this.onDisplayedColumnsWidthChanged.bind(this),
         });
     }
 
@@ -83,7 +81,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
             this.verticalScrollShowing = params.verticalScrollShowing;
 
             const event: WithoutGridCommon<ScrollVisibilityChangedEvent> = {
-                type: Events.EVENT_SCROLL_VISIBILITY_CHANGED,
+                type: 'scrollVisibilityChanged',
             };
             this.eventService.dispatchEvent(event);
         }

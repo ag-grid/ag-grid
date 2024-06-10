@@ -4,7 +4,6 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
-import { Events } from '../events';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { RowRenderer } from '../rendering/rowRenderer';
@@ -30,7 +29,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged.bind(this));
+        this.addManagedEventListeners({ cellValueChanged: this.onCellValueChanged.bind(this) });
     }
 
     private onCellValueChanged(event: CellValueChangedEvent): void {

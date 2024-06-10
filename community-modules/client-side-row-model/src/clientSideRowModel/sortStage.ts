@@ -17,7 +17,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
     private sortController: SortController;
 
     public wireBeans(beans: BeanCollection): void {
-        this.sortService = beans.sortService;
+        this.sortService = beans.sortService as SortService;
         this.sortController = beans.sortController;
     }
 

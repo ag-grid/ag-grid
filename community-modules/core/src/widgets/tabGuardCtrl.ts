@@ -100,7 +100,7 @@ export class TabGuardCtrl extends BeanStub {
         this.activateTabGuards();
 
         [this.eTopGuard, this.eBottomGuard].forEach((guard) =>
-            this.addManagedListener(guard, 'focus', this.onFocus.bind(this))
+            this.addManagedElementListeners(guard, { focus: this.onFocus.bind(this) })
         );
     }
 

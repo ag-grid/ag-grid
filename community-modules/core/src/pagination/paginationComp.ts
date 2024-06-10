@@ -1,6 +1,5 @@
 import { KeyCode } from '../constants/keyCode';
 import type { BeanCollection } from '../context/context';
-import { Events } from '../events';
 import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -96,11 +95,7 @@ export class PaginationComp extends Component {
 
     private setupListeners() {
         if (!this.areListenersSetup) {
-            this.addManagedListener(
-                this.eventService,
-                Events.EVENT_PAGINATION_CHANGED,
-                this.onPaginationChanged.bind(this)
-            );
+            this.addManagedEventListeners({ paginationChanged: this.onPaginationChanged.bind(this) });
 
             [
                 { el: this.btFirst, fn: this.onBtFirst.bind(this) },
@@ -109,12 +104,14 @@ export class PaginationComp extends Component {
                 { el: this.btLast, fn: this.onBtLast.bind(this) },
             ].forEach((item) => {
                 const { el, fn } = item;
-                this.addManagedListener(el, 'click', fn);
-                this.addManagedListener(el, 'keydown', (e: KeyboardEvent) => {
-                    if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
-                        e.preventDefault();
-                        fn();
-                    }
+                this.addManagedListeners(el, {
+                    click: fn,
+                    keydown: (e: KeyboardEvent) => {
+                        if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
+                            e.preventDefault();
+                            fn();
+                        }
+                    },
                 });
             });
             this.areListenersSetup = true;

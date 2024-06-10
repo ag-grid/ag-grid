@@ -8,7 +8,6 @@ import type {
     ChartOptionsChanged,
     ChartRangeSelectionChanged,
     ChartType,
-    EventsType,
     IAggFunc,
     IRangeService,
     PartialCellRange,
@@ -19,7 +18,7 @@ import type {
     UpdateRangeChartParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, Events } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 import type { AgCartesianAxisType, AgChartThemePalette } from 'ag-charts-community';
 import { _ModuleSupport, _Theme } from 'ag-charts-community';
 
@@ -38,19 +37,19 @@ import {
 
 export const DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
 
-export class ChartController extends BeanStub {
+export type ChartControllerEvent =
+    | 'chartUpdated'
+    | 'chartApiUpdate'
+    | 'chartModelUpdate'
+    | 'chartTypeChanged'
+    | 'chartSeriesChartTypeChanged'
+    | 'chartLinkedChanged';
+export class ChartController extends BeanStub<ChartControllerEvent> {
     private rangeService: IRangeService;
 
     public wireBeans(beans: BeanCollection) {
-        this.rangeService = beans.rangeService;
+        this.rangeService = beans.rangeService!;
     }
-
-    public static EVENT_CHART_UPDATED = 'chartUpdated';
-    public static EVENT_CHART_API_UPDATE = 'chartApiUpdate';
-    public static EVENT_CHART_MODEL_UPDATE = 'chartModelUpdate';
-    public static EVENT_CHART_TYPE_CHANGED = 'chartTypeChanged';
-    public static EVENT_CHART_SERIES_CHART_TYPE_CHANGED = 'chartSeriesChartTypeChanged';
-    public static EVENT_CHART_LINKED_CHANGED = 'chartLinkedChanged';
 
     private chartProxy: ChartProxy;
 
@@ -67,18 +66,18 @@ export class ChartController extends BeanStub {
             }
         }
         const listener = this.updateForGridChange.bind(this);
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_RANGE_SELECTION_CHANGED]: (event) => {
+        this.addManagedEventListeners({
+            rangeSelectionChanged: (event) => {
                 if (event.id && event.id === this.model.chartId) {
                     this.updateForRangeChange();
                 }
             },
-            [Events.EVENT_COLUMN_MOVED]: listener,
-            [Events.EVENT_COLUMN_PINNED]: listener,
-            [Events.EVENT_COLUMN_VISIBLE]: listener,
-            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: listener,
-            [Events.EVENT_MODEL_UPDATED]: listener,
-            [Events.EVENT_CELL_VALUE_CHANGED]: this.updateForDataChange.bind(this),
+            columnMoved: listener,
+            columnPinned: listener,
+            columnVisible: listener,
+            columnRowGroupChanged: listener,
+            modelUpdated: listener,
+            cellValueChanged: this.updateForDataChange.bind(this),
         });
     }
 
@@ -456,7 +455,7 @@ export class ChartController extends BeanStub {
             // update chart data may have changed
             this.updateForGridChange();
         }
-        this.dispatchEvent({ type: ChartController.EVENT_CHART_LINKED_CHANGED });
+        this.dispatchLocalEvent({ type: 'chartLinkedChanged' });
     }
 
     public setChartProxy(chartProxy: ChartProxy): void {
@@ -515,16 +514,16 @@ export class ChartController extends BeanStub {
             this.updateForDataChange();
 
             if (updateChartType) {
-                // update the settings panel by raising an EVENT_CHART_TYPE_CHANGED event
-                this.dispatchEvent({
-                    type: ChartController.EVENT_CHART_TYPE_CHANGED,
+                // update the settings panel by raising an 'chartTypeChanged' event
+                this.dispatchLocalEvent({
+                    type: 'chartTypeChanged',
                 });
             }
 
             if (prevSeriesChartType !== chartType) {
-                // update the format panel by raising an EVENT_CHART_SERIES_CHART_TYPE_CHANGED event
-                this.dispatchEvent({
-                    type: ChartController.EVENT_CHART_SERIES_CHART_TYPE_CHANGED,
+                // update the format panel by raising an chartSeriesChartTypeChanged event
+                this.dispatchLocalEvent({
+                    type: 'chartSeriesChartTypeChanged',
                 });
             }
 
@@ -635,33 +634,21 @@ export class ChartController extends BeanStub {
     }
 
     public raiseChartModelUpdateEvent(): void {
-        const event = {
-            type: ChartController.EVENT_CHART_MODEL_UPDATE,
-        };
-
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent({ type: 'chartModelUpdate' });
     }
 
     public raiseChartUpdatedEvent(): void {
-        const event = {
-            type: ChartController.EVENT_CHART_UPDATED,
-        };
-
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent({ type: 'chartUpdated' });
     }
 
     public raiseChartApiUpdateEvent(): void {
-        const event = {
-            type: ChartController.EVENT_CHART_API_UPDATE,
-        };
-
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent({ type: 'chartApiUpdate' });
     }
 
     private raiseChartOptionsChangedEvent(): void {
         const { chartId, chartType } = this.getChartModel();
         const event: WithoutGridCommon<ChartOptionsChanged> = {
-            type: Events.EVENT_CHART_OPTIONS_CHANGED,
+            type: 'chartOptionsChanged',
             chartId,
             chartType,
             chartThemeName: this.getChartThemeName(),
@@ -673,7 +660,7 @@ export class ChartController extends BeanStub {
 
     private raiseChartRangeSelectionChangedEvent(): void {
         const event: WithoutGridCommon<ChartRangeSelectionChanged> = {
-            type: Events.EVENT_CHART_RANGE_SELECTION_CHANGED,
+            type: 'chartRangeSelectionChanged',
             id: this.model.chartId,
             chartId: this.model.chartId,
             cellRange: this.getCellRangeParams(),

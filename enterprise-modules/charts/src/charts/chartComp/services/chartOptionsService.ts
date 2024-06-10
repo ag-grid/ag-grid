@@ -1,5 +1,5 @@
 import type { AgChartThemeOverrides, ChartOptionsChanged, ChartType, WithoutGridCommon } from '@ag-grid-community/core';
-import { BeanStub, Events } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 import type {
     AgBaseThemeableChartOptions,
     AgCartesianAxesTheme,
@@ -638,7 +638,7 @@ export class ChartOptionsService extends BeanStub {
         const chartModel = this.chartController.getChartModel();
 
         const event: WithoutGridCommon<ChartOptionsChanged> = {
-            type: Events.EVENT_CHART_OPTIONS_CHANGED,
+            type: 'chartOptionsChanged',
             chartId: chartModel.chartId,
             chartType: chartModel.chartType,
             chartThemeName: this.chartController.getChartThemeName(),

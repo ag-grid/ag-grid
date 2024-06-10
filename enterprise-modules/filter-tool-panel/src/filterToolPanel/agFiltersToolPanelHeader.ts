@@ -1,8 +1,7 @@
-import type { AgColumn, AgComponentSelector, BeanCollection, ColumnModel } from '@ag-grid-community/core';
+import type { AgColumn, AgComponentSelector, AgEvent, BeanCollection, ColumnModel } from '@ag-grid-community/core';
 import {
     AgInputTextField,
     Component,
-    Events,
     RefPlaceholder,
     _createIconNoSpan,
     _debounce,
@@ -16,8 +15,8 @@ export enum EXPAND_STATE {
     COLLAPSED,
     INDETERMINATE,
 }
-
-export class AgFiltersToolPanelHeader extends Component {
+export type AgFiltersToolPanelHeaderEvent = 'collapseAll' | 'expandAll' | 'searchChanged';
+export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeaderEvent> {
     private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection) {
@@ -58,8 +57,8 @@ export class AgFiltersToolPanelHeader extends Component {
 
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);
-        this.addManagedListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
+        this.addManagedElementListeners(this.eExpand, { click: this.onExpandClicked.bind(this) });
+        this.addManagedEventListeners({ newColumnsLoaded: this.showOrHideOptions.bind(this) });
     }
 
     public init(params: ToolPanelFiltersCompParams): void {
@@ -96,7 +95,7 @@ export class AgFiltersToolPanelHeader extends Component {
     private onSearchTextChanged(): void {
         if (!this.onSearchTextChangedDebounced) {
             this.onSearchTextChangedDebounced = _debounce(() => {
-                this.dispatchEvent({ type: 'searchChanged', searchText: this.eFilterTextField.getValue() });
+                this.dispatchLocalEvent({ type: 'searchChanged', searchText: this.eFilterTextField.getValue() });
             }, 300);
         }
 
@@ -104,9 +103,9 @@ export class AgFiltersToolPanelHeader extends Component {
     }
 
     private onExpandClicked(): void {
-        const event =
+        const event: AgEvent<AgFiltersToolPanelHeaderEvent> =
             this.currentExpandState === EXPAND_STATE.EXPANDED ? { type: 'collapseAll' } : { type: 'expandAll' };
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent(event);
     }
 
     public setExpandState(state: EXPAND_STATE): void {

@@ -19,7 +19,7 @@ export class LegendPanel extends Component {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
     private readonly legendGroup: AgGroupComponent = RefPlaceholder;
 
@@ -78,7 +78,7 @@ export class LegendPanel extends Component {
         registerGroupComponent(this.legendGroup);
     }
 
-    private getItems(chartMenuParamsFactory: ChartMenuParamsFactory): Component[] {
+    private getItems(chartMenuParamsFactory: ChartMenuParamsFactory): Component<any>[] {
         const createSlider = (expression: string, labelKey: ChartTranslationKey, defaultMaxValue: number) =>
             this.createManagedBean(
                 new AgSlider(

@@ -18,7 +18,7 @@ export class TitleEdit extends Component {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
 
     private static TEMPLATE /* html */ = `<textarea
@@ -37,18 +37,20 @@ export class TitleEdit extends Component {
     }
 
     public postConstruct(): void {
-        this.addManagedListener(this.getGui(), 'keydown', (e: KeyboardEvent) => {
-            if (this.editing && e.key === 'Enter' && !e.shiftKey) {
-                this.handleEndEditing();
-                e.preventDefault();
-            }
+        this.addManagedListeners(this.getGui(), {
+            keydown: (e: KeyboardEvent) => {
+                if (this.editing && e.key === 'Enter' && !e.shiftKey) {
+                    this.handleEndEditing();
+                    e.preventDefault();
+                }
+            },
+            input: () => {
+                if (this.editing) {
+                    this.updateHeight();
+                }
+            },
+            blur: () => this.endEditing(),
         });
-        this.addManagedListener(this.getGui(), 'input', () => {
-            if (this.editing) {
-                this.updateHeight();
-            }
-        });
-        this.addManagedListener(this.getGui(), 'blur', () => this.endEditing());
     }
 
     /* should be called when the containing component changes to a new chart proxy */
@@ -66,30 +68,29 @@ export class TitleEdit extends Component {
         const chart = chartProxy.getChart();
         const canvas = chart.canvasElement;
 
-        const destroyDbleClickListener = this.addManagedListener(canvas, 'dblclick', (event) => {
-            const { title } = chart;
-
-            if (title && title.node.containsPoint(event.offsetX, event.offsetY)) {
-                const bbox = title.node.computeBBox()!;
-                const xy = title.node.inverseTransformPoint(bbox.x, bbox.y);
-
-                this.startEditing({ ...bbox, ...xy }, canvas.width);
-            }
-        });
-
         let wasInTitle = false;
-        const destroyMouseMoveListener = this.addManagedListener(canvas, 'mousemove', (event) => {
-            const { title } = chart;
+        this.destroyableChartListeners = this.addManagedElementListeners(canvas, {
+            dblclick: (event: MouseEvent) => {
+                const { title } = chart;
 
-            const inTitle = !!(title && title.enabled && title.node.containsPoint(event.offsetX, event.offsetY));
-            if (wasInTitle !== inTitle) {
-                canvas.style.cursor = inTitle ? 'pointer' : '';
-            }
+                if (title && title.node.containsPoint(event.offsetX, event.offsetY)) {
+                    const bbox = title.node.computeBBox()!;
+                    const xy = title.node.inverseTransformPoint(bbox.x, bbox.y);
 
-            wasInTitle = inTitle;
+                    this.startEditing({ ...bbox, ...xy }, canvas.width);
+                }
+            },
+            mousemove: (event: MouseEvent) => {
+                const { title } = chart;
+
+                const inTitle = !!(title && title.enabled && title.node.containsPoint(event.offsetX, event.offsetY));
+                if (wasInTitle !== inTitle) {
+                    canvas.style.cursor = inTitle ? 'pointer' : '';
+                }
+
+                wasInTitle = inTitle;
+            },
         });
-
-        this.destroyableChartListeners = [destroyDbleClickListener!, destroyMouseMoveListener!];
     }
 
     private startEditing(titleBBox: BBox, canvasWidth: number): void {

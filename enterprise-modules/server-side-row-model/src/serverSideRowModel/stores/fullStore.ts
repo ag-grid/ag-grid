@@ -6,6 +6,7 @@ import type {
     IRowNode,
     ISelectionService,
     IServerSideStore,
+    IServerSideTransactionManager,
     IsApplyServerSideTransactionParams,
     LoadSuccessParams,
     PostSortRowsParams,
@@ -24,7 +25,6 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    Events,
     NumberSequence,
     RowNodeBlock,
     ServerSideTransactionResultStatus,
@@ -38,7 +38,6 @@ import {
 import type { BlockUtils } from '../blocks/blockUtils';
 import type { NodeManager } from '../nodeManager';
 import type { SSRMParams, ServerSideRowModel } from '../serverSideRowModel';
-import type { TransactionManager } from '../transactionManager';
 import type { StoreUtils } from './storeUtils';
 
 export class FullStore extends RowNodeBlock implements IServerSideStore {
@@ -51,20 +50,20 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private selectionService: ISelectionService;
     private nodeManager: NodeManager;
     private filterManager?: FilterManager;
-    private transactionManager: TransactionManager;
+    private transactionManager: IServerSideTransactionManager;
     private serverSideRowModel: ServerSideRowModel;
 
     public wireBeans(beans: BeanCollection) {
-        this.storeUtils = beans.ssrmStoreUtils;
-        this.blockUtils = beans.ssrmBlockUtils;
+        this.storeUtils = beans.ssrmStoreUtils as StoreUtils;
+        this.blockUtils = beans.ssrmBlockUtils as BlockUtils;
         this.funcColsService = beans.funcColsService;
         this.rowNodeBlockLoader = beans.rowNodeBlockLoader!;
         this.rowNodeSorter = beans.rowNodeSorter;
         this.sortController = beans.sortController;
         this.selectionService = beans.selectionService;
-        this.nodeManager = beans.ssrmNodeManager;
+        this.nodeManager = beans.ssrmNodeManager as NodeManager;
         this.filterManager = beans.filterManager;
-        this.transactionManager = beans.ssrmTransactionManager;
+        this.transactionManager = beans.ssrmTransactionManager!;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
     }
 
@@ -134,7 +133,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
         if (userInitialRowCount != null) {
             this.eventService.dispatchEventOnce({
-                type: Events.EVENT_ROW_COUNT_READY,
+                type: 'rowCountReady',
             });
         }
     }
@@ -276,7 +275,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
         if (this.level === 0) {
             this.eventService.dispatchEventOnce({
-                type: Events.EVENT_ROW_COUNT_READY,
+                type: 'rowCountReady',
             });
         }
 
@@ -645,7 +644,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             });
 
             const event: WithoutGridCommon<SelectionChangedEvent> = {
-                type: Events.EVENT_SELECTION_CHANGED,
+                type: 'selectionChanged',
                 source: 'rowDataChanged',
             };
             this.eventService.dispatchEvent(event);
@@ -810,7 +809,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         // this results in row model firing ModelUpdated.
         // server side row model also updates the row indexes first
         const event: WithoutGridCommon<StoreUpdatedEvent> = {
-            type: Events.EVENT_STORE_UPDATED,
+            type: 'storeUpdated',
         };
         this.eventService.dispatchEvent(event);
     }

@@ -2,7 +2,6 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import { Events } from '../eventKeys';
 import type { Logger } from '../logger';
 import { _getMaxDivHeight } from '../utils/browser';
 
@@ -46,7 +45,7 @@ export class RowContainerHeightService extends BeanStub implements NamedBean {
     private maxScrollY: number;
 
     public postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));
+        this.addManagedEventListeners({ bodyHeightChanged: this.updateOffset.bind(this) });
         this.maxDivHeight = _getMaxDivHeight();
         this.logger.log('maxDivHeight = ' + this.maxDivHeight);
     }
@@ -93,7 +92,7 @@ export class RowContainerHeightService extends BeanStub implements NamedBean {
     private setUiContainerHeight(height: number | null): void {
         if (height !== this.uiContainerHeight) {
             this.uiContainerHeight = height;
-            this.eventService.dispatchEvent({ type: Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED });
+            this.eventService.dispatchEvent({ type: 'rowContainerHeightChanged' });
         }
     }
 
@@ -111,7 +110,7 @@ export class RowContainerHeightService extends BeanStub implements NamedBean {
         }
 
         this.divStretchOffset = newOffsetFloor!;
-        this.eventService.dispatchEvent({ type: Events.EVENT_HEIGHT_SCALE_CHANGED });
+        this.eventService.dispatchEvent({ type: 'heightScaleChanged' });
     }
 
     public setModelHeight(modelHeight: number | null): void {

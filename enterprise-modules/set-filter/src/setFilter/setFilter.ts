@@ -20,7 +20,6 @@ import type {
 import {
     AgInputTextField,
     AgPromise,
-    Events,
     GROUP_AUTO_COLUMN_ID,
     KeyCode,
     ProvidedFilter,
@@ -67,7 +66,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     private valueModel: SetValueModel<V> | null = null;
     private setFilterParams: SetFilterParams<any, V> | null = null;
-    private virtualList: VirtualList | null = null;
+    private virtualList: VirtualList<any> | null = null;
     private caseSensitive: boolean = false;
     private treeDataTreeList = false;
     private getDataPath?: GetDataPath<any>;
@@ -341,7 +340,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             valueService: this.valueService,
             treeDataTreeList: this.treeDataTreeList,
             groupingTreeList: this.groupingTreeList,
-            addManagedListener: (event, listener) => this.addManagedListener(this.eventService, event, listener),
+            addManagedEventListeners: (handlers) => this.addManagedEventListeners(handlers),
         });
 
         this.initialiseFilterBodyUi();
@@ -450,11 +449,13 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             return;
         }
 
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, (event: CellValueChangedEvent) => {
-            // only interested in changes to do with this column
-            if (this.setFilterParams && event.column === this.setFilterParams.column) {
-                this.syncAfterDataChange();
-            }
+        this.addManagedEventListeners({
+            cellValueChanged: (event: CellValueChangedEvent) => {
+                // only interested in changes to do with this column
+                if (this.setFilterParams && event.column === this.setFilterParams.column) {
+                    this.syncAfterDataChange();
+                }
+            },
         });
 
         this.addManagedPropertyListeners(['treeData', 'getDataPath', 'groupAllowUnbalanced'], () => {
@@ -609,9 +610,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         };
         const listItem = this.createBean(new SetFilterListItem<V | string | null>(itemParams));
 
-        listItem.addEventListener(SetFilterListItem.EVENT_SELECTION_CHANGED, selectedListener as any);
+        listItem.addEventListener('selectionChanged', selectedListener as any);
         if (expandedListener) {
-            listItem.addEventListener(SetFilterListItem.EVENT_EXPANDED_CHANGED, expandedListener as any);
+            listItem.addEventListener('expandedChanged', expandedListener as any);
         }
 
         return listItem;
@@ -788,7 +789,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         eMiniFilter.onValueChange(() => this.onMiniFilterInput());
         eMiniFilter.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
 
-        this.addManagedListener(eMiniFilter.getInputElement(), 'keydown', (e) => this.onMiniFilterKeyDown(e));
+        this.addManagedElementListeners(eMiniFilter.getInputElement(), {
+            keydown: (e) => this.onMiniFilterKeyDown(e!),
+        });
     }
 
     private updateMiniFilter() {

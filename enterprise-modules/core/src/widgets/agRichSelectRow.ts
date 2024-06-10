@@ -11,11 +11,8 @@ import {
     _bindCellRendererToHtmlElement,
     _escapeString,
     _exists,
-    _setAriaActiveDescendant,
     _setAriaSelected,
 } from '@ag-grid-community/core';
-
-import type { VirtualList } from './virtualList';
 
 export class RichSelectRow<TValue> extends Component {
     private userComponentFactory: UserComponentFactory;
@@ -29,7 +26,6 @@ export class RichSelectRow<TValue> extends Component {
 
     constructor(
         private readonly params: RichSelectParams<TValue>,
-        private readonly wrapperEl: HTMLElement,
         private readonly isItemSelected: (value: TValue) => boolean
     ) {
         super(/* html */ `<div class="ag-rich-select-row" role="presentation"></div>`);
@@ -95,18 +91,7 @@ export class RichSelectRow<TValue> extends Component {
         return this.value;
     }
 
-    public updateHighlighted(highlighted: boolean): void {
-        const eGui = this.getGui();
-        const parentId = `ag-rich-select-row-${this.getCompId()}`;
-
-        eGui.parentElement?.setAttribute('id', parentId);
-
-        if (highlighted) {
-            const parentAriaEl = (this.getParentComponent() as VirtualList).getAriaElement();
-            _setAriaActiveDescendant(parentAriaEl, parentId);
-            this.wrapperEl.setAttribute('data-active-option', parentId);
-        }
-
+    public toggleHighlighted(highlighted: boolean): void {
         this.addOrRemoveCssClass('ag-rich-select-row-highlighted', highlighted);
     }
 

@@ -2,9 +2,8 @@ import type { BeanCollection } from '@ag-grid-community/core';
 
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { KeyCode } from '../../../constants/keyCode';
-import { AgColumn } from '../../../entities/agColumn';
+import type { AgColumn } from '../../../entities/agColumn';
 import type { ColumnEvent, FilterChangedEvent } from '../../../events';
-import { Events } from '../../../events';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { _setAriaLabel } from '../../../utils/aria';
 import { _isElementChildOfClass } from '../../../utils/dom';
@@ -26,8 +25,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     private iconCreated: boolean = false;
 
     private userCompDetails?: UserCompDetails | null;
-    private destroySyncListener: (() => null) | undefined;
-    private destroyFilterChangedListener: (() => null) | undefined;
+    private destroySyncListener: () => null;
+    private destroyFilterChangedListener: () => null;
 
     constructor(column: AgColumn, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
         super(column, beans, parentRowCtrl);
@@ -57,9 +56,9 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.setupSyncWithFilter();
         this.setupUi();
 
-        this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
+        this.addManagedElementListeners(this.eButtonShowMainFilter, { click: this.showParentFilter.bind(this) });
         this.setupFilterChangedListener();
-        this.addManagedListener(this.column, AgColumn.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
+        this.addManagedListeners(this.column, { colDefChanged: this.onColDefChanged.bind(this) });
     }
 
     // empty abstract method
@@ -234,7 +233,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             this.comp.addOrRemoveCssClass('ag-column-hover', hovered);
         };
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, listener);
+        this.addManagedEventListeners({ columnHoverChanged: listener });
         listener();
     }
 
@@ -301,7 +300,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
                         event
                             ? this.gos.addGridCommonParams<FilterChangedEvent>({
                                   columns: event.columns ?? [],
-                                  type: Events.EVENT_FILTER_CHANGED,
+                                  type: 'filterChanged',
                                   source: event.source === 'api' ? 'api' : 'columnFilter',
                               })
                             : null
@@ -310,7 +309,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             });
         };
 
-        this.destroySyncListener = this.addManagedListener(this.column, AgColumn.EVENT_FILTER_CHANGED, syncWithFilter);
+        [this.destroySyncListener] = this.addManagedListeners(this.column, { filterChanged: syncWithFilter });
 
         if (filterManager?.isFilterActive(this.column)) {
             syncWithFilter(null);
@@ -323,17 +322,15 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             this.comp.setWidth(width);
         };
 
-        this.addManagedListener(this.column, AgColumn.EVENT_WIDTH_CHANGED, listener);
+        this.addManagedListeners(this.column, { widthChanged: listener });
         listener();
     }
 
     private setupFilterChangedListener(): void {
         if (this.active) {
-            this.destroyFilterChangedListener = this.addManagedListener(
-                this.column,
-                AgColumn.EVENT_FILTER_CHANGED,
-                this.updateFilterButton.bind(this)
-            );
+            [this.destroyFilterChangedListener] = this.addManagedListeners(this.column, {
+                filterChanged: this.updateFilterButton.bind(this),
+            });
             this.updateFilterButton();
         }
     }
@@ -353,8 +350,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.setupActive();
         const becomeActive = !wasActive && this.active;
         if (wasActive && !this.active) {
-            this.destroySyncListener?.();
-            this.destroyFilterChangedListener?.();
+            this.destroySyncListener();
+            this.destroyFilterChangedListener();
         }
 
         const newCompDetails = this.active

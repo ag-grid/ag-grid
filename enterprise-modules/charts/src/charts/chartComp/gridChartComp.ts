@@ -15,7 +15,6 @@ import type {
 } from '@ag-grid-community/core';
 import {
     Component,
-    Events,
     RefPlaceholder,
     _clearElement,
     _getAbsoluteHeight,
@@ -85,9 +84,9 @@ export class GridChartComp extends Component {
     private popupService: PopupService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.crossFilterService = beans.chartCrossFilterService;
-        this.chartTranslationService = beans.chartTranslationService;
-        this.chartMenuService = beans.chartMenuService;
+        this.crossFilterService = beans.chartCrossFilterService as ChartCrossFilterService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
+        this.chartMenuService = beans.chartMenuService as ChartMenuService;
         this.focusService = beans.focusService;
         this.popupService = beans.popupService;
     }
@@ -157,8 +156,8 @@ export class GridChartComp extends Component {
         this.addMenu();
         this.addTitleEditComp();
 
-        this.addManagedListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATE, this.update.bind(this));
+        this.addManagedElementListeners(this.getGui(), { focusin: this.setActiveChartCellRange.bind(this) });
+        this.addManagedListeners(this.chartController, { chartModelUpdate: this.update.bind(this) });
 
         this.addManagedPropertyListeners(
             ['chartThemeOverrides', 'chartThemes'],
@@ -327,7 +326,7 @@ export class GridChartComp extends Component {
 
         this.createBean(this.chartDialog);
 
-        this.chartDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => {
+        this.chartDialog.addEventListener('destroyed', () => {
             this.destroy();
             this.chartMenuService.hideAdvancedSettings();
         });
@@ -597,7 +596,7 @@ export class GridChartComp extends Component {
 
     private raiseChartCreatedEvent(): void {
         const event: WithoutGridCommon<ChartCreated> = {
-            type: Events.EVENT_CHART_CREATED,
+            type: 'chartCreated',
             chartId: this.chartController.getChartId(),
         };
 
@@ -611,7 +610,7 @@ export class GridChartComp extends Component {
 
     private raiseChartDestroyedEvent(): void {
         const event: WithoutGridCommon<ChartDestroyed> = {
-            type: Events.EVENT_CHART_DESTROYED,
+            type: 'chartDestroyed',
             chartId: this.chartController.getChartId(),
         };
 

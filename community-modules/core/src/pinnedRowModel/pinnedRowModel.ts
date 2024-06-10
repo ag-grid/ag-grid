@@ -2,8 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import { RowNode } from '../entities/rowNode';
-import type { CssVariablesChanged, PinnedRowDataChangedEvent } from '../events';
-import { Events } from '../events';
+import type { CssVariablesChanged, PinnedHeightChangedEvent, PinnedRowDataChangedEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 import { _last } from '../utils/array';
@@ -26,11 +25,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         this.setPinnedBottomRowData();
         this.addManagedPropertyListener('pinnedTopRowData', () => this.setPinnedTopRowData());
         this.addManagedPropertyListener('pinnedBottomRowData', () => this.setPinnedBottomRowData());
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_GRID_STYLES_CHANGED,
-            this.onGridStylesChanges.bind(this)
-        );
+        this.addManagedEventListeners({ gridStylesChanged: this.onGridStylesChanges.bind(this) });
     }
 
     public isEmpty(floating: RowPinnedType): boolean {
@@ -85,8 +80,8 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         rowTop = 0;
         this.pinnedTopRows?.forEach(updateRowHeight);
 
-        const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
-            type: Events.EVENT_PINNED_HEIGHT_CHANGED,
+        const event: WithoutGridCommon<PinnedHeightChangedEvent> = {
+            type: 'pinnedHeightChanged',
         };
         this.eventService.dispatchEvent(event);
 
@@ -97,7 +92,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         const rowData = this.gos.get('pinnedTopRowData');
         this.pinnedTopRows = this.createNodesFromData(rowData, true);
         const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
-            type: Events.EVENT_PINNED_ROW_DATA_CHANGED,
+            type: 'pinnedRowDataChanged',
         };
         this.eventService.dispatchEvent(event);
     }
@@ -106,7 +101,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         const rowData = this.gos.get('pinnedBottomRowData');
         this.pinnedBottomRows = this.createNodesFromData(rowData, false);
         const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
-            type: Events.EVENT_PINNED_ROW_DATA_CHANGED,
+            type: 'pinnedRowDataChanged',
         };
         this.eventService.dispatchEvent(event);
     }

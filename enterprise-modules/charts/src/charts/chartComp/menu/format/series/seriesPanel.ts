@@ -6,7 +6,6 @@ import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
 
 import { AgColorPicker } from '../../../../../widgets/agColorPicker';
 import { AgSlider } from '../../../../../widgets/agSlider';
-import { ChartController } from '../../../chartController';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartSeriesType } from '../../../utils/seriesTypeMapper';
 import { getSeriesType, isPieChartSeries } from '../../../utils/seriesTypeMapper';
@@ -33,11 +32,11 @@ export class SeriesPanel extends Component {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
     private chartMenuUtils: ChartMenuParamsFactory;
 
-    private activePanels: Component[] = [];
+    private activePanels: Component<any>[] = [];
     private seriesType: ChartSeriesType;
 
     private readonly widgetFuncs = {
@@ -118,11 +117,7 @@ export class SeriesPanel extends Component {
             new ChartMenuParamsFactory(chartOptionsService.getSeriesOptionsProxy(() => this.seriesType))
         );
 
-        this.addManagedListener(
-            chartController,
-            ChartController.EVENT_CHART_SERIES_CHART_TYPE_CHANGED,
-            this.refreshWidgets.bind(this)
-        );
+        this.addManagedListeners(chartController, { chartSeriesChartTypeChanged: this.refreshWidgets.bind(this) });
 
         this.refreshWidgets();
     }
@@ -336,7 +331,7 @@ export class SeriesPanel extends Component {
         this.addWidget(tileSpacingPanelComp);
     }
 
-    private addWidget(widget: Component): void {
+    private addWidget(widget: Component<any>): void {
         this.seriesGroup.addItem(widget);
         this.activePanels.push(widget);
     }

@@ -12,7 +12,7 @@ export class AgAutocompleteList extends PopupComponent {
 
     private readonly eList: HTMLElement = RefPlaceholder;
 
-    private virtualList: VirtualList;
+    private virtualList: VirtualList<any>;
 
     private autocompleteEntries: AutocompleteEntry[];
 
@@ -49,9 +49,11 @@ export class AgAutocompleteList extends PopupComponent {
 
         const virtualListGui = this.virtualList.getGui();
 
-        this.addManagedListener(virtualListGui, 'click', () => this.params.onConfirmed());
-        this.addManagedListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
-        this.addManagedListener(virtualListGui, 'mousedown', (e) => e.preventDefault());
+        this.addManagedListeners(virtualListGui, {
+            click: () => this.params.onConfirmed(),
+            mousemove: this.onMouseMove.bind(this),
+            mousedown: (e) => e.preventDefault(),
+        });
 
         this.setSelectedValue(0);
     }

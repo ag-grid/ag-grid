@@ -1,16 +1,18 @@
 import type { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { _exists } from '../utils/generic';
 import { _isEventFromPrintableCharacter } from '../utils/keyboard';
+import type { AgAbstractInputFieldEvent } from './agAbstractInputField';
 import { AgAbstractInputField } from './agAbstractInputField';
 import type { AgComponentSelector } from './component';
 
 export interface AgInputTextFieldParams extends AgInputFieldParams {
     allowedCharPattern?: string;
 }
-
+export type AgInputTextFieldEvent = AgAbstractInputFieldEvent;
 export class AgInputTextField<
     TConfig extends AgInputTextFieldParams = AgInputTextFieldParams,
-> extends AgAbstractInputField<HTMLInputElement, string, TConfig> {
+    TEventType extends string = AgInputTextFieldEvent,
+> extends AgAbstractInputField<HTMLInputElement, string, TConfig, AgInputTextFieldEvent | TEventType> {
     static readonly selector: AgComponentSelector = 'AG-INPUT-TEXT-FIELD';
 
     constructor(config?: TConfig, className = 'ag-text-field', inputType = 'text') {
@@ -52,14 +54,15 @@ export class AgInputTextField<
             }
         };
 
-        this.addManagedListener(this.eInput, 'keydown', preventCharacters);
+        this.addManagedListeners(this.eInput, {
+            keydown: preventCharacters,
+            paste: (e: ClipboardEvent) => {
+                const text = e.clipboardData?.getData('text');
 
-        this.addManagedListener(this.eInput, 'paste', (e: ClipboardEvent) => {
-            const text = e.clipboardData?.getData('text');
-
-            if (text && text.split('').some((c: string) => !pattern.test(c))) {
-                e.preventDefault();
-            }
+                if (text && text.split('').some((c: string) => !pattern.test(c))) {
+                    e.preventDefault();
+                }
+            },
         });
     }
 }

@@ -9,7 +9,6 @@ import type {
 } from '@ag-grid-community/core';
 import {
     Component,
-    Events,
     _clearElement,
     _exists,
     _flatten,
@@ -26,12 +25,13 @@ import { ToolPanelFilterComp } from './toolPanelFilterComp';
 import type { ToolPanelFilterItem } from './toolPanelFilterGroupComp';
 import { ToolPanelFilterGroupComp } from './toolPanelFilterGroupComp';
 
-export class AgFiltersToolPanelList extends Component {
+export type AgFiltersToolPanelListEvent = 'filterExpanded' | 'groupExpanded';
+export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEvent> {
     private toolPanelColDefService: ToolPanelColDefService;
     private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection) {
-        this.toolPanelColDefService = beans.toolPanelColDefService;
+        this.toolPanelColDefService = beans.toolPanelColDefService as ToolPanelColDefService;
         this.columnModel = beans.columnModel;
     }
 
@@ -69,28 +69,28 @@ export class AgFiltersToolPanelList extends Component {
         this.params = defaultParams as ToolPanelFiltersCompParams;
 
         if (!this.params.suppressSyncLayoutWithGrid) {
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => this.onColumnsChanged());
+            this.addManagedEventListeners({ columnMoved: () => this.onColumnsChanged() });
         }
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
-
-        this.addManagedListener(this.eventService, Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, (event) => {
-            // when re-entering the filters tool panel we need to refresh the virtual lists in the set filters in case
-            // filters have been changed elsewhere, i.e. via an api call.
-            if (event.key === 'filters') {
-                this.refreshFilters(event.visible);
-            }
-        });
-
-        this.addManagedListener(this.eventService, Events.EVENT_DRAG_STARTED, () => {
-            this.suppressOnColumnsChanged = true;
-        });
-        this.addManagedListener(this.eventService, Events.EVENT_DRAG_STOPPED, () => {
-            this.suppressOnColumnsChanged = false;
-            if (this.onColumnsChangedPending) {
-                this.onColumnsChangedPending = false;
-                this.onColumnsChanged();
-            }
+        this.addManagedEventListeners({
+            newColumnsLoaded: () => this.onColumnsChanged(),
+            toolPanelVisibleChanged: (event) => {
+                // when re-entering the filters tool panel we need to refresh the virtual lists in the set filters in case
+                // filters have been changed elsewhere, i.e. via an api call.
+                if (event.key === 'filters') {
+                    this.refreshFilters(event.visible);
+                }
+            },
+            dragStarted: () => {
+                this.suppressOnColumnsChanged = true;
+            },
+            dragStopped: () => {
+                this.suppressOnColumnsChanged = false;
+                if (this.onColumnsChangedPending) {
+                    this.onColumnsChangedPending = false;
+                    this.onColumnsChanged();
+                }
+            },
         });
 
         if (this.columnModel.isReady()) {
@@ -407,7 +407,7 @@ export class AgFiltersToolPanelList extends Component {
     }
 
     private onFilterExpanded(): void {
-        this.dispatchEvent({ type: 'filterExpanded' });
+        this.dispatchLocalEvent({ type: 'filterExpanded' });
     }
 
     private fireExpandedEvent(): void {
@@ -439,7 +439,7 @@ export class AgFiltersToolPanelList extends Component {
             state = EXPAND_STATE.EXPANDED;
         }
 
-        this.dispatchEvent({ type: 'groupExpanded', state: state });
+        this.dispatchLocalEvent({ type: 'groupExpanded', state: state });
     }
 
     public performFilterSearch(searchText: string) {

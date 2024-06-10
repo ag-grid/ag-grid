@@ -55,7 +55,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         this.funcColsService = beans.funcColsService;
         this.focusService = beans.focusService;
         this.rowPositionUtils = beans.rowPositionUtils;
-        this.chartMenuItemMapper = beans.chartMenuItemMapper;
+        this.chartMenuItemMapper = beans.chartMenuItemMapper as ChartMenuItemMapper;
         this.menuService = beans.menuService;
         this.sortController = beans.sortController;
         this.columnAutosizeService = beans.columnAutosizeService;

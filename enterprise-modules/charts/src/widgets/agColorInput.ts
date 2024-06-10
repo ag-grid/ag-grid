@@ -1,10 +1,11 @@
-import type { AgComponentSelector, BeanCollection } from '@ag-grid-community/core';
+import type { AgComponentSelector, AgInputTextFieldParams, BeanCollection } from '@ag-grid-community/core';
 import { AgInputTextField, RefPlaceholder } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
 
 import type { ChartTranslationService } from '../charts/chartComp/services/chartTranslationService';
 
-export class AgColorInput extends AgInputTextField {
+export type AgColorInputEvent = 'colorChanged';
+export class AgColorInput extends AgInputTextField<AgInputTextFieldParams, AgColorInputEvent> {
     static override selector: AgComponentSelector = 'AG-COLOR-INPUT';
     private static TEMPLATE = /* html */ `
         <div role="presentation" class="ag-color-input">
@@ -18,7 +19,7 @@ export class AgColorInput extends AgInputTextField {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
     private readonly eColor: HTMLElement = RefPlaceholder;
 
@@ -37,12 +38,12 @@ export class AgColorInput extends AgInputTextField {
         this.eInput.setCustomValidity(isValid ? '' : this.chartTranslationService.translate('invalidColor'));
         super.setValue(value, silent);
         if (isValid && !silent) {
-            this.dispatchEvent({ type: 'colorChanged' });
+            this.dispatchLocalEvent({ type: 'colorChanged' });
         }
         return this;
     }
 
     public onColorChanged(callback: (color: _Util.Color) => void): void {
-        this.addManagedListener(this, 'colorChanged', () => callback(_Util.Color.fromString(this.value!)));
+        this.addManagedListeners(this, { colorChanged: () => callback(_Util.Color.fromString(this.value!)) });
     }
 }

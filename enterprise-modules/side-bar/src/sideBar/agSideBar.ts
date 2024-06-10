@@ -14,7 +14,6 @@ import type {
 } from '@ag-grid-community/core';
 import {
     Component,
-    Events,
     KeyCode,
     ManagedFocusFeature,
     ModuleNames,
@@ -39,7 +38,7 @@ export class AgSideBar extends Component implements ISideBar {
     public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
         this.filterManager = beans.filterManager;
-        this.sideBarService = beans.sideBarService;
+        this.sideBarService = beans.sideBarService as SideBarService;
     }
 
     static readonly selector: AgComponentSelector = 'AG-SIDE-BAR';
@@ -58,10 +57,7 @@ export class AgSideBar extends Component implements ISideBar {
     }
 
     public postConstruct(): void {
-        this.sideBarButtons.addEventListener(
-            AgSideBarButtons.EVENT_SIDE_BAR_BUTTON_CLICKED,
-            this.onToolPanelButtonClicked.bind(this)
-        );
+        this.sideBarButtons.addEventListener('sideBarButtonClicked', this.onToolPanelButtonClicked.bind(this));
         const { sideBar: sideBarState } = this.gos.get('initialState') ?? {};
         this.setSideBarDef({
             sideBarDef: SideBarDefParser.parse(this.gos.get('sideBar')),
@@ -238,7 +234,7 @@ export class AgSideBar extends Component implements ISideBar {
             wrapper.setResizerSizerSide(resizerSide);
         });
 
-        this.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED });
+        this.eventService.dispatchEvent({ type: 'sideBarUpdated' });
 
         return this;
     }
@@ -248,7 +244,7 @@ export class AgSideBar extends Component implements ISideBar {
         options?: { skipAriaHidden?: boolean | undefined } | undefined
     ): void {
         super.setDisplayed(displayed, options);
-        this.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED });
+        this.eventService.dispatchEvent({ type: 'sideBarUpdated' });
     }
 
     public getState(): SideBarState {
@@ -335,7 +331,7 @@ export class AgSideBar extends Component implements ISideBar {
 
             wrapper.setToolPanelDef(def, {
                 initialState,
-                onStateUpdated: () => this.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED }),
+                onStateUpdated: () => this.eventService.dispatchEvent({ type: 'sideBarUpdated' }),
             });
         }
         wrapper.setDisplayed(false);
@@ -393,7 +389,7 @@ export class AgSideBar extends Component implements ISideBar {
         const switchingToolPanel = !!key && !!previousKey;
         if (previousKey) {
             const event: WithoutGridCommon<ToolPanelVisibleChangedEvent> = {
-                type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
+                type: 'toolPanelVisibleChanged',
                 source,
                 key: previousKey,
                 visible: false,
@@ -403,7 +399,7 @@ export class AgSideBar extends Component implements ISideBar {
         }
         if (key) {
             const event: WithoutGridCommon<ToolPanelVisibleChangedEvent> = {
-                type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
+                type: 'toolPanelVisibleChanged',
                 source,
                 key,
                 visible: true,
@@ -453,7 +449,7 @@ export class AgSideBar extends Component implements ISideBar {
                 }
                 const params = this.gos.addGridCommonParams<IToolPanelParams>({
                     ...(toolPanelDef.toolPanelParams ?? {}),
-                    onStateUpdated: () => this.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED }),
+                    onStateUpdated: () => this.eventService.dispatchEvent({ type: 'sideBarUpdated' }),
                 });
                 const hasRefreshed = toolPanelWrapper.getToolPanelInstance()?.refresh(params);
                 if (hasRefreshed !== true) {

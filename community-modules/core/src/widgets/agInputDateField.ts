@@ -18,18 +18,18 @@ export class AgInputDateField extends AgInputTextField {
     public override postConstruct() {
         super.postConstruct();
 
-        this.addManagedListener(this.eInput, 'wheel', this.onWheel.bind(this));
-
         // ensures that the input element is focussed when a clear button is clicked,
         // unless using safari as there is no clear button and focus does not work properly
         const usingSafari = _isBrowserSafari();
-        this.addManagedListener(this.eInput, 'mousedown', () => {
-            if (this.isDisabled() || usingSafari) {
-                return;
-            }
-            this.eInput.focus();
+        this.addManagedListeners(this.eInput, {
+            wheel: this.onWheel.bind(this),
+            mousedown: () => {
+                if (this.isDisabled() || usingSafari) {
+                    return;
+                }
+                this.eInput.focus();
+            },
         });
-
         this.eInput.step = 'any';
     }
 

@@ -3,7 +3,6 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import { DragAndDropService, DragSourceType } from '../dragAndDrop/dragAndDropService';
-import { Events } from '../eventKeys';
 import type { GridSizeChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
@@ -103,7 +102,7 @@ export class GridCtrl extends BeanStub {
     private onGridSizeChanged(): void {
         this.applyDefaultHeight();
         const event: WithoutGridCommon<GridSizeChangedEvent> = {
-            type: Events.EVENT_GRID_SIZE_CHANGED,
+            type: 'gridSizeChanged',
             clientWidth: this.eGridHostDiv.clientWidth,
             clientHeight: this.eGridHostDiv.clientHeight,
         };

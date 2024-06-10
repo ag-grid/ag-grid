@@ -1,10 +1,11 @@
 import { _setAriaRole } from '../utils/aria';
 import { _clearElement, _isNodeOrElement } from '../utils/dom';
+import type { ComponentEvent } from './component';
 import { Component } from './component';
 import type { ITabGuard } from './tabGuardCtrl';
 import { TabGuardClassNames, TabGuardCtrl } from './tabGuardCtrl';
 
-export class TabGuardComp extends Component {
+export class TabGuardComp<TLocalEvent extends string = ComponentEvent> extends Component<TLocalEvent> {
     private eTopGuard: HTMLElement;
     private eBottomGuard: HTMLElement;
     private eFocusableElement: HTMLElement;

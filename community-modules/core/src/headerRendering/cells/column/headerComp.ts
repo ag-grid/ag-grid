@@ -1,9 +1,7 @@
 import type { FuncColsService } from '../../../columns/funcColsService';
 import type { BeanCollection } from '../../../context/context';
-import { AgColumn } from '../../../entities/agColumn';
+import type { AgColumn } from '../../../entities/agColumn';
 import type { SortDirection } from '../../../entities/colDef';
-import { Events } from '../../../eventKeys';
-import type { EventsType } from '../../../eventKeys';
 import type { Column } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { IComponent } from '../../../interfaces/iComponent';
@@ -14,7 +12,7 @@ import { _exists } from '../../../utils/generic';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _escapeString } from '../../../utils/string';
 import { Component, RefPlaceholder } from '../../../widgets/component';
-import type { LongTapEvent, TapEvent } from '../../../widgets/touchListener';
+import type { LongTapEvent, TapEvent, TouchListenerEvent } from '../../../widgets/touchListener';
 import { TouchListener } from '../../../widgets/touchListener';
 import { SortIndicatorComp } from './sortIndicatorComp';
 
@@ -231,10 +229,10 @@ export class HeaderComp extends Component implements IHeaderComp {
         const menuTouchListener = tapMenuButton ? new TouchListener(this.eMenu!, true) : touchListener;
 
         if (this.params.enableMenu) {
-            const eventType = tapMenuButton ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
+            const eventType: TouchListenerEvent = tapMenuButton ? 'tap' : 'longTap';
             const showMenuFn = (event: TapEvent | LongTapEvent) =>
                 this.params.showColumnMenuAfterMouseClick(event.touchStart);
-            this.addManagedListener(menuTouchListener, TouchListener[eventType], showMenuFn);
+            this.addManagedListeners(menuTouchListener, { [eventType]: showMenuFn });
         }
 
         if (this.params.enableSorting) {
@@ -249,14 +247,14 @@ export class HeaderComp extends Component implements IHeaderComp {
                 this.sortController.progressSort(this.params.column as AgColumn, false, 'uiColumnSorted');
             };
 
-            this.addManagedListener(touchListener, TouchListener.EVENT_TAP, tapListener);
+            this.addManagedListeners(touchListener, { tap: tapListener });
         }
 
         if (this.params.enableFilterButton) {
             const filterButtonTouchListener = new TouchListener(this.eFilterButton!, true);
-            this.addManagedListener(filterButtonTouchListener, 'tap', () =>
-                this.params.showFilter(this.eFilterButton!)
-            );
+            this.addManagedListeners(filterButtonTouchListener, {
+                tap: () => this.params.showFilter(this.eFilterButton!),
+            });
             this.addDestroyFunc(() => filterButtonTouchListener.destroy());
         }
 
@@ -295,7 +293,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.eMenu.classList.toggle('ag-header-menu-icon', !isLegacyMenu);
 
         this.currentSuppressMenuHide = this.shouldSuppressMenuHide();
-        this.addManagedListener(this.eMenu, 'click', () => this.params.showColumnMenu(this.eMenu!));
+        this.addManagedElementListeners(this.eMenu, { click: () => this.params.showColumnMenu(this.eMenu!) });
         this.eMenu.classList.toggle('ag-header-menu-always-show', this.currentSuppressMenuHide);
     }
 
@@ -344,27 +342,31 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
 
         // keep track of last time the moving changed flag was set
-        this.addManagedListener(this.params.column, AgColumn.EVENT_MOVING_CHANGED, () => {
-            this.lastMovingChanged = new Date().getTime();
+        this.addManagedListeners(this.params.column, {
+            movingChanged: () => {
+                this.lastMovingChanged = new Date().getTime();
+            },
         });
 
         // add the event on the header, so when clicked, we do sorting
         if (this.eLabel) {
-            this.addManagedListener(this.eLabel, 'click', (event: MouseEvent) => {
-                // sometimes when moving a column via dragging, this was also firing a clicked event.
-                // here is issue raised by user: https://ag-grid.zendesk.com/agent/tickets/1076
-                // this check stops sort if a) column is moving or b) column moved less than 200ms ago (so caters for race condition)
-                const moving = this.params.column.isMoving();
-                const nowTime = new Date().getTime();
-                // typically there is <2ms if moving flag was set recently, as it would be done in same VM turn
-                const movedRecently = nowTime - this.lastMovingChanged < 50;
-                const columnMoving = moving || movedRecently;
+            this.addManagedElementListeners(this.eLabel, {
+                click: (event: MouseEvent) => {
+                    // sometimes when moving a column via dragging, this was also firing a clicked event.
+                    // here is issue raised by user: https://ag-grid.zendesk.com/agent/tickets/1076
+                    // this check stops sort if a) column is moving or b) column moved less than 200ms ago (so caters for race condition)
+                    const moving = this.params.column.isMoving();
+                    const nowTime = new Date().getTime();
+                    // typically there is <2ms if moving flag was set recently, as it would be done in same VM turn
+                    const movedRecently = nowTime - this.lastMovingChanged < 50;
+                    const columnMoving = moving || movedRecently;
 
-                if (!columnMoving) {
-                    const sortUsingCtrl = this.gos.get('multiSortKey') === 'ctrl';
-                    const multiSort = sortUsingCtrl ? event.ctrlKey || event.metaKey : event.shiftKey;
-                    this.params.progressSort(multiSort);
-                }
+                    if (!columnMoving) {
+                        const sortUsingCtrl = this.gos.get('multiSortKey') === 'ctrl';
+                        const multiSort = sortUsingCtrl ? event.ctrlKey || event.metaKey : event.shiftKey;
+                        this.params.progressSort(multiSort);
+                    }
+                },
             });
         }
 
@@ -386,9 +388,9 @@ export class HeaderComp extends Component implements IHeaderComp {
                 this.addOrRemoveCssClass('ag-header-cell-sorted-mixed', isMultiSorting);
             }
         };
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_SORT_CHANGED]: onSortingChanged,
-            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: onSortingChanged,
+        this.addManagedEventListeners({
+            sortChanged: onSortingChanged,
+            columnRowGroupChanged: onSortingChanged,
         });
     }
 
@@ -409,7 +411,9 @@ export class HeaderComp extends Component implements IHeaderComp {
             this.onFilterChangedButton.bind(this)
         );
         if (configured) {
-            this.addManagedListener(this.eFilterButton, 'click', () => this.params.showFilter(this.eFilterButton!));
+            this.addManagedElementListeners(this.eFilterButton, {
+                click: () => this.params.showFilter(this.eFilterButton!),
+            });
         } else {
             this.eFilterButton = undefined;
         }
@@ -424,7 +428,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         const column = this.params.column as AgColumn;
         this.addInIcon('filter', element, column);
 
-        this.addManagedListener(column, AgColumn.EVENT_FILTER_CHANGED, filterChangedCallback);
+        this.addManagedListeners(column, { filterChanged: filterChangedCallback });
         filterChangedCallback();
         return true;
     }

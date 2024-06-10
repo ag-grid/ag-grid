@@ -6,8 +6,6 @@ import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import type { CellPosition, CellPositionUtils } from '../entities/cellPositionUtils';
 import type { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
-import { Events } from '../eventKeys';
-import type { EventsType } from '../eventKeys';
 import type {
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
@@ -72,30 +70,26 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         this.undoStack = new UndoRedoStack(undoRedoLimit);
         this.redoStack = new UndoRedoStack(undoRedoLimit);
 
-        this.addRowEditingListeners();
-        this.addCellEditingListeners();
-        this.addPasteListeners();
-        this.addFillListeners();
-        this.addCellKeyListeners();
+        this.addListeners();
 
         const listener = this.clearStacks.bind(this);
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_CELL_VALUE_CHANGED]: this.onCellValueChanged.bind(this),
+        this.addManagedEventListeners({
+            cellValueChanged: this.onCellValueChanged.bind(this),
             // undo / redo is restricted to actual editing so we clear the stacks when other operations are
             // performed that change the order of the row / cols.
-            [Events.EVENT_MODEL_UPDATED]: (e) => {
+            modelUpdated: (e) => {
                 if (!e.keepUndoRedoStack) {
                     this.clearStacks();
                 }
             },
-            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: listener,
-            [Events.EVENT_NEW_COLUMNS_LOADED]: listener,
-            [Events.EVENT_COLUMN_GROUP_OPENED]: listener,
-            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: listener,
-            [Events.EVENT_COLUMN_MOVED]: listener,
-            [Events.EVENT_COLUMN_PINNED]: listener,
-            [Events.EVENT_COLUMN_VISIBLE]: listener,
-            [Events.EVENT_ROW_DRAG_END]: listener,
+            columnPivotModeChanged: listener,
+            newColumnsLoaded: listener,
+            columnGroupOpened: listener,
+            columnRowGroupChanged: listener,
+            columnMoved: listener,
+            columnPinned: listener,
+            columnVisible: listener,
+            rowDragEnd: listener,
         });
 
         this.ctrlsService.whenReady((p) => {
@@ -144,7 +138,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
 
     public undo(source: 'api' | 'ui'): void {
         const startEvent: WithoutGridCommon<UndoStartedEvent> = {
-            type: Events.EVENT_UNDO_STARTED,
+            type: 'undoStarted',
             source,
         };
         this.eventService.dispatchEvent(startEvent);
@@ -152,7 +146,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         const operationPerformed = this.undoRedo(this.undoStack, this.redoStack, 'initialRange', 'oldValue', 'undo');
 
         const endEvent: WithoutGridCommon<UndoEndedEvent> = {
-            type: Events.EVENT_UNDO_ENDED,
+            type: 'undoEnded',
             source,
             operationPerformed,
         };
@@ -161,7 +155,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
 
     public redo(source: 'api' | 'ui'): void {
         const startEvent: WithoutGridCommon<RedoStartedEvent> = {
-            type: Events.EVENT_REDO_STARTED,
+            type: 'redoStarted',
             source,
         };
         this.eventService.dispatchEvent(startEvent);
@@ -169,7 +163,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         const operationPerformed = this.undoRedo(this.redoStack, this.undoStack, 'finalRange', 'newValue', 'redo');
 
         const endEvent: WithoutGridCommon<RedoEndedEvent> = {
-            type: Events.EVENT_REDO_ENDED,
+            type: 'redoEnded',
             source,
             operationPerformed,
         };
@@ -301,75 +295,61 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         rangeService?.setRangeToCell(cellPosition);
     }
 
-    private addRowEditingListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_EDITING_STARTED, (e: RowEditingStartedEvent) => {
-            this.activeRowEdit = { rowIndex: e.rowIndex!, rowPinned: e.rowPinned };
-        });
-
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_EDITING_STOPPED, () => {
-            const action = new UndoRedoAction(this.cellValueChanges);
-            this.pushActionsToUndoStack(action);
-            this.activeRowEdit = null;
-        });
-    }
-
-    private addCellEditingListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_EDITING_STARTED, (e: CellEditingStartedEvent) => {
-            this.activeCellEdit = { column: e.column, rowIndex: e.rowIndex!, rowPinned: e.rowPinned };
-        });
-
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_EDITING_STOPPED, (e: CellEditingStoppedEvent) => {
-            this.activeCellEdit = null;
-
-            const shouldPushAction = e.valueChanged && !this.activeRowEdit && !this.isPasting && !this.isRangeInAction;
-
-            if (shouldPushAction) {
+    private addListeners(): void {
+        this.addManagedEventListeners({
+            rowEditingStarted: (e: RowEditingStartedEvent) => {
+                this.activeRowEdit = { rowIndex: e.rowIndex!, rowPinned: e.rowPinned };
+            },
+            rowEditingStopped: () => {
                 const action = new UndoRedoAction(this.cellValueChanges);
                 this.pushActionsToUndoStack(action);
-            }
-        });
-    }
+                this.activeRowEdit = null;
+            },
+            cellEditingStarted: (e: CellEditingStartedEvent) => {
+                this.activeCellEdit = { column: e.column, rowIndex: e.rowIndex!, rowPinned: e.rowPinned };
+            },
+            cellEditingStopped: (e: CellEditingStoppedEvent) => {
+                this.activeCellEdit = null;
 
-    private addPasteListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_PASTE_START, () => {
-            this.isPasting = true;
-        });
+                const shouldPushAction =
+                    e.valueChanged && !this.activeRowEdit && !this.isPasting && !this.isRangeInAction;
 
-        this.addManagedListener(this.eventService, Events.EVENT_PASTE_END, () => {
-            const action = new UndoRedoAction(this.cellValueChanges);
-            this.pushActionsToUndoStack(action);
-            this.isPasting = false;
-        });
-    }
-
-    private addFillListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_FILL_START, () => {
-            this.isRangeInAction = true;
-        });
-
-        this.addManagedListener(this.eventService, Events.EVENT_FILL_END, (event: FillEndEvent) => {
-            const action = new RangeUndoRedoAction(this.cellValueChanges, event.initialRange, event.finalRange);
-            this.pushActionsToUndoStack(action);
-            this.isRangeInAction = false;
-        });
-    }
-
-    private addCellKeyListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START, () => {
-            this.isRangeInAction = true;
-        });
-
-        this.addManagedListener(this.eventService, Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END, () => {
-            let action: UndoRedoAction;
-            if (this.rangeService && this.gos.get('enableRangeSelection')) {
-                action = new RangeUndoRedoAction(this.cellValueChanges, undefined, undefined, [
-                    ...this.rangeService.getCellRanges(),
-                ]);
-            } else {
-                action = new UndoRedoAction(this.cellValueChanges);
-            }
-            this.pushActionsToUndoStack(action);
-            this.isRangeInAction = false;
+                if (shouldPushAction) {
+                    const action = new UndoRedoAction(this.cellValueChanges);
+                    this.pushActionsToUndoStack(action);
+                }
+            },
+            pasteStart: () => {
+                this.isPasting = true;
+            },
+            pasteEnd: () => {
+                const action = new UndoRedoAction(this.cellValueChanges);
+                this.pushActionsToUndoStack(action);
+                this.isPasting = false;
+            },
+            fillStart: () => {
+                this.isRangeInAction = true;
+            },
+            fillEnd: (event: FillEndEvent) => {
+                const action = new RangeUndoRedoAction(this.cellValueChanges, event.initialRange, event.finalRange);
+                this.pushActionsToUndoStack(action);
+                this.isRangeInAction = false;
+            },
+            keyShortcutChangedCellStart: () => {
+                this.isRangeInAction = true;
+            },
+            keyShortcutChangedCellEnd: () => {
+                let action: UndoRedoAction;
+                if (this.rangeService && this.gos.get('enableRangeSelection')) {
+                    action = new RangeUndoRedoAction(this.cellValueChanges, undefined, undefined, [
+                        ...this.rangeService.getCellRanges(),
+                    ]);
+                } else {
+                    action = new UndoRedoAction(this.cellValueChanges);
+                }
+                this.pushActionsToUndoStack(action);
+                this.isRangeInAction = false;
+            },
         });
     }
 

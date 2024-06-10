@@ -39,13 +39,13 @@ export class LazyCache extends BeanStub {
 
     public wireBeans(beans: BeanCollection) {
         this.rowRenderer = beans.rowRenderer;
-        this.blockUtils = beans.ssrmBlockUtils;
+        this.blockUtils = beans.ssrmBlockUtils as BlockUtils;
         this.focusService = beans.focusService;
-        this.nodeManager = beans.ssrmNodeManager;
+        this.nodeManager = beans.ssrmNodeManager as NodeManager;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.rowNodeSorter = beans.rowNodeSorter;
         this.sortController = beans.sortController;
-        this.lazyBlockLoadingService = beans.lazyBlockLoadingService;
+        this.lazyBlockLoadingService = beans.lazyBlockLoadingService as LazyBlockLoadingService;
     }
 
     /**

@@ -1,20 +1,19 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { DataTypeService } from '../columns/dataTypeService';
 import { FilterComponent } from '../components/framework/componentTypes';
+import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import type { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
-import { AgColumn } from '../entities/agColumn';
+import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import { Events, type EventsType } from '../eventKeys';
 import type {
     ColumnEventType,
     FilterChangedEventSourceType,
     FilterDestroyedEvent,
     FilterModifiedEvent,
 } from '../events';
-import { unwrapUserComp } from '../gridApi';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -69,10 +68,10 @@ export class ColumnFilterService extends BeanStub {
     private initialFilterModel: FilterModel;
 
     public postConstruct(): void {
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_GRID_COLUMNS_CHANGED]: this.onColumnsChanged.bind(this),
-            [Events.EVENT_ROW_DATA_UPDATED]: () => this.onNewRowsLoaded('rowDataUpdated'),
-            [Events.EVENT_DATA_TYPES_INFERRED]: this.processFilterModelUpdateQueue.bind(this),
+        this.addManagedEventListeners({
+            gridColumnsChanged: this.onColumnsChanged.bind(this),
+            rowDataUpdated: () => this.onNewRowsLoaded('rowDataUpdated'),
+            dataTypesInferred: this.processFilterModelUpdateQueue.bind(this),
         });
 
         this.initialFilterModel = {
@@ -593,7 +592,7 @@ export class ColumnFilterService extends BeanStub {
             }
 
             filterComponent.then((instance) => {
-                callback(unwrapUserComp(instance!));
+                callback(_unwrapUserComp(instance!));
             });
         };
 
@@ -676,7 +675,7 @@ export class ColumnFilterService extends BeanStub {
             this.allColumnFilters.delete(filterWrapper.column.getColId());
 
             const event: WithoutGridCommon<FilterDestroyedEvent> = {
-                type: Events.EVENT_FILTER_DESTROYED,
+                type: 'filterDestroyed',
                 source,
                 column: filterWrapper.column,
             };
@@ -687,7 +686,7 @@ export class ColumnFilterService extends BeanStub {
     private filterModifiedCallbackFactory(filter: IFilterComp<any>, column: AgColumn<any>) {
         return () => {
             const event: WithoutGridCommon<FilterModifiedEvent> = {
-                type: Events.EVENT_FILTER_MODIFIED,
+                type: 'filterModified',
                 column,
                 filterInstance: filter,
             };
@@ -758,7 +757,7 @@ export class ColumnFilterService extends BeanStub {
         this.allColumnFilters.set(colId, filterWrapper);
         this.allColumnListeners.set(
             colId,
-            this.addManagedListener(column, AgColumn.EVENT_COL_DEF_CHANGED, () => this.checkDestroyFilter(colId))
+            this.addManagedListeners(column, { colDefChanged: () => this.checkDestroyFilter(colId) })[0]
         );
     }
 
@@ -793,10 +792,10 @@ export class ColumnFilterService extends BeanStub {
             if (!callback) {
                 return;
             }
-            const unwrapped = unwrapUserComp(instance) as any;
+            const unwrapped = _unwrapUserComp(instance) as any;
             callback(unwrapped);
         });
-        const unwrapped = unwrapUserComp(res);
+        const unwrapped = _unwrapUserComp(res);
         return unwrapped as any;
     }
 

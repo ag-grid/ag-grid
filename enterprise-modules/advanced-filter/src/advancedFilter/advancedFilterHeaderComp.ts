@@ -1,7 +1,6 @@
 import type { BeanCollection, ColumnModel, FocusService, HeaderNavigationService } from '@ag-grid-community/core';
 import {
     Component,
-    Events,
     KeyCode,
     _clearElement,
     _setAriaColIndex,
@@ -38,9 +37,7 @@ export class AdvancedFilterHeaderComp extends Component {
 
         this.addDestroyFunc(() => this.destroyBean(this.eAdvancedFilter));
 
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () =>
-            this.onGridColumnsChanged()
-        );
+        this.addManagedEventListeners({ gridColumnsChanged: () => this.onGridColumnsChanged() });
 
         this.addGuiEventListener('keydown', (event: KeyboardEvent) => this.onKeyDown(event));
 

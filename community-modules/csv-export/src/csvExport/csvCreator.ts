@@ -32,7 +32,7 @@ export class CsvCreator
         this.columnNameService = beans.columnNameService;
         this.funcColsService = beans.funcColsService;
         this.valueService = beans.valueService;
-        this.gridSerializer = beans.gridSerializer;
+        this.gridSerializer = beans.gridSerializer as GridSerializer;
     }
 
     public postConstruct(): void {

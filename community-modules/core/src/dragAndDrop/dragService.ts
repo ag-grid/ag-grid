@@ -2,7 +2,6 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { DragStartedEvent, DragStoppedEvent } from '../events';
-import { Events } from '../events';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _removeFromArray } from '../utils/array';
@@ -246,7 +245,7 @@ export class DragService extends BeanStub implements NamedBean {
 
             this.dragging = true;
             const event: WithoutGridCommon<DragStartedEvent> = {
-                type: Events.EVENT_DRAG_STARTED,
+                type: 'dragStarted',
                 target: el,
             };
             this.eventService.dispatchEvent(event);
@@ -347,7 +346,7 @@ export class DragService extends BeanStub implements NamedBean {
             this.dragging = false;
             this.currentDragParams!.onDragStop(eventOrTouch);
             const event: WithoutGridCommon<DragStoppedEvent> = {
-                type: Events.EVENT_DRAG_STOPPED,
+                type: 'dragStopped',
                 target: el,
             };
             this.eventService.dispatchEvent(event);

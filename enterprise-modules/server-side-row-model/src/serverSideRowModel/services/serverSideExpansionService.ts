@@ -6,7 +6,7 @@ import type {
     RowNode,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Events, ExpansionService } from '@ag-grid-community/core';
+import { ExpansionService } from '@ag-grid-community/core';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 
@@ -24,8 +24,10 @@ export class ServerSideExpansionService extends ExpansionService implements Name
 
     public override postConstruct(): void {
         super.postConstruct();
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => {
-            this.queuedRowIds.clear();
+        this.addManagedEventListeners({
+            columnRowGroupChanged: () => {
+                this.queuedRowIds.clear();
+            },
         });
     }
 

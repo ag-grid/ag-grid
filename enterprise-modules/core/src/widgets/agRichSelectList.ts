@@ -1,18 +1,23 @@
 import type {
     Component,
-    FieldPickerValueSelectedEvent,
+    RichSelectListRowSelectedEvent,
     RichSelectParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { _setAriaControls, _setAriaLabel } from '@ag-grid-community/core';
-import { KeyCode } from '@ag-grid-community/core';
+import { KeyCode, _setAriaActiveDescendant, _setAriaControls, _setAriaLabel } from '@ag-grid-community/core';
 
 import { RichSelectRow } from './agRichSelectRow';
 import { VirtualList } from './virtualList';
 
-export class AgRichSelectList<TValue> extends VirtualList {
-    public static EVENT_LIST_ROW_SELECTED = 'richSelectListRowSelected';
+export type AgRichSelectListEvent = 'fieldPickerValueSelected' | 'richSelectListRowSelected';
 
+const LIST_COMPONENT_NAME = 'ag-rich-select-list';
+const ROW_COMPONENT_NAME = 'ag-rich-select-row';
+
+export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectListEvent> extends VirtualList<
+    Component<TEventType | AgRichSelectListEvent>,
+    TEventType | AgRichSelectListEvent
+> {
     private eLoading: HTMLElement | undefined;
     private lastRowHovered: number = -1;
     private currentList: TValue[] | undefined;
@@ -20,12 +25,12 @@ export class AgRichSelectList<TValue> extends VirtualList {
 
     constructor(
         private readonly params: RichSelectParams,
-        private readonly eWrapper: HTMLElement,
+        private readonly richSelectWrapper: HTMLElement,
         private readonly getSearchString: () => string
     ) {
         super({ cssIdentifier: 'rich-select' });
         this.params = params;
-        this.setComponentCreator((value: TValue) => this.createRowComponent(value));
+        this.setComponentCreator(this.createRowComponent.bind(this));
         /* nothing to update but method required to soft refresh */
         this.setComponentUpdater(() => {});
     }
@@ -43,20 +48,22 @@ export class AgRichSelectList<TValue> extends VirtualList {
         const eGui = this.getGui();
         const eListAriaEl = this.getAriaElement();
 
-        this.addManagedListener(eGui, 'mousemove', this.onMouseMove.bind(this));
-        this.addManagedListener(eGui, 'mouseout', this.onMouseOut.bind(this));
-        this.addManagedListener(eGui, 'mousedown', this.onMouseDown.bind(this));
-        this.addManagedListener(eGui, 'click', this.onClick.bind(this));
+        this.addManagedListeners(eGui, {
+            mousemove: this.onMouseMove.bind(this),
+            mouseout: this.onMouseOut.bind(this),
+            mousedown: this.onMouseDown.bind(this),
+            click: this.onClick.bind(this),
+        });
 
-        eGui.classList.add('ag-rich-select-list');
+        eGui.classList.add(LIST_COMPONENT_NAME);
 
-        const listId = `ag-rich-select-list-${this.getCompId()}`;
+        const listId = `${LIST_COMPONENT_NAME}-${this.getCompId()}`;
         eListAriaEl.setAttribute('id', listId);
         const translate = this.localeService.getLocaleTextFunc();
         const ariaLabel = translate(pickerAriaLabelKey, pickerAriaLabelValue);
 
         _setAriaLabel(eListAriaEl, ariaLabel);
-        _setAriaControls(this.eWrapper, eListAriaEl);
+        _setAriaControls(this.richSelectWrapper, eListAriaEl);
     }
 
     public highlightFilterMatch(searchString: string): void {
@@ -183,7 +190,15 @@ export class AgRichSelectList<TValue> extends VirtualList {
         }
 
         this.forEachRenderedRow((cmp: RichSelectRow<TValue>, idx: number) => {
-            cmp.updateHighlighted(index === idx);
+            const highlighted = index === idx;
+
+            cmp.toggleHighlighted(highlighted);
+
+            if (highlighted) {
+                const idForParent = `${ROW_COMPONENT_NAME}-${cmp.getCompId()}`;
+                _setAriaActiveDescendant(this.richSelectWrapper, idForParent);
+                this.richSelectWrapper.setAttribute('data-active-option', idForParent);
+            }
         });
     }
 
@@ -222,6 +237,7 @@ export class AgRichSelectList<TValue> extends VirtualList {
         }
 
         this.refreshSelectedItems();
+        this.dispatchValueSelected();
     }
 
     private refreshSelectedItems(): void {
@@ -241,10 +257,10 @@ export class AgRichSelectList<TValue> extends VirtualList {
         this.eLoading = el;
     }
 
-    private createRowComponent(value: TValue): Component {
-        const row = new RichSelectRow<TValue>(this.params, this.eWrapper, (value) => this.selectedItems.has(value));
+    private createRowComponent(value: TValue, listItemElement: HTMLElement): Component<AgRichSelectListEvent> {
+        const row = new RichSelectRow<TValue>(this.params, (value) => this.selectedItems.has(value));
+        listItemElement.setAttribute('id', `${ROW_COMPONENT_NAME}-${row.getCompId()}`);
         row.setParentComponent(this);
-
         this.createBean(row);
         row.setState(value);
 
@@ -287,32 +303,32 @@ export class AgRichSelectList<TValue> extends VirtualList {
         }
     }
 
-    private onClick(): void {
+    private onClick(e: MouseEvent): void {
         const { multiSelect } = this.params;
 
         if (!this.currentList) {
             return;
         }
 
-        const item = this.currentList[this.lastRowHovered];
+        const row = this.getRowForMouseEvent(e);
+        const item = this.currentList[row];
 
         if (multiSelect) {
             this.toggleListItemSelection(item);
         } else {
             this.selectListItems([item]);
+            this.dispatchValueSelected();
         }
-
-        this.dispatchValueSelected();
     }
 
     private dispatchValueSelected(): void {
-        const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
-            type: AgRichSelectList.EVENT_LIST_ROW_SELECTED,
+        const event: WithoutGridCommon<RichSelectListRowSelectedEvent> = {
+            type: 'richSelectListRowSelected',
             fromEnterKey: false,
             value: this.selectedItems,
         };
 
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent(event);
     }
 
     public override destroy(): void {
