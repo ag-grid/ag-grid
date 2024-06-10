@@ -19,11 +19,6 @@ export enum ExpandState {
 }
 
 const DEBOUNCE_DELAY = 300;
-const TEMPLATE = /* html */ `<div class="ag-column-select-header" role="presentation">
-        <div data-ref="eExpand" class="ag-column-select-header-icon"></div>
-        <ag-checkbox data-ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
-        <ag-input-text-field class="ag-column-select-header-filter-wrapper" data-ref="eFilterTextField"></ag-input-text-field>
-    </div>`;
 export type AgPrimaryColsHeaderEvent = 'unselectAll' | 'selectAll' | 'collapseAll' | 'expandAll' | 'filterChanged';
 export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     static readonly selector: AgComponentSelector = 'AG-PRIMARY-COLS-HEADER';
@@ -50,7 +45,14 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     private params: ToolPanelColumnCompParams;
 
     constructor() {
-        super(TEMPLATE, [AgCheckbox, AgInputTextField]);
+        super(
+            /* html */ `<div class="ag-column-select-header" role="presentation">
+            <div data-ref="eExpand" class="ag-column-select-header-icon"></div>
+            <ag-checkbox data-ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
+            <ag-input-text-field class="ag-column-select-header-filter-wrapper" data-ref="eFilterTextField"></ag-input-text-field>
+        </div>`,
+            [AgCheckbox, AgInputTextField]
+        );
     }
 
     public postConstruct(): void {

@@ -21,14 +21,6 @@ import type { BaseBean } from './genericContext';
 export type BeanStubEvent = 'destroyed';
 export type EventOrDestroyed<TEventType extends string> = TEventType | BeanStubEvent;
 
-export function addManagedListeners<TEvent extends string>(
-    beanStub: BeanStub,
-    object: IEventEmitter<TEvent>,
-    handlers: EventHandlers<TEvent>
-) {
-    return beanStub.addManagedListeners<TEvent>(object, handlers);
-}
-
 type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
 export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     implements BaseBean<BeanCollection>, Bean, IEventEmitter<EventOrDestroyed<TEventType>>

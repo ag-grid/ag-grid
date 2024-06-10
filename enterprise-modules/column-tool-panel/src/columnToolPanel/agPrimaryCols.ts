@@ -10,10 +10,6 @@ import { Component, PositionableFeature, RefPlaceholder } from '@ag-grid-communi
 import { AgPrimaryColsHeader } from './agPrimaryColsHeader';
 import { AgPrimaryColsList } from './agPrimaryColsList';
 
-const TEMPLATE = /* html */ `<div class="ag-column-select">
-        <ag-primary-cols-header data-ref="primaryColsHeaderPanel"></ag-primary-cols-header>
-        <ag-primary-cols-list data-ref="primaryColsListPanel"></ag-primary-cols-list>
-    </div>`;
 export class AgPrimaryCols extends Component {
     static readonly selector: AgComponentSelector = 'AG-PRIMARY-COLS';
 
@@ -26,7 +22,13 @@ export class AgPrimaryCols extends Component {
     private positionableFeature: PositionableFeature;
 
     constructor() {
-        super(TEMPLATE, [AgPrimaryColsHeader, AgPrimaryColsList]);
+        super(
+            /* html */ `<div class="ag-column-select">
+            <ag-primary-cols-header data-ref="primaryColsHeaderPanel"></ag-primary-cols-header>
+            <ag-primary-cols-list data-ref="primaryColsListPanel"></ag-primary-cols-list>
+        </div>`,
+            [AgPrimaryColsHeader, AgPrimaryColsList]
+        );
     }
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu

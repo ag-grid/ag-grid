@@ -28,10 +28,6 @@ import type { ColumnModelItem } from './columnModelItem';
 import type { ModelItemUtils } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
-const TEMPLATE = /* html */ `<div class="ag-column-select-column" aria-hidden="true">
-        <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-        <span class="ag-column-select-column-label" data-ref="eLabel"></span>
-    </div>`;
 export class ToolPanelColumnComp extends Component {
     private columnModel: ColumnModel;
     private dragAndDropService: DragAndDropService;
@@ -65,7 +61,13 @@ export class ToolPanelColumnComp extends Component {
     }
 
     public postConstruct(): void {
-        this.setTemplate(TEMPLATE, [AgCheckbox]);
+        this.setTemplate(
+            /* html */ `<div class="ag-column-select-column" aria-hidden="true">
+            <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
+            <span class="ag-column-select-column-label" data-ref="eLabel"></span>
+        </div>`,
+            [AgCheckbox]
+        );
         this.eDragHandle = _createIconNoSpan('columnDrag', this.gos)!;
         this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-drag-handle');
 
