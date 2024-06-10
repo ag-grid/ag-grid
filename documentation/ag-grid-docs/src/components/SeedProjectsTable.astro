@@ -1,0 +1,36 @@
+---
+import seedProjects from '@ag-website-shared/content/seed-projects/grid-seed-projects.json';
+---
+
+<table role="grid">
+    <thead>
+        <tr>
+            <th scope="col">Build Tool / CLI</th>
+            <th scope="col">Packages or Modules</th>
+            <th scope="col">License Type</th>
+            <th scope="col">Path</th>
+        </tr>
+    </thead>
+    <tbody>
+        {
+            seedProjects.map(({ name, importType, licenseType, url }) => {
+                return (
+                    <tr>
+                        <td scope="row" data-column="Build Tool / CLI">
+                            {name}
+                        </td>
+                        <td data-column="Packages or Modules">{importType}</td>
+                        <td data-column="License Type">
+                            <a href="https://www.ag-grid.com/license-pricing/">
+                                {licenseType === 'enterprise-bundle' ? 'Enterprise Bundle' : 'AG Grid Enterprise'}
+                            </a>
+                        </td>
+                        <td data-column="Path">
+                            <a href={url}>link</a>
+                        </td>
+                    </tr>
+                );
+            })
+        }
+    </tbody>
+</table>

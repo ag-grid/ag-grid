@@ -230,5 +230,8 @@ export default defineMarkdocConfig({
                 tags: { type: Array, required: true },
             },
         },
+        seedProjectsTable: {
+            render: component('./src/components/SeedProjectsTable.astro'),
+        },
     },
 });
