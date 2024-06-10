@@ -92,13 +92,12 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             } else {
                 const fromNode = this.selectionCtx.getRoot();
                 const toNode = node;
-                const currentRange = this.selectionCtx.getRange().slice();
-                this.selectionCtx.setEndRange(node);
-                if (fromNode !== toNode && this.isMultiselect()) {
+                if (fromNode !== toNode) {
+                    const partition = this.selectionCtx.extend(node);
                     if (newValue) {
-                        this.selectRange(currentRange, false, source);
+                        this.selectRange(partition.discard, false, source);
                     }
-                    return this.selectRangeBetween(fromNode, toNode, newValue, source);
+                    return this.selectRange(partition.keep, newValue, source);
                 }
             }
         }
@@ -152,20 +151,8 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         return updatedCount;
     }
 
-    // selects all rows between this node and the last selected node (or the top if this is the first selection).
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
-    private selectRangeBetween(
-        fromNode: RowNode | null,
-        toNode: RowNode,
-        value: boolean,
-        source: SelectionEventSourceType
-    ): number {
-        const nodesToSelect = this.rowModel.getNodesInRangeForSelection(fromNode, toNode);
-
-        return this.selectRange(nodesToSelect, value, source);
-    }
-
     private selectRange(nodesToSelect: RowNode[], value: boolean, source: SelectionEventSourceType): number {
         let updatedCount = 0;
 
