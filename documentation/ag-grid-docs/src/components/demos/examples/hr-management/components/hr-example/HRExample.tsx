@@ -114,10 +114,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
         return {
           statusPanels: [
             { statusPanel: "agTotalAndFilteredRowCountComponent" },
-            { statusPanel: "agTotalRowCountComponent" },
             { statusPanel: "agFilteredRowCountComponent" },
-            { statusPanel: "agSelectedRowCountComponent" },
-            { statusPanel: "agAggregationComponent" },
           ],
         };
       }, []);    
