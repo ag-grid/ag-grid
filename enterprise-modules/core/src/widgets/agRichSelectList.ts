@@ -120,18 +120,32 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         const selectedPositions = this.getIndicesForValues(value);
         const len = selectedPositions.length;
 
-        if (len === 0) {
-            return;
+        if (len >= 0) {
+            // make sure the virtual list has been sized correctly
+            this.refresh();
+            this.ensureIndexVisible(selectedPositions[0]);
+            // this second call to refresh is necessary to force scrolled elements
+            // to be rendered with the correct index info.
+            this.refresh(true);
         }
 
-        // make sure the virtual list has been sized correctly
-        this.refresh();
-        this.ensureIndexVisible(selectedPositions[0]);
-        // this second call to refresh is necessary to force scrolled elements
-        // to be rendered with the correct index info.
-        this.refresh(true);
-
         this.selectListItems(Array.isArray(value) ? value : [value]);
+    }
+
+    private selectListItems(values: TValue[], append = false): void {
+        if (!append) {
+            this.selectedItems.clear();
+        }
+
+        for (let i = 0; i < values.length; i++) {
+            const currentItem = values[i];
+            if (this.selectedItems.has(currentItem)) {
+                continue;
+            }
+            this.selectedItems.add(currentItem);
+        }
+
+        this.refreshSelectedItems();
     }
 
     public getCurrentList(): TValue[] | undefined {
@@ -146,22 +160,6 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
             getRow: (index: number) => list[index],
             areRowsEqual: (oldRow, newRow) => oldRow === newRow,
         });
-    }
-
-    public selectListItems(values: TValue[], append = false): void {
-        if (!append) {
-            this.selectedItems.clear();
-        }
-
-        for (let i = 0; i < values.length; i++) {
-            const currentItem = values[i];
-            if (this.selectedItems.has(currentItem)) {
-                continue;
-            }
-            this.selectedItems.add(currentItem);
-        }
-
-        this.refreshSelectedItems();
     }
 
     public getSelectedItems(): Set<TValue> {

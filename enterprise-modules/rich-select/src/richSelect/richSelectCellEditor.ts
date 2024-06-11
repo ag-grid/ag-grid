@@ -79,6 +79,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             valuePlaceholder,
             eventKey,
             multiSelect,
+            suppressDeselectAll,
         } = this.params;
 
         const ret: RichSelectParams = {
@@ -100,6 +101,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             placeholder: valuePlaceholder,
             initialInputValue: eventKey?.length === 1 ? eventKey : undefined,
             multiSelect,
+            suppressDeselectAll,
         };
 
         let valuesResult;

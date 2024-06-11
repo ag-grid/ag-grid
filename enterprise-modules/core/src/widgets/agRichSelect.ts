@@ -16,6 +16,7 @@ import {
     RefPlaceholder,
     _bindCellRendererToHtmlElement,
     _clearElement,
+    _createIconNoSpan,
     _debounce,
     _escapeString,
     _exists,
@@ -32,10 +33,11 @@ import { AgRichSelectList } from './agRichSelectList';
 const TEMPLATE = /* html */ `
     <div class="ag-picker-field" role="presentation">
         <div data-ref="eLabel"></div>
-            <div data-ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-rich-select-value ag-picker-collapsed">
-            <div data-ref="eDisplayField" class="ag-picker-field-display"></div>
+        <div data-ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-rich-select-value ag-picker-collapsed">
+            <span data-ref="eDisplayField" class="ag-picker-field-display"></span>
             <ag-input-text-field data-ref="eInput" class="ag-rich-select-field-input"></ag-input-text-field>
-            <div data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
+            <span data-ref="eDeselect" class="ag-rich-select-deselect-button ag-picker-field-icon" role="presentation"></span>
+            <span data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></span>
         </div>
     </div>`;
 export type AgRichSelectEvent = AgRichSelectListEvent;
@@ -58,6 +60,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     private searchStringCreator: ((values: TValue[]) => string[]) | null = null;
     private readonly eInput: AgInputTextField = RefPlaceholder;
+    private readonly eDeselect: HTMLSpanElement = RefPlaceholder;
 
     constructor(config?: RichSelectParams<TValue>) {
         super({
@@ -93,8 +96,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     public override postConstruct(): void {
         super.postConstruct();
         this.createListComponent();
+        this.eDeselect.appendChild(_createIconNoSpan('cancel', this.gos)!);
 
-        const { allowTyping, placeholder } = this.config;
+        const { allowTyping, placeholder, suppressDeselectAll } = this.config;
+
+        this.eDeselect.classList.add('ag-hidden');
 
         if (allowTyping) {
             this.eInput.setAutoComplete(false).setInputPlaceholder(placeholder);
@@ -115,6 +121,13 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             this.addManagedElementListeners(this.eWrapper, { focus: this.onWrapperFocus.bind(this) });
         }
         this.addManagedElementListeners(this.eWrapper, { focusout: this.onWrapperFocusOut.bind(this) });
+
+        if (!suppressDeselectAll) {
+            this.addManagedElementListeners(this.eDeselect, {
+                mousedown: this.onDeselectAllMouseDown.bind(this),
+                click: this.onDeselectAllClick.bind(this),
+            });
+        }
     }
 
     private createListComponent(): void {
@@ -131,12 +144,17 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     private renderSelectedValue(): void {
         const { value, eDisplayField, config } = this;
-        const { allowTyping, initialInputValue } = this.config;
+        const { allowTyping, initialInputValue, multiSelect, suppressDeselectAll } = this.config;
         const valueFormatted = this.config.valueFormatter ? this.config.valueFormatter(value) : value;
 
         if (allowTyping) {
             this.eInput.setValue(initialInputValue ?? valueFormatted);
             return;
+        }
+
+        if (multiSelect && !suppressDeselectAll) {
+            const isEmpty = value == null || (Array.isArray(value) && value.length === 0);
+            this.eDeselect.classList.toggle('ag-hidden', isEmpty);
         }
 
         let userCompDetails: UserCompDetails | undefined;
@@ -259,6 +277,15 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         if (!this.eWrapper.contains(e.relatedTarget as Element)) {
             this.hidePicker();
         }
+    }
+
+    private onDeselectAllMouseDown(e: MouseEvent): void {
+        // don't expand or collapse picker when clicking on deselect all
+        e.stopImmediatePropagation();
+    }
+
+    private onDeselectAllClick(): void {
+        this.setValue([], true);
     }
 
     private buildSearchStringFromKeyboardEvent(searchKey: KeyboardEvent) {
@@ -422,25 +449,24 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             return this;
         }
 
-        if (Array.isArray(value)) {
+        const isArray = Array.isArray(value);
+
+        if (value != null) {
+            if (!isArray) {
+                const list = this.listComponent?.getCurrentList();
+                const index = list ? list.indexOf(value) : -1;
+
+                if (index === -1) {
+                    return this;
+                }
+            }
+
             if (!fromPicker) {
                 this.listComponent?.selectValue(value);
-            }
-        } else if (value != null) {
-            const list = this.listComponent?.getCurrentList();
-            const index = list ? list.indexOf(value) : -1;
-
-            if (index === -1) {
-                return this;
-            }
-
-            if (!fromPicker) {
-                this.listComponent?.selectListItems([value]);
             }
         }
 
         super.setValue(value, silent);
-
         this.renderSelectedValue();
 
         return this;
