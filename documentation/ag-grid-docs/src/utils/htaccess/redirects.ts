@@ -2661,8 +2661,8 @@ export const SITE_301_REDIRECTS: Redirect[] = [
         from: '/react-data-grid/component-floating-filter-imperative-react/',
         to: '/react-data-grid/component-floating-filter/',
     },
-    { from: '/react-data-grid/component-date-imperative-react/', to: '/react-data-grid/component-date/' },
-    { from: '/react-data-grid/component-cell-editor-imperative-react/', to: '/react-data-grid/component-cell-editor/' },
+    { from: '/react-data-grid/component-date-imperative-react/', to: '/react-data-grid/filter-date/' },
+    { from: '/react-data-grid/component-cell-editor-imperative-react/', to: '/react-data-grid/cell-editors/' },
 
     { from: '/cookies.php', to: '/cookies' },
     { from: '/privacy.php', to: '/privacy' },
