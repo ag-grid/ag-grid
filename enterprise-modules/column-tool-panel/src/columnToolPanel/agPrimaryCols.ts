@@ -2,15 +2,15 @@ import type {
     ColDef,
     ColGroupDef,
     ColumnEventType,
-    ComponentClass,
+    ComponentSelector,
     ToolPanelColumnCompParams,
 } from '@ag-grid-community/core';
 import { Component, PositionableFeature, RefPlaceholder } from '@ag-grid-community/core';
 
 import type { AgPrimaryColsHeader } from './agPrimaryColsHeader';
-import { AgPrimaryColsHeaderClass } from './agPrimaryColsHeader';
+import { AgPrimaryColsHeaderSelector } from './agPrimaryColsHeader';
 import type { AgPrimaryColsList } from './agPrimaryColsList';
-import { AgPrimaryColsListClass } from './agPrimaryColsList';
+import { AgPrimaryColsListSelector } from './agPrimaryColsList';
 
 export class AgPrimaryCols extends Component {
     private readonly primaryColsHeaderPanel: AgPrimaryColsHeader = RefPlaceholder;
@@ -27,7 +27,7 @@ export class AgPrimaryCols extends Component {
             <ag-primary-cols-header data-ref="primaryColsHeaderPanel"></ag-primary-cols-header>
             <ag-primary-cols-list data-ref="primaryColsListPanel"></ag-primary-cols-list>
         </div>`,
-            [AgPrimaryColsHeaderClass, AgPrimaryColsListClass]
+            [AgPrimaryColsHeaderSelector, AgPrimaryColsListSelector]
         );
     }
 
@@ -120,7 +120,7 @@ export class AgPrimaryCols extends Component {
     }
 }
 
-export const AgPrimaryColsClass: ComponentClass = {
+export const AgPrimaryColsSelector: ComponentSelector = {
     selector: 'AG-PRIMARY-COLS',
-    class: AgPrimaryCols,
+    Component: AgPrimaryCols,
 };

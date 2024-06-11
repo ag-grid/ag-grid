@@ -2,7 +2,7 @@ import type { CheckboxChangedEvent } from '../events';
 import type { AgCheckboxParams, LabelAlignment } from '../interfaces/agFieldParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { AgAbstractInputField } from './agAbstractInputField';
-import type { ComponentClass } from './component';
+import type { ComponentSelector } from './component';
 
 export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> extends AgAbstractInputField<
     HTMLInputElement,
@@ -140,7 +140,7 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
     }
 }
 
-export const AgCheckboxClass: ComponentClass = {
+export const AgCheckboxSelector: ComponentSelector = {
     selector: 'AG-CHECKBOX',
-    class: AgCheckbox,
+    Component: AgCheckbox,
 };

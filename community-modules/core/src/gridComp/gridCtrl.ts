@@ -9,7 +9,7 @@ import type { IWatermark } from '../interfaces/iWatermark';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import { _last } from '../utils/array';
-import type { ComponentClass } from '../widgets/component';
+import type { ComponentSelector } from '../widgets/component';
 
 export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
@@ -20,12 +20,12 @@ export interface IGridComp extends LayoutView {
     setUserSelect(value: string | null): void;
 }
 
-export interface GridOptionalClasses {
-    paginationClass?: ComponentClass;
-    dropZonesClass?: ComponentClass;
-    sideBarClass?: ComponentClass;
-    statusBarClass?: ComponentClass;
-    watermarkClass?: ComponentClass;
+export interface OptionalGridComponents {
+    paginationSelector?: ComponentSelector;
+    gridHeaderDropZonesSelector?: ComponentSelector;
+    sideBarSelector?: ComponentSelector;
+    statusBarSelector?: ComponentSelector;
+    watermarkSelector?: ComponentSelector;
 }
 
 export class GridCtrl extends BeanStub {
@@ -84,14 +84,14 @@ export class GridCtrl extends BeanStub {
         return el?.getAttribute('row-id')?.startsWith('detail') || false;
     }
 
-    public getOptionalClasses(): GridOptionalClasses {
+    public getOptionalSelectors(): OptionalGridComponents {
         const beans = this.beans;
         return {
-            paginationClass: beans.paginationService?.getPaginationComp(),
-            dropZonesClass: beans.columnDropZonesService?.getDropZoneComponent(),
-            sideBarClass: beans.sideBarService?.getSideBarClass(),
-            statusBarClass: beans.statusBarService?.getStatusPanelClass(),
-            watermarkClass: (beans.licenseManager as IWatermark)?.getWatermarkClass(),
+            paginationSelector: beans.paginationService?.getPaginationSelector(),
+            gridHeaderDropZonesSelector: beans.columnDropZonesService?.getDropZoneComponent(),
+            sideBarSelector: beans.sideBarService?.getSideBarSelector(),
+            statusBarSelector: beans.statusBarService?.getStatusPanelSelector(),
+            watermarkSelector: (beans.licenseManager as IWatermark)?.getWatermarkSelector(),
         };
     }
 

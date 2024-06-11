@@ -6,7 +6,7 @@ import { _missing } from '../../utils/generic';
 import type { ValueService } from '../../valueService/valueService';
 import type { ListOption } from '../../widgets/agList';
 import type { AgSelect } from '../../widgets/agSelect';
-import { AgSelectClass } from '../../widgets/agSelect';
+import { AgSelectSelector } from '../../widgets/agSelect';
 import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
 import type { ISelectCellEditorParams } from './iSelectCellEditor';
@@ -34,7 +34,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
             `<div class="ag-cell-edit-wrapper">
                 <ag-select class="ag-cell-editor" data-ref="eSelect"></ag-select>
             </div>`,
-            [AgSelectClass]
+            [AgSelectSelector]
         );
     }
 

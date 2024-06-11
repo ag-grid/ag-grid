@@ -1,7 +1,7 @@
 import type { AgLabelParams, LabelAlignment } from '../interfaces/agFieldParams';
 import { _setAriaRole } from '../utils/aria';
 import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from '../utils/dom';
-import type { ComponentClass, ComponentEvent } from './component';
+import type { ComponentEvent, ComponentSelector } from './component';
 import { Component } from './component';
 
 export type AgAbstractLabelEvent = ComponentEvent;
@@ -17,7 +17,7 @@ export abstract class AgAbstractLabel<
     protected disabled: boolean = false;
     private label: HTMLElement | string = '';
 
-    constructor(config?: TConfig, template?: string, components?: ComponentClass[]) {
+    constructor(config?: TConfig, template?: string, components?: ComponentSelector[]) {
         super(template, components);
 
         this.config = config || ({} as any);

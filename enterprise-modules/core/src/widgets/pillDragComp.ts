@@ -1,7 +1,7 @@
 import type {
     AgEvent,
     BeanCollection,
-    ComponentClass,
+    ComponentSelector,
     DragAndDropIcon,
     DragAndDropService,
     DragItem,
@@ -50,7 +50,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         private ghost: boolean,
         private horizontal: boolean,
         private template?: string,
-        private agComponents?: ComponentClass[]
+        private agComponents?: ComponentSelector[]
     ) {
         super();
     }

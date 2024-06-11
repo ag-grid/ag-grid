@@ -2,7 +2,7 @@ import type { AgFieldParams } from '../interfaces/agFieldParams';
 import { _getAriaLabel, _setAriaLabel, _setAriaLabelledBy } from '../utils/aria';
 import { _setFixedWidth } from '../utils/dom';
 import { AgAbstractLabel } from './agAbstractLabel';
-import type { ComponentClass } from './component';
+import type { ComponentSelector } from './component';
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export type AgAbstractFieldEvent = 'fieldValueChanged';
@@ -18,7 +18,7 @@ export abstract class AgAbstractField<
     constructor(
         config?: TConfig,
         template?: string,
-        components?: ComponentClass[],
+        components?: ComponentSelector[],
         protected readonly className?: string
     ) {
         super(config, template, components);

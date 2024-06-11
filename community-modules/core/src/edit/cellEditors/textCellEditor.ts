@@ -1,6 +1,6 @@
 import { _exists } from '../../utils/generic';
 import type { AgInputTextField } from '../../widgets/agInputTextField';
-import { AgInputTextFieldClass } from '../../widgets/agInputTextField';
+import { AgInputTextFieldSelector } from '../../widgets/agInputTextField';
 import type { CellEditorInput } from './iCellEditorInput';
 import type { ITextCellEditorParams } from './iTextCellEditor';
 import { SimpleCellEditor } from './simpleCellEditor';
@@ -15,7 +15,7 @@ class TextCellEditorInput<TValue = any>
         return /* html */ `<ag-input-text-field class="ag-cell-editor" data-ref="eInput"></ag-input-text-field>`;
     }
     public getAgComponents() {
-        return [AgInputTextFieldClass];
+        return [AgInputTextFieldSelector];
     }
 
     public init(eInput: AgInputTextField, params: ITextCellEditorParams<any, TValue>): void {

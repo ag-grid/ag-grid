@@ -1,11 +1,11 @@
 import type { BeanCollection } from '@ag-grid-community/core';
 import { Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponentClass } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 
-import { AgColorPickerClass } from '../../../../../widgets/agColorPicker';
+import { AgColorPickerSelector } from '../../../../../widgets/agColorPicker';
 import type { AgSliderParams } from '../../../../../widgets/agSlider';
-import { AgSliderClass } from '../../../../../widgets/agSlider';
+import { AgSliderSelector } from '../../../../../widgets/agSlider';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -46,7 +46,7 @@ export class ShadowPanel extends Component {
             }
         );
         const shadowColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(`${propertyNamespace}.color`);
-        this.setTemplate(ShadowPanel.TEMPLATE, [AgGroupComponentClass, AgColorPickerClass, AgSliderClass], {
+        this.setTemplate(ShadowPanel.TEMPLATE, [AgGroupComponentSelector, AgColorPickerSelector, AgSliderSelector], {
             shadowGroup: shadowGroupParams,
             shadowColorPicker: shadowColorPickerParams,
             shadowBlurSlider: this.getSliderParams('blur', 0, 20),

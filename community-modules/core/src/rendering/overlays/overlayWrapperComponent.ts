@@ -3,7 +3,7 @@ import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layout
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
 import { _clearElement } from '../../utils/dom';
 import type { AgPromise } from '../../utils/promise';
-import type { ComponentClass } from '../../widgets/component';
+import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import type { OverlayService } from './overlayService';
 
@@ -113,7 +113,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         super.destroy();
     }
 }
-export const OverlayWrapperComponentClass: ComponentClass = {
+export const OverlayWrapperComponentSelector: ComponentSelector = {
     selector: 'AG-OVERLAY-WRAPPER',
-    class: OverlayWrapperComponent,
+    Component: OverlayWrapperComponent,
 };

@@ -1,6 +1,6 @@
 import type {
     BeanCollection,
-    ComponentClass,
+    ComponentSelector,
     FilterManager,
     FocusService,
     ISideBar,
@@ -24,7 +24,7 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import { AgSideBarButtonsClass, type SideBarButtonClickedEvent } from './agSideBarButtons';
+import { AgSideBarButtonsSelector, type SideBarButtonClickedEvent } from './agSideBarButtons';
 import type { AgSideBarButtons } from './agSideBarButtons';
 import { SideBarDefParser } from './sideBarDefParser';
 import type { SideBarService } from './sideBarService';
@@ -52,7 +52,7 @@ export class AgSideBar extends Component implements ISideBar {
             /* html */ `<div class="ag-side-bar ag-unselectable">
             <ag-side-bar-buttons data-ref="sideBarButtons"></ag-side-bar-buttons>
         </div>`,
-            [AgSideBarButtonsClass]
+            [AgSideBarButtonsSelector]
         );
     }
 
@@ -481,7 +481,7 @@ export class AgSideBar extends Component implements ISideBar {
     }
 }
 
-export const AgSideBarClass: ComponentClass = {
+export const AgSideBarSelector: ComponentSelector = {
     selector: 'AG-SIDE-BAR',
-    class: AgSideBar,
+    Component: AgSideBar,
 };

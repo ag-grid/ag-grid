@@ -1,6 +1,6 @@
 import type { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { AgAbstractInputField } from './agAbstractInputField';
-import type { ComponentClass } from './component';
+import type { ComponentSelector } from './component';
 
 export class AgInputTextArea extends AgAbstractInputField<HTMLTextAreaElement, string> {
     constructor(config?: AgInputFieldParams) {
@@ -28,7 +28,7 @@ export class AgInputTextArea extends AgAbstractInputField<HTMLTextAreaElement, s
     }
 }
 
-export const AgInputTextAreaClass: ComponentClass = {
+export const AgInputTextAreaSelector: ComponentSelector = {
     selector: 'AG-INPUT-TEXT-AREA',
-    class: AgInputTextArea,
+    Component: AgInputTextArea,
 };

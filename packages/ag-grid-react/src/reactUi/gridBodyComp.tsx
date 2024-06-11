@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
-import type { ComponentClass, IGridBodyComp, RowContainerName } from 'ag-grid-community';
+import type { ComponentSelector, IGridBodyComp, RowContainerName } from 'ag-grid-community';
 import {
     CssClassManager,
     FakeHScrollComp,

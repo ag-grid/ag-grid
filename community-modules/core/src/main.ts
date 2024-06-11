@@ -38,7 +38,7 @@ export {
 
 // components
 export { ComponentUtil } from './components/componentUtil';
-export { ComponentClass, AgComponentSelector, RefPlaceholder, ComponentEvent } from './widgets/component';
+export { ComponentSelector, AgComponentSelector, RefPlaceholder, ComponentEvent } from './widgets/component';
 
 export { UserComponentRegistry } from './components/framework/userComponentRegistry';
 export { UserComponentFactory, UserCompDetails } from './components/framework/userComponentFactory';
@@ -278,7 +278,7 @@ export { GridHeaderCtrl, IGridHeaderComp } from './headerRendering/gridHeaderCtr
 export { HeaderRowComp, HeaderRowType } from './headerRendering/row/headerRowComp';
 export { HeaderRowCtrl, IHeaderRowComp } from './headerRendering/row/headerRowCtrl';
 export { HeaderCellCtrl, IHeaderCellComp } from './headerRendering/cells/column/headerCellCtrl';
-export { SortIndicatorComp, SortIndicatorCompClass } from './headerRendering/cells/column/sortIndicatorComp';
+export { SortIndicatorComp, SortIndicatorSelector } from './headerRendering/cells/column/sortIndicatorComp';
 export { IHeaderFilterCellComp } from './headerRendering/cells/floatingFilter/iHeaderFilterCellComp';
 export { HeaderFilterCellCtrl } from './headerRendering/cells/floatingFilter/headerFilterCellCtrl';
 export { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerRendering/cells/columnGroup/headerGroupCellCtrl';
@@ -463,14 +463,14 @@ export {
 export { RichSelectParams } from './interfaces/iRichCellEditorParams';
 export { AgAbstractField, FieldElement } from './widgets/agAbstractField';
 export { AgAbstractInputField } from './widgets/agAbstractInputField';
-export { AgCheckbox, AgCheckboxClass } from './widgets/agCheckbox';
+export { AgCheckbox, AgCheckboxSelector } from './widgets/agCheckbox';
 export { AgRadioButton, AgRadioButtonParams } from './widgets/agRadioButton';
-export { AgToggleButton, AgToggleButtonParams, AgToggleButtonClass } from './widgets/agToggleButton';
-export { AgInputTextField, AgInputTextFieldParams, AgInputTextFieldClass } from './widgets/agInputTextField';
+export { AgToggleButton, AgToggleButtonParams, AgToggleButtonSelector } from './widgets/agToggleButton';
+export { AgInputTextField, AgInputTextFieldParams, AgInputTextFieldSelector } from './widgets/agInputTextField';
 export { AgInputTextArea } from './widgets/agInputTextArea';
-export { AgInputNumberField, AgInputNumberFieldClass, AgInputNumberFieldParams } from './widgets/agInputNumberField';
+export { AgInputNumberField, AgInputNumberFieldSelector, AgInputNumberFieldParams } from './widgets/agInputNumberField';
 export { AgInputDateField } from './widgets/agInputDateField';
-export { AgSelect, AgSelectParams, AgSelectClass } from './widgets/agSelect';
+export { AgSelect, AgSelectParams, AgSelectSelector } from './widgets/agSelect';
 export { ListOption } from './widgets/agList';
 export { Component, VisibleChangedEvent } from './widgets/component';
 export { ManagedFocusFeature, ManagedFocusCallbacks } from './widgets/managedFocusFeature';
@@ -567,7 +567,7 @@ export { SelectableService } from './rowNodes/selectableService';
 export { RowNodeSorter, SortedRowNode, SortOption } from './rowNodes/rowNodeSorter';
 export { CtrlsService } from './ctrlsService';
 export { GridComp } from './gridComp/gridComp';
-export { GridCtrl, IGridComp, GridOptionalClasses } from './gridComp/gridCtrl';
+export { GridCtrl, IGridComp } from './gridComp/gridCtrl';
 export { Logger, LoggerFactory } from './logger';
 export { SortController, SortModelItem } from './sortController';
 export { LocaleService } from './localeService';

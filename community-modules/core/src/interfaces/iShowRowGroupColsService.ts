@@ -1,5 +1,5 @@
 import type { AgColumn } from '../entities/agColumn';
-import type { ComponentClass } from '../widgets/component';
+import type { ComponentSelector } from '../widgets/component';
 
 export interface IShowRowGroupColsService {
     refresh(): void;
@@ -10,5 +10,5 @@ export interface IShowRowGroupColsService {
 }
 
 export interface IColumnDropZonesService {
-    getDropZoneComponent(): ComponentClass;
+    getDropZoneComponent(): ComponentSelector;
 }

@@ -1,4 +1,4 @@
-import type { AgPickerFieldParams, ComponentClass } from '@ag-grid-community/core';
+import type { AgPickerFieldParams, ComponentSelector } from '@ag-grid-community/core';
 import { AgPickerField } from '@ag-grid-community/core';
 import { AgDialog } from '@ag-grid-enterprise/core';
 import { _Util } from 'ag-charts-community';
@@ -118,7 +118,7 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
     }
 }
 
-export const AgColorPickerClass: ComponentClass = {
+export const AgColorPickerSelector: ComponentSelector = {
     selector: 'AG-COLOR-PICKER',
-    class: AgColorPicker,
+    Component: AgColorPicker,
 };

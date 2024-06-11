@@ -1,9 +1,9 @@
 import type { BeanCollection } from '@ag-grid-community/core';
-import { AgCheckboxClass, Component } from '@ag-grid-community/core';
+import { AgCheckboxSelector, Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponentClass } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 
-import { AgSliderClass } from '../../../../../widgets/agSlider';
+import { AgSliderSelector } from '../../../../../widgets/agSlider';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -48,7 +48,7 @@ export class NavigatorPanel extends Component {
             'miniChart'
         );
 
-        this.setTemplate(NavigatorPanel.TEMPLATE, [AgGroupComponentClass, AgSliderClass, AgCheckboxClass], {
+        this.setTemplate(NavigatorPanel.TEMPLATE, [AgGroupComponentSelector, AgSliderSelector, AgCheckboxSelector], {
             navigatorGroup: navigatorGroupParams,
             navigatorHeightSlider: navigatorHeightSliderParams,
             navigatorMiniChartCheckbox: navigatorMiniChartCheckboxParams,

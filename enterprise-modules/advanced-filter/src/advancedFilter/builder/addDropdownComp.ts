@@ -1,6 +1,6 @@
 import type { RichSelectParams } from '@ag-grid-community/core';
 import {
-    AgInputTextFieldClass,
+    AgInputTextFieldSelector,
     _setAriaLabel,
     _setAriaLabelledBy,
     _setDisplayed,
@@ -28,7 +28,7 @@ export class AddDropdownComp extends AgRichSelect {
                         <div data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
                     </div>
                 </div>`,
-            agComponents: [AgInputTextFieldClass],
+            agComponents: [AgInputTextFieldSelector],
         });
     }
 

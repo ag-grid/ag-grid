@@ -1,7 +1,7 @@
-import type { ComponentClass, ISideBar, ISideBarService, NamedBean } from '@ag-grid-community/core';
+import type { ComponentSelector, ISideBar, ISideBarService, NamedBean } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
-import { AgSideBarClass } from './agSideBar';
+import { AgSideBarSelector } from './agSideBar';
 
 export class SideBarService extends BeanStub implements NamedBean, ISideBarService {
     beanName = 'sideBarService' as const;
@@ -16,7 +16,7 @@ export class SideBarService extends BeanStub implements NamedBean, ISideBarServi
         return this.sideBarComp;
     }
 
-    public getSideBarClass(): ComponentClass {
-        return AgSideBarClass;
+    public getSideBarSelector(): ComponentSelector {
+        return AgSideBarSelector;
     }
 }

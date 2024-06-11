@@ -4,7 +4,7 @@ import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import { _clearElement } from '../../utils/dom';
 import { _warnOnce } from '../../utils/function';
 import { AgSelect } from '../../widgets/agSelect';
-import type { ComponentClass } from '../../widgets/component';
+import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 import type { PaginationService } from '../paginationService';
 
@@ -223,7 +223,7 @@ export class PageSizeSelectorComp extends Component {
     }
 }
 
-export const PageSizeSelectorCompClass: ComponentClass = {
+export const PageSizeSelectorSelector: ComponentSelector = {
     selector: 'AG-PAGE-SIZE-SELECTOR',
-    class: PageSizeSelectorComp,
+    Component: PageSizeSelectorComp,
 };

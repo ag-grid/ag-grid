@@ -7,7 +7,7 @@ import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import { _setDisplayed } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
 import type { AgInputTextField } from '../../../widgets/agInputTextField';
-import { AgInputTextFieldClass } from '../../../widgets/agInputTextField';
+import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
 import { RefPlaceholder } from '../../../widgets/component';
 import type { IFloatingFilterParams } from '../../floating/floatingFilter';
 import { getDebounceMs } from '../../floating/provided/providedFilterUtils';
@@ -45,7 +45,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
                 <ag-input-text-field data-ref="eReadOnlyText"></ag-input-text-field>
                 <div data-ref="eDateWrapper" style="display: flex;"></div>
             </div>`,
-            [AgInputTextFieldClass]
+            [AgInputTextFieldSelector]
         );
     }
 

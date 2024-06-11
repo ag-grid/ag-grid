@@ -1,21 +1,21 @@
 import type { AgSelect, AgSelectParams, BeanCollection, ListOption } from '@ag-grid-community/core';
 import {
     AgCheckbox,
-    AgSelectClass,
+    AgSelectSelector,
     Component,
     RefPlaceholder,
     _removeFromParent,
     _setDisplayed,
 } from '@ag-grid-community/core';
 import type { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponentClass } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 import type { AgCartesianAxisOptions } from 'ag-charts-community';
 
 import { AgAngleSelect } from '../../../../../widgets/agAngleSelect';
 import type { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
-import { AgColorPickerClass } from '../../../../../widgets/agColorPicker';
+import { AgColorPickerSelector } from '../../../../../widgets/agColorPicker';
 import type { AgSliderParams } from '../../../../../widgets/agSlider';
-import { AgSlider, AgSliderClass } from '../../../../../widgets/agSlider';
+import { AgSlider, AgSliderSelector } from '../../../../../widgets/agSlider';
 import type { ChartOptionsProxy } from '../../../services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
@@ -98,7 +98,7 @@ export class CartesianAxisPanel extends Component {
 
         this.setTemplate(
             CartesianAxisPanel.TEMPLATE,
-            [AgGroupComponentClass, AgSelectClass, AgColorPickerClass, AgSliderClass],
+            [AgGroupComponentSelector, AgSelectSelector, AgColorPickerSelector, AgSliderSelector],
             {
                 axisGroup: axisGroupParams,
                 axisTypeSelect: axisTypeSelectParams ?? undefined,

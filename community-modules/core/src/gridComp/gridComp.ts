@@ -1,15 +1,15 @@
 import type { BeanCollection } from '../context/context';
 import type { GridBodyComp } from '../gridBodyComp/gridBodyComp';
-import { GridBodyCompClass } from '../gridBodyComp/gridBodyComp';
+import { GridBodySelector } from '../gridBodyComp/gridBodyComp';
 import type { ISideBar } from '../interfaces/iSideBar';
 import type { Logger, LoggerFactory } from '../logger';
 import type { UpdateLayoutClassesParams } from '../styling/layoutFeature';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import { _isVisible } from '../utils/dom';
-import type { ComponentClass } from '../widgets/component';
+import type { ComponentSelector } from '../widgets/component';
 import { type Component, RefPlaceholder } from '../widgets/component';
 import { TabGuardComp } from '../widgets/tabGuardComp';
-import type { GridOptionalClasses, IGridComp } from './gridCtrl';
+import type { IGridComp, OptionalGridComponents } from './gridCtrl';
 import { GridCtrl } from './gridCtrl';
 
 export class GridComp extends TabGuardComp {
@@ -50,9 +50,9 @@ export class GridComp extends TabGuardComp {
         };
 
         const ctrl = this.createManagedBean(new GridCtrl());
-        const comps = ctrl.getOptionalClasses();
+        const comps = ctrl.getOptionalSelectors();
         const template = this.createTemplate(comps);
-        const requiredComps = [GridBodyCompClass, ...Object.values(comps).filter((c) => !!c)] as ComponentClass[];
+        const requiredComps = [GridBodySelector, ...Object.values(comps).filter((c) => !!c)] as ComponentSelector[];
         this.setTemplate(template, requiredComps);
 
         ctrl.setComp(compProxy, this.eGridDiv, this.getGui());
@@ -87,12 +87,14 @@ export class GridComp extends TabGuardComp {
         this.addOrRemoveCssClass(LayoutCssClasses.PRINT, params.print);
     }
 
-    private createTemplate(params: GridOptionalClasses): string {
-        const dropZones = params.dropZonesClass ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
-        const sideBar = params.sideBarClass ? '<ag-side-bar data-ref="sideBar"></ag-side-bar>' : '';
-        const statusBar = params.statusBarClass ? '<ag-status-bar></ag-status-bar>' : '';
-        const watermark = params.watermarkClass ? '<ag-watermark></ag-watermark>' : '';
-        const pagination = params.paginationClass ? '<ag-pagination></ag-pagination>' : '';
+    private createTemplate(params: OptionalGridComponents): string {
+        const dropZones = params.gridHeaderDropZonesSelector
+            ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>'
+            : '';
+        const sideBar = params.sideBarSelector ? '<ag-side-bar data-ref="sideBar"></ag-side-bar>' : '';
+        const statusBar = params.statusBarSelector ? '<ag-status-bar></ag-status-bar>' : '';
+        const watermark = params.watermarkSelector ? '<ag-watermark></ag-watermark>' : '';
+        const pagination = params.paginationSelector ? '<ag-pagination></ag-pagination>' : '';
 
         const template =
             /* html */

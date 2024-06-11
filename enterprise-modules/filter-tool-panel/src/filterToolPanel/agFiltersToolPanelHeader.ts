@@ -4,10 +4,10 @@ import type {
     AgInputTextField,
     BeanCollection,
     ColumnModel,
-    ComponentClass,
+    ComponentSelector,
 } from '@ag-grid-community/core';
 import {
-    AgInputTextFieldClass,
+    AgInputTextFieldSelector,
     Component,
     RefPlaceholder,
     _createIconNoSpan,
@@ -50,7 +50,7 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
                 <div data-ref="eExpand" class="ag-filter-toolpanel-expand"></div>
                 <ag-input-text-field data-ref="eFilterTextField" class="ag-filter-toolpanel-search-input"></ag-input-text-field>
             </div>`,
-            [AgInputTextFieldClass]
+            [AgInputTextFieldSelector]
         );
 
         const translate = this.localeService.getLocaleTextFunc();
@@ -122,7 +122,7 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
     }
 }
 
-export const AgFiltersToolPanelHeaderClass: ComponentClass = {
+export const AgFiltersToolPanelHeaderSelector: ComponentSelector = {
     selector: 'AG-FILTERS-TOOL-PANEL-HEADER',
-    class: AgFiltersToolPanelHeader,
+    Component: AgFiltersToolPanelHeader,
 };

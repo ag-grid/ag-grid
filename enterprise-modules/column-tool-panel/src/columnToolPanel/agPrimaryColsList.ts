@@ -8,7 +8,7 @@ import type {
     ColumnModel,
     ColumnNameService,
     ColumnToolPanelState,
-    ComponentClass,
+    ComponentSelector,
 } from '@ag-grid-community/core';
 import {
     Component,
@@ -583,7 +583,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 }
 
-export const AgPrimaryColsListClass: ComponentClass = {
+export const AgPrimaryColsListSelector: ComponentSelector = {
     selector: 'AG-PRIMARY-COLS-LIST',
-    class: AgPrimaryColsList,
+    Component: AgPrimaryColsList,
 };

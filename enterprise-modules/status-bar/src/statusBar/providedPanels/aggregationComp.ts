@@ -22,7 +22,7 @@ import {
 } from '@ag-grid-community/core';
 
 import type { AgNameValue } from './agNameValue';
-import { AgNameValueClass } from './agNameValue';
+import { AgNameValueSelector } from './agNameValue';
 
 export class AggregationComp extends Component implements IStatusPanelComp {
     private valueService: ValueService;
@@ -58,7 +58,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
             <ag-name-value data-ref="maxAggregationComp"></ag-name-value>
             <ag-name-value data-ref="sumAggregationComp"></ag-name-value>
         </div>`,
-            [AgNameValueClass]
+            [AgNameValueSelector]
         );
     }
 

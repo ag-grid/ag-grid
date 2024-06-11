@@ -1,4 +1,4 @@
-import type { BeanCollection, ColumnModel, ComponentClass, FuncColsService } from '@ag-grid-community/core';
+import type { BeanCollection, ColumnModel, ComponentSelector, FuncColsService } from '@ag-grid-community/core';
 import { Component, _setAriaRole } from '@ag-grid-community/core';
 
 import { PivotDropZonePanel } from './pivotDropZonePanel';
@@ -103,7 +103,7 @@ export class AgGridHeaderDropZones extends Component {
     }
 }
 
-export const AgGridHeaderDropZonesClass: ComponentClass = {
+export const AgGridHeaderDropZonesSelector: ComponentSelector = {
     selector: 'AG-GRID-HEADER-DROP-ZONES',
-    class: AgGridHeaderDropZones,
+    Component: AgGridHeaderDropZones,
 };

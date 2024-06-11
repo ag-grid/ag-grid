@@ -4,7 +4,7 @@ import type {
     AgProvidedColumnGroup,
     BeanCollection,
     ColumnModel,
-    ComponentClass,
+    ComponentSelector,
     FiltersToolPanelState,
 } from '@ag-grid-community/core';
 import {
@@ -558,7 +558,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     }
 }
 
-export const AgFiltersToolPanelListClass: ComponentClass = {
+export const AgFiltersToolPanelListSelector: ComponentSelector = {
     selector: 'AG-FILTERS-TOOL-PANEL-LIST',
-    class: AgFiltersToolPanelList,
+    Component: AgFiltersToolPanelList,
 };

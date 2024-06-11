@@ -3,7 +3,7 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { SortController } from '../../../sortController';
 import { _clearElement, _setDisplayed } from '../../../utils/dom';
 import { _createIconNoSpan } from '../../../utils/icon';
-import type { ComponentClass } from '../../../widgets/component';
+import type { ComponentSelector } from '../../../widgets/component';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 
 const SortIndicatorTemplate /* html */ = `<span class="ag-sort-indicator-container">
@@ -163,7 +163,7 @@ export class SortIndicatorComp extends Component {
     }
 }
 
-export const SortIndicatorCompClass: ComponentClass = {
+export const SortIndicatorSelector: ComponentSelector = {
     selector: 'AG-SORT-INDICATOR',
-    class: SortIndicatorComp,
+    Component: SortIndicatorComp,
 };

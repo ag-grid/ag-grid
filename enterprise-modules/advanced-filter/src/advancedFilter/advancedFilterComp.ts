@@ -10,7 +10,7 @@ import type {
     AutocompleteValueChangedEvent,
     AutocompleteValueConfirmedEvent,
 } from './autocomplete/agAutocomplete';
-import { AgAutocompleteClass } from './autocomplete/agAutocomplete';
+import { AgAutocompleteSelector } from './autocomplete/agAutocomplete';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 import type { FilterExpressionParser } from './filterExpressionParser';
 import type { AutocompleteUpdate } from './filterExpressionUtils';
@@ -47,7 +47,7 @@ export class AdvancedFilterComp extends Component {
                     <span class="ag-advanced-filter-builder-button-label" data-ref="eBuilderFilterButtonLabel"></span>
                 </button>
             </div>`,
-            [AgAutocompleteClass]
+            [AgAutocompleteSelector]
         );
     }
 

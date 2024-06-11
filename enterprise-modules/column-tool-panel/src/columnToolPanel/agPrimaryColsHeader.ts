@@ -3,11 +3,11 @@ import type {
     AgInputTextField,
     BeanCollection,
     ColumnModel,
-    ComponentClass,
+    ComponentSelector,
 } from '@ag-grid-community/core';
 import {
-    AgCheckboxClass,
-    AgInputTextFieldClass,
+    AgCheckboxSelector,
+    AgInputTextFieldSelector,
     Component,
     KeyCode,
     RefPlaceholder,
@@ -55,7 +55,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
             <ag-checkbox data-ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
             <ag-input-text-field class="ag-column-select-header-filter-wrapper" data-ref="eFilterTextField"></ag-input-text-field>
         </div>`,
-            [AgCheckboxClass, AgInputTextFieldClass]
+            [AgCheckboxSelector, AgInputTextFieldSelector]
         );
     }
 
@@ -177,7 +177,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     }
 }
 
-export const AgPrimaryColsHeaderClass: ComponentClass = {
+export const AgPrimaryColsHeaderSelector: ComponentSelector = {
     selector: 'AG-PRIMARY-COLS-HEADER',
-    class: AgPrimaryColsHeader,
+    Component: AgPrimaryColsHeader,
 };

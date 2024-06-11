@@ -1,8 +1,8 @@
-import type { AgInputNumberField, AgLabelParams, ComponentClass, LabelAlignment } from '@ag-grid-community/core';
-import { AgAbstractLabel, AgInputNumberFieldClass, RefPlaceholder } from '@ag-grid-community/core';
+import type { AgInputNumberField, AgLabelParams, ComponentSelector, LabelAlignment } from '@ag-grid-community/core';
+import { AgAbstractLabel, AgInputNumberFieldSelector, RefPlaceholder } from '@ag-grid-community/core';
 
 import type { AgInputRange } from './agInputRange';
-import { AgInputRangeClass } from './agInputRange';
+import { AgInputRangeSelector } from './agInputRange';
 
 export interface AgSliderParams extends AgLabelParams {
     minValue?: number;
@@ -31,7 +31,7 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams, AgSliderEvent> {
                 <ag-input-number-field data-ref="eText"></ag-input-number-field>
             </div>
         </div>`,
-            [AgInputRangeClass, AgInputNumberFieldClass]
+            [AgInputRangeSelector, AgInputNumberFieldSelector]
         );
     }
 
@@ -128,7 +128,7 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams, AgSliderEvent> {
     }
 }
 
-export const AgSliderClass: ComponentClass = {
+export const AgSliderSelector: ComponentSelector = {
     selector: 'AG-SLIDER',
-    class: AgSlider,
+    Component: AgSlider,
 };

@@ -1,7 +1,7 @@
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _getAriaCheckboxStateName } from '../../utils/aria';
 import type { AgCheckbox } from '../../widgets/agCheckbox';
-import { AgCheckboxClass } from '../../widgets/agCheckbox';
+import { AgCheckboxSelector } from '../../widgets/agCheckbox';
 import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
 
@@ -12,7 +12,7 @@ export class CheckboxCellEditor extends PopupComponent implements ICellEditorCom
             <div class="ag-cell-wrapper ag-cell-edit-wrapper ag-checkbox-edit">
                 <ag-checkbox role="presentation" data-ref="eCheckbox"></ag-checkbox>
             </div>`,
-            [AgCheckboxClass]
+            [AgCheckboxSelector]
         );
     }
 

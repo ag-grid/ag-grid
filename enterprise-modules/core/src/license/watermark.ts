@@ -1,4 +1,4 @@
-import type { BeanCollection, ComponentClass } from '@ag-grid-community/core';
+import type { BeanCollection, ComponentSelector } from '@ag-grid-community/core';
 import { Component, RefPlaceholder } from '@ag-grid-community/core';
 
 import type { GridLicenseManager as LicenseManager } from './gridLicenseManager';
@@ -38,7 +38,7 @@ export class AgWatermark extends Component {
     }
 }
 
-export const AgWatermarkClass: ComponentClass = {
+export const AgWatermarkSelector: ComponentSelector = {
     selector: 'AG-WATERMARK',
-    class: AgWatermark,
+    Component: AgWatermark,
 };

@@ -1,5 +1,5 @@
 import type { AgCheckbox, BeanCollection, ColumnModel, CtrlsService } from '@ag-grid-community/core';
-import { AgToggleButtonClass, Component, RefPlaceholder } from '@ag-grid-community/core';
+import { AgToggleButtonSelector, Component, RefPlaceholder } from '@ag-grid-community/core';
 
 export class PivotModePanel extends Component {
     private columnModel: ColumnModel;
@@ -19,7 +19,7 @@ export class PivotModePanel extends Component {
     }
 
     public postConstruct(): void {
-        this.setTemplate(this.createTemplate(), [AgToggleButtonClass]);
+        this.setTemplate(this.createTemplate(), [AgToggleButtonSelector]);
 
         this.cbPivotMode.setValue(this.columnModel.isPivotMode());
         const localeTextFunc = this.localeService.getLocaleTextFunc();

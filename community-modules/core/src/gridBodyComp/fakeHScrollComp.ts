@@ -3,7 +3,7 @@ import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from '../utils/dom';
-import type { ComponentClass } from '../widgets/component';
+import type { ComponentSelector } from '../widgets/component';
 import { RefPlaceholder } from '../widgets/component';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { CenterWidthFeature } from './centerWidthFeature';
@@ -147,7 +147,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     }
 }
 
-export const FakeHScrollCompClass: ComponentClass = {
+export const FakeHScrollSelector: ComponentSelector = {
     selector: 'AG-FAKE-HORIZONTAL-SCROLL',
-    class: FakeHScrollComp,
+    Component: FakeHScrollComp,
 };

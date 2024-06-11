@@ -1,6 +1,6 @@
-import type { AgCheckbox, AgEvent, ComponentClass } from '@ag-grid-community/core';
+import type { AgCheckbox, AgEvent, ComponentSelector } from '@ag-grid-community/core';
 import {
-    AgCheckboxClass,
+    AgCheckboxSelector,
     AgToggleButton,
     Component,
     KeyCode,
@@ -74,7 +74,7 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
     private readonly eContainer: HTMLElement = RefPlaceholder;
 
     constructor(private readonly params: AgGroupComponentParams = {}) {
-        super(getAgGroupComponentTemplate(params), [AgCheckboxClass]);
+        super(getAgGroupComponentTemplate(params), [AgCheckboxSelector]);
 
         const {
             enabled,
@@ -492,7 +492,7 @@ class DefaultTitleBar extends Component<ExpandedChangedEvent> {
     }
 }
 
-export const AgGroupComponentClass: ComponentClass = {
+export const AgGroupComponentSelector: ComponentSelector = {
     selector: 'AG-GROUP-COMPONENT',
-    class: AgGroupComponent,
+    Component: AgGroupComponent,
 };

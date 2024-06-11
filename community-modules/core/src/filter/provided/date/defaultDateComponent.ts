@@ -4,7 +4,7 @@ import { _getSafariVersion, _isBrowserChrome, _isBrowserFirefox, _isBrowserSafar
 import { _dateToFormattedString, _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import { _warnOnce } from '../../../utils/function';
 import type { AgInputTextField } from '../../../widgets/agInputTextField';
-import { AgInputTextFieldClass } from '../../../widgets/agInputTextField';
+import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 
 export class DefaultDateComponent extends Component implements IDateComp {
@@ -16,7 +16,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
             <div class="ag-filter-filter">
                 <ag-input-text-field class="ag-date-filter" data-ref="eDateInput"></ag-input-text-field>
             </div>`,
-            [AgInputTextFieldClass]
+            [AgInputTextFieldSelector]
         );
     }
 

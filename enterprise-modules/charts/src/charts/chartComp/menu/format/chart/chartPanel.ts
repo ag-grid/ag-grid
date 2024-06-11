@@ -1,7 +1,7 @@
 import type { BeanCollection } from '@ag-grid-community/core';
 import { Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponentClass } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { FormatPanelOptions } from '../formatPanel';
@@ -43,7 +43,7 @@ export class ChartPanel extends Component {
             /* html */ `<div>
             <ag-group-component data-ref="chartGroup"></ag-group-component>
         </div>`,
-            [AgGroupComponentClass],
+            [AgGroupComponentSelector],
             { chartGroup: chartGroupParams }
         );
         registerGroupComponent(this.chartGroup);

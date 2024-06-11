@@ -1,4 +1,4 @@
-import type { AgInputTextFieldParams, BeanCollection, ComponentClass } from '@ag-grid-community/core';
+import type { AgInputTextFieldParams, BeanCollection, ComponentSelector } from '@ag-grid-community/core';
 import { AgInputTextField, RefPlaceholder } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
 
@@ -46,7 +46,7 @@ export class AgColorInput extends AgInputTextField<AgInputTextFieldParams, AgCol
     }
 }
 
-export const AgColorInputClass: ComponentClass = {
+export const AgColorInputSelector: ComponentSelector = {
     selector: 'AG-COLOR-INPUT',
-    class: AgColorInput,
+    Component: AgColorInput,
 };

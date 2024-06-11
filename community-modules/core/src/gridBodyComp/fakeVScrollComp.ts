@@ -1,7 +1,7 @@
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import { _isVisible, _setFixedWidth } from '../utils/dom';
-import type { ComponentClass } from '../widgets/component';
+import type { ComponentSelector } from '../widgets/component';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { SetHeightFeature } from './rowContainer/setHeightFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
@@ -75,7 +75,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
     }
 }
 
-export const FakeVScrollCompClass: ComponentClass = {
+export const FakeVScrollSelector: ComponentSelector = {
     selector: 'AG-FAKE-VERTICAL-SCROLL',
-    class: FakeVScrollComp,
+    Component: FakeVScrollComp,
 };

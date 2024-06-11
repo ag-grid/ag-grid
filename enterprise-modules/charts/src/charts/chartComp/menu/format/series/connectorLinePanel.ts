@@ -1,11 +1,11 @@
 import type { BeanCollection } from '@ag-grid-community/core';
 import { Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponentClass } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 
-import { AgColorPickerClass } from '../../../../../widgets/agColorPicker';
+import { AgColorPickerSelector } from '../../../../../widgets/agColorPicker';
 import type { AgSliderParams } from '../../../../../widgets/agSlider';
-import { AgSliderClass } from '../../../../../widgets/agSlider';
+import { AgSliderSelector } from '../../../../../widgets/agSlider';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -37,13 +37,17 @@ export class ConnectorLinePanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(ConnectorLinePanel.TEMPLATE, [AgGroupComponentClass, AgColorPickerClass, AgSliderClass], {
-            lineGroup: lineGroupParams,
-            lineColorPicker: this.chartMenuUtils.getDefaultColorPickerParams('line.stroke'),
-            lineStrokeWidthSlider: this.getSliderParams('strokeWidth', 10, 'line.strokeWidth'),
-            lineDashSlider: this.getSliderParams('lineDash', 30, 'line.lineDash', 1, true),
-            lineOpacitySlider: this.getSliderParams('strokeOpacity', 1, 'line.strokeOpacity', 0.05),
-        });
+        this.setTemplate(
+            ConnectorLinePanel.TEMPLATE,
+            [AgGroupComponentSelector, AgColorPickerSelector, AgSliderSelector],
+            {
+                lineGroup: lineGroupParams,
+                lineColorPicker: this.chartMenuUtils.getDefaultColorPickerParams('line.stroke'),
+                lineStrokeWidthSlider: this.getSliderParams('strokeWidth', 10, 'line.strokeWidth'),
+                lineDashSlider: this.getSliderParams('lineDash', 30, 'line.lineDash', 1, true),
+                lineOpacitySlider: this.getSliderParams('strokeOpacity', 1, 'line.strokeOpacity', 0.05),
+            }
+        );
     }
 
     private getSliderParams(

@@ -1,4 +1,4 @@
-import type { Context, IGridComp } from '@ag-grid-community/core';
+import type { Component, Context, IGridComp } from '@ag-grid-community/core';
 import { GridCtrl } from '@ag-grid-community/core';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -100,22 +100,26 @@ const GridComp = ({ context }: GridCompProps) => {
         const beansToDestroy: any[] = [];
 
         // these components are optional, so we check if they are registered before creating them
-        // assuming that they will be registered by the feature module if present
-        const { watermarkComp, paginationComp, sideBarComp, statusBarComp, dropZonesComp } =
-            gridCtrl.getOptionalComps();
+        const {
+            watermarkSelector,
+            paginationSelector,
+            sideBarSelector,
+            statusBarSelector,
+            gridHeaderDropZonesSelector,
+        } = gridCtrl.getOptionalSelectors();
         const additionalEls: HTMLElement[] = [];
         const eRootWrapper = eRootWrapperRef.current;
 
-        if (dropZonesComp) {
-            const headerDropZonesComp = context.createBean(new dropZonesComp.class());
+        if (gridHeaderDropZonesSelector) {
+            const headerDropZonesComp = context.createBean(new gridHeaderDropZonesSelector.Component());
             const eGui = headerDropZonesComp.getGui();
             eRootWrapper.insertAdjacentElement('afterbegin', eGui);
             additionalEls.push(eGui);
             beansToDestroy.push(headerDropZonesComp);
         }
 
-        if (sideBarComp) {
-            const sideBarComp = context.createBean(new sideBarComp.class());
+        if (sideBarSelector) {
+            const sideBarComp = context.createBean(new sideBarSelector.Component());
             const eGui = sideBarComp.getGui();
             const bottomTabGuard = eGridBodyParent.querySelector('.ag-tab-guard-bottom');
             if (bottomTabGuard) {
@@ -126,28 +130,24 @@ const GridComp = ({ context }: GridCompProps) => {
             beansToDestroy.push(sideBarComp);
         }
 
-        if (statusBarComp) {
-            const statusBarComp = context.createBean(new statusBarComp.class());
-            const eGui = statusBarComp.getGui();
+        const addComponentToDom = (component: { new (params?: any): Component<any> }) => {
+            const comp = context.createBean(new component());
+            const eGui = comp.getGui();
             eRootWrapper.insertAdjacentElement('beforeend', eGui);
             additionalEls.push(eGui);
-            beansToDestroy.push(statusBarComp);
+            beansToDestroy.push(comp);
+        };
+
+        if (statusBarSelector) {
+            addComponentToDom(statusBarSelector.Component);
         }
 
-        if (PaginationClass) {
-            const paginationComp = context.createBean(new PaginationClass.class());
-            const eGui = paginationComp.getGui();
-            eRootWrapper.insertAdjacentElement('beforeend', eGui);
-            additionalEls.push(eGui);
-            beansToDestroy.push(paginationComp);
+        if (paginationSelector) {
+            addComponentToDom(paginationSelector.Component);
         }
 
-        if (WatermarkClass) {
-            const watermarkComp = context.createBean(new WatermarkClass.class());
-            const eGui = watermarkComp.getGui();
-            eRootWrapper.insertAdjacentElement('beforeend', eGui);
-            additionalEls.push(eGui);
-            beansToDestroy.push(watermarkComp);
+        if (watermarkSelector) {
+            addComponentToDom(watermarkSelector.Component);
         }
 
         return () => {

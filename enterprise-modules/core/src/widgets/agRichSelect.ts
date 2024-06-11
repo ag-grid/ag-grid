@@ -11,7 +11,7 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    AgInputTextFieldClass,
+    AgInputTextFieldSelector,
     AgPickerField,
     KeyCode,
     RefPlaceholder,
@@ -69,7 +69,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             pickerIcon: 'smallDown',
             ariaRole: 'combobox',
             template: config?.template ?? TEMPLATE,
-            agComponents: [AgInputTextFieldClass],
+            agComponents: [AgInputTextFieldSelector],
             modalPicker: false,
             ...config,
             // maxPickerHeight needs to be set after expanding `config`

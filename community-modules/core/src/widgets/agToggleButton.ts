@@ -1,6 +1,6 @@
 import type { AgCheckboxParams } from '../interfaces/agFieldParams';
 import { AgCheckbox } from './agCheckbox';
-import type { ComponentClass } from './component';
+import type { ComponentSelector } from './component';
 
 export interface AgToggleButtonParams extends AgCheckboxParams {}
 
@@ -17,7 +17,7 @@ export class AgToggleButton extends AgCheckbox<AgToggleButtonParams> {
         return this;
     }
 }
-export const AgToggleButtonClass: ComponentClass = {
+export const AgToggleButtonSelector: ComponentSelector = {
     selector: 'AG-TOGGLE-BUTTON',
-    class: AgToggleButton,
+    Component: AgToggleButton,
 };

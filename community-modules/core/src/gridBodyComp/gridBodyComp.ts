@@ -1,17 +1,17 @@
 import type { BeanCollection } from '../context/context';
-import { GridHeaderCompClass } from '../headerRendering/gridHeaderComp';
+import { GridHeaderSelector } from '../headerRendering/gridHeaderComp';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { ResizeObserverService } from '../misc/resizeObserverService';
-import { OverlayWrapperComponentClass } from '../rendering/overlays/overlayWrapperComponent';
+import { OverlayWrapperComponentSelector } from '../rendering/overlays/overlayWrapperComponent';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRowCount } from '../utils/aria';
-import type { ComponentClass } from '../widgets/component';
+import type { ComponentSelector } from '../widgets/component';
 import { Component, RefPlaceholder } from '../widgets/component';
-import { FakeHScrollCompClass } from './fakeHScrollComp';
-import { FakeVScrollCompClass } from './fakeVScrollComp';
+import { FakeHScrollSelector } from './fakeHScrollComp';
+import { FakeVScrollSelector } from './fakeVScrollComp';
 import type { IGridBodyComp, RowAnimationCssClasses } from './gridBodyCtrl';
 import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl } from './gridBodyCtrl';
-import { RowContainerCompClass } from './rowContainer/rowContainerComp';
+import { RowContainerSelector } from './rowContainer/rowContainerComp';
 import type { RowContainerName } from './rowContainer/rowContainerCtrl';
 
 function makeRowContainers(names: RowContainerName[]): string {
@@ -63,11 +63,11 @@ export class GridBodyComp extends Component {
 
     constructor() {
         super(GRID_BODY_TEMPLATE, [
-            OverlayWrapperComponentClass,
-            FakeHScrollCompClass,
-            FakeVScrollCompClass,
-            GridHeaderCompClass,
-            RowContainerCompClass,
+            OverlayWrapperComponentSelector,
+            FakeHScrollSelector,
+            FakeVScrollSelector,
+            GridHeaderSelector,
+            RowContainerSelector,
         ]);
     }
 
@@ -152,7 +152,7 @@ export class GridBodyComp extends Component {
         return [this.eTop, this.eBottom];
     }
 }
-export const GridBodyCompClass: ComponentClass = {
+export const GridBodySelector: ComponentSelector = {
     selector: 'AG-GRID-BODY',
-    class: GridBodyComp,
+    Component: GridBodyComp,
 };

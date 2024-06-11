@@ -2,7 +2,7 @@ import { _addOrRemoveAttribute } from '../utils/dom';
 import { _exists } from '../utils/generic';
 import type { AgInputTextFieldParams } from './agInputTextField';
 import { AgInputTextField } from './agInputTextField';
-import type { ComponentClass } from './component';
+import type { ComponentSelector } from './component';
 
 export interface AgInputNumberFieldParams extends AgInputTextFieldParams {
     precision?: number;
@@ -194,7 +194,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
     }
 }
 
-export const AgInputNumberFieldClass: ComponentClass = {
+export const AgInputNumberFieldSelector: ComponentSelector = {
     selector: 'AG-INPUT-NUMBER-FIELD',
-    class: AgInputNumberField,
+    Component: AgInputNumberField,
 };

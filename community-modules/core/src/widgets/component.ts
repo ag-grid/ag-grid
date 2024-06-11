@@ -36,7 +36,7 @@ export interface VisibleChangedEvent extends AgEvent<ComponentEvent> {
     visible: boolean;
 }
 
-export type ComponentClass = { class: { new (params?: any): Component<any> }; selector: AgComponentSelector };
+export type ComponentSelector = { Component: { new (params?: any): Component<any> }; selector: AgComponentSelector };
 
 export class Component<TLocalEvent extends string = ComponentEvent>
     extends BeanStub<TLocalEvent | ComponentEvent>
@@ -49,7 +49,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     public static elementGettingCreated: any;
 
     private eGui: HTMLElement;
-    private components: Map<AgComponentSelector, ComponentClass>;
+    private components: Map<AgComponentSelector, ComponentSelector>;
 
     // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
     private displayed = true;
@@ -70,7 +70,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     private tooltipText: string | null | undefined;
     private tooltipFeature: TooltipFeature | undefined;
 
-    constructor(template?: string, components?: ComponentClass[]) {
+    constructor(template?: string, components?: ComponentSelector[]) {
         super();
 
         this.cssClassManager = new CssClassManager(() => this.eGui);
@@ -231,7 +231,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
         if (ComponentClass) {
             Component.elementGettingCreated = element;
             const componentParams = paramsMap && elementRef ? paramsMap[elementRef] : undefined;
-            newComponent = new ComponentClass.class(componentParams);
+            newComponent = new ComponentClass.Component(componentParams);
             newComponent.setParentComponent(this as Component);
 
             this.createBean(newComponent, null, afterPreCreateCallback);
@@ -273,7 +273,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
 
     public setTemplate(
         template: string | null | undefined,
-        components?: ComponentClass[],
+        components?: ComponentSelector[],
         paramsMap?: { [key: string]: any }
     ): void {
         const eGui = _loadTemplate(template as string);
@@ -282,7 +282,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
 
     public setTemplateFromElement(
         element: HTMLElement,
-        components?: ComponentClass[],
+        components?: ComponentSelector[],
         paramsMap?: { [key: string]: any }
     ): void {
         this.eGui = element;

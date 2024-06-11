@@ -4,7 +4,7 @@ import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
 import { _setAriaRole } from '../../utils/aria';
 import { _ensureDomOrder, _insertWithDomOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
-import type { ComponentClass } from '../../widgets/component';
+import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import type { IRowContainerComp, RowContainerName, RowContainerOptions } from './rowContainerCtrl';
 import { RowContainerCtrl, _getRowContainerOptions } from './rowContainerCtrl';
@@ -123,7 +123,7 @@ export class RowContainerComp extends Component {
     }
 }
 
-export const RowContainerCompClass: ComponentClass = {
+export const RowContainerSelector: ComponentSelector = {
     selector: 'AG-ROW-CONTAINER',
-    class: RowContainerComp,
+    Component: RowContainerComp,
 };

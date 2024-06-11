@@ -1,6 +1,6 @@
 import type {
     BeanCollection,
-    ComponentClass,
+    ComponentSelector,
     IStatusPanelComp,
     IStatusPanelParams,
     StatusPanelDef,
@@ -185,7 +185,7 @@ export class AgStatusBar extends Component {
     }
 }
 
-export const AgStatusBarClass: ComponentClass = {
+export const AgStatusBarSelector: ComponentSelector = {
     selector: 'AG-STATUS-BAR',
-    class: AgStatusBar,
+    Component: AgStatusBar,
 };

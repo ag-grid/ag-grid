@@ -7,7 +7,7 @@ import type {
 } from '@ag-grid-community/core';
 import {
     AgAbstractLabel,
-    AgInputNumberFieldClass,
+    AgInputNumberFieldSelector,
     RefPlaceholder,
     _exists,
     _setFixedWidth,
@@ -52,7 +52,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams, AgAngleS
                 <ag-input-number-field data-ref="eAngleValue"></ag-input-number-field>
             </div>
         </div>`,
-            [AgInputNumberFieldClass]
+            [AgInputNumberFieldSelector]
         );
     }
 

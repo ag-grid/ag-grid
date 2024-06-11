@@ -1,8 +1,8 @@
 import type { BeanCollection } from '@ag-grid-community/core';
-import { AgCheckboxClass, Component } from '@ag-grid-community/core';
-import { AgGroupComponentClass, type AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgCheckboxSelector, Component } from '@ag-grid-community/core';
+import { type AgGroupComponentParams, AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 
-import { AgColorPickerClass } from '../../../../../widgets/agColorPicker';
+import { AgColorPickerSelector } from '../../../../../widgets/agColorPicker';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -49,11 +49,15 @@ export class CrosshairPanel extends Component {
             'crosshair.stroke',
             'color'
         );
-        this.setTemplate(CrosshairPanel.TEMPLATE, [AgGroupComponentClass, AgCheckboxClass, AgColorPickerClass], {
-            crosshairGroup: crosshairGroupParams,
-            crosshairLabelCheckbox: crosshairLabelCheckboxParams,
-            crosshairSnapCheckbox: crosshairSnapCheckboxParams,
-            crosshairStrokeColorPicker: crosshairStrokeColorPickerParams,
-        });
+        this.setTemplate(
+            CrosshairPanel.TEMPLATE,
+            [AgGroupComponentSelector, AgCheckboxSelector, AgColorPickerSelector],
+            {
+                crosshairGroup: crosshairGroupParams,
+                crosshairLabelCheckbox: crosshairLabelCheckboxParams,
+                crosshairSnapCheckbox: crosshairSnapCheckboxParams,
+                crosshairStrokeColorPicker: crosshairStrokeColorPickerParams,
+            }
+        );
     }
 }

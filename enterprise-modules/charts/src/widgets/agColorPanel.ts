@@ -2,7 +2,7 @@ import { Component, KeyCode, RefPlaceholder, _exists, _setDisplayed } from '@ag-
 import { _Util } from 'ag-charts-community';
 
 import type { AgColorInput } from './agColorInput';
-import { AgColorInputClass } from './agColorInput';
+import { AgColorInputSelector } from './agColorInput';
 import type { AgColorPicker } from './agColorPicker';
 
 const TEMPLATE = /* html */ `<div class="ag-color-panel" tabindex="-1">
@@ -60,7 +60,7 @@ export class AgColorPanel extends Component {
     private readonly recentColors: HTMLElement = RefPlaceholder;
 
     constructor(config: { picker: Component<any> }) {
-        super(TEMPLATE, [AgColorInputClass]);
+        super(TEMPLATE, [AgColorInputSelector]);
         this.picker = config.picker;
     }
 

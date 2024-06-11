@@ -3,7 +3,7 @@ import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
 import { _addOrRemoveAttribute } from '../utils/dom';
 import type { AgInputTextFieldParams } from './agInputTextField';
 import { AgInputTextField } from './agInputTextField';
-import type { ComponentClass } from './component';
+import type { ComponentSelector } from './component';
 
 export class AgInputDateField extends AgInputTextField {
     private min?: string;
@@ -89,7 +89,7 @@ export class AgInputDateField extends AgInputTextField {
     }
 }
 
-export const AgInputDateFieldClass: ComponentClass = {
+export const AgInputDateFieldSelector: ComponentSelector = {
     selector: 'AG-INPUT-DATE-FIELD',
-    class: AgInputDateField,
+    Component: AgInputDateField,
 };

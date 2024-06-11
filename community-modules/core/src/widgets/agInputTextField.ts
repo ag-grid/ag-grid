@@ -3,7 +3,7 @@ import { _exists } from '../utils/generic';
 import { _isEventFromPrintableCharacter } from '../utils/keyboard';
 import type { AgAbstractInputFieldEvent } from './agAbstractInputField';
 import { AgAbstractInputField } from './agAbstractInputField';
-import type { ComponentClass } from './component';
+import type { ComponentSelector } from './component';
 
 export interface AgInputTextFieldParams extends AgInputFieldParams {
     allowedCharPattern?: string;
@@ -64,7 +64,7 @@ export class AgInputTextField<
         });
     }
 }
-export const AgInputTextFieldClass: ComponentClass = {
+export const AgInputTextFieldSelector: ComponentSelector = {
     selector: 'AG-INPUT-TEXT-FIELD',
-    class: AgInputTextField,
+    Component: AgInputTextField,
 };

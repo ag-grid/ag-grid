@@ -3,7 +3,7 @@ export { GridLicenseManager as LicenseManager } from './license/gridLicenseManag
 export { ILicenseManager } from './license/shared/licenseManager';
 
 // widgets shared across enterprise modules
-export { AgGroupComponent, AgGroupComponentClass, AgGroupComponentParams } from './widgets/agGroupComponent';
+export { AgGroupComponent, AgGroupComponentSelector, AgGroupComponentParams } from './widgets/agGroupComponent';
 export { AgRichSelect } from './widgets/agRichSelect';
 export { PillDragComp } from './widgets/pillDragComp';
 export { PillDropZonePanel, PillDropZonePanelParams } from './widgets/pillDropZonePanel';

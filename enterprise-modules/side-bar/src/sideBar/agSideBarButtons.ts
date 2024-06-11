@@ -1,7 +1,7 @@
 import type {
     AgEvent,
     BeanCollection,
-    ComponentClass,
+    ComponentSelector,
     FocusService,
     ToolPanelDef,
     VisibleColsService,
@@ -79,7 +79,7 @@ export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
     }
 }
 
-export const AgSideBarButtonsClass: ComponentClass = {
+export const AgSideBarButtonsSelector: ComponentSelector = {
     selector: 'AG-SIDE-BAR-BUTTONS',
-    class: AgSideBarButtons,
+    Component: AgSideBarButtons,
 };
