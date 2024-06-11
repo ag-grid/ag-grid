@@ -146,7 +146,7 @@ export interface DraggingEvent<TData = any, TContext = any> extends AgGridCommon
     dropZoneTarget: HTMLElement;
 }
 
-const GHOST_TEMPLATE /* html */ = `<div class="ag-dnd-ghost ag-unselectable">
+const GHOST_TEMPLATE = /* html */ `<div class="ag-dnd-ghost ag-unselectable">
 <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>
 <div class="ag-dnd-ghost-label"></div>
 </div>`;

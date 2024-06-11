@@ -31,16 +31,6 @@ import {
 import type { AgRichSelectListEvent } from './agRichSelectList';
 import { AgRichSelectList } from './agRichSelectList';
 
-const TEMPLATE = /* html */ `
-    <div class="ag-picker-field" role="presentation">
-        <div data-ref="eLabel"></div>
-        <div data-ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-rich-select-value ag-picker-collapsed">
-            <span data-ref="eDisplayField" class="ag-picker-field-display"></span>
-            <ag-input-text-field data-ref="eInput" class="ag-rich-select-field-input"></ag-input-text-field>
-            <span data-ref="eDeselect" class="ag-rich-select-deselect-button ag-picker-field-icon" role="presentation"></span>
-            <span data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></span>
-        </div>
-    </div>`;
 export type AgRichSelectEvent = AgRichSelectListEvent;
 export class AgRichSelect<TValue = any> extends AgPickerField<
     TValue[] | TValue,
@@ -71,7 +61,18 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             className: 'ag-rich-select',
             pickerIcon: 'smallDown',
             ariaRole: 'combobox',
-            template: config?.template ?? TEMPLATE,
+            template:
+                config?.template ??
+                /* html */ `
+            <div class="ag-picker-field" role="presentation">
+                <div data-ref="eLabel"></div>
+                <div data-ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-rich-select-value ag-picker-collapsed">
+                    <span data-ref="eDisplayField" class="ag-picker-field-display"></span>
+                    <ag-input-text-field data-ref="eInput" class="ag-rich-select-field-input"></ag-input-text-field>
+                    <span data-ref="eDeselect" class="ag-rich-select-deselect-button ag-picker-field-icon" role="presentation"></span>
+                    <span data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></span>
+                </div>
+            </div>`,
             agComponents: [AgInputTextFieldSelector],
             modalPicker: false,
             ...config,

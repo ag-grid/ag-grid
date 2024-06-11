@@ -13,14 +13,6 @@ import type { ChartTranslationKey, ChartTranslationService } from '../../../serv
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class GridLinePanel extends Component {
-    public static TEMPLATE = /* html */ `<div>
-            <ag-group-component data-ref="gridLineGroup">
-                <ag-color-picker data-ref="gridLineColorPicker"></ag-color-picker>
-                <ag-slider data-ref="gridLineWidthSlider"></ag-slider>
-                <ag-slider data-ref="gridLineLineDashSlider"></ag-slider>
-            </ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -45,12 +37,22 @@ export class GridLinePanel extends Component {
         const gridLineColorPickerParams = this.getGridLineColorPickerParams('color');
         const gridLineWidthSliderParams = this.getGridLineWidthSliderParams('thickness');
         const gridLineLineDashSliderParams = this.getGridLineDashSliderParams('lineDash');
-        this.setTemplate(GridLinePanel.TEMPLATE, [AgGroupComponentSelector, AgColorPickerSelector, AgSliderSelector], {
-            gridLineGroup: gridLineGroupParams,
-            gridLineColorPicker: gridLineColorPickerParams,
-            gridLineWidthSlider: gridLineWidthSliderParams,
-            gridLineLineDashSlider: gridLineLineDashSliderParams,
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="gridLineGroup">
+                <ag-color-picker data-ref="gridLineColorPicker"></ag-color-picker>
+                <ag-slider data-ref="gridLineWidthSlider"></ag-slider>
+                <ag-slider data-ref="gridLineLineDashSlider"></ag-slider>
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector, AgColorPickerSelector, AgSliderSelector],
+            {
+                gridLineGroup: gridLineGroupParams,
+                gridLineColorPicker: gridLineColorPickerParams,
+                gridLineWidthSlider: gridLineWidthSliderParams,
+                gridLineLineDashSlider: gridLineLineDashSliderParams,
+            }
+        );
     }
 
     private getGridLineColorPickerParams(labelKey: ChartTranslationKey): AgColorPickerParams {

@@ -4,14 +4,6 @@ import { _Util } from 'ag-charts-community';
 
 import type { ChartTranslationService } from '../charts/chartComp/services/chartTranslationService';
 
-const TEMPLATE = /* html */ `
-    <div role="presentation" class="ag-color-input">
-        <div data-ref="eLabel" class="ag-input-field-label"></div>
-        <div data-ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
-            <input data-ref="eInput" class="ag-input-field-input">
-            <div data-ref="eColor" class="ag-color-input-color"></div>
-        </div>
-    </div>`;
 export type AgColorInputEvent = 'colorChanged';
 export class AgColorInput extends AgInputTextField<AgInputTextFieldParams, AgColorInputEvent> {
     private chartTranslationService: ChartTranslationService;
@@ -22,7 +14,16 @@ export class AgColorInput extends AgInputTextField<AgInputTextFieldParams, AgCol
     private readonly eColor: HTMLElement = RefPlaceholder;
 
     constructor() {
-        super({ template: TEMPLATE });
+        super({
+            template: /* html */ `
+            <div role="presentation" class="ag-color-input">
+                <div data-ref="eLabel" class="ag-input-field-label"></div>
+                <div data-ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
+                    <input data-ref="eInput" class="ag-input-field-input">
+                    <div data-ref="eColor" class="ag-color-input-color"></div>
+                </div>
+            </div>`,
+        });
     }
 
     public setColor(color: _Util.Color): void {

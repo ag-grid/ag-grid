@@ -10,8 +10,6 @@ import type { FontPanelParams } from '../fontPanel';
 import { FontPanel } from '../fontPanel';
 
 export class TitlePanel extends Component {
-    public static TEMPLATE = /* html */ `<div></div>`;
-
     protected chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -27,7 +25,7 @@ export class TitlePanel extends Component {
         private readonly name: ChartTranslationKey,
         protected readonly key: string
     ) {
-        super(TitlePanel.TEMPLATE);
+        super(/* html */ `<div></div>`);
         this.chartOptions = chartMenuUtils.getChartOptions();
     }
 

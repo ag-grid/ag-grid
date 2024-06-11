@@ -12,13 +12,6 @@ import { FontPanel } from '../fontPanel';
 import type { FormatPanelOptions } from '../formatPanel';
 
 export class PolarAxisPanel extends Component {
-    public static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="axisGroup">
-                <ag-color-picker data-ref="axisColorInput"></ag-color-picker>
-                <ag-slider data-ref="axisLineWidthSlider"></ag-slider>
-            </ag-group-component>
-        </div>`;
-
     private readonly axisGroup: AgGroupComponent = RefPlaceholder;
 
     private chartTranslationService: ChartTranslationService;
@@ -45,11 +38,20 @@ export class PolarAxisPanel extends Component {
             'thickness',
             10
         );
-        this.setTemplate(PolarAxisPanel.TEMPLATE, [AgGroupComponentSelector, AgColorPickerSelector, AgSliderSelector], {
-            axisGroup: axisGroupParams,
-            axisColorInput: axisColorInputParams,
-            axisLineWidthSlider: axisLineWidthSliderParams,
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="axisGroup">
+                <ag-color-picker data-ref="axisColorInput"></ag-color-picker>
+                <ag-slider data-ref="axisLineWidthSlider"></ag-slider>
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector, AgColorPickerSelector, AgSliderSelector],
+            {
+                axisGroup: axisGroupParams,
+                axisColorInput: axisColorInputParams,
+                axisLineWidthSlider: axisLineWidthSliderParams,
+            }
+        );
         registerGroupComponent(this.axisGroup);
 
         this.initAxis();

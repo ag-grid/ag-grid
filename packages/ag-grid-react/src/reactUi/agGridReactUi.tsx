@@ -26,10 +26,11 @@ import type {
 } from 'ag-grid-community';
 import {
     BaseComponentWrapper,
-    ComponentUtil,
     GridCoreCreator,
     ModuleRegistry,
     VanillaFrameworkOverrides,
+    _combineAttributesAndGridOptions,
+    _processOnChange,
     _warnOnce,
 } from 'ag-grid-community';
 
@@ -88,7 +89,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
             });
         }
 
-        const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(props.gridOptions, props);
+        const mergedGridOps = _combineAttributesAndGridOptions(props.gridOptions, props);
 
         const gridParams: GridParams = {
             providedBeanInstances: {
@@ -166,7 +167,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
         prevProps.current = props;
         processWhenReady(() => {
             if (apiRef.current) {
-                ComponentUtil.processOnChange(changes, apiRef.current);
+                _processOnChange(changes, apiRef.current);
             }
         });
     }, [props]);

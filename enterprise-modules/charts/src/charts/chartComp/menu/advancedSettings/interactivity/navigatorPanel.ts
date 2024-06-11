@@ -8,13 +8,6 @@ import type { ChartTranslationService } from '../../../services/chartTranslation
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class NavigatorPanel extends Component {
-    public static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="navigatorGroup">
-                <ag-slider data-ref="navigatorHeightSlider"></ag-slider>
-                <ag-checkbox data-ref="navigatorMiniChartCheckbox"></ag-checkbox>
-            </ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -48,10 +41,19 @@ export class NavigatorPanel extends Component {
             'miniChart'
         );
 
-        this.setTemplate(NavigatorPanel.TEMPLATE, [AgGroupComponentSelector, AgSliderSelector, AgCheckboxSelector], {
-            navigatorGroup: navigatorGroupParams,
-            navigatorHeightSlider: navigatorHeightSliderParams,
-            navigatorMiniChartCheckbox: navigatorMiniChartCheckboxParams,
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="navigatorGroup">
+                <ag-slider data-ref="navigatorHeightSlider"></ag-slider>
+                <ag-checkbox data-ref="navigatorMiniChartCheckbox"></ag-checkbox>
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector, AgSliderSelector, AgCheckboxSelector],
+            {
+                navigatorGroup: navigatorGroupParams,
+                navigatorHeightSlider: navigatorHeightSliderParams,
+                navigatorMiniChartCheckbox: navigatorMiniChartCheckboxParams,
+            }
+        );
     }
 }

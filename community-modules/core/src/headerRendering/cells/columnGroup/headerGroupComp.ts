@@ -42,12 +42,6 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         this.columnModel = beans.columnModel;
     }
 
-    static TEMPLATE /* html */ = `<div class="ag-header-group-cell-label" role="presentation">
-            <span data-ref="agLabel" class="ag-header-group-text" role="presentation"></span>
-            <span data-ref="agOpened" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded"></span>
-            <span data-ref="agClosed" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed"></span>
-        </div>`;
-
     private params: IHeaderGroupParams;
 
     private readonly agOpened: HTMLElement = RefPlaceholder;
@@ -55,7 +49,11 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private readonly agLabel: HTMLElement = RefPlaceholder;
 
     constructor() {
-        super(HeaderGroupComp.TEMPLATE);
+        super(/* html */ `<div class="ag-header-group-cell-label" role="presentation">
+            <span data-ref="agLabel" class="ag-header-group-text" role="presentation"></span>
+            <span data-ref="agOpened" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded"></span>
+            <span data-ref="agClosed" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed"></span>
+        </div>`);
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.

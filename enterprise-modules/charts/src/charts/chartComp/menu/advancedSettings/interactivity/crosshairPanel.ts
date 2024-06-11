@@ -7,14 +7,6 @@ import type { ChartTranslationService } from '../../../services/chartTranslation
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class CrosshairPanel extends Component {
-    public static TEMPLATE = /* html */ `<div>
-            <ag-group-component data-ref="crosshairGroup">
-                <ag-checkbox data-ref="crosshairLabelCheckbox"></ag-checkbox>
-                <ag-checkbox data-ref="crosshairSnapCheckbox"></ag-checkbox>
-                <ag-color-picker data-ref="crosshairStrokeColorPicker"></ag-color-picker>
-            </ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -50,7 +42,13 @@ export class CrosshairPanel extends Component {
             'color'
         );
         this.setTemplate(
-            CrosshairPanel.TEMPLATE,
+            /* html */ `<div>
+            <ag-group-component data-ref="crosshairGroup">
+                <ag-checkbox data-ref="crosshairLabelCheckbox"></ag-checkbox>
+                <ag-checkbox data-ref="crosshairSnapCheckbox"></ag-checkbox>
+                <ag-color-picker data-ref="crosshairStrokeColorPicker"></ag-color-picker>
+            </ag-group-component>
+        </div>`,
             [AgGroupComponentSelector, AgCheckboxSelector, AgColorPickerSelector],
             {
                 crosshairGroup: crosshairGroupParams,
