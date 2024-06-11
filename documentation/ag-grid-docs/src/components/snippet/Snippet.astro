@@ -10,6 +10,7 @@ const {
     // @see https://github.com/markdoc/markdoc/blob/a13cc583fa3b0420538e772a75628dd15d72b793/src/schema.ts#L56
     'data-language': language,
     frameworkTransform,
+    copyToClipboard,
     ...otherProps
 } = Astro.props;
 
@@ -18,10 +19,11 @@ const content = he.decode(encodedHtmlContent);
 ---
 
 <Snippet
-    client:only="react"
+    client:load="react"
     framework={framework}
     language={language}
     content={content}
     transform={frameworkTransform}
+    copyToClipboard={copyToClipboard}
     {...otherProps}
 />
