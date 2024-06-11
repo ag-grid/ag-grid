@@ -1562,7 +1562,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public resetRowDataOnUpdate: boolean | undefined = undefined;
-    /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc.
+    /** Callback fired after the row is rendered into the DOM. Should not be used for side effects.
      */
     @Input() public processRowPostCreate: ((params: ProcessRowParams<TData>) => void) | undefined = undefined;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
