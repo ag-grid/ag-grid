@@ -1,5 +1,6 @@
 import { LicenseManager } from '@ag-grid-enterprise/core';
 import type { ImportType } from '@ag-grid-types';
+import { AgCharts } from 'ag-charts-enterprise';
 import { useEffect, useMemo, useState } from 'react';
 
 import type { LicensedProducts, Products } from '../types';
@@ -134,24 +135,35 @@ export const useLicenseData = () => {
     });
 
     const licenseDetails = useMemo(() => LicenseManager.getLicenseDetails(license), [license]);
+    const chartsLicenseDetails = useMemo(() => AgCharts.getLicenseDetails(license) || {}, [license]);
+
     const { version: userLicenseVersion, isTrial: userLicenseIsTrial, expiry: userLicenseExpiry } = licenseDetails;
     const validLicenseText = useMemo<string>(() => {
-        const { valid, expired, trialExpired, suppliedLicenseType } = licenseDetails;
         let text = '';
-        if (valid && !expired && !trialExpired) {
+        if (
+            licenseDetails.suppliedLicenseType !== 'CHARTS' &&
+            licenseDetails.valid &&
+            !licenseDetails.expired &&
+            !licenseDetails.trialExpired
+        ) {
             let supportsText = '';
-            if (suppliedLicenseType === 'GRID') {
+            if (licenseDetails.suppliedLicenseType === 'GRID') {
                 supportsText = `Supports "Grid Enterprise"`;
-            } else if (suppliedLicenseType === 'CHARTS') {
-                supportsText = `Supports "Chart Enterprise"`;
-            } else if (suppliedLicenseType === 'BOTH') {
+            } else if (licenseDetails.suppliedLicenseType === 'BOTH') {
                 supportsText = `Supports "Grid Enterprise", "Integrated Enterprise" and "Chart Enterprise"`;
             }
             text = `Valid license. ${supportsText}`;
+        } else if (
+            licenseDetails.suppliedLicenseType === 'CHARTS' &&
+            chartsLicenseDetails.valid &&
+            !chartsLicenseDetails.expired &&
+            !chartsLicenseDetails.trialExpired
+        ) {
+            text = `Valid license. Supports "Chart Enterprise"`;
         }
 
         return text;
-    }, [licenseDetails]);
+    }, [licenseDetails, chartsLicenseDetails]);
 
     const { errors } = useErrors({ hasLicense, license, licensedProducts, userProducts, licenseDetails });
 
