@@ -320,7 +320,7 @@ export const AG_GRID_LOCALE_EN: Record<string, string> = {
     horizontalAxisTitle: 'Horizontal Axis Title',
     verticalAxisTitle: 'Vertical Axis Title',
     polarAxisTitle: 'Polar Axis Title',
-    titlePlaceholder: 'Chart title - double click to edit',
+    titlePlaceholder: 'Chart Title',
     background: 'Background',
     font: 'Font',
     weight: 'Weight',
