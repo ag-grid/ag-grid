@@ -1,4 +1,4 @@
-import type { LicensedProducts } from '../types';
+import type { Products } from '../types';
 
 export const TEMPLATES = {
     react: {
@@ -18,13 +18,13 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 });
 `,
-        modules: ({ license, userLicensedProducts }: { license: string; userLicensedProducts: LicensedProducts }) =>
+        modules: ({ license, userProducts }: { license: string; userProducts: Products }) =>
             `import React from "react";
 import { render } from "react-dom";
 
 import { ModuleRegistry } from "@ag-grid-community/core";
 import { LicenseManager } from "@ag-grid-enterprise/core";
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';${userLicensedProducts.charts ? "\nimport { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';" : ''}
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';${userProducts.chartsEnterprise ? "\nimport { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';" : ''}
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
@@ -33,7 +33,7 @@ import App from "./App";
 
 LicenseManager.setLicenseKey("${license}");
 
-ModuleRegistry.registerModules([ClientSideRowModelModule${userLicensedProducts.charts ? ', GridChartsModule' : ''}]);
+ModuleRegistry.registerModules([ClientSideRowModelModule${userProducts.chartsEnterprise ? ', GridChartsModule' : ''}]);
 
 document.addEventListener('DOMContentLoaded', () => {
     render(
@@ -56,17 +56,17 @@ LicenseManager.setLicenseKey("${license}");
    [modules]="modules" />
 `,
 
-        modules: ({ license, userLicensedProducts }: { license: string; userLicensedProducts: LicensedProducts }) =>
+        modules: ({ license, userProducts }: { license: string; userProducts: Products }) =>
             `import { ModuleRegistry } from "@ag-grid-community/core";
 import { LicenseManager } from "@ag-grid-enterprise/core";
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'${userLicensedProducts.charts ? "\nimport { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';" : ''};
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'${userProducts.chartsEnterprise ? "\nimport { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';" : ''};
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 LicenseManager.setLicenseKey("${license}");
 
-ModuleRegistry.registerModules([ClientSideRowModelModule${userLicensedProducts.charts ? ', GridChartsModule' : ''}]);
+ModuleRegistry.registerModules([ClientSideRowModelModule${userProducts.chartsEnterprise ? ', GridChartsModule' : ''}]);
 
 // Template
 <ag-grid-angular
@@ -84,20 +84,20 @@ createGrid(<dom element>, gridOptions);
 `,
         modules: ({
             license,
-            userLicensedProducts,
+            userProducts,
         }: {
             license: string;
-            userLicensedProducts: LicensedProducts;
+            userProducts: Products;
         }) => `import { ModuleRegistry } from "@ag-grid-community/core";
 import { LicenseManager } from "@ag-grid-enterprise/core";
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'${userLicensedProducts.charts ? "\nimport { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';" : ''};
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'${userProducts.chartsEnterprise ? "\nimport { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';" : ''};
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 LicenseManager.setLicenseKey("${license}");
 
-ModuleRegistry.registerModules([ClientSideRowModelModule${userLicensedProducts.charts ? ', GridChartsModule' : ''}]);
+ModuleRegistry.registerModules([ClientSideRowModelModule${userProducts.chartsEnterprise ? ', GridChartsModule' : ''}]);
 
 createGrid(<dom element>, gridOptions);
 `,
@@ -120,20 +120,20 @@ export default {
 };
 </script>
 `,
-        modules: ({ license, userLicensedProducts }: { license: string; userLicensedProducts: LicensedProducts }) =>
+        modules: ({ license, userProducts }: { license: string; userProducts: Products }) =>
             `<script>
 import { AgGridVue } from "ag-grid-vue3";
 
 import { ModuleRegistry } from "@ag-grid-community/core";
 import { LicenseManager } from "@ag-grid-enterprise/core";
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'${userLicensedProducts.charts ? "\nimport { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';" : ''};
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'${userProducts.chartsEnterprise ? "\nimport { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';" : ''};
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 LicenseManager.setLicenseKey("${license}");
 
-ModuleRegistry.registerModules([ClientSideRowModelModule${userLicensedProducts.charts ? ', GridChartsModule' : ''}]);
+ModuleRegistry.registerModules([ClientSideRowModelModule${userProducts.chartsEnterprise ? ', GridChartsModule' : ''}]);
 
 export default {
     name: "App",

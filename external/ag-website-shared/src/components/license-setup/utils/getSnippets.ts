@@ -1,26 +1,23 @@
 import type { Framework, ImportType } from '@ag-grid-types';
 import { agGridVersion } from '@constants';
 
-import type { LicensedProducts } from '../types';
+import type { Products } from '../types';
 import { getDependencies } from './getDependencies';
 import { TEMPLATES } from './templates';
 
 export const getDependenciesSnippet = ({
     framework,
-    licensedProducts,
+    products,
     importType,
-    useStandaloneCharts,
 }: {
     framework: Framework;
-    licensedProducts: LicensedProducts;
+    products: Products;
     importType?: ImportType;
-    useStandaloneCharts?: boolean;
 }) => {
     const dependencies = getDependencies({
         framework,
-        licensedProducts,
+        products,
         importType,
-        useStandaloneCharts,
     });
 
     const depObject: Record<string, string> = {};
@@ -35,12 +32,12 @@ export const getBootstrapSnippet = ({
     framework,
     importType,
     license: rawLicense,
-    userLicensedProducts = {} as LicensedProducts,
+    userProducts = {} as Products,
 }: {
     framework: Framework;
     license?: string;
     importType?: ImportType;
-    userLicensedProducts?: LicensedProducts;
+    userProducts?: Products;
 }) => {
     const license = rawLicense?.trim();
     const frameworkTemplate = TEMPLATES[framework];
@@ -51,5 +48,5 @@ export const getBootstrapSnippet = ({
 
     const template = frameworkTemplate[importType];
 
-    return (template && template({ license, userLicensedProducts })).trim() || '';
+    return (template && template({ license, userProducts })).trim() || '';
 };

@@ -52,6 +52,11 @@
 
     .inputList {
         justify-content: end;
+        flex-direction: column;
+    }
+
+    label {
+        justify-content: end;
     }
 }
 

@@ -1,8 +1,7 @@
 import type { Framework, ImportType } from '@ag-grid-types';
 import Warning from '@ag-website-shared/components/alert/Warning';
 import { Snippet } from '@components/snippet/Snippet';
-import { InfoTooltip } from '@components/theme-builder/components/general/Tooltip';
-import { CHARTS_SITE_URL, FRAMEWORK_DISPLAY_TEXT } from '@constants';
+import { FRAMEWORK_DISPLAY_TEXT } from '@constants';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
@@ -43,10 +42,8 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
         setUserLicense,
         importType,
         setImportType,
-        userLicensedProducts,
-        setUserLicensedProducts,
-        useStandaloneCharts,
-        setUseStandaloneCharts,
+        userProducts,
+        setUserProducts,
         userLicenseExpiry,
 
         errors,
@@ -55,11 +52,10 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
         () =>
             getDependenciesSnippet({
                 framework,
-                licensedProducts: userLicensedProducts,
+                products: userProducts,
                 importType,
-                useStandaloneCharts,
             }),
-        [framework, userLicensedProducts, importType, useStandaloneCharts]
+        [framework, userProducts, importType]
     );
     const bootstrapSnippet = useMemo(
         () =>
@@ -67,17 +63,17 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                 framework,
                 importType,
                 license: license || 'your license key',
-                userLicensedProducts,
+                userProducts,
             }),
-        [framework, importType, license, userLicensedProducts]
+        [framework, importType, license, userProducts]
     );
     const selectedSeedRepos = useMemo(
         () =>
             seedRepos
                 .filter(({ licenseType }) => {
-                    if (userLicensedProducts.charts && userLicensedProducts.grid) {
+                    if (userProducts.integratedEnterprise) {
                         return licenseType === 'enterprise-bundle';
-                    } else if (userLicensedProducts.charts || userLicensedProducts.grid) {
+                    } else if (userProducts.chartsEnterprise || userProducts.gridEnterprise) {
                         return licenseType === 'enterprise';
                     }
 
@@ -86,7 +82,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                 .filter((seedRepo) => {
                     return seedRepo.framework === framework && seedRepo.importType === importType;
                 }),
-        [seedRepos, userLicensedProducts, framework, importType]
+        [seedRepos, userProducts, framework, importType]
     );
 
     return (
@@ -162,46 +158,67 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                 )}
 
                 <div>
-                    <div>Licensed products</div>
+                    <div>Which enterprise products would you like to use?</div>
                     <div className={styles.licensedProductsContainer}>
                         <div className={styles.inputList}>
                             <label>
+                                Grid Enterprise
                                 <input
                                     type="checkbox"
-                                    name="licensedProducts"
-                                    value="grid"
-                                    checked={userLicensedProducts.grid}
+                                    name="products"
+                                    value="gridEnterprise"
+                                    checked={userProducts.gridEnterprise}
                                     onChange={() => {
-                                        setUserLicensedProducts((prevLicensedProducts) => {
+                                        setUserProducts((prevProducts) => {
                                             return {
-                                                ...prevLicensedProducts,
-                                                grid: !prevLicensedProducts.grid,
+                                                ...prevProducts,
+                                                gridEnterprise: !prevProducts.gridEnterprise,
                                             };
                                         });
                                     }}
                                 />
-                                Grid Enterprise
                             </label>
                             <label>
+                                Integrated Enterprise
                                 <input
                                     type="checkbox"
-                                    name="licensedProducts"
-                                    value="charts"
-                                    checked={userLicensedProducts.charts}
+                                    name="products"
+                                    value="integratedEnterprise"
+                                    checked={userProducts.integratedEnterprise}
                                     onChange={() => {
-                                        setUserLicensedProducts((prevLicensedProducts) => {
+                                        setUserProducts((prevProducts) => {
                                             return {
-                                                ...prevLicensedProducts,
-                                                charts: !prevLicensedProducts.charts,
+                                                ...prevProducts,
+                                                integratedEnterprise: !prevProducts.integratedEnterprise,
                                             };
                                         });
                                     }}
                                 />
+                            </label>
+                            <label>
                                 Charts Enterprise
+                                <input
+                                    type="checkbox"
+                                    name="products"
+                                    value="chartsEnterprise"
+                                    checked={userProducts.chartsEnterprise}
+                                    onChange={() => {
+                                        setUserProducts((prevProducts) => {
+                                            return {
+                                                ...prevProducts,
+                                                chartsEnterprise: !prevProducts.chartsEnterprise,
+                                            };
+                                        });
+                                    }}
+                                />
                             </label>
                         </div>
+                        {errors.chartsNoIntegratedEnterprise && (
+                            <Warning>{errors.chartsNoIntegratedEnterprise}</Warning>
+                        )}
+                        {errors.gridNoIntegratedEnterprise && <Warning>{errors.gridNoIntegratedEnterprise}</Warning>}
                         {errors.chartsNoGridEnterprise && <Warning>{errors.chartsNoGridEnterprise}</Warning>}
-                        {errors.chartsSupported && <Warning>{errors.chartsSupported}</Warning>}
+                        {errors.gridNoCharts && <Warning>{errors.gridNoCharts}</Warning>}
                     </div>
                 </div>
                 <div>
@@ -226,67 +243,38 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                         <option value="modules">Modules</option>
                     </select>
                 </div>
-
-                <div>
-                    <div>
-                        Use AG Charts outside of AG Grid (<a href={CHARTS_SITE_URL}>Standalone Charts</a>){' '}
-                        <InfoTooltip title="AG Charts will be included inside AG Grid Enterprise, but if you want to use AG Charts in your own application, you will need to import it separately" />
-                    </div>
-                    <div className={styles.inputList}>
-                        <label>
-                            <input
-                                type="radio"
-                                name="useStandaloneCharts"
-                                value="true"
-                                defaultChecked={useStandaloneCharts !== undefined && useStandaloneCharts}
-                                onChange={() => setUseStandaloneCharts(true)}
-                            />{' '}
-                            Yes
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                name="useStandaloneCharts"
-                                value="false"
-                                defaultChecked={useStandaloneCharts !== undefined && !useStandaloneCharts}
-                                onChange={() => setUseStandaloneCharts(false)}
-                            />{' '}
-                            No
-                        </label>
-                    </div>
-                </div>
             </div>
 
             <div className={styles.results}>
                 <h3>Dependencies</h3>
+
+                {errors.noProducts && <Warning>{errors.noProducts}</Warning>}
+
                 <p>
                     Copy the following dependencies into your <code>package.json</code>:
                 </p>
                 {dependenciesSnippet && <Snippet framework={framework} content={dependenciesSnippet} />}
 
                 <h3>Set Up License Example</h3>
-                {userLicensedProducts.grid && (
-                    <>
-                        <p>An example of how to set up your license:</p>
-                        {bootstrapSnippet && <Snippet framework={framework} content={bootstrapSnippet} />}
+                {errors.noProducts && <Warning>{errors.noProducts}</Warning>}
 
-                        {selectedSeedRepos.length ? (
-                            <>
-                                <p>Here are some seed code repositories to get you started:</p>
-                                <ul>
-                                    {selectedSeedRepos.map(({ name, url, importType }) => {
-                                        return (
-                                            <li key={url}>
-                                                <a href={url}>{name}</a> ({importType})
-                                            </li>
-                                        );
-                                    })}
-                                </ul>
-                            </>
-                        ) : undefined}
+                <p>An example of how to set up your license:</p>
+                {bootstrapSnippet && <Snippet framework={framework} content={bootstrapSnippet} />}
+
+                {selectedSeedRepos.length ? (
+                    <>
+                        <p>Here are some seed code repositories to get you started:</p>
+                        <ul>
+                            {selectedSeedRepos.map(({ name, url, importType }) => {
+                                return (
+                                    <li key={url}>
+                                        <a href={url}>{name}</a> ({importType})
+                                    </li>
+                                );
+                            })}
+                        </ul>
                     </>
-                )}
-                {errors.noLicenseExample && <Warning>{errors.noLicenseExample}</Warning>}
+                ) : undefined}
             </div>
         </form>
     );
