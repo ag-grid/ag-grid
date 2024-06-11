@@ -9,17 +9,6 @@ import type { ChartTranslationKey, ChartTranslationService } from '../../../serv
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class TileSpacingPanel extends Component {
-    public static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="groupSpacing">
-                <ag-slider data-ref="groupPaddingSlider"></ag-slider>
-                <ag-slider data-ref="groupSpacingSlider"></ag-slider>
-            </ag-group-component>
-            <ag-group-component data-ref="tileSpacing">
-                <ag-slider data-ref="tilePaddingSlider"></ag-slider>
-                <ag-slider data-ref="tileSpacingSlider"></ag-slider>
-            </ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -37,14 +26,27 @@ export class TileSpacingPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(TileSpacingPanel.TEMPLATE, [AgGroupComponentSelector, AgSliderSelector], {
-            groupSpacing: { ...groupParams, title: this.chartTranslationService.translate('group') },
-            tileSpacing: { ...groupParams, title: this.chartTranslationService.translate('tile') },
-            groupPaddingSlider: this.getSliderParams('padding', 'group.padding'),
-            groupSpacingSlider: this.getSliderParams('spacing', 'group.gap'),
-            tilePaddingSlider: this.getSliderParams('padding', 'tile.padding'),
-            tileSpacingSlider: this.getSliderParams('spacing', 'tile.gap'),
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="groupSpacing">
+                <ag-slider data-ref="groupPaddingSlider"></ag-slider>
+                <ag-slider data-ref="groupSpacingSlider"></ag-slider>
+            </ag-group-component>
+            <ag-group-component data-ref="tileSpacing">
+                <ag-slider data-ref="tilePaddingSlider"></ag-slider>
+                <ag-slider data-ref="tileSpacingSlider"></ag-slider>
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector, AgSliderSelector],
+            {
+                groupSpacing: { ...groupParams, title: this.chartTranslationService.translate('group') },
+                tileSpacing: { ...groupParams, title: this.chartTranslationService.translate('tile') },
+                groupPaddingSlider: this.getSliderParams('padding', 'group.padding'),
+                groupSpacingSlider: this.getSliderParams('spacing', 'group.gap'),
+                tilePaddingSlider: this.getSliderParams('padding', 'tile.padding'),
+                tileSpacingSlider: this.getSliderParams('spacing', 'tile.gap'),
+            }
+        );
     }
 
     private getSliderParams(labelKey: ChartTranslationKey, key: string): AgSliderParams {

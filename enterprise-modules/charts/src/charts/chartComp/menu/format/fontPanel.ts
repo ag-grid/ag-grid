@@ -39,17 +39,6 @@ export class FontPanel extends Component {
         this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
 
-    public static TEMPLATE /* html */ = `<div class="ag-font-panel">
-            <ag-group-component data-ref="fontGroup">
-                <ag-select data-ref="familySelect"></ag-select>
-                <ag-select data-ref="weightStyleSelect"></ag-select>
-                <div class="ag-charts-font-size-color">
-                    <ag-select data-ref="sizeSelect"></ag-select>
-                    <ag-color-picker data-ref="colorPicker"></ag-color-picker>
-                </div>
-            </ag-group-component>
-        </div>`;
-
     private readonly fontGroup: AgGroupComponent = RefPlaceholder;
 
     private readonly chartOptions: ChartOptionsProxy;
@@ -75,13 +64,28 @@ export class FontPanel extends Component {
             },
             useToggle: !this.params.suppressEnabledCheckbox,
         };
-        this.setTemplate(FontPanel.TEMPLATE, [AgGroupComponentSelector, AgSelectSelector, AgColorPickerSelector], {
-            fontGroup: fontGroupParams,
-            familySelect: this.getFamilySelectParams(),
-            weightStyleSelect: this.getWeightStyleSelectParams(),
-            sizeSelect: this.getSizeSelectParams(),
-            colorPicker: this.params.chartMenuParamsFactory.getDefaultColorPickerParams(this.params.keyMapper('color')),
-        });
+        this.setTemplate(
+            /* html */ `<div class="ag-font-panel">
+            <ag-group-component data-ref="fontGroup">
+                <ag-select data-ref="familySelect"></ag-select>
+                <ag-select data-ref="weightStyleSelect"></ag-select>
+                <div class="ag-charts-font-size-color">
+                    <ag-select data-ref="sizeSelect"></ag-select>
+                    <ag-color-picker data-ref="colorPicker"></ag-color-picker>
+                </div>
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector, AgSelectSelector, AgColorPickerSelector],
+            {
+                fontGroup: fontGroupParams,
+                familySelect: this.getFamilySelectParams(),
+                weightStyleSelect: this.getWeightStyleSelectParams(),
+                sizeSelect: this.getSizeSelectParams(),
+                colorPicker: this.params.chartMenuParamsFactory.getDefaultColorPickerParams(
+                    this.params.keyMapper('color')
+                ),
+            }
+        );
     }
 
     public addItem(comp: Component<any>, prepend?: boolean) {

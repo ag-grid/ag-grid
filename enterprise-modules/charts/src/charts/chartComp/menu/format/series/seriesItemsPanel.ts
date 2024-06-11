@@ -11,12 +11,6 @@ import { FontPanel } from '../fontPanel';
 type SeriesItemType = 'positive' | 'negative';
 
 export class SeriesItemsPanel extends Component {
-    public static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="seriesItemsGroup">
-                <ag-select data-ref="seriesItemSelect"></ag-select>
-            </ag-group-component>
-        </div>`;
-
     private readonly seriesItemsGroup: AgGroupComponent = RefPlaceholder;
 
     private chartTranslationService: ChartTranslationService;
@@ -39,10 +33,18 @@ export class SeriesItemsPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(SeriesItemsPanel.TEMPLATE, [AgGroupComponentSelector, AgSelectSelector], {
-            seriesItemsGroup: seriesItemsGroupParams,
-            seriesItemSelect: this.getSeriesItemsParams(),
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="seriesItemsGroup">
+                <ag-select data-ref="seriesItemSelect"></ag-select>
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector, AgSelectSelector],
+            {
+                seriesItemsGroup: seriesItemsGroupParams,
+                seriesItemSelect: this.getSeriesItemsParams(),
+            }
+        );
 
         this.initSeriesControls();
     }

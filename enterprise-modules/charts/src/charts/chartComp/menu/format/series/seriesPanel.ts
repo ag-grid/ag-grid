@@ -31,11 +31,6 @@ const labels = 'labels';
 const shadow = 'shadow';
 
 export class SeriesPanel extends Component {
-    public static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="seriesGroup">
-            </ag-group-component>
-        </div>`;
-
     private readonly seriesGroup: AgGroupComponent = RefPlaceholder;
 
     private chartTranslationService: ChartTranslationService;
@@ -114,7 +109,14 @@ export class SeriesPanel extends Component {
             expanded,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(SeriesPanel.TEMPLATE, [AgGroupComponentSelector], { seriesGroup: seriesGroupParams });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="seriesGroup">
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector],
+            { seriesGroup: seriesGroupParams }
+        );
 
         registerGroupComponent(this.seriesGroup);
 

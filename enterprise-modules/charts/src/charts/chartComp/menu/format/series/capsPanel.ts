@@ -8,12 +8,6 @@ import type { ChartTranslationService } from '../../../services/chartTranslation
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class CapsPanel extends Component {
-    public static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="capsGroup">
-                <ag-slider data-ref="capLengthRatioSlider"></ag-slider>
-            </ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -39,9 +33,17 @@ export class CapsPanel extends Component {
         );
         capLengthRatioSliderParams.step = 0.05;
 
-        this.setTemplate(CapsPanel.TEMPLATE, [AgGroupComponentSelector, AgSliderSelector], {
-            capsGroup: capsGroupParams,
-            capLengthRatioSlider: capLengthRatioSliderParams,
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="capsGroup">
+                <ag-slider data-ref="capLengthRatioSlider"></ag-slider>
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector, AgSliderSelector],
+            {
+                capsGroup: capsGroupParams,
+                capLengthRatioSlider: capLengthRatioSliderParams,
+            }
+        );
     }
 }

@@ -7,12 +7,6 @@ import type { ChartTranslationService } from '../../../services/chartTranslation
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class AnimationPanel extends Component {
-    public static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="animationGroup">
-                <ag-input-number-field data-ref="animationHeightInput"></ag-input>
-            </ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -42,9 +36,17 @@ export class AnimationPanel extends Component {
                 min: 0,
             }
         );
-        this.setTemplate(AnimationPanel.TEMPLATE, [AgGroupComponentSelector, AgInputNumberFieldSelector], {
-            animationGroup: animationGroupParams,
-            animationHeightInput: animationHeightInputParams,
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="animationGroup">
+                <ag-input-number-field data-ref="animationHeightInput"></ag-input>
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector, AgInputNumberFieldSelector],
+            {
+                animationGroup: animationGroupParams,
+                animationHeightInput: animationHeightInputParams,
+            }
+        );
     }
 }
