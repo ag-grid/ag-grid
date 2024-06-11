@@ -28,7 +28,8 @@ export class AxisTicksPanel extends Component {
     }
 
     public postConstruct() {
-        const axisTicksGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>('tick.enabled', {
+        const { chartMenuUtils } = this;
+        const axisTicksGroupParams = chartMenuUtils.addEnableParams<AgGroupComponentParams>('tick.enabled', {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
             suppressOpenCloseIcons: true,
@@ -36,9 +37,9 @@ export class AxisTicksPanel extends Component {
             suppressEnabledCheckbox: true,
             useToggle: true,
         });
-        const axisTicksColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams('tick.color');
-        const axisTicksWidthSliderParams = this.chartMenuUtils.getDefaultSliderParams('tick.width', 'width', 10);
-        const axisTicksSizeSliderParams = this.chartMenuUtils.getDefaultSliderParams('tick.size', 'length', 30);
+        const axisTicksColorPickerParams = chartMenuUtils.getDefaultColorPickerParams('tick.stroke');
+        const axisTicksWidthSliderParams = chartMenuUtils.getDefaultSliderParams('tick.width', 'width', 10);
+        const axisTicksSizeSliderParams = chartMenuUtils.getDefaultSliderParams('tick.size', 'length', 30);
         this.setTemplate(AxisTicksPanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
             axisTicksGroup: axisTicksGroupParams,
             axisTicksColorPicker: axisTicksColorPickerParams,
