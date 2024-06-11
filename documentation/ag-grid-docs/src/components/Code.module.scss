@@ -82,6 +82,8 @@
 }
 
 .hasCopied {
+    opacity: 1;
+
     .clipboardButton {
         background-color: var(--color-util-gray-700);
     }
