@@ -1,12 +1,12 @@
-import type { ComponentSelector, NamedBean } from '@ag-grid-community/core';
+import type { ComponentSelector, IColumnDropZonesService, NamedBean } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
 import { AgGridHeaderDropZonesSelector } from './agGridHeaderDropZones';
 
-export class ColumnDropZoneService extends BeanStub implements NamedBean {
+export class ColumnDropZoneService extends BeanStub implements NamedBean, IColumnDropZonesService {
     beanName = 'columnDropZonesService' as const;
 
-    getDropZoneComponent(): ComponentSelector {
+    getDropZoneSelector(): ComponentSelector {
         return AgGridHeaderDropZonesSelector;
     }
 }

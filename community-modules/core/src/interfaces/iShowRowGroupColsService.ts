@@ -10,5 +10,5 @@ export interface IShowRowGroupColsService {
 }
 
 export interface IColumnDropZonesService {
-    getDropZoneComponent(): ComponentSelector;
+    getDropZoneSelector(): ComponentSelector;
 }

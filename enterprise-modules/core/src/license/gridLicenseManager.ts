@@ -1,11 +1,11 @@
-import type { ComponentSelector, NamedBean } from '@ag-grid-community/core';
+import type { ComponentSelector, IWatermark, NamedBean } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
 import type { ILicenseManager } from './shared/licenseManager';
 import { LicenseManager } from './shared/licenseManager';
 import { AgWatermarkSelector } from './watermark';
 
-export class GridLicenseManager extends BeanStub implements NamedBean {
+export class GridLicenseManager extends BeanStub implements NamedBean, IWatermark {
     beanName = 'licenseManager' as const;
 
     private licenseManager: LicenseManager;
