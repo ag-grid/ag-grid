@@ -1,4 +1,4 @@
-import type { Component, Context, IGridComp } from '@ag-grid-community/core';
+import type { ComponentSelector, Context, IGridComp } from '@ag-grid-community/core';
 import { GridCtrl } from '@ag-grid-community/core';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -111,7 +111,7 @@ const GridComp = ({ context }: GridCompProps) => {
         const eRootWrapper = eRootWrapperRef.current;
 
         if (gridHeaderDropZonesSelector) {
-            const headerDropZonesComp = context.createBean(new gridHeaderDropZonesSelector.Component());
+            const headerDropZonesComp = context.createBean(new gridHeaderDropZonesSelector.component());
             const eGui = headerDropZonesComp.getGui();
             eRootWrapper.insertAdjacentElement('afterbegin', eGui);
             additionalEls.push(eGui);
@@ -119,7 +119,7 @@ const GridComp = ({ context }: GridCompProps) => {
         }
 
         if (sideBarSelector) {
-            const sideBarComp = context.createBean(new sideBarSelector.Component());
+            const sideBarComp = context.createBean(new sideBarSelector.component());
             const eGui = sideBarComp.getGui();
             const bottomTabGuard = eGridBodyParent.querySelector('.ag-tab-guard-bottom');
             if (bottomTabGuard) {
@@ -130,7 +130,7 @@ const GridComp = ({ context }: GridCompProps) => {
             beansToDestroy.push(sideBarComp);
         }
 
-        const addComponentToDom = (component: { new (params?: any): Component<any> }) => {
+        const addComponentToDom = (component: ComponentSelector['component']) => {
             const comp = context.createBean(new component());
             const eGui = comp.getGui();
             eRootWrapper.insertAdjacentElement('beforeend', eGui);
@@ -139,15 +139,15 @@ const GridComp = ({ context }: GridCompProps) => {
         };
 
         if (statusBarSelector) {
-            addComponentToDom(statusBarSelector.Component);
+            addComponentToDom(statusBarSelector.component);
         }
 
         if (paginationSelector) {
-            addComponentToDom(paginationSelector.Component);
+            addComponentToDom(paginationSelector.component);
         }
 
         if (watermarkSelector) {
-            addComponentToDom(watermarkSelector.Component);
+            addComponentToDom(watermarkSelector.component);
         }
 
         return () => {

@@ -90,12 +90,12 @@ const GridBodyComp = () => {
             eParent.appendChild(eChild);
             destroyFuncs.current.push(() => eParent.removeChild(eChild));
         };
-        const newComp = (compClass: ComponentSelector['Component']) => {
+        const newComp = (compClass: ComponentSelector['component']) => {
             const comp = context.createBean(new compClass());
             beansToDestroy.current.push(comp);
             return comp;
         };
-        const addComp = (eParent: HTMLElement, compClass: ComponentSelector['Component'], comment: string) => {
+        const addComp = (eParent: HTMLElement, compClass: ComponentSelector['component'], comment: string) => {
             attachToDom(eParent, document.createComment(comment));
             attachToDom(eParent, newComp(compClass).getGui());
         };
