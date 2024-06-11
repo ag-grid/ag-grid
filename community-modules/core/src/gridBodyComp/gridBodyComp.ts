@@ -2,7 +2,7 @@ import type { BeanCollection } from '../context/context';
 import { GridHeaderSelector } from '../headerRendering/gridHeaderComp';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { ResizeObserverService } from '../misc/resizeObserverService';
-import { OverlayWrapperComponentSelector } from '../rendering/overlays/overlayWrapperComponent';
+import { OverlayWrapperSelector } from '../rendering/overlays/overlayWrapperComponent';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRowCount } from '../utils/aria';
 import type { ComponentSelector } from '../widgets/component';
@@ -63,7 +63,7 @@ export class GridBodyComp extends Component {
 
     constructor() {
         super(GRID_BODY_TEMPLATE, [
-            OverlayWrapperComponentSelector,
+            OverlayWrapperSelector,
             FakeHScrollSelector,
             FakeVScrollSelector,
             GridHeaderSelector,

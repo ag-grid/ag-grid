@@ -113,7 +113,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         super.destroy();
     }
 }
-export const OverlayWrapperComponentSelector: ComponentSelector = {
+export const OverlayWrapperSelector: ComponentSelector = {
     selector: 'AG-OVERLAY-WRAPPER',
     Component: OverlayWrapperComponent,
 };
