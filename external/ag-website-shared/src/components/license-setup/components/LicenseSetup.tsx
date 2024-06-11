@@ -1,4 +1,5 @@
 import type { Framework, ImportType } from '@ag-grid-types';
+import Idea from '@ag-website-shared/components/alert/Idea';
 import Warning from '@ag-website-shared/components/alert/Warning';
 import { Snippet } from '@components/snippet/Snippet';
 import { FRAMEWORK_DISPLAY_TEXT } from '@constants';
@@ -42,10 +43,11 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
         setUserLicense,
         importType,
         setImportType,
+        licensedProducts,
         userProducts,
         setUserProducts,
         userLicenseExpiry,
-
+        validLicenseText,
         errors,
     } = useLicenseData();
     const dependenciesSnippet = useMemo(
@@ -123,6 +125,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                     }}
                 ></textarea>
             )}
+            {validLicenseText && <Idea>{validLicenseText}</Idea>}
             {errors.expired && (
                 <Warning>
                     {errors.expired}. <EmailSales />
@@ -161,7 +164,11 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                     <div>Which enterprise products would you like to use?</div>
                     <div className={styles.licensedProductsContainer}>
                         <div className={styles.inputList}>
-                            <label>
+                            <label
+                                className={classnames({
+                                    [styles.licensedProduct]: licensedProducts.grid,
+                                })}
+                            >
                                 Grid Enterprise
                                 <input
                                     type="checkbox"
@@ -178,7 +185,11 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                                     }}
                                 />
                             </label>
-                            <label>
+                            <label
+                                className={classnames({
+                                    [styles.licensedProduct]: licensedProducts.grid && licensedProducts.charts,
+                                })}
+                            >
                                 Integrated Enterprise
                                 <input
                                     type="checkbox"
@@ -195,7 +206,11 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                                     }}
                                 />
                             </label>
-                            <label>
+                            <label
+                                className={classnames({
+                                    [styles.licensedProduct]: licensedProducts.charts,
+                                })}
+                            >
                                 Charts Enterprise
                                 <input
                                     type="checkbox"

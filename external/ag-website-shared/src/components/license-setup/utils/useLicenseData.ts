@@ -135,6 +135,23 @@ export const useLicenseData = () => {
 
     const licenseDetails = useMemo(() => LicenseManager.getLicenseDetails(license), [license]);
     const { version: userLicenseVersion, isTrial: userLicenseIsTrial, expiry: userLicenseExpiry } = licenseDetails;
+    const validLicenseText = useMemo<string>(() => {
+        const { valid, expired, trialExpired, suppliedLicenseType } = licenseDetails;
+        let text = '';
+        if (valid && !expired && !trialExpired) {
+            let supportsText = '';
+            if (suppliedLicenseType === 'GRID') {
+                supportsText = `Supports "Grid Enterprise"`;
+            } else if (suppliedLicenseType === 'CHARTS') {
+                supportsText = `Supports "Chart Enterprise"`;
+            } else if (suppliedLicenseType === 'BOTH') {
+                supportsText = `Supports "Grid Enterprise", "Integrated Enterprise" and "Chart Enterprise"`;
+            }
+            text = `Valid license. ${supportsText}`;
+        }
+
+        return text;
+    }, [licenseDetails]);
 
     const { errors } = useErrors({ hasLicense, license, licensedProducts, userProducts, licenseDetails });
 
@@ -176,6 +193,7 @@ export const useLicenseData = () => {
         userProducts,
         setUserProducts,
 
+        validLicenseText,
         userLicenseVersion,
         userLicenseIsTrial,
         userLicenseExpiry,

@@ -60,6 +60,10 @@
     }
 }
 
+.licensedProduct {
+    color: var(--color-positive);
+}
+
 .error {
     border: 1px solid var(--color-input-error);
     background-color: var(--color-util-warning-100);
