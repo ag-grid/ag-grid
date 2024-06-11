@@ -129,7 +129,7 @@ export const useLicenseData = () => {
      * Licensed products from license
      */
     const [licensedProducts, setLicensedProducts] = useState<LicensedProducts>({
-        grid: true,
+        grid: false,
         charts: false,
     });
 
@@ -156,6 +156,10 @@ export const useLicenseData = () => {
     const { errors } = useErrors({ hasLicense, license, licensedProducts, userProducts, licenseDetails });
 
     useEffect(() => {
+        if (!hasValue(license)) {
+            return;
+        }
+
         const { suppliedLicenseType } = licenseDetails;
         const gridEnterprise = suppliedLicenseType === 'GRID' || suppliedLicenseType === 'BOTH';
         const integratedEnterprise = suppliedLicenseType === 'BOTH';
