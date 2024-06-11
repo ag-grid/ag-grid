@@ -7,17 +7,14 @@ import {
     setAdvancedFilterModel,
     showAdvancedFilterBuilder,
 } from './advancedFilter/advancedFilterApi';
-import { AdvancedFilterCompClass } from './advancedFilter/advancedFilterComp';
 import { AdvancedFilterExpressionService } from './advancedFilter/advancedFilterExpressionService';
 import { AdvancedFilterService } from './advancedFilter/advancedFilterService';
-import { AgAutocompleteClass } from './advancedFilter/autocomplete/agAutocomplete';
 import { VERSION } from './version';
 
 export const AdvancedFilterCoreModule: Module = {
     version: VERSION,
     moduleName: `${ModuleNames.AdvancedFilterModule}-core`,
     beans: [AdvancedFilterService, AdvancedFilterExpressionService],
-    agStackComponents: [AgAutocompleteClass, AdvancedFilterCompClass],
     dependantModules: [EnterpriseCoreModule, _FilterCoreModule],
 };
 

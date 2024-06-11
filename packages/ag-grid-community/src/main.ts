@@ -33,7 +33,6 @@ export { AgPickerField } from '@ag-grid-community/core';
 export { AgPromise } from '@ag-grid-community/core';
 export { AgProvidedColumnGroup } from '@ag-grid-community/core';
 export { AgRadioButton } from '@ag-grid-community/core';
-export { AgRadioButtonClass } from '@ag-grid-community/core';
 export { AgSelect } from '@ag-grid-community/core';
 export { AgSelectClass } from '@ag-grid-community/core';
 export { AgToggleButton } from '@ag-grid-community/core';

@@ -2,8 +2,6 @@ import type { Module } from '@ag-grid-community/core';
 import { ModuleNames } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
-import { AgStatusBarClass } from './statusBar/agStatusBar';
-import { AgNameValueClass } from './statusBar/providedPanels/agNameValue';
 import { AggregationComp } from './statusBar/providedPanels/aggregationComp';
 import { FilteredRowsComp } from './statusBar/providedPanels/filteredRowsComp';
 import { SelectedRowsComp } from './statusBar/providedPanels/selectedRowsComp';
@@ -17,7 +15,6 @@ export const StatusBarCoreModule: Module = {
     version: VERSION,
     moduleName: `${ModuleNames.StatusBarModule}-core`,
     beans: [StatusBarService],
-    agStackComponents: [AgStatusBarClass, AgNameValueClass],
     userComponents: [
         { name: 'agAggregationComponent', classImp: AggregationComp },
         { name: 'agSelectedRowCountComponent', classImp: SelectedRowsComp },

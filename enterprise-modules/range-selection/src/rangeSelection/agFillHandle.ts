@@ -5,7 +5,6 @@ import type {
     CellNavigationService,
     CellPosition,
     CellRange,
-    ComponentClass,
     FillEndEvent,
     FillOperationParams,
     FillStartEvent,
@@ -679,8 +678,3 @@ export class AgFillHandle extends AbstractSelectionHandle {
         super.refresh(cellCtrl);
     }
 }
-
-export const AgFillHandleClass: ComponentClass = {
-    selector: 'AG-FILL-HANDLE',
-    class: AgFillHandle,
-};

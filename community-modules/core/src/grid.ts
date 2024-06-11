@@ -18,7 +18,6 @@ import { ColumnViewportService } from './columns/columnViewportService';
 import { FuncColsService } from './columns/funcColsService';
 import { PivotResultColsService } from './columns/pivotResultColsService';
 import { VisibleColsService } from './columns/visibleColsService';
-import { AgStackComponentsRegistry } from './components/agStackComponentsRegistry';
 import { AgComponentUtils } from './components/framework/agComponentUtils';
 import { ComponentMetadataProvider } from './components/framework/componentMetadataProvider';
 import { UserComponentFactory } from './components/framework/userComponentFactory';
@@ -265,7 +264,6 @@ export class GridCoreCreator {
 
         const context = new Context(contextParams);
         this.registerModuleUserComponents(context, registeredModules);
-        this.registerModuleStackComponents(context, registeredModules);
         this.registerControllers(context, registeredModules);
         this.registerModuleApiFunctions(context, registeredModules);
 
@@ -287,14 +285,6 @@ export class GridCoreCreator {
                 module.controllers.forEach((meta) => factory.register(meta));
             }
         });
-    }
-
-    private registerModuleStackComponents(context: Context, registeredModules: Module[]): void {
-        const registry = context.getBean('agStackComponentsRegistry');
-        const agStackComponents = registeredModules.flatMap((module) =>
-            module.agStackComponents ? module.agStackComponents : []
-        );
-        registry.ensureRegistered(agStackComponents);
     }
 
     private getRegisteredModules(params: GridParams | undefined, gridId: string): Module[] {
@@ -460,7 +450,6 @@ export class GridCoreCreator {
             SelectableService,
             ChangeDetectionService,
             AnimationFrameService,
-            AgStackComponentsRegistry,
             ColumnDefFactory,
             RowCssClassCalculator,
             RowNodeSorter,

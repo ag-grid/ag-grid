@@ -19,7 +19,6 @@ import type { DataTypeService } from '../columns/dataTypeService';
 import type { FuncColsService } from '../columns/funcColsService';
 import type { PivotResultColsService } from '../columns/pivotResultColsService';
 import type { VisibleColsService } from '../columns/visibleColsService';
-import type { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
 import type { AgComponentUtils } from '../components/framework/agComponentUtils';
 import type { ComponentMetadataProvider } from '../components/framework/componentMetadataProvider';
 import type { FrameworkComponentWrapper } from '../components/framework/frameworkComponentWrapper';
@@ -70,7 +69,7 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
-import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
+import type { IColumnDropZonesService, IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IStatusBarService } from '../interfaces/iStatusBarService';
 import type { LocaleService } from '../localeService';
@@ -210,7 +209,6 @@ export interface CoreBeanCollection {
     rowModel: IRowModel;
     ctrlsService: CtrlsService;
     ctrlsFactory: CtrlsFactory;
-    agStackComponentsRegistry: AgStackComponentsRegistry;
     valueCache: ValueCache;
     rowNodeEventThrottle: RowNodeEventThrottle;
     localeService: LocaleService;
@@ -234,6 +232,7 @@ export interface CoreBeanCollection {
     funcColsService: FuncColsService;
     quickFilterService?: QuickFilterService;
     showRowGroupColsService?: IShowRowGroupColsService;
+    columnDropZonesService?: IColumnDropZonesService;
     headerPositionUtils: HeaderPositionUtils;
     dataTypeService?: DataTypeService;
     globalEventListener: AgGlobalEventListener;
@@ -327,7 +326,6 @@ export type BeanName =
     | 'agGridReact'
     | 'agGridVue'
     | 'agComponentUtils'
-    | 'agStackComponentsRegistry'
     | 'aggregationStage'
     | 'alignedGridsService'
     | 'animationFrameService'
@@ -355,6 +353,7 @@ export type BeanName =
     | 'columnChooserFactory'
     | 'columnController'
     | 'columnDefFactory'
+    | 'columnDropZonesService'
     | 'columnEditorFactory'
     | 'columnEventDispatcher'
     | 'columnFilterService'

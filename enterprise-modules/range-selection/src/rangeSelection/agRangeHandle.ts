@@ -1,4 +1,4 @@
-import type { CellPosition, CellRange, ComponentClass } from '@ag-grid-community/core';
+import type { CellPosition, CellRange } from '@ag-grid-community/core';
 import { CellRangeType, SelectionHandleType, _last } from '@ag-grid-community/core';
 
 import { AbstractSelectionHandle } from './abstractSelectionHandle';
@@ -77,8 +77,3 @@ export class AgRangeHandle extends AbstractSelectionHandle {
         cellRange.startColumn = column;
     }
 }
-
-export const AgRangeHandleClass: ComponentClass = {
-    selector: 'AG-RANGE-HANDLE',
-    class: AgRangeHandle,
-};

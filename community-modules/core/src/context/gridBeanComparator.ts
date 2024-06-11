@@ -67,7 +67,6 @@ const orderedCoreBeans: BeanName[] = [
     'changeDetectionService',
     'animationFrameService',
     'undoRedoService',
-    'agStackComponentsRegistry',
     'columnDefFactory',
     'rowCssClassCalculator',
     'rowNodeBlockLoader',

@@ -24,7 +24,6 @@ export interface Module {
     validate?: () => ModuleValidationResult;
     moduleName: string;
     beans?: SingletonBean[];
-    agStackComponents?: ComponentClass[];
     controllers?: ControllerMeta[];
     userComponents?: ComponentMeta[];
     rowModel?: RowModelType;

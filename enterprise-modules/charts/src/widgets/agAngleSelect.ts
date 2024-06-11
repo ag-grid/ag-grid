@@ -2,7 +2,6 @@ import type {
     AgInputNumberField,
     AgLabelParams,
     BeanCollection,
-    ComponentClass,
     DragListenerParams,
     DragService,
 } from '@ag-grid-community/core';
@@ -222,8 +221,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams, AgAngleS
     }
 
     public onValueChange(callbackFn: (newValue: number) => void): this {
-        const agAngleSelect: AgAngleSelect = this;
-        this.addManagedListeners(agAngleSelect, {
+        this.addManagedListeners(this, {
             fieldValueChanged: () => {
                 callbackFn(this.degrees);
             },
@@ -275,8 +273,3 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams, AgAngleS
         super.destroy();
     }
 }
-
-export const AgAngleSelectClass: ComponentClass = {
-    selector: 'AG-ANGLE-SELECT',
-    class: AgAngleSelect,
-};

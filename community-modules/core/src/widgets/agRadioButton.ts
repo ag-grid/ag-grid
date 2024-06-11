@@ -1,7 +1,6 @@
 import type { CheckboxChangedEvent } from '../events';
 import type { AgCheckboxParams } from '../interfaces/agFieldParams';
 import { AgCheckbox } from './agCheckbox';
-import type { ComponentClass } from './component';
 
 export interface AgRadioButtonParams extends AgCheckboxParams {}
 
@@ -50,8 +49,3 @@ export class AgRadioButton extends AgCheckbox<AgRadioButtonParams> {
         }
     }
 }
-
-export const AgRadioButtonClass: ComponentClass = {
-    selector: 'AG-RADIO-BUTTON',
-    class: AgRadioButton,
-};

@@ -1,10 +1,4 @@
-import type {
-    BeanCollection,
-    ComponentClass,
-    FilterManager,
-    ITooltipParams,
-    WithoutGridCommon,
-} from '@ag-grid-community/core';
+import type { BeanCollection, FilterManager, ITooltipParams, WithoutGridCommon } from '@ag-grid-community/core';
 import { Component, RefPlaceholder, _createIconNoSpan, _makeNull, _setDisabled } from '@ag-grid-community/core';
 
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
@@ -200,8 +194,3 @@ export class AdvancedFilterComp extends Component {
         this.eBuilderFilterButton.focus();
     }
 }
-
-export const AdvancedFilterCompClass: ComponentClass = {
-    selector: 'AG-ADVANCED-FILTER',
-    class: AdvancedFilterComp,
-};

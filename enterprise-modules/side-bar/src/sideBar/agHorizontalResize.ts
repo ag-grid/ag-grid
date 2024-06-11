@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    ComponentClass,
     HorizontalResizeService,
     ToolPanelSizeChangedEvent,
     WithoutGridCommon,
@@ -87,8 +86,3 @@ export class AgHorizontalResize extends Component {
         }
     }
 }
-
-export const AgHorizontalResizeClass: ComponentClass = {
-    selector: 'AG-HORIZONTAL-RESIZE',
-    class: AgHorizontalResize,
-};

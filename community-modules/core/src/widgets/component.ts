@@ -1,4 +1,3 @@
-import type { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
 import type { BeanStubEvent } from '../context/beanStub';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -43,17 +42,14 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     extends BeanStub<TLocalEvent | ComponentEvent>
     implements ComponentBean, BaseBean<BeanCollection>
 {
-    protected agStackComponentsRegistry: AgStackComponentsRegistry;
-
     public override preWireBeans(beans: BeanCollection): void {
         super.preWireBeans(beans);
-        this.agStackComponentsRegistry = beans.agStackComponentsRegistry;
     }
 
     public static elementGettingCreated: any;
 
     private eGui: HTMLElement;
-    private components: ComponentClass[];
+    private components: Map<AgComponentSelector, ComponentClass>;
 
     // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
     private displayed = true;
@@ -79,7 +75,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
 
         this.cssClassManager = new CssClassManager(() => this.eGui);
 
-        this.components = components ?? [];
+        this.components = new Map((components ?? []).map((comp) => [comp.selector, comp]));
         if (template) {
             this.setTemplate(template);
         }
@@ -94,8 +90,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     private wireTemplate(element: HTMLElement | undefined, paramsMap?: { [key: string]: any }): void {
         // ui exists if user sets template in constructor. when this happens,
         // We have to wait for the context to be autoWired first before we can create child components.
-        this.agStackComponentsRegistry?.ensureRegistered(this.components);
-        if (element && this.agStackComponentsRegistry) {
+        if (element && this.gos) {
             this.applyElementsToComponent(element);
             this.createChildComponentsFromTags(element, paramsMap);
         }
@@ -230,9 +225,8 @@ export class Component<TLocalEvent extends string = ComponentEvent>
 
         const elementRef = element.getAttribute('data-ref');
 
-        const ComponentClass = key.startsWith('AG-')
-            ? this.agStackComponentsRegistry.getComponent(key as Uppercase<AgComponentSelector>)
-            : null;
+        const isAgGridComponent = key.indexOf('AG-') === 0;
+        const ComponentClass = isAgGridComponent ? this.components.get(key as Uppercase<AgComponentSelector>) : null;
         let newComponent: Component | null = null;
         if (ComponentClass) {
             Component.elementGettingCreated = element;
@@ -241,6 +235,10 @@ export class Component<TLocalEvent extends string = ComponentEvent>
             newComponent.setParentComponent(this as Component);
 
             this.createBean(newComponent, null, afterPreCreateCallback);
+        } else if (isAgGridComponent) {
+            console.warn(
+                `Trying to create component with selector ${key} but no component is registered with that selector.`
+            );
         }
 
         this.applyElementsToComponent(element, elementRef, paramsMap, newComponent);
@@ -289,7 +287,10 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     ): void {
         this.eGui = element;
         if (components) {
-            this.components = [...this.components, ...components];
+            for (let i = 0; i < components.length; i++) {
+                const component = components[i];
+                this.components.set(component.selector, component);
+            }
         }
         this.wireTemplate(element, paramsMap);
     }
@@ -402,23 +403,20 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     }
 }
 
+/** All the AG Grid components that are used within internal templates via <ag-autocomplete> syntax */
 export type AgComponentSelector =
-    | 'AG-ADVANCED-FILTER'
-    | 'AG-ANGLE-SELECT'
     | 'AG-AUTOCOMPLETE'
     | 'AG-CHECKBOX'
     | 'AG-COLOR-INPUT'
     | 'AG-COLOR-PICKER'
     | 'AG-FAKE-HORIZONTAL-SCROLL'
     | 'AG-FAKE-VERTICAL-SCROLL'
-    | 'AG-FILL-HANDLE'
     | 'AG-FILTERS-TOOL-PANEL-HEADER'
     | 'AG-FILTERS-TOOL-PANEL-LIST'
     | 'AG-GRID-BODY'
     | 'AG-GRID-HEADER-DROP-ZONES'
     | 'AG-GROUP-COMPONENT'
     | 'AG-HEADER-ROOT'
-    | 'AG-HORIZONTAL-RESIZE'
     | 'AG-INPUT-DATE-FIELD'
     | 'AG-INPUT-NUMBER-FIELD'
     | 'AG-INPUT-RANGE'
@@ -431,8 +429,6 @@ export type AgComponentSelector =
     | 'AG-PRIMARY-COLS-HEADER'
     | 'AG-PRIMARY-COLS-LIST'
     | 'AG-PRIMARY-COLS'
-    | 'AG-RADIO-BUTTON'
-    | 'AG-RANGE-HANDLE'
     | 'AG-ROW-CONTAINER'
     | 'AG-SELECT'
     | 'AG-SIDE-BAR'

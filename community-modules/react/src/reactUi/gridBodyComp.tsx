@@ -86,7 +86,7 @@ const GridBodyComp = () => {
             return;
         }
 
-        const newComp = (compClass: ComponentClass) => {
+        const newComp = (compClass: any) => {
             const comp = context.createBean(new compClass());
             beansToDestroy.current.push(comp);
             return comp;
