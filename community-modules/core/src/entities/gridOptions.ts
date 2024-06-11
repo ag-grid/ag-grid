@@ -1799,7 +1799,7 @@ export interface GridOptions<TData = any> {
      */
     resetRowDataOnUpdate?: boolean;
     /**
-     * Callback fired after the row is rendered into the DOM. Should not be used for side effects.
+     * Callback fired after the row is rendered into the DOM. Should not be used to initiate side effects.
      */
     processRowPostCreate?: (params: ProcessRowParams<TData>) => void;
     /**
