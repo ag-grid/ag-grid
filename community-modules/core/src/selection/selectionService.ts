@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
-import type { SelectionChangedEvent, SelectionEventSourceType } from '../events';
+import { type SelectionChangedEvent, type SelectionEventSourceType, isSelectionUIEvent } from '../events';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -53,6 +53,16 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         return this.rowSelection === 'multiple';
     }
 
+    private overrideSelectionValue({ newValue, source }: ISetNodesSelectedParams): boolean {
+        const root = this.selectionCtx.getRoot();
+
+        if (!isSelectionUIEvent(source)) {
+            return newValue;
+        }
+
+        return root ? root.isSelected() ?? false : true;
+    }
+
     public setNodesSelected(params: ISetNodesSelectedParams): number {
         const { newValue, clearSelection, suppressFinishActions, rangeSelect, nodes, event, source = 'api' } = params;
 
@@ -77,6 +87,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             }
 
             const node = filteredNodes[0];
+            const newSelectionValue = this.overrideSelectionValue(params);
 
             if (this.selectionCtx.isInRange(node)) {
                 const partition = this.selectionCtx.truncate(node);
@@ -85,19 +96,19 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
                 // selected range (see AG-9620)
                 // When we are de-selecting a range, we can/should leave the other nodes unchanged
                 // (i.e. selected nodes outside the current range should remain selected - see AG-10215)
-                if (newValue) {
+                if (newSelectionValue) {
                     this.selectRange(partition.discard, false, source);
                 }
-                return this.selectRange(partition.keep, newValue, source);
+                return this.selectRange(partition.keep, newSelectionValue, source);
             } else {
                 const fromNode = this.selectionCtx.getRoot();
                 const toNode = node;
                 if (fromNode !== toNode) {
                     const partition = this.selectionCtx.extend(node);
-                    if (newValue) {
+                    if (newSelectionValue) {
                         this.selectRange(partition.discard, false, source);
                     }
-                    return this.selectRange(partition.keep, newValue, source);
+                    return this.selectRange(partition.keep, newSelectionValue, source);
                 }
             }
         }

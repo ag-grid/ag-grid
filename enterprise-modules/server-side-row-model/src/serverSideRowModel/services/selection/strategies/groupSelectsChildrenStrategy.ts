@@ -8,8 +8,14 @@ import type {
     IServerSideGroupSelectionState,
     ISetNodesSelectedParams,
     RowNode,
+    SelectionEventSourceType,
 } from '@ag-grid-community/core';
-import { BeanStub, _RowRangeSelectionContext as RowRangeSelectionContext, _last } from '@ag-grid-community/core';
+import {
+    BeanStub,
+    _RowRangeSelectionContext as RowRangeSelectionContext,
+    _last,
+    isSelectionUIEvent,
+} from '@ag-grid-community/core';
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
@@ -23,7 +29,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     private funcColsService: FuncColsService;
     private filterManager?: FilterManager;
     private selectionService: ISelectionService;
-    private selectionContext = new RowRangeSelectionContext();
+    private selectionCtx = new RowRangeSelectionContext();
 
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
@@ -42,7 +48,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             columnRowGroupChanged: () => this.selectionService.reset('rowGroupChanged'),
         });
 
-        this.selectionContext.init(this.rowModel);
+        this.selectionCtx.init(this.rowModel);
     }
 
     public getSelectedState() {
@@ -149,7 +155,17 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         return anyStateChanged;
     }
 
-    public setNodesSelected({ nodes, newValue, rangeSelect, clearSelection }: ISetNodesSelectedParams): number {
+    private overrideSelectionValue(newValue: boolean, source: SelectionEventSourceType): boolean {
+        const root = this.selectionCtx.getRoot();
+
+        if (!isSelectionUIEvent(source)) {
+            return newValue;
+        }
+
+        return root ? root.isSelected() ?? false : true;
+    }
+
+    public setNodesSelected({ nodes, newValue, rangeSelect, clearSelection, source }: ISetNodesSelectedParams): number {
         if (nodes.length === 0) return 0;
 
         if (rangeSelect) {
@@ -157,28 +173,29 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 throw new Error('AG Grid: cannot select multiple rows when using rangeSelect');
             }
             const node = nodes[0];
+            const newSelectionValue = this.overrideSelectionValue(newValue, source);
 
-            if (this.selectionContext.isInRange(node)) {
-                const partition = this.selectionContext.truncate(node);
+            if (this.selectionCtx.isInRange(node)) {
+                const partition = this.selectionCtx.truncate(node);
 
                 // When we are selecting a range, we may need to de-select part of the previously
                 // selected range (see AG-9620)
                 // When we are de-selecting a range, we can/should leave the other nodes unchanged
                 // (i.e. selected nodes outside the current range should remain selected - see AG-10215)
-                if (newValue) {
+                if (newSelectionValue) {
                     this.selectRange(partition.discard, false);
                 }
-                this.selectRange(partition.keep, newValue);
+                this.selectRange(partition.keep, newSelectionValue);
                 return 1;
             } else {
-                const fromNode = this.selectionContext.getRoot();
+                const fromNode = this.selectionCtx.getRoot();
                 const toNode = node;
                 if (fromNode !== toNode) {
-                    const partition = this.selectionContext.extend(node);
-                    if (newValue) {
+                    const partition = this.selectionCtx.extend(node);
+                    if (newSelectionValue) {
                         this.selectRange(partition.discard, false);
                     }
-                    this.selectRange(partition.keep, newValue);
+                    this.selectRange(partition.keep, newSelectionValue);
                     return 1;
                 }
             }
@@ -198,7 +215,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             this.recursivelySelectNode(idPathToNode, this.selectedState, newValue);
         });
         this.removeRedundantState();
-        this.selectionContext.reset(_last(nodes));
+        this.selectionCtx.reset(_last(nodes));
         return 1;
     }
 

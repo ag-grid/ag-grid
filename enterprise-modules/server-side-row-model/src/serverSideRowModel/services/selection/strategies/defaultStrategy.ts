@@ -8,7 +8,12 @@ import type {
     SelectionEventSourceType,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, _RowRangeSelectionContext as RowRangeSelectionContext, _last } from '@ag-grid-community/core';
+import {
+    BeanStub,
+    _RowRangeSelectionContext as RowRangeSelectionContext,
+    _last,
+    isSelectionUIEvent,
+} from '@ag-grid-community/core';
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
@@ -19,7 +24,7 @@ interface SelectedState {
 
 export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     private rowModel: IRowModel;
-    private selectionContext = new RowRangeSelectionContext();
+    private selectionCtx = new RowRangeSelectionContext();
 
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
@@ -38,7 +43,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         this.addManagedPropertyListener('rowSelection', (propChange) => {
             this.rowSelection = propChange.currentValue;
         });
-        this.selectionContext.init(this.rowModel);
+        this.selectionCtx.init(this.rowModel);
     }
 
     public getSelectedState(): IServerSideSelectionState {
@@ -99,6 +104,16 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         return anyNodesToggled;
     }
 
+    private overrideSelectionValue({ newValue, source }: ISetNodesSelectedParams): boolean {
+        const root = this.selectionCtx.getRoot();
+
+        if (!isSelectionUIEvent(source)) {
+            return newValue;
+        }
+
+        return root ? root.isSelected() ?? false : true;
+    }
+
     public setNodesSelected(params: ISetNodesSelectedParams): number {
         const { nodes, clearSelection, newValue, rangeSelect } = params;
         if (nodes.length === 0) return 0;
@@ -122,7 +137,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                     toggledNodes: new Set(),
                 };
             }
-            this.selectionContext.reset(node);
+            this.selectionCtx.reset(node);
             return 1;
         }
 
@@ -147,34 +162,35 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 throw new Error('AG Grid: cannot select multiple rows when using rangeSelect');
             }
             const node = nodes[0];
+            const newSelectionValue = this.overrideSelectionValue(params);
 
-            if (this.selectionContext.isInRange(node)) {
-                const partition = this.selectionContext.truncate(node);
+            if (this.selectionCtx.isInRange(node)) {
+                const partition = this.selectionCtx.truncate(node);
 
                 // When we are selecting a range, we may need to de-select part of the previously
                 // selected range (see AG-9620)
                 // When we are de-selecting a range, we can/should leave the other nodes unchanged
                 // (i.e. selected nodes outside the current range should remain selected - see AG-10215)
-                if (newValue) {
+                if (newSelectionValue) {
                     partition.discard.forEach((node) => updateNodeState(node, false));
                 }
-                partition.keep.forEach((node) => updateNodeState(node));
+                partition.keep.forEach((node) => updateNodeState(node, newSelectionValue));
             } else {
-                const fromNode = this.selectionContext.getRoot();
+                const fromNode = this.selectionCtx.getRoot();
                 const toNode = node;
                 if (fromNode !== toNode) {
-                    const partition = this.selectionContext.extend(node);
-                    if (newValue) {
+                    const partition = this.selectionCtx.extend(node);
+                    if (newSelectionValue) {
                         partition.discard.forEach((node) => updateNodeState(node, false));
                     }
-                    partition.keep.forEach((node) => updateNodeState(node));
+                    partition.keep.forEach((node) => updateNodeState(node, newSelectionValue));
                 }
             }
             return 1;
         }
 
         nodes.forEach((node) => updateNodeState(node));
-        this.selectionContext.reset(_last(nodes));
+        this.selectionCtx.reset(_last(nodes));
         return 1;
     }
 
