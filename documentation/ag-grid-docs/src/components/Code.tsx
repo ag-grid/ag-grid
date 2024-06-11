@@ -57,7 +57,7 @@ function CopyToClipboardButton({ code }: { code: string | string[] }) {
                 <span className={styles.clipboardButtonCopied}>Copied</span>
             </span>
             <span className={styles.clipboardButton}>
-                <Icon name={'feature-clipboard'} />
+                {hasCopied ? <Icon className={styles.check} name={'check'} /> : <Icon name={'feature-clipboard'} />}
             </span>
         </span>
     );
