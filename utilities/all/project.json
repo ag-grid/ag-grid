@@ -211,6 +211,7 @@
     "packages/ag-grid-vue3",
     "documentation/ag-grid-docs",
     "external/ag-website-shared",
+    "external/ag-shared",
     "ag-grid-generate-example-files"
   ],
   "tags": []
