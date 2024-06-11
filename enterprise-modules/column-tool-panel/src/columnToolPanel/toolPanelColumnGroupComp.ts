@@ -34,14 +34,6 @@ import type { ColumnModelItem } from './columnModelItem';
 import type { ModelItemUtils } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
-const TEMPLATE = /* html */ `<div class="ag-column-select-column-group" aria-hidden="true">
-        <span class="ag-column-group-icons" data-ref="eColumnGroupIcons" >
-            <span class="ag-column-group-closed-icon" data-ref="eGroupClosedIcon"></span>
-            <span class="ag-column-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
-        </span>
-        <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-        <span class="ag-column-select-column-label" data-ref="eLabel"></span>
-    </div>`;
 export class ToolPanelColumnGroupComp extends Component {
     private columnModel: ColumnModel;
     private dragAndDropService: DragAndDropService;
@@ -83,7 +75,17 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     public postConstruct(): void {
-        this.setTemplate(TEMPLATE, [AgCheckboxSelector]);
+        this.setTemplate(
+            /* html */ `<div class="ag-column-select-column-group" aria-hidden="true">
+            <span class="ag-column-group-icons" data-ref="eColumnGroupIcons" >
+                <span class="ag-column-group-closed-icon" data-ref="eGroupClosedIcon"></span>
+                <span class="ag-column-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
+            </span>
+            <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
+            <span class="ag-column-select-column-label" data-ref="eLabel"></span>
+        </div>`,
+            [AgCheckboxSelector]
+        );
 
         this.eDragHandle = _createIconNoSpan('columnDrag', this.gos)!;
         this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-group-drag-handle');
