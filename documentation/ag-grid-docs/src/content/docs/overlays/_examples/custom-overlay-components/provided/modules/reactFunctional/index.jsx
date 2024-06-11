@@ -93,7 +93,6 @@ const GridExample = () => {
                         loadingOverlayComponentParams={loadingOverlayComponentParams}
                         noRowsOverlayComponent={noRowsOverlayComponent}
                         noRowsOverlayComponentParams={noRowsOverlayComponentParams}
-                        reactiveCustomComponents
                     />
                 </div>
             </div>

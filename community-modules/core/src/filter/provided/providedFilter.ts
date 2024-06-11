@@ -8,7 +8,7 @@ import { PositionableFeature } from '../../rendering/features/positionableFeatur
 import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
 import { _debounce } from '../../utils/function';
 import type { AgPromise } from '../../utils/promise';
-import type { ComponentClass } from '../../widgets/component';
+import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import type { PopupEventParams } from '../../widgets/popupService';
@@ -63,7 +63,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     protected abstract updateUiVisibility(): void;
 
     protected abstract createBodyTemplate(): string;
-    protected abstract getAgComponents(): ComponentClass[];
+    protected abstract getAgComponents(): ComponentSelector[];
     protected abstract getCssIdentifier(): string;
     protected abstract resetUiToDefaults(silent?: boolean): AgPromise<void>;
 

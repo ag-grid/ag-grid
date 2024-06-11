@@ -7,15 +7,15 @@ import type { HeaderRowCtrl, HeaderRowCtrlInstanceId } from '../row/headerRowCtr
 import type { IHeaderRowContainerComp } from './headerRowContainerCtrl';
 import { HeaderRowContainerCtrl } from './headerRowContainerCtrl';
 
+const PINNED_LEFT_TEMPLATE = /* html */ `<div class="ag-pinned-left-header" role="rowgroup"></div>`;
+
+const PINNED_RIGHT_TEMPLATE = /* html */ `<div class="ag-pinned-right-header" role="rowgroup"></div>`;
+
+const CENTER_TEMPLATE /* html */ = `<div class="ag-header-viewport" role="presentation">
+        <div class="ag-header-container" data-ref="eCenterContainer" role="rowgroup"></div>
+    </div>`;
+
 export class HeaderRowContainerComp extends Component {
-    private static PINNED_LEFT_TEMPLATE = /* html */ `<div class="ag-pinned-left-header" role="rowgroup"></div>`;
-
-    private static PINNED_RIGHT_TEMPLATE = /* html */ `<div class="ag-pinned-right-header" role="rowgroup"></div>`;
-
-    private static CENTER_TEMPLATE /* html */ = `<div class="ag-header-viewport" role="presentation">
-            <div class="ag-header-container" data-ref="eCenterContainer" role="rowgroup"></div>
-        </div>`;
-
     private eCenterContainer: HTMLElement = RefPlaceholder;
 
     private eRowContainer: HTMLElement;
@@ -58,11 +58,7 @@ export class HeaderRowContainerComp extends Component {
         const pinnedLeft = this.pinned == 'left';
         const pinnedRight = this.pinned == 'right';
 
-        const template = pinnedLeft
-            ? HeaderRowContainerComp.PINNED_LEFT_TEMPLATE
-            : pinnedRight
-              ? HeaderRowContainerComp.PINNED_RIGHT_TEMPLATE
-              : HeaderRowContainerComp.CENTER_TEMPLATE;
+        const template = pinnedLeft ? PINNED_LEFT_TEMPLATE : pinnedRight ? PINNED_RIGHT_TEMPLATE : CENTER_TEMPLATE;
 
         this.setTemplate(template);
 

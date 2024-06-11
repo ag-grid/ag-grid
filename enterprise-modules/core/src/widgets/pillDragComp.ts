@@ -1,7 +1,9 @@
 import type {
     AgEvent,
     BeanCollection,
-    ComponentClass,
+    ComponentSelector,
+    DragAndDropIcon,
+    DragAndDropService,
     DragItem,
     DragSource,
     DragSourceType,
@@ -9,7 +11,6 @@ import type {
 } from '@ag-grid-community/core';
 import {
     Component,
-    DragAndDropService,
     KeyCode,
     RefPlaceholder,
     TouchListener,
@@ -27,7 +28,8 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         this.dragAndDropService = beans.dragAndDropService;
     }
 
-    private TEMPLATE /* html */ = `<span role="option">
+    private TEMPLATE = /* html */ `
+        <span role="option">
           <span data-ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
           <span data-ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
           <span data-ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
@@ -49,7 +51,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         private ghost: boolean,
         private horizontal: boolean,
         private template?: string,
-        private agComponents?: ComponentClass[]
+        private agComponents?: ComponentSelector[]
     ) {
         super();
     }
@@ -124,8 +126,8 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         return undefined;
     }
 
-    protected getDefaultIconName(): string {
-        return DragAndDropService.ICON_NOT_ALLOWED;
+    protected getDefaultIconName(): DragAndDropIcon {
+        return 'notAllowed';
     }
 
     private addDragSource(): void {

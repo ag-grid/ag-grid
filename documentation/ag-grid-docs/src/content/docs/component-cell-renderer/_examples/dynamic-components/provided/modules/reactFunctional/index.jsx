@@ -178,7 +178,6 @@ const GridExample = () => {
                             methodFromParent,
                         }}
                         defaultColDef={defaultColDef}
-                        reactiveCustomComponents
                     />
                 </div>
             </div>

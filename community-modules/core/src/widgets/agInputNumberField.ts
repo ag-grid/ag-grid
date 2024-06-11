@@ -2,7 +2,7 @@ import { _addOrRemoveAttribute } from '../utils/dom';
 import { _exists } from '../utils/generic';
 import type { AgInputTextFieldParams } from './agInputTextField';
 import { AgInputTextField } from './agInputTextField';
-import type { AgComponentSelector } from './component';
+import type { ComponentSelector } from './component';
 
 export interface AgInputNumberFieldParams extends AgInputTextFieldParams {
     precision?: number;
@@ -12,8 +12,6 @@ export interface AgInputNumberFieldParams extends AgInputTextFieldParams {
 }
 
 export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParams> {
-    static override selector: AgComponentSelector = 'AG-INPUT-NUMBER-FIELD';
-
     private precision?: number;
     private step?: number;
     private min?: number;
@@ -195,3 +193,8 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
         return typeof value === 'string' && value.includes('e');
     }
 }
+
+export const AgInputNumberFieldSelector: ComponentSelector = {
+    selector: 'AG-INPUT-NUMBER-FIELD',
+    component: AgInputNumberField,
+};

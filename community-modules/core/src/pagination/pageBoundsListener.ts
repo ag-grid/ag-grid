@@ -4,20 +4,20 @@ import type { BeanCollection } from '../context/context';
 import type { ModelUpdatedEvent, PaginationChangedEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
+import type { PageBoundsService } from './pageBoundsService';
 import type { PaginationService } from './paginationService';
-import type { RowBoundsService } from './rowBoundsService';
 
-export class RowBoundsListener extends BeanStub implements NamedBean {
-    beanName = 'rowBoundsListener' as const;
+export class PageBoundsListener extends BeanStub implements NamedBean {
+    beanName = 'pageBoundsListener' as const;
 
     private rowModel: IRowModel;
     private paginationService?: PaginationService;
-    private rowBoundsService: RowBoundsService;
+    private pageBoundsService: PageBoundsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
         this.paginationService = beans.paginationService;
-        this.rowBoundsService = beans.rowBoundsService;
+        this.pageBoundsService = beans.pageBoundsService;
     }
 
     public postConstruct(): void {
@@ -47,7 +47,7 @@ export class RowBoundsListener extends BeanStub implements NamedBean {
         if (this.paginationService) {
             this.paginationService.calculatePages();
         } else {
-            this.rowBoundsService.calculateBounds(0, this.rowModel.getRowCount() - 1);
+            this.pageBoundsService.calculateBounds(0, this.rowModel.getRowCount() - 1);
         }
     }
 }

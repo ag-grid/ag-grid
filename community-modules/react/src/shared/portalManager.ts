@@ -2,9 +2,8 @@ import type { ReactPortal } from 'react';
 
 import type { ReactComponent } from './reactComponent';
 
+const MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component
 export class PortalManager {
-    private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component
-
     private refresher: () => void;
     private wrappingElement: string;
     private destroyed = false;
@@ -19,7 +18,7 @@ export class PortalManager {
         this.refresher = refresher;
         this.maxComponentCreationTimeMs = maxComponentCreationTimeMs
             ? maxComponentCreationTimeMs
-            : PortalManager.MAX_COMPONENT_CREATION_TIME_IN_MS;
+            : MAX_COMPONENT_CREATION_TIME_IN_MS;
     }
 
     public getPortals(): ReactPortal[] {

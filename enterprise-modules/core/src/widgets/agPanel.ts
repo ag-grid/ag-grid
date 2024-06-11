@@ -18,6 +18,16 @@ export interface PanelOptions extends PositionableOptions {
     title?: string | null;
     cssIdentifier?: string | null;
 }
+function getTemplate(config: PanelOptions) {
+    const cssIdentifier = config.cssIdentifier || 'default';
+    return /* html */ `<div class="ag-panel ag-${cssIdentifier}-panel" tabindex="-1">
+        <div data-ref="eTitleBar" class="ag-panel-title-bar ag-${cssIdentifier}-panel-title-bar ag-unselectable">
+            <span data-ref="eTitle" class="ag-panel-title-bar-title ag-${cssIdentifier}-panel-title-bar-title"></span>
+            <div data-ref="eTitleBarButtons" class="ag-panel-title-bar-buttons ag-${cssIdentifier}-panel-title-bar-buttons"></div>
+        </div>
+        <div data-ref="eContentWrapper" class="ag-panel-content-wrapper ag-${cssIdentifier}-panel-content-wrapper"></div>
+    </div>`;
+}
 
 export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Component {
     protected static CLOSE_BTN_TEMPLATE = /* html */ `<div class="ag-button"></div>`;
@@ -33,18 +43,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
     protected readonly eTitle: HTMLElement = RefPlaceholder;
 
     constructor(protected readonly config: TConfig) {
-        super(AgPanel.getTemplate(config));
-    }
-
-    private static getTemplate(config: PanelOptions) {
-        const cssIdentifier = config.cssIdentifier || 'default';
-        return /* html */ `<div class="ag-panel ag-${cssIdentifier}-panel" tabindex="-1">
-            <div data-ref="eTitleBar" class="ag-panel-title-bar ag-${cssIdentifier}-panel-title-bar ag-unselectable">
-                <span data-ref="eTitle" class="ag-panel-title-bar-title ag-${cssIdentifier}-panel-title-bar-title"></span>
-                <div data-ref="eTitleBarButtons" class="ag-panel-title-bar-buttons ag-${cssIdentifier}-panel-title-bar-buttons"></div>
-            </div>
-            <div data-ref="eContentWrapper" class="ag-panel-content-wrapper ag-${cssIdentifier}-panel-content-wrapper"></div>
-        </div>`;
+        super(getTemplate(config));
     }
 
     public postConstruct() {

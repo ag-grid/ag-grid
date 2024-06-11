@@ -25,10 +25,7 @@ import type { MouseEventService } from './mouseEventService';
 import { RowDragFeature } from './rowDragFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
-export enum RowAnimationCssClasses {
-    ANIMATION_ON = 'ag-row-animation',
-    ANIMATION_OFF = 'ag-row-no-animation',
-}
+export type RowAnimationCssClasses = 'ag-row-animation' | 'ag-row-no-animation';
 
 export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
 
@@ -50,7 +47,7 @@ export interface IGridBodyComp extends LayoutView {
     setStickyBottomWidth(width: string): void;
     setColumnCount(count: number): void;
     setRowCount(count: number): void;
-    setRowAnimationCssOnBodyViewport(cssClass: string, animate: boolean): void;
+    setRowAnimationCssOnBodyViewport(cssClass: RowAnimationCssClasses, animate: boolean): void;
     setAlwaysVerticalScrollClass(cssClass: string | null, on: boolean): void;
     setPinnedTopBottomOverflowY(overflow: 'scroll' | 'hidden'): void;
     registerBodyViewportResizeListener(listener: () => void): void;
@@ -321,9 +318,9 @@ export class GridBodyCtrl extends BeanStub {
                 initialSizeMeasurementComplete &&
                 this.gos.isAnimateRows() &&
                 !this.rowContainerHeightService.isStretching();
-            const animateRowsCssClass = animateRows
-                ? RowAnimationCssClasses.ANIMATION_ON
-                : RowAnimationCssClasses.ANIMATION_OFF;
+            const animateRowsCssClass: RowAnimationCssClasses = animateRows
+                ? 'ag-row-animation'
+                : 'ag-row-no-animation';
             this.comp.setRowAnimationCssOnBodyViewport(animateRowsCssClass, animateRows);
         };
 

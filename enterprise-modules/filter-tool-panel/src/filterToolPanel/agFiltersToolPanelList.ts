@@ -1,10 +1,10 @@
 import type {
     AbstractColDef,
     AgColumn,
-    AgComponentSelector,
     AgProvidedColumnGroup,
     BeanCollection,
     ColumnModel,
+    ComponentSelector,
     FiltersToolPanelState,
 } from '@ag-grid-community/core';
 import {
@@ -35,10 +35,6 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         this.columnModel = beans.columnModel;
     }
 
-    static readonly selector: AgComponentSelector = 'AG-FILTERS-TOOL-PANEL-LIST';
-
-    private static TEMPLATE = /* html */ `<div class="ag-filter-list-panel"></div>`;
-
     private initialised = false;
     private hasLoadedInitialState = false;
     private isInitialState = false;
@@ -54,7 +50,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     private onColumnsChangedPending: boolean = false;
 
     constructor() {
-        super(AgFiltersToolPanelList.TEMPLATE);
+        super(/* html */ `<div class="ag-filter-list-panel"></div>`);
     }
 
     public init(params: ToolPanelFiltersCompParams): void {
@@ -561,3 +557,8 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         super.destroy();
     }
 }
+
+export const AgFiltersToolPanelListSelector: ComponentSelector = {
+    selector: 'AG-FILTERS-TOOL-PANEL-LIST',
+    component: AgFiltersToolPanelList,
+};

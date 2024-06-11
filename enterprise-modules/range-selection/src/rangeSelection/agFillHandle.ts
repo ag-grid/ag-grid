@@ -1,6 +1,5 @@
 import type {
     AgColumn,
-    AgComponentSelector,
     BeanCollection,
     CellCtrl,
     CellNavigationService,
@@ -48,10 +47,6 @@ export class AgFillHandle extends AbstractSelectionHandle {
         this.visibleColsService = beans.visibleColsService;
     }
 
-    static readonly selector: AgComponentSelector = 'AG-FILL-HANDLE';
-
-    static TEMPLATE = /* html */ `<div class="ag-fill-handle"></div>`;
-
     private initialPosition: CellPosition | undefined;
     private initialXY: { x: number; y: number } | null;
     private lastCellMarked: CellPosition | undefined;
@@ -66,7 +61,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     protected type = SelectionHandleType.FILL;
 
     constructor() {
-        super(AgFillHandle.TEMPLATE);
+        super(/* html */ `<div class="ag-fill-handle"></div>`);
     }
 
     protected override updateValuesOnMove(e: MouseEvent) {

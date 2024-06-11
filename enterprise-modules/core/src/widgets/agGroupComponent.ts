@@ -1,6 +1,6 @@
-import type { AgComponentSelector, AgEvent } from '@ag-grid-community/core';
+import type { AgCheckbox, AgEvent, ComponentSelector } from '@ag-grid-community/core';
 import {
-    AgCheckbox,
+    AgCheckboxSelector,
     AgToggleButton,
     Component,
     KeyCode,
@@ -42,9 +42,21 @@ interface EnableChangeEvent extends AgEvent<'enableChange'> {
     enabled: boolean;
 }
 
-export class AgGroupComponent extends Component<AgGroupComponentEvent> {
-    static readonly selector: AgComponentSelector = 'AG-GROUP-COMPONENT';
+function getAgGroupComponentTemplate(params: AgGroupComponentParams) {
+    const cssIdentifier = params.cssIdentifier || 'default';
+    const direction: Direction = params.direction || 'vertical';
 
+    return /* html */ `
+        <div class="ag-group ag-${cssIdentifier}-group" role="presentation">
+            <div data-ref="eToolbar" class="ag-group-toolbar ag-${cssIdentifier}-group-toolbar">
+                <ag-checkbox data-ref="cbGroupEnabled"></ag-checkbox>
+            </div>
+            <div data-ref="eContainer" class="ag-group-container ag-group-container-${direction} ag-${cssIdentifier}-group-container"></div>
+        </div>
+    `;
+}
+
+export class AgGroupComponent extends Component<AgGroupComponentEvent> {
     private items: GroupItem[];
     private cssIdentifier: string;
     private enabled: boolean;
@@ -62,7 +74,7 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
     private readonly eContainer: HTMLElement = RefPlaceholder;
 
     constructor(private readonly params: AgGroupComponentParams = {}) {
-        super(AgGroupComponent.getTemplate(params), [AgCheckbox]);
+        super(getAgGroupComponentTemplate(params), [AgCheckboxSelector]);
 
         const {
             enabled,
@@ -90,20 +102,6 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
         if (suppressToggleExpandOnEnableChange != null) {
             this.suppressToggleExpandOnEnableChange = suppressToggleExpandOnEnableChange;
         }
-    }
-
-    private static getTemplate(params: AgGroupComponentParams) {
-        const cssIdentifier = params.cssIdentifier || 'default';
-        const direction: Direction = params.direction || 'vertical';
-
-        return /* html */ `
-            <div class="ag-group ag-${cssIdentifier}-group" role="presentation">
-                <div data-ref="eToolbar" class="ag-group-toolbar ag-${cssIdentifier}-group-toolbar">
-                    <ag-checkbox data-ref="cbGroupEnabled"></ag-checkbox>
-                </div>
-                <div data-ref="eContainer" class="ag-group-container ag-group-container-${direction} ag-${cssIdentifier}-group-container"></div>
-            </div>
-        `;
     }
 
     public postConstruct() {
@@ -346,7 +344,19 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
 }
 
 const TITLE_BAR_DISABLED_CLASS = 'ag-disabled-group-title-bar';
+function getDefaultTitleBarTemplate(params: AgGroupComponentParams) {
+    const cssIdentifier = params.cssIdentifier ?? 'default';
 
+    const role = params.suppressKeyboardNavigation ? 'presentation' : 'role';
+
+    return /* html */ `
+        <div class="ag-group-title-bar ag-${cssIdentifier}-group-title-bar ag-unselectable" role="${role}">
+            <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" data-ref="eGroupOpenedIcon" role="presentation"></span>
+            <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" data-ref="eGroupClosedIcon" role="presentation"></span>
+            <span data-ref="eTitle" class="ag-group-title ag-${cssIdentifier}-group-title"></span>
+        </div>
+    `;
+}
 class DefaultTitleBar extends Component<ExpandedChangedEvent> {
     private title: string | undefined;
     private suppressOpenCloseIcons: boolean = false;
@@ -357,7 +367,7 @@ class DefaultTitleBar extends Component<ExpandedChangedEvent> {
     private readonly eTitle: HTMLElement = RefPlaceholder;
 
     constructor(params: AgGroupComponentParams = {}) {
-        super(DefaultTitleBar.getTemplate(params));
+        super(getDefaultTitleBarTemplate(params));
 
         const { title, suppressOpenCloseIcons, suppressKeyboardNavigation } = params;
 
@@ -370,20 +380,6 @@ class DefaultTitleBar extends Component<ExpandedChangedEvent> {
         }
 
         this.suppressKeyboardNavigation = suppressKeyboardNavigation ?? false;
-    }
-
-    private static getTemplate(params: AgGroupComponentParams) {
-        const cssIdentifier = params.cssIdentifier ?? 'default';
-
-        const role = params.suppressKeyboardNavigation ? 'presentation' : 'role';
-
-        return /* html */ `
-            <div class="ag-group-title-bar ag-${cssIdentifier}-group-title-bar ag-unselectable" role="${role}">
-                <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" data-ref="eGroupOpenedIcon" role="presentation"></span>
-                <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" data-ref="eGroupClosedIcon" role="presentation"></span>
-                <span data-ref="eTitle" class="ag-group-title ag-${cssIdentifier}-group-title"></span>
-            </div>
-        `;
     }
 
     public postConstruct() {
@@ -495,3 +491,8 @@ class DefaultTitleBar extends Component<ExpandedChangedEvent> {
         }
     }
 }
+
+export const AgGroupComponentSelector: ComponentSelector = {
+    selector: 'AG-GROUP-COMPONENT',
+    component: AgGroupComponent,
+};

@@ -9,8 +9,8 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, VerticalScrollPosition } from '../interfaces/iRowNode';
 import type { AnimationFrameService } from '../misc/animationFrameService';
+import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { PaginationService } from '../pagination/paginationService';
-import type { RowBoundsService } from '../pagination/rowBoundsService';
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import { _isIOSUserAgent } from '../utils/browser';
@@ -32,7 +32,7 @@ export class GridBodyScrollFeature extends BeanStub {
     private ctrlsService: CtrlsService;
     private animationFrameService: AnimationFrameService;
     private paginationService?: PaginationService;
-    private rowBoundsService: RowBoundsService;
+    private pageBoundsService: PageBoundsService;
     private rowModel: IRowModel;
     private heightScaler: RowContainerHeightService;
     private rowRenderer: RowRenderer;
@@ -43,7 +43,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.ctrlsService = beans.ctrlsService;
         this.animationFrameService = beans.animationFrameService;
         this.paginationService = beans.paginationService;
-        this.rowBoundsService = beans.rowBoundsService;
+        this.pageBoundsService = beans.pageBoundsService;
         this.rowModel = beans.rowModel;
         this.heightScaler = beans.rowContainerHeightService;
         this.rowRenderer = beans.rowRenderer;
@@ -515,7 +515,7 @@ export class GridBodyScrollFeature extends BeanStub {
                 const startingRowTop = rowNode!.rowTop;
                 const startingRowHeight = rowNode!.rowHeight;
 
-                const paginationOffset = this.rowBoundsService.getPixelOffset();
+                const paginationOffset = this.pageBoundsService.getPixelOffset();
                 const rowTopPixel = rowNode!.rowTop! - paginationOffset;
                 const rowBottomPixel = rowTopPixel + rowNode!.rowHeight!;
 

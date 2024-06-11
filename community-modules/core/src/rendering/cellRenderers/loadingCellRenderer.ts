@@ -8,16 +8,14 @@ export interface ILoadingCellRenderer {}
 export interface ILoadingCellRendererComp extends ILoadingCellRenderer, IComponent<ILoadingCellRendererParams> {}
 
 export class LoadingCellRenderer extends Component implements ILoadingCellRendererComp {
-    private static TEMPLATE = `<div class="ag-loading">
-            <span class="ag-loading-icon" data-ref="eLoadingIcon"></span>
-            <span class="ag-loading-text" data-ref="eLoadingText"></span>
-        </div>`;
-
     private readonly eLoadingIcon: HTMLElement = RefPlaceholder;
     private readonly eLoadingText: HTMLElement = RefPlaceholder;
 
     constructor() {
-        super(LoadingCellRenderer.TEMPLATE);
+        super(/* html */ `<div class="ag-loading">
+            <span class="ag-loading-icon" data-ref="eLoadingIcon"></span>
+            <span class="ag-loading-text" data-ref="eLoadingText"></span>
+        </div>`);
     }
 
     public init(params: ILoadingCellRendererParams): void {

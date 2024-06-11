@@ -14,7 +14,7 @@ import { _escapeString } from '../../../utils/string';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 import type { LongTapEvent, TapEvent, TouchListenerEvent } from '../../../widgets/touchListener';
 import { TouchListener } from '../../../widgets/touchListener';
-import { SortIndicatorComp } from './sortIndicatorComp';
+import { SortIndicatorComp, SortIndicatorSelector } from './sortIndicatorComp';
 
 export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column the header is for. */
@@ -98,17 +98,16 @@ export interface IHeader {
 
 export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {}
 
+const HeaderCompTemplate = /* html */ `<div class="ag-cell-label-container" role="presentation">
+        <span data-ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
+        <span data-ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button" aria-hidden="true"></span>
+        <div data-ref="eLabel" class="ag-header-cell-label" role="presentation">
+            <span data-ref="eText" class="ag-header-cell-text"></span>
+            <span data-ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
+            <ag-sort-indicator data-ref="eSortIndicator"></ag-sort-indicator>
+        </div>
+    </div>`;
 export class HeaderComp extends Component implements IHeaderComp {
-    private static TEMPLATE /* html */ = `<div class="ag-cell-label-container" role="presentation">
-            <span data-ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
-            <span data-ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button" aria-hidden="true"></span>
-            <div data-ref="eLabel" class="ag-header-cell-label" role="presentation">
-                <span data-ref="eText" class="ag-header-cell-text"></span>
-                <span data-ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
-                <ag-sort-indicator data-ref="eSortIndicator"></ag-sort-indicator>
-            </div>
-        </div>`;
-
     private sortController: SortController;
     private menuService: MenuService;
     private funcColsService: FuncColsService;
@@ -175,7 +174,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private workOutTemplate(): string | null | undefined {
-        let template: string | null | undefined = this.params.template ?? HeaderComp.TEMPLATE;
+        let template: string | null | undefined = this.params.template ?? HeaderCompTemplate;
 
         // take account of any newlines & whitespace before/after the actual template
         template = template && template.trim ? template.trim() : template;
@@ -186,7 +185,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.params = params;
 
         this.currentTemplate = this.workOutTemplate();
-        this.setTemplate(this.currentTemplate, [SortIndicatorComp]);
+        this.setTemplate(this.currentTemplate, [SortIndicatorSelector]);
         this.setupTap();
         this.setMenu();
         this.setupSort();

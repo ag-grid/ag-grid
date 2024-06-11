@@ -1,7 +1,7 @@
 import type { BeanCollection } from '@ag-grid-community/core';
 import { AgCheckbox, AgSelect, Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponent, AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 
 import { AgSlider } from '../../../../../widgets/agSlider';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
@@ -11,11 +11,6 @@ import { FontPanel } from '../fontPanel';
 import type { FormatPanelOptions } from '../formatPanel';
 
 export class LegendPanel extends Component {
-    private static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="legendGroup">
-            </ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -72,9 +67,16 @@ export class LegendPanel extends Component {
             expanded,
             items: [enabledGroup],
         };
-        this.setTemplate(LegendPanel.TEMPLATE, [AgGroupComponent], {
-            legendGroup: legendGroupParams,
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="legendGroup">
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector],
+            {
+                legendGroup: legendGroupParams,
+            }
+        );
         registerGroupComponent(this.legendGroup);
     }
 

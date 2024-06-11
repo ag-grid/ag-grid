@@ -1,6 +1,7 @@
 import { _serialiseDate } from '../../utils/date';
 import { _exists } from '../../utils/generic';
-import { AgInputDateField } from '../../widgets/agInputDateField';
+import type { AgInputDateField } from '../../widgets/agInputDateField';
+import { AgInputDateFieldSelector } from '../../widgets/agInputDateField';
 import type { CellEditorInput } from './iCellEditorInput';
 import type { IDateCellEditorParams } from './iDateCellEditor';
 import { SimpleCellEditor } from './simpleCellEditor';
@@ -13,7 +14,7 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         return /* html */ `<ag-input-date-field class="ag-cell-editor" data-ref="eInput"></ag-input-date-field>`;
     }
     public getAgComponents() {
-        return [AgInputDateField];
+        return [AgInputDateFieldSelector];
     }
 
     public init(eInput: AgInputDateField, params: IDateCellEditorParams): void {

@@ -1,10 +1,10 @@
 import type { BeanCollection, ListOption } from '@ag-grid-community/core';
 import { AgSelect, Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponent, AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 
-import { AgColorPicker } from '../../../../../widgets/agColorPicker';
-import { AgSlider } from '../../../../../widgets/agSlider';
+import { AgColorPickerSelector } from '../../../../../widgets/agColorPicker';
+import { AgSlider, AgSliderSelector } from '../../../../../widgets/agSlider';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { getSeriesType, isRadial } from '../../../utils/seriesTypeMapper';
 import type { FontPanelParams } from '../fontPanel';
@@ -39,13 +39,13 @@ export class PolarAxisPanel extends Component {
             expanded,
             suppressEnabledCheckbox: true,
         };
-        const axisColorInputParams = chartAxisMenuParamsFactory.getDefaultColorPickerParams('line.color');
+        const axisColorInputParams = chartAxisMenuParamsFactory.getDefaultColorPickerParams('line.stroke');
         const axisLineWidthSliderParams = chartAxisMenuParamsFactory.getDefaultSliderParams(
             'line.width',
             'thickness',
             10
         );
-        this.setTemplate(PolarAxisPanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
+        this.setTemplate(PolarAxisPanel.TEMPLATE, [AgGroupComponentSelector, AgColorPickerSelector, AgSliderSelector], {
             axisGroup: axisGroupParams,
             axisColorInput: axisColorInputParams,
             axisLineWidthSlider: axisLineWidthSliderParams,

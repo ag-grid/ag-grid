@@ -1,7 +1,8 @@
-import type { AgComponentSelector, AgLabelParams, LabelAlignment } from '@ag-grid-community/core';
-import { AgAbstractLabel, AgInputNumberField, RefPlaceholder } from '@ag-grid-community/core';
+import type { AgInputNumberField, AgLabelParams, ComponentSelector, LabelAlignment } from '@ag-grid-community/core';
+import { AgAbstractLabel, AgInputNumberFieldSelector, RefPlaceholder } from '@ag-grid-community/core';
 
-import { AgInputRange } from './agInputRange';
+import type { AgInputRange } from './agInputRange';
+import { AgInputRangeSelector } from './agInputRange';
 
 export interface AgSliderParams extends AgLabelParams {
     minValue?: number;
@@ -14,16 +15,6 @@ export interface AgSliderParams extends AgLabelParams {
 
 export type AgSliderEvent = 'fieldValueChanged';
 export class AgSlider extends AgAbstractLabel<AgSliderParams, AgSliderEvent> {
-    static readonly selector: AgComponentSelector = 'AG-SLIDER';
-
-    private static TEMPLATE /* html */ = `<div class="ag-slider">
-            <label data-ref="eLabel"></label>
-            <div class="ag-wrapper ag-slider-wrapper">
-                <ag-input-range data-ref="eSlider"></ag-input-range>
-                <ag-input-number-field data-ref="eText"></ag-input-number-field>
-            </div>
-        </div>`;
-
     protected readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eSlider: AgInputRange = RefPlaceholder;
     private readonly eText: AgInputNumberField = RefPlaceholder;
@@ -31,7 +22,17 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams, AgSliderEvent> {
     protected override labelAlignment: LabelAlignment = 'top';
 
     constructor(config?: AgSliderParams) {
-        super(config, AgSlider.TEMPLATE, [AgInputRange, AgInputNumberField]);
+        super(
+            config,
+            /* html */ `<div class="ag-slider">
+            <label data-ref="eLabel"></label>
+            <div class="ag-wrapper ag-slider-wrapper">
+                <ag-input-range data-ref="eSlider"></ag-input-range>
+                <ag-input-number-field data-ref="eText"></ag-input-number-field>
+            </div>
+        </div>`,
+            [AgInputRangeSelector, AgInputNumberFieldSelector]
+        );
     }
 
     public override postConstruct() {
@@ -126,3 +127,8 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams, AgSliderEvent> {
         return this;
     }
 }
+
+export const AgSliderSelector: ComponentSelector = {
+    selector: 'AG-SLIDER',
+    component: AgSlider,
+};

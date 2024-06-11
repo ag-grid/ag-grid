@@ -658,10 +658,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         return this.cellRanges.filter((cellRange) => this.isCellInSpecificRange(cell, cellRange)).length;
     }
 
-    private isRowInRange(rowIndex: number, floating: RowPinnedType, cellRange: CellRange): boolean {
+    private isRowInRange(rowIndex: number, rowPinned: RowPinnedType, cellRange: CellRange): boolean {
         const firstRow = this.getRangeStartRow(cellRange);
         const lastRow = this.getRangeEndRow(cellRange);
-        const thisRow: RowPosition = { rowIndex, rowPinned: floating || null };
+        const thisRow: RowPosition = { rowIndex, rowPinned: rowPinned || null };
 
         // compare rowPinned with == instead of === because it can be `null` or `undefined`
         const equalsFirstRow = thisRow.rowIndex === firstRow.rowIndex && thisRow.rowPinned == firstRow.rowPinned;

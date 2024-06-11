@@ -1,7 +1,7 @@
-import type { AgSelectParams, AgToggleButtonParams, BeanCollection, ListOption } from '@ag-grid-community/core';
+import type { AgToggleButtonParams, BeanCollection, ListOption } from '@ag-grid-community/core';
 import { AgSelect, AgToggleButton, Component, RefPlaceholder, _removeFromParent } from '@ag-grid-community/core';
-import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import type { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
 
 import { AgColorPicker } from '../../../../../widgets/agColorPicker';
@@ -17,9 +17,18 @@ import { CapsPanel } from './capsPanel';
 import { ConnectorLinePanel } from './connectorLinePanel';
 import { MarkersPanel } from './markersPanel';
 import { SeriesItemsPanel } from './seriesItemsPanel';
+import { getShapeSelectOptions } from './seriesUtils';
 import { ShadowPanel } from './shadowPanel';
 import { TileSpacingPanel } from './tileSpacingPanel';
 import { WhiskersPanel } from './whiskersPanel';
+
+const tooltips = 'tooltips';
+const strokeWidth = 'strokeWidth';
+const lineDash = 'lineDash';
+const lineOpacity = 'lineOpacity';
+const fillOpacity = 'fillOpacity';
+const labels = 'labels';
+const shadow = 'shadow';
 
 export class SeriesPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
@@ -41,53 +50,49 @@ export class SeriesPanel extends Component {
 
     private readonly widgetFuncs = {
         lineWidth: () => this.initStrokeWidth('lineWidth'),
-        strokeWidth: () => this.initStrokeWidth('strokeWidth'),
+        [strokeWidth]: () => this.initStrokeWidth('strokeWidth'),
         lineColor: () => this.initLineColor(),
-        lineDash: () => this.initLineDash(),
-        lineOpacity: () => this.initLineOpacity(),
-        fillOpacity: () => this.initFillOpacity(),
-        markers: () => this.initMarkers(),
-        labels: () => this.initLabels(),
-        shadow: () => this.initShadow(),
-        tooltips: () => this.initTooltips(),
+        [lineDash]: () => this.initLineDash(),
+        [lineOpacity]: () => this.initOpacity('strokeOpacity'),
+        [fillOpacity]: () => this.initOpacity('fillOpacity'),
+        markers: () => new MarkersPanel(this.chartMenuUtils),
+        [labels]: () => this.initLabels(),
+        sectorLabels: () => this.initSectorLabels(),
+        [shadow]: () => new ShadowPanel(this.chartMenuUtils),
+        [tooltips]: () => this.initTooltips(),
         bins: () => this.initBins(),
-        whiskers: () => this.initWhiskers(),
-        caps: () => this.initCaps(),
-        connectorLine: () => this.initConnectorLine(),
-        seriesItems: () => this.initSeriesItemsPanel(),
-        tileSpacing: () => this.initTileSpacingPanel(),
+        whiskers: () => new WhiskersPanel(this.chartMenuUtils),
+        caps: () => new CapsPanel(this.chartMenuUtils),
+        connectorLine: () => new ConnectorLinePanel(this.chartMenuUtils),
+        seriesItems: () => new SeriesItemsPanel(this.chartMenuUtils),
+        tileSpacing: () => new TileSpacingPanel(this.chartMenuUtils),
+        shape: () => this.initShape(),
+        size: () => this.initSize('size', 'size'),
+        minSize: () => this.initSize('size', 'minSize'),
+        maxSize: () => this.initSize('maxSize', 'maxSize'),
     } as const;
 
     private readonly seriesWidgetMappings: { [K in ChartSeriesType]?: (keyof typeof this.widgetFuncs)[] } = {
-        bar: ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
-        pie: ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
-        donut: ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
-        line: ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
-        scatter: ['tooltips', 'markers', 'labels'],
-        bubble: ['tooltips', 'markers', 'labels'],
-        area: ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
-        histogram: ['tooltips', 'bins', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
-        'radial-column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
-        'radial-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
-        'radar-line': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
-        'radar-area': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels'],
-        nightingale: ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
-        'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'whiskers', 'caps'],
-        'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
-        'range-area': [
-            'tooltips',
-            'lineWidth',
-            'lineDash',
-            'lineOpacity',
-            'fillOpacity',
-            'markers',
-            'labels',
-            'shadow',
-        ],
-        treemap: ['tooltips', 'tileSpacing'],
-        sunburst: ['tooltips'],
-        heatmap: ['tooltips', 'labels', 'lineColor', 'lineWidth', 'lineOpacity'],
-        waterfall: ['tooltips', 'connectorLine', 'seriesItems'],
+        bar: [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels, shadow],
+        pie: [tooltips, strokeWidth, lineOpacity, fillOpacity, labels, 'sectorLabels', shadow],
+        donut: [tooltips, strokeWidth, lineOpacity, fillOpacity, labels, 'sectorLabels', shadow],
+        line: [tooltips, 'lineWidth', lineDash, lineOpacity, 'markers', labels],
+        scatter: [tooltips, 'shape', 'size', strokeWidth, labels],
+        bubble: [tooltips, 'shape', 'minSize', 'maxSize', strokeWidth, labels],
+        area: [tooltips, 'lineWidth', lineDash, lineOpacity, fillOpacity, 'markers', labels, shadow],
+        histogram: [tooltips, 'bins', strokeWidth, lineDash, lineOpacity, fillOpacity, labels, shadow],
+        'radial-column': [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels],
+        'radial-bar': [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels],
+        'radar-line': [tooltips, strokeWidth, lineDash, lineOpacity, 'markers', labels],
+        'radar-area': [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, 'markers', labels],
+        nightingale: [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels],
+        'box-plot': [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, 'whiskers', 'caps'],
+        'range-bar': [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels],
+        'range-area': [tooltips, 'lineWidth', lineDash, lineOpacity, fillOpacity, 'markers', labels, shadow],
+        treemap: [tooltips, 'tileSpacing'],
+        sunburst: [tooltips],
+        heatmap: [tooltips, labels, 'lineColor', 'lineWidth', lineOpacity],
+        waterfall: [tooltips, 'connectorLine', 'seriesItems'],
     };
 
     constructor(private readonly options: FormatPanelOptions) {
@@ -109,7 +114,7 @@ export class SeriesPanel extends Component {
             expanded,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(SeriesPanel.TEMPLATE, [AgGroupComponent], { seriesGroup: seriesGroupParams });
+        this.setTemplate(SeriesPanel.TEMPLATE, [AgGroupComponentSelector], { seriesGroup: seriesGroupParams });
 
         registerGroupComponent(this.seriesGroup);
 
@@ -141,13 +146,25 @@ export class SeriesPanel extends Component {
                     this.initSeriesSelect();
                 }
 
-                (this.seriesWidgetMappings[this.seriesType] ?? []).forEach((w) => this.widgetFuncs[w]());
+                (this.seriesWidgetMappings[this.seriesType] ?? []).forEach((w) => {
+                    const widgetFuncResult = this.widgetFuncs[w]();
+                    let widget: Component<any>;
+                    if (Array.isArray(widgetFuncResult)) {
+                        const comp = this.createBean(widgetFuncResult[0]);
+                        widget = comp;
+                        widgetFuncResult[1](comp);
+                    } else {
+                        widget = this.createBean(widgetFuncResult);
+                    }
+                    this.seriesGroup.addItem(widget);
+                    this.activePanels.push(widget);
+                });
             })
             .catch((e) => console.error(`AG Grid - chart rendering failed`, e));
     }
 
     private initSeriesSelect() {
-        const seriesSelect = this.seriesGroup.createManagedBean(
+        const seriesSelect = this.createBean(
             new AgSelect(
                 this.chartMenuUtils.getDefaultSelectParamsWithoutValueParams(
                     'seriesType',
@@ -166,174 +183,117 @@ export class SeriesPanel extends Component {
         this.activePanels.push(seriesSelect);
     }
 
-    private initTooltips(): void {
-        const seriesTooltipsToggle = this.createBean(
-            new AgToggleButton(
-                this.chartMenuUtils.addValueParams<AgToggleButtonParams>('tooltip.enabled', {
-                    label: this.translate('tooltips'),
-                    labelAlignment: 'left',
-                    labelWidth: 'flex',
-                    inputWidth: 'flex',
-                })
-            )
+    private initTooltips(): AgToggleButton {
+        return new AgToggleButton(
+            this.chartMenuUtils.addValueParams<AgToggleButtonParams>('tooltip.enabled', {
+                label: this.translate('tooltips'),
+                labelAlignment: 'left',
+                labelWidth: 'flex',
+                inputWidth: 'flex',
+            })
         );
-
-        this.addWidget(seriesTooltipsToggle);
     }
 
-    private initLineColor(): void {
-        const seriesLineColorPicker = this.createBean(
-            new AgColorPicker(this.chartMenuUtils.getDefaultColorPickerParams('stroke', 'strokeColor'))
-        );
-
-        this.addWidget(seriesLineColorPicker);
+    private initLineColor(): AgColorPicker {
+        return new AgColorPicker(this.chartMenuUtils.getDefaultColorPickerParams('stroke', 'strokeColor'));
     }
 
-    private initStrokeWidth(labelKey: 'strokeWidth' | 'lineWidth'): void {
-        const seriesStrokeWidthSlider = this.createBean(
-            new AgSlider(this.chartMenuUtils.getDefaultSliderParams('strokeWidth', labelKey, 10))
-        );
-
-        this.addWidget(seriesStrokeWidthSlider);
+    private initStrokeWidth(labelKey: 'strokeWidth' | 'lineWidth'): AgSlider {
+        return new AgSlider(this.chartMenuUtils.getDefaultSliderParams('strokeWidth', labelKey, 10));
     }
 
-    private initLineDash(): void {
-        const seriesLineDashSlider = this.createBean(
-            new AgSlider(this.chartMenuUtils.getDefaultSliderParams('lineDash', 'lineDash', 30, true))
-        );
-
-        this.addWidget(seriesLineDashSlider);
+    private initLineDash(): AgSlider {
+        return new AgSlider(this.chartMenuUtils.getDefaultSliderParams('lineDash', 'lineDash', 30, true));
     }
 
-    private initLineOpacity(): void {
-        const params = this.chartMenuUtils.getDefaultSliderParams('strokeOpacity', 'strokeOpacity', 1);
+    private initOpacity(type: 'strokeOpacity' | 'fillOpacity'): AgSlider {
+        const params = this.chartMenuUtils.getDefaultSliderParams(type, type, 1);
         params.step = 0.05;
-        const seriesLineOpacitySlider = this.createBean(new AgSlider(params));
-
-        this.addWidget(seriesLineOpacitySlider);
+        return new AgSlider(params);
     }
 
-    private initFillOpacity(): void {
-        const params = this.chartMenuUtils.getDefaultSliderParams('fillOpacity', 'fillOpacity', 1);
-        params.step = 0.05;
-        const seriesFillOpacitySlider = this.createBean(new AgSlider(params));
-
-        this.addWidget(seriesFillOpacitySlider);
-    }
-
-    private initLabels() {
+    private initLabels(): [FontPanel, (fontPanel: FontPanel) => void] {
         const isPieChart = isPieChartSeries(this.seriesType);
         const seriesOptionLabelProperty = isPieChart ? 'calloutLabel' : 'label';
         const labelKey = isPieChart ? 'calloutLabels' : 'labels';
         const labelParams = this.chartMenuUtils.getDefaultFontPanelParams(seriesOptionLabelProperty, labelKey);
-        const labelPanelComp = this.createBean(new FontPanel(labelParams));
+        const fontPanel = new FontPanel(labelParams);
 
-        if (isPieChart) {
-            const calloutPanelComp = this.createBean(new CalloutPanel(this.chartMenuUtils));
-            labelPanelComp.addItem(calloutPanelComp);
-            this.activePanels.push(calloutPanelComp);
-        }
+        const addItems = (labelPanelComp: FontPanel) => {
+            if (isPieChart) {
+                const calloutPanelComp = labelPanelComp.createManagedBean(new CalloutPanel(this.chartMenuUtils));
+                labelPanelComp.addItem(calloutPanelComp);
+                this.activePanels.push(calloutPanelComp);
+            }
 
-        this.addWidget(labelPanelComp);
+            if (this.seriesType === 'range-bar') {
+                // Add label placement dropdown
+                const options: Array<ListOption<AgRangeBarSeriesLabelPlacement>> = [
+                    { value: 'inside', text: this.translate('inside') },
+                    { value: 'outside', text: this.translate('outside') },
+                ];
+                const placementSelect = labelPanelComp.createManagedBean(
+                    new AgSelect(
+                        this.chartMenuUtils.getDefaultSelectParams('label.placement', 'labelPlacement', options)
+                    )
+                );
 
-        if (isPieChart) {
-            const sectorParams = this.chartMenuUtils.getDefaultFontPanelParams('sectorLabel', 'sectorLabels');
-            const sectorPanelComp = this.createBean(new FontPanel(sectorParams));
-            const positionRatioComp = this.getSectorLabelPositionRatio();
+                labelPanelComp.addItem(placementSelect);
+                this.activePanels.push(placementSelect);
+
+                // Add padding slider
+                const paddingSlider = labelPanelComp.createManagedBean(
+                    new AgSlider(this.chartMenuUtils.getDefaultSliderParams('label.padding', 'padding', 200))
+                );
+
+                labelPanelComp.addItem(paddingSlider);
+                this.activePanels.push(paddingSlider);
+            }
+        };
+
+        return [fontPanel, addItems];
+    }
+
+    private initSectorLabels(): [FontPanel, (fontPanel: FontPanel) => void] {
+        const sectorParams = this.chartMenuUtils.getDefaultFontPanelParams('sectorLabel', 'sectorLabels');
+        const fontPanel = new FontPanel(sectorParams);
+
+        const addItems = (sectorPanelComp: FontPanel) => {
+            const positionRatioParams = this.chartMenuUtils.getDefaultSliderParams(
+                'sectorLabel.positionRatio',
+                'positionRatio',
+                1
+            );
+            positionRatioParams.step = 0.05;
+            const positionRatioComp = sectorPanelComp.createManagedBean(new AgSlider(positionRatioParams));
             sectorPanelComp.addItem(positionRatioComp);
+        };
 
-            this.addWidget(sectorPanelComp);
-        }
-
-        if (this.seriesType === 'range-bar') {
-            // Add label placement dropdown
-            const options: Array<ListOption<AgRangeBarSeriesLabelPlacement>> = [
-                { value: 'inside', text: this.translate('inside') },
-                { value: 'outside', text: this.translate('outside') },
-            ];
-            const placementSelect = labelPanelComp.createManagedBean(
-                new AgSelect(
-                    this.chartMenuUtils.addValueParams<AgSelectParams>('label.placement', {
-                        label: this.translate('labelPlacement'),
-                        labelAlignment: 'left',
-                        labelWidth: 'flex',
-                        inputWidth: 'flex',
-                        options,
-                    })
-                )
-            );
-
-            labelPanelComp.addItem(placementSelect);
-            this.activePanels.push(placementSelect);
-
-            // Add padding slider
-            const paddingSlider = labelPanelComp.createManagedBean(
-                new AgSlider(this.chartMenuUtils.getDefaultSliderParams('label.padding', 'padding', 200))
-            );
-
-            labelPanelComp.addItem(paddingSlider);
-            this.activePanels.push(paddingSlider);
-        }
+        return [fontPanel, addItems];
     }
 
-    private getSectorLabelPositionRatio(): AgSlider {
-        const params = this.chartMenuUtils.getDefaultSliderParams('sectorLabel.positionRatio', 'positionRatio', 1);
-        params.step = 0.05;
-        return this.createBean(new AgSlider(params));
-    }
-
-    private initShadow() {
-        const shadowPanelComp = this.createBean(new ShadowPanel(this.chartMenuUtils));
-        this.addWidget(shadowPanelComp);
-    }
-
-    private initMarkers() {
-        const markersPanelComp = this.createBean(
-            new MarkersPanel(this.options.chartOptionsService, this.chartMenuUtils)
-        );
-        this.addWidget(markersPanelComp);
-    }
-
-    private initBins() {
+    private initBins(): AgSlider {
         const params = this.chartMenuUtils.getDefaultSliderParams('binCount', 'histogramBinCount', 20);
         const chartOptions = this.chartMenuUtils.getChartOptions();
         // this needs fixing
         const value = (chartOptions.getValue<any>('bins') ?? chartOptions.getValue<any>('calculatedBins', true)).length;
         params.value = `${value}`;
         params.maxValue = Math.max(value, 20);
-        const seriesBinCountSlider = this.createBean(new AgSlider(params));
-
-        this.addWidget(seriesBinCountSlider);
+        return new AgSlider(params);
     }
 
-    private initWhiskers() {
-        const whiskersPanelComp = this.createBean(new WhiskersPanel(this.chartMenuUtils));
-        this.addWidget(whiskersPanelComp);
+    private initShape(): AgSelect {
+        return new AgSelect(
+            this.chartMenuUtils.getDefaultSelectParams(
+                'shape',
+                'shape',
+                getShapeSelectOptions(this.chartTranslationService)
+            )
+        );
     }
 
-    private initCaps() {
-        const capsPanelComp = this.createBean(new CapsPanel(this.chartMenuUtils));
-        this.addWidget(capsPanelComp);
-    }
-
-    private initConnectorLine() {
-        const connectorLinePanelComp = this.createBean(new ConnectorLinePanel(this.chartMenuUtils));
-        this.addWidget(connectorLinePanelComp);
-    }
-
-    private initSeriesItemsPanel() {
-        const seriesItemsPanelComp = this.createBean(new SeriesItemsPanel(this.chartMenuUtils));
-        this.addWidget(seriesItemsPanelComp);
-    }
-
-    private initTileSpacingPanel() {
-        const tileSpacingPanelComp = this.createBean(new TileSpacingPanel(this.chartMenuUtils));
-        this.addWidget(tileSpacingPanelComp);
-    }
-
-    private addWidget(widget: Component<any>): void {
-        this.seriesGroup.addItem(widget);
-        this.activePanels.push(widget);
+    private initSize(expression: 'size' | 'maxSize', labelKey: 'size' | 'minSize' | 'maxSize'): AgSlider {
+        return new AgSlider(this.chartMenuUtils.getDefaultSliderParams(expression, labelKey, 60));
     }
 
     private getSeriesSelectOptions(): ListOption[] {

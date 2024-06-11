@@ -9,6 +9,7 @@ import { _getCtrlForEventTarget } from '../utils/event';
 import { _exists } from '../utils/generic';
 import { NumberSequence } from '../utils/numberSequence';
 
+const GRID_DOM_KEY = '__ag_grid_instance';
 export class MouseEventService extends BeanStub implements NamedBean {
     beanName = 'mouseEventService' as const;
 
@@ -19,7 +20,6 @@ export class MouseEventService extends BeanStub implements NamedBean {
     }
 
     private static gridInstanceSequence = new NumberSequence();
-    private static GRID_DOM_KEY = '__ag_grid_instance';
 
     private gridInstanceId = MouseEventService.gridInstanceSequence.next();
 
@@ -27,7 +27,7 @@ export class MouseEventService extends BeanStub implements NamedBean {
     // so the grid can work out if the even came from this grid or a grid inside this one. see the ctrl+v logic
     // for where this is used.
     public stampTopLevelGridCompWithGridInstance(eGridDiv: HTMLElement): void {
-        (eGridDiv as any)[MouseEventService.GRID_DOM_KEY] = this.gridInstanceId;
+        (eGridDiv as any)[GRID_DOM_KEY] = this.gridInstanceId;
     }
 
     public getRenderedCellForEvent(event: Event): CellCtrl | null {
@@ -45,7 +45,7 @@ export class MouseEventService extends BeanStub implements NamedBean {
     public isElementInThisGrid(element: HTMLElement): boolean {
         let pointer: HTMLElement | null = element;
         while (pointer) {
-            const instanceId = (pointer as any)[MouseEventService.GRID_DOM_KEY];
+            const instanceId = (pointer as any)[GRID_DOM_KEY];
             if (_exists(instanceId)) {
                 const eventFromThisGrid = instanceId === this.gridInstanceId;
                 return eventFromThisGrid;

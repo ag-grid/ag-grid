@@ -42,7 +42,6 @@ import { PolarChartProxy } from './chartProxies/polar/polarChartProxy';
 import { HeatmapChartProxy } from './chartProxies/specialized/heatmapChartProxy';
 import { BoxPlotChartProxy } from './chartProxies/statistical/boxPlotChartProxy';
 import { RangeChartProxy } from './chartProxies/statistical/rangeChartProxy';
-import { TitleEdit } from './chartTitle/titleEdit';
 import { ChartMenu } from './menu/chartMenu';
 import type { ChartMenuContext } from './menu/chartMenuContext';
 import { ChartMenuParamsFactory } from './menu/chartMenuParamsFactory';
@@ -91,23 +90,12 @@ export class GridChartComp extends Component {
         this.popupService = beans.popupService;
     }
 
-    private static TEMPLATE /* html */ = `<div class="ag-chart" tabindex="-1">
-            <div data-ref="eChartContainer" tabindex="-1" class="ag-chart-components-wrapper ag-chart-menu-hidden">
-                <div data-ref="eChart" class="ag-chart-canvas-wrapper"></div>
-                <div data-ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
-            </div>
-            <div data-ref="eTitleEditContainer"></div>
-            <div data-ref="eMenuContainer" class="ag-chart-docked-container"></div>
-        </div>`;
-
     private readonly eChart: HTMLElement = RefPlaceholder;
     private readonly eChartContainer: HTMLElement = RefPlaceholder;
     private readonly eMenuContainer: HTMLElement = RefPlaceholder;
     private readonly eEmpty: HTMLElement = RefPlaceholder;
-    private readonly eTitleEditContainer: HTMLDivElement = RefPlaceholder;
 
     private chartMenu: ChartMenu;
-    private titleEdit: TitleEdit;
     private chartDialog: AgDialog;
 
     private chartController: ChartController;
@@ -124,7 +112,13 @@ export class GridChartComp extends Component {
     private onDestroyColorSchemeChangeListener: () => void;
 
     constructor(params: GridChartParams) {
-        super(GridChartComp.TEMPLATE);
+        super(/* html */ `<div class="ag-chart" tabindex="-1">
+            <div data-ref="eChartContainer" tabindex="-1" class="ag-chart-components-wrapper ag-chart-menu-hidden">
+                <div data-ref="eChart" class="ag-chart-canvas-wrapper"></div>
+                <div data-ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
+            </div>
+            <div data-ref="eMenuContainer" class="ag-chart-docked-container"></div>
+            </div>`);
         this.params = params;
     }
 
@@ -154,7 +148,6 @@ export class GridChartComp extends Component {
         }
 
         this.addMenu();
-        this.addTitleEditComp();
 
         this.addManagedElementListeners(this.getGui(), { focusin: this.setActiveChartCellRange.bind(this) });
         this.addManagedListeners(this.chartController, { chartModelUpdate: this.update.bind(this) });
@@ -219,7 +212,6 @@ export class GridChartComp extends Component {
 
         this.chartController.setChartProxy(this.chartProxy);
         this.createMenuContext();
-        this.titleEdit && this.titleEdit.refreshTitle(this.chartMenuContext);
     }
 
     private createMenuContext(): void {
@@ -364,14 +356,6 @@ export class GridChartComp extends Component {
         }
     }
 
-    private addTitleEditComp(): void {
-        this.titleEdit = this.createBean(new TitleEdit(this.chartMenu));
-        this.eTitleEditContainer.appendChild(this.titleEdit.getGui());
-        if (this.chartProxy) {
-            this.titleEdit.refreshTitle(this.chartMenuContext);
-        }
-    }
-
     public update(params?: UpdateChartParams): void {
         // update chart model for api.updateChart()
         if (params?.chartId) {
@@ -447,8 +431,6 @@ export class GridChartComp extends Component {
             .then(() => {
                 this.chartController.raiseChartUpdatedEvent();
             });
-
-        this.titleEdit.refreshTitle(this.chartMenuContext);
     }
 
     private chartTypeChanged(updateParams?: UpdateChartParams): ChartType | null {
@@ -625,7 +607,6 @@ export class GridChartComp extends Component {
         }
 
         this.destroyBean(this.chartMenu);
-        this.destroyBean(this.titleEdit);
 
         // don't want to invoke destroy() on the Dialog (prevents destroy loop)
         if (this.chartDialog && this.chartDialog.isAlive()) {

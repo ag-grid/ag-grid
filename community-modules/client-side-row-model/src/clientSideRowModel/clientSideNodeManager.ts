@@ -13,9 +13,9 @@ import type {
 } from '@ag-grid-community/core';
 import { RowNode, _cloneObject, _missingOrEmpty, _sortRowNodesByOrder } from '@ag-grid-community/core';
 
+const ROOT_NODE_ID = 'ROOT_NODE_ID';
+const TOP_LEVEL = 0;
 export class ClientSideNodeManager {
-    private static TOP_LEVEL = 0;
-
     private readonly rootNode: RowNode;
 
     private gos: GridOptionsService;
@@ -25,8 +25,6 @@ export class ClientSideNodeManager {
     private beans: BeanCollection;
 
     private nextId = 0;
-
-    private static ROOT_NODE_ID = 'ROOT_NODE_ID';
 
     // has row data actually been set
     private rowCountReady = false;
@@ -51,7 +49,7 @@ export class ClientSideNodeManager {
 
         this.rootNode.group = true;
         this.rootNode.level = -1;
-        this.rootNode.id = ClientSideNodeManager.ROOT_NODE_ID;
+        this.rootNode.id = ROOT_NODE_ID;
         this.rootNode.allLeafChildren = [];
         this.rootNode.childrenAfterGroup = [];
         this.rootNode.childrenAfterSort = [];
@@ -93,9 +91,7 @@ export class ClientSideNodeManager {
             // we use rootNode as the parent, however if using ag-grid-enterprise, the grouping stage
             // sets the parent node on each row (even if we are not grouping). so setting parent node
             // here is for benefit of ag-grid-community users
-            rootNode.allLeafChildren = rowData.map((dataItem) =>
-                this.createNode(dataItem, this.rootNode, ClientSideNodeManager.TOP_LEVEL)
-            );
+            rootNode.allLeafChildren = rowData.map((dataItem) => this.createNode(dataItem, this.rootNode, TOP_LEVEL));
         } else {
             rootNode.allLeafChildren = [];
             rootNode.childrenAfterGroup = [];
@@ -184,9 +180,7 @@ export class ClientSideNodeManager {
         }
 
         // create new row nodes for each data item
-        const newNodes: RowNode[] = add!.map((item) =>
-            this.createNode(item, this.rootNode, ClientSideNodeManager.TOP_LEVEL)
-        );
+        const newNodes: RowNode[] = add!.map((item) => this.createNode(item, this.rootNode, TOP_LEVEL));
 
         if (typeof addIndex === 'number' && addIndex >= 0) {
             // new rows are inserted in one go by concatenating them in between the existing rows at the desired index.
@@ -284,7 +278,7 @@ export class ClientSideNodeManager {
                 nodesToUnselect.push(rowNode);
             }
 
-            this.setMasterForRow(rowNode, item, ClientSideNodeManager.TOP_LEVEL, false);
+            this.setMasterForRow(rowNode, item, TOP_LEVEL, false);
 
             rowNodeTransaction.update.push(rowNode);
         });

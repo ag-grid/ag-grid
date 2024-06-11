@@ -1,4 +1,5 @@
 import type {
+    AgCheckbox,
     AgColumn,
     AgProvidedColumnGroup,
     BeanCollection,
@@ -6,6 +7,7 @@ import type {
     ColumnModel,
     ColumnPanelItemDragEndEvent,
     ColumnPanelItemDragStartEvent,
+    DragAndDropService,
     DragItem,
     DragSource,
     IAggFunc,
@@ -13,16 +15,15 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    AgCheckbox,
+    AgCheckboxSelector,
     Component,
-    CssClassApplier,
-    DragAndDropService,
     DragSourceType,
     KeyCode,
     RefPlaceholder,
     TouchListener,
     _createIcon,
     _createIconNoSpan,
+    _getToolPanelClassesFromColDef,
     _setAriaDescribedBy,
     _setAriaExpanded,
     _setAriaLabel,
@@ -33,16 +34,15 @@ import type { ColumnModelItem } from './columnModelItem';
 import type { ModelItemUtils } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
+const TEMPLATE = /* html */ `<div class="ag-column-select-column-group" aria-hidden="true">
+        <span class="ag-column-group-icons" data-ref="eColumnGroupIcons" >
+            <span class="ag-column-group-closed-icon" data-ref="eGroupClosedIcon"></span>
+            <span class="ag-column-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
+        </span>
+        <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
+        <span class="ag-column-select-column-label" data-ref="eLabel"></span>
+    </div>`;
 export class ToolPanelColumnGroupComp extends Component {
-    private static TEMPLATE /* html */ = `<div class="ag-column-select-column-group" aria-hidden="true">
-            <span class="ag-column-group-icons" data-ref="eColumnGroupIcons" >
-                <span class="ag-column-group-closed-icon" data-ref="eGroupClosedIcon"></span>
-                <span class="ag-column-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
-            </span>
-            <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-select-column-label" data-ref="eLabel"></span>
-        </div>`;
-
     private columnModel: ColumnModel;
     private dragAndDropService: DragAndDropService;
     private modelItemUtils: ModelItemUtils;
@@ -83,7 +83,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     public postConstruct(): void {
-        this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE, [AgCheckbox]);
+        this.setTemplate(TEMPLATE, [AgCheckboxSelector]);
 
         this.eDragHandle = _createIconNoSpan('columnDrag', this.gos)!;
         this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-group-drag-handle');
@@ -117,7 +117,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.refreshAriaLabel();
         this.setupTooltip();
 
-        const classes = CssClassApplier.getToolPanelClassesFromColDef(
+        const classes = _getToolPanelClassesFromColDef(
             this.columnGroup.getColGroupDef(),
             this.gos,
             null,
@@ -218,8 +218,7 @@ export class ToolPanelColumnGroupComp extends Component {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            getDefaultIconName: () =>
-                hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: () => (hideColumnOnExit ? 'hide' : 'notAllowed'),
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
                 hideColumnOnExit = !this.gos.get('suppressDragLeaveHidesColumns');

@@ -9,7 +9,7 @@ import type { AgInputTextField } from '../../widgets/agInputTextField';
 import type { ListOption } from '../../widgets/agList';
 import { AgRadioButton } from '../../widgets/agRadioButton';
 import { AgSelect } from '../../widgets/agSelect';
-import type { ComponentClass } from '../../widgets/component';
+import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 import type { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import type {
@@ -453,7 +453,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         // created dynamically
         return '';
     }
-    protected getAgComponents(): ComponentClass[] {
+    protected getAgComponents(): ComponentSelector[] {
         // created dynamically
         return [];
     }

@@ -9,19 +9,16 @@ import type {
 } from '@ag-grid-community/core';
 import { Component, RefPlaceholder } from '@ag-grid-community/core';
 
-import { AgFiltersToolPanelHeader } from './agFiltersToolPanelHeader';
-import { AgFiltersToolPanelList } from './agFiltersToolPanelList';
+import type { AgFiltersToolPanelHeader } from './agFiltersToolPanelHeader';
+import { AgFiltersToolPanelHeaderSelector } from './agFiltersToolPanelHeader';
+import type { AgFiltersToolPanelList } from './agFiltersToolPanelList';
+import { AgFiltersToolPanelListSelector } from './agFiltersToolPanelList';
 
 export interface ToolPanelFiltersCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, FiltersToolPanelState>,
         IToolPanelFiltersCompParams {}
 
 export class FiltersToolPanel extends Component implements IFiltersToolPanel, IToolPanelComp {
-    private static TEMPLATE /* html */ = `<div class="ag-filter-toolpanel">
-            <ag-filters-tool-panel-header data-ref="filtersToolPanelHeaderPanel"></ag-filters-tool-panel-header>
-            <ag-filters-tool-panel-list data-ref="filtersToolPanelListPanel"></ag-filters-tool-panel-list>
-         </div>`;
-
     private readonly filtersToolPanelHeaderPanel: AgFiltersToolPanelHeader = RefPlaceholder;
     private readonly filtersToolPanelListPanel: AgFiltersToolPanelList = RefPlaceholder;
 
@@ -30,7 +27,13 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     private listenerDestroyFuncs: (() => void)[] = [];
 
     constructor() {
-        super(FiltersToolPanel.TEMPLATE, [AgFiltersToolPanelHeader, AgFiltersToolPanelList]);
+        super(
+            /* html */ `<div class="ag-filter-toolpanel">
+            <ag-filters-tool-panel-header data-ref="filtersToolPanelHeaderPanel"></ag-filters-tool-panel-header>
+            <ag-filters-tool-panel-list data-ref="filtersToolPanelListPanel"></ag-filters-tool-panel-list>
+         </div>`,
+            [AgFiltersToolPanelHeaderSelector, AgFiltersToolPanelListSelector]
+        );
     }
 
     public init(params: ToolPanelFiltersCompParams): void {

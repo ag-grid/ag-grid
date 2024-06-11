@@ -1,18 +1,15 @@
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { CtrlsService } from '../ctrlsService';
-import { DragAndDropService, DragSourceType } from '../dragAndDrop/dragAndDropService';
+import { DragSourceType } from '../dragAndDrop/dragAndDropService';
 import type { GridSizeChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
-import type { MouseEventService } from '../gridBodyComp/mouseEventService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import type { ResizeObserverService } from '../misc/resizeObserverService';
-import { ModuleNames } from '../modules/moduleNames';
-import { ModuleRegistry } from '../modules/moduleRegistry';
+import type { IWatermark } from '../interfaces/iWatermark';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import { _last } from '../utils/array';
+import type { ComponentSelector } from '../widgets/component';
 
 export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
@@ -23,22 +20,24 @@ export interface IGridComp extends LayoutView {
     setUserSelect(value: string | null): void;
 }
 
+export interface OptionalGridComponents {
+    paginationSelector?: ComponentSelector;
+    gridHeaderDropZonesSelector?: ComponentSelector;
+    sideBarSelector?: ComponentSelector;
+    statusBarSelector?: ComponentSelector;
+    watermarkSelector?: ComponentSelector;
+}
+
 export class GridCtrl extends BeanStub {
+    private beans: BeanCollection;
     private focusService: FocusService;
-    private resizeObserverService: ResizeObserverService;
     private visibleColsService: VisibleColsService;
-    private ctrlsService: CtrlsService;
-    private mouseEventService: MouseEventService;
-    private dragAndDropService: DragAndDropService;
 
     public wireBeans(beans: BeanCollection) {
+        this.beans = beans;
         this.eGridWrapperDiv = beans.eGridDiv;
         this.focusService = beans.focusService;
-        this.resizeObserverService = beans.resizeObserverService;
         this.visibleColsService = beans.visibleColsService;
-        this.ctrlsService = beans.ctrlsService;
-        this.mouseEventService = beans.mouseEventService;
-        this.dragAndDropService = beans.dragAndDropService;
     }
 
     private view: IGridComp;
@@ -53,14 +52,16 @@ export class GridCtrl extends BeanStub {
 
         this.eGui.setAttribute('grid-id', this.gridId);
 
+        const { dragAndDropService, mouseEventService, ctrlsService, resizeObserverService } = this.beans;
+
         // this drop target is just used to see if the drop event is inside the grid
-        this.dragAndDropService.addDropTarget({
+        dragAndDropService.addDropTarget({
             getContainer: () => this.eGui,
             isInterestedIn: (type) => type === DragSourceType.HeaderCell || type === DragSourceType.ToolPanel,
-            getIconName: () => DragAndDropService.ICON_NOT_ALLOWED,
+            getIconName: () => 'notAllowed',
         });
 
-        this.mouseEventService.stampTopLevelGridCompWithGridInstance(eGridDiv);
+        mouseEventService.stampTopLevelGridCompWithGridInstance(eGridDiv);
 
         this.createManagedBean(new LayoutFeature(this.view));
 
@@ -68,13 +69,13 @@ export class GridCtrl extends BeanStub {
 
         this.applyDefaultHeight();
 
-        const unsubscribeFromResize = this.resizeObserverService.observeResize(
+        const unsubscribeFromResize = resizeObserverService.observeResize(
             this.eGridHostDiv,
             this.onGridSizeChanged.bind(this)
         );
         this.addDestroyFunc(() => unsubscribeFromResize());
 
-        this.ctrlsService.register('gridCtrl', this);
+        ctrlsService.register('gridCtrl', this);
     }
 
     public isDetailGrid(): boolean {
@@ -83,20 +84,15 @@ export class GridCtrl extends BeanStub {
         return el?.getAttribute('row-id')?.startsWith('detail') || false;
     }
 
-    public showDropZones(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.RowGroupingModule, this.gridId);
-    }
-
-    public showSideBar(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.SideBarModule, this.gridId);
-    }
-
-    public showStatusBar(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.StatusBarModule, this.gridId);
-    }
-
-    public showWatermark(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.gridId);
+    public getOptionalSelectors(): OptionalGridComponents {
+        const beans = this.beans;
+        return {
+            paginationSelector: beans.paginationService?.getPaginationSelector(),
+            gridHeaderDropZonesSelector: beans.columnDropZonesService?.getDropZoneSelector(),
+            sideBarSelector: beans.sideBarService?.getSideBarSelector(),
+            statusBarSelector: beans.statusBarService?.getStatusPanelSelector(),
+            watermarkSelector: (beans.licenseManager as IWatermark)?.getWatermarkSelector(),
+        };
     }
 
     private onGridSizeChanged(): void {

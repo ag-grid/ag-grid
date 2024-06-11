@@ -4,7 +4,8 @@ import type { CellEditingStartedEvent, CellEditingStoppedEvent } from '../../eve
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import { _getAriaCheckboxStateName, _setAriaLive } from '../../utils/aria';
 import { _stopPropagationForAgGrid } from '../../utils/event';
-import { AgCheckbox } from '../../widgets/agCheckbox';
+import type { AgCheckbox } from '../../widgets/agCheckbox';
+import { AgCheckboxSelector } from '../../widgets/agCheckbox';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import type { ICellRenderer, ICellRendererParams } from './iCellRenderer';
 
@@ -15,16 +16,17 @@ export interface ICheckboxCellRendererParams<TData = any, TContext = any>
 }
 
 export class CheckboxCellRenderer extends Component implements ICellRenderer {
-    private static TEMPLATE = /* html*/ `
-        <div class="ag-cell-wrapper ag-checkbox-cell" role="presentation">
-            <ag-checkbox role="presentation" data-ref="eCheckbox"></ag-checkbox>
-        </div>`;
-
     private readonly eCheckbox: AgCheckbox = RefPlaceholder;
     private params: ICheckboxCellRendererParams;
 
     constructor() {
-        super(CheckboxCellRenderer.TEMPLATE, [AgCheckbox]);
+        super(
+            /* html*/ `
+            <div class="ag-cell-wrapper ag-checkbox-cell" role="presentation">
+                <ag-checkbox role="presentation" data-ref="eCheckbox"></ag-checkbox>
+            </div>`,
+            [AgCheckboxSelector]
+        );
     }
 
     public init(params: ICheckboxCellRendererParams): void {

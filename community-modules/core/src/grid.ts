@@ -18,7 +18,6 @@ import { ColumnViewportService } from './columns/columnViewportService';
 import { FuncColsService } from './columns/funcColsService';
 import { PivotResultColsService } from './columns/pivotResultColsService';
 import { VisibleColsService } from './columns/visibleColsService';
-import { AgStackComponentsRegistry } from './components/agStackComponentsRegistry';
 import { AgComponentUtils } from './components/framework/agComponentUtils';
 import { ComponentMetadataProvider } from './components/framework/componentMetadataProvider';
 import { UserComponentFactory } from './components/framework/userComponentFactory';
@@ -44,7 +43,7 @@ import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridComp } from './gridComp/gridComp';
 import { CommunityFeaturesModule } from './gridCoreModule';
 import { GridDestroyService } from './gridDestroyService';
-import { GridOptionsService } from './gridOptionsService';
+import { GridOptionsService, getCoercedGridOptions } from './gridOptionsService';
 import { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 import { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
 import { HeaderPositionUtils } from './headerRendering/common/headerPosition';
@@ -62,8 +61,8 @@ import { MenuService } from './misc/menuService';
 import { ResizeObserverService } from './misc/resizeObserverService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
-import { RowBoundsListener } from './pagination/rowBoundsListener';
-import { RowBoundsService } from './pagination/rowBoundsService';
+import { PageBoundsListener } from './pagination/pageBoundsListener';
+import { PageBoundsService } from './pagination/pageBoundsService';
 import { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 import { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
 import { AutoWidthCalculator } from './rendering/autoWidthCalculator';
@@ -238,7 +237,7 @@ export class GridCoreCreator {
         } else {
             mergedGridOps = providedOptions;
         }
-        const gridOptions = GridOptionsService.getCoercedGridOptions(mergedGridOps);
+        const gridOptions = getCoercedGridOptions(mergedGridOps);
 
         const gridId = gridOptions.gridId ?? String(nextGridId++);
 
@@ -265,7 +264,6 @@ export class GridCoreCreator {
 
         const context = new Context(contextParams);
         this.registerModuleUserComponents(context, registeredModules);
-        this.registerModuleStackComponents(context, registeredModules);
         this.registerControllers(context, registeredModules);
         this.registerModuleApiFunctions(context, registeredModules);
 
@@ -287,14 +285,6 @@ export class GridCoreCreator {
                 module.controllers.forEach((meta) => factory.register(meta));
             }
         });
-    }
-
-    private registerModuleStackComponents(context: Context, registeredModules: Module[]): void {
-        const registry = context.getBean('agStackComponentsRegistry');
-        const agStackComponents = registeredModules.flatMap((module) =>
-            module.agStackComponents ? module.agStackComponents : []
-        );
-        registry.ensureRegistered(agStackComponents);
     }
 
     private getRegisteredModules(params: GridParams | undefined, gridId: string): Module[] {
@@ -436,8 +426,8 @@ export class GridCoreCreator {
             SelectionService,
             ColumnModel,
             HeaderNavigationService,
-            RowBoundsService,
-            RowBoundsListener,
+            PageBoundsService,
+            PageBoundsListener,
             RowRenderer,
             ExpressionService,
             ColumnFactory,
@@ -460,7 +450,6 @@ export class GridCoreCreator {
             SelectableService,
             ChangeDetectionService,
             AnimationFrameService,
-            AgStackComponentsRegistry,
             ColumnDefFactory,
             RowCssClassCalculator,
             RowNodeSorter,

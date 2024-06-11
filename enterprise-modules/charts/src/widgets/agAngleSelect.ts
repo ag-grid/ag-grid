@@ -1,11 +1,17 @@
 import type {
-    AgComponentSelector,
+    AgInputNumberField,
     AgLabelParams,
     BeanCollection,
     DragListenerParams,
     DragService,
 } from '@ag-grid-community/core';
-import { AgAbstractLabel, AgInputNumberField, RefPlaceholder, _exists, _setFixedWidth } from '@ag-grid-community/core';
+import {
+    AgAbstractLabel,
+    AgInputNumberFieldSelector,
+    RefPlaceholder,
+    _exists,
+    _setFixedWidth,
+} from '@ag-grid-community/core';
 
 export interface AgAngleSelectParams extends AgLabelParams {
     value?: number;
@@ -19,8 +25,6 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams, AgAngleS
     public wireBeans(beans: BeanCollection) {
         this.dragService = beans.dragService;
     }
-
-    static readonly selector: AgComponentSelector = 'AG-ANGLE-SELECT';
 
     protected readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eParentCircle: HTMLElement = RefPlaceholder;
@@ -48,7 +52,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams, AgAngleS
                 <ag-input-number-field data-ref="eAngleValue"></ag-input-number-field>
             </div>
         </div>`,
-            [AgInputNumberField]
+            [AgInputNumberFieldSelector]
         );
     }
 
@@ -217,8 +221,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams, AgAngleS
     }
 
     public onValueChange(callbackFn: (newValue: number) => void): this {
-        const agAngleSelect: AgAngleSelect = this;
-        this.addManagedListeners(agAngleSelect, {
+        this.addManagedListeners(this, {
             fieldValueChanged: () => {
                 callbackFn(this.degrees);
             },

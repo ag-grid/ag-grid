@@ -69,12 +69,10 @@ class AdvancedSettingsMenu extends TabGuardComp {
         this.focusService = beans.focusService;
     }
 
-    private static TEMPLATE = /* html */ `<div class="ag-chart-advanced-settings"></div>`;
-
     private advancedSettingsPanel: AdvancedSettingsPanel;
 
     constructor(private readonly chartMenuContext: ChartMenuContext) {
-        super(AdvancedSettingsMenu.TEMPLATE);
+        super(/* html */ `<div class="ag-chart-advanced-settings"></div>`);
     }
 
     public postConstruct(): void {

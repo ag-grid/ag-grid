@@ -74,6 +74,7 @@ export class StickyRowFeature extends BeanStub {
         // only footer nodes stick bottom, so shouldn't reach this.
         return 0;
     }
+
     private getServerSideLastPixelOfGroup(row: RowNode): number {
         if (this.isClientSide) {
             throw new Error('This func should only be called in server side row model.');

@@ -3,20 +3,21 @@ import type {
     BeanCollection,
     ColumnModel,
     ColumnNameService,
+    DragAndDropIcon,
     DragItem,
     DropTarget,
     FuncColsService,
     IAggFuncService,
     PopupService,
     SortController,
+    SortIndicatorComp,
 } from '@ag-grid-community/core';
 import {
     Component,
-    DragAndDropService,
     DragSourceType,
     KeyCode,
     RefPlaceholder,
-    SortIndicatorComp,
+    SortIndicatorSelector,
     _loadTemplate,
 } from '@ag-grid-community/core';
 import { PillDragComp, VirtualList } from '@ag-grid-enterprise/core';
@@ -65,7 +66,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
                     <span data-ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
                 </span>
             `,
-            [SortIndicatorComp]
+            [SortIndicatorSelector]
         );
     }
 
@@ -198,8 +199,8 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         }
     }
 
-    protected override getDefaultIconName(): string {
-        return DragAndDropService.ICON_HIDE;
+    protected override getDefaultIconName(): DragAndDropIcon {
+        return 'hide';
     }
 
     protected createGetDragItem(): () => DragItem {

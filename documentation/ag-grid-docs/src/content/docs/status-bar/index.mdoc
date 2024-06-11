@@ -99,12 +99,6 @@ Applications that are using [Server-side Data](./row-models/) or which require b
 {% interfaceDocumentation interfaceName="CustomStatusPanelProps" /%}
 {% /if %}
 
-{% if isFramework("react") %}
-{% note %}
-If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom status bar panels. However your status bar panel will not update with prop changes, but will instead be destroyed/recreated..
-{% /note %}
-{% /if %}
-
 Custom Panels are configured alongside Provided Panels.
 
 {% partial file="./_configure-javascript.mdoc" /%}

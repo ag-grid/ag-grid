@@ -94,7 +94,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
             providedBeanInstances: {
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(
                     portalManager.current,
-                    !!mergedGridOps.reactiveCustomComponents
+                    mergedGridOps.reactiveCustomComponents ?? true
                 ),
             },
             modules,

@@ -91,6 +91,7 @@ export interface AddPopupResult {
     hideFunc: (params?: PopupEventParams) => void;
 }
 
+const WAIT_FOR_POPUP_CONTENT_RESIZE: number = 200;
 export class PopupService extends BeanStub implements NamedBean {
     beanName = 'popupService' as const;
 
@@ -107,8 +108,6 @@ export class PopupService extends BeanStub implements NamedBean {
     private gridCtrl: GridCtrl;
 
     private popupList: AgPopup[] = [];
-
-    private static WAIT_FOR_POPUP_CONTENT_RESIZE: number = 200;
 
     public postConstruct(): void {
         this.ctrlsService.whenReady((p) => {
@@ -399,7 +398,7 @@ export class PopupService extends BeanStub implements NamedBean {
                 updatePopupPosition(true)
             );
             // Only need to reposition when first open, so can clean up after a bit of time
-            setTimeout(() => resizeObserverDestroyFunc(), PopupService.WAIT_FOR_POPUP_CONTENT_RESIZE);
+            setTimeout(() => resizeObserverDestroyFunc(), WAIT_FOR_POPUP_CONTENT_RESIZE);
         }
     }
 

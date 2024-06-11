@@ -1601,12 +1601,10 @@ export interface GridOptions<TData = any> {
     /**
      * **React only**.
      *
-     * If enabled, makes it easier to set up custom components.
-     * If disabled, custom components will either need to have methods declared imperatively,
-     * or the component props will not update reactively. The behaviour with this disabled is deprecated,
-     * and in v32 this will default to `true`.
+     * @deprecated As of v32 custom components are created reactively by default.
+     * Set this property to `false` to switch to the legacy way of declaring custom components imperatively.
      * @initial
-     * @default false
+     * @default true
      */
     reactiveCustomComponents?: boolean;
 

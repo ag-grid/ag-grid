@@ -1,21 +1,19 @@
-import type { AgComponentSelector, AgInputTextFieldParams, BeanCollection } from '@ag-grid-community/core';
+import type { AgInputTextFieldParams, BeanCollection, ComponentSelector } from '@ag-grid-community/core';
 import { AgInputTextField, RefPlaceholder } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
 
 import type { ChartTranslationService } from '../charts/chartComp/services/chartTranslationService';
 
+const TEMPLATE = /* html */ `
+    <div role="presentation" class="ag-color-input">
+        <div data-ref="eLabel" class="ag-input-field-label"></div>
+        <div data-ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
+            <input data-ref="eInput" class="ag-input-field-input">
+            <div data-ref="eColor" class="ag-color-input-color"></div>
+        </div>
+    </div>`;
 export type AgColorInputEvent = 'colorChanged';
 export class AgColorInput extends AgInputTextField<AgInputTextFieldParams, AgColorInputEvent> {
-    static override selector: AgComponentSelector = 'AG-COLOR-INPUT';
-    private static TEMPLATE = /* html */ `
-        <div role="presentation" class="ag-color-input">
-            <div data-ref="eLabel" class="ag-input-field-label"></div>
-            <div data-ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
-                <input data-ref="eInput" class="ag-input-field-input">
-                <div data-ref="eColor" class="ag-color-input-color"></div>
-            </div>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -24,7 +22,7 @@ export class AgColorInput extends AgInputTextField<AgInputTextFieldParams, AgCol
     private readonly eColor: HTMLElement = RefPlaceholder;
 
     constructor() {
-        super({ template: AgColorInput.TEMPLATE });
+        super({ template: TEMPLATE });
     }
 
     public setColor(color: _Util.Color): void {
@@ -47,3 +45,8 @@ export class AgColorInput extends AgInputTextField<AgInputTextFieldParams, AgCol
         this.addManagedListeners(this, { colorChanged: () => callback(_Util.Color.fromString(this.value!)) });
     }
 }
+
+export const AgColorInputSelector: ComponentSelector = {
+    selector: 'AG-COLOR-INPUT',
+    component: AgColorInput,
+};

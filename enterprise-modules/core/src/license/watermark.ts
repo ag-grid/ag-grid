@@ -1,11 +1,9 @@
-import type { AgComponentSelector, BeanCollection } from '@ag-grid-community/core';
+import type { BeanCollection, ComponentSelector } from '@ag-grid-community/core';
 import { Component, RefPlaceholder } from '@ag-grid-community/core';
 
 import type { GridLicenseManager as LicenseManager } from './gridLicenseManager';
 
 export class AgWatermark extends Component {
-    static readonly selector: AgComponentSelector = 'AG-WATERMARK';
-
     licenseManager: LicenseManager;
 
     public wireBeans(beans: BeanCollection): void {
@@ -39,3 +37,8 @@ export class AgWatermark extends Component {
         return this.licenseManager.isDisplayWatermark();
     }
 }
+
+export const AgWatermarkSelector: ComponentSelector = {
+    selector: 'AG-WATERMARK',
+    component: AgWatermark,
+};

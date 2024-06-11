@@ -14,6 +14,7 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
     searchType?: 'match' | 'matchAny' | 'fuzzy';
     highlightMatch?: boolean;
     multiSelect?: boolean;
+    suppressDeselectAll?: boolean;
     placeholder?: string;
     initialInputValue?: string;
 
@@ -61,6 +62,11 @@ export interface IRichCellEditorParams<TData = any, TValue = any> {
      * Note: This feature does not work with `allowTyping=true`.
      */
     multiSelect?: boolean;
+    /**
+     * If `true` the option to remove all selected options will not be displayed.
+     * Note: This feature only works when `multiSelect=true`.
+     */
+    suppressDeselectAll?: boolean;
     /**
      * The value in `ms` for the search algorithm debounce delay (only relevant when `allowTyping=false`).
      * @default 300

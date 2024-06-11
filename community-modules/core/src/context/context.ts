@@ -19,7 +19,6 @@ import type { DataTypeService } from '../columns/dataTypeService';
 import type { FuncColsService } from '../columns/funcColsService';
 import type { PivotResultColsService } from '../columns/pivotResultColsService';
 import type { VisibleColsService } from '../columns/visibleColsService';
-import type { AgStackComponentsRegistry } from '../components/agStackComponentsRegistry';
 import type { AgComponentUtils } from '../components/framework/agComponentUtils';
 import type { ComponentMetadataProvider } from '../components/framework/componentMetadataProvider';
 import type { FrameworkComponentWrapper } from '../components/framework/frameworkComponentWrapper';
@@ -70,7 +69,7 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
-import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
+import type { IColumnDropZonesService, IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IStatusBarService } from '../interfaces/iStatusBarService';
 import type { LocaleService } from '../localeService';
@@ -81,10 +80,10 @@ import type { MenuService } from '../misc/menuService';
 import type { ResizeObserverService } from '../misc/resizeObserverService';
 import type { StateService } from '../misc/state/stateService';
 import { ModuleRegistry } from '../modules/moduleRegistry';
+import type { PageBoundsListener } from '../pagination/pageBoundsListener';
+import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { PaginationAutoPageSizeService } from '../pagination/paginationAutoPageSizeService';
 import type { PaginationService } from '../pagination/paginationService';
-import type { RowBoundsListener } from '../pagination/rowBoundsListener';
-import type { RowBoundsService } from '../pagination/rowBoundsService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
@@ -174,7 +173,7 @@ export type ComponentMeta = NamedClass<UserComponentName>;
 export interface CoreBeanCollection {
     context: Context;
     resizeObserverService: ResizeObserverService;
-    rowBoundsListener: RowBoundsListener;
+    pageBoundsListener: PageBoundsListener;
     gos: GridOptionsService;
     environment: Environment;
     rowRenderer: RowRenderer;
@@ -210,7 +209,6 @@ export interface CoreBeanCollection {
     rowModel: IRowModel;
     ctrlsService: CtrlsService;
     ctrlsFactory: CtrlsFactory;
-    agStackComponentsRegistry: AgStackComponentsRegistry;
     valueCache: ValueCache;
     rowNodeEventThrottle: RowNodeEventThrottle;
     localeService: LocaleService;
@@ -234,6 +232,7 @@ export interface CoreBeanCollection {
     funcColsService: FuncColsService;
     quickFilterService?: QuickFilterService;
     showRowGroupColsService?: IShowRowGroupColsService;
+    columnDropZonesService?: IColumnDropZonesService;
     headerPositionUtils: HeaderPositionUtils;
     dataTypeService?: DataTypeService;
     globalEventListener: AgGlobalEventListener;
@@ -267,7 +266,7 @@ export interface CoreBeanCollection {
     alignedGridsService?: AlignedGridsService;
     paginationAutoPageSizeService?: PaginationAutoPageSizeService;
     paginationService?: PaginationService;
-    rowBoundsService: RowBoundsService;
+    pageBoundsService: PageBoundsService;
     apiFunctionService: ApiFunctionService;
     rowModelHelperService?: RowModelHelperService;
     detailGridApiService?: IDetailGridApiService;
@@ -327,7 +326,6 @@ export type BeanName =
     | 'agGridReact'
     | 'agGridVue'
     | 'agComponentUtils'
-    | 'agStackComponentsRegistry'
     | 'aggregationStage'
     | 'alignedGridsService'
     | 'animationFrameService'
@@ -355,6 +353,7 @@ export type BeanName =
     | 'columnChooserFactory'
     | 'columnController'
     | 'columnDefFactory'
+    | 'columnDropZonesService'
     | 'columnEditorFactory'
     | 'columnEventDispatcher'
     | 'columnFilterService'
@@ -435,8 +434,8 @@ export type BeanName =
     | 'quickFilterService'
     | 'rangeService'
     | 'resizeObserverService'
-    | 'rowBoundsListener'
-    | 'rowBoundsService'
+    | 'pageBoundsListener'
+    | 'pageBoundsService'
     | 'rowContainerHeightService'
     | 'rowCssClassCalculator'
     | 'rowEditService'

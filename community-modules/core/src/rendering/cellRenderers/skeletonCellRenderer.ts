@@ -3,10 +3,8 @@ import { Component } from '../../widgets/component';
 import type { ILoadingCellRendererComp, ILoadingCellRendererParams } from './loadingCellRenderer';
 
 export class SkeletonCellRenderer extends Component implements ILoadingCellRendererComp {
-    private static TEMPLATE = `<div class="ag-skeleton-container"></div>`;
-
     constructor() {
-        super(SkeletonCellRenderer.TEMPLATE);
+        super(/* html */ `<div class="ag-skeleton-container"></div>`);
     }
 
     public init(params: ILoadingCellRendererParams): void {

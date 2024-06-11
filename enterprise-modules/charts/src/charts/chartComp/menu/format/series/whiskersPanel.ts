@@ -1,10 +1,10 @@
 import type { BeanCollection } from '@ag-grid-community/core';
 import { Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 
-import { AgColorPicker } from '../../../../../widgets/agColorPicker';
-import { AgSlider } from '../../../../../widgets/agSlider';
+import { AgColorPickerSelector } from '../../../../../widgets/agColorPicker';
+import { AgSliderSelector } from '../../../../../widgets/agSlider';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -37,7 +37,7 @@ export class WhiskersPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(WhiskersPanel.TEMPLATE, [AgGroupComponent, AgColorPicker, AgSlider], {
+        this.setTemplate(WhiskersPanel.TEMPLATE, [AgGroupComponentSelector, AgColorPickerSelector, AgSliderSelector], {
             whiskersGroup: whiskersGroupParams,
             whiskerColorPicker: this.chartMenuUtils.getDefaultColorPickerParams('whisker.stroke'),
             whiskerThicknessSlider: this.chartMenuUtils.getDefaultSliderParams(
