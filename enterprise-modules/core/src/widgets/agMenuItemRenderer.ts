@@ -41,24 +41,26 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
         if (this.params.isCompact) {
             return;
         }
-        const icon = _loadTemplate(
+        const iconWrapper = _loadTemplate(
             /* html */
             `<span data-ref="eIcon" class="${this.getClassName('part')} ${this.getClassName('icon')}" role="presentation"></span>`
         );
 
-        if (this.params.checked) {
-            icon.appendChild(_createIconNoSpan('check', this.gos)!);
-        } else if (this.params.icon) {
-            if (_isNodeOrElement(this.params.icon)) {
-                icon.appendChild(this.params.icon as HTMLElement);
-            } else if (typeof this.params.icon === 'string') {
-                icon.innerHTML = this.params.icon;
+        const { checked, icon } = this.params;
+
+        if (checked) {
+            iconWrapper.appendChild(_createIconNoSpan('check', this.gos)!);
+        } else if (icon) {
+            if (_isNodeOrElement(icon)) {
+                iconWrapper.appendChild(icon);
+            } else if (typeof icon === 'string') {
+                iconWrapper.innerHTML = icon;
             } else {
                 console.warn('AG Grid: menu item icon must be DOM node or string');
             }
         }
 
-        this.getGui().appendChild(icon);
+        this.getGui().appendChild(iconWrapper);
     }
 
     private addName(): void {
