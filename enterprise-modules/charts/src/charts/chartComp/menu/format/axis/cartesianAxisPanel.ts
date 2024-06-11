@@ -277,7 +277,7 @@ export class CartesianAxisPanel extends Component {
     }
 
     private getAxisColorInputParams(chartAxisThemeOverrides: ChartMenuParamsFactory): AgColorPickerParams {
-        return chartAxisThemeOverrides.getDefaultColorPickerParams('line.color');
+        return chartAxisThemeOverrides.getDefaultColorPickerParams('line.stroke');
     }
 
     private getAxisLineWidthSliderParams(chartAxisThemeOverrides: ChartMenuParamsFactory): AgSliderParams {
