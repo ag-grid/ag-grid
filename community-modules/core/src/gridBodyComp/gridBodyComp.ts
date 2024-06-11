@@ -154,5 +154,5 @@ export class GridBodyComp extends Component {
 }
 export const GridBodySelector: ComponentSelector = {
     selector: 'AG-GRID-BODY',
-    Component: GridBodyComp,
+    component: GridBodyComp,
 };

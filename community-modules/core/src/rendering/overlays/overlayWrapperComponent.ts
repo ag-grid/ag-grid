@@ -115,5 +115,5 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 }
 export const OverlayWrapperSelector: ComponentSelector = {
     selector: 'AG-OVERLAY-WRAPPER',
-    Component: OverlayWrapperComponent,
+    component: OverlayWrapperComponent,
 };

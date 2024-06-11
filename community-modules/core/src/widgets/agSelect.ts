@@ -191,5 +191,5 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
 
 export const AgSelectSelector: ComponentSelector = {
     selector: 'AG-SELECT',
-    Component: AgSelect,
+    component: AgSelect,
 };

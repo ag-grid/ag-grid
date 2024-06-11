@@ -483,5 +483,5 @@ export class AgSideBar extends Component implements ISideBar {
 
 export const AgSideBarSelector: ComponentSelector = {
     selector: 'AG-SIDE-BAR',
-    Component: AgSideBar,
+    component: AgSideBar,
 };

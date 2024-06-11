@@ -48,5 +48,5 @@ export class AgColorInput extends AgInputTextField<AgInputTextFieldParams, AgCol
 
 export const AgColorInputSelector: ComponentSelector = {
     selector: 'AG-COLOR-INPUT',
-    Component: AgColorInput,
+    component: AgColorInput,
 };

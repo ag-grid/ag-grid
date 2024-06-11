@@ -105,5 +105,5 @@ export class AgGridHeaderDropZones extends Component {
 
 export const AgGridHeaderDropZonesSelector: ComponentSelector = {
     selector: 'AG-GRID-HEADER-DROP-ZONES',
-    Component: AgGridHeaderDropZones,
+    component: AgGridHeaderDropZones,
 };

@@ -125,5 +125,5 @@ export class RowContainerComp extends Component {
 
 export const RowContainerSelector: ComponentSelector = {
     selector: 'AG-ROW-CONTAINER',
-    Component: RowContainerComp,
+    component: RowContainerComp,
 };

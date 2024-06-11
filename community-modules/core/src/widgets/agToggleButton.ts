@@ -19,5 +19,5 @@ export class AgToggleButton extends AgCheckbox<AgToggleButtonParams> {
 }
 export const AgToggleButtonSelector: ComponentSelector = {
     selector: 'AG-TOGGLE-BUTTON',
-    Component: AgToggleButton,
+    component: AgToggleButton,
 };

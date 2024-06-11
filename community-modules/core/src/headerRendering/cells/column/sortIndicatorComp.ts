@@ -165,5 +165,5 @@ export class SortIndicatorComp extends Component {
 
 export const SortIndicatorSelector: ComponentSelector = {
     selector: 'AG-SORT-INDICATOR',
-    Component: SortIndicatorComp,
+    component: SortIndicatorComp,
 };

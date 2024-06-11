@@ -33,5 +33,5 @@ export class GridHeaderComp extends Component {
 }
 export const GridHeaderSelector: ComponentSelector = {
     selector: 'AG-HEADER-ROOT',
-    Component: GridHeaderComp,
+    component: GridHeaderComp,
 };

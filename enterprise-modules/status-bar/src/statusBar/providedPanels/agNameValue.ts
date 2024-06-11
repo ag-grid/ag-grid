@@ -26,5 +26,5 @@ export class AgNameValue extends Component {
 }
 export const AgNameValueSelector: ComponentSelector = {
     selector: 'AG-NAME-VALUE',
-    Component: AgNameValue,
+    component: AgNameValue,
 };

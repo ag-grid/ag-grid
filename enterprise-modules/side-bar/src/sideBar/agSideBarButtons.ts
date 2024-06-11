@@ -81,5 +81,5 @@ export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
 
 export const AgSideBarButtonsSelector: ComponentSelector = {
     selector: 'AG-SIDE-BAR-BUTTONS',
-    Component: AgSideBarButtons,
+    component: AgSideBarButtons,
 };

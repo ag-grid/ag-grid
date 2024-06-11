@@ -196,5 +196,5 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
 
 export const AgInputNumberFieldSelector: ComponentSelector = {
     selector: 'AG-INPUT-NUMBER-FIELD',
-    Component: AgInputNumberField,
+    component: AgInputNumberField,
 };

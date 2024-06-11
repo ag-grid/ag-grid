@@ -77,5 +77,5 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
 
 export const FakeVScrollSelector: ComponentSelector = {
     selector: 'AG-FAKE-VERTICAL-SCROLL',
-    Component: FakeVScrollComp,
+    component: FakeVScrollComp,
 };

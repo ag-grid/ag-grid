@@ -40,5 +40,5 @@ export class AgWatermark extends Component {
 
 export const AgWatermarkSelector: ComponentSelector = {
     selector: 'AG-WATERMARK',
-    Component: AgWatermark,
+    component: AgWatermark,
 };

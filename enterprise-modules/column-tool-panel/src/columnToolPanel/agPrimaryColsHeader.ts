@@ -179,5 +179,5 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
 
 export const AgPrimaryColsHeaderSelector: ComponentSelector = {
     selector: 'AG-PRIMARY-COLS-HEADER',
-    Component: AgPrimaryColsHeader,
+    component: AgPrimaryColsHeader,
 };

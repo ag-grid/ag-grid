@@ -225,5 +225,5 @@ export class PageSizeSelectorComp extends Component {
 
 export const PageSizeSelectorSelector: ComponentSelector = {
     selector: 'AG-PAGE-SIZE-SELECTOR',
-    Component: PageSizeSelectorComp,
+    component: PageSizeSelectorComp,
 };

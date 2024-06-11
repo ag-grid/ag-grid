@@ -91,5 +91,5 @@ export class AgInputDateField extends AgInputTextField {
 
 export const AgInputDateFieldSelector: ComponentSelector = {
     selector: 'AG-INPUT-DATE-FIELD',
-    Component: AgInputDateField,
+    component: AgInputDateField,
 };

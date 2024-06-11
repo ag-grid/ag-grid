@@ -122,5 +122,5 @@ export class AgPrimaryCols extends Component {
 
 export const AgPrimaryColsSelector: ComponentSelector = {
     selector: 'AG-PRIMARY-COLS',
-    Component: AgPrimaryCols,
+    component: AgPrimaryCols,
 };

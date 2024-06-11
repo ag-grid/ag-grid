@@ -30,5 +30,5 @@ export class AgInputTextArea extends AgAbstractInputField<HTMLTextAreaElement, s
 
 export const AgInputTextAreaSelector: ComponentSelector = {
     selector: 'AG-INPUT-TEXT-AREA',
-    Component: AgInputTextArea,
+    component: AgInputTextArea,
 };

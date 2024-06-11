@@ -369,5 +369,5 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
 
 export const AgAutocompleteSelector: ComponentSelector = {
     selector: 'AG-AUTOCOMPLETE',
-    Component: AgAutocomplete,
+    component: AgAutocomplete,
 };

@@ -82,5 +82,5 @@ export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string,
 
 export const AgInputRangeSelector: ComponentSelector = {
     selector: 'AG-INPUT-RANGE',
-    Component: AgInputRange,
+    component: AgInputRange,
 };

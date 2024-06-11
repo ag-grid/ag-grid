@@ -187,5 +187,5 @@ export class AgStatusBar extends Component {
 
 export const AgStatusBarSelector: ComponentSelector = {
     selector: 'AG-STATUS-BAR',
-    Component: AgStatusBar,
+    component: AgStatusBar,
 };

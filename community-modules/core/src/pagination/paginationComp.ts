@@ -298,5 +298,5 @@ export class PaginationComp extends Component {
 
 export const PaginationSelector: ComponentSelector = {
     selector: 'AG-PAGINATION',
-    Component: PaginationComp,
+    component: PaginationComp,
 };

@@ -560,5 +560,5 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
 export const AgFiltersToolPanelListSelector: ComponentSelector = {
     selector: 'AG-FILTERS-TOOL-PANEL-LIST',
-    Component: AgFiltersToolPanelList,
+    component: AgFiltersToolPanelList,
 };

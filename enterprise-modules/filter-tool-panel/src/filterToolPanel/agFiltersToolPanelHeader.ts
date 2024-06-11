@@ -124,5 +124,5 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
 
 export const AgFiltersToolPanelHeaderSelector: ComponentSelector = {
     selector: 'AG-FILTERS-TOOL-PANEL-HEADER',
-    Component: AgFiltersToolPanelHeader,
+    component: AgFiltersToolPanelHeader,
 };

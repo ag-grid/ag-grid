@@ -149,5 +149,5 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
 export const FakeHScrollSelector: ComponentSelector = {
     selector: 'AG-FAKE-HORIZONTAL-SCROLL',
-    Component: FakeHScrollComp,
+    component: FakeHScrollComp,
 };

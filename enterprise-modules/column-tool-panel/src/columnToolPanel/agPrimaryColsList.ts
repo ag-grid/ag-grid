@@ -585,5 +585,5 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
 export const AgPrimaryColsListSelector: ComponentSelector = {
     selector: 'AG-PRIMARY-COLS-LIST',
-    Component: AgPrimaryColsList,
+    component: AgPrimaryColsList,
 };

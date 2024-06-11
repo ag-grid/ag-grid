@@ -142,5 +142,5 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
 
 export const AgCheckboxSelector: ComponentSelector = {
     selector: 'AG-CHECKBOX',
-    Component: AgCheckbox,
+    component: AgCheckbox,
 };

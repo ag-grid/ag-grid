@@ -66,5 +66,5 @@ export class AgInputTextField<
 }
 export const AgInputTextFieldSelector: ComponentSelector = {
     selector: 'AG-INPUT-TEXT-FIELD',
-    Component: AgInputTextField,
+    component: AgInputTextField,
 };

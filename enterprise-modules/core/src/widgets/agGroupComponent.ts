@@ -494,5 +494,5 @@ class DefaultTitleBar extends Component<ExpandedChangedEvent> {
 
 export const AgGroupComponentSelector: ComponentSelector = {
     selector: 'AG-GROUP-COMPONENT',
-    Component: AgGroupComponent,
+    component: AgGroupComponent,
 };

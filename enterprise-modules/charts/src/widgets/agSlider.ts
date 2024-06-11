@@ -130,5 +130,5 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams, AgSliderEvent> {
 
 export const AgSliderSelector: ComponentSelector = {
     selector: 'AG-SLIDER',
-    Component: AgSlider,
+    component: AgSlider,
 };
