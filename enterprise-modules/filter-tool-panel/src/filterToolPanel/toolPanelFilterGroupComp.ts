@@ -28,10 +28,6 @@ export class ToolPanelFilterGroupComp extends Component {
         this.columnNameService = beans.columnNameService;
     }
 
-    private static TEMPLATE /* html */ = `<div class="ag-filter-toolpanel-group-wrapper">
-            <ag-group-component data-ref="filterGroupComp"></ag-group-component>
-        </div>`;
-
     private filterGroupComp: AgGroupComponent = RefPlaceholder;
 
     private readonly depth: number;
@@ -61,7 +57,13 @@ export class ToolPanelFilterGroupComp extends Component {
             cssIdentifier: 'filter-toolpanel',
             direction: 'vertical',
         };
-        this.setTemplate(ToolPanelFilterGroupComp.TEMPLATE, [AgGroupComponent], { filterGroupComp: groupParams });
+        this.setTemplate(
+            /* html */ `<div class="ag-filter-toolpanel-group-wrapper">
+            <ag-group-component data-ref="filterGroupComp"></ag-group-component>
+        </div>`,
+            [AgGroupComponent],
+            { filterGroupComp: groupParams }
+        );
 
         this.setGroupTitle();
         this.filterGroupComp.setAlignItems('stretch');

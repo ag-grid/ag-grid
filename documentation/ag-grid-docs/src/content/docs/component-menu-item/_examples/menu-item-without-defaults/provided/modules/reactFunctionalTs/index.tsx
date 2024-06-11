@@ -84,7 +84,6 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     getMainMenuItems={getMainMenuItems}
                     suppressMenuHide
-                    reactiveCustomComponents
                     onGridReady={onGridReady}
                 />
             </div>

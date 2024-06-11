@@ -11,10 +11,6 @@ import { ChartTitlePanel } from './chartTitlePanel';
 import { TitlePanel } from './titlePanel';
 
 export class TitlesPanel extends Component {
-    private static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="titleGroup"></ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -64,7 +60,13 @@ export class TitlesPanel extends Component {
                 ...axisTitlePanels,
             ],
         };
-        this.setTemplate(TitlesPanel.TEMPLATE, [AgGroupComponent], { titleGroup: titleGroupParams });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="titleGroup"></ag-group-component>
+        </div>`,
+            [AgGroupComponent],
+            { titleGroup: titleGroupParams }
+        );
         registerGroupComponent(this.titleGroup);
     }
 }

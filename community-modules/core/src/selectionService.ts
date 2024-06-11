@@ -8,7 +8,7 @@ import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { IRowModel } from './interfaces/iRowModel';
 import type { ISelectionService, ISetNodesSelectedParams } from './interfaces/iSelectionService';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './interfaces/selectionState';
-import type { RowBoundsService } from './pagination/rowBoundsService';
+import type { PageBoundsService } from './pagination/pageBoundsService';
 import { _last } from './utils/array';
 import { ChangedPath } from './utils/changedPath';
 import { _exists, _missing } from './utils/generic';
@@ -17,11 +17,11 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
     beanName = 'selectionService' as const;
 
     private rowModel: IRowModel;
-    private rowBoundsService: RowBoundsService;
+    private pageBoundsService: PageBoundsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
-        this.rowBoundsService = beans.rowBoundsService;
+        this.pageBoundsService = beans.pageBoundsService;
     }
 
     private selectedNodes: Map<string, RowNode> = new Map();
@@ -571,8 +571,8 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
     }
 
     private forEachNodeOnPage(callback: (rowNode: RowNode) => void) {
-        const firstRow = this.rowBoundsService.getFirstRow();
-        const lastRow = this.rowBoundsService.getLastRow();
+        const firstRow = this.pageBoundsService.getFirstRow();
+        const lastRow = this.pageBoundsService.getLastRow();
         for (let i = firstRow; i <= lastRow; i++) {
             const node = this.rowModel.getRow(i);
             if (node) {

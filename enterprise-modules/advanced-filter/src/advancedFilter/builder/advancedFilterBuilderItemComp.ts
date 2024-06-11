@@ -1,12 +1,12 @@
 import type {
     BaseCellDataType,
     BeanCollection,
+    DragAndDropService,
     DragSource,
     FieldPickerValueSelectedEvent,
     FieldValueEvent,
 } from '@ag-grid-community/core';
 import {
-    DragAndDropService,
     DragSourceType,
     KeyCode,
     RefPlaceholder,
@@ -422,7 +422,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             type: DragSourceType.AdvancedFilterBuilder,
             eElement: this.eDragHandle,
             dragItemName: () => this.ePillWrapper.getDragName(),
-            getDefaultIconName: () => DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: () => 'notAllowed',
             getDragItem: () => ({}),
             onDragStarted: () =>
                 this.dragFeature.dispatchLocalEvent<AdvancedFilterBuilderDragStartedEvent>({

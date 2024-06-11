@@ -90,7 +90,6 @@ const GridExample = () => {
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    reactiveCustomComponents
                     onRowEditingStarted={onRowEditingStarted}
                     onRowEditingStopped={onRowEditingStopped}
                     onCellEditingStarted={onCellEditingStarted}

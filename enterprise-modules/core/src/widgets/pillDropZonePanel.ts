@@ -33,6 +33,8 @@ export interface PillDropZonePanelParams {
     icon?: Element;
 }
 
+type PillState = 'notDragging' | 'newItemsIn' | 'rearrangeItems';
+
 export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem> extends Component {
     private focusService: FocusService;
     private dragAndDropService: DragAndDropService;
@@ -42,11 +44,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.dragAndDropService = beans.dragAndDropService;
     }
 
-    private static STATE_NOT_DRAGGING = 'notDragging';
-    private static STATE_NEW_ITEMS_IN = 'newItemsIn';
-    private static STATE_REARRANGE_ITEMS = 'rearrangeItems';
-
-    private state = PillDropZonePanel.STATE_NOT_DRAGGING;
+    private state: PillState = 'notDragging';
 
     private dropTarget: DropTarget;
 
@@ -248,11 +246,11 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     }
 
     private checkDragStartedBySelf(draggingEvent: DraggingEvent): void {
-        if (this.state !== PillDropZonePanel.STATE_NOT_DRAGGING) {
+        if (this.state !== 'notDragging') {
             return;
         }
 
-        this.state = PillDropZonePanel.STATE_REARRANGE_ITEMS;
+        this.state = 'rearrangeItems';
 
         this.potentialDndItems = this.getItems(draggingEvent.dragSource.getDragItem());
         this.refreshGui();
@@ -274,7 +272,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     private onDragEnter(draggingEvent: DraggingEvent): void {
         // this will contain all items that are potential drops
         const dragItems = this.getItems(draggingEvent.dragSource.getDragItem());
-        this.state = PillDropZonePanel.STATE_NEW_ITEMS_IN;
+        this.state = 'newItemsIn';
         // take out items that are not droppable
         const goodDragItems = dragItems.filter((item) => this.isItemDroppable(item, draggingEvent));
         const alreadyPresent = goodDragItems.every(
@@ -288,7 +286,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.potentialDndItems = goodDragItems;
 
         if (alreadyPresent) {
-            this.state = PillDropZonePanel.STATE_NOT_DRAGGING;
+            this.state = 'notDragging';
             return;
         }
 
@@ -308,7 +306,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         // if the dragging started from us, we remove the group, however if it started
         // some place else, then we don't, as it was only 'asking'
 
-        if (this.state === PillDropZonePanel.STATE_REARRANGE_ITEMS) {
+        if (this.state === 'rearrangeItems') {
             const items = this.getItems(draggingEvent.dragSource.getDragItem());
             this.removeItems(items);
         }
@@ -320,12 +318,12 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             this.refreshGui();
         }
 
-        this.state = PillDropZonePanel.STATE_NOT_DRAGGING;
+        this.state = 'notDragging';
     }
 
     private onDragStop(): void {
         if (this.isPotentialDndItems()) {
-            if (this.state === PillDropZonePanel.STATE_NEW_ITEMS_IN) {
+            if (this.state === 'newItemsIn') {
                 this.addItems(this.potentialDndItems);
             } else {
                 this.rearrangeItems(this.potentialDndItems);
@@ -335,7 +333,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             this.refreshGui();
         }
 
-        this.state = PillDropZonePanel.STATE_NOT_DRAGGING;
+        this.state = 'notDragging';
     }
 
     private removeItems(itemsToRemove: TItem[]): void {

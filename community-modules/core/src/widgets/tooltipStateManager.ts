@@ -24,6 +24,10 @@ enum TooltipTrigger {
     FOCUS,
 }
 
+const SHOW_QUICK_TOOLTIP_DIFF = 1000;
+const FADE_OUT_TOOLTIP_TIMEOUT = 1000;
+const INTERACTIVE_HIDE_DELAY = 100;
+
 export class TooltipStateManager extends BeanStub {
     private popupService: PopupService;
     private userComponentFactory: UserComponentFactory;
@@ -32,10 +36,6 @@ export class TooltipStateManager extends BeanStub {
         this.popupService = beans.popupService;
         this.userComponentFactory = beans.userComponentFactory;
     }
-
-    private readonly SHOW_QUICK_TOOLTIP_DIFF = 1000;
-    private readonly FADE_OUT_TOOLTIP_TIMEOUT = 1000;
-    private readonly INTERACTIVE_HIDE_DELAY = 100;
 
     // different instances of tooltipFeature use this to see when the
     // last tooltip was hidden.
@@ -162,7 +162,7 @@ export class TooltipStateManager extends BeanStub {
         if (TooltipStateManager.isLocked) {
             this.showTooltipTimeoutId = window.setTimeout(() => {
                 this.prepareToShowTooltip(e);
-            }, this.INTERACTIVE_HIDE_DELAY);
+            }, INTERACTIVE_HIDE_DELAY);
         } else {
             this.prepareToShowTooltip(e);
         }
@@ -247,7 +247,7 @@ export class TooltipStateManager extends BeanStub {
         const now = new Date().getTime();
         const then = TooltipStateManager.lastTooltipHideTime;
 
-        return now - then < this.SHOW_QUICK_TOOLTIP_DIFF;
+        return now - then < SHOW_QUICK_TOOLTIP_DIFF;
     }
 
     private setToDoNothing(): void {
@@ -454,7 +454,7 @@ export class TooltipStateManager extends BeanStub {
         // and we clear then to 'undefined' later, so need to take a copy before they are undefined.
         const tooltipPopupDestroyFunc = this.tooltipPopupDestroyFunc;
         const tooltipComp = this.tooltipComp;
-        const delay = this.tooltipTrigger === TooltipTrigger.HOVER ? this.FADE_OUT_TOOLTIP_TIMEOUT : 0;
+        const delay = this.tooltipTrigger === TooltipTrigger.HOVER ? FADE_OUT_TOOLTIP_TIMEOUT : 0;
 
         window.setTimeout(() => {
             tooltipPopupDestroyFunc!();
@@ -490,7 +490,7 @@ export class TooltipStateManager extends BeanStub {
         this.interactiveTooltipTimeoutId = window.setTimeout(() => {
             this.unlockService();
             this.setToDoNothing();
-        }, this.INTERACTIVE_HIDE_DELAY);
+        }, INTERACTIVE_HIDE_DELAY);
     }
 
     private unlockService(): void {

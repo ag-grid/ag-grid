@@ -2,7 +2,8 @@ import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import { DragAndDropService, DragSourceType } from '../dragAndDrop/dragAndDropService';
+import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
+import { DragSourceType } from '../dragAndDrop/dragAndDropService';
 import type { GridSizeChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
@@ -57,7 +58,7 @@ export class GridCtrl extends BeanStub {
         this.dragAndDropService.addDropTarget({
             getContainer: () => this.eGui,
             isInterestedIn: (type) => type === DragSourceType.HeaderCell || type === DragSourceType.ToolPanel,
-            getIconName: () => DragAndDropService.ICON_NOT_ALLOWED,
+            getIconName: () => 'notAllowed',
         });
 
         this.mouseEventService.stampTopLevelGridCompWithGridInstance(eGridDiv);

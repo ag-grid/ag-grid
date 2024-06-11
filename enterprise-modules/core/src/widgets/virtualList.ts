@@ -28,6 +28,15 @@ interface VirtualListParams {
     listName?: string;
 }
 
+function getVirtualListTemplate(cssIdentifier: string) {
+    return (
+        /* html */
+        `<div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
+            <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" data-ref="eContainer"></div>
+        </div>`
+    );
+}
+
 export class VirtualList<
     C extends Component<any> = Component<any>,
     TEventType extends string = ComponentEvent,
@@ -58,7 +67,7 @@ export class VirtualList<
     private readonly eContainer: HTMLElement = RefPlaceholder;
 
     constructor(params?: VirtualListParams) {
-        super(VirtualList.getTemplate(params?.cssIdentifier || 'default'));
+        super(getVirtualListTemplate(params?.cssIdentifier || 'default'));
 
         const { cssIdentifier = 'default', ariaRole = 'listbox', listName } = params || {};
 
@@ -241,15 +250,6 @@ export class VirtualList<
 
     public forEachRenderedRow(func: (comp: C, idx: number) => void): void {
         this.renderedRows.forEach((value, key) => func(value.rowComponent, key));
-    }
-
-    private static getTemplate(cssIdentifier: string) {
-        return (
-            /* html */
-            `<div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
-                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" data-ref="eContainer"></div>
-            </div>`
-        );
     }
 
     private getItemHeight(): number {

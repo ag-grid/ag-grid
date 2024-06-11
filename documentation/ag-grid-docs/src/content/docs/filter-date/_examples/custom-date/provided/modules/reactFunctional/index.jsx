@@ -74,7 +74,6 @@ const GridExample = () => {
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     components={components}
-                    reactiveCustomComponents
                     onGridReady={onGridReady}
                 />
             </div>

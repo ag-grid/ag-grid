@@ -4,8 +4,8 @@ import { VerticalDirection } from '../constants/direction';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { DraggingEvent, DropTarget } from '../dragAndDrop/dragAndDropService';
-import { DragAndDropService, DragSourceType } from '../dragAndDrop/dragAndDropService';
+import type { DragAndDropIcon, DragAndDropService, DraggingEvent, DropTarget } from '../dragAndDrop/dragAndDropService';
+import { DragSourceType } from '../dragAndDrop/dragAndDropService';
 import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
 import type { RowDragEndEvent, RowDragEnterEvent, RowDragEvent, RowDragLeaveEvent, RowDragMoveEvent } from '../events';
@@ -16,7 +16,7 @@ import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { RowHighlightPosition } from '../interfaces/iRowNode';
 import type { ISelectionService } from '../interfaces/iSelectionService';
-import type { RowBoundsService } from '../pagination/rowBoundsService';
+import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { SortController } from '../sortController';
 import { _last } from '../utils/array';
 import { _warnOnce } from '../utils/function';
@@ -44,7 +44,7 @@ export interface RowDropZoneParams extends RowDropZoneEvents {
 export class RowDragFeature extends BeanStub implements DropTarget {
     private dragAndDropService: DragAndDropService;
     private rowModel: IRowModel;
-    private rowBoundsService: RowBoundsService;
+    private pageBoundsService: PageBoundsService;
     private focusService: FocusService;
     private sortController: SortController;
     private filterManager?: FilterManager;
@@ -57,7 +57,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     public wireBeans(beans: BeanCollection): void {
         this.dragAndDropService = beans.dragAndDropService;
         this.rowModel = beans.rowModel;
-        this.rowBoundsService = beans.rowBoundsService;
+        this.pageBoundsService = beans.pageBoundsService;
         this.focusService = beans.focusService;
         this.sortController = beans.sortController;
         this.filterManager = beans.filterManager;
@@ -105,14 +105,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return type === DragSourceType.RowDrag;
     }
 
-    public getIconName(): string {
+    public getIconName(): DragAndDropIcon {
         const managedDrag = this.gos.get('rowDragManaged');
 
         if (managedDrag && this.shouldPreventRowMove()) {
-            return DragAndDropService.ICON_NOT_ALLOWED;
+            return 'notAllowed';
         }
 
-        return DragAndDropService.ICON_MOVE;
+        return 'move';
     }
 
     public shouldPreventRowMove(): boolean {
@@ -322,7 +322,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         this.dragAndDropService.addDropTarget({
             isInterestedIn: (type: DragSourceType) => type === DragSourceType.RowDrag,
-            getIconName: () => DragAndDropService.ICON_MOVE,
+            getIconName: () => 'move',
             external: true,
             ...(processedParams as any),
         });
@@ -378,7 +378,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     private draggingToRowDragEvent<T extends AgEventType>(type: T, draggingEvent: DraggingEvent): RowDragEvent<T> {
         const yNormalised = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
-        const mouseIsPastLastRow = yNormalised > this.rowBoundsService.getCurrentPageHeight();
+        const mouseIsPastLastRow = yNormalised > this.pageBoundsService.getCurrentPageHeight();
 
         let overIndex = -1;
         let overNode: RowNode | undefined;

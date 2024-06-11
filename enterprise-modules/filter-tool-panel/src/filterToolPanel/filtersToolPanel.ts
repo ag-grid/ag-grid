@@ -17,11 +17,6 @@ export interface ToolPanelFiltersCompParams<TData = any, TContext = any>
         IToolPanelFiltersCompParams {}
 
 export class FiltersToolPanel extends Component implements IFiltersToolPanel, IToolPanelComp {
-    private static TEMPLATE /* html */ = `<div class="ag-filter-toolpanel">
-            <ag-filters-tool-panel-header data-ref="filtersToolPanelHeaderPanel"></ag-filters-tool-panel-header>
-            <ag-filters-tool-panel-list data-ref="filtersToolPanelListPanel"></ag-filters-tool-panel-list>
-         </div>`;
-
     private readonly filtersToolPanelHeaderPanel: AgFiltersToolPanelHeader = RefPlaceholder;
     private readonly filtersToolPanelListPanel: AgFiltersToolPanelList = RefPlaceholder;
 
@@ -30,7 +25,13 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     private listenerDestroyFuncs: (() => void)[] = [];
 
     constructor() {
-        super(FiltersToolPanel.TEMPLATE, [AgFiltersToolPanelHeader, AgFiltersToolPanelList]);
+        super(
+            /* html */ `<div class="ag-filter-toolpanel">
+            <ag-filters-tool-panel-header data-ref="filtersToolPanelHeaderPanel"></ag-filters-tool-panel-header>
+            <ag-filters-tool-panel-list data-ref="filtersToolPanelListPanel"></ag-filters-tool-panel-list>
+         </div>`,
+            [AgFiltersToolPanelHeader, AgFiltersToolPanelList]
+        );
     }
 
     public init(params: ToolPanelFiltersCompParams): void {

@@ -44,7 +44,7 @@ import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridComp } from './gridComp/gridComp';
 import { CommunityFeaturesModule } from './gridCoreModule';
 import { GridDestroyService } from './gridDestroyService';
-import { GridOptionsService } from './gridOptionsService';
+import { GridOptionsService, getCoercedGridOptions } from './gridOptionsService';
 import { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 import { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
 import { HeaderPositionUtils } from './headerRendering/common/headerPosition';
@@ -62,8 +62,8 @@ import { MenuService } from './misc/menuService';
 import { ResizeObserverService } from './misc/resizeObserverService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
-import { RowBoundsListener } from './pagination/rowBoundsListener';
-import { RowBoundsService } from './pagination/rowBoundsService';
+import { PageBoundsListener } from './pagination/pageBoundsListener';
+import { PageBoundsService } from './pagination/pageBoundsService';
 import { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 import { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
 import { AutoWidthCalculator } from './rendering/autoWidthCalculator';
@@ -238,7 +238,7 @@ export class GridCoreCreator {
         } else {
             mergedGridOps = providedOptions;
         }
-        const gridOptions = GridOptionsService.getCoercedGridOptions(mergedGridOps);
+        const gridOptions = getCoercedGridOptions(mergedGridOps);
 
         const gridId = gridOptions.gridId ?? String(nextGridId++);
 
@@ -436,8 +436,8 @@ export class GridCoreCreator {
             SelectionService,
             ColumnModel,
             HeaderNavigationService,
-            RowBoundsService,
-            RowBoundsListener,
+            PageBoundsService,
+            PageBoundsListener,
             RowRenderer,
             ExpressionService,
             ColumnFactory,
