@@ -3,11 +3,10 @@ import { AgSelectSelector, Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 
-import type { AgSlider, AgSliderParams } from '../../../../../widgets/agSlider';
 import { AgSliderSelector } from '../../../../../widgets/agSlider';
-import type { ChartOptionsService } from '../../../services/chartOptionsService';
-import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import { getShapeSelectOptions } from './seriesUtils';
 
 export class MarkersPanel extends Component {
     public static TEMPLATE /* html */ = `<div>

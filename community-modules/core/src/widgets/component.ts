@@ -236,9 +236,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
 
             this.createBean(newComponent, null, afterPreCreateCallback);
         } else if (isAgGridComponent) {
-            console.warn(
-                `Trying to create component with selector ${key} but no component is registered with that selector.`
-            );
+            console.error(`Missing selector: ${key}`);
         }
 
         this.applyElementsToComponent(element, elementRef, paramsMap, newComponent);
