@@ -1,4 +1,4 @@
-const { readdirSync } = require('fs')
+import { readdirSync } from 'fs';
 import { hideBin } from 'yargs/helpers';
 import yargs from 'yargs/yargs';
 
