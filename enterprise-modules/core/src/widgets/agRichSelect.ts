@@ -132,7 +132,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     private createListComponent(): void {
         this.listComponent = this.createBean(new AgRichSelectList(this.config, this.eWrapper, () => this.searchString));
-
         this.listComponent.setParentComponent(this);
 
         this.addManagedListeners(this.listComponent, {
@@ -163,6 +162,13 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             userCompDetails = this.userComponentFactory.getCellRendererDetails(this.config, {
                 value,
                 valueFormatted,
+                getValue: () => this.getValue(),
+                setValue: (value: TValue[] | TValue | null) => {
+                    this.setValue(value, true);
+                },
+                setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
+                    this.setTooltip({ newTooltipText: value, shouldDisplayTooltip });
+                },
             } as ICellRendererParams);
         }
 

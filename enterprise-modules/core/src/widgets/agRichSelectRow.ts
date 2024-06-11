@@ -14,6 +14,8 @@ import {
     _setAriaSelected,
 } from '@ag-grid-community/core';
 
+import type { AgRichSelect } from './agRichSelect';
+
 export class RichSelectRow<TValue> extends Component {
     private userComponentFactory: UserComponentFactory;
 
@@ -127,9 +129,14 @@ export class RichSelectRow<TValue> extends Component {
         let userCompDetails: UserCompDetails | undefined;
 
         if (this.params.cellRenderer) {
+            const richSelect = this.getParentComponent()?.getParentComponent() as AgRichSelect;
             userCompDetails = this.userComponentFactory.getCellRendererDetails(this.params, {
                 value,
                 valueFormatted,
+                getValue: () => richSelect?.getValue(),
+                setValue: (value: TValue[] | TValue | null) => {
+                    richSelect?.setValue(value, true);
+                },
                 setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
                     this.setTooltip({ newTooltipText: value, shouldDisplayTooltip });
                 },
