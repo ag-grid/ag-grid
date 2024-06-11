@@ -16,10 +16,9 @@ export interface PivotColDefServiceResult {
     pivotColumnDefs: ColDef[];
 }
 
+const PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
 export class PivotColDefService extends BeanStub implements NamedBean, IPivotColDefService {
     beanName = 'pivotColDefService' as const;
-
-    public static PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
 
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
@@ -359,14 +358,14 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             colDef.pivotTotalColumnIds = colIds;
         }
 
-        colDef.colId = PivotColDefService.PIVOT_ROW_TOTAL_PREFIX + colDef.colId;
+        colDef.colId = PIVOT_ROW_TOTAL_PREFIX + colDef.colId;
         pivotColumnDefs.push(colDef);
 
         const valueGroup: ColGroupDef | ColDef = addGroup
             ? {
                   children: [colDef],
                   pivotKeys: [],
-                  groupId: `${PivotColDefService.PIVOT_ROW_TOTAL_PREFIX}_pivotGroup_${valueColumn.getColId()}`,
+                  groupId: `${PIVOT_ROW_TOTAL_PREFIX}_pivotGroup_${valueColumn.getColId()}`,
               }
             : colDef;
 
