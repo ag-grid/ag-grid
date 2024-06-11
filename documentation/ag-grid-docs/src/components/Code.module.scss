@@ -40,7 +40,6 @@
 
     svg {
         --color-icon: var(--color-util-gray-500);
-
         position: relative;
         left: -2px;
         transition: fill $transition-default-timing;
@@ -91,7 +90,7 @@
     }
 
     #{$selector-darkmode} & {
-        color: var(--color-util-gray-600);
+        color: var(--color-bg-primary);
     }
 }
 
@@ -102,9 +101,16 @@
 
     svg {
         --color-icon: var(--color-fg-white);
+
+        #{$selector-darkmode} & {
+            --color-icon: var(--color-bg-primary);
+        }
     }
 
     &:hover svg {
         --color-icon: var(--color-fg-white);
+        #{$selector-darkmode} & {
+            --color-icon: var(--color-bg-primary);
+        }
     }
 }
