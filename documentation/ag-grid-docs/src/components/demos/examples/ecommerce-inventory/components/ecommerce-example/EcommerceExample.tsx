@@ -1,20 +1,21 @@
 import type { ColDef, SizeColumnsToContentStrategy } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
-import { useCallback, type FunctionComponent, useRef, useState } from 'react';
+import { useCallback, type FunctionComponent, useRef, useState, useMemo } from 'react';
 
 import { quantityCalculator } from '../../utils/valueGetters';
 import { ActionsCellRenderer } from '../actions-cell-renderer/ActionsCellRenderer';
 import { ImageCellRenderer } from '../image-cell-renderer/ImageCellRenderer';
 import { ProductCellRenderer } from '../product-cell-renderer/ProductCellRenderer';
 import { StatusCellRenderer } from '../status-cell-renderer/StatusCellRenderer';
+import { ProductDetailsRenderer } from '../product-details-renderer/ProductDetailsRenderer';
 import styles from './EcommerceExample.module.css';
 import { getData } from './data';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 
-ModuleRegistry.registerModules([ SetFilterModule ]);
-ModuleRegistry.registerModules([ MultiFilterModule ]);
+ModuleRegistry.registerModules([ SetFilterModule, MultiFilterModule, MasterDetailModule ]);
 
 interface Props {
     gridTheme?: string;
@@ -41,6 +42,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             field: 'product',
             headerName: 'Product',
             cellRenderer: ProductCellRenderer,
+            cellRenderer: "agGroupCellRenderer",
             wrapText: true,
             filter: 'agMultiColumnFilter',
             filterParams: {
@@ -126,6 +128,32 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
         );
       }, []);
 
+      const detailCellRendererParams = useMemo(() => {
+        return {
+            detailGridOptions: {
+                columnDefs: [
+                    { field: 'value', headerName: 'Type', width: 150, cellRenderer: ProductDetailsRenderer },
+                    { field: 'description', headerName: 'Description', width: 150 },
+                    { field: 'grossAmount', headerName: 'Gross Amount', width: 150 },
+                ],
+                defaultColDef: {
+                    flex: 1,
+                    minWidth: 100,
+                },
+            },
+            getDetailRowData: function (params: any) {
+                const descriptions = ['TBD' ];
+
+                const selectedDescription = descriptions[Math.floor(Math.random() * descriptions.length)];
+
+                params.successCallback([
+                    { type: 'Type 1', description: selectedDescription, grossAmount: 1000 },
+                    { type: 'Type 2', description: selectedDescription, grossAmount: 2000 },
+                ]);
+            },
+        };
+    }, []);
+
     return (
         <div className={styles.wrapper}>
             <div className={styles.container}>
@@ -150,6 +178,8 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                         pagination={true}
                         paginationPageSize={10}
                         paginationPageSizeSelector={paginationPageSizeSelector}
+                        masterDetail={true}
+                        detailCellRendererParams={detailCellRendererParams}
                     />
                 </div>
             </div>
