@@ -284,6 +284,7 @@ export { getRowContainerTypeForName } from '@ag-grid-community/core';
 export { isColumn } from '@ag-grid-community/core';
 export { isColumnGroup } from '@ag-grid-community/core';
 export { isProvidedColumnGroup } from '@ag-grid-community/core';
+export { isSelectionUIEvent } from '@ag-grid-community/core';
 export { provideGlobalGridOptions } from '@ag-grid-community/core';
 /** AUTO_GENERATED_END **/
 
