@@ -166,7 +166,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                         <div className={styles.inputList}>
                             <label
                                 className={classnames({
-                                    [styles.licensedProduct]: licensedProducts.grid,
+                                    [styles.licensedProduct]: hasLicense && licensedProducts.grid,
                                 })}
                             >
                                 Grid Enterprise
@@ -187,7 +187,8 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                             </label>
                             <label
                                 className={classnames({
-                                    [styles.licensedProduct]: licensedProducts.grid && licensedProducts.charts,
+                                    [styles.licensedProduct]:
+                                        hasLicense && licensedProducts.grid && licensedProducts.charts,
                                 })}
                             >
                                 Integrated Enterprise
@@ -208,7 +209,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                             </label>
                             <label
                                 className={classnames({
-                                    [styles.licensedProduct]: licensedProducts.charts,
+                                    [styles.licensedProduct]: hasLicense && licensedProducts.charts,
                                 })}
                             >
                                 Charts Enterprise
