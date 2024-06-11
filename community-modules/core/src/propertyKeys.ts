@@ -28,6 +28,7 @@ type KeysLike<U> = Exclude<GetKeys<GridOptions, U>, undefined>;
 type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
 type CallbackKeys = KeysOfType<(any: AgGridCommon<any, any>) => any>;
 /** All function properties excluding those explicity match the common callback interface. */
+// eslint-disable-next-line @typescript-eslint/ban-types
 type FunctionKeys = Exclude<KeysLike<Function>, CallbackKeys>;
 
 export const INITIAL_GRID_OPTION_KEYS = {
@@ -113,7 +114,7 @@ export const INITIAL_GRID_OPTION_KEYS = {
     getLocaleText: true,
     getRowId: true,
     reactiveCustomComponents: true,
-    columnMenu: 'new',
+    columnMenu: true,
 };
 
 type InitialGridOptionKey = keyof typeof INITIAL_GRID_OPTION_KEYS;

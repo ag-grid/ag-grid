@@ -15,12 +15,10 @@ const INTERACTIVITY_GROUPS = ['navigator', 'zoom', 'animation', 'crosshair'] as 
 type ChartInteractivityGroup = (typeof INTERACTIVITY_GROUPS)[number];
 
 export class AdvancedSettingsPanel extends Component {
-    private static TEMPLATE = /* html */ `<div class="ag-chart-advanced-settings-wrapper"></div>`;
-
     private chartPanelFeature: ChartPanelFeature;
 
     constructor(private readonly chartMenuContext: ChartMenuContext) {
-        super(AdvancedSettingsPanel.TEMPLATE);
+        super(/* html */ `<div class="ag-chart-advanced-settings-wrapper"></div>`);
     }
 
     public postConstruct(): void {

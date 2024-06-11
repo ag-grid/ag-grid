@@ -2,7 +2,6 @@ import type { BeanCollection } from '@ag-grid-community/core';
 import { Component } from '@ag-grid-community/core';
 
 import type { ChartController } from '../chartController';
-import type { ChartMenu } from '../menu/chartMenu';
 import type { ChartMenuContext } from '../menu/chartMenuContext';
 import type { ChartOptionsProxy, ChartOptionsService } from '../services/chartOptionsService';
 import type { ChartTranslationService } from '../services/chartTranslationService';
@@ -21,19 +20,17 @@ export class TitleEdit extends Component {
         this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
 
-    private static TEMPLATE /* html */ = `<textarea
-             class="ag-chart-title-edit"
-             style="padding:0; border:none; border-radius: 0; min-height: 0; text-align: center; resize: none;" />
-        `;
-
     private destroyableChartListeners: (() => void)[] = [];
     private chartController: ChartController;
     private chartOptionsService: ChartOptionsService;
     private chartMenuUtils: ChartOptionsProxy;
     private editing: boolean = false;
 
-    constructor(private readonly chartMenu: ChartMenu) {
-        super(TitleEdit.TEMPLATE);
+    constructor() {
+        super(/* html */ `<textarea
+            class="ag-chart-title-edit"
+            style="padding:0; border:none; border-radius: 0; min-height: 0; text-align: center; resize: none;" />
+       `);
     }
 
     public postConstruct(): void {

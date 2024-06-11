@@ -12,8 +12,6 @@ type AggFuncPreset = 'count' | 'sum' | 'min' | 'max' | 'avg' | 'first' | 'last';
 const DEFAULT_AGG_FUNC: AggFuncPreset = 'sum';
 
 export class CategoriesDataPanel extends DragDataPanel {
-    private static TEMPLATE = /* html */ `<div id="categoriesGroup"></div>`;
-
     private aggFuncToggle?: AgToggleButton;
     private aggFuncSelect?: AgSelect;
 
@@ -25,7 +23,7 @@ export class CategoriesDataPanel extends DragDataPanel {
         private isOpen?: boolean
     ) {
         const maxSelection = undefined;
-        super(chartController, allowMultipleSelection, maxSelection, CategoriesDataPanel.TEMPLATE);
+        super(chartController, allowMultipleSelection, maxSelection, /* html */ `<div id="categoriesGroup"></div>`);
     }
 
     public postConstruct() {

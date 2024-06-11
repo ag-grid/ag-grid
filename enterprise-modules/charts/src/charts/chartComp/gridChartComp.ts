@@ -91,15 +91,6 @@ export class GridChartComp extends Component {
         this.popupService = beans.popupService;
     }
 
-    private static TEMPLATE /* html */ = `<div class="ag-chart" tabindex="-1">
-            <div data-ref="eChartContainer" tabindex="-1" class="ag-chart-components-wrapper ag-chart-menu-hidden">
-                <div data-ref="eChart" class="ag-chart-canvas-wrapper"></div>
-                <div data-ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
-            </div>
-            <div data-ref="eTitleEditContainer"></div>
-            <div data-ref="eMenuContainer" class="ag-chart-docked-container"></div>
-        </div>`;
-
     private readonly eChart: HTMLElement = RefPlaceholder;
     private readonly eChartContainer: HTMLElement = RefPlaceholder;
     private readonly eMenuContainer: HTMLElement = RefPlaceholder;
@@ -124,7 +115,14 @@ export class GridChartComp extends Component {
     private onDestroyColorSchemeChangeListener: () => void;
 
     constructor(params: GridChartParams) {
-        super(GridChartComp.TEMPLATE);
+        super(/* html */ `<div class="ag-chart" tabindex="-1">
+            <div data-ref="eChartContainer" tabindex="-1" class="ag-chart-components-wrapper ag-chart-menu-hidden">
+                <div data-ref="eChart" class="ag-chart-canvas-wrapper"></div>
+                <div data-ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
+            </div>
+            <div data-ref="eTitleEditContainer"></div>
+            <div data-ref="eMenuContainer" class="ag-chart-docked-container"></div>
+            </div>`);
         this.params = params;
     }
 
@@ -365,7 +363,7 @@ export class GridChartComp extends Component {
     }
 
     private addTitleEditComp(): void {
-        this.titleEdit = this.createBean(new TitleEdit(this.chartMenu));
+        this.titleEdit = this.createBean(new TitleEdit());
         this.eTitleEditContainer.appendChild(this.titleEdit.getGui());
         if (this.chartProxy) {
             this.titleEdit.refreshTitle(this.chartMenuContext);

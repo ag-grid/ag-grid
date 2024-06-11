@@ -21,6 +21,7 @@ import type { IRangeService } from './interfaces/IRangeService';
 import type { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 import type { NavigateToNextHeaderParams, TabToNextHeaderParams } from './interfaces/iCallbackParams';
 import type { WithoutGridCommon } from './interfaces/iCommon';
+import type { RowPinnedType } from './interfaces/iRowNode';
 import { RowCtrl } from './rendering/row/rowCtrl';
 import type { RowRenderer } from './rendering/rowRenderer';
 import { _last } from './utils/array';
@@ -308,7 +309,6 @@ export class FocusService extends BeanStub implements NamedBean {
             ...this.getFocusEventParams(),
             forceBrowserFocus,
             preventScrollOnBrowserFocus,
-            floating: null,
         };
 
         this.eventService.dispatchEvent(event);
@@ -548,13 +548,14 @@ export class FocusService extends BeanStub implements NamedBean {
         return !!this.focusedCellPosition;
     }
 
-    public isRowFocused(rowIndex: number, floating?: string | null): boolean {
+    public isRowFocused(rowIndex: number, rowPinnedType: RowPinnedType): boolean {
         if (this.focusedCellPosition == null) {
             return false;
         }
 
         return (
-            this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === _makeNull(floating)
+            this.focusedCellPosition.rowIndex === rowIndex &&
+            this.focusedCellPosition.rowPinned === _makeNull(rowPinnedType)
         );
     }
 

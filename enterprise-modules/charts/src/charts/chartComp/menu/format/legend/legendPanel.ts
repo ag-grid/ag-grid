@@ -11,11 +11,6 @@ import { FontPanel } from '../fontPanel';
 import type { FormatPanelOptions } from '../formatPanel';
 
 export class LegendPanel extends Component {
-    private static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="legendGroup">
-            </ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -72,9 +67,16 @@ export class LegendPanel extends Component {
             expanded,
             items: [enabledGroup],
         };
-        this.setTemplate(LegendPanel.TEMPLATE, [AgGroupComponent], {
-            legendGroup: legendGroupParams,
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="legendGroup">
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponent],
+            {
+                legendGroup: legendGroupParams,
+            }
+        );
         registerGroupComponent(this.legendGroup);
     }
 

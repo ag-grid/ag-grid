@@ -98,6 +98,7 @@ export {
     DragSource,
     DragItem,
     DraggingEvent,
+    DragAndDropIcon,
 } from './dragAndDrop/dragAndDropService';
 export { RowDropZoneParams, RowDropZoneEvents } from './gridBodyComp/rowDragFeature';
 export { DragService, DragListenerParams } from './dragAndDrop/dragService';
@@ -263,13 +264,14 @@ export {
     IRowContainerComp,
     RowContainerCtrl,
     RowContainerType,
-    getRowContainerTypeForName,
+    RowContainerOptions,
+    _getRowContainerOptions,
 } from './gridBodyComp/rowContainer/rowContainerCtrl';
 
 // headerRendering
 export { BodyDropPivotTarget } from './headerRendering/columnDrag/bodyDropPivotTarget';
 export { BodyDropTarget } from './headerRendering/columnDrag/bodyDropTarget';
-export { CssClassApplier } from './headerRendering/cells/cssClassApplier';
+export { _getHeaderClassesFromColDef, _getToolPanelClassesFromColDef } from './headerRendering/cells/cssClassApplier';
 export { HeaderRowContainerComp } from './headerRendering/rowContainer/headerRowContainerComp';
 export { GridHeaderComp } from './headerRendering/gridHeaderComp';
 export { GridHeaderCtrl, IGridHeaderComp } from './headerRendering/gridHeaderCtrl';

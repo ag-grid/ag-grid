@@ -18,8 +18,6 @@ export interface ToolPanelColumnCompParams<TData = any, TContext = any>
         IToolPanelColumnCompParams {}
 
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
-    private static TEMPLATE = `<div class="ag-column-panel"></div>`;
-
     private initialised = false;
     private params: ToolPanelColumnCompParams;
 
@@ -32,7 +30,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private pivotDropZonePanel: PivotDropZonePanel;
 
     constructor() {
-        super(ColumnToolPanel.TEMPLATE);
+        super(/* html */ `<div class="ag-column-panel"></div>`);
     }
 
     // lazy initialise the panel

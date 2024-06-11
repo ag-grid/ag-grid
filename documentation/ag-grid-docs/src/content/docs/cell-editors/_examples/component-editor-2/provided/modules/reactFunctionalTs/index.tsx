@@ -63,12 +63,7 @@ const GridExample = () => {
     return (
         <div style={containerStyle}>
             <div style={gridStyle} className={'ag-theme-quartz-dark'}>
-                <AgGridReact
-                    rowData={rowData}
-                    columnDefs={columnDefs}
-                    reactiveCustomComponents={true}
-                    defaultColDef={defaultColDef}
-                />
+                <AgGridReact rowData={rowData} columnDefs={columnDefs} defaultColDef={defaultColDef} />
             </div>
         </div>
     );

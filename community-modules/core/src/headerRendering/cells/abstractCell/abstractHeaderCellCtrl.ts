@@ -20,7 +20,7 @@ import { _getInnerWidth } from '../../../utils/dom';
 import { _isUserSuppressingHeaderKeyboardEvent } from '../../../utils/keyboard';
 import { KeyCode } from '../.././../constants/keyCode';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
-import { CssClassApplier } from '../cssClassApplier';
+import { refreshFirstAndLastStyles } from '../cssClassApplier';
 
 let instanceIdSequence = 0;
 
@@ -125,7 +125,7 @@ export abstract class AbstractHeaderCellCtrl<
 
     private refreshFirstAndLastStyles(): void {
         const { comp, column, beans } = this;
-        CssClassApplier.refreshFirstAndLastStyles(comp, column, beans.visibleColsService);
+        refreshFirstAndLastStyles(comp, column, beans.visibleColsService);
     }
 
     private refreshAriaColIndex(): void {

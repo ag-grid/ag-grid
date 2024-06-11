@@ -2,14 +2,19 @@ import type { ColumnModel } from '../../columns/columnModel';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
-import type { DragAndDropService, DraggingEvent, DropTarget } from '../../dragAndDrop/dragAndDropService';
+import type {
+    DragAndDropIcon,
+    DragAndDropService,
+    DraggingEvent,
+    DropTarget,
+} from '../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { BodyDropPivotTarget } from './bodyDropPivotTarget';
 import { MoveColumnFeature } from './moveColumnFeature';
 
 export interface DropListener {
-    getIconName(): string | null;
+    getIconName(): DragAndDropIcon | null;
     onDragEnter(params: DraggingEvent): void;
     onDragLeave(params: DraggingEvent): void;
     onDragging(params: DraggingEvent): void;
@@ -91,7 +96,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         return this.eContainer;
     }
 
-    public getIconName(): string | null {
+    public getIconName(): DragAndDropIcon | null {
         return this.currentDropListener.getIconName();
     }
 

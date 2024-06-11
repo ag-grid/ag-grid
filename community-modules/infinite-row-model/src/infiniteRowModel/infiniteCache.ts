@@ -28,6 +28,11 @@ export interface InfiniteCacheParams {
     dynamicRowHeight: boolean;
 }
 
+// this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
+// blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
+// scrolled over are not needed to be loaded.
+const MAX_EMPTY_BLOCKS_TO_KEEP = 2;
+
 export class InfiniteCache extends BeanStub {
     protected rowRenderer: RowRenderer;
     private focusService: FocusService;
@@ -40,11 +45,6 @@ export class InfiniteCache extends BeanStub {
 
         this.logger = beans.loggerFactory.create('InfiniteCache');
     }
-
-    // this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
-    // blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
-    // scrolled over are not needed to be loaded.
-    private static MAX_EMPTY_BLOCKS_TO_KEEP = 2;
 
     private readonly params: InfiniteCacheParams;
 
@@ -148,7 +148,7 @@ export class InfiniteCache extends BeanStub {
         // we want to keep, which means we are left with blocks that we can potentially purge
         const maxBlocksProvided = this.params.maxBlocksInCache! > 0;
         const blocksToKeep = maxBlocksProvided ? this.params.maxBlocksInCache! - 1 : null;
-        const emptyBlocksToKeep = InfiniteCache.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
+        const emptyBlocksToKeep = MAX_EMPTY_BLOCKS_TO_KEEP - 1;
 
         blocksForPurging.forEach((block: InfiniteBlock, index: number) => {
             const purgeBecauseBlockEmpty = block.getState() === 'needsLoading' && index >= emptyBlocksToKeep;

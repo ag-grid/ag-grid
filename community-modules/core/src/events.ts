@@ -497,11 +497,6 @@ export interface CellFocusedParams extends CommonCellFocusParams {
     forceBrowserFocus?: boolean;
     /** When `forceBrowserFocus` is `true`, should scroll be prevented */
     preventScrollOnBrowserFocus?: boolean;
-    // floating is for backwards compatibility, this is the same as rowPinned.
-    // this is because the focus service doesn't keep references to rowNodes
-    // as focused cell is identified by rowIndex - thus when the user re-orders
-    // or filters, the focused cell stays with the index, but the node can change.
-    floating?: string | null;
 }
 
 export interface CellFocusClearedEvent<TData = any, TContext = any>

@@ -4,6 +4,7 @@ import type { BeanCollection } from '../context/context';
 import type { IRowModel, RowBounds } from '../interfaces/iRowModel';
 import { _exists, _missing } from '../utils/generic';
 
+// note that everything in this service is used even when pagination is off
 export class PageBoundsService extends BeanStub implements NamedBean {
     beanName = 'pageBoundsService' as const;
 
@@ -64,6 +65,7 @@ export class PageBoundsService extends BeanStub implements NamedBean {
         }
 
         this.pixelOffset = value;
+        // this event is required even when pagination is off
         this.eventService.dispatchEvent({ type: 'paginationPixelOffsetChanged' });
     }
 }

@@ -18,6 +18,16 @@ import {
     _setDisplayed,
 } from '@ag-grid-community/core';
 
+const TEMPLATE = /* html */ `
+<div class="ag-filter-toolpanel-instance">
+    <div class="ag-filter-toolpanel-header ag-filter-toolpanel-instance-header" data-ref="eFilterToolPanelHeader" role="button" aria-expanded="false">
+        <div data-ref="eExpand" class="ag-filter-toolpanel-expand"></div>
+        <span data-ref="eFilterName" class="ag-header-cell-text"></span>
+        <span data-ref="eFilterIcon" class="ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon" aria-hidden="true"></span>
+    </div>
+    <div class="ag-filter-toolpanel-instance-body ag-filter" data-ref="agFilterToolPanelBody"></div>
+</div>`;
+
 export type ToolPanelFilterCompEvent = 'filterChanged';
 export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
     private filterManager?: FilterManager;
@@ -27,16 +37,6 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
         this.filterManager = beans.filterManager;
         this.columnNameService = beans.columnNameService;
     }
-
-    private static TEMPLATE = /* html */ `
-        <div class="ag-filter-toolpanel-instance">
-            <div class="ag-filter-toolpanel-header ag-filter-toolpanel-instance-header" data-ref="eFilterToolPanelHeader" role="button" aria-expanded="false">
-                <div data-ref="eExpand" class="ag-filter-toolpanel-expand"></div>
-                <span data-ref="eFilterName" class="ag-header-cell-text"></span>
-                <span data-ref="eFilterIcon" class="ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon" aria-hidden="true"></span>
-            </div>
-            <div class="ag-filter-toolpanel-instance-body ag-filter" data-ref="agFilterToolPanelBody"></div>
-        </div>`;
 
     private readonly eFilterToolPanelHeader: HTMLElement = RefPlaceholder;
     private readonly eFilterName: HTMLElement = RefPlaceholder;
@@ -56,7 +56,7 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
         hideHeader: boolean,
         private readonly expandedCallback: () => void
     ) {
-        super(ToolPanelFilterComp.TEMPLATE);
+        super(TEMPLATE);
         this.hideHeader = hideHeader;
     }
 
