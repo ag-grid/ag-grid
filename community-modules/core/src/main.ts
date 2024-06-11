@@ -37,7 +37,7 @@ export {
 } from './interfaces/autoSizeStrategy';
 
 // components
-export { ComponentUtil } from './components/componentUtil';
+export { ComponentUtil, _combineAttributesAndGridOptions, _processOnChange } from './components/componentUtil';
 export { ComponentSelector, AgComponentSelector, RefPlaceholder, ComponentEvent } from './widgets/component';
 
 export { UserComponentRegistry } from './components/framework/userComponentRegistry';

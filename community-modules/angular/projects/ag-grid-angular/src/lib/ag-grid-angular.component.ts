@@ -172,8 +172,8 @@ import type {
     VirtualRowRemovedEvent,
 } from '@ag-grid-community/core';
 // @END_IMPORTS@
-import { AgPromise, ComponentUtil, createGrid } from '@ag-grid-community/core';
 import type { GridApi, GridOptions, GridParams, Module } from '@ag-grid-community/core';
+import { AgPromise, _combineAttributesAndGridOptions, _processOnChange, createGrid } from '@ag-grid-community/core';
 import {
     AfterViewInit,
     Component,
@@ -228,7 +228,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         // Run the setup outside of angular so all the event handlers that are created do not trigger change detection
         this.angularFrameworkOverrides.runOutsideAngular(() => {
             this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef, this.angularFrameworkOverrides);
-            const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this);
+            const mergedGridOps = _combineAttributesAndGridOptions(this.gridOptions, this);
 
             this.gridParams = {
                 globalEventListener: this.globalEventListener.bind(this),
@@ -261,7 +261,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
                 Object.entries(changes).forEach(([key, value]: [string, any]) => {
                     gridOptions[key as keyof GridOptions] = value.currentValue;
                 });
-                ComponentUtil.processOnChange(gridOptions, this.api);
+                _processOnChange(gridOptions, this.api);
             });
         }
     }

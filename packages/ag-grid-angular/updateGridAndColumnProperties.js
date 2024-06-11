@@ -95,7 +95,7 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
 
     if (missingEventTypes.length > 0) {
         throw new Error(
-            `The following events are missing type information: [${missingEventTypes.join()}]\n If this is a public event add it to the GridOptions interface. \n If a private event add it to ComponentUtil.EXCLUDED_INTERNAL_EVENTS.\n`
+            `The following events are missing type information: [${missingEventTypes.join()}]\n If this is a public event add it to the GridOptions interface. \n If a private event add it to INTERNAL_EVENTS.\n`
         );
     }
 
