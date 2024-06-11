@@ -104,7 +104,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         return anyNodesToggled;
     }
 
-    private overrideSelectionValue({ newValue, source }: ISetNodesSelectedParams): boolean {
+    private overrideSelectionValue(newValue: boolean, source: SelectionEventSourceType): boolean {
         const root = this.selectionCtx.getRoot();
 
         if (!isSelectionUIEvent(source)) {
@@ -115,7 +115,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     }
 
     public setNodesSelected(params: ISetNodesSelectedParams): number {
-        const { nodes, clearSelection, newValue, rangeSelect } = params;
+        const { nodes, clearSelection, newValue, rangeSelect, source } = params;
         if (nodes.length === 0) return 0;
 
         const onlyThisNode = clearSelection && newValue && !rangeSelect;
@@ -162,7 +162,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 throw new Error('AG Grid: cannot select multiple rows when using rangeSelect');
             }
             const node = nodes[0];
-            const newSelectionValue = this.overrideSelectionValue(params);
+            const newSelectionValue = this.overrideSelectionValue(newValue, source);
 
             if (this.selectionCtx.isInRange(node)) {
                 const partition = this.selectionCtx.truncate(node);

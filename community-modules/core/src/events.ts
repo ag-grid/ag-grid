@@ -146,6 +146,10 @@ export type SelectionEventSourceType =
     | 'uiSelectAllCurrentPage'
     | 'gridInitializing';
 
+/**
+ * Determines whether the selection event was generated directly by a user interacting
+ * with the UI
+ */
 export const isSelectionUIEvent = (
     source: SelectionEventSourceType
 ): source is Exclude<

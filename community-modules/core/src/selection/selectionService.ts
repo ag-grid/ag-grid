@@ -53,18 +53,18 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         return this.rowSelection === 'multiple';
     }
 
-    private overrideSelectionValue({ newValue, source }: ISetNodesSelectedParams): boolean {
-        const root = this.selectionCtx.getRoot();
-
+    private overrideSelectionValue(newValue: boolean, source: SelectionEventSourceType): boolean {
         if (!isSelectionUIEvent(source)) {
             return newValue;
         }
+
+        const root = this.selectionCtx.getRoot();
 
         return root ? root.isSelected() ?? false : true;
     }
 
     public setNodesSelected(params: ISetNodesSelectedParams): number {
-        const { newValue, clearSelection, suppressFinishActions, rangeSelect, nodes, event, source = 'api' } = params;
+        const { newValue, clearSelection, suppressFinishActions, rangeSelect, nodes, event, source } = params;
 
         if (nodes.length === 0) return 0;
 
@@ -87,7 +87,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             }
 
             const node = filteredNodes[0];
-            const newSelectionValue = this.overrideSelectionValue(params);
+            const newSelectionValue = this.overrideSelectionValue(newValue, source);
 
             if (this.selectionCtx.isInRange(node)) {
                 const partition = this.selectionCtx.truncate(node);

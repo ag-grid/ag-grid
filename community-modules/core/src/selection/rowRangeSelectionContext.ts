@@ -62,11 +62,11 @@ export class RowRangeSelectionContext {
     }
 
     /**
-     * Finds the given node in the range describe by this context. If the node exists,
-     * splits the range at that node (inclusive).
+     * Truncates the range to the given node (assumed to be within the current range).
+     * Returns nodes that remain in the current range and those that should be removed
      *
-     * @param node - Node at which to bisect the range
-     * @returns Tuple of arrays containing nodes to either side of the given node
+     * @param node - Node at which to truncate the range
+     * @returns Object of nodes to either keep or discard (i.e. deselect) from the range
      */
     public truncate(node: RowNode): { keep: RowNode[]; discard: RowNode[] } {
         const range = this.getRange();
@@ -90,6 +90,13 @@ export class RowRangeSelectionContext {
         }
     }
 
+    /**
+     * Extends the range to the given node. Returns nodes that remain in the current range
+     * and those that should be removed.
+     *
+     * @param node - Node marking the new end of the range
+     * @returns Object of nodes to either keep or discard (i.e. deselect) from the range
+     */
     public extend(node: RowNode): { keep: RowNode[]; discard: RowNode[] } {
         const newRange = this.rowModel.getNodesInRangeForSelection(this.root, node);
 
