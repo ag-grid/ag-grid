@@ -644,12 +644,6 @@ export class NavigationService extends BeanStub implements NamedBean {
                 } else if (userResult === false) {
                     return false;
                 } else {
-                    if ((userResult as any).floating) {
-                        _warnOnce(
-                            `tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`
-                        );
-                        userResult.rowPinned = (userResult as any).floating;
-                    }
                     nextPosition = {
                         rowIndex: userResult.rowIndex,
                         column: userResult.column,
@@ -802,12 +796,6 @@ export class NavigationService extends BeanStub implements NamedBean {
                 };
                 const userCell = userFunc(params);
                 if (_exists(userCell)) {
-                    if ((userCell as any).floating) {
-                        _warnOnce(
-                            `tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`
-                        );
-                        userCell.rowPinned = (userCell as any).floating;
-                    }
                     nextCell = {
                         rowPinned: userCell.rowPinned,
                         rowIndex: userCell.rowIndex,
@@ -894,7 +882,6 @@ export class NavigationService extends BeanStub implements NamedBean {
             rowPinned: cellPosition.rowPinned,
             column: cellPosition.column,
             isFullWidthCell: true,
-            floating: cellPosition.rowPinned,
             fromBelow,
         };
 

@@ -109,7 +109,6 @@ const GridExample = () => {
                         defaultColDef={defaultColDef}
                         icons={icons}
                         sideBar={sideBar}
-                        reactiveCustomComponents
                         onGridReady={onGridReady}
                         onCellValueChanged={onCellValueChanged}
                     />

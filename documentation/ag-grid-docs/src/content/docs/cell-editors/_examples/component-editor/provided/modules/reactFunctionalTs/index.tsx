@@ -70,12 +70,7 @@ const GridExample = () => {
                     'ag-theme-quartz' /** DARK MODE END **/
                 }
             >
-                <AgGridReact
-                    columnDefs={columnDefs}
-                    rowData={rowData}
-                    defaultColDef={defaultColDef}
-                    reactiveCustomComponents
-                />
+                <AgGridReact columnDefs={columnDefs} rowData={rowData} defaultColDef={defaultColDef} />
             </div>
         </div>
     );

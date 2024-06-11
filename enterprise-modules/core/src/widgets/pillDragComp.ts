@@ -28,7 +28,8 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         this.dragAndDropService = beans.dragAndDropService;
     }
 
-    private TEMPLATE /* html */ = `<span role="option">
+    private TEMPLATE = /* html */ `
+        <span role="option">
           <span data-ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
           <span data-ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
           <span data-ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>

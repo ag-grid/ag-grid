@@ -112,7 +112,6 @@ const GridExample = () => {
                     getMainMenuItems={getMainMenuItems}
                     getContextMenuItems={getContextMenuItems}
                     suppressMenuHide
-                    reactiveCustomComponents
                     onGridReady={onGridReady}
                 />
             </div>

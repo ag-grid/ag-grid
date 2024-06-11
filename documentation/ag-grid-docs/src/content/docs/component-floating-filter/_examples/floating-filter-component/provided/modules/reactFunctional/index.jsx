@@ -89,7 +89,6 @@ const GridExample = () => {
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                         alwaysShowVerticalScroll
-                        reactiveCustomComponents
                         onGridReady={onGridReady}
                     />
                 </div>
