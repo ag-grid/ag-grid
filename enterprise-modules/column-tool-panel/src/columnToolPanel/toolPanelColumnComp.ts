@@ -1,4 +1,5 @@
 import type {
+    AgCheckbox,
     AgColumn,
     BeanCollection,
     ColumnModel,
@@ -11,7 +12,7 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    AgCheckbox,
+    AgCheckboxSelector,
     Component,
     DragSourceType,
     KeyCode,
@@ -66,7 +67,7 @@ export class ToolPanelColumnComp extends Component {
             <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
             <span class="ag-column-select-column-label" data-ref="eLabel"></span>
         </div>`,
-            [AgCheckbox]
+            [AgCheckboxSelector]
         );
         this.eDragHandle = _createIconNoSpan('columnDrag', this.gos)!;
         this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-drag-handle');

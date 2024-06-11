@@ -1,4 +1,4 @@
-import type { AgComponentSelector, AgInputTextFieldParams, BeanCollection } from '@ag-grid-community/core';
+import type { AgInputTextFieldParams, BeanCollection, ComponentSelector } from '@ag-grid-community/core';
 import { AgInputTextField, RefPlaceholder } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
 
@@ -14,8 +14,6 @@ const TEMPLATE = /* html */ `
     </div>`;
 export type AgColorInputEvent = 'colorChanged';
 export class AgColorInput extends AgInputTextField<AgInputTextFieldParams, AgColorInputEvent> {
-    static override selector: AgComponentSelector = 'AG-COLOR-INPUT';
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -47,3 +45,8 @@ export class AgColorInput extends AgInputTextField<AgInputTextFieldParams, AgCol
         this.addManagedListeners(this, { colorChanged: () => callback(_Util.Color.fromString(this.value!)) });
     }
 }
+
+export const AgColorInputSelector: ComponentSelector = {
+    selector: 'AG-COLOR-INPUT',
+    component: AgColorInput,
+};

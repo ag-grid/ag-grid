@@ -2,7 +2,8 @@ import type { ColumnNameService } from '../../../columns/columnNameService';
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { IFilter } from '../../../interfaces/iFilter';
-import { AgInputTextField } from '../../../widgets/agInputTextField';
+import type { AgInputTextField } from '../../../widgets/agInputTextField';
+import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 import type { IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParent } from '../floatingFilter';
 
@@ -26,7 +27,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
             <div class="ag-floating-filter-input" role="presentation">
                 <ag-input-text-field data-ref="eFloatingFilterText"></ag-input-text-field>
             </div>`,
-            [AgInputTextField]
+            [AgInputTextFieldSelector]
         );
     }
 

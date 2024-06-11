@@ -1,10 +1,11 @@
 import type { BeanCollection, ChartOptionsChanged } from '@ag-grid-community/core';
 import { Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 import type { AgChartPaddingOptions, AgChartThemeOverrides } from 'ag-charts-community';
 
-import { AgSlider } from '../../../../../widgets/agSlider';
+import type { AgSlider } from '../../../../../widgets/agSlider';
+import { AgSliderSelector } from '../../../../../widgets/agSlider';
 import type { ChartController } from '../../../chartController';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartThemeOverridesSeriesType } from '../../../utils/seriesTypeMapper';
@@ -45,7 +46,7 @@ export class PaddingPanel extends Component {
         const getSliderParams = (property: keyof AgChartPaddingOptions) =>
             this.chartMenuUtils.getDefaultSliderParams('padding.' + property, property, 200);
 
-        this.setTemplate(PaddingPanel.TEMPLATE, [AgGroupComponent, AgSlider], {
+        this.setTemplate(PaddingPanel.TEMPLATE, [AgGroupComponentSelector, AgSliderSelector], {
             chartPaddingGroup: chartPaddingGroupParams,
             paddingTopSlider: getSliderParams('top'),
             paddingRightSlider: getSliderParams('right'),

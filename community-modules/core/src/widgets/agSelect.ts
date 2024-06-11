@@ -4,7 +4,7 @@ import { _setAriaControls } from '../utils/aria';
 import type { ListOption } from './agList';
 import { AgList } from './agList';
 import { AgPickerField } from './agPickerField';
-import type { AgComponentSelector } from './component';
+import type { ComponentSelector } from './component';
 
 export interface AgSelectParams<TValue = string>
     extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
@@ -21,8 +21,6 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
     AgSelectEvent,
     AgList<AgSelectEvent, TValue>
 > {
-    static readonly selector: AgComponentSelector = 'AG-SELECT';
-
     protected listComponent: AgList<AgSelectEvent, TValue> | undefined;
 
     constructor(config?: AgSelectParams<TValue>) {
@@ -190,3 +188,8 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
         super.destroy();
     }
 }
+
+export const AgSelectSelector: ComponentSelector = {
+    selector: 'AG-SELECT',
+    component: AgSelect,
+};

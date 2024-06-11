@@ -1,21 +1,21 @@
-import type { AgSelectParams, BeanCollection, ListOption } from '@ag-grid-community/core';
+import type { AgSelect, AgSelectParams, BeanCollection, ListOption } from '@ag-grid-community/core';
 import {
     AgCheckbox,
-    AgSelect,
+    AgSelectSelector,
     Component,
     RefPlaceholder,
     _removeFromParent,
     _setDisplayed,
 } from '@ag-grid-community/core';
-import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import type { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 import type { AgCartesianAxisOptions } from 'ag-charts-community';
 
 import { AgAngleSelect } from '../../../../../widgets/agAngleSelect';
 import type { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
-import { AgColorPicker } from '../../../../../widgets/agColorPicker';
+import { AgColorPickerSelector } from '../../../../../widgets/agColorPicker';
 import type { AgSliderParams } from '../../../../../widgets/agSlider';
-import { AgSlider } from '../../../../../widgets/agSlider';
+import { AgSlider, AgSliderSelector } from '../../../../../widgets/agSlider';
 import type { ChartOptionsProxy } from '../../../services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
@@ -96,14 +96,18 @@ export class CartesianAxisPanel extends Component {
         const axisColorInputParams = this.getAxisColorInputParams(chartAxisThemeOverrides);
         const axisLineWidthSliderParams = this.getAxisLineWidthSliderParams(chartAxisThemeOverrides);
 
-        this.setTemplate(CartesianAxisPanel.TEMPLATE, [AgGroupComponent, AgSelect, AgColorPicker, AgSlider], {
-            axisGroup: axisGroupParams,
-            axisTypeSelect: axisTypeSelectParams ?? undefined,
-            axisPositionSelect: axisPositionSelectParams ?? undefined,
-            axisTimeFormatSelect: axisTimeFormatSelectParams ?? undefined,
-            axisColorInput: axisColorInputParams,
-            axisLineWidthSlider: axisLineWidthSliderParams,
-        });
+        this.setTemplate(
+            CartesianAxisPanel.TEMPLATE,
+            [AgGroupComponentSelector, AgSelectSelector, AgColorPickerSelector, AgSliderSelector],
+            {
+                axisGroup: axisGroupParams,
+                axisTypeSelect: axisTypeSelectParams ?? undefined,
+                axisPositionSelect: axisPositionSelectParams ?? undefined,
+                axisTimeFormatSelect: axisTimeFormatSelectParams ?? undefined,
+                axisColorInput: axisColorInputParams,
+                axisLineWidthSlider: axisLineWidthSliderParams,
+            }
+        );
         registerGroupComponent(this.axisGroup);
 
         this.axisTypeSelect.setDisplayed(!!axisTypeSelectParams.options?.length);

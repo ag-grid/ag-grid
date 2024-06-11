@@ -2,9 +2,6 @@ import type { Module } from '@ag-grid-community/core';
 import { ModuleNames } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
-import { AgHorizontalResize } from './sideBar/agHorizontalResize';
-import { AgSideBar } from './sideBar/agSideBar';
-import { AgSideBarButtons } from './sideBar/agSideBarButtons';
 import { ToolPanelColDefService } from './sideBar/common/toolPanelColDefService';
 import {
     closeToolPanel,
@@ -25,7 +22,6 @@ export const SideBarCoreModule: Module = {
     version: VERSION,
     moduleName: `${ModuleNames.SideBarModule}-core`,
     beans: [ToolPanelColDefService, SideBarService],
-    agStackComponents: [AgHorizontalResize, AgSideBar, AgSideBarButtons],
     dependantModules: [EnterpriseCoreModule],
 };
 

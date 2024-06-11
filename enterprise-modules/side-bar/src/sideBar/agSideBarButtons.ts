@@ -1,7 +1,7 @@
 import type {
-    AgComponentSelector,
     AgEvent,
     BeanCollection,
+    ComponentSelector,
     FocusService,
     ToolPanelDef,
     VisibleColsService,
@@ -23,8 +23,6 @@ export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
         this.focusService = beans.focusService;
         this.visibleColsService = beans.visibleColsService;
     }
-
-    static readonly selector: AgComponentSelector = 'AG-SIDE-BAR-BUTTONS';
 
     private buttonComps: SideBarButtonComp[] = [];
 
@@ -80,3 +78,8 @@ export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
         super.destroy();
     }
 }
+
+export const AgSideBarButtonsSelector: ComponentSelector = {
+    selector: 'AG-SIDE-BAR-BUTTONS',
+    component: AgSideBarButtons,
+};

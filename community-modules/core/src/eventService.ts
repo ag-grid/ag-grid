@@ -3,8 +3,8 @@ import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { AgEventType } from './eventTypes';
 import type { AgEvent, AgEventListener, AgGlobalEventListener } from './events';
+import type { IEventEmitter } from './interfaces/iEventEmitter';
 import { LocalEventService } from './localEventService';
-import type { IEventEmitter } from './main';
 
 export class EventService extends BeanStub<AgEventType> implements NamedBean, IEventEmitter<AgEventType> {
     beanName = 'eventService' as const;

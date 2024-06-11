@@ -1,6 +1,6 @@
 import type { RichSelectParams } from '@ag-grid-community/core';
 import {
-    AgInputTextField,
+    AgInputTextFieldSelector,
     _setAriaLabel,
     _setAriaLabelledBy,
     _stopPropagationForAgGrid,
@@ -28,7 +28,7 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
                         <div data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
                     </div>
                 </div>`,
-            agComponents: [AgInputTextField],
+            agComponents: [AgInputTextFieldSelector],
         });
     }
 

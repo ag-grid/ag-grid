@@ -1,11 +1,11 @@
 import type { BeanCollection } from '@ag-grid-community/core';
-import { AgSelect, Component } from '@ag-grid-community/core';
+import { AgSelectSelector, Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 
-import { AgSlider } from '../../../../../widgets/agSlider';
+import { AgSliderSelector } from '../../../../../widgets/agSlider';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
-import { type ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import { getShapeSelectOptions } from './seriesUtils';
 
 export class MarkersPanel extends Component {
@@ -36,7 +36,7 @@ export class MarkersPanel extends Component {
             suppressOpenCloseIcons: true,
         });
 
-        this.setTemplate(MarkersPanel.TEMPLATE, [AgGroupComponent, AgSelect, AgSlider], {
+        this.setTemplate(MarkersPanel.TEMPLATE, [AgGroupComponentSelector, AgSelectSelector, AgSliderSelector], {
             seriesMarkersGroup: seriesMarkersGroupParams,
             seriesMarkerShapeSelect: this.chartMenuUtils.getDefaultSelectParams(
                 'marker.shape',
