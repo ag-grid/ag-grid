@@ -160,6 +160,8 @@ export class Component<TLocalEvent extends string = ComponentEvent>
             const current = (this as any)[elementRef];
             if (current === RefPlaceholder) {
                 (this as any)[elementRef] = newComponent ?? element;
+                // Clear all the data-ref attributes from the component
+                this.addDestroyFunc(() => ((this as any)[elementRef] = undefined));
             } else {
                 // Don't warn if the data-ref is used for passing parameters to the component
                 const usedAsParamRef = paramsMap && paramsMap[elementRef];
@@ -236,6 +238,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
             newComponent.setParentComponent(this as Component);
 
             this.createBean(newComponent, null, afterPreCreateCallback);
+            this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
         } else if (isAgGridComponent) {
             _warnOnce(`Missing selector: ${key}`);
         }
@@ -253,7 +256,6 @@ export class Component<TLocalEvent extends string = ComponentEvent>
         const eComponent = newComponent.getGui();
         parentNode.replaceChild(eComponent, childNode);
         parentNode.insertBefore(document.createComment(childNode.nodeName), eComponent);
-        this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
     }
 
     protected activateTabIndex(elements?: Element[]): void {
