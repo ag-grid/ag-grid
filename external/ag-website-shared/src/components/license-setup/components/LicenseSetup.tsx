@@ -2,6 +2,7 @@ import type { Framework, ImportType } from '@ag-grid-types';
 import Idea from '@ag-website-shared/components/alert/Idea';
 import Note from '@ag-website-shared/components/alert/Note';
 import Warning from '@ag-website-shared/components/alert/Warning';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Snippet } from '@components/snippet/Snippet';
 import { InfoTooltip } from '@components/theme-builder/components/general/Tooltip';
 import { FRAMEWORK_DISPLAY_TEXT } from '@constants';
@@ -326,15 +327,44 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                     {selectedSeedRepos.length ? (
                         <>
                             <p>Here are some seed code repositories to get you started:</p>
-                            <ul>
-                                {selectedSeedRepos.map(({ name, url, importType }) => {
-                                    return (
-                                        <li key={url}>
-                                            <a href={url}>{name}</a> ({importType})
-                                        </li>
-                                    );
-                                })}
-                            </ul>
+
+                            <table className={styles.reposTable}>
+                                <thead>
+                                    <tr>
+                                        <th>Github Repo</th>
+                                        <th>Framework</th>
+                                        <th>Development Environment</th>
+                                        <th>Import Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {selectedSeedRepos.map(({ name, url, framework, devEnviroment, importType }) => {
+                                        return (
+                                            <tr key={url}>
+                                                <td>
+                                                    <a
+                                                        className={classnames(styles.repoButton, 'button-secondary')}
+                                                        href={url}
+                                                    >
+                                                        <Icon name="github" />
+                                                        {name}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <img
+                                                        className={styles.frameworkLogo}
+                                                        src={urlWithBaseUrl(`/images/fw-logos/${framework}.svg`)}
+                                                        alt={framework}
+                                                    />{' '}
+                                                    {framework}
+                                                </td>
+                                                <td>{devEnviroment}</td>
+                                                <td>{importType}</td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
                         </>
                     ) : undefined}
                 </div>

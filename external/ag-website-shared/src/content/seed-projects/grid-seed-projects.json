@@ -1,6 +1,7 @@
 [
     {
         "name": "Angular CLI",
+        "devEnviroment": "Angular CLI",
         "framework": "angular",
         "importType": "modules",
         "licenseType": "enterprise-bundle",
@@ -8,48 +9,55 @@
     },
     {
         "name": "Create React App (CRA)",
+        "devEnviroment": "Create React App (CRA)",
         "framework": "react",
         "importType": "modules",
         "licenseType": "enterprise-bundle",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise-bundle/modules/create-react-app"
     },
     {
-        "name": "Nuxt / Vue3",
+        "name": "Nuxt - Vue3",
+        "devEnviroment": "Nuxt",
         "framework": "vue",
         "importType": "modules",
         "licenseType": "enterprise-bundle",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise-bundle/modules/nuxt-vue3"
     },
     {
-        "name": "Vite / React",
+        "name": "Vite - React",
+        "devEnviroment": "Vite",
         "framework": "react",
         "importType": "modules",
         "licenseType": "enterprise-bundle",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise-bundle/modules/vite-react"
     },
     {
-        "name": "Vite / TypeScript",
+        "name": "Vite - TypeScript",
+        "devEnviroment": "Vite",
         "framework": "javascript",
         "importType": "modules",
         "licenseType": "enterprise-bundle",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise-bundle/modules/vite-typescript"
     },
     {
-        "name": "Vite / Vue 3",
+        "name": "Vite - Vue 3",
+        "devEnviroment": "Vite",
         "framework": "vue",
         "importType": "modules",
         "licenseType": "enterprise-bundle",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise-bundle/modules/vite-vue3"
     },
     {
-        "name": "Webpack 5 / JavaScript",
+        "name": "Webpack 5 - JavaScript",
+        "devEnviroment": "Webpack 5",
         "framework": "javascript",
         "importType": "modules",
         "licenseType": "enterprise-bundle",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise-bundle/modules/webpack5-javascript"
     },
     {
-        "name": "Webpack 5 / TypeScript",
+        "name": "Webpack 5 - TypeScript",
+        "devEnviroment": "Webpack 5",
         "framework": "javascript",
         "importType": "modules",
         "licenseType": "enterprise-bundle",
@@ -57,6 +65,7 @@
     },
     {
         "name": "Angular CLI",
+        "devEnviroment": "Angular CLI",
         "framework": "angular",
         "importType": "packages",
         "licenseType": "enterprise-bundle",
@@ -64,48 +73,55 @@
     },
     {
         "name": "Create React App (CRA)",
+        "devEnviroment": "Create React App (CRA)",
         "framework": "react",
         "importType": "packages",
         "licenseType": "enterprise-bundle",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise-bundle/packages/create-react-app"
     },
     {
-        "name": "Nuxt / Vue3",
+        "name": "Nuxt - Vue3",
+        "devEnviroment": "Nuxt",
         "framework": "vue",
         "importType": "packages",
         "licenseType": "enterprise-bundle",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise-bundle/packages/nuxt-vue3"
     },
     {
-        "name": "Vite / React",
+        "name": "Vite - React",
+        "devEnviroment": "Vite",
         "framework": "react",
         "importType": "packages",
         "licenseType": "enterprise-bundle",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise-bundle/packages/vite-react"
     },
     {
-        "name": "Vite / TypeScript",
+        "name": "Vite - TypeScript",
+        "devEnviroment": "Vite",
         "framework": "javascript",
         "importType": "packages",
         "licenseType": "enterprise-bundle",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise-bundle/packages/vite-typescript"
     },
     {
-        "name": "Vite / Vue 3",
+        "name": "Vite - Vue 3",
+        "devEnviroment": "Vite",
         "framework": "vue",
         "importType": "packages",
         "licenseType": "enterprise-bundle",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise-bundle/packages/vite-vue3"
     },
     {
-        "name": "Webpack 5 / JavaScript",
+        "name": "Webpack 5 - JavaScript",
+        "devEnviroment": "Webpack 5",
         "framework": "javascript",
         "importType": "packages",
         "licenseType": "enterprise-bundle",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise-bundle/packages/webpack5-javascript"
     },
     {
-        "name": "Webpack 5 / TypeScript",
+        "name": "Webpack 5 - TypeScript",
+        "devEnviroment": "Webpack 5",
         "framework": "javascript",
         "importType": "packages",
         "licenseType": "enterprise-bundle",
@@ -113,6 +129,7 @@
     },
     {
         "name": "Angular CLI",
+        "devEnviroment": "Angular CLI",
         "framework": "angular",
         "importType": "modules",
         "licenseType": "enterprise",
@@ -120,48 +137,55 @@
     },
     {
         "name": "Create React App (CRA)",
+        "devEnviroment": "Create React App (CRA)",
         "framework": "react",
         "importType": "modules",
         "licenseType": "enterprise",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/modules/create-react-app"
     },
     {
-        "name": "Nuxt / Vue3",
+        "name": "Nuxt - Vue3",
+        "devEnviroment": "Nuxt",
         "framework": "vue",
         "importType": "modules",
         "licenseType": "enterprise",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/modules/nuxt-vue3"
     },
     {
-        "name": "Vite / React",
+        "name": "Vite - React",
+        "devEnviroment": "Vite",
         "framework": "react",
         "importType": "modules",
         "licenseType": "enterprise",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/modules/vite-react"
     },
     {
-        "name": "Vite / TypeScript",
+        "name": "Vite - TypeScript",
+        "devEnviroment": "Vite",
         "framework": "javascript",
         "importType": "modules",
         "licenseType": "enterprise",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/modules/vite-typescript"
     },
     {
-        "name": "Vite / Vue 3",
+        "name": "Vite - Vue 3",
+        "devEnviroment": "Vite",
         "framework": "vue",
         "importType": "modules",
         "licenseType": "enterprise",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/modules/vite-vue3"
     },
     {
-        "name": "Webpack 5 / JavaScript",
+        "name": "Webpack 5 - JavaScript",
+        "devEnviroment": "Webpack 5",
         "framework": "javascript",
         "importType": "modules",
         "licenseType": "enterprise",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/modules/webpack5-javascript"
     },
     {
-        "name": "Webpack 5 / TypeScript",
+        "name": "Webpack 5 - TypeScript",
+        "devEnviroment": "Webpack 5",
         "framework": "javascript",
         "importType": "modules",
         "licenseType": "enterprise",
@@ -169,6 +193,7 @@
     },
     {
         "name": "Angular CLI",
+        "devEnviroment": "Angular CLI",
         "framework": "angular",
         "importType": "packages",
         "licenseType": "enterprise",
@@ -176,48 +201,55 @@
     },
     {
         "name": "Create React App (CRA)",
+        "devEnviroment": "Create React App (CRA)",
         "framework": "react",
         "importType": "packages",
         "licenseType": "enterprise",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/create-react-app"
     },
     {
-        "name": "Nuxt / Vue3",
+        "name": "Nuxt - Vue3",
+        "devEnviroment": "Nuxt",
         "framework": "vue",
         "importType": "packages",
         "licenseType": "enterprise",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/nuxt-vue3"
     },
     {
-        "name": "Vite / React",
+        "name": "Vite - React",
+        "devEnviroment": "Vite",
         "framework": "react",
         "importType": "packages",
         "licenseType": "enterprise",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/vite-react"
     },
     {
-        "name": "Vite / TypeScript",
+        "name": "Vite - TypeScript",
+        "devEnviroment": "Vite",
         "framework": "javascript",
         "importType": "packages",
         "licenseType": "enterprise",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/vite-typescript"
     },
     {
-        "name": "Vite / Vue 3",
+        "name": "Vite - Vue 3",
+        "devEnviroment": "Vite",
         "framework": "vue",
         "importType": "packages",
         "licenseType": "enterprise",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/vite-vue3"
     },
     {
-        "name": "Webpack 5 / JavaScript",
+        "name": "Webpack 5 - JavaScript",
+        "devEnviroment": "Webpack 5",
         "framework": "javascript",
         "importType": "packages",
         "licenseType": "enterprise",
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/webpack5-javascript"
     },
     {
-        "name": "Webpack 5 / TypeScript",
+        "name": "Webpack 5 - TypeScript",
+        "devEnviroment": "Webpack 5",
         "framework": "javascript",
         "importType": "packages",
         "licenseType": "enterprise",

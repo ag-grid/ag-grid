@@ -113,3 +113,29 @@
         margin-top: $spacing-size-12;
     }
 }
+
+.reposTable {
+    th:first-child,
+    td:first-child {
+        padding-left: 0;
+    }
+
+    th:last-child,
+    td:last-child {
+        padding-right: 0;
+    }
+
+    td {
+        vertical-align: middle;
+        text-transform: capitalize;
+    }
+}
+
+.repoButton {
+    > svg:global(.icon) {
+        --icon-size: 1.5em;
+
+        position: relative;
+        right: 4px;
+    }
+}
