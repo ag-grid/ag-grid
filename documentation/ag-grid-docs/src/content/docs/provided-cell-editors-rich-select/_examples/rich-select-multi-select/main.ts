@@ -26,6 +26,12 @@ const valueFormatter = (params: ValueFormatterParams) => {
 };
 
 const valueParser = (params: ValueParserParams) => {
+    const { newValue } = params;
+
+    if (newValue == null || newValue === '') {
+        return null;
+    }
+
     return params.newValue.split(',');
 };
 
