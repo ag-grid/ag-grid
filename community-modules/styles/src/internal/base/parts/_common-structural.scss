@@ -1780,7 +1780,7 @@
     .ag-spectrum-color {
         flex: 1 1 auto;
         position: relative;
-        overflow: hidden;
+        overflow: visible;
         cursor: default;
     }
 
@@ -1822,19 +1822,30 @@
         height: 100%;
     }
 
+    .ag-spectrum-alpha {
+        --ag-spectrum-alpha-background-checked: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><rect x="0" y="0" width="4" height="4" fill="%23fff"/><path d="M0 0H2V4H4V2H0Z" fill="%23b2b2b2"/></svg>');
+    }
+
     .ag-spectrum-alpha-background {
-        background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgb(0, 0, 0));
+        background:
+            linear-gradient(to right, var(--ag-spectrum-alpha-color-from), var(--ag-spectrum-alpha-color-to)),
+            var(--ag-spectrum-alpha-background-checked) top left / 4px 4px;
         width: 100%;
         height: 100%;
     }
 
     .ag-spectrum-tool {
         cursor: pointer;
+        position: relative;
     }
 
     .ag-spectrum-slider {
         position: absolute;
         pointer-events: none;
+    }
+
+    .ag-spectrum-alpha .ag-spectrum-slider {
+        background: linear-gradient(to bottom, var(--ag-spectrum-alpha-color), var(--ag-spectrum-alpha-color)) white;
     }
 
     .ag-recent-colors {

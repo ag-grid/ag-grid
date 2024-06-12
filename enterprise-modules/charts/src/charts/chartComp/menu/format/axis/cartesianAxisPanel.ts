@@ -386,7 +386,7 @@ export class CartesianAxisPanel extends Component {
                 { expression: 'label.rotation', value: autoRotate ? undefined : this.prevRotation },
             ]);
 
-            rotationComp.setDisabled(autoRotate);
+            rotationComp.setDisplayed(!autoRotate);
         };
 
         const rotation = getLabelRotationValue();
@@ -401,7 +401,7 @@ export class CartesianAxisPanel extends Component {
         );
 
         // init rotation comp state
-        rotationComp.setDisabled(autoRotate);
+        rotationComp.setDisplayed(!autoRotate);
 
         return autoRotateCheckbox;
     }
