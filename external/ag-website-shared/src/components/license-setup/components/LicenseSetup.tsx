@@ -158,6 +158,17 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                         {errors.v2License}. <EmailSales />
                     </Warning>
                 )}
+
+                {/* TODO change "AG Grid" to grid/charts based on site */}
+                {!hasLicense && (
+                    <Note>
+                        Don't yet have an AG Grid licence yet? Visit the{' '}
+                        <a href={urlWithBaseUrl('/license-pricing')}>Pricing Page</a> to discover the power of AG Grid
+                        enterprise and purchase a licence. Or email{' '}
+                        <a href="mailto:info@ag-grid.com">info@ag-grid.com</a> to start a conversation or request a
+                    </Note>
+                )}
+
                 <div className={styles.licenseData}>
                     <div>
                         <label>Framework</label>
