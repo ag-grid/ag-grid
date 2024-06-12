@@ -115,6 +115,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             headerName: 'Employee',
             width: 330,
             pinned: 'left',
+            sort: 'asc',
             cellRendererParams: {
                 suppressCount: true,
                 innerRenderer: EmployeeCellRenderer,
