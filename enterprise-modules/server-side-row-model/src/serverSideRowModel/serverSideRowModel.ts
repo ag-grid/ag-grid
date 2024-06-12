@@ -33,7 +33,6 @@ import {
     NumberSequence,
     RowNode,
     _debounce,
-    _exists,
     _jsonEquals,
     _warnOnce,
 } from '@ag-grid-community/core';
@@ -658,18 +657,10 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode | null, lastInRange: RowNode): RowNode[] {
-        if (!_exists(firstInRange)) {
-            return [];
-        }
-
-        if (!lastInRange) {
-            return [firstInRange];
-        }
-
-        const startIndex = firstInRange.rowIndex;
+        const startIndex = firstInRange ? firstInRange.rowIndex : 0;
         const endIndex = lastInRange.rowIndex;
         if (startIndex === null || endIndex === null) {
-            return [firstInRange];
+            return firstInRange ? [firstInRange] : [];
         }
 
         const nodeRange: RowNode[] = [];
@@ -687,7 +678,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
         // don't allow range selection if we don't have the full range of rows
         if (nodeRange.length !== lastIndex - firstIndex + 1) {
-            return [firstInRange];
+            return firstInRange ? [firstInRange] : [];
         }
 
         return nodeRange;
