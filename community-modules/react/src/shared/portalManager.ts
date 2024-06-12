@@ -1,4 +1,4 @@
-import { _errorOnce } from 'community-modules/core/dist/types/src/main';
+import { _errorOnce } from '@ag-grid-community/core';
 import type { ReactPortal } from 'react';
 
 import type { ReactComponent } from './reactComponent';

@@ -14,6 +14,12 @@ export default [
             '@typescript-eslint/no-explicit-any': 'off',
             '@typescript-eslint/consistent-type-imports': 'error',
             '@typescript-eslint/no-this-alias': 'off',
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: ['community-modules/*', 'enterprise-modules/*', '*/main'],
+                },
+            ],
         },
     },
 ];
