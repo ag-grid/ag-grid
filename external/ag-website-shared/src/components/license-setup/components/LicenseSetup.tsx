@@ -21,6 +21,7 @@ interface SeedRepo {
     framework: Framework;
     importType: ImportType;
     licenseType: 'enterprise' | 'enterprise-bundle';
+    devEnvironment: string;
     url: string;
 }
 
@@ -343,7 +344,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {selectedSeedRepos.map(({ name, url, framework, devEnviroment, importType }) => {
+                                    {selectedSeedRepos.map(({ name, url, framework, devEnvironment, importType }) => {
                                         return (
                                             <tr key={url}>
                                                 <td>
@@ -363,7 +364,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                                                     />{' '}
                                                     {framework}
                                                 </td>
-                                                <td>{devEnviroment}</td>
+                                                <td>{devEnvironment}</td>
                                                 <td>{importType}</td>
                                             </tr>
                                         );

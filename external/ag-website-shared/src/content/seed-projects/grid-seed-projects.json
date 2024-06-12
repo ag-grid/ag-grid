@@ -1,7 +1,7 @@
 [
     {
         "name": "Angular CLI",
-        "devEnviroment": "Angular CLI",
+        "devEnvironment": "Angular CLI",
         "framework": "angular",
         "importType": "modules",
         "licenseType": "enterprise-bundle",
@@ -9,7 +9,7 @@
     },
     {
         "name": "Create React App (CRA)",
-        "devEnviroment": "Create React App (CRA)",
+        "devEnvironment": "Create React App (CRA)",
         "framework": "react",
         "importType": "modules",
         "licenseType": "enterprise-bundle",
@@ -17,7 +17,7 @@
     },
     {
         "name": "Nuxt - Vue3",
-        "devEnviroment": "Nuxt",
+        "devEnvironment": "Nuxt",
         "framework": "vue",
         "importType": "modules",
         "licenseType": "enterprise-bundle",
@@ -25,7 +25,7 @@
     },
     {
         "name": "Vite - React",
-        "devEnviroment": "Vite",
+        "devEnvironment": "Vite",
         "framework": "react",
         "importType": "modules",
         "licenseType": "enterprise-bundle",
@@ -33,7 +33,7 @@
     },
     {
         "name": "Vite - TypeScript",
-        "devEnviroment": "Vite",
+        "devEnvironment": "Vite",
         "framework": "javascript",
         "importType": "modules",
         "licenseType": "enterprise-bundle",
@@ -41,7 +41,7 @@
     },
     {
         "name": "Vite - Vue 3",
-        "devEnviroment": "Vite",
+        "devEnvironment": "Vite",
         "framework": "vue",
         "importType": "modules",
         "licenseType": "enterprise-bundle",
@@ -49,7 +49,7 @@
     },
     {
         "name": "Webpack 5 - JavaScript",
-        "devEnviroment": "Webpack 5",
+        "devEnvironment": "Webpack 5",
         "framework": "javascript",
         "importType": "modules",
         "licenseType": "enterprise-bundle",
@@ -57,7 +57,7 @@
     },
     {
         "name": "Webpack 5 - TypeScript",
-        "devEnviroment": "Webpack 5",
+        "devEnvironment": "Webpack 5",
         "framework": "javascript",
         "importType": "modules",
         "licenseType": "enterprise-bundle",
@@ -65,7 +65,7 @@
     },
     {
         "name": "Angular CLI",
-        "devEnviroment": "Angular CLI",
+        "devEnvironment": "Angular CLI",
         "framework": "angular",
         "importType": "packages",
         "licenseType": "enterprise-bundle",
@@ -73,7 +73,7 @@
     },
     {
         "name": "Create React App (CRA)",
-        "devEnviroment": "Create React App (CRA)",
+        "devEnvironment": "Create React App (CRA)",
         "framework": "react",
         "importType": "packages",
         "licenseType": "enterprise-bundle",
@@ -81,7 +81,7 @@
     },
     {
         "name": "Nuxt - Vue3",
-        "devEnviroment": "Nuxt",
+        "devEnvironment": "Nuxt",
         "framework": "vue",
         "importType": "packages",
         "licenseType": "enterprise-bundle",
@@ -89,7 +89,7 @@
     },
     {
         "name": "Vite - React",
-        "devEnviroment": "Vite",
+        "devEnvironment": "Vite",
         "framework": "react",
         "importType": "packages",
         "licenseType": "enterprise-bundle",
@@ -97,7 +97,7 @@
     },
     {
         "name": "Vite - TypeScript",
-        "devEnviroment": "Vite",
+        "devEnvironment": "Vite",
         "framework": "javascript",
         "importType": "packages",
         "licenseType": "enterprise-bundle",
@@ -105,7 +105,7 @@
     },
     {
         "name": "Vite - Vue 3",
-        "devEnviroment": "Vite",
+        "devEnvironment": "Vite",
         "framework": "vue",
         "importType": "packages",
         "licenseType": "enterprise-bundle",
@@ -113,7 +113,7 @@
     },
     {
         "name": "Webpack 5 - JavaScript",
-        "devEnviroment": "Webpack 5",
+        "devEnvironment": "Webpack 5",
         "framework": "javascript",
         "importType": "packages",
         "licenseType": "enterprise-bundle",
@@ -121,7 +121,7 @@
     },
     {
         "name": "Webpack 5 - TypeScript",
-        "devEnviroment": "Webpack 5",
+        "devEnvironment": "Webpack 5",
         "framework": "javascript",
         "importType": "packages",
         "licenseType": "enterprise-bundle",
@@ -129,7 +129,7 @@
     },
     {
         "name": "Angular CLI",
-        "devEnviroment": "Angular CLI",
+        "devEnvironment": "Angular CLI",
         "framework": "angular",
         "importType": "modules",
         "licenseType": "enterprise",
@@ -137,7 +137,7 @@
     },
     {
         "name": "Create React App (CRA)",
-        "devEnviroment": "Create React App (CRA)",
+        "devEnvironment": "Create React App (CRA)",
         "framework": "react",
         "importType": "modules",
         "licenseType": "enterprise",
@@ -145,7 +145,7 @@
     },
     {
         "name": "Nuxt - Vue3",
-        "devEnviroment": "Nuxt",
+        "devEnvironment": "Nuxt",
         "framework": "vue",
         "importType": "modules",
         "licenseType": "enterprise",
@@ -153,7 +153,7 @@
     },
     {
         "name": "Vite - React",
-        "devEnviroment": "Vite",
+        "devEnvironment": "Vite",
         "framework": "react",
         "importType": "modules",
         "licenseType": "enterprise",
@@ -161,7 +161,7 @@
     },
     {
         "name": "Vite - TypeScript",
-        "devEnviroment": "Vite",
+        "devEnvironment": "Vite",
         "framework": "javascript",
         "importType": "modules",
         "licenseType": "enterprise",
@@ -169,7 +169,7 @@
     },
     {
         "name": "Vite - Vue 3",
-        "devEnviroment": "Vite",
+        "devEnvironment": "Vite",
         "framework": "vue",
         "importType": "modules",
         "licenseType": "enterprise",
@@ -177,7 +177,7 @@
     },
     {
         "name": "Webpack 5 - JavaScript",
-        "devEnviroment": "Webpack 5",
+        "devEnvironment": "Webpack 5",
         "framework": "javascript",
         "importType": "modules",
         "licenseType": "enterprise",
@@ -185,7 +185,7 @@
     },
     {
         "name": "Webpack 5 - TypeScript",
-        "devEnviroment": "Webpack 5",
+        "devEnvironment": "Webpack 5",
         "framework": "javascript",
         "importType": "modules",
         "licenseType": "enterprise",
@@ -193,7 +193,7 @@
     },
     {
         "name": "Angular CLI",
-        "devEnviroment": "Angular CLI",
+        "devEnvironment": "Angular CLI",
         "framework": "angular",
         "importType": "packages",
         "licenseType": "enterprise",
@@ -201,7 +201,7 @@
     },
     {
         "name": "Create React App (CRA)",
-        "devEnviroment": "Create React App (CRA)",
+        "devEnvironment": "Create React App (CRA)",
         "framework": "react",
         "importType": "packages",
         "licenseType": "enterprise",
@@ -209,7 +209,7 @@
     },
     {
         "name": "Nuxt - Vue3",
-        "devEnviroment": "Nuxt",
+        "devEnvironment": "Nuxt",
         "framework": "vue",
         "importType": "packages",
         "licenseType": "enterprise",
@@ -217,7 +217,7 @@
     },
     {
         "name": "Vite - React",
-        "devEnviroment": "Vite",
+        "devEnvironment": "Vite",
         "framework": "react",
         "importType": "packages",
         "licenseType": "enterprise",
@@ -225,7 +225,7 @@
     },
     {
         "name": "Vite - TypeScript",
-        "devEnviroment": "Vite",
+        "devEnvironment": "Vite",
         "framework": "javascript",
         "importType": "packages",
         "licenseType": "enterprise",
@@ -233,7 +233,7 @@
     },
     {
         "name": "Vite - Vue 3",
-        "devEnviroment": "Vite",
+        "devEnvironment": "Vite",
         "framework": "vue",
         "importType": "packages",
         "licenseType": "enterprise",
@@ -241,7 +241,7 @@
     },
     {
         "name": "Webpack 5 - JavaScript",
-        "devEnviroment": "Webpack 5",
+        "devEnvironment": "Webpack 5",
         "framework": "javascript",
         "importType": "packages",
         "licenseType": "enterprise",
@@ -249,7 +249,7 @@
     },
     {
         "name": "Webpack 5 - TypeScript",
-        "devEnviroment": "Webpack 5",
+        "devEnvironment": "Webpack 5",
         "framework": "javascript",
         "importType": "packages",
         "licenseType": "enterprise",
