@@ -8,7 +8,7 @@ import { hasValue } from './hasValue';
 
 type ErrorKey = keyof typeof errorConditions;
 type Errors = Record<ErrorKey, string | undefined>;
-interface ErrorData {
+export interface ErrorData {
     hasLicense: boolean;
     license: string;
     licensedProducts: LicensedProducts;
