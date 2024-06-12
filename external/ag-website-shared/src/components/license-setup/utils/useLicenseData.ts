@@ -36,7 +36,7 @@ const errorConditions = {
     noProducts: {
         getIsError: ({ userProducts }: ErrorData) =>
             !userProducts.gridEnterprise && !userProducts.integratedEnterprise && !userProducts.chartsEnterprise,
-        message: `Please select an enterprise product`,
+        message: `A license is not required to use AG Grid community or AG Charts Community`,
     },
     userLicenseError: {
         getIsError: ({ hasLicense, license, licenseDetails }: ErrorData) => {

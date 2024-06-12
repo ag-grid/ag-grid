@@ -1,5 +1,6 @@
 import type { Framework, ImportType } from '@ag-grid-types';
 import Idea from '@ag-website-shared/components/alert/Idea';
+import Note from '@ag-website-shared/components/alert/Note';
 import Warning from '@ag-website-shared/components/alert/Warning';
 import { Snippet } from '@components/snippet/Snippet';
 import { InfoTooltip } from '@components/theme-builder/components/general/Tooltip';
@@ -274,7 +275,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
 
             <div className={styles.results}>
                 <h3>Dependencies</h3>
-                {errors.noProducts && <Warning>{errors.noProducts}</Warning>}
+                {errors.noProducts && <Note>{errors.noProducts}</Note>}
                 <p>
                     Copy the following dependencies into your <code>package.json</code>:
                 </p>
@@ -282,7 +283,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                 <p>Or install using npm:</p>
                 {npmInstallSnippet && <Snippet framework={framework} content={npmInstallSnippet} language="bash" />}
                 <h3>Set Up License Example</h3>
-                {errors.noProducts && <Warning>{errors.noProducts}</Warning>}
+                {errors.noProducts && <Note>{errors.noProducts}</Note>}
                 {(userProducts.gridEnterprise || userProducts.integratedEnterprise) && (
                     <>
                         <p>An example of how to set up your Grid Enterprise license:</p>
