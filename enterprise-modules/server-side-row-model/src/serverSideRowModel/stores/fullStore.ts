@@ -294,7 +294,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
                 return undefined;
             }
 
-            const getRowIdFunc = this.gos.getCallback('getRowId');
+            const getRowIdFunc = this.gos.getRowIdCallback();
             if (!getRowIdFunc) {
                 return undefined;
             }
@@ -742,33 +742,31 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private lookupRowNode(data: any): RowNode | null {
-        const getRowIdFunc = this.gos.getCallback('getRowId');
+        const getRowIdFunc = this.gos.getRowIdCallback();
 
-        let rowNode: RowNode;
         if (getRowIdFunc != null) {
             // find rowNode using id
-            const level = this.level;
             const parentKeys = this.parentRowNode.getGroupKeys();
-            const id: string = getRowIdFunc({
+            const id = getRowIdFunc({
                 data,
                 parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
-                level,
+                level: this.level,
             });
-            rowNode = this.allNodesMap[id];
+            const rowNode = this.allNodesMap[id];
             if (!rowNode) {
                 console.error(`AG Grid: could not find row id=${id}, data item was not found for this id`);
                 return null;
             }
+            return rowNode;
         } else {
             // find rowNode using object references
-            rowNode = this.allRowNodes.find((currentRowNode) => currentRowNode.data === data)!;
+            const rowNode = this.allRowNodes.find((currentRowNode) => currentRowNode.data === data)!;
             if (!rowNode) {
                 console.error(`AG Grid: could not find data item as object was not found`, data);
                 return null;
             }
+            return rowNode;
         }
-
-        return rowNode;
     }
 
     public addStoreStates(result: ServerSideGroupLevelState[]): void {

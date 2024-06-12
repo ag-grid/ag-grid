@@ -361,7 +361,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
     public setId(id?: string): void {
         // see if user is providing the id's
-        const getRowIdFunc = this.beans.gos.getCallback('getRowId');
+        const getRowIdFunc = this.beans.gos.getRowIdCallback();
 
         if (getRowIdFunc) {
             // if user is providing the id's, then we set the id only after the data has been set.
@@ -377,20 +377,12 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
                     parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
                     level: this.level,
                 });
-                // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
-                // it has 'startsWith' in case the user provided a number.
-                if (
-                    this.id !== null &&
-                    typeof this.id === 'string' &&
-                    this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)
-                ) {
+
+                // make sure id provided doesn't start with 'row-group-' as this is reserved.
+                if (this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
                     console.error(
                         `AG Grid: Row IDs cannot start with ${RowNode.ID_PREFIX_ROW_GROUP}, this is a reserved prefix for AG Grid's row grouping feature.`
                     );
-                }
-                // force id to be a string
-                if (this.id !== null && typeof this.id !== 'string') {
-                    this.id = '' + this.id;
                 }
             } else {
                 // this can happen if user has set blank into the rowNode after the row previously
@@ -551,6 +543,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         this.group = group;
         this.updateHasChildren();
+        this.checkRowSelectable();
         this.dispatchRowEvent('groupChanged');
     }
 
