@@ -1,4 +1,3 @@
-import { _warnOnce } from '@ag-grid-community/core';
 import type {
     BeanCollection,
     ClientSideRowModelStep,
@@ -6,6 +5,7 @@ import type {
     RowDataTransaction,
     RowNodeTransaction,
 } from '@ag-grid-community/core';
+import { _warnOnce } from '@ag-grid-community/core';
 
 export function onGroupExpandedOrCollapsed(beans: BeanCollection): void {
     beans.expansionService.onGroupExpandedOrCollapsed();

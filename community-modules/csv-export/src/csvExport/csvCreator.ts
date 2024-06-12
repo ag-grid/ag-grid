@@ -1,4 +1,3 @@
-import { _warnOnce } from '@ag-grid-community/core';
 import type {
     BeanCollection,
     ColumnModel,
@@ -10,6 +9,7 @@ import type {
     NamedBean,
     ValueService,
 } from '@ag-grid-community/core';
+import { _warnOnce } from '@ag-grid-community/core';
 
 import { BaseCreator } from './baseCreator';
 import { Downloader } from './downloader';
