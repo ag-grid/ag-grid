@@ -238,7 +238,6 @@ export class Component<TLocalEvent extends string = ComponentEvent>
             newComponent.setParentComponent(this as Component);
 
             this.createBean(newComponent, null, afterPreCreateCallback);
-            this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
         } else if (isAgGridComponent) {
             _warnOnce(`Missing selector: ${key}`);
         }
@@ -256,6 +255,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
         const eComponent = newComponent.getGui();
         parentNode.replaceChild(eComponent, childNode);
         parentNode.insertBefore(document.createComment(childNode.nodeName), eComponent);
+        this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
     }
 
     protected activateTabIndex(elements?: Element[]): void {
