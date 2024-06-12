@@ -457,6 +457,10 @@ export interface TooltipHideEvent<TData = any, TContext = any> extends TooltipEv
 export interface PaginationPixelOffsetChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'paginationPixelOffsetChanged', TData, TContext> {}
 
+export interface StickyTopOffsetChangedEvent extends AgEvent<'stickyTopOffsetChanged'> {
+    offset: number;
+}
+
 export interface CommonCellFocusParams {
     /** Row index of the focused cell */
     rowIndex: number | null;

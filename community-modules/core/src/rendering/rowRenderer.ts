@@ -623,6 +623,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         if (this.stickyRowFeature) {
             this.stickyRowFeature.checkStickyRows();
+
+            // this is a hack, if sticky rows brings in rows from other pages
+            // need to update the model height to include them.
+            const extraHeight =
+                this.stickyRowFeature.getExtraTopHeight() + this.stickyRowFeature.getExtraBottomHeight();
+            if (extraHeight) {
+                this.updateContainerHeights(extraHeight);
+            }
         }
 
         this.recycleRows(rowsToRecycle, animate);
@@ -649,10 +657,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         if (scrollToTop && !suppressScrollToTop) {
             this.gridBodyCtrl.getScrollFeature().scrollToTop();
+            this.stickyRowFeature?.resetOffsets();
         }
     }
 
-    private updateContainerHeights(): void {
+    private updateContainerHeights(additionalHeight = 0): void {
         // when doing print layout, we don't explicitly set height on the containers
         if (this.printLayout) {
             this.rowContainerHeightService.setModelHeight(null);
@@ -669,7 +678,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             containerHeight = 1;
         }
 
-        this.rowContainerHeightService.setModelHeight(containerHeight);
+        this.rowContainerHeightService.setModelHeight(containerHeight + additionalHeight);
     }
 
     private getLockOnRefresh(): void {
@@ -1024,6 +1033,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         if (this.stickyRowFeature) {
             hasStickyRowChanges = this.stickyRowFeature.checkStickyRows();
+
+            // this is a hack, if sticky rows brings in rows from other pages
+            // need to update the model height to include them.
+            const extraHeight =
+                this.stickyRowFeature.getExtraTopHeight() + this.stickyRowFeature.getExtraBottomHeight();
+            if (extraHeight) {
+                this.updateContainerHeights(extraHeight);
+            }
         }
 
         const rangeChanged = this.firstRenderedRow !== oldFirstRow || this.lastRenderedRow !== oldLastRow;

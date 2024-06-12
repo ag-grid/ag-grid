@@ -59,6 +59,7 @@ export class RowContainerComp extends Component {
                 this.domOrder = domOrder;
             },
             setContainerWidth: (width) => (this.eContainer.style.width = width),
+            setOffsetTop: (offset) => (this.eContainer.style.transform = `translateY(${offset})`),
         };
 
         const ctrl = this.createManagedBean(new RowContainerCtrl(this.name));
