@@ -1,6 +1,8 @@
 /************************************************************************************************
  * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
  ************************************************************************************************/
+import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
+
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AsyncTransactionsFlushed,
@@ -109,7 +111,6 @@ import type {
 } from '../interfaces/exportParams';
 import type { GridState } from '../interfaces/gridState';
 import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
-import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 import type { AlignedGrid } from '../interfaces/iAlignedGrid';
 import type {
     FillOperationParams,

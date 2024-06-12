@@ -178,7 +178,9 @@ function extractTypes(context, propsToSkip = []) {
     let expandedTypes = propertyTypes.flatMap((m) => m);
 
     const nonAgTypes = ['Partial', 'Document', 'HTMLElement', 'Function', 'TData'];
-    expandedTypes = [...new Set(expandedTypes)].filter((t) => !nonAgTypes.includes(t) && !AG_CHART_TYPES.includes(t)).sort();
+    expandedTypes = [...new Set(expandedTypes)]
+        .filter((t) => !nonAgTypes.includes(t) && !AG_CHART_TYPES.includes(t))
+        .sort();
     return expandedTypes;
 }
 

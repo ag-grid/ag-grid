@@ -1,8 +1,4 @@
-import type {
-    ChartType,
-    SeriesChartType,
-    SeriesGroupType,
-} from '@ag-grid-community/core';
+import type { ChartType, SeriesChartType, SeriesGroupType } from '@ag-grid-community/core';
 import type {
     AgChartInstance,
     AgChartOptions,
