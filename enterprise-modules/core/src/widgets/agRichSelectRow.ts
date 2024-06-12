@@ -1,7 +1,6 @@
 import type {
     AgPromise,
     BeanCollection,
-    ICellRendererParams,
     IRichCellEditorRendererParams,
     RichSelectParams,
     UserCompDetails,
@@ -144,7 +143,7 @@ export class RichSelectRow<TValue> extends Component {
                 setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
                     this.setTooltip({ newTooltipText: value, shouldDisplayTooltip });
                 },
-            } as ICellRendererParams);
+            });
         }
 
         if (userCompDetails) {

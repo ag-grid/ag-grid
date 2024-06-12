@@ -1,13 +1,12 @@
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { AgPickerFieldParams } from './agFieldParams';
 import type { ICellEditorParams } from './iCellEditor';
-import type { IComponent } from './iComponent';
 
 export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
     value?: TValue[] | TValue;
     valueList?: TValue[];
     allowTyping?: boolean;
-    cellRenderer?: IComponent<IRichCellEditorRendererParams>;
+    cellRenderer?: any;
 
     cellRowHeight?: number;
     searchDebounceDelay?: number;
