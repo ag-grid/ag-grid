@@ -1,7 +1,7 @@
 import { LicenseManager } from '@ag-grid-enterprise/core';
 import type { ImportType } from '@ag-grid-types';
 import { AgCharts } from 'ag-charts-enterprise';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { LicensedProducts, Products } from '../types';
 import { hasValue } from './hasValue';
@@ -17,6 +17,12 @@ interface ErrorData {
     licenseDetails: ReturnType<typeof LicenseManager.getLicenseDetails>;
     chartsLicenseDetails: ReturnType<typeof AgCharts.getLicenseDetails>;
 }
+
+const DEFAULT_USER_PRODUCTS: Products = {
+    gridEnterprise: true,
+    integratedEnterprise: false,
+    chartsEnterprise: false,
+};
 
 const errorConditions = {
     chartsNoGridEnterprise: {
@@ -118,6 +124,78 @@ const useErrors = ({
     };
 };
 
+const updateSearchParams = ({ products = {}, importType }: { products: Products; importType: ImportType }) => {
+    const url = new URL(window.location);
+    const productsParam = url.searchParams.get('products');
+    const productsStr = Object.entries(products)
+        .map(([key, selectedProduct]) => {
+            return selectedProduct ? key : undefined;
+        })
+        .filter(Boolean)
+        .toString();
+    const importTypeParam = url.searchParams.get('importType');
+
+    if (productsParam !== productsStr) {
+        if (productsStr) {
+            url.searchParams.set('products', productsStr);
+        } else {
+            url.searchParams.delete('products');
+        }
+    }
+
+    if (importTypeParam !== importType) {
+        if (importType) {
+            url.searchParams.set('importType', importType);
+        } else {
+            url.searchParams.delete('importType');
+        }
+    }
+
+    history.pushState(null, '', url);
+};
+
+const useUpdateDataFromUrl = ({
+    setUserProducts,
+    setImportType,
+}: {
+    setUserProducts: React.Dispatch<Products>;
+    setImportType: React.Dispatch<ImportType>;
+}) => {
+    useEffect(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const productsParam = searchParams.get('products');
+        const importTypeParam = searchParams.get('importType');
+        const newSearchParams = {} as { products: Products; importType: ImportType };
+
+        if (productsParam) {
+            const validProductKeys = Object.keys(DEFAULT_USER_PRODUCTS);
+            const productsList = productsParam
+                .split(',')
+                .map((p) => p.trim())
+                .filter((p) => validProductKeys.includes(p));
+
+            if (productsList.length) {
+                const productsObj = {} as Products;
+                validProductKeys.forEach((key) => {
+                    productsObj[key as keyof Products] = productsList.includes(key);
+                });
+                setUserProducts(productsObj);
+                newSearchParams.products = productsObj;
+            }
+        }
+
+        const importType = importTypeParam?.trim();
+        if (['modules', 'packages'].includes(importType as ImportType)) {
+            setImportType(importType);
+            newSearchParams.importType = importType;
+        }
+
+        if (Object.keys(newSearchParams).length) {
+            updateSearchParams(newSearchParams);
+        }
+    }, []);
+};
+
 export const useLicenseData = () => {
     const [hasLicense, setHasLicense] = useState<boolean>(true);
     /**
@@ -133,11 +211,25 @@ export const useLicenseData = () => {
     /**
      * User selected products
      */
-    const [userProducts, setUserProducts] = useState<Products>({
-        gridEnterprise: true,
-        integratedEnterprise: false,
-        chartsEnterprise: false,
-    });
+    const [userProducts, setUserProducts] = useState<Products>(DEFAULT_USER_PRODUCTS);
+
+    const updateUserProductsWithUrlUpdate = useCallback(
+        (products: Products) => {
+            setUserProducts(products);
+
+            updateSearchParams({ products, importType });
+        },
+        [importType]
+    );
+    const updateImportTypeWithUrlUpdate = useCallback(
+        (type: ImportType) => {
+            setImportType(type);
+
+            updateSearchParams({ products: userProducts, importType: type });
+        },
+        [userProducts]
+    );
+
     /**
      * Licensed products from license
      */
@@ -190,6 +282,8 @@ export const useLicenseData = () => {
         chartsLicenseDetails,
     });
 
+    useUpdateDataFromUrl({ setUserProducts, setImportType });
+
     useEffect(() => {
         if (!hasValue(license)) {
             return;
@@ -205,7 +299,7 @@ export const useLicenseData = () => {
             charts: chartsEnterprise,
         });
 
-        setUserProducts({
+        updateUserProductsWithUrlUpdate({
             gridEnterprise,
             integratedEnterprise,
             chartsEnterprise,
@@ -227,10 +321,10 @@ export const useLicenseData = () => {
         userLicense,
         setUserLicense,
         importType,
-        setImportType,
+        updateImportTypeWithUrlUpdate,
         licensedProducts,
         userProducts,
-        setUserProducts,
+        updateUserProductsWithUrlUpdate,
         noUserProducts,
 
         validLicenseText,

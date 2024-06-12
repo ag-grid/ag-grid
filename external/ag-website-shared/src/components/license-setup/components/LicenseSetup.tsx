@@ -46,10 +46,10 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
         userLicense,
         setUserLicense,
         importType,
-        setImportType,
+        updateImportTypeWithUrlUpdate,
         licensedProducts,
         userProducts,
-        setUserProducts,
+        updateUserProductsWithUrlUpdate,
         noUserProducts,
         userLicenseExpiry,
         validLicenseText,
@@ -211,11 +211,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                                         value="gridEnterprise"
                                         checked={userProducts.gridEnterprise}
                                         onChange={() => {
-                                            setUserProducts((prevProducts) => {
-                                                return {
-                                                    ...prevProducts,
-                                                    gridEnterprise: !prevProducts.gridEnterprise,
-                                                };
+                                            updateUserProductsWithUrlUpdate({
+                                                ...userProducts,
+                                                gridEnterprise: !userProducts.gridEnterprise,
                                             });
                                         }}
                                     />
@@ -239,11 +237,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                                         value="integratedEnterprise"
                                         checked={userProducts.integratedEnterprise}
                                         onChange={() => {
-                                            setUserProducts((prevProducts) => {
-                                                return {
-                                                    ...prevProducts,
-                                                    integratedEnterprise: !prevProducts.integratedEnterprise,
-                                                };
+                                            updateUserProductsWithUrlUpdate({
+                                                ...userProducts,
+                                                integratedEnterprise: !userProducts.integratedEnterprise,
                                             });
                                         }}
                                     />
@@ -260,11 +256,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                                         value="chartsEnterprise"
                                         checked={userProducts.chartsEnterprise}
                                         onChange={() => {
-                                            setUserProducts((prevProducts) => {
-                                                return {
-                                                    ...prevProducts,
-                                                    chartsEnterprise: !prevProducts.chartsEnterprise,
-                                                };
+                                            updateUserProductsWithUrlUpdate({
+                                                ...userProducts,
+                                                chartsEnterprise: !userProducts.chartsEnterprise,
                                             });
                                         }}
                                     />
@@ -293,9 +287,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                         </label>
                         <select
                             name="importType"
-                            defaultValue={importType}
+                            value={importType}
                             onChange={(e) => {
-                                setImportType(e.target.value as ImportType);
+                                updateImportTypeWithUrlUpdate(e.target.value as ImportType);
                             }}
                         >
                             <option value="packages">Packages</option>
