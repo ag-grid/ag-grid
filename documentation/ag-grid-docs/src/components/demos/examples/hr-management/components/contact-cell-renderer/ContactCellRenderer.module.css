@@ -1,10 +1,11 @@
 .icon {
     height: 16px;
     width: 16px;
+    padding-top: 1px;
 }
 
 .iconContainer button {
-    margin: 12px;
+    margin: 8px;
     width: 24px;
 }
 

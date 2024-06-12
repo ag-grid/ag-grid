@@ -35,7 +35,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             headerName: 'Contact',
             field: 'contact',
             cellRenderer: ContactCellRenderer,
-            width: 150,
+            width: 120,
         },
         {
             headerName: 'Location',
@@ -113,7 +113,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
     const autoGroupColumnDef = useMemo(() => {
         return {
             headerName: 'Employee',
-            width: 300,
+            width: 330,
             pinned: 'left',
             cellRendererParams: {
                 suppressCount: true,
