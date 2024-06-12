@@ -27,11 +27,20 @@
 }
 
 .license {
-    margin-top: $spacing-size-4;
-    padding: $spacing-size-3;
+    margin-top: $spacing-size-2;
     width: 100%;
-    height: 8em;
+    height: 13.2em;
+    padding: $spacing-size-4;
+    font-family: var(--text-monospace-font-family);
+    font-size: 15px;
     border-radius: var(--radius-md);
+    border: 1px solid color-mix(in srgb, var(--color-border-secondary), var(--color-border-primary));
+    background-color: var(--color-bg-secondary);
+    color: var(--color-fg-secondary);
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-bg-tertiary);
+    }
 }
 
 .licenseData {
