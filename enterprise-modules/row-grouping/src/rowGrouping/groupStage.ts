@@ -257,12 +257,57 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         return res;
     }
 
+    /**
+     * Topological sort of the given row nodes based on the grouping hierarchy, where parents come before children.
+     * Used to ensure tree data is moved in the correct order (see AG-11678)
+     */
+    private topoSort(rowNodes: RowNode[], details: GroupingDetails): RowNode[] {
+        const sortedNodes: RowNode[] = [];
+        // performance: create a cache of ids to make lookups during the search faster
+        const idLookup = Object.fromEntries(rowNodes.map<[string, number]>((node, i) => [node.id!, i]));
+        // performance: keep track of the nodes we haven't found yet so we can return early
+        const stillToFind = new Set(Object.keys(idLookup));
+
+        const queue = [details.rootNode];
+        let i = 0;
+
+        // BFS for nodes in the hierarchy that match IDs of the given nodes
+        while (i < queue.length) {
+            // performance: indexing into the array instead of using e.g. `.shift` is _much_ faster
+            const node = queue[i];
+            i++;
+            if (node === undefined) {
+                continue;
+            }
+
+            if (node.id && node.id in idLookup) {
+                sortedNodes.push(rowNodes[idLookup[node.id]]);
+                stillToFind.delete(node.id);
+            }
+
+            // we can stop early if we've already found all the nodes
+            if (stillToFind.size === 0) {
+                return sortedNodes;
+            }
+
+            const children = node.childrenAfterGroup ?? [];
+            for (let i = 0; i < children.length; i++) {
+                queue.push(children[i]);
+            }
+        }
+
+        return sortedNodes;
+    }
+
     private moveNodesInWrongPath(
         childNodes: RowNode[],
         details: GroupingDetails,
         batchRemover: BatchRemover | undefined
     ): void {
-        childNodes.forEach((childNode) => {
+        // AG-11678 avoid unnecessary sorting when using normal row grouping
+        const sorted = details.usingTreeData ? this.topoSort(childNodes, details) : childNodes;
+
+        sorted.forEach((childNode) => {
             // we add node, even if parent has not changed, as the data could have
             // changed, hence aggregations will be wrong
             if (details.changedPath.isActive()) {
