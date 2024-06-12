@@ -28,7 +28,7 @@ import {
     _stopPropagationForAgGrid,
 } from '@ag-grid-community/core';
 
-import { PillRenderer } from '../rendering/pillRenderer';
+import { PillContainer } from './AgPillContainer';
 import type { AgRichSelectListEvent } from './agRichSelectList';
 import { AgRichSelectList } from './agRichSelectList';
 
@@ -48,7 +48,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     private searchString = '';
     private listComponent: AgRichSelectList<TValue> | undefined;
-    private pillRenderer: PillRenderer<TValue> | null;
+    private pillContainer: PillContainer<TValue> | null;
     protected values: TValue[];
 
     private searchStringCreator: ((values: TValue[]) => string[]) | null = null;
@@ -170,7 +170,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         let userCompDetails: UserCompDetails | undefined;
 
         if (multiSelect && showSelectedItemsAsPills) {
-            this.createOrUpdatePillRenderer(eDisplayField);
+            this.createOrUpdatePillContainer(eDisplayField);
             return;
         }
 
@@ -285,18 +285,18 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         super.beforeHidePicker();
     }
 
-    private createOrUpdatePillRenderer(container: HTMLElement): void {
-        if (!this.pillRenderer) {
-            const pillRenderer = (this.pillRenderer = this.createBean(new PillRenderer<TValue>()));
+    private createOrUpdatePillContainer(container: HTMLElement): void {
+        if (!this.pillContainer) {
+            const pillContainer = (this.pillContainer = this.createBean(new PillContainer<TValue>()));
             this.addDestroyFunc(() => {
-                this.destroyBean(this.pillRenderer);
-                this.pillRenderer = null;
+                this.destroyBean(this.pillContainer);
+                this.pillContainer = null;
             });
 
             _clearElement(container);
-            container.appendChild(pillRenderer.getGui());
+            container.appendChild(pillContainer.getGui());
 
-            pillRenderer.init({
+            pillContainer.init({
                 eWrapper: this.eWrapper,
                 onPillMouseDown: (e: MouseEvent) => {
                     e.stopImmediatePropagation();
@@ -306,7 +306,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             });
         }
 
-        this.pillRenderer.refresh();
+        this.pillContainer.refresh();
     }
 
     private onWrapperFocus(): void {
@@ -628,8 +628,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         switch (key) {
             case KeyCode.LEFT:
             case KeyCode.RIGHT:
-                if (!allowTyping) {
+                if (!allowTyping || this.pillContainer) {
                     event.preventDefault();
+                    if (this.pillContainer) {
+                        this.pillContainer.onKeyboardNavigateKey(event);
+                    }
                 }
                 break;
             case KeyCode.PAGE_HOME:

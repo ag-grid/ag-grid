@@ -1292,7 +1292,7 @@
     //  * Pill
     //  ****************************
     // */
-    .ag-pill-renderer {
+    .ag-pill-container {
         display: flex;
         gap: 0.25rem;
         flex-wrap: nowrap;
@@ -1302,6 +1302,7 @@
         display: flex;
         white-space: nowrap;
         padding: 0 0.25rem;
+        align-items: center;
     }
 
     .ag-pill .ag-pill-button {

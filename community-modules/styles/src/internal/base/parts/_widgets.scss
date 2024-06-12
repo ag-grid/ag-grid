@@ -597,6 +597,7 @@
     // PILL
     ////////////////////////////////////////
     .ag-pill {
+        border: 1px solid transparent;
         border-radius: var(--ag-border-radius);
         background-color: var(--ag-chip-background-color);
     }
@@ -608,14 +609,13 @@
             )
         );
     }
-
-    .ag-pill .ag-pill-button:focus {
-        box-shadow: none;
+    .ag-pill:focus-visible {
+        border-color: var(--ag-input-focus-border-color);
     }
 
-    .ag-pill .ag-pill-button:focus-visible {
-        background-color: var(--ag-active-color);
-        color: var(--ag-background-color);
+    .ag-pill .ag-pill-button:hover {
+        color: var(--ag-active-color);
+        cursor: pointer;
     }
 
     ////////////////////////////////////////
