@@ -1,7 +1,7 @@
 import type {
     AgPromise,
     BeanCollection,
-    ICellRendererParams,
+    IRichCellEditorRendererParams,
     RichSelectParams,
     UserCompDetails,
     UserComponentFactory,
@@ -130,7 +130,10 @@ export class RichSelectRow<TValue> extends Component {
 
         if (this.params.cellRenderer) {
             const richSelect = this.getParentComponent()?.getParentComponent() as AgRichSelect;
-            userCompDetails = this.userComponentFactory.getCellRendererDetails(this.params, {
+            userCompDetails = this.userComponentFactory.getEditorRendererDetails<
+                RichSelectParams,
+                IRichCellEditorRendererParams
+            >(this.params, {
                 value,
                 valueFormatted,
                 getValue: () => richSelect?.getValue(),
@@ -140,7 +143,7 @@ export class RichSelectRow<TValue> extends Component {
                 setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
                     this.setTooltip({ newTooltipText: value, shouldDisplayTooltip });
                 },
-            } as ICellRendererParams);
+            });
         }
 
         if (userCompDetails) {

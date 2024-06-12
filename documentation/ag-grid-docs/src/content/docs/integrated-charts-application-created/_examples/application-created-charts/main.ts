@@ -69,7 +69,7 @@ const gridOptions: GridOptions = {
     },
     enableCharts: true,
     suppressAggFuncInHeader: true,
-    getRowId: (params: GetRowIdParams) => params.data.trade,
+    getRowId: (params: GetRowIdParams) => String(params.data.trade),
     getChartToolbarItems: (): ChartToolbarMenuItemOptions[] => [],
     onFirstDataRendered,
 };

@@ -1,5 +1,5 @@
 import type { BeanCollection } from '@ag-grid-community/core';
-import { Component } from '@ag-grid-community/core';
+import { Component, _errorOnce } from '@ag-grid-community/core';
 import { _Scene } from 'ag-charts-community';
 
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
@@ -42,7 +42,7 @@ export abstract class MiniChart extends Component {
 
         // Necessary to force scene graph render as we are not using the standalone factory.
         this.scene.render().catch((e: Error) => {
-            console.error(`${ERROR_MESSAGE}`, e);
+            _errorOnce(`${ERROR_MESSAGE}`, e);
         });
     }
 

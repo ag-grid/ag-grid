@@ -61,9 +61,7 @@ const gridOptions: GridOptions = {
     getDataPath: (data) => {
         return data.dataPath;
     },
-    getRowId: (params) => {
-        return params.data.employeeId;
-    },
+    getRowId: (params) => String(params.data.employeeId),
 };
 
 function arrayComparator(a: string[] | null, b: string[] | null): number {

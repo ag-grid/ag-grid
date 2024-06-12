@@ -1,5 +1,5 @@
 import type { BeanCollection, IGetRowsParams, LoadSuccessParams, NumberSequence } from '@ag-grid-community/core';
-import { RowNode, RowNodeBlock, _exists, _missing } from '@ag-grid-community/core';
+import { RowNode, RowNodeBlock, _exists, _missing, _warnOnce } from '@ag-grid-community/core';
 
 import type { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
 
@@ -63,7 +63,7 @@ export class InfiniteBlock extends RowNodeBlock {
     protected loadFromDatasource(): void {
         const params = this.createLoadParams();
         if (_missing(this.params.datasource.getRows)) {
-            console.warn(`AG Grid: datasource is missing getRows method`);
+            _warnOnce(`datasource is missing getRows method`);
             return;
         }
 

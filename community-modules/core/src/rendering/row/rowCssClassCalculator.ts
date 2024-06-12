@@ -7,6 +7,7 @@ import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { StylingService } from '../../styling/stylingService';
 import { _pushAll } from '../../utils/array';
+import { _warnOnce } from '../../utils/function';
 import { _exists } from '../../utils/generic';
 
 export interface RowCssClassCalculatorParams {
@@ -122,7 +123,7 @@ export class RowCssClassCalculator extends BeanStub implements NamedBean {
         const rowClass = this.gos.get('rowClass');
         if (rowClass) {
             if (typeof rowClass === 'function') {
-                console.warn('AG Grid: rowClass should not be a function, please use getRowClass instead');
+                _warnOnce('rowClass should not be a function, please use getRowClass instead');
                 return [];
             }
             process(rowClass);

@@ -8,6 +8,7 @@ import {
     ComponentUtil,
     _combineAttributesAndGridOptions,
     _processOnChange,
+    _warnOnce,
     createGrid,
 } from 'ag-grid-community';
 
@@ -108,7 +109,7 @@ export const AgGridVue = defineComponent({
                 ((thisAsAny.rowData && thisAsAny.rowData !== 'AG-VUE-OMITTED-PROPERTY') || this.gridOptions.rowData) &&
                 thisAsAny.modelValue
             ) {
-                console.warn('AG Grid: Using both rowData and v-model. rowData will be ignored.');
+                _warnOnce('Using both rowData and v-model. rowData will be ignored.');
             }
         },
         getRowData(): any[] {

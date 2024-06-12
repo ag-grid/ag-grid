@@ -52,8 +52,6 @@ import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { Module } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
 import { LocaleService } from './localeService';
-import type { Logger } from './logger';
-import { LoggerFactory } from './logger';
 import { AnimationFrameService } from './misc/animationFrameService';
 import { ApiEventService } from './misc/apiEventService';
 import { ExpansionService } from './misc/expansionService';
@@ -171,8 +169,6 @@ export function createGrid<TData>(
  * @deprecated v31 use createGrid() instead
  */
 export class Grid {
-    protected logger: Logger;
-
     private readonly gridOptions: any; // Not typed to enable setting api for backwards compatibility
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
@@ -388,7 +384,7 @@ export class GridCoreCreator {
         };
 
         if (!rowModelModuleNames[rowModelType]) {
-            _errorOnce('Could not find row model for rowModelType = ' + rowModelType);
+            _errorOnce('Could not find row model for rowModelType = ', rowModelType);
             return;
         }
 
@@ -434,7 +430,6 @@ export class GridCoreCreator {
             NavigationService,
             ValueCache,
             ValueService,
-            LoggerFactory,
             AutoWidthCalculator,
             StandardMenuFactory,
             DragAndDropService,

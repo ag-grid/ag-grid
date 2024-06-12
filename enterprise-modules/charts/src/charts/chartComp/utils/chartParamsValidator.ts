@@ -164,15 +164,15 @@ export class ChartParamsValidator {
                     params as UpdateCrossFilterChartParams
                 );
             default:
-                console.warn(
-                    `AG Grid - Invalid value supplied for 'type': ${params.type}. It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'.`
+                _warnOnce(
+                    `Invalid value supplied for 'type': ${params.type}. It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'.`
                 );
                 return false;
         }
     }
 
     public static validateCreateParams(params: CommonCreateChartParams): boolean | CommonCreateChartParams {
-        return ChartParamsValidator.validateProperties(params, [
+        return validateProperties(params, [
             ChartParamsValidator.enterpriseChartTypeValidation,
             ChartParamsValidator.switchCategorySeriesValidation,
         ]);
@@ -191,7 +191,7 @@ export class ChartParamsValidator {
             },
         ];
 
-        return ChartParamsValidator.validateProperties(
+        return validateProperties(
             params,
             validations,
             [
@@ -210,7 +210,7 @@ export class ChartParamsValidator {
     private static validateUpdatePivotChartParams(params: UpdatePivotChartParams): boolean | UpdatePivotChartParams {
         const validations: ValidationFunction<any>[] = [...ChartParamsValidator.commonUpdateValidations];
 
-        return ChartParamsValidator.validateProperties(
+        return validateProperties(
             params,
             validations,
             [...ChartParamsValidator.baseUpdateChartParams],
@@ -226,57 +226,55 @@ export class ChartParamsValidator {
             ...ChartParamsValidator.cellRangeValidations,
         ];
 
-        return ChartParamsValidator.validateProperties(
+        return validateProperties(
             params,
             validations,
             [...ChartParamsValidator.baseUpdateChartParams, 'cellRange', 'suppressChartRanges', 'aggFunc'],
             'UpdateCrossFilterChartParams'
         );
     }
+}
 
-    private static validateProperties<T extends object>(
-        params: T,
-        validations: ValidationFunction<T>[],
-        validPropertyNames?: (keyof T)[],
-        paramsType?: string
-    ): boolean | T {
-        let validatedProperties: T | undefined = undefined;
-        for (const validation of validations) {
-            const { property, validationFn, warnMessage, warnIfFixed } = validation;
-            if (property in params) {
-                const value = params[property];
-                const validationResult = validationFn(value);
-                if (validationResult === true) continue;
-                if (validationResult === false) {
-                    console.warn(warnMessage(value));
-                    return false;
-                }
-                // If the validation function returned a 'fix' value, we need to return an updated property set.
-                // First we clone the input set if there has not been a 'fix' encountered in a previous iteration:
-                validatedProperties = validatedProperties || { ...params };
-                /// Then we update the cloned object with the 'fixed' value
-                validatedProperties[property] = validationResult;
-                if (warnIfFixed) {
-                    console.warn(warnMessage(value));
-                }
+function validateProperties<T extends object>(
+    params: T,
+    validations: ValidationFunction<T>[],
+    validPropertyNames?: (keyof T)[],
+    paramsType?: string
+): boolean | T {
+    let validatedProperties: T | undefined = undefined;
+    for (const validation of validations) {
+        const { property, validationFn, warnMessage, warnIfFixed } = validation;
+        if (property in params) {
+            const value = params[property];
+            const validationResult = validationFn(value);
+            if (validationResult === true) continue;
+            if (validationResult === false) {
+                _warnOnce(warnMessage(value));
+                return false;
+            }
+            // If the validation function returned a 'fix' value, we need to return an updated property set.
+            // First we clone the input set if there has not been a 'fix' encountered in a previous iteration:
+            validatedProperties = validatedProperties || { ...params };
+            /// Then we update the cloned object with the 'fixed' value
+            validatedProperties[property] = validationResult;
+            if (warnIfFixed) {
+                _warnOnce(warnMessage(value));
             }
         }
-
-        if (validPropertyNames) {
-            // Check for unexpected properties
-            for (const property in params) {
-                if (!validPropertyNames.includes(property as keyof T)) {
-                    console.warn(
-                        `AG Grid - Unexpected property supplied. ${paramsType} does not contain: \`${property}\`.`
-                    );
-                    return false;
-                }
-            }
-        }
-
-        // If one or more 'fixed' values were encountered, return the updated property set
-        if (validatedProperties) return validatedProperties;
-
-        return true;
     }
+
+    if (validPropertyNames) {
+        // Check for unexpected properties
+        for (const property in params) {
+            if (!validPropertyNames.includes(property as keyof T)) {
+                _warnOnce(`Unexpected property supplied. ${paramsType} does not contain: \`${property}\`.`);
+                return false;
+            }
+        }
+    }
+
+    // If one or more 'fixed' values were encountered, return the updated property set
+    if (validatedProperties) return validatedProperties;
+
+    return true;
 }

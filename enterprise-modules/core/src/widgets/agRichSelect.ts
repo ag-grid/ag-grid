@@ -3,7 +3,7 @@ import type {
     AgPromise,
     BeanCollection,
     FieldPickerValueSelectedEvent,
-    ICellRendererParams,
+    IRichCellEditorRendererParams,
     RichSelectListRowSelectedEvent,
     RichSelectParams,
     UserCompDetails,
@@ -175,7 +175,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         if (cellRenderer) {
-            userCompDetails = this.userComponentFactory.getCellRendererDetails(config, {
+            userCompDetails = this.userComponentFactory.getEditorRendererDetails<
+                RichSelectParams,
+                IRichCellEditorRendererParams
+            >(config, {
                 value,
                 valueFormatted,
                 getValue: () => this.getValue(),
@@ -185,7 +188,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
                     this.setTooltip({ newTooltipText: value, shouldDisplayTooltip });
                 },
-            } as ICellRendererParams);
+            });
         }
 
         let userCompDetailsPromise: AgPromise<any> | undefined;

@@ -1,5 +1,7 @@
 import type { ReactPortal } from 'react';
 
+import { _errorOnce } from 'ag-grid-community';
+
 import type { ReactComponent } from './reactComponent';
 
 const MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component
@@ -83,10 +85,10 @@ export class PortalManager {
                     return;
                 }
 
-                console.error(
-                    `AG Grid: React Component '${reactComponent.getReactComponentName()}' not created within ${this.maxComponentCreationTimeMs}ms.`
+                _errorOnce(
+                    `React Component '${reactComponent.getReactComponentName()}' not created within ${this.maxComponentCreationTimeMs}ms.`
                 );
-                console.error(
+                _errorOnce(
                     '    If the component is using `forwardRef` but not `useImperativeHandle`, add the following: `useImperativeHandle(ref, () => ({}));`'
                 );
                 return;

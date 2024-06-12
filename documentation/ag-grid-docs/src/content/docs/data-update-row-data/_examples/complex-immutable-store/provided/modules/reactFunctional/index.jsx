@@ -365,7 +365,7 @@ const GridExample = () => {
         };
     }, []);
     const getRowId = useCallback(function (params) {
-        return params.data.trade;
+        return String(params.data.trade);
     }, []);
 
     const updateData = useCallback(() => {

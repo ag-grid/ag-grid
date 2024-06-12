@@ -28,6 +28,7 @@ import {
     ModuleRegistry,
     RefPlaceholder,
     _createIconNoSpan,
+    _warnOnce,
 } from '@ag-grid-community/core';
 import type { AgMenuList, CloseMenuEvent, TabbedItem } from '@ag-grid-enterprise/core';
 import { TabbedLayout } from '@ag-grid-enterprise/core';
@@ -355,6 +356,8 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
     private tabFactories: { [p: string]: () => TabbedItem } = {};
     private includeChecks: { [p: string]: () => boolean } = {};
 
+    private filterComp?: FilterWrapperComp | null;
+
     constructor(
         private readonly column: AgColumn | undefined,
         private readonly restoreFocusParams: MenuRestoreFocusParams,
@@ -422,8 +425,8 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
         isValid = isValid && TABS_DEFAULT.indexOf(menuTabName) > -1;
 
         if (!isValid) {
-            console.warn(
-                `AG Grid: Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${itemsToConsider}]`
+            _warnOnce(
+                `Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${itemsToConsider}]`
             );
         }
 
@@ -506,7 +509,8 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
     }
 
     private createFilterPanel(): TabbedItem {
-        const comp = this.column ? this.createManagedBean(new FilterWrapperComp(this.column, 'COLUMN_MENU')) : null;
+        const comp = this.column ? this.createBean(new FilterWrapperComp(this.column, 'COLUMN_MENU')) : null;
+        this.filterComp = comp;
         if (!comp?.hasFilter()) {
             throw new Error('AG Grid - Unable to instantiate filter');
         }
@@ -560,6 +564,12 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
 
     public getGui(): HTMLElement {
         return this.tabbedLayout.getGui();
+    }
+
+    public override destroy(): void {
+        super.destroy();
+        // Needs to be destroyed last to ensure that `afterGuiDetached` runs
+        this.destroyBean(this.filterComp);
     }
 }
 

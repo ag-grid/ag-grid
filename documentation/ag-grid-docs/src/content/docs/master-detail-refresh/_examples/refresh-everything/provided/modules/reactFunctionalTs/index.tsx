@@ -43,9 +43,7 @@ const GridExample = () => {
         };
     }, []);
     const getRowId = useMemo<GetRowIdFunc>(() => {
-        return (params: GetRowIdParams) => {
-            return params.data.account;
-        };
+        return (params: GetRowIdParams) => String(params.data.account);
     }, []);
     const detailCellRendererParams = useMemo(() => {
         return {

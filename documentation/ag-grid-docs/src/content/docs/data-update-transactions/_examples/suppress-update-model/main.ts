@@ -20,7 +20,7 @@ import { createDataItem, getData } from './data';
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 function getRowId(params) {
-    return params.data.id;
+    return String(params.data.id);
 }
 
 let gridApi: GridApi;

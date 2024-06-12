@@ -21,8 +21,6 @@ import type {
     IRangeService,
     IRowModel,
     ISelectionService,
-    Logger,
-    LoggerFactory,
     NamedBean,
     PasteEndEvent,
     PasteStartEvent,
@@ -78,7 +76,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     beanName = 'clipboardService' as const;
 
     private csvCreator: ICsvCreator;
-    private loggerFactory: LoggerFactory;
     private selectionService: ISelectionService;
     private rowModel: IRowModel;
     private ctrlsService: CtrlsService;
@@ -94,7 +91,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
     public wireBeans(beans: BeanCollection): void {
         this.csvCreator = beans.csvCreator!;
-        this.loggerFactory = beans.loggerFactory;
         this.selectionService = beans.selectionService;
         this.rowModel = beans.rowModel;
         this.ctrlsService = beans.ctrlsService;
@@ -110,15 +106,12 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private clientSideRowModel: IClientSideRowModel;
-    private logger: Logger;
     private gridCtrl: GridCtrl;
     private lastPasteOperationTime: number = 0;
 
     private navigatorApiFailed = false;
 
     public postConstruct(): void {
-        this.logger = this.loggerFactory.create('ClipboardService');
-
         if (this.rowModel.getType() === 'clientSide') {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
@@ -129,8 +122,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     public pasteFromClipboard(): void {
-        this.logger.log('pasteFromClipboard');
-
         // Method 1 - native clipboard API, available in modern chrome browsers
         const allowNavigator = !this.gos.get('suppressClipboardApi');
         // Some browsers (Firefox) do not allow Web Applications to read from
@@ -737,7 +728,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
     private copyOrCutToClipboard(params: IClipboardCopyParams, cut?: boolean): void {
         let { includeHeaders, includeGroupHeaders } = params;
-        this.logger.log(`copyToClipboard: includeHeaders = ${includeHeaders}`);
 
         // don't override 'includeHeaders' if it has been explicitly set to 'false'
         if (includeHeaders == null) {
@@ -1189,8 +1179,8 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             const result = eDocument.execCommand('copy');
 
             if (!result) {
-                console.warn(
-                    "AG Grid: Browser did not allow document.execCommand('copy'). Ensure " +
+                _warnOnce(
+                    "Browser did not allow document.execCommand('copy'). Ensure " +
                         'api.copySelectedRowsToClipboard() is invoked via a user event, i.e. button click, otherwise ' +
                         'the browser will prevent it for security reasons.'
                 );
@@ -1227,7 +1217,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         try {
             callbackNow(eTempInput);
         } catch (err) {
-            console.warn("AG Grid: Browser does not support document.execCommand('copy') for clipboard operations");
+            _warnOnce("Browser does not support document.execCommand('copy') for clipboard operations");
         }
 
         //It needs 100 otherwise OS X seemed to not always be able to paste... Go figure...

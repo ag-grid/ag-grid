@@ -1,11 +1,11 @@
-import {
-    type BeanCollection,
-    type ClientSideRowModelStep,
-    type IRowNode,
-    type RowDataTransaction,
-    type RowNodeTransaction,
-    _warnOnce,
+import type {
+    BeanCollection,
+    ClientSideRowModelStep,
+    IRowNode,
+    RowDataTransaction,
+    RowNodeTransaction,
 } from '@ag-grid-community/core';
+import { _warnOnce } from '@ag-grid-community/core';
 
 export function onGroupExpandedOrCollapsed(beans: BeanCollection): void {
     beans.expansionService.onGroupExpandedOrCollapsed();

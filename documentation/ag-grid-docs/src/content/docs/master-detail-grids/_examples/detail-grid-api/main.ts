@@ -46,7 +46,7 @@ const gridOptions: GridOptions<IAccount> = {
     } as IDetailCellRendererParams<IAccount, ICallRecord>,
     getRowId: (params: GetRowIdParams) => {
         // use 'account' as the row ID
-        return params.data.account;
+        return String(params.data.account);
     },
     defaultColDef: {
         flex: 1,

@@ -1,4 +1,4 @@
-import { _includes } from '@ag-grid-community/core';
+import { _includes, _warnOnce } from '@ag-grid-community/core';
 import type {
     AgChartLegendClickEvent,
     AgChartTheme,
@@ -187,8 +187,8 @@ export function lookupCustomChartTheme(chartProxyParams: ChartProxyParams, name:
     const customChartTheme = customChartThemes && customChartThemes[name];
 
     if (!customChartTheme) {
-        console.warn(
-            `AG Grid: no stock theme exists with the name '${name}' and no ` +
+        _warnOnce(
+            `no stock theme exists with the name '${name}' and no ` +
                 "custom chart theme with that name was supplied to 'customChartThemes'"
         );
     }

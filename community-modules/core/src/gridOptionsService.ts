@@ -19,7 +19,7 @@ import { LocalEventService } from './localEventService';
 import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
 import { _getScrollbarWidth } from './utils/browser';
-import { _warnOnce } from './utils/function';
+import { _log, _warnOnce } from './utils/function';
 import { _exists, _missing, toBoolean } from './utils/generic';
 import { toConstrainedNum, toNumber } from './utils/number';
 import { GRID_OPTION_DEFAULTS } from './validation/rules/gridOptionsValidations';
@@ -254,12 +254,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
 
         events.forEach((event) => {
             if (this.gridOptions.debug) {
-                console.log(
-                    `AG Grid: Updated property ${event.type} from `,
-                    event.previousValue,
-                    ' to  ',
-                    event.currentValue
-                );
+                _log(`Updated property ${event.type} from ${event.previousValue} to ${event.currentValue}`);
             }
             this.propertyEventService.dispatchEvent(event);
         });
@@ -420,7 +415,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             return rowHeight;
         }
 
-        console.warn('AG Grid row height must be a number if not using standard row model');
+        _warnOnce('row height must be a number if not using standard row model');
         return this.environment.getDefaultRowHeight();
     }
 
@@ -605,9 +600,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             let id = getRowId(params);
 
             if (typeof id !== 'string') {
-                console.warn(
-                    `AG Grid: The getRowId callback must return a string. The ID ${id} is being cast to a string.`
-                );
+                _warnOnce(`The getRowId callback must return a string. The ID ${id} is being cast to a string.`);
                 id = String(id);
             }
 

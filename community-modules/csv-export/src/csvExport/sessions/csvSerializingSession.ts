@@ -1,3 +1,4 @@
+import { _warnOnce } from '@ag-grid-community/core';
 import type { AgColumn, AgColumnGroup, CsvCustomContent, RowNode } from '@ag-grid-community/core';
 
 import type { CsvSerializingParams, RowAccumulator, RowSpanningAccumulator } from '../interfaces';
@@ -117,7 +118,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         } else if (typeof value.toString === 'function') {
             stringValue = value.toString();
         } else {
-            console.warn('AG Grid: unknown value type during csv conversion');
+            _warnOnce('unknown value type during csv conversion');
             stringValue = '';
         }
 

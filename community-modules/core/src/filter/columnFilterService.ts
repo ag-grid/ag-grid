@@ -20,6 +20,7 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import type { RowRenderer } from '../rendering/rowRenderer';
+import { _warnOnce } from '../utils/function';
 import { _exists, _jsonEquals } from '../utils/generic';
 import { _cloneObject } from '../utils/object';
 import { AgPromise } from '../utils/promise';
@@ -104,23 +105,19 @@ export class ColumnFilterService extends BeanStub {
                 const column = this.columnModel.getColDefCol(colId) || this.columnModel.getCol(colId);
 
                 if (!column) {
-                    console.warn('AG Grid: setFilterModel() - no column found for colId: ' + colId);
+                    _warnOnce('setFilterModel() - no column found for colId: ' + colId);
                     return;
                 }
 
                 if (!column.isFilterAllowed()) {
-                    console.warn(
-                        'AG Grid: setFilterModel() - unable to fully apply model, filtering disabled for colId: ' +
-                            colId
-                    );
+                    _warnOnce('setFilterModel() - unable to fully apply model, filtering disabled for colId: ' + colId);
                     return;
                 }
 
                 const filterWrapper = this.getOrCreateFilterWrapper(column);
                 if (!filterWrapper) {
-                    console.warn(
-                        'AG-Grid: setFilterModel() - unable to fully apply model, unable to create filter for colId: ' +
-                            colId
+                    _warnOnce(
+                        'setFilterModel() - unable to fully apply model, unable to create filter for colId: ' + colId
                     );
                     return;
                 }
@@ -155,7 +152,7 @@ export class ColumnFilterService extends BeanStub {
         return new AgPromise<void>((resolve) => {
             filterPromise.then((filter) => {
                 if (typeof filter!.setModel !== 'function') {
-                    console.warn('AG Grid: filter missing setModel method, which is needed for setFilterModel');
+                    _warnOnce('filter missing setModel method, which is needed for setFilterModel');
                     resolve();
                 }
 
@@ -189,7 +186,7 @@ export class ColumnFilterService extends BeanStub {
         }
 
         if (typeof filter.getModel !== 'function') {
-            console.warn('AG Grid: filter API missing getModel method, which is needed for getFilterModel');
+            _warnOnce('filter API missing getModel method, which is needed for getFilterModel');
             return null;
         }
 
@@ -230,7 +227,7 @@ export class ColumnFilterService extends BeanStub {
                 return false;
             } // this never happens, including to avoid compile error
             if (!filter.isFilterActive) {
-                console.warn('AG Grid: Filter is missing isFilterActive() method');
+                _warnOnce('Filter is missing isFilterActive() method');
                 return false;
             }
             return filter.isFilterActive();
