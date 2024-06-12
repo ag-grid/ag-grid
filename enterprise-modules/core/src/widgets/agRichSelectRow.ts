@@ -70,7 +70,7 @@ export class RichSelectRow<TValue> extends Component {
                 const highlightedPart = _escapeString(parsedValue.slice(index, highlightEndIndex), true);
                 const endPart = _escapeString(parsedValue.slice(highlightEndIndex));
                 this.renderValueWithoutRenderer(
-                    `${startPart}<span class="ag-rich-select-row-text-highlight">${highlightedPart}</span>${endPart}`
+                    /* html */ `${startPart}<span class="ag-rich-select-row-text-highlight">${highlightedPart}</span>${endPart}`
                 );
             } else {
                 hasMatch = false;
@@ -132,7 +132,7 @@ export class RichSelectRow<TValue> extends Component {
             const richSelect = this.getParentComponent()?.getParentComponent() as AgRichSelect;
             userCompDetails = this.userComponentFactory.getEditorRendererDetails<
                 RichSelectParams,
-                IRichCellEditorRendererParams
+                IRichCellEditorRendererParams<TValue>
             >(this.params, {
                 value,
                 valueFormatted,

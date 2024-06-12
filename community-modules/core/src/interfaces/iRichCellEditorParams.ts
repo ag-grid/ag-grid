@@ -1,6 +1,8 @@
-import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { AgPickerFieldParams } from './agFieldParams';
 import type { ICellEditorParams } from './iCellEditor';
+import { ICellEditorRendererParams } from './iCellEditorRenderer';
+
+export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRendererParams<TValue> {}
 
 export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
     value?: TValue[] | TValue;
@@ -25,14 +27,10 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
     valueFormatter?: (value: TValue[] | TValue) => any;
     searchStringCreator?: (values: TValue[]) => string[];
 }
+
 export interface RichCellEditorValuesCallback<TData = any, TValue = any> {
     (params: ICellEditorParams<TData, TValue>): TValue[] | Promise<TValue[]>;
 }
-
-export type IRichCellEditorRendererParams = Pick<
-    ICellRendererParams,
-    'api' | 'context' | 'value' | 'valueFormatted' | 'getValue' | 'setValue' | 'setTooltip'
->;
 
 export interface IRichCellEditorParams<TData = any, TValue = any> {
     /** The list of values to be selected from. */
@@ -63,7 +61,7 @@ export interface IRichCellEditorParams<TData = any, TValue = any> {
     /**
      * If `true`, each item on the list of values will highlight the part of the text that matches the input.
      * Note: It only makes sense to use this option when `filterList` is `true` and `searchType` is **not** `fuzzy`.
-     * @default false.
+     * @default false
      */
     highlightMatch?: boolean;
     /**

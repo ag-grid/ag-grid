@@ -1,0 +1,41 @@
+{% if isFramework("javascript") %}
+The interface for the Cell Component is as follows:
+{% /if %}
+
+{% if isFramework("javascript") %}
+```ts
+interface ICellEditorRendererComp {
+   // Optional - props for rendering.
+   init?(props: IRichCellEditorRendererParams): void;
+
+   // Mandatory - Return the DOM element of the component, this is what the grid puts into the cell
+   getGui(): HTMLElement;
+
+   // Optional - Gets called once by grid after rendering is finished - if your renderer needs to do any cleanup,
+   // do it here
+   destroy?(): void;
+}
+```
+{% /if %}
+
+{% if isFramework("javascript") %}
+The Component is provided `props` containing, amongst other things, the value to be rendered.
+{% /if %}
+
+{% if isFramework("javascript") %}
+```ts
+class MyCustomEditorRenderer {
+    // ...
+    init(props) {
+        // create the cell
+        this.eGui = document.createElement('div');
+        this.eGui.innerHTML = props.value;
+    }
+    // ...
+}
+```
+{% /if %}
+
+{% if isFramework("javascript") %}
+The provided `props` (interface IRichCellEditorRendererParams) are:
+{% /if %}

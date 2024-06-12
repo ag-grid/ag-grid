@@ -177,7 +177,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         if (cellRenderer) {
             userCompDetails = this.userComponentFactory.getEditorRendererDetails<
                 RichSelectParams,
-                IRichCellEditorRendererParams
+                IRichCellEditorRendererParams<TValue>
             >(config, {
                 value,
                 valueFormatted,

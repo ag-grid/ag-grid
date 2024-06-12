@@ -320,6 +320,9 @@ export {
     RichCellEditorParams,
     IRichCellEditorRendererParams,
 } from './interfaces/iRichCellEditorParams';
+
+export { ICellEditorRendererComp, ICellEditorRendererParams } from './interfaces/iCellEditorRenderer';
+
 export { CheckboxCellEditor } from './edit/cellEditors/checkboxCellEditor';
 export { EditCoreModule as _EditCoreModule } from './edit/editModule';
 
