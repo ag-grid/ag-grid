@@ -1,13 +1,14 @@
 import {
     Component,
-    type IMenuItemComp,
-    type IMenuItemParams,
+    
+    
     _createIconNoSpan,
     _isNodeOrElement,
     _loadTemplate,
     _setAriaExpanded,
-    _warnOnce,
+    _warnOnce
 } from '@ag-grid-community/core';
+import type {IMenuItemComp, IMenuItemParams} from '@ag-grid-community/core';
 
 interface AgMenuItemRendererParams {
     cssClassPrefix?: string;

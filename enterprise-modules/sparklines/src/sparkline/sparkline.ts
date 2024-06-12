@@ -1,4 +1,5 @@
-import { type HighlightStyleOptions, _errorOnce } from '@ag-grid-community/core';
+import {  _errorOnce } from '@ag-grid-community/core';
+import type {HighlightStyleOptions} from '@ag-grid-community/core';
 import { _Scale, _Scene, _Util } from 'ag-charts-community';
 
 import type { SparklineFactoryOptions } from './agSparkline';

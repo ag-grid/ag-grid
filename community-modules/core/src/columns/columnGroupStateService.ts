@@ -1,7 +1,8 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { type AgProvidedColumnGroup, isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import {  isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import type {AgProvidedColumnGroup} from '../entities/agProvidedColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';

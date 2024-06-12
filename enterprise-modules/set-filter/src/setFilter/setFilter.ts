@@ -32,7 +32,8 @@ import {
     _toStringOrNull,
     _warnOnce,
 } from '@ag-grid-community/core';
-import { VirtualList, type VirtualListModel } from '@ag-grid-enterprise/core';
+import { VirtualList  } from '@ag-grid-enterprise/core';
+import type {VirtualListModel} from '@ag-grid-enterprise/core';
 
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { SetFilterDisplayValue } from './iSetDisplayValueModel';

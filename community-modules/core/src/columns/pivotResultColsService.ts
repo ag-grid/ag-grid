@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, Context } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import { type AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import type {AgProvidedColumnGroup} from '../entities/agProvidedColumnGroup';
 import type { AbstractColDef, ColDef, ColGroupDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import { _areEqual } from '../utils/array';

@@ -1,3 +1,4 @@
+import { _errorOnce } from '../utils/function';
 import type { GenericBean } from './genericBean';
 
 type BeanComparator<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> = (
@@ -59,7 +60,7 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
             if (instance.beanName) {
                 this.beans[instance.beanName] = instance as any;
             } else {
-                console.error(`Bean ${BeanClass.name} is missing beanName`);
+                _errorOnce(`Bean ${BeanClass.name} is missing beanName`);
             }
             this.createdBeans.push(instance);
         });
@@ -144,6 +145,8 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
      */
     public destroyBean(bean: GenericBean<TBeanName, TBeanCollection> | null | undefined): undefined {
         bean?.destroy?.();
+        // We pass an empty object so all the beans can clean up their references automatically
+        bean?.wireBeans?.({} as any);
     }
 
     /**
