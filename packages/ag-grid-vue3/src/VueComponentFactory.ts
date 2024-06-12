@@ -1,5 +1,7 @@
 import { createVNode, defineComponent, render } from 'vue';
 
+import { _errorOnce } from 'ag-grid-community';
+
 export class VueComponentFactory {
     private static getComponentDefinition(component: any, parent: any) {
         let componentDefinition: any;
@@ -12,7 +14,7 @@ export class VueComponentFactory {
             componentDefinition = { extends: defineComponent({ ...component }) };
         }
         if (!componentDefinition) {
-            console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
+            _errorOnce(`Could not find component with name of ${component}. Is it in Vue.components?`);
         }
 
         if (componentDefinition.extends) {
@@ -116,7 +118,7 @@ export class VueComponentFactory {
         }
 
         if (!componentInstance && !suppressError) {
-            console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
+            _errorOnce(`Could not find component with name of ${component}. Is it in Vue.components?`);
             return null;
         }
         return componentInstance;
