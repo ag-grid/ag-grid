@@ -28,6 +28,25 @@ export const getDependenciesSnippet = ({
     return dependencies.length > 0 ? `dependencies: ${JSON.stringify(depObject, null, 4)}` : undefined;
 };
 
+export const getNpmInstallSnippet = ({
+    framework,
+    products,
+    importType,
+}: {
+    framework: Framework;
+    products: Products;
+    importType?: ImportType;
+}) => {
+    const dependencies = getDependencies({
+        framework,
+        products,
+        importType,
+    });
+    const dependenciesStr = dependencies.join(' ');
+
+    return dependencies.length > 0 ? `npm install ${dependenciesStr}` : undefined;
+};
+
 export const getBootstrapSnippet = ({
     framework,
     importType,

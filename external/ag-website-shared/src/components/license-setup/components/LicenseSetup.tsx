@@ -8,7 +8,7 @@ import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { type FunctionComponent, useMemo } from 'react';
 
-import { getBootstrapSnippet, getDependenciesSnippet } from '../utils/getSnippets';
+import { getBootstrapSnippet, getDependenciesSnippet, getNpmInstallSnippet } from '../utils/getSnippets';
 import { hasValue } from '../utils/hasValue';
 import { useLicenseData } from '../utils/useLicenseData';
 import styles from './LicenseSetup.module.scss';
@@ -53,6 +53,15 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
     const dependenciesSnippet = useMemo(
         () =>
             getDependenciesSnippet({
+                framework,
+                products: userProducts,
+                importType,
+            }),
+        [framework, userProducts, importType]
+    );
+    const npmInstallSnippet = useMemo(
+        () =>
+            getNpmInstallSnippet({
                 framework,
                 products: userProducts,
                 importType,
@@ -263,31 +272,27 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
 
             <div className={styles.results}>
                 <h3>Dependencies</h3>
-
                 {errors.noProducts && <Warning>{errors.noProducts}</Warning>}
-
                 <p>
                     Copy the following dependencies into your <code>package.json</code>:
                 </p>
                 {dependenciesSnippet && <Snippet framework={framework} content={dependenciesSnippet} />}
-
+                <p>Or install using npm:</p>
+                {npmInstallSnippet && <Snippet framework={framework} content={npmInstallSnippet} />}
                 <h3>Set Up License Example</h3>
                 {errors.noProducts && <Warning>{errors.noProducts}</Warning>}
-
                 {(userProducts.gridEnterprise || userProducts.integratedEnterprise) && (
                     <>
                         <p>An example of how to set up your Grid Enterprise license:</p>
                         {bootstrapSnippet.grid && <Snippet framework={framework} content={bootstrapSnippet.grid} />}
                     </>
                 )}
-
                 {userProducts.chartsEnterprise && (
                     <>
                         <p>An example of how to set up your Charts Enterprise license:</p>
                         {bootstrapSnippet.charts && <Snippet framework={framework} content={bootstrapSnippet.charts} />}
                     </>
                 )}
-
                 {selectedSeedRepos.length ? (
                     <>
                         <p>Here are some seed code repositories to get you started:</p>
