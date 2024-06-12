@@ -29,7 +29,7 @@ const gridOptions: GridOptions = {
         flex: 1,
     },
     rowData: rowData,
-    getRowId: (params: GetRowIdParams) => params.data.id,
+    getRowId: (params: GetRowIdParams) => String(params.data.id),
 };
 
 // setup the grid after the page has finished loading

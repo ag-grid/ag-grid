@@ -157,9 +157,7 @@ const gridOptions: GridOptions = {
     suppressAggFuncInHeader: true,
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
-    getRowId: (params: GetRowIdParams) => {
-        return params.data.trade;
-    },
+    getRowId: (params: GetRowIdParams) => String(params.data.trade),
     defaultColDef: {
         width: 120,
     },

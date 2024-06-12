@@ -85,7 +85,7 @@ const gridOptions: GridOptions = {
     groupDefaultExpanded: 1,
     valueCache: true,
     getRowId: (params: GetRowIdParams) => {
-        return params.data.id;
+        return String(params.data.id);
     },
     onCellValueChanged: () => {
         console.log('onCellValueChanged');
