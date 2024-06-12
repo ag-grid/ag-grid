@@ -68,9 +68,9 @@
 }
 
 .frameworkLogo {
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
+    width: $spacing-size-6;
+    height: $spacing-size-6;
+    border-radius: var(--radius-xs);
 }
 
 .licensedProductsContainer {
@@ -123,11 +123,16 @@
     th:last-child,
     td:last-child {
         padding-right: 0;
+        text-align: right;
     }
 
     td {
         vertical-align: middle;
         text-transform: capitalize;
+    }
+
+    .frameworkLogo {
+        margin-right: $spacing-size-1;
     }
 }
 
