@@ -3,7 +3,7 @@ import { agGridVersion } from '@constants';
 
 import type { Products } from '../types';
 import { getDependencies } from './getDependencies';
-import { GRID_LICENSE_TEMPLATES } from './templates';
+import { GRID_LICENSE_TEMPLATES, getChartsTemplate } from './templates';
 
 export const getDependenciesSnippet = ({
     framework,
@@ -38,15 +38,16 @@ export const getBootstrapSnippet = ({
     license?: string;
     importType?: ImportType;
     userProducts?: Products;
-}) => {
+}): {
+    grid: string;
+    charts: string;
+} => {
     const license = rawLicense?.trim();
     const frameworkTemplate = GRID_LICENSE_TEMPLATES[framework];
-    if (!frameworkTemplate) {
-        console.error('Framework template not found for', framework);
-        return '';
-    }
+    const gridTemplate = frameworkTemplate[importType];
 
-    const template = frameworkTemplate[importType];
-
-    return (template && template({ license, userProducts })).trim() || '';
+    return {
+        grid: (gridTemplate && gridTemplate({ license, userProducts })).trim() || '',
+        charts: getChartsTemplate({ license }),
+    };
 };

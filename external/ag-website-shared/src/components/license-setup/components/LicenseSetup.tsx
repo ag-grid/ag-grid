@@ -274,8 +274,19 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                 <h3>Set Up License Example</h3>
                 {errors.noProducts && <Warning>{errors.noProducts}</Warning>}
 
-                <p>An example of how to set up your license:</p>
-                {bootstrapSnippet && <Snippet framework={framework} content={bootstrapSnippet} />}
+                {(userProducts.gridEnterprise || userProducts.integratedEnterprise) && (
+                    <>
+                        <p>An example of how to set up your Grid Enterprise license:</p>
+                        {bootstrapSnippet.grid && <Snippet framework={framework} content={bootstrapSnippet.grid} />}
+                    </>
+                )}
+
+                {userProducts.chartsEnterprise && (
+                    <>
+                        <p>An example of how to set up your Charts Enterprise license:</p>
+                        {bootstrapSnippet.charts && <Snippet framework={framework} content={bootstrapSnippet.charts} />}
+                    </>
+                )}
 
                 {selectedSeedRepos.length ? (
                     <>

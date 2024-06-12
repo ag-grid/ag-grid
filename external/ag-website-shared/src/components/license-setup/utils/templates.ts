@@ -145,3 +145,9 @@ export default {
 `,
     },
 };
+
+export const getChartsTemplate = ({ license }: { license?: string }) => {
+    return `import { AgCharts } from "ag-charts-enterprise";
+
+AgCharts.setLicenseKey("${license}");`;
+};
