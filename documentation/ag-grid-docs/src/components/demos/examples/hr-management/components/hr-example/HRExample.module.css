@@ -5,7 +5,10 @@
 :global(.ag-theme-quartz),
 :global(.ag-theme-quartz-dark) {
     --ag-row-height: 65px !important;
-    --ag-header-background-color: transparent !important;
+    --ag-header-background-color: transparent;
+    --ag-odd-row-background-color: rgba(216, 216, 216, 0.062);
+    --ag-row-border-color: rgba(138, 138, 138, 0.154);
+    --ag-borders: none;
 }
 
 :global(.ag-theme-quartz .ag-cell),
@@ -19,6 +22,26 @@
     height: 100%;
     display: flex;
     align-items: center !important;
+}
+
+:global(.ag-theme-quartz .ag-header),
+:global(.ag-theme-quartz-dark .ag-header) {
+    text-transform: uppercase;
+    border: none;
+    opacity: 0.7;
+    font-size: 13px;
+    border-bottom: 1px rgba(140, 140, 140, 0.176) solid;
+}
+
+:global(.ag-theme-quartz .ag-header-cell-text),
+:global(.ag-theme-quartz-dark .ag-header-cell-text) {
+    letter-spacing: 1.1px;
+    font-weight: 600;
+}
+
+:global(.ag-theme-quartz .ag-group-expanded),
+:global(.ag-theme-quartz-dark .ag-group-expanded) {
+    opacity: 0.5;
 }
 
 .grid {

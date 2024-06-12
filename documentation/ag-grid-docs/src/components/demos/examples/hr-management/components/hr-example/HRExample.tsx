@@ -1,20 +1,21 @@
 import type { ColDef, GetDataPath, StatusPanelDef } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
+import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import { type FunctionComponent, useCallback, useMemo, useRef, useState } from 'react';
 
 import { currencyFormatter } from '../../utils/valueFormatters';
 import { EmployeeCellRenderer } from '../employee-cell-renderer/EmployeeCellRenderer';
 import { FlagRenderer } from '../flag-renderer/FlagRenderer';
+import { StatusCellRenderer } from '../status-cell-renderer/StatusCellRenderer';
 import { TagCellRenderer } from '../tag-cell-renderer/TagCellRenderer';
 import styles from './HRExample.module.css';
 import { getData } from './data';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
-    
-ModuleRegistry.registerModules([ RowGroupingModule, RichSelectModule, SetFilterModule, StatusBarModule ]);
+
+ModuleRegistry.registerModules([RowGroupingModule, RichSelectModule, SetFilterModule, StatusBarModule]);
 
 interface Props {
     gridTheme?: string;
@@ -36,55 +37,59 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             width: 200,
             cellRenderer: FlagRenderer,
             editable: true,
-            filter: 'agSetColumnFilter',
         },
         {
             field: 'department',
             cellDataType: 'text',
             width: 250,
             cellRenderer: TagCellRenderer,
-            filter: 'agSetColumnFilter',
         },
-        { 
+        {
             field: 'employmentType',
             editable: true,
             width: 180,
-            cellEditor: "agRichSelectCellEditor",
+            cellEditor: 'agRichSelectCellEditor',
             cellEditorParams: {
                 values: employmentType,
             },
-            filter: 'agSetColumnFilter',
         },
-        { 
+        {
             field: 'joinDate',
             editable: true,
             width: 120,
         },
-        {   field: 'basicMonthlySalary',
+        {
+            headerName: 'Salary',
+            field: 'basicMonthlySalary',
             cellDataType: 'number',
-            valueFormatter: currencyFormatter
+            valueFormatter: currencyFormatter,
         },
         {
+            headerName: 'ID',
             field: 'employeeId',
             cellDataType: 'number',
             width: 120,
         },
-        { 
-            field: 'paymentMethod', 
+        {
+            headerName: 'Method',
+            field: 'paymentMethod',
             cellDataType: 'text',
             editable: true,
             width: 180,
-            cellEditor: "agRichSelectCellEditor",
+            cellEditor: 'agRichSelectCellEditor',
             cellEditorParams: {
                 values: paymentMethod,
             },
         },
-        { 
-            field: 'paymentStatus', 
+        {
+            headerName: 'Status',
+            field: 'paymentStatus',
             cellDataType: 'text',
             editable: true,
             width: 150,
-            cellEditor: "agRichSelectCellEditor",
+            pinned: 'right',
+            cellRenderer: StatusCellRenderer,
+            cellEditor: 'agRichSelectCellEditor',
             cellEditorParams: {
                 values: paymentStatus,
             },
@@ -97,27 +102,28 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
 
     const themeClass = isDarkMode ? `${gridTheme}-dark` : gridTheme;
     const treeData = true;
-    const autoGroupColumnDef = useMemo(() => { 
+    const autoGroupColumnDef = useMemo(() => {
         return {
-            headerName: "Organisational Hierarchy",
-            width: 400,
+            headerName: 'Employee',
+            width: 300,
+            pinned: 'left',
             cellRendererParams: {
                 suppressCount: true,
                 innerRenderer: EmployeeCellRenderer,
-            }
+            },
         };
     }, []);
 
     const statusBar = useMemo<{
         statusPanels: StatusPanelDef[];
-      }>(() => {
+    }>(() => {
         return {
-          statusPanels: [
-            { statusPanel: "agTotalAndFilteredRowCountComponent" },
-            { statusPanel: "agFilteredRowCountComponent" },
-          ],
+            statusPanels: [
+                { statusPanel: 'agTotalAndFilteredRowCountComponent' },
+                { statusPanel: 'agFilteredRowCountComponent' },
+            ],
         };
-      }, []);    
+    }, []);
 
     return (
         <div className={styles.wrapper}>

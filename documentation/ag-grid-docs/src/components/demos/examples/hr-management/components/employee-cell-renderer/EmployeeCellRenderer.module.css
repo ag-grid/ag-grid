@@ -7,13 +7,16 @@
 }
 
 .employeeCell img {
-    border: 1px solid rgba(157, 157, 157, 0.5);
     padding: 2px;
 }
 
 .employeeData {
     display: flex;
     flex-direction: column;
+
+    span:first-child {
+        font-weight: 500;
+    }
 }
 
 .description {
@@ -25,13 +28,13 @@
 }
 
 .employeeName {
-    font-weight: 500;
+    font-weight: 600;
     color: rgb(50, 50, 50);
 }
 
 .image {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     margin-right: 5px;
     border-radius: 100px;
 }

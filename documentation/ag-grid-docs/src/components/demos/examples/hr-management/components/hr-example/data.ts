@@ -31,7 +31,7 @@ export function getData() {
             flag: 'uk',
         },
         {
-            orgHierarchy: ['Dylan Lewis', 'Frank Wilson'],
+            orgHierarchy: ['Dylan Lewis', 'Renee Baker', 'Frank Wilson'],
             jobTitle: 'Exec. Vice President',
             employmentType: 'Permanent',
             department: 'Executive Management',
@@ -46,7 +46,7 @@ export function getData() {
             flag: 'uk',
         },
         {
-            orgHierarchy: ['Dylan Lewis', 'Michael Dennis'],
+            orgHierarchy: ['Dylan Lewis', 'Renee Baker', 'Frank Wilson', 'Michael Dennis'],
             jobTitle: 'Exec. Vice President',
             employmentType: 'Permanent',
             department: 'Executive Management',
@@ -91,7 +91,7 @@ export function getData() {
             flag: 'ie',
         },
         {
-            orgHierarchy: ['John Gonzalez', 'Rachel Mckenzie'],
+            orgHierarchy: ['John Gonzalez', 'Nicole Bass', 'Rachel Mckenzie'],
             jobTitle: 'Employee',
             employmentType: 'Contract',
             department: 'Customer Support',
@@ -136,7 +136,7 @@ export function getData() {
             flag: 'us',
         },
         {
-            orgHierarchy: ['Jonathan Romero', 'Dr. Gregory Mills'],
+            orgHierarchy: ['Jonathan Romero', 'Heather Mathis', 'Dr. Gregory Mills'],
             jobTitle: 'Employee',
             employmentType: 'Permanent',
             department: 'Design',
@@ -211,7 +211,7 @@ export function getData() {
             flag: 'ne',
         },
         {
-            orgHierarchy: ['Shawn Phillips',  'Darren Osborn'],
+            orgHierarchy: ['Shawn Phillips', 'Darren Osborn'],
             jobTitle: 'Employee',
             employmentType: 'Permanent',
             department: 'Engineering',
@@ -226,7 +226,7 @@ export function getData() {
             flag: 'es',
         },
         {
-            orgHierarchy: ['Shawn Phillips',  'Amanda Arnold'],
+            orgHierarchy: ['Shawn Phillips', 'Amanda Arnold'],
             jobTitle: 'Employee',
             employmentType: 'Permanent',
             department: 'Engineering',
@@ -241,7 +241,7 @@ export function getData() {
             flag: 'ie',
         },
         {
-            orgHierarchy: ['Shawn Phillips',  'Richard Willis'],
+            orgHierarchy: ['Shawn Phillips', 'Richard Willis'],
             jobTitle: 'Employee',
             employmentType: 'Contract',
             department: 'Engineering',
@@ -256,7 +256,7 @@ export function getData() {
             flag: 'fr',
         },
         {
-            orgHierarchy: ['Shawn Phillips',  'Mary Mckinney'],
+            orgHierarchy: ['Shawn Phillips', 'Mary Mckinney'],
             jobTitle: 'Employee',
             employmentType: 'Contract',
             department: 'Engineering',
@@ -271,7 +271,7 @@ export function getData() {
             flag: 'uk',
         },
         {
-            orgHierarchy: ['Shawn Phillips',  'Tammy Love'],
+            orgHierarchy: ['Shawn Phillips', 'Tammy Love'],
             jobTitle: 'Employee',
             employmentType: 'Permanent',
             department: 'Engineering',
@@ -286,7 +286,7 @@ export function getData() {
             flag: 'fr',
         },
         {
-            orgHierarchy: ['Shawn Phillips',  'Donna Parker'],
+            orgHierarchy: ['Shawn Phillips', 'Donna Parker'],
             jobTitle: 'Employee',
             employmentType: 'Contract',
             department: 'Engineering',
@@ -301,7 +301,7 @@ export function getData() {
             flag: 'es',
         },
         {
-            orgHierarchy: ['Shawn Phillips',  'Trevor Williams'],
+            orgHierarchy: ['Shawn Phillips', 'Trevor Williams'],
             jobTitle: 'Employee',
             employmentType: 'Contract',
             department: 'Engineering',
@@ -316,7 +316,7 @@ export function getData() {
             flag: 'fr',
         },
         {
-            orgHierarchy: ['Shawn Phillips',  'Daniel Rodgers'],
+            orgHierarchy: ['Shawn Phillips', 'Daniel Rodgers'],
             jobTitle: 'Employee',
             employmentType: 'Permanent',
             department: 'Engineering',
@@ -346,7 +346,7 @@ export function getData() {
             flag: 'fr',
         },
         {
-            orgHierarchy: ['John Hall',  'Alexandria Novak'],
+            orgHierarchy: ['John Hall', 'Alexandria Novak'],
             jobTitle: 'Employee',
             employmentType: 'Contract',
             department: 'Legal',
@@ -361,7 +361,7 @@ export function getData() {
             flag: 'uk',
         },
         {
-            orgHierarchy: ['John Hall',  'Donald Brennan'],
+            orgHierarchy: ['John Hall', 'Donald Brennan'],
             jobTitle: 'Employee',
             employmentType: 'Permanent',
             department: 'Legal',
@@ -376,7 +376,7 @@ export function getData() {
             flag: 'ie',
         },
         {
-            orgHierarchy: ['John Hall',  'Andrea Kim'],
+            orgHierarchy: ['John Hall', 'Andrea Kim'],
             jobTitle: 'Employee',
             employmentType: 'Permanent',
             department: 'Legal',
