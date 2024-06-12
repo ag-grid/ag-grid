@@ -140,6 +140,7 @@ export const INTERNAL_EVENTS = [
     'gridStylesChanged',
     'chartTitleEdit',
     'recalculateRowBounds',
+    'stickyTopOffsetChanged',
 ] as const;
 
 export const ALL_EVENTS = [...PUBLIC_EVENTS, ...INTERNAL_EVENTS] as const;

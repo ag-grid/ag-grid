@@ -3,7 +3,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { DragService } from '../../dragAndDrop/dragService';
-import type { DisplayedRowsChangedEvent } from '../../events';
+import type { DisplayedRowsChangedEvent, StickyTopOffsetChangedEvent } from '../../events';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { ResizeObserverService } from '../../misc/resizeObserverService';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -217,6 +217,7 @@ export interface IRowContainerComp {
     setRowCtrls(params: { rowCtrls: RowCtrl[]; useFlushSync?: boolean }): void;
     setDomOrder(domOrder: boolean): void;
     setContainerWidth(width: string): void;
+    setOffsetTop(offset: string): void;
 }
 
 export class RowContainerCtrl extends BeanStub {
@@ -257,10 +258,16 @@ export class RowContainerCtrl extends BeanStub {
     public postConstruct(): void {
         this.enableRtl = this.gos.get('enableRtl');
 
-        this.forContainers(
-            ['center'],
-            () => (this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this)))
-        );
+        this.forContainers(['center'], () => {
+            this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this));
+            this.addManagedEventListeners({
+                stickyTopOffsetChanged: this.onStickyTopOffsetChanged.bind(this),
+            });
+        });
+    }
+
+    private onStickyTopOffsetChanged(event: StickyTopOffsetChangedEvent): void {
+        this.comp.setOffsetTop(`${event.offset}px`);
     }
 
     private registerWithCtrlsService(): void {

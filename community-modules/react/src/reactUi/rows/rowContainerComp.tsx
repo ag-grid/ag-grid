@@ -86,6 +86,11 @@ const RowContainerComp = (params: { name: RowContainerName }) => {
                         eContainer.current.style.width = width;
                     }
                 },
+                setOffsetTop: (offset: string) => {
+                    if (eContainer.current) {
+                        eContainer.current.style.transform = `translateY(${offset})`;
+                    }
+                },
             };
 
             rowContainerCtrlRef.current = context.createBean(new RowContainerCtrl(name));
