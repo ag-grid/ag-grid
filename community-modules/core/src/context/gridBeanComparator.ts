@@ -113,7 +113,7 @@ export function gridBeanInitComparator(
 
 // We want gos and gridOptions to be destroyed last in case any beans are using them in their destroy methods
 const lastDestroyOrder: { [key in BeanName]?: number } = Object.fromEntries(
-    ['gos', 'gridOptions'].map((beanName, index) => [beanName, index])
+    ['gridOptions', 'gos'].map((beanName, index) => [beanName, index])
 );
 export function gridBeanDestroyComparator(
     bean1: GenericBean<BeanName, BeanCollection>,
@@ -126,5 +126,5 @@ export function gridBeanDestroyComparator(
     // if the beans are not in the ordered list, just ensure they are before the ordered beans and stable to provided order
     const index1 = (bean1.beanName ? lastDestroyOrder[bean1.beanName] : undefined) ?? 0;
     const index2 = (bean2.beanName ? lastDestroyOrder[bean2.beanName] : undefined) ?? 0;
-    return index2 - index1;
+    return index1 - index2;
 }
