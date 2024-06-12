@@ -119,7 +119,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                             type="radio"
                             name="hasLicense"
                             value="true"
-                            defaultChecked={hasValue(hasLicense) && hasLicense}
+                            checked={hasValue(hasLicense) && hasLicense}
                             onChange={() => setHasLicense(true)}
                         />{' '}
                         Existing license key
@@ -130,7 +130,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                             type="radio"
                             name="hasLicense"
                             value="false"
-                            defaultChecked={hasValue(hasLicense) && !hasLicense}
+                            checked={hasValue(hasLicense) && !hasLicense}
                             onChange={() => setHasLicense(false)}
                         />{' '}
                         No license key yet
