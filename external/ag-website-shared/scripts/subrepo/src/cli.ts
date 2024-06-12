@@ -5,11 +5,10 @@ import yargs from 'yargs/yargs';
 import { type SubrepoCommandParams, runSubRepoCommand } from './lib/runSubRepoCommand';
 import { TERMINAL_COLORS as tc } from './lib/terminal-colors';
 
-
 const SUBREPO_FOLDER = 'external';
 const subRepos = readdirSync(SUBREPO_FOLDER, { withFileTypes: true })
-    .filter((entry:any) => entry.isDirectory())
-    .map((directory:any) => directory.name);
+    .filter((entry: any) => entry.isDirectory())
+    .map((directory: any) => directory.name);
 
 const runCommand = ({ command, subRepoFolder, isVerbose }: SubrepoCommandParams) => {
     try {
@@ -48,7 +47,7 @@ yargs(hideBin(process.argv))
                     isVerbose: argv.verbose,
                     rootPath: argv.rootPath,
                 });
-            })
+            });
         }
     )
     .option('verbose', {
