@@ -152,7 +152,7 @@ export class ColumnFilterService extends BeanStub {
         return new AgPromise<void>((resolve) => {
             filterPromise.then((filter) => {
                 if (typeof filter!.setModel !== 'function') {
-                    _warnOnce('AG Grid: filter missing setModel method, which is needed for setFilterModel');
+                    _warnOnce('filter missing setModel method, which is needed for setFilterModel');
                     resolve();
                 }
 
@@ -186,7 +186,7 @@ export class ColumnFilterService extends BeanStub {
         }
 
         if (typeof filter.getModel !== 'function') {
-            _warnOnce('AG Grid: filter API missing getModel method, which is needed for getFilterModel');
+            _warnOnce('filter API missing getModel method, which is needed for getFilterModel');
             return null;
         }
 
@@ -227,7 +227,7 @@ export class ColumnFilterService extends BeanStub {
                 return false;
             } // this never happens, including to avoid compile error
             if (!filter.isFilterActive) {
-                _warnOnce('AG Grid: Filter is missing isFilterActive() method');
+                _warnOnce('Filter is missing isFilterActive() method');
                 return false;
             }
             return filter.isFilterActive();

@@ -349,7 +349,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         if (groupIds) {
             const unrecognisedGroupIds = groupIds.filter((groupId) => updatedGroupIds.indexOf(groupId) < 0);
             if (unrecognisedGroupIds.length > 0) {
-                _warnOnce('AG Grid: unable to find groups for these supplied groupIds:', unrecognisedGroupIds);
+                _warnOnce('unable to find groups for these supplied groupIds:', unrecognisedGroupIds);
             }
         }
     }

@@ -944,15 +944,16 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const isSameColumn = columnFrom === columnTo;
         const fromIndex = allColumns.indexOf(columnFrom as AgColumn);
 
+        const logMissing = (column: AgColumn) => _warnOnce(`column ${column.getId()} is not visible`);
         if (fromIndex < 0) {
-            _warnOnce(`column ${columnFrom.getId()} is not visible`);
+            logMissing(columnFrom);
             return;
         }
 
         const toIndex = isSameColumn ? fromIndex : allColumns.indexOf(columnTo as AgColumn);
 
         if (toIndex < 0) {
-            _warnOnce(`column ${columnTo.getId()} is not visible`);
+            logMissing(columnTo);
             return;
         }
 

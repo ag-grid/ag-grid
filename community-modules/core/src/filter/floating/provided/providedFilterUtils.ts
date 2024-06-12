@@ -4,7 +4,7 @@ import type { ProvidedFilterParams } from '../../provided/iProvidedFilter';
 export function getDebounceMs(params: ProvidedFilterParams, debounceDefault: number): number {
     if (isUseApplyButton(params)) {
         if (params.debounceMs != null) {
-            _warnOnce('AG Grid: debounceMs is ignored when apply button is present');
+            _warnOnce('debounceMs is ignored when apply button is present');
         }
 
         return 0;

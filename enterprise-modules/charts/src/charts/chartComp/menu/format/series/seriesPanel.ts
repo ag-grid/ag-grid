@@ -169,7 +169,7 @@ export class SeriesPanel extends Component {
                     this.activePanels.push(widget);
                 });
             })
-            .catch((e) => _errorOnce(`AG Grid - chart rendering failed`, e));
+            .catch((e) => _errorOnce(`chart rendering failed`, e));
     }
 
     private initSeriesSelect() {
