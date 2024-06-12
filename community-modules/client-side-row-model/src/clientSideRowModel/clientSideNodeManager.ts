@@ -285,12 +285,12 @@ export class ClientSideNodeManager {
     }
 
     private lookupRowNode(data: any): RowNode | null {
-        const getRowIdFunc = this.gos.getCallback('getRowId');
+        const getRowIdFunc = this.gos.getRowIdCallback();
 
         let rowNode: RowNode | undefined;
         if (getRowIdFunc) {
             // find rowNode using id
-            const id: string = getRowIdFunc({ data, level: 0 });
+            const id = getRowIdFunc({ data, level: 0 });
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
                 console.error(`AG Grid: could not find row id=${id}, data item was not found for this id`);

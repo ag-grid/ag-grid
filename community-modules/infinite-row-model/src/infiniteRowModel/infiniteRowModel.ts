@@ -173,7 +173,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
         // if user is providing id's, then this means we can keep the selection between datasource hits,
         // as the rows will keep their unique id's even if, for example, server side sorting or filtering
         // is done.
-        const getRowIdFunc = this.gos.getCallback('getRowId');
+        const getRowIdFunc = this.gos.getRowIdCallback();
         const userGeneratingIds = getRowIdFunc != null;
 
         if (!userGeneratingIds) {
