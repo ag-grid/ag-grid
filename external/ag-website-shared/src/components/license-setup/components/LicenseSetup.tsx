@@ -280,7 +280,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                 </p>
                 {dependenciesSnippet && <Snippet framework={framework} content={dependenciesSnippet} />}
                 <p>Or install using npm:</p>
-                {npmInstallSnippet && <Snippet framework={framework} content={npmInstallSnippet} />}
+                {npmInstallSnippet && <Snippet framework={framework} content={npmInstallSnippet} language="bash" />}
                 <h3>Set Up License Example</h3>
                 {errors.noProducts && <Warning>{errors.noProducts}</Warning>}
                 {(userProducts.gridEnterprise || userProducts.integratedEnterprise) && (
