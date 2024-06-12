@@ -52,7 +52,11 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
 
     protected init(params: GenericContextParams<TBeanName, TBeanCollection>): void {
         Object.entries(params.providedBeanInstances).forEach(([beanName, beanInstance]: [TBeanName, any]) => {
-            this.beans[beanName] = beanInstance;
+            if (beanInstance) {
+                this.beans[beanName] = beanInstance;
+            } else {
+                _errorOnce(`Bean ${beanName} is missing beanInstance`);
+            }
         });
 
         params.beanClasses.forEach((BeanClass) => {

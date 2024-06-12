@@ -351,13 +351,19 @@ export class GridCoreCreator {
             frameworkOverrides = new VanillaFrameworkOverrides();
         }
 
-        const seed = {
+        const seed: any = {
             gridOptions: gridOptions,
             eGridDiv: eGridDiv,
-            globalEventListener: params ? params.globalEventListener : null,
-            globalSyncEventListener: params ? params.globalSyncEventListener : null,
             frameworkOverrides: frameworkOverrides,
         };
+        // Only set of the seed if the params are provided to avoid setting
+        // null values in the beans context
+        if (params?.globalEventListener) {
+            seed.globalEventListener = params.globalEventListener;
+        }
+        if (params?.globalSyncEventListener) {
+            seed.globalSyncEventListener = params.globalSyncEventListener;
+        }
         if (params && params.providedBeanInstances) {
             Object.assign(seed, params.providedBeanInstances);
         }
