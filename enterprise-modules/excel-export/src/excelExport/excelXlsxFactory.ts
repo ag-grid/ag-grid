@@ -8,7 +8,7 @@ import type {
     ExcelWorksheet,
     RowHeightCallbackParams,
 } from '@ag-grid-community/core';
-import { ExcelFactoryMode, _escapeString } from '@ag-grid-community/core';
+import { ExcelFactoryMode, _escapeString, _warnOnce } from '@ag-grid-community/core';
 
 import type {
     ExcelCalculatedImage,
@@ -88,8 +88,8 @@ export class ExcelXlsxFactory {
     }
 
     private static showExcelTableNonCompatibleFeaturesWarning(featureName: string) {
-        console.warn(
-            `AG Grid: Excel table export does not work with ${featureName}. ` +
+        _warnOnce(
+            `Excel table export does not work with ${featureName}. ` +
                 `The exported Excel file will not contain any Excel tables.\n` +
                 `Please turn off ${featureName} to enable Excel table exports.`
         );
@@ -108,7 +108,7 @@ export class ExcelXlsxFactory {
 
     public static addTableToSheet(sheetIndex: number, table: ExcelDataTable): void {
         if (this.worksheetDataTables.has(sheetIndex)) {
-            console.warn('Unable to add data table to Excel sheet: A table already exists.');
+            _warnOnce('Unable to add data table to Excel sheet: A table already exists.');
             return;
         }
 
@@ -156,7 +156,7 @@ export class ExcelXlsxFactory {
         }
 
         if (!tableColumns || !tableColumns.length || !tableRowCount || !tableName) {
-            console.warn('Unable to add data table to Excel sheet: Missing required parameters.');
+            _warnOnce('Unable to add data table to Excel sheet: Missing required parameters.');
             return;
         }
 

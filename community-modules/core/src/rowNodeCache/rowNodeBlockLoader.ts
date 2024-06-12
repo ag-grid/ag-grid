@@ -3,9 +3,8 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
-import type { Logger } from '../logger';
 import { _removeFromArray } from '../utils/array';
-import { _debounce } from '../utils/function';
+import { _debounce, _log } from '../utils/function';
 import type { RowNodeBlock } from './rowNodeBlock';
 
 export type RowNodeBlockLoaderEvent = 'blockLoaded' | 'blockLoaderFinished';
@@ -14,11 +13,8 @@ export class RowNodeBlockLoader extends BeanStub<RowNodeBlockLoaderEvent> implem
 
     private rowModel: IRowModel;
 
-    private logger: Logger;
-
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
-        this.logger = beans.loggerFactory.create('RowNodeBlockLoader');
     }
 
     private maxConcurrentRequests: number | undefined;
@@ -96,7 +92,9 @@ export class RowNodeBlockLoader extends BeanStub<RowNodeBlockLoaderEvent> implem
         this.printCacheStatus();
 
         if (this.maxConcurrentRequests != null && this.activeBlockLoadsCount >= this.maxConcurrentRequests) {
-            this.logger.log(`checkBlockToLoad: max loads exceeded`);
+            if (this.gos.get('debug')) {
+                _log(`RowNodeBlockLoader - checkBlockToLoad: max loads exceeded`);
+            }
             return;
         }
 
@@ -125,9 +123,9 @@ export class RowNodeBlockLoader extends BeanStub<RowNodeBlockLoaderEvent> implem
     }
 
     private printCacheStatus(): void {
-        if (this.logger.isLogging()) {
-            this.logger.log(
-                `printCacheStatus: activePageLoadsCount = ${this.activeBlockLoadsCount},` +
+        if (this.gos.get('debug')) {
+            _log(
+                `RowNodeBlockLoader - printCacheStatus: activePageLoadsCount = ${this.activeBlockLoadsCount},` +
                     ` blocks = ${JSON.stringify(this.getBlockState())}`
             );
         }

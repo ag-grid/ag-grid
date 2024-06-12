@@ -14,7 +14,7 @@ import type {
     SortedRowNode,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, _missing, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, _errorOnce, _missing, _warnOnce } from '@ag-grid-community/core';
 
 export class SortService extends BeanStub implements NamedBean {
     beanName = 'sortService' as const;
@@ -253,8 +253,8 @@ export class SortService extends BeanStub implements NamedBean {
             groupDisplayCols.forEach((groupDisplayCol) => {
                 const showRowGroup = groupDisplayCol.getColDef().showRowGroup;
                 if (typeof showRowGroup !== 'string') {
-                    console.error(
-                        'AG Grid: groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup'
+                    _errorOnce(
+                        'groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup'
                     );
                     return;
                 }

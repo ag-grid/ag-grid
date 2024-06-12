@@ -408,7 +408,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             } else if (typeof footerValueGetter === 'string') {
                 footerValue = this.expressionService.evaluate(footerValueGetter, paramsClone);
             } else {
-                console.warn('AG Grid: footerValueGetter should be either a function or a string (expression)');
+                _warnOnce('footerValueGetter should be either a function or a string (expression)');
             }
         } else {
             const localeTextFunc = this.localeService.getLocaleTextFunc();

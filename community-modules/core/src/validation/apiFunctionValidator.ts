@@ -3,7 +3,7 @@ import type { BeanCollection } from '../context/context';
 import type { RowModelType } from '../interfaces/iRowModel';
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
-import { _warnOnce } from '../utils/function';
+import { _errorOnce, _warnOnce } from '../utils/function';
 
 // enable minification
 const clientSideRowModelModule = ModuleNames.ClientSideRowModelModule;
@@ -289,8 +289,8 @@ export function validateApiFunction<TFunctionName extends ApiFunctionName>(
         return (...args: any[]) => {
             const rowModel = beans.rowModel.getType();
             if (!rowModels.includes(rowModel)) {
-                console.error(
-                    `AG Grid: api.${functionName} can only be called when gridOptions.rowModelType is ${rowModels.join(' or ')}`
+                _errorOnce(
+                    `api.${functionName} can only be called when gridOptions.rowModelType is ${rowModels.join(' or ')}`
                 );
                 return undefined;
             }

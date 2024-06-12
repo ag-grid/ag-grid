@@ -1,4 +1,4 @@
-import { BeanStub } from '@ag-grid-community/core';
+import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 import type {
     BeanCollection,
     FocusService,
@@ -785,8 +785,8 @@ export class LazyCache extends BeanStub {
             const duplicates = this.extractDuplicateIds(response.rowData);
             if (duplicates.length > 0) {
                 const duplicateIdText = duplicates.join(', ');
-                console.warn(
-                    `AG Grid: Unable to display rows as duplicate row ids (${duplicateIdText}) were returned by the getRowId callback. Please modify the getRowId callback to provide unique ids.`
+                _warnOnce(
+                    `Unable to display rows as duplicate row ids (${duplicateIdText}) were returned by the getRowId callback. Please modify the getRowId callback to provide unique ids.`
                 );
                 this.onLoadFailed(firstRowIndex, numberOfRowsExpected);
                 return;

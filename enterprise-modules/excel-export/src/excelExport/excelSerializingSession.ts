@@ -18,7 +18,7 @@ import type {
     RowHeightCallbackParams,
     RowNode,
 } from '@ag-grid-community/core';
-import { _last, _mergeDeep } from '@ag-grid-community/core';
+import { _last, _mergeDeep, _warnOnce } from '@ag-grid-community/core';
 import type { GridSerializingParams, RowAccumulator, RowSpanningAccumulator } from '@ag-grid-community/csv-export';
 import { BaseGridSerializingSession, RowType } from '@ag-grid-community/csv-export';
 
@@ -401,9 +401,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 case 'boolean':
                     return 'b';
                 default:
-                    console.warn(
-                        `AG Grid: Unrecognized data type for excel export [${style.id}.dataType=${style.dataType}]`
-                    );
+                    _warnOnce(`Unrecognized data type for excel export [${style.id}.dataType=${style.dataType}]`);
             }
         }
 

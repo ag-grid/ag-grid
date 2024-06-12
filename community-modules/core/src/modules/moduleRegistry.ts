@@ -1,5 +1,5 @@
 import type { Module, ModuleValidationInvalidResult } from '../interfaces/iModule';
-import { _doOnce } from '../utils/function';
+import { _errorOnce } from '../utils/function';
 import { _values } from '../utils/generic';
 import { ModuleNames } from './moduleNames';
 
@@ -69,14 +69,15 @@ export class ModuleRegistry {
         if (!ModuleRegistry.currentModuleVersion) {
             ModuleRegistry.currentModuleVersion = module.version;
         }
-
+        const errorMsg = (details: string) =>
+            `You are using incompatible versions of AG Grid modules. Major and minor versions should always match across modules. ${details} Please update all modules to the same version.`;
         if (!module.version) {
-            console.error(
-                `AG Grid: You are using incompatible versions of AG Grid modules. Major and minor versions should always match across modules. '${module.moduleName}' is incompatible. Please update all modules to the same version.`
-            );
+            _errorOnce(errorMsg(`'${module.moduleName}' is incompatible.`));
         } else if (!ModuleRegistry.isValidModuleVersion(module)) {
-            console.error(
-                `AG Grid: You are using incompatible versions of AG Grid modules. Major and minor versions should always match across modules. '${module.moduleName}' is version ${module.version} but the other modules are version ${this.currentModuleVersion}. Please update all modules to the same version.`
+            _errorOnce(
+                errorMsg(
+                    `'${module.moduleName}' is version ${module.version} but the other modules are version ${ModuleRegistry.currentModuleVersion}.`
+                )
             );
         }
 
@@ -84,7 +85,7 @@ export class ModuleRegistry {
             const result = module.validate();
             if (!result.isValid) {
                 const errorResult = result as ModuleValidationInvalidResult;
-                console.error(`AG Grid: ${errorResult.message}`);
+                _errorOnce(`${errorResult.message}`);
             }
         }
     }
@@ -94,12 +95,10 @@ export class ModuleRegistry {
             ModuleRegistry.moduleBased = moduleBased;
         } else {
             if (ModuleRegistry.moduleBased !== moduleBased) {
-                _doOnce(() => {
-                    console.warn(
-                        `AG Grid: You are mixing modules (i.e. @ag-grid-community/core) and packages (ag-grid-community) - you can only use one or the other of these mechanisms.`
-                    );
-                    console.warn('Please see https://www.ag-grid.com/javascript-grid/modules/ for more information.');
-                }, 'ModulePackageCheck');
+                _errorOnce(
+                    `AG Grid: You are mixing modules (i.e. @ag-grid-community/core) and packages (ag-grid-community) - you can only use one or the other of these mechanisms.`
+                );
+                _errorOnce('Please see https://www.ag-grid.com/javascript-grid/modules/ for more information.');
             }
         }
     }
@@ -117,7 +116,6 @@ export class ModuleRegistry {
             return true;
         }
 
-        const warningKey = reason + moduleName;
         let warningMessage: string;
 
         if (ModuleRegistry.isBundled) {
@@ -145,9 +143,7 @@ For more info see: https://www.ag-grid.com/javascript-grid/modules/`;
     import 'ag-grid-enterprise';`;
         }
 
-        _doOnce(() => {
-            console.warn(warningMessage);
-        }, warningKey);
+        _errorOnce(warningMessage);
 
         return false;
     }

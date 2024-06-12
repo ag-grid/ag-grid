@@ -16,6 +16,7 @@ import { _setAriaLabel, _setAriaRole } from '../utils/aria';
 import { _last } from '../utils/array';
 import { _getAbsoluteHeight, _getAbsoluteWidth, _getElementRectWithOffset } from '../utils/dom';
 import { _isElementInEventPath, _isStopPropagationForAgGrid } from '../utils/event';
+import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 
@@ -463,7 +464,7 @@ export class PopupService extends BeanStub implements NamedBean {
         const { eChild, ariaLabel, alwaysOnTop, positionCallback, anchorToElement } = params;
 
         if (!eDocument) {
-            console.warn('AG Grid: could not find the document, document is empty');
+            _warnOnce('could not find the document, document is empty');
             return { hideFunc: () => {} };
         }
 

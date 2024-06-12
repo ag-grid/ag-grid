@@ -14,6 +14,7 @@ import type { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 import type { RowCtrl } from './rendering/row/rowCtrl';
 import type { RowRenderer } from './rendering/rowRenderer';
 import { _last } from './utils/array';
+import { _warnOnce } from './utils/function';
 import { _missing } from './utils/generic';
 
 export class CellNavigationService extends BeanStub implements NamedBean {
@@ -106,7 +107,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
                     break;
                 default:
                     pointer = null;
-                    console.warn('AG Grid: unknown key for navigation ' + key);
+                    _warnOnce('unknown key for navigation ', key);
                     break;
             }
 

@@ -1,7 +1,8 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { type AgColumn, isColumn } from '../entities/agColumn';
+import { isColumn } from '../entities/agColumn';
+import type { AgColumn } from '../entities/agColumn';
 import { AgColumnGroup, createUniqueColumnGroupId, isColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { RowNode } from '../entities/rowNode';

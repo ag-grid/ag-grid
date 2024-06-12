@@ -21,6 +21,7 @@ import {
     LocalEventService,
     _defaultComparator,
     _doOnce,
+    _errorOnce,
     _exists,
     _makeNull,
     _warnOnce,
@@ -450,11 +451,9 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
         existingValues?: Map<string | null, V | null>;
     } | null {
         if (!this.clientSideValuesExtractor) {
-            _doOnce(() => {
-                console.error(
-                    'AG Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values'
-                );
-            }, 'setFilterValueNotCSRM');
+            _errorOnce(
+                'Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values'
+            );
             return null;
         }
 

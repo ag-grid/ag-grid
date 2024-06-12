@@ -7,7 +7,14 @@ import type {
     ColumnModel,
     NamedBean,
 } from '@ag-grid-community/core';
-import { AgProvidedColumnGroup, BeanStub, _includes, _last, isProvidedColumnGroup } from '@ag-grid-community/core';
+import {
+    AgProvidedColumnGroup,
+    BeanStub,
+    _includes,
+    _last,
+    _warnOnce,
+    isProvidedColumnGroup,
+} from '@ag-grid-community/core';
 
 export class ToolPanelColDefService extends BeanStub implements NamedBean {
     beanName = 'toolPanelColDefService' as const;
@@ -64,7 +71,7 @@ export class ToolPanelColDefService extends BeanStub implements NamedBean {
         });
 
         if (invalidColIds.length > 0) {
-            console.warn('AG Grid: unable to find grid columns for the supplied colDef(s):', invalidColIds);
+            _warnOnce('unable to find grid columns for the supplied colDef(s):', invalidColIds);
         }
 
         return mappedResults;

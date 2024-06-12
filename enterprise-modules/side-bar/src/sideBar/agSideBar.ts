@@ -24,9 +24,10 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import { AgSideBarButtonsSelector, type SideBarButtonClickedEvent } from './agSideBarButtons';
+import { AgSideBarButtonsSelector } from './agSideBarButtons';
+import type { SideBarButtonClickedEvent } from './agSideBarButtons';
 import type { AgSideBarButtons } from './agSideBarButtons';
-import { SideBarDefParser } from './sideBarDefParser';
+import { parseSideBarDef } from './sideBarDefParser';
 import type { SideBarService } from './sideBarService';
 import { ToolPanelWrapper } from './toolPanelWrapper';
 
@@ -60,7 +61,7 @@ export class AgSideBar extends Component implements ISideBar {
         this.sideBarButtons.addEventListener('sideBarButtonClicked', this.onToolPanelButtonClicked.bind(this));
         const { sideBar: sideBarState } = this.gos.get('initialState') ?? {};
         this.setSideBarDef({
-            sideBarDef: SideBarDefParser.parse(this.gos.get('sideBar')),
+            sideBarDef: parseSideBarDef(this.gos.get('sideBar')),
             sideBarState,
         });
 
@@ -276,8 +277,8 @@ export class AgSideBar extends Component implements ISideBar {
 
     private validateDef(def: ToolPanelDef): boolean {
         if (def.id == null) {
-            console.warn(
-                `AG Grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id`
+            _warnOnce(
+                `please review all your toolPanel components, it seems like at least one of them doesn't have an id`
             );
             return false;
         }
@@ -374,7 +375,7 @@ export class AgSideBar extends Component implements ISideBar {
         const toolPanelWrapper = this.toolPanelWrappers.filter((toolPanel) => toolPanel.getToolPanelId() === key)[0];
 
         if (!toolPanelWrapper) {
-            console.warn(`AG Grid: unable to lookup Tool Panel as invalid key supplied: ${key}`);
+            _warnOnce(`unable to lookup Tool Panel as invalid key supplied: ${key}`);
             return;
         }
 
@@ -428,7 +429,7 @@ export class AgSideBar extends Component implements ISideBar {
     }
 
     private onSideBarUpdated(): void {
-        const sideBarDef = SideBarDefParser.parse(this.gos.get('sideBar'));
+        const sideBarDef = parseSideBarDef(this.gos.get('sideBar'));
 
         const existingToolPanelWrappers: { [id: string]: ToolPanelWrapper } = {};
         if (sideBarDef && this.sideBar) {

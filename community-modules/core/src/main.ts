@@ -568,7 +568,6 @@ export { RowNodeSorter, SortedRowNode, SortOption } from './rowNodes/rowNodeSort
 export { CtrlsService } from './ctrlsService';
 export { GridComp } from './gridComp/gridComp';
 export { GridCtrl, IGridComp } from './gridComp/gridCtrl';
-export { Logger, LoggerFactory } from './logger';
 export { SortController, SortModelItem } from './sortController';
 export { LocaleService } from './localeService';
 export { ValueService } from './valueService/valueService';
@@ -860,7 +859,7 @@ export {
     _isStopPropagationForAgGrid,
     _isElementInEventPath,
 } from './utils/event';
-export { _warnOnce, _errorOnce, _debounce, _compose, _doOnce, _waitUntil } from './utils/function';
+export { _log, _warnOnce, _errorOnce, _debounce, _compose, _doOnce, _waitUntil } from './utils/function';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export {

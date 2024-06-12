@@ -11,7 +11,7 @@ import type {
     ValueService,
     VisibleColsService,
 } from '@ag-grid-community/core';
-import { BeanStub } from '@ag-grid-community/core';
+import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 
 export class ChartColumnService extends BeanStub implements NamedBean {
     beanName = 'chartColumnService' as const;
@@ -95,8 +95,8 @@ export class ChartColumnService extends BeanStub implements NamedBean {
                     case 'excluded':
                         return;
                     default:
-                        console.warn(
-                            `AG Grid: unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'`
+                        _warnOnce(
+                            `unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'`
                         );
                         break;
                 }

@@ -14,7 +14,7 @@ import { SkeletonCellRenderer } from '../../rendering/cellRenderers/skeletonCell
 import { LoadingOverlayComponent } from '../../rendering/overlays/loadingOverlayComponent';
 import { NoRowsOverlayComponent } from '../../rendering/overlays/noRowsOverlayComponent';
 import { TooltipComponent } from '../../rendering/tooltipComponent';
-import { _doOnce } from '../../utils/function';
+import { _doOnce, _warnOnce } from '../../utils/function';
 import { _fuzzySuggestions } from '../../utils/fuzzyMatch';
 import { _iterateObject } from '../../utils/object';
 
@@ -130,13 +130,13 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
         ];
         const suggestions = _fuzzySuggestions(componentName, validComponents, true, 0.8).values;
 
-        console.warn(
-            `AG Grid: Could not find '${componentName}' component. It was configured as "${propertyName}: '${componentName}'" but it wasn't found in the list of registered components.`
+        _warnOnce(
+            `Could not find '${componentName}' component. It was configured as "${propertyName}: '${componentName}'" but it wasn't found in the list of registered components.`
         );
         if (suggestions.length > 0) {
-            console.warn(`         Did you mean: [${suggestions.slice(0, 3)}]?`);
+            _warnOnce(`         Did you mean: [${suggestions.slice(0, 3)}]?`);
         }
-        console.warn(
+        _warnOnce(
             `If using a custom component check it has been registered as described in: ${this.getFrameworkOverrides().getDocLink('components/')}`
         );
     }

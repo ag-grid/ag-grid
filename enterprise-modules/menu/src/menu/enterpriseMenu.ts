@@ -28,6 +28,7 @@ import {
     ModuleRegistry,
     RefPlaceholder,
     _createIconNoSpan,
+    _warnOnce,
 } from '@ag-grid-community/core';
 import type { AgMenuList, CloseMenuEvent, TabbedItem } from '@ag-grid-enterprise/core';
 import { TabbedLayout } from '@ag-grid-enterprise/core';
@@ -422,8 +423,8 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
         isValid = isValid && TABS_DEFAULT.indexOf(menuTabName) > -1;
 
         if (!isValid) {
-            console.warn(
-                `AG Grid: Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${itemsToConsider}]`
+            _warnOnce(
+                `Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${itemsToConsider}]`
             );
         }
 

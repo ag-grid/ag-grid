@@ -6,6 +6,7 @@ import type { SelectionEventSourceType } from '../../../events';
 import type { IRowModel } from '../../../interfaces/iRowModel';
 import type { ISelectionService } from '../../../interfaces/iSelectionService';
 import { _setAriaHidden, _setAriaRole } from '../../../utils/aria';
+import { _warnOnce } from '../../../utils/function';
 import { AgCheckbox } from '../../../widgets/agCheckbox';
 import type { HeaderCellCtrl } from './headerCellCtrl';
 
@@ -143,7 +144,7 @@ export class SelectAllFeature extends BeanStub {
         const isMultiSelect = this.gos.get('rowSelection') === 'multiple';
 
         if (!isMultiSelect) {
-            console.warn(`AG Grid: ${feature} is only available if using 'multiple' rowSelection.`);
+            _warnOnce(`${feature} is only available if using 'multiple' rowSelection.`);
             return false;
         }
         return true;
@@ -154,8 +155,8 @@ export class SelectAllFeature extends BeanStub {
         const rowModelMatches = rowModelType === 'clientSide' || rowModelType === 'serverSide';
 
         if (!rowModelMatches) {
-            console.warn(
-                `AG Grid: ${feature} is only available if using 'clientSide' or 'serverSide' rowModelType, you are using ${rowModelType}.`
+            _warnOnce(
+                `${feature} is only available if using 'clientSide' or 'serverSide' rowModelType, you are using ${rowModelType}.`
             );
             return false;
         }

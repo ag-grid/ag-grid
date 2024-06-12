@@ -11,7 +11,14 @@ import type {
     SelectionEventSourceType,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { RowNode, _cloneObject, _missingOrEmpty, _sortRowNodesByOrder } from '@ag-grid-community/core';
+import {
+    RowNode,
+    _cloneObject,
+    _errorOnce,
+    _missingOrEmpty,
+    _sortRowNodesByOrder,
+    _warnOnce,
+} from '@ag-grid-community/core';
 
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
 const TOP_LEVEL = 0;
@@ -67,7 +74,7 @@ export class ClientSideNodeManager {
 
     public setRowData(rowData: any[]): RowNode[] | undefined {
         if (typeof rowData === 'string') {
-            console.warn('AG Grid: rowData must be an array.');
+            _warnOnce('rowData must be an array.');
             return;
         }
         this.rowCountReady = true;
@@ -293,15 +300,15 @@ export class ClientSideNodeManager {
             const id = getRowIdFunc({ data, level: 0 });
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                console.error(`AG Grid: could not find row id=${id}, data item was not found for this id`);
+                _errorOnce(`could not find row id=${id}, data item was not found for this id`);
                 return null;
             }
         } else {
             // find rowNode using object references
             rowNode = this.rootNode.allLeafChildren.find((node) => node.data === data);
             if (!rowNode) {
-                console.error(`AG Grid: could not find data item as object was not found`, data);
-                console.error(`Consider using getRowId to help the Grid find matching row data`);
+                _errorOnce(`could not find data item as object was not found`, data);
+                _errorOnce(`Consider using getRowId to help the Grid find matching row data`);
                 return null;
             }
         }
@@ -322,8 +329,8 @@ export class ClientSideNodeManager {
         node.setDataAndId(dataItem, this.nextId.toString());
 
         if (this.allNodesMap[node.id!]) {
-            console.warn(
-                `AG Grid: duplicate node id '${node.id}' detected from getRowId callback, this could cause issues in your grid.`
+            _warnOnce(
+                `duplicate node id '${node.id}' detected from getRowId callback, this could cause issues in your grid.`
             );
         }
         this.allNodesMap[node.id!] = node;

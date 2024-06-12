@@ -8,6 +8,7 @@ import type {
     ServerSideTransaction,
     ServerSideTransactionResult,
 } from '@ag-grid-community/core';
+import { _warnOnce } from '@ag-grid-community/core';
 
 export function getServerSideSelectionState(
     beans: BeanCollection
@@ -39,7 +40,7 @@ export function applyServerSideRowData(
     const startRow = params.startRow ?? 0;
     const route = params.route ?? [];
     if (startRow < 0) {
-        console.warn(`AG Grid: invalid value ${params.startRow} for startRow, the value should be >= 0`);
+        _warnOnce(`invalid value ${params.startRow} for startRow, the value should be >= 0`);
         return;
     }
 
