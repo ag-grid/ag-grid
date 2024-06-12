@@ -123,6 +123,7 @@ export class LegendPanel extends Component {
             suppressEnabledCheckbox: true,
             chartMenuParamsFactory,
             keyMapper: (key) => `${rootKey}.${key}`,
+            cssIdentifier: 'charts-format-sub-level-no-header',
         };
 
         return this.createManagedBean(new FontPanel(params));

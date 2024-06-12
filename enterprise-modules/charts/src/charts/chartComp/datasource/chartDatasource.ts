@@ -142,7 +142,7 @@ export class ChartDatasource extends BeanStub {
         for (let i = 0; i < numRows; i++) {
             const rowNode = crossFiltering ? allRowNodes[i] : this.gridRowModel.getRow(i + startRow)!;
 
-            if (rowNode.footer) {
+            if (rowNode.footer || rowNode.detail) {
                 numRemovedNodes++;
                 continue;
             }
