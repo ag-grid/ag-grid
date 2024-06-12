@@ -12,7 +12,7 @@ export interface ICellEditorRendererParams<TValue = any, TData = any, TContext =
     /** Sets the value of the editor */
     setValue: (value: TValue[] | TValue | null) => void;
     /** Used to set a tooltip to the renderer */
-    setTooltip?: (value: string, shouldDisplayTooltip: () => boolean) => void;
+    setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => void;
 }
 
 export interface ICellEditorRendererComp<TValue> extends IComponent<ICellEditorRendererParams<TValue>> {}
