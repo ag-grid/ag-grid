@@ -36,11 +36,11 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
             return func.apply(func, [this.beans, ...args]);
         }
 
-        if (this.isDestroyed) {
-            return this.destroyedHandler(functionName);
-        }
         if (this.isFrameworkMethod(functionName)) {
             return undefined;
+        }
+        if (this.isDestroyed) {
+            return this.destroyedHandler(functionName);
         }
         this.beans.validationService?.warnMissingApiFunction(functionName);
         return undefined;
