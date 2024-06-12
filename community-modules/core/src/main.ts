@@ -318,6 +318,7 @@ export {
     IRichCellEditorParams,
     RichCellEditorValuesCallback,
     RichCellEditorParams,
+    IRichCellEditorRendererParams,
 } from './interfaces/iRichCellEditorParams';
 export { CheckboxCellEditor } from './edit/cellEditors/checkboxCellEditor';
 export { EditCoreModule as _EditCoreModule } from './edit/editModule';

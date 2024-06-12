@@ -38,6 +38,7 @@ import {
     CellEditorComponent,
     CellRendererComponent,
     DateComponent,
+    EditorRendererComponent,
     FilterComponent,
     FloatingFilterComponent,
     FullWidth,
@@ -138,14 +139,21 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
     }
 
     public getCellRendererDetails(
-        def: ColDef | RichSelectParams,
+        def: ColDef,
         params: WithoutGridCommon<ICellRendererParams>
     ): UserCompDetails | undefined {
         return this.getCompDetails(def, CellRendererComponent, null, params);
     }
 
+    public getEditorRendererDetails<TDefinition, TEditorParams extends AgGridCommon<any, any>>(
+        def: TDefinition,
+        params: WithoutGridCommon<TEditorParams>
+    ): UserCompDetails | undefined {
+        return this.getCompDetails<TDefinition>(def, EditorRendererComponent, null, params);
+    }
+
     public getLoadingCellRendererDetails(
-        def: ColDef | RichSelectParams,
+        def: ColDef,
         params: WithoutGridCommon<ICellRendererParams>
     ): UserCompDetails | undefined {
         return this.getCompDetails(def, LoadingCellRendererComponent, 'agSkeletonCellRenderer', params, true);
@@ -217,8 +225,8 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         return this.getCompDetails(def, MenuItemComponent, 'agMenuItem', params, true)!;
     }
 
-    private getCompDetails(
-        defObject: DefinitionObject,
+    private getCompDetails<TDefinition = DefinitionObject>(
+        defObject: TDefinition,
         type: ComponentType,
         defaultName: string | null | undefined,
         params: any,
@@ -277,9 +285,9 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         };
     }
 
-    public static getCompKeys(
+    public static getCompKeys<TDefinition = DefinitionObject>(
         frameworkOverrides: IFrameworkOverrides,
-        defObject: DefinitionObject,
+        defObject: TDefinition,
         type: ComponentType,
         params?: any
     ): {
@@ -374,8 +382,8 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
     }
 
     // used by Floating Filter
-    public mergeParamsWithApplicationProvidedParams(
-        defObject: DefinitionObject,
+    public mergeParamsWithApplicationProvidedParams<TDefinition = DefinitionObject>(
+        defObject: TDefinition,
         type: ComponentType,
         paramsFromGrid: any,
         paramsFromSelector: any = null

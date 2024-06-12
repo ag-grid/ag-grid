@@ -1,11 +1,13 @@
+import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { AgPickerFieldParams } from './agFieldParams';
 import type { ICellEditorParams } from './iCellEditor';
+import type { IComponent } from './iComponent';
 
 export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
     value?: TValue[] | TValue;
     valueList?: TValue[];
     allowTyping?: boolean;
-    cellRenderer?: any;
+    cellRenderer?: IComponent<IRichCellEditorRendererParams>;
 
     cellRowHeight?: number;
     searchDebounceDelay?: number;
@@ -27,6 +29,11 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
 export interface RichCellEditorValuesCallback<TData = any, TValue = any> {
     (params: ICellEditorParams<TData, TValue>): TValue[] | Promise<TValue[]>;
 }
+
+export type IRichCellEditorRendererParams = Pick<
+    ICellRendererParams,
+    'api' | 'context' | 'value' | 'valueFormatted' | 'getValue' | 'setValue' | 'setTooltip'
+>;
 
 export interface IRichCellEditorParams<TData = any, TValue = any> {
     /** The list of values to be selected from. */
