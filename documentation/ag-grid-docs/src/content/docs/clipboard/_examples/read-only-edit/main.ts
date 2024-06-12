@@ -26,7 +26,7 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
         minWidth: 100,
         editable: true,
     },
-    getRowId: (params: GetRowIdParams) => params.data.id,
+    getRowId: (params: GetRowIdParams) => String(params.data.id),
 
     enableRangeSelection: true,
     readOnlyEdit: true,

@@ -165,9 +165,7 @@ const gridOptions: GridOptions = {
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
     asyncTransactionWaitMillis: 4000,
-    getRowId: (params: GetRowIdParams) => {
-        return params.data.trade;
-    },
+    getRowId: (params: GetRowIdParams) => String(params.data.trade),
     defaultColDef: {
         width: 120,
     },
