@@ -99,218 +99,228 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
     );
 
     return (
-        <form>
-            <p>Fill in the following form to get instructions on how to set up your license:</p>
-            <div className={styles.inputList}>
-                <label>
-                    <input
-                        type="radio"
-                        name="hasLicense"
-                        value="true"
-                        defaultChecked={hasValue(hasLicense) && hasLicense}
-                        onChange={() => setHasLicense(true)}
-                    />{' '}
-                    Existing license key
-                </label>
-
-                <label>
-                    <input
-                        type="radio"
-                        name="hasLicense"
-                        value="false"
-                        defaultChecked={hasValue(hasLicense) && !hasLicense}
-                        onChange={() => setHasLicense(false)}
-                    />{' '}
-                    No license key yet
-                </label>
-            </div>
-            {hasLicense && (
-                <textarea
-                    className={classnames(styles.license, {
-                        [styles.error]: errors.userLicenseError,
-                    })}
-                    placeholder="Paste your license here..."
-                    value={userLicense}
-                    onChange={(e) => {
-                        setUserLicense(e.target.value);
-                    }}
-                ></textarea>
-            )}
-            {validLicenseText && <Idea>{validLicenseText}</Idea>}
-            {errors.expired && (
-                <Warning>
-                    {errors.expired}. <EmailSales />
-                </Warning>
-            )}
-            {errors.userLicenseError && (
-                <Warning>
-                    {errors.userLicenseError}. <EmailSales />
-                </Warning>
-            )}
-            {errors.v2License && (
-                <Warning>
-                    {errors.v2License}. <EmailSales />
-                </Warning>
-            )}
-            <div className={styles.licenseData}>
-                <div>
-                    <label>Framework</label>
-                    <div className={styles.frameworkContainer}>
-                        <img
-                            className={styles.frameworkLogo}
-                            src={urlWithBaseUrl(`/images/fw-logos/${framework}.svg`)}
-                            alt={framework}
+        <>
+            <p className={styles.pageDescription}>
+                Validate your licence key and configure your application. See sample code and example projects to learn
+                how to install your AG Grid Enterprise products.
+            </p>
+            <form>
+                <p>Fill in the following form to get instructions on how to set up your license:</p>
+                <div className={styles.inputList}>
+                    <label>
+                        <input
+                            type="radio"
+                            name="hasLicense"
+                            value="true"
+                            defaultChecked={hasValue(hasLicense) && hasLicense}
+                            onChange={() => setHasLicense(true)}
                         />{' '}
-                        {FRAMEWORK_DISPLAY_TEXT[framework]}
-                    </div>
+                        Existing license key
+                    </label>
+
+                    <label>
+                        <input
+                            type="radio"
+                            name="hasLicense"
+                            value="false"
+                            defaultChecked={hasValue(hasLicense) && !hasLicense}
+                            onChange={() => setHasLicense(false)}
+                        />{' '}
+                        No license key yet
+                    </label>
                 </div>
                 {hasLicense && (
-                    <div>
-                        <label>Expiry</label>
-                        <div>{userLicenseExpiry ? userLicenseExpiry : '-'}</div>
-                    </div>
-                )}
-
-                <div>
-                    <div>Which enterprise products would you like to use?</div>
-                    <div className={styles.licensedProductsContainer}>
-                        <div className={styles.inputList}>
-                            <label
-                                className={classnames({
-                                    [styles.licensedProduct]: hasLicense && licensedProducts.grid,
-                                })}
-                            >
-                                Grid Enterprise
-                                <input
-                                    type="checkbox"
-                                    name="products"
-                                    value="gridEnterprise"
-                                    checked={userProducts.gridEnterprise}
-                                    onChange={() => {
-                                        setUserProducts((prevProducts) => {
-                                            return {
-                                                ...prevProducts,
-                                                gridEnterprise: !prevProducts.gridEnterprise,
-                                            };
-                                        });
-                                    }}
-                                />
-                            </label>
-                            <label
-                                className={classnames({
-                                    [styles.licensedProduct]:
-                                        hasLicense && licensedProducts.grid && licensedProducts.charts,
-                                })}
-                            >
-                                Integrated Enterprise{' '}
-                                <InfoTooltip title="Use Charts Enterprise within Grid Enterprise through integrated charts" />
-                                <input
-                                    type="checkbox"
-                                    name="products"
-                                    value="integratedEnterprise"
-                                    checked={userProducts.integratedEnterprise}
-                                    onChange={() => {
-                                        setUserProducts((prevProducts) => {
-                                            return {
-                                                ...prevProducts,
-                                                integratedEnterprise: !prevProducts.integratedEnterprise,
-                                            };
-                                        });
-                                    }}
-                                />
-                            </label>
-                            <label
-                                className={classnames({
-                                    [styles.licensedProduct]: hasLicense && licensedProducts.charts,
-                                })}
-                            >
-                                Charts Enterprise
-                                <input
-                                    type="checkbox"
-                                    name="products"
-                                    value="chartsEnterprise"
-                                    checked={userProducts.chartsEnterprise}
-                                    onChange={() => {
-                                        setUserProducts((prevProducts) => {
-                                            return {
-                                                ...prevProducts,
-                                                chartsEnterprise: !prevProducts.chartsEnterprise,
-                                            };
-                                        });
-                                    }}
-                                />
-                            </label>
-                        </div>
-                        {errors.chartsNoIntegratedEnterprise && (
-                            <Warning>{errors.chartsNoIntegratedEnterprise}</Warning>
-                        )}
-                        {errors.gridNoIntegratedEnterprise && <Warning>{errors.gridNoIntegratedEnterprise}</Warning>}
-                        {errors.chartsNoGridEnterprise && <Warning>{errors.chartsNoGridEnterprise}</Warning>}
-                        {errors.gridNoCharts && <Warning>{errors.gridNoCharts}</Warning>}
-                    </div>
-                </div>
-                <div>
-                    <label>
-                        <a
-                            href={urlWithPrefix({
-                                framework,
-                                url: './modules/#packages-vs-modules',
-                            })}
-                        >
-                            Import type
-                        </a>
-                    </label>
-                    <select
-                        name="importType"
-                        defaultValue={importType}
+                    <textarea
+                        className={classnames(styles.license, {
+                            [styles.error]: errors.userLicenseError,
+                        })}
+                        placeholder="Paste your license here..."
+                        value={userLicense}
                         onChange={(e) => {
-                            setImportType(e.target.value as ImportType);
+                            setUserLicense(e.target.value);
                         }}
-                    >
-                        <option value="packages">Packages</option>
-                        <option value="modules">Modules</option>
-                    </select>
-                </div>
-            </div>
+                    ></textarea>
+                )}
+                {validLicenseText && <Idea>{validLicenseText}</Idea>}
+                {errors.expired && (
+                    <Warning>
+                        {errors.expired}. <EmailSales />
+                    </Warning>
+                )}
+                {errors.userLicenseError && (
+                    <Warning>
+                        {errors.userLicenseError}. <EmailSales />
+                    </Warning>
+                )}
+                {errors.v2License && (
+                    <Warning>
+                        {errors.v2License}. <EmailSales />
+                    </Warning>
+                )}
+                <div className={styles.licenseData}>
+                    <div>
+                        <label>Framework</label>
+                        <div className={styles.frameworkContainer}>
+                            <img
+                                className={styles.frameworkLogo}
+                                src={urlWithBaseUrl(`/images/fw-logos/${framework}.svg`)}
+                                alt={framework}
+                            />{' '}
+                            {FRAMEWORK_DISPLAY_TEXT[framework]}
+                        </div>
+                    </div>
+                    {hasLicense && (
+                        <div>
+                            <label>Expiry</label>
+                            <div>{userLicenseExpiry ? userLicenseExpiry : '-'}</div>
+                        </div>
+                    )}
 
-            <div className={styles.results}>
-                <h3>Dependencies</h3>
-                {errors.noProducts && <Note>{errors.noProducts}</Note>}
-                <p>
-                    Copy the following dependencies into your <code>package.json</code>:
-                </p>
-                {dependenciesSnippet && <Snippet framework={framework} content={dependenciesSnippet} />}
-                <p>Or install using npm:</p>
-                {npmInstallSnippet && <Snippet framework={framework} content={npmInstallSnippet} language="bash" />}
-                <h3>Set Up License Example</h3>
-                {errors.noProducts && <Note>{errors.noProducts}</Note>}
-                {(userProducts.gridEnterprise || userProducts.integratedEnterprise) && (
-                    <>
-                        <p>An example of how to set up your Grid Enterprise license:</p>
-                        {bootstrapSnippet.grid && <Snippet framework={framework} content={bootstrapSnippet.grid} />}
-                    </>
-                )}
-                {userProducts.chartsEnterprise && (
-                    <>
-                        <p>An example of how to set up your Charts Enterprise license:</p>
-                        {bootstrapSnippet.charts && <Snippet framework={framework} content={bootstrapSnippet.charts} />}
-                    </>
-                )}
-                {selectedSeedRepos.length ? (
-                    <>
-                        <p>Here are some seed code repositories to get you started:</p>
-                        <ul>
-                            {selectedSeedRepos.map(({ name, url, importType }) => {
-                                return (
-                                    <li key={url}>
-                                        <a href={url}>{name}</a> ({importType})
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                    </>
-                ) : undefined}
-            </div>
-        </form>
+                    <div>
+                        <div>Which enterprise products would you like to use?</div>
+                        <div className={styles.licensedProductsContainer}>
+                            <div className={styles.inputList}>
+                                <label
+                                    className={classnames({
+                                        [styles.licensedProduct]: hasLicense && licensedProducts.grid,
+                                    })}
+                                >
+                                    Grid Enterprise
+                                    <input
+                                        type="checkbox"
+                                        name="products"
+                                        value="gridEnterprise"
+                                        checked={userProducts.gridEnterprise}
+                                        onChange={() => {
+                                            setUserProducts((prevProducts) => {
+                                                return {
+                                                    ...prevProducts,
+                                                    gridEnterprise: !prevProducts.gridEnterprise,
+                                                };
+                                            });
+                                        }}
+                                    />
+                                </label>
+                                <label
+                                    className={classnames({
+                                        [styles.licensedProduct]:
+                                            hasLicense && licensedProducts.grid && licensedProducts.charts,
+                                    })}
+                                >
+                                    Integrated Enterprise{' '}
+                                    <InfoTooltip title="Use Charts Enterprise within Grid Enterprise through integrated charts" />
+                                    <input
+                                        type="checkbox"
+                                        name="products"
+                                        value="integratedEnterprise"
+                                        checked={userProducts.integratedEnterprise}
+                                        onChange={() => {
+                                            setUserProducts((prevProducts) => {
+                                                return {
+                                                    ...prevProducts,
+                                                    integratedEnterprise: !prevProducts.integratedEnterprise,
+                                                };
+                                            });
+                                        }}
+                                    />
+                                </label>
+                                <label
+                                    className={classnames({
+                                        [styles.licensedProduct]: hasLicense && licensedProducts.charts,
+                                    })}
+                                >
+                                    Charts Enterprise
+                                    <input
+                                        type="checkbox"
+                                        name="products"
+                                        value="chartsEnterprise"
+                                        checked={userProducts.chartsEnterprise}
+                                        onChange={() => {
+                                            setUserProducts((prevProducts) => {
+                                                return {
+                                                    ...prevProducts,
+                                                    chartsEnterprise: !prevProducts.chartsEnterprise,
+                                                };
+                                            });
+                                        }}
+                                    />
+                                </label>
+                            </div>
+                            {errors.chartsNoIntegratedEnterprise && (
+                                <Warning>{errors.chartsNoIntegratedEnterprise}</Warning>
+                            )}
+                            {errors.gridNoIntegratedEnterprise && (
+                                <Warning>{errors.gridNoIntegratedEnterprise}</Warning>
+                            )}
+                            {errors.chartsNoGridEnterprise && <Warning>{errors.chartsNoGridEnterprise}</Warning>}
+                            {errors.gridNoCharts && <Warning>{errors.gridNoCharts}</Warning>}
+                        </div>
+                    </div>
+                    <div>
+                        <label>
+                            <a
+                                href={urlWithPrefix({
+                                    framework,
+                                    url: './modules/#packages-vs-modules',
+                                })}
+                            >
+                                Import type
+                            </a>
+                        </label>
+                        <select
+                            name="importType"
+                            defaultValue={importType}
+                            onChange={(e) => {
+                                setImportType(e.target.value as ImportType);
+                            }}
+                        >
+                            <option value="packages">Packages</option>
+                            <option value="modules">Modules</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div className={styles.results}>
+                    <h3>Dependencies</h3>
+                    {errors.noProducts && <Note>{errors.noProducts}</Note>}
+                    <p>
+                        Copy the following dependencies into your <code>package.json</code>:
+                    </p>
+                    {dependenciesSnippet && <Snippet framework={framework} content={dependenciesSnippet} />}
+                    <p>Or install using npm:</p>
+                    {npmInstallSnippet && <Snippet framework={framework} content={npmInstallSnippet} language="bash" />}
+                    <h3>Set Up License Example</h3>
+                    {errors.noProducts && <Note>{errors.noProducts}</Note>}
+                    {(userProducts.gridEnterprise || userProducts.integratedEnterprise) && (
+                        <>
+                            <p>An example of how to set up your Grid Enterprise license:</p>
+                            {bootstrapSnippet.grid && <Snippet framework={framework} content={bootstrapSnippet.grid} />}
+                        </>
+                    )}
+                    {userProducts.chartsEnterprise && (
+                        <>
+                            <p>An example of how to set up your Charts Enterprise license:</p>
+                            {bootstrapSnippet.charts && (
+                                <Snippet framework={framework} content={bootstrapSnippet.charts} />
+                            )}
+                        </>
+                    )}
+                    {selectedSeedRepos.length ? (
+                        <>
+                            <p>Here are some seed code repositories to get you started:</p>
+                            <ul>
+                                {selectedSeedRepos.map(({ name, url, importType }) => {
+                                    return (
+                                        <li key={url}>
+                                            <a href={url}>{name}</a> ({importType})
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </>
+                    ) : undefined}
+                </div>
+            </form>
+        </>
     );
 };
