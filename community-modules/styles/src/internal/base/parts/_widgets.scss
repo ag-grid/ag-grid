@@ -336,7 +336,7 @@
         border-radius: 12px;
         height: 12px;
         width: 12px;
-        border: 1px solid white;
+        border: 2px solid white;
         background: black;
         box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.24);
     }
@@ -360,7 +360,7 @@
         width: 13px;
         height: 13px;
         border-radius: 13px;
-        background-color: rgb(248, 248, 248);
+        border: 2px solid white;
         box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.37);
     }
 
@@ -597,6 +597,7 @@
     // PILL
     ////////////////////////////////////////
     .ag-pill {
+        border: 1px solid transparent;
         border-radius: var(--ag-border-radius);
         background-color: var(--ag-chip-background-color);
     }
@@ -608,14 +609,13 @@
             )
         );
     }
-
-    .ag-pill .ag-pill-button:focus {
-        box-shadow: none;
+    .ag-pill:focus-visible {
+        border-color: var(--ag-input-focus-border-color);
     }
 
-    .ag-pill .ag-pill-button:focus-visible {
-        background-color: var(--ag-active-color);
-        color: var(--ag-background-color);
+    .ag-pill .ag-pill-button:hover {
+        color: var(--ag-active-color);
+        cursor: pointer;
     }
 
     ////////////////////////////////////////

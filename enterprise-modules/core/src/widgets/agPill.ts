@@ -2,7 +2,7 @@ import { RefPlaceholder } from '@ag-grid-community/core';
 import { Component } from '@ag-grid-community/core';
 
 export interface PillConfig {
-    onButtonKeyDown?: (e?: KeyboardEvent) => void;
+    onKeyDown?: (e?: KeyboardEvent) => void;
     onButtonClick?: (e?: MouseEvent) => void;
 }
 
@@ -14,14 +14,14 @@ export class AgPill extends Component {
         super(/* html */ `
             <div class="ag-pill">
                 <span class="ag-pill-text" data-ref="eText"></span>
-                <button class="ag-pill-button" data-ref="eButton"></button>
+                <span class="ag-button ag-pill-button" data-ref="eButton"></span>
             </div>
         `);
     }
 
     public postConstruct() {
         const { config, eButton } = this;
-        const { onButtonKeyDown, onButtonClick } = config;
+        const { onKeyDown, onButtonClick } = config;
 
         this.getGui().setAttribute('tabindex', String(this.gos.get('tabIndex')));
 
@@ -29,14 +29,15 @@ export class AgPill extends Component {
             this.eButton.focus();
         });
 
-        if (!onButtonKeyDown && !onButtonClick) {
-            return;
+        if (onKeyDown) {
+            this.addGuiEventListener('keydown', onKeyDown);
         }
 
-        this.addManagedElementListeners(eButton, {
-            keydown: onButtonKeyDown,
-            click: onButtonClick,
-        });
+        if (onButtonClick) {
+            this.addManagedElementListeners(eButton, {
+                click: onButtonClick,
+            });
+        }
     }
 
     public toggleCloseButtonClass(className: string, force?: boolean) {

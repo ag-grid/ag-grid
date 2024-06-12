@@ -166,7 +166,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
 
         let cellRange: PartialCellRange | undefined;
         let pivotChart: true | undefined;
-        let suppressChartRanges: true | undefined;
+        let suppressChartRanges: boolean | undefined;
         let chartPaletteToRestore: AgChartThemePalette | undefined;
 
         if (model.modelType === 'pivot') {
@@ -179,6 +179,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         } else {
             cellRange = this.createCellRange(model.cellRange);
             chartPaletteToRestore = model.chartPalette;
+            suppressChartRanges = model.suppressChartRanges;
         }
 
         if (!cellRange) {
