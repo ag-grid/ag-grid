@@ -589,7 +589,12 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return updatedParams;
     }
 
-    public getRowIdCallback<TData = any>(): WrappedCallback<'getRowId', GetRowIdFunc<TData> | undefined> {
+    // AG-9259 Can't use `WrappedCallback<'getRowId', ...>` here because of a strange typescript bug
+    public getRowIdCallback<TData = any>():
+        | ((
+              params: WithoutGridCommon<ExtractParamsFromCallback<GetRowIdFunc<TData>>>
+          ) => ExtractReturnTypeFromCallback<GetRowIdFunc<TData>>)
+        | undefined {
         const getRowId = this.getCallback('getRowId');
 
         if (getRowId === undefined) {
