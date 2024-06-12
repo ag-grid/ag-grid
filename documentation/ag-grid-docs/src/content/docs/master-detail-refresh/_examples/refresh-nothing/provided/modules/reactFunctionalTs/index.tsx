@@ -50,7 +50,7 @@ const GridExample = () => {
             refreshStrategy: 'nothing',
             detailGridOptions: {
                 rowSelection: 'multiple',
-                getRowId: (params) => String(params.data.callId),
+                getRowId: (params: GetRowIdParams) => String(params.data.callId),
                 columnDefs: [
                     { field: 'callId', checkboxSelection: true },
                     { field: 'direction' },
