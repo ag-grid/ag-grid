@@ -2,7 +2,7 @@ import type { AgChartThemeOverrides } from 'ag-charts-types';
 
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
-import type { AgEventType } from './eventTypes';
+import type { AgEventType, AgInternalEventType, AgPublicEventType } from './eventTypes';
 import type { FilterRequestSource } from './filter/iColumnFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
@@ -15,6 +15,150 @@ import type { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 import type { ServerSideTransactionResult } from './interfaces/serverSideTransaction';
 
 export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<string> = new Set(['gridPreDestroyed', 'fillStart', 'pasteStart']);
+
+// export type SomeEventsType = 'modelUpdated' | 'paginationChanged' | 'sortChanged';
+type SomeMapped = {
+    [K in AgPublicEventType | AgInternalEventType]: AgGridEvent<any, any, K>;
+};
+
+type SomeEvents<T extends SomeMapped> = T;
+
+export type EventTypeParams<TData = any, TContext = any> = SomeEvents<{
+    columnEverythingChanged: ColumnEverythingChangedEvent<TData, TContext>;
+    newColumnsLoaded: NewColumnsLoadedEvent<TData, TContext>;
+    columnPivotModeChanged: ColumnPivotModeChangedEvent<TData, TContext>;
+    pivotMaxColumnsExceeded: PivotMaxColumnsExceededEvent<TData, TContext>;
+    columnRowGroupChanged: ColumnRowGroupChangedEvent<TData, TContext>;
+    expandOrCollapseAll: ExpandOrCollapseAllEvent<TData, TContext>;
+    columnPivotChanged: ColumnPivotChangedEvent<TData, TContext>;
+    gridColumnsChanged: GridColumnsChangedEvent<TData, TContext>;
+    columnValueChanged: ColumnValueChangedEvent<TData, TContext>;
+    columnMoved: ColumnMovedEvent<TData, TContext>;
+    columnVisible: ColumnVisibleEvent<TData, TContext>;
+    columnPinned: ColumnPinnedEvent<TData, TContext>;
+    columnGroupOpened: ColumnGroupOpenedEvent<TData, TContext>;
+    columnResized: ColumnResizedEvent<TData, TContext>;
+    displayedColumnsChanged: DisplayedColumnsChangedEvent<TData, TContext>;
+    virtualColumnsChanged: VirtualColumnsChangedEvent<TData, TContext>;
+    columnHeaderMouseOver: ColumnHeaderMouseOverEvent<TData, TContext>;
+    columnHeaderMouseLeave: ColumnHeaderMouseLeaveEvent<TData, TContext>;
+    columnHeaderClicked: ColumnHeaderClickedEvent<TData, TContext>;
+    columnHeaderContextMenu: ColumnHeaderContextMenuEvent<TData, TContext>;
+    asyncTransactionsFlushed: AsyncTransactionsFlushedEvent<TData, TContext>;
+    rowGroupOpened: RowGroupOpenedEvent<TData, TContext>;
+    rowDataUpdated: RowDataUpdatedEvent<TData, TContext>;
+    pinnedRowDataChanged: PinnedRowDataChangedEvent<TData, TContext>;
+    rangeSelectionChanged: RangeSelectionChangedEvent<TData, TContext>;
+    chartCreated: ChartCreatedEvent<TData, TContext>;
+    chartRangeSelectionChanged: ChartRangeSelectionChangedEvent<TData, TContext>;
+    chartOptionsChanged: ChartOptionsChangedEvent<TData, TContext>;
+    chartDestroyed: ChartDestroyedEvent<TData, TContext>;
+    toolPanelVisibleChanged: ToolPanelVisibleChangedEvent<TData, TContext>;
+    toolPanelSizeChanged: ToolPanelSizeChangedEvent<TData, TContext>;
+    modelUpdated: ModelUpdatedEvent<TData, TContext>;
+    cutStart: CutStartEvent<TData, TContext>;
+    cutEnd: CutEndEvent<TData, TContext>;
+    pasteStart: PasteStartEvent<TData, TContext>;
+    pasteEnd: PasteEndEvent<TData, TContext>;
+    fillStart: FillStartEvent<TData, TContext>;
+    fillEnd: FillEndEvent<TData, TContext>;
+    rangeDeleteStart: RangeDeleteStartEvent<TData, TContext>;
+    rangeDeleteEnd: RangeDeleteEndEvent<TData, TContext>;
+    undoStarted: UndoStartedEvent<TData, TContext>;
+    undoEnded: UndoEndedEvent<TData, TContext>;
+    redoStarted: RedoStartedEvent<TData, TContext>;
+    redoEnded: RedoEndedEvent<TData, TContext>;
+    cellClicked: CellClickedEvent<TData, TContext>;
+    cellDoubleClicked: CellDoubleClickedEvent<TData, TContext>;
+    cellMouseDown: CellMouseDownEvent<TData, TContext>;
+    cellContextMenu: CellContextMenuEvent<TData, TContext>;
+    cellValueChanged: CellValueChangedEvent<TData, TContext>;
+    cellEditRequest: CellEditRequestEvent<TData, TContext>;
+    rowValueChanged: RowValueChangedEvent<TData, TContext>;
+    cellFocused: CellFocusedEvent<TData, TContext>;
+    rowSelected: RowSelectedEvent<TData, TContext>;
+    selectionChanged: SelectionChangedEvent<TData, TContext>;
+    tooltipShow: TooltipShowEvent<TData, TContext>;
+    tooltipHide: TooltipHideEvent<TData, TContext>;
+    cellKeyDown: CellKeyDownEvent<TData, TContext>;
+    cellMouseOver: CellMouseOverEvent<TData, TContext>;
+    cellMouseOut: CellMouseOutEvent<TData, TContext>;
+    filterChanged: FilterChangedEvent<TData, TContext>;
+    filterModified: FilterModifiedEvent<TData, TContext>;
+    filterOpened: FilterOpenedEvent<TData, TContext>;
+    advancedFilterBuilderVisibleChanged: AdvancedFilterBuilderVisibleChangedEvent<TData, TContext>;
+    sortChanged: SortChangedEvent<TData, TContext>;
+    virtualRowRemoved: VirtualRowRemovedEvent<TData, TContext>;
+    rowClicked: RowClickedEvent<TData, TContext>;
+    rowDoubleClicked: RowDoubleClickedEvent<TData, TContext>;
+    gridReady: GridReadyEvent<TData, TContext>;
+    gridPreDestroyed: GridPreDestroyedEvent<TData, TContext>;
+    gridSizeChanged: GridSizeChangedEvent<TData, TContext>;
+    viewportChanged: ViewportChangedEvent<TData, TContext>;
+    firstDataRendered: FirstDataRenderedEvent<TData, TContext>;
+    dragStarted: DragStartedEvent<TData, TContext>;
+    dragStopped: DragStoppedEvent<TData, TContext>;
+    rowEditingStarted: RowEditingStartedEvent<TData, TContext>;
+    rowEditingStopped: RowEditingStoppedEvent<TData, TContext>;
+    cellEditingStarted: CellEditingStartedEvent<TData, TContext>;
+    cellEditingStopped: CellEditingStoppedEvent<TData, TContext>;
+    bodyScroll: BodyScrollEvent<TData, TContext>;
+    bodyScrollEnd: BodyScrollEndEvent<TData, TContext>;
+    paginationChanged: PaginationChangedEvent<TData, TContext>;
+    componentStateChanged: ComponentStateChangedEvent<TData, TContext>;
+    storeRefreshed: StoreRefreshedEvent<TData, TContext>;
+    stateUpdated: StateUpdatedEvent<TData, TContext>;
+    columnMenuVisibleChanged: ColumnMenuVisibleChangedEvent<TData, TContext>;
+    contextMenuVisibleChanged: ContextMenuVisibleChangedEvent<TData, TContext>;
+    rowDragEnter: RowDragEnterEvent<TData, TContext>;
+    rowDragMove: RowDragMoveEvent<TData, TContext>;
+    rowDragLeave: RowDragLeaveEvent<TData, TContext>;
+    rowDragEnd: RowDragEndEvent<TData, TContext>;
+    // Internal events
+    scrollbarWidthChanged: ScrollbarWidthChangedEvent<TData, TContext>;
+    keyShortcutChangedCellStart: keyShortcutChangedCellStartEvent<TData, TContext>;
+    keyShortcutChangedCellEnd: keyShortcutChangedCellEndEvent<TData, TContext>;
+    pinnedHeightChanged: PinnedHeightChangedEvent<TData, TContext>;
+    cellFocusCleared: CellFocusClearedEvent<TData, TContext>;
+    fullWidthRowFocused: FullWidthRowFocusedEvent<TData, TContext>;
+    checkboxChanged: CheckboxChangedEvent<TData, TContext>;
+    heightScaleChanged: HeightScaleChangedEvent<TData, TContext>;
+    suppressMovableColumns: SuppressMovableColumnsEvent<TData, TContext>;
+    suppressMenuHide: SuppressMenuHideEvent<TData, TContext>;
+    suppressFieldDotNotation: SuppressFieldDotNotationEvent<TData, TContext>;
+    columnPanelItemDragStart: ColumnPanelItemDragStartEvent<TData, TContext>;
+    columnPanelItemDragEnd: ColumnPanelItemDragEndEvent<TData, TContext>;
+    bodyHeightChanged: BodyHeightChangedEvent<TData, TContext>;
+    columnContainerWidthChanged: ColumnContainerWidthChangedEvent<TData, TContext>;
+    displayedColumnsWidthChanged: DisplayedColumnsWidthChangedEvent<TData, TContext>;
+    scrollVisibilityChanged: ScrollVisibilityChangedEvent<TData, TContext>;
+    columnHoverChanged: ColumnHoverChangedEvent<TData, TContext>;
+    flashCells: FlashCellsEvent<TData, TContext>;
+    paginationPixelOffsetChanged: PaginationPixelOffsetChangedEvent<TData, TContext>;
+    displayedRowsChanged: DisplayedRowsChangedEvent<TData, TContext>;
+    leftPinnedWidthChanged: LeftPinnedWidthChangedEvent<TData, TContext>;
+    rightPinnedWidthChanged: RightPinnedWidthChangedEvent<TData, TContext>;
+    rowContainerHeightChanged: RowContainerHeightChangedEvent<TData, TContext>;
+    headerHeightChanged: HeaderHeightChangedEvent<TData, TContext>;
+    columnHeaderHeightChanged: ColumnHeaderHeightChangedEvent<TData, TContext>;
+    gridStylesChanged: GridStylesChangedEvent<TData, TContext>;
+    storeUpdated: StoreUpdatedEvent<TData, TContext>;
+    filterDestroyed: FilterDestroyedEvent<TData, TContext>;
+    rowDataUpdateStarted: RowDataUpdateStartedEvent<TData, TContext>;
+    rowCountReady: RowCountReadyEvent<TData, TContext>;
+    advancedFilterEnabledChanged: AdvancedFilterEnabledChangedEvent<TData, TContext>;
+    dataTypesInferred: DataTypesInferredEvent<TData, TContext>;
+    fieldValueChanged: FieldValueChangedEvent<TData, TContext>;
+    fieldPickerValueSelected: FieldPickerValueSelectedEvent<TData, TContext>;
+    richSelectListRowSelected: RichSelectListRowSelectedEvent<TData, TContext>;
+    sideBarUpdated: SideBarUpdatedEvent<TData, TContext>;
+    alignedGridScroll: AlignedGridScrollEvent<TData, TContext>;
+    alignedGridColumn: AlignedGridColumnEvent<TData, TContext>;
+    gridOptionsChanged: GridOptionsChangedEvent<TData, TContext>;
+    chartTitleEdit: ChartTitleEditEvent<TData, TContext>;
+    recalculateRowBounds: RecalculateRowBoundsEvent<TData, TContext>;
+    stickyTopOffsetChanged: StickyTopOffsetChangedEvent<TData, TContext>;
+}>;
 
 export interface AgEvent<TEventType extends string = string> {
     /** Event identifier */
@@ -392,11 +536,12 @@ export interface RangeSelectionChangedEvent<TData = any, TContext = any>
     finished: boolean;
 }
 
-export interface ChartCreated<TData = any, TContext = any> extends AgGlobalEvent<'chartCreated', TData, TContext> {
+export interface ChartCreatedEvent<TData = any, TContext = any> extends AgGlobalEvent<'chartCreated', TData, TContext> {
     /** Id of the created chart. This can later be used to reference the chart via api methods. */
     chartId: string;
 }
-
+/** @deprecated v32 Use ChartCreatedEvent instead */
+export interface ChartCreate<TData = any, TContext = any> extends ChartCreatedEvent<TData, TContext> {}
 export interface ChartRangeSelectionChanged<TData = any, TContext = any>
     extends AgGlobalEvent<'chartRangeSelectionChanged', TData, TContext> {
     /** Id of the effected chart. */
@@ -783,7 +928,7 @@ export interface CellEditRequestEvent<TData = any, TValue = any>
     source: string | undefined;
 }
 
-export interface AsyncTransactionsFlushed<TData = any, TContext = any>
+export interface AsyncTransactionsFlushedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'asyncTransactionsFlushed', TData, TContext> {
     /**
      * Array of result objects. for SSRM it's always list of `ServerSideTransactionResult`.
@@ -791,6 +936,9 @@ export interface AsyncTransactionsFlushed<TData = any, TContext = any>
      */
     results: (RowNodeTransaction<TData> | ServerSideTransactionResult)[];
 }
+/** @deprecated v32 Use AsyncTransactionsFlushedEvent */
+export interface AsyncTransactionsFlushed<TData = any, TContext = any>
+    extends AsyncTransactionsFlushedEvent<TData, TContext> {}
 
 export interface StoreRefreshedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'storeRefreshed', TData, TContext> {

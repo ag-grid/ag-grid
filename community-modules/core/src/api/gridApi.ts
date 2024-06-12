@@ -4,7 +4,14 @@ import type { CellPosition } from '../entities/cellPositionUtils';
 import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from '../entities/colDef';
 import type { ChartRef, GridOptions } from '../entities/gridOptions';
 import type { AgPublicEventType } from '../eventTypes';
-import type { AgEvent, ColumnEventType, FilterChangedEventSourceType, SelectionEventSourceType } from '../events';
+import type {
+    AgEvent,
+    ColumnEventType,
+    EventTypeParams,
+    FilterChangedEventSourceType,
+    SelectionEventSourceType,
+    SomeEventsType,
+} from '../events';
 import type { RowDropZoneEvents, RowDropZoneParams } from '../gridBodyComp/rowDragFeature';
 import type {
     ChartDownloadParams,
@@ -549,7 +556,10 @@ export interface GridApi<TData = any> {
      * Works similar to `addEventListener` for a browser DOM element.
      * Listeners will be automatically removed when the grid is destroyed.
      */
-    addEventListener(eventType: AgPublicEventType, listener: (...args: any[]) => any): void;
+    addEventListener<T extends SomeEventsType>(
+        eventType: T,
+        listener: (params: EventTypeParams<TData, any>[T]) => any
+    ): void;
 
     /**
      * Add an event listener for all event types coming from the grid.
@@ -1067,3 +1077,17 @@ export interface GridApi<TData = any> {
      */
     updateGridOptions<TDataUpdate extends TData>(options: ManagedGridOptions<TDataUpdate>): void;
 }
+
+const api: GridApi = {} as any;
+
+api.addEventListener('paginationChanged', (e) => {
+    const p = e.newPage;
+});
+
+api.addEventListener('modelUpdated', (e) => {
+    e.keepUndoRedoStack = true;
+});
+
+api.addEventListener('sorftChanged', (e) => {
+    e.columns;
+});
