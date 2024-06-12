@@ -24,7 +24,7 @@ interface Props {
 
 const whenSoldOut = ['Discontinued', 'Back order', 'Email when available'];
 const paginationPageSizeSelector = [5, 10, 20];
-
+function currencyFormatter(params: ValueFormatterParams) { return params.value == null ? "" : "£" + params.value; };
 
 export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
     const gridRef = useRef<AgGridReact>(null);
@@ -60,14 +60,37 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             },
             width: 600
         },
+        {   field: 'sku', 
+            headerName: 'SKU', 
+            width: 500 
+        },
+        {   headerName: 'Price',
+            width: 200,
+            cellRenderer: function(param)
+            {
+                return (
+                    <div>
+                        {'£' + param.data.price}
+                        <br />
+                        <span style={{ color: 'green', fontWeight: 'bold' }}>
+                            {param.data.priceIncrease + '% incease'}
+                        </span>
+                    </div>
+                );
+            }
+        },
+        {   field: 'soldLastMonth',
+            filter: 'agNumberColumnFilter'
+        },
+        {   headerName: 'Est. Profit',
+            valueGetter: p => '£'+p.data.price * p.data.soldLastMonth /10 
+        },
         {
             field: 'status',
             headerName: 'Status',
             cellRenderer: StatusCellRenderer,
             filter: 'agSetColumnFilter',
         },
-        { field: 'sku', headerName: 'SKU', width: 500 },
-
         {
             field: 'whenSoldOut',
             cellEditor: 'agSelectCellEditor',
@@ -86,6 +109,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                 showStepperButtons: true,
             },
             editable: true,
+            width: 100
         },
         {
             field: 'unavailable',
@@ -97,8 +121,13 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                 showStepperButtons: true,
             },
             editable: true,
+            width: 150
         },
-        { field: 'onHand', valueGetter: quantityCalculator, filter: 'agNumberColumnFilter' },
+        {   field: 'onHand', 
+            valueGetter: quantityCalculator, 
+            filter: 'agNumberColumnFilter',
+            width: 100,
+        },
         {
             field: 'incoming',
             cellEditor: 'agNumberCellEditor',
@@ -109,6 +138,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                 showStepperButtons: true,
             },
             editable: true,
+            width: 100,
         },
         { field: 'actions', cellRenderer: ActionsCellRenderer, pinned: 'right' },
     ]);
