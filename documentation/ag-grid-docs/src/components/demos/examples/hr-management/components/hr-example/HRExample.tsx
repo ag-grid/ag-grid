@@ -8,6 +8,7 @@ import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import { type FunctionComponent, useCallback, useMemo, useRef, useState } from 'react';
 
 import { currencyFormatter } from '../../utils/valueFormatters';
+import { ContactCellRenderer } from '../contact-cell-renderer/ContactCellRenderer';
 import { EmployeeCellRenderer } from '../employee-cell-renderer/EmployeeCellRenderer';
 import { FlagRenderer } from '../flag-renderer/FlagRenderer';
 import { StatusCellRenderer } from '../status-cell-renderer/StatusCellRenderer';
@@ -31,6 +32,12 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
 
     const [colDefs] = useState<ColDef[]>([
         {
+            headerName: 'Contact',
+            field: 'contact',
+            cellRenderer: ContactCellRenderer,
+            width: 150,
+        },
+        {
             headerName: 'Location',
             field: 'location',
             cellDataType: 'text',
@@ -38,6 +45,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             cellRenderer: FlagRenderer,
             editable: true,
         },
+
         {
             field: 'department',
             cellDataType: 'text',

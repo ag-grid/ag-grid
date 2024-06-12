@@ -44,6 +44,18 @@
     opacity: 0.5;
 }
 
+:global(.ag-theme-quartz .ag-icon-tree-open),
+:global(.ag-theme-quartz-dark .ag-icon-tree-open) {
+    border: 1px solid rgba(138, 138, 138, 0.444);
+    height: 24px;
+    width: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 6px;
+    box-shadow: 0px 4px 5px 2px #00000012;
+}
+
 .grid {
     height: calc(100vh - var(--layout-grid-header-height));
 }

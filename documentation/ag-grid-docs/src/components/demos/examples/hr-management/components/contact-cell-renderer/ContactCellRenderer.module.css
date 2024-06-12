@@ -1,0 +1,15 @@
+.icon {
+    height: 16px;
+    width: 16px;
+}
+
+.iconContainer button {
+    margin: 12px;
+    width: 24px;
+}
+
+.iconLink {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
