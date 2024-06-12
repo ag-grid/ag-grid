@@ -5,14 +5,15 @@ import type { Products } from '../types';
 export const getDependencies = ({
     framework,
     products,
+    noProducts,
     importType,
 }: {
     framework: Framework;
     products: Products;
+    noProducts: boolean;
     importType?: ImportType;
 }) => {
     const dependencies: string[] = [];
-    const noProducts = !products.gridEnterprise && !products.integratedEnterprise && !products.chartsEnterprise;
 
     if (importType === 'packages') {
         if (products.gridEnterprise || products.integratedEnterprise || noProducts) {

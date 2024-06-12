@@ -50,6 +50,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
         licensedProducts,
         userProducts,
         setUserProducts,
+        noUserProducts,
         userLicenseExpiry,
         validLicenseText,
         errors,
@@ -59,6 +60,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
             getDependenciesSnippet({
                 framework,
                 products: userProducts,
+                noProducts: noUserProducts,
                 importType,
             }),
         [framework, userProducts, importType]
@@ -68,6 +70,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
             getNpmInstallSnippet({
                 framework,
                 products: userProducts,
+                noProducts: noUserProducts,
                 importType,
             }),
         [framework, userProducts, importType]
@@ -79,6 +82,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                 importType,
                 license: license || 'your license key',
                 userProducts,
+                noProducts: noUserProducts,
             }),
         [framework, importType, license, userProducts]
     );
@@ -314,9 +318,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                     <h2>Set Up Your Application</h2>
                     {errors.noProducts && <Note>{errors.noProducts}</Note>}
 
-                    {(userProducts.gridEnterprise || userProducts.integratedEnterprise) && (
+                    {(userProducts.gridEnterprise || userProducts.integratedEnterprise || noUserProducts) && (
                         <>
-                            <p>An example of how to set up your Grid Enterprise license:</p>
+                            {!noUserProducts && <p>An example of how to set up your Grid Enterprise license:</p>}
                             {bootstrapSnippet.grid && <Snippet framework={framework} content={bootstrapSnippet.grid} />}
                         </>
                     )}

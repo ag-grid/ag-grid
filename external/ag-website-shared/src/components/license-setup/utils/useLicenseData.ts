@@ -8,11 +8,12 @@ import { hasValue } from './hasValue';
 
 type ErrorKey = keyof typeof errorConditions;
 type Errors = Record<ErrorKey, string | undefined>;
-export interface ErrorData {
+interface ErrorData {
     hasLicense: boolean;
     license: string;
     licensedProducts: LicensedProducts;
     userProducts: Products;
+    noUserProducts: boolean;
     licenseDetails: ReturnType<typeof LicenseManager.getLicenseDetails>;
 }
 
@@ -34,8 +35,7 @@ const errorConditions = {
         message: `Your license does not support "Integrated Enterprise"`,
     },
     noProducts: {
-        getIsError: ({ userProducts }: ErrorData) =>
-            !userProducts.gridEnterprise && !userProducts.integratedEnterprise && !userProducts.chartsEnterprise,
+        getIsError: ({ noUserProducts }: ErrorData) => noUserProducts,
         message: `A license is not required to use AG Grid community or AG Charts Community`,
     },
     userLicenseError: {
@@ -76,14 +76,28 @@ const errorConditions = {
     },
 };
 
-const useErrors = ({ hasLicense, license, licensedProducts, userProducts, licenseDetails }: ErrorData) => {
+const useErrors = ({
+    hasLicense,
+    license,
+    licensedProducts,
+    userProducts,
+    noUserProducts,
+    licenseDetails,
+}: ErrorData) => {
     const [errors, setErrors] = useState<Errors>({} as Errors);
 
     useEffect(() => {
         const newErrors = {} as Errors;
         (Object.keys(errorConditions) as ErrorKey[]).forEach((key) => {
             const { getIsError, message } = errorConditions[key];
-            const isError = getIsError({ hasLicense, license, licensedProducts, userProducts, licenseDetails });
+            const isError = getIsError({
+                hasLicense,
+                license,
+                licensedProducts,
+                userProducts,
+                noUserProducts,
+                licenseDetails,
+            });
 
             if (isError) {
                 newErrors[key] = message;
@@ -134,6 +148,9 @@ export const useLicenseData = () => {
         charts: false,
     });
 
+    const noUserProducts = useMemo(() => {
+        return !userProducts.gridEnterprise && !userProducts.integratedEnterprise && !userProducts.chartsEnterprise;
+    }, [userProducts]);
     const licenseDetails = useMemo(() => LicenseManager.getLicenseDetails(license), [license]);
     const chartsLicenseDetails = useMemo(() => AgCharts.getLicenseDetails(license) || {}, [license]);
 
@@ -165,7 +182,14 @@ export const useLicenseData = () => {
         return text;
     }, [licenseDetails, chartsLicenseDetails]);
 
-    const { errors } = useErrors({ hasLicense, license, licensedProducts, userProducts, licenseDetails });
+    const { errors } = useErrors({
+        hasLicense,
+        license,
+        licensedProducts,
+        userProducts,
+        noUserProducts,
+        licenseDetails,
+    });
 
     useEffect(() => {
         if (!hasValue(license)) {
@@ -208,6 +232,7 @@ export const useLicenseData = () => {
         licensedProducts,
         userProducts,
         setUserProducts,
+        noUserProducts,
 
         validLicenseText,
         userLicenseVersion,

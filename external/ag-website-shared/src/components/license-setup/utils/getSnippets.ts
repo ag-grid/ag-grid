@@ -8,15 +8,18 @@ import { GRID_LICENSE_TEMPLATES, getChartsTemplate } from './templates';
 export const getDependenciesSnippet = ({
     framework,
     products,
+    noProducts,
     importType,
 }: {
     framework: Framework;
     products: Products;
+    noProducts: boolean;
     importType?: ImportType;
 }) => {
     const dependencies = getDependencies({
         framework,
         products,
+        noProducts,
         importType,
     });
 
@@ -31,15 +34,18 @@ export const getDependenciesSnippet = ({
 export const getNpmInstallSnippet = ({
     framework,
     products,
+    noProducts,
     importType,
 }: {
     framework: Framework;
     products: Products;
+    noProducts: boolean;
     importType?: ImportType;
 }) => {
     const dependencies = getDependencies({
         framework,
         products,
+        noProducts,
         importType,
     });
     const dependenciesStr = dependencies.join(' ');
@@ -52,11 +58,13 @@ export const getBootstrapSnippet = ({
     importType,
     license: rawLicense,
     userProducts = {} as Products,
+    noProducts,
 }: {
     framework: Framework;
     license?: string;
     importType?: ImportType;
     userProducts?: Products;
+    noProducts?: boolean;
 }): {
     grid: string;
     charts: string;
@@ -64,9 +72,10 @@ export const getBootstrapSnippet = ({
     const license = rawLicense?.trim();
     const frameworkTemplate = GRID_LICENSE_TEMPLATES[framework];
     const gridTemplate = frameworkTemplate[importType];
+    const hideLicense = noProducts;
 
     return {
-        grid: (gridTemplate && gridTemplate({ license, userProducts })).trim() || '',
+        grid: (gridTemplate && gridTemplate({ license, userProducts, hideLicense })).trim() || '',
         charts: getChartsTemplate({ license }),
     };
 };
