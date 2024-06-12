@@ -356,6 +356,8 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
     private tabFactories: { [p: string]: () => TabbedItem } = {};
     private includeChecks: { [p: string]: () => boolean } = {};
 
+    private filterComp?: FilterWrapperComp | null;
+
     constructor(
         private readonly column: AgColumn | undefined,
         private readonly restoreFocusParams: MenuRestoreFocusParams,
@@ -507,7 +509,8 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
     }
 
     private createFilterPanel(): TabbedItem {
-        const comp = this.column ? this.createManagedBean(new FilterWrapperComp(this.column, 'COLUMN_MENU')) : null;
+        const comp = this.column ? this.createBean(new FilterWrapperComp(this.column, 'COLUMN_MENU')) : null;
+        this.filterComp = comp;
         if (!comp?.hasFilter()) {
             throw new Error('AG Grid - Unable to instantiate filter');
         }
@@ -561,6 +564,12 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
 
     public getGui(): HTMLElement {
         return this.tabbedLayout.getGui();
+    }
+
+    public override destroy(): void {
+        super.destroy();
+        // Needs to be destroyed last to ensure that `afterGuiDetached` runs
+        this.destroyBean(this.filterComp);
     }
 }
 
