@@ -28,6 +28,7 @@ import {
     _stopPropagationForAgGrid,
 } from '@ag-grid-community/core';
 
+import { PillRenderer } from '../rendering/pillRenderer';
 import type { AgRichSelectListEvent } from './agRichSelectList';
 import { AgRichSelectList } from './agRichSelectList';
 
@@ -47,6 +48,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     private searchString = '';
     private listComponent: AgRichSelectList<TValue> | undefined;
+    private pillRenderer: PillRenderer<TValue> | null;
     protected values: TValue[];
 
     private searchStringCreator: ((values: TValue[]) => string[]) | null = null;
@@ -145,7 +147,14 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     private renderSelectedValue(): void {
         const { value, eDisplayField, config } = this;
-        const { allowTyping, initialInputValue, multiSelect, suppressDeselectAll } = this.config;
+        const {
+            allowTyping,
+            cellRenderer,
+            initialInputValue,
+            multiSelect,
+            suppressDeselectAll,
+            showSelectedItemsAsPills,
+        } = config;
         const valueFormatted = this.config.valueFormatter ? this.config.valueFormatter(value) : value;
 
         if (allowTyping) {
@@ -160,8 +169,13 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         let userCompDetails: UserCompDetails | undefined;
 
-        if (config.cellRenderer) {
-            userCompDetails = this.userComponentFactory.getCellRendererDetails(this.config, {
+        if (multiSelect && showSelectedItemsAsPills) {
+            this.createOrUpdatePillRenderer(eDisplayField);
+            return;
+        }
+
+        if (cellRenderer) {
+            userCompDetails = this.userComponentFactory.getCellRendererDetails(config, {
                 value,
                 valueFormatted,
                 getValue: () => this.getValue(),
@@ -269,6 +283,30 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     protected override beforeHidePicker(): void {
         super.beforeHidePicker();
+    }
+
+    private createOrUpdatePillRenderer(container: HTMLElement): void {
+        if (!this.pillRenderer) {
+            const pillRenderer = (this.pillRenderer = this.createBean(new PillRenderer<TValue>()));
+            this.addDestroyFunc(() => {
+                this.destroyBean(this.pillRenderer);
+                this.pillRenderer = null;
+            });
+
+            _clearElement(container);
+            container.appendChild(pillRenderer.getGui());
+
+            pillRenderer.init({
+                eWrapper: this.eWrapper,
+                onPillMouseDown: (e: MouseEvent) => {
+                    e.stopImmediatePropagation();
+                },
+                getValue: () => this.getValue() as TValue[] | null,
+                setValue: (value: TValue[] | null) => this.setValue(value, true),
+            });
+        }
+
+        this.pillRenderer.refresh();
     }
 
     private onWrapperFocus(): void {

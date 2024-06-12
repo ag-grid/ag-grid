@@ -1289,6 +1289,28 @@
 
     // /**
     //  ****************************
+    //  * Pill
+    //  ****************************
+    // */
+    .ag-pill-renderer {
+        display: flex;
+        gap: 0.25rem;
+        flex-wrap: nowrap;
+    }
+
+    .ag-pill {
+        display: flex;
+        white-space: nowrap;
+        padding: 0 0.25rem;
+    }
+
+    .ag-pill .ag-pill-button {
+        border: none;
+        padding: 0;
+    }
+
+    // /**
+    //  ****************************
     //  * Rich Select
     //  ****************************
     // */
