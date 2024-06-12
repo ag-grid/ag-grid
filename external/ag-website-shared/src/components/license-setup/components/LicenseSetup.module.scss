@@ -144,3 +144,9 @@
         right: 4px;
     }
 }
+
+.tooltipWrapper svg {
+    width: $spacing-size-5;
+    height: $spacing-size-5;
+    fill: var(--color-fg-quinary);
+}

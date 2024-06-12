@@ -214,14 +214,19 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                                         }}
                                     />
                                 </label>
+
                                 <label
                                     className={classnames({
                                         [styles.licensedProduct]:
                                             hasLicense && licensedProducts.grid && licensedProducts.charts,
                                     })}
                                 >
-                                    Integrated Enterprise{' '}
-                                    <InfoTooltip title="Use Charts Enterprise within Grid Enterprise through integrated charts" />
+                                    <span>Integrated Enterprise</span>
+
+                                    <span className={styles.tooltipWrapper}>
+                                        <InfoTooltip title="Use Charts Enterprise within Grid Enterprise through integrated charts" />
+                                    </span>
+
                                     <input
                                         type="checkbox"
                                         name="products"
