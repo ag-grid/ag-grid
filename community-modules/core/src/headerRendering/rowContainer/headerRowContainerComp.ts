@@ -11,7 +11,7 @@ const PINNED_LEFT_TEMPLATE = /* html */ `<div class="ag-pinned-left-header" role
 
 const PINNED_RIGHT_TEMPLATE = /* html */ `<div class="ag-pinned-right-header" role="rowgroup"></div>`;
 
-const CENTER_TEMPLATE /* html */ = `<div class="ag-header-viewport" role="presentation">
+const CENTER_TEMPLATE = /* html */ `<div class="ag-header-viewport" role="presentation">
         <div class="ag-header-container" data-ref="eCenterContainer" role="rowgroup"></div>
     </div>`;
 

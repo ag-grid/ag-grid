@@ -9,14 +9,6 @@ import type { ChartTranslationService } from '../../../services/chartTranslation
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class ZoomPanel extends Component {
-    public static TEMPLATE = /* html */ `<div>
-            <ag-group-component data-ref="zoomGroup">
-                <ag-checkbox data-ref="zoomSelectingCheckbox"></ag-checkbox>
-                <ag-checkbox data-ref="zoomScrollingCheckbox"></ag-checkbox>
-                <ag-slider data-ref="zoomScrollingStepInput"></ag-slider>
-            </ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -61,12 +53,22 @@ export class ZoomPanel extends Component {
             this.zoomScrollingStepInput.setDisabled(!value);
         })(zoomScrollingCheckboxParams.onValueChange);
 
-        this.setTemplate(ZoomPanel.TEMPLATE, [AgGroupComponentSelector, AgCheckboxSelector, AgSliderSelector], {
-            zoomGroup: zoomGroupParams,
-            zoomScrollingCheckbox: zoomScrollingCheckboxParams,
-            zoomScrollingStepInput: zoomScrollingStepSliderParams,
-            zoomSelectingCheckbox: zoomSelectingCheckboxParams,
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="zoomGroup">
+                <ag-checkbox data-ref="zoomSelectingCheckbox"></ag-checkbox>
+                <ag-checkbox data-ref="zoomScrollingCheckbox"></ag-checkbox>
+                <ag-slider data-ref="zoomScrollingStepInput"></ag-slider>
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector, AgCheckboxSelector, AgSliderSelector],
+            {
+                zoomGroup: zoomGroupParams,
+                zoomScrollingCheckbox: zoomScrollingCheckboxParams,
+                zoomScrollingStepInput: zoomScrollingStepSliderParams,
+                zoomSelectingCheckbox: zoomSelectingCheckboxParams,
+            }
+        );
 
         // Set the initial state of the scrolling step input according to whether the scrolling checkbox is checked
         this.zoomScrollingStepInput.setDisabled(!zoomScrollingCheckboxParams.value);

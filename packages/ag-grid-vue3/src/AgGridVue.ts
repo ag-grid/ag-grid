@@ -3,7 +3,13 @@ import type { PropType } from 'vue';
 import { defineComponent, getCurrentInstance, h } from 'vue';
 
 import type { GridApi, GridOptions, IRowNode, Module } from 'ag-grid-community';
-import { ALWAYS_SYNC_GLOBAL_EVENTS, ComponentUtil, createGrid } from 'ag-grid-community';
+import {
+    ALWAYS_SYNC_GLOBAL_EVENTS,
+    ComponentUtil,
+    _combineAttributesAndGridOptions,
+    _processOnChange,
+    createGrid,
+} from 'ag-grid-community';
 
 import type { Properties } from './Utils';
 import { getAgGridProperties } from './Utils';
@@ -93,7 +99,7 @@ export const AgGridVue = defineComponent({
                 };
                 // decouple the row data - if we don't when the grid changes row data directly that'll trigger this component to react to rowData changes,
                 // which can reset grid state (ie row selection)
-                ComponentUtil.processOnChange(options, this.api as any);
+                _processOnChange(options, this.api as any);
             }
         },
         checkForBindingConflicts() {
@@ -187,7 +193,7 @@ export const AgGridVue = defineComponent({
 
         // the gridOptions we pass to the grid don't need to be reactive (and shouldn't be - it'll cause issues
         // with mergeDeep for example
-        const gridOptions = markRaw(ComponentUtil.combineAttributesAndGridOptions(toRaw(this.gridOptions), this));
+        const gridOptions = markRaw(_combineAttributesAndGridOptions(toRaw(this.gridOptions), this));
 
         this.checkForBindingConflicts();
 

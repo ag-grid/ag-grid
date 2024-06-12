@@ -63,21 +63,6 @@ export interface SetFilterListItemParams<V> {
     hasIndeterminateExpandState?: boolean;
 }
 
-const GROUP_TEMPLATE = /* html */ `
-<div class="ag-set-filter-item" aria-hidden="true">
-    <span class="ag-set-filter-group-icons">
-        <span class="ag-set-filter-group-closed-icon" data-ref="eGroupClosedIcon"></span>
-        <span class="ag-set-filter-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
-        <span class="ag-set-filter-group-indeterminate-icon" data-ref="eGroupIndeterminateIcon"></span>
-    </span>
-    <ag-checkbox data-ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
-</div>`;
-
-const TEMPLATE = /* html */ `
-<div class="ag-set-filter-item">
-    <ag-checkbox data-ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
-</div>`;
-
 export type SetFilterListItemEvent = 'selectionChanged' | 'expandedChanged';
 /** @param V type of value in the Set Filter */
 export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
@@ -117,7 +102,23 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private destroyCellRendererComponent?: () => void;
 
     constructor(params: SetFilterListItemParams<V>) {
-        super(params.isGroup ? GROUP_TEMPLATE : TEMPLATE, [AgCheckboxSelector]);
+        super(
+            params.isGroup
+                ? /* html */ `
+            <div class="ag-set-filter-item" aria-hidden="true">
+                <span class="ag-set-filter-group-icons">
+                    <span class="ag-set-filter-group-closed-icon" data-ref="eGroupClosedIcon"></span>
+                    <span class="ag-set-filter-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
+                    <span class="ag-set-filter-group-indeterminate-icon" data-ref="eGroupIndeterminateIcon"></span>
+                </span>
+                <ag-checkbox data-ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
+            </div>`
+                : /* html */ `
+            <div class="ag-set-filter-item">
+                <ag-checkbox data-ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
+            </div>`,
+            [AgCheckboxSelector]
+        );
         this.focusWrapper = params.focusWrapper;
         this.value = params.value;
         this.params = params.params;

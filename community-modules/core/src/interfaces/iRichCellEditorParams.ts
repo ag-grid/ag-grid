@@ -13,8 +13,11 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
     filterList?: boolean;
     searchType?: 'match' | 'matchAny' | 'fuzzy';
     highlightMatch?: boolean;
+
     multiSelect?: boolean;
     suppressDeselectAll?: boolean;
+    showSelectedItemsAsPills?: boolean;
+
     placeholder?: string;
     initialInputValue?: string;
 
@@ -67,6 +70,11 @@ export interface IRichCellEditorParams<TData = any, TValue = any> {
      * Note: This feature only works when `multiSelect=true`.
      */
     suppressDeselectAll?: boolean;
+    /**
+     * If `true` the selected items will be displayed with a `Pill Renderer`.
+     * Note: This feature only works when `multiSelect=true`.
+     */
+    showSelectedItemsAsPills?: boolean;
     /**
      * The value in `ms` for the search algorithm debounce delay (only relevant when `allowTyping=false`).
      * @default 300

@@ -156,6 +156,7 @@ export const ICON_MAP = {
     eye: CarbonIcon.View,
     code: CarbonIcon.Code,
     tick: TickIcon,
+    check: CarbonIcon.Checkmark,
     cross: CrossIcon,
     plunker: PlunkerIcon,
     stackblitz: StackBlitzIcon,

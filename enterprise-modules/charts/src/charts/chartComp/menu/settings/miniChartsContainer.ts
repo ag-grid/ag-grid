@@ -137,8 +137,6 @@ export class MiniChartsContainer extends Component {
         this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
 
-    static TEMPLATE = /* html */ `<div class="ag-chart-settings-mini-wrapper"></div>`;
-
     private readonly fills: string[];
     private readonly strokes: string[];
     private readonly themeTemplateParameters: ThemeTemplateParameters;
@@ -156,7 +154,7 @@ export class MiniChartsContainer extends Component {
         isCustomTheme: boolean,
         chartGroups: ChartGroupsDef = DEFAULT_CHART_GROUPS
     ) {
-        super(MiniChartsContainer.TEMPLATE);
+        super(/* html */ `<div class="ag-chart-settings-mini-wrapper"></div>`);
 
         this.chartController = chartController;
         this.fills = fills;

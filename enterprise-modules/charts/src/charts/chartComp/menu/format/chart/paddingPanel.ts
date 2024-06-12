@@ -12,15 +12,6 @@ import type { ChartThemeOverridesSeriesType } from '../../../utils/seriesTypeMap
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class PaddingPanel extends Component {
-    public static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="chartPaddingGroup">
-                <ag-slider data-ref="paddingTopSlider"></ag-slider>
-                <ag-slider data-ref="paddingRightSlider"></ag-slider>
-                <ag-slider data-ref="paddingBottomSlider"></ag-slider>
-                <ag-slider data-ref="paddingLeftSlider"></ag-slider>
-            </ag-group-component>
-        <div>`;
-
     private readonly paddingTopSlider: AgSlider = RefPlaceholder;
 
     private chartTranslationService: ChartTranslationService;
@@ -46,13 +37,24 @@ export class PaddingPanel extends Component {
         const getSliderParams = (property: keyof AgChartPaddingOptions) =>
             this.chartMenuUtils.getDefaultSliderParams('padding.' + property, property, 200);
 
-        this.setTemplate(PaddingPanel.TEMPLATE, [AgGroupComponentSelector, AgSliderSelector], {
-            chartPaddingGroup: chartPaddingGroupParams,
-            paddingTopSlider: getSliderParams('top'),
-            paddingRightSlider: getSliderParams('right'),
-            paddingBottomSlider: getSliderParams('bottom'),
-            paddingLeftSlider: getSliderParams('left'),
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="chartPaddingGroup">
+                <ag-slider data-ref="paddingTopSlider"></ag-slider>
+                <ag-slider data-ref="paddingRightSlider"></ag-slider>
+                <ag-slider data-ref="paddingBottomSlider"></ag-slider>
+                <ag-slider data-ref="paddingLeftSlider"></ag-slider>
+            </ag-group-component>
+        <div>`,
+            [AgGroupComponentSelector, AgSliderSelector],
+            {
+                chartPaddingGroup: chartPaddingGroupParams,
+                paddingTopSlider: getSliderParams('top'),
+                paddingRightSlider: getSliderParams('right'),
+                paddingBottomSlider: getSliderParams('bottom'),
+                paddingLeftSlider: getSliderParams('left'),
+            }
+        );
 
         this.addManagedEventListeners({
             chartOptionsChanged: (e: ChartOptionsChanged) => {

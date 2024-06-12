@@ -25,13 +25,11 @@ const DefaultFormatPanelDef: ChartFormatPanel = {
 };
 
 export class FormatPanel extends Component {
-    public static TEMPLATE = /* html */ `<div class="ag-chart-format-wrapper"></div>`;
-
     private chartPanelFeature: ChartPanelFeature;
     private groupExpansionFeature: GroupExpansionFeature;
 
     constructor(private readonly chartMenuContext: ChartMenuContext) {
-        super(FormatPanel.TEMPLATE);
+        super(/* html */ `<div class="ag-chart-format-wrapper"></div>`);
     }
 
     public postConstruct() {

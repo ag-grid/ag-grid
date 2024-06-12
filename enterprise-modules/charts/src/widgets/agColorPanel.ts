@@ -5,28 +5,6 @@ import type { AgColorInput } from './agColorInput';
 import { AgColorInputSelector } from './agColorInput';
 import type { AgColorPicker } from './agColorPicker';
 
-const TEMPLATE = /* html */ `<div class="ag-color-panel" tabindex="-1">
-        <div data-ref="spectrumColor" class="ag-spectrum-color">
-            <div class="ag-spectrum-sat ag-spectrum-fill">
-                <div data-ref="spectrumVal" class="ag-spectrum-val ag-spectrum-fill">
-                    <div data-ref="spectrumDragger" class="ag-spectrum-dragger"></div>
-                </div>
-            </div>
-        </div>
-        <div class="ag-spectrum-tools">
-            <div data-ref="spectrumHue" class="ag-spectrum-hue ag-spectrum-tool">
-                <div class="ag-spectrum-hue-background"></div>
-                <div data-ref="spectrumHueSlider" class="ag-spectrum-slider"></div>
-            </div>
-            <div data-ref="spectrumAlpha" class="ag-spectrum-alpha ag-spectrum-tool">
-                <div class="ag-spectrum-alpha-background"></div>
-                <div data-ref="spectrumAlphaSlider" class="ag-spectrum-slider"></div>
-            </div>
-            <ag-color-input data-ref="colorInput"></ag-color-input>
-            <div data-ref="recentColors" class="ag-recent-colors"></div>
-        </div>
-    </div>`;
-
 export class AgColorPanel extends Component {
     private H = 1; // in the [0, 1] range
     private S = 1; // in the [0, 1] range
@@ -60,7 +38,30 @@ export class AgColorPanel extends Component {
     private readonly recentColors: HTMLElement = RefPlaceholder;
 
     constructor(config: { picker: Component<any> }) {
-        super(TEMPLATE, [AgColorInputSelector]);
+        super(
+            /* html */ `<div class="ag-color-panel" tabindex="-1">
+            <div data-ref="spectrumColor" class="ag-spectrum-color">
+                <div class="ag-spectrum-sat ag-spectrum-fill">
+                    <div data-ref="spectrumVal" class="ag-spectrum-val ag-spectrum-fill">
+                        <div data-ref="spectrumDragger" class="ag-spectrum-dragger"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="ag-spectrum-tools">
+                <div data-ref="spectrumHue" class="ag-spectrum-hue ag-spectrum-tool">
+                    <div class="ag-spectrum-hue-background"></div>
+                    <div data-ref="spectrumHueSlider" class="ag-spectrum-slider"></div>
+                </div>
+                <div data-ref="spectrumAlpha" class="ag-spectrum-alpha ag-spectrum-tool">
+                    <div class="ag-spectrum-alpha-background"></div>
+                    <div data-ref="spectrumAlphaSlider" class="ag-spectrum-slider"></div>
+                </div>
+                <ag-color-input data-ref="colorInput"></ag-color-input>
+                <div data-ref="recentColors" class="ag-recent-colors"></div>
+            </div>
+        </div>`,
+            [AgColorInputSelector]
+        );
         this.picker = config.picker;
     }
 

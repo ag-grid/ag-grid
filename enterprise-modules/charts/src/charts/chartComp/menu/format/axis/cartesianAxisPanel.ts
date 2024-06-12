@@ -28,16 +28,6 @@ import { GridLinePanel } from './gridLinePanel';
 const DEFAULT_TIME_AXIS_FORMAT = '%d %B %Y';
 
 export class CartesianAxisPanel extends Component {
-    public static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="axisGroup">
-                <ag-select data-ref="axisTypeSelect"></ag-select>
-                <ag-select data-ref="axisTimeFormatSelect"></ag-select>
-                <ag-select data-ref="axisPositionSelect"></ag-select>
-                <ag-color-picker data-ref="axisColorInput"></ag-color-picker>
-                <ag-slider data-ref="axisLineWidthSlider"></ag-slider>
-            </ag-group-component>
-        </div>`;
-
     private readonly axisGroup: AgGroupComponent = RefPlaceholder;
     private readonly axisTypeSelect: AgSelect = RefPlaceholder;
     private readonly axisPositionSelect: AgSelect = RefPlaceholder;
@@ -97,7 +87,15 @@ export class CartesianAxisPanel extends Component {
         const axisLineWidthSliderParams = this.getAxisLineWidthSliderParams(chartAxisThemeOverrides);
 
         this.setTemplate(
-            CartesianAxisPanel.TEMPLATE,
+            /* html */ `<div>
+            <ag-group-component data-ref="axisGroup">
+                <ag-select data-ref="axisTypeSelect"></ag-select>
+                <ag-select data-ref="axisTimeFormatSelect"></ag-select>
+                <ag-select data-ref="axisPositionSelect"></ag-select>
+                <ag-color-picker data-ref="axisColorInput"></ag-color-picker>
+                <ag-slider data-ref="axisLineWidthSlider"></ag-slider>
+            </ag-group-component>
+        </div>`,
             [AgGroupComponentSelector, AgSelectSelector, AgColorPickerSelector, AgSliderSelector],
             {
                 axisGroup: axisGroupParams,

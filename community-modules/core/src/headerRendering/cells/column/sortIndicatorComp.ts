@@ -6,7 +6,7 @@ import { _createIconNoSpan } from '../../../utils/icon';
 import type { ComponentSelector } from '../../../widgets/component';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 
-const SortIndicatorTemplate /* html */ = `<span class="ag-sort-indicator-container">
+const SortIndicatorTemplate = /* html */ `<span class="ag-sort-indicator-container">
         <span data-ref="eSortOrder" class="ag-sort-indicator-icon ag-sort-order ag-hidden" aria-hidden="true"></span>
         <span data-ref="eSortAsc" class="ag-sort-indicator-icon ag-sort-ascending-icon ag-hidden" aria-hidden="true"></span>
         <span data-ref="eSortDesc" class="ag-sort-indicator-icon ag-sort-descending-icon ag-hidden" aria-hidden="true"></span>

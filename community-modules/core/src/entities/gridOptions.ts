@@ -1799,7 +1799,7 @@ export interface GridOptions<TData = any> {
      */
     resetRowDataOnUpdate?: boolean;
     /**
-     * Allows you to process rows after they are created, so you can do final adding of custom attributes etc.
+     * Callback fired after the row is rendered into the DOM. Should not be used to initiate side effects.
      */
     processRowPostCreate?: (params: ProcessRowParams<TData>) => void;
     /**

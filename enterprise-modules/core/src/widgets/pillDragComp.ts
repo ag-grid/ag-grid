@@ -28,13 +28,6 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         this.dragAndDropService = beans.dragAndDropService;
     }
 
-    private TEMPLATE = /* html */ `
-        <span role="option">
-          <span data-ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
-          <span data-ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
-          <span data-ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
-        </span>`;
-
     private readonly eText: HTMLElement = RefPlaceholder;
     private readonly eDragHandle: HTMLElement = RefPlaceholder;
     private readonly eButton: HTMLElement = RefPlaceholder;
@@ -57,7 +50,16 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
     }
 
     public postConstruct(): void {
-        this.setTemplate(this.template ?? this.TEMPLATE, this.agComponents);
+        this.setTemplate(
+            this.template ??
+                /* html */ `
+            <span role="option">
+              <span data-ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
+              <span data-ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
+              <span data-ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
+            </span>`,
+            this.agComponents
+        );
         const eGui = this.getGui();
 
         this.addElementClasses(eGui);

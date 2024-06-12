@@ -323,21 +323,51 @@ export class Component<TLocalEvent extends string = ComponentEvent>
         return this.eGui.querySelector(cssSelector) as HTMLElement;
     }
 
-    public appendChild(newChild: HTMLElement | Component<any>, container?: HTMLElement): void {
+    private getContainerAndElement(
+        newChild: Component<any> | HTMLElement,
+        container?: HTMLElement
+    ): { element: HTMLElement; parent: HTMLElement } | null {
+        let parent = container;
+
         if (newChild == null) {
-            return;
+            return null;
         }
 
-        if (!container) {
-            container = this.eGui;
+        if (!parent) {
+            parent = this.eGui;
         }
 
         if (_isNodeOrElement(newChild)) {
-            container.appendChild(newChild as HTMLElement);
-        } else {
-            const childComponent = newChild as Component;
-            container.appendChild(childComponent.getGui());
+            return {
+                element: newChild,
+                parent,
+            };
         }
+
+        return {
+            element: newChild.getGui(),
+            parent,
+        };
+    }
+
+    public prependChild(newChild: HTMLElement | Component<any>, container?: HTMLElement) {
+        const { element, parent } = this.getContainerAndElement(newChild, container) || {};
+
+        if (!element || !parent) {
+            return;
+        }
+
+        parent.insertAdjacentElement('afterbegin', element);
+    }
+
+    public appendChild(newChild: HTMLElement | Component<any>, container?: HTMLElement): void {
+        const { element, parent } = this.getContainerAndElement(newChild, container) || {};
+
+        if (!element || !parent) {
+            return;
+        }
+
+        parent.appendChild(element);
     }
 
     public isDisplayed(): boolean {

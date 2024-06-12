@@ -426,7 +426,7 @@ export function _formatSize(size: number | string) {
     return size;
 }
 
-export function _isNodeOrElement(o: any) {
+export function _isNodeOrElement(o: any): o is Node | Element {
     return o instanceof Node || o instanceof HTMLElement;
 }
 

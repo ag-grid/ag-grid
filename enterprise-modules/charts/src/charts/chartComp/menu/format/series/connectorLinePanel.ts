@@ -10,15 +10,6 @@ import type { ChartTranslationKey, ChartTranslationService } from '../../../serv
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class ConnectorLinePanel extends Component {
-    public static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="lineGroup">
-                <ag-color-picker data-ref="lineColorPicker"></ag-color-picker>
-                <ag-slider data-ref="lineStrokeWidthSlider"></ag-slider>
-                <ag-slider data-ref="lineOpacitySlider"></ag-slider>
-                <ag-slider data-ref="lineDashSlider"></ag-slider>                
-            </ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -38,7 +29,14 @@ export class ConnectorLinePanel extends Component {
             suppressEnabledCheckbox: true,
         };
         this.setTemplate(
-            ConnectorLinePanel.TEMPLATE,
+            /* html */ `<div>
+            <ag-group-component data-ref="lineGroup">
+                <ag-color-picker data-ref="lineColorPicker"></ag-color-picker>
+                <ag-slider data-ref="lineStrokeWidthSlider"></ag-slider>
+                <ag-slider data-ref="lineOpacitySlider"></ag-slider>
+                <ag-slider data-ref="lineDashSlider"></ag-slider>                
+            </ag-group-component>
+        </div>`,
             [AgGroupComponentSelector, AgColorPickerSelector, AgSliderSelector],
             {
                 lineGroup: lineGroupParams,

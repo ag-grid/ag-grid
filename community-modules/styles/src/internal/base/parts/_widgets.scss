@@ -594,6 +594,31 @@
     }
 
     ////////////////////////////////////////
+    // PILL
+    ////////////////////////////////////////
+    .ag-pill {
+        border-radius: var(--ag-border-radius);
+        background-color: var(--ag-chip-background-color);
+    }
+
+    .ag-pill .ag-pill-button {
+        @include ag.unthemed-rtl(
+            (
+                margin-left: var(--ag-grid-size),
+            )
+        );
+    }
+
+    .ag-pill .ag-pill-button:focus {
+        box-shadow: none;
+    }
+
+    .ag-pill .ag-pill-button:focus-visible {
+        background-color: var(--ag-active-color);
+        color: var(--ag-background-color);
+    }
+
+    ////////////////////////////////////////
     // Dialog
     ////////////////////////////////////////
     .ag-dragging-range-handle .ag-dialog,

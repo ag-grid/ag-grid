@@ -8,12 +8,6 @@ import type { ChartTranslationService } from '../../../services/chartTranslation
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class BackgroundPanel extends Component {
-    public static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="chartBackgroundGroup">
-                <ag-color-picker data-ref="colorPicker"></ag-color-picker>
-            </ag-group-component>
-        <div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -36,9 +30,17 @@ export class BackgroundPanel extends Component {
             }
         );
         const colorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams('background.fill');
-        this.setTemplate(BackgroundPanel.TEMPLATE, [AgGroupComponentSelector, AgColorPickerSelector], {
-            chartBackgroundGroup: chartBackgroundGroupParams,
-            colorPicker: colorPickerParams,
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="chartBackgroundGroup">
+                <ag-color-picker data-ref="colorPicker"></ag-color-picker>
+            </ag-group-component>
+        <div>`,
+            [AgGroupComponentSelector, AgColorPickerSelector],
+            {
+                chartBackgroundGroup: chartBackgroundGroupParams,
+                colorPicker: colorPickerParams,
+            }
+        );
     }
 }

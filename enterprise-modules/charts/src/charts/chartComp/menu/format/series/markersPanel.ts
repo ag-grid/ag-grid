@@ -9,14 +9,6 @@ import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import { getShapeSelectOptions } from './seriesUtils';
 
 export class MarkersPanel extends Component {
-    public static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="seriesMarkersGroup">
-                <ag-select data-ref="seriesMarkerShapeSelect"></ag-select>
-                <ag-slider data-ref="seriesMarkerSizeSlider"></ag-slider>
-                <ag-slider data-ref="seriesMarkerStrokeWidthSlider"></ag-slider>
-            </ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -36,19 +28,29 @@ export class MarkersPanel extends Component {
             suppressOpenCloseIcons: true,
         });
 
-        this.setTemplate(MarkersPanel.TEMPLATE, [AgGroupComponentSelector, AgSelectSelector, AgSliderSelector], {
-            seriesMarkersGroup: seriesMarkersGroupParams,
-            seriesMarkerShapeSelect: this.chartMenuUtils.getDefaultSelectParams(
-                'marker.shape',
-                'shape',
-                getShapeSelectOptions(this.chartTranslationService)
-            ),
-            seriesMarkerSizeSlider: this.chartMenuUtils.getDefaultSliderParams('marker.size', 'size', 60),
-            seriesMarkerStrokeWidthSlider: this.chartMenuUtils.getDefaultSliderParams(
-                'marker.strokeWidth',
-                'strokeWidth',
-                10
-            ),
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="seriesMarkersGroup">
+                <ag-select data-ref="seriesMarkerShapeSelect"></ag-select>
+                <ag-slider data-ref="seriesMarkerSizeSlider"></ag-slider>
+                <ag-slider data-ref="seriesMarkerStrokeWidthSlider"></ag-slider>
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector, AgSelectSelector, AgSliderSelector],
+            {
+                seriesMarkersGroup: seriesMarkersGroupParams,
+                seriesMarkerShapeSelect: this.chartMenuUtils.getDefaultSelectParams(
+                    'marker.shape',
+                    'shape',
+                    getShapeSelectOptions(this.chartTranslationService)
+                ),
+                seriesMarkerSizeSlider: this.chartMenuUtils.getDefaultSliderParams('marker.size', 'size', 60),
+                seriesMarkerStrokeWidthSlider: this.chartMenuUtils.getDefaultSliderParams(
+                    'marker.strokeWidth',
+                    'strokeWidth',
+                    10
+                ),
+            }
+        );
     }
 }
