@@ -1,4 +1,4 @@
-import type { ColDef, GetDataPath, StatusPanelDef } from '@ag-grid-community/core';
+import type { ColDef, GetDataPath, StatusPanelDef, ICellRendererParams } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
@@ -34,8 +34,13 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
         {
             headerName: 'Contact',
             field: 'contact',
-            pinned: 'left',
-            cellRenderer: ContactCellRenderer,
+            cellRendererSelector: (params: ICellRendererParams<IRow>) => {
+                const contactDetails = {
+                  component: ContactCellRenderer,
+                };
+                if (params.node.footer) return undefined;
+                return contactDetails;
+              },
             width: 120,
         },
         {
@@ -43,7 +48,13 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             field: 'location',
             cellDataType: 'text',
             width: 200,
-            cellRenderer: FlagRenderer,
+            cellRendererSelector: (params: ICellRendererParams<IRow>) => {
+                const flatIcon = {
+                  component: FlagRenderer,
+                };
+                if (params.node.footer) return undefined;
+                return flatIcon;
+              },
             editable: true,
         },
 
@@ -51,7 +62,13 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             field: 'department',
             cellDataType: 'text',
             width: 250,
-            cellRenderer: TagCellRenderer,
+            cellRendererSelector: (params: ICellRendererParams<IRow>) => {
+                const tagCell = {
+                  component: TagCellRenderer,
+                };
+                if (params.node.footer) return undefined;
+                return tagCell;
+              },
         },
         {
             field: 'employmentType',
@@ -76,7 +93,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
         {
             headerName: 'ID',
             field: 'employeeId',
-            cellDataType: 'number',
+            cellDataType: 'text',
             width: 120,
         },
         {
@@ -97,7 +114,13 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             editable: true,
             width: 150,
             pinned: 'right',
-            cellRenderer: StatusCellRenderer,
+            cellRendererSelector: (params: ICellRendererParams<IRow>) => {
+                const statusCell = {
+                  component: StatusCellRenderer,
+                };
+                if (params.node.footer) return undefined;
+                return statusCell;
+              },
             cellEditor: 'agRichSelectCellEditor',
             cellEditorParams: {
                 values: paymentStatus,
@@ -117,10 +140,14 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             width: 330,
             pinned: 'left',
             sort: 'asc',
-            cellRendererParams: {
-                suppressCount: true,
-                innerRenderer: EmployeeCellRenderer,
-            },
+            cellRendererSelector: (params: ICellRendererParams<IRow>) => {
+                const groupCell = {
+                    suppressCount: true,
+                    innerRenderer: EmployeeCellRenderer,
+                };
+                if (params.node.footer) return undefined;
+                return { component: 'agGroupCellRenderer', params: groupCell };
+              },
         };
     }, []);
 
@@ -149,6 +176,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
                         treeData={treeData}
                         autoGroupColumnDef={autoGroupColumnDef}
                         statusBar={statusBar}
+                        grandTotalRow={"bottom"}
                     />
                 </div>
             </div>
