@@ -173,9 +173,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         justFiltered?: boolean | undefined;
         justCurrentPage?: boolean | undefined;
     }): void {
-        if (params.justCurrentPage || params.justFiltered) {
-            _warnOnce("selecting just filtered only works when gridOptions.rowModelType='clientSide'");
-        }
+        validateSelectionParameters(params);
 
         this.selectionStrategy.selectAllRowNodes(params);
 
@@ -195,9 +193,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         justFiltered?: boolean | undefined;
         justCurrentPage?: boolean | undefined;
     }): void {
-        if (params.justCurrentPage || params.justFiltered) {
-            _warnOnce("selecting just filtered only works when gridOptions.rowModelType='clientSide'");
-        }
+        validateSelectionParameters(params);
 
         this.selectionStrategy.deselectAllRowNodes(params);
 
@@ -238,5 +234,14 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
             source,
         };
         this.eventService.dispatchEvent(event);
+    }
+}
+function validateSelectionParameters(params: {
+    source: SelectionEventSourceType;
+    justFiltered?: boolean | undefined;
+    justCurrentPage?: boolean | undefined;
+}) {
+    if (params.justCurrentPage || params.justFiltered) {
+        _warnOnce(`selecting just filtered only works when gridOptions.rowModelType='clientSide'`);
     }
 }

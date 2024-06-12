@@ -27,7 +27,7 @@ import {
 import { AgSideBarButtonsSelector } from './agSideBarButtons';
 import type { SideBarButtonClickedEvent } from './agSideBarButtons';
 import type { AgSideBarButtons } from './agSideBarButtons';
-import { SideBarDefParser } from './sideBarDefParser';
+import { parseSideBarDef } from './sideBarDefParser';
 import type { SideBarService } from './sideBarService';
 import { ToolPanelWrapper } from './toolPanelWrapper';
 
@@ -61,7 +61,7 @@ export class AgSideBar extends Component implements ISideBar {
         this.sideBarButtons.addEventListener('sideBarButtonClicked', this.onToolPanelButtonClicked.bind(this));
         const { sideBar: sideBarState } = this.gos.get('initialState') ?? {};
         this.setSideBarDef({
-            sideBarDef: SideBarDefParser.parse(this.gos.get('sideBar')),
+            sideBarDef: parseSideBarDef(this.gos.get('sideBar')),
             sideBarState,
         });
 
@@ -429,7 +429,7 @@ export class AgSideBar extends Component implements ISideBar {
     }
 
     private onSideBarUpdated(): void {
-        const sideBarDef = SideBarDefParser.parse(this.gos.get('sideBar'));
+        const sideBarDef = parseSideBarDef(this.gos.get('sideBar'));
 
         const existingToolPanelWrappers: { [id: string]: ToolPanelWrapper } = {};
         if (sideBarDef && this.sideBar) {
