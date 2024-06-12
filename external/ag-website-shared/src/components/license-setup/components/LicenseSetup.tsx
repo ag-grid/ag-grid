@@ -104,6 +104,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                 Validate your licence key and configure your application. See sample code and example projects to learn
                 how to install your AG Grid Enterprise products.
             </p>
+
             <form>
                 <p>Fill in the following form to get instructions on how to set up your license:</p>
                 <div className={styles.inputList}>
@@ -281,22 +282,27 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                 </div>
 
                 <div className={styles.results}>
-                    <h3>Dependencies</h3>
+                    <h2>Add Your Dependencies</h2>
                     {errors.noProducts && <Note>{errors.noProducts}</Note>}
+
                     <p>
                         Copy the following dependencies into your <code>package.json</code>:
                     </p>
                     {dependenciesSnippet && <Snippet framework={framework} content={dependenciesSnippet} />}
+
                     <p>Or install using npm:</p>
                     {npmInstallSnippet && <Snippet framework={framework} content={npmInstallSnippet} language="bash" />}
-                    <h3>Set Up License Example</h3>
+
+                    <h2>Set Up Your Application</h2>
                     {errors.noProducts && <Note>{errors.noProducts}</Note>}
+
                     {(userProducts.gridEnterprise || userProducts.integratedEnterprise) && (
                         <>
                             <p>An example of how to set up your Grid Enterprise license:</p>
                             {bootstrapSnippet.grid && <Snippet framework={framework} content={bootstrapSnippet.grid} />}
                         </>
                     )}
+
                     {userProducts.chartsEnterprise && (
                         <>
                             <p>An example of how to set up your Charts Enterprise license:</p>
@@ -305,6 +311,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                             )}
                         </>
                     )}
+
                     {selectedSeedRepos.length ? (
                         <>
                             <p>Here are some seed code repositories to get you started:</p>

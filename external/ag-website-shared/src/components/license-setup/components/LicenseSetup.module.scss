@@ -43,6 +43,10 @@
     }
 }
 
+.license + :global(.alert) {
+    margin-top: 0;
+}
+
 .licenseData {
     margin-top: $spacing-size-4;
     display: flex;
@@ -105,5 +109,7 @@
 }
 
 .results {
-    margin-top: $spacing-size-4;
+    h2 {
+        margin-top: $spacing-size-12;
+    }
 }
