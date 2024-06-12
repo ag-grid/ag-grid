@@ -25,6 +25,7 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
                     <div data-ref="eWrapper" class="ag-wrapper ag-advanced-filter-builder-pill ag-picker-collapsed">
                         <div data-ref="eDisplayField" class="ag-picker-field-display ag-advanced-filter-builder-pill-display"></div>
                         <ag-input-text-field data-ref="eInput" class="ag-rich-select-field-input"></ag-input-text-field>
+                        <span data-ref="eDeselect" class="ag-rich-select-deselect-button ag-picker-field-icon" role="presentation"></span>
                         <div data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
                     </div>
                 </div>`,
