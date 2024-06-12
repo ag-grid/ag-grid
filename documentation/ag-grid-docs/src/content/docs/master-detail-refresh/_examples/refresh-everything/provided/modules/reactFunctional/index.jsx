@@ -34,16 +34,14 @@ const GridExample = () => {
         };
     }, []);
     const getRowId = useMemo(() => {
-        return (params) => params.data.account;
+        return (params) => String(params.data.account);
     }, []);
     const detailCellRendererParams = useMemo(() => {
         return {
             refreshStrategy: 'everything',
             detailGridOptions: {
                 rowSelection: 'multiple',
-                getRowId: (params) => {
-                    return params.data.callId;
-                },
+                getRowId: (params) => String(params.data.callId),
                 columnDefs: [
                     { field: 'callId', checkboxSelection: true },
                     { field: 'direction' },

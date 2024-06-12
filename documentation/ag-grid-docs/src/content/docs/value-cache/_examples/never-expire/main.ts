@@ -92,7 +92,7 @@ const gridOptions: GridOptions = {
     suppressAggFuncInHeader: true,
     groupDefaultExpanded: 1,
     getRowId: (params: GetRowIdParams) => {
-        return params.data.id;
+        return String(params.data.id);
     },
     onCellValueChanged: () => {
         console.log('onCellValueChanged');
