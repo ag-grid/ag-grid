@@ -10,7 +10,7 @@ import type {
     RowNode,
     SelectionEventSourceType,
 } from '@ag-grid-community/core';
-import { BeanStub } from '@ag-grid-community/core';
+import { BeanStub, _errorOnce, _warnOnce } from '@ag-grid-community/core';
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
@@ -119,7 +119,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         try {
             this.selectedState = recursivelyDeserializeState(state, !!state.selectAllChildren);
         } catch (e) {
-            console.error(e.message);
+            _errorOnce(e.message);
         }
     }
 
@@ -334,8 +334,8 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     public getSelectedNodes(): RowNode<any>[] {
-        console.warn(
-            `AG Grid: \`getSelectedNodes\` and \`getSelectedRows\` functions cannot be used with \`groupSelectsChildren\` and the server-side row model.
+        _warnOnce(
+            `\`getSelectedNodes\` and \`getSelectedRows\` functions cannot be used with \`groupSelectsChildren\` and the server-side row model.
             Use \`api.getServerSideSelectionState()\` instead.`
         );
 

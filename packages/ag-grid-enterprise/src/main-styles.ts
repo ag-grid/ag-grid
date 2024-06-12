@@ -177,7 +177,6 @@ export { LayoutCssClasses } from '@ag-grid-community/core';
 export { LocalEventService } from '@ag-grid-community/core';
 export { LocaleService } from '@ag-grid-community/core';
 export { Logger } from '@ag-grid-community/core';
-export { LoggerFactory } from '@ag-grid-community/core';
 export { ManagedFocusFeature } from '@ag-grid-community/core';
 export { MenuService } from '@ag-grid-community/core';
 export { ModuleNames } from '@ag-grid-community/core';

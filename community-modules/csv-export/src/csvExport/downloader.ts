@@ -1,9 +1,11 @@
+import { _warnOnce } from '@ag-grid-community/core';
+
 export class Downloader {
     public static download(fileName: string, content: Blob) {
         const win = document.defaultView || window;
 
         if (!win) {
-            console.warn('AG Grid: There is no `window` associated with the current `document`');
+            _warnOnce('There is no `window` associated with the current `document`');
             return;
         }
 

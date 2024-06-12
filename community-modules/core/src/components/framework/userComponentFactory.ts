@@ -28,6 +28,7 @@ import type { ICellRendererParams, ISetFilterCellRendererParams } from '../../re
 import type { ILoadingOverlayParams } from '../../rendering/overlays/loadingOverlayComponent';
 import type { INoRowsOverlayParams } from '../../rendering/overlays/noRowsOverlayComponent';
 import type { ITooltipParams } from '../../rendering/tooltipComponent';
+import { _errorOnce } from '../../utils/function';
 import { _mergeDeep } from '../../utils/object';
 import { AgPromise } from '../../utils/promise';
 import type { AgComponentUtils } from './agComponentUtils';
@@ -254,9 +255,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
 
         if (!jsComp && !fwComp) {
             if (mandatory) {
-                console.error(
-                    `AG Grid: Could not find component ${compName}, did you forget to configure this component?`
-                );
+                _errorOnce(`Could not find component ${compName}, did you forget to configure this component?`);
             }
             return;
         }

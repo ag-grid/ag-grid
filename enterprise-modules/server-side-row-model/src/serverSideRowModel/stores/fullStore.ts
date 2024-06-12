@@ -28,6 +28,7 @@ import {
     NumberSequence,
     RowNodeBlock,
     ServerSideTransactionResultStatus,
+    _errorOnce,
     _getAllValuesInObject,
     _insertIntoArray,
     _missing,
@@ -754,7 +755,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             });
             const rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                console.error(`AG Grid: could not find row id=${id}, data item was not found for this id`);
+                _errorOnce(`could not find row id=${id}, data item was not found for this id`);
                 return null;
             }
             return rowNode;
@@ -762,7 +763,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             // find rowNode using object references
             const rowNode = this.allRowNodes.find((currentRowNode) => currentRowNode.data === data)!;
             if (!rowNode) {
-                console.error(`AG Grid: could not find data item as object was not found`, data);
+                _errorOnce(`could not find data item as object was not found`, data);
                 return null;
             }
             return rowNode;

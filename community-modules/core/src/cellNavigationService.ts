@@ -8,6 +8,7 @@ import type { CellPosition } from './entities/cellPositionUtils';
 import type { RowNode } from './entities/rowNode';
 import type { RowPosition } from './entities/rowPositionUtils';
 import type { IRowModel } from './interfaces/iRowModel';
+import { _warnOnce } from './main';
 import type { PageBoundsService } from './pagination/pageBoundsService';
 import type { PaginationService } from './pagination/paginationService';
 import type { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
@@ -106,7 +107,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
                     break;
                 default:
                     pointer = null;
-                    console.warn('AG Grid: unknown key for navigation ' + key);
+                    _warnOnce('unknown key for navigation ', key);
                     break;
             }
 

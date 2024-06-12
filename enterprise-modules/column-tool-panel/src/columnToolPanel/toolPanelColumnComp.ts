@@ -23,6 +23,7 @@ import {
     _setAriaDescribedBy,
     _setAriaLabel,
     _setDisplayed,
+    _warnOnce,
 } from '@ag-grid-community/core';
 
 import type { ColumnModelItem } from './columnModelItem';
@@ -341,6 +342,6 @@ export class ToolPanelColumnComp extends Component {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public setExpanded(_value: boolean): void {
-        console.warn('AG Grid: can not expand a column item that does not represent a column group header');
+        _warnOnce('can not expand a column item that does not represent a column group header');
     }
 }

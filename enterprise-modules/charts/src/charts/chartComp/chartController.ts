@@ -18,7 +18,7 @@ import type {
     UpdateRangeChartParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub } from '@ag-grid-community/core';
+import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 import type { AgCartesianAxisType, AgChartThemePalette } from 'ag-charts-community';
 import { _ModuleSupport, _Theme } from 'ag-charts-community';
 
@@ -576,8 +576,8 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
 
     private validUpdateType(params: UpdateChartParams): boolean {
         if (!params.type) {
-            console.warn(
-                `AG Grid - Unable to update chart as the 'type' is missing. It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'.`
+            _warnOnce(
+                `Unable to update chart as the 'type' is missing. It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'.`
             );
             return false;
         }
@@ -594,8 +594,8 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             params.type === `${currentChartType[0].toLowerCase()}${currentChartType.slice(1).replace(/ /g, '')}Update`;
 
         if (!valid) {
-            console.warn(
-                `AG Grid - Unable to update chart as a '${params.type}' update type is not permitted on a ${currentChartType}.`
+            _warnOnce(
+                `Unable to update chart as a '${params.type}' update type is not permitted on a ${currentChartType}.`
             );
         }
         return valid;

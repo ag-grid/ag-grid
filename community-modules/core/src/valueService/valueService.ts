@@ -250,12 +250,12 @@ export class ValueService extends BeanStub implements NamedBean {
         const { field, valueSetter } = column.getColDef();
 
         if (_missing(field) && _missing(valueSetter)) {
-            console.warn(`AG Grid: you need either field or valueSetter set on colDef for editing to work`);
+            _warnOnce(`you need either field or valueSetter set on colDef for editing to work`);
             return false;
         }
 
         if (this.dataTypeService && !this.dataTypeService.checkType(column, newValue)) {
-            console.warn(`AG Grid: Data type of the new value does not match the cell data type of the column`);
+            _warnOnce(`Data type of the new value does not match the cell data type of the column`);
             return false;
         }
 

@@ -1,3 +1,5 @@
+import { _warnOnce } from '@ag-grid-community/core';
+
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { BeanCollection, Context } from '../../../context/context';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
@@ -91,7 +93,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
                 if (!isNaN(params[param])) {
                     return params[param] == null ? fallback : Number(params[param]);
                 } else {
-                    console.warn(`AG Grid: DateFilter ${param} is not a number`);
+                    _warnOnce(`DateFilter ${param} is not a number`);
                 }
             }
 
@@ -102,7 +104,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         this.maxValidYear = yearParser('maxValidYear', DEFAULT_MAX_YEAR);
 
         if (this.minValidYear > this.maxValidYear) {
-            console.warn(`AG Grid: DateFilter minValidYear should be <= maxValidYear`);
+            _warnOnce(`DateFilter minValidYear should be <= maxValidYear`);
         }
 
         if (params.minValidDate) {
@@ -124,7 +126,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         }
 
         if (this.minValidDate && this.maxValidDate && this.minValidDate > this.maxValidDate) {
-            console.warn(`AG Grid: DateFilter minValidDate should be <= maxValidDate`);
+            _warnOnce(`DateFilter minValidDate should be <= maxValidDate`);
         }
 
         this.filterModelFormatter = new DateFilterModelFormatter(

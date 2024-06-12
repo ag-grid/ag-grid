@@ -6,7 +6,7 @@ import type { IRowModel } from '../../interfaces/iRowModel';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
 import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
-import { _debounce } from '../../utils/function';
+import { _debounce, _warnOnce } from '../../utils/function';
 import type { AgPromise } from '../../utils/promise';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
@@ -210,7 +210,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                     };
                     break;
                 default:
-                    console.warn('AG Grid: Unknown button type specified');
+                    _warnOnce('Unknown button type specified');
                     return;
             }
 

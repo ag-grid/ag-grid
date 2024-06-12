@@ -7,6 +7,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { IRowModel } from '../interfaces/iRowModel';
+import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
 import type { ValueService } from '../valueService/valueService';
 
@@ -121,7 +122,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
         }
 
         if (!this.gos.isRowModelType('clientSide')) {
-            console.warn('AG Grid - Quick filtering only works with the Client-Side Row Model');
+            _warnOnce('Quick filtering only works with the Client-Side Row Model');
             return null;
         }
 
@@ -130,9 +131,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
 
     private setQuickFilter(newFilter: string | undefined): void {
         if (newFilter != null && typeof newFilter !== 'string') {
-            console.warn(
-                `AG Grid - Grid option quickFilterText only supports string inputs, received: ${typeof newFilter}`
-            );
+            _warnOnce(`Grid option quickFilterText only supports string inputs, received: ${typeof newFilter}`);
             return;
         }
 

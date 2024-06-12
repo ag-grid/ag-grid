@@ -11,7 +11,7 @@ import type {
     RowNode,
     RowPositionUtils,
 } from '@ag-grid-community/core';
-import { BeanStub, _missing } from '@ag-grid-community/core';
+import { BeanStub, _missing, _warnOnce } from '@ag-grid-community/core';
 
 export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRendererCtrl {
     private rowPositionUtils: RowPositionUtils;
@@ -84,8 +84,8 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         }
 
         if (providedStrategy != null) {
-            console.warn(
-                "AG Grid: invalid cellRendererParams.refreshStrategy = '" +
+            _warnOnce(
+                "invalid cellRendererParams.refreshStrategy = '" +
                     providedStrategy +
                     "' supplied, defaulting to refreshStrategy = 'rows'."
             );
@@ -104,8 +104,8 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
     private createDetailGrid(): void {
         if (_missing(this.params.detailGridOptions)) {
-            console.warn(
-                'AG Grid: could not find detail grid options for master detail, ' +
+            _warnOnce(
+                'could not find detail grid options for master detail, ' +
                     'please set gridOptions.detailCellRendererParams.detailGridOptions'
             );
             return;
@@ -172,8 +172,8 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
         const userFunc = this.params.getDetailRowData;
         if (!userFunc) {
-            console.warn(
-                'AG Grid: could not find getDetailRowData for master / detail, ' +
+            _warnOnce(
+                'could not find getDetailRowData for master / detail, ' +
                     'please set gridOptions.detailCellRendererParams.getDetailRowData'
             );
             return;

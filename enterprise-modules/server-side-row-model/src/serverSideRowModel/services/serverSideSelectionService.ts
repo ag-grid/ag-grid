@@ -11,7 +11,7 @@ import type {
     ServerSideRowSelectionState,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub } from '@ag-grid-community/core';
+import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 
 import { DefaultStrategy } from './selection/strategies/defaultStrategy';
 import { GroupSelectsChildrenStrategy } from './selection/strategies/groupSelectsChildrenStrategy';
@@ -68,12 +68,12 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
 
         const rowSelection = this.gos.get('rowSelection');
         if (nodes.length > 1 && rowSelection !== 'multiple') {
-            console.warn(`AG Grid: cannot multi select while rowSelection='single'`);
+            _warnOnce(`cannot multi select while rowSelection='single'`);
             return 0;
         }
 
         if (nodes.length > 1 && params.rangeSelect) {
-            console.warn(`AG Grid: cannot use range selection when multi selecting rows`);
+            _warnOnce(`cannot use range selection when multi selecting rows`);
             return 0;
         }
 
@@ -174,7 +174,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         justCurrentPage?: boolean | undefined;
     }): void {
         if (params.justCurrentPage || params.justFiltered) {
-            console.warn("AG Grid: selecting just filtered only works when gridOptions.rowModelType='clientSide'");
+            _warnOnce("selecting just filtered only works when gridOptions.rowModelType='clientSide'");
         }
 
         this.selectionStrategy.selectAllRowNodes(params);
@@ -196,7 +196,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         justCurrentPage?: boolean | undefined;
     }): void {
         if (params.justCurrentPage || params.justFiltered) {
-            console.warn("AG Grid: selecting just filtered only works when gridOptions.rowModelType='clientSide'");
+            _warnOnce("selecting just filtered only works when gridOptions.rowModelType='clientSide'");
         }
 
         this.selectionStrategy.deselectAllRowNodes(params);
@@ -223,9 +223,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
 
     // used by CSRM
     public getBestCostNodeSelection(): RowNode<any>[] | undefined {
-        console.warn(
-            'AG Grid: calling gridApi.getBestCostNodeSelection() is only possible when using rowModelType=`clientSide`.'
-        );
+        _warnOnce('calling gridApi.getBestCostNodeSelection() is only possible when using rowModelType=`clientSide`.');
         return undefined;
     }
 

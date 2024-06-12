@@ -404,7 +404,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
 
         if (this.gos.isDomLayout('print')) {
-            console.warn(`AG Grid: Changing the column pinning status is not allowed with domLayout='print'`);
+            _warnOnce(`Changing the column pinning status is not allowed with domLayout='print'`);
             return;
         }
 
@@ -638,8 +638,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
         newOrder = this.columnMoveService.placeLockedColumns(newOrder);
 
         if (!this.columnMoveService.doesMovePassMarryChildren(newOrder)) {
-            console.warn(
-                'AG Grid: Applying column order broke a group where columns should be married together. Applying new order has been discarded.'
+            _warnOnce(
+                'Applying column order broke a group where columns should be married together. Applying new order has been discarded.'
             );
             return;
         }

@@ -73,7 +73,6 @@ import type { IColumnDropZonesService, IShowRowGroupColsService } from '../inter
 import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IStatusBarService } from '../interfaces/iStatusBarService';
 import type { LocaleService } from '../localeService';
-import type { LoggerFactory } from '../logger';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEventService';
 import type { MenuService } from '../misc/menuService';
@@ -220,7 +219,6 @@ export interface CoreBeanCollection {
     gridApi: GridApi;
     gridOptions: GridOptions;
     eGridDiv: HTMLElement;
-    loggerFactory: LoggerFactory;
     columnApplyStateService: ColumnApplyStateService;
     columnFactory: ColumnFactory;
     pivotResultColsService: PivotResultColsService;

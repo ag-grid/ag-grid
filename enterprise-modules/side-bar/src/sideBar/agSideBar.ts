@@ -276,8 +276,8 @@ export class AgSideBar extends Component implements ISideBar {
 
     private validateDef(def: ToolPanelDef): boolean {
         if (def.id == null) {
-            console.warn(
-                `AG Grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id`
+            _warnOnce(
+                `please review all your toolPanel components, it seems like at least one of them doesn't have an id`
             );
             return false;
         }
@@ -374,7 +374,7 @@ export class AgSideBar extends Component implements ISideBar {
         const toolPanelWrapper = this.toolPanelWrappers.filter((toolPanel) => toolPanel.getToolPanelId() === key)[0];
 
         if (!toolPanelWrapper) {
-            console.warn(`AG Grid: unable to lookup Tool Panel as invalid key supplied: ${key}`);
+            _warnOnce(`unable to lookup Tool Panel as invalid key supplied: ${key}`);
             return;
         }
 

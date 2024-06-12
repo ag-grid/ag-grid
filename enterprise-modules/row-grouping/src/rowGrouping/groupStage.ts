@@ -569,7 +569,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             this.addToParent(childNode, parentGroup);
         } else {
             if (!parentGroup.group) {
-                console.warn(`AG Grid: duplicate group keys for row data, keys should be unique`, [
+                _warnOnce(`duplicate group keys for row data, keys should be unique`, [
                     parentGroup.data,
                     childNode.data,
                 ]);

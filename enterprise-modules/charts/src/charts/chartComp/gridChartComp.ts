@@ -22,6 +22,7 @@ import {
     _includes,
     _removeFromParent,
     _setDisplayed,
+    _warnOnce,
 } from '@ag-grid-community/core';
 import { AgDialog } from '@ag-grid-enterprise/core';
 import type { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
@@ -206,7 +207,7 @@ export class GridChartComp extends Component {
 
         this.chartProxy = GridChartComp.createChartProxy(chartProxyParams);
         if (!this.chartProxy) {
-            console.warn('AG Grid: invalid chart type supplied: ', chartProxyParams.chartType);
+            _warnOnce('invalid chart type supplied: ' + chartProxyParams.chartType);
             return;
         }
 
@@ -548,8 +549,8 @@ export class GridChartComp extends Component {
         if (customChartThemes) {
             this.getAllKeysInObjects([customChartThemes]).forEach((customThemeName) => {
                 if (!_includes(suppliedThemes, customThemeName)) {
-                    console.warn(
-                        "AG Grid: a custom chart theme with the name '" +
+                    _warnOnce(
+                        "a custom chart theme with the name '" +
                             customThemeName +
                             "' has been " +
                             "supplied but not added to the 'chartThemes' list"

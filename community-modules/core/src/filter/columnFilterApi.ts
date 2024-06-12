@@ -2,6 +2,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { Column } from '../interfaces/iColumn';
 import type { FilterModel, IFilter } from '../interfaces/iFilter';
+import { _errorOnce } from '../utils/function';
 
 export function isColumnFilterPresent(beans: BeanCollection): boolean {
     return !!beans.filterManager?.isColumnFilterPresent() || !!beans.filterManager?.isAggregateFilterPresent();
@@ -53,7 +54,7 @@ export function setColumnFilterModel<TModel>(
 export function showColumnFilter(beans: BeanCollection, colKey: string | Column): void {
     const column = beans.columnModel.getCol(colKey);
     if (!column) {
-        console.error(`AG Grid: column '${colKey}' not found`);
+        _errorOnce(`column '${colKey}' not found`);
         return;
     }
     beans.menuService.showFilterMenu({

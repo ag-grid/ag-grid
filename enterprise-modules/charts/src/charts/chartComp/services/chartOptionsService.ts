@@ -1,5 +1,5 @@
 import type { AgChartThemeOverrides, ChartOptionsChanged, ChartType, WithoutGridCommon } from '@ag-grid-community/core';
-import { BeanStub } from '@ag-grid-community/core';
+import { BeanStub, _errorOnce } from '@ag-grid-community/core';
 import type {
     AgBaseThemeableChartOptions,
     AgCartesianAxesTheme,
@@ -281,7 +281,7 @@ export class ChartOptionsService extends BeanStub {
         chart
             .waitForUpdate()
             .then(() => func())
-            .catch((e) => console.error(`AG Grid - chart update failed`, e));
+            .catch((e) => _errorOnce(`chart update failed`, e));
     }
 
     private getAxisProperty<T = string>(expression: string): T {

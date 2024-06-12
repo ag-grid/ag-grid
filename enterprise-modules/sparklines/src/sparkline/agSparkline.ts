@@ -1,11 +1,12 @@
-import type {
-    CrosshairLineOptions,
-    HighlightStyleOptions,
-    PaddingOptions,
-    SparklineCrosshairsOptions,
-    SparklineLineOptions,
-    SparklineMarkerOptions,
-    SparklineOptions,
+import {
+    type CrosshairLineOptions,
+    type HighlightStyleOptions,
+    type PaddingOptions,
+    type SparklineCrosshairsOptions,
+    type SparklineLineOptions,
+    type SparklineMarkerOptions,
+    type SparklineOptions,
+    _warnOnce,
 } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
 
@@ -242,8 +243,9 @@ const offsetValidator = (property: string, value: number, defaultOffset?: number
         return true;
     }
 
-    const message = `AG Charts: ${property} must be a number, the value you provided is not a valid number. Using the default of ${defaultOffset}px.`;
-    doOnce(() => console.warn(message), `${property} not a number`);
+    _warnOnce(
+        `${property} must be a number, the value you provided is not a valid number. Using the default of ${defaultOffset}px.`
+    );
     return false;
 };
 
@@ -263,7 +265,7 @@ function setValueIfPropertyExists(target: any, property: string, value: any, opt
                 target[property] = value;
             }
         } else {
-            console.warn(`Property ${property} does not exist on the target object.`);
+            _warnOnce(`Property ${property} does not exist on the target object.`);
         }
     }
 }

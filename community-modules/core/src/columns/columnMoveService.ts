@@ -7,6 +7,7 @@ import type { ColDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { _moveInArray } from '../utils/array';
+import { _warnOnce } from '../utils/function';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColKey, ColumnModel } from './columnModel';
@@ -48,10 +49,8 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         this.columnAnimationService.start();
 
         if (toIndex > gridColumns.length - columnsToMoveKeys.length) {
-            console.warn('AG Grid: tried to insert columns in invalid location, toIndex = ' + toIndex);
-            console.warn(
-                'AG Grid: remember that you should not count the moving columns when calculating the new index'
-            );
+            _warnOnce('tried to insert columns in invalid location, toIndex = ', toIndex);
+            _warnOnce('remember that you should not count the moving columns when calculating the new index');
             return;
         }
 

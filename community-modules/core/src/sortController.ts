@@ -153,9 +153,7 @@ export class SortController extends BeanStub implements NamedBean {
         }
 
         if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
-            console.warn(
-                `AG Grid: sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`
-            );
+            _warnOnce(`sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`);
             return null;
         }
 
@@ -172,7 +170,7 @@ export class SortController extends BeanStub implements NamedBean {
 
         // verify the sort type exists, as the user could provide the sortingOrder, need to make sure it's valid
         if (DEFAULT_SORTING_ORDER.indexOf(result) < 0) {
-            _warnOnce('invalid sort type ' + result);
+            _warnOnce('invalid sort type ', result);
             return null;
         }
 

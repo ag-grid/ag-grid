@@ -3,7 +3,6 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import { type AgProvidedColumnGroup, isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColumnEventType } from '../events';
-import type { Logger } from '../logger';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
@@ -18,15 +17,11 @@ export class ColumnGroupStateService extends BeanStub implements NamedBean {
     private eventDispatcher: ColumnEventDispatcher;
     private visibleColsService: VisibleColsService;
 
-    private logger: Logger;
-
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.columnAnimationService = beans.columnAnimationService;
         this.eventDispatcher = beans.columnEventDispatcher;
         this.visibleColsService = beans.visibleColsService;
-
-        this.logger = beans.loggerFactory.create('columnModel');
     }
 
     public getColumnGroupState(): { groupId: string; open: boolean }[] {
@@ -92,7 +87,6 @@ export class ColumnGroupStateService extends BeanStub implements NamedBean {
                 return;
             }
 
-            this.logger.log('columnGroupOpened(' + providedColumnGroup.getGroupId() + ',' + newValue + ')');
             providedColumnGroup.setExpanded(newValue);
             impactedGroups.push(providedColumnGroup);
         });

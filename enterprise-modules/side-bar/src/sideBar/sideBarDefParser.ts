@@ -1,4 +1,4 @@
-import type { SideBarDef, ToolPanelDef } from '@ag-grid-community/core';
+import { type SideBarDef, type ToolPanelDef, _warnOnce } from '@ag-grid-community/core';
 
 export class SideBarDefParser {
     static readonly DEFAULT_COLUMN_COMP: ToolPanelDef = {
@@ -42,8 +42,8 @@ export class SideBarDefParser {
             toParse.forEach((key) => {
                 const lookupResult = SideBarDefParser.DEFAULT_BY_KEY[key];
                 if (!lookupResult) {
-                    console.warn(
-                        `AG Grid: the key ${key} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(SideBarDefParser.DEFAULT_BY_KEY).join(',')}`
+                    _warnOnce(
+                        `the key ${key} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(SideBarDefParser.DEFAULT_BY_KEY).join(',')}`
                     );
                     return;
                 }
@@ -83,8 +83,8 @@ export class SideBarDefParser {
             if (typeof it === 'string') {
                 const lookupResult = SideBarDefParser.DEFAULT_BY_KEY[it];
                 if (!lookupResult) {
-                    console.warn(
-                        `AG Grid: the key ${it} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(SideBarDefParser.DEFAULT_BY_KEY).join(',')}`
+                    _warnOnce(
+                        `the key ${it} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(SideBarDefParser.DEFAULT_BY_KEY).join(',')}`
                     );
                     return;
                 }

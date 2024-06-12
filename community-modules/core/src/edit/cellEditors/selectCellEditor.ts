@@ -2,6 +2,7 @@ import { KeyCode } from '../../constants/keyCode';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import { _warnOnce } from '../../utils/function';
 import { _missing } from '../../utils/generic';
 import type { ValueService } from '../../valueService/valueService';
 import type { ListOption } from '../../widgets/agList';
@@ -45,7 +46,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
         const { values, value, eventKey } = params;
 
         if (_missing(values)) {
-            console.warn('AG Grid: no values found for select cellEditor');
+            _warnOnce('no values found for select cellEditor');
             return;
         }
 

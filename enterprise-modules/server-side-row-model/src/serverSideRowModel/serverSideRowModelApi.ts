@@ -1,12 +1,13 @@
-import type {
-    BeanCollection,
-    IServerSideGroupSelectionState,
-    IServerSideSelectionState,
-    LoadSuccessParams,
-    RefreshServerSideParams,
-    ServerSideGroupLevelState,
-    ServerSideTransaction,
-    ServerSideTransactionResult,
+import {
+    type BeanCollection,
+    type IServerSideGroupSelectionState,
+    type IServerSideSelectionState,
+    type LoadSuccessParams,
+    type RefreshServerSideParams,
+    type ServerSideGroupLevelState,
+    type ServerSideTransaction,
+    type ServerSideTransactionResult,
+    _warnOnce,
 } from '@ag-grid-community/core';
 
 export function getServerSideSelectionState(
@@ -39,7 +40,7 @@ export function applyServerSideRowData(
     const startRow = params.startRow ?? 0;
     const route = params.route ?? [];
     if (startRow < 0) {
-        console.warn(`AG Grid: invalid value ${params.startRow} for startRow, the value should be >= 0`);
+        _warnOnce(`invalid value ${params.startRow} for startRow, the value should be >= 0`);
         return;
     }
 

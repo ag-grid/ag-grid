@@ -1,5 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
+import { _errorOnce, _log } from '../utils/function';
 
 export class ExpressionService extends BeanStub implements NamedBean {
     beanName = 'expressionService' as const;
@@ -11,7 +12,7 @@ export class ExpressionService extends BeanStub implements NamedBean {
             // valueGetter is an expression, so execute the expression
             return this.evaluateExpression(expression, params);
         } else {
-            console.error('AG Grid: value should be either a string or a function', expression);
+            _errorOnce('value should be either a string or a function', expression);
         }
     }
 
@@ -40,13 +41,13 @@ export class ExpressionService extends BeanStub implements NamedBean {
             // the expression failed, which can happen, as it's the client that
             // provides the expression. so print a nice message
             // tslint:disable-next-line
-            console.log('Processing of the expression failed');
+            _log('Processing of the expression failed');
             // tslint:disable-next-line
-            console.log('Expression = ' + expression);
+            _log('Expression = ' + expression);
             // tslint:disable-next-line
-            console.log('Params =', params);
+            _log('Params = ' + params);
             // tslint:disable-next-line
-            console.log('Exception = ' + e);
+            _log('Exception = ' + e);
             return null;
         }
     }

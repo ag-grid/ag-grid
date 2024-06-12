@@ -10,7 +10,7 @@ import type {
     RowRenderer,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, RowNode, _iterateObject, _missing } from '@ag-grid-community/core';
+import { BeanStub, RowNode, _iterateObject, _missing, _warnOnce } from '@ag-grid-community/core';
 
 export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
@@ -170,7 +170,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         this.rowCount = -1;
 
         if (!viewportDatasource.init) {
-            console.warn('AG Grid: viewport is missing init method.');
+            _warnOnce('viewport is missing init method.');
         } else {
             viewportDatasource.init({
                 setRowCount: this.setRowCount.bind(this),

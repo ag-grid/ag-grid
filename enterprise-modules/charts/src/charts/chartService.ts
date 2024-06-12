@@ -23,7 +23,7 @@ import type {
     UpdateChartParams,
     VisibleColsService,
 } from '@ag-grid-community/core';
-import { BeanStub } from '@ag-grid-community/core';
+import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
 import { VERSION as CHARTS_VERSION, _ModuleSupport } from 'ag-charts-community';
 
@@ -80,13 +80,13 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
 
     public updateChart(params: UpdateChartParams): void {
         if (this.activeChartComps.size === 0) {
-            console.warn(`AG Grid - No active charts to update.`);
+            _warnOnce(`No active charts to update.`);
             return;
         }
 
         const chartComp = [...this.activeChartComps].find((chartComp) => chartComp.getChartId() === params.chartId);
         if (!chartComp) {
-            console.warn(`AG Grid - Unable to update chart. No active chart found with ID: ${params.chartId}.`);
+            _warnOnce(`Unable to update chart. No active chart found with ID: ${params.chartId}.`);
             return;
         }
 
@@ -156,7 +156,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
 
     public restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
         if (!model) {
-            console.warn('AG Grid - unable to restore chart as no chart model is provided');
+            _warnOnce('unable to restore chart as no chart model is provided');
             return;
         }
 
@@ -341,8 +341,8 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             rangeParams &&
             this.rangeService?.createPartialCellRangeFromRangeParams(rangeParams as CellRangeParams, true);
         if (!cellRange) {
-            console.warn(
-                `AG Grid - unable to create chart as ${allRange ? 'there are no columns in the grid' : 'no range is selected'}.`
+            _warnOnce(
+                `unable to create chart as ${allRange ? 'there are no columns in the grid' : 'no range is selected'}.`
             );
         }
         return cellRange;

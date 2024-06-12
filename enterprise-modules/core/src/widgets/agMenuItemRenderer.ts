@@ -6,6 +6,7 @@ import {
     _isNodeOrElement,
     _loadTemplate,
     _setAriaExpanded,
+    _warnOnce,
 } from '@ag-grid-community/core';
 
 interface AgMenuItemRendererParams {
@@ -56,7 +57,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
             } else if (typeof icon === 'string') {
                 iconWrapper.innerHTML = icon;
             } else {
-                console.warn('AG Grid: menu item icon must be DOM node or string');
+                _warnOnce('menu item icon must be DOM node or string');
             }
         }
 

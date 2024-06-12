@@ -33,6 +33,7 @@ import {
     NumberSequence,
     RowNode,
     _debounce,
+    _errorOnce,
     _exists,
     _jsonEquals,
     _warnOnce,
@@ -718,7 +719,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
                 rootStore.setRowCount(rowCount, lastRowIndexKnown);
                 return;
             }
-            console.error('AG Grid: Infinite scrolling must be enabled in order to set the row count.');
+            _errorOnce('Infinite scrolling must be enabled in order to set the row count.');
         }
     }
 

@@ -19,6 +19,7 @@ import {
     _formatNumberTwoDecimalPlacesAndCommas,
     _missing,
     _missingOrEmpty,
+    _warnOnce,
 } from '@ag-grid-community/core';
 
 import type { AgNameValue } from './agNameValue';
@@ -70,9 +71,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
     public postConstruct(): void {
         if (!this.isValidRowModel()) {
-            console.warn(
-                `AG Grid: agAggregationComponent should only be used with the client and server side row model.`
-            );
+            _warnOnce(`agAggregationComponent should only be used with the client and server side row model.`);
             return;
         }
 

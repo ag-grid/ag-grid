@@ -16,6 +16,7 @@ import {
     _includes,
     _setAriaLabel,
     _setAriaLevel,
+    _warnOnce,
     isProvidedColumnGroup,
 } from '@ag-grid-community/core';
 import { VirtualList, type VirtualListModel } from '@ag-grid-enterprise/core';
@@ -433,7 +434,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         const unrecognisedGroupIds = groupIds.filter((groupId) => !_includes(expandedGroupIds, groupId));
         if (unrecognisedGroupIds.length > 0) {
-            console.warn('AG Grid: unable to find group(s) for supplied groupIds:', unrecognisedGroupIds);
+            _warnOnce('unable to find group(s) for supplied groupIds:', unrecognisedGroupIds);
         }
     }
 

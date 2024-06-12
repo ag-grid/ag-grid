@@ -23,7 +23,7 @@ import type {
 import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
 import { LocalEventService } from '../localEventService';
 import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
-import { _debounce } from '../utils/function';
+import { _debounce, _errorOnce, _warnOnce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
 import type { AgColumn } from './agColumn';
 
@@ -380,8 +380,8 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
                 // make sure id provided doesn't start with 'row-group-' as this is reserved.
                 if (this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
-                    console.error(
-                        `AG Grid: Row IDs cannot start with ${RowNode.ID_PREFIX_ROW_GROUP}, this is a reserved prefix for AG Grid's row grouping feature.`
+                    _errorOnce(
+                        `Row IDs cannot start with ${RowNode.ID_PREFIX_ROW_GROUP}, this is a reserved prefix for AG Grid's row grouping feature.`
                     );
                 }
             } else {
@@ -1044,8 +1044,8 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
      */
     public setSelected(newValue: boolean, clearSelection: boolean = false, source: SelectionEventSourceType = 'api') {
         if (typeof source === 'boolean') {
-            console.warn(
-                'AG Grid: since version v30, rowNode.setSelected() property `suppressFinishActions` has been removed, please use `gridApi.setNodesSelected()` for bulk actions, and the event `source` property for ignoring events instead.'
+            _warnOnce(
+                'since version v30, rowNode.setSelected() property `suppressFinishActions` has been removed, please use `gridApi.setNodesSelected()` for bulk actions, and the event `source` property for ignoring events instead.'
             );
             return;
         }
@@ -1061,12 +1061,12 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     // this is for internal use only. To make calling code more readable, this is the same method as setSelected except it takes names parameters
     public setSelectedParams(params: SetSelectedParams & { event?: Event }): number {
         if (this.rowPinned) {
-            console.warn('AG Grid: cannot select pinned rows');
+            _warnOnce('cannot select pinned rows');
             return 0;
         }
 
         if (this.id === undefined) {
-            console.warn('AG Grid: cannot select node until id for node is known');
+            _warnOnce('cannot select node until id for node is known');
             return 0;
         }
 

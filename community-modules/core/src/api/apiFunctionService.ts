@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgEventType } from '../eventTypes';
 import type { AgEvent } from '../events';
+import { _warnOnce } from '../utils/function';
 import type { ApiFunction, ApiFunctionName } from './iApiFunction';
 
 function dispatchEvent(beans: BeanCollection, event: AgEvent<AgEventType>): void {
@@ -69,8 +70,8 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
         if (functionName === 'destroy') {
             return;
         }
-        console.warn(
-            `AG Grid: Grid API function ${functionName}() cannot be called as the grid has been destroyed.\n` +
+        _warnOnce(
+            `Grid API function ${functionName}() cannot be called as the grid has been destroyed.\n` +
                 `It is recommended to remove local references to the grid api. Alternatively, check gridApi.isDestroyed() to avoid calling methods against a destroyed grid.\n` +
                 `To run logic when the grid is about to be destroyed use the gridPreDestroy event. See: ${this.preDestroyLink}`
         );

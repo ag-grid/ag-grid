@@ -1,13 +1,14 @@
-import type {
-    BeanCollection,
-    ColumnModel,
-    ColumnNameService,
-    CsvCustomContent,
-    CsvExportParams,
-    FuncColsService,
-    ICsvCreator,
-    NamedBean,
-    ValueService,
+import {
+    type BeanCollection,
+    type ColumnModel,
+    type ColumnNameService,
+    type CsvCustomContent,
+    type CsvExportParams,
+    type FuncColsService,
+    type ICsvCreator,
+    type NamedBean,
+    type ValueService,
+    _warnOnce,
 } from '@ag-grid-community/core';
 
 import { BaseCreator } from './baseCreator';
@@ -49,7 +50,7 @@ export class CsvCreator
 
     protected export(userParams?: CsvExportParams): void {
         if (this.isExportSuppressed()) {
-            console.warn(`AG Grid: Export cancelled. Export is not allowed as per your configuration.`);
+            _warnOnce(`Export cancelled. Export is not allowed as per your configuration.`);
             return;
         }
 

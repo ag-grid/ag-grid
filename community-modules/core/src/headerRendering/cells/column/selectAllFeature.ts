@@ -1,3 +1,5 @@
+import { _warnOnce } from '@ag-grid-community/core';
+
 import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
@@ -143,7 +145,7 @@ export class SelectAllFeature extends BeanStub {
         const isMultiSelect = this.gos.get('rowSelection') === 'multiple';
 
         if (!isMultiSelect) {
-            console.warn(`AG Grid: ${feature} is only available if using 'multiple' rowSelection.`);
+            _warnOnce(`${feature} is only available if using 'multiple' rowSelection.`);
             return false;
         }
         return true;
@@ -154,8 +156,8 @@ export class SelectAllFeature extends BeanStub {
         const rowModelMatches = rowModelType === 'clientSide' || rowModelType === 'serverSide';
 
         if (!rowModelMatches) {
-            console.warn(
-                `AG Grid: ${feature} is only available if using 'clientSide' or 'serverSide' rowModelType, you are using ${rowModelType}.`
+            _warnOnce(
+                `${feature} is only available if using 'clientSide' or 'serverSide' rowModelType, you are using ${rowModelType}.`
             );
             return false;
         }
