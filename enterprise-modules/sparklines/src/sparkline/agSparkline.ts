@@ -1,12 +1,12 @@
-import {
-    type CrosshairLineOptions,
-    type HighlightStyleOptions,
-    type PaddingOptions,
-    type SparklineCrosshairsOptions,
-    type SparklineLineOptions,
-    type SparklineMarkerOptions,
-    type SparklineOptions,
-    _warnOnce,
+import { _warnOnce } from '@ag-grid-community/core';
+import type {
+    CrosshairLineOptions,
+    HighlightStyleOptions,
+    PaddingOptions,
+    SparklineCrosshairsOptions,
+    SparklineLineOptions,
+    SparklineMarkerOptions,
+    SparklineOptions,
 } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
 
@@ -221,21 +221,6 @@ function initCrosshairLineOptions(target: CrosshairLineOptions, options: any) {
     setValueIfPropertyExists(target, 'strokeWidth', options.strokeWidth, options);
     setValueIfPropertyExists(target, 'lineDash', options.lineDash, options);
     setValueIfPropertyExists(target, 'lineCap', options.lineCap, options);
-}
-
-const doOnceFlags: { [key: string]: boolean } = {};
-/**
- * If the key was passed before, then doesn't execute the func
- * @param {Function} func
- * @param {string} key
- */
-function doOnce(func: () => void, key: string) {
-    if (doOnceFlags[key]) {
-        return;
-    }
-
-    func();
-    doOnceFlags[key] = true;
 }
 
 const offsetValidator = (property: string, value: number, defaultOffset?: number): boolean => {

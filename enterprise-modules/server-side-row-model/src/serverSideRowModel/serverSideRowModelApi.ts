@@ -1,13 +1,13 @@
-import {
-    type BeanCollection,
-    type IServerSideGroupSelectionState,
-    type IServerSideSelectionState,
-    type LoadSuccessParams,
-    type RefreshServerSideParams,
-    type ServerSideGroupLevelState,
-    type ServerSideTransaction,
-    type ServerSideTransactionResult,
-    _warnOnce,
+import { _warnOnce } from '@ag-grid-community/core';
+import type {
+    BeanCollection,
+    IServerSideGroupSelectionState,
+    IServerSideSelectionState,
+    LoadSuccessParams,
+    RefreshServerSideParams,
+    ServerSideGroupLevelState,
+    ServerSideTransaction,
+    ServerSideTransactionResult,
 } from '@ag-grid-community/core';
 
 export function getServerSideSelectionState(

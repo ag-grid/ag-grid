@@ -24,7 +24,8 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import { AgSideBarButtonsSelector, type SideBarButtonClickedEvent } from './agSideBarButtons';
+import { AgSideBarButtonsSelector } from './agSideBarButtons';
+import type { SideBarButtonClickedEvent } from './agSideBarButtons';
 import type { AgSideBarButtons } from './agSideBarButtons';
 import { SideBarDefParser } from './sideBarDefParser';
 import type { SideBarService } from './sideBarService';

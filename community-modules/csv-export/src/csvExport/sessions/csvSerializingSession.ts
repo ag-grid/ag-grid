@@ -1,10 +1,5 @@
-import {
-    type AgColumn,
-    type AgColumnGroup,
-    type CsvCustomContent,
-    type RowNode,
-    _warnOnce,
-} from '@ag-grid-community/core';
+import { _warnOnce } from '@ag-grid-community/core';
+import type { AgColumn, AgColumnGroup, CsvCustomContent, RowNode } from '@ag-grid-community/core';
 
 import type { CsvSerializingParams, RowAccumulator, RowSpanningAccumulator } from '../interfaces';
 import { BaseGridSerializingSession } from './baseGridSerializingSession';

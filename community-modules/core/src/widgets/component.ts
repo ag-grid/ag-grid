@@ -17,6 +17,7 @@ import {
     _setDisplayed,
     _setVisible,
 } from '../utils/dom';
+import { _warnOnce } from '../utils/function';
 import { NumberSequence } from '../utils/numberSequence';
 import { TooltipFeature } from './tooltipFeature';
 
@@ -159,6 +160,8 @@ export class Component<TLocalEvent extends string = ComponentEvent>
             const current = (this as any)[elementRef];
             if (current === RefPlaceholder) {
                 (this as any)[elementRef] = newComponent ?? element;
+                // Clear all the data-ref attributes from the component
+                this.addDestroyFunc(() => ((this as any)[elementRef] = RefPlaceholder));
             } else {
                 // Don't warn if the data-ref is used for passing parameters to the component
                 const usedAsParamRef = paramsMap && paramsMap[elementRef];
@@ -166,10 +169,10 @@ export class Component<TLocalEvent extends string = ComponentEvent>
                     // This can happen because of:
                     // 1. The data-ref has a typo and doesn't match the property in the component
                     // 2. The  property is not initialised with the RefPlaceholder and should be.
-                    // 3. The property is on a child component and not availble on the parent during construction.
+                    // 3. The property is on a child component and not available on the parent during construction.
                     //    In which case you may need to pass the template via setTemplate() instead of in the super constructor.
                     // 4. The data-ref is not used by the component and should be removed from the template.
-                    console.warn(`Issue with data-ref: ${elementRef} on ${this.constructor.name} with ${current}`);
+                    _warnOnce(`Issue with data-ref: ${elementRef} on ${this.constructor.name} with ${current}`);
                 }
             }
         }
@@ -235,8 +238,9 @@ export class Component<TLocalEvent extends string = ComponentEvent>
             newComponent.setParentComponent(this as Component);
 
             this.createBean(newComponent, null, afterPreCreateCallback);
+            this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
         } else if (isAgGridComponent) {
-            console.error(`Missing selector: ${key}`);
+            _warnOnce(`Missing selector: ${key}`);
         }
 
         this.applyElementsToComponent(element, elementRef, paramsMap, newComponent);
@@ -252,7 +256,6 @@ export class Component<TLocalEvent extends string = ComponentEvent>
         const eComponent = newComponent.getGui();
         parentNode.replaceChild(eComponent, childNode);
         parentNode.insertBefore(document.createComment(childNode.nodeName), eComponent);
-        this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
     }
 
     protected activateTabIndex(elements?: Element[]): void {

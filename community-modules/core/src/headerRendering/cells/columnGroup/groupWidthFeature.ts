@@ -1,5 +1,5 @@
 import { BeanStub } from '../../../context/beanStub';
-import { type AgColumnGroup } from '../../../entities/agColumnGroup';
+import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { IHeaderGroupCellComp } from './headerGroupCellCtrl';
 
 export class GroupWidthFeature extends BeanStub {

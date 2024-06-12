@@ -19,7 +19,8 @@ import {
     _warnOnce,
     isProvidedColumnGroup,
 } from '@ag-grid-community/core';
-import { VirtualList, type VirtualListModel } from '@ag-grid-enterprise/core';
+import { VirtualList } from '@ag-grid-enterprise/core';
+import type { VirtualListModel } from '@ag-grid-enterprise/core';
 import type { ToolPanelColDefService } from '@ag-grid-enterprise/side-bar';
 
 import { ExpandState } from './agPrimaryColsHeader';

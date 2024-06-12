@@ -1,6 +1,7 @@
 import type { BeanCollection } from '@ag-grid-community/core';
 import { AgCheckboxSelector, Component } from '@ag-grid-community/core';
-import { type AgGroupComponentParams, AgGroupComponentSelector } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 
 import { AgColorPickerSelector } from '../../../../../widgets/agColorPicker';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
