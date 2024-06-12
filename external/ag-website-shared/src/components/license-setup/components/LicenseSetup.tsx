@@ -311,10 +311,14 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                     <p>
                         Copy the following dependencies into your <code>package.json</code>:
                     </p>
-                    {dependenciesSnippet && <Snippet framework={framework} content={dependenciesSnippet} />}
+                    {dependenciesSnippet && (
+                        <Snippet framework={framework} content={dependenciesSnippet} copyToClipboard />
+                    )}
 
                     <p>Or install using npm:</p>
-                    {npmInstallSnippet && <Snippet framework={framework} content={npmInstallSnippet} language="bash" />}
+                    {npmInstallSnippet && (
+                        <Snippet framework={framework} content={npmInstallSnippet} language="bash" copyToClipboard />
+                    )}
 
                     <h2>Set Up Your Application</h2>
                     {errors.noProducts && <Note>{errors.noProducts}</Note>}
@@ -322,7 +326,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                     {(userProducts.gridEnterprise || userProducts.integratedEnterprise || noUserProducts) && (
                         <>
                             {!noUserProducts && <p>An example of how to set up your Grid Enterprise license:</p>}
-                            {bootstrapSnippet.grid && <Snippet framework={framework} content={bootstrapSnippet.grid} />}
+                            {bootstrapSnippet.grid && (
+                                <Snippet framework={framework} content={bootstrapSnippet.grid} copyToClipboard />
+                            )}
                         </>
                     )}
 
@@ -330,7 +336,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                         <>
                             <p>An example of how to set up your Charts Enterprise license:</p>
                             {bootstrapSnippet.charts && (
-                                <Snippet framework={framework} content={bootstrapSnippet.charts} />
+                                <Snippet framework={framework} content={bootstrapSnippet.charts} copyToClipboard />
                             )}
                         </>
                     )}
