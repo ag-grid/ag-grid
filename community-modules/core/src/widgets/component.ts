@@ -160,8 +160,6 @@ export class Component<TLocalEvent extends string = ComponentEvent>
             const current = (this as any)[elementRef];
             if (current === RefPlaceholder) {
                 (this as any)[elementRef] = newComponent ?? element;
-                // Clear all the data-ref attributes from the component
-                this.addDestroyFunc(() => ((this as any)[elementRef] = RefPlaceholder));
             } else {
                 // Don't warn if the data-ref is used for passing parameters to the component
                 const usedAsParamRef = paramsMap && paramsMap[elementRef];
