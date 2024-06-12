@@ -12,6 +12,7 @@ export const getDependencies = ({
     importType?: ImportType;
 }) => {
     const dependencies: string[] = [];
+    const noProducts = !products.gridEnterprise && !products.integratedEnterprise && !products.chartsEnterprise;
 
     if (importType === 'packages') {
         if (products.gridEnterprise || products.integratedEnterprise) {
@@ -52,25 +53,45 @@ export const getDependencies = ({
             dependencies.push('ag-grid-react', 'ag-grid-community', 'ag-charts-react', 'ag-charts-community');
         }
     } else if (importType === 'modules') {
-        // TODO
-        // dependencies.push('@ag-grid-community/client-side-row-model', '@ag-grid-community/styles');
-        // if (framework === 'react') {
-        //     dependencies.push('@ag-grid-community/react');
-        // } else if (framework === 'angular') {
-        //     dependencies.push('@ag-grid-community/angular');
-        // } else if (framework === 'vue') {
-        //     dependencies.push('@ag-grid-community/vue3');
-        // }
-        // if (licensedProducts.grid) {
-        //     dependencies.push('@ag-grid-enterprise/core');
-        //     if (licensedProducts.charts) {
-        //         dependencies.push('@ag-grid-enterprise/charts-enterprise');
-        //     }
-        // } else {
-        //     if (licensedProducts.charts) {
-        //         // Invalid state - need grid to be enabled
-        //     }
-        // }
+        if (products.gridEnterprise || products.integratedEnterprise || noProducts) {
+            if (framework === 'react') {
+                dependencies.push('@ag-grid-community/react');
+            } else if (framework === 'angular') {
+                dependencies.push('@ag-grid-community/angular');
+            } else if (framework === 'vue') {
+                dependencies.push('@ag-grid-community/vue3');
+            }
+
+            dependencies.push('@ag-grid-community/client-side-row-model', '@ag-grid-community/styles');
+        }
+
+        if (products.chartsEnterprise || noProducts) {
+            if (framework === 'react') {
+                dependencies.push('ag-charts-react');
+            } else if (framework === 'angular') {
+                dependencies.push('ag-charts-angular');
+            } else if (framework === 'vue') {
+                dependencies.push('ag-charts-vue3');
+            }
+        }
+
+        if (products.integratedEnterprise) {
+            dependencies.push('@ag-grid-enterprise/core', '@ag-grid-enterprise/charts-enterprise');
+
+            if (products.chartsEnterprise) {
+                dependencies.push('ag-charts-enterprise');
+            }
+        } else if (products.gridEnterprise) {
+            dependencies.push('@ag-grid-enterprise/core');
+
+            if (products.chartsEnterprise) {
+                dependencies.push('ag-charts-enterprise');
+            }
+        } else if (products.chartsEnterprise) {
+            dependencies.push('ag-charts-enterprise');
+        } else {
+            dependencies.push('ag-charts-community');
+        }
     }
 
     return dependencies;
