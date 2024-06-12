@@ -115,7 +115,6 @@ export class ModuleRegistry {
             return true;
         }
 
-        const warningKey = reason + moduleName;
         let warningMessage: string;
 
         if (ModuleRegistry.isBundled) {

@@ -8,13 +8,13 @@ import type { CellPosition } from './entities/cellPositionUtils';
 import type { RowNode } from './entities/rowNode';
 import type { RowPosition } from './entities/rowPositionUtils';
 import type { IRowModel } from './interfaces/iRowModel';
-import { _warnOnce } from './main';
 import type { PageBoundsService } from './pagination/pageBoundsService';
 import type { PaginationService } from './pagination/paginationService';
 import type { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 import type { RowCtrl } from './rendering/row/rowCtrl';
 import type { RowRenderer } from './rendering/rowRenderer';
 import { _last } from './utils/array';
+import { _warnOnce } from './utils/function';
 import { _missing } from './utils/generic';
 
 export class CellNavigationService extends BeanStub implements NamedBean {

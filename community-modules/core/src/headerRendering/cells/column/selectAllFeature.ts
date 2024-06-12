@@ -1,5 +1,3 @@
-import { _warnOnce } from '@ag-grid-community/core';
-
 import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
@@ -8,6 +6,7 @@ import type { SelectionEventSourceType } from '../../../events';
 import type { IRowModel } from '../../../interfaces/iRowModel';
 import type { ISelectionService } from '../../../interfaces/iSelectionService';
 import { _setAriaHidden, _setAriaRole } from '../../../utils/aria';
+import { _warnOnce } from '../../../utils/function';
 import { AgCheckbox } from '../../../widgets/agCheckbox';
 import type { HeaderCellCtrl } from './headerCellCtrl';
 

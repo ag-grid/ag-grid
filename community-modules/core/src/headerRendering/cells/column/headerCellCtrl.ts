@@ -1,13 +1,12 @@
-import type { BeanCollection, ColumnHeaderMouseOverEvent } from '@ag-grid-community/core';
-
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
 import { KeyCode } from '../../../constants/keyCode';
+import type { BeanCollection } from '../../../context/context';
 import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { SortDirection } from '../../../entities/colDef';
-import type { ColumnHeaderMouseLeaveEvent } from '../../../events';
+import type { ColumnHeaderMouseLeaveEvent, ColumnHeaderMouseOverEvent } from '../../../events';
 import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { ColumnSortState } from '../../../utils/aria';

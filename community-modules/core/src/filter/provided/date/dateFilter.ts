@@ -1,9 +1,8 @@
-import { _warnOnce } from '@ag-grid-community/core';
-
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { BeanCollection, Context } from '../../../context/context';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
+import { _warnOnce } from '../../../utils/function';
 import type { FILTER_LOCALE_TEXT } from '../../filterLocaleText';
 import type { Comparator } from '../iScalarFilter';
 import type { ISimpleFilterModel, Tuple } from '../iSimpleFilter';

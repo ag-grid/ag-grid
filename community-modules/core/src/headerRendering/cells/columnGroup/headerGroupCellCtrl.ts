@@ -1,8 +1,7 @@
-import type { BeanCollection } from '@ag-grid-community/core';
-
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
 import { KeyCode } from '../../../constants/keyCode';
+import type { BeanCollection } from '../../../context/context';
 import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';
