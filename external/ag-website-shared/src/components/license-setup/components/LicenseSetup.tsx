@@ -2,6 +2,7 @@ import type { Framework, ImportType } from '@ag-grid-types';
 import Idea from '@ag-website-shared/components/alert/Idea';
 import Warning from '@ag-website-shared/components/alert/Warning';
 import { Snippet } from '@components/snippet/Snippet';
+import { InfoTooltip } from '@components/theme-builder/components/general/Tooltip';
 import { FRAMEWORK_DISPLAY_TEXT } from '@constants';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
@@ -200,7 +201,8 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                                         hasLicense && licensedProducts.grid && licensedProducts.charts,
                                 })}
                             >
-                                Integrated Enterprise
+                                Integrated Enterprise{' '}
+                                <InfoTooltip title="Use Charts Enterprise within Grid Enterprise through integrated charts" />
                                 <input
                                     type="checkbox"
                                     name="products"
