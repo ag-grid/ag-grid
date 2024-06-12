@@ -11,7 +11,7 @@ describe('getDependencies', () => {
         ${'react'}      | ${true}        | ${false}             | ${true}          | ${'packages'} | ${['ag-grid-react', 'ag-grid-enterprise', 'ag-charts-react', 'ag-charts-enterprise']}
         ${'react'}      | ${false}       | ${true}              | ${true}          | ${'packages'} | ${['ag-grid-react', 'ag-grid-charts-enterprise', 'ag-charts-react', 'ag-charts-enterprise']}
         ${'react'}      | ${true}        | ${true}              | ${true}          | ${'packages'} | ${['ag-grid-react', 'ag-grid-charts-enterprise', 'ag-charts-react', 'ag-charts-enterprise']}
-        ${'angular'}    | ${false}       | ${false}             | ${false}         | ${'packages'} | ${['ag-grid-react', 'ag-grid-community', 'ag-charts-react', 'ag-charts-community']}
+        ${'angular'}    | ${false}       | ${false}             | ${false}         | ${'packages'} | ${['ag-grid-angular', 'ag-grid-community', 'ag-charts-angular', 'ag-charts-community']}
         ${'angular'}    | ${true}        | ${false}             | ${false}         | ${'packages'} | ${['ag-grid-angular', 'ag-grid-enterprise']}
         ${'angular'}    | ${false}       | ${true}              | ${false}         | ${'packages'} | ${['ag-grid-angular', 'ag-grid-charts-enterprise']}
         ${'angular'}    | ${true}        | ${true}              | ${false}         | ${'packages'} | ${['ag-grid-angular', 'ag-grid-charts-enterprise']}
@@ -19,7 +19,7 @@ describe('getDependencies', () => {
         ${'angular'}    | ${true}        | ${false}             | ${true}          | ${'packages'} | ${['ag-grid-angular', 'ag-grid-enterprise', 'ag-charts-angular', 'ag-charts-enterprise']}
         ${'angular'}    | ${false}       | ${true}              | ${true}          | ${'packages'} | ${['ag-grid-angular', 'ag-grid-charts-enterprise', 'ag-charts-angular', 'ag-charts-enterprise']}
         ${'angular'}    | ${true}        | ${true}              | ${true}          | ${'packages'} | ${['ag-grid-angular', 'ag-grid-charts-enterprise', 'ag-charts-angular', 'ag-charts-enterprise']}
-        ${'vue'}        | ${false}       | ${false}             | ${false}         | ${'packages'} | ${['ag-grid-react', 'ag-grid-community', 'ag-charts-react', 'ag-charts-community']}
+        ${'vue'}        | ${false}       | ${false}             | ${false}         | ${'packages'} | ${['ag-grid-vue3', 'ag-grid-community', 'ag-charts-vue3', 'ag-charts-community']}
         ${'vue'}        | ${true}        | ${false}             | ${false}         | ${'packages'} | ${['ag-grid-vue3', 'ag-grid-enterprise']}
         ${'vue'}        | ${false}       | ${true}              | ${false}         | ${'packages'} | ${['ag-grid-vue3', 'ag-grid-charts-enterprise']}
         ${'vue'}        | ${true}        | ${true}              | ${false}         | ${'packages'} | ${['ag-grid-vue3', 'ag-grid-charts-enterprise']}
@@ -27,7 +27,7 @@ describe('getDependencies', () => {
         ${'vue'}        | ${true}        | ${false}             | ${true}          | ${'packages'} | ${['ag-grid-vue3', 'ag-grid-enterprise', 'ag-charts-vue3', 'ag-charts-enterprise']}
         ${'vue'}        | ${false}       | ${true}              | ${true}          | ${'packages'} | ${['ag-grid-vue3', 'ag-grid-charts-enterprise', 'ag-charts-vue3', 'ag-charts-enterprise']}
         ${'vue'}        | ${true}        | ${true}              | ${true}          | ${'packages'} | ${['ag-grid-vue3', 'ag-grid-charts-enterprise', 'ag-charts-vue3', 'ag-charts-enterprise']}
-        ${'javascript'} | ${false}       | ${false}             | ${false}         | ${'packages'} | ${['ag-grid-react', 'ag-grid-community', 'ag-charts-react', 'ag-charts-community']}
+        ${'javascript'} | ${false}       | ${false}             | ${false}         | ${'packages'} | ${['ag-grid-community', 'ag-charts-community']}
         ${'javascript'} | ${true}        | ${false}             | ${false}         | ${'packages'} | ${['ag-grid-enterprise']}
         ${'javascript'} | ${false}       | ${true}              | ${false}         | ${'packages'} | ${['ag-grid-charts-enterprise']}
         ${'javascript'} | ${true}        | ${true}              | ${false}         | ${'packages'} | ${['ag-grid-charts-enterprise']}

@@ -15,7 +15,7 @@ export const getDependencies = ({
     const noProducts = !products.gridEnterprise && !products.integratedEnterprise && !products.chartsEnterprise;
 
     if (importType === 'packages') {
-        if (products.gridEnterprise || products.integratedEnterprise) {
+        if (products.gridEnterprise || products.integratedEnterprise || noProducts) {
             if (framework === 'react') {
                 dependencies.push('ag-grid-react');
             } else if (framework === 'angular') {
@@ -25,7 +25,7 @@ export const getDependencies = ({
             }
         }
 
-        if (products.chartsEnterprise) {
+        if (products.chartsEnterprise || noProducts) {
             if (framework === 'react') {
                 dependencies.push('ag-charts-react');
             } else if (framework === 'angular') {
@@ -50,7 +50,7 @@ export const getDependencies = ({
         } else if (products.chartsEnterprise) {
             dependencies.push('ag-charts-enterprise');
         } else {
-            dependencies.push('ag-grid-react', 'ag-grid-community', 'ag-charts-react', 'ag-charts-community');
+            dependencies.push('ag-grid-community', 'ag-charts-community');
         }
     } else if (importType === 'modules') {
         if (products.gridEnterprise || products.integratedEnterprise || noProducts) {
