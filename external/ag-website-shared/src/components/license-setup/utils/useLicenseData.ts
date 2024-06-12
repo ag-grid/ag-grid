@@ -15,6 +15,7 @@ interface ErrorData {
     userProducts: Products;
     noUserProducts: boolean;
     licenseDetails: ReturnType<typeof LicenseManager.getLicenseDetails>;
+    chartsLicenseDetails: ReturnType<typeof AgCharts.getLicenseDetails>;
 }
 
 const errorConditions = {
@@ -39,13 +40,8 @@ const errorConditions = {
         message: `A license is not required to use AG Grid community or AG Charts Community`,
     },
     userLicenseError: {
-        getIsError: ({ hasLicense, license, licenseDetails }: ErrorData) => {
-            const { valid, suppliedLicenseType, incorrectLicenseType } = licenseDetails;
-
-            const licenseIsValid =
-                valid ||
-                // TODO: Check charts license against charts LicenseManager
-                (suppliedLicenseType === 'CHARTS' && incorrectLicenseType);
+        getIsError: ({ hasLicense, license, licenseDetails, chartsLicenseDetails }: ErrorData) => {
+            const licenseIsValid = licenseDetails.valid || chartsLicenseDetails.valid;
             return hasValue(hasLicense) && hasValue(license) && !licenseIsValid;
         },
         message: 'License is not valid. Make sure you are copying the whole license which was originally provided',
@@ -83,6 +79,7 @@ const useErrors = ({
     userProducts,
     noUserProducts,
     licenseDetails,
+    chartsLicenseDetails,
 }: ErrorData) => {
     const [errors, setErrors] = useState<Errors>({} as Errors);
 
@@ -97,6 +94,7 @@ const useErrors = ({
                 userProducts,
                 noUserProducts,
                 licenseDetails,
+                chartsLicenseDetails,
             });
 
             if (isError) {
@@ -112,7 +110,7 @@ const useErrors = ({
                 ...newErrors,
             };
         });
-    }, [hasLicense, license, licensedProducts, userProducts, licenseDetails]);
+    }, [hasLicense, license, licensedProducts, userProducts, noUserProducts, licenseDetails, chartsLicenseDetails]);
 
     return {
         errors,
@@ -189,6 +187,7 @@ export const useLicenseData = () => {
         userProducts,
         noUserProducts,
         licenseDetails,
+        chartsLicenseDetails,
     });
 
     useEffect(() => {
