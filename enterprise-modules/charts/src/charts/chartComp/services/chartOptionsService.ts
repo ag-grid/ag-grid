@@ -1,4 +1,4 @@
-import type { AgChartThemeOverrides, ChartOptionsChanged, ChartType, WithoutGridCommon } from '@ag-grid-community/core';
+import type { ChartOptionsChanged, ChartType, WithoutGridCommon } from '@ag-grid-community/core';
 import { BeanStub, _errorOnce } from '@ag-grid-community/core';
 import type {
     AgBaseThemeableChartOptions,
@@ -7,6 +7,7 @@ import type {
     AgCartesianAxisType,
     AgCartesianChartOptions,
     AgChartOptions,
+    AgChartThemeOverrides,
     AgPolarAxesTheme,
     AgPolarAxisType,
 } from 'ag-charts-community';

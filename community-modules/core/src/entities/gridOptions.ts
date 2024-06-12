@@ -109,7 +109,7 @@ import type {
 } from '../interfaces/exportParams';
 import type { GridState } from '../interfaces/gridState';
 import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
-import type { AgChartTheme, AgChartThemeOverrides } from '../interfaces/iAgChartOptions';
+import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 import type { AlignedGrid } from '../interfaces/iAlignedGrid';
 import type {
     FillOperationParams,

@@ -1,6 +1,5 @@
 import type {
     ChartType,
-    AgChartTheme as GridAgChartTheme,
     SeriesChartType,
     SeriesGroupType,
 } from '@ag-grid-community/core';
@@ -25,7 +24,7 @@ import { createAgChartTheme, lookupCustomChartTheme } from './chartTheme';
 export interface ChartProxyParams {
     chartInstance?: AgChartInstance;
     chartType: ChartType;
-    customChartThemes?: { [name: string]: AgChartTheme | GridAgChartTheme };
+    customChartThemes?: { [name: string]: AgChartTheme };
     parentElement: HTMLElement;
     grouping: boolean;
     getChartThemeName: () => string;

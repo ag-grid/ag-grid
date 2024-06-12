@@ -883,7 +883,6 @@ export { AgPromise } from './utils/promise';
 
 // charts
 export * from './interfaces/iChartOptions';
-export * from './interfaces/iAgChartOptions';
 
 // sparklines
 export * from './interfaces/iSparklineCellRendererParams';

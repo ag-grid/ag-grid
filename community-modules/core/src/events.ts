@@ -4,7 +4,7 @@ import type { AgEventType } from './eventTypes';
 import type { FilterRequestSource } from './filter/iColumnFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
-import type { AgChartThemeOverrides } from './interfaces/iAgChartOptions';
+import type { AgChartThemeOverrides } from 'ag-charts-types';
 import type { ChartType } from './interfaces/iChartOptions';
 import type { Column, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
 import type { AgGridCommon } from './interfaces/iCommon';

@@ -1,5 +1,8 @@
 import type {
-    AgChartThemeOverrides,
+    AgChartThemeOverrides
+} from 'ag-charts-types';
+
+import type {
     BeanCollection,
     CellRange,
     CellRangeParams,
