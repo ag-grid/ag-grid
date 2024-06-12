@@ -7,7 +7,6 @@ import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import { type FunctionComponent, useCallback, useMemo, useRef, useState } from 'react';
 
-import { currencyFormatter } from '../../utils/valueFormatters';
 import { ContactCellRenderer } from '../contact-cell-renderer/ContactCellRenderer';
 import { EmployeeCellRenderer } from '../employee-cell-renderer/EmployeeCellRenderer';
 import { FlagRenderer } from '../flag-renderer/FlagRenderer';
@@ -26,6 +25,9 @@ interface Props {
 const employmentType = ['Permanent', 'Contract'];
 const paymentMethod = ['Cash', 'Check', 'Bank Transfer'];
 const paymentStatus = ['Paid', 'Pending'];
+
+function currencyFormatter(params: ValueFormatterParams) { return params.value == null ? "" : "$" + params.value; };
+
 
 export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
     const gridRef = useRef<AgGridReact>(null);
@@ -151,17 +153,6 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
         };
     }, []);
 
-    const statusBar = useMemo<{
-        statusPanels: StatusPanelDef[];
-    }>(() => {
-        return {
-            statusPanels: [
-                { statusPanel: 'agTotalAndFilteredRowCountComponent' },
-                { statusPanel: 'agFilteredRowCountComponent' },
-            ],
-        };
-    }, []);
-
     return (
         <div className={styles.wrapper}>
             <div className={styles.container}>
@@ -175,7 +166,6 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
                         columnMenu="new"
                         treeData={treeData}
                         autoGroupColumnDef={autoGroupColumnDef}
-                        statusBar={statusBar}
                         grandTotalRow={"bottom"}
                     />
                 </div>
