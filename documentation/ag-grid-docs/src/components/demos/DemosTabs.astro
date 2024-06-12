@@ -22,7 +22,7 @@ const { activeTab } = Astro.props;
     </div>
 
     <div class:list={[styles.tabWrapper, activeTab === 'crm' && styles.tabActive]}>
-        <a href={urlWithBaseUrl(`/example-crm`)}>
+        <a href={urlWithBaseUrl(`/example-hr`)}>
             <img class={styles.showcaseItemTab} src={urlWithBaseUrl(`/example/crm-grid.png`)} alt="Grid illustration" />
             <img
                 class={`${styles.showcaseItemTab} ${styles.darkTab}`}
