@@ -43,11 +43,11 @@ export class ExpressionService extends BeanStub implements NamedBean {
             // tslint:disable-next-line
             _log('Processing of the expression failed');
             // tslint:disable-next-line
-            _log('Expression = ' + expression);
+            _log('Expression = ', expression);
             // tslint:disable-next-line
-            _log('Params = ' + params);
+            _log('Params = ', params);
             // tslint:disable-next-line
-            _log('Exception = ' + e);
+            _log('Exception = ', e);
             return null;
         }
     }

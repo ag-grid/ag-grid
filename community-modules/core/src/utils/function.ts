@@ -14,8 +14,8 @@ export function _doOnce(func: () => void, key: string) {
     doOnceFlags[key] = true;
 }
 
-export function _log(message: string) {
-    console.log('AG Grid: ' + message);
+export function _log(message: string, ...args: any[]) {
+    console.log('AG Grid: ' + message, ...args);
 }
 
 export function _warnOnce(msg: string, ...args: any[]) {
