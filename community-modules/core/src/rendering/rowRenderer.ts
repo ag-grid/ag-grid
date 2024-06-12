@@ -945,13 +945,13 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     public override destroy(): void {
-        this.removeAllRowComps();
+        this.removeAllRowComps(true);
         super.destroy();
     }
 
-    private removeAllRowComps(): void {
+    private removeAllRowComps(suppressAnimation: boolean = false): void {
         const rowIndexesToRemove = Object.keys(this.rowCtrlsByRowIndex);
-        this.removeRowCtrls(rowIndexesToRemove);
+        this.removeRowCtrls(rowIndexesToRemove, suppressAnimation);
 
         if (this.stickyRowFeature) {
             this.stickyRowFeature.destroyStickyCtrls();
