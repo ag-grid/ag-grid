@@ -24,48 +24,56 @@ const DEFAULT_USER_PRODUCTS: Products = {
     chartsEnterprise: false,
 };
 
+const validLicenseMessages = {
+    valid: 'Valid license key',
+    gridEnterprise: 'Includes "AG Grid Enterprise"',
+    integratedEnterprise: 'Includes "AG Grid Enterprise", "AG Chart Enterprise", and "Integrated Enterprise"',
+    chartsEnterprise: 'Includes "AG Charts Enterprise"',
+};
+
 const errorConditions = {
     chartsNoGridEnterprise: {
         getIsError: ({ userProducts, licensedProducts }: ErrorData) =>
             licensedProducts.charts && !licensedProducts.grid && userProducts.gridEnterprise,
-        message: `Your license does not support "AG Grid Enterprise"`,
+        message: `Your license key does not include "AG Grid Enterprise"`,
     },
     chartsNoIntegratedEnterprise: {
         getIsError: ({ userProducts, licensedProducts }: ErrorData) =>
             licensedProducts.charts && !licensedProducts.grid && userProducts.integratedEnterprise,
-        message: `Your license does not support "Integrated Enterprise"`,
+        message: `Your license key does not include "Integrated Enterprise"`,
     },
     noProducts: {
         getIsError: ({ noUserProducts }: ErrorData) => noUserProducts,
-        message: `A license is not required to use AG Grid Community or AG Charts Community`,
+        message: `A license key is not required to use AG Grid Community or AG Charts Community`,
     },
     userLicenseError: {
         getIsError: ({ hasLicense, license, licenseDetails, chartsLicenseDetails }: ErrorData) => {
             const licenseIsValid = licenseDetails.valid || chartsLicenseDetails.valid;
             return hasValue(hasLicense) && hasValue(license) && !licenseIsValid;
         },
-        message: 'License is not valid. Make sure you are copying the whole license which was originally provided',
+        message:
+            'License key is not valid. Make sure you are copying the whole license key which was originally provided',
     },
     v2License: {
         getIsError: ({ licenseDetails }: ErrorData) => licenseDetails.version === '2',
-        message: 'This license is not valid for v30+',
+        message: 'This license key is not valid for v30+',
     },
     gridNoCharts: {
         getIsError: ({ userProducts, licensedProducts }: ErrorData) =>
             !licensedProducts.charts && licensedProducts.grid && userProducts.chartsEnterprise,
-        message: 'Your license does not support "AG Charts Enterprise"',
+        message: 'Your license key does not include "AG Charts Enterprise"',
     },
     gridNoIntegratedEnterprise: {
         getIsError: ({ userProducts, licensedProducts }: ErrorData) =>
             !licensedProducts.charts && licensedProducts.grid && userProducts.integratedEnterprise,
-        message: `Your license does not support "Integrated Enterprise"`,
+        message: `Your license key does not include "Integrated Enterprise"`,
     },
     expired: {
         getIsError: ({ license, licenseDetails }: ErrorData) => {
             const { expired, trialExpired } = licenseDetails;
             return hasValue(license) && (Boolean(expired) || Boolean(trialExpired));
         },
-        message: 'This license is expired',
+        message: 'This license key is expired',
     },
 };
 
@@ -246,18 +254,18 @@ export const useLicenseData = () => {
         ) {
             let supportsText = '';
             if (licenseDetails.suppliedLicenseType === 'GRID') {
-                supportsText = `Supports "AG Grid Enterprise".`;
+                supportsText = validLicenseMessages.gridEnterprise;
             } else if (licenseDetails.suppliedLicenseType === 'BOTH') {
-                supportsText = `Supports "AG Grid Enterprise", "AG Chart Enterprise", and "Integrated Enterprise".`;
+                supportsText = validLicenseMessages.integratedEnterprise;
             }
-            text = `Valid license. ${supportsText}`;
+            text = `${validLicenseMessages.valid}. ${supportsText}`;
         } else if (
             licenseDetails.suppliedLicenseType === 'CHARTS' &&
             chartsLicenseDetails.valid &&
             !chartsLicenseDetails.expired &&
             !chartsLicenseDetails.trialExpired
         ) {
-            text = `Valid license. Supports "AG Charts Enterprise".`;
+            text = `${validLicenseMessages.valid}. ${validLicenseMessages.chartsEnterprise}`;
         }
 
         return text;

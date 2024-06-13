@@ -152,7 +152,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
 
                         {userLicense === '' && (
                             <span className={styles.licencePlaceholder}>
-                                <b>Paste your license key here e.g. </b>
+                                <b>Paste your license key here, e.g., </b>
                                 <span>{DUMMY_LICENSE_KEY}</span>
                             </span>
                         )}
@@ -193,7 +193,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                 <div className={styles.licenseData}>
                     {hasLicense && (
                         <div>
-                            <label>Licence expires: </label>
+                            <label>Licence key expires: </label>
                             <b className={errors.expired && styles.expired}>
                                 {userLicenseExpiry ? userLicenseExpiry : '--'}
                             </b>
@@ -341,7 +341,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
 
                     {(userProducts.gridEnterprise || userProducts.integratedEnterprise || noUserProducts) && (
                         <>
-                            {!noUserProducts && <p>An example of how to set up your AG Grid Enterprise license:</p>}
+                            {!noUserProducts && <p>An example of how to set up your AG Grid Enterprise license key:</p>}
                             {bootstrapSnippet.grid && (
                                 <Snippet framework={framework} content={bootstrapSnippet.grid} copyToClipboard />
                             )}
@@ -350,7 +350,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
 
                     {userProducts.chartsEnterprise && (
                         <>
-                            <p>An example of how to set up your Charts Enterprise license:</p>
+                            <p>An example of how to set up your Charts Enterprise license key:</p>
                             {bootstrapSnippet.charts && (
                                 <Snippet framework={framework} content={bootstrapSnippet.charts} copyToClipboard />
                             )}
