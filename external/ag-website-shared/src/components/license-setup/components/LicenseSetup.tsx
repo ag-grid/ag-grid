@@ -299,7 +299,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                 </div>
 
                 <div className={styles.results}>
-                    <h2>Add Your Dependencies</h2>
+                    <h3 id="add-your-dependencies">Add Your Dependencies</h3>
                     {errors.noProducts && <Note>{errors.noProducts}</Note>}
 
                     <p>
@@ -314,7 +314,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                         <Snippet framework={framework} content={npmInstallSnippet} language="bash" copyToClipboard />
                     )}
 
-                    <h2>Set Up Your Application</h2>
+                    <h3 id="set-up-your-application">Set Up Your Application</h3>
                     {errors.noProducts && <Note>{errors.noProducts}</Note>}
 
                     {(userProducts.gridEnterprise || userProducts.integratedEnterprise || noUserProducts) && (
