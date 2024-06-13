@@ -163,7 +163,7 @@ export abstract class CartesianChartProxy<
                 },
             };
             s.marker = {
-                formatter: (p: any) => {
+                itemStyler: (p) => {
                     const value = p.datum[category.id];
                     return {
                         fill: p.highlighted ? 'yellow' : p.fill,
