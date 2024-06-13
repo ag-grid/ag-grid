@@ -2,7 +2,7 @@ import { markRaw, toRaw } from '@vue/reactivity';
 import type { PropType } from 'vue';
 import { defineComponent, getCurrentInstance, h } from 'vue';
 
-import type { GridApi, GridOptions, IRowNode, Module } from 'ag-grid-community';
+import type { AgEventType, GridApi, GridOptions, IRowNode, Module } from 'ag-grid-community';
 import {
     ALWAYS_SYNC_GLOBAL_EVENTS,
     ComponentUtil,
@@ -67,7 +67,7 @@ export const AgGridVue = defineComponent({
     watch,
     methods: {
         globalEventListenerFactory(restrictToSyncOnly?: boolean) {
-            return (eventType: string) => {
+            return (eventType: AgEventType) => {
                 if (this.isDestroyed) {
                     return;
                 }
