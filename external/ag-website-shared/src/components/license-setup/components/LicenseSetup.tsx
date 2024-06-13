@@ -339,13 +339,13 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                         <>
                             <p>Here are some seed code repositories to get you started:</p>
 
-                            <table className={styles.reposTable}>
+                            <table className={styles.reposTable} role="grid">
                                 <thead>
                                     <tr>
-                                        <th>Github Repo</th>
-                                        <th>Framework</th>
-                                        <th>Development Environment</th>
-                                        <th>Import Type</th>
+                                        <th scope="col">Github Repo</th>
+                                        <th scope="col">Framework</th>
+                                        <th scope="col">Development Environment</th>
+                                        <th scope="col">Import Type</th>
                                     </tr>
                                 </thead>
                                 <tbody>

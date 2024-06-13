@@ -8,8 +8,8 @@
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise-bundle/modules/angular-cli"
     },
     {
-        "name": "Create React App (CRA)",
-        "devEnvironment": "Create React App (CRA)",
+        "name": "Create React App",
+        "devEnvironment": "Create React App",
         "framework": "react",
         "importType": "modules",
         "licenseType": "enterprise-bundle",
@@ -72,8 +72,8 @@
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise-bundle/packages/angular-cli"
     },
     {
-        "name": "Create React App (CRA)",
-        "devEnvironment": "Create React App (CRA)",
+        "name": "Create React App",
+        "devEnvironment": "Create React App",
         "framework": "react",
         "importType": "packages",
         "licenseType": "enterprise-bundle",
@@ -136,8 +136,8 @@
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/modules/angular-cli"
     },
     {
-        "name": "Create React App (CRA)",
-        "devEnvironment": "Create React App (CRA)",
+        "name": "Create React App",
+        "devEnvironment": "Create React App",
         "framework": "react",
         "importType": "modules",
         "licenseType": "enterprise",
@@ -200,8 +200,8 @@
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/angular-cli"
     },
     {
-        "name": "Create React App (CRA)",
-        "devEnvironment": "Create React App (CRA)",
+        "name": "Create React App",
+        "devEnvironment": "Create React App",
         "framework": "react",
         "importType": "packages",
         "licenseType": "enterprise",

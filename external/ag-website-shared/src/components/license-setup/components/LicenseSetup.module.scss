@@ -115,15 +115,14 @@
 }
 
 .reposTable {
+    thead {
+        line-height: 1.2;
+        vertical-align: bottom;
+    }
+
     th:first-child,
     td:first-child {
         padding-left: 0;
-    }
-
-    th:last-child,
-    td:last-child {
-        padding-right: 0;
-        text-align: right;
     }
 
     td {
@@ -133,6 +132,68 @@
 
     .frameworkLogo {
         margin-right: $spacing-size-1;
+    }
+
+    @media screen and (max-width: 900px) {
+        thead {
+            display: none;
+        }
+
+        tr,
+        td {
+            display: block;
+            text-align: left;
+        }
+
+        tr {
+            padding: $spacing-size-4 0;
+
+            &:nth-child(even) {
+                background-color: unset;
+            }
+        }
+
+        td {
+            padding: 0;
+            line-height: var(--text-lh-tight);
+            font-weight: var(--text-bold);
+
+            &:not(:last-child) {
+                margin-bottom: $spacing-size-2;
+            }
+        }
+
+        td[data-column]::before {
+            content: attr(data-column) ': ';
+            font-weight: var(--text-regular);
+            color: var(--color-fg-secondary);
+        }
+    }
+
+    @media screen and (min-width: 900px) {
+        th:last-child,
+        td:last-child {
+            padding-right: 0;
+            text-align: right;
+        }
+
+        [data-column='Github Repo'] {
+            width: 280px;
+        }
+
+        [data-column='Framework'] {
+            width: 140px;
+        }
+
+        [data-column='Import Type'] {
+            width: 140px;
+        }
+    }
+
+    @media screen and (min-width: 1600px) {
+        [data-column='License Type'] {
+            width: 160px;
+        }
     }
 }
 
