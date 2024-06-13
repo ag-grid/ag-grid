@@ -1,6 +1,18 @@
 import type { RowNode } from '../entities/rowNode';
 import type { IRowModel } from '../interfaces/iRowModel';
 
+interface ISelectionContext<TNode> {
+    init(rowModel: IRowModel): void;
+    destroy(): void;
+    reset(node: TNode): void;
+    setEndRange(node: TNode): void;
+    getRange(): RowNode[];
+    getRoot(): TNode | null;
+    isInRange(node: TNode): boolean;
+    truncate(node: TNode): { keep: RowNode[]; discard: RowNode[] };
+    extend(node: TNode): { keep: RowNode[]; discard: RowNode[] };
+}
+
 /**
  * The context of a row range selection operation.
  *
@@ -10,7 +22,7 @@ import type { IRowModel } from '../interfaces/iRowModel';
  *
  * See AG-9620 for more
  */
-export class RowRangeSelectionContext {
+export class RowRangeSelectionContext implements ISelectionContext<RowNode> {
     private root: RowNode | null = null;
     /**
      * Note that the "end" `RowNode` may come before or after the "root" `RowNode` in the
@@ -120,6 +132,124 @@ export class RowRangeSelectionContext {
         const newRange = this.rowModel.getNodesInRangeForSelection(this.getRoot(), node);
 
         if (newRange.find((newRangeNode) => newRangeNode.id === this.end?.id)) {
+            // Range between root and given node contains the current "end"
+            // so this is an extension of the current range direction
+            this.setEndRange(node);
+            return { keep: this.getRange(), discard: [] };
+        } else {
+            // otherwise, this is an inversion
+            const discard = this.getRange().slice();
+            this.setEndRange(node);
+            return { keep: this.getRange(), discard };
+        }
+    }
+}
+
+export class ServerSideRowRangeSelectionContext implements ISelectionContext<string> {
+    private rowModel: IRowModel;
+    private root: string | null = null;
+    /**
+     * Note that the "end" `RowNode` may come before or after the "root" `RowNode` in the
+     * actual grid.
+     */
+    private end: string | null = null;
+    private cachedRange: RowNode[] = [];
+
+    public init(rowModel: IRowModel): void {
+        this.rowModel = rowModel;
+    }
+
+    public destroy(): void {
+        this.root = null;
+        this.end = null;
+        this.cachedRange.length = 0;
+    }
+
+    public reset(node: string): void {
+        this.root = node;
+        this.end = null;
+        this.cachedRange.length = 0;
+    }
+
+    public setEndRange(end: string): void {
+        this.end = end;
+        this.cachedRange.length = 0;
+    }
+
+    getRoot(): string | null {
+        return this.root;
+    }
+
+    public getRange(): RowNode[] {
+        if (this.cachedRange.length === 0) {
+            const root = this.root ? this.rowModel.getRowNode(this.root) : undefined;
+            const end = this.end ? this.rowModel.getRowNode(this.end) : undefined;
+
+            if (end == null) {
+                return this.cachedRange;
+            }
+
+            this.cachedRange = this.rowModel.getNodesInRangeForSelection(root ?? null, end);
+        }
+
+        return this.cachedRange;
+    }
+
+    public isInRange(node: string): boolean {
+        if (this.root === null) {
+            return false;
+        }
+
+        return this.getRange().some((nodeInRange) => nodeInRange.id === node);
+    }
+
+    /**
+     * Truncates the range to the given node (assumed to be within the current range).
+     * Returns nodes that remain in the current range and those that should be removed
+     *
+     * @param node - Node at which to truncate the range
+     * @returns Object of nodes to either keep or discard (i.e. deselect) from the range
+     */
+    public truncate(node: string): { keep: RowNode[]; discard: RowNode[] } {
+        const range = this.getRange();
+
+        if (range.length === 0) {
+            return { keep: [], discard: [] };
+        }
+
+        // if root is first, then selection range goes "down" the table
+        // so we should be unselecting the range _after_ the given `node`
+        const discardAfter = range[0].id === this.root!;
+
+        const idx = range.findIndex((rowNode) => rowNode.id === node);
+        if (idx > -1) {
+            const above = range.slice(0, idx);
+            const below = range.slice(idx + 1);
+            this.setEndRange(node);
+            return discardAfter ? { keep: above, discard: below } : { keep: below, discard: above };
+        } else {
+            return { keep: range, discard: [] };
+        }
+    }
+
+    /**
+     * Extends the range to the given node. Returns nodes that remain in the current range
+     * and those that should be removed.
+     *
+     * @param node - Node marking the new end of the range
+     * @returns Object of nodes to either keep or discard (i.e. deselect) from the range
+     */
+    public extend(node: string): { keep: RowNode[]; discard: RowNode[] } {
+        const rowNode = this.rowModel.getRowNode(node);
+        const rootNode = this.rowModel.getRowNode(this.root!);
+
+        if (rowNode == null || rootNode == null) {
+            return { keep: this.getRange(), discard: [] };
+        }
+
+        const newRange = this.rowModel.getNodesInRangeForSelection(rootNode, rowNode);
+
+        if (newRange.find((newRangeNode) => newRangeNode.id === this.end)) {
             // Range between root and given node contains the current "end"
             // so this is an extension of the current range direction
             this.setEndRange(node);

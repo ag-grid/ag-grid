@@ -12,7 +12,7 @@ import type {
 } from '@ag-grid-community/core';
 import {
     BeanStub,
-    _RowRangeSelectionContext as RowRangeSelectionContext,
+    _ServerSideRowRangeSelectionContext as RowRangeSelectionContext,
     _errorOnce,
     _last,
     _warnOnce,
@@ -158,13 +158,14 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     private overrideSelectionValue(newValue: boolean, source: SelectionEventSourceType): boolean {
-        const root = this.selectionCtx.getRoot();
-
         if (!isSelectionUIEvent(source)) {
             return newValue;
         }
 
-        return root ? root.isSelected() ?? false : true;
+        const root = this.selectionCtx.getRoot();
+        const node = root ? this.rowModel.getRowNode(root) : null;
+
+        return node ? node.isSelected() ?? false : true;
     }
 
     public setNodesSelected({ nodes, newValue, rangeSelect, clearSelection, source }: ISetNodesSelectedParams): number {
@@ -177,8 +178,8 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             const node = nodes[0];
             const newSelectionValue = this.overrideSelectionValue(newValue, source);
 
-            if (this.selectionCtx.isInRange(node)) {
-                const partition = this.selectionCtx.truncate(node);
+            if (this.selectionCtx.isInRange(node.id!)) {
+                const partition = this.selectionCtx.truncate(node.id!);
 
                 // When we are selecting a range, we may need to de-select part of the previously
                 // selected range (see AG-9620)
@@ -192,8 +193,8 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             } else {
                 const fromNode = this.selectionCtx.getRoot();
                 const toNode = node;
-                if (fromNode !== toNode) {
-                    const partition = this.selectionCtx.extend(node);
+                if (fromNode !== toNode.id) {
+                    const partition = this.selectionCtx.extend(node.id!);
                     if (newSelectionValue) {
                         this.selectRange(partition.discard, false);
                     }
@@ -217,7 +218,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             this.recursivelySelectNode(idPathToNode, this.selectedState, newValue);
         });
         this.removeRedundantState();
-        this.selectionCtx.reset(_last(nodes));
+        this.selectionCtx.reset(_last(nodes).id!);
         return 1;
     }
 

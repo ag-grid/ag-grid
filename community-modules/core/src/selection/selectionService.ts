@@ -9,7 +9,6 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService, ISetNodesSelectedParams } from '../interfaces/iSelectionService';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../interfaces/selectionState';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
-import { _last } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _errorOnce, _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';

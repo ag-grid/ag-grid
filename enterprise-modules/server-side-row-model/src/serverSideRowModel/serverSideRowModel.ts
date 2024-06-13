@@ -690,7 +690,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
         // don't allow range selection if we don't have the full range of rows
         if (nodeRange.length !== lastIndex - firstIndex + 1) {
-            return firstInRange ? [firstInRange] : [];
+            return firstInRange ? [firstInRange, lastInRange] : [];
         }
 
         return nodeRange;

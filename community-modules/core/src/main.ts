@@ -452,7 +452,10 @@ export { ISideBarService, ISideBar, SideBarDef, ToolPanelDef } from './interface
 export { IGetRowsParams, IDatasource } from './interfaces/iDatasource';
 
 // selection
-export { RowRangeSelectionContext as _RowRangeSelectionContext } from './selection/rowRangeSelectionContext';
+export {
+    RowRangeSelectionContext as _RowRangeSelectionContext,
+    ServerSideRowRangeSelectionContext as _ServerSideRowRangeSelectionContext,
+} from './selection/rowRangeSelectionContext';
 
 // styling
 export { StylingService } from './styling/stylingService';
