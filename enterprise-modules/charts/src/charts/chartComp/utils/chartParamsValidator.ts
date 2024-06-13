@@ -1,5 +1,4 @@
 import type {
-    AgChartThemeOverrides,
     ChartParamsCellRange,
     ChartType,
     IAggFunc,
@@ -9,6 +8,7 @@ import type {
     UpdateRangeChartParams,
 } from '@ag-grid-community/core';
 import { _warnOnce } from '@ag-grid-community/core';
+import type { AgChartThemeOverrides } from 'ag-charts-community';
 import { _ModuleSupport } from 'ag-charts-community';
 
 import type { CommonCreateChartParams } from '../../chartService';

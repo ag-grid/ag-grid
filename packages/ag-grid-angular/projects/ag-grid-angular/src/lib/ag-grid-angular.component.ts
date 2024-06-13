@@ -12,12 +12,11 @@ import {
     ViewContainerRef,
     ViewEncapsulation,
 } from '@angular/core';
+import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterModel,
-    AgChartTheme,
-    AgChartThemeOverrides,
     AlignedGrid,
     AsyncTransactionsFlushed,
     BodyScrollEndEvent,

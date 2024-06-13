@@ -24,7 +24,7 @@ export const CellRendererComponent: ComponentType = {
 };
 
 export const EditorRendererComponent: ComponentType = {
-    propertyName: 'editorRenderer',
+    propertyName: 'cellRenderer',
     cellRenderer: false,
 };
 

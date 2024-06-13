@@ -3,8 +3,6 @@
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterModel,
-    AgChartTheme,
-    AgChartThemeOverrides,
     AlignedGrid,
     AsyncTransactionsFlushed,
     BodyScrollEndEvent,
@@ -186,6 +184,7 @@ import {
     ViewContainerRef,
     ViewEncapsulation,
 } from '@angular/core';
+import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 
 import { AngularFrameworkComponentWrapper } from './angularFrameworkComponentWrapper';
 import { AngularFrameworkOverrides } from './angularFrameworkOverrides';

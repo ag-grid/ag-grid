@@ -1,0 +1,21 @@
+.productCell {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: left;
+    gap: 8px;
+}
+
+.productDetails {
+    display: flex;
+    flex-direction: column;
+}
+
+.productDetails > span {
+    line-height: 40px;
+}
+
+.productName {
+    font-weight: 500;
+    color: rgb(50, 50, 50);
+}

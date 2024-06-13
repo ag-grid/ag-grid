@@ -61,6 +61,9 @@
     "not blackberry > 0"
   ],
   "homepage": "https://www.ag-grid.com/",
+  "dependencies": {
+    "ag-charts-types": "9.3.1-beta.20240612.1657"
+  },
   "devDependencies": {
     "source-map-loader": "^5.0.0",
     "gulp": "^4.0.0",

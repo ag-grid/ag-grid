@@ -35,7 +35,11 @@ export class PillContainer<TValue> extends Component {
 
         const { params, onPillKeyDown } = this;
 
-        const values = params.getValue() || [];
+        const values = params.getValue();
+
+        if (!Array.isArray(values)) {
+            return;
+        }
 
         for (const value of values) {
             const pill: AgPill = this.createBean(

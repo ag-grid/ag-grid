@@ -320,6 +320,9 @@ export {
     RichCellEditorParams,
     IRichCellEditorRendererParams,
 } from './interfaces/iRichCellEditorParams';
+
+export { ICellEditorRendererComp, ICellEditorRendererParams } from './interfaces/iCellEditorRenderer';
+
 export { CheckboxCellEditor } from './edit/cellEditors/checkboxCellEditor';
 export { EditCoreModule as _EditCoreModule } from './edit/editModule';
 
@@ -883,7 +886,6 @@ export { AgPromise } from './utils/promise';
 
 // charts
 export * from './interfaces/iChartOptions';
-export * from './interfaces/iAgChartOptions';
 
 // sparklines
 export * from './interfaces/iSparklineCellRendererParams';

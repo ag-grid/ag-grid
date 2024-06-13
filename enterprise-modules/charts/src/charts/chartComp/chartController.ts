@@ -1,5 +1,4 @@
 import type {
-    AgChartThemeOverrides,
     BeanCollection,
     CellRange,
     CellRangeParams,
@@ -21,6 +20,7 @@ import type {
 import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 import type { AgCartesianAxisType, AgChartThemePalette } from 'ag-charts-community';
 import { _ModuleSupport, _Theme } from 'ag-charts-community';
+import type { AgChartThemeOverrides } from 'ag-charts-types';
 
 import type { ChartProxy, FieldDefinition, UpdateParams } from './chartProxies/chartProxy';
 import { isStockTheme } from './chartProxies/chartTheme';

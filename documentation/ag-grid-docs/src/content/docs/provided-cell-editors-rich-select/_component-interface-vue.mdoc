@@ -1,0 +1,17 @@
+{% if isFramework("vue") %}
+You can access the `params` object via `this.params` in the usual methods (lifecycle hooks, methods etc), and via `props.params` when using `setup`.
+{% /if %}
+
+{% if isFramework("vue") %}
+```ts
+  // ...
+  beforeMount() {
+    this.cellValue = this.params.value;
+  }
+  // ...
+```
+{% /if %}
+
+{% if isFramework("vue") %}
+The `params` (interface IRichCellEditorRendererParams) passed to the Editor Renderer are as follows:
+{% /if %}
