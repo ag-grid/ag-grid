@@ -200,7 +200,7 @@ export const PORTFOLIO_DATA: BasePortfolioItem[] = [
         quantity: 65,
         buyDate: '2023-07-10',
         buyPrice: 24.56,
-    },    
+    },
 ];
 
 /**
