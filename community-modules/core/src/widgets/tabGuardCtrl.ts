@@ -206,7 +206,7 @@ export class TabGuardCtrl extends BeanStub {
     }
 
     private onFocusIn(e: FocusEvent): void {
-        if (this.focusTrapActive) {
+        if (this.focusTrapActive || this.forcingFocusOut) {
             return;
         }
 
