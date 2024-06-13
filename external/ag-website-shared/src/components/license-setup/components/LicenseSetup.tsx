@@ -1,11 +1,11 @@
-import type { Framework, ImportType } from '@ag-grid-types';
+import type { Framework, ImportType, MenuItem } from '@ag-grid-types';
 import Note from '@ag-website-shared/components/alert/Note';
 import Success from '@ag-website-shared/components/alert/Success';
 import Warning from '@ag-website-shared/components/alert/Warning';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { FrameworkSelectorInsideDocs } from '@components/framework-selector-inside-doc/FrameworkSelectorInsideDocs';
 import { Snippet } from '@components/snippet/Snippet';
 import { InfoTooltip } from '@components/theme-builder/components/general/Tooltip';
-import { FRAMEWORK_DISPLAY_TEXT } from '@constants';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
@@ -27,6 +27,8 @@ interface SeedRepo {
 
 interface Props {
     framework: Framework;
+    path: string;
+    menuItems: MenuItem[];
     seedRepos: SeedRepo[];
 }
 
@@ -41,7 +43,7 @@ const EmailSales = () => {
     );
 };
 
-export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos }) => {
+export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuItems, seedRepos }) => {
     const {
         hasLicense,
         setHasLicense,
@@ -281,12 +283,11 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                     <div className={styles.frameworkImportContainer}>
                         <div className={styles.frameworkContainer}>
                             <label>Framework</label>
-                            <img
-                                className={styles.frameworkLogo}
-                                src={urlWithBaseUrl(`/images/fw-logos/${framework}.svg`)}
-                                alt={framework}
+                            <FrameworkSelectorInsideDocs
+                                path={path}
+                                currentFramework={framework}
+                                menuItems={menuItems}
                             />
-                            <b>{FRAMEWORK_DISPLAY_TEXT[framework]}</b>
                         </div>
 
                         <span className={styles.divider}></span>
