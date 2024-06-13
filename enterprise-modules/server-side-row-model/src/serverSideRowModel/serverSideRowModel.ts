@@ -657,6 +657,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode | null, lastInRange: RowNode): RowNode[] {
+        // if firstInRange is null, we begin from the first row
         const startIndex = firstInRange ? firstInRange.rowIndex : 0;
         const endIndex = lastInRange.rowIndex;
 
