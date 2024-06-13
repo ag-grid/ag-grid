@@ -168,6 +168,14 @@ pre.code.line-numbers > code,
     text-align: right;
 }
 
+.copy-to-clipboard {
+    overflow: hidden;
+
+    > code {
+        max-width: 100%;
+    }
+}
+
 // Theme colors
 // ============
 .token.comment,
