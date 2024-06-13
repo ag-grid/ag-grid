@@ -211,7 +211,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                         <div>
                             <div className={styles.inputList}>
                                 <label className={hasLicense && licensedProducts.grid ? styles.licensedProduct : ''}>
-                                    <b>AG Grid Enterprise</b>
                                     <input
                                         type="checkbox"
                                         name="products"
@@ -224,10 +223,10 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                                             });
                                         }}
                                     />
+                                    <strong>AG Grid Enterprise</strong>
                                 </label>
 
                                 <label className={hasLicense && licensedProducts.charts ? styles.licensedProduct : ''}>
-                                    <b>AG Charts Enterprise</b>
                                     <input
                                         type="checkbox"
                                         name="products"
@@ -240,6 +239,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                                             });
                                         }}
                                     />
+                                    <strong>AG Charts Enterprise</strong>
                                 </label>
 
                                 <label
@@ -249,8 +249,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                                             : ''
                                     }
                                 >
-                                    <b>Integrated Enterprise</b>
-
                                     <input
                                         type="checkbox"
                                         name="products"
@@ -263,6 +261,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                                             });
                                         }}
                                     />
+                                    <strong>Integrated Enterprise</strong>
                                 </label>
                             </div>
 
