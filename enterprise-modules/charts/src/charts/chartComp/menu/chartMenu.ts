@@ -5,7 +5,7 @@ import type {
     ChartToolbarMenuItemOptions,
     Environment,
 } from '@ag-grid-community/core';
-import { AgPromise, Component } from '@ag-grid-community/core';
+import { AgPromise, Component, _warnOnce } from '@ag-grid-community/core';
 import { AgPanel } from '@ag-grid-enterprise/core';
 
 import type { ChartController } from '../chartController';
@@ -187,7 +187,7 @@ export class ChartMenu extends Component {
             const menuPanel = panel || this.defaultPanel;
             let tab = this.panels.indexOf(menuPanel);
             if (tab < 0) {
-                console.warn(`AG Grid: '${panel}' is not a valid Chart Tool Panel name`);
+                _warnOnce(`'${panel}' is not a valid Chart Tool Panel name`);
                 tab = this.panels.indexOf(this.defaultPanel);
             }
 

@@ -28,9 +28,7 @@ const gridOptions: GridOptions<IAccount> = {
         flex: 1,
         enableCellChangeFlash: true,
     },
-    getRowId: (params: GetRowIdParams) => {
-        return params.data.account;
-    },
+    getRowId: (params: GetRowIdParams) => String(params.data.account),
     masterDetail: true,
     detailCellRendererParams: {
         refreshStrategy: 'nothing',
@@ -50,9 +48,7 @@ const gridOptions: GridOptions<IAccount> = {
 
         detailGridOptions: {
             rowSelection: 'multiple',
-            getRowId: (params: GetRowIdParams) => {
-                return params.data.callId;
-            },
+            getRowId: (params: GetRowIdParams) => String(params.data.callId),
             columnDefs: [
                 { field: 'callId', checkboxSelection: true },
                 { field: 'direction' },

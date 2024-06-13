@@ -1354,9 +1354,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const rowStyle = this.gos.get('rowStyle');
 
         if (rowStyle && typeof rowStyle === 'function') {
-            console.warn(
-                'AG Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead'
-            );
+            _warnOnce('rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
             return;
         }
 

@@ -20,6 +20,7 @@ interface Props {
     suppressFrameworkContext?: boolean;
     spaceBetweenProperties?: boolean;
     inlineReactProperties?: boolean;
+    copyToClipboard?: boolean;
     children?: any;
 }
 
@@ -37,6 +38,7 @@ export const Snippet = (props: Props) => {
         suppressFrameworkContext,
         spaceBetweenProperties,
         inlineReactProperties,
+        copyToClipboard,
     } = props;
 
     if (!content) {
@@ -58,6 +60,7 @@ export const Snippet = (props: Props) => {
             code={snippet}
             language={language ? language : (languages[framework] as Language)}
             lineNumbers={lineNumbers}
+            copyToClipboard={copyToClipboard}
         />
     );
 };

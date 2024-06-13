@@ -7,6 +7,8 @@ const { getFormatterForTS } = require('./../../scripts/formatAST');
 
 const { formatNode, findNode, getFullJsDoc } = getFormatterForTS(ts);
 
+const AG_CHART_TYPES = ['AgChartTheme', 'AgChartThemeOverrides'];
+
 function writeSortedLines(toWrite, result) {
     toWrite.sort((a, b) => {
         if (a.order < b.order) return -1;
@@ -95,7 +97,7 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
 
     if (missingEventTypes.length > 0) {
         throw new Error(
-            `The following events are missing type information: [${missingEventTypes.join()}]\n If this is a public event add it to the GridOptions interface. \n If a private event add it to ComponentUtil.EXCLUDED_INTERNAL_EVENTS.\n`
+            `The following events are missing type information: [${missingEventTypes.join()}]\n If this is a public event add it to the GridOptions interface. \n If a private event add it to INTERNAL_EVENTS.\n`
         );
     }
 
@@ -176,7 +178,9 @@ function extractTypes(context, propsToSkip = []) {
     let expandedTypes = propertyTypes.flatMap((m) => m);
 
     const nonAgTypes = ['Partial', 'Document', 'HTMLElement', 'Function', 'TData'];
-    expandedTypes = [...new Set(expandedTypes)].filter((t) => !nonAgTypes.includes(t)).sort();
+    expandedTypes = [...new Set(expandedTypes)]
+        .filter((t) => !nonAgTypes.includes(t) && !AG_CHART_TYPES.includes(t))
+        .sort();
     return expandedTypes;
 }
 

@@ -2,6 +2,7 @@ import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
 import type { IRowNode } from '../interfaces/iRowNode';
+import { _warnOnce } from '../utils/function';
 
 export function setNodesSelected(
     beans: BeanCollection,
@@ -9,12 +10,12 @@ export function setNodesSelected(
 ) {
     const allNodesValid = params.nodes.every((node) => {
         if (node.rowPinned) {
-            console.warn('AG Grid: cannot select pinned rows');
+            _warnOnce('cannot select pinned rows');
             return false;
         }
 
         if (node.id === undefined) {
-            console.warn('AG Grid: cannot select node until id for node is known');
+            _warnOnce('cannot select node until id for node is known');
             return false;
         }
         return true;

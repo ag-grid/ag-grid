@@ -1,5 +1,6 @@
 import type { BeanCollection } from '../context/context';
 import type { Column } from '../interfaces/iColumn';
+import { _errorOnce } from '../utils/function';
 
 /** @deprecated v31.1 */
 export function showColumnMenuAfterButtonClick(
@@ -28,7 +29,7 @@ export function showColumnMenuAfterMouseClick(
         column = beans.columnModel.getColDefCol(colKey);
     }
     if (!column) {
-        console.error(`AG Grid: column '${colKey}' not found`);
+        _errorOnce(`column '${colKey}' not found`);
         return;
     }
     beans.menuService.showColumnMenu({
@@ -41,7 +42,7 @@ export function showColumnMenuAfterMouseClick(
 export function showColumnMenu(beans: BeanCollection, colKey: string | Column): void {
     const column = beans.columnModel.getCol(colKey);
     if (!column) {
-        console.error(`AG Grid: column '${colKey}' not found`);
+        _errorOnce(`column '${colKey}' not found`);
         return;
     }
     beans.menuService.showColumnMenu({

@@ -67,7 +67,7 @@ function onFilterChanged() {
 }
 
 function getRowId(params: GetRowIdParams) {
-    return params.data.id;
+    return String(params.data.id);
 }
 
 function onRowDragMove(event: RowDragMoveEvent) {

@@ -11,6 +11,7 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { ColumnEventType } from '../../events';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
+import { _errorOnce } from '../../utils/function';
 import { _exists, _missing } from '../../utils/generic';
 import { attemptMoveColumns, moveColumns, normaliseX } from '../columnMoveHelper';
 import type { DropListener } from './bodyDropTarget';
@@ -206,7 +207,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
                 case HorizontalDirection.Right:
                     return HorizontalDirection.Left;
                 default:
-                    console.error(`AG Grid: Unknown direction ${hDirection}`);
+                    _errorOnce(`Unknown direction ${hDirection}`);
             }
         } else {
             return hDirection;

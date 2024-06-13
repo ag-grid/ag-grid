@@ -10,15 +10,6 @@ import type { Component } from './component';
 import { RefPlaceholder } from './component';
 import type { AddPopupParams, PopupService } from './popupService';
 
-const TEMPLATE = /* html */ `
-    <div class="ag-picker-field" role="presentation">
-        <div data-ref="eLabel"></div>
-            <div data-ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-picker-collapsed">
-            <div data-ref="eDisplayField" class="ag-picker-field-display"></div>
-            <div data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
-        </div>
-    </div>`;
-
 export type AgPickerFieldEvent = AgAbstractFieldEvent;
 export abstract class AgPickerField<
     TValue,
@@ -56,7 +47,20 @@ export abstract class AgPickerField<
     private readonly eIcon: HTMLButtonElement = RefPlaceholder;
 
     constructor(config?: TConfig) {
-        super(config, config?.template || TEMPLATE, config?.agComponents || [], config?.className);
+        super(
+            config,
+            config?.template ||
+                /* html */ `
+            <div class="ag-picker-field" role="presentation">
+                <div data-ref="eLabel"></div>
+                    <div data-ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-picker-collapsed">
+                    <div data-ref="eDisplayField" class="ag-picker-field-display"></div>
+                    <div data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
+                </div>
+            </div>`,
+            config?.agComponents || [],
+            config?.className
+        );
 
         this.ariaRole = config?.ariaRole;
         this.onPickerFocusIn = this.onPickerFocusIn.bind(this);

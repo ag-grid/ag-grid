@@ -1,7 +1,7 @@
 import type { AgSelectParams, BeanCollection, ListOption } from '@ag-grid-community/core';
-import { AgSelect, Component, RefPlaceholder, _removeFromParent } from '@ag-grid-community/core';
-import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgSelectSelector, Component, RefPlaceholder, _removeFromParent } from '@ag-grid-community/core';
+import type { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 
 import { AgSlider } from '../../../../../widgets/agSlider';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
@@ -11,12 +11,6 @@ import { FontPanel } from '../fontPanel';
 type SeriesItemType = 'positive' | 'negative';
 
 export class SeriesItemsPanel extends Component {
-    public static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="seriesItemsGroup">
-                <ag-select data-ref="seriesItemSelect"></ag-select>
-            </ag-group-component>
-        </div>`;
-
     private readonly seriesItemsGroup: AgGroupComponent = RefPlaceholder;
 
     private chartTranslationService: ChartTranslationService;
@@ -39,10 +33,18 @@ export class SeriesItemsPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(SeriesItemsPanel.TEMPLATE, [AgGroupComponent, AgSelect], {
-            seriesItemsGroup: seriesItemsGroupParams,
-            seriesItemSelect: this.getSeriesItemsParams(),
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="seriesItemsGroup">
+                <ag-select data-ref="seriesItemSelect"></ag-select>
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector, AgSelectSelector],
+            {
+                seriesItemsGroup: seriesItemsGroupParams,
+                seriesItemSelect: this.getSeriesItemsParams(),
+            }
+        );
 
         this.initSeriesControls();
     }

@@ -1,4 +1,4 @@
-import type { ComponentClass } from '../widgets/component';
+import type { ComponentSelector } from '../widgets/component';
 
 export type LabelAlignment = 'left' | 'right' | 'top';
 
@@ -24,7 +24,7 @@ export interface AgPickerFieldParams extends AgFieldParams {
     pickerAriaLabelKey: string;
     pickerAriaLabelValue: string;
     template?: string;
-    agComponents?: ComponentClass[];
+    agComponents?: ComponentSelector[];
     className?: string;
     pickerIcon?: string;
     ariaRole?: string;

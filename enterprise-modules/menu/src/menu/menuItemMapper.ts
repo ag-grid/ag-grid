@@ -25,6 +25,7 @@ import {
     _createIconNoSpan,
     _escapeString,
     _exists,
+    _warnOnce,
 } from '@ag-grid-community/core';
 
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
@@ -396,7 +397,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     action: () => this.sortController.setSortForColumn(column!, null, false, 'columnMenu'),
                 };
             default: {
-                console.warn(`AG Grid: unknown menu item type ${key}`);
+                _warnOnce(`unknown menu item type ${key}`);
                 return null;
             }
         }

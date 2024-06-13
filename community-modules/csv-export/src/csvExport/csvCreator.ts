@@ -9,6 +9,7 @@ import type {
     NamedBean,
     ValueService,
 } from '@ag-grid-community/core';
+import { _warnOnce } from '@ag-grid-community/core';
 
 import { BaseCreator } from './baseCreator';
 import { Downloader } from './downloader';
@@ -49,7 +50,7 @@ export class CsvCreator
 
     protected export(userParams?: CsvExportParams): void {
         if (this.isExportSuppressed()) {
-            console.warn(`AG Grid: Export cancelled. Export is not allowed as per your configuration.`);
+            _warnOnce(`Export cancelled. Export is not allowed as per your configuration.`);
             return;
         }
 

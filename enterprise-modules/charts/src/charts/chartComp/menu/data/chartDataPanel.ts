@@ -26,8 +26,6 @@ const DefaultDataPanelDef: ChartDataPanelType = {
 };
 
 export class ChartDataPanel extends Component {
-    public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper ag-scrollable-container"></div>`;
-
     protected chartTranslationService: ChartTranslationService;
     private chartService: IChartService;
 
@@ -48,7 +46,7 @@ export class ChartDataPanel extends Component {
     private panels: Component[] = [];
 
     constructor(private readonly chartMenuContext: ChartMenuContext) {
-        super(ChartDataPanel.TEMPLATE);
+        super(/* html */ `<div class="ag-chart-data-wrapper ag-scrollable-container"></div>`);
 
         this.chartController = chartMenuContext.chartController;
     }

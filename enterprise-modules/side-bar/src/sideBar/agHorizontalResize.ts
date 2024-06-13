@@ -1,5 +1,4 @@
 import type {
-    AgComponentSelector,
     BeanCollection,
     HorizontalResizeService,
     ToolPanelSizeChangedEvent,
@@ -13,8 +12,6 @@ export class AgHorizontalResize extends Component {
     public wireBeans(beans: BeanCollection) {
         this.horizontalResizeService = beans.horizontalResizeService;
     }
-
-    static readonly selector: AgComponentSelector = 'AG-HORIZONTAL-RESIZE';
 
     private startingWidth: number;
     private elementToResize: HTMLElement;

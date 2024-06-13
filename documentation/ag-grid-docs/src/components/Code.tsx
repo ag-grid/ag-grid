@@ -1,3 +1,4 @@
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import classnames from 'classnames';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-bash';
@@ -12,7 +13,9 @@ import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-xml-doc';
 import 'prismjs/plugins/keep-markup/prism-keep-markup';
 import 'prismjs/plugins/line-numbers/prism-line-numbers';
-import { memo, useEffect, useRef } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
+
+import styles from './Code.module.scss';
 
 const GrammarMap = {
     js: Prism.languages.javascript,
@@ -32,6 +35,34 @@ const GrammarMap = {
 
 export type Language = keyof typeof GrammarMap;
 
+function CopyToClipboardButton({ code }: { code: string | string[] }) {
+    const [hasCopied, setHasCopied] = useState(false);
+
+    const copyToClipboard = async (code) => {
+        await navigator.clipboard.writeText(code);
+        await setHasCopied(true);
+        await setTimeout(() => {
+            setHasCopied(false);
+        }, 2000);
+    };
+
+    return (
+        <span
+            className={classnames(styles.clipboardButtonOuter, hasCopied ? styles.hasCopied : '')}
+            onClick={() => {
+                copyToClipboard(code);
+            }}
+        >
+            <span className={styles.clipboardButtonCopiedOuter}>
+                <span className={styles.clipboardButtonCopied}>Copied</span>
+            </span>
+            <span className={styles.clipboardButton}>
+                {hasCopied ? <Icon className={styles.check} name={'check'} /> : <Icon name={'feature-clipboard'} />}
+            </span>
+        </span>
+    );
+}
+
 /**
  * This uses Prism to highlight a provided code snippet.
  */
@@ -41,6 +72,7 @@ function Code({
     className,
     keepMarkup = false,
     lineNumbers = false,
+    copyToClipboard = false,
     ...props
 }: {
     code: string | string[];
@@ -48,6 +80,7 @@ function Code({
     className?: string;
     keepMarkup?: boolean;
     lineNumbers?: boolean;
+    copyToClipboard?: boolean;
 }) {
     if (Array.isArray(code)) {
         code = code.join('\n');
@@ -58,6 +91,8 @@ function Code({
             className={classnames('code', `language-${language}`, className, lineNumbers ? 'line-numbers' : null)}
             {...props}
         >
+            {copyToClipboard && <CopyToClipboardButton code={code} />}
+
             {keepMarkup || lineNumbers ? (
                 <CodeWithPrismPlugins code={code} keepMarkup={keepMarkup} />
             ) : (

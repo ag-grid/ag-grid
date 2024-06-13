@@ -25,7 +25,7 @@ export interface ICellRendererParams<TData = any, TValue = any, TContext = any> 
     eGridCell: HTMLElement;
     /** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */
     eParentOfValue: HTMLElement;
-    /** Convenience function to get most recent up to date value. */
+    /** Convenience function to get most recent up to data value. */
     getValue?: () => TValue | null | undefined;
     /** Convenience function to set the value. */
     setValue?: (value: TValue | null | undefined) => void;

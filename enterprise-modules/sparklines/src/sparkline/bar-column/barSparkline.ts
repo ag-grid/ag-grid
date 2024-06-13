@@ -9,8 +9,6 @@ const { BandScale } = _Scale;
 
 interface BarNodeDatum extends RectNodeDatum {}
 export class BarSparkline extends BarColumnSparkline {
-    static className = 'BarSparkline';
-
     protected updateYScaleRange() {
         const { seriesRect, yScale } = this;
         yScale.range = [0, seriesRect.width];

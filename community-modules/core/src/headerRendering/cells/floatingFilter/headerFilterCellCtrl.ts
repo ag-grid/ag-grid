@@ -1,7 +1,6 @@
-import type { BeanCollection } from '@ag-grid-community/core';
-
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { KeyCode } from '../../../constants/keyCode';
+import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { ColumnEvent, FilterChangedEvent } from '../../../events';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';

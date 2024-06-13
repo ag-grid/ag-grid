@@ -97,7 +97,7 @@ export class TabGuardComp<TLocalEvent extends string = ComponentEvent> extends C
 
     public override appendChild(newChild: Component | HTMLElement, container?: HTMLElement | undefined): void {
         if (!_isNodeOrElement(newChild)) {
-            newChild = (newChild as Component).getGui();
+            newChild = newChild.getGui();
         }
 
         const { eBottomGuard: bottomTabGuard } = this;

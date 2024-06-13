@@ -7,9 +7,10 @@ import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
 import { _setAriaDisabled } from '../utils/aria';
 import { _createIconNoSpan } from '../utils/icon';
 import { _formatNumberCommas } from '../utils/number';
-import type { AgComponentSelector } from '../widgets/component';
+import type { ComponentSelector } from '../widgets/component';
 import { Component, RefPlaceholder } from '../widgets/component';
-import { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
+import type { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
+import { PageSizeSelectorSelector } from './pageSizeSelector/pageSizeSelectorComp';
 import type { PaginationService } from './paginationService';
 
 export class PaginationComp extends Component {
@@ -22,8 +23,6 @@ export class PaginationComp extends Component {
         this.rowModel = beans.rowModel;
         this.paginationService = beans.paginationService!;
     }
-
-    static readonly selector: AgComponentSelector = 'AG-PAGINATION';
 
     private readonly btFirst: HTMLElement = RefPlaceholder;
     private readonly btPrevious: HTMLElement = RefPlaceholder;
@@ -49,7 +48,7 @@ export class PaginationComp extends Component {
 
     public postConstruct(): void {
         const isRtl = this.gos.get('enableRtl');
-        this.setTemplate(this.getTemplate(), [PageSizeSelectorComp]);
+        this.setTemplate(this.getTemplate(), [PageSizeSelectorSelector]);
 
         const { btFirst, btPrevious, btNext, btLast } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast]);
@@ -296,3 +295,8 @@ export class PaginationComp extends Component {
         this.lbRecordCount.textContent = this.formatNumber(0);
     }
 }
+
+export const PaginationSelector: ComponentSelector = {
+    selector: 'AG-PAGINATION',
+    component: PaginationComp,
+};

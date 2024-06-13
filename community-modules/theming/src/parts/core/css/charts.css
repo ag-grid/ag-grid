@@ -13,19 +13,6 @@
     overflow: hidden;
 }
 
-.ag-chart-title-edit {
-    position: absolute;
-    display: none;
-    top: 0;
-    /*rtl:ignore*/
-    left: 0;
-    text-align: center;
-}
-
-.ag-chart-title-edit.currently-editing {
-    display: inline-block;
-}
-
 .ag-chart-canvas-wrapper {
     position: relative;
     flex: 1 1 auto;
@@ -305,6 +292,7 @@
     background-color: unset;
     padding: 0 2px;
     border-radius: 1px;
+    z-index: 2000; /* Temporary fix for button not being clickable. */
 }
 
 .ag-chart-mini-thumbnail {

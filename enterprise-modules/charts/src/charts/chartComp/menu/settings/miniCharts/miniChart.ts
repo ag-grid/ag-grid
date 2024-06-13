@@ -1,5 +1,5 @@
 import type { BeanCollection } from '@ag-grid-community/core';
-import { Component } from '@ag-grid-community/core';
+import { Component, _errorOnce } from '@ag-grid-community/core';
 import { _Scene } from 'ag-charts-community';
 
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
@@ -28,11 +28,17 @@ export abstract class MiniChart extends Component {
         const scene = new _Scene.Scene({
             width: this.size,
             height: this.size,
+            domManager: {
+                addChild(type, _, child) {
+                    const newEl = child ?? container.ownerDocument.createElement(type);
+                    container.appendChild(newEl);
+                    return newEl;
+                },
+            },
         });
 
         scene.canvas.element.classList.add(CANVAS_CLASS);
         scene.setRoot(this.root);
-        scene.setContainer(container);
 
         this.scene = scene;
     }
@@ -42,7 +48,7 @@ export abstract class MiniChart extends Component {
 
         // Necessary to force scene graph render as we are not using the standalone factory.
         this.scene.render().catch((e: Error) => {
-            console.error(`${ERROR_MESSAGE}`, e);
+            _errorOnce(`${ERROR_MESSAGE}`, e);
         });
     }
 

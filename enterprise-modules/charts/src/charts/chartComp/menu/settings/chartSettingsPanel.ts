@@ -17,19 +17,6 @@ import { MiniChartsContainer } from './miniChartsContainer';
 type AnimationDirection = 'left' | 'right';
 
 export class ChartSettingsPanel extends Component {
-    public static TEMPLATE /* html */ = `<div class="ag-chart-settings-wrapper">
-            <div data-ref="eMiniChartsContainer" class="ag-chart-settings-mini-charts-container ag-scrollable-container"></div>
-            <div data-ref="eNavBar" class="ag-chart-settings-nav-bar">
-                <div data-ref="ePrevBtn" class="ag-chart-settings-prev">
-                    <button type="button" class="ag-button ag-chart-settings-prev-button"></button>
-                </div>
-                <div data-ref="eCardSelector" class="ag-chart-settings-card-selector"></div>
-                <div data-ref="eNextBtn" class="ag-chart-settings-next">
-                    <button type="button" class="ag-button ag-chart-settings-next-button"></button>
-                </div>
-            </div>
-        </div>`;
-
     private readonly eMiniChartsContainer: HTMLElement = RefPlaceholder;
     private readonly eNavBar: HTMLElement = RefPlaceholder;
     private readonly eCardSelector: HTMLElement = RefPlaceholder;
@@ -46,7 +33,18 @@ export class ChartSettingsPanel extends Component {
     private isAnimating: boolean;
 
     constructor(private readonly chartController: ChartController) {
-        super(ChartSettingsPanel.TEMPLATE);
+        super(/* html */ `<div class="ag-chart-settings-wrapper">
+            <div data-ref="eMiniChartsContainer" class="ag-chart-settings-mini-charts-container ag-scrollable-container"></div>
+            <div data-ref="eNavBar" class="ag-chart-settings-nav-bar">
+                <div data-ref="ePrevBtn" class="ag-chart-settings-prev">
+                    <button type="button" class="ag-button ag-chart-settings-prev-button"></button>
+                </div>
+                <div data-ref="eCardSelector" class="ag-chart-settings-card-selector"></div>
+                <div data-ref="eNextBtn" class="ag-chart-settings-next">
+                    <button type="button" class="ag-button ag-chart-settings-next-button"></button>
+                </div>
+            </div>
+        </div>`);
     }
 
     public postConstruct() {

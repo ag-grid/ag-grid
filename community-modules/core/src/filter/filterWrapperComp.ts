@@ -6,6 +6,7 @@ import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedPar
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IFilterComp } from '../interfaces/iFilter';
 import { _clearElement } from '../utils/dom';
+import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { Component } from '../widgets/component';
@@ -71,9 +72,7 @@ export class FilterWrapperComp extends Component {
             const guiFromFilter = filter!.getGui();
 
             if (!_exists(guiFromFilter)) {
-                console.warn(
-                    `AG Grid: getGui method from filter returned ${guiFromFilter}; it should be a DOM element.`
-                );
+                _warnOnce(`getGui method from filter returned ${guiFromFilter}; it should be a DOM element.`);
             }
 
             this.appendChild(guiFromFilter);

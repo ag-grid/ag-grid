@@ -3,7 +3,7 @@ import { _exists } from '../utils/generic';
 import { _isEventFromPrintableCharacter } from '../utils/keyboard';
 import type { AgAbstractInputFieldEvent } from './agAbstractInputField';
 import { AgAbstractInputField } from './agAbstractInputField';
-import type { AgComponentSelector } from './component';
+import type { ComponentSelector } from './component';
 
 export interface AgInputTextFieldParams extends AgInputFieldParams {
     allowedCharPattern?: string;
@@ -13,8 +13,6 @@ export class AgInputTextField<
     TConfig extends AgInputTextFieldParams = AgInputTextFieldParams,
     TEventType extends string = AgInputTextFieldEvent,
 > extends AgAbstractInputField<HTMLInputElement, string, TConfig, AgInputTextFieldEvent | TEventType> {
-    static readonly selector: AgComponentSelector = 'AG-INPUT-TEXT-FIELD';
-
     constructor(config?: TConfig, className = 'ag-text-field', inputType = 'text') {
         super(config, className, inputType);
     }
@@ -66,3 +64,7 @@ export class AgInputTextField<
         });
     }
 }
+export const AgInputTextFieldSelector: ComponentSelector = {
+    selector: 'AG-INPUT-TEXT-FIELD',
+    component: AgInputTextField,
+};

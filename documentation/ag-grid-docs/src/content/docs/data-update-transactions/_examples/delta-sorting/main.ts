@@ -32,7 +32,7 @@ const gridOptions: GridOptions = {
     },
     rowData: getRowData(100000),
     deltaSort: true,
-    getRowId: ({ data }: GetRowIdParams) => data.id,
+    getRowId: ({ data }: GetRowIdParams) => String(data.id),
 };
 
 function addDelta() {

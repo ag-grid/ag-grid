@@ -28,9 +28,7 @@ const gridOptions: GridOptions<IAccount> = {
         flex: 1,
         enableCellChangeFlash: true,
     },
-    getRowId: (params: GetRowIdParams) => {
-        return params.data.account;
-    },
+    getRowId: (params: GetRowIdParams) => String(params.data.account),
     masterDetail: true,
     detailCellRendererParams: {
         refreshStrategy: 'everything',

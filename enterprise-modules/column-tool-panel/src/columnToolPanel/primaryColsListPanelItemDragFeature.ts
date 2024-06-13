@@ -7,7 +7,8 @@ import type {
     ColumnPanelItemDragStartEvent,
 } from '@ag-grid-community/core';
 import { BeanStub, DragSourceType, isProvidedColumnGroup } from '@ag-grid-community/core';
-import { type VirtualList, VirtualListDragFeature, type VirtualListDragItem } from '@ag-grid-enterprise/core';
+import { VirtualListDragFeature } from '@ag-grid-enterprise/core';
+import type { VirtualList, VirtualListDragItem } from '@ag-grid-enterprise/core';
 
 import type { AgPrimaryColsList } from './agPrimaryColsList';
 import type { ToolPanelColumnComp } from './toolPanelColumnComp';

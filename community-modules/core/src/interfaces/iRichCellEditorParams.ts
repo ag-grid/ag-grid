@@ -1,5 +1,8 @@
 import type { AgPickerFieldParams } from './agFieldParams';
 import type { ICellEditorParams } from './iCellEditor';
+import type { ICellEditorRendererParams } from './iCellEditorRenderer';
+
+export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRendererParams<TValue> {}
 
 export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
     value?: TValue[] | TValue;
@@ -13,14 +16,18 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
     filterList?: boolean;
     searchType?: 'match' | 'matchAny' | 'fuzzy';
     highlightMatch?: boolean;
+
     multiSelect?: boolean;
     suppressDeselectAll?: boolean;
+    showSelectedItemsAsPills?: boolean;
+
     placeholder?: string;
     initialInputValue?: string;
 
     valueFormatter?: (value: TValue[] | TValue) => any;
     searchStringCreator?: (values: TValue[]) => string[];
 }
+
 export interface RichCellEditorValuesCallback<TData = any, TValue = any> {
     (params: ICellEditorParams<TData, TValue>): TValue[] | Promise<TValue[]>;
 }
@@ -54,7 +61,7 @@ export interface IRichCellEditorParams<TData = any, TValue = any> {
     /**
      * If `true`, each item on the list of values will highlight the part of the text that matches the input.
      * Note: It only makes sense to use this option when `filterList` is `true` and `searchType` is **not** `fuzzy`.
-     * @default false.
+     * @default false
      */
     highlightMatch?: boolean;
     /**
@@ -67,6 +74,11 @@ export interface IRichCellEditorParams<TData = any, TValue = any> {
      * Note: This feature only works when `multiSelect=true`.
      */
     suppressDeselectAll?: boolean;
+    /**
+     * If `true` the selected items will be displayed with a `Pill Renderer`.
+     * Note: This feature only works when `multiSelect=true`.
+     */
+    showSelectedItemsAsPills?: boolean;
     /**
      * The value in `ms` for the search algorithm debounce delay (only relevant when `allowTyping=false`).
      * @default 300

@@ -1,4 +1,4 @@
-import { BeanStub } from '@ag-grid-community/core';
+import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 import type {
     BeanCollection,
     FocusService,
@@ -88,7 +88,7 @@ export class LazyCache extends BeanStub {
     /**
      * Grid options properties - stored locally for access speed.
      */
-    private getRowIdFunc?: (params: WithoutGridCommon<GetRowIdParams<any, any>>) => string;
+    private getRowIdFunc?: (params: WithoutGridCommon<GetRowIdParams>) => string;
     private isMasterDetail: boolean;
 
     /**
@@ -117,7 +117,7 @@ export class LazyCache extends BeanStub {
         this.nodesToRefresh = new Set();
 
         this.defaultNodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
-        this.getRowIdFunc = this.gos.getCallback('getRowId');
+        this.getRowIdFunc = this.gos.getRowIdCallback();
         this.isMasterDetail = this.gos.get('masterDetail');
     }
 
@@ -615,12 +615,8 @@ export class LazyCache extends BeanStub {
         if (node.stub) {
             return false;
         }
-
-        if (this.getRowIdFunc != null) {
-            const id: string = this.getRowId(data)!;
-            return node.id === id;
-        }
-        return node.data === data;
+        const id = this.getRowId(data);
+        return id === null ? node.data === data : node.id === id;
     }
 
     /**
@@ -630,7 +626,7 @@ export class LazyCache extends BeanStub {
         const firstRow = this.rowRenderer.getFirstVirtualRenderedRow();
         const lastRow = this.rowRenderer.getLastVirtualRenderedRow();
         const firstRowBlockStart = this.getBlockStartIndex(firstRow);
-        const [_, lastRowBlockEnd] = this.getBlockBounds(lastRow);
+        const [, lastRowBlockEnd] = this.getBlockBounds(lastRow);
 
         this.nodeMap.forEach((lazyNode) => {
             // failed loads are still useful, so we don't purge them
@@ -789,8 +785,8 @@ export class LazyCache extends BeanStub {
             const duplicates = this.extractDuplicateIds(response.rowData);
             if (duplicates.length > 0) {
                 const duplicateIdText = duplicates.join(', ');
-                console.warn(
-                    `AG Grid: Unable to display rows as duplicate row ids (${duplicateIdText}) were returned by the getRowId callback. Please modify the getRowId callback to provide unique ids.`
+                _warnOnce(
+                    `Unable to display rows as duplicate row ids (${duplicateIdText}) were returned by the getRowId callback. Please modify the getRowId callback to provide unique ids.`
                 );
                 this.onLoadFailed(firstRowIndex, numberOfRowsExpected);
                 return;
@@ -969,7 +965,7 @@ export class LazyCache extends BeanStub {
         this.store.fireStoreUpdatedEvent();
     }
 
-    private getRowId(data: any) {
+    private getRowId(data: any): string | null {
         if (this.getRowIdFunc == null) {
             return null;
         }
@@ -977,12 +973,11 @@ export class LazyCache extends BeanStub {
         // find rowNode using id
         const { level } = this.store.getRowDetails();
         const parentKeys = this.store.getParentNode().getGroupKeys();
-        const id: string = this.getRowIdFunc({
+        return this.getRowIdFunc({
             data,
             parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
             level,
         });
-        return String(id);
     }
 
     public getOrderedNodeMap() {
@@ -1031,7 +1026,7 @@ export class LazyCache extends BeanStub {
 
         const updatedNodes: RowNode[] = [];
         updates.forEach((data) => {
-            const id: string = this.getRowId(data)!;
+            const id = this.getRowId(data);
             const lazyNode = this.nodeMap.getBy('id', id);
             if (lazyNode) {
                 this.blockUtils.updateDataIntoRowNode(lazyNode.node, data);

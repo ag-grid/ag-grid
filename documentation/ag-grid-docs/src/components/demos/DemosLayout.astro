@@ -1,0 +1,14 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+interface Props {
+    title: string;
+    description?: string;
+}
+
+const { title, description } = Astro.props as Props;
+---
+
+<Layout title={title} description={description} showSearchBar={true} showDocsNav={false} hideFooter={true}>
+    <slot />
+</Layout>

@@ -3,13 +3,11 @@ import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layout
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
 import { _clearElement } from '../../utils/dom';
 import type { AgPromise } from '../../utils/promise';
-import type { AgComponentSelector } from '../../widgets/component';
+import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import type { OverlayService } from './overlayService';
 
 export class OverlayWrapperComponent extends Component implements LayoutView {
-    static readonly selector: AgComponentSelector = 'AG-OVERLAY-WRAPPER';
-
     private overlayService: OverlayService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -115,3 +113,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         super.destroy();
     }
 }
+export const OverlayWrapperSelector: ComponentSelector = {
+    selector: 'AG-OVERLAY-WRAPPER',
+    component: OverlayWrapperComponent,
+};

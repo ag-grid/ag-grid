@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { PaginationService } from '../pagination/paginationService';
+import { _warnOnce } from '../utils/function';
 
 interface TaskItem {
     task: () => void;
@@ -77,7 +78,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     // when it should not.
     private verifyAnimationFrameOn(methodName: string): void {
         if (this.useAnimationFrame === false) {
-            console.warn(`AG Grid: AnimationFrameService.${methodName} called but animation frames are off`);
+            _warnOnce(`AnimationFrameService.${methodName} called but animation frames are off`);
         }
     }
 

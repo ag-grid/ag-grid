@@ -15,7 +15,7 @@ import type {
     SortController,
     ValueService,
 } from '@ag-grid-community/core';
-import { BeanStub, ModuleNames, ModuleRegistry, _includes, _last, _values } from '@ag-grid-community/core';
+import { BeanStub, ModuleNames, ModuleRegistry, _includes, _last, _values, _warnOnce } from '@ag-grid-community/core';
 
 import type { ColState } from '../model/chartDataModel';
 import { ChartDataModel } from '../model/chartDataModel';
@@ -61,12 +61,12 @@ export class ChartDatasource extends BeanStub {
     public getData(params: ChartDatasourceParams): IData {
         if (params.crossFiltering) {
             if (params.grouping) {
-                console.warn('AG Grid: crossing filtering with row grouping is not supported.');
+                _warnOnce('crossing filtering with row grouping is not supported.');
                 return { chartData: [], columnNames: {} };
             }
 
             if (!this.gos.isRowModelType('clientSide')) {
-                console.warn('AG Grid: crossing filtering is only supported in the client side row model.');
+                _warnOnce('crossing filtering is only supported in the client side row model.');
                 return { chartData: [], columnNames: {} };
             }
         }
@@ -142,7 +142,7 @@ export class ChartDatasource extends BeanStub {
         for (let i = 0; i < numRows; i++) {
             const rowNode = crossFiltering ? allRowNodes[i] : this.gridRowModel.getRow(i + startRow)!;
 
-            if (rowNode.footer) {
+            if (rowNode.footer || rowNode.detail) {
                 numRemovedNodes++;
                 continue;
             }

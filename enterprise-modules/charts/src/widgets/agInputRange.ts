@@ -1,4 +1,4 @@
-import type { AgComponentSelector, AgInputFieldParams } from '@ag-grid-community/core';
+import type { AgInputFieldParams, ComponentSelector } from '@ag-grid-community/core';
 import { AgAbstractInputField } from '@ag-grid-community/core';
 
 interface IInputRange extends AgInputFieldParams {
@@ -8,7 +8,6 @@ interface IInputRange extends AgInputFieldParams {
 }
 
 export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string, IInputRange> {
-    static readonly selector: AgComponentSelector = 'AG-INPUT-RANGE';
     private min: number;
     private max: number;
 
@@ -80,3 +79,8 @@ export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string,
         return ret;
     }
 }
+
+export const AgInputRangeSelector: ComponentSelector = {
+    selector: 'AG-INPUT-RANGE',
+    component: AgInputRange,
+};

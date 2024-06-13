@@ -3,10 +3,9 @@ import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
 import { _addOrRemoveAttribute } from '../utils/dom';
 import type { AgInputTextFieldParams } from './agInputTextField';
 import { AgInputTextField } from './agInputTextField';
-import type { AgComponentSelector } from './component';
+import type { ComponentSelector } from './component';
 
 export class AgInputDateField extends AgInputTextField {
-    static override selector: AgComponentSelector = 'AG-INPUT-DATE-FIELD';
     private min?: string;
     private max?: string;
     private step?: number;
@@ -89,3 +88,8 @@ export class AgInputDateField extends AgInputTextField {
         this.setValue(_serialiseDate(date ?? null, false), silent);
     }
 }
+
+export const AgInputDateFieldSelector: ComponentSelector = {
+    selector: 'AG-INPUT-DATE-FIELD',
+    component: AgInputDateField,
+};

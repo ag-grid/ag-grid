@@ -1,6 +1,6 @@
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { ComponentMeta, ControllerMeta, SingletonBean } from '../context/context';
-import type { ComponentClass } from '../widgets/component';
+import type { ComponentSelector } from '../widgets/component';
 import type { RowModelType } from './iRowModel';
 
 export type ModuleValidationValidResult = {
@@ -24,7 +24,6 @@ export interface Module {
     validate?: () => ModuleValidationResult;
     moduleName: string;
     beans?: SingletonBean[];
-    agStackComponents?: ComponentClass[];
     controllers?: ControllerMeta[];
     userComponents?: ComponentMeta[];
     rowModel?: RowModelType;

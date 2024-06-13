@@ -31,6 +31,7 @@ import {
     RowHighlightPosition,
     RowNode,
     _debounce,
+    _errorOnce,
     _exists,
     _insertIntoArray,
     _last,
@@ -643,7 +644,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         if (_missing(paramsStep)) {
-            console.error(`AG Grid: invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}`);
+            _errorOnce(`invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}`);
             return undefined;
         }
         const animate = !this.gos.get('suppressAnimationFrame');
@@ -792,7 +793,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     // eslint-disable-next-line
     public setDatasource(datasource: any): void {
-        console.error('AG Grid: should never call setDatasource on clientSideRowController');
+        _errorOnce('should never call setDatasource on clientSideRowController');
     }
 
     public getTopLevelNodes(): RowNode[] | null {

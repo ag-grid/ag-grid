@@ -1,8 +1,9 @@
 import type {
     AgColumn,
+    AgInputTextField,
     BeanCollection,
     CellValueChangedEvent,
-    ComponentClass,
+    ComponentSelector,
     DataTypeService,
     FuncColsService,
     GetDataPath,
@@ -18,7 +19,7 @@ import type {
     ValueService,
 } from '@ag-grid-community/core';
 import {
-    AgInputTextField,
+    AgInputTextFieldSelector,
     AgPromise,
     GROUP_AUTO_COLUMN_ID,
     KeyCode,
@@ -31,7 +32,8 @@ import {
     _toStringOrNull,
     _warnOnce,
 } from '@ag-grid-community/core';
-import { VirtualList, type VirtualListModel } from '@ag-grid-enterprise/core';
+import { VirtualList } from '@ag-grid-enterprise/core';
+import type { VirtualListModel } from '@ag-grid-enterprise/core';
 
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { SetFilterDisplayValue } from './iSetDisplayValueModel';
@@ -100,8 +102,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
                 <div data-ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
             </div>`;
     }
-    protected getAgComponents(): ComponentClass[] {
-        return [AgInputTextField];
+    protected getAgComponents(): ComponentSelector[] {
+        return [AgInputTextFieldSelector];
     }
 
     protected override handleKeyDown(e: KeyboardEvent): void {

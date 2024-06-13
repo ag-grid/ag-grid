@@ -1,21 +1,13 @@
 import type { BeanCollection } from '@ag-grid-community/core';
 import { Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 
-import { AgSlider } from '../../../../../widgets/agSlider';
+import { AgSliderSelector } from '../../../../../widgets/agSlider';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class CalloutPanel extends Component {
-    public static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="calloutGroup">
-                <ag-slider data-ref="calloutLengthSlider"></ag-slider>
-                <ag-slider data-ref="calloutStrokeWidthSlider"></ag-slider>
-                <ag-slider data-ref="labelOffsetSlider"></ag-slider>
-            </ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -34,15 +26,25 @@ export class CalloutPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(CalloutPanel.TEMPLATE, [AgGroupComponent, AgSlider], {
-            calloutGroup: calloutGroupParams,
-            calloutLengthSlider: this.chartMenuUtils.getDefaultSliderParams('calloutLine.length', 'length', 40),
-            calloutStrokeWidthSlider: this.chartMenuUtils.getDefaultSliderParams(
-                'calloutLine.strokeWidth',
-                'strokeWidth',
-                10
-            ),
-            labelOffsetSlider: this.chartMenuUtils.getDefaultSliderParams('calloutLabel.offset', 'offset', 30),
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="calloutGroup">
+                <ag-slider data-ref="calloutLengthSlider"></ag-slider>
+                <ag-slider data-ref="calloutStrokeWidthSlider"></ag-slider>
+                <ag-slider data-ref="labelOffsetSlider"></ag-slider>
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector, AgSliderSelector],
+            {
+                calloutGroup: calloutGroupParams,
+                calloutLengthSlider: this.chartMenuUtils.getDefaultSliderParams('calloutLine.length', 'length', 40),
+                calloutStrokeWidthSlider: this.chartMenuUtils.getDefaultSliderParams(
+                    'calloutLine.strokeWidth',
+                    'strokeWidth',
+                    10
+                ),
+                labelOffsetSlider: this.chartMenuUtils.getDefaultSliderParams('calloutLabel.offset', 'offset', 30),
+            }
+        );
     }
 }

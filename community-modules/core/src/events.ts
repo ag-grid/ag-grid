@@ -1,10 +1,11 @@
+import type { AgChartThemeOverrides } from 'ag-charts-types';
+
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { AgEventType } from './eventTypes';
 import type { FilterRequestSource } from './filter/iColumnFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
-import type { AgChartThemeOverrides } from './interfaces/iAgChartOptions';
 import type { ChartType } from './interfaces/iChartOptions';
 import type { Column, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
 import type { AgGridCommon } from './interfaces/iCommon';
@@ -455,6 +456,10 @@ export interface TooltipHideEvent<TData = any, TContext = any> extends TooltipEv
 
 export interface PaginationPixelOffsetChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'paginationPixelOffsetChanged', TData, TContext> {}
+
+export interface StickyTopOffsetChangedEvent extends AgEvent<'stickyTopOffsetChanged'> {
+    offset: number;
+}
 
 export interface CommonCellFocusParams {
     /** Row index of the focused cell */

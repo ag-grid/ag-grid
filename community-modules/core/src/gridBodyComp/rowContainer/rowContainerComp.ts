@@ -4,7 +4,7 @@ import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
 import { _setAriaRole } from '../../utils/aria';
 import { _ensureDomOrder, _insertWithDomOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
-import type { AgComponentSelector } from '../../widgets/component';
+import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import type { IRowContainerComp, RowContainerName, RowContainerOptions } from './rowContainerCtrl';
 import { RowContainerCtrl, _getRowContainerOptions } from './rowContainerCtrl';
@@ -25,8 +25,6 @@ function templateFactory(options: RowContainerOptions): string {
 }
 
 export class RowContainerComp extends Component {
-    static readonly selector: AgComponentSelector = 'AG-ROW-CONTAINER';
-
     private beans: BeanCollection;
 
     public wireBeans(beans: BeanCollection): void {
@@ -61,6 +59,7 @@ export class RowContainerComp extends Component {
                 this.domOrder = domOrder;
             },
             setContainerWidth: (width) => (this.eContainer.style.width = width),
+            setOffsetTop: (offset) => (this.eContainer.style.transform = `translateY(${offset})`),
         };
 
         const ctrl = this.createManagedBean(new RowContainerCtrl(this.name));
@@ -124,3 +123,8 @@ export class RowContainerComp extends Component {
         }
     }
 }
+
+export const RowContainerSelector: ComponentSelector = {
+    selector: 'AG-ROW-CONTAINER',
+    component: RowContainerComp,
+};
