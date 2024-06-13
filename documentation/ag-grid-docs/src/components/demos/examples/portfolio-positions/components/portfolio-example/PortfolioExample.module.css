@@ -9,7 +9,11 @@
 .grid {
     --ag-row-height: 36px;
     --ag-header-height: 40px;
+    --ag-header-background-color: #fff;
+    height: calc(100vh - var(--layout-grid-header-height));
+}
 
+:global(.ag-theme-quartz-dark) {
     --ag-background-color: #001223;
     --ag-foreground-color: #d8e0e8;
 
@@ -23,13 +27,10 @@
 
     --input-background-color: #001223;
     --input-focus-box-shadow-color: rgba(255, 255, 255, 0.25);
-
-    height: calc(100vh - var(--layout-grid-header-height));
 }
 
 :global(.ag-theme-quartz .ag-row-group),
 :global(.ag-theme-quartz-dark .ag-row-group) {
-    color: #8097ad;
     text-transform: uppercase;
     font-size: 12px;
 }
@@ -102,11 +103,11 @@
 }
 
 :global(.ag-theme-quartz .cell-green) {
-    color: rgb(70, 227, 114);
+    color: rgb(39, 134, 66);
 }
 
 :global(.ag-theme-quartz .cell-red) {
-    color: rgb(255, 0, 92);
+    color: rgb(208, 10, 46);
 }
 
 :global(.ag-theme-quartz-dark .cell-green) {
