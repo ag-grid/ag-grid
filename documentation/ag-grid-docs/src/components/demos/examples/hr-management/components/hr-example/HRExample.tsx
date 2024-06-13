@@ -42,6 +42,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
         {
             headerName: 'Contact',
             field: 'contact',
+            pinned: 'left',
             cellRendererSelector: (params: ICellRendererParams<IRow>) => {
                 const contactDetails = {
                     component: ContactCellRenderer,
