@@ -58,7 +58,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                     },
                 ],
             },
-            width: 600
+            width: 600,
         },
         {   field: 'sku', 
             headerName: 'SKU', 
@@ -209,8 +209,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                         paginationPageSize={10}
                         paginationPageSizeSelector={paginationPageSizeSelector}
                         masterDetail={true}
-                        detailCellRendererParams={detailCellRendererParams}
-                    />
+                        detailCellRendererParams={detailCellRendererParams}                    />
                 </div>
             </div>
         </div>

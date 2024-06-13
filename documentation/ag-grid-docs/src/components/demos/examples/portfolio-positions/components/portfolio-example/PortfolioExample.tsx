@@ -43,7 +43,6 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             pinned: 'left',
             width: 150,
             cellRenderer: TickerCellRenderer,
-            rowDrag: true,
         },
         {
             headerName: 'P/L',
@@ -254,7 +253,6 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
                         }}
                         groupDisplayType="groupRows"
                         groupDefaultExpanded={1}
-                        columnMenu="new"
                         rowGroupPanelShow={'always'}
                     />
                 </div>
