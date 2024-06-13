@@ -149,8 +149,6 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
      */
     public destroyBean(bean: GenericBean<TBeanName, TBeanCollection> | null | undefined): undefined {
         bean?.destroy?.();
-        // We pass an empty object so all the beans can clean up their references automatically
-        bean?.wireBeans?.({} as any);
     }
 
     /**
