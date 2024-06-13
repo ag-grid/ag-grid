@@ -1,18 +1,5 @@
 @use 'design-system' as *;
 
-// Page 'subheader' styles copied from `docs.module.scss`
-// !important required to
-.pageDescription {
-    font-size: var(--text-fs-xl) !important;
-    line-height: var(--text-lh-sm) !important;
-    margin-bottom: $spacing-size-8;
-    color: color-mix(in srgb, var(--color-fg-secondary), var(--color-bg-primary) 20%);
-
-    :global(code) {
-        font-size: 0.8em;
-    }
-}
-
 .hasLicenseInput {
     display: flex;
     flex-direction: row;

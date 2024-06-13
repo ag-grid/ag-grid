@@ -106,11 +106,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
 
     return (
         <>
-            <p className={styles.pageDescription}>
-                Validate your licence key and configure your application. See sample code and example projects to learn
-                how to install your AG Grid Enterprise products.
-            </p>
-
             <form>
                 <p>Fill in the following form to get instructions on how to set up your license:</p>
                 <div className={styles.inputList}>
