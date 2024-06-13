@@ -136,6 +136,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                         No license key yet
                     </label>
                 </div>
+
                 {hasLicense && (
                     <textarea
                         className={classnames(styles.license, {
@@ -148,17 +149,21 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                         }}
                     ></textarea>
                 )}
+
                 {validLicenseText && <Idea>{validLicenseText}</Idea>}
+
                 {errors.expired && (
                     <Warning>
                         {errors.expired}. <EmailSales />
                     </Warning>
                 )}
+
                 {errors.userLicenseError && (
                     <Warning>
                         {errors.userLicenseError}. <EmailSales />
                     </Warning>
                 )}
+
                 {errors.v2License && (
                     <Warning>
                         {errors.v2License}. <EmailSales />
@@ -177,34 +182,27 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                 )}
 
                 <div className={styles.licenseData}>
-                    <div>
-                        <label>Framework</label>
-                        <div className={styles.frameworkContainer}>
-                            <img
-                                className={styles.frameworkLogo}
-                                src={urlWithBaseUrl(`/images/fw-logos/${framework}.svg`)}
-                                alt={framework}
-                            />{' '}
-                            {FRAMEWORK_DISPLAY_TEXT[framework]}
-                        </div>
-                    </div>
                     {hasLicense && (
                         <div>
-                            <label>Expiry</label>
-                            <div>{userLicenseExpiry ? userLicenseExpiry : '-'}</div>
+                            <label>Licence expires: </label>
+                            <b className={errors.expired && styles.expired}>
+                                {userLicenseExpiry ? userLicenseExpiry : '--'}
+                            </b>
                         </div>
                     )}
 
                     <div>
-                        <div>Which enterprise products would you like to use?</div>
-                        <div className={styles.licensedProductsContainer}>
+                        <div>
+                            <span>Which enterprise products are you using:</span>
+                            <span className={styles.tooltipWrapper}>
+                                <InfoTooltip title="Integrated Enterprise: Use AG Charts Enterprise features within AG Grid Enterprise through integrated charts" />
+                            </span>
+                        </div>
+
+                        <div>
                             <div className={styles.inputList}>
-                                <label
-                                    className={classnames({
-                                        [styles.licensedProduct]: hasLicense && licensedProducts.grid,
-                                    })}
-                                >
-                                    Grid Enterprise
+                                <label className={hasLicense && licensedProducts.grid ? styles.licensedProduct : ''}>
+                                    <b>AG Grid Enterprise</b>
                                     <input
                                         type="checkbox"
                                         name="products"
@@ -219,17 +217,30 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                                     />
                                 </label>
 
-                                <label
-                                    className={classnames({
-                                        [styles.licensedProduct]:
-                                            hasLicense && licensedProducts.grid && licensedProducts.charts,
-                                    })}
-                                >
-                                    <span>Integrated Enterprise</span>
+                                <label className={hasLicense && licensedProducts.charts ? styles.licensedProduct : ''}>
+                                    <b>AG Charts Enterprise</b>
+                                    <input
+                                        type="checkbox"
+                                        name="products"
+                                        value="chartsEnterprise"
+                                        checked={userProducts.chartsEnterprise}
+                                        onChange={() => {
+                                            updateUserProductsWithUrlUpdate({
+                                                ...userProducts,
+                                                chartsEnterprise: !userProducts.chartsEnterprise,
+                                            });
+                                        }}
+                                    />
+                                </label>
 
-                                    <span className={styles.tooltipWrapper}>
-                                        <InfoTooltip title="Use Charts Enterprise within Grid Enterprise through integrated charts" />
-                                    </span>
+                                <label
+                                    className={
+                                        hasLicense && licensedProducts.grid && licensedProducts.charts
+                                            ? styles.licensedProduct
+                                            : ''
+                                    }
+                                >
+                                    <b>Integrated Enterprise</b>
 
                                     <input
                                         type="checkbox"
@@ -244,57 +255,60 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                                         }}
                                     />
                                 </label>
-                                <label
-                                    className={classnames({
-                                        [styles.licensedProduct]: hasLicense && licensedProducts.charts,
-                                    })}
-                                >
-                                    Charts Enterprise
-                                    <input
-                                        type="checkbox"
-                                        name="products"
-                                        value="chartsEnterprise"
-                                        checked={userProducts.chartsEnterprise}
-                                        onChange={() => {
-                                            updateUserProductsWithUrlUpdate({
-                                                ...userProducts,
-                                                chartsEnterprise: !userProducts.chartsEnterprise,
-                                            });
-                                        }}
-                                    />
-                                </label>
                             </div>
+
                             {errors.chartsNoIntegratedEnterprise && (
                                 <Warning>{errors.chartsNoIntegratedEnterprise}</Warning>
                             )}
+
                             {errors.gridNoIntegratedEnterprise && (
                                 <Warning>{errors.gridNoIntegratedEnterprise}</Warning>
                             )}
+
                             {errors.chartsNoGridEnterprise && <Warning>{errors.chartsNoGridEnterprise}</Warning>}
+
                             {errors.gridNoCharts && <Warning>{errors.gridNoCharts}</Warning>}
                         </div>
                     </div>
-                    <div>
-                        <label>
-                            <a
-                                href={urlWithPrefix({
-                                    framework,
-                                    url: './modules/#packages-vs-modules',
-                                })}
+
+                    <div className={styles.frameworkImportContainer}>
+                        <div className={styles.frameworkContainer}>
+                            <label>Framework</label>
+                            <img
+                                className={styles.frameworkLogo}
+                                src={urlWithBaseUrl(`/images/fw-logos/${framework}.svg`)}
+                                alt={framework}
+                            />
+                            <b>{FRAMEWORK_DISPLAY_TEXT[framework]}</b>
+                        </div>
+
+                        <span className={styles.divider}></span>
+
+                        <div className={styles.importContainer}>
+                            <label>
+                                <span>Import type:</span>
+                            </label>
+
+                            <select
+                                name="importType"
+                                value={importType}
+                                onChange={(e) => {
+                                    updateImportTypeWithUrlUpdate(e.target.value as ImportType);
+                                }}
                             >
-                                Import type
-                            </a>
-                        </label>
-                        <select
-                            name="importType"
-                            value={importType}
-                            onChange={(e) => {
-                                updateImportTypeWithUrlUpdate(e.target.value as ImportType);
-                            }}
+                                <option value="packages">Packages</option>
+                                <option value="modules">Modules</option>
+                            </select>
+                        </div>
+                        <a
+                            className={classnames(styles.importsLink, 'text-sm')}
+                            href={urlWithPrefix({
+                                framework,
+                                url: './modules/#packages-vs-modules',
+                            })}
                         >
-                            <option value="packages">Packages</option>
-                            <option value="modules">Modules</option>
-                        </select>
+                            Learn more about import types
+                        </a>
                     </div>
                 </div>
 
@@ -319,7 +333,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
 
                     {(userProducts.gridEnterprise || userProducts.integratedEnterprise || noUserProducts) && (
                         <>
-                            {!noUserProducts && <p>An example of how to set up your Grid Enterprise license:</p>}
+                            {!noUserProducts && <p>An example of how to set up your AG Grid Enterprise license:</p>}
                             {bootstrapSnippet.grid && (
                                 <Snippet framework={framework} content={bootstrapSnippet.grid} copyToClipboard />
                             )}

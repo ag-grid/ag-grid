@@ -31,7 +31,7 @@ const errorConditions = {
             !licensedProducts.grid &&
             userProducts.gridEnterprise &&
             userProducts.chartsEnterprise,
-        message: `Your license does not support "Grid Enterprise"`,
+        message: `Your license does not support "AG Grid Enterprise"`,
     },
     chartsNoIntegratedEnterprise: {
         getIsError: ({ userProducts, licensedProducts }: ErrorData) =>
@@ -62,7 +62,7 @@ const errorConditions = {
             licensedProducts.grid &&
             userProducts.gridEnterprise &&
             userProducts.chartsEnterprise,
-        message: 'Your license does not support "Charts Enterprise"',
+        message: 'Your license does not support "AG Charts Enterprise"',
     },
     gridNoIntegratedEnterprise: {
         getIsError: ({ userProducts, licensedProducts }: ErrorData) =>
@@ -255,9 +255,9 @@ export const useLicenseData = () => {
         ) {
             let supportsText = '';
             if (licenseDetails.suppliedLicenseType === 'GRID') {
-                supportsText = `Supports "Grid Enterprise"`;
+                supportsText = `Supports "AG Grid Enterprise".`;
             } else if (licenseDetails.suppliedLicenseType === 'BOTH') {
-                supportsText = `Supports "Grid Enterprise", "Integrated Enterprise" and "Chart Enterprise"`;
+                supportsText = `Supports "AG Grid Enterprise", "AG Chart Enterprise", and "Integrated Enterprise".`;
             }
             text = `Valid license. ${supportsText}`;
         } else if (
@@ -266,7 +266,7 @@ export const useLicenseData = () => {
             !chartsLicenseDetails.expired &&
             !chartsLicenseDetails.trialExpired
         ) {
-            text = `Valid license. Supports "Chart Enterprise"`;
+            text = `Valid license. Supports "AG Charts Enterprise".`;
         }
 
         return text;

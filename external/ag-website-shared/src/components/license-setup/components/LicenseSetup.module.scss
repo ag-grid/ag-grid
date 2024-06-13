@@ -48,22 +48,46 @@
 }
 
 .licenseData {
-    margin-top: $spacing-size-4;
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-size-3;
-    width: 600px;
+    margin-top: $spacing-size-2;
 
     > div {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
+        margin-bottom: $spacing-size-8;
+    }
+
+    .inputList {
+        margin-bottom: $spacing-size-10;
     }
 }
 
-.frameworkContainer {
+.expired {
+    color: var(--color-negative);
+}
+
+.frameworkImportContainer,
+.frameworkContainer,
+.importContainer {
     display: flex;
     align-items: center;
+}
+
+.frameworkImportContainer {
+    flex-wrap: wrap;
+    gap: $spacing-size-4;
+
+    .divider {
+        align-self: stretch;
+        width: 1px;
+        background-color: var(--color-util-gray-300);
+    }
+}
+
+.importsLink {
+    width: 100%;
+    margin-top: -$spacing-size-2;
+    font-weight: var(--text-regular);
+}
+
+.frameworkContainer {
     gap: $spacing-size-2;
 }
 
@@ -73,21 +97,18 @@
     border-radius: var(--radius-xs);
 }
 
-.licensedProductsContainer {
-    width: 315px;
+.licensedProduct b {
+    position: relative;
 
-    .inputList {
-        justify-content: end;
-        flex-direction: column;
+    &::after {
+        content: 'Valid license';
+        position: absolute;
+        top: $spacing-size-5;
+        left: 0;
+        font-size: var(--text-fs-sm);
+        font-weight: var(--text-regular);
+        color: var(--color-fg-quinary);
     }
-
-    label {
-        justify-content: end;
-    }
-}
-
-.licensedProduct {
-    color: var(--color-positive);
 }
 
 .error {
@@ -97,14 +118,13 @@
 
 .inputList {
     display: flex;
-    flex-direction: row;
-    gap: $spacing-size-5;
+    gap: $spacing-size-6;
+    margin-top: $spacing-size-1;
 
     label {
         display: flex;
-        flex-direction: row;
+        align-items: center;
         gap: $spacing-size-2;
-        cursor: pointer;
     }
 }
 
