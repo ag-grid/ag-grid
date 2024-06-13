@@ -1,5 +1,5 @@
-import { AgGridCommon } from './iCommon';
-import { IComponent } from './iComponent';
+import type { AgGridCommon } from './iCommon';
+import type { IComponent } from './iComponent';
 
 export interface ICellEditorRendererParams<TValue = any, TData = any, TContext = any>
     extends AgGridCommon<TData, TContext> {

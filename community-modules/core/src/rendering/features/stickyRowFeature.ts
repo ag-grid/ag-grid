@@ -2,7 +2,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { RowNode } from '../../entities/rowNode';
-import { StickyTopOffsetChangedEvent } from '../../events';
+import type { StickyTopOffsetChangedEvent } from '../../events';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
 import type { IRowModel } from '../../interfaces/iRowModel';
 import type { PageBoundsService } from '../../pagination/pageBoundsService';
