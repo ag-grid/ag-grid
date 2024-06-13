@@ -9,8 +9,8 @@ import { LocalEventService } from './localEventService';
 export class EventService extends BeanStub<AgEventType> implements NamedBean, IEventEmitter<AgEventType> {
     beanName = 'eventService' as const;
 
-    private globalEventListener?: AgGlobalEventListener;
-    private globalSyncEventListener?: AgGlobalEventListener;
+    private globalEventListener?: AgGlobalEventListener<AgEventType>;
+    private globalSyncEventListener?: AgGlobalEventListener<AgEventType>;
 
     public wireBeans(beans: BeanCollection): void {
         this.globalEventListener = beans.globalEventListener;
@@ -46,11 +46,11 @@ export class EventService extends BeanStub<AgEventType> implements NamedBean, IE
         this.globalEventService.removeEventListener(eventType, listener, async);
     }
 
-    public addGlobalListener(listener: AgGlobalEventListener, async = false): void {
+    public addGlobalListener(listener: AgGlobalEventListener<AgEventType>, async = false): void {
         this.globalEventService.addGlobalListener(listener, async);
     }
 
-    public removeGlobalListener(listener: AgGlobalEventListener, async = false): void {
+    public removeGlobalListener(listener: AgGlobalEventListener<AgEventType>, async = false): void {
         this.globalEventService.removeGlobalListener(listener, async);
     }
 

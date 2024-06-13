@@ -6,11 +6,11 @@ import type { ChartRef, GridOptions } from '../entities/gridOptions';
 import type { AgPublicEventType } from '../eventTypes';
 import type {
     AgEvent,
+    AgEventListener,
+    AgGlobalEventListener,
     ColumnEventType,
-    EventTypeParams,
     FilterChangedEventSourceType,
     SelectionEventSourceType,
-    SomeEventsType,
 } from '../events';
 import type { RowDropZoneEvents, RowDropZoneParams } from '../gridBodyComp/rowDragFeature';
 import type {
@@ -556,22 +556,17 @@ export interface GridApi<TData = any> {
      * Works similar to `addEventListener` for a browser DOM element.
      * Listeners will be automatically removed when the grid is destroyed.
      */
-    addEventListener<T extends SomeEventsType>(
-        eventType: T,
-        listener: (params: EventTypeParams<TData, any>[T]) => any
-    ): void;
+    addEventListener<T extends AgPublicEventType>(eventType: T, listener: AgEventListener<T, TData, any>): void;
+    /** Remove an event listener. */
+    removeEventListener<T extends AgPublicEventType>(eventType: T, listener: AgEventListener<T, TData, any>): void;
 
     /**
      * Add an event listener for all event types coming from the grid.
      * Listeners will be automatically removed when the grid is destroyed.
      */
-    addGlobalListener(listener: (...args: any[]) => any): void;
-
-    /** Remove an event listener. */
-    removeEventListener(eventType: AgPublicEventType, listener: (...args: any[]) => any): void;
-
+    addGlobalListener<T extends AgPublicEventType>(listener: AgGlobalEventListener<T, TData, any>): void;
     /** Remove a global event listener. */
-    removeGlobalListener(listener: (...args: any[]) => any): void;
+    removeGlobalListener<T extends AgPublicEventType>(listener: AgGlobalEventListener<T, TData, any>): void;
 
     dispatchEvent(event: AgEvent): void;
 
@@ -1078,16 +1073,16 @@ export interface GridApi<TData = any> {
     updateGridOptions<TDataUpdate extends TData>(options: ManagedGridOptions<TDataUpdate>): void;
 }
 
-const api: GridApi = {} as any;
+// const api: GridApi = {} as any;
 
-api.addEventListener('paginationChanged', (e) => {
-    const p = e.newPage;
-});
+// api.addEventListener('paginationChanged', (e) => {
+//     const p = e.newPage;
+// });
 
-api.addEventListener('modelUpdated', (e) => {
-    e.keepUndoRedoStack = true;
-});
+// api.addEventListener('stateUpdated', (e) => {
+//     e.state. = true;
+// });
 
-api.addEventListener('sorftChanged', (e) => {
-    e.columns;
-});
+// api.addEventListener('sortChanged', (e) => {
+//     e.columns;
+// });

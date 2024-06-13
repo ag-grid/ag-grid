@@ -52,7 +52,7 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
 
     public addEventListener<T extends TEventType>(
         eventType: T,
-        listener: AgEventListener<any, any, T>,
+        listener: AgEventListener<T, any, any>,
         async = false
     ): void {
         this.getListeners(eventType, async, true)!.add(listener);

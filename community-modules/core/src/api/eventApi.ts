@@ -1,17 +1,13 @@
 import type { BeanCollection } from '../context/context';
 import type { AgPublicEventType } from '../eventTypes';
-import type { AgGlobalEventListener, EventTypeParams, SomeEventsType } from '../events';
+import type { AgEventListener, AgGlobalEventListener } from '../events';
 
-export type AgEventListener<TEventType extends keyof EventTypeParams<TData, TContext>, TData = any, TContext = any> = (
-    event: (params: EventTypeParams<TData, TContext>[TEventType]) => void
-) => void;
-
-export function addEventListener<T extends SomeEventsType>(
+export function addEventListener<T extends AgPublicEventType>(
     beans: BeanCollection,
     eventType: T,
     listener: AgEventListener<T, any, any>
 ): void {
-    beans.apiEventService.addEventListener(eventType, listener as any);
+    beans.apiEventService.addEventListener(eventType, listener);
 }
 
 export function addGlobalListener(beans: BeanCollection, listener: (...args: any[]) => any): void {
