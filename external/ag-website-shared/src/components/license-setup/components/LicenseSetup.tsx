@@ -265,17 +265,29 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                                 </label>
                             </div>
 
+                            {errors.chartsNoGridEnterprise && (
+                                <Warning>
+                                    {errors.chartsNoGridEnterprise}. <EmailSales />
+                                </Warning>
+                            )}
+
                             {errors.chartsNoIntegratedEnterprise && (
-                                <Warning>{errors.chartsNoIntegratedEnterprise}</Warning>
+                                <Warning>
+                                    {errors.chartsNoIntegratedEnterprise}. <EmailSales />
+                                </Warning>
+                            )}
+
+                            {errors.gridNoCharts && (
+                                <Warning>
+                                    {errors.gridNoCharts}. <EmailSales />
+                                </Warning>
                             )}
 
                             {errors.gridNoIntegratedEnterprise && (
-                                <Warning>{errors.gridNoIntegratedEnterprise}</Warning>
+                                <Warning>
+                                    {errors.gridNoIntegratedEnterprise}. <EmailSales />
+                                </Warning>
                             )}
-
-                            {errors.chartsNoGridEnterprise && <Warning>{errors.chartsNoGridEnterprise}</Warning>}
-
-                            {errors.gridNoCharts && <Warning>{errors.gridNoCharts}</Warning>}
                         </div>
                     </div>
 
