@@ -6,6 +6,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { LicensedProducts, Products } from '../types';
 import { hasValue } from './hasValue';
 
+type ValidLicenseType = 'gridEnterprise' | 'chartsEnterprise' | 'integratedEnterprise' | 'none';
+type LicenseDetails = ReturnType<typeof LicenseManager.getLicenseDetails>;
+
 type ErrorKey = keyof typeof errorConditions;
 type Errors = Record<ErrorKey, string | undefined>;
 interface ErrorData {
@@ -14,8 +17,8 @@ interface ErrorData {
     licensedProducts: LicensedProducts;
     userProducts: Products;
     noUserProducts: boolean;
-    licenseDetails: ReturnType<typeof LicenseManager.getLicenseDetails>;
-    chartsLicenseDetails: ReturnType<typeof AgCharts.getLicenseDetails>;
+    licenseDetails: LicenseDetails;
+    chartsLicenseDetails: LicenseDetails;
 }
 
 const DEFAULT_USER_PRODUCTS: Products = {
@@ -26,6 +29,7 @@ const DEFAULT_USER_PRODUCTS: Products = {
 
 const validLicenseMessages = {
     valid: 'Valid license key',
+    validTrialLicense: 'Valid trial license key',
     gridEnterprise: 'Includes "AG Grid Enterprise"',
     integratedEnterprise: 'Includes "AG Grid Enterprise", "AG Chart Enterprise", and "Integrated Enterprise"',
     chartsEnterprise: 'Includes "AG Charts Enterprise"',
@@ -123,7 +127,13 @@ const useErrors = ({
     };
 };
 
-const updateSearchParams = ({ products = {}, importType }: { products: Products; importType: ImportType }) => {
+const updateSearchParams = ({
+    products = {} as Products,
+    importType,
+}: {
+    products: Products;
+    importType: ImportType;
+}) => {
     const url = new URL(window.location);
     const productsParam = url.searchParams.get('products');
     const productsStr = Object.entries(products)
@@ -240,36 +250,47 @@ export const useLicenseData = () => {
     const noUserProducts = useMemo(() => {
         return !userProducts.gridEnterprise && !userProducts.integratedEnterprise && !userProducts.chartsEnterprise;
     }, [userProducts]);
-    const licenseDetails = useMemo(() => LicenseManager.getLicenseDetails(license), [license]);
-    const chartsLicenseDetails = useMemo(() => AgCharts.getLicenseDetails(license) || {}, [license]);
+    const licenseDetails = useMemo<LicenseDetails>(() => LicenseManager.getLicenseDetails(license), [license]);
+    const chartsLicenseDetails = useMemo<LicenseDetails>(
+        () => (AgCharts.getLicenseDetails(license) as LicenseDetails) || {},
+        [license]
+    );
 
-    const { version: userLicenseVersion, isTrial: userLicenseIsTrial, expiry: userLicenseExpiry } = licenseDetails;
-    const validLicenseText = useMemo<string>(() => {
-        let text = '';
+    const {
+        version: userLicenseVersion,
+        isTrial: userLicenseIsTrial,
+        expiry: userLicenseExpiry,
+        expired: userLicenseIsExpired,
+        trialExpired: userLicenseTrialIsExpired,
+    } = licenseDetails;
+    const validLicenseType = useMemo<ValidLicenseType>(() => {
+        let type: ValidLicenseType = 'none';
         if (
             licenseDetails.suppliedLicenseType !== 'CHARTS' &&
             licenseDetails.valid &&
             !licenseDetails.expired &&
             !licenseDetails.trialExpired
         ) {
-            let supportsText = '';
             if (licenseDetails.suppliedLicenseType === 'GRID') {
-                supportsText = validLicenseMessages.gridEnterprise;
+                type = 'gridEnterprise';
             } else if (licenseDetails.suppliedLicenseType === 'BOTH') {
-                supportsText = validLicenseMessages.integratedEnterprise;
+                type = 'integratedEnterprise';
             }
-            text = `${validLicenseMessages.valid}. ${supportsText}`;
         } else if (
             licenseDetails.suppliedLicenseType === 'CHARTS' &&
             chartsLicenseDetails.valid &&
             !chartsLicenseDetails.expired &&
             !chartsLicenseDetails.trialExpired
         ) {
-            text = `${validLicenseMessages.valid}. ${validLicenseMessages.chartsEnterprise}`;
+            type = 'chartsEnterprise';
         }
-
-        return text;
+        return type;
     }, [licenseDetails, chartsLicenseDetails]);
+    const validLicenseText = useMemo<string>(() => {
+        const validPrefix = userLicenseIsTrial ? validLicenseMessages.validTrialLicense : validLicenseMessages.valid;
+
+        return validLicenseType === 'none' ? '' : `${validPrefix}. ${validLicenseMessages[validLicenseType]}`;
+    }, [validLicenseType, userLicenseIsTrial]);
 
     const { errors } = useErrors({
         hasLicense,
@@ -329,6 +350,8 @@ export const useLicenseData = () => {
         validLicenseText,
         userLicenseVersion,
         userLicenseIsTrial,
+        userLicenseIsExpired,
+        userLicenseTrialIsExpired,
         userLicenseExpiry,
         errors,
     };

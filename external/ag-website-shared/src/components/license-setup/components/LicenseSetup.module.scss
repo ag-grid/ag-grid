@@ -113,17 +113,32 @@
     border-radius: var(--radius-xs);
 }
 
-.licensedProduct strong {
-    position: relative;
+.licensedProduct {
+    strong {
+        position: relative;
 
-    &::after {
+        &::after {
+            position: absolute;
+            top: $spacing-size-5;
+            left: 0;
+            font-size: var(--text-fs-sm);
+            font-weight: var(--text-regular);
+            color: var(--color-fg-quinary);
+            min-width: 160px;
+        }
+    }
+
+    &.valid strong::after {
         content: 'Valid license key';
-        position: absolute;
-        top: $spacing-size-5;
-        left: 0;
-        font-size: var(--text-fs-sm);
-        font-weight: var(--text-regular);
-        color: var(--color-fg-quinary);
+    }
+
+    &.valid.trial strong::after {
+        content: 'Valid trial license key';
+    }
+
+    &.valid.expired strong::after {
+        content: 'License key is expired';
+        color: var(--color-negative);
     }
 }
 
@@ -134,7 +149,7 @@
 
 .inputList {
     display: flex;
-    gap: $spacing-size-6;
+    gap: $spacing-size-8;
     margin-top: $spacing-size-1;
 
     label {

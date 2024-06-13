@@ -57,6 +57,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
         updateUserProductsWithUrlUpdate,
         noUserProducts,
         userLicenseExpiry,
+        userLicenseIsTrial,
+        userLicenseIsExpired,
+        userLicenseTrialIsExpired,
         validLicenseText,
         errors,
     } = useLicenseData();
@@ -210,7 +213,16 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
 
                         <div>
                             <div className={styles.inputList}>
-                                <label className={hasLicense && licensedProducts.grid ? styles.licensedProduct : ''}>
+                                <label
+                                    className={classnames(styles.licensedProduct, {
+                                        [styles.valid]: hasLicense && licensedProducts.grid,
+                                        [styles.trial]: hasLicense && userLicenseIsTrial && licensedProducts.grid,
+                                        [styles.expired]:
+                                            hasLicense &&
+                                            (userLicenseIsExpired || userLicenseTrialIsExpired) &&
+                                            licensedProducts.grid,
+                                    })}
+                                >
                                     <input
                                         type="checkbox"
                                         name="products"
@@ -226,7 +238,16 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                                     <strong>AG Grid Enterprise</strong>
                                 </label>
 
-                                <label className={hasLicense && licensedProducts.charts ? styles.licensedProduct : ''}>
+                                <label
+                                    className={classnames(styles.licensedProduct, {
+                                        [styles.valid]: hasLicense && licensedProducts.charts,
+                                        [styles.trial]: hasLicense && userLicenseIsTrial && licensedProducts.charts,
+                                        [styles.expired]:
+                                            hasLicense &&
+                                            (userLicenseIsExpired || userLicenseTrialIsExpired) &&
+                                            licensedProducts.charts,
+                                    })}
+                                >
                                     <input
                                         type="checkbox"
                                         name="products"
@@ -243,11 +264,19 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                                 </label>
 
                                 <label
-                                    className={
-                                        hasLicense && licensedProducts.grid && licensedProducts.charts
-                                            ? styles.licensedProduct
-                                            : ''
-                                    }
+                                    className={classnames(styles.licensedProduct, {
+                                        [styles.valid]: hasLicense && licensedProducts.grid && licensedProducts.charts,
+                                        [styles.trial]:
+                                            hasLicense &&
+                                            userLicenseIsTrial &&
+                                            licensedProducts.grid &&
+                                            licensedProducts.charts,
+                                        [styles.expired]:
+                                            hasLicense &&
+                                            (userLicenseIsExpired || userLicenseTrialIsExpired) &&
+                                            licensedProducts.grid &&
+                                            licensedProducts.charts,
+                                    })}
                                 >
                                     <input
                                         type="checkbox"
