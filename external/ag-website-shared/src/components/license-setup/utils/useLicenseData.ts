@@ -27,18 +27,12 @@ const DEFAULT_USER_PRODUCTS: Products = {
 const errorConditions = {
     chartsNoGridEnterprise: {
         getIsError: ({ userProducts, licensedProducts }: ErrorData) =>
-            licensedProducts.charts &&
-            !licensedProducts.grid &&
-            userProducts.gridEnterprise &&
-            userProducts.chartsEnterprise,
+            licensedProducts.charts && !licensedProducts.grid && userProducts.gridEnterprise,
         message: `Your license does not support "AG Grid Enterprise"`,
     },
     chartsNoIntegratedEnterprise: {
         getIsError: ({ userProducts, licensedProducts }: ErrorData) =>
-            licensedProducts.charts &&
-            !licensedProducts.grid &&
-            userProducts.integratedEnterprise &&
-            userProducts.chartsEnterprise,
+            licensedProducts.charts && !licensedProducts.grid && userProducts.integratedEnterprise,
         message: `Your license does not support "Integrated Enterprise"`,
     },
     noProducts: {
@@ -58,10 +52,7 @@ const errorConditions = {
     },
     gridNoCharts: {
         getIsError: ({ userProducts, licensedProducts }: ErrorData) =>
-            !licensedProducts.charts &&
-            licensedProducts.grid &&
-            userProducts.gridEnterprise &&
-            userProducts.chartsEnterprise,
+            !licensedProducts.charts && licensedProducts.grid && userProducts.chartsEnterprise,
         message: 'Your license does not support "AG Charts Enterprise"',
     },
     gridNoIntegratedEnterprise: {
