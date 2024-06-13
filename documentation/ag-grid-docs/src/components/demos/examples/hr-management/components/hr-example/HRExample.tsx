@@ -173,7 +173,6 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
                         columnMenu="new"
                         treeData={treeData}
                         autoGroupColumnDef={autoGroupColumnDef}
-                        suppressGroupRowsSticky={true}
                     />
                 </div>
             </div>
