@@ -657,27 +657,52 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode | null, lastInRange: RowNode): RowNode[] {
-        const startIndex = firstInRange ? firstInRange.rowIndex : 0;
-        const endIndex = lastInRange.rowIndex;
-        if (startIndex === null || endIndex === null) {
-            return firstInRange ? [firstInRange] : [];
+        const firstId = firstInRange ? firstInRange.id : null;
+        const lastId = lastInRange.id;
+        let firstIndex = NaN;
+        let lastIndex = NaN;
+
+        if (firstId == null || lastId == null) {
+            return [];
+        }
+
+        function updateBounds(idx: number | null): void {
+            if (idx === null) {
+                return;
+            } else if (isNaN(firstIndex)) {
+                firstIndex = idx;
+            } else if (isNaN(lastIndex)) {
+                lastIndex = idx;
+            } else if (idx >= firstIndex) {
+                lastIndex = idx;
+            } else if (idx < firstIndex) {
+                lastIndex = firstIndex;
+                firstIndex = idx;
+            }
         }
 
         const nodeRange: RowNode[] = [];
-        const [firstIndex, lastIndex] = [startIndex, endIndex].sort((a, b) => a - b);
         this.forEachNode((node) => {
+            if (node.rowIndex === null || node.rowIndex > lastIndex) {
+                return;
+            }
+
+            if (firstId === node.id || lastId === node.id) {
+                updateBounds(node.rowIndex);
+            }
+
             const thisRowIndex = node.rowIndex;
             if (thisRowIndex == null || node.stub) {
                 return;
             }
 
-            if (thisRowIndex >= firstIndex && thisRowIndex <= lastIndex) {
+            if (thisRowIndex >= firstIndex && !(thisRowIndex > lastIndex)) {
                 nodeRange.push(node);
             }
         });
 
         // don't allow range selection if we don't have the full range of rows
-        if (nodeRange.length !== lastIndex - firstIndex + 1) {
+        if (!isNaN(lastIndex) && !isNaN(firstIndex) && nodeRange.length !== lastIndex - firstIndex + 1) {
             return firstInRange ? [firstInRange] : [];
         }
 
