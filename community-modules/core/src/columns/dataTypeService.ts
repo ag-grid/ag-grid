@@ -372,7 +372,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (!columnStateUpdates) {
             return;
         }
-        const columnListener: AgEventListener = (event: AgGridEvent & { key: keyof ColumnStateParams }) => {
+        const columnListener: AgEventListener<any> = (event: AgGridEvent & { key: keyof ColumnStateParams }) => {
             columnStateUpdates.add(event.key);
         };
         column.addEventListener('columnStateUpdated', columnListener);

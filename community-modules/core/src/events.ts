@@ -577,7 +577,7 @@ export interface ChartDestroyedEvent<TData = any, TContext = any>
 }
 
 /** @deprecated v32 Use ChartDestroyedEvent instead */
-export interface ChartDestroyed<TData = any, TContext = any> extends ChartCreatedEvent<TData, TContext> {}
+export interface ChartDestroyed<TData = any, TContext = any> extends ChartDestroyedEvent<TData, TContext> {}
 
 export interface ColumnGroupOpenedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'columnGroupOpened', TData, TContext> {

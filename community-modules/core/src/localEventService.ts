@@ -52,7 +52,7 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
 
     public addEventListener<T extends TEventType>(
         eventType: T,
-        listener: AgEventListener<T, any, any>,
+        listener: AgEventListener<any, any, any>,
         async = false
     ): void {
         this.getListeners(eventType, async, true)!.add(listener);
@@ -111,7 +111,10 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
             }
         }
 
-        const processEventListeners = (listeners: Set<AgEventListener>, originalListeners: Set<AgEventListener>) =>
+        const processEventListeners = (
+            listeners: Set<AgEventListener<any>>,
+            originalListeners: Set<AgEventListener<any>>
+        ) =>
             listeners.forEach((listener) => {
                 if (!originalListeners.has(listener)) {
                     // A listener could have been removed by a previously processed listener. In this case we don't want to call
@@ -128,14 +131,16 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
                 }
             });
 
-        const originalListeners = this.getListeners(eventType, async, false) ?? new Set<AgEventListener>();
+        const originalListeners = this.getListeners(eventType, async, false) ?? new Set<AgEventListener<any>>();
         // create a shallow copy to prevent listeners cyclically adding more listeners to capture this event
-        const listeners = new Set<AgEventListener>(originalListeners);
+        const listeners = new Set<AgEventListener<any>>(originalListeners);
         if (listeners.size > 0) {
             processEventListeners(listeners, originalListeners);
         }
 
-        const globalListeners = new Set(async ? this.globalAsyncListeners : this.globalSyncListeners);
+        const globalListeners: Set<AgGlobalEventListener<any>> = new Set(
+            async ? this.globalAsyncListeners : this.globalSyncListeners
+        );
 
         globalListeners.forEach((listener) => {
             const callback = this.frameworkOverrides

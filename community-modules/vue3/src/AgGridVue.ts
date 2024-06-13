@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, IRowNode, Module } from '@ag-grid-community/core';
+import type { AgEventType, GridApi, GridOptions, IRowNode, Module } from '@ag-grid-community/core';
 import {
     ALWAYS_SYNC_GLOBAL_EVENTS,
     ComponentUtil,
@@ -66,7 +66,7 @@ export const AgGridVue = defineComponent({
     watch,
     methods: {
         globalEventListenerFactory(restrictToSyncOnly?: boolean) {
-            return (eventType: string) => {
+            return (eventType: AgEventType) => {
                 if (this.isDestroyed) {
                     return;
                 }
