@@ -7,7 +7,7 @@ import type { FilterRequestSource } from './filter/iColumnFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
 import type { ChartType } from './interfaces/iChartOptions';
-import type { Column, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
+import type { Column, ColumnEventName, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
 import type { AgGridCommon } from './interfaces/iCommon';
 import type { IFilterComp } from './interfaces/iFilter';
 import type { IRowNode, RowPinnedType } from './interfaces/iRowNode';
@@ -170,13 +170,11 @@ export interface AgGridEvent<TData = any, TContext = any, TEventType extends str
 export interface AgGlobalEvent<T extends AgEventType, TData = any, TContext = any>
     extends AgGridEvent<TData, TContext, T> {}
 
-export type AgEventListener<
-    TEventType extends keyof AgEventTypeParams<TData, TContext>,
-    TData = any,
-    TContext = any,
-> = (params: AgEventTypeParams<TData, TContext>[TEventType]) => void;
+export type AgEventListener<TEventType extends AgEventType = AgEventType, TData = any, TContext = any> = (
+    params: AgEventTypeParams<TData, TContext>[TEventType]
+) => void;
 
-export type AgGlobalEventListener<T extends AgEventType, TData = any, TContext = any> = (
+export type AgGlobalEventListener<T extends AgEventType = AgEventType, TData = any, TContext = any> = (
     eventType: T,
     event: AgGridEvent<TData, TContext, T>
 ) => void;
@@ -695,8 +693,8 @@ export type ColumnEventType =
     | 'cellDataTypeInferred'
     | 'viewportSizeFeature';
 
-export interface ColumnEvent<T extends AgEventType = any, TData = any, TContext = any>
-    extends AgGlobalEvent<T, TData, TContext> {
+export interface ColumnEvent<T extends AgEventType | ColumnEventName = any, TData = any, TContext = any>
+    extends AgGridEvent<TData, TContext, T> {
     /** The impacted column, only set if action was on one column */
     column: Column | null;
     /** List of all impacted columns */

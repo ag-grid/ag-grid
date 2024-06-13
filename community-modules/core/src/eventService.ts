@@ -32,7 +32,7 @@ export class EventService extends BeanStub<AgEventType> implements NamedBean, IE
 
     public override addEventListener<T extends AgEventType>(
         eventType: T,
-        listener: AgEventListener<any, any, T>,
+        listener: AgEventListener<T>,
         async?: boolean
     ): void {
         this.globalEventService.addEventListener(eventType, listener, async);
