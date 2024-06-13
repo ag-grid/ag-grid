@@ -1,0 +1,130 @@
+:global(:root) {
+    --layout-grid-header-height: 32px;
+}
+
+.icon {
+    margin-right: 8px;
+}
+
+.grid {
+    --ag-row-height: 36px;
+    --ag-header-height: 40px;
+
+    --ag-background-color: #001223;
+    --ag-foreground-color: #d8e0e8;
+
+    --ag-borders: 1px solid;
+    --ag-border-color: rgba(255, 255, 255, 0.144);
+
+    --ag-odd-row-background-color: #001223;
+
+    --ag-header-background-color: #001223;
+    --ag-header-foreground-color: #8fa0b2;
+
+    --input-background-color: #001223;
+    --input-focus-box-shadow-color: rgba(255, 255, 255, 0.25);
+
+    height: calc(100vh - var(--layout-grid-header-height));
+}
+
+:global(.ag-theme-quartz .ag-row-group),
+:global(.ag-theme-quartz-dark .ag-row-group) {
+    color: #8097ad;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+.container {
+    width: 100%;
+}
+
+.sidebar {
+    background: hsl(0, 0%, 100%);
+    height: 100%;
+    width: 56px;
+    border-right: 1px solid rgb(207, 207, 207);
+    display: flex;
+    justify-content: center;
+    padding-top: 16px;
+    opacity: 0.4;
+}
+
+.wrapper {
+    display: flex;
+    background: var(--color-bg-primary);
+    overflow: hidden;
+}
+
+.buttonIcon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.7;
+    margin-right: 8px;
+}
+
+.sidebarIcon {
+    height: 20px;
+    width: 20px;
+    opacity: 0.5;
+    transition: all 0.5s;
+}
+
+.sidebarIcon:hover {
+    opacity: 1;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+
+.settingsIcon {
+    height: 20px;
+    width: 20px;
+    opacity: 0.5;
+    transition: all 0.5s;
+    margin-bottom: 16px;
+}
+
+.settingsIcon:hover {
+    opacity: 1;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+
+.activeIcon {
+    height: 20px;
+    width: 20px;
+    opacity: 0.7;
+    background: rgba(0, 0, 0, 0.075);
+    border-radius: 4px;
+}
+
+:global(.ag-right-aligned-cell) {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+}
+
+:global(.ag-theme-quartz .cell-green) {
+    color: rgb(70, 227, 114);
+}
+
+:global(.ag-theme-quartz .cell-red) {
+    color: rgb(255, 0, 92);
+}
+
+:global(.ag-theme-quartz-dark .cell-green) {
+    color: rgb(62, 201, 102);
+}
+
+:global(.grid .cell-green)::before {
+    content: '↑';
+    margin-right: 8px;
+}
+
+:global(.ag-theme-quartz-dark .cell-red) {
+    color: rgb(255, 0, 92);
+    background-color: rgb(255, 0, 92, 0.1);
+    border-radius: 100px;
+}
+
+:global(.grid .cell-red)::before {
+    content: '↓';
+    margin-right: 8px;
+}
