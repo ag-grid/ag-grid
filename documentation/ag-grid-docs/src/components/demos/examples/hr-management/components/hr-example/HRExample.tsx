@@ -40,33 +40,11 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
 
     const [colDefs] = useState<ColDef[]>([
         {
-            headerName: 'Contact',
-            field: 'contact',
-            pinned: 'left',
-            cellRendererSelector: (params: ICellRendererParams<IRow>) => {
-                const contactDetails = {
-                    component: ContactCellRenderer,
-                };
-                if (params.node.footer) return undefined;
-                return contactDetails;
-            },
+            headerName: 'ID',
+            field: 'employeeId',
+            cellDataType: 'text',
             width: 120,
         },
-        {
-            headerName: 'Location',
-            field: 'location',
-            cellDataType: 'text',
-            width: 200,
-            cellRendererSelector: (params: ICellRendererParams<IRow>) => {
-                const flatIcon = {
-                    component: FlagRenderer,
-                };
-                if (params.node.footer) return undefined;
-                return flatIcon;
-            },
-            editable: true,
-        },
-
         {
             field: 'department',
             cellDataType: 'text',
@@ -89,6 +67,20 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             },
         },
         {
+            headerName: 'Location',
+            field: 'location',
+            cellDataType: 'text',
+            width: 200,
+            cellRendererSelector: (params: ICellRendererParams<IRow>) => {
+                const flatIcon = {
+                    component: FlagRenderer,
+                };
+                if (params.node.footer) return undefined;
+                return flatIcon;
+            },
+            editable: true,
+        },
+        {
             field: 'joinDate',
             editable: true,
             width: 120,
@@ -98,12 +90,6 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             field: 'basicMonthlySalary',
             cellDataType: 'number',
             valueFormatter: currencyFormatter,
-        },
-        {
-            headerName: 'ID',
-            field: 'employeeId',
-            cellDataType: 'text',
-            width: 120,
         },
         {
             headerName: 'Method',
@@ -121,8 +107,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             field: 'paymentStatus',
             cellDataType: 'text',
             editable: true,
-            width: 150,
-            pinned: 'right',
+            width: 100,
             cellRendererSelector: (params: ICellRendererParams<IRow>) => {
                 const statusCell = {
                     component: StatusCellRenderer,
@@ -134,6 +119,19 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             cellEditorParams: {
                 values: paymentStatus,
             },
+        },
+        {
+            headerName: 'Contact',
+            field: 'contact',
+            pinned: 'right',
+            cellRendererSelector: (params: ICellRendererParams<IRow>) => {
+                const contactDetails = {
+                    component: ContactCellRenderer,
+                };
+                if (params.node.footer) return undefined;
+                return contactDetails;
+            },
+            width: 120,
         },
     ]);
     const [rowData] = useState(getData());
