@@ -42,7 +42,7 @@ const seoTagline = `Download AG Grid v${version} today: The best ${frameworkDisp
 const description = page.data.description
     ? page.data.description.replaceAll('$framework', frameworkDisplayText) // Use front-matter description
     : getFirstParagraphText(page.body, currentFramework); // Default to 1st paragraph text
-const descriptionWithSeoTagline = `${description} ${seoTagline}`;
+const descriptionWithSeoTagline = `${description ? `${description} ` : ''}${seoTagline}`;
 
 const isApiPage = isApiMenuPath({
     pageName,
