@@ -1,7 +1,7 @@
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import { _isVisible, _setFixedWidth } from '../utils/dom';
-import type { AgComponentSelector } from '../widgets/component';
+import type { ComponentSelector } from '../widgets/component';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { SetHeightFeature } from './rowContainer/setHeightFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
@@ -15,8 +15,6 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         this.ctrlsService = beans.ctrlsService;
         this.scrollVisibleService = beans.scrollVisibleService;
     }
-
-    static readonly selector: AgComponentSelector = 'AG-FAKE-VERTICAL-SCROLL';
 
     constructor() {
         super(
@@ -76,3 +74,8 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         this.getViewport().scrollTop = value;
     }
 }
+
+export const FakeVScrollSelector: ComponentSelector = {
+    selector: 'AG-FAKE-VERTICAL-SCROLL',
+    component: FakeVScrollComp,
+};

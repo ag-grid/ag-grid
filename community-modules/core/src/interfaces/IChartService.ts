@@ -1,7 +1,8 @@
+import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-types';
+
 import type { IAggFunc } from '../entities/colDef';
 import type { ChartRef } from '../entities/gridOptions';
 import type { CellRangeParams } from './IRangeService';
-import type { AgChartThemeOverrides, AgChartThemePalette } from './iAgChartOptions';
 import type {
     ChartToolPanelName,
     ChartType,

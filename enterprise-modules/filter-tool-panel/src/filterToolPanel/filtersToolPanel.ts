@@ -9,8 +9,10 @@ import type {
 } from '@ag-grid-community/core';
 import { Component, RefPlaceholder } from '@ag-grid-community/core';
 
-import { AgFiltersToolPanelHeader } from './agFiltersToolPanelHeader';
-import { AgFiltersToolPanelList } from './agFiltersToolPanelList';
+import type { AgFiltersToolPanelHeader } from './agFiltersToolPanelHeader';
+import { AgFiltersToolPanelHeaderSelector } from './agFiltersToolPanelHeader';
+import type { AgFiltersToolPanelList } from './agFiltersToolPanelList';
+import { AgFiltersToolPanelListSelector } from './agFiltersToolPanelList';
 
 export interface ToolPanelFiltersCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, FiltersToolPanelState>,
@@ -30,7 +32,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
             <ag-filters-tool-panel-header data-ref="filtersToolPanelHeaderPanel"></ag-filters-tool-panel-header>
             <ag-filters-tool-panel-list data-ref="filtersToolPanelListPanel"></ag-filters-tool-panel-list>
          </div>`,
-            [AgFiltersToolPanelHeader, AgFiltersToolPanelList]
+            [AgFiltersToolPanelHeaderSelector, AgFiltersToolPanelListSelector]
         );
     }
 

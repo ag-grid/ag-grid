@@ -26,6 +26,12 @@ const valueFormatter = (params: ValueFormatterParams) => {
 };
 
 const valueParser = (params: ValueParserParams) => {
+    const { newValue } = params;
+
+    if (newValue == null || newValue === '') {
+        return null;
+    }
+
     return params.newValue.split(',');
 };
 
@@ -37,6 +43,20 @@ const columnDefs: ColDef[] = [
         cellEditorParams: {
             values: colors,
             multiSelect: true,
+            searchType: 'matchAny',
+            filterList: true,
+            highlightMatch: true,
+            valueListMaxHeight: 220,
+        } as IRichCellEditorParams,
+    },
+    {
+        headerName: 'Multi Select (With Pills)',
+        field: 'colors',
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            values: colors,
+            multiSelect: true,
+            showSelectedItemsAsPills: true,
             searchType: 'matchAny',
             filterList: true,
             highlightMatch: true,

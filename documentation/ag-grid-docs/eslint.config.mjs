@@ -20,6 +20,7 @@ export default [
             '@typescript-eslint/ban-types': 'warn',
             '@typescript-eslint/ban-ts-comment': 'warn',
             '@typescript-eslint/triple-slash-reference': 'warn',
+            'import-x/consistent-type-specifier-style': 'off',
         },
     },
     {

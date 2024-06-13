@@ -1,10 +1,14 @@
+import { readdirSync } from 'fs';
 import { hideBin } from 'yargs/helpers';
 import yargs from 'yargs/yargs';
 
 import { type SubrepoCommandParams, runSubRepoCommand } from './lib/runSubRepoCommand';
 import { TERMINAL_COLORS as tc } from './lib/terminal-colors';
 
-const SUBREPO_FOLDER = 'external/ag-website-shared';
+const SUBREPO_FOLDER = 'external';
+const subRepos = readdirSync(SUBREPO_FOLDER, { withFileTypes: true })
+    .filter((entry: any) => entry.isDirectory())
+    .map((directory: any) => directory.name);
 
 const runCommand = ({ command, subRepoFolder, isVerbose }: SubrepoCommandParams) => {
     try {
@@ -36,11 +40,13 @@ yargs(hideBin(process.argv))
             });
         },
         (argv) => {
-            runCommand({
-                command: argv.command,
-                subRepoFolder: SUBREPO_FOLDER,
-                isVerbose: argv.verbose,
-                rootPath: argv.rootPath,
+            subRepos.forEach((subRepo: string) => {
+                runCommand({
+                    command: argv.command,
+                    subRepoFolder: `${SUBREPO_FOLDER}/${subRepo}`,
+                    isVerbose: argv.verbose,
+                    rootPath: argv.rootPath,
+                });
             });
         }
     )

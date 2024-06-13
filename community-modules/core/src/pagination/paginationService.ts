@@ -7,9 +7,9 @@ import type { PaginationChangedEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _exists } from '../utils/generic';
-import type { ComponentClass } from '../widgets/component';
+import type { ComponentSelector } from '../widgets/component';
 import type { PageBoundsService } from './pageBoundsService';
-import { PaginationComp } from './paginationComp';
+import { PaginationSelector } from './paginationComp';
 
 export class PaginationService extends BeanStub implements NamedBean {
     beanName = 'paginationService' as const;
@@ -53,8 +53,8 @@ export class PaginationService extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('paginationPageSize', this.onPageSizeGridOptionChanged.bind(this));
     }
 
-    public getPaginationComp(): ComponentClass {
-        return PaginationComp;
+    public getPaginationSelector(): ComponentSelector {
+        return PaginationSelector;
     }
 
     private isPaginateChildRows(): boolean {

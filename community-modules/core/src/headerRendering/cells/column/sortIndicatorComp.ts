@@ -3,10 +3,10 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { SortController } from '../../../sortController';
 import { _clearElement, _setDisplayed } from '../../../utils/dom';
 import { _createIconNoSpan } from '../../../utils/icon';
-import type { AgComponentSelector } from '../../../widgets/component';
+import type { ComponentSelector } from '../../../widgets/component';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 
-const SortIndicatorTemplate /* html */ = `<span class="ag-sort-indicator-container">
+const SortIndicatorTemplate = /* html */ `<span class="ag-sort-indicator-container">
         <span data-ref="eSortOrder" class="ag-sort-indicator-icon ag-sort-order ag-hidden" aria-hidden="true"></span>
         <span data-ref="eSortAsc" class="ag-sort-indicator-icon ag-sort-ascending-icon ag-hidden" aria-hidden="true"></span>
         <span data-ref="eSortDesc" class="ag-sort-indicator-icon ag-sort-descending-icon ag-hidden" aria-hidden="true"></span>
@@ -19,8 +19,6 @@ export class SortIndicatorComp extends Component {
     public wireBeans(beans: BeanCollection): void {
         this.sortController = beans.sortController;
     }
-
-    static readonly selector: AgComponentSelector = 'AG-SORT-INDICATOR';
 
     private eSortOrder: HTMLElement = RefPlaceholder;
     private eSortAsc: HTMLElement = RefPlaceholder;
@@ -164,3 +162,8 @@ export class SortIndicatorComp extends Component {
         }
     }
 }
+
+export const SortIndicatorSelector: ComponentSelector = {
+    selector: 'AG-SORT-INDICATOR',
+    component: SortIndicatorComp,
+};

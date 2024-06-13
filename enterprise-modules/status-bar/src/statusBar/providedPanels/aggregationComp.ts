@@ -19,9 +19,11 @@ import {
     _formatNumberTwoDecimalPlacesAndCommas,
     _missing,
     _missingOrEmpty,
+    _warnOnce,
 } from '@ag-grid-community/core';
 
-import { AgNameValue } from './agNameValue';
+import type { AgNameValue } from './agNameValue';
+import { AgNameValueSelector } from './agNameValue';
 
 export class AggregationComp extends Component implements IStatusPanelComp {
     private valueService: ValueService;
@@ -57,7 +59,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
             <ag-name-value data-ref="maxAggregationComp"></ag-name-value>
             <ag-name-value data-ref="sumAggregationComp"></ag-name-value>
         </div>`,
-            [AgNameValue]
+            [AgNameValueSelector]
         );
     }
 
@@ -69,9 +71,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
     public postConstruct(): void {
         if (!this.isValidRowModel()) {
-            console.warn(
-                `AG Grid: agAggregationComponent should only be used with the client and server side row model.`
-            );
+            _warnOnce(`agAggregationComponent should only be used with the client and server side row model.`);
             return;
         }
 

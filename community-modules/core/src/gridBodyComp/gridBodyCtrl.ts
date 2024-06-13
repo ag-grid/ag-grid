@@ -17,6 +17,7 @@ import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import { _getTabIndex, _isIOSUserAgent, _isInvisibleScrollbar } from '../utils/browser';
 import { _getInnerWidth, _isElementChildOfClass, _isVerticalScrollShowing } from '../utils/dom';
+import { _warnOnce } from '../utils/function';
 import type { PopupService } from '../widgets/popupService';
 import type { LongTapEvent } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
@@ -561,8 +562,8 @@ export class GridBodyCtrl extends BeanStub {
                 this.sizeColumnsToFit(params, -1);
             }, 500);
         } else {
-            console.warn(
-                'AG Grid: tried to call sizeColumnsToFit() but the grid is coming back with ' +
+            _warnOnce(
+                'tried to call sizeColumnsToFit() but the grid is coming back with ' +
                     'zero width, maybe the grid is not visible yet on the screen?'
             );
         }

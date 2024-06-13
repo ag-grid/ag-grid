@@ -3,7 +3,7 @@ import { ComponentUtil } from './components/componentUtil';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
-import type { DomLayoutType, GridOptions } from './entities/gridOptions';
+import type { DomLayoutType, GetRowIdFunc, GridOptions } from './entities/gridOptions';
 import type { Environment } from './environment';
 import type { AgEvent, GridOptionsChangedEvent } from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
@@ -19,7 +19,7 @@ import { LocalEventService } from './localEventService';
 import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
 import { _getScrollbarWidth } from './utils/browser';
-import { _warnOnce } from './utils/function';
+import { _log, _warnOnce } from './utils/function';
 import { _exists, _missing, toBoolean } from './utils/generic';
 import { toConstrainedNum, toNumber } from './utils/number';
 import { GRID_OPTION_DEFAULTS } from './validation/rules/gridOptionsValidations';
@@ -254,12 +254,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
 
         events.forEach((event) => {
             if (this.gridOptions.debug) {
-                console.log(
-                    `AG Grid: Updated property ${event.type} from `,
-                    event.previousValue,
-                    ' to  ',
-                    event.currentValue
-                );
+                _log(`Updated property ${event.type} from ${event.previousValue} to ${event.currentValue}`);
             }
             this.propertyEventService.dispatchEvent(event);
         });
@@ -420,7 +415,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             return rowHeight;
         }
 
-        console.warn('AG Grid row height must be a number if not using standard row model');
+        _warnOnce('row height must be a number if not using standard row model');
         return this.environment.getDefaultRowHeight();
     }
 
@@ -587,5 +582,29 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         updatedParams.api = this.api;
         updatedParams.context = this.gridOptionsContext;
         return updatedParams;
+    }
+
+    // AG-9259 Can't use `WrappedCallback<'getRowId', ...>` here because of a strange typescript bug
+    public getRowIdCallback<TData = any>():
+        | ((
+              params: WithoutGridCommon<ExtractParamsFromCallback<GetRowIdFunc<TData>>>
+          ) => ExtractReturnTypeFromCallback<GetRowIdFunc<TData>>)
+        | undefined {
+        const getRowId = this.getCallback('getRowId');
+
+        if (getRowId === undefined) {
+            return getRowId;
+        }
+
+        return (params) => {
+            let id = getRowId(params);
+
+            if (typeof id !== 'string') {
+                _warnOnce(`The getRowId callback must return a string. The ID ${id} is being cast to a string.`);
+                id = String(id);
+            }
+
+            return id;
+        };
     }
 }

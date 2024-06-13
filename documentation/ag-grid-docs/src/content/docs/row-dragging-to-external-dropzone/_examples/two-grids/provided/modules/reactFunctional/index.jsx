@@ -56,7 +56,7 @@ const GridExample = () => {
         setLeftRowData(createLeftRowData());
     }, [createDataItem]);
 
-    const getRowId = (params) => params.data.id;
+    const getRowId = (params) => String(params.data.id);
 
     const addRecordToGrid = (side, data) => {
         // if data missing or data has no it, do nothing

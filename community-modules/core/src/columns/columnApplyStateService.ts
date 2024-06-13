@@ -10,6 +10,7 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { SortController } from '../sortController';
 import { _areEqual, _removeFromArray } from '../utils/array';
+import { _warnOnce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColumnGetStateService } from './columnGetStateService';
@@ -97,8 +98,8 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
         }
 
         if (params && params.state && !params.state.forEach) {
-            console.warn(
-                'AG Grid: applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.'
+            _warnOnce(
+                'applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.'
             );
             return false;
         }
@@ -434,8 +435,8 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
                 }
             } else {
                 if (_exists(aggFunc)) {
-                    console.warn(
-                        'AG Grid: stateItem.aggFunc must be a string. if using your own aggregation ' +
+                    _warnOnce(
+                        'stateItem.aggFunc must be a string. if using your own aggregation ' +
                             'functions, register the functions first before using them in get/set state. This is because it is ' +
                             'intended for the column state to be stored and retrieved as simple JSON.'
                     );

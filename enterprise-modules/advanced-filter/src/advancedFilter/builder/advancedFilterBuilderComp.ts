@@ -6,7 +6,8 @@ import type {
     JoinAdvancedFilterModel,
 } from '@ag-grid-community/core';
 import { Component, RefPlaceholder, TooltipFeature, _exists, _setDisabled } from '@ag-grid-community/core';
-import { VirtualList, type VirtualListDragItem } from '@ag-grid-enterprise/core';
+import { VirtualList } from '@ag-grid-enterprise/core';
+import type { VirtualListDragItem } from '@ag-grid-enterprise/core';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AdvancedFilterService } from '../advancedFilterService';

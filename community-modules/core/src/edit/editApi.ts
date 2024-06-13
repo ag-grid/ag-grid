@@ -5,6 +5,7 @@ import type { BeanCollection } from '../context/context';
 import type { CellPosition } from '../entities/cellPositionUtils';
 import type { ICellEditor } from '../interfaces/iCellEditor';
 import type { GetCellEditorInstancesParams } from '../rendering/rowRenderer';
+import { _warnOnce } from '../utils/function';
 
 export function undoCellEditing(beans: BeanCollection): void {
     beans.undoRedoService?.undo('api');
@@ -34,7 +35,7 @@ export function stopEditing(beans: BeanCollection, cancel: boolean = false): voi
 export function startEditingCell(beans: BeanCollection, params: StartEditingCellParams): void {
     const column = beans.columnModel.getCol(params.colKey);
     if (!column) {
-        console.warn(`AG Grid: no column found for ${params.colKey}`);
+        _warnOnce(`no column found for ${params.colKey}`);
         return;
     }
     const cellPosition: CellPosition = {

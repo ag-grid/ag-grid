@@ -1,4 +1,4 @@
-import { ComponentUtil } from 'ag-grid-community';
+import { ComponentUtil, _processOnChange } from 'ag-grid-community';
 
 export const kebabProperty = (property: string) => {
     return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
@@ -47,7 +47,7 @@ export const getAgGridProperties = (): [Properties, Properties, Properties] => {
                     }
                 }
 
-                ComponentUtil.processOnChange({ rowData: currentValue }, this.api);
+                _processOnChange({ rowData: currentValue }, this.api);
             },
             deep: true,
         },
@@ -66,7 +66,7 @@ export const getAgGridProperties = (): [Properties, Properties, Properties] => {
                         currentValue === ComponentUtil.VUE_OMITTED_PROPERTY ? undefined : currentValue;
                     if (timeout == null) {
                         timeout = setTimeout(() => {
-                            ComponentUtil.processOnChange(changes, this.api);
+                            _processOnChange(changes, this.api);
                             timeout = null;
                             changes = {};
                         }, 0);

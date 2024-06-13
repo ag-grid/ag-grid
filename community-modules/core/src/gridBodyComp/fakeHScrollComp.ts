@@ -3,15 +3,13 @@ import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from '../utils/dom';
-import type { AgComponentSelector } from '../widgets/component';
+import type { ComponentSelector } from '../widgets/component';
 import { RefPlaceholder } from '../widgets/component';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { CenterWidthFeature } from './centerWidthFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 export class FakeHScrollComp extends AbstractFakeScrollComp {
-    static readonly selector: AgComponentSelector = 'AG-FAKE-HORIZONTAL-SCROLL';
-
     private visibleColsService: VisibleColsService;
     private pinnedRowModel: PinnedRowModel;
     private ctrlsService: CtrlsService;
@@ -148,3 +146,8 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         _setScrollLeft(this.getViewport(), value, this.enableRtl);
     }
 }
+
+export const FakeHScrollSelector: ComponentSelector = {
+    selector: 'AG-FAKE-HORIZONTAL-SCROLL',
+    component: FakeHScrollComp,
+};

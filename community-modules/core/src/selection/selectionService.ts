@@ -9,7 +9,9 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService, ISetNodesSelectedParams } from '../interfaces/iSelectionService';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../interfaces/selectionState';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
+import { _last } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
+import { _errorOnce, _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
 import { RowRangeSelectionContext } from './rowRangeSelectionContext';
 
@@ -69,7 +71,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         if (nodes.length === 0) return 0;
 
         if (nodes.length > 1 && !this.isMultiselect()) {
-            console.warn(`AG Grid: cannot multi select while rowSelection='single'`);
+            _warnOnce(`cannot multi select while rowSelection='single'`);
             return 0;
         }
 
@@ -82,7 +84,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
 
         if (rangeSelect) {
             if (filteredNodes.length > 1) {
-                console.warn('AG Grid: cannot range select while selecting multiple rows');
+                _warnOnce('cannot range select while selecting multiple rows');
                 return 0;
             }
 
@@ -436,7 +438,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
 
         if (justCurrentPage || justFiltered) {
             if (!rowModelClientSide) {
-                console.error("AG Grid: selecting just filtered only works when gridOptions.rowModelType='clientSide'");
+                _errorOnce("selecting just filtered only works when gridOptions.rowModelType='clientSide'");
                 return;
             }
             this.getNodesToSelect(justFiltered, justCurrentPage).forEach(callback);

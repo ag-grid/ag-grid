@@ -3,8 +3,6 @@
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterModel,
-    AgChartTheme,
-    AgChartThemeOverrides,
     AlignedGrid,
     AsyncTransactionsFlushed,
     BodyScrollEndEvent,
@@ -172,8 +170,8 @@ import type {
     VirtualRowRemovedEvent,
 } from '@ag-grid-community/core';
 // @END_IMPORTS@
-import { AgPromise, ComponentUtil, createGrid } from '@ag-grid-community/core';
 import type { GridApi, GridOptions, GridParams, Module } from '@ag-grid-community/core';
+import { AgPromise, _combineAttributesAndGridOptions, _processOnChange, createGrid } from '@ag-grid-community/core';
 import {
     AfterViewInit,
     Component,
@@ -186,6 +184,7 @@ import {
     ViewContainerRef,
     ViewEncapsulation,
 } from '@angular/core';
+import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 
 import { AngularFrameworkComponentWrapper } from './angularFrameworkComponentWrapper';
 import { AngularFrameworkOverrides } from './angularFrameworkOverrides';
@@ -228,7 +227,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         // Run the setup outside of angular so all the event handlers that are created do not trigger change detection
         this.angularFrameworkOverrides.runOutsideAngular(() => {
             this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef, this.angularFrameworkOverrides);
-            const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this);
+            const mergedGridOps = _combineAttributesAndGridOptions(this.gridOptions, this);
 
             this.gridParams = {
                 globalEventListener: this.globalEventListener.bind(this),
@@ -261,7 +260,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
                 Object.entries(changes).forEach(([key, value]: [string, any]) => {
                     gridOptions[key as keyof GridOptions] = value.currentValue;
                 });
-                ComponentUtil.processOnChange(gridOptions, this.api);
+                _processOnChange(gridOptions, this.api);
             });
         }
     }
@@ -1561,7 +1560,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public resetRowDataOnUpdate: boolean | undefined = undefined;
-    /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc.
+    /** Callback fired after the row is rendered into the DOM. Should not be used to initiate side effects.
      */
     @Input() public processRowPostCreate: ((params: ProcessRowParams<TData>) => void) | undefined = undefined;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.

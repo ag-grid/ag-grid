@@ -1,6 +1,8 @@
 /************************************************************************************************
  * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
  ************************************************************************************************/
+import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
+
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AsyncTransactionsFlushed,
@@ -109,7 +111,6 @@ import type {
 } from '../interfaces/exportParams';
 import type { GridState } from '../interfaces/gridState';
 import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
-import type { AgChartTheme, AgChartThemeOverrides } from '../interfaces/iAgChartOptions';
 import type { AlignedGrid } from '../interfaces/iAlignedGrid';
 import type {
     FillOperationParams,
@@ -1799,7 +1800,7 @@ export interface GridOptions<TData = any> {
      */
     resetRowDataOnUpdate?: boolean;
     /**
-     * Allows you to process rows after they are created, so you can do final adding of custom attributes etc.
+     * Callback fired after the row is rendered into the DOM. Should not be used to initiate side effects.
      */
     processRowPostCreate?: (params: ProcessRowParams<TData>) => void;
     /**

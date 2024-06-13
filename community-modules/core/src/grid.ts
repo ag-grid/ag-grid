@@ -18,7 +18,6 @@ import { ColumnViewportService } from './columns/columnViewportService';
 import { FuncColsService } from './columns/funcColsService';
 import { PivotResultColsService } from './columns/pivotResultColsService';
 import { VisibleColsService } from './columns/visibleColsService';
-import { AgStackComponentsRegistry } from './components/agStackComponentsRegistry';
 import { AgComponentUtils } from './components/framework/agComponentUtils';
 import { ComponentMetadataProvider } from './components/framework/componentMetadataProvider';
 import { UserComponentFactory } from './components/framework/userComponentFactory';
@@ -53,8 +52,6 @@ import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { Module } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
 import { LocaleService } from './localeService';
-import type { Logger } from './logger';
-import { LoggerFactory } from './logger';
 import { AnimationFrameService } from './misc/animationFrameService';
 import { ApiEventService } from './misc/apiEventService';
 import { ExpansionService } from './misc/expansionService';
@@ -172,8 +169,6 @@ export function createGrid<TData>(
  * @deprecated v31 use createGrid() instead
  */
 export class Grid {
-    protected logger: Logger;
-
     private readonly gridOptions: any; // Not typed to enable setting api for backwards compatibility
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
@@ -265,7 +260,6 @@ export class GridCoreCreator {
 
         const context = new Context(contextParams);
         this.registerModuleUserComponents(context, registeredModules);
-        this.registerModuleStackComponents(context, registeredModules);
         this.registerControllers(context, registeredModules);
         this.registerModuleApiFunctions(context, registeredModules);
 
@@ -287,14 +281,6 @@ export class GridCoreCreator {
                 module.controllers.forEach((meta) => factory.register(meta));
             }
         });
-    }
-
-    private registerModuleStackComponents(context: Context, registeredModules: Module[]): void {
-        const registry = context.getBean('agStackComponentsRegistry');
-        const agStackComponents = registeredModules.flatMap((module) =>
-            module.agStackComponents ? module.agStackComponents : []
-        );
-        registry.ensureRegistered(agStackComponents);
     }
 
     private getRegisteredModules(params: GridParams | undefined, gridId: string): Module[] {
@@ -398,7 +384,7 @@ export class GridCoreCreator {
         };
 
         if (!rowModelModuleNames[rowModelType]) {
-            _errorOnce('Could not find row model for rowModelType = ' + rowModelType);
+            _errorOnce('Could not find row model for rowModelType = ', rowModelType);
             return;
         }
 
@@ -444,7 +430,6 @@ export class GridCoreCreator {
             NavigationService,
             ValueCache,
             ValueService,
-            LoggerFactory,
             AutoWidthCalculator,
             StandardMenuFactory,
             DragAndDropService,
@@ -460,7 +445,6 @@ export class GridCoreCreator {
             SelectableService,
             ChangeDetectionService,
             AnimationFrameService,
-            AgStackComponentsRegistry,
             ColumnDefFactory,
             RowCssClassCalculator,
             RowNodeSorter,

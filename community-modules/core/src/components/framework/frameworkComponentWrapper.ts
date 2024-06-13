@@ -1,4 +1,5 @@
 import type { IComponent } from '../../interfaces/iComponent';
+import { _warnOnce } from '../../utils/function';
 import type { ComponentType } from './componentTypes';
 
 /**
@@ -60,7 +61,7 @@ export abstract class BaseComponentWrapper<F extends WrappableInterface> impleme
             }
 
             if (mandatory) {
-                console.warn('AG Grid: Framework component is missing the method ' + methodName + '()');
+                _warnOnce('Framework component is missing the method ' + methodName + '()');
             }
             // multiple features rely on this returning `null` rather than `undefined`,
             // so that they can differentiate whether the underlying component has implemented a void method or not

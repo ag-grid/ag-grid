@@ -11,7 +11,9 @@ import type {
 import {
     BeanStub,
     _RowRangeSelectionContext as RowRangeSelectionContext,
+    _errorOnce,
     _last,
+    _warnOnce,
     isSelectionUIEvent,
 } from '@ag-grid-community/core';
 
@@ -61,14 +63,14 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         };
 
         if (typeof state !== 'object') {
-            console.error('AG Grid: The provided selection state should be an object.');
+            _errorOnce('The provided selection state should be an object.');
             return;
         }
 
         if ('selectAll' in state && typeof state.selectAll === 'boolean') {
             newState.selectAll = state.selectAll;
         } else {
-            console.error('AG Grid: Select all status should be of boolean type.');
+            _errorOnce('Select all status should be of boolean type.');
             return;
         }
 
@@ -77,11 +79,11 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 if (typeof key === 'string') {
                     newState.toggledNodes.add(key);
                 } else {
-                    console.warn(`AG Grid: Provided ids must be of string type. Invalid id provided: ${key}`);
+                    _warnOnce(`Provided ids must be of string type. Invalid id provided: ${key}`);
                 }
             });
         } else {
-            console.error('AG Grid: `toggledNodes` must be an array of string ids.');
+            _warnOnce('`toggledNodes` must be an array of string ids.');
             return;
         }
 
@@ -207,8 +209,8 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
     public getSelectedNodes(): RowNode<any>[] {
         if (this.selectAllUsed) {
-            console.warn(
-                `AG Grid: getSelectedNodes and getSelectedRows functions cannot be used with select all functionality with the server-side row model.
+            _warnOnce(
+                `getSelectedNodes and getSelectedRows functions cannot be used with select all functionality with the server-side row model.
                 Use \`api.getServerSideSelectionState()\` instead.`
             );
         }

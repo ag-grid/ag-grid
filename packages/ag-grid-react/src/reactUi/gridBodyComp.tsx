@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
-import type { ComponentClass, IGridBodyComp, RowContainerName } from 'ag-grid-community';
+import type { ComponentSelector, IGridBodyComp, RowContainerName } from 'ag-grid-community';
 import {
     CssClassManager,
     FakeHScrollComp,
@@ -87,26 +87,25 @@ const GridBodyComp = () => {
             return;
         }
 
-        const newComp = (compClass: ComponentClass) => {
-            const comp = context.createBean(new compClass());
-            beansToDestroy.current.push(comp);
-            return comp;
-        };
-
         const attachToDom = (eParent: HTMLElement, eChild: HTMLElement | Comment) => {
             eParent.appendChild(eChild);
             destroyFuncs.current.push(() => eParent.removeChild(eChild));
         };
+        const newComp = (compClass: ComponentSelector['component']) => {
+            const comp = context.createBean(new compClass());
+            beansToDestroy.current.push(comp);
+            return comp;
+        };
+        const addComp = (eParent: HTMLElement, compClass: ComponentSelector['component'], comment: string) => {
+            attachToDom(eParent, document.createComment(comment));
+            attachToDom(eParent, newComp(compClass).getGui());
+        };
 
-        attachToDom(eRoot.current, document.createComment(' AG Fake Horizontal Scroll '));
-        attachToDom(eRoot.current, newComp(FakeHScrollComp).getGui());
-
-        attachToDom(eRoot.current, document.createComment(' AG Overlay Wrapper '));
-        attachToDom(eRoot.current, newComp(OverlayWrapperComponent).getGui());
+        addComp(eRoot.current, FakeHScrollComp, ' AG Fake Horizontal Scroll ');
+        addComp(eRoot.current, OverlayWrapperComponent, ' AG Overlay Wrapper ');
 
         if (eBody.current) {
-            attachToDom(eBody.current, document.createComment(' AG Fake Vertical Scroll '));
-            attachToDom(eBody.current, newComp(FakeVScrollComp).getGui());
+            addComp(eBody.current, FakeVScrollComp, ' AG Fake Vertical Scroll ');
         }
         const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,

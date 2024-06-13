@@ -31,9 +31,7 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
     },
-    getRowId: (params: GetRowIdParams) => {
-        return params.data.account;
-    },
+    getRowId: (params: GetRowIdParams) => String(params.data.account),
     detailCellRendererParams: {
         detailGridOptions: {
             columnDefs: [

@@ -14,7 +14,7 @@ import { _escapeString } from '../../../utils/string';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 import type { LongTapEvent, TapEvent, TouchListenerEvent } from '../../../widgets/touchListener';
 import { TouchListener } from '../../../widgets/touchListener';
-import { SortIndicatorComp } from './sortIndicatorComp';
+import { SortIndicatorComp, SortIndicatorSelector } from './sortIndicatorComp';
 
 export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column the header is for. */
@@ -185,7 +185,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.params = params;
 
         this.currentTemplate = this.workOutTemplate();
-        this.setTemplate(this.currentTemplate, [SortIndicatorComp]);
+        this.setTemplate(this.currentTemplate, [SortIndicatorSelector]);
         this.setupTap();
         this.setMenu();
         this.setupSort();

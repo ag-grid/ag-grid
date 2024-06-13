@@ -1,7 +1,7 @@
 import type { BeanCollection, IChartService } from '@ag-grid-community/core';
 import { AgSelect, ChartMappings, Component, RefPlaceholder } from '@ag-grid-community/core';
-import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import type { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { canSwitchDirection, getFullChartNameTranslationKey, getSeriesType } from '../../utils/seriesTypeMapper';
@@ -46,7 +46,7 @@ export class ChartSpecificDataPanel extends Component {
             <div id="chartSpecificGroup">
                 <ag-group-component data-ref="chartSpecificGroup"></ag-group-component>
             </div>`,
-            [AgGroupComponent],
+            [AgGroupComponentSelector],
             {
                 chartSpecificGroup: chartSpecificGroupParams,
             }

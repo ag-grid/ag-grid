@@ -4,7 +4,7 @@ import type { LocaleService } from '../../localeService';
 import type { PositionableFeature } from '../../rendering/features/positionableFeature';
 import { mock } from '../../test-utils/mock';
 import type { AgPromise } from '../../utils/promise';
-import type { ComponentClass } from '../../widgets/component';
+import type { ComponentSelector } from '../../widgets/component';
 import type { ProvidedFilterParams } from './iProvidedFilter';
 import { ProvidedFilter } from './providedFilter';
 
@@ -47,7 +47,7 @@ class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {
     protected createBodyTemplate(): string {
         throw new Error('Method not implemented.');
     }
-    protected getAgComponents(): ComponentClass[] {
+    protected getAgComponents(): ComponentSelector[] {
         throw new Error('Method not implemented.');
     }
 

@@ -1,32 +1,23 @@
-import type { BeanCollection } from '../context/context';
-import { GridBodyComp } from '../gridBodyComp/gridBodyComp';
+import type { GridBodyComp } from '../gridBodyComp/gridBodyComp';
+import { GridBodySelector } from '../gridBodyComp/gridBodyComp';
 import type { ISideBar } from '../interfaces/iSideBar';
-import type { Logger, LoggerFactory } from '../logger';
-import type { PaginationService } from '../pagination/paginationService';
 import type { UpdateLayoutClassesParams } from '../styling/layoutFeature';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import { _isVisible } from '../utils/dom';
-import { type Component, RefPlaceholder } from '../widgets/component';
+import { _log } from '../utils/function';
+import type { ComponentSelector } from '../widgets/component';
+import { RefPlaceholder } from '../widgets/component';
+import type { Component } from '../widgets/component';
 import { TabGuardComp } from '../widgets/tabGuardComp';
-import type { IGridComp } from './gridCtrl';
+import type { IGridComp, OptionalGridComponents } from './gridCtrl';
 import { GridCtrl } from './gridCtrl';
 
 export class GridComp extends TabGuardComp {
-    private loggerFactory: LoggerFactory;
-    private paginationService?: PaginationService;
-
-    public wireBeans(beans: BeanCollection) {
-        this.loggerFactory = beans.loggerFactory;
-        this.paginationService = beans.paginationService;
-    }
-
     private readonly gridBody: GridBodyComp = RefPlaceholder;
     private readonly sideBar: ISideBar & Component = RefPlaceholder;
     private readonly rootWrapperBody: HTMLElement = RefPlaceholder;
 
-    private logger: Logger;
     private eGridDiv: HTMLElement;
-    private ctrl: GridCtrl;
 
     constructor(eGridDiv: HTMLElement) {
         super();
@@ -34,8 +25,6 @@ export class GridComp extends TabGuardComp {
     }
 
     public postConstruct(): void {
-        this.logger = this.loggerFactory.create('GridComp');
-
         const compProxy: IGridComp = {
             destroyGridUi: () => this.destroyBean(this),
             setRtlClass: (cssClass: string) => this.addCssClass(cssClass),
@@ -51,20 +40,20 @@ export class GridComp extends TabGuardComp {
             },
         };
 
-        this.ctrl = this.createManagedBean(new GridCtrl());
+        const ctrl = this.createManagedBean(new GridCtrl());
+        const comps = ctrl.getOptionalSelectors();
+        const template = this.createTemplate(comps);
+        const requiredComps = [GridBodySelector, ...Object.values(comps).filter((c) => !!c)] as ComponentSelector[];
+        this.setTemplate(template, requiredComps);
 
-        const paginationComp = this.paginationService?.getPaginationComp();
-        const template = this.createTemplate(!!paginationComp);
-        this.setTemplate(template, [GridBodyComp, ...(paginationComp ? [paginationComp] : [])]);
-
-        this.ctrl.setComp(compProxy, this.eGridDiv, this.getGui());
+        ctrl.setComp(compProxy, this.eGridDiv, this.getGui());
 
         this.insertGridIntoDom();
 
         this.initialiseTabGuard({
             // we want to override the default behaviour to do nothing for onTabKeyDown
             onTabKeyDown: () => undefined,
-            focusInnerElement: (fromBottom) => this.ctrl.focusInnerElement(fromBottom),
+            focusInnerElement: (fromBottom) => ctrl.focusInnerElement(fromBottom),
             forceFocusOutWhenTabGuardsAreEmpty: true,
         });
     }
@@ -74,7 +63,9 @@ export class GridComp extends TabGuardComp {
         this.eGridDiv.appendChild(eGui);
         this.addDestroyFunc(() => {
             this.eGridDiv.removeChild(eGui);
-            this.logger.log('Grid removed from DOM');
+            if (this.gos.get('debug')) {
+                _log('Grid removed from DOM');
+            }
         });
     }
 
@@ -89,12 +80,14 @@ export class GridComp extends TabGuardComp {
         this.addOrRemoveCssClass(LayoutCssClasses.PRINT, params.print);
     }
 
-    private createTemplate(hasPagination: boolean): string {
-        const dropZones = this.ctrl.showDropZones() ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
-        const sideBar = this.ctrl.showSideBar() ? '<ag-side-bar data-ref="sideBar"></ag-side-bar>' : '';
-        const statusBar = this.ctrl.showStatusBar() ? '<ag-status-bar></ag-status-bar>' : '';
-        const watermark = this.ctrl.showWatermark() ? '<ag-watermark></ag-watermark>' : '';
-        const pagination = hasPagination ? '<ag-pagination></ag-pagination>' : '';
+    private createTemplate(params: OptionalGridComponents): string {
+        const dropZones = params.gridHeaderDropZonesSelector
+            ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>'
+            : '';
+        const sideBar = params.sideBarSelector ? '<ag-side-bar data-ref="sideBar"></ag-side-bar>' : '';
+        const statusBar = params.statusBarSelector ? '<ag-status-bar></ag-status-bar>' : '';
+        const watermark = params.watermarkSelector ? '<ag-watermark></ag-watermark>' : '';
+        const pagination = params.paginationSelector ? '<ag-pagination></ag-pagination>' : '';
 
         const template =
             /* html */

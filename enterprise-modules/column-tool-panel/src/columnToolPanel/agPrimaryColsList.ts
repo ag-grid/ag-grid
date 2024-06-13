@@ -1,7 +1,6 @@
 import type {
     AbstractColDef,
     AgColumn,
-    AgComponentSelector,
     AgProvidedColumnGroup,
     BeanCollection,
     ColGroupDef,
@@ -9,6 +8,7 @@ import type {
     ColumnModel,
     ColumnNameService,
     ColumnToolPanelState,
+    ComponentSelector,
 } from '@ag-grid-community/core';
 import {
     Component,
@@ -16,9 +16,11 @@ import {
     _includes,
     _setAriaLabel,
     _setAriaLevel,
+    _warnOnce,
     isProvidedColumnGroup,
 } from '@ag-grid-community/core';
-import { VirtualList, type VirtualListModel } from '@ag-grid-enterprise/core';
+import { VirtualList } from '@ag-grid-enterprise/core';
+import type { VirtualListModel } from '@ag-grid-enterprise/core';
 import type { ToolPanelColDefService } from '@ag-grid-enterprise/side-bar';
 
 import { ExpandState } from './agPrimaryColsHeader';
@@ -49,10 +51,6 @@ const PRIMARY_COLS_LIST_PANEL_CLASS = 'ag-column-select-list';
 
 export type AgPrimaryColsListEvent = 'groupExpanded' | 'selectionChanged';
 export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
-    static readonly selector: AgComponentSelector = 'AG-PRIMARY-COLS-LIST';
-
-    public static TEMPLATE = /* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="presentation"></div>`;
-
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
     private colDefService: ToolPanelColDefService;
@@ -82,7 +80,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private isInitialState: boolean = false;
 
     constructor() {
-        super(AgPrimaryColsList.TEMPLATE);
+        super(/* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="presentation"></div>`);
     }
 
     public override destroy(): void {
@@ -437,7 +435,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         const unrecognisedGroupIds = groupIds.filter((groupId) => !_includes(expandedGroupIds, groupId));
         if (unrecognisedGroupIds.length > 0) {
-            console.warn('AG Grid: unable to find group(s) for supplied groupIds:', unrecognisedGroupIds);
+            _warnOnce('unable to find group(s) for supplied groupIds:', unrecognisedGroupIds);
         }
     }
 
@@ -586,3 +584,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         return expandedGroupIds;
     }
 }
+
+export const AgPrimaryColsListSelector: ComponentSelector = {
+    selector: 'AG-PRIMARY-COLS-LIST',
+    component: AgPrimaryColsList,
+};

@@ -6,6 +6,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColumnEventType } from '../events';
 import type { Column } from '../interfaces/iColumn';
 import { _removeFromArray, _removeFromUnorderedArray } from '../utils/array';
+import { _errorOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColKey, ColumnModel } from './columnModel';
@@ -169,7 +170,7 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
                 if (loopCount > 1000) {
                     // this should never happen, but in the future, someone might introduce a bug here,
                     // so we stop the browser from hanging and report bug properly
-                    console.error('AG Grid: infinite loop in resizeColumnSets');
+                    _errorOnce('infinite loop in resizeColumnSets');
                     break;
                 }
 

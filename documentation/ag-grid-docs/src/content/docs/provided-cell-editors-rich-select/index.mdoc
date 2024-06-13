@@ -56,6 +56,13 @@ columnDefs: [
 ]
 ```
 
+{% partial file="./_component-interface-angular.mdoc" /%}
+{% partial file="./_component-interface-javascript.mdoc" /%}
+{% partial file="./_component-interface-react.mdoc" /%}
+{% partial file="./_component-interface-vue.mdoc" /%}
+
+{% interfaceDocumentation interfaceName="IRichCellEditorRendererParams" config={ "description": "" } /%}
+
 ### Search Values
 
 Different types of search are possible within the editor list as shown below:
@@ -176,6 +183,6 @@ columnDefs: [
 ## API Reference
 
 
-{% interfaceDocumentation interfaceName="IRichCellEditorParams" names=["values", "cellHeight", "cellRenderer", "multiSelect", "allowTyping", "filterList", "searchType", "highlightMatch", "valuePlaceholder", "valueListGap", "valueListMaxHeight", "valueListMaxWidth", "formatValue", "searchDebounceDelay" ] /%}
+{% interfaceDocumentation interfaceName="IRichCellEditorParams" names=["values", "cellHeight", "cellRenderer", "multiSelect", "suppressDeselectAll", "showSelectedItemsAsPills", "allowTyping", "filterList", "searchType", "highlightMatch", "valuePlaceholder", "valueListGap", "valueListMaxHeight", "valueListMaxWidth", "formatValue", "searchDebounceDelay" ] /%}
 
 Continue to the next section: [Number Cell Editor](./provided-cell-editors-number/).

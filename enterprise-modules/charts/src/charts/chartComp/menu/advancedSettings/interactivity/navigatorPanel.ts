@@ -1,20 +1,13 @@
 import type { BeanCollection } from '@ag-grid-community/core';
-import { AgCheckbox, Component } from '@ag-grid-community/core';
+import { AgCheckboxSelector, Component } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 
-import { AgSlider } from '../../../../../widgets/agSlider';
+import { AgSliderSelector } from '../../../../../widgets/agSlider';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class NavigatorPanel extends Component {
-    public static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="navigatorGroup">
-                <ag-slider data-ref="navigatorHeightSlider"></ag-slider>
-                <ag-checkbox data-ref="navigatorMiniChartCheckbox"></ag-checkbox>
-            </ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -48,10 +41,19 @@ export class NavigatorPanel extends Component {
             'miniChart'
         );
 
-        this.setTemplate(NavigatorPanel.TEMPLATE, [AgGroupComponent, AgSlider, AgCheckbox], {
-            navigatorGroup: navigatorGroupParams,
-            navigatorHeightSlider: navigatorHeightSliderParams,
-            navigatorMiniChartCheckbox: navigatorMiniChartCheckboxParams,
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="navigatorGroup">
+                <ag-slider data-ref="navigatorHeightSlider"></ag-slider>
+                <ag-checkbox data-ref="navigatorMiniChartCheckbox"></ag-checkbox>
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector, AgSliderSelector, AgCheckboxSelector],
+            {
+                navigatorGroup: navigatorGroupParams,
+                navigatorHeightSlider: navigatorHeightSliderParams,
+                navigatorMiniChartCheckbox: navigatorMiniChartCheckboxParams,
+            }
+        );
     }
 }

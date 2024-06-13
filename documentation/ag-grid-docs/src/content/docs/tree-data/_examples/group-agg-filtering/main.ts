@@ -58,7 +58,7 @@ const gridOptions: GridOptions = {
         return data.filePath;
     },
     getRowId: (params: GetRowIdParams) => {
-        return params.data.id;
+        return String(params.data.id);
     },
     groupAggFiltering: true,
 };

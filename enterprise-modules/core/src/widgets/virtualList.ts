@@ -18,6 +18,7 @@ import {
     _setAriaSetSize,
     _stopPropagationForAgGrid,
     _waitUntil,
+    _warnOnce,
 } from '@ag-grid-community/core';
 
 import type { VirtualListModel } from './iVirtualList';
@@ -266,7 +267,7 @@ export class VirtualList<
         const lastRow = this.model.getRowCount();
 
         if (typeof index !== 'number' || index < 0 || index >= lastRow) {
-            console.warn('AG Grid: invalid row index for ensureIndexVisible: ' + index);
+            _warnOnce('invalid row index for ensureIndexVisible: ', index);
             return false;
         }
 

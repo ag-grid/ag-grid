@@ -38,6 +38,7 @@ import {
     _makeNull,
     _missing,
     _shallowCompare,
+    _warnOnce,
 } from '@ag-grid-community/core';
 
 export class RangeService extends BeanStub implements NamedBean, IRangeService {
@@ -943,15 +944,16 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const isSameColumn = columnFrom === columnTo;
         const fromIndex = allColumns.indexOf(columnFrom as AgColumn);
 
+        const logMissing = (column: AgColumn) => _warnOnce(`column ${column.getId()} is not visible`);
         if (fromIndex < 0) {
-            console.warn(`AG Grid: column ${columnFrom.getId()} is not visible`);
+            logMissing(columnFrom);
             return;
         }
 
         const toIndex = isSameColumn ? fromIndex : allColumns.indexOf(columnTo as AgColumn);
 
         if (toIndex < 0) {
-            console.warn(`AG Grid: column ${columnTo.getId()} is not visible`);
+            logMissing(columnTo);
             return;
         }
 

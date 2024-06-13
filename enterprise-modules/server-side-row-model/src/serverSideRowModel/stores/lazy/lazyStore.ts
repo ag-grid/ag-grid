@@ -18,7 +18,7 @@ import type {
     StoreUpdatedEvent,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, NumberSequence, ServerSideTransactionResultStatus } from '@ag-grid-community/core';
+import { BeanStub, NumberSequence, ServerSideTransactionResultStatus, _warnOnce } from '@ag-grid-community/core';
 
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { SSRMParams } from '../../serverSideRowModel';
@@ -116,11 +116,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns an object determining the status of this transaction and effected nodes
      */
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
-        const idFunc = this.gos.getCallback('getRowId');
+        const idFunc = this.gos.getRowIdCallback();
         if (!idFunc) {
-            console.warn(
-                'AG Grid: getRowId callback must be implemented for transactions to work. Transaction was ignored.'
-            );
+            _warnOnce('getRowId callback must be implemented for transactions to work. Transaction was ignored.');
             return {
                 status: ServerSideTransactionResultStatus.Cancelled,
             };

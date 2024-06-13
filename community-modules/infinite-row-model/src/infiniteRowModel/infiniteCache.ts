@@ -2,7 +2,6 @@ import type {
     BeanCollection,
     FocusService,
     IDatasource,
-    Logger,
     RowNode,
     RowNodeBlockLoader,
     RowRenderer,
@@ -10,7 +9,7 @@ import type {
     StoreUpdatedEvent,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, NumberSequence, _exists, _getAllValuesInObject, _missing } from '@ag-grid-community/core';
+import { BeanStub, NumberSequence, _exists, _getAllValuesInObject, _log, _missing } from '@ag-grid-community/core';
 
 import { InfiniteBlock } from './infiniteBlock';
 
@@ -37,13 +36,9 @@ export class InfiniteCache extends BeanStub {
     protected rowRenderer: RowRenderer;
     private focusService: FocusService;
 
-    private logger: Logger;
-
     public wireBeans(beans: BeanCollection): void {
         this.rowRenderer = beans.rowRenderer;
         this.focusService = beans.focusService;
-
-        this.logger = beans.loggerFactory.create('InfiniteCache');
     }
 
     private readonly params: InfiniteCacheParams;
@@ -126,7 +121,9 @@ export class InfiniteCache extends BeanStub {
             return;
         }
 
-        this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${lastRow}`);
+        if (this.gos.get('debug')) {
+            _log(`InfiniteCache - onPageLoaded: page = ${block.getId()}, lastRow = ${lastRow}`);
+        }
 
         this.checkRowCount(block, lastRow);
         // we fire cacheUpdated even if the row count has not changed, as some items need updating even

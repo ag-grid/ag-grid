@@ -21,7 +21,7 @@ export {
 } from './columns/columnApplyStateService';
 export { ColumnMoveService } from './columns/columnMoveService';
 export { ColumnNameService } from './columns/columnNameService';
-export { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
+export { IShowRowGroupColsService, IColumnDropZonesService } from './interfaces/iShowRowGroupColsService';
 export { PivotResultColsService } from './columns/pivotResultColsService';
 export { ColumnSizeService, IColumnLimit, ISizeColumnsToFitParams } from './columns/columnSizeService';
 export { ColumnKeyCreator } from './columns/columnKeyCreator';
@@ -37,8 +37,8 @@ export {
 } from './interfaces/autoSizeStrategy';
 
 // components
-export { ComponentUtil } from './components/componentUtil';
-export { ComponentClass, AgComponentSelector, RefPlaceholder, ComponentEvent } from './widgets/component';
+export { ComponentUtil, _combineAttributesAndGridOptions, _processOnChange } from './components/componentUtil';
+export { ComponentSelector, AgComponentSelector, RefPlaceholder, ComponentEvent } from './widgets/component';
 
 export { UserComponentRegistry } from './components/framework/userComponentRegistry';
 export { UserComponentFactory, UserCompDetails } from './components/framework/userComponentFactory';
@@ -278,7 +278,7 @@ export { GridHeaderCtrl, IGridHeaderComp } from './headerRendering/gridHeaderCtr
 export { HeaderRowComp, HeaderRowType } from './headerRendering/row/headerRowComp';
 export { HeaderRowCtrl, IHeaderRowComp } from './headerRendering/row/headerRowCtrl';
 export { HeaderCellCtrl, IHeaderCellComp } from './headerRendering/cells/column/headerCellCtrl';
-export { SortIndicatorComp } from './headerRendering/cells/column/sortIndicatorComp';
+export { SortIndicatorComp, SortIndicatorSelector } from './headerRendering/cells/column/sortIndicatorComp';
 export { IHeaderFilterCellComp } from './headerRendering/cells/floatingFilter/iHeaderFilterCellComp';
 export { HeaderFilterCellCtrl } from './headerRendering/cells/floatingFilter/headerFilterCellCtrl';
 export { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerRendering/cells/columnGroup/headerGroupCellCtrl';
@@ -318,7 +318,11 @@ export {
     IRichCellEditorParams,
     RichCellEditorValuesCallback,
     RichCellEditorParams,
+    IRichCellEditorRendererParams,
 } from './interfaces/iRichCellEditorParams';
+
+export { ICellEditorRendererComp, ICellEditorRendererParams } from './interfaces/iCellEditorRenderer';
+
 export { CheckboxCellEditor } from './edit/cellEditors/checkboxCellEditor';
 export { EditCoreModule as _EditCoreModule } from './edit/editModule';
 
@@ -466,14 +470,14 @@ export {
 export { RichSelectParams } from './interfaces/iRichCellEditorParams';
 export { AgAbstractField, FieldElement } from './widgets/agAbstractField';
 export { AgAbstractInputField } from './widgets/agAbstractInputField';
-export { AgCheckbox } from './widgets/agCheckbox';
+export { AgCheckbox, AgCheckboxSelector } from './widgets/agCheckbox';
 export { AgRadioButton, AgRadioButtonParams } from './widgets/agRadioButton';
-export { AgToggleButton, AgToggleButtonParams } from './widgets/agToggleButton';
-export { AgInputTextField, AgInputTextFieldParams } from './widgets/agInputTextField';
+export { AgToggleButton, AgToggleButtonParams, AgToggleButtonSelector } from './widgets/agToggleButton';
+export { AgInputTextField, AgInputTextFieldParams, AgInputTextFieldSelector } from './widgets/agInputTextField';
 export { AgInputTextArea } from './widgets/agInputTextArea';
-export { AgInputNumberField, AgInputNumberFieldParams } from './widgets/agInputNumberField';
+export { AgInputNumberField, AgInputNumberFieldSelector, AgInputNumberFieldParams } from './widgets/agInputNumberField';
 export { AgInputDateField } from './widgets/agInputDateField';
-export { AgSelect, AgSelectParams } from './widgets/agSelect';
+export { AgSelect, AgSelectParams, AgSelectSelector } from './widgets/agSelect';
 export { ListOption } from './widgets/agList';
 export { Component, VisibleChangedEvent } from './widgets/component';
 export { ManagedFocusFeature, ManagedFocusCallbacks } from './widgets/managedFocusFeature';
@@ -571,7 +575,6 @@ export { RowNodeSorter, SortedRowNode, SortOption } from './rowNodes/rowNodeSort
 export { CtrlsService } from './ctrlsService';
 export { GridComp } from './gridComp/gridComp';
 export { GridCtrl, IGridComp } from './gridComp/gridCtrl';
-export { Logger, LoggerFactory } from './logger';
 export { SortController, SortModelItem } from './sortController';
 export { LocaleService } from './localeService';
 export { ValueService } from './valueService/valueService';
@@ -795,6 +798,7 @@ export {
     BaseMenuItem,
     BaseMenuItemParams,
 } from './interfaces/menuItem';
+export { IWatermark } from './interfaces/iWatermark';
 
 // utils
 export {
@@ -862,7 +866,7 @@ export {
     _isStopPropagationForAgGrid,
     _isElementInEventPath,
 } from './utils/event';
-export { _warnOnce, _errorOnce, _debounce, _compose, _doOnce, _waitUntil } from './utils/function';
+export { _log, _warnOnce, _errorOnce, _debounce, _compose, _doOnce, _waitUntil } from './utils/function';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export {
@@ -885,7 +889,6 @@ export { AgPromise } from './utils/promise';
 
 // charts
 export * from './interfaces/iChartOptions';
-export * from './interfaces/iAgChartOptions';
 
 // sparklines
 export * from './interfaces/iSparklineCellRendererParams';

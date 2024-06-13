@@ -1,6 +1,6 @@
 import type { Module } from '@ag-grid-community/core';
-import { AgCheckbox, AgInputNumberField, AgSelect, ModuleNames } from '@ag-grid-community/core';
-import { AgGroupComponent, AgMenuItemRenderer, EnterpriseCoreModule } from '@ag-grid-enterprise/core';
+import { ModuleNames } from '@ag-grid-community/core';
+import { AgMenuItemRenderer, EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 
 import { AdvancedSettingsMenuFactory } from './charts/chartComp/menu/advancedSettings/advancedSettingsMenuFactory';
@@ -24,11 +24,6 @@ import {
 } from './charts/chartsApi';
 import { validGridChartsVersion } from './utils/validGridChartsVersion';
 import { VERSION as GRID_VERSION } from './version';
-import { AgAngleSelect } from './widgets/agAngleSelect';
-import { AgColorInput } from './widgets/agColorInput';
-import { AgColorPicker } from './widgets/agColorPicker';
-import { AgInputRange } from './widgets/agInputRange';
-import { AgSlider } from './widgets/agSlider';
 
 export const GridChartsCoreModule: Module = {
     version: GRID_VERSION,
@@ -46,18 +41,6 @@ export const GridChartsCoreModule: Module = {
         ChartMenuListFactory,
         ChartMenuService,
         AdvancedSettingsMenuFactory,
-    ],
-    // Register all the components that are used across all the chart comps to avoid repetition
-    agStackComponents: [
-        AgColorPicker,
-        AgColorInput,
-        AgAngleSelect,
-        AgInputRange,
-        AgSlider,
-        AgGroupComponent,
-        AgSelect,
-        AgInputNumberField,
-        AgCheckbox,
     ],
     userComponents: [
         {

@@ -15,14 +15,10 @@ import type {
     BodyScrollEvent,
     ColumnEvent,
     ColumnGroupOpenedEvent,
-    ColumnMovedEvent,
-    ColumnPinnedEvent,
     ColumnResizedEvent,
-    ColumnVisibleEvent,
 } from './events';
 import type { WithoutGridCommon } from './interfaces/iCommon';
-import type { Logger } from './logger';
-import { _errorOnce } from './utils/function';
+import { _errorOnce, _warnOnce } from './utils/function';
 
 export class AlignedGridsService extends BeanStub implements NamedBean {
     beanName = 'alignedGridsService' as const;
@@ -32,15 +28,11 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
     private ctrlsService: CtrlsService;
     private columnApplyStateService: ColumnApplyStateService;
 
-    private logger: Logger;
-
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.columnSizeService = beans.columnSizeService;
         this.ctrlsService = beans.ctrlsService;
         this.columnApplyStateService = beans.columnApplyStateService;
-
-        this.logger = beans.loggerFactory.create('AlignedGridsService');
     }
 
     // flag to mark if we are consuming. to avoid cyclic events (ie other grid firing back to master
@@ -194,8 +186,8 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                 case 'columnPivotChanged':
                     // we cannot support pivoting with aligned grids as the columns will be out of sync as the
                     // grids will have columns created based on the row data of the grid.
-                    console.warn(
-                        'AG Grid: pivoting is not supported with aligned grids. ' +
+                    _warnOnce(
+                        'pivoting is not supported with aligned grids. ' +
                             'You can only use one of these features at a time in a grid.'
                     );
                     break;
@@ -217,9 +209,6 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                 return;
             }
 
-            this.logger.log(
-                'onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterGroup.isExpanded()
-            );
             this.columnModel.setColumnGroupOpened(otherColumnGroup, masterGroup.isExpanded(), 'alignedGridChanged');
         });
     }
@@ -249,14 +238,12 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                 // to an index, as there maybe be many indexes columns moved to (as wasn't result of a mouse drag).
                 // so only way to be sure is match the order of all columns using Column State.
                 {
-                    const movedEvent = colEvent as ColumnMovedEvent;
                     const srcColState = colEvent.api.getColumnState();
                     const destColState = srcColState.map((s) => ({ colId: s.colId }));
                     this.columnApplyStateService.applyColumnState(
                         { state: destColState, applyOrder: true },
                         'alignedGridChanged'
                     );
-                    this.logger.log(`onColumnEvent-> processing ${colEvent.type} toIndex = ${movedEvent.toIndex}`);
                 }
                 break;
             case 'columnVisible':
@@ -264,20 +251,16 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                 // as there maybe be mix of true/false (as wasn't result of a mouse click to set visiblity).
                 // so only way to be sure is match the visibility of all columns using Column State.
                 {
-                    const visibleEvent = colEvent as ColumnVisibleEvent;
                     const srcColState = colEvent.api.getColumnState();
                     const destColState = srcColState.map((s) => ({ colId: s.colId, hide: s.hide }));
                     this.columnApplyStateService.applyColumnState({ state: destColState }, 'alignedGridChanged');
-                    this.logger.log(`onColumnEvent-> processing ${colEvent.type} visible = ${visibleEvent.visible}`);
                 }
                 break;
             case 'columnPinned':
                 {
-                    const pinnedEvent = colEvent as ColumnPinnedEvent;
                     const srcColState = colEvent.api.getColumnState();
                     const destColState = srcColState.map((s) => ({ colId: s.colId, pinned: s.pinned }));
                     this.columnApplyStateService.applyColumnState({ state: destColState }, 'alignedGridChanged');
-                    this.logger.log(`onColumnEvent-> processing ${colEvent.type} pinned = ${pinnedEvent.pinned}`);
                 }
                 break;
             case 'columnResized': {
@@ -290,9 +273,6 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                     };
                 } = {};
                 masterColumns.forEach((column) => {
-                    this.logger.log(
-                        `onColumnEvent-> processing ${colEvent.type} actualWidth = ${column.getActualWidth()}`
-                    );
                     columnWidths[column.getId()] = { key: column.getColId(), newWidth: column.getActualWidth() };
                 });
                 // don't set flex columns width
