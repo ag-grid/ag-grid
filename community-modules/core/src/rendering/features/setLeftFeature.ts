@@ -8,18 +8,29 @@ import { _last } from '../../utils/array';
 import { _exists } from '../../utils/generic';
 
 export class SetLeftFeature extends BeanStub {
+    private eCell: HTMLElement;
     private ariaEl: HTMLElement;
+
     private actualLeft: number;
 
+    // if we are spanning columns, this tells what columns,
+    // otherwise this is empty
+    private colsSpanning: AgColumn[] | undefined;
+
+    private beans: BeanCollection;
+
     constructor(
-        private columnOrGroup: AgColumn | AgColumnGroup,
-        private eCell: HTMLElement,
-        private beans: BeanCollection,
-        // if we are spanning columns, this tells what columns, otherwise this is empty
-        private colsSpanning?: AgColumn[]
+        private readonly columnOrGroup: AgColumn | AgColumnGroup,
+        eCell: HTMLElement,
+        beans: BeanCollection,
+        colsSpanning?: AgColumn[]
     ) {
         super();
+        this.columnOrGroup = columnOrGroup;
+        this.eCell = eCell;
         this.ariaEl = this.eCell.querySelector('[role=columnheader]') || this.eCell;
+        this.colsSpanning = colsSpanning;
+        this.beans = beans;
     }
 
     public setColsSpanning(colsSpanning: AgColumn[]): void {
@@ -133,14 +144,5 @@ export class SetLeftFeature extends BeanStub {
                 _setAriaColSpan(this.ariaEl, children.length);
             }
         }
-    }
-
-    public override destroy(): void {
-        super.destroy();
-        this.eCell = null!;
-        this.ariaEl = null!;
-        this.columnOrGroup = null!;
-        this.colsSpanning = [];
-        this.beans = null!;
     }
 }

@@ -77,8 +77,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private instanceId: RowCtrlInstanceId;
 
-    private rowNode: RowNode;
-    private beans: BeanCollection;
+    private readonly rowNode: RowNode;
+    private readonly beans: BeanCollection;
     private tooltipFeature: TooltipFeature | undefined;
 
     private rowType: RowType;
@@ -1567,9 +1567,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.centerCellCtrls = destroyCellCtrls(this.centerCellCtrls);
         this.leftCellCtrls = destroyCellCtrls(this.leftCellCtrls);
         this.rightCellCtrls = destroyCellCtrls(this.rightCellCtrls);
-
-        this.beans = undefined as any;
-        this.rowNode = undefined as any;
     }
 
     private setFocusedClasses(gui?: RowGui): void {

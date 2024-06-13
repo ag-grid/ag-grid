@@ -111,20 +111,10 @@ export function gridBeanInitComparator(
     return index1 - index2;
 }
 
-// We want gos and gridOptions to be destroyed last in case any beans are using them in their destroy methods
-const lastDestroyOrder: { [key in BeanName]?: number } = Object.fromEntries(
-    ['gridOptions', 'gos'].map((beanName, index) => [beanName, index])
-);
 export function gridBeanDestroyComparator(
     bean1: GenericBean<BeanName, BeanCollection>,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     bean2: GenericBean<BeanName, BeanCollection>
 ): number {
-    if (bean1?.beanName === 'gridDestroyService') {
-        return -1;
-    }
-    // if the beans are not in the ordered list, just ensure they are before the ordered beans and stable to provided order
-    const index1 = (bean1.beanName ? lastDestroyOrder[bean1.beanName] : undefined) ?? 0;
-    const index2 = (bean2.beanName ? lastDestroyOrder[bean2.beanName] : undefined) ?? 0;
-    return index1 - index2;
+    return bean1?.beanName === 'gridDestroyService' ? -1 : 0;
 }
