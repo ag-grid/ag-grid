@@ -1,4 +1,4 @@
-import type { ColDef, GetDataPath, StatusPanelDef, ICellRendererParams } from '@ag-grid-community/core';
+import type { ColDef, GetDataPath, ICellRendererParams, StatusPanelDef } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
@@ -42,15 +42,15 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
         {
             headerName: 'Contact',
             field: 'contact',
+            pinned: 'left',
             cellRendererSelector: (params: ICellRendererParams<IRow>) => {
                 const contactDetails = {
-                  component: ContactCellRenderer,
+                    component: ContactCellRenderer,
                 };
                 if (params.node.footer) return undefined;
                 return contactDetails;
-              },
+            },
             width: 120,
-            aggFunc: 'count'
         },
         {
             headerName: 'Location',
@@ -59,11 +59,11 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             width: 200,
             cellRendererSelector: (params: ICellRendererParams<IRow>) => {
                 const flatIcon = {
-                  component: FlagRenderer,
+                    component: FlagRenderer,
                 };
                 if (params.node.footer) return undefined;
                 return flatIcon;
-              },
+            },
             editable: true,
         },
 
@@ -73,11 +73,11 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             width: 250,
             cellRendererSelector: (params: ICellRendererParams<IRow>) => {
                 const tagCell = {
-                  component: TagCellRenderer,
+                    component: TagCellRenderer,
                 };
                 if (params.node.footer) return undefined;
                 return tagCell;
-              },
+            },
         },
         {
             field: 'employmentType',
@@ -98,7 +98,6 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             field: 'basicMonthlySalary',
             cellDataType: 'number',
             valueFormatter: currencyFormatter,
-            aggFunc: 'sum'
         },
         {
             headerName: 'ID',
@@ -126,11 +125,11 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             pinned: 'right',
             cellRendererSelector: (params: ICellRendererParams<IRow>) => {
                 const statusCell = {
-                  component: StatusCellRenderer,
+                    component: StatusCellRenderer,
                 };
                 if (params.node.footer) return undefined;
                 return statusCell;
-              },
+            },
             cellEditor: 'agRichSelectCellEditor',
             cellEditorParams: {
                 values: paymentStatus,
@@ -159,7 +158,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
                     return 'Total';
                 }
                 return { component: 'agGroupCellRenderer', params: groupCell };
-              },
+            },
         };
     }, []);
 
@@ -176,7 +175,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
                         columnMenu="new"
                         treeData={treeData}
                         autoGroupColumnDef={autoGroupColumnDef}
-                        grandTotalRow={"bottom"}
+                        suppressGroupRowsSticky={true}
                     />
                 </div>
             </div>

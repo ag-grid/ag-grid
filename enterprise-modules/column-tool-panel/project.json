@@ -69,7 +69,7 @@
           "@ag-grid-enterprise/side-bar"
         ],
         "platform": "browser",
-        "target": "es6",
+        "target": "es2020",
         "format": ["cjs", "esm"],
         "sourcemap": true
       },

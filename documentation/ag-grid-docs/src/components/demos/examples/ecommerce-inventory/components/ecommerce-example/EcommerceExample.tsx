@@ -1,21 +1,21 @@
 import type { ColDef, SizeColumnsToContentStrategy } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
-import { useCallback, type FunctionComponent, useRef, useState, useMemo } from 'react';
+import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
+import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { type FunctionComponent, useCallback, useMemo, useRef, useState } from 'react';
 
 import { quantityCalculator } from '../../utils/valueGetters';
 import { ActionsCellRenderer } from '../actions-cell-renderer/ActionsCellRenderer';
 import { ImageCellRenderer } from '../image-cell-renderer/ImageCellRenderer';
 import { ProductCellRenderer } from '../product-cell-renderer/ProductCellRenderer';
-import { StatusCellRenderer } from '../status-cell-renderer/StatusCellRenderer';
 import { ProductDetailsRenderer } from '../product-details-renderer/ProductDetailsRenderer';
+import { StatusCellRenderer } from '../status-cell-renderer/StatusCellRenderer';
 import styles from './EcommerceExample.module.css';
 import { getData } from './data';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 
-ModuleRegistry.registerModules([ SetFilterModule, MultiFilterModule, MasterDetailModule ]);
+ModuleRegistry.registerModules([SetFilterModule, MultiFilterModule, MasterDetailModule]);
 
 interface Props {
     gridTheme?: string;
@@ -24,7 +24,9 @@ interface Props {
 
 const whenSoldOut = ['Discontinued', 'Back order', 'Email when available'];
 const paginationPageSizeSelector = [5, 10, 20];
-function currencyFormatter(params: ValueFormatterParams) { return params.value == null ? "" : "£" + params.value; };
+function currencyFormatter(params: ValueFormatterParams) {
+    return params.value == null ? '' : '£' + params.value;
+}
 
 export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
     const gridRef = useRef<AgGridReact>(null);
@@ -42,7 +44,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             field: 'product',
             headerName: 'Product',
             cellRenderer: ProductCellRenderer,
-            cellRenderer: "agGroupCellRenderer",
+            cellRenderer: 'agGroupCellRenderer',
             wrapText: true,
             filter: 'agMultiColumnFilter',
             filterParams: {
@@ -51,7 +53,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                         filter: 'agTextColumnFilter',
                         filterParams: {
                             defaultOption: 'startsWith',
-                        }
+                        },
                     },
                     {
                         filter: 'agSetColumnFilter',
@@ -60,14 +62,11 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             },
             width: 600,
         },
-        {   field: 'sku', 
-            headerName: 'SKU', 
-            width: 500 
-        },
-        {   headerName: 'Price',
+        { field: 'sku', headerName: 'SKU', width: 500 },
+        {
+            headerName: 'Price',
             width: 200,
-            cellRenderer: function(param)
-            {
+            cellRenderer: function (param) {
                 return (
                     <div>
                         {'£' + param.data.price}
@@ -77,14 +76,10 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                         </span>
                     </div>
                 );
-            }
+            },
         },
-        {   field: 'soldLastMonth',
-            filter: 'agNumberColumnFilter'
-        },
-        {   headerName: 'Est. Profit',
-            valueGetter: p => '£'+p.data.price * p.data.soldLastMonth /10 
-        },
+        { field: 'soldLastMonth', filter: 'agNumberColumnFilter' },
+        { headerName: 'Est. Profit', valueGetter: (p) => '£' + (p.data.price * p.data.soldLastMonth) / 10 },
         {
             field: 'status',
             headerName: 'Status',
@@ -109,7 +104,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                 showStepperButtons: true,
             },
             editable: true,
-            width: 100
+            width: 100,
         },
         {
             field: 'unavailable',
@@ -121,13 +116,9 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                 showStepperButtons: true,
             },
             editable: true,
-            width: 150
+            width: 150,
         },
-        {   field: 'onHand', 
-            valueGetter: quantityCalculator, 
-            filter: 'agNumberColumnFilter',
-            width: 100,
-        },
+        { field: 'onHand', valueGetter: quantityCalculator, filter: 'agNumberColumnFilter', width: 100 },
         {
             field: 'incoming',
             cellEditor: 'agNumberCellEditor',
@@ -153,12 +144,12 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
 
     const onFilterTextBoxChanged = useCallback(() => {
         gridRef.current!.api.setGridOption(
-          "quickFilterText",
-          (document.getElementById("filter-text-box") as HTMLInputElement).value,
+            'quickFilterText',
+            (document.getElementById('filter-text-box') as HTMLInputElement).value
         );
-      }, []);
+    }, []);
 
-      const detailCellRendererParams = useMemo(() => {
+    const detailCellRendererParams = useMemo(() => {
         return {
             detailGridOptions: {
                 columnDefs: [
@@ -172,7 +163,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                 },
             },
             getDetailRowData: function (params: any) {
-                const descriptions = ['TBD' ];
+                const descriptions = ['TBD'];
 
                 const selectedDescription = descriptions[Math.floor(Math.random() * descriptions.length)];
 
@@ -189,13 +180,8 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             <div className={styles.container}>
                 <div className="example-header">
                     <span>Quick Filter:</span>
-                    <input
-                        type="text"
-                        id="filter-text-box"
-                        placeholder="Search..."
-                        onInput={onFilterTextBoxChanged}
-            />
-        </div>
+                    <input type="text" id="filter-text-box" placeholder="Search..." onInput={onFilterTextBoxChanged} />
+                </div>
                 <div className={`${themeClass} ${styles.grid}`}>
                     <AgGridReact
                         ref={gridRef}
@@ -209,7 +195,8 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                         paginationPageSize={10}
                         paginationPageSizeSelector={paginationPageSizeSelector}
                         masterDetail={true}
-                        detailCellRendererParams={detailCellRendererParams}                    />
+                        detailCellRendererParams={detailCellRendererParams}
+                    />
                 </div>
             </div>
         </div>

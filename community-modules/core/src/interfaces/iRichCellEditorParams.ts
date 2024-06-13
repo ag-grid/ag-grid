@@ -1,6 +1,6 @@
 import type { AgPickerFieldParams } from './agFieldParams';
 import type { ICellEditorParams } from './iCellEditor';
-import { ICellEditorRendererParams } from './iCellEditorRenderer';
+import type { ICellEditorRendererParams } from './iCellEditorRenderer';
 
 export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRendererParams<TValue> {}
 
