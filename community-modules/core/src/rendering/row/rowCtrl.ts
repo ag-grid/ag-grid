@@ -28,7 +28,7 @@ import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
 import { ModuleNames } from '../../modules/moduleNames';
 import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { _setAriaExpanded, _setAriaRowIndex, _setAriaSelected } from '../../utils/aria';
-import { _isElementChildOfClass, _isVisible } from '../../utils/dom';
+import { _isElementChildOfClass, _isFocusableFormField, _isVisible } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _executeNextVMTurn, _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
@@ -932,7 +932,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         } // can happen with react ui, comp not yet ready
 
         element.classList.toggle('ag-full-width-focus', isFocused);
-        if (isFocused) {
+
+        if (isFocused && event?.forceBrowserFocus) {
             // we don't scroll normal rows into view when we focus them, so we don't want
             // to scroll Full Width rows either.
             element.focus({ preventScroll: true });
@@ -1024,11 +1025,20 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             this.beans.rangeService.removeAllCellRanges();
         }
 
+        const element = this.getFullWidthElement();
+        const target = mouseEvent.target as HTMLElement;
+
+        let forceBrowserFocus = true;
+
+        if (element && element.contains(target as HTMLElement) && _isFocusableFormField(target)) {
+            forceBrowserFocus = false;
+        }
+
         this.beans.focusService.setFocusedCell({
             rowIndex: node.rowIndex!,
             column: presentedColsService.getAllCols()[0],
             rowPinned: node.rowPinned,
-            forceBrowserFocus: true,
+            forceBrowserFocus,
         });
     }
 
