@@ -43,7 +43,7 @@ const errorConditions = {
     },
     noProducts: {
         getIsError: ({ noUserProducts }: ErrorData) => noUserProducts,
-        message: `A license is not required to use AG Grid community or AG Charts Community`,
+        message: `A license is not required to use AG Grid Community or AG Charts Community`,
     },
     userLicenseError: {
         getIsError: ({ hasLicense, license, licenseDetails, chartsLicenseDetails }: ErrorData) => {
