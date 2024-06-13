@@ -26,8 +26,14 @@ const employmentType = ['Permanent', 'Contract'];
 const paymentMethod = ['Cash', 'Check', 'Bank Transfer'];
 const paymentStatus = ['Paid', 'Pending'];
 
-function currencyFormatter(params: ValueFormatterParams) { return params.value == null ? "" : "$" + params.value; };
-
+const currencyFormatter = (params) => {
+    const value = params.value;
+    if (value == null) {
+        return '';
+    }
+    const roundedValue = Math.round(value);
+    return `$${roundedValue.toLocaleString()}`;
+};
 
 export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
     const gridRef = useRef<AgGridReact>(null);
@@ -44,6 +50,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
                 return contactDetails;
               },
             width: 120,
+            aggFunc: 'count'
         },
         {
             headerName: 'Location',
@@ -91,6 +98,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             field: 'basicMonthlySalary',
             cellDataType: 'number',
             valueFormatter: currencyFormatter,
+            aggFunc: 'sum'
         },
         {
             headerName: 'ID',
@@ -147,7 +155,9 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
                     suppressCount: true,
                     innerRenderer: EmployeeCellRenderer,
                 };
-                if (params.node.footer) return undefined;
+                if (params.node.footer) {
+                    return 'Total';
+                }
                 return { component: 'agGroupCellRenderer', params: groupCell };
               },
         };
