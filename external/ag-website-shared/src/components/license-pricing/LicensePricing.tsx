@@ -152,6 +152,13 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                             >
                                 info@ag-grid.com
                             </InfoEmailLink>
+
+                            <p className={styles.licenceKeyDocs}>
+                                Already have a licence and need to install your key?
+                                <br />
+                                {/* TODO: Add correct link for licence setup page. Should always point to Grid. Preferably with current Framework if set */}
+                                Read our documentation on <a href="">Installing Your Licence Key</a>.
+                            </p>
                         </div>
 
                         <div className={styles.videoPrompt}>

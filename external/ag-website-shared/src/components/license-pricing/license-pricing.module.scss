@@ -330,7 +330,7 @@
     text-align: center;
     margin-top: $spacing-size-12;
     padding-top: $spacing-size-24;
-    padding-bottom: $spacing-size-24;
+    padding-bottom: $spacing-size-10;
     position: relative;
 
     p {
@@ -368,6 +368,10 @@
 
     &::after {
         right: -100vw;
+    }
+
+    .licenceKeyDocs {
+        margin-top: $spacing-size-20;
     }
 }
 
