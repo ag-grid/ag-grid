@@ -50,7 +50,6 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
                 return contactDetails;
               },
             width: 120,
-            aggFunc: 'count'
         },
         {
             headerName: 'Location',
@@ -98,7 +97,6 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             field: 'basicMonthlySalary',
             cellDataType: 'number',
             valueFormatter: currencyFormatter,
-            aggFunc: 'sum'
         },
         {
             headerName: 'ID',
@@ -176,7 +174,6 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
                         columnMenu="new"
                         treeData={treeData}
                         autoGroupColumnDef={autoGroupColumnDef}
-                        grandTotalRow={"bottom"}
                     />
                 </div>
             </div>

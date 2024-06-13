@@ -107,8 +107,10 @@ export const PORTFOLIO_DATA: BasePortfolioItem[] = [
         buyDate: '2023-07-10',
         buyPrice: 24.56,
     },
+
+    // FOREX
     {
-        ticker: 'EURUSD',
+        ticker: 'EUR',
         name: 'Euro to US Dollar',
         ccy: 'USD',
         instrument: 'Forex',
@@ -117,7 +119,7 @@ export const PORTFOLIO_DATA: BasePortfolioItem[] = [
         buyPrice: 24.56,
     },
     {
-        ticker: 'GBPUSD',
+        ticker: 'GBP',
         name: 'Sterling to US Dollar',
         ccy: 'USD',
         instrument: 'Forex',
@@ -126,8 +128,8 @@ export const PORTFOLIO_DATA: BasePortfolioItem[] = [
         buyPrice: 24.56,
     },
     {
-        ticker: 'USDJPY',
-        name: 'US Dollar to Japanese Yen',
+        ticker: 'JPY',
+        name: 'Japanese Yen to US Dollar',
         ccy: 'USD',
         instrument: 'Forex',
         quantity: 65,
@@ -135,14 +137,25 @@ export const PORTFOLIO_DATA: BasePortfolioItem[] = [
         buyPrice: 24.56,
     },
     {
-        ticker: 'GBPCAD',
-        name: 'Sterling to Canadian Dollar',
-        ccy: 'GBP',
+        ticker: 'CAD',
+        name: 'Canadian Dollar to US Dollar',
+        ccy: 'USD',
         instrument: 'Forex',
         quantity: 65,
         buyDate: '2023-07-10',
         buyPrice: 24.56,
     },
+    {
+        ticker: 'CNY',
+        name: 'Chinese Yuan to US Dollar',
+        ccy: 'USD',
+        instrument: 'Forex',
+        quantity: 65,
+        buyDate: '2023-07-10',
+        buyPrice: 24.56,
+    },
+
+    // Crytpo
     {
         ticker: 'BTC',
         name: 'Bitcoin',
@@ -179,6 +192,15 @@ export const PORTFOLIO_DATA: BasePortfolioItem[] = [
         buyDate: '2023-07-10',
         buyPrice: 24.56,
     },
+    {
+        ticker: 'DOGE',
+        name: 'Dogecoin',
+        ccy: 'USD',
+        instrument: 'Crypto',
+        quantity: 65,
+        buyDate: '2023-07-10',
+        buyPrice: 24.56,
+    },    
 ];
 
 /**
