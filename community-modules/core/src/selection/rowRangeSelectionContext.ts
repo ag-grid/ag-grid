@@ -42,8 +42,15 @@ export class RowRangeSelectionContext {
     }
 
     public getRange(): RowNode[] {
-        if (this.cachedRange.length === 0 && this.end !== null) {
-            this.cachedRange = this.rowModel.getNodesInRangeForSelection(this.root, this.end);
+        if (this.cachedRange.length === 0) {
+            const root = this.getRoot();
+            const end = this.getEnd();
+
+            if (end == null) {
+                return this.cachedRange;
+            }
+
+            this.cachedRange = this.rowModel.getNodesInRangeForSelection(root, end);
         }
 
         return this.cachedRange;
@@ -58,7 +65,19 @@ export class RowRangeSelectionContext {
     }
 
     public getRoot(): RowNode | null {
+        if (this.root && this.root?.key === null) {
+            this.root = this.rowModel.getRowNode(this.root.id!) ?? null;
+        }
+
         return this.root;
+    }
+
+    private getEnd(): RowNode | null {
+        if (this.end && this.end?.key === null) {
+            this.end = this.rowModel.getRowNode(this.end.id!) ?? null;
+        }
+
+        return this.end;
     }
 
     /**
@@ -98,7 +117,7 @@ export class RowRangeSelectionContext {
      * @returns Object of nodes to either keep or discard (i.e. deselect) from the range
      */
     public extend(node: RowNode): { keep: RowNode[]; discard: RowNode[] } {
-        const newRange = this.rowModel.getNodesInRangeForSelection(this.root, node);
+        const newRange = this.rowModel.getNodesInRangeForSelection(this.getRoot(), node);
 
         if (newRange.find((newRangeNode) => newRangeNode.id === this.end?.id)) {
             // Range between root and given node contains the current "end"
