@@ -7,7 +7,7 @@ const { activeTab } = Astro.props;
 
 <div class={styles.tabs}>
     <div class:list={[styles.tabWrapper, activeTab === 'complete' && styles.tabActive]}>
-        <a href={urlWithBaseUrl(`/example-performance`)}>
+        <a href={urlWithBaseUrl(`/example`)}>
             <img
                 class={styles.showcaseItemTab}
                 src={urlWithBaseUrl(`/example/grid-full.png`)}
@@ -22,7 +22,7 @@ const { activeTab } = Astro.props;
     </div>
 
     <div class:list={[styles.tabWrapper, activeTab === 'finance' && styles.tabActive]}>
-        <a href={urlWithBaseUrl(`/example`)}>
+        <a href={urlWithBaseUrl(`/example-finance`)}>
             <img
                 class={styles.showcaseItemTab}
                 src={urlWithBaseUrl(`/example/finance-grid.png`)}
