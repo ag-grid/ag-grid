@@ -314,6 +314,20 @@ export const useLicenseData = () => {
     useUpdateDataFromUrl({ setUserProducts, setImportType });
 
     useEffect(() => {
+        const url = new URL(window.location);
+        const isDebug = url.searchParams.get('debug') === 'true';
+
+        if (isDebug) {
+            console.log({
+                validLicenseType,
+                licenseDetails,
+                chartsLicenseDetails,
+                errors,
+            });
+        }
+    }, [validLicenseType, licenseDetails, chartsLicenseDetails, errors]);
+
+    useEffect(() => {
         if (!hasValue(license)) {
             return;
         }
