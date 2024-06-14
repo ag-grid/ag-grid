@@ -141,7 +141,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                             className={classnames(styles.license, {
                                 [styles.error]: errors.userLicenseError,
                             })}
-                            placeholder="Paste your license here..."
+                            placeholder="Paste your license key here."
                             value={userLicense}
                             onChange={(e) => {
                                 setUserLicense(e.target.value);
@@ -150,7 +150,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
 
                         {userLicense === '' && (
                             <span className={styles.licencePlaceholder}>
-                                <b>Paste your license here. E.g. </b>
+                                <b>Paste your license key here e.g. </b>
                                 <span>{DUMMY_LICENSE_KEY}</span>
                             </span>
                         )}
