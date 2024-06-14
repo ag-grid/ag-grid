@@ -1,5 +1,5 @@
 import type { ChartType } from '@ag-grid-community/core';
-import { _Scene, _Theme, _Util } from 'ag-charts-community';
+import { _Scene, _Theme } from 'ag-charts-community';
 
 import type { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniChart } from '../miniChart';

@@ -1,5 +1,4 @@
 import { BeanStub } from '../context/beanStub';
-import type { AgEvent } from '../events';
 import type { Column, ColumnGroupShowType, ColumnInstanceId, ProvidedColumnGroup } from '../interfaces/iColumn';
 import type { AgColumn } from './agColumn';
 import { getNextColInstanceId, isColumn } from './agColumn';

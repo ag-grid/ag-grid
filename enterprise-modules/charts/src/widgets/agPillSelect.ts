@@ -1,12 +1,5 @@
 import type { DragItem, DraggingEvent, DropTarget, ListOption } from '@ag-grid-community/core';
-import {
-    AgSelect,
-    Component,
-    DragAndDropService,
-    DragSourceType,
-    _escapeString,
-    _removeFromParent,
-} from '@ag-grid-community/core';
+import { AgSelect, Component, DragSourceType, _escapeString, _removeFromParent } from '@ag-grid-community/core';
 import { PillDragComp, PillDropZonePanel } from '@ag-grid-enterprise/core';
 
 export interface AgPillSelectParams<TValue = string | null> {

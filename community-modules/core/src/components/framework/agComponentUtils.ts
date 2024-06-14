@@ -27,7 +27,7 @@ export class AgComponentUtils extends BeanStub implements NamedBean {
         class Adapter implements ICellRendererComp {
             private eGui: HTMLElement;
 
-            refresh(params: ICellRendererParams): boolean {
+            refresh(): boolean {
                 return false;
             }
 

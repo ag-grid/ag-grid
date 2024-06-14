@@ -42,7 +42,7 @@ export class FilteredRowsComp extends AgNameValue implements IStatusPanelComp {
 
     private getTotalRowCountValue(): number {
         let totalRowCount = 0;
-        this.rowModel.forEachNode((node) => (totalRowCount += 1));
+        this.rowModel.forEachNode(() => (totalRowCount += 1));
         return totalRowCount;
     }
 

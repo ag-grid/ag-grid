@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const replace = require('replace-in-file');
 const fs = require('fs');
 const { EOL } = require('os');
@@ -162,8 +163,8 @@ function parseFile(sourceFile) {
 function extractTypes(context, propsToSkip = []) {
     let allTypes = [
         ...Object.entries(context.typeLookup)
-            .filter(([k, v]) => !propsToSkip.includes(k))
-            .map(([k, v]) => v),
+            .filter(([k]) => !propsToSkip.includes(k))
+            .map(([, v]) => v),
         ...Object.values(context.eventTypeLookup),
     ];
 
@@ -225,7 +226,7 @@ const updateGridProperties = (getGridPropertiesAndEvents) => {
     });
 };
 
-updatePropertiesBuilt = () => {
+const updatePropertiesBuilt = () => {
     updateGridProperties(getGridPropertiesAndEventsJs);
 };
 

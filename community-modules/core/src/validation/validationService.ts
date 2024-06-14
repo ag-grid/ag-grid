@@ -47,7 +47,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         return validateApiFunction(functionName, apiFunction, this.beans);
     }
 
-    private processOptions<T extends {}>(options: T, validator: OptionsValidator<T>): void {
+    private processOptions<T extends object>(options: T, validator: OptionsValidator<T>): void {
         const { validations, deprecations, allProperties, propertyExceptions, objectName, docsUrl } = validator;
 
         if (allProperties && this.gridOptions.suppressPropertyNamesCheck !== true) {
@@ -152,7 +152,11 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
     }
 
-    private checkForWarning<T extends {}>(key: keyof T, validator: DependencyValidator<T>, options: T): string | null {
+    private checkForWarning<T extends object>(
+        key: keyof T,
+        validator: DependencyValidator<T>,
+        options: T
+    ): string | null {
         if (typeof validator === 'function') {
             return validator(options, this.gridOptions);
         }
@@ -175,7 +179,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         return `'${String(key)}' requires '${failedKey}' to be ${possibleOptions[0]}.`;
     }
 
-    private checkProperties<T extends {}>(
+    private checkProperties<T extends object>(
         object: T,
         exceptions: string[], // deprecated properties generally
         validProperties: string[], // properties to recommend
