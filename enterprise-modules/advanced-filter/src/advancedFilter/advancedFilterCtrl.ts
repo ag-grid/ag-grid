@@ -1,6 +1,5 @@
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
-    AdvancedFilterEnabledChangedEvent,
     BeanCollection,
     CtrlsService,
     Environment,

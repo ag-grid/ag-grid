@@ -1,13 +1,13 @@
-import type { AgEvent, AgEventListener, AgGlobalEventListener, AgGridEvent } from './events';
-import type { IEventEmitter } from './interfaces/iEventEmitter';
+import type { AgEvent, AgGridEvent } from './events';
+import type { IEventEmitter, IEventListener, IGlobalEventListener } from './interfaces/iEventEmitter';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 
 export class LocalEventService<TEventType extends string> implements IEventEmitter<TEventType> {
-    private allSyncListeners = new Map<TEventType, Set<AgEventListener>>();
-    private allAsyncListeners = new Map<TEventType, Set<AgEventListener>>();
+    private allSyncListeners = new Map<TEventType, Set<IEventListener<TEventType>>>();
+    private allAsyncListeners = new Map<TEventType, Set<IEventListener<TEventType>>>();
 
-    private globalSyncListeners = new Set<AgGlobalEventListener>();
-    private globalAsyncListeners = new Set<AgGlobalEventListener>();
+    private globalSyncListeners = new Set<IGlobalEventListener<TEventType>>();
+    private globalAsyncListeners = new Set<IGlobalEventListener<TEventType>>();
 
     private frameworkOverrides?: IFrameworkOverrides;
 
@@ -25,7 +25,7 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         eventType: TEventType,
         async: boolean,
         autoCreateListenerCollection: boolean
-    ): Set<AgEventListener> | undefined {
+    ): Set<IEventListener<TEventType>> | undefined {
         const listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
         let listeners = listenerMap.get(eventType);
 
@@ -34,7 +34,7 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         // against 'memory bloat' as empty collections will prevent the RowNode's event service from being removed after
         // the RowComp is destroyed, see noRegisteredListenersExist() below.
         if (!listeners && autoCreateListenerCollection) {
-            listeners = new Set<AgEventListener>();
+            listeners = new Set<IEventListener<TEventType>>();
             listenerMap.set(eventType, listeners);
         }
 
@@ -50,19 +50,11 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         );
     }
 
-    public addEventListener<T extends TEventType>(
-        eventType: T,
-        listener: AgEventListener<any, any, any>,
-        async = false
-    ): void {
+    public addEventListener<T extends TEventType>(eventType: T, listener: IEventListener<T>, async = false): void {
         this.getListeners(eventType, async, true)!.add(listener);
     }
 
-    public removeEventListener<T extends TEventType>(
-        eventType: T,
-        listener: AgEventListener<any, any, T>,
-        async = false
-    ): void {
+    public removeEventListener<T extends TEventType>(eventType: T, listener: IEventListener<T>, async = false): void {
         const listeners = this.getListeners(eventType, async, false);
         if (!listeners) {
             return;
@@ -76,11 +68,11 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         }
     }
 
-    public addGlobalListener(listener: AgGlobalEventListener, async = false): void {
+    public addGlobalListener(listener: IGlobalEventListener<TEventType>, async = false): void {
         (async ? this.globalAsyncListeners : this.globalSyncListeners).add(listener);
     }
 
-    public removeGlobalListener(listener: AgGlobalEventListener, async = false): void {
+    public removeGlobalListener(listener: IGlobalEventListener<TEventType>, async = false): void {
         (async ? this.globalAsyncListeners : this.globalSyncListeners).delete(listener);
     }
 
@@ -112,8 +104,8 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         }
 
         const processEventListeners = (
-            listeners: Set<AgEventListener<any>>,
-            originalListeners: Set<AgEventListener<any>>
+            listeners: Set<IEventListener<TEventType>>,
+            originalListeners: Set<IEventListener<TEventType>>
         ) =>
             listeners.forEach((listener) => {
                 if (!originalListeners.has(listener)) {
@@ -131,14 +123,14 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
                 }
             });
 
-        const originalListeners = this.getListeners(eventType, async, false) ?? new Set<AgEventListener<any>>();
+        const originalListeners = this.getListeners(eventType, async, false) ?? new Set<IEventListener<TEventType>>();
         // create a shallow copy to prevent listeners cyclically adding more listeners to capture this event
-        const listeners = new Set<AgEventListener<any>>(originalListeners);
+        const listeners = new Set<IEventListener<TEventType>>(originalListeners);
         if (listeners.size > 0) {
             processEventListeners(listeners, originalListeners);
         }
 
-        const globalListeners: Set<AgGlobalEventListener<any>> = new Set(
+        const globalListeners: Set<IGlobalEventListener<TEventType>> = new Set(
             async ? this.globalAsyncListeners : this.globalSyncListeners
         );
 

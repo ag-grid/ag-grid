@@ -1,5 +1,5 @@
-import type { AgEvent, AgEventListener } from '../events';
-import type { IEventEmitter } from '../interfaces/iEventEmitter';
+import type { AgEvent } from '../events';
+import type { IEventEmitter, IEventListener } from '../interfaces/iEventEmitter';
 import { LocalEventService } from '../localEventService';
 import { _areEventsNear } from '../utils/mouse';
 
@@ -67,14 +67,11 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
         return null;
     }
 
-    public addEventListener<T extends TouchListenerEvent>(eventType: T, listener: AgEventListener<any, any, T>): void {
+    public addEventListener<T extends TouchListenerEvent>(eventType: T, listener: IEventListener<T>): void {
         this.localEventService.addEventListener(eventType, listener);
     }
 
-    public removeEventListener<T extends TouchListenerEvent>(
-        eventType: T,
-        listener: AgEventListener<any, any, T>
-    ): void {
+    public removeEventListener<T extends TouchListenerEvent>(eventType: T, listener: IEventListener<T>): void {
         this.localEventService.removeEventListener(eventType, listener);
     }
 

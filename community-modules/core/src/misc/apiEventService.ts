@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { AgEventType } from '../eventTypes';
 import type { AgEventListener, AgGlobalEventListener } from '../events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from '../events';
+import type { IEventListener } from '../interfaces/iEventEmitter';
 import { FrameworkEventListenerService } from './frameworkEventListenerService';
 
 export class ApiEventService extends BeanStub<AgEventType> implements NamedBean {
@@ -26,7 +27,7 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
 
     public override addEventListener<T extends AgEventType>(
         eventType: T,
-        userListener: AgEventListener<any, any, T>
+        userListener: IEventListener<AgEventType>
     ): void {
         const listener = this.frameworkEventWrappingService.wrap(userListener);
 
@@ -40,7 +41,7 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
     }
     public override removeEventListener<T extends AgEventType>(
         eventType: T,
-        userListener: AgEventListener<any, any, T>
+        userListener: IEventListener<AgEventType>
     ): void {
         const listener = this.frameworkEventWrappingService.unwrap(userListener);
         const asyncListeners = this.asyncEventListeners.get(eventType);

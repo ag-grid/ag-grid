@@ -1,5 +1,5 @@
+import type { AgColumn, AgProvidedColumnGroup, IEventEmitter, IEventListener } from '@ag-grid-community/core';
 import { LocalEventService } from '@ag-grid-community/core';
-import type { AgColumn, AgEventListener, AgProvidedColumnGroup, IEventEmitter } from '@ag-grid-community/core';
 
 export type ColumnModelItemEvent = 'expandedChanged';
 export class ColumnModelItem implements IEventEmitter<ColumnModelItemEvent> {
@@ -74,14 +74,14 @@ export class ColumnModelItem implements IEventEmitter<ColumnModelItemEvent> {
 
     public addEventListener<T extends ColumnModelItemEvent>(
         eventType: T,
-        listener: AgEventListener<any, any, T>
+        listener: IEventListener<ColumnModelItemEvent>
     ): void {
         this.localEventService.addEventListener(eventType, listener);
     }
 
     public removeEventListener<T extends ColumnModelItemEvent>(
         eventType: T,
-        listener: AgEventListener<any, any, T>
+        listener: IEventListener<ColumnModelItemEvent>
     ): void {
         this.localEventService.removeEventListener(eventType, listener);
     }

@@ -10,7 +10,6 @@ import type { RowNode } from '../entities/rowNode';
 import type { RowPosition } from '../entities/rowPositionUtils';
 import type { Environment } from '../environment';
 import type {
-    AgEventListener,
     BodyScrollEvent,
     CellFocusedEvent,
     DisplayedRowsChangedEvent,
@@ -24,6 +23,7 @@ import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { ICellEditor } from '../interfaces/iCellEditor';
 import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IEventListener } from '../interfaces/iEventEmitter';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { AnimationFrameService } from '../misc/animationFrameService';
@@ -761,7 +761,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
         return res;
     }
 
-    public addRenderedRowListener(eventName: RenderedRowEvent, rowIndex: number, callback: AgEventListener): void {
+    public addRenderedRowListener(
+        eventName: RenderedRowEvent,
+        rowIndex: number,
+        callback: IEventListener<RenderedRowEvent>
+    ): void {
         const rowComp = this.rowCtrlsByRowIndex[rowIndex];
         if (rowComp) {
             rowComp.addEventListener(eventName, callback);

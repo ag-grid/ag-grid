@@ -1,5 +1,6 @@
 import type { AgEvent, SelectionEventSourceType } from '../events';
 import type { Column } from '../interfaces/iColumn';
+import type { BuildEventTypeMap } from './iEventEmitter';
 
 export type RowNodeEventType =
     | 'rowSelected'
@@ -24,37 +25,35 @@ export type RowNodeEventType =
     | 'mouseLeave'
     | 'draggingChanged';
 
-type EventTypeParamsMap<TData = any> = {
-    [K in RowNodeEventType]: RowNodeEvent<K, TData>;
-};
-type EventTypeParamsBuilder<T extends EventTypeParamsMap> = T;
+export type RowNodeEventTypeMap<TData = any> = BuildEventTypeMap<
+    RowNodeEventType,
+    {
+        rowSelected: RowSelectedEvent<TData>;
+        selectableChanged: SelectableChangedEvent<TData>;
+        displayedChanged: DisplayedChangedEvent<TData>;
+        dataChanged: DataChangedEvent<TData>;
+        cellChanged: CellChangedEvent<TData>;
+        masterChanged: MasterChangedEvent<TData>;
+        heightChanged: HeightChangedEvent<TData>;
+        topChanged: TopChangedEvent<TData>;
+        groupChanged: GroupChangedEvent<TData>;
+        allChildrenCountChanged: AllChildrenCountChangedEvent<TData>;
+        firstChildChanged: FirstChildChangedEvent<TData>;
+        lastChildChanged: LastChildChangedEvent<TData>;
+        childIndexChanged: ChildIndexChangedEvent<TData>;
+        rowIndexChanged: RowIndexChangedEvent<TData>;
+        expandedChanged: ExpandedChangedEvent<TData>;
+        hasChildrenChanged: HasChildrenChangedEvent<TData>;
+        uiLevelChanged: UiLevelChangedEvent<TData>;
+        rowHighlightChanged: RowHighlightChangedEvent<TData>;
+        mouseEnter: MouseEnterEvent<TData>;
+        mouseLeave: MouseLeaveEvent<TData>;
+        draggingChanged: DraggingChangedEvent<TData>;
+    }
+>;
 
-export type RowNodeEventTypeParams<TData = any> = EventTypeParamsBuilder<{
-    rowSelected: RowSelectedEvent<TData>;
-    selectableChanged: SelectableChangedEvent<TData>;
-    displayedChanged: DisplayedChangedEvent<TData>;
-    dataChanged: DataChangedEvent<TData>;
-    cellChanged: CellChangedEvent<TData>;
-    masterChanged: MasterChangedEvent<TData>;
-    heightChanged: HeightChangedEvent<TData>;
-    topChanged: TopChangedEvent<TData>;
-    groupChanged: GroupChangedEvent<TData>;
-    allChildrenCountChanged: AllChildrenCountChangedEvent<TData>;
-    firstChildChanged: FirstChildChangedEvent<TData>;
-    lastChildChanged: LastChildChangedEvent<TData>;
-    childIndexChanged: ChildIndexChangedEvent<TData>;
-    rowIndexChanged: RowIndexChangedEvent<TData>;
-    expandedChanged: ExpandedChangedEvent<TData>;
-    hasChildrenChanged: HasChildrenChangedEvent<TData>;
-    uiLevelChanged: UiLevelChangedEvent<TData>;
-    rowHighlightChanged: RowHighlightChangedEvent<TData>;
-    mouseEnter: MouseEnterEvent<TData>;
-    mouseLeave: MouseLeaveEvent<TData>;
-    draggingChanged: DraggingChangedEvent<TData>;
-}>;
-
-export type AgRowNodeEventListener<TEventType extends keyof RowNodeEventTypeParams<TData>, TData = any> = (
-    params: RowNodeEventTypeParams<TData>[TEventType]
+export type AgRowNodeEventListener<TEventType extends keyof RowNodeEventTypeMap<TData>, TData = any> = (
+    params: RowNodeEventTypeMap<TData>[TEventType]
 ) => void;
 
 export interface SetSelectedParams {
