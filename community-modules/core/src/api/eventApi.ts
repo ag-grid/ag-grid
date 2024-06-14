@@ -9,21 +9,24 @@ export function addEventListener<T extends AgPublicEventType>(
 ): void {
     beans.apiEventService.addEventListener(eventType, listener);
 }
-
-export function addGlobalListener(beans: BeanCollection, listener: (...args: any[]) => any): void {
-    addEventListener(beans, 'modelUpdated', (d) => console.log(d));
-
-    beans.apiEventService.addGlobalListener(listener as AgGlobalEventListener);
-}
-
-export function removeEventListener(
+export function removeEventListener<T extends AgPublicEventType>(
     beans: BeanCollection,
-    eventType: AgPublicEventType,
-    listener: (...args: any[]) => any
+    eventType: T,
+    listener: AgEventListener<T, any, any>
 ): void {
     beans.apiEventService.removeEventListener(eventType, listener as AgEventListener);
 }
 
-export function removeGlobalListener(beans: BeanCollection, listener: (...args: any[]) => any): void {
-    beans.apiEventService.removeGlobalListener(listener as AgGlobalEventListener);
+export function addGlobalListener<T extends AgPublicEventType>(
+    beans: BeanCollection,
+    listener: AgGlobalEventListener<T, any, any>
+): void {
+    beans.apiEventService.addGlobalListener(listener);
+}
+
+export function removeGlobalListener<T extends AgPublicEventType>(
+    beans: BeanCollection,
+    listener: AgGlobalEventListener<T, any, any>
+): void {
+    beans.apiEventService.removeGlobalListener(listener);
 }
