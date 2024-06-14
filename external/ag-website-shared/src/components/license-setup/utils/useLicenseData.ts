@@ -51,9 +51,9 @@ const errorConditions = {
         message: `A license key is not required to use AG Grid Community or AG Charts Community`,
     },
     userLicenseError: {
-        getIsError: ({ hasLicense, license, licenseDetails, chartsLicenseDetails }: ErrorData) => {
+        getIsError: ({ license, licenseDetails, chartsLicenseDetails }: ErrorData) => {
             const licenseIsValid = licenseDetails.valid || chartsLicenseDetails.valid;
-            return hasValue(hasLicense) && hasValue(license) && !licenseIsValid;
+            return hasValue(license) && !licenseIsValid;
         },
         message:
             'License key is not valid. Make sure you are copying the whole license key which was originally provided',
@@ -103,15 +103,17 @@ const useErrors = ({
         const newErrors = {} as Errors;
         (Object.keys(errorConditions) as ErrorKey[]).forEach((key) => {
             const { getIsError, message } = errorConditions[key];
-            const isError = getIsError({
-                hasLicense,
-                license,
-                licensedProducts,
-                userProducts,
-                noUserProducts,
-                licenseDetails,
-                chartsLicenseDetails,
-            });
+            const isError =
+                hasLicense &&
+                getIsError({
+                    hasLicense,
+                    license,
+                    licensedProducts,
+                    userProducts,
+                    noUserProducts,
+                    licenseDetails,
+                    chartsLicenseDetails,
+                });
 
             if (isError) {
                 newErrors[key] = message;
