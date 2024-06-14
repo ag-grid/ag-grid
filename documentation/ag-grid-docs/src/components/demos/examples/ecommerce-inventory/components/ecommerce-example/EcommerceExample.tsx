@@ -33,7 +33,6 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             headerName: 'Product',
             cellRenderer: 'agGroupCellRenderer',
             cellRendererParams: {
-                wrapText: true,
                 innerRenderer: ProductCellRenderer,
             },
             filter: 'agMultiColumnFilter',
