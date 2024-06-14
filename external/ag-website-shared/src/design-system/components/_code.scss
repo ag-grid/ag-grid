@@ -266,6 +266,13 @@ code[class*='language-css'] {
     color: var(--tag-color);
 }
 
+.language-bash {
+    .token.function {
+        color: var(--default-text-color);
+        font-weight: 600;
+    }
+}
+
 .token.atrule,
 .token.attr-name,
 .token.attr-value,
