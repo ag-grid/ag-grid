@@ -17,8 +17,13 @@ interface ErrorData {
     licensedProducts: LicensedProducts;
     userProducts: Products;
     noUserProducts: boolean;
-    licenseDetails: LicenseDetails;
-    chartsLicenseDetails: LicenseDetails;
+
+    userLicenseVersion?: string;
+    userLicenseExpiry?: string;
+    userLicenseIsValid: boolean;
+    userLicenseIsTrial: boolean;
+    userLicenseIsExpired: boolean;
+    userLicenseTrialIsExpired: boolean;
 }
 
 const DEFAULT_USER_PRODUCTS: Products = {
@@ -51,15 +56,14 @@ const errorConditions = {
         message: `A license key is not required to use AG Grid Community or AG Charts Community`,
     },
     userLicenseError: {
-        getIsError: ({ license, licenseDetails, chartsLicenseDetails }: ErrorData) => {
-            const licenseIsValid = licenseDetails.valid || chartsLicenseDetails.valid;
-            return hasValue(license) && !licenseIsValid;
+        getIsError: ({ license, userLicenseIsValid }: ErrorData) => {
+            return hasValue(license) && !userLicenseIsValid;
         },
         message:
             'License key is not valid. Make sure you are copying the whole license key which was originally provided',
     },
     v2License: {
-        getIsError: ({ licenseDetails }: ErrorData) => licenseDetails.version === '2',
+        getIsError: ({ userLicenseVersion }: ErrorData) => userLicenseVersion === '2',
         message: 'This license key is not valid for v30+',
     },
     gridNoCharts: {
@@ -73,16 +77,14 @@ const errorConditions = {
         message: `Your license key does not include "Integrated Enterprise"`,
     },
     expired: {
-        getIsError: ({ license, licenseDetails }: ErrorData) => {
-            const { expired } = licenseDetails;
-            return hasValue(license) && Boolean(expired);
+        getIsError: ({ license, userLicenseIsExpired }: ErrorData) => {
+            return hasValue(license) && userLicenseIsExpired;
         },
         message: 'This license key is expired',
     },
     expiredTrial: {
-        getIsError: ({ license, licenseDetails }: ErrorData) => {
-            const { trialExpired } = licenseDetails;
-            return hasValue(license) && Boolean(trialExpired);
+        getIsError: ({ license, userLicenseTrialIsExpired }: ErrorData) => {
+            return hasValue(license) && userLicenseTrialIsExpired;
         },
         message: 'This trial license key is expired',
     },
@@ -94,8 +96,12 @@ const useErrors = ({
     licensedProducts,
     userProducts,
     noUserProducts,
-    licenseDetails,
-    chartsLicenseDetails,
+    userLicenseVersion,
+    userLicenseExpiry,
+    userLicenseIsValid,
+    userLicenseIsTrial,
+    userLicenseIsExpired,
+    userLicenseTrialIsExpired,
 }: ErrorData) => {
     const [errors, setErrors] = useState<Errors>({} as Errors);
 
@@ -111,8 +117,13 @@ const useErrors = ({
                     licensedProducts,
                     userProducts,
                     noUserProducts,
-                    licenseDetails,
-                    chartsLicenseDetails,
+                    userLicenseVersion,
+                    userLicenseExpiry,
+                    userLicenseIsValid,
+                    userLicenseIsTrial,
+
+                    userLicenseIsExpired,
+                    userLicenseTrialIsExpired,
                 });
 
             if (isError) {
@@ -128,7 +139,19 @@ const useErrors = ({
                 ...newErrors,
             };
         });
-    }, [hasLicense, license, licensedProducts, userProducts, noUserProducts, licenseDetails, chartsLicenseDetails]);
+    }, [
+        hasLicense,
+        license,
+        licensedProducts,
+        userProducts,
+        noUserProducts,
+        userLicenseVersion,
+        userLicenseExpiry,
+        userLicenseIsValid,
+        userLicenseIsTrial,
+        userLicenseIsExpired,
+        userLicenseTrialIsExpired,
+    ]);
 
     return {
         errors,
@@ -265,13 +288,6 @@ export const useLicenseData = () => {
         [license]
     );
 
-    const {
-        version: userLicenseVersion,
-        isTrial: userLicenseIsTrial,
-        expiry: userLicenseExpiry,
-        expired: userLicenseIsExpired,
-        trialExpired: userLicenseTrialIsExpired,
-    } = licenseDetails;
     const validLicenseType = useMemo<ValidLicenseType>(() => {
         let type: ValidLicenseType = 'none';
         if (
@@ -295,6 +311,27 @@ export const useLicenseData = () => {
         }
         return type;
     }, [licenseDetails, chartsLicenseDetails]);
+
+    const {
+        userLicenseVersion,
+        userLicenseExpiry,
+        userLicenseIsValid,
+        userLicenseIsTrial,
+        userLicenseIsExpired,
+        userLicenseTrialIsExpired,
+    } = useMemo(() => {
+        const details = licenseDetails.suppliedLicenseType === 'CHARTS' ? chartsLicenseDetails : licenseDetails;
+
+        return {
+            userLicenseVersion: details.version || undefined,
+            userLicenseExpiry: details.expiry || undefined,
+            userLicenseIsValid: Boolean(details.valid),
+            userLicenseIsTrial: Boolean(details.isTrial),
+            userLicenseIsExpired: Boolean(details.expired),
+            userLicenseTrialIsExpired: Boolean(details.trialExpired),
+        };
+    }, [licenseDetails, chartsLicenseDetails]);
+
     const validLicenseText = useMemo<string>(() => {
         const validPrefix = userLicenseIsTrial ? validLicenseMessages.validTrialLicense : validLicenseMessages.valid;
 
@@ -307,8 +344,12 @@ export const useLicenseData = () => {
         licensedProducts,
         userProducts,
         noUserProducts,
-        licenseDetails,
-        chartsLicenseDetails,
+        userLicenseVersion,
+        userLicenseExpiry,
+        userLicenseIsValid,
+        userLicenseIsTrial,
+        userLicenseIsExpired,
+        userLicenseTrialIsExpired,
     });
 
     useUpdateDataFromUrl({ setUserProducts, setImportType });
@@ -323,9 +364,26 @@ export const useLicenseData = () => {
                 licenseDetails,
                 chartsLicenseDetails,
                 errors,
+                userLicenseVersion,
+                userLicenseExpiry,
+                userLicenseIsValid,
+                userLicenseIsTrial,
+                userLicenseIsExpired,
+                userLicenseTrialIsExpired,
             });
         }
-    }, [validLicenseType, licenseDetails, chartsLicenseDetails, errors]);
+    }, [
+        validLicenseType,
+        licenseDetails,
+        chartsLicenseDetails,
+        errors,
+        userLicenseVersion,
+        userLicenseExpiry,
+        userLicenseIsValid,
+        userLicenseIsTrial,
+        userLicenseIsExpired,
+        userLicenseTrialIsExpired,
+    ]);
 
     useEffect(() => {
         if (!hasValue(license)) {
@@ -372,10 +430,11 @@ export const useLicenseData = () => {
 
         validLicenseText,
         userLicenseVersion,
+        userLicenseExpiry,
+        userLicenseIsValid,
         userLicenseIsTrial,
         userLicenseIsExpired,
         userLicenseTrialIsExpired,
-        userLicenseExpiry,
         errors,
     };
 };
