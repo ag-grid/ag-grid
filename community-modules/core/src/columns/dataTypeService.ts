@@ -483,7 +483,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             this.columnModel.queueResizeOperations();
         }
         const [destroyFunc] = this.addManagedEventListeners({
-            rowDataUpdateStarted: (event: RowDataUpdateStartedEvent) => {
+            rowDataUpdateStarted: (event) => {
                 const { firstRowData } = event;
                 if (!firstRowData) {
                     return;

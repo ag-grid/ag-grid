@@ -327,8 +327,7 @@ export class RowContainerCtrl extends BeanStub {
         this.addManagedEventListeners({
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             displayedColumnsWidthChanged: this.onDisplayedColumnsWidthChanged.bind(this),
-            displayedRowsChanged: (params: DisplayedRowsChangedEvent) =>
-                this.onDisplayedRowsChanged(params.afterScroll),
+            displayedRowsChanged: (params) => this.onDisplayedRowsChanged(params.afterScroll),
         });
 
         this.onDisplayedColumnsChanged();

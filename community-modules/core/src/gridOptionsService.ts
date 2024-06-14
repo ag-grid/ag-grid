@@ -158,7 +158,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         this.getScrollbarWidth();
 
         this.addManagedEventListeners({
-            gridOptionsChanged: ({ options }: GridOptionsChangedEvent) => {
+            gridOptionsChanged: ({ options }) => {
                 this.updateGridOptions({ options, force: true, source: 'gridOptionsUpdated' });
             },
         });

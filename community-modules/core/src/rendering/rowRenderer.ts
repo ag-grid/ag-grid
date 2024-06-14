@@ -265,7 +265,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     // all active cells.
     private registerCellEventListeners(): void {
         this.addManagedEventListeners({
-            cellFocused: (event: CellFocusedEvent) => {
+            cellFocused: (event) => {
                 this.onCellFocusChanged(event);
             },
             cellFocusCleared: () => this.onCellFocusChanged(),

@@ -78,7 +78,7 @@ export abstract class AbstractFakeScrollComp extends Component {
 
     protected hideAndShowInvisibleScrollAsNeeded(): void {
         this.addManagedEventListeners({
-            bodyScroll: (params: BodyScrollEvent) => {
+            bodyScroll: (params) => {
                 if (params.direction === this.direction) {
                     if (this.hideTimeout !== null) {
                         window.clearTimeout(this.hideTimeout);

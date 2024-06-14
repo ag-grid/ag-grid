@@ -49,8 +49,7 @@ export class FilterManager extends BeanStub implements NamedBean {
             columnPivotModeChanged: this.refreshFiltersForAggregations.bind(this),
             newColumnsLoaded: this.updateAdvancedFilterColumns.bind(this),
             columnVisible: this.updateAdvancedFilterColumns.bind(this),
-            advancedFilterEnabledChanged: ({ enabled }: AdvancedFilterEnabledChangedEvent) =>
-                this.onAdvancedFilterEnabledChanged(enabled),
+            advancedFilterEnabledChanged: ({ enabled }) => this.onAdvancedFilterEnabledChanged(enabled),
             dataTypesInferred: this.processFilterModelUpdateQueue.bind(this),
         });
 

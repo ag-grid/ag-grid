@@ -57,7 +57,7 @@ export class PaddingPanel extends Component {
         );
 
         this.addManagedEventListeners({
-            chartOptionsChanged: (e: ChartOptionsChanged) => {
+            chartOptionsChanged: (e) => {
                 this.updateTopPadding(e.chartOptions);
             },
         });
