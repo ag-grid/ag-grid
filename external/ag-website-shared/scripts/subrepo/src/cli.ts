@@ -1,4 +1,5 @@
 import { readdirSync } from 'fs';
+import prompts from 'prompts';
 import { hideBin } from 'yargs/helpers';
 import yargs from 'yargs/yargs';
 
@@ -24,6 +25,29 @@ const runCommand = ({ command, subRepoFolder, isVerbose }: SubrepoCommandParams)
     }
 };
 
+const getPromptSubrepo = async ({ command }: { command: string }) => {
+    const { promptSubrepo } = await prompts({
+        type: 'select',
+        name: 'promptSubrepo',
+        message: `Which subrepo do you want to run "${command}" on?`,
+        choices: [
+            {
+                title: '- Cancel -',
+                value: false,
+            },
+        ].concat(
+            subRepos.map((repo) => {
+                return {
+                    title: repo,
+                    value: repo,
+                };
+            })
+        ),
+    });
+
+    return promptSubrepo;
+};
+
 yargs(hideBin(process.argv))
     .usage('Usage: <command> [options]')
     .command(
@@ -39,8 +63,17 @@ yargs(hideBin(process.argv))
                 choices: ['push', 'pull', 'check'],
             });
         },
-        (argv) => {
-            const { subrepo, command, verbose } = argv;
+        async (argv) => {
+            let { subrepo, command, verbose } = argv;
+
+            if (!subrepo) {
+                const promptSubrepo = await getPromptSubrepo({ command: command! });
+                if (!promptSubrepo) {
+                    return;
+                }
+
+                subrepo = promptSubrepo;
+            }
 
             runCommand({
                 command: command as Command,
@@ -59,6 +92,5 @@ yargs(hideBin(process.argv))
         choices: subRepos,
         description: 'Subrepo to run the command on',
     })
-    .demandOption('subrepo')
     .help()
     .parse();
