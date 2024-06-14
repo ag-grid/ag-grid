@@ -103,8 +103,14 @@ export class ServerSideRowRangeSelectionContext implements ISelectionContext<str
         const rowNode = this.rowModel.getRowNode(node);
         const rootNode = this.rowModel.getRowNode(this.root!);
 
-        if (rowNode == null || rootNode == null) {
+        if (rowNode == null) {
             return { keep: this.getRange(), discard: [] };
+        }
+
+        // If the root node is no longer retrievable, we cannot iterate from the root
+        // to the given `node`. So we keep the existing selection, plus the given `node`
+        if (rootNode == null) {
+            return { keep: this.getRange().concat(rowNode), discard: [] };
         }
 
         const newRange = this.rowModel.getNodesInRangeForSelection(rootNode, rowNode);
