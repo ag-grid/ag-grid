@@ -3,7 +3,7 @@ import styles from '@pages-styles/example.module.scss';
 import DemosLayout from '@components/demos/DemosLayout.astro';
 import DemoTabs from '@components/demos/DemosTabs.astro';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { PortfolioPositions } from '@components/demos/examples/portfolio-positions';
+import { Finance } from 'src/components/demos/examples/finance';
 import LogoMark from '@components/logo/LogoMark';
 ---
 
@@ -29,7 +29,7 @@ import LogoMark from '@components/logo/LogoMark';
                 <LogoMark isSpinning />
             </div>
 
-            <PortfolioPositions client:only="react" />
+            <Finance client:only="react" />
         </div>
     </div>
 </DemosLayout>
