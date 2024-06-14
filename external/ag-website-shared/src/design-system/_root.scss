@@ -140,6 +140,8 @@
     --color-warning-900: #7a2e0e;
     --color-warning-950: #4e1d09;
 
+    --color-success: #28a745;
+
     --color-logo-text: #003264;
     --color-logo-aqua: #55b4c8;
     --color-logo-orange: #ff8c00;
@@ -362,6 +364,8 @@ html[data-dark-mode='true'] {
     --color-util-gray-500: var(--color-gray-500);
     --color-util-gray-600: var(--color-gray-400);
     --color-util-gray-700: var(--color-gray-300);
+
+    --color-success: #64ea82;
 
     // TODO: Find a way to use base url here. Moved to Layout for now
     // --dark-icon: url(urlWithBaseUrl('/images/sun.svg'));

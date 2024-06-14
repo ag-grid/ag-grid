@@ -6,8 +6,8 @@ interface Props {
     children: ReactNode;
 }
 
-const Idea: FunctionComponent<Props> = ({ children }) => {
-    return <Alert type="idea">{children}</Alert>;
+const Success: FunctionComponent<Props> = ({ children }) => {
+    return <Alert type="success">{children}</Alert>;
 };
 
-export default Idea;
+export default Success;
