@@ -180,12 +180,14 @@ export class GridSerializer extends BeanStub implements NamedBean {
     ): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
             if (!params.skipColumnGroupHeaders) {
-                const groupInstanceIdCreator: GroupInstanceIdCreator = new GroupInstanceIdCreator();
-                const displayedGroups: (AgColumn | AgColumnGroup)[] = this.visibleColsService.createGroups(
-                    columnsToExport,
-                    groupInstanceIdCreator,
-                    null
-                );
+                const idCreator: GroupInstanceIdCreator = new GroupInstanceIdCreator();
+                const displayedGroups: (AgColumn | AgColumnGroup)[] = this.visibleColsService.createGroups({
+                    columns: columnsToExport,
+                    idCreator,
+                    pinned: null,
+                    isStandaloneStructure: true,
+                });
+
                 this.recursivelyAddHeaderGroups(
                     displayedGroups,
                     gridSerializingSession,
