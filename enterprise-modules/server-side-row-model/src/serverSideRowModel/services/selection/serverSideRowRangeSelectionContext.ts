@@ -1,35 +1,18 @@
-import type { RowNode } from '../entities/rowNode';
-import type { IRowModel } from '../interfaces/iRowModel';
-
-export interface ISelectionContext<TNode> {
-    init(rowModel: IRowModel): void;
-    destroy(): void;
-    reset(node: TNode): void;
-    setEndRange(node: TNode): void;
-    getRange(): RowNode[];
-    getRoot(): TNode | null;
-    isInRange(node: TNode): boolean;
-    truncate(node: TNode): { keep: RowNode[]; discard: RowNode[] };
-    extend(node: TNode): { keep: RowNode[]; discard: RowNode[] };
-}
+import type { IRowModel, ISelectionContext, RowNode } from '@ag-grid-community/core';
 
 /**
- * The context of a row range selection operation.
- *
- * Used to model the stateful range selection behaviour found in Excel, where
- * a given cell/row represents the "root" of a selection range, and subsequent
- * selections are based off that root.
- *
- * See AG-9620 for more
+ * This is the same as RowRangeSelectionContext in core, except that we store RowNode IDs
+ * instead of RowNode instances directly, because RowNodes can be dropped when scrolled out
+ * of view
  */
-export class RowRangeSelectionContext implements ISelectionContext<RowNode> {
-    private root: RowNode | null = null;
+export class ServerSideRowRangeSelectionContext implements ISelectionContext<string> {
+    private rowModel: IRowModel;
+    private root: string | null = null;
     /**
      * Note that the "end" `RowNode` may come before or after the "root" `RowNode` in the
      * actual grid.
      */
-    private end: RowNode | null = null;
-    private rowModel: IRowModel;
+    private end: string | null = null;
     private cachedRange: RowNode[] = [];
 
     public init(rowModel: IRowModel): void {
@@ -42,54 +25,42 @@ export class RowRangeSelectionContext implements ISelectionContext<RowNode> {
         this.cachedRange.length = 0;
     }
 
-    public reset(node: RowNode): void {
+    public reset(node: string): void {
         this.root = node;
         this.end = null;
         this.cachedRange.length = 0;
     }
 
-    public setEndRange(end: RowNode): void {
+    public setEndRange(end: string): void {
         this.end = end;
         this.cachedRange.length = 0;
     }
 
+    getRoot(): string | null {
+        return this.root;
+    }
+
     public getRange(): RowNode[] {
         if (this.cachedRange.length === 0) {
-            const root = this.getRoot();
-            const end = this.getEnd();
+            const root = this.root ? this.rowModel.getRowNode(this.root) : undefined;
+            const end = this.end ? this.rowModel.getRowNode(this.end) : undefined;
 
             if (end == null) {
                 return this.cachedRange;
             }
 
-            this.cachedRange = this.rowModel.getNodesInRangeForSelection(root, end);
+            this.cachedRange = this.rowModel.getNodesInRangeForSelection(root ?? null, end);
         }
 
         return this.cachedRange;
     }
 
-    public isInRange(node: RowNode): boolean {
+    public isInRange(node: string): boolean {
         if (this.root === null) {
             return false;
         }
 
-        return this.getRange().some((nodeInRange) => nodeInRange.id === node.id);
-    }
-
-    public getRoot(): RowNode | null {
-        if (this.root && this.root?.key === null) {
-            this.root = this.rowModel.getRowNode(this.root.id!) ?? null;
-        }
-
-        return this.root;
-    }
-
-    private getEnd(): RowNode | null {
-        if (this.end && this.end?.key === null) {
-            this.end = this.rowModel.getRowNode(this.end.id!) ?? null;
-        }
-
-        return this.end;
+        return this.getRange().some((nodeInRange) => nodeInRange.id === node);
     }
 
     /**
@@ -99,7 +70,7 @@ export class RowRangeSelectionContext implements ISelectionContext<RowNode> {
      * @param node - Node at which to truncate the range
      * @returns Object of nodes to either keep or discard (i.e. deselect) from the range
      */
-    public truncate(node: RowNode): { keep: RowNode[]; discard: RowNode[] } {
+    public truncate(node: string): { keep: RowNode[]; discard: RowNode[] } {
         const range = this.getRange();
 
         if (range.length === 0) {
@@ -108,9 +79,9 @@ export class RowRangeSelectionContext implements ISelectionContext<RowNode> {
 
         // if root is first, then selection range goes "down" the table
         // so we should be unselecting the range _after_ the given `node`
-        const discardAfter = range[0].id === this.root!.id;
+        const discardAfter = range[0].id === this.root!;
 
-        const idx = range.findIndex((rowNode) => rowNode.id === node.id);
+        const idx = range.findIndex((rowNode) => rowNode.id === node);
         if (idx > -1) {
             const above = range.slice(0, idx);
             const below = range.slice(idx + 1);
@@ -128,10 +99,17 @@ export class RowRangeSelectionContext implements ISelectionContext<RowNode> {
      * @param node - Node marking the new end of the range
      * @returns Object of nodes to either keep or discard (i.e. deselect) from the range
      */
-    public extend(node: RowNode): { keep: RowNode[]; discard: RowNode[] } {
-        const newRange = this.rowModel.getNodesInRangeForSelection(this.getRoot(), node);
+    public extend(node: string): { keep: RowNode[]; discard: RowNode[] } {
+        const rowNode = this.rowModel.getRowNode(node);
+        const rootNode = this.rowModel.getRowNode(this.root!);
 
-        if (newRange.find((newRangeNode) => newRangeNode.id === this.end?.id)) {
+        if (rowNode == null || rootNode == null) {
+            return { keep: this.getRange(), discard: [] };
+        }
+
+        const newRange = this.rowModel.getNodesInRangeForSelection(rootNode, rowNode);
+
+        if (newRange.find((newRangeNode) => newRangeNode.id === this.end)) {
             // Range between root and given node contains the current "end"
             // so this is an extension of the current range direction
             this.setEndRange(node);

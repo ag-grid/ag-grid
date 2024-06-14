@@ -10,15 +10,9 @@ import type {
     RowNode,
     SelectionEventSourceType,
 } from '@ag-grid-community/core';
-import {
-    BeanStub,
-    _ServerSideRowRangeSelectionContext as RowRangeSelectionContext,
-    _errorOnce,
-    _last,
-    _warnOnce,
-    isSelectionUIEvent,
-} from '@ag-grid-community/core';
+import { BeanStub, _errorOnce, _last, _warnOnce, isSelectionUIEvent } from '@ag-grid-community/core';
 
+import { ServerSideRowRangeSelectionContext } from '../serverSideRowRangeSelectionContext';
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
 interface SelectionState {
@@ -31,7 +25,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     private funcColsService: FuncColsService;
     private filterManager?: FilterManager;
     private selectionService: ISelectionService;
-    private selectionCtx = new RowRangeSelectionContext();
+    private selectionCtx = new ServerSideRowRangeSelectionContext();
 
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;

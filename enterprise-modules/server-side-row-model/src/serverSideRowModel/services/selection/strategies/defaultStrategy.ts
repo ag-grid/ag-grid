@@ -8,15 +8,9 @@ import type {
     SelectionEventSourceType,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import {
-    BeanStub,
-    _ServerSideRowRangeSelectionContext as RowRangeSelectionContext,
-    _errorOnce,
-    _last,
-    _warnOnce,
-    isSelectionUIEvent,
-} from '@ag-grid-community/core';
+import { BeanStub, _errorOnce, _last, _warnOnce, isSelectionUIEvent } from '@ag-grid-community/core';
 
+import { ServerSideRowRangeSelectionContext } from '../serverSideRowRangeSelectionContext';
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
 interface SelectedState {
@@ -26,7 +20,7 @@ interface SelectedState {
 
 export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     private rowModel: IRowModel;
-    private selectionCtx = new RowRangeSelectionContext();
+    private selectionCtx = new ServerSideRowRangeSelectionContext();
 
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
