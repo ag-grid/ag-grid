@@ -190,11 +190,11 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                 {/* TODO change "AG Grid" to grid/charts based on site */}
                 {!hasLicense && (
                     <Note>
-                        Don't have an AG Grid licence yet? Visit the{' '}
+                        Don't have an AG Grid licence key yet? Visit the{' '}
                         <a href={urlWithBaseUrl('/license-pricing')}>Pricing Page</a> to discover the power of AG Grid
-                        enterprise and purchase a licence. Or email{' '}
+                        Enterprise and purchase a licence key. Alternatively, email{' '}
                         <a href="mailto:info@ag-grid.com">info@ag-grid.com</a> to start a conversation or request a
-                        trial licence
+                        trial licence key.
                     </Note>
                 )}
 
