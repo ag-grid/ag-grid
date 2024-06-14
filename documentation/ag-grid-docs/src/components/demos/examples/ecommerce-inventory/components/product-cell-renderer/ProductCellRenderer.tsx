@@ -1,3 +1,4 @@
+import { getResourceUrl } from '@components/demos/examples/finance/utils/getResourceUrl';
 import { type FunctionComponent } from 'react';
 
 import type { CustomCellRendererProps } from 'ag-grid-react';
@@ -5,13 +6,18 @@ import type { CustomCellRendererProps } from 'ag-grid-react';
 import styles from './ProductCellRenderer.module.css';
 
 export const ProductCellRenderer: FunctionComponent<CustomCellRendererProps> = ({ data }) => {
-    const productName = data.product;
-    const availableStock = data.available;
+    const { product, available, image } = data;
+    const imgSrc = getResourceUrl(`/example/inventory/${image}.png`);
 
     return (
         <div className={styles.productCell}>
-            <div>{productName}</div>
-            <div className={styles.stockCell}>{availableStock} in stock</div>
+            <div className={styles.image}>
+                <img src={imgSrc} alt={image} />
+            </div>
+            <div>
+                <div>{product}</div>
+                <div className={styles.stockCell}>{available} in stock</div>
+            </div>
         </div>
     );
 };

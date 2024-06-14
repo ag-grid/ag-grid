@@ -24,28 +24,19 @@ interface Props {
 
 const whenSoldOut = ['Discontinued', 'Back order', 'Email when available'];
 const paginationPageSizeSelector = [5, 10, 20];
-function currencyFormatter(params: ValueFormatterParams) {
-    return params.value == null ? '' : '£' + params.value;
-}
 
 export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
     const gridRef = useRef<AgGridReact>(null);
 
     const [colDefs] = useState<ColDef[]>([
         {
-            headerCheckboxSelection: true,
-            checkboxSelection: true,
-            field: 'imageURL',
-            headerName: 'Image',
-            cellRenderer: ImageCellRenderer,
-            autoHeight: true,
-        },
-        {
             field: 'product',
             headerName: 'Product',
-            cellRenderer: ProductCellRenderer,
             cellRenderer: 'agGroupCellRenderer',
-            wrapText: true,
+            cellRendererParams: {
+                wrapText: true,
+                innerRenderer: ProductCellRenderer,
+            },
             filter: 'agMultiColumnFilter',
             filterParams: {
                 filters: [
@@ -188,6 +179,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                         columnDefs={colDefs}
                         rowData={rowData}
                         defaultColDef={defaultColDef}
+                        rowHeight={80}
                         rowSelection="multiple"
                         autoSizeStrategy={autoSizeStrategy}
                         columnMenu="new"
