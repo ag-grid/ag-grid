@@ -169,6 +169,11 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                         {errors.expired}. <EmailSales />
                     </Warning>
                 )}
+                {errors.expiredTrial && (
+                    <Warning>
+                        {errors.expiredTrial}. <EmailSales />
+                    </Warning>
+                )}
 
                 {errors.userLicenseError && (
                     <Warning>
@@ -197,7 +202,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                     {hasLicense && (
                         <div>
                             <label>Licence key expires: </label>
-                            <b className={errors.expired && styles.expired}>
+                            <b className={(errors.expired || errors.expiredTrial) && styles.expired}>
                                 {userLicenseExpiry ? userLicenseExpiry : '--'}
                             </b>
                         </div>

@@ -74,10 +74,17 @@ const errorConditions = {
     },
     expired: {
         getIsError: ({ license, licenseDetails }: ErrorData) => {
-            const { expired, trialExpired } = licenseDetails;
-            return hasValue(license) && (Boolean(expired) || Boolean(trialExpired));
+            const { expired } = licenseDetails;
+            return hasValue(license) && Boolean(expired);
         },
         message: 'This license key is expired',
+    },
+    expiredTrial: {
+        getIsError: ({ license, licenseDetails }: ErrorData) => {
+            const { trialExpired } = licenseDetails;
+            return hasValue(license) && Boolean(trialExpired);
+        },
+        message: 'This trial license key is expired',
     },
 };
 
