@@ -8,7 +8,6 @@ import { type FunctionComponent, useCallback, useMemo, useRef, useState } from '
 
 import { quantityCalculator } from '../../utils/valueGetters';
 import { ActionsCellRenderer } from '../actions-cell-renderer/ActionsCellRenderer';
-import { ImageCellRenderer } from '../image-cell-renderer/ImageCellRenderer';
 import { ProductCellRenderer } from '../product-cell-renderer/ProductCellRenderer';
 import { ProductDetailsRenderer } from '../product-details-renderer/ProductDetailsRenderer';
 import { StatusCellRenderer } from '../status-cell-renderer/StatusCellRenderer';
