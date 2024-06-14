@@ -49,7 +49,7 @@ const gridOptions: GridOptions<IAccount> = {
         detailGridOptions: {
             rowSelection: 'multiple',
             getRowId: (params: GetRowIdParams) => {
-                return params.data.callId;
+                return String(params.data.callId);
             },
             columnDefs: [
                 { field: 'callId', checkboxSelection: true },
