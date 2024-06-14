@@ -33,8 +33,8 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         this.addManagedPropertyListener('groupSelectsChildren', (propChange) => {
             this.destroyBean(this.selectionStrategy);
 
-            const StrategyClazz = !propChange.currentValue ? DefaultStrategy : GroupSelectsChildrenStrategy;
-            this.selectionStrategy = this.createManagedBean(new StrategyClazz());
+            const Strategy = !propChange.currentValue ? DefaultStrategy : GroupSelectsChildrenStrategy;
+            this.selectionStrategy = this.createManagedBean(new Strategy());
 
             this.shotgunResetNodeSelectionState();
             this.dispatchSelectionChanged('api');
@@ -42,8 +42,8 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
 
         this.addManagedPropertyListener('rowSelection', () => this.deselectAllRowNodes({ source: 'api' }));
 
-        const StrategyClazz = !groupSelectsChildren ? DefaultStrategy : GroupSelectsChildrenStrategy;
-        this.selectionStrategy = this.createManagedBean(new StrategyClazz());
+        const Strategy = !groupSelectsChildren ? DefaultStrategy : GroupSelectsChildrenStrategy;
+        this.selectionStrategy = this.createManagedBean(new Strategy());
     }
 
     public getSelectionState(): string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | null {

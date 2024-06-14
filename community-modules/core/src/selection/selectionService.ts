@@ -1,18 +1,19 @@
-import type { NamedBean } from './context/bean';
-import { BeanStub } from './context/beanStub';
-import type { BeanCollection } from './context/context';
-import type { RowNode } from './entities/rowNode';
-import type { SelectionChangedEvent, SelectionEventSourceType } from './events';
-import type { IClientSideRowModel } from './interfaces/iClientSideRowModel';
-import type { WithoutGridCommon } from './interfaces/iCommon';
-import type { IRowModel } from './interfaces/iRowModel';
-import type { ISelectionService, ISetNodesSelectedParams } from './interfaces/iSelectionService';
-import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './interfaces/selectionState';
-import type { PageBoundsService } from './pagination/pageBoundsService';
-import { _last } from './utils/array';
-import { ChangedPath } from './utils/changedPath';
-import { _errorOnce, _warnOnce } from './utils/function';
-import { _exists, _missing } from './utils/generic';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { RowNode } from '../entities/rowNode';
+import type { SelectionChangedEvent, SelectionEventSourceType } from '../events';
+import { isSelectionUIEvent } from '../events';
+import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { ISelectionService, ISetNodesSelectedParams } from '../interfaces/iSelectionService';
+import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../interfaces/selectionState';
+import type { PageBoundsService } from '../pagination/pageBoundsService';
+import { ChangedPath } from '../utils/changedPath';
+import { _errorOnce, _warnOnce } from '../utils/function';
+import { _exists, _missing } from '../utils/generic';
+import { RowRangeSelectionContext } from './rowRangeSelectionContext';
 
 export class SelectionService extends BeanStub implements NamedBean, ISelectionService {
     beanName = 'selectionService' as const;
@@ -26,12 +27,13 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
     }
 
     private selectedNodes: Map<string, RowNode> = new Map();
-    private lastRowNode: RowNode | null = null;
+    private selectionCtx: RowRangeSelectionContext = new RowRangeSelectionContext();
 
     private groupSelectsChildren: boolean;
     private rowSelection?: 'single' | 'multiple';
 
     public postConstruct(): void {
+        this.selectionCtx.init(this.rowModel);
         this.rowSelection = this.gos.get('rowSelection');
         this.groupSelectsChildren = this.gos.get('groupSelectsChildren');
         this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection'], () => {
@@ -46,15 +48,25 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
     public override destroy(): void {
         super.destroy();
         this.resetNodes();
-        this.lastRowNode = null;
+        this.selectionCtx.destroy();
     }
 
     private isMultiselect() {
         return this.rowSelection === 'multiple';
     }
 
+    private overrideSelectionValue(newValue: boolean, source: SelectionEventSourceType): boolean {
+        if (!isSelectionUIEvent(source)) {
+            return newValue;
+        }
+
+        const root = this.selectionCtx.getRoot();
+
+        return root ? root.isSelected() ?? false : true;
+    }
+
     public setNodesSelected(params: ISetNodesSelectedParams): number {
-        const { newValue, clearSelection, suppressFinishActions, rangeSelect, nodes, event, source = 'api' } = params;
+        const { newValue, clearSelection, suppressFinishActions, rangeSelect, nodes, event, source } = params;
 
         if (nodes.length === 0) return 0;
 
@@ -71,38 +83,44 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         const filteredNodes = nodes.map((node) => (node.footer ? node.sibling! : node));
 
         if (rangeSelect) {
-            if (nodes.length > 1) {
+            if (filteredNodes.length > 1) {
                 _warnOnce('cannot range select while selecting multiple rows');
                 return 0;
             }
 
-            let toNode: RowNode | null = null;
-            if (source === 'checkboxSelected' && newValue === false && this.lastRowNode) {
-                if (this.lastRowNode.id) {
-                    toNode = this.lastRowNode;
-                } else {
-                    this.lastRowNode = null;
+            const node = filteredNodes[0];
+            const newSelectionValue = this.overrideSelectionValue(newValue, source);
+
+            if (this.selectionCtx.isInRange(node)) {
+                const partition = this.selectionCtx.truncate(node);
+
+                // When we are selecting a range, we may need to de-select part of the previously
+                // selected range (see AG-9620)
+                // When we are de-selecting a range, we can/should leave the other nodes unchanged
+                // (i.e. selected nodes outside the current range should remain selected - see AG-10215)
+                if (newSelectionValue) {
+                    this.selectRange(partition.discard, false, source);
                 }
-            }
-
-            if (toNode == null) {
-                toNode = this.getLastSelectedNode();
-            }
-
-            if (toNode) {
-                // if node is a footer, we don't do selection, just pass the info
-                // to the sibling (the parent of the group)
-                const fromNode = filteredNodes[0];
-                const newRowClicked = fromNode !== toNode;
-                if (newRowClicked && this.isMultiselect()) {
-                    return this.selectRange(fromNode, toNode, newValue, source);
+                return this.selectRange(partition.keep, newSelectionValue, source);
+            } else {
+                const fromNode = this.selectionCtx.getRoot();
+                const toNode = node;
+                if (fromNode !== toNode) {
+                    const partition = this.selectionCtx.extend(node);
+                    if (newSelectionValue) {
+                        this.selectRange(partition.discard, false, source);
+                    }
+                    return this.selectRange(partition.keep, newSelectionValue, source);
                 }
             }
         }
 
-        // when deselecting nodes, we want to use the last deselected node
-        // as starting point for deselection
-        this.lastRowNode = newValue ? null : filteredNodes[0];
+        // Avoid re-setting here because if `suppressFinishActions` is true then this
+        // call is not a result of a user action, but rather a follow-on call (e.g
+        // in this.clearOtherNodes).
+        if (!suppressFinishActions) {
+            this.selectionCtx.reset(filteredNodes[0]);
+        }
 
         let updatedCount = 0;
         for (let i = 0; i < filteredNodes.length; i++) {
@@ -146,17 +164,9 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         return updatedCount;
     }
 
-    // selects all rows between this node and the last selected node (or the top if this is the first selection).
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
-    private selectRange(
-        fromNode: RowNode,
-        toNode: RowNode,
-        value: boolean = true,
-        source: SelectionEventSourceType
-    ): number {
-        const nodesToSelect = this.rowModel.getNodesInRangeForSelection(fromNode, toNode);
-
+    private selectRange(nodesToSelect: RowNode[], value: boolean, source: SelectionEventSourceType): number {
         let updatedCount = 0;
 
         nodesToSelect.forEach((rowNode) => {
@@ -170,9 +180,11 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             }
         });
 
-        this.updateGroupsFromChildrenSelections(source);
+        if (updatedCount > 0) {
+            this.updateGroupsFromChildrenSelections(source);
 
-        this.dispatchSelectionChanged(source);
+            this.dispatchSelectionChanged(source);
+        }
 
         return updatedCount;
     }
@@ -197,22 +209,6 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             source,
             nodes: children,
         });
-    }
-
-    private getLastSelectedNode(): RowNode | null {
-        const selectedKeys = Array.from(this.selectedNodes.keys());
-
-        if (selectedKeys.length == 0) {
-            return null;
-        }
-
-        const node = this.selectedNodes.get(_last(selectedKeys));
-
-        if (node) {
-            return node;
-        }
-
-        return null;
     }
 
     public getSelectedNodes() {
