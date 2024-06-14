@@ -64,7 +64,8 @@ yargs(hideBin(process.argv))
             });
         },
         async (argv) => {
-            let { subrepo, command, verbose } = argv;
+            const { subrepo: subrepoArg, command, verbose } = argv;
+            let subrepo = subrepoArg;
 
             if (!subrepo) {
                 const promptSubrepo = await getPromptSubrepo({ command: command! });
