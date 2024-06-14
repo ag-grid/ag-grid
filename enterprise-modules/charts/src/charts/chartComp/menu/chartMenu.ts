@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    ChartCreated,
     ChartToolPanelMenuOptions,
     ChartToolbarMenuItemOptions,
     Environment,

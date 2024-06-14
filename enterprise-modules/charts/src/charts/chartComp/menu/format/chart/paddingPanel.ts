@@ -1,4 +1,4 @@
-import type { BeanCollection, ChartOptionsChanged } from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
 import { Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
 import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';

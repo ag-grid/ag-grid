@@ -34,10 +34,10 @@ import type {
     CellMouseOverEvent,
     CellPosition,
     CellValueChangedEvent,
-    ChartCreated,
-    ChartDestroyed,
-    ChartOptionsChanged,
-    ChartRangeSelectionChanged,
+    ChartCreatedEvent,
+    ChartDestroyedEvent,
+    ChartOptionsChangedEvent,
+    ChartRangeSelectionChangedEvent,
     ChartRefParams,
     ChartToolPanelsDef,
     ColDef,
@@ -1799,20 +1799,23 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     > = new EventEmitter<AdvancedFilterBuilderVisibleChangedEvent<TData>>();
     /** A chart has been created.
      */
-    @Output() public chartCreated: EventEmitter<ChartCreated<TData>> = new EventEmitter<ChartCreated<TData>>();
+    @Output() public chartCreated: EventEmitter<ChartCreatedEvent<TData>> = new EventEmitter<
+        ChartCreatedEvent<TData>
+    >();
     /** The data range for the chart has been changed.
      */
-    @Output() public chartRangeSelectionChanged: EventEmitter<ChartRangeSelectionChanged<TData>> = new EventEmitter<
-        ChartRangeSelectionChanged<TData>
-    >();
+    @Output() public chartRangeSelectionChanged: EventEmitter<ChartRangeSelectionChangedEvent<TData>> =
+        new EventEmitter<ChartRangeSelectionChangedEvent<TData>>();
     /** Formatting changes have been made by users through the Format Panel.
      */
-    @Output() public chartOptionsChanged: EventEmitter<ChartOptionsChanged<TData>> = new EventEmitter<
-        ChartOptionsChanged<TData>
+    @Output() public chartOptionsChanged: EventEmitter<ChartOptionsChangedEvent<TData>> = new EventEmitter<
+        ChartOptionsChangedEvent<TData>
     >();
     /** A chart has been destroyed.
      */
-    @Output() public chartDestroyed: EventEmitter<ChartDestroyed<TData>> = new EventEmitter<ChartDestroyed<TData>>();
+    @Output() public chartDestroyed: EventEmitter<ChartDestroyedEvent<TData>> = new EventEmitter<
+        ChartDestroyedEvent<TData>
+    >();
     /** DOM event `keyDown` happened on a cell.
      */
     @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>> =

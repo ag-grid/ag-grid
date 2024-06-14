@@ -553,7 +553,7 @@ export interface GridApi<TData = any> {
 
     /**
      * Add an event listener for the specified `eventType`.
-     * Listener will receive the event as a  single parameter.
+     * Listener will receive the `event` as a single parameter.
      * Listeners will be automatically removed when the grid is destroyed.
      * @example api.addEventListener('rowClicked', (event) => { console.log('Row clicked', event);});
      */
