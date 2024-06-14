@@ -3,11 +3,12 @@ import type { ImportType } from '@ag-grid-types';
 import { AgCharts } from 'ag-charts-enterprise';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import type { LicensedProducts, Products } from '../types';
+import { DEFAULT_USER_PRODUCTS } from '../constants';
+import type { LicenseDetails, LicensedProducts, Products, ValidLicenseType } from '../types';
 import { hasValue } from './hasValue';
-
-type ValidLicenseType = 'gridEnterprise' | 'chartsEnterprise' | 'integratedEnterprise' | 'none';
-type LicenseDetails = ReturnType<typeof LicenseManager.getLicenseDetails>;
+import { updateSearchParams } from './updateSearchParams';
+import { useLicenseDebug } from './useLicenseDebug';
+import { useUpdateDataFromUrl } from './useUpdateDataFromUrl';
 
 type ErrorKey = keyof typeof errorConditions;
 type Errors = Record<ErrorKey, string | undefined>;
@@ -25,12 +26,6 @@ interface ErrorData {
     userLicenseIsExpired: boolean;
     userLicenseTrialIsExpired: boolean;
 }
-
-const DEFAULT_USER_PRODUCTS: Products = {
-    gridEnterprise: true,
-    integratedEnterprise: false,
-    chartsEnterprise: false,
-};
 
 const validLicenseMessages = {
     valid: 'Valid license key',
@@ -159,84 +154,6 @@ const useErrors = ({
     };
 };
 
-const updateSearchParams = ({
-    products = {} as Products,
-    importType,
-}: {
-    products: Products;
-    importType: ImportType;
-}) => {
-    const url = new URL(window.location);
-    const productsParam = url.searchParams.get('products');
-    const productsStr = Object.entries(products)
-        .map(([key, selectedProduct]) => {
-            return selectedProduct ? key : undefined;
-        })
-        .filter(Boolean)
-        .toString();
-    const importTypeParam = url.searchParams.get('importType');
-
-    if (productsParam !== productsStr) {
-        if (productsStr) {
-            url.searchParams.set('products', productsStr);
-        } else {
-            url.searchParams.delete('products');
-        }
-    }
-
-    if (importTypeParam !== importType) {
-        if (importType) {
-            url.searchParams.set('importType', importType);
-        } else {
-            url.searchParams.delete('importType');
-        }
-    }
-
-    history.pushState(null, '', url);
-};
-
-const useUpdateDataFromUrl = ({
-    setUserProducts,
-    setImportType,
-}: {
-    setUserProducts: React.Dispatch<Products>;
-    setImportType: React.Dispatch<ImportType>;
-}) => {
-    useEffect(() => {
-        const searchParams = new URLSearchParams(window.location.search);
-        const productsParam = searchParams.get('products');
-        const importTypeParam = searchParams.get('importType');
-        const newSearchParams = {} as { products: Products; importType: ImportType };
-
-        if (productsParam) {
-            const validProductKeys = Object.keys(DEFAULT_USER_PRODUCTS);
-            const productsList = productsParam
-                .split(',')
-                .map((p) => p.trim())
-                .filter((p) => validProductKeys.includes(p));
-
-            if (productsList.length) {
-                const productsObj = {} as Products;
-                validProductKeys.forEach((key) => {
-                    productsObj[key as keyof Products] = productsList.includes(key);
-                });
-                setUserProducts(productsObj);
-                newSearchParams.products = productsObj;
-            }
-        }
-
-        const importType = importTypeParam?.trim();
-        if (['modules', 'packages'].includes(importType as ImportType)) {
-            setImportType(importType);
-            newSearchParams.importType = importType;
-        }
-
-        if (Object.keys(newSearchParams).length) {
-            updateSearchParams(newSearchParams);
-        }
-    }, []);
-};
-
 export const useLicenseData = () => {
     const [hasLicense, setHasLicense] = useState<boolean>(true);
     /**
@@ -353,26 +270,7 @@ export const useLicenseData = () => {
     });
 
     useUpdateDataFromUrl({ setUserProducts, setImportType });
-
-    useEffect(() => {
-        const url = new URL(window.location);
-        const isDebug = url.searchParams.get('debug') === 'true';
-
-        if (isDebug) {
-            console.log({
-                validLicenseType,
-                licenseDetails,
-                chartsLicenseDetails,
-                errors,
-                userLicenseVersion,
-                userLicenseExpiry,
-                userLicenseIsValid,
-                userLicenseIsTrial,
-                userLicenseIsExpired,
-                userLicenseTrialIsExpired,
-            });
-        }
-    }, [
+    useLicenseDebug({
         validLicenseType,
         licenseDetails,
         chartsLicenseDetails,
@@ -383,7 +281,7 @@ export const useLicenseData = () => {
         userLicenseIsTrial,
         userLicenseIsExpired,
         userLicenseTrialIsExpired,
-    ]);
+    });
 
     useEffect(() => {
         if (!hasValue(license)) {
