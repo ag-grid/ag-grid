@@ -176,7 +176,7 @@ export type AgEventListener<TEventType extends AgEventType = AgEventType, TData 
 
 export type AgGlobalEventListener<T extends AgEventType = AgEventType, TData = any, TContext = any> = (
     eventType: T,
-    event: AgGridEvent<TData, TContext, T>
+    event: AgEventTypeParams<TData, TContext>[T]
 ) => void;
 
 export interface ModelUpdatedEvent<TData = any, TContext = any> extends AgGlobalEvent<'modelUpdated', TData, TContext> {

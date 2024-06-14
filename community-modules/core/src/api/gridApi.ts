@@ -553,8 +553,9 @@ export interface GridApi<TData = any> {
 
     /**
      * Add an event listener for the specified `eventType`.
-     * Works similar to `addEventListener` for a browser DOM element.
+     * Listener will receive the event as a  single parameter.
      * Listeners will be automatically removed when the grid is destroyed.
+     * @example api.addEventListener('rowClicked', (event) => { console.log('Row clicked', event);});
      */
     addEventListener<T extends AgPublicEventType>(eventType: T, listener: AgEventListener<T, TData, any>): void;
     /** Remove an event listener. */
@@ -562,7 +563,10 @@ export interface GridApi<TData = any> {
 
     /**
      * Add an event listener for all event types coming from the grid.
+     * Listener will receive `eventType` and `event` as parameters.
      * Listeners will be automatically removed when the grid is destroyed.
+     * If handling multiple event types it is recommended to use `event.type` to enable TypeScript to infer the event parameters.
+     * @example api.addGlobalListener((eventType, event) => { });
      */
     addGlobalListener<T extends AgPublicEventType>(listener: AgGlobalEventListener<T, TData, any>): void;
     /** Remove a global event listener. */
@@ -1072,17 +1076,3 @@ export interface GridApi<TData = any> {
      */
     updateGridOptions<TDataUpdate extends TData>(options: ManagedGridOptions<TDataUpdate>): void;
 }
-
-// const api: GridApi = {} as any;
-
-// api.addEventListener('paginationChanged', (e) => {
-//     const p = e.newPage;
-// });
-
-// api.addEventListener('stateUpdated', (e) => {
-//     e.state. = true;
-// });
-
-// api.addEventListener('sortChanged', (e) => {
-//     e.columns;
-// });
