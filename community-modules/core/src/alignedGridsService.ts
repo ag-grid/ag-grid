@@ -81,7 +81,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
     }
 
     private isGridApi(ref: AlignedGrid): ref is GridApi {
-        return !!ref && 'dispatchEvent' in ref;
+        return !!ref && !!(ref as GridApi).dispatchEvent;
     }
 
     public postConstruct(): void {
