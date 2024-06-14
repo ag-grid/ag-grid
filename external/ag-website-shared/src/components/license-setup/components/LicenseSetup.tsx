@@ -1,6 +1,6 @@
 import type { Framework, ImportType } from '@ag-grid-types';
-import Idea from '@ag-website-shared/components/alert/Idea';
 import Note from '@ag-website-shared/components/alert/Note';
+import Success from '@ag-website-shared/components/alert/Success';
 import Warning from '@ag-website-shared/components/alert/Warning';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Snippet } from '@components/snippet/Snippet';
@@ -145,7 +145,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, seedRepos })
                     ></textarea>
                 )}
 
-                {validLicenseText && <Idea>{validLicenseText}</Idea>}
+                {validLicenseText && <Success>{validLicenseText}</Success>}
 
                 {errors.expired && (
                     <Warning>

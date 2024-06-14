@@ -5,13 +5,19 @@ import { type FunctionComponent, type ReactNode } from 'react';
 import styles from './Alert.module.scss';
 
 interface Props {
-    type: 'info' | 'idea' | 'warning' | 'default';
+    type: 'info' | 'idea' | 'warning' | 'success' | 'default';
     children: ReactNode;
     className?: string;
 }
 
 export const Alert: FunctionComponent<Props> = ({ type = 'default', children, className }) => {
-    const icon = type !== 'default' ? type : null;
+    let icon = type;
+
+    if (type === 'success') {
+        icon = 'tick';
+    } else if (type === 'default') {
+        icon = null;
+    }
 
     return (
         <div className={classNames('alert', styles.alert, styles[type], className)}>
