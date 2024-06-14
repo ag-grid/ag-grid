@@ -58,11 +58,11 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                     _errorOnce(seeUrl());
                     return;
                 }
-                if ('dispatchEvent' in alignedGrid) {
+                if ((alignedGrid as GridApi).dispatchEvent) {
                     return alignedGrid;
                 }
                 // Extract the GridApi from a ref or component
-                const refOrComp = alignedGrid;
+                const refOrComp = alignedGrid as any;
                 if ('current' in refOrComp) {
                     return refOrComp.current?.api;
                 } else {
