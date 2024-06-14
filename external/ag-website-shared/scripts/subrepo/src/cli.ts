@@ -2,7 +2,7 @@ import { readdirSync } from 'fs';
 import { hideBin } from 'yargs/helpers';
 import yargs from 'yargs/yargs';
 
-import { type SubrepoCommandParams, runSubRepoCommand } from './lib/runSubRepoCommand';
+import { type Command, type SubrepoCommandParams, runSubRepoCommand } from './lib/runSubRepoCommand';
 import { TERMINAL_COLORS as tc } from './lib/terminal-colors';
 
 const SUBREPO_FOLDER = 'external';
@@ -40,13 +40,12 @@ yargs(hideBin(process.argv))
             });
         },
         (argv) => {
-            subRepos.forEach((subRepo: string) => {
-                runCommand({
-                    command: argv.command,
-                    subRepoFolder: `${SUBREPO_FOLDER}/${subRepo}`,
-                    isVerbose: argv.verbose,
-                    rootPath: argv.rootPath,
-                });
+            const { subrepo, command, verbose } = argv;
+
+            runCommand({
+                command: command as Command,
+                subRepoFolder: `${SUBREPO_FOLDER}/${subrepo}`,
+                isVerbose: Boolean(verbose),
             });
         }
     )
@@ -55,5 +54,11 @@ yargs(hideBin(process.argv))
         type: 'boolean',
         description: 'Run with verbose logging',
     })
+    .option('subrepo', {
+        alias: 's',
+        choices: subRepos,
+        description: 'Subrepo to run the command on',
+    })
+    .demandOption('subrepo')
     .help()
     .parse();
