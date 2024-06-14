@@ -6,7 +6,6 @@ const { activeTab } = Astro.props;
 ---
 
 <div class={styles.tabs}>
-
     <div class:list={[styles.tabWrapper, activeTab === 'complete' && styles.tabActive]}>
         <a href={urlWithBaseUrl(`/example-performance`)}>
             <img
@@ -62,5 +61,4 @@ const { activeTab } = Astro.props;
             />
         </a>
     </div>
-
 </div>
