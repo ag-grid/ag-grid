@@ -93,9 +93,7 @@ export class AutoScrollService {
     private doTick(): void {
         this.tickCount++;
 
-        let tickAmount: number;
-
-        tickAmount = this.tickCount > 20 ? 200 : this.tickCount > 10 ? 80 : 40;
+        const tickAmount = this.tickCount > 20 ? 200 : this.tickCount > 10 ? 80 : 40;
 
         if (this.scrollVertically) {
             const vScrollPosition = this.getVerticalPosition();

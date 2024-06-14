@@ -37,7 +37,7 @@ export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
 
     private getRowCountValue(): number {
         let totalRowCount = 0;
-        (this.rowModel as IClientSideRowModel).forEachLeafNode((node) => (totalRowCount += 1));
+        (this.rowModel as IClientSideRowModel).forEachLeafNode(() => (totalRowCount += 1));
         return totalRowCount;
     }
 

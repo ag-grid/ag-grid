@@ -4,7 +4,7 @@ import { CustomComponentWrapper } from './customComponentWrapper';
 import type { CustomToolPanelProps } from './interfaces';
 
 export class ToolPanelComponentWrapper
-    extends CustomComponentWrapper<IToolPanelParams, CustomToolPanelProps, {}>
+    extends CustomComponentWrapper<IToolPanelParams, CustomToolPanelProps, object>
     implements IToolPanel
 {
     private state: any;

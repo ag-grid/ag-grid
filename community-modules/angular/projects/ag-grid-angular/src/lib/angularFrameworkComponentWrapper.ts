@@ -1,13 +1,10 @@
-import {
-    BaseComponentWrapper,
-    FrameworkComponentWrapper,
-    WrappableInterface,
-    _removeFromParent,
-} from '@ag-grid-community/core';
-import { ComponentRef, Injectable, ViewContainerRef } from '@angular/core';
+import type { FrameworkComponentWrapper, WrappableInterface } from '@ag-grid-community/core';
+import { BaseComponentWrapper, _removeFromParent } from '@ag-grid-community/core';
+import type { ComponentRef, ViewContainerRef } from '@angular/core';
+import { Injectable } from '@angular/core';
 
-import { AngularFrameworkOverrides } from './angularFrameworkOverrides';
-import { AgFrameworkComponent } from './interfaces';
+import type { AngularFrameworkOverrides } from './angularFrameworkOverrides';
+import type { AgFrameworkComponent } from './interfaces';
 
 @Injectable()
 export class AngularFrameworkComponentWrapper
@@ -25,7 +22,7 @@ export class AngularFrameworkComponentWrapper
         this.angularFrameworkOverrides = angularFrameworkOverrides;
     }
 
-    createWrapper(OriginalConstructor: { new (): any }, compType: any): WrappableInterface {
+    createWrapper(OriginalConstructor: { new (): any }): WrappableInterface {
         const angularFrameworkOverrides = this.angularFrameworkOverrides;
         const that = this;
         class DynamicAgNg2Component

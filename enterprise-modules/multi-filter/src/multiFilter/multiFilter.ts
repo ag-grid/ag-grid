@@ -380,7 +380,8 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             if (filterDefs) {
                 _forEachReverse(filterDefs!, (filterDef, index) => {
                     const isFirst = index === 0;
-                    const suppressFocus = !isFirst || filterDef.display !== 'inline';
+                    const suppressFocus =
+                        params?.suppressFocus || !isFirst || (filterDef.display && filterDef.display !== 'inline');
                     const afterGuiAttachedParams = { ...(params ?? {}), suppressFocus };
                     const filter = this.filters?.[index];
                     if (filter) {
