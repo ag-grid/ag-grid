@@ -1,9 +1,9 @@
-import type { FunctionComponent, ReactElement } from 'react';
+import type { FunctionComponent, ReactNode } from 'react';
 
 import { Alert } from './Alert';
 
 interface Props {
-    children: ReactElement;
+    children: ReactNode;
 }
 
 const Idea: FunctionComponent<Props> = ({ children }) => {

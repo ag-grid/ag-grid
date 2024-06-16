@@ -42,7 +42,7 @@ export interface AgGridReactProps<TData = any> extends SharedProps<TData> {
 
 export interface AgReactComponent {
     /** @deprecated v31.1 Apply styling directly to `.ag-react-container` if needed */
-    getReactContainerStyle?: () => {};
+    getReactContainerStyle?: () => object;
     /** @deprecated v31.1 Apply styling directly to `.ag-react-container` if needed */
     getReactContainerClasses?: () => string[];
 }

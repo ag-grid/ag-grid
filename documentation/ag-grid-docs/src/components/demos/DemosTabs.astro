@@ -6,8 +6,23 @@ const { activeTab } = Astro.props;
 ---
 
 <div class={styles.tabs}>
-    <div class:list={[styles.tabWrapper, activeTab === 'finance' && styles.tabActive]}>
+    <div class:list={[styles.tabWrapper, activeTab === 'complete' && styles.tabActive]}>
         <a href={urlWithBaseUrl(`/example`)}>
+            <img
+                class={styles.showcaseItemTab}
+                src={urlWithBaseUrl(`/example/grid-full.png`)}
+                alt="Grid illustration"
+            />
+            <img
+                class={`${styles.showcaseItemTab} ${styles.darkTab}`}
+                src={urlWithBaseUrl(`/example/complete-dark.png`)}
+                alt="Grid illustration"
+            />
+        </a>
+    </div>
+
+    <div class:list={[styles.tabWrapper, activeTab === 'finance' && styles.tabActive]}>
+        <a href={urlWithBaseUrl(`/example-finance`)}>
             <img
                 class={styles.showcaseItemTab}
                 src={urlWithBaseUrl(`/example/finance-grid.png`)}
@@ -42,21 +57,6 @@ const { activeTab } = Astro.props;
             <img
                 class={`${styles.showcaseItemTab} ${styles.darkTab}`}
                 src={urlWithBaseUrl(`/example/inventory-dark.png`)}
-                alt="Grid illustration"
-            />
-        </a>
-    </div>
-
-    <div class:list={[styles.tabWrapper, activeTab === 'complete' && styles.tabActive]}>
-        <a href={urlWithBaseUrl(`/example-complete`)}>
-            <img
-                class={styles.showcaseItemTab}
-                src={urlWithBaseUrl(`/example/grid-full.png`)}
-                alt="Grid illustration"
-            />
-            <img
-                class={`${styles.showcaseItemTab} ${styles.darkTab}`}
-                src={urlWithBaseUrl(`/example/complete-dark.png`)}
                 alt="Grid illustration"
             />
         </a>

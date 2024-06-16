@@ -17,6 +17,7 @@ import type {
     ColumnGroupOpenedEvent,
     ColumnResizedEvent,
 } from './events';
+import type { AlignedGrid } from './interfaces/iAlignedGrid';
 import type { WithoutGridCommon } from './interfaces/iCommon';
 import { _errorOnce, _warnOnce } from './utils/function';
 
@@ -58,25 +59,29 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                     _errorOnce(seeUrl());
                     return;
                 }
-                if ('dispatchEvent' in alignedGrid) {
+                if (this.isGridApi(alignedGrid)) {
                     return alignedGrid;
                 }
                 // Extract the GridApi from a ref or component
                 const refOrComp = alignedGrid;
                 if ('current' in refOrComp) {
                     return refOrComp.current?.api;
-                } else {
-                    if (!refOrComp.api) {
-                        _errorOnce(
-                            `alignedGrids - No api found on the linked grid. If you are passing gridOptions to alignedGrids since v31 this is no longer valid. ${seeUrl()}`
-                        );
-                    }
-                    return refOrComp.api;
                 }
+
+                if (!refOrComp.api) {
+                    _errorOnce(
+                        `alignedGrids - No api found on the linked grid. If you are passing gridOptions to alignedGrids since v31 this is no longer valid. ${seeUrl()}`
+                    );
+                }
+                return refOrComp.api;
             })
             .filter((api) => !!api && !api.isDestroyed());
 
         return apis as GridApi[];
+    }
+
+    private isGridApi(ref: AlignedGrid): ref is GridApi {
+        return !!ref && !!(ref as GridApi).dispatchEvent;
     }
 
     public postConstruct(): void {

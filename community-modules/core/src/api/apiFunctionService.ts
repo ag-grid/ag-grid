@@ -16,6 +16,7 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
     private beans: BeanCollection;
     private functions: { [key in ApiFunctionName]?: (beans: BeanCollection, ...args: any[]) => any } = {
         // this is used by frameworks
+        // also used by aligned grids to identify a grid api instance
         dispatchEvent,
     };
     private isDestroyed = false;

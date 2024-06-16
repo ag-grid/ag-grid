@@ -6,9 +6,13 @@
 :global(.ag-theme-quartz-dark) {
     --ag-row-height: 65px !important;
     --ag-header-background-color: transparent;
-    --ag-odd-row-background-color: rgba(133, 160, 243, 0.062);
-    --ag-row-border-color: rgba(138, 138, 138, 0.1);
+    --ag-odd-row-background-color: rgb(240, 244, 255);
+    --ag-row-border-color: rgba(228, 228, 228, 0.1);
     --ag-borders: none;
+}
+
+:global(.ag-theme-quartz-dark) {
+    --ag-odd-row-background-color: #252f3f;
 }
 
 :global(.ag-theme-quartz .ag-cell),

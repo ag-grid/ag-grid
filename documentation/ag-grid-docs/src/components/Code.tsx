@@ -88,7 +88,13 @@ function Code({
 
     return (
         <pre
-            className={classnames('code', `language-${language}`, className, lineNumbers ? 'line-numbers' : null)}
+            className={classnames(
+                'code',
+                `language-${language}`,
+                className,
+                lineNumbers ? 'line-numbers' : null,
+                copyToClipboard ? 'copy-to-clipboard' : ''
+            )}
             {...props}
         >
             {copyToClipboard && <CopyToClipboardButton code={code} />}

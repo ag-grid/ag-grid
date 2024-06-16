@@ -1,29 +1,35 @@
-import { type ColDef, type GetRowIdFunc, type GetRowIdParams } from '@ag-grid-community/core';
+import {
+    type ColDef,
+    type GetRowIdFunc,
+    type GetRowIdParams,
+    type TooltipRendererParams,
+    type TooltipRendererResult,
+} from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import classNames from 'classnames';
 import { type FunctionComponent, useCallback, useRef, useState } from 'react';
 
-import { type PortfolioItem } from '../../../types';
-import { currencyFormatter, percentageFormatter } from '../../utils/valueFormatters';
+import styles from './FinanceExample.module.css';
+import { TickerCellRenderer } from './cell-renderers/ticker-cell-renderer/TickerCellRenderer';
+import { generatePortfolio } from './data';
+import { toCurrency, toTime } from './formatters';
+import { type PortfolioItem } from './types';
+import { useDataGenerator } from './useDataGenerator';
+import { currencyFormatter, percentageFormatter } from './utils/valueFormatters';
 import {
     calculate52wChange,
     costCalculator,
     pnlCalculator,
     pnlPercentCalculator,
     valueCalculator,
-} from '../../utils/valueGetters';
-import { TickerCellRenderer } from '../ticker-cell-renderer/TickerCellRenderer';
-import styles from './PortfolioExample.module.css';
-import { generatePortfolio } from './data';
-import { toCurrency, toTime } from './formatters.ts';
-import { useDataGenerator } from './useDataGenerator';
+} from './utils/valueGetters';
 
 interface Props {
     gridTheme?: string;
     isDarkMode?: boolean;
 }
 
-const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
+const FinanceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
     const timelineTooltipRenderer = ({ xValue, yValue }: TooltipRendererParams): TooltipRendererResult => {
         return {
             title: toTime({ value: xValue }),
@@ -261,4 +267,4 @@ const PortfolioExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
     );
 };
 
-export default PortfolioExample;
+export default FinanceExample;

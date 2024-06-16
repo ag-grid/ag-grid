@@ -156,12 +156,8 @@ export class VirtualList<
     }
 
     protected onTabKeyDown(e: KeyboardEvent): void {
-        if (this.navigate(e.shiftKey)) {
-            e.preventDefault();
-        } else {
-            _stopPropagationForAgGrid(e);
-            this.forceFocusOutOfContainer(e.shiftKey);
-        }
+        _stopPropagationForAgGrid(e);
+        this.forceFocusOutOfContainer(e.shiftKey);
     }
 
     private navigate(up: boolean): boolean {

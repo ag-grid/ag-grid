@@ -292,7 +292,6 @@
     background-color: unset;
     padding: 0 2px;
     border-radius: 1px;
-    z-index: 2000; /* Temporary fix for button not being clickable. */
 }
 
 .ag-chart-mini-thumbnail {

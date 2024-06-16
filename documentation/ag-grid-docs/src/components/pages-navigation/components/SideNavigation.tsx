@@ -7,10 +7,11 @@ import styles from './SideNavigation.module.scss';
 
 interface Props {
     headings: MarkdownHeading[];
+    delayedScrollSpy?: boolean;
 }
 
-export function SideNavigation({ headings }: Props) {
-    const menuRef = useScrollSpy({ headings });
+export function SideNavigation({ headings, delayedScrollSpy }: Props) {
+    const menuRef = useScrollSpy({ headings, delayedScrollSpy });
 
     if (headings.length < 2) {
         return null;

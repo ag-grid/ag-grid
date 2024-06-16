@@ -15,7 +15,7 @@ export default getViteConfig({
         include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
         exclude: ['**/_examples/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
         reporters: ['default'],
-        coverage: { reportsDirectory: '../../coverage/ag-charts-website', provider: 'v8' },
+        coverage: { reportsDirectory: '../../coverage/ag-grid-docs', provider: 'v8' },
     },
     resolve: {
         alias: {

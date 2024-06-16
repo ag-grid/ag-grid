@@ -151,6 +151,10 @@
                                 "path": "licensing"
                             },
                             {
+                                "title": "Installing Your Licence Key",
+                                "path": "license-install"
+                            },
+                            {
                                 "title": "React Best Practices",
                                 "path": "react-hooks",
                                 "frameworks": ["react"]

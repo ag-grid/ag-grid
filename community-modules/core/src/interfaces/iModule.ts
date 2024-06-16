@@ -1,6 +1,5 @@
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { ComponentMeta, ControllerMeta, SingletonBean } from '../context/context';
-import type { ComponentSelector } from '../widgets/component';
 import type { RowModelType } from './iRowModel';
 
 export type ModuleValidationValidResult = {
