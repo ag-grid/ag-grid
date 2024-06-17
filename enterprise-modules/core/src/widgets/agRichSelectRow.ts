@@ -26,10 +26,7 @@ export class RichSelectRow<TValue> extends Component {
     private value: TValue;
     private parsedValue: string | null;
 
-    constructor(
-        private readonly params: RichSelectParams<TValue>,
-        private readonly isItemSelected: (value: TValue) => boolean
-    ) {
+    constructor(private readonly params: RichSelectParams<TValue>) {
         super(/* html */ `<div class="ag-rich-select-row" role="presentation"></div>`);
     }
 
@@ -47,10 +44,6 @@ export class RichSelectRow<TValue> extends Component {
         }
 
         this.value = value;
-
-        if (this.isItemSelected(value)) {
-            this.updateSelected(true);
-        }
     }
 
     public highlightString(matchString: string): void {

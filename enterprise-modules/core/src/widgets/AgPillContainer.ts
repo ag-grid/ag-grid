@@ -60,11 +60,11 @@ export class PillContainer<TValue> extends Component {
         }
     }
 
-    public onKeyboardNavigateKey(e: KeyboardEvent): void {
+    public onKeyboardNavigateKey(e: KeyboardEvent): boolean {
         const { key } = e;
 
         if (!this.pills.length || (key !== KeyCode.LEFT && key !== KeyCode.RIGHT)) {
-            return;
+            return false;
         }
 
         e.preventDefault();
@@ -72,7 +72,10 @@ export class PillContainer<TValue> extends Component {
 
         if (nextFocusableEl) {
             nextFocusableEl.focus();
+            return true;
         }
+
+        return false;
     }
 
     private clearPills(): void {
