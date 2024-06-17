@@ -56,11 +56,6 @@ const gridOptions: GridOptions = {
         if (params.parentKeys && params.parentKeys.length) {
             rowId += params.parentKeys.join('-') + '-';
         }
-        const groupCols = params.api.getRowGroupColumns();
-        if (groupCols.length > params.level) {
-            const thisGroupCol = groupCols[params.level];
-            rowId += params.data[thisGroupCol.getColDef().field!] + '-';
-        }
         if (params.data.tradeId != null) {
             rowId += params.data.tradeId;
         }
