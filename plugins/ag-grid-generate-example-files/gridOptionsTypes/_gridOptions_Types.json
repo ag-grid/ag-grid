@@ -473,12 +473,6 @@
       "IRowNode"
     ]
   },
-  "processPivotResultColDef": {
-    "typeName": "(colDef: ColDef<TData>) => void",
-    "typesToInclude": [
-      "ColDef"
-    ]
-  },
   "processPivotResultColGroupDef": {
     "typeName": "(colGroupDef: ColGroupDef<TData>) => void",
     "typesToInclude": [
@@ -534,6 +528,12 @@
   "quickFilterMatcher": {
     "typeName": "(quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean",
     "typesToInclude": []
+  },
+  "processPivotResultColDef": {
+    "typeName": "(colDef: ColDef<TData>) => void",
+    "typesToInclude": [
+      "ColDef"
+    ]
   },
   "getLocaleText": {
     "typeName": "(params: GetLocaleTextParams<TData>) => string",

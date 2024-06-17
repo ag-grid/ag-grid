@@ -57,7 +57,7 @@ export interface AbstractColDef<TData = any, TValue = any> {
     cellAriaRole?: string;
 
     /**
-     * Provides a context object that is provided to different callbacks the column uses. Used for passing additional information to the callbacks by your application.
+     * Context property can be used to associate arbitrary application data with this column definition.
      */
     context?: any;
 }
