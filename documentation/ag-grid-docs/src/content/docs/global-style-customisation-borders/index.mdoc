@@ -13,8 +13,9 @@ These variables use [Variable Cascading](./global-style-customisation-css/#varia
   * `--ag-borders-secondary` and `--ag-secondary-border-color` - borders separating UI elements within components.
     * `--ag-borders-input` and `--ag-secondary-border-row` - borders around text inputs
 * `--ag-row-border-style`, `--ag-row-border-color` and `--ag-row-border-width` - borders separating the grid rows. Row borders are configured independently of other border properties.
+* `--ag-cell-horizontal-border` - borders between horizontally adjacent cells (i.e. between columns). This accepts a style and a color, e.g. `solid black`.
 
-## Example
+## Example: row borders
 
 ```css
 .ag-theme-quartz {
@@ -24,7 +25,14 @@ These variables use [Variable Cascading](./global-style-customisation-css/#varia
     --ag-row-border-style: dashed;
     --ag-row-border-width: 5px;
     --ag-row-border-color: rgb(150, 150, 200);
+    /* and between columns */
+    --ag-cell-horizontal-border: solid rgb(150, 150, 200);
 }
 ```
 
 {% gridExampleRunner title="Border Customisation" name="border-customisation"  exampleHeight=450 /%}
+
+### Borders between header cells
+
+`--ag-cell-horizontal-border` adds a border between cells in the grid area. To add a border between header cells, use [header column separators](./global-style-customisation-headers/#header-column-separators-and-resize-handles).
+
