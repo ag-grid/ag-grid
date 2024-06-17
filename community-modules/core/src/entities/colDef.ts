@@ -55,6 +55,11 @@ export interface AbstractColDef<TData = any, TValue = any> {
      * @default 'gridcell'
      */
     cellAriaRole?: string;
+
+    /**
+     * Provides a context object that is provided to different callbacks the column uses. Used for passing additional information to the callbacks by your application.
+     */
+    colContext?: any;
 }
 
 /** Configuration options for column groups in AG Grid.  */

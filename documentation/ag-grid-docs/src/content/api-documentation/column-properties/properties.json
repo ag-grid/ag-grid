@@ -115,7 +115,8 @@
                 "url": "./tooltips"
             }
         },
-        "tooltipComponentParams": {}
+        "tooltipComponentParams": {},
+        "colContext": {}
     },
     "header": {
         "meta": {
@@ -541,7 +542,8 @@
                 "url": "./tooltips"
             }
         },
-        "tooltipComponentParams": {}
+        "tooltipComponentParams": {},
+        "colContext": {}
     },
     "groupsHeader": {
         "meta": {

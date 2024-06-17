@@ -217,6 +217,7 @@ const colDefPropertyMap: Record<ColKey, undefined> = {
     loadingCellRenderer: undefined,
     loadingCellRendererParams: undefined,
     loadingCellRendererSelector: undefined,
+    colContext: undefined,
 };
 const ALL_PROPERTIES: ColKey[] = Object.keys(colDefPropertyMap) as ColKey[];
 
