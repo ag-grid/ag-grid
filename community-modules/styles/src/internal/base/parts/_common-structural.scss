@@ -1917,4 +1917,14 @@
     .ag-body .ag-body-viewport {
         -webkit-overflow-scrolling: touch;
     }
+
+    .ag-measurement-container {
+        width: 0;
+        overflow: hidden;
+        visibility: hidden;
+
+        div {
+            position: absolute;
+        }
+    }
 }
