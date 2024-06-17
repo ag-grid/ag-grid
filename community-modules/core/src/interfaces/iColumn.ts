@@ -1,6 +1,6 @@
 import type { AgProvidedColumnGroupEvent } from '../entities/agProvidedColumnGroup';
 import type { AbstractColDef, ColDef, ColGroupDef, IAggFunc, SortDirection } from '../entities/colDef';
-import { ColumnEvent } from '../events';
+import type { ColumnEvent } from '../events';
 import type { BrandedType } from '../interfaces/brandedType';
 import type { IEventEmitter } from './iEventEmitter';
 import type { IRowNode } from './iRowNode';
