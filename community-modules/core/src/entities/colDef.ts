@@ -57,7 +57,7 @@ export interface AbstractColDef<TData = any, TValue = any> {
     cellAriaRole?: string;
 
     /**
-     * Context property can be used to associate arbitrary application data with this column definition.
+     * Context property that can be used to associate arbitrary application data with this column definition.
      */
     context?: any;
 }
