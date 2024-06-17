@@ -29,8 +29,8 @@
 }
 
 .stockCell {
-    background-color: #f9f9f9;
-    color: #656565;
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-secondary);
     width: fit-content;
     padding: 4px;
     border: 1px solid #c0c0c057;

@@ -58,6 +58,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             headerName: 'Status',
             cellRenderer: StatusCellRenderer,
             filter: 'agSetColumnFilter',
+            headerClass: 'status',
         },
 
         {

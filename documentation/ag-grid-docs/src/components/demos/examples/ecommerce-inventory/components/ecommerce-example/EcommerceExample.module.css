@@ -10,7 +10,7 @@
 
 :global(.ag-theme-quartz .ag-row),
 :global(.ag-theme-quartz-dark .ag-row) {
-    border-bottom: 1px solid rgba(152, 152, 152, 0.23);
+    border-bottom: none;
 }
 
 :global(.ag-theme-quartz .ag-cell-expandable),
@@ -33,7 +33,7 @@
 }
 
 :global(.ag-theme-quartz .ag-header) {
-    background-color: #f9fafb;
+    background-color: #f6f7f7;
     color: #39485d;
     border-radius: 8px;
     border: none;
@@ -68,7 +68,6 @@
 .wrapper {
     display: flex;
     background: var(--color-bg-primary);
-    overflow: hidden;
 }
 
 .buttonIcon {

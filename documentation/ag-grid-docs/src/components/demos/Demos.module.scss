@@ -83,3 +83,11 @@
 #{$selector-darkmode} .showcaseItemTab.darkTab {
     display: block;
 }
+
+.tabs span {
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    padding-top: $spacing-size-4;
+    color: var(--color-fg-primary);
+}
