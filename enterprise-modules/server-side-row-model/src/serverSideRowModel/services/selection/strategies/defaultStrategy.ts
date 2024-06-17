@@ -134,7 +134,9 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                     toggledNodes: new Set(),
                 };
             }
-            this.selectionCtx.reset(node.id!);
+            if (node.selectable) {
+                this.selectionCtx.reset(node.id!);
+            }
             return 1;
         }
 
