@@ -22,7 +22,7 @@ export abstract class SimpleFilterModelFormatter<TValue = any> {
         const translate = this.localeService.getLocaleTextFunc();
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
-            const { conditions } = combinedModel;
+            const conditions = combinedModel.conditions ?? [];
             const customOptions = conditions.map((condition) => this.getModelAsString(condition));
             const joinOperatorTranslateKey = combinedModel.operator === 'AND' ? 'andCondition' : 'orCondition';
             return customOptions.join(
