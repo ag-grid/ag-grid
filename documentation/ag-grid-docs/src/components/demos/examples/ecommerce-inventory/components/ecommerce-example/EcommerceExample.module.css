@@ -79,6 +79,8 @@
 }
 
 .exampleHeader {
+    display: flex;
+    justify-content: space-between;
     padding-bottom: 16px;
     padding-top: 8px;
 }
@@ -123,4 +125,37 @@
 
 .increase {
     opacity: 0.7;
+}
+
+.tabs {
+    display: flex;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--color-bg-secondary);
+    padding: 4px;
+}
+
+.tabButton {
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-seondary);
+    cursor: pointer;
+    box-shadow: none;
+    transition:
+        background 0.3s,
+        color 0.3s;
+}
+
+.tabButton:hover {
+    background: #7c7c7c23;
+    color: rgba(37, 37, 37, 0.6);
+}
+
+.tabButton.active {
+    background: #fff;
+    color: #000;
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }

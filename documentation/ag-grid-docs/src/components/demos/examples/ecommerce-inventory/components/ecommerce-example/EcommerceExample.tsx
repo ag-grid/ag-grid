@@ -171,6 +171,24 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
         };
     }, []);
 
+    const setStatusFilter = (status: string) => {
+        gridRef.current!.api.getFilterInstance('status', (filterInstance) => {
+            if (status === 'all') {
+                filterInstance.setModel(null); // Reset the filter
+            } else {
+                filterInstance.setModel({ values: [status] });
+            }
+            gridRef.current!.api.onFilterChanged();
+        });
+    };
+
+    const [activeTab, setActiveTab] = useState('all');
+
+    const handleTabClick = (status: string) => {
+        setActiveTab(status);
+        setStatusFilter(status);
+    };
+
     return (
         <div className={styles.wrapper}>
             <div className={styles.container}>
@@ -195,6 +213,33 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                             placeholder="Search product..."
                             onInput={onFilterTextBoxChanged}
                         />
+                    </div>
+
+                    <div className={styles.tabs}>
+                        <button
+                            className={`${styles.tabButton} ${activeTab === 'all' ? styles.active : ''}`}
+                            onClick={() => handleTabClick('all')}
+                        >
+                            All
+                        </button>
+                        <button
+                            className={`${styles.tabButton} ${activeTab === 'active' ? styles.active : ''}`}
+                            onClick={() => handleTabClick('active')}
+                        >
+                            Active
+                        </button>
+                        <button
+                            className={`${styles.tabButton} ${activeTab === 'paused' ? styles.active : ''}`}
+                            onClick={() => handleTabClick('paused')}
+                        >
+                            Paused
+                        </button>
+                        <button
+                            className={`${styles.tabButton} ${activeTab === 'out of stock' ? styles.active : ''}`}
+                            onClick={() => handleTabClick('out of stock')}
+                        >
+                            Out of Stock
+                        </button>
                     </div>
                 </div>
                 <div className={`${themeClass} ${styles.grid}`}>
