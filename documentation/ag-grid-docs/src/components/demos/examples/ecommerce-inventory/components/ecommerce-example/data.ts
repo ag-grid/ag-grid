@@ -1,5 +1,5 @@
 export function getData() {
-    return [
+    const data = [
         {
             product: 'Macbook Pro 14',
             sku: 'MNTR-XYZ-749',
@@ -14,7 +14,25 @@ export function getData() {
             soldLastMonth: 15,
             priceIncrease: 5, // in percentage
             category: 'Electronics',
+            variantName: 'Macbook',
         },
+        {
+            product: 'Macbook Pro 14',
+            sku: 'MNTR-XYZ-749',
+            status: 'Active',
+            whenSoldOut: 'Back order',
+            available: 12,
+            committed: 0,
+            unavailable: 29,
+            incoming: 45,
+            image: 'macbook',
+            price: 2499,
+            soldLastMonth: 15,
+            priceIncrease: 5, // in percentage
+            category: 'Electronics',
+            variantName: 'Macbook',
+        },
+
         {
             product: 'Aesop Karst',
             sku: 'MNTR-XYZ-533',
@@ -29,6 +47,7 @@ export function getData() {
             soldLastMonth: 40,
             priceIncrease: 3,
             category: 'Beauty',
+            variantName: 'Aesop',
         },
         {
             product: 'ACG Mountain Fly 2 Low',
@@ -44,6 +63,7 @@ export function getData() {
             soldLastMonth: 25,
             priceIncrease: 2,
             category: 'Footwear',
+            variantName: 'ACG',
         },
         {
             product: 'MUUTO Linear Table Lamp',
@@ -59,6 +79,7 @@ export function getData() {
             soldLastMonth: 5,
             priceIncrease: 1.5,
             category: 'Home & Furniture',
+            variantName: 'MUUTO',
         },
         {
             product: 'Sonos Ace Headphones',
@@ -74,6 +95,7 @@ export function getData() {
             soldLastMonth: 12,
             priceIncrease: 4,
             category: 'Electronics',
+            variantName: 'Sonos',
         },
         {
             product: 'Harbour Dining Chair',
@@ -89,6 +111,7 @@ export function getData() {
             soldLastMonth: 8,
             priceIncrease: 2.5,
             category: 'Home & Furniture',
+            variantName: 'Harbour',
         },
         {
             product: 'Ceramic and Brass Oil Diffuser',
@@ -104,6 +127,7 @@ export function getData() {
             soldLastMonth: 18,
             priceIncrease: 3.5,
             category: 'Home & Furniture',
+            variantName: 'Ceramic',
         },
         {
             product: 'Artifox Desk',
@@ -119,6 +143,7 @@ export function getData() {
             soldLastMonth: 3,
             priceIncrease: 5,
             category: 'Home & Furniture',
+            variantName: 'Artifox',
         },
         {
             product: 'Fellow EKG Pro Electric Kettle',
@@ -134,6 +159,7 @@ export function getData() {
             soldLastMonth: 22,
             priceIncrease: 1.8,
             category: 'Home & Furniture',
+            variantName: 'Fellow',
         },
         {
             product: 'Nordic Kitchen Timer',
@@ -149,6 +175,7 @@ export function getData() {
             soldLastMonth: 45,
             priceIncrease: 2.2,
             category: 'Home & Furniture',
+            variantName: 'Nordic',
         },
         {
             product: 'VIEWSONIC 774 Screen',
@@ -164,6 +191,7 @@ export function getData() {
             soldLastMonth: 7,
             priceIncrease: 4.5,
             category: 'Electronics',
+            variantName: 'VIEWSONIC',
         },
         {
             product: 'PHILIPS 916 Display',
@@ -179,6 +207,7 @@ export function getData() {
             soldLastMonth: 4,
             priceIncrease: 1.7,
             category: 'Electronics',
+            variantName: 'PHILIPS',
         },
         {
             product: 'MSI 318 Display',
@@ -194,6 +223,7 @@ export function getData() {
             soldLastMonth: 6,
             priceIncrease: 3,
             category: 'Electronics',
+            variantName: 'MSI',
         },
         {
             product: 'DELL 565 Screen',
@@ -209,6 +239,7 @@ export function getData() {
             soldLastMonth: 8,
             priceIncrease: 2.5,
             category: 'Electronics',
+            variantName: 'DELL',
         },
         {
             product: 'DELL 197 Screen',
@@ -224,6 +255,7 @@ export function getData() {
             soldLastMonth: 3,
             priceIncrease: 2.8,
             category: 'Electronics',
+            variantName: 'DELL',
         },
         {
             product: 'ACER 522 Screen',
@@ -239,6 +271,7 @@ export function getData() {
             soldLastMonth: 10,
             priceIncrease: 3.2,
             category: 'Electronics',
+            variantName: 'ACER',
         },
         {
             product: 'LG 961 Screen',
@@ -254,50 +287,20 @@ export function getData() {
             soldLastMonth: 12,
             priceIncrease: 1.5,
             category: 'Electronics',
-        },
-        {
-            product: 'DELL 373 Screen',
-            sku: 'MNTR-XYZ-297',
-            status: 'Active',
-            whenSoldOut: 'Discontinue',
-            available: 17,
-            committed: 10,
-            unavailable: 0,
-            incoming: 0,
-            image: 'headphones',
-            price: 899,
-            soldLastMonth: 9,
-            priceIncrease: 4.3,
-            category: 'Electronics',
-        },
-        {
-            product: 'PHILIPS 393 Display',
-            sku: 'MNTR-XYZ-358',
-            status: 'Active',
-            whenSoldOut: 'Discontinue',
-            available: 20,
-            committed: 11,
-            unavailable: 0,
-            incoming: 0,
-            image: 'kettle',
-            price: 649,
-            soldLastMonth: 11,
-            priceIncrease: 3.1,
-            category: 'Electronics',
-        },
-        {
-            product: 'HP 306 Display',
-            sku: 'MNTR-XYZ-376',
-            status: 'Out of Stock',
-            whenSoldOut: 'Back order',
-            available: 0,
-            committed: 0,
-            unavailable: 29,
-            incoming: 45,
-            image: 'macbook',
-            price: 1999,
-            soldLastMonth: 20,
-            priceIncrease: 4.8,
+            variantName: 'LG',
         },
     ];
+
+    // Group products by variantName and count the number of variants
+    const variantCounts = data.reduce((acc, product) => {
+        acc[product.variantName] = (acc[product.variantName] || 0) + 1;
+        return acc;
+    }, {});
+
+    // Map products to the new structure with variant counts
+    return data.map((product) => ({
+        ...product,
+        product: product.variantName,
+        variantCount: variantCounts[product.variantName],
+    }));
 }
