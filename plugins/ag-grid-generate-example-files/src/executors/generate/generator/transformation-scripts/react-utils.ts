@@ -105,8 +105,4 @@ export const convertFunctionToConstCallbackTs = (code: string, callbackDependenc
     return `${code.replace(/function\s+([^(\s]+)\s*\(([^)]*)\)(:?\s+[^{]*)/, 'const $1 = useCallback(($2) $3 =>')}, [${callbackDependencies[functionName] || ''}])`;
 };
 
-export const EventAndCallbackNames = new Set([
-    ...PropertyKeys.CALLBACK_PROPERTIES,
-    ...PropertyKeys.FUNCTIONAL_PROPERTIES,
-    ...ALL_EVENTS,
-]);
+export const EventAndCallbackNames = new Set([...PropertyKeys.FUNCTION_PROPERTIES, ...ALL_EVENTS]);

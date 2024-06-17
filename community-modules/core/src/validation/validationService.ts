@@ -196,9 +196,11 @@ export class ValidationService extends BeanStub implements NamedBean {
         );
 
         _iterateObject(invalidProperties, (key, value) => {
-            _warnOnce(
-                `invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(', ')}`
-            );
+            let message = `invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(', ')}.`;
+            if (validProperties.includes('context')) {
+                message += `\nIf you are trying to annotate ${containerName} with application data, use the '${containerName}.context' property instead.`;
+            }
+            _warnOnce(message);
         });
 
         if (Object.keys(invalidProperties).length > 0 && docsUrl) {

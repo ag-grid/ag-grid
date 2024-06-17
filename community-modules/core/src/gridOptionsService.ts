@@ -6,7 +6,7 @@ import type { BeanCollection } from './context/context';
 import type { DomLayoutType, GetRowIdFunc, GridOptions } from './entities/gridOptions';
 import type { Environment } from './environment';
 import type { AgEventType } from './eventTypes';
-import type { AgEvent, GridOptionsChangedEvent } from './events';
+import type { AgEvent } from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
 import type {
     GetGroupAggFilteringParams,

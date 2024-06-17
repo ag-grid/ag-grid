@@ -85,7 +85,7 @@
                 "url": "./context-menu/#configuring-the-context-menu"
             }
         },
-        "colContext": {}
+        "context": {}
     },
     "charts": {
         "meta": {
@@ -543,7 +543,7 @@
             }
         },
         "tooltipComponentParams": {},
-        "colContext": {}
+        "context": {}
     },
     "groupsHeader": {
         "meta": {
