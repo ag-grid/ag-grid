@@ -13,6 +13,7 @@ export function getData() {
             price: 2499,
             soldLastMonth: 15,
             priceIncrease: 5, // in percentage
+            category: 'Electronics',
         },
         {
             product: 'Aesop Karst',
@@ -27,6 +28,7 @@ export function getData() {
             price: 95,
             soldLastMonth: 40,
             priceIncrease: 3,
+            category: 'Beauty',
         },
         {
             product: 'ACG Mountain Fly 2 Low',
@@ -41,6 +43,7 @@ export function getData() {
             price: 180,
             soldLastMonth: 25,
             priceIncrease: 2,
+            category: 'Footwear',
         },
         {
             product: 'MUUTO Linear Table Lamp',
@@ -55,6 +58,7 @@ export function getData() {
             price: 350,
             soldLastMonth: 5,
             priceIncrease: 1.5,
+            category: 'Home & Furniture',
         },
         {
             product: 'Sonos Ace Headphones',
@@ -69,6 +73,7 @@ export function getData() {
             price: 299,
             soldLastMonth: 12,
             priceIncrease: 4,
+            category: 'Electronics',
         },
         {
             product: 'Harbour Dining Chair',
@@ -83,6 +88,7 @@ export function getData() {
             price: 499,
             soldLastMonth: 8,
             priceIncrease: 2.5,
+            category: 'Home & Furniture',
         },
         {
             product: 'Ceramic and Brass Oil Diffuser',
@@ -97,6 +103,7 @@ export function getData() {
             price: 75,
             soldLastMonth: 18,
             priceIncrease: 3.5,
+            category: 'Home & Furniture',
         },
         {
             product: 'Artifox Desk',
@@ -111,6 +118,7 @@ export function getData() {
             price: 1200,
             soldLastMonth: 3,
             priceIncrease: 5,
+            category: 'Home & Furniture',
         },
         {
             product: 'Fellow EKG Pro Electric Kettle',
@@ -125,6 +133,7 @@ export function getData() {
             price: 159,
             soldLastMonth: 22,
             priceIncrease: 1.8,
+            category: 'Home & Furniture',
         },
         {
             product: 'Nordic Kitchen Timer',
@@ -139,6 +148,7 @@ export function getData() {
             price: 30,
             soldLastMonth: 45,
             priceIncrease: 2.2,
+            category: 'Home & Furniture',
         },
         {
             product: 'VIEWSONIC 774 Screen',
@@ -153,6 +163,7 @@ export function getData() {
             price: 499,
             soldLastMonth: 7,
             priceIncrease: 4.5,
+            category: 'Electronics',
         },
         {
             product: 'PHILIPS 916 Display',
@@ -167,6 +178,7 @@ export function getData() {
             price: 599,
             soldLastMonth: 4,
             priceIncrease: 1.7,
+            category: 'Electronics',
         },
         {
             product: 'MSI 318 Display',
@@ -181,6 +193,7 @@ export function getData() {
             price: 399,
             soldLastMonth: 6,
             priceIncrease: 3,
+            category: 'Electronics',
         },
         {
             product: 'DELL 565 Screen',
@@ -195,6 +208,7 @@ export function getData() {
             price: 699,
             soldLastMonth: 8,
             priceIncrease: 2.5,
+            category: 'Electronics',
         },
         {
             product: 'DELL 197 Screen',
@@ -209,6 +223,7 @@ export function getData() {
             price: 749,
             soldLastMonth: 3,
             priceIncrease: 2.8,
+            category: 'Electronics',
         },
         {
             product: 'ACER 522 Screen',
@@ -223,6 +238,7 @@ export function getData() {
             price: 459,
             soldLastMonth: 10,
             priceIncrease: 3.2,
+            category: 'Electronics',
         },
         {
             product: 'LG 961 Screen',
@@ -237,6 +253,7 @@ export function getData() {
             price: 529,
             soldLastMonth: 12,
             priceIncrease: 1.5,
+            category: 'Electronics',
         },
         {
             product: 'DELL 373 Screen',
@@ -251,6 +268,7 @@ export function getData() {
             price: 899,
             soldLastMonth: 9,
             priceIncrease: 4.3,
+            category: 'Electronics',
         },
         {
             product: 'PHILIPS 393 Display',
@@ -265,48 +283,7 @@ export function getData() {
             price: 649,
             soldLastMonth: 11,
             priceIncrease: 3.1,
-        },
-        {
-            product: 'AOC 138 Screen',
-            sku: 'MNTR-XYZ-857',
-            status: 'Active',
-            whenSoldOut: 'Discontinue',
-            available: 1,
-            committed: 1,
-            unavailable: 0,
-            incoming: 0,
-            image: 'aesop',
-            price: 429,
-            soldLastMonth: 14,
-            priceIncrease: 2,
-        },
-        {
-            product: 'MSI 219 Display',
-            sku: 'MNTR-XYZ-469',
-            status: 'Out of Stock',
-            whenSoldOut: 'Back order',
-            available: 0,
-            committed: 0,
-            unavailable: 26,
-            incoming: 25,
-            image: 'headphones',
-            price: 399,
-            soldLastMonth: 13,
-            priceIncrease: 2.7,
-        },
-        {
-            product: 'SAMSUNG 101 Screen',
-            sku: 'MNTR-XYZ-692',
-            status: 'Out of Stock',
-            whenSoldOut: 'Discontinue',
-            available: 0,
-            committed: 0,
-            unavailable: 35,
-            incoming: 29,
-            image: 'candle',
-            price: 449,
-            soldLastMonth: 9,
-            priceIncrease: 1.9,
+            category: 'Electronics',
         },
         {
             product: 'HP 306 Display',

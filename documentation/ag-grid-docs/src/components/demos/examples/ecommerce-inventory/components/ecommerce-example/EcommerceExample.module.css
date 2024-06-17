@@ -36,7 +36,7 @@
     background-color: #f9fafb;
     color: #39485d;
     border-radius: 8px;
-    border: none;
+    border: 1px solid #eff0f1;
 }
 
 :global(.ag-theme-quartz .ag-header-cell-text) {
@@ -135,6 +135,7 @@
     overflow: hidden;
     background-color: var(--color-bg-secondary);
     padding: 4px;
+    border: 1px solid #eff0f1;
 }
 
 .tabButton {
