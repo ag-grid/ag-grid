@@ -25,8 +25,8 @@
 
 .tabWrapper {
     background-color: #e5e9ed;
-    width: 325px;
-    height: 175px;
+    width: 100%;
+    max-width: 325px;
     box-shadow: var(--shadow-sm);
     border-radius: var(--radius-lg);
     overflow: hidden;
@@ -76,6 +76,9 @@
     padding-top: 12px;
 }
 
+.showcaseItemTab.darkTab {
+    display: none;
+}
 #{$selector-darkmode} .showcaseItemTab {
     display: none;
 }
