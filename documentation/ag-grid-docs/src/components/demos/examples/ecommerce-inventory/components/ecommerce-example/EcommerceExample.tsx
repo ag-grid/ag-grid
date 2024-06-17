@@ -68,7 +68,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                 );
             },
         },
-        { field: 'soldLastMonth', filter: 'agNumberColumnFilter', headerClass: 'header-calendar' },
+        { field: 'soldLastMonth', headerClass: 'header-calendar' },
         {
             headerName: 'Est. Profit',
             headerClass: 'header-percentage',
@@ -86,7 +86,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
         {
             field: 'available',
             cellEditor: 'agNumberCellEditor',
-            filter: 'agNumberColumnFilter',
+
             cellEditorParams: {
                 precision: 0,
                 step: 1,
@@ -98,7 +98,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
         {
             field: 'unavailable',
             cellEditor: 'agNumberCellEditor',
-            filter: 'agNumberColumnFilter',
+
             cellEditorParams: {
                 precision: 0,
                 step: 1,
@@ -107,11 +107,11 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             editable: true,
             width: 150,
         },
-        { field: 'onHand', valueGetter: quantityCalculator, filter: 'agNumberColumnFilter', width: 100 },
+        { field: 'onHand', valueGetter: quantityCalculator, width: 100 },
         {
             field: 'incoming',
             cellEditor: 'agNumberCellEditor',
-            filter: 'agNumberColumnFilter',
+
             cellEditorParams: {
                 precision: 0,
                 step: 1,
