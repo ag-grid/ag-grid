@@ -3,7 +3,7 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from '@ag-grid-community/vue3';
-import { createApp, onBeforeMount, ref } from 'vue';
+import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
 import { getData } from './data.js';
 import './styles.css';
@@ -62,7 +62,7 @@ const VueExample = {
                 headerName: 'Age',
             },
         ]);
-        const gridApi = ref();
+        const gridApi = shallowRef();
         const defaultColDef = ref({
             editable: true,
         });
