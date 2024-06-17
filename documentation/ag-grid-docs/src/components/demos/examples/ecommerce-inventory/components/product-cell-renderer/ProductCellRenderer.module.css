@@ -29,5 +29,15 @@
 }
 
 .stockCell {
-    opacity: 0.7;
+    background-color: #f9f9f9;
+    color: #656565;
+    width: fit-content;
+    padding: 4px;
+    border: 1px solid #c0c0c057;
+    border-radius: 6px;
+    padding-top: 2px;
+    margin-top: 4px;
+    padding-left: 4px;
+    padding-right: 4px;
+    font-size: 12px;
 }

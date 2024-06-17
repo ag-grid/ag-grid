@@ -16,7 +16,7 @@ export const ProductCellRenderer: FunctionComponent<CustomCellRendererProps> = (
             </div>
             <div>
                 <div>{product}</div>
-                <div className={styles.stockCell}>{available} in stock</div>
+                <div className={styles.stockCell}>Technology</div>
             </div>
         </div>
     );

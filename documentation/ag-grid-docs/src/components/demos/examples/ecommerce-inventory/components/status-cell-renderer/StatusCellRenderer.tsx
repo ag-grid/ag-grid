@@ -8,6 +8,7 @@ export const StatusCellRenderer: FunctionComponent<CustomCellRendererProps> = ({
     const status = data.status;
     let containerClass: string = '';
     let circleClass: string = '';
+    let displayText: string = status;
 
     // Assign different classes based on the status
     switch (status) {
@@ -22,6 +23,7 @@ export const StatusCellRenderer: FunctionComponent<CustomCellRendererProps> = ({
         case 'Paused':
             containerClass = styles.pausedTag;
             circleClass = styles.pausedCircle;
+            displayText = 'On Hold';
             break;
         default:
             containerClass = styles.defaultTag; // Optional: for statuses not listed
@@ -31,7 +33,7 @@ export const StatusCellRenderer: FunctionComponent<CustomCellRendererProps> = ({
     return (
         <div className={`${styles.tag} ${containerClass}`}>
             <div className={`${styles.circle} ${circleClass}`}></div>
-            <span>{status}</span>
+            <span>{displayText}</span>
         </div>
     );
 };
