@@ -44,6 +44,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             field: 'status',
             headerName: 'Status',
             cellRenderer: StatusCellRenderer,
+            filter: 'agSetColumnFilter',
             headerClass: 'header-status',
         },
 
@@ -86,7 +87,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
         {
             field: 'available',
             cellEditor: 'agNumberCellEditor',
-
+            filter: 'agNumberColumnFilter',
             cellEditorParams: {
                 precision: 0,
                 step: 1,
