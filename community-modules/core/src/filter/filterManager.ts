@@ -7,7 +7,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import type { AdvancedFilterEnabledChangedEvent, FilterChangedEvent, FilterChangedEventSourceType } from '../events';
+import type { FilterChangedEvent, FilterChangedEventSourceType } from '../events';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
