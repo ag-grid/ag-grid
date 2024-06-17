@@ -121,7 +121,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 throw new Error("AG Grid: cannot select multiple rows when rowSelection is set to 'single'");
             }
             const node = nodes[0];
-            if (newValue) {
+            if (newValue && node.selectable) {
                 this.selectedNodes = { [node.id!]: node };
                 this.selectedState = {
                     selectAll: false,
