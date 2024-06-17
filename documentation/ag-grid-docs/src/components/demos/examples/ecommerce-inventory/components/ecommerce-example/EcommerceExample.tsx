@@ -29,7 +29,6 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
     const gridRef = useRef<AgGridReact>(null);
 
     const [colDefs] = useState<ColDef[]>([
-        { field: 'sku', headerName: 'SKU', width: 500, headerClass: 'header-sku' },
         {
             field: 'product',
             headerName: 'Product',
@@ -40,6 +39,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             },
             width: 600,
         },
+        { field: 'sku', headerName: 'SKU', width: 500, headerClass: 'header-sku' },
         {
             field: 'status',
             headerName: 'Status',
@@ -55,60 +55,6 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             headerClass: 'header-inventory',
             width: 600,
         },
-
-        {
-            headerName: 'Price',
-            width: 200,
-            headerClass: 'header-price',
-            cellRenderer: function (param) {
-                return (
-                    <div className={styles.price}>
-                        <span className={styles.priceAmount}>{'£' + param.data.price}</span>
-                        <span className={styles.increase}>{param.data.priceIncrease + '% incease'}</span>
-                    </div>
-                );
-            },
-        },
-        { field: 'soldLastMonth', headerClass: 'header-calendar' },
-        {
-            headerName: 'Est. Profit',
-            headerClass: 'header-percentage',
-            valueGetter: (p) => '£' + (p.data.price * p.data.soldLastMonth) / 10,
-        },
-
-        {
-            field: 'whenSoldOut',
-            cellEditor: 'agSelectCellEditor',
-            cellEditorParams: {
-                values: whenSoldOut,
-            },
-            editable: true,
-        },
-        {
-            field: 'available',
-            cellEditor: 'agNumberCellEditor',
-            filter: 'agNumberColumnFilter',
-            cellEditorParams: {
-                precision: 0,
-                step: 1,
-                showStepperButtons: true,
-            },
-            editable: true,
-            width: 100,
-        },
-        {
-            field: 'unavailable',
-            cellEditor: 'agNumberCellEditor',
-
-            cellEditorParams: {
-                precision: 0,
-                step: 1,
-                showStepperButtons: true,
-            },
-            editable: true,
-            width: 150,
-        },
-        { field: 'onHand', valueGetter: quantityCalculator, width: 100 },
         {
             field: 'incoming',
             cellEditor: 'agNumberCellEditor',
@@ -120,6 +66,36 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             },
             editable: true,
             width: 100,
+        },
+        {
+            headerName: 'Price',
+            width: 120,
+            headerClass: 'header-price',
+            cellRenderer: function (param) {
+                return (
+                    <div className={styles.price}>
+                        <span className={styles.priceAmount}>{'£' + param.data.price}</span>
+                        <span className={styles.increase}>{param.data.priceIncrease + '% incease'}</span>
+                    </div>
+                );
+            },
+        },
+        { field: 'soldLastMonth', headerClass: 'header-calendar', width: 180 },
+        {
+            headerName: 'Est. Profit',
+            headerClass: 'header-percentage',
+            valueGetter: (p) => '£' + (p.data.price * p.data.soldLastMonth) / 10,
+            width: 150
+        },
+
+        {
+            field: 'whenSoldOut',
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+                values: whenSoldOut,
+            },
+            editable: true,
+            width: 130
         },
         { field: 'actions', cellRenderer: ActionsCellRenderer, pinned: 'right' },
     ]);
