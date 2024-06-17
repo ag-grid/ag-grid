@@ -85,7 +85,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             headerName: 'Est. Profit',
             headerClass: 'header-percentage',
             valueGetter: (p) => '£' + (p.data.price * p.data.soldLastMonth) / 10,
-            width: 150
+            width: 150,
         },
 
         {
@@ -95,7 +95,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                 values: whenSoldOut,
             },
             editable: true,
-            width: 130
+            width: 130,
         },
         { field: 'actions', cellRenderer: ActionsCellRenderer, pinned: 'right' },
     ]);
