@@ -1,5 +1,6 @@
 import type { AgEvent, SelectionEventSourceType } from '../events';
 import type { Column } from '../interfaces/iColumn';
+import type { BuildEventTypeMap } from './iEventEmitter';
 
 export type RowNodeEventType =
     | 'rowSelected'
@@ -23,6 +24,37 @@ export type RowNodeEventType =
     | 'mouseEnter'
     | 'mouseLeave'
     | 'draggingChanged';
+
+export type RowNodeEventTypeMap<TData = any> = BuildEventTypeMap<
+    RowNodeEventType,
+    {
+        rowSelected: RowSelectedEvent<TData>;
+        selectableChanged: SelectableChangedEvent<TData>;
+        displayedChanged: DisplayedChangedEvent<TData>;
+        dataChanged: DataChangedEvent<TData>;
+        cellChanged: CellChangedEvent<TData>;
+        masterChanged: MasterChangedEvent<TData>;
+        heightChanged: HeightChangedEvent<TData>;
+        topChanged: TopChangedEvent<TData>;
+        groupChanged: GroupChangedEvent<TData>;
+        allChildrenCountChanged: AllChildrenCountChangedEvent<TData>;
+        firstChildChanged: FirstChildChangedEvent<TData>;
+        lastChildChanged: LastChildChangedEvent<TData>;
+        childIndexChanged: ChildIndexChangedEvent<TData>;
+        rowIndexChanged: RowIndexChangedEvent<TData>;
+        expandedChanged: ExpandedChangedEvent<TData>;
+        hasChildrenChanged: HasChildrenChangedEvent<TData>;
+        uiLevelChanged: UiLevelChangedEvent<TData>;
+        rowHighlightChanged: RowHighlightChangedEvent<TData>;
+        mouseEnter: MouseEnterEvent<TData>;
+        mouseLeave: MouseLeaveEvent<TData>;
+        draggingChanged: DraggingChangedEvent<TData>;
+    }
+>;
+
+export type AgRowNodeEventListener<TEventType extends keyof RowNodeEventTypeMap<TData>, TData = any> = (
+    params: RowNodeEventTypeMap<TData>[TEventType]
+) => void;
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -233,9 +265,9 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     isHovered(): boolean;
 
     /** Add an event listener. */
-    addEventListener(eventType: RowNodeEventType, listener: (...args: any[]) => any): void;
+    addEventListener<T extends RowNodeEventType>(eventType: T, userListener: AgRowNodeEventListener<T>): void;
     /** Remove event listener. */
-    removeEventListener(eventType: RowNodeEventType, listener: (...args: any[]) => any): void;
+    removeEventListener<T extends RowNodeEventType>(eventType: T, userListener: AgRowNodeEventListener<T>): void;
 
     /**
      * The first time `quickFilter` runs, the grid creates a one-off string representation of the row.

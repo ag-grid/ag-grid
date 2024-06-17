@@ -5,6 +5,7 @@ import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { DomLayoutType, GetRowIdFunc, GridOptions } from './entities/gridOptions';
 import type { Environment } from './environment';
+import type { AgEventType } from './eventTypes';
 import type { AgEvent, GridOptionsChangedEvent } from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
 import type {
@@ -157,7 +158,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         this.getScrollbarWidth();
 
         this.addManagedEventListeners({
-            gridOptionsChanged: ({ options }: GridOptionsChangedEvent) => {
+            gridOptionsChanged: ({ options }) => {
                 this.updateGridOptions({ options, force: true, source: 'gridOptionsUpdated' });
             },
         });
@@ -272,7 +273,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     // This is required for events such as GridPreDestroyed.
     // Other events can be fired asynchronously or synchronously depending on config.
     globalEventHandlerFactory = (restrictToSyncOnly?: boolean) => {
-        return (eventName: string, event?: any) => {
+        return (eventName: AgEventType, event?: any) => {
             // prevent events from being fired _after_ the grid has been destroyed
             if (!this.isAlive()) {
                 return;

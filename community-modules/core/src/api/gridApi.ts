@@ -4,7 +4,14 @@ import type { CellPosition } from '../entities/cellPositionUtils';
 import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from '../entities/colDef';
 import type { ChartRef, GridOptions } from '../entities/gridOptions';
 import type { AgPublicEventType } from '../eventTypes';
-import type { AgEvent, ColumnEventType, FilterChangedEventSourceType, SelectionEventSourceType } from '../events';
+import type {
+    AgEvent,
+    AgEventListener,
+    AgGlobalEventListener,
+    ColumnEventType,
+    FilterChangedEventSourceType,
+    SelectionEventSourceType,
+} from '../events';
 import type { RowDropZoneEvents, RowDropZoneParams } from '../gridBodyComp/rowDragFeature';
 import type {
     ChartDownloadParams,
@@ -546,22 +553,34 @@ export interface GridApi<TData = any> {
 
     /**
      * Add an event listener for the specified `eventType`.
-     * Works similar to `addEventListener` for a browser DOM element.
+     * Listener will receive the `event` as a single parameter.
      * Listeners will be automatically removed when the grid is destroyed.
+     * @example api.addEventListener('rowClicked', (event) => { console.log('Row clicked', event);});
      */
-    addEventListener(eventType: AgPublicEventType, listener: (...args: any[]) => any): void;
+    addEventListener<TEventType extends AgPublicEventType>(
+        eventType: TEventType,
+        listener: AgEventListener<TData, any, TEventType>
+    ): void;
+    /** Remove an event listener. */
+    removeEventListener<TEventType extends AgPublicEventType>(
+        eventType: TEventType,
+        listener: AgEventListener<TData, any, TEventType>
+    ): void;
 
     /**
      * Add an event listener for all event types coming from the grid.
+     * Listener will receive `eventType` and `event` as parameters.
      * Listeners will be automatically removed when the grid is destroyed.
+     * If handling multiple event types it is recommended to use `event.type` to enable TypeScript to infer the event parameters.
+     * @example api.addGlobalListener((eventType, event) => { });
      */
-    addGlobalListener(listener: (...args: any[]) => any): void;
-
-    /** Remove an event listener. */
-    removeEventListener(eventType: AgPublicEventType, listener: (...args: any[]) => any): void;
-
+    addGlobalListener<TEventType extends AgPublicEventType>(
+        listener: AgGlobalEventListener<TData, any, TEventType>
+    ): void;
     /** Remove a global event listener. */
-    removeGlobalListener(listener: (...args: any[]) => any): void;
+    removeGlobalListener<TEventType extends AgPublicEventType>(
+        listener: AgGlobalEventListener<TData, any, TEventType>
+    ): void;
 
     dispatchEvent(event: AgEvent): void;
 

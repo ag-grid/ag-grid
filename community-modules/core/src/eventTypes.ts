@@ -137,7 +137,6 @@ export const INTERNAL_EVENTS = [
     'alignedGridScroll',
     'alignedGridColumn',
     'gridOptionsChanged',
-    'gridStylesChanged',
     'chartTitleEdit',
     'recalculateRowBounds',
     'stickyTopOffsetChanged',

@@ -30,20 +30,20 @@ export class EventService extends BeanStub<AgEventType> implements NamedBean, IE
         }
     }
 
-    public override addEventListener<T extends AgEventType>(
-        eventType: T,
-        listener: AgEventListener<any, any, T>,
+    public override addEventListener<TEventType extends AgEventType>(
+        eventType: TEventType,
+        listener: AgEventListener<any, any, TEventType>,
         async?: boolean
     ): void {
-        this.globalEventService.addEventListener(eventType, listener, async);
+        this.globalEventService.addEventListener(eventType, listener as any, async);
     }
 
-    public override removeEventListener<T extends AgEventType>(
-        eventType: T,
-        listener: AgEventListener<any, any, T>,
+    public override removeEventListener<TEventType extends AgEventType>(
+        eventType: TEventType,
+        listener: AgEventListener<any, any, TEventType>,
         async?: boolean
     ): void {
-        this.globalEventService.removeEventListener(eventType, listener, async);
+        this.globalEventService.removeEventListener(eventType, listener as any, async);
     }
 
     public addGlobalListener(listener: AgGlobalEventListener, async = false): void {

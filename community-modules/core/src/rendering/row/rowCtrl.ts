@@ -8,7 +8,6 @@ import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
 import type { AgEventType } from '../../eventTypes';
 import type {
-    AgEventListener,
     CellFocusedEvent,
     RowClickedEvent,
     RowDoubleClickedEvent,
@@ -21,6 +20,7 @@ import type { ProcessRowParams, RenderedRowEvent } from '../../interfaces/iCallb
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { ColumnInstanceId, ColumnPinnedType } from '../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
+import type { IEventListener } from '../../interfaces/iEventEmitter';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import { RowHighlightPosition } from '../../interfaces/iRowNode';
@@ -1519,17 +1519,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         });
     }
 
-    public override addEventListener<T extends RowCtrlEvent>(
-        eventType: T,
-        listener: AgEventListener<any, any, T>
-    ): void {
+    public override addEventListener<T extends RowCtrlEvent>(eventType: T, listener: IEventListener<T>): void {
         super.addEventListener(eventType, listener);
     }
 
-    public override removeEventListener<T extends RowCtrlEvent>(
-        eventType: T,
-        listener: AgEventListener<any, any, T>
-    ): void {
+    public override removeEventListener<T extends RowCtrlEvent>(eventType: T, listener: IEventListener<T>): void {
         super.removeEventListener(eventType, listener);
     }
 

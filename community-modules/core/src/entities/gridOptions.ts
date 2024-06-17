@@ -20,10 +20,10 @@ import type {
     CellMouseOutEvent,
     CellMouseOverEvent,
     CellValueChangedEvent,
-    ChartCreated,
-    ChartDestroyed,
-    ChartOptionsChanged,
-    ChartRangeSelectionChanged,
+    ChartCreatedEvent,
+    ChartDestroyedEvent,
+    ChartOptionsChangedEvent,
+    ChartRangeSelectionChangedEvent,
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
     ColumnHeaderClickedEvent,
@@ -2052,19 +2052,19 @@ export interface GridOptions<TData = any> {
     /**
      * A chart has been created.
      */
-    onChartCreated?(event: ChartCreated<TData>): void;
+    onChartCreated?(event: ChartCreatedEvent<TData>): void;
     /**
      * The data range for the chart has been changed.
      */
-    onChartRangeSelectionChanged?(event: ChartRangeSelectionChanged<TData>): void;
+    onChartRangeSelectionChanged?(event: ChartRangeSelectionChangedEvent<TData>): void;
     /**
      * Formatting changes have been made by users through the Format Panel.
      */
-    onChartOptionsChanged?(event: ChartOptionsChanged<TData>): void;
+    onChartOptionsChanged?(event: ChartOptionsChangedEvent<TData>): void;
     /**
      * A chart has been destroyed.
      */
-    onChartDestroyed?(event: ChartDestroyed<TData>): void;
+    onChartDestroyed?(event: ChartDestroyedEvent<TData>): void;
 
     // *** Keyboard Navigation *** //
     /**

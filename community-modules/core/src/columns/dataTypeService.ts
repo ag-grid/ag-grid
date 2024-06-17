@@ -18,10 +18,11 @@ import type {
     ValueFormatterLiteParams,
     ValueParserLiteParams,
 } from '../entities/dataType';
-import type { AgEventListener, AgGridEvent, DataTypesInferredEvent, RowDataUpdateStartedEvent } from '../events';
+import type { AgGridEvent, DataTypesInferredEvent } from '../events';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import type { Column } from '../interfaces/iColumn';
+import type { Column, ColumnEventName } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IEventListener } from '../interfaces/iEventEmitter';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { ModuleNames } from '../modules/moduleNames';
@@ -372,7 +373,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (!columnStateUpdates) {
             return;
         }
-        const columnListener: AgEventListener = (event: AgGridEvent & { key: keyof ColumnStateParams }) => {
+        const columnListener: IEventListener<ColumnEventName> = (
+            event: AgGridEvent<any, any, ColumnEventName> & { key: keyof ColumnStateParams }
+        ) => {
             columnStateUpdates.add(event.key);
         };
         column.addEventListener('columnStateUpdated', columnListener);
@@ -483,7 +486,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             this.columnModel.queueResizeOperations();
         }
         const [destroyFunc] = this.addManagedEventListeners({
-            rowDataUpdateStarted: (event: RowDataUpdateStartedEvent) => {
+            rowDataUpdateStarted: (event) => {
                 const { firstRowData } = event;
                 if (!firstRowData) {
                     return;

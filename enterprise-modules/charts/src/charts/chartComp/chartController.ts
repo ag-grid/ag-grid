@@ -4,8 +4,8 @@ import type {
     CellRangeParams,
     ChartModel,
     ChartModelType,
-    ChartOptionsChanged,
-    ChartRangeSelectionChanged,
+    ChartOptionsChangedEvent,
+    ChartRangeSelectionChangedEvent,
     ChartType,
     IAggFunc,
     IRangeService,
@@ -647,7 +647,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
 
     private raiseChartOptionsChangedEvent(): void {
         const { chartId, chartType } = this.getChartModel();
-        const event: WithoutGridCommon<ChartOptionsChanged> = {
+        const event: WithoutGridCommon<ChartOptionsChangedEvent> = {
             type: 'chartOptionsChanged',
             chartId,
             chartType,
@@ -659,7 +659,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     }
 
     private raiseChartRangeSelectionChangedEvent(): void {
-        const event: WithoutGridCommon<ChartRangeSelectionChanged> = {
+        const event: WithoutGridCommon<ChartRangeSelectionChangedEvent> = {
             type: 'chartRangeSelectionChanged',
             id: this.model.chartId,
             chartId: this.model.chartId,

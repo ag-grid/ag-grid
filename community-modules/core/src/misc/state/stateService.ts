@@ -121,7 +121,7 @@ export class StateService extends BeanStub implements NamedBean {
 
         const [newColumnsLoadedDestroyFunc, rowCountReadyDestroyFunc, firstDataRenderedDestroyFunc] =
             this.addManagedEventListeners({
-                newColumnsLoaded: ({ source }: NewColumnsLoadedEvent) => {
+                newColumnsLoaded: ({ source }) => {
                     if (source === 'gridInitializing') {
                         newColumnsLoadedDestroyFunc();
                         this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnColumnsInitialised());
@@ -233,7 +233,7 @@ export class StateService extends BeanStub implements NamedBean {
                 this.staleStateKeys.add('rowSelection');
                 this.onRowSelectedDebounced();
             },
-            paginationChanged: (event: PaginationChangedEvent) => {
+            paginationChanged: (event) => {
                 if (event.newPage || event.newPageSize) {
                     this.updateCachedState('pagination', this.getPaginationState());
                 }
@@ -267,7 +267,7 @@ export class StateService extends BeanStub implements NamedBean {
 
         this.addManagedEventListeners({
             cellFocused: () => this.updateCachedState('focusedCell', this.getFocusedCellState()),
-            rangeSelectionChanged: (event: RangeSelectionChangedEvent) => {
+            rangeSelectionChanged: (event) => {
                 if (event.finished) {
                     this.updateCachedState('rangeSelection', this.getRangeSelectionState());
                 }

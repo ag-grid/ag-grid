@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
-    ChartCreated,
+    ChartCreatedEvent,
     ChartToolPanelName,
     FirstDataRenderedEvent,
     GridApi,
@@ -51,7 +51,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
     });
 }
 
-function onChartCreated(event: ChartCreated) {
+function onChartCreated(event: ChartCreatedEvent) {
     chartId = event.chartId;
 }
 

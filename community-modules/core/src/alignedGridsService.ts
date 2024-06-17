@@ -93,8 +93,8 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
             columnGroupOpened: fireColumnEvent,
             columnResized: fireColumnEvent,
             bodyScroll: this.fireScrollEvent.bind(this),
-            alignedGridColumn: ({ event }: AlignedGridColumnEvent) => this.onColumnEvent(event),
-            alignedGridScroll: ({ event }: AlignedGridScrollEvent) => this.onScrollEvent(event),
+            alignedGridColumn: ({ event }) => this.onColumnEvent(event),
+            alignedGridScroll: ({ event }) => this.onScrollEvent(event),
         });
     }
 

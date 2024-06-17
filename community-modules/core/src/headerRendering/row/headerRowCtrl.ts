@@ -96,8 +96,7 @@ export class HeaderRowCtrl extends BeanStub {
         this.addManagedEventListeners({
             columnResized: this.onColumnResized.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
-            virtualColumnsChanged: (params: VirtualColumnsChangedEvent) =>
-                this.onVirtualColumnsChanged(params.afterScroll),
+            virtualColumnsChanged: (params) => this.onVirtualColumnsChanged(params.afterScroll),
             columnHeaderHeightChanged: onHeightChanged,
             gridStylesChanged: onHeightChanged,
             advancedFilterEnabledChanged: onHeightChanged,

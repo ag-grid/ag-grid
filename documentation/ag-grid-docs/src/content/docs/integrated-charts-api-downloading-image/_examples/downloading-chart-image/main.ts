@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
-    ChartCreated,
+    ChartCreatedEvent,
     CreateRangeChartParams,
     FirstDataRenderedEvent,
     GetChartImageDataUrlParams,
@@ -67,7 +67,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
     params.api.createRangeChart(createRangeChartParams);
 }
 
-function onChartCreated(event: ChartCreated) {
+function onChartCreated(event: ChartCreatedEvent) {
     chartId = event.chartId;
 }
 

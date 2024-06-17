@@ -297,7 +297,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
 
     private addListeners(): void {
         this.addManagedEventListeners({
-            rowEditingStarted: (e: RowEditingStartedEvent) => {
+            rowEditingStarted: (e) => {
                 this.activeRowEdit = { rowIndex: e.rowIndex!, rowPinned: e.rowPinned };
             },
             rowEditingStopped: () => {
@@ -305,10 +305,10 @@ export class UndoRedoService extends BeanStub implements NamedBean {
                 this.pushActionsToUndoStack(action);
                 this.activeRowEdit = null;
             },
-            cellEditingStarted: (e: CellEditingStartedEvent) => {
+            cellEditingStarted: (e) => {
                 this.activeCellEdit = { column: e.column, rowIndex: e.rowIndex!, rowPinned: e.rowPinned };
             },
-            cellEditingStopped: (e: CellEditingStoppedEvent) => {
+            cellEditingStopped: (e) => {
                 this.activeCellEdit = null;
 
                 const shouldPushAction =
@@ -330,7 +330,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
             fillStart: () => {
                 this.isRangeInAction = true;
             },
-            fillEnd: (event: FillEndEvent) => {
+            fillEnd: (event) => {
                 const action = new RangeUndoRedoAction(this.cellValueChanges, event.initialRange, event.finalRange);
                 this.pushActionsToUndoStack(action);
                 this.isRangeInAction = false;

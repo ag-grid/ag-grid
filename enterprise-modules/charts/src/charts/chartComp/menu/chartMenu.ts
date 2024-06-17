@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    ChartCreated,
     ChartToolPanelMenuOptions,
     ChartToolbarMenuItemOptions,
     Environment,
@@ -71,7 +70,7 @@ export class ChartMenu extends Component {
         this.refreshToolbarAndPanels();
 
         this.addManagedEventListeners({
-            chartCreated: (e: ChartCreated) => {
+            chartCreated: (e) => {
                 if (e.chartId === this.chartController.getChartId()) {
                     const showDefaultToolPanel = Boolean(this.gos.get('chartToolPanelsDef')?.defaultToolPanel);
                     if (showDefaultToolPanel) {

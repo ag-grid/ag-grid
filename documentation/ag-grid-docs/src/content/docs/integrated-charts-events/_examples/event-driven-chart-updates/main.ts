@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
-    ChartCreated,
-    ChartRangeSelectionChanged,
+    ChartCreatedEvent,
+    ChartRangeSelectionChangedEvent,
     CreateRangeChartParams,
     FirstDataRenderedEvent,
     GridApi,
@@ -53,12 +53,12 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
     params.api.createRangeChart(createRangeChartParams);
 }
 
-function onChartCreated(event: ChartCreated) {
+function onChartCreated(event: ChartCreatedEvent) {
     console.log('Created chart with ID ' + event.chartId);
     updateTitle(gridApi!, event.chartId);
 }
 
-function onChartRangeSelectionChanged(event: ChartRangeSelectionChanged) {
+function onChartRangeSelectionChanged(event: ChartRangeSelectionChangedEvent) {
     console.log('Changed range selection of chart with ID ' + event.chartId);
     updateTitle(gridApi!, event.chartId);
 }
