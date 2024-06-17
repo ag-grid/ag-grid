@@ -21,6 +21,10 @@ $nav-height: 340px;
     width: 100%;
     justify-content: space-between;
 
+    @media screen and (max-width: 700px) {
+        flex-direction: column;
+    }
+
     @media screen and (max-width: 1900px) {
         padding-left: 24px;
         padding-right: 24px;
