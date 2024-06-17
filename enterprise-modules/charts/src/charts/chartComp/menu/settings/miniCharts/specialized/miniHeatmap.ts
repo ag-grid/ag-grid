@@ -77,8 +77,9 @@ export class MiniHeatmap extends MiniChart {
         const colorRange = isCustomTheme ? [fills[0], fills[1]] : defaultColorRange;
         const stroke = isCustomTheme ? strokes[0] : backgroundFill;
 
+        const fillFn = _Util.interpolateColor(colorRange[0], colorRange[1]);
         this.rects.forEach((rect, i) => {
-            rect.fill = _Util.Color.interpolate(colorRange[0], colorRange[1])(i * 0.2);
+            rect.fill = fillFn(i * 0.2);
             rect.stroke = stroke;
         });
     }
