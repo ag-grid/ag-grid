@@ -139,7 +139,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         }
 
         const updateNodeState = (node: RowNode, value = newValue) => {
-            if (value) {
+            if (value && node.selectable) {
                 this.selectedNodes[node.id!] = node;
             } else {
                 delete this.selectedNodes[node.id!];
