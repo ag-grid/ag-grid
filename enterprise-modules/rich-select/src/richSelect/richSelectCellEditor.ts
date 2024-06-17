@@ -80,7 +80,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             eventKey,
             multiSelect,
             suppressDeselectAll,
-            showSelectedItemsAsPills,
+            suppressMultiSelectPillRenderer,
         } = this.params;
 
         const ret: RichSelectParams = {
@@ -103,7 +103,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             initialInputValue: eventKey?.length === 1 ? eventKey : undefined,
             multiSelect,
             suppressDeselectAll,
-            showSelectedItemsAsPills,
+            suppressMultiSelectPillRenderer,
         };
 
         let valuesResult;

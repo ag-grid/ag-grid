@@ -153,7 +153,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             initialInputValue,
             multiSelect,
             suppressDeselectAll,
-            showSelectedItemsAsPills,
+            suppressMultiSelectPillRenderer,
         } = config;
         const valueFormatted = this.config.valueFormatter ? this.config.valueFormatter(value) : value;
 
@@ -169,7 +169,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         let userCompDetails: UserCompDetails | undefined;
 
-        if (multiSelect && showSelectedItemsAsPills) {
+        if (multiSelect && !suppressMultiSelectPillRenderer) {
             this.createOrUpdatePillContainer(eDisplayField);
             return;
         }
@@ -551,6 +551,16 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
     }
 
+    private onDeleteKeyDown(e: KeyboardEvent): void {
+        const { eWrapper, gos } = this;
+        const activeEl = gos.getActiveDomElement();
+
+        if (activeEl === eWrapper) {
+            e.preventDefault();
+            this.setValue([], true);
+        }
+    }
+
     private onTabKeyDown(): void {
         const { config, isPickerDisplayed, listComponent } = this;
         const { multiSelect } = config;
@@ -622,26 +632,26 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         return super.getFocusableElement();
     }
 
-    protected override onKeyDown(event: KeyboardEvent): void {
-        const key = event.key;
+    protected override onKeyDown(e: KeyboardEvent): void {
+        const { key } = e;
 
         const { isPickerDisplayed, config, listComponent, pickerComponent } = this;
-        const { allowTyping, multiSelect } = config;
+        const { allowTyping, multiSelect, suppressDeselectAll } = config;
 
         switch (key) {
             case KeyCode.LEFT:
             case KeyCode.RIGHT:
                 if (!allowTyping || this.pillContainer) {
-                    event.preventDefault();
+                    e.preventDefault();
                     if (this.pillContainer) {
-                        this.pillContainer.onKeyboardNavigateKey(event);
+                        this.pillContainer.onKeyboardNavigateKey(e);
                     }
                 }
                 break;
             case KeyCode.PAGE_HOME:
             case KeyCode.PAGE_END:
                 if (allowTyping) {
-                    event.preventDefault();
+                    e.preventDefault();
                     const inputEl = this.eInput.getInputElement();
                     const target = key === KeyCode.PAGE_HOME ? 0 : inputEl.value.length;
                     inputEl.setSelectionRange(target, target);
@@ -651,30 +661,30 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             // eslint-disable-next-line
             case KeyCode.PAGE_UP:
             case KeyCode.PAGE_DOWN:
-                event.preventDefault();
+                e.preventDefault();
                 if (pickerComponent) {
                     listComponent?.navigateToPage(key);
                 }
                 break;
             case KeyCode.DOWN:
             case KeyCode.UP:
-                this.onNavigationKeyDown(event, key);
+                this.onNavigationKeyDown(e, key);
                 break;
             case KeyCode.ESCAPE:
                 if (isPickerDisplayed) {
                     if (_isVisible(this.listComponent!.getGui())) {
-                        event.preventDefault();
-                        _stopPropagationForAgGrid(event);
+                        e.preventDefault();
+                        _stopPropagationForAgGrid(e);
                     }
                     this.hidePicker();
                 }
                 break;
             case KeyCode.ENTER:
-                this.onEnterKeyDown(event);
+                this.onEnterKeyDown(e);
                 break;
             case KeyCode.SPACE:
                 if (isPickerDisplayed && multiSelect && listComponent) {
-                    event.preventDefault();
+                    e.preventDefault();
                     const lastItemHovered = listComponent.getLastItemHovered();
 
                     if (lastItemHovered) {
@@ -685,9 +695,14 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             case KeyCode.TAB:
                 this.onTabKeyDown();
                 break;
+            case KeyCode.DELETE:
+                if (multiSelect && !suppressDeselectAll) {
+                    this.onDeleteKeyDown(e);
+                }
+                break;
             default:
                 if (!allowTyping) {
-                    this.buildSearchStringFromKeyboardEvent(event);
+                    this.buildSearchStringFromKeyboardEvent(e);
                 }
         }
     }

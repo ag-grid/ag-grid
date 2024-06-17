@@ -56,7 +56,6 @@ const columnDefs: ColDef[] = [
         cellEditorParams: {
             values: colors,
             multiSelect: true,
-            showSelectedItemsAsPills: true,
             searchType: 'matchAny',
             filterList: true,
             highlightMatch: true,
@@ -71,6 +70,7 @@ const columnDefs: ColDef[] = [
         cellEditorParams: {
             values: colors,
             cellRenderer: ColourCellRenderer,
+            suppressMultiSelectPillRenderer: true,
             multiSelect: true,
             searchType: 'matchAny',
             filterList: true,
