@@ -1,5 +1,6 @@
 import type { AgProvidedColumnGroupEvent } from '../entities/agProvidedColumnGroup';
 import type { AbstractColDef, ColDef, ColGroupDef, IAggFunc, SortDirection } from '../entities/colDef';
+import { ColumnEvent } from '../events';
 import type { BrandedType } from '../interfaces/brandedType';
 import type { IEventEmitter } from './iEventEmitter';
 import type { IRowNode } from './iRowNode';
@@ -88,12 +89,10 @@ export interface Column<TValue = any>
     isTooltipFieldContainsDots(): boolean;
 
     /** Add an event listener to the column. */
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    addEventListener(eventType: ColumnEventName, userListener: Function): void;
+    addEventListener<T extends ColumnEventName>(eventType: T, userListener: (params: ColumnEvent<T>) => void): void;
 
     /** Remove event listener from the column. */
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    removeEventListener(eventType: ColumnEventName, userListener: Function): void;
+    removeEventListener<T extends ColumnEventName>(eventType: T, userListener: (params: ColumnEvent<T>) => void): void;
 
     isSuppressNavigable(rowNode: IRowNode): boolean;
 
