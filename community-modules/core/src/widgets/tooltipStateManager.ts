@@ -309,6 +309,10 @@ export class TooltipStateManager extends BeanStub {
         };
         this.eventService.dispatchEvent(event);
 
+        if (forceHide) {
+            this.isInteractingWithTooltip = false;
+        }
+
         this.state = TooltipStates.NOTHING;
     }
 

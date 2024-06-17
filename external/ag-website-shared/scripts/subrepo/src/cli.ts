@@ -1,8 +1,9 @@
 import { readdirSync } from 'fs';
+import prompts from 'prompts';
 import { hideBin } from 'yargs/helpers';
 import yargs from 'yargs/yargs';
 
-import { type SubrepoCommandParams, runSubRepoCommand } from './lib/runSubRepoCommand';
+import { type Command, type SubrepoCommandParams, runSubRepoCommand } from './lib/runSubRepoCommand';
 import { TERMINAL_COLORS as tc } from './lib/terminal-colors';
 
 const SUBREPO_FOLDER = 'external';
@@ -24,6 +25,29 @@ const runCommand = ({ command, subRepoFolder, isVerbose }: SubrepoCommandParams)
     }
 };
 
+const getPromptSubrepo = async ({ command }: { command: string }) => {
+    const { promptSubrepo } = await prompts({
+        type: 'select',
+        name: 'promptSubrepo',
+        message: `Which subrepo do you want to run "${command}" on?`,
+        choices: [
+            {
+                title: '- Cancel -',
+                value: false,
+            },
+        ].concat(
+            subRepos.map((repo) => {
+                return {
+                    title: repo,
+                    value: repo,
+                };
+            })
+        ),
+    });
+
+    return promptSubrepo;
+};
+
 yargs(hideBin(process.argv))
     .usage('Usage: <command> [options]')
     .command(
@@ -39,14 +63,23 @@ yargs(hideBin(process.argv))
                 choices: ['push', 'pull', 'check'],
             });
         },
-        (argv) => {
-            subRepos.forEach((subRepo: string) => {
-                runCommand({
-                    command: argv.command,
-                    subRepoFolder: `${SUBREPO_FOLDER}/${subRepo}`,
-                    isVerbose: argv.verbose,
-                    rootPath: argv.rootPath,
-                });
+        async (argv) => {
+            const { subrepo: subrepoArg, command, verbose } = argv;
+            let subrepo = subrepoArg;
+
+            if (!subrepo) {
+                const promptSubrepo = await getPromptSubrepo({ command: command! });
+                if (!promptSubrepo) {
+                    return;
+                }
+
+                subrepo = promptSubrepo;
+            }
+
+            runCommand({
+                command: command as Command,
+                subRepoFolder: `${SUBREPO_FOLDER}/${subrepo}`,
+                isVerbose: Boolean(verbose),
             });
         }
     )
@@ -54,6 +87,11 @@ yargs(hideBin(process.argv))
         alias: 'v',
         type: 'boolean',
         description: 'Run with verbose logging',
+    })
+    .option('subrepo', {
+        alias: 's',
+        choices: subRepos,
+        description: 'Subrepo to run the command on',
     })
     .help()
     .parse();

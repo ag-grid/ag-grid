@@ -451,7 +451,10 @@ export { IServerSideStore, StoreRefreshAfterParams, ServerSideGroupLevelState } 
 export { ISideBarService, ISideBar, SideBarDef, ToolPanelDef } from './interfaces/iSideBar';
 export { IGetRowsParams, IDatasource } from './interfaces/iDatasource';
 
-//styling
+// selection
+export { ISelectionContext } from './selection/rowRangeSelectionContext';
+
+// styling
 export { StylingService } from './styling/stylingService';
 export { UpdateLayoutClassesParams, LayoutCssClasses } from './styling/layoutFeature';
 

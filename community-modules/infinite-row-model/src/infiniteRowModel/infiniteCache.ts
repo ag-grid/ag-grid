@@ -307,7 +307,7 @@ export class InfiniteCache extends BeanStub {
         this.onCacheUpdated();
     }
 
-    public getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+    public getRowNodesInRange(firstInRange: RowNode | null, lastInRange: RowNode): RowNode[] {
         const result: RowNode[] = [];
 
         let lastBlockId = -1;

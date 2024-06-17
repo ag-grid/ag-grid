@@ -105,7 +105,7 @@ export class MiniBoxPlot extends MiniChartWithAxes {
         this.boxPlotGroups.forEach((group, i) => {
             group.children?.forEach((node: _Scene.Rect | _Scene.Line) => {
                 const fill = fills[i % fills.length];
-                node.fill = isCustomTheme ? fill : _Util.Color.interpolate(fill, backgroundFill)(0.7);
+                node.fill = isCustomTheme ? fill : _Util.interpolateColor(fill, backgroundFill)(0.7);
                 node.stroke = strokes[i % strokes.length];
             });
         });

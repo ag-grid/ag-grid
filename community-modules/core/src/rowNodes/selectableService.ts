@@ -5,7 +5,7 @@ import type { RowNode } from '../entities/rowNode';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
-import { SelectionService } from '../selectionService';
+import { SelectionService } from '../selection/selectionService';
 import { ChangedPath } from '../utils/changedPath';
 
 export class SelectableService extends BeanStub implements NamedBean {

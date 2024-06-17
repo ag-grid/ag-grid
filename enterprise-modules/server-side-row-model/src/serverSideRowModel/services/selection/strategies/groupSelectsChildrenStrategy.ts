@@ -10,8 +10,9 @@ import type {
     RowNode,
     SelectionEventSourceType,
 } from '@ag-grid-community/core';
-import { BeanStub, _errorOnce, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, _errorOnce, _last, _warnOnce, isSelectionUIEvent } from '@ag-grid-community/core';
 
+import { ServerSideRowRangeSelectionContext } from '../serverSideRowRangeSelectionContext';
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
 interface SelectionState {
@@ -24,6 +25,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     private funcColsService: FuncColsService;
     private filterManager?: FilterManager;
     private selectionService: ISelectionService;
+    private selectionCtx = new ServerSideRowRangeSelectionContext();
 
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
@@ -33,7 +35,6 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     private selectedState: SelectionState = { selectAllChildren: false, toggledNodes: new Map() };
-    private lastSelected: RowNode | null = null;
 
     public postConstruct(): void {
         this.addManagedEventListeners({
@@ -42,6 +43,8 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             // when the grouping changes, the state no longer makes sense, so reset the state.
             columnRowGroupChanged: () => this.selectionService.reset('rowGroupChanged'),
         });
+
+        this.selectionCtx.init(this.rowModel);
     }
 
     public getSelectedState() {
@@ -101,7 +104,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 recursivelyDeserializeState(innerState, isThisNodeSelected),
             ]);
             const doesRedundantStateExist = convertedChildren?.some(
-                ([_, innerState]) =>
+                ([, innerState]) =>
                     isThisNodeSelected === innerState.selectAllChildren && innerState.toggledNodes.size === 0
             );
             if (doesRedundantStateExist) {
@@ -148,44 +151,87 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         return anyStateChanged;
     }
 
-    public setNodesSelected(params: ISetNodesSelectedParams): number {
-        const { nodes, ...other } = params;
+    private overrideSelectionValue(newValue: boolean, source: SelectionEventSourceType): boolean {
+        if (!isSelectionUIEvent(source)) {
+            return newValue;
+        }
 
+        const root = this.selectionCtx.getRoot();
+        const node = root ? this.rowModel.getRowNode(root) : null;
+
+        return node ? node.isSelected() ?? false : true;
+    }
+
+    public setNodesSelected({ nodes, newValue, rangeSelect, clearSelection, source }: ISetNodesSelectedParams): number {
         if (nodes.length === 0) return 0;
 
-        if (params.rangeSelect) {
+        if (rangeSelect) {
             if (nodes.length > 1) {
                 throw new Error('AG Grid: cannot select multiple rows when using rangeSelect');
             }
             const node = nodes[0];
-            const rangeOfNodes = this.rowModel.getNodesInRangeForSelection(node, this.lastSelected);
-            // sort the routes by route length, high to low, this means we can do the lowest level children first
-            const routes = rangeOfNodes.map(this.getRouteToNode).sort((a, b) => b.length - a.length);
+            const newSelectionValue = this.overrideSelectionValue(newValue, source);
 
-            // skip routes if we've already done a descendent
-            const completedRoutes: Set<IRowNode> = new Set();
-            routes.forEach((route) => {
-                // skip routes if we've already selected a descendent
-                if (completedRoutes.has(route[route.length - 1])) {
-                    return;
+            if (this.selectionCtx.isInRange(node.id!)) {
+                const partition = this.selectionCtx.truncate(node.id!);
+
+                // When we are selecting a range, we may need to de-select part of the previously
+                // selected range (see AG-9620)
+                // When we are de-selecting a range, we can/should leave the other nodes unchanged
+                // (i.e. selected nodes outside the current range should remain selected - see AG-10215)
+                if (newSelectionValue) {
+                    this.selectRange(partition.discard, false);
                 }
-
-                route.forEach((part) => completedRoutes.add(part));
-                this.recursivelySelectNode(route, this.selectedState, { node, ...other });
-            });
-
-            this.removeRedundantState();
-            this.lastSelected = node;
+                this.selectRange(partition.keep, newSelectionValue);
+                return 1;
+            } else {
+                const fromNode = this.selectionCtx.getRoot();
+                const toNode = node;
+                if (fromNode !== toNode.id) {
+                    const partition = this.selectionCtx.extend(node.id!);
+                    if (newSelectionValue) {
+                        this.selectRange(partition.discard, false);
+                    }
+                    this.selectRange(partition.keep, newSelectionValue);
+                    return 1;
+                }
+            }
             return 1;
         }
 
-        params.nodes.forEach((node) => {
+        const onlyThisNode = clearSelection && newValue && !rangeSelect;
+        if (this.gos.get('rowSelection') !== 'multiple' || onlyThisNode) {
+            if (nodes.length > 1) {
+                throw new Error("AG Grid: cannot select multiple rows when rowSelection is set to 'single'");
+            }
+            this.deselectAllRowNodes();
+        }
+
+        nodes.forEach((node) => {
             const idPathToNode = this.getRouteToNode(node);
-            this.recursivelySelectNode(idPathToNode, this.selectedState, { ...other, node });
+            this.recursivelySelectNode(idPathToNode, this.selectedState, newValue);
         });
         this.removeRedundantState();
-        this.lastSelected = params.nodes[params.nodes.length - 1];
+        this.selectionCtx.reset(_last(nodes).id!);
         return 1;
+    }
+
+    private selectRange(nodes: RowNode[], newValue: boolean) {
+        // sort routes longest to shortest, meaning we can do the lowest level children first
+        const routes = nodes.map(this.getRouteToNode).sort((a, b) => a.length - b.length);
+
+        // keep track of nodes we've seen so we can skip branches we've visited already
+        const seen = new Set<RowNode>();
+        routes.forEach((route) => {
+            if (seen.has(_last(route))) {
+                return;
+            }
+            route.forEach((part) => seen.add(part));
+
+            this.recursivelySelectNode(route, this.selectedState, newValue);
+        });
+
+        this.removeRedundantState();
     }
 
     public isNodeSelected(node: RowNode): boolean | undefined {
@@ -214,7 +260,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         }
 
         // no deeper custom state, respect the closest default
-        return !!state.selectAllChildren;
+        return state.selectAllChildren;
     }
 
     private getRouteToNode(node: RowNode) {
@@ -286,11 +332,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         forEachNodeStateDepthFirst();
     }
 
-    private recursivelySelectNode(
-        [nextNode, ...nodes]: IRowNode[],
-        selectedState: SelectionState,
-        params: { newValue: boolean; source: SelectionEventSourceType; event?: Event; node: RowNode }
-    ) {
+    private recursivelySelectNode([nextNode, ...nodes]: IRowNode[], selectedState: SelectionState, newValue: boolean) {
         if (!nextNode) {
             return;
         }
@@ -300,13 +342,13 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         if (isLastNode) {
             // if the node is not selectable, we should never have it in selection state
             const isNodeSelectable = nextNode.selectable;
-            const doesNodeConform = selectedState.selectAllChildren === params.newValue;
+            const doesNodeConform = selectedState.selectAllChildren === newValue;
             if (doesNodeConform || !isNodeSelectable) {
                 selectedState.toggledNodes.delete(nextNode.id!);
                 return;
             }
             const newState: SelectionState = {
-                selectAllChildren: params.newValue,
+                selectAllChildren: newValue,
                 toggledNodes: new Map(),
             };
             selectedState.toggledNodes.set(nextNode.id!, newState);
@@ -314,18 +356,16 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         }
 
         const doesStateAlreadyExist = selectedState.toggledNodes.has(nextNode.id!);
-        const childState: SelectionState = doesStateAlreadyExist
-            ? selectedState.toggledNodes.get(nextNode.id!)!
-            : {
-                  selectAllChildren: selectedState.selectAllChildren,
-                  toggledNodes: new Map(),
-              };
+        const childState: SelectionState = selectedState.toggledNodes.get(nextNode.id!) ?? {
+            selectAllChildren: selectedState.selectAllChildren,
+            toggledNodes: new Map(),
+        };
 
         if (!doesStateAlreadyExist) {
             selectedState.toggledNodes.set(nextNode.id!, childState);
         }
 
-        this.recursivelySelectNode(nodes, childState, params);
+        this.recursivelySelectNode(nodes, childState, newValue);
 
         // cleans out groups which have no toggled nodes and an equivalent default to its parent
         if (selectedState.selectAllChildren === childState.selectAllChildren && childState.toggledNodes.size === 0) {
@@ -348,7 +388,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         return selectedNodes;
     }
 
-    public processNewRow(node: RowNode<any>): void {
+    public processNewRow(): void {
         // This is used for updating outdated node refs, as this model entirely uses ids it's irrelevant
     }
 
@@ -364,23 +404,15 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         return !this.selectedState.selectAllChildren && !this.selectedState.toggledNodes?.size;
     }
 
-    public selectAllRowNodes(params: {
-        source: SelectionEventSourceType;
-        justFiltered?: boolean | undefined;
-        justCurrentPage?: boolean | undefined;
-    }): void {
+    public selectAllRowNodes(): void {
         this.selectedState = { selectAllChildren: true, toggledNodes: new Map() };
     }
 
-    public deselectAllRowNodes(params: {
-        source: SelectionEventSourceType;
-        justFiltered?: boolean | undefined;
-        justCurrentPage?: boolean | undefined;
-    }): void {
+    public deselectAllRowNodes(): void {
         this.selectedState = { selectAllChildren: false, toggledNodes: new Map() };
     }
 
-    public getSelectAllState(justFiltered?: boolean, justCurrentPage?: boolean): boolean | null {
+    public getSelectAllState(): boolean | null {
         if (this.selectedState.selectAllChildren) {
             if (this.selectedState.toggledNodes.size > 0) {
                 return null;

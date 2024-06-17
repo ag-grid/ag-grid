@@ -17,7 +17,7 @@ import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { type FunctionComponent } from 'react';
 
-import PortfolioExample from './components/portfolio-example/PortfolioExample';
+import FinanceExample from './FinanceExample';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -35,8 +35,8 @@ ModuleRegistry.registerModules([
     SparklinesModule,
 ]);
 
-export const PortfolioPositions: FunctionComponent = () => {
+export const Finance: FunctionComponent = () => {
     const [isDarkMode] = useDarkmode();
 
-    return <PortfolioExample isDarkMode={isDarkMode} />;
+    return <FinanceExample isDarkMode={isDarkMode} />;
 };
