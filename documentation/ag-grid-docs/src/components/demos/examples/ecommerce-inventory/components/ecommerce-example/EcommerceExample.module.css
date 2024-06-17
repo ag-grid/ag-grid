@@ -1,12 +1,6 @@
 :global(:root) {
     --layout-grid-header-height: 32px;
-}
-
-:global(.ag-theme-quartz .ag-row-group),
-:global(.ag-theme-quartz-dark .ag-row-group) {
-    text-transform: uppercase;
-    font-size: 11px;
-    color: #6f6f6f;
+    --ag-row-border: 1px solid #c41717;
 }
 
 :global(.ag-theme-quartz .ag-row-group .ag-icon),
@@ -14,10 +8,48 @@
     opacity: 0.5;
 }
 
+:global(.ag-theme-quartz .ag-row),
+:global(.ag-theme-quartz-dark .ag-row) {
+    border-bottom: 1px solid rgba(152, 152, 152, 0.23);
+}
+
+:global(.ag-theme-quartz .ag-cell-expandable),
+:global(.ag-theme-quartz-dark .ag-cell-expandable) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 :global(.ag-theme-quartz .ag-cell),
 :global(.ag-theme-quartz-dark .ag-cell) {
     display: flex;
     align-items: center;
+}
+
+:global(.ag-theme-quartz-dark .ag-header) {
+    background-color: #1c2630;
+    border-radius: 8px;
+    border: none;
+}
+
+:global(.ag-theme-quartz .ag-header) {
+    background-color: #f9fafb;
+    color: #39485d;
+    border-radius: 8px;
+    border: none;
+}
+
+:global(.ag-theme-quartz .ag-header-cell-text) {
+    color: #1f383c;
+}
+
+:global(.ag-theme-quartz-dark .ag-header-cell-text) {
+    color: #c9d0da;
+}
+
+:global(.ag-theme-quartz .ag-root-wrapper),
+:global(.ag-theme-quartz-dark .ag-root-wrapper) {
+    border: none;
 }
 
 .icon {
@@ -44,4 +76,51 @@
     height: 16px;
     opacity: 0.7;
     margin-right: 8px;
+}
+
+.exampleHeader {
+    padding-bottom: 16px;
+    padding-top: 8px;
+}
+
+.exampleHeader {
+    padding-bottom: 16px;
+    padding-top: 8px;
+}
+
+.exampleHeader span {
+    margin-right: 12px;
+    font-size: 14px;
+}
+
+.inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: visible;
+}
+
+.inputWrapper svg {
+    position: absolute;
+    left: 8px;
+    pointer-events: none;
+}
+
+.inputWrapper input {
+    padding-left: 32px;
+    font-size: 14px;
+}
+
+.price {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.price span {
+    line-height: 100%;
+}
+
+.increase {
+    opacity: 0.7;
 }
