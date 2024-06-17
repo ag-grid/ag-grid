@@ -557,9 +557,15 @@ export interface GridApi<TData = any> {
      * Listeners will be automatically removed when the grid is destroyed.
      * @example api.addEventListener('rowClicked', (event) => { console.log('Row clicked', event);});
      */
-    addEventListener<T extends AgPublicEventType>(eventType: T, listener: AgEventListener<T, TData, any>): void;
+    addEventListener<TEventType extends AgPublicEventType>(
+        eventType: TEventType,
+        listener: AgEventListener<TData, any, TEventType>
+    ): void;
     /** Remove an event listener. */
-    removeEventListener<T extends AgPublicEventType>(eventType: T, listener: AgEventListener<T, TData, any>): void;
+    removeEventListener<TEventType extends AgPublicEventType>(
+        eventType: TEventType,
+        listener: AgEventListener<TData, any, TEventType>
+    ): void;
 
     /**
      * Add an event listener for all event types coming from the grid.
@@ -568,9 +574,13 @@ export interface GridApi<TData = any> {
      * If handling multiple event types it is recommended to use `event.type` to enable TypeScript to infer the event parameters.
      * @example api.addGlobalListener((eventType, event) => { });
      */
-    addGlobalListener<T extends AgPublicEventType>(listener: AgGlobalEventListener<T, TData, any>): void;
+    addGlobalListener<TEventType extends AgPublicEventType>(
+        listener: AgGlobalEventListener<TData, any, TEventType>
+    ): void;
     /** Remove a global event listener. */
-    removeGlobalListener<T extends AgPublicEventType>(listener: AgGlobalEventListener<T, TData, any>): void;
+    removeGlobalListener<TEventType extends AgPublicEventType>(
+        listener: AgGlobalEventListener<TData, any, TEventType>
+    ): void;
 
     dispatchEvent(event: AgEvent): void;
 

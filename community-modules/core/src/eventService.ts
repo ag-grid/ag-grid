@@ -9,8 +9,8 @@ import { LocalEventService } from './localEventService';
 export class EventService extends BeanStub<AgEventType> implements NamedBean, IEventEmitter<AgEventType> {
     beanName = 'eventService' as const;
 
-    private globalEventListener?: AgGlobalEventListener<AgEventType>;
-    private globalSyncEventListener?: AgGlobalEventListener<AgEventType>;
+    private globalEventListener?: AgGlobalEventListener;
+    private globalSyncEventListener?: AgGlobalEventListener;
 
     public wireBeans(beans: BeanCollection): void {
         this.globalEventListener = beans.globalEventListener;
@@ -30,27 +30,27 @@ export class EventService extends BeanStub<AgEventType> implements NamedBean, IE
         }
     }
 
-    public override addEventListener<T extends AgEventType>(
-        eventType: T,
-        listener: AgEventListener<T>,
+    public override addEventListener<TEventType extends AgEventType>(
+        eventType: TEventType,
+        listener: AgEventListener<any, any, TEventType>,
         async?: boolean
     ): void {
         this.globalEventService.addEventListener(eventType, listener as any, async);
     }
 
-    public override removeEventListener<T extends AgEventType>(
-        eventType: T,
-        listener: AgEventListener<T>,
+    public override removeEventListener<TEventType extends AgEventType>(
+        eventType: TEventType,
+        listener: AgEventListener<any, any, TEventType>,
         async?: boolean
     ): void {
         this.globalEventService.removeEventListener(eventType, listener as any, async);
     }
 
-    public addGlobalListener(listener: AgGlobalEventListener<AgEventType>, async = false): void {
+    public addGlobalListener(listener: AgGlobalEventListener, async = false): void {
         this.globalEventService.addGlobalListener(listener, async);
     }
 
-    public removeGlobalListener(listener: AgGlobalEventListener<AgEventType>, async = false): void {
+    public removeGlobalListener(listener: AgGlobalEventListener, async = false): void {
         this.globalEventService.removeGlobalListener(listener, async);
     }
 

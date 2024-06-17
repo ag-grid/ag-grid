@@ -169,11 +169,11 @@ export interface AgGridEvent<TData = any, TContext = any, TEventType extends str
 export interface AgGlobalEvent<T extends AgEventType, TData = any, TContext = any>
     extends AgGridEvent<TData, TContext, T> {}
 
-export type AgEventListener<TEventType extends AgEventType = AgEventType, TData = any, TContext = any> = (
+export type AgEventListener<TData = any, TContext = any, TEventType extends AgEventType = AgEventType> = (
     params: AgEventTypeParams<TData, TContext>[TEventType]
 ) => void;
 
-export type AgGlobalEventListener<T extends AgEventType = AgEventType, TData = any, TContext = any> = (
+export type AgGlobalEventListener<TData = any, TContext = any, T extends AgEventType = AgEventType> = (
     eventType: T,
     event: AgEventTypeParams<TData, TContext>[T]
 ) => void;

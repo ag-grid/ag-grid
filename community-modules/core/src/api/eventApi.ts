@@ -2,31 +2,31 @@ import type { BeanCollection } from '../context/context';
 import type { AgPublicEventType } from '../eventTypes';
 import type { AgEventListener, AgGlobalEventListener } from '../events';
 
-export function addEventListener<T extends AgPublicEventType>(
+export function addEventListener<TEventType extends AgPublicEventType>(
     beans: BeanCollection,
-    eventType: T,
-    listener: AgEventListener<T, any, any>
+    eventType: TEventType,
+    listener: AgEventListener<any, any, TEventType>
 ): void {
     beans.apiEventService.addEventListener(eventType, listener);
 }
-export function removeEventListener<T extends AgPublicEventType>(
+export function removeEventListener<TEventType extends AgPublicEventType>(
     beans: BeanCollection,
-    eventType: T,
-    listener: AgEventListener<T, any, any>
+    eventType: TEventType,
+    listener: AgEventListener<any, any, TEventType>
 ): void {
     beans.apiEventService.removeEventListener(eventType, listener as AgEventListener);
 }
 
-export function addGlobalListener<T extends AgPublicEventType>(
+export function addGlobalListener<TEventType extends AgPublicEventType>(
     beans: BeanCollection,
-    listener: AgGlobalEventListener<T, any, any>
+    listener: AgGlobalEventListener<any, any, TEventType>
 ): void {
     beans.apiEventService.addGlobalListener(listener);
 }
 
-export function removeGlobalListener<T extends AgPublicEventType>(
+export function removeGlobalListener<TEventType extends AgPublicEventType>(
     beans: BeanCollection,
-    listener: AgGlobalEventListener<T, any, any>
+    listener: AgGlobalEventListener<any, any, TEventType>
 ): void {
     beans.apiEventService.removeGlobalListener(listener);
 }
