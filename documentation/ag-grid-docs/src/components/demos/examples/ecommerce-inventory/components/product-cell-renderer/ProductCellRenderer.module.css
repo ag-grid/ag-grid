@@ -26,6 +26,7 @@
 .productCell div {
     padding-bottom: 0;
     line-height: 1.5;
+    padding-left: 8px;
 }
 
 .stockCell {
@@ -40,4 +41,5 @@
     padding-left: 4px;
     padding-right: 4px;
     font-size: 12px;
+    margin-left: 8px;
 }
