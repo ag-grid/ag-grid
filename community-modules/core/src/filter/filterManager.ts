@@ -339,11 +339,11 @@ export class FilterManager extends BeanStub implements NamedBean {
         this.onFilterChanged({ source: 'advancedFilter' });
     }
 
-    public showAdvancedFilterBuilder(source: 'api' | 'ui'): void {
+    public toggleAdvancedFilterBuilder(show: boolean, source: 'api' | 'ui'): void {
         if (!this.isAdvancedFilterEnabled()) {
             return;
         }
-        this.advancedFilterService.getCtrl().toggleFilterBuilder(source, true);
+        this.advancedFilterService.getCtrl().toggleFilterBuilder(source, show);
     }
 
     private updateAdvancedFilterColumns(): void {

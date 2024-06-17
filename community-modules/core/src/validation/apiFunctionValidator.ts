@@ -198,6 +198,7 @@ const functionModules: { [name in ApiFunctionName]: ModuleNames } = {
     getAdvancedFilterModel: advancedFilterModule,
     setAdvancedFilterModel: advancedFilterModule,
     showAdvancedFilterBuilder: advancedFilterModule,
+    hideAdvancedFilterBuilder: advancedFilterModule,
     getChartModels: gridChartsModule,
     getChartRef: gridChartsModule,
     getChartImageDataURL: gridChartsModule,

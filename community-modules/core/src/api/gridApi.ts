@@ -261,6 +261,12 @@ export interface GridApi<TData = any> {
     showAdvancedFilterBuilder(): void;
 
     /**
+     * Closes the Advanced Filter Builder dialog (if enabled).
+     * Un-applied changes are discarded.
+     */
+    hideAdvancedFilterBuilder(): void;
+
+    /**
      * Set all of the provided nodes selection state to the provided value.
      */
     setNodesSelected(params: { nodes: IRowNode[]; newValue: boolean; source?: SelectionEventSourceType }): void;

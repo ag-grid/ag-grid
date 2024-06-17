@@ -4,6 +4,7 @@ import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
 import {
     getAdvancedFilterModel,
+    hideAdvancedFilterBuilder,
     setAdvancedFilterModel,
     showAdvancedFilterBuilder,
 } from './advancedFilter/advancedFilterApi';
@@ -25,6 +26,7 @@ export const AdvancedFilterApiModule: Module = {
         getAdvancedFilterModel,
         setAdvancedFilterModel,
         showAdvancedFilterBuilder,
+        hideAdvancedFilterBuilder,
     },
     dependantModules: [AdvancedFilterCoreModule],
 };

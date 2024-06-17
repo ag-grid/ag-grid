@@ -9,5 +9,9 @@ export function setAdvancedFilterModel(beans: BeanCollection, advancedFilterMode
 }
 
 export function showAdvancedFilterBuilder(beans: BeanCollection): void {
-    beans.filterManager?.showAdvancedFilterBuilder('api');
+    beans.filterManager?.toggleAdvancedFilterBuilder(true, 'api');
+}
+
+export function hideAdvancedFilterBuilder(beans: BeanCollection): void {
+    beans.filterManager?.toggleAdvancedFilterBuilder(false, 'api');
 }
