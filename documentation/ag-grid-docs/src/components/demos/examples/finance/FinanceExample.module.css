@@ -30,10 +30,6 @@
 }
 
 :global(.ag-theme-quartz .ag-row-group),
-:global(.ag-theme-quartz-dark .ag-row-group) {
-    text-transform: uppercase;
-    font-size: 12px;
-}
 .container {
     width: 100%;
 }
