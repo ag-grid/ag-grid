@@ -35,14 +35,12 @@ export class GridCtrl extends BeanStub {
 
     public wireBeans(beans: BeanCollection) {
         this.beans = beans;
-        this.eGridWrapperDiv = beans.eGridDiv;
         this.focusService = beans.focusService;
         this.visibleColsService = beans.visibleColsService;
     }
 
     private view: IGridComp;
     private eGridHostDiv: HTMLElement;
-    private eGridWrapperDiv: HTMLElement;
     private eGui: HTMLElement;
 
     public setComp(view: IGridComp, eGridDiv: HTMLElement, eGui: HTMLElement): void {
@@ -66,8 +64,6 @@ export class GridCtrl extends BeanStub {
         this.createManagedBean(new LayoutFeature(this.view));
 
         this.addRtlSupport();
-
-        this.applyDefaultHeight();
 
         const unsubscribeFromResize = resizeObserverService.observeResize(
             this.eGridHostDiv,
@@ -96,39 +92,12 @@ export class GridCtrl extends BeanStub {
     }
 
     private onGridSizeChanged(): void {
-        this.applyDefaultHeight();
         const event: WithoutGridCommon<GridSizeChangedEvent> = {
             type: 'gridSizeChanged',
             clientWidth: this.eGridHostDiv.clientWidth,
             clientHeight: this.eGridHostDiv.clientHeight,
         };
         this.eventService.dispatchEvent(event);
-    }
-
-    private applyDefaultHeight(): void {
-        if (this.eGui.offsetParent == null) {
-            return;
-        }
-        // If the application has not given the host div a height, then we want
-        // to apply a default height in order to prevent the grid from being
-        // zero height. However we can't just test whether the host div is 0px
-        // high, because it might have been explicitly set to 0px. So we vary
-        // the height of the main grid element and check whether the container
-        // resizes to fit. It it does, it has no explicit height set and we need a default height.
-        const gui = this.eGui;
-        const wrapper = this.eGridWrapperDiv;
-        gui.style.boxSizing = 'border-box';
-        gui.style.height = '0';
-        gui.style.padding = '0';
-        const firstMeasurement = wrapper.clientHeight;
-        gui.style.height = '10px';
-        const secondMeasurement = wrapper.clientHeight;
-        // difference should be 10px but allow some margin of error if the layout is scaled
-        const hasIntrinsicHeight = secondMeasurement - firstMeasurement <= 5;
-        gui.style.boxSizing = '';
-        gui.style.height = '';
-        gui.style.padding = '';
-        gui.classList.toggle('ag-default-height', !hasIntrinsicHeight);
     }
 
     private addRtlSupport(): void {
