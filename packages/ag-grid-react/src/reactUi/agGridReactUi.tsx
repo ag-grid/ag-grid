@@ -49,7 +49,7 @@ import { PortalManager } from '../shared/portalManager';
 import { ReactComponent } from '../shared/reactComponent';
 import { BeansContext } from './beansContext';
 import GridComp from './gridComp';
-import { CssClasses, runWithoutFlushSync } from './utils';
+import { CssClasses, isReact17Minus, runWithoutFlushSync } from './utils';
 
 export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     const apiRef = useRef<GridApi<TData>>();
@@ -58,6 +58,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     const destroyFuncs = useRef<(() => void)[]>([]);
     const whenReadyFuncs = useRef<(() => void)[]>([]);
     const prevProps = useRef<AgGridReactProps<any>>(props);
+    const frameworkOverridesRef = useRef<ReactFrameworkOverrides>();
 
     const ready = useRef<boolean>(false);
 
@@ -91,6 +92,19 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
 
         const mergedGridOps = _combineAttributesAndGridOptions(props.gridOptions, props);
 
+        const frameworkOverrides = isReact17Minus()
+            ? new React17MinusFrameworkOverrides(() => {
+                  if (ready.current) {
+                      let fn = whenReadyFuncs.current.shift();
+                      while (fn && !frameworkOverridesRef.current?.shouldQueueUpdates()) {
+                          fn();
+                          fn = whenReadyFuncs.current.shift();
+                      }
+                  }
+              })
+            : new ReactFrameworkOverrides();
+        frameworkOverridesRef.current = frameworkOverrides;
+
         const gridParams: GridParams = {
             providedBeanInstances: {
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(
@@ -99,7 +113,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
                 ),
             },
             modules,
-            frameworkOverrides: new ReactFrameworkOverrides(),
+            frameworkOverrides,
         };
 
         const createUiCallback = (context: Context) => {
@@ -155,7 +169,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     }, [props.containerStyle]);
 
     const processWhenReady = useCallback((func: () => void) => {
-        if (ready.current) {
+        if (ready.current && !frameworkOverridesRef.current?.shouldQueueUpdates()) {
             func();
         } else {
             whenReadyFuncs.current.push(func);
@@ -402,4 +416,37 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
         }
         return callback();
     };
+
+    shouldQueueUpdates(): boolean {
+        return false;
+    }
+
+    getLockOnRefreshError(): string {
+        return ` This error can also occur if using 'ReactDOM.render' instead of 'createRoot'. If so, please upgrade to 'createRoot'.`;
+    }
+}
+
+class React17MinusFrameworkOverrides extends ReactFrameworkOverrides {
+    private queueUpdates = false;
+
+    constructor(private readonly processQueuedUpdates: () => void) {
+        super();
+    }
+
+    getLockOnRefresh(): void {
+        this.queueUpdates = true;
+    }
+
+    releaseLockOnRefresh(): void {
+        this.queueUpdates = false;
+        this.processQueuedUpdates();
+    }
+
+    override shouldQueueUpdates(): boolean {
+        return this.queueUpdates;
+    }
+
+    override getLockOnRefreshError(): string {
+        return '';
+    }
 }
