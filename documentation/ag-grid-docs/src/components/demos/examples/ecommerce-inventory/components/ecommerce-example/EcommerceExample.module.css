@@ -135,7 +135,7 @@
     overflow: hidden;
     background-color: var(--color-bg-secondary);
     padding: 4px;
-    border: 1px solid #eff0f1;
+    border: 1px solid var(--color-border-secondary);
 }
 
 .tabButton {
