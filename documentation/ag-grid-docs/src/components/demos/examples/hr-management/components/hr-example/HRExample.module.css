@@ -6,7 +6,7 @@
 :global(.ag-theme-quartz-dark) {
     --ag-row-height: 65px !important;
     --ag-header-background-color: transparent;
-    --ag-odd-row-background-color: rgb(240, 244, 255);
+    --ag-odd-row-background-color: rgb(244, 246, 251);
     --ag-row-border-color: rgba(228, 228, 228, 0.1);
     --ag-borders: none;
 }
