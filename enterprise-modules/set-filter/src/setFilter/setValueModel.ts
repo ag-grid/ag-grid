@@ -1,11 +1,11 @@
 import type {
     AgColumn,
-    AgEventListener,
     AgEventType,
     FuncColsService,
     GridOptionsService,
     IClientSideRowModel,
     IEventEmitter,
+    IEventListener,
     RowNode,
     SetFilterModelValue,
     SetFilterParams,
@@ -221,7 +221,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
 
     public addEventListener<T extends SetValueModelEvent>(
         eventType: T,
-        listener: AgEventListener<any, any, T>,
+        listener: IEventListener<T>,
         async?: boolean
     ): void {
         this.localEventService.addEventListener(eventType, listener, async);
@@ -229,7 +229,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
 
     public removeEventListener<T extends SetValueModelEvent>(
         eventType: T,
-        listener: AgEventListener<any, any, T>,
+        listener: IEventListener<T>,
         async?: boolean
     ): void {
         this.localEventService.removeEventListener(eventType, listener, async);

@@ -33,7 +33,7 @@ const compIdSequence = new NumberSequence();
 export const RefPlaceholder: any = null;
 
 export type ComponentEvent = 'displayChanged' | BeanStubEvent;
-export interface VisibleChangedEvent extends AgEvent<ComponentEvent> {
+export interface VisibleChangedEvent extends AgEvent<'displayChanged'> {
     visible: boolean;
 }
 

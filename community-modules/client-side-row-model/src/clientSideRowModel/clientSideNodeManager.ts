@@ -189,10 +189,10 @@ export class ClientSideNodeManager {
         // create new row nodes for each data item
         const newNodes: RowNode[] = add!.map((item) => this.createNode(item, this.rootNode, TOP_LEVEL));
 
+        const allLeafChildren = this.rootNode.allLeafChildren!;
         if (typeof addIndex === 'number' && addIndex >= 0) {
             // new rows are inserted in one go by concatenating them in between the existing rows at the desired index.
             // this is much faster than splicing them individually into 'allLeafChildren' when there are large inserts.
-            const { allLeafChildren } = this.rootNode;
             const len = allLeafChildren.length;
             let normalisedAddIndex = addIndex;
 
@@ -210,10 +210,10 @@ export class ClientSideNodeManager {
             const nodesAfterIndex = allLeafChildren.slice(normalisedAddIndex, allLeafChildren.length);
             this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
         } else {
-            this.rootNode.allLeafChildren = [...this.rootNode.allLeafChildren, ...newNodes];
+            this.rootNode.allLeafChildren = [...allLeafChildren, ...newNodes];
         }
         if (this.rootNode.sibling) {
-            this.rootNode.sibling.allLeafChildren = this.rootNode.allLeafChildren;
+            this.rootNode.sibling.allLeafChildren = allLeafChildren;
         }
         // add new row nodes to the transaction add items
         rowNodeTransaction.add = newNodes;
@@ -257,7 +257,8 @@ export class ClientSideNodeManager {
             rowNodeTransaction.remove.push(rowNode);
         });
 
-        this.rootNode.allLeafChildren = this.rootNode.allLeafChildren.filter((rowNode) => !rowIdsRemoved[rowNode.id!]);
+        this.rootNode.allLeafChildren =
+            this.rootNode.allLeafChildren?.filter((rowNode) => !rowIdsRemoved[rowNode.id!]) ?? null;
         if (this.rootNode.sibling) {
             this.rootNode.sibling.allLeafChildren = this.rootNode.allLeafChildren;
         }
@@ -305,7 +306,7 @@ export class ClientSideNodeManager {
             }
         } else {
             // find rowNode using object references
-            rowNode = this.rootNode.allLeafChildren.find((node) => node.data === data);
+            rowNode = this.rootNode.allLeafChildren?.find((node) => node.data === data);
             if (!rowNode) {
                 _errorOnce(`could not find data item as object was not found`, data);
                 _errorOnce(`Consider using getRowId to help the Grid find matching row data`);

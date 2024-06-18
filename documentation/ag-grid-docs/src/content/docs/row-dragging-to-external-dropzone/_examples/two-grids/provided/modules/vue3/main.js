@@ -124,7 +124,7 @@ const VueExample = {
     },
     methods: {
         getRowId(params) {
-            return params.data.id;
+            return String(params.data.id);
         },
 
         onGridReady(params, side) {

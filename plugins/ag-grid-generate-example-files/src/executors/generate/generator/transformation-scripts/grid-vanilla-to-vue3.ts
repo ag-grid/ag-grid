@@ -254,7 +254,7 @@ function getModuleImports(
     const { inlineGridStyles } = bindings;
 
     const imports = [
-        "import { createApp, onBeforeMount, ref } from 'vue';",
+        "import { createApp, onBeforeMount, ref, shallowRef } from 'vue';",
         "import { AgGridVue } from '@ag-grid-community/vue3';",
     ];
 
@@ -297,7 +297,7 @@ function getPackageImports(
     const { inlineGridStyles } = bindings;
 
     const imports = [
-        "import { createApp, onBeforeMount, ref } from 'vue';",
+        "import { createApp, onBeforeMount, ref, shallowRef } from 'vue';",
         "import { AgGridVue } from 'ag-grid-vue3';",
     ];
 
@@ -382,7 +382,7 @@ const VueExample = {
     },
     setup(props) {
         const columnDefs = ref(${columnDefs});
-        const gridApi = ref();
+        const gridApi = shallowRef();
         ${defaultColDef ? `const defaultColDef = ref(${defaultColDef});` : ''}
         ${propertyVars.join(';\n')}
         

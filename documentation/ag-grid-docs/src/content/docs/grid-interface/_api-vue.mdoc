@@ -23,4 +23,7 @@ onGridReady = (params) => {
     this.api = params.api;
 }
 ```
+
+If the API is being stored in a reference, it must be a `shallowRef` rather than a `ref` in order to work correctly.
+
 {% /if %}

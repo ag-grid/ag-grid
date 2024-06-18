@@ -11,11 +11,9 @@ const VueExample = {
     template: `
         <div style="display: flex; flex-direction: column; height: 100%">
             <div style="margin-bottom: 5px;">
-                Set width and height: &nbsp;
-                <button @click="fillLarge">100%</button>
-                <button @click="fillMedium">60%</button>
-                <button @click="fillExact">400px</button>
-                <button @click="noSize">None (default size)</button>
+                <button @click="fillLarge">Fill 100%</button>
+                <button @click="fillMedium">Fill 60%</button>
+                <button @click="fillExact">Exactly 400 x 400 pixels</button>
             </div>
             <div style="width: 100%; flex: 1 1 auto;">
                 <ag-grid-vue :style="{width, height}" :class="themeClass"
@@ -64,9 +62,6 @@ const VueExample = {
         },
         fillExact() {
             this.setWidthAndHeight('400px', '400px');
-        },
-        noSize() {
-            this.setWidthAndHeight('', '');
         },
         setWidthAndHeight(width, height) {
             this.width = width;

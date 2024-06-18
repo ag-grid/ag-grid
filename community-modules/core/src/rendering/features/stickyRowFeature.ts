@@ -4,6 +4,7 @@ import type { CtrlsService } from '../../ctrlsService';
 import type { RowNode } from '../../entities/rowNode';
 import type { StickyTopOffsetChangedEvent } from '../../events';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
+import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { IRowModel } from '../../interfaces/iRowModel';
 import type { PageBoundsService } from '../../pagination/pageBoundsService';
 import { _last } from '../../utils/array';
@@ -65,7 +66,7 @@ export class StickyRowFeature extends BeanStub {
             return;
         }
         this.extraTopHeight = offset;
-        const event: StickyTopOffsetChangedEvent = {
+        const event: WithoutGridCommon<StickyTopOffsetChangedEvent> = {
             type: 'stickyTopOffsetChanged',
             offset,
         };

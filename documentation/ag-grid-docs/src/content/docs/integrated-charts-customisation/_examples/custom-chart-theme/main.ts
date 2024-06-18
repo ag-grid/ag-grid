@@ -74,7 +74,7 @@ const myCustomThemeLight = deepMerge(commonThemeProperties, {
                 number: {
                     bottom: {
                         line: {
-                            color: '#424242',
+                            stroke: '#424242',
                         },
                         label: {
                             color: '#555555',
@@ -88,7 +88,7 @@ const myCustomThemeLight = deepMerge(commonThemeProperties, {
                 category: {
                     left: {
                         line: {
-                            color: '#424242',
+                            stroke: '#424242',
                         },
                         label: {
                             color: '#555555',

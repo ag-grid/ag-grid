@@ -1,7 +1,7 @@
 import type { ColumnState } from '../columns/columnApplyStateService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { AgEvent, AgEventListener, ColumnEvent, ColumnEventType } from '../events';
+import type { AgEvent, ColumnEvent, ColumnEventType } from '../events';
 import type {
     Column,
     ColumnEventName,
@@ -61,7 +61,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
         this.columnHoverService = beans.columnHoverService;
     }
 
-    private frameworkEventListenerService: FrameworkEventListenerService | null;
+    private frameworkEventListenerService: FrameworkEventListenerService<any, any> | null;
 
     private readonly colId: any;
     private colDef: ColDef<any, TValue>;
@@ -317,7 +317,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
 
     public override addEventListener<T extends ColumnEventName>(
         eventType: T,
-        userListener: AgEventListener<any, any, T>
+        userListener: (params: ColumnEvent<T>) => void
     ): void {
         if (this.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
             // Only construct if we need it, as it's an overhead for column construction
@@ -331,7 +331,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
 
     public override removeEventListener<T extends ColumnEventName>(
         eventType: T,
-        userListener: AgEventListener<any, any, T>
+        userListener: (params: ColumnEvent<T>) => void
     ): void {
         const listener = this.frameworkEventListenerService?.unwrap(userListener) ?? userListener;
         this.columnEventService.removeEventListener(eventType, listener);
@@ -432,7 +432,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
         this.columnEventService.dispatchEvent(this.createColumnEvent('movingChanged', source));
     }
 
-    private createColumnEvent(type: ColumnEventName, source: ColumnEventType): ColumnEvent {
+    private createColumnEvent<T extends ColumnEventName>(type: T, source: ColumnEventType): ColumnEvent<T> {
         return this.gos.addGridCommonParams({
             type: type,
             column: this,

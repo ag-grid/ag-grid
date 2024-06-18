@@ -158,14 +158,10 @@ export class Environment extends BeanStub implements NamedBean {
         if (!container) {
             container = this.eMeasurementContainer = document.createElement('div');
             container.className = 'ag-measurement-container';
-            container.style.width = '0';
-            container.style.overflow = 'hidden';
-            container.style.visibility = 'hidden';
             this.eGridDiv.appendChild(container);
         }
 
         sizeEl = document.createElement('div');
-        sizeEl.style.position = 'absolute';
         sizeEl.style.width = `var(${variable.cssName}, ${NO_VALUE_SENTINEL}px)`;
         container.appendChild(sizeEl);
         this.sizeEls.set(variable, sizeEl);

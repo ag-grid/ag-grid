@@ -7,7 +7,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import type { AdvancedFilterEnabledChangedEvent, FilterChangedEvent, FilterChangedEventSourceType } from '../events';
+import type { FilterChangedEvent, FilterChangedEventSourceType } from '../events';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -49,8 +49,7 @@ export class FilterManager extends BeanStub implements NamedBean {
             columnPivotModeChanged: this.refreshFiltersForAggregations.bind(this),
             newColumnsLoaded: this.updateAdvancedFilterColumns.bind(this),
             columnVisible: this.updateAdvancedFilterColumns.bind(this),
-            advancedFilterEnabledChanged: ({ enabled }: AdvancedFilterEnabledChangedEvent) =>
-                this.onAdvancedFilterEnabledChanged(enabled),
+            advancedFilterEnabledChanged: ({ enabled }) => this.onAdvancedFilterEnabledChanged(enabled),
             dataTypesInferred: this.processFilterModelUpdateQueue.bind(this),
         });
 
@@ -340,11 +339,11 @@ export class FilterManager extends BeanStub implements NamedBean {
         this.onFilterChanged({ source: 'advancedFilter' });
     }
 
-    public showAdvancedFilterBuilder(source: 'api' | 'ui'): void {
+    public toggleAdvancedFilterBuilder(show: boolean, source: 'api' | 'ui'): void {
         if (!this.isAdvancedFilterEnabled()) {
             return;
         }
-        this.advancedFilterService.getCtrl().toggleFilterBuilder(source, true);
+        this.advancedFilterService.getCtrl().toggleFilterBuilder(source, show);
     }
 
     private updateAdvancedFilterColumns(): void {

@@ -66,26 +66,6 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         _setAriaControls(this.richSelectWrapper, eListAriaEl);
     }
 
-    public highlightFilterMatch(searchString: string): void {
-        this.forEachRenderedRow((cmp: RichSelectRow<TValue>) => {
-            cmp.highlightString(searchString);
-        });
-    }
-
-    public onNavigationKeyDown(key: string): void {
-        this.animationFrameService.requestAnimationFrame(() => {
-            if (!this.currentList || !this.isAlive()) {
-                return;
-            }
-            const len = this.currentList.length;
-            const oldIndex = this.lastRowHovered;
-
-            const diff = key === KeyCode.DOWN ? 1 : -1;
-            const newIndex = Math.min(Math.max(oldIndex === -1 ? 0 : oldIndex + diff, 0), len - 1);
-            this.highlightIndex(newIndex);
-        });
-    }
-
     public override navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): number | null {
         const newIndex = super.navigateToPage(key, this.lastRowHovered);
 
@@ -99,6 +79,33 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         }
 
         return newIndex;
+    }
+
+    protected override drawVirtualRows(softRefresh?: boolean | undefined): void {
+        super.drawVirtualRows(softRefresh);
+
+        this.refreshSelectedItems();
+    }
+
+    public highlightFilterMatch(searchString: string): void {
+        this.forEachRenderedRow((cmp: RichSelectRow<TValue>) => {
+            cmp.highlightString(searchString);
+        });
+    }
+
+    public onNavigationKeyDown(key: string, announceItem: () => void): void {
+        this.animationFrameService.requestAnimationFrame(() => {
+            if (!this.currentList || !this.isAlive()) {
+                return;
+            }
+            const len = this.currentList.length;
+            const oldIndex = this.lastRowHovered;
+
+            const diff = key === KeyCode.DOWN ? 1 : -1;
+            const newIndex = Math.min(Math.max(oldIndex === -1 ? 0 : oldIndex + diff, 0), len - 1);
+            this.highlightIndex(newIndex);
+            announceItem();
+        });
     }
 
     public selectValue(value?: TValue[] | TValue): void {
@@ -120,7 +127,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         const selectedPositions = this.getIndicesForValues(value);
         const len = selectedPositions.length;
 
-        if (len >= 0) {
+        if (len > 0) {
             // make sure the virtual list has been sized correctly
             this.refresh();
             this.ensureIndexVisible(selectedPositions[0]);
@@ -256,7 +263,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     private createRowComponent(value: TValue, listItemElement: HTMLElement): Component<AgRichSelectListEvent> {
-        const row = new RichSelectRow<TValue>(this.params, (value) => this.selectedItems.has(value));
+        const row = new RichSelectRow<TValue>(this.params);
         listItemElement.setAttribute('id', `${ROW_COMPONENT_NAME}-${row.getCompId()}`);
         row.setParentComponent(this);
         this.createBean(row);

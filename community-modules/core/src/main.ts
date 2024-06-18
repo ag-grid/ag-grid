@@ -770,7 +770,7 @@ export { IRowNodeStage, StageExecuteParams } from './interfaces/iRowNodeStage';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
 export { IComponent } from './interfaces/iComponent';
-export { IEventEmitter } from './interfaces/iEventEmitter';
+export { IEventEmitter, IEventListener } from './interfaces/iEventEmitter';
 export { IHeaderParams, IHeaderComp, IHeader } from './headerRendering/cells/column/headerComp';
 export {
     IHeaderGroupParams,
@@ -799,6 +799,8 @@ export {
     BaseMenuItemParams,
 } from './interfaces/menuItem';
 export { IWatermark } from './interfaces/iWatermark';
+
+export { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
 
 // utils
 export {

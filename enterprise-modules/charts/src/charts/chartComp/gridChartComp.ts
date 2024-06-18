@@ -1,7 +1,7 @@
 import type {
     BeanCollection,
-    ChartCreated,
-    ChartDestroyed,
+    ChartCreatedEvent,
+    ChartDestroyedEvent,
     ChartModel,
     ChartToolPanelName,
     ChartType,
@@ -578,7 +578,7 @@ export class GridChartComp extends Component {
     }
 
     private raiseChartCreatedEvent(): void {
-        const event: WithoutGridCommon<ChartCreated> = {
+        const event: WithoutGridCommon<ChartCreatedEvent> = {
             type: 'chartCreated',
             chartId: this.chartController.getChartId(),
         };
@@ -592,7 +592,7 @@ export class GridChartComp extends Component {
     }
 
     private raiseChartDestroyedEvent(): void {
-        const event: WithoutGridCommon<ChartDestroyed> = {
+        const event: WithoutGridCommon<ChartDestroyedEvent> = {
             type: 'chartDestroyed',
             chartId: this.chartController.getChartId(),
         };

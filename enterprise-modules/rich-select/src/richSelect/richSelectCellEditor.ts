@@ -80,7 +80,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             eventKey,
             multiSelect,
             suppressDeselectAll,
-            showSelectedItemsAsPills,
+            suppressMultiSelectPillRenderer,
         } = this.params;
 
         const ret: RichSelectParams = {
@@ -103,7 +103,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             initialInputValue: eventKey?.length === 1 ? eventKey : undefined,
             multiSelect,
             suppressDeselectAll,
-            showSelectedItemsAsPills,
+            suppressMultiSelectPillRenderer,
         };
 
         let valuesResult;
@@ -123,7 +123,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         }
 
         if (multiSelect && allowTyping) {
-            ret.allowTyping = false;
+            this.params.allowTyping = ret.allowTyping = false;
             _warnOnce(
                 'agRichSelectCellEditor cannot have `multiSelect` and `allowTyping` set to `true`. AllowTyping has been turned off.'
             );

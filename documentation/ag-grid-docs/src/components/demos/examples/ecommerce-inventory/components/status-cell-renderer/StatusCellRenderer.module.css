@@ -5,11 +5,14 @@
     line-height: 2;
     font-weight: 500;
     border: 1.5px solid rgba(91, 91, 91, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .activeTag {
-    background-color: rgb(70, 227, 114, 0.1);
-    color: rgb(62, 184, 97);
+    background-color: #ddeedc;
+    color: #001203;
     border: 1.5px solid rgb(70, 227, 114, 0.2);
 }
 
@@ -20,5 +23,26 @@
 }
 
 .pausedTag {
-    background-color: rgb(128, 128, 128, 0.1);
+    background-color: #ffe7b9;
+    color: #5c3f1f;
+}
+
+.circle {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+    margin-left: 6px;
+}
+
+.activeCircle {
+    background-color: #6d9b7e;
+}
+
+.outOfStockCircle {
+    background-color: #ea5353;
+}
+
+.pausedCircle {
+    background-color: #5c3f1f;
 }

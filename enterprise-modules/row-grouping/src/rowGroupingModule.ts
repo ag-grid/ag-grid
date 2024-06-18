@@ -5,6 +5,7 @@ import { EnterpriseCoreModule, GroupCellRenderer, GroupCellRendererCtrl } from '
 import { AggFuncService } from './rowGrouping/aggFuncService';
 import { AggregationStage } from './rowGrouping/aggregationStage';
 import { AutoColService } from './rowGrouping/autoColService';
+import { ColumnDropZoneService } from './rowGrouping/columnDropZones/columnDropZoneService';
 import { FilterAggregatesStage } from './rowGrouping/filterAggregatesStage';
 import { GroupFilter } from './rowGrouping/groupFilter/groupFilter';
 import { GroupFloatingFilterComp } from './rowGrouping/groupFilter/groupFloatingFilter';
@@ -55,6 +56,7 @@ export const RowGroupingCoreModule: Module = {
         AggFuncService,
         AutoColService,
         ShowRowGroupColsService,
+        ColumnDropZoneService,
     ],
     userComponents: [
         {

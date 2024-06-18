@@ -66,7 +66,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 
         this.addManagedPropertyListener('enableAdvancedFilter', (event) => this.setEnabled(!!event.currentValue));
         this.addManagedEventListeners({
-            newColumnsLoaded: (event: NewColumnsLoadedEvent) => this.onNewColumnsLoaded(event),
+            newColumnsLoaded: (event) => this.onNewColumnsLoaded(event),
         });
         this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', () => this.updateValidity());
     }

@@ -19,7 +19,7 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
 
     multiSelect?: boolean;
     suppressDeselectAll?: boolean;
-    showSelectedItemsAsPills?: boolean;
+    suppressMultiSelectPillRenderer?: boolean;
 
     placeholder?: string;
     initialInputValue?: string;
@@ -75,10 +75,9 @@ export interface IRichCellEditorParams<TData = any, TValue = any> {
      */
     suppressDeselectAll?: boolean;
     /**
-     * If `true` the selected items will be displayed with a `Pill Renderer`.
-     * Note: This feature only works when `multiSelect=true`.
+     * When `multiSelect=true` the editor will automatically show the selected items as "pills". Set this property to `true` suppress this behaviour.
      */
-    showSelectedItemsAsPills?: boolean;
+    suppressMultiSelectPillRenderer?: boolean;
     /**
      * The value in `ms` for the search algorithm debounce delay (only relevant when `allowTyping=false`).
      * @default 300

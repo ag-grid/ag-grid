@@ -130,10 +130,6 @@
 
         &.ag-layout-normal {
             height: 100%;
-
-            &.ag-default-height {
-                height: var(--ag-default-grid-height);
-            }
         }
     }
 
@@ -1920,5 +1916,15 @@
 
     .ag-body .ag-body-viewport {
         -webkit-overflow-scrolling: touch;
+    }
+
+    .ag-measurement-container {
+        width: 0;
+        overflow: hidden;
+        visibility: hidden;
+
+        div {
+            position: absolute;
+        }
     }
 }

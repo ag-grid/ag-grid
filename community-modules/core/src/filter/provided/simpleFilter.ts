@@ -246,7 +246,13 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<M>;
 
-            const numConditions = this.validateAndUpdateConditions(combinedModel.conditions);
+            let conditions = combinedModel.conditions;
+            if (conditions == null) {
+                conditions = [];
+                _warnOnce(`Filter model is missing 'conditions'`);
+            }
+
+            const numConditions = this.validateAndUpdateConditions(conditions);
             const numPrevConditions = this.getNumConditions();
             if (numConditions < numPrevConditions) {
                 this.removeConditionsAndOperators(numConditions);
@@ -261,7 +267,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             this.eJoinOperatorsAnd.forEach((eJoinOperatorAnd) => eJoinOperatorAnd.setValue(!orChecked, true));
             this.eJoinOperatorsOr.forEach((eJoinOperatorOr) => eJoinOperatorOr.setValue(orChecked, true));
 
-            combinedModel.conditions.forEach((condition, position) => {
+            conditions.forEach((condition, position) => {
                 this.eTypes[position].setValue(condition.type, true);
                 this.setConditionIntoUi(condition, position);
             });

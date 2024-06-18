@@ -452,7 +452,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
 
         this.addManagedEventListeners({
-            cellValueChanged: (event: CellValueChangedEvent) => {
+            cellValueChanged: (event) => {
                 // only interested in changes to do with this column
                 if (this.setFilterParams && event.column === this.setFilterParams.column) {
                     this.syncAfterDataChange();
