@@ -119,10 +119,10 @@ export class OverlayService extends BeanStub implements NamedBean {
                 this.showOrHideOverlay();
             }
         } else if (loading) {
+            this.showLoadingOverlay();
             if (this.gos.get('suppressLoadingOverlay')) {
                 _warnOnce('setting loading to true has no effect when suppressLoadingOverlay is true');
             }
-            this.showLoadingOverlay();
         } else {
             this.showOrHideOverlay();
         }
