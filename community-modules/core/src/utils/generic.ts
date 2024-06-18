@@ -79,6 +79,10 @@ export function toBoolean(value: any): boolean {
     return false;
 }
 
+export function toBooleanOrUndefined(value: any): boolean | undefined {
+    return value === undefined ? undefined : toBoolean(value);
+}
+
 // for parsing html attributes, where we want empty strings and missing attributes to be undefined
 export function _attrToString(value?: string): string | undefined {
     if (value == null || value === '') {

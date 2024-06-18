@@ -6,6 +6,7 @@ import type { BeanCollection } from '../../context/context';
 import type { GridOptions } from '../../entities/gridOptions';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { IRowModel } from '../../interfaces/iRowModel';
+import { _warnOnce } from '../../utils/function';
 import type { ILoadingOverlayParams } from './loadingOverlayComponent';
 import type { INoRowsOverlayParams } from './noRowsOverlayComponent';
 import type { OverlayWrapperComponent } from './overlayWrapperComponent';
@@ -45,7 +46,8 @@ export class OverlayService extends BeanStub implements NamedBean {
         }
         const loading = this.gos.get('loading');
         if (loading !== undefined && !loading) {
-            return; // loading property is false, we cannot show the loading overlay
+            _warnOnce('AG Grid: showLoadingOverlay has no effect when loading=false');
+            return;
         }
 
         const params: WithoutGridCommon<ILoadingOverlayParams> = {};
@@ -62,8 +64,8 @@ export class OverlayService extends BeanStub implements NamedBean {
         if (this.gos.get('suppressNoRowsOverlay')) {
             return;
         }
-        if (this.gos.get('loading') !== undefined) {
-            return; // loading property is true or false, we cannot show the no-rows overlay
+        if (this.gos.get('loading')) {
+            return; // loading property is true, we cannot show the no-rows overlay
         }
 
         const params: WithoutGridCommon<INoRowsOverlayParams> = {};
@@ -125,9 +127,12 @@ export class OverlayService extends BeanStub implements NamedBean {
                 this.showOrHideOverlay();
             }
         } else if (loading) {
+            if (this.gos.get('suppressLoadingOverlay')) {
+                _warnOnce('AG Grid: setting loading to true has no effect when suppressLoadingOverlay is true');
+            }
             this.showLoadingOverlay();
         } else {
-            this.hideOverlay();
+            this.showOrHideOverlay();
         }
     }
 

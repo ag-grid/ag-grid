@@ -21,7 +21,7 @@ import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
 import { _getScrollbarWidth } from './utils/browser';
 import { _log, _warnOnce } from './utils/function';
-import { _exists, _missing, toBoolean } from './utils/generic';
+import { _exists, _missing, toBoolean, toBooleanOrUndefined } from './utils/generic';
 import { toConstrainedNum, toNumber } from './utils/number';
 import { GRID_OPTION_DEFAULTS } from './validation/rules/gridOptionsValidations';
 import type { ValidationService } from './validation/validationService';
@@ -86,6 +86,7 @@ export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: 
  */
 const PROPERTY_COERCIONS: Map<keyof GridOptions, (value: any) => GridOptions[keyof GridOptions]> = new Map([
     ...PropertyKeys.BOOLEAN_PROPERTIES.map((key) => [key as keyof GridOptions, toBoolean]),
+    ...PropertyKeys.BOOLEAN_OR_UNDEFINED_PROPERTIES.map((key) => [key as keyof GridOptions, toBooleanOrUndefined]),
     ...PropertyKeys.NUMBER_PROPERTIES.map((key) => [key as keyof GridOptions, toNumber]),
     ['groupAggFiltering', (val: any) => (typeof val === 'function' ? val : toBoolean(val))],
     ['pageSize', toConstrainedNum(1)],
