@@ -451,6 +451,8 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             this.reset(source);
         }
 
+        this.selectionCtx.reset(null);
+
         // the above does not clean up the parent rows if they are selected
         if (rowModelClientSide && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections(source);
@@ -589,9 +591,10 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
 
         const { source, justFiltered, justCurrentPage } = params;
 
-        const callback = (rowNode: RowNode) => rowNode.selectThisNode(true, undefined, source);
-
-        this.getNodesToSelect(justFiltered, justCurrentPage).forEach(callback);
+        this.getNodesToSelect(justFiltered, justCurrentPage).forEach((rowNode) =>
+            rowNode.selectThisNode(true, undefined, source)
+        );
+        this.selectionCtx.reset(null);
 
         // the above does not clean up the parent rows if they are selected
         if (this.rowModel.getType() === 'clientSide' && this.groupSelectsChildren) {
