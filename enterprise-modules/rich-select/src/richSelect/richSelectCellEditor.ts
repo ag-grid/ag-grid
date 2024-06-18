@@ -46,7 +46,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         this.addManagedListeners(this.richSelect, {
             fieldPickerValueSelected: this.onEditorPickerValueSelected.bind(this),
         });
-        // this.addManagedElementListeners(this.richSelect.getGui(), { focusout: this.onEditorFocusOut.bind(this) });
+        this.addManagedElementListeners(this.richSelect.getGui(), { focusout: this.onEditorFocusOut.bind(this) });
         this.focusAfterAttached = cellStartedEdit;
     }
 
@@ -123,7 +123,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         }
 
         if (multiSelect && allowTyping) {
-            ret.allowTyping = false;
+            this.params.allowTyping = ret.allowTyping = false;
             _warnOnce(
                 'agRichSelectCellEditor cannot have `multiSelect` and `allowTyping` set to `true`. AllowTyping has been turned off.'
             );
