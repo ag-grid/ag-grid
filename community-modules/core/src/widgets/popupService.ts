@@ -708,49 +708,52 @@ export class PopupService extends BeanStub implements NamedBean {
 
         const leftPx = ePopup.style.left;
         const left = parseInt(leftPx!.substring(0, leftPx!.length - 1), 10);
-
+        const fwOverrides = this.getFrameworkOverrides();
         return new AgPromise<() => void>((resolve) => {
-            this.getFrameworkOverrides()
-                .setInterval(() => {
-                    const pRect = eParent.getBoundingClientRect();
-                    const sRect = element.getBoundingClientRect();
+            fwOverrides.wrapIncoming(() => {
+                fwOverrides
+                    .setInterval(() => {
+                        const pRect = eParent.getBoundingClientRect();
+                        const sRect = element.getBoundingClientRect();
 
-                    const elementNotInDom = sRect.top == 0 && sRect.left == 0 && sRect.height == 0 && sRect.width == 0;
-                    if (elementNotInDom) {
-                        params.hidePopup();
-                        return;
-                    }
-
-                    const currentDiffTop = pRect.top - sRect.top;
-                    if (currentDiffTop != lastDiffTop) {
-                        const newTop = this.keepXYWithinBounds(
-                            ePopup,
-                            top + initialDiffTop - currentDiffTop,
-                            DIRECTION.vertical
-                        );
-                        ePopup.style.top = `${newTop}px`;
-                    }
-                    lastDiffTop = currentDiffTop;
-
-                    const currentDiffLeft = pRect.left - sRect.left;
-                    if (currentDiffLeft != lastDiffLeft) {
-                        const newLeft = this.keepXYWithinBounds(
-                            ePopup,
-                            left + initialDiffLeft - currentDiffLeft,
-                            DIRECTION.horizontal
-                        );
-                        ePopup.style.left = `${newLeft}px`;
-                    }
-                    lastDiffLeft = currentDiffLeft;
-                }, 200)
-                .then((intervalId) => {
-                    const result = () => {
-                        if (intervalId != null) {
-                            window.clearInterval(intervalId);
+                        const elementNotInDom =
+                            sRect.top == 0 && sRect.left == 0 && sRect.height == 0 && sRect.width == 0;
+                        if (elementNotInDom) {
+                            params.hidePopup();
+                            return;
                         }
-                    };
-                    resolve(result);
-                });
+
+                        const currentDiffTop = pRect.top - sRect.top;
+                        if (currentDiffTop != lastDiffTop) {
+                            const newTop = this.keepXYWithinBounds(
+                                ePopup,
+                                top + initialDiffTop - currentDiffTop,
+                                DIRECTION.vertical
+                            );
+                            ePopup.style.top = `${newTop}px`;
+                        }
+                        lastDiffTop = currentDiffTop;
+
+                        const currentDiffLeft = pRect.left - sRect.left;
+                        if (currentDiffLeft != lastDiffLeft) {
+                            const newLeft = this.keepXYWithinBounds(
+                                ePopup,
+                                left + initialDiffLeft - currentDiffLeft,
+                                DIRECTION.horizontal
+                            );
+                            ePopup.style.left = `${newLeft}px`;
+                        }
+                        lastDiffLeft = currentDiffLeft;
+                    }, 200)
+                    .then((intervalId) => {
+                        const result = () => {
+                            if (intervalId != null) {
+                                window.clearInterval(intervalId);
+                            }
+                        };
+                        resolve(result);
+                    });
+            }, 'popupPositioning');
         });
     }
 
