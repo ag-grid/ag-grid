@@ -80,4 +80,8 @@ $nav-height: 340px;
 
 .youtubeIcon {
     fill: red !important;
+
+    #{$selector-darkmode} & {
+        fill: white !important;
+    }
 }
