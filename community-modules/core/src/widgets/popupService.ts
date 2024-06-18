@@ -18,7 +18,6 @@ import { _getAbsoluteHeight, _getAbsoluteWidth, _getElementRectWithOffset } from
 import { _isElementInEventPath, _isStopPropagationForAgGrid } from '../utils/event';
 import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
-import { AgPromise } from '../utils/promise';
 
 export interface PopupPositionParams {
     ePopup: HTMLElement;
@@ -49,7 +48,7 @@ export interface AgPopup {
     isAnchored: boolean;
     instanceId: number;
     alignedToElement?: HTMLElement;
-    stopAnchoringPromise?: AgPromise<() => void>;
+    stopAnchoringPromise?: Promise<() => void>;
 }
 
 enum DIRECTION {
@@ -650,7 +649,7 @@ export class PopupService extends BeanStub implements NamedBean {
     public setPopupPositionRelatedToElement(
         popupEl: HTMLElement,
         relativeElement?: HTMLElement | null
-    ): AgPromise<() => void> | undefined {
+    ): Promise<() => void> | undefined {
         const popupIndex = this.getPopupIndex(popupEl);
 
         if (popupIndex === -1) {
@@ -695,7 +694,7 @@ export class PopupService extends BeanStub implements NamedBean {
         ePopup: HTMLElement;
         element: HTMLElement;
         hidePopup: (params?: PopupEventParams) => void;
-    }): AgPromise<() => void> {
+    }): Promise<() => void> {
         const eParent = this.getPopupParent();
         const parentRect = eParent.getBoundingClientRect();
 
@@ -714,7 +713,7 @@ export class PopupService extends BeanStub implements NamedBean {
         const leftPx = ePopup.style.left;
         const left = parseInt(leftPx!.substring(0, leftPx!.length - 1), 10);
         const fwOverrides = this.getFrameworkOverrides();
-        return new AgPromise<() => void>((resolve) => {
+        return new Promise<() => void>((resolve) => {
             fwOverrides.wrapIncoming(() => {
                 fwOverrides
                     .setInterval(() => {

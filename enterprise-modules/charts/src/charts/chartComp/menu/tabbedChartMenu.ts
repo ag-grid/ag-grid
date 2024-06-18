@@ -1,5 +1,5 @@
 import type { BeanCollection, ChartToolPanelMenuOptions } from '@ag-grid-community/core';
-import { AgPromise, Component } from '@ag-grid-community/core';
+import { Component } from '@ag-grid-community/core';
 import type { TabbedItem } from '@ag-grid-enterprise/core';
 import { TabbedLayout } from '@ag-grid-enterprise/core';
 
@@ -72,7 +72,7 @@ export class TabbedChartMenu extends Component<TabbedChartMenuEvent> {
         return {
             title: titleEl,
             titleLabel: translatedTitle,
-            bodyPromise: AgPromise.resolve(eWrapperDiv),
+            bodyPromise: Promise.resolve(eWrapperDiv),
             getScrollableContainer: () => {
                 const scrollableContainer = eWrapperDiv.querySelector('.ag-scrollable-container');
                 return (scrollableContainer || eWrapperDiv) as HTMLElement;

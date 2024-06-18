@@ -23,7 +23,6 @@ import type { RowRenderer } from '../rendering/rowRenderer';
 import { _warnOnce } from '../utils/function';
 import { _exists, _jsonEquals } from '../utils/generic';
 import { _cloneObject } from '../utils/object';
-import { AgPromise } from '../utils/promise';
 import type { ValueService } from '../valueService/valueService';
 import type { FilterManager } from './filterManager';
 import type { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
@@ -86,7 +85,7 @@ export class ColumnFilterService extends BeanStub {
             return;
         }
 
-        const allPromises: AgPromise<void>[] = [];
+        const allPromises: Promise<void>[] = [];
         const previousModel = this.getFilterModel();
 
         if (model) {
@@ -129,7 +128,7 @@ export class ColumnFilterService extends BeanStub {
             });
         }
 
-        AgPromise.all(allPromises).then(() => {
+        Promise.all(allPromises).then(() => {
             const currentModel = this.getFilterModel();
 
             const columns: AgColumn[] = [];
@@ -148,15 +147,15 @@ export class ColumnFilterService extends BeanStub {
         });
     }
 
-    private setModelOnFilterWrapper(filterPromise: AgPromise<IFilterComp>, newModel: any): AgPromise<void> {
-        return new AgPromise<void>((resolve) => {
+    private setModelOnFilterWrapper(filterPromise: Promise<IFilterComp>, newModel: any): Promise<void> {
+        return new Promise<void>((resolve) => {
             filterPromise.then((filter) => {
                 if (typeof filter!.setModel !== 'function') {
                     _warnOnce('filter missing setModel method, which is needed for setFilterModel');
                     resolve();
                 }
 
-                (filter!.setModel(newModel) || AgPromise.resolve()).then(() => resolve());
+                (filter!.setModel(newModel) || Promise.resolve()).then(() => resolve());
             });
         });
     }
@@ -216,7 +215,7 @@ export class ColumnFilterService extends BeanStub {
         return this.doColumnFiltersPass(node, filterToSkip, true);
     }
 
-    private updateActiveFilters(): AgPromise<void> {
+    private updateActiveFilters(): Promise<void> {
         const isFilterActive = (filter: IFilter | null) => {
             if (!filter) {
                 return false;
@@ -276,7 +275,7 @@ export class ColumnFilterService extends BeanStub {
     private updateFilterFlagInColumns(
         source: ColumnEventType,
         additionalEventAttributes?: any
-    ): AgPromise<(void | null)[]> {
+    ): Promise<(void | null)[]> {
         return this.forEachColumnFilter((filter, filterWrapper) =>
             filterWrapper.column.setFilterActive(filter!.isFilterActive(), source, additionalEventAttributes)
         );
@@ -284,8 +283,8 @@ export class ColumnFilterService extends BeanStub {
 
     private forEachColumnFilter(
         callback: (filter: IFilterComp | null, filterWrapper: FilterWrapper) => void
-    ): AgPromise<(void | null)[]> {
-        return AgPromise.all(
+    ): Promise<(void | null)[]> {
+        return Promise.all(
             Array.from(this.allColumnFilters.values()).map((filterWrapper) =>
                 filterWrapper.filterPromise!.then((filter) => callback(filter, filterWrapper))
             )
@@ -342,7 +341,7 @@ export class ColumnFilterService extends BeanStub {
             filterInstance?: IFilterComp;
             additionalEventAttributes?: any;
         } = {}
-    ): AgPromise<void> {
+    ): Promise<void> {
         const { filterInstance, additionalEventAttributes } = params;
 
         this.updateDependentFilters();
@@ -363,7 +362,7 @@ export class ColumnFilterService extends BeanStub {
                 // method comes back, we know all listeners have finished executing.
                 this.processingFilterChange = true;
             })
-        ) as AgPromise<void>;
+        );
     }
 
     public updateAfterFilterChanged(): void {
@@ -464,7 +463,7 @@ export class ColumnFilterService extends BeanStub {
         column: AgColumn,
         filterWrapper?: FilterWrapper
     ): {
-        filterPromise: (() => AgPromise<IFilterComp> | null) | null;
+        filterPromise: (() => Promise<IFilterComp> | null) | null;
         compDetails: UserCompDetails | null;
     } {
         const defaultFilter = this.getDefaultFilter(column);
@@ -804,22 +803,18 @@ export class ColumnFilterService extends BeanStub {
     public getColumnFilterInstance<TFilter extends IFilter>(
         key: string | AgColumn
     ): Promise<TFilter | null | undefined> {
-        return new Promise((resolve) => {
-            this.getFilterInstanceImpl(key).then((filter) => {
-                resolve(_unwrapUserComp(filter) as any);
-            });
-        });
+        return this.getFilterInstanceImpl(key).then((filter) => _unwrapUserComp(filter) as any);
     }
 
-    private getFilterInstanceImpl(key: string | AgColumn): AgPromise<IFilter | null | undefined> {
+    private getFilterInstanceImpl(key: string | AgColumn): Promise<IFilter | null | undefined> {
         const column = this.columnModel.getColDefCol(key);
 
         if (!column) {
-            return AgPromise.resolve(undefined);
+            return Promise.resolve(undefined);
         }
 
         const filterPromise = this.getOrCreateFilterWrapper(column)?.filterPromise;
-        return filterPromise ?? AgPromise.resolve(null);
+        return filterPromise ?? Promise.resolve(null);
     }
 
     private processFilterModelUpdateQueue(): void {
@@ -848,14 +843,7 @@ export class ColumnFilterService extends BeanStub {
 
         const column = this.columnModel.getColDefCol(key);
         const filterWrapper = column ? this.getOrCreateFilterWrapper(column) : null;
-        const convertPromise = <T>(promise: AgPromise<T>): Promise<T> => {
-            return new Promise((resolve) => {
-                promise.then((result) => resolve(result!));
-            });
-        };
-        return filterWrapper
-            ? convertPromise(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, model))
-            : Promise.resolve();
+        return filterWrapper ? this.setModelOnFilterWrapper(filterWrapper.filterPromise!, model) : Promise.resolve();
     }
 
     private getFilterWrapper(key: string | AgColumn): FilterWrapper | null {
@@ -874,7 +862,7 @@ export class ColumnFilterService extends BeanStub {
 export interface FilterWrapper {
     compiledElement: any;
     column: AgColumn;
-    filterPromise: AgPromise<IFilterComp> | null;
+    filterPromise: Promise<IFilterComp> | null;
     filter?: IFilterComp;
     compDetails: UserCompDetails | null;
 }

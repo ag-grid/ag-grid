@@ -20,7 +20,6 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    AgPromise,
     BeanStub,
     Component,
     FilterWrapperComp,
@@ -244,7 +243,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
     }
 
     private addStopAnchoring(
-        stopAnchoringPromise: AgPromise<() => void>,
+        stopAnchoringPromise: Promise<() => void>,
         column: AgColumn,
         closedFuncsArr: (() => void)[]
     ) {
@@ -497,7 +496,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
         this.tabItemGeneral = {
             title: _createIconNoSpan('menu', this.gos, this.column)!,
             titleLabel: TAB_GENERAL.replace('MenuTab', ''),
-            bodyPromise: AgPromise.resolve(this.mainMenuList.getGui()),
+            bodyPromise: Promise.resolve(this.mainMenuList.getGui()),
             name: TAB_GENERAL,
         };
 
@@ -522,7 +521,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
         this.tabItemFilter = {
             title: _createIconNoSpan('filter', this.gos, this.column)!,
             titleLabel: TAB_FILTER.replace('MenuTab', ''),
-            bodyPromise: AgPromise.resolve(comp?.getGui()) as AgPromise<HTMLElement>,
+            bodyPromise: Promise.resolve(comp?.getGui()) as Promise<HTMLElement>,
             afterAttachedCallback,
             afterDetachedCallback,
             name: TAB_FILTER,
@@ -544,7 +543,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
         this.tabItemColumns = {
             title: _createIconNoSpan('columns', this.gos, this.column)!, //createColumnsIcon(),
             titleLabel: TAB_COLUMNS.replace('MenuTab', ''),
-            bodyPromise: AgPromise.resolve(eWrapperDiv),
+            bodyPromise: Promise.resolve(eWrapperDiv),
             name: TAB_COLUMNS,
         };
 

@@ -3,7 +3,6 @@ import type { RowStyle } from '../entities/gridOptions';
 import type { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
 import { _setAriaHidden } from './aria';
 import { _isBrowserChrome, _isBrowserSafari } from './browser';
-import type { AgPromise } from './promise';
 import { _camelCaseToHyphenated } from './string';
 
 let rtlNegativeScroll: boolean;
@@ -479,13 +478,10 @@ export function _nodeListForEach<T extends Node>(nodeList: NodeListOf<T> | null,
 /**
  * cell renderers are used in a few places. they bind to dom slightly differently to other cell renders as they
  * can return back strings (instead of html element) in the getGui() method. common code placed here to handle that.
- * @param {AgPromise<ICellRendererComp>} cellRendererPromise
+ * @param {Promise<ICellRendererComp>} cellRendererPromise
  * @param {HTMLElement} eTarget
  */
-export function _bindCellRendererToHtmlElement(
-    cellRendererPromise: AgPromise<ICellRendererComp>,
-    eTarget: HTMLElement
-) {
+export function _bindCellRendererToHtmlElement(cellRendererPromise: Promise<ICellRendererComp>, eTarget: HTMLElement) {
     cellRendererPromise.then((cellRenderer) => {
         const gui: HTMLElement | string = cellRenderer!.getGui();
 

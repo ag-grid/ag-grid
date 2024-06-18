@@ -185,7 +185,7 @@ import type {
 } from 'ag-grid-community';
 // @END_IMPORTS@
 import type { GridApi, GridOptions, GridParams, Module } from 'ag-grid-community';
-import { AgPromise, _combineAttributesAndGridOptions, _processOnChange, createGrid } from 'ag-grid-community';
+import { _combineAttributesAndGridOptions, _processOnChange, createGrid } from 'ag-grid-community';
 
 import { AngularFrameworkComponentWrapper } from './angularFrameworkComponentWrapper';
 import { AngularFrameworkOverrides } from './angularFrameworkOverrides';

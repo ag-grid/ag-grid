@@ -8,7 +8,7 @@ import type {
     SetFilterParams,
     ValueService,
 } from '@ag-grid-community/core';
-import { AgPromise, _makeNull, _toStringOrNull } from '@ag-grid-community/core';
+import { _makeNull, _toStringOrNull } from '@ag-grid-community/core';
 
 /** @param V type of value in the Set Filter */
 export class ClientSideValuesExtractor<V> {
@@ -31,8 +31,8 @@ export class ClientSideValuesExtractor<V> {
     public extractUniqueValuesAsync(
         predicate: (node: RowNode) => boolean,
         existingValues?: Map<string | null, V | null>
-    ): AgPromise<Map<string | null, V | null>> {
-        return new AgPromise((resolve) => {
+    ): Promise<Map<string | null, V | null>> {
+        return new Promise((resolve) => {
             if (this.rowModel.isRowDataLoaded()) {
                 resolve(this.extractUniqueValues(predicate, existingValues));
             } else {

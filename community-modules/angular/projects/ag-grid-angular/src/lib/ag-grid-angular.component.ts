@@ -171,7 +171,7 @@ import type {
 } from '@ag-grid-community/core';
 // @END_IMPORTS@
 import type { GridApi, GridOptions, GridParams, Module } from '@ag-grid-community/core';
-import { AgPromise, _combineAttributesAndGridOptions, _processOnChange, createGrid } from '@ag-grid-community/core';
+import { _combineAttributesAndGridOptions, _processOnChange, createGrid } from '@ag-grid-community/core';
 import {
     AfterViewInit,
     Component,

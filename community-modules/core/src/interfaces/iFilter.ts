@@ -1,7 +1,6 @@
 import type { ColDef, ValueGetterFunc } from '../entities/colDef';
 import type { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 import type { Column } from '../interfaces/iColumn';
-import type { AgPromise } from '../utils/promise';
 import type { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 import type { AgGridCommon } from './iCommon';
 import type { IComponent } from './iComponent';
@@ -92,7 +91,7 @@ export interface IFilter extends BaseFilter {
      * Sets the state of the filter using the supplied model. Providing `null` as the model will
      * de-activate the filter.
      */
-    setModel(model: any): void | AgPromise<void>;
+    setModel(model: any): void | Promise<void>;
 
     /**
      * This method is called when the filter parameters change.

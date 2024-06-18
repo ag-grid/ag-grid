@@ -1,5 +1,3 @@
-import type { AgPromise } from '../utils/promise';
-
 /** This is for User Components only, do not implement this for internal components. */
 export interface IComponent<T> {
     /** Return the DOM element of your component, this is what the grid puts into the DOM */
@@ -9,5 +7,5 @@ export interface IComponent<T> {
     destroy?(): void;
 
     /** The init(params) method is called on the component once. */
-    init?(params: T): AgPromise<void> | void;
+    init?(params: T): Promise<void> | void;
 }

@@ -1,5 +1,3 @@
-import { AgPromise } from '@ag-grid-community/core';
-
 import customWrapperComp from '../../reactUi/customComp/customWrapperComp';
 import { ReactComponent } from '../reactComponent';
 
@@ -20,9 +18,9 @@ export function addOptionalMethods<M, C>(optionalMethodNames: string[], provided
 }
 
 export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> extends ReactComponent {
-    private updateCallback?: () => AgPromise<void>;
+    private updateCallback?: () => Promise<void>;
     private resolveUpdateCallback!: () => void;
-    private awaitUpdateCallback = new AgPromise<void>((resolve) => {
+    private awaitUpdateCallback = new Promise<void>((resolve) => {
         this.resolveUpdateCallback = resolve;
     });
 
@@ -32,7 +30,7 @@ export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> exten
 
     protected sourceParams!: TInputParams;
 
-    public override init(params: TInputParams): AgPromise<void> {
+    public override init(params: TInputParams): Promise<void> {
         this.sourceParams = params;
         return super.init(this.getProps());
     }
@@ -41,7 +39,7 @@ export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> exten
         // do nothing
     }
 
-    public getInstance(): AgPromise<any> {
+    public getInstance(): Promise<any> {
         return this.instanceCreated.then(() => this.componentInstance);
     }
 
@@ -58,7 +56,7 @@ export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> exten
                 // this hooks up `CustomWrapperComp` to allow props updates to be pushed to the custom component
                 this.updateCallback = () => {
                     callback(this.getProps());
-                    return new AgPromise<void>((resolve) => {
+                    return new Promise<void>((resolve) => {
                         // ensure prop updates have happened
                         setTimeout(() => {
                             resolve();
@@ -87,12 +85,12 @@ export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> exten
         } as any;
     }
 
-    protected refreshProps(): AgPromise<void> {
+    protected refreshProps(): Promise<void> {
         if (this.updateCallback) {
             return this.updateCallback();
         }
         // `refreshProps` is assigned in an effect. It's possible it hasn't been run before the first usage, so wait.
-        return new AgPromise<void>((resolve) =>
+        return new Promise<void>((resolve) =>
             this.awaitUpdateCallback.then(() => {
                 this.updateCallback!().then(() => resolve());
             })

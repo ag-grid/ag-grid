@@ -3,7 +3,6 @@ import type { IDoesFilterPassParams, IFilterOptionDef } from '../../interfaces/i
 import { _areEqual } from '../../utils/array';
 import { _removeFromParent, _setDisabled, _setDisplayed } from '../../utils/dom';
 import { _isFunction, _warnOnce } from '../../utils/function';
-import { AgPromise } from '../../utils/promise';
 import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
 import type { AgInputTextField } from '../../widgets/agInputTextField';
 import type { ListOption } from '../../widgets/agList';
@@ -240,7 +239,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return true;
     }
 
-    protected setModelIntoUi(model: ISimpleFilterModel | ICombinedSimpleModel<M>): AgPromise<void> {
+    protected setModelIntoUi(model: ISimpleFilterModel | ICombinedSimpleModel<M>): Promise<void> {
         const isCombined = (model as any).operator;
 
         if (isCombined) {
@@ -288,7 +287,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
         this.onUiChanged();
 
-        return AgPromise.resolve();
+        return Promise.resolve();
     }
 
     private validateAndUpdateConditions(conditions: M[]): number {
@@ -809,7 +808,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         }
     }
 
-    protected resetUiToDefaults(silent?: boolean): AgPromise<void> {
+    protected resetUiToDefaults(silent?: boolean): Promise<void> {
         this.removeConditionsAndOperators(this.isReadOnly() ? 1 : this.numAlwaysVisibleConditions);
 
         this.eTypes.forEach((eType) => this.resetType(eType));
@@ -834,7 +833,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             this.onUiChanged();
         }
 
-        return AgPromise.resolve();
+        return Promise.resolve();
     }
 
     private resetType(eType: AgSelect): void {

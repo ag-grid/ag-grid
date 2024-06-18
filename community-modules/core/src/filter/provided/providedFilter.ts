@@ -7,7 +7,6 @@ import type { IRowNode } from '../../interfaces/iRowNode';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
 import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
 import { _debounce, _warnOnce } from '../../utils/function';
-import type { AgPromise } from '../../utils/promise';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
@@ -65,9 +64,9 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     protected abstract createBodyTemplate(): string;
     protected abstract getAgComponents(): ComponentSelector[];
     protected abstract getCssIdentifier(): string;
-    protected abstract resetUiToDefaults(silent?: boolean): AgPromise<void>;
+    protected abstract resetUiToDefaults(silent?: boolean): Promise<void>;
 
-    protected abstract setModelIntoUi(model: M): AgPromise<void>;
+    protected abstract setModelIntoUi(model: M): Promise<void>;
     protected abstract areModelsEqual(a: M, b: M): boolean;
 
     /** Used to get the filter type for filter models. */
@@ -261,7 +260,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         return this.appliedModel ? this.appliedModel : null;
     }
 
-    public setModel(model: M | null): AgPromise<void> {
+    public setModel(model: M | null): Promise<void> {
         const promise = model != null ? this.setModelIntoUi(model) : this.resetUiToDefaults();
 
         return promise.then(() => {

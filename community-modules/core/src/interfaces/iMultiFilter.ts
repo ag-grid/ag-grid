@@ -1,5 +1,4 @@
 import type { IProvidedFilter } from '../filter/provided/iProvidedFilter';
-import type { AgPromise } from '../utils/promise';
 import type {
     IFilter,
     IFilterComp,
@@ -81,7 +80,7 @@ export interface IMultiFilterComp {
      * waiting on the returned grid promise, e.g.
      * `filter.setModel([null, { values: ['a', 'b'] }]).then(function() { gridApi.onFilterChanged(); });`
      */
-    setModel(model: IMultiFilterModel | null): void | AgPromise<void>;
+    setModel(model: IMultiFilterModel | null): void | Promise<void>;
 
     /** Returns the child filter instance at the specified index or `undefined` for an invalid index.  */
     getChildFilterInstance(index: number): IFilterComp | undefined;

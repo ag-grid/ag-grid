@@ -1,7 +1,6 @@
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import type { IFloatingFilterComp } from '../../../filter/floating/floatingFilter';
 import { _setDisplayed } from '../../../utils/dom';
-import type { AgPromise } from '../../../utils/promise';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderFilterCellCtrl } from './headerFilterCellCtrl';
@@ -13,7 +12,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
     private readonly eButtonShowMainFilter: HTMLElement = RefPlaceholder;
 
     private floatingFilterComp: IFloatingFilterComp | undefined;
-    private compPromise: AgPromise<IFloatingFilterComp> | null;
+    private compPromise: Promise<IFloatingFilterComp> | null;
 
     constructor(ctrl: HeaderFilterCellCtrl) {
         super(

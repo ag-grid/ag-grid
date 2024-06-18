@@ -1,4 +1,4 @@
-import type { AgPromise, IAfterGuiAttachedParams } from '@ag-grid-community/core';
+import type { IAfterGuiAttachedParams } from '@ag-grid-community/core';
 
 export interface TabbedLayoutParams {
     items: TabbedItem[];
@@ -16,7 +16,7 @@ export interface TabbedLayoutParams {
 export interface TabbedItem {
     title: Element;
     titleLabel: string;
-    bodyPromise: AgPromise<HTMLElement>;
+    bodyPromise: Promise<HTMLElement>;
     name: string;
     getScrollableContainer?: () => HTMLElement;
     afterAttachedCallback?: (params: IAfterGuiAttachedParams) => void;

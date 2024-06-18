@@ -1,6 +1,5 @@
 import type {
     AgInputTextField,
-    AgPromise,
     AriaAnnouncementService,
     BeanCollection,
     FieldPickerValueSelectedEvent,
@@ -214,7 +213,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             });
         }
 
-        let userCompDetailsPromise: AgPromise<any> | undefined;
+        let userCompDetailsPromise: Promise<any> | undefined;
 
         if (userCompDetails) {
             userCompDetailsPromise = userCompDetails.newAgStackInstance();

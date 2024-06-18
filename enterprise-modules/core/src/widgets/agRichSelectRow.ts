@@ -1,5 +1,4 @@
 import type {
-    AgPromise,
     BeanCollection,
     IRichCellEditorRendererParams,
     RichSelectParams,
@@ -118,7 +117,7 @@ export class RichSelectRow<TValue> extends Component {
 
     private populateWithRenderer(value: TValue, valueFormatted: string): boolean {
         // bad coder here - we are not populating all values of the cellRendererParams
-        let cellRendererPromise: AgPromise<any> | undefined;
+        let cellRendererPromise: Promise<any> | undefined;
         let userCompDetails: UserCompDetails | undefined;
 
         if (this.params.cellRenderer) {

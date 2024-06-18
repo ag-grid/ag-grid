@@ -1,5 +1,5 @@
 import type { ComponentType, IComponent, WrappableInterface } from '@ag-grid-community/core';
-import { AgPromise, _warnOnce } from '@ag-grid-community/core';
+import { _warnOnce } from '@ag-grid-community/core';
 import type { ReactPortal } from 'react';
 import { createElement } from 'react';
 import { createPortal } from 'react-dom';
@@ -23,7 +23,7 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
     private oldPortal: ReactPortal | null = null;
     private reactElement: any;
     private params: any;
-    protected instanceCreated: AgPromise<boolean> | AgPromise<false>;
+    protected instanceCreated: Promise<boolean> | Promise<false>;
     private resolveInstanceCreated?: (value: boolean) => void;
     private suppressFallbackMethods: boolean;
 
@@ -44,8 +44,8 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
         this.portalKey = generateNewKey();
 
         this.instanceCreated = this.isStatelessComponent()
-            ? AgPromise.resolve(false)
-            : new AgPromise((resolve) => {
+            ? Promise.resolve(false)
+            : new Promise((resolve) => {
                   this.resolveInstanceCreated = resolve;
               });
     }
@@ -166,13 +166,13 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
         (this as any)[name] = callback;
     }
 
-    public init(params: any): AgPromise<void> {
+    public init(params: any): Promise<void> {
         this.eParentElement = this.createParentElement(params);
         this.params = params;
 
         this.createOrUpdatePortal(params);
 
-        return new AgPromise<void>((resolve) => this.createReactComponent(resolve));
+        return new Promise<void>((resolve) => this.createReactComponent(resolve));
     }
 
     private createOrUpdatePortal(params: any) {

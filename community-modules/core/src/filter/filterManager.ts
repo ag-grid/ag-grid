@@ -14,7 +14,6 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
 import { _warnOnce } from '../utils/function';
 import { _mergeDeep } from '../utils/object';
-import { AgPromise } from '../utils/promise';
 import type { ColumnFilterService, FilterWrapper } from './columnFilterService';
 import type { QuickFilterService } from './quickFilterService';
 
@@ -184,7 +183,7 @@ export class FilterManager extends BeanStub implements NamedBean {
         this.externalFilterPresent = this.isExternalFilterPresentCallback();
         (this.columnFilterService
             ? this.columnFilterService.updateBeforeFilterChanged(params)
-            : AgPromise.resolve()
+            : Promise.resolve()
         ).then(() => {
             const filterChangedEvent: WithoutGridCommon<FilterChangedEvent> = {
                 source,

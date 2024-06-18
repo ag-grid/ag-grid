@@ -1,7 +1,6 @@
 import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import type { HeaderFilterCellCtrl, IFloatingFilter, IHeaderFilterCellComp, UserCompDetails } from 'ag-grid-community';
-import { AgPromise } from 'ag-grid-community';
 
 import { CustomContext } from '../../shared/customComp/customContext';
 import { FloatingFilterComponentProxy } from '../../shared/customComp/floatingFilterComponentProxy';
@@ -31,7 +30,7 @@ const HeaderFilterCellComp = (props: { ctrl: HeaderFilterCellCtrl }) => {
     const eButtonShowMainFilter = useRef<HTMLButtonElement>(null);
 
     const userCompResolve = useRef<(value: IFloatingFilter) => void>();
-    const userCompPromise = useRef<AgPromise<IFloatingFilter>>();
+    const userCompPromise = useRef<Promise<IFloatingFilter>>();
 
     const userCompRef = (value: IFloatingFilter) => {
         // We skip when it's un-setting
@@ -50,7 +49,7 @@ const HeaderFilterCellComp = (props: { ctrl: HeaderFilterCellCtrl }) => {
             return;
         }
 
-        userCompPromise.current = new AgPromise<IFloatingFilter>((resolve) => {
+        userCompPromise.current = new Promise<IFloatingFilter>((resolve) => {
             userCompResolve.current = resolve;
         });
 

@@ -10,7 +10,6 @@
     UserComponentFactory,
 } from '@ag-grid-community/core';
 import {
-    AgPromise,
     IAfterGuiAttachedParams,
     IClientSideRowModel,
     IDoesFilterPassParams,
@@ -63,8 +62,8 @@ function createFilter(filterParams: any = {}): MultiFilter {
 
     filterManager.createFilterParams.mockImplementation((_1, _2, _3) => ({ ...baseFilterParams }));
     userComponentFactory.newFilterComponent
-        .mockReturnValueOnce(AgPromise.resolve(filter1))
-        .mockReturnValueOnce(AgPromise.resolve(filter2));
+        .mockReturnValueOnce(Promise.resolve(filter1))
+        .mockReturnValueOnce(Promise.resolve(filter2));
 
     const params: MultiFilterParams = {
         ...baseFilterParams,

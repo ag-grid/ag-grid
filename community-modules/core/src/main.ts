@@ -887,7 +887,6 @@ export { _formatNumberTwoDecimalPlacesAndCommas, _formatNumberCommas } from './u
 export { _iterateObject, _cloneObject, _getAllValuesInObject, _mergeDeep } from './utils/object';
 export { _sortRowNodesByOrder } from './utils/rowNode';
 export { _capitalise, _escapeString, _utf8_encode } from './utils/string';
-export { AgPromise } from './utils/promise';
 
 // charts
 export * from './interfaces/iChartOptions';

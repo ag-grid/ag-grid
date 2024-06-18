@@ -1,4 +1,4 @@
-import type { AgPromise, IDoesFilterPassParams, IFilter, IFilterParams } from 'ag-grid-community';
+import type { IDoesFilterPassParams, IFilter, IFilterParams } from 'ag-grid-community';
 
 import { CustomComponentWrapper } from './customComponentWrapper';
 import type { CustomFilterCallbacks, CustomFilterProps } from './interfaces';
@@ -24,7 +24,7 @@ export class FilterComponentWrapper
         return this.model;
     }
 
-    public setModel(model: any): AgPromise<void> {
+    public setModel(model: any): Promise<void> {
         this.expectingNewMethods = true;
         this.model = model;
         return this.refreshProps();

@@ -1,6 +1,5 @@
 import type {
     AgEvent,
-    AgPromise,
     BeanCollection,
     Component,
     IComponent,
@@ -78,7 +77,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
     private cssClassPrefix: string;
     private eSubMenuGui?: HTMLElement;
 
-    public init(params: AgMenuItemComponentParams): AgPromise<void> {
+    public init(params: AgMenuItemComponentParams): Promise<void> {
         const { menuItemDef, isAnotherSubMenuOpen, level, childComponent, contextParams } = params;
         this.params = params.menuItemDef;
         this.level = level;
