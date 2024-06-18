@@ -46,7 +46,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         }
         const loading = this.gos.get('loading');
         if (loading !== undefined && !loading) {
-            _warnOnce('AG Grid: showLoadingOverlay has no effect when loading=false');
+            _warnOnce('showLoadingOverlay has no effect when loading=false');
             return;
         }
 
@@ -120,7 +120,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             }
         } else if (loading) {
             if (this.gos.get('suppressLoadingOverlay')) {
-                _warnOnce('AG Grid: setting loading to true has no effect when suppressLoadingOverlay is true');
+                _warnOnce('setting loading to true has no effect when suppressLoadingOverlay is true');
             }
             this.showLoadingOverlay();
         } else {

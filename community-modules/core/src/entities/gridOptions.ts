@@ -766,9 +766,9 @@ export interface GridOptions<TData = any> {
 
     // *** Overlays *** //
     /**
-     * Forces the grid to show or hide the loading overlay. If undefined, the grid will show the loading overlay if rows are not set yet.
+     * Forces the grid to show or hide the loading overlay. If unset, the loading overlay will be shown if rows are not set yet.
      */
-    loading?: boolean | undefined;
+    loading?: boolean;
     /**
      * Provide a template for 'loading' overlay.
      */
