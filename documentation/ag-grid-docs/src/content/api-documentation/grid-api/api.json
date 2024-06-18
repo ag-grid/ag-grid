@@ -567,10 +567,26 @@
         "meta": {
             "displayName": "Events"
         },
-        "addEventListener": {},
-        "addGlobalListener": {},
-        "removeEventListener": {},
-        "removeGlobalListener": {},
+        "addEventListener": {
+            "interfaceHierarchyOverrides": {
+                "exclude": ["AgEventTypeParams"]
+            }
+        },
+        "removeEventListener": {
+            "interfaceHierarchyOverrides": {
+                "exclude": ["AgEventTypeParams"]
+            }
+        },
+        "addGlobalListener": {
+            "interfaceHierarchyOverrides": {
+                "exclude": ["AgEventTypeParams"]
+            }
+        },
+        "removeGlobalListener": {
+            "interfaceHierarchyOverrides": {
+                "exclude": ["AgEventTypeParams"]
+            }
+        },
         "addRenderedRowListener": {
             "more": {
                 "name": "Row Events",
