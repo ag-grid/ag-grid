@@ -1,16 +1,17 @@
 import type { BeanCollection, FocusService } from '@ag-grid-community/core';
-import { Component, KeyCode, _clearElement } from '@ag-grid-community/core';
+import { Component, KeyCode, _clearElement, _setAriaPosInSet, _setAriaSetSize } from '@ag-grid-community/core';
 
 import { AgPill } from './agPill';
 
 export interface PillRendererParams<TValue> {
     eWrapper?: HTMLElement;
+    announceItemFocus?: () => void;
     onPillMouseDown?: (e: MouseEvent) => void;
     getValue: () => TValue[] | null;
     setValue: (value: TValue[] | null) => void;
 }
 
-export class PillContainer<TValue> extends Component {
+export class AgPillContainer<TValue> extends Component {
     private focusService: FocusService;
     private params: PillRendererParams<TValue>;
     private pills: AgPill[] = [];
@@ -21,7 +22,7 @@ export class PillContainer<TValue> extends Component {
 
     constructor() {
         super(/* html */ `
-            <div class="ag-pill-container"></div>
+            <div class="ag-pill-container" role="listbox"></div>
             `);
     }
 
@@ -41,7 +42,10 @@ export class PillContainer<TValue> extends Component {
             return;
         }
 
-        for (const value of values) {
+        const len = values.length;
+
+        for (let i = 0; i < len; i++) {
+            const value = values[i];
             const pill: AgPill = this.createBean(
                 new AgPill({
                     onButtonClick: () => this.onPillButtonClick(pill),
@@ -49,33 +53,53 @@ export class PillContainer<TValue> extends Component {
                 })
             );
 
+            const pillGui = pill.getGui();
+
+            _setAriaPosInSet(pillGui, i + 1);
+            _setAriaSetSize(pillGui, len);
+
             if (params.onPillMouseDown) {
                 pill.addGuiEventListener('mousedown', params.onPillMouseDown);
             }
 
+            if (params.announceItemFocus) {
+                pill.addGuiEventListener('focus', params.announceItemFocus);
+            }
+
             pill.setText(value as string);
             pill.toggleCloseButtonClass('ag-icon-cancel', true);
-            this.appendChild(pill.getGui());
+            this.appendChild(pillGui);
             this.pills.push(pill);
         }
     }
 
-    public onKeyboardNavigateKey(e: KeyboardEvent): boolean {
+    public onKeyboardNavigateKey(e: KeyboardEvent): void {
         const { key } = e;
 
         if (!this.pills.length || (key !== KeyCode.LEFT && key !== KeyCode.RIGHT)) {
-            return false;
+            return;
         }
 
         e.preventDefault();
-        const nextFocusableEl = this.focusService.findNextFocusableElement(this.getGui(), false, key === KeyCode.LEFT);
 
-        if (nextFocusableEl) {
-            nextFocusableEl.focus();
-            return true;
+        const activeEl = this.gos.getActiveDomElement();
+        const eGui = this.getGui();
+        const { params, focusService } = this;
+
+        if (eGui.contains(activeEl)) {
+            const nextFocusableEl = focusService.findNextFocusableElement(eGui, false, key === KeyCode.LEFT);
+
+            if (nextFocusableEl) {
+                nextFocusableEl.focus();
+            } else if (params.eWrapper) {
+                params.eWrapper.focus();
+            }
+        } else {
+            const focusableElements = focusService.findFocusableElements(eGui);
+            if (focusableElements.length > 0) {
+                focusableElements[key === KeyCode.RIGHT ? 0 : focusableElements.length - 1].focus();
+            }
         }
-
-        return false;
     }
 
     private clearPills(): void {

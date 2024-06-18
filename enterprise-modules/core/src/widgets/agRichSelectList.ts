@@ -127,7 +127,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         const selectedPositions = this.getIndicesForValues(value);
         const len = selectedPositions.length;
 
-        if (len >= 0) {
+        if (len > 0) {
             // make sure the virtual list has been sized correctly
             this.refresh();
             this.ensureIndexVisible(selectedPositions[0]);

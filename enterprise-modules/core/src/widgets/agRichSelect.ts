@@ -29,7 +29,7 @@ import {
     _stopPropagationForAgGrid,
 } from '@ag-grid-community/core';
 
-import { PillContainer } from './AgPillContainer';
+import { AgPillContainer } from './AgPillContainer';
 import type { AgRichSelectListEvent } from './agRichSelectList';
 import { AgRichSelectList } from './agRichSelectList';
 
@@ -51,7 +51,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     private searchString = '';
     private listComponent: AgRichSelectList<TValue> | undefined;
-    private pillContainer: PillContainer<TValue> | null;
+    private pillContainer: AgPillContainer<TValue> | null;
     protected values: TValue[];
 
     private searchStringCreator: ((values: TValue[]) => string[]) | null = null;
@@ -61,6 +61,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private ariaToggleSelection: string;
     private ariaDeselectAllItems: string;
     private ariaDeleteSelection: string;
+    private skipWrapperAnnouncement?: boolean = false;
 
     constructor(config?: RichSelectParams<TValue>) {
         super({
@@ -312,7 +313,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     private createOrUpdatePillContainer(container: HTMLElement): void {
         if (!this.pillContainer) {
-            const pillContainer = (this.pillContainer = this.createBean(new PillContainer<TValue>()));
+            const pillContainer = (this.pillContainer = this.createBean(new AgPillContainer<TValue>()));
             this.addDestroyFunc(() => {
                 this.destroyBean(this.pillContainer);
                 this.pillContainer = null;
@@ -326,12 +327,17 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 onPillMouseDown: (e: MouseEvent) => {
                     e.stopImmediatePropagation();
                 },
+                announceItemFocus: () => {
+                    this.ariaAnnouncementService.announceValue(this.ariaDeleteSelection);
+                },
                 getValue: () => this.getValue() as TValue[] | null,
                 setValue: (value: TValue[] | null) => this.setValue(value, true),
             });
         }
 
+        this.skipWrapperAnnouncement = true;
         this.pillContainer.refresh();
+        this.skipWrapperAnnouncement = false;
     }
 
     private onWrapperFocus(): void {
@@ -342,7 +348,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             const focusableEl = eInput.getFocusableElement() as HTMLInputElement;
             focusableEl.focus();
             focusableEl.select();
-        } else if (multiSelect && !suppressDeselectAll) {
+        } else if (multiSelect && !suppressDeselectAll && !this.skipWrapperAnnouncement) {
             this.ariaAnnouncementService.announceValue(this.ariaDeselectAllItems);
         }
     }
@@ -668,8 +674,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             case KeyCode.RIGHT:
                 if (!allowTyping || this.pillContainer) {
                     e.preventDefault();
-                    if (this.pillContainer && this.pillContainer.onKeyboardNavigateKey(e)) {
-                        this.ariaAnnouncementService.announceValue(this.ariaDeleteSelection);
+                    if (this.pillContainer) {
+                        this.pillContainer.onKeyboardNavigateKey(e);
                     }
                 }
                 break;
