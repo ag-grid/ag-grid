@@ -6,4 +6,6 @@
     --ag-row-border-style: dashed;
     --ag-row-border-width: 2px;
     --ag-row-border-color: rgb(150, 150, 200);
+    /* and between columns */
+    --ag-cell-horizontal-border: solid rgb(150, 150, 200);
 }

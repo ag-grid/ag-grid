@@ -14,8 +14,6 @@ export interface ILoadingOverlayComp<TData = any, TContext = any>
         ILoadingOverlay<TData, TContext> {}
 
 export class LoadingOverlayComponent extends Component implements ILoadingOverlayComp {
-    private static DEFAULT_LOADING_OVERLAY_TEMPLATE = /* html */ `<span aria-live="polite" aria-atomic="true" class="ag-overlay-loading-center"></span>`;
-
     constructor() {
         super();
     }
@@ -26,10 +24,13 @@ export class LoadingOverlayComponent extends Component implements ILoadingOverla
         super.destroy();
     }
 
-    public init(params: ILoadingOverlayParams): void {
+    public init(): void {
         const customTemplate = this.gos.get('overlayLoadingTemplate');
 
-        this.setTemplate(customTemplate ?? LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE);
+        this.setTemplate(
+            customTemplate ??
+                /* html */ `<span aria-live="polite" aria-atomic="true" class="ag-overlay-loading-center"></span>`
+        );
 
         if (!customTemplate) {
             const localeTextFunc = this.localeService.getLocaleTextFunc();

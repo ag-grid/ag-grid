@@ -7,18 +7,12 @@ import {
     IDetailCellRendererParams,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 
-ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
-    ClientSideRowModelModule,
-    ColumnsToolPanelModule,
-    MasterDetailModule,
-    MenuModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MasterDetailModule, MenuModule]);
 
 let gridApi: GridApi<IAccount>;
 
@@ -35,7 +29,7 @@ const gridOptions: GridOptions<IAccount> = {
         enableCellChangeFlash: true,
     },
     getRowId: (params: GetRowIdParams) => {
-        return params.data.account;
+        return String(params.data.account);
     },
     masterDetail: true,
     detailCellRendererParams: {
@@ -50,7 +44,7 @@ const gridOptions: GridOptions<IAccount> = {
         detailGridOptions: {
             rowSelection: 'multiple',
             getRowId: (params: GetRowIdParams) => {
-                return params.data.callId;
+                return String(params.data.callId);
             },
             columnDefs: [
                 { field: 'callId', checkboxSelection: true },

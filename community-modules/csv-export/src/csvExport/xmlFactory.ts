@@ -2,6 +2,21 @@ import type { HeaderElement, PrefixedXmlAttributes, XmlElement } from '@ag-grid-
 
 const LINE_SEPARATOR = '\r\n';
 
+function returnAttributeIfPopulated(key: string, value: any, booleanTransformer?: (currentValue: boolean) => string) {
+    if (!value && value !== '' && value !== 0) {
+        return '';
+    }
+
+    let xmlValue: string = value;
+    if (typeof value === 'boolean') {
+        if (booleanTransformer) {
+            xmlValue = booleanTransformer(value);
+        }
+    }
+
+    return ` ${key}="${xmlValue}"`;
+}
+
 export class XmlFactory {
     public static createHeader(headerElement: HeaderElement = {}): string {
         const headerStart = '<?';
@@ -28,7 +43,7 @@ export class XmlFactory {
             if (xmlElement.properties.prefixedAttributes) {
                 xmlElement.properties.prefixedAttributes.forEach((prefixedSet: PrefixedXmlAttributes) => {
                     Object.keys(prefixedSet.map).forEach((key) => {
-                        props += this.returnAttributeIfPopulated(
+                        props += returnAttributeIfPopulated(
                             prefixedSet.prefix + key,
                             prefixedSet.map[key],
                             booleanTransformer
@@ -39,11 +54,7 @@ export class XmlFactory {
 
             if (xmlElement.properties.rawMap) {
                 Object.keys(xmlElement.properties.rawMap).forEach((key) => {
-                    props += this.returnAttributeIfPopulated(
-                        key,
-                        xmlElement.properties!.rawMap[key],
-                        booleanTransformer
-                    );
+                    props += returnAttributeIfPopulated(key, xmlElement.properties!.rawMap[key], booleanTransformer);
                 });
             }
         }
@@ -65,24 +76,5 @@ export class XmlFactory {
         }
 
         return result + '</' + xmlElement.name + '>' + LINE_SEPARATOR;
-    }
-
-    private static returnAttributeIfPopulated(
-        key: string,
-        value: any,
-        booleanTransformer?: (currentValue: boolean) => string
-    ) {
-        if (!value && value !== '' && value !== 0) {
-            return '';
-        }
-
-        let xmlValue: string = value;
-        if (typeof value === 'boolean') {
-            if (booleanTransformer) {
-                xmlValue = booleanTransformer(value);
-            }
-        }
-
-        return ` ${key}="${xmlValue}"`;
     }
 }

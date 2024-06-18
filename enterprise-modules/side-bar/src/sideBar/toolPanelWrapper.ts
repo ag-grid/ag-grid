@@ -6,7 +6,7 @@ import type {
     UserComponentFactory,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { Component } from '@ag-grid-community/core';
+import { Component, _warnOnce } from '@ag-grid-community/core';
 
 import { AgHorizontalResize } from './agHorizontalResize';
 
@@ -17,8 +17,6 @@ export class ToolPanelWrapper extends Component {
         this.userComponentFactory = beans.userComponentFactory;
     }
 
-    private static TEMPLATE /* html */ = `<div class="ag-tool-panel-wrapper" role="tabpanel"/>`;
-
     private toolPanelCompInstance: IToolPanelComp | undefined;
     private toolPanelId: string;
     private resizeBar: AgHorizontalResize;
@@ -26,7 +24,7 @@ export class ToolPanelWrapper extends Component {
     private params: IToolPanelParams;
 
     constructor() {
-        super(ToolPanelWrapper.TEMPLATE);
+        super(/* html */ `<div class="ag-tool-panel-wrapper" role="tabpanel"/>`);
     }
 
     public postConstruct(): void {
@@ -55,7 +53,7 @@ export class ToolPanelWrapper extends Component {
         this.params = compDetails.params;
 
         if (componentPromise == null) {
-            console.warn(`AG Grid: error processing tool panel component ${id}. You need to specify 'toolPanel'`);
+            _warnOnce(`error processing tool panel component ${id}. You need to specify 'toolPanel'`);
             return;
         }
         componentPromise.then(this.setToolPanelComponent.bind(this));

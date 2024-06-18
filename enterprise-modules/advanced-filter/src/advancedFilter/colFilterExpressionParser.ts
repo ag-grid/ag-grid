@@ -96,7 +96,7 @@ class ColumnParser implements Parser {
             this.colName = colValue.columnName;
             this.column = this.params.columnModel.getColDefCol(this.colId);
             if (this.column) {
-                this.baseCellDataType = this.params.dataTypeService.getBaseDataType(this.column) ?? 'text';
+                this.baseCellDataType = this.params.dataTypeService?.getBaseDataType(this.column) ?? 'text';
                 return true;
             }
         }
@@ -534,7 +534,8 @@ export class ColFilterExpressionParser {
                 break;
         }
         if (baseCellDataType === 'dateString') {
-            return this.params.dataTypeService.getDateParserFunction(column)(operand as string);
+            const { dataTypeService } = this.params;
+            return dataTypeService ? dataTypeService.getDateParserFunction(column)(operand as string) : operand;
         }
         return operand;
     }

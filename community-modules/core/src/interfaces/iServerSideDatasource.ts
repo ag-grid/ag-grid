@@ -1,7 +1,7 @@
 // we pass a VO of the column and not the column itself,
 // so the data is read to be be converted to JSON and thrown
 // over the wire
-import type { LoadSuccessParams } from '../rowNodeCache/rowNodeBlock';
+import type { LoadSuccessParams } from '../rowNodeCache/iRowNodeBlock';
 import type { SortModelItem } from '../sortController';
 import type { AdvancedFilterModel } from './advancedFilterModel';
 import type { ColumnVO } from './iColumnVO';

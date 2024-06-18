@@ -1,7 +1,7 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
@@ -12,7 +12,7 @@ import CustomLoadingOverlay from './customLoadingOverlay.jsx';
 import CustomNoRowsOverlay from './customNoRowsOverlay.jsx';
 import './styles.css';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const GridExample = () => {
     const gridRef = useRef();
@@ -93,7 +93,6 @@ const GridExample = () => {
                         loadingOverlayComponentParams={loadingOverlayComponentParams}
                         noRowsOverlayComponent={noRowsOverlayComponent}
                         noRowsOverlayComponentParams={noRowsOverlayComponentParams}
-                        reactiveCustomComponents
                     />
                 </div>
             </div>

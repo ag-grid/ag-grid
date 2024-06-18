@@ -1,17 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColDef, GridApi, GridOptions, IDateFilterParams, createGrid } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 
-ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
-    ClientSideRowModelModule,
-    MenuModule,
-    MultiFilterModule,
-    SetFilterModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, MultiFilterModule, SetFilterModule]);
 
 var filterParams: IDateFilterParams = {
     comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {

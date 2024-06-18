@@ -199,6 +199,26 @@
         font-weight: 500;
     }
 
+    .ag-chart-data-section,
+    .ag-chart-format-section {
+        .ag-label:not(.ag-group-title-bar) {
+            color: var(--ag-chart-menu-label-color);
+        }
+
+        .ag-label-align-top .ag-label {
+            margin-top: calc(var(--ag-widget-vertical-spacing) * 0.5);
+            margin-bottom: var(--ag-widget-vertical-spacing);
+        }
+
+        .ag-slider.ag-label-align-top .ag-label {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: inline-block;
+        }
+    }
+
     .ag-chart-format-wrapper,
     .ag-chart-data-wrapper,
     .ag-charts-format-top-level-group,
@@ -299,8 +319,9 @@
     }
 
     .ag-spectrum-tools {
-        padding-left: 0px;
-        padding-right: 0px;
+        padding-left: 0;
+        padding-right: 0;
+        padding-bottom: 0;
     }
 
     .ag-spectrum-tool {
@@ -318,7 +339,22 @@
         height: 18px;
         border-radius: 18px;
         border: 3px solid rgb(248, 248, 248);
-        background-color: transparent;
+    }
+
+    .ag-recent-colors {
+        margin-left: var(--ag-grid-size);
+        margin-right: var(--ag-grid-size);
+        margin-bottom: 2px;
+    }
+
+    .ag-color-input-color,
+    .ag-color-picker-color,
+    .ag-recent-color {
+        border-radius: 4px;
+    }
+
+    .ag-recent-color {
+        border: var(--ag-borders-secondary) var(--ag-secondary-border-color);
     }
 
     &.ag-dnd-ghost {
@@ -402,6 +438,10 @@
         }
         .ag-picker-field-display {
             font-weight: 500;
+            color: var(--ag-chart-menu-pill-select-button-color);
+        }
+        .ag-picker-field-icon .ag-icon {
+            color: var(--ag-chart-menu-pill-select-button-color);
         }
     }
 

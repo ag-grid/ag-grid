@@ -82,7 +82,7 @@ describe.each([
         isValid: false,
         message: validGridChartsVersionErrorMessage({
             type: 'invalidGrid',
-            // @ts-ignore
+            // @ts-expect-error testing null
             gridVersion: null,
             chartsVersion: '7.0.0',
         }),
@@ -104,7 +104,7 @@ describe.each([
         message: validGridChartsVersionErrorMessage({
             type: 'invalidCharts',
             gridVersion: '29.0.0',
-            // @ts-ignore
+            // @ts-expect-error testing null
             chartsVersion: null,
         }),
     },

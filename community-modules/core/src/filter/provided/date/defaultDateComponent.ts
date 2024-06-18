@@ -3,7 +3,8 @@ import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttac
 import { _getSafariVersion, _isBrowserChrome, _isBrowserFirefox, _isBrowserSafari } from '../../../utils/browser';
 import { _dateToFormattedString, _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import { _warnOnce } from '../../../utils/function';
-import { AgInputTextField } from '../../../widgets/agInputTextField';
+import type { AgInputTextField } from '../../../widgets/agInputTextField';
+import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 
 export class DefaultDateComponent extends Component implements IDateComp {
@@ -15,7 +16,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
             <div class="ag-filter-filter">
                 <ag-input-text-field class="ag-date-filter" data-ref="eDateInput"></ag-input-text-field>
             </div>`,
-            [AgInputTextField]
+            [AgInputTextFieldSelector]
         );
     }
 
@@ -34,24 +35,25 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
         const inputElement = this.eDateInput.getInputElement();
 
-        // ensures that the input element is focussed when a clear button is clicked,
-        // unless using safari as there is no clear button and focus does not work properly
-        this.addManagedListener(inputElement, 'mousedown', () => {
-            if (this.eDateInput.isDisabled() || this.usingSafariDatePicker) {
-                return;
-            }
-            inputElement.focus();
-        });
+        this.addManagedListeners(inputElement, {
+            // ensures that the input element is focussed when a clear button is clicked,
+            // unless using safari as there is no clear button and focus does not work properly
+            mouseDown: () => {
+                if (this.eDateInput.isDisabled() || this.usingSafariDatePicker) {
+                    return;
+                }
+                inputElement.focus();
+            },
+            input: (e) => {
+                if (e.target !== this.gos.getActiveDomElement()) {
+                    return;
+                }
+                if (this.eDateInput.isDisabled()) {
+                    return;
+                }
 
-        this.addManagedListener(inputElement, 'input', (e) => {
-            if (e.target !== this.gos.getActiveDomElement()) {
-                return;
-            }
-            if (this.eDateInput.isDisabled()) {
-                return;
-            }
-
-            this.params.onDateChanged();
+                this.params.onDateChanged();
+            },
         });
     }
 

@@ -77,11 +77,11 @@
     "vite-plugin-svgr": "^4.2.0"
   },
   "devDependencies": {
-    "ag-charts-community": "9.3.1-beta.20240602",
-    "ag-charts-enterprise": "9.3.1-beta.20240602",
-    "ag-charts-react": "9.3.1-beta.20240602",
-    "ag-charts-angular": "9.3.1-beta.20240602",
-    "ag-charts-vue3": "9.3.1-beta.20240602",
+    "ag-charts-community": "9.3.1-beta.20240618",
+    "ag-charts-enterprise": "9.3.1-beta.20240618",
+    "ag-charts-react": "9.3.1-beta.20240618",
+    "ag-charts-angular": "9.3.1-beta.20240618",
+    "ag-charts-vue3": "9.3.1-beta.20240618",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/he": "^1.2.3",
     "prettier-plugin-astro": "^0.12.3",

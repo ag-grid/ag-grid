@@ -32,7 +32,7 @@ export class ChartMenuService extends BeanStub implements NamedBean {
     private advancedSettingsMenuFactory: AdvancedSettingsMenuFactory;
 
     public wireBeans(beans: BeanCollection) {
-        this.advancedSettingsMenuFactory = beans.advancedSettingsMenuFactory;
+        this.advancedSettingsMenuFactory = beans.advancedSettingsMenuFactory as AdvancedSettingsMenuFactory;
     }
 
     public downloadChart(

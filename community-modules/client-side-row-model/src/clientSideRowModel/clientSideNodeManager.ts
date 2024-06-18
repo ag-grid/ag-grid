@@ -12,17 +12,17 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    ColumnModel,
-    Events,
     RowNode,
     _cloneObject,
+    _errorOnce,
     _missingOrEmpty,
     _sortRowNodesByOrder,
+    _warnOnce,
 } from '@ag-grid-community/core';
 
+const ROOT_NODE_ID = 'ROOT_NODE_ID';
+const TOP_LEVEL = 0;
 export class ClientSideNodeManager {
-    private static TOP_LEVEL = 0;
-
     private readonly rootNode: RowNode;
 
     private gos: GridOptionsService;
@@ -32,8 +32,6 @@ export class ClientSideNodeManager {
     private beans: BeanCollection;
 
     private nextId = 0;
-
-    private static ROOT_NODE_ID = 'ROOT_NODE_ID';
 
     // has row data actually been set
     private rowCountReady = false;
@@ -58,7 +56,7 @@ export class ClientSideNodeManager {
 
         this.rootNode.group = true;
         this.rootNode.level = -1;
-        this.rootNode.id = ClientSideNodeManager.ROOT_NODE_ID;
+        this.rootNode.id = ROOT_NODE_ID;
         this.rootNode.allLeafChildren = [];
         this.rootNode.childrenAfterGroup = [];
         this.rootNode.childrenAfterSort = [];
@@ -76,7 +74,7 @@ export class ClientSideNodeManager {
 
     public setRowData(rowData: any[]): RowNode[] | undefined {
         if (typeof rowData === 'string') {
-            console.warn('AG Grid: rowData must be an array.');
+            _warnOnce('rowData must be an array.');
             return;
         }
         this.rowCountReady = true;
@@ -100,9 +98,7 @@ export class ClientSideNodeManager {
             // we use rootNode as the parent, however if using ag-grid-enterprise, the grouping stage
             // sets the parent node on each row (even if we are not grouping). so setting parent node
             // here is for benefit of ag-grid-community users
-            rootNode.allLeafChildren = rowData.map((dataItem) =>
-                this.createNode(dataItem, this.rootNode, ClientSideNodeManager.TOP_LEVEL)
-            );
+            rootNode.allLeafChildren = rowData.map((dataItem) => this.createNode(dataItem, this.rootNode, TOP_LEVEL));
         } else {
             rootNode.allLeafChildren = [];
             rootNode.childrenAfterGroup = [];
@@ -152,7 +148,7 @@ export class ClientSideNodeManager {
 
     private dispatchRowDataUpdateStartedEvent(rowData?: any[] | null): void {
         const event: WithoutGridCommon<RowDataUpdateStartedEvent> = {
-            type: Events.EVENT_ROW_DATA_UPDATE_STARTED,
+            type: 'rowDataUpdateStarted',
             firstRowData: rowData?.length ? rowData[0] : null,
         };
         this.eventService.dispatchEvent(event);
@@ -177,7 +173,7 @@ export class ClientSideNodeManager {
 
         if (selectionChanged) {
             const event: WithoutGridCommon<SelectionChangedEvent> = {
-                type: Events.EVENT_SELECTION_CHANGED,
+                type: 'selectionChanged',
                 source: source,
             };
             this.eventService.dispatchEvent(event);
@@ -191,14 +187,12 @@ export class ClientSideNodeManager {
         }
 
         // create new row nodes for each data item
-        const newNodes: RowNode[] = add!.map((item) =>
-            this.createNode(item, this.rootNode, ClientSideNodeManager.TOP_LEVEL)
-        );
+        const newNodes: RowNode[] = add!.map((item) => this.createNode(item, this.rootNode, TOP_LEVEL));
 
+        const allLeafChildren = this.rootNode.allLeafChildren!;
         if (typeof addIndex === 'number' && addIndex >= 0) {
             // new rows are inserted in one go by concatenating them in between the existing rows at the desired index.
             // this is much faster than splicing them individually into 'allLeafChildren' when there are large inserts.
-            const { allLeafChildren } = this.rootNode;
             const len = allLeafChildren.length;
             let normalisedAddIndex = addIndex;
 
@@ -216,10 +210,10 @@ export class ClientSideNodeManager {
             const nodesAfterIndex = allLeafChildren.slice(normalisedAddIndex, allLeafChildren.length);
             this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
         } else {
-            this.rootNode.allLeafChildren = [...this.rootNode.allLeafChildren, ...newNodes];
+            this.rootNode.allLeafChildren = [...allLeafChildren, ...newNodes];
         }
         if (this.rootNode.sibling) {
-            this.rootNode.sibling.allLeafChildren = this.rootNode.allLeafChildren;
+            this.rootNode.sibling.allLeafChildren = allLeafChildren;
         }
         // add new row nodes to the transaction add items
         rowNodeTransaction.add = newNodes;
@@ -263,7 +257,8 @@ export class ClientSideNodeManager {
             rowNodeTransaction.remove.push(rowNode);
         });
 
-        this.rootNode.allLeafChildren = this.rootNode.allLeafChildren.filter((rowNode) => !rowIdsRemoved[rowNode.id!]);
+        this.rootNode.allLeafChildren =
+            this.rootNode.allLeafChildren?.filter((rowNode) => !rowIdsRemoved[rowNode.id!]) ?? null;
         if (this.rootNode.sibling) {
             this.rootNode.sibling.allLeafChildren = this.rootNode.allLeafChildren;
         }
@@ -291,30 +286,30 @@ export class ClientSideNodeManager {
                 nodesToUnselect.push(rowNode);
             }
 
-            this.setMasterForRow(rowNode, item, ClientSideNodeManager.TOP_LEVEL, false);
+            this.setMasterForRow(rowNode, item, TOP_LEVEL, false);
 
             rowNodeTransaction.update.push(rowNode);
         });
     }
 
     private lookupRowNode(data: any): RowNode | null {
-        const getRowIdFunc = this.gos.getCallback('getRowId');
+        const getRowIdFunc = this.gos.getRowIdCallback();
 
         let rowNode: RowNode | undefined;
         if (getRowIdFunc) {
             // find rowNode using id
-            const id: string = getRowIdFunc({ data, level: 0 });
+            const id = getRowIdFunc({ data, level: 0 });
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                console.error(`AG Grid: could not find row id=${id}, data item was not found for this id`);
+                _errorOnce(`could not find row id=${id}, data item was not found for this id`);
                 return null;
             }
         } else {
             // find rowNode using object references
-            rowNode = this.rootNode.allLeafChildren.find((node) => node.data === data);
+            rowNode = this.rootNode.allLeafChildren?.find((node) => node.data === data);
             if (!rowNode) {
-                console.error(`AG Grid: could not find data item as object was not found`, data);
-                console.error(`Consider using getRowId to help the Grid find matching row data`);
+                _errorOnce(`could not find data item as object was not found`, data);
+                _errorOnce(`Consider using getRowId to help the Grid find matching row data`);
                 return null;
             }
         }
@@ -335,8 +330,8 @@ export class ClientSideNodeManager {
         node.setDataAndId(dataItem, this.nextId.toString());
 
         if (this.allNodesMap[node.id!]) {
-            console.warn(
-                `AG Grid: duplicate node id '${node.id}' detected from getRowId callback, this could cause issues in your grid.`
+            _warnOnce(
+                `duplicate node id '${node.id}' detected from getRowId callback, this could cause issues in your grid.`
             );
         }
         this.allNodesMap[node.id!] = node;

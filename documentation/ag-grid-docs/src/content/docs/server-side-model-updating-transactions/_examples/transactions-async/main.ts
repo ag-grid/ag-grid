@@ -8,13 +8,13 @@ import {
     ServerSideTransaction,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
 
 import { data, dataObservers, randomUpdates } from './data';
 import { FakeServer } from './fakeServer';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ServerSideRowModelModule]);
+ModuleRegistry.registerModules([ServerSideRowModelModule]);
 
 const columnDefs: ColDef[] = [
     { field: 'tradeId' },
@@ -55,11 +55,6 @@ const gridOptions: GridOptions = {
         var rowId = '';
         if (params.parentKeys && params.parentKeys.length) {
             rowId += params.parentKeys.join('-') + '-';
-        }
-        const groupCols = params.api.getRowGroupColumns();
-        if (groupCols.length > params.level) {
-            const thisGroupCol = groupCols[params.level];
-            rowId += params.data[thisGroupCol.getColDef().field!] + '-';
         }
         if (params.data.tradeId != null) {
             rowId += params.data.tradeId;

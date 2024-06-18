@@ -10,6 +10,7 @@ export class FilterComponentWrapper
     private model: any = null;
     private readonly onModelChange = (model: any) => this.updateModel(model);
     private readonly onUiChange = () => this.sourceParams.filterChangedCallback();
+    private expectingNewMethods = true;
 
     public isFilterActive(): boolean {
         return this.model != null;
@@ -24,6 +25,7 @@ export class FilterComponentWrapper
     }
 
     public setModel(model: any): AgPromise<void> {
+        this.expectingNewMethods = true;
         this.model = model;
         return this.refreshProps();
     }
@@ -36,6 +38,20 @@ export class FilterComponentWrapper
 
     protected override getOptionalMethods(): string[] {
         return ['afterGuiAttached', 'afterGuiDetached', 'onNewRowsLoaded', 'getModelAsString', 'onAnyFilterChanged'];
+    }
+
+    protected override setMethods(methods: CustomFilterCallbacks): void {
+        // filtering is run after the component's `doesFilterPass` receives the new `model`.
+        // However, if `doesFilterPass` is using a state variable derived from `model` (via effect),
+        // it won't have updated in time when filtering runs.
+        // We catch this use case here, and re-run filtering
+        if (this.expectingNewMethods === false && this.providedMethods?.doesFilterPass !== methods?.doesFilterPass) {
+            setTimeout(() => {
+                this.sourceParams.filterChangedCallback();
+            });
+        }
+        this.expectingNewMethods = false;
+        super.setMethods(methods);
     }
 
     private updateModel(model: any): void {

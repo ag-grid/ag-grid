@@ -1,0 +1,21 @@
+---
+import type { MenuSection } from '@ag-grid-types';
+import { LicenseSetup } from './LicenseSetup';
+import { getEntry } from 'astro:content';
+import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
+import seedRepos from '../../../content/seed-projects/grid-seed-projects.json';
+import { getFilteredMenuSections } from '@components/pages-navigation/utils/getFilteredMenuSections';
+
+const { pathname } = Astro.url;
+const framework = getFrameworkFromPath(pathname);
+
+const { data: menu } = await getEntry('menu', 'data');
+
+// TODO: Need to generalise this to make it work with charts
+const menuItems: MenuSection[] = getFilteredMenuSections({
+    menuSections: menu.main.sections,
+    framework,
+});
+---
+
+<LicenseSetup client:only="react" framework={framework} path={pathname} menuItems={menuItems} seedRepos={seedRepos} />

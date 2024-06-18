@@ -1,14 +1,13 @@
 import type {
     BeanCollection,
-    ChartCreated,
     ChartToolPanelMenuOptions,
     ChartToolbarMenuItemOptions,
     Environment,
 } from '@ag-grid-community/core';
-import { AgPromise, Component, Events } from '@ag-grid-community/core';
+import { AgPromise, Component, _warnOnce } from '@ag-grid-community/core';
 import { AgPanel } from '@ag-grid-enterprise/core';
 
-import { ChartController } from '../chartController';
+import type { ChartController } from '../chartController';
 import type { ExtraPaddingDirection } from '../chartProxies/chartProxy';
 import type { ChartMenuService } from '../services/chartMenuService';
 import type { ChartMenuContext } from './chartMenuContext';
@@ -29,8 +28,8 @@ export class ChartMenu extends Component {
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection) {
-        this.chartMenuService = beans.chartMenuService;
-        this.chartMenuListFactory = beans.chartMenuListFactory;
+        this.chartMenuService = beans.chartMenuService as ChartMenuService;
+        this.chartMenuListFactory = beans.chartMenuListFactory as ChartMenuListFactory;
         this.environment = beans.environment;
     }
 
@@ -49,8 +48,6 @@ export class ChartMenu extends Component {
     private panels: ChartToolPanelMenuOptions[] = [];
     private defaultPanel: ChartToolPanelMenuOptions;
 
-    private static TEMPLATE = /* html */ `<div class="ag-chart-menu-wrapper"></div>`;
-
     private chartToolbar: ChartToolbar;
     private tabbedMenu: TabbedChartMenu;
     private menuPanel?: AgPanel;
@@ -62,7 +59,7 @@ export class ChartMenu extends Component {
         private readonly eMenuPanelContainer: HTMLElement,
         private readonly chartMenuContext: ChartMenuContext
     ) {
-        super(ChartMenu.TEMPLATE);
+        super(/* html */ `<div class="ag-chart-menu-wrapper"></div>`);
         this.chartController = chartMenuContext.chartController;
     }
 
@@ -72,27 +69,23 @@ export class ChartMenu extends Component {
 
         this.refreshToolbarAndPanels();
 
-        this.addManagedListener(this.eventService, Events.EVENT_CHART_CREATED, (e: ChartCreated) => {
-            if (e.chartId === this.chartController.getChartId()) {
-                const showDefaultToolPanel = Boolean(this.gos.get('chartToolPanelsDef')?.defaultToolPanel);
-                if (showDefaultToolPanel) {
-                    this.showMenu({ panel: this.defaultPanel, suppressFocus: true });
+        this.addManagedEventListeners({
+            chartCreated: (e) => {
+                if (e.chartId === this.chartController.getChartId()) {
+                    const showDefaultToolPanel = Boolean(this.gos.get('chartToolPanelsDef')?.defaultToolPanel);
+                    if (showDefaultToolPanel) {
+                        this.showMenu({ panel: this.defaultPanel, suppressFocus: true });
+                    }
                 }
-            }
+            },
         });
-        this.addManagedListener(
-            this.chartController,
-            ChartController.EVENT_CHART_LINKED_CHANGED,
-            this.refreshToolbarAndPanels.bind(this)
-        );
+        this.addManagedListeners(this.chartController, {
+            chartLinkedChanged: this.refreshToolbarAndPanels.bind(this),
+        });
 
         this.refreshMenuClasses();
 
-        this.addManagedListener(
-            this.chartController,
-            ChartController.EVENT_CHART_API_UPDATE,
-            this.refreshToolbarAndPanels.bind(this)
-        );
+        this.addManagedListeners(this.chartController, { chartApiUpdate: this.refreshToolbarAndPanels.bind(this) });
     }
 
     public isVisible(): boolean {
@@ -150,11 +143,13 @@ export class ChartMenu extends Component {
 
         this.tabbedMenu = this.createBean(new TabbedChartMenu(this.panels, this.chartMenuContext));
 
-        this.addManagedListener(this.tabbedMenu, TabbedChartMenu.EVENT_CLOSED, () => {
-            this.hideMenu();
+        this.addManagedListeners(this.tabbedMenu, {
+            closed: () => {
+                this.hideMenu();
+            },
         });
 
-        this.addManagedListener(menuPanel, Component.EVENT_DESTROYED, () => this.destroyBean(this.tabbedMenu));
+        this.addManagedListeners(menuPanel, { destroyed: () => this.destroyBean(this.tabbedMenu) });
 
         return new AgPromise((res: (arg0: any) => void) => {
             window.setTimeout(() => {
@@ -191,7 +186,7 @@ export class ChartMenu extends Component {
             const menuPanel = panel || this.defaultPanel;
             let tab = this.panels.indexOf(menuPanel);
             if (tab < 0) {
-                console.warn(`AG Grid: '${panel}' is not a valid Chart Tool Panel name`);
+                _warnOnce(`'${panel}' is not a valid Chart Tool Panel name`);
                 tab = this.panels.indexOf(this.defaultPanel);
             }
 

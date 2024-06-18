@@ -1,12 +1,11 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { beforeEach, describe, expect, it } from '@jest/globals';
 
 import type { ZipFile } from '../src/csvExport/zipContainer/zipContainer';
-import { getDeflatedHeaderAndContent, getHeaderAndContent } from '../src/csvExport/zipContainer/zipContainerHelper';
+import { getDeflatedHeaderAndContent } from '../src/csvExport/zipContainer/zipContainerHelper';
 
 describe('getDeflatedHeaderAndContent', () => {
     const testPath: string = 'test-path/file-name.csv';
     let currentFile: ZipFile | undefined = undefined;
-    let deflationPerformed: boolean = false;
 
     beforeEach(() => {
         currentFile = {
@@ -16,8 +15,6 @@ describe('getDeflatedHeaderAndContent', () => {
             path: testPath,
             created: new Date(),
         };
-
-        deflationPerformed = false;
     });
 
     it('should append the right local file header', async () => {

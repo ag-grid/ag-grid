@@ -18,7 +18,6 @@ import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { getData } from './data';
 
 ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
     FiltersToolPanelModule,

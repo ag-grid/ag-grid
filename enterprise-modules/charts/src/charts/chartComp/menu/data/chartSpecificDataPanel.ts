@@ -1,26 +1,20 @@
-import type { BeanCollection } from '@ag-grid-community/core';
+import type { BeanCollection, IChartService } from '@ag-grid-community/core';
 import { AgSelect, ChartMappings, Component, RefPlaceholder } from '@ag-grid-community/core';
-import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import type { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 
-import type { ChartService } from '../../../chartService';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { canSwitchDirection, getFullChartNameTranslationKey, getSeriesType } from '../../utils/seriesTypeMapper';
 import type { ChartMenuContext } from '../chartMenuContext';
 import { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
 
 export class ChartSpecificDataPanel extends Component {
-    private static TEMPLATE = /* html */ `
-        <div id="chartSpecificGroup">
-            <ag-group-component data-ref="chartSpecificGroup"></ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
-    private chartService: ChartService;
+    private chartService: IChartService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
-        this.chartService = beans.chartService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
+        this.chartService = beans.chartService!;
     }
 
     private readonly chartSpecificGroup: AgGroupComponent = RefPlaceholder;
@@ -47,9 +41,16 @@ export class ChartSpecificDataPanel extends Component {
             expanded: this.isOpen,
             items: [...this.createDirectionSelect(), this.createGroupTypeSelect()],
         };
-        this.setTemplate(ChartSpecificDataPanel.TEMPLATE, [AgGroupComponent], {
-            chartSpecificGroup: chartSpecificGroupParams,
-        });
+        this.setTemplate(
+            /* html */ `
+            <div id="chartSpecificGroup">
+                <ag-group-component data-ref="chartSpecificGroup"></ag-group-component>
+            </div>`,
+            [AgGroupComponentSelector],
+            {
+                chartSpecificGroup: chartSpecificGroupParams,
+            }
+        );
         this.setDisplayed(this.hasContent);
     }
 

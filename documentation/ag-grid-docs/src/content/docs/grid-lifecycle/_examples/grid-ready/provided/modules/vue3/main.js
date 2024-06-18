@@ -1,14 +1,14 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from '@ag-grid-community/vue3';
-import { createApp, onBeforeMount, ref } from 'vue';
+import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
 import { getData } from './data.js';
 import './styles.css';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: `
@@ -66,7 +66,7 @@ const VueExample = {
             },
         ]);
 
-        const gridApi = ref();
+        const gridApi = shallowRef();
 
         const rowData = ref(null);
         const rowSelection = ref(null);

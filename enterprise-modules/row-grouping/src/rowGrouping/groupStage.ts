@@ -7,13 +7,13 @@ import type {
     GetDataPath,
     IRowNodeStage,
     ISelectionService,
+    IShowRowGroupColsService,
     InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
     KeyCreatorParams,
     NamedBean,
     RowNodeTransaction,
     SelectableService,
-    ShowRowGroupColsService,
     StageExecuteParams,
     ValueService,
     WithoutGridCommon,
@@ -68,7 +68,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     private valueService: ValueService;
     private beans: BeanCollection;
     private selectionService: ISelectionService;
-    private showRowGroupColsService: ShowRowGroupColsService;
+    private showRowGroupColsService: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.beans = beans;
@@ -77,7 +77,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         this.selectableService = beans.selectableService;
         this.valueService = beans.valueService;
         this.selectionService = beans.selectionService;
-        this.showRowGroupColsService = beans.showRowGroupColsService;
+        this.showRowGroupColsService = beans.showRowGroupColsService!;
     }
 
     // when grouping, these items are of note:
@@ -206,11 +206,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     private sortChildren(details: GroupingDetails): void {
         details.changedPath.forEachChangedNodeDepthFirst(
             (node) => {
-                if (!node.childrenAfterGroup) {
-                    return;
-                }
-
-                const didSort = _sortRowNodesByOrder(node.childrenAfterGroup!, details.rowNodeOrder);
+                const didSort = _sortRowNodesByOrder(node.childrenAfterGroup, details.rowNodeOrder);
                 if (didSort) {
                     details.changedPath.addParentNode(node);
                 }
@@ -257,12 +253,57 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         return res;
     }
 
+    /**
+     * Topological sort of the given row nodes based on the grouping hierarchy, where parents come before children.
+     * Used to ensure tree data is moved in the correct order (see AG-11678)
+     */
+    private topoSort(rowNodes: RowNode[], details: GroupingDetails): RowNode[] {
+        const sortedNodes: RowNode[] = [];
+        // performance: create a cache of ids to make lookups during the search faster
+        const idLookup = Object.fromEntries(rowNodes.map<[string, number]>((node, i) => [node.id!, i]));
+        // performance: keep track of the nodes we haven't found yet so we can return early
+        const stillToFind = new Set(Object.keys(idLookup));
+
+        const queue = [details.rootNode];
+        let i = 0;
+
+        // BFS for nodes in the hierarchy that match IDs of the given nodes
+        while (i < queue.length) {
+            // performance: indexing into the array instead of using e.g. `.shift` is _much_ faster
+            const node = queue[i];
+            i++;
+            if (node === undefined) {
+                continue;
+            }
+
+            if (node.id && node.id in idLookup) {
+                sortedNodes.push(rowNodes[idLookup[node.id]]);
+                stillToFind.delete(node.id);
+            }
+
+            // we can stop early if we've already found all the nodes
+            if (stillToFind.size === 0) {
+                return sortedNodes;
+            }
+
+            const children = node.childrenAfterGroup ?? [];
+            for (let i = 0; i < children.length; i++) {
+                queue.push(children[i]);
+            }
+        }
+
+        return sortedNodes;
+    }
+
     private moveNodesInWrongPath(
         childNodes: RowNode[],
         details: GroupingDetails,
         batchRemover: BatchRemover | undefined
     ): void {
-        childNodes.forEach((childNode) => {
+        // AG-11678 avoid unnecessary sorting when using normal row grouping
+        const sorted = details.usingTreeData ? this.topoSort(childNodes, details) : childNodes;
+
+        sorted.forEach((childNode) => {
             // we add node, even if parent has not changed, as the data could have
             // changed, hence aggregations will be wrong
             if (details.changedPath.isActive()) {
@@ -369,25 +410,32 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             // so double check before trying to remove again.
             const mapKey = this.getChildrenMappedKey(rowNode.key!, rowNode.rowGroupColumn);
             const parentRowNode = rowNode.parent;
-            const groupAlreadyRemoved =
-                parentRowNode && parentRowNode.childrenMapped ? !parentRowNode.childrenMapped[mapKey] : true;
+            const groupAlreadyRemoved = parentRowNode?.childrenMapped ? !parentRowNode.childrenMapped[mapKey] : true;
 
             if (groupAlreadyRemoved) {
                 // if not linked, then group was already removed
                 return false;
             }
             // if still not removed, then we remove if this group is empty
-            return !!rowNode.isEmptyRowGroupNode();
+            return rowNode.isEmptyRowGroupNode();
         };
 
         while (checkAgain) {
             checkAgain = false;
-            const batchRemover: BatchRemover = new BatchRemover();
+            const batchRemover = new BatchRemover();
             possibleEmptyGroups.forEach((possibleEmptyGroup) => {
                 // remove empty groups
                 this.forEachParentGroup(details, possibleEmptyGroup, (rowNode) => {
-                    if (groupShouldBeRemoved(rowNode)) {
+                    const shouldBeRemoved = groupShouldBeRemoved(rowNode);
+                    if (shouldBeRemoved && details.usingTreeData && details.getDataPath?.(rowNode.data)) {
+                        // This node has associated tree data so shouldn't be removed, but should no longer be
+                        // marked as a group if it has no children.
+                        rowNode.setGroup(
+                            (rowNode.childrenAfterGroup && rowNode.childrenAfterGroup.length > 0) ?? false
+                        );
+                    } else if (shouldBeRemoved) {
                         checkAgain = true;
+
                         this.removeFromParent(rowNode, batchRemover);
                         // we remove selection on filler nodes here, as the selection would not be removed
                         // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
@@ -414,8 +462,8 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             }
         }
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
-        if (child.parent && child.parent.childrenMapped) {
-            child.parent.childrenMapped[mapKey] = undefined;
+        if (child.parent?.childrenMapped != undefined) {
+            delete child.parent.childrenMapped[mapKey];
         }
         // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
         // remove, if rowTop is still present, the rowComp thinks it's just moved position.
@@ -432,7 +480,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             if (parent?.childrenMapped?.[mapKey] !== child) {
                 parent.childrenMapped[mapKey] = child;
                 parent.childrenAfterGroup!.push(child);
-                parent?.updateHasChildren();
+                parent.setGroup(true); // calls `.updateHasChildren` internally
             }
         }
     }
@@ -459,7 +507,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
                     field: rowNode.field,
                     key: rowNode.key!,
                     rowGroupColumn: rowNode.rowGroupColumn,
-                    leafNode: rowNode.allLeafChildren[0],
+                    leafNode: rowNode.allLeafChildren?.[0],
                 };
                 this.setGroupData(rowNode, groupInfo, details);
                 recurse(rowNode.childrenAfterGroup);
@@ -495,7 +543,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             sibling.childrenMapped = rootNode.childrenMapped;
         }
 
-        this.insertNodes(rootNode.allLeafChildren, details, false);
+        this.insertNodes(rootNode.allLeafChildren!, details, false);
     }
 
     private noChangeInGroupingColumns(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
@@ -562,7 +610,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             this.addToParent(childNode, parentGroup);
         } else {
             if (!parentGroup.group) {
-                console.warn(`AG Grid: duplicate group keys for row data, keys should be unique`, [
+                _warnOnce(`duplicate group keys for row data, keys should be unique`, [
                     parentGroup.data,
                     childNode.data,
                 ]);
@@ -594,7 +642,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
 
             if (!batchRemover?.isRemoveFromAllLeafChildren(nextNode, childNode)) {
-                nextNode.allLeafChildren.push(childNode);
+                nextNode.allLeafChildren!.push(childNode);
             } else {
                 // if this node is about to be removed, prevent that
                 batchRemover?.preventRemoveFromAllLeafChildren(nextNode, childNode);
@@ -812,14 +860,13 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         }
 
         // use expandByDefault if exists
-        const { expandByDefault } = details;
         if (details.expandByDefault === -1) {
             groupNode.expanded = true;
             return;
         }
 
         // otherwise
-        groupNode.expanded = groupNode.level < expandByDefault;
+        groupNode.expanded = groupNode.level < details.expandByDefault;
     }
 
     private getGroupInfo(rowNode: RowNode, details: GroupingDetails): GroupInfo[] {
@@ -830,13 +877,12 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     }
 
     private getGroupInfoFromCallback(rowNode: RowNode, details: GroupingDetails): GroupInfo[] {
-        const keys: string[] | null = details.getDataPath ? details.getDataPath(rowNode.data) : null;
+        const keys = details.getDataPath?.(rowNode.data);
 
-        if (keys === null || keys === undefined || keys.length === 0) {
+        if (keys === undefined || keys.length === 0) {
             _warnOnce(`getDataPath() should not return an empty path for data ${rowNode.data}`);
         }
-        const groupInfoMapper = (key: string | null) => ({ key, field: null, rowGroupColumn: null }) as GroupInfo;
-        return keys ? keys.map(groupInfoMapper) : [];
+        return keys?.map((key) => ({ key, field: null, rowGroupColumn: null })) ?? [];
     }
 
     private getGroupInfoFromGroupColumns(rowNode: RowNode, details: GroupingDetails) {

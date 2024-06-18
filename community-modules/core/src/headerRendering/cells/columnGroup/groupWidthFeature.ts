@@ -1,5 +1,5 @@
 import { BeanStub } from '../../../context/beanStub';
-import { type AgColumnGroup, EVENT_COLUMN_GROUP_DISPLAYED_CHILDREN_CHANGED } from '../../../entities/agColumnGroup';
+import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { IHeaderGroupCellComp } from './headerGroupCellCtrl';
 
 export class GroupWidthFeature extends BeanStub {
@@ -20,11 +20,9 @@ export class GroupWidthFeature extends BeanStub {
         this.addListenersToChildrenColumns();
 
         // the children belonging to this group can change, so we need to add and remove listeners as they change
-        this.addManagedListener(
-            this.columnGroup,
-            EVENT_COLUMN_GROUP_DISPLAYED_CHILDREN_CHANGED,
-            this.onDisplayedChildrenChanged.bind(this)
-        );
+        this.addManagedListeners(this.columnGroup, {
+            displayedChildrenChanged: this.onDisplayedChildrenChanged.bind(this),
+        });
 
         this.onWidthChanged();
 

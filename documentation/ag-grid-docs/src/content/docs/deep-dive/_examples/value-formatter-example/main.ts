@@ -2,7 +2,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry, ValueFormatterParams } from '@ag-grid-community/core';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 // Row Data Interface
 interface IRow {

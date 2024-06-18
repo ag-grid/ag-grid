@@ -1,6 +1,8 @@
-import { AlignedGridsService } from './alignedGridsService';
+import { ApiFunctionService } from './api/apiFunctionService';
+import { createApiProxy } from './api/apiUtils';
+import type { GridApi } from './api/gridApi';
+import type { ApiFunctionName } from './api/iApiFunction';
 import { CellNavigationService } from './cellNavigationService';
-import { AutoColService } from './columns/autoColService';
 import { ColumnApplyStateService } from './columns/columnApplyStateService';
 import { ColumnAutosizeService } from './columns/columnAutosizeService';
 import { ColumnDefFactory } from './columns/columnDefFactory';
@@ -13,19 +15,16 @@ import { ColumnMoveService } from './columns/columnMoveService';
 import { ColumnNameService } from './columns/columnNameService';
 import { ColumnSizeService } from './columns/columnSizeService';
 import { ColumnViewportService } from './columns/columnViewportService';
-import { DataTypeService } from './columns/dataTypeService';
 import { FuncColsService } from './columns/funcColsService';
 import { PivotResultColsService } from './columns/pivotResultColsService';
-import { ShowRowGroupColsService } from './columns/showRowGroupColsService';
 import { VisibleColsService } from './columns/visibleColsService';
-import { AgStackComponentsRegistry } from './components/agStackComponentsRegistry';
 import { AgComponentUtils } from './components/framework/agComponentUtils';
 import { ComponentMetadataProvider } from './components/framework/componentMetadataProvider';
 import { UserComponentFactory } from './components/framework/userComponentFactory';
 import { UserComponentRegistry } from './components/framework/userComponentRegistry';
-import type { ContextParams, SingletonBean } from './context/context';
+import type { ComponentMeta, ContextParams, SingletonBean } from './context/context';
 import { Context } from './context/context';
-import { gridBeanComparator } from './context/gridBeanComparator';
+import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import { CtrlsFactory } from './ctrlsFactory';
 import { CtrlsService } from './ctrlsService';
 import { DragAndDropService } from './dragAndDrop/dragAndDropService';
@@ -37,14 +36,14 @@ import { RowPositionUtils } from './entities/rowPositionUtils';
 import { Environment } from './environment';
 import { EventService } from './eventService';
 import { FocusService } from './focusService';
-import type { GridApi } from './gridApi';
-import { GridApiService } from './gridApiService';
 import { MouseEventService } from './gridBodyComp/mouseEventService';
 import { NavigationService } from './gridBodyComp/navigationService';
 import { PinnedWidthService } from './gridBodyComp/pinnedWidthService';
 import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridComp } from './gridComp/gridComp';
-import { GridOptionsService } from './gridOptionsService';
+import { CommunityFeaturesModule } from './gridCoreModule';
+import { GridDestroyService } from './gridDestroyService';
+import { GridOptionsService, getCoercedGridOptions } from './gridOptionsService';
 import { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 import { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
 import { HeaderPositionUtils } from './headerRendering/common/headerPosition';
@@ -53,18 +52,15 @@ import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { Module } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
 import { LocaleService } from './localeService';
-import type { Logger } from './logger';
-import { LoggerFactory } from './logger';
 import { AnimationFrameService } from './misc/animationFrameService';
 import { ApiEventService } from './misc/apiEventService';
 import { ExpansionService } from './misc/expansionService';
 import { MenuService } from './misc/menuService';
 import { ResizeObserverService } from './misc/resizeObserverService';
-import { StateService } from './misc/stateService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
-import { PaginationAutoPageSizeService } from './pagination/paginationAutoPageSizeService';
-import { PaginationProxy } from './pagination/paginationProxy';
+import { PageBoundsListener } from './pagination/pageBoundsListener';
+import { PageBoundsService } from './pagination/pageBoundsService';
 import { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 import { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
 import { AutoWidthCalculator } from './rendering/autoWidthCalculator';
@@ -74,14 +70,12 @@ import { OverlayService } from './rendering/overlays/overlayService';
 import { RowCssClassCalculator } from './rendering/row/rowCssClassCalculator';
 import { RowContainerHeightService } from './rendering/rowContainerHeightService';
 import { RowRenderer } from './rendering/rowRenderer';
-import { RowNodeBlockLoader } from './rowNodeCache/rowNodeBlockLoader';
 import { RowNodeSorter } from './rowNodes/rowNodeSorter';
 import { SelectableService } from './rowNodes/selectableService';
-import { SelectionService } from './selectionService';
+import { SelectionService } from './selection/selectionService';
 import { SortController } from './sortController';
 import { StylingService } from './styling/stylingService';
 import { SyncService } from './syncService';
-import { UndoRedoService } from './undoRedo/undoRedoService';
 import { _errorOnce, _warnOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
@@ -175,8 +169,6 @@ export function createGrid<TData>(
  * @deprecated v31 use createGrid() instead
  */
 export class Grid {
-    protected logger: Logger;
-
     private readonly gridOptions: any; // Not typed to enable setting api for backwards compatibility
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
@@ -241,7 +233,7 @@ export class GridCoreCreator {
         } else {
             mergedGridOps = providedOptions;
         }
-        const gridOptions = GridOptionsService.getCoercedGridOptions(mergedGridOps);
+        const gridOptions = getCoercedGridOptions(mergedGridOps);
 
         const gridId = gridOptions.gridId ?? String(nextGridId++);
 
@@ -261,13 +253,15 @@ export class GridCoreCreator {
             providedBeanInstances: providedBeanInstances,
             beanClasses: beanClasses,
             gridId: gridId,
-            beanComparator: gridBeanComparator,
+            beanInitComparator: gridBeanInitComparator,
+            beanDestroyComparator: gridBeanDestroyComparator,
+            derivedBeans: [createApiProxy],
         };
 
         const context = new Context(contextParams);
         this.registerModuleUserComponents(context, registeredModules);
-        this.registerModuleStackComponents(context, registeredModules);
         this.registerControllers(context, registeredModules);
+        this.registerModuleApiFunctions(context, registeredModules);
 
         createUi(context);
 
@@ -277,8 +271,7 @@ export class GridCoreCreator {
             acceptChanges(context);
         }
 
-        const gridApi = context.getBean('gridApi') as GridApi;
-        return gridApi;
+        return context.getBean('gridApi');
     }
 
     private registerControllers(context: Context, registeredModules: Module[]): void {
@@ -288,14 +281,6 @@ export class GridCoreCreator {
                 module.controllers.forEach((meta) => factory.register(meta));
             }
         });
-    }
-
-    private registerModuleStackComponents(context: Context, registeredModules: Module[]): void {
-        const registry = context.getBean('agStackComponentsRegistry');
-        const agStackComponents = registeredModules.flatMap((module) =>
-            module.agStackComponents ? module.agStackComponents : []
-        );
-        registry.ensureRegistered(agStackComponents);
     }
 
     private getRegisteredModules(params: GridParams | undefined, gridId: string): Module[] {
@@ -321,6 +306,12 @@ export class GridCoreCreator {
             }
         };
 
+        addModule(
+            !!passedViaConstructor?.length || !ModuleRegistry.__isPackageBased(),
+            CommunityFeaturesModule,
+            undefined
+        );
+
         if (passedViaConstructor) {
             passedViaConstructor.forEach((m) => addModule(true, m, gridId));
         }
@@ -333,14 +324,24 @@ export class GridCoreCreator {
     }
 
     private registerModuleUserComponents(context: Context, registeredModules: Module[]): void {
-        const moduleUserComps: { componentName: string; componentClass: any }[] = this.extractModuleEntity(
-            registeredModules,
-            (module) => (module.userComponents ? module.userComponents : [])
+        const moduleUserComps: ComponentMeta[] = this.extractModuleEntity<ComponentMeta>(registeredModules, (module) =>
+            module.userComponents ? module.userComponents : []
         );
 
         const registry = context.getBean('userComponentRegistry');
         moduleUserComps.forEach((compMeta) => {
-            registry.registerDefaultComponent(compMeta.componentName, compMeta.componentClass);
+            registry.registerDefaultComponent(compMeta.name, compMeta.classImp);
+        });
+    }
+
+    private registerModuleApiFunctions(context: Context, registeredModules: Module[]): void {
+        const apiFunctionService = context.getBean('apiFunctionService');
+        registeredModules.forEach((module) => {
+            const apiFunctions = module.apiFunctions ?? {};
+            const names = Object.keys(apiFunctions) as ApiFunctionName[];
+            names.forEach((name) => {
+                apiFunctionService?.addFunction(name, apiFunctions[name]!);
+            });
         });
     }
 
@@ -383,7 +384,7 @@ export class GridCoreCreator {
         };
 
         if (!rowModelModuleNames[rowModelType]) {
-            _errorOnce('Could not find row model for rowModelType = ' + rowModelType);
+            _errorOnce('Could not find row model for rowModelType = ', rowModelType);
             return;
         }
 
@@ -402,8 +403,8 @@ export class GridCoreCreator {
             RowPositionUtils,
             CellPositionUtils,
             HeaderPositionUtils,
-            PaginationAutoPageSizeService,
-            GridApiService,
+            GridDestroyService,
+            ApiFunctionService,
             UserComponentRegistry,
             AgComponentUtils,
             ComponentMetadataProvider,
@@ -421,15 +422,14 @@ export class GridCoreCreator {
             SelectionService,
             ColumnModel,
             HeaderNavigationService,
-            PaginationProxy,
+            PageBoundsService,
+            PageBoundsListener,
             RowRenderer,
             ExpressionService,
             ColumnFactory,
-            AlignedGridsService,
             NavigationService,
             ValueCache,
             ValueService,
-            LoggerFactory,
             AutoWidthCalculator,
             StandardMenuFactory,
             DragAndDropService,
@@ -443,23 +443,17 @@ export class GridCoreCreator {
             ColumnHoverService,
             ColumnAnimationService,
             SelectableService,
-            AutoColService,
             ChangeDetectionService,
             AnimationFrameService,
-            UndoRedoService,
-            AgStackComponentsRegistry,
             ColumnDefFactory,
             RowCssClassCalculator,
-            RowNodeBlockLoader,
             RowNodeSorter,
             CtrlsService,
             PinnedWidthService,
             RowNodeEventThrottle,
             CtrlsFactory,
-            DataTypeService,
             SyncService,
             OverlayService,
-            StateService,
             ExpansionService,
             ApiEventService,
             AriaAnnouncementService,
@@ -475,7 +469,6 @@ export class GridCoreCreator {
             ColumnNameService,
             ColumnViewportService,
             PivotResultColsService,
-            ShowRowGroupColsService,
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => (module.beans ? module.beans : []));

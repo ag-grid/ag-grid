@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-imports */
 // @START_IMPORTS@
 import {
     AfterViewInit,
@@ -11,12 +12,11 @@ import {
     ViewContainerRef,
     ViewEncapsulation,
 } from '@angular/core';
+import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 
-import {
+import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterModel,
-    AgChartTheme,
-    AgChartThemeOverrides,
     AlignedGrid,
     AsyncTransactionsFlushed,
     BodyScrollEndEvent,
@@ -34,10 +34,10 @@ import {
     CellMouseOverEvent,
     CellPosition,
     CellValueChangedEvent,
-    ChartCreated,
-    ChartDestroyed,
-    ChartOptionsChanged,
-    ChartRangeSelectionChanged,
+    ChartCreatedEvent,
+    ChartDestroyedEvent,
+    ChartOptionsChangedEvent,
+    ChartRangeSelectionChangedEvent,
     ChartRefParams,
     ChartToolPanelsDef,
     ColDef,
@@ -71,7 +71,7 @@ import {
     DragStoppedEvent,
     ExcelExportParams,
     ExcelStyle,
-    ExpandCollapseAllEvent,
+    ExpandOrCollapseAllEvent,
     FillEndEvent,
     FillOperationParams,
     FillStartEvent,
@@ -143,7 +143,10 @@ import {
     RowClickedEvent,
     RowDataUpdatedEvent,
     RowDoubleClickedEvent,
-    RowDragEvent,
+    RowDragEndEvent,
+    RowDragEnterEvent,
+    RowDragLeaveEvent,
+    RowDragMoveEvent,
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
     RowGroupOpenedEvent,
@@ -181,7 +184,8 @@ import {
     VirtualRowRemovedEvent,
 } from 'ag-grid-community';
 // @END_IMPORTS@
-import { AgPromise, ComponentUtil, GridApi, GridOptions, GridParams, Module, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions, GridParams, Module } from 'ag-grid-community';
+import { AgPromise, _combineAttributesAndGridOptions, _processOnChange, createGrid } from 'ag-grid-community';
 
 import { AngularFrameworkComponentWrapper } from './angularFrameworkComponentWrapper';
 import { AngularFrameworkOverrides } from './angularFrameworkOverrides';
@@ -227,7 +231,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         // Run the setup outside of angular so all the event handlers that are created do not trigger change detection
         this.angularFrameworkOverrides.runOutsideAngular(() => {
             this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef, this.angularFrameworkOverrides);
-            const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this);
+            const mergedGridOps = _combineAttributesAndGridOptions(this.gridOptions, this);
 
             this.gridParams = {
                 globalEventListener: this.globalEventListener.bind(this),
@@ -260,7 +264,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
                 Object.entries(changes).forEach(([key, value]: [string, any]) => {
                     gridOptions[key as keyof GridOptions] = value.currentValue;
                 });
-                ComponentUtil.processOnChange(gridOptions, this.api);
+                _processOnChange(gridOptions, this.api);
             });
         }
     }
@@ -1560,7 +1564,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public resetRowDataOnUpdate: boolean | undefined = undefined;
-    /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc.
+    /** Callback fired after the row is rendered into the DOM. Should not be used to initiate side effects.
      */
     @Input() public processRowPostCreate: ((params: ProcessRowParams<TData>) => void) | undefined = undefined;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
@@ -1798,20 +1802,23 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     > = new EventEmitter<AdvancedFilterBuilderVisibleChangedEvent<TData>>();
     /** A chart has been created.
      */
-    @Output() public chartCreated: EventEmitter<ChartCreated<TData>> = new EventEmitter<ChartCreated<TData>>();
+    @Output() public chartCreated: EventEmitter<ChartCreatedEvent<TData>> = new EventEmitter<
+        ChartCreatedEvent<TData>
+    >();
     /** The data range for the chart has been changed.
      */
-    @Output() public chartRangeSelectionChanged: EventEmitter<ChartRangeSelectionChanged<TData>> = new EventEmitter<
-        ChartRangeSelectionChanged<TData>
-    >();
+    @Output() public chartRangeSelectionChanged: EventEmitter<ChartRangeSelectionChangedEvent<TData>> =
+        new EventEmitter<ChartRangeSelectionChangedEvent<TData>>();
     /** Formatting changes have been made by users through the Format Panel.
      */
-    @Output() public chartOptionsChanged: EventEmitter<ChartOptionsChanged<TData>> = new EventEmitter<
-        ChartOptionsChanged<TData>
+    @Output() public chartOptionsChanged: EventEmitter<ChartOptionsChangedEvent<TData>> = new EventEmitter<
+        ChartOptionsChangedEvent<TData>
     >();
     /** A chart has been destroyed.
      */
-    @Output() public chartDestroyed: EventEmitter<ChartDestroyed<TData>> = new EventEmitter<ChartDestroyed<TData>>();
+    @Output() public chartDestroyed: EventEmitter<ChartDestroyedEvent<TData>> = new EventEmitter<
+        ChartDestroyedEvent<TData>
+    >();
     /** DOM event `keyDown` happened on a cell.
      */
     @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>> =
@@ -1872,16 +1879,20 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     >();
     /** A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid.
      */
-    @Output() public rowDragEnter: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
+    @Output() public rowDragEnter: EventEmitter<RowDragEnterEvent<TData>> = new EventEmitter<
+        RowDragEnterEvent<TData>
+    >();
     /** The mouse has moved while dragging.
      */
-    @Output() public rowDragMove: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
+    @Output() public rowDragMove: EventEmitter<RowDragMoveEvent<TData>> = new EventEmitter<RowDragMoveEvent<TData>>();
     /** The mouse has left the grid while dragging.
      */
-    @Output() public rowDragLeave: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
+    @Output() public rowDragLeave: EventEmitter<RowDragLeaveEvent<TData>> = new EventEmitter<
+        RowDragLeaveEvent<TData>
+    >();
     /** The drag has finished over the grid.
      */
-    @Output() public rowDragEnd: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
+    @Output() public rowDragEnd: EventEmitter<RowDragEndEvent<TData>> = new EventEmitter<RowDragEndEvent<TData>>();
     /** A row group column was added, removed or reordered.
      */
     @Output() public columnRowGroupChanged: EventEmitter<ColumnRowGroupChangedEvent<TData>> = new EventEmitter<
@@ -1894,8 +1905,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     >();
     /** Fired when calling either of the API methods `expandAll()` or `collapseAll()`.
      */
-    @Output() public expandOrCollapseAll: EventEmitter<ExpandCollapseAllEvent<TData>> = new EventEmitter<
-        ExpandCollapseAllEvent<TData>
+    @Output() public expandOrCollapseAll: EventEmitter<ExpandOrCollapseAllEvent<TData>> = new EventEmitter<
+        ExpandOrCollapseAllEvent<TData>
     >();
     /** Exceeded the `pivotMaxGeneratedColumns` limit when generating columns.
      */

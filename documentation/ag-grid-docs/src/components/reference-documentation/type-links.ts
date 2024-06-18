@@ -59,6 +59,8 @@ const TYPE_LINKS: Record<string, string> = {
     ExcelTableConfig: './excel-export-api/#exceltableconfig',
     GridApi: './grid-api/',
     GridOptions: './grid-options/',
+    AgPublicEventType: './grid-events/',
+    AgEventListener: './grid-events/',
     HeaderPosition: './keyboard-navigation/#headerposition',
     HTMLElement: 'https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement',
     IAggFunc: './aggregation-custom-functions/#custom-aggregation-functions',

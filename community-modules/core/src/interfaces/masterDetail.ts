@@ -1,6 +1,6 @@
+import type { GridApi } from '../api/gridApi';
 import type { Bean } from '../context/bean';
 import type { GridOptions } from '../entities/gridOptions';
-import type { GridApi } from '../gridApi';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { IRowNode } from './iRowNode';
 

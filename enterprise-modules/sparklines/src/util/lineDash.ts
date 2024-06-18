@@ -1,3 +1,5 @@
+import { _warnOnce } from '@ag-grid-community/core';
+
 export function getLineDash(lineCap: 'butt' | 'square' | 'round' | undefined, lineDash: string = 'solid'): number[] {
     const buttOrNull: { [key: string]: number[] } = {
         solid: [],
@@ -31,7 +33,7 @@ export function getLineDash(lineCap: 'butt' | 'square' | 'round' | undefined, li
 
     if (lineCap === 'round' || lineCap === 'square') {
         if (roundOrSquare[lineDash] == undefined) {
-            console.warn(`'${lineDash}' is not a valid 'lineDash' option.`);
+            warnInvalid(lineDash);
             return roundOrSquare.solid;
         }
 
@@ -39,9 +41,13 @@ export function getLineDash(lineCap: 'butt' | 'square' | 'round' | undefined, li
     }
 
     if (buttOrNull[lineDash] == undefined) {
-        console.warn(`'${lineDash}' is not a valid 'lineDash' option.`);
+        warnInvalid(lineDash);
         return buttOrNull.solid;
     }
 
     return buttOrNull[lineDash];
+}
+
+function warnInvalid(lineDash: string) {
+    _warnOnce(`'${lineDash}' is not a valid 'lineDash' option.`);
 }

@@ -1,16 +1,14 @@
 import type { CheckboxChangedEvent } from '../events';
-import { Events } from '../events';
 import type { AgCheckboxParams, LabelAlignment } from '../interfaces/agFieldParams';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { AgAbstractInputField } from './agAbstractInputField';
-import type { AgComponentSelector } from './component';
+import type { ComponentSelector } from './component';
 
 export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> extends AgAbstractInputField<
     HTMLInputElement,
     boolean,
     TConfig
 > {
-    static readonly selector: AgComponentSelector = 'AG-CHECKBOX';
-
     protected override labelAlignment: LabelAlignment = 'right';
 
     private selected?: boolean = false;
@@ -30,8 +28,8 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
     }
 
     protected override addInputListeners() {
-        this.addManagedListener(this.eInput, 'click', this.onCheckboxClick.bind(this));
-        this.addManagedListener(this.eLabel, 'click', this.toggle.bind(this));
+        this.addManagedElementListeners(this.eInput, { click: this.onCheckboxClick.bind(this) });
+        this.addManagedElementListeners(this.eLabel, { click: this.toggle.bind(this) });
     }
 
     public getNextValue(): boolean {
@@ -112,11 +110,11 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
     }
 
     private dispatchChange(selected: boolean | undefined, previousValue: boolean | undefined, event?: MouseEvent) {
-        this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED, selected, previousValue, event });
+        this.dispatchLocalEvent({ type: 'fieldValueChanged', selected, previousValue, event });
 
         const input = this.getInputElement();
-        const checkboxChangedEvent: CheckboxChangedEvent = {
-            type: Events.EVENT_CHECKBOX_CHANGED,
+        const checkboxChangedEvent: WithoutGridCommon<CheckboxChangedEvent> = {
+            type: 'checkboxChanged',
             id: input.id,
             name: input.name,
             selected,
@@ -141,3 +139,8 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
         this.eWrapper.classList.toggle('ag-indeterminate', value == null);
     }
 }
+
+export const AgCheckboxSelector: ComponentSelector = {
+    selector: 'AG-CHECKBOX',
+    component: AgCheckbox,
+};

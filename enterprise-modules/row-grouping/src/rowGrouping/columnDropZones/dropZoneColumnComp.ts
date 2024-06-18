@@ -1,22 +1,23 @@
 import type {
+    AgColumn,
     BeanCollection,
     ColumnModel,
     ColumnNameService,
+    DragAndDropIcon,
     DragItem,
     DropTarget,
     FuncColsService,
     IAggFuncService,
     PopupService,
     SortController,
+    SortIndicatorComp,
 } from '@ag-grid-community/core';
 import {
-    AgColumn,
     Component,
-    DragAndDropService,
     DragSourceType,
     KeyCode,
     RefPlaceholder,
-    SortIndicatorComp,
+    SortIndicatorSelector,
     _loadTemplate,
 } from '@ag-grid-community/core';
 import { PillDragComp, VirtualList } from '@ag-grid-enterprise/core';
@@ -65,7 +66,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
                     <span data-ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
                 </span>
             `,
-            [SortIndicatorComp]
+            [SortIndicatorSelector]
         );
     }
 
@@ -76,8 +77,10 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
 
         this.setupSort();
 
-        this.addManagedListener(this.eventService, AgColumn.EVENT_SORT_CHANGED, () => {
-            this.setupAria();
+        this.addManagedEventListeners({
+            sortChanged: () => {
+                this.setupAria();
+            },
         });
 
         if (this.isGroupingZone()) {
@@ -196,8 +199,8 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         }
     }
 
-    protected override getDefaultIconName(): string {
-        return DragAndDropService.ICON_HIDE;
+    protected override getDefaultIconName(): DragAndDropIcon {
+        return 'hide';
     }
 
     protected createGetDragItem(): () => DragItem {
@@ -264,10 +267,12 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         ePopup.appendChild(virtualListGui);
         ePopup.style.width = `${eGui.clientWidth}px`;
 
-        const focusoutListener = this.addManagedListener(ePopup, 'focusout', (e: FocusEvent) => {
-            if (!ePopup.contains(e.relatedTarget as HTMLElement) && addPopupRes) {
-                addPopupRes.hideFunc();
-            }
+        const [focusoutListener] = this.addManagedElementListeners(ePopup, {
+            focusout: (e: FocusEvent) => {
+                if (!ePopup.contains(e.relatedTarget as HTMLElement) && addPopupRes) {
+                    addPopupRes.hideFunc();
+                }
+            },
         });
 
         const popupHiddenFunc = (callbackEvent?: KeyboardEvent) => {

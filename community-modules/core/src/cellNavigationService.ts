@@ -8,11 +8,13 @@ import type { CellPosition } from './entities/cellPositionUtils';
 import type { RowNode } from './entities/rowNode';
 import type { RowPosition } from './entities/rowPositionUtils';
 import type { IRowModel } from './interfaces/iRowModel';
-import type { PaginationProxy } from './pagination/paginationProxy';
+import type { PageBoundsService } from './pagination/pageBoundsService';
+import type { PaginationService } from './pagination/paginationService';
 import type { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 import type { RowCtrl } from './rendering/row/rowCtrl';
 import type { RowRenderer } from './rendering/rowRenderer';
 import { _last } from './utils/array';
+import { _warnOnce } from './utils/function';
 import { _missing } from './utils/generic';
 
 export class CellNavigationService extends BeanStub implements NamedBean {
@@ -22,14 +24,16 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     private rowModel: IRowModel;
     private rowRenderer: RowRenderer;
     private pinnedRowModel: PinnedRowModel;
-    private paginationProxy: PaginationProxy;
+    private paginationService?: PaginationService;
+    private pageBoundsService: PageBoundsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleColsService = beans.visibleColsService;
         this.rowModel = beans.rowModel;
         this.rowRenderer = beans.rowRenderer;
         this.pinnedRowModel = beans.pinnedRowModel;
-        this.paginationProxy = beans.paginationProxy;
+        this.paginationService = beans.paginationService;
+        this.pageBoundsService = beans.pageBoundsService;
     }
 
     // returns null if no cell to focus on, ie at the end of the grid
@@ -54,7 +58,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         let rowIndex: number;
 
         if (upKey || downKey) {
-            rowIndex = upKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
+            rowIndex = upKey ? this.pageBoundsService.getFirstRow() : this.pageBoundsService.getLastRow();
             column = focusedCell.column as AgColumn;
         } else {
             const allColumns = this.visibleColsService.getAllCols();
@@ -103,7 +107,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
                     break;
                 default:
                     pointer = null;
-                    console.warn('AG Grid: unknown key for navigation ' + key);
+                    _warnOnce('unknown key for navigation ', key);
                     break;
             }
 
@@ -189,7 +193,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
                     // if on last row of pinned top, then next row is main body (if rows exist),
                     // otherwise it's the pinned bottom
                     if (this.rowModel.isRowsToRender()) {
-                        return { rowIndex: this.paginationProxy.getPageFirstRow(), rowPinned: null } as RowPosition;
+                        return { rowIndex: this.pageBoundsService.getFirstRow(), rowPinned: null } as RowPosition;
                     }
 
                     if (this.pinnedRowModel.isRowsToRender('bottom')) {
@@ -267,16 +271,16 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         const index = rowPosition.rowIndex;
 
         if (pinned === 'top') {
-            const lastTopIndex = this.pinnedRowModel.getPinnedTopRowData().length - 1;
+            const lastTopIndex = this.pinnedRowModel.getPinnedTopRowNodes().length - 1;
             return lastTopIndex <= index;
         }
 
         if (pinned === 'bottom') {
-            const lastBottomIndex = this.pinnedRowModel.getPinnedBottomRowData().length - 1;
+            const lastBottomIndex = this.pinnedRowModel.getPinnedBottomRowNodes().length - 1;
             return lastBottomIndex <= index;
         }
 
-        const lastBodyIndex = this.paginationProxy.getPageLastRow();
+        const lastBodyIndex = this.pageBoundsService.getLastRow();
         return lastBodyIndex <= index;
     }
 
@@ -284,7 +288,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         // if already on top row, do nothing
         const index = rowPosition.rowIndex;
         const pinned = rowPosition.rowPinned;
-        const isFirstRow = pinned ? index === 0 : index === this.paginationProxy.getPageFirstRow();
+        const isFirstRow = pinned ? index === 0 : index === this.pageBoundsService.getFirstRow();
 
         // if already on top row, do nothing
         if (isFirstRow) {
@@ -340,13 +344,13 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     }
 
     private getLastBodyCell(): RowPosition {
-        const lastBodyRow = this.paginationProxy.getPageLastRow();
+        const lastBodyRow = this.pageBoundsService.getLastRow();
 
         return { rowIndex: lastBodyRow, rowPinned: null } as RowPosition;
     }
 
     private getLastFloatingTopRow(): RowPosition {
-        const lastFloatingRow = this.pinnedRowModel.getPinnedTopRowData().length - 1;
+        const lastFloatingRow = this.pinnedRowModel.getPinnedTopRowNodes().length - 1;
 
         return { rowIndex: lastFloatingRow, rowPinned: 'top' } as RowPosition;
     }
@@ -379,7 +383,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
 
             // If we are tabbing and there is a paging panel present, tabbing should go
             // to the paging panel instead of loading the next page.
-            if (!rowBelow.rowPinned && !this.paginationProxy.isRowInPage(rowBelow)) {
+            if (!rowBelow.rowPinned && !(this.paginationService?.isRowInPage(rowBelow) ?? true)) {
                 return null;
             }
 
@@ -411,7 +415,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
 
             // If we are tabbing and there is a paging panel present, tabbing should go
             // to the paging panel instead of loading the next page.
-            if (!rowAbove.rowPinned && !this.paginationProxy.isRowInPage(rowAbove)) {
+            if (!rowAbove.rowPinned && !(this.paginationService?.isRowInPage(rowAbove) ?? true)) {
                 return null;
             }
 

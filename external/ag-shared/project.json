@@ -1,0 +1,53 @@
+{
+  "name": "ag-shared",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "{projectRoot}/src",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": ["build:types"],
+      "inputs": [],
+      "outputs": [],
+      "configurations": {
+        "watch": {},
+        "production": {}
+      }
+    },
+    "build:types": {
+      "executor": "@nx/js:tsc",
+      "dependsOn": ["^build:types"],
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:typescript"]
+        }
+      ],
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "external/ag-shared/dist/types",
+        "main": "external/ag-shared/src/main.ts",
+        "tsConfig": "external/ag-shared//tsconfig.types.json",
+        "compiler": "tsc"
+      },
+      "configurations": {
+        "watch": {
+          "tsConfig": "external/ag-shared/tsconfig.types.watch.json"
+        },
+        "production": {}
+      }
+    },
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    }
+  },
+  "tags": ["shared"]
+}

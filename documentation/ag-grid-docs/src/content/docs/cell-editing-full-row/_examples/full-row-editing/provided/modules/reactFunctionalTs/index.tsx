@@ -13,7 +13,7 @@ import { createRoot } from 'react-dom/client';
 import NumericCellEditor from './numericCellEditor';
 import './styles.css';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule]);
 
 function getRowData(): any[] {
     const rowData: any[] = [];
@@ -119,7 +119,6 @@ const GridExample = () => {
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                         editType={'fullRow'}
-                        reactiveCustomComponents
                         onCellValueChanged={onCellValueChanged}
                         onRowValueChanged={onRowValueChanged}
                     />

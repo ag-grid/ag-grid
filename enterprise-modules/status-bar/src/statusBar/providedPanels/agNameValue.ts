@@ -1,19 +1,15 @@
-import type { AgComponentSelector } from '@ag-grid-community/core';
+import type { ComponentSelector } from '@ag-grid-community/core';
 import { Component, RefPlaceholder } from '@ag-grid-community/core';
 
 export class AgNameValue extends Component {
-    static readonly selector: AgComponentSelector = 'AG-NAME-VALUE';
-
-    private static TEMPLATE /* html */ = `<div class="ag-status-name-value">
-            <span data-ref="eLabel"></span>:&nbsp;
-            <span data-ref="eValue" class="ag-status-name-value-value"></span>
-        </div>`;
-
     private readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eValue: HTMLElement = RefPlaceholder;
 
     constructor() {
-        super(AgNameValue.TEMPLATE);
+        super(/* html */ `<div class="ag-status-name-value">
+            <span data-ref="eLabel"></span>:&nbsp;
+            <span data-ref="eValue" class="ag-status-name-value-value"></span>
+        </div>`);
     }
 
     public setLabel(key: string, defaultValue: string): void {
@@ -28,3 +24,7 @@ export class AgNameValue extends Component {
         this.eValue.innerHTML = value;
     }
 }
+export const AgNameValueSelector: ComponentSelector = {
+    selector: 'AG-NAME-VALUE',
+    component: AgNameValue,
+};

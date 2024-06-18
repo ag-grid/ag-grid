@@ -7,7 +7,7 @@ import { MenuModule } from '@ag-grid-enterprise/menu';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 
 // Register shared Modules globally
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, MenuModule, GridChartsModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, GridChartsModule]);
 
 const columnDefs: ColDef[] = [{ field: 'id' }, { field: 'color' }, { field: 'value1' }];
 const defaultColDef = {

@@ -1,21 +1,21 @@
 import type {
     AbstractColDef,
     AgColumn,
-    AgComponentSelector,
     AgProvidedColumnGroup,
     BeanCollection,
     ColumnModel,
+    ComponentSelector,
     FiltersToolPanelState,
 } from '@ag-grid-community/core';
 import {
     Component,
-    Events,
     _clearElement,
     _exists,
     _flatten,
     _includes,
     _mergeDeep,
     _setAriaLabel,
+    _warnOnce,
     isProvidedColumnGroup,
 } from '@ag-grid-community/core';
 import type { ToolPanelColDefService } from '@ag-grid-enterprise/side-bar';
@@ -26,18 +26,15 @@ import { ToolPanelFilterComp } from './toolPanelFilterComp';
 import type { ToolPanelFilterItem } from './toolPanelFilterGroupComp';
 import { ToolPanelFilterGroupComp } from './toolPanelFilterGroupComp';
 
-export class AgFiltersToolPanelList extends Component {
+export type AgFiltersToolPanelListEvent = 'filterExpanded' | 'groupExpanded';
+export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEvent> {
     private toolPanelColDefService: ToolPanelColDefService;
     private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection) {
-        this.toolPanelColDefService = beans.toolPanelColDefService;
+        this.toolPanelColDefService = beans.toolPanelColDefService as ToolPanelColDefService;
         this.columnModel = beans.columnModel;
     }
-
-    static readonly selector: AgComponentSelector = 'AG-FILTERS-TOOL-PANEL-LIST';
-
-    private static TEMPLATE = /* html */ `<div class="ag-filter-list-panel"></div>`;
 
     private initialised = false;
     private hasLoadedInitialState = false;
@@ -54,7 +51,7 @@ export class AgFiltersToolPanelList extends Component {
     private onColumnsChangedPending: boolean = false;
 
     constructor() {
-        super(AgFiltersToolPanelList.TEMPLATE);
+        super(/* html */ `<div class="ag-filter-list-panel"></div>`);
     }
 
     public init(params: ToolPanelFiltersCompParams): void {
@@ -69,28 +66,28 @@ export class AgFiltersToolPanelList extends Component {
         this.params = defaultParams as ToolPanelFiltersCompParams;
 
         if (!this.params.suppressSyncLayoutWithGrid) {
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => this.onColumnsChanged());
+            this.addManagedEventListeners({ columnMoved: () => this.onColumnsChanged() });
         }
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
-
-        this.addManagedListener(this.eventService, Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, (event) => {
-            // when re-entering the filters tool panel we need to refresh the virtual lists in the set filters in case
-            // filters have been changed elsewhere, i.e. via an api call.
-            if (event.key === 'filters') {
-                this.refreshFilters(event.visible);
-            }
-        });
-
-        this.addManagedListener(this.eventService, Events.EVENT_DRAG_STARTED, () => {
-            this.suppressOnColumnsChanged = true;
-        });
-        this.addManagedListener(this.eventService, Events.EVENT_DRAG_STOPPED, () => {
-            this.suppressOnColumnsChanged = false;
-            if (this.onColumnsChangedPending) {
-                this.onColumnsChangedPending = false;
-                this.onColumnsChanged();
-            }
+        this.addManagedEventListeners({
+            newColumnsLoaded: () => this.onColumnsChanged(),
+            toolPanelVisibleChanged: (event) => {
+                // when re-entering the filters tool panel we need to refresh the virtual lists in the set filters in case
+                // filters have been changed elsewhere, i.e. via an api call.
+                if (event.key === 'filters') {
+                    this.refreshFilters(event.visible);
+                }
+            },
+            dragStarted: () => {
+                this.suppressOnColumnsChanged = true;
+            },
+            dragStopped: () => {
+                this.suppressOnColumnsChanged = false;
+                if (this.onColumnsChangedPending) {
+                    this.onColumnsChangedPending = false;
+                    this.onColumnsChanged();
+                }
+            },
         });
 
         if (this.columnModel.isReady()) {
@@ -352,7 +349,7 @@ export class AgFiltersToolPanelList extends Component {
         if (groupIds) {
             const unrecognisedGroupIds = groupIds.filter((groupId) => updatedGroupIds.indexOf(groupId) < 0);
             if (unrecognisedGroupIds.length > 0) {
-                console.warn('AG Grid: unable to find groups for these supplied groupIds:', unrecognisedGroupIds);
+                _warnOnce('unable to find groups for these supplied groupIds:', unrecognisedGroupIds);
             }
         }
     }
@@ -397,7 +394,7 @@ export class AgFiltersToolPanelList extends Component {
         if (colIds) {
             const unrecognisedColIds = colIds.filter((colId) => updatedColIds.indexOf(colId) < 0);
             if (unrecognisedColIds.length > 0) {
-                console.warn('AG Grid: unable to find columns for these supplied colIds:', unrecognisedColIds);
+                _warnOnce('unable to find columns for these supplied colIds:' + unrecognisedColIds);
             }
         }
     }
@@ -407,7 +404,7 @@ export class AgFiltersToolPanelList extends Component {
     }
 
     private onFilterExpanded(): void {
-        this.dispatchEvent({ type: 'filterExpanded' });
+        this.dispatchLocalEvent({ type: 'filterExpanded' });
     }
 
     private fireExpandedEvent(): void {
@@ -439,7 +436,7 @@ export class AgFiltersToolPanelList extends Component {
             state = EXPAND_STATE.EXPANDED;
         }
 
-        this.dispatchEvent({ type: 'groupExpanded', state: state });
+        this.dispatchLocalEvent({ type: 'groupExpanded', state: state });
     }
 
     public performFilterSearch(searchText: string) {
@@ -561,3 +558,8 @@ export class AgFiltersToolPanelList extends Component {
         super.destroy();
     }
 }
+
+export const AgFiltersToolPanelListSelector: ComponentSelector = {
+    selector: 'AG-FILTERS-TOOL-PANEL-LIST',
+    component: AgFiltersToolPanelList,
+};

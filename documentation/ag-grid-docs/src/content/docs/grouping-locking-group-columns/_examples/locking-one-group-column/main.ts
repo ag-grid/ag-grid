@@ -1,10 +1,10 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, MenuModule, RowGroupingModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, RowGroupingModule]);
 
 let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {

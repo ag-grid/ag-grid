@@ -14,7 +14,7 @@ export class AdvancedSettingsMenuFactory extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.focusService = beans.focusService;
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
 
     private activeMenu?: AdvancedSettingsMenu;
@@ -69,12 +69,10 @@ class AdvancedSettingsMenu extends TabGuardComp {
         this.focusService = beans.focusService;
     }
 
-    private static TEMPLATE = /* html */ `<div class="ag-chart-advanced-settings"></div>`;
-
     private advancedSettingsPanel: AdvancedSettingsPanel;
 
     constructor(private readonly chartMenuContext: ChartMenuContext) {
-        super(AdvancedSettingsMenu.TEMPLATE);
+        super(/* html */ `<div class="ag-chart-advanced-settings"></div>`);
     }
 
     public postConstruct(): void {

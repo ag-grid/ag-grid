@@ -2,7 +2,6 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColumnHoverChangedEvent } from '../events';
-import { Events } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 
 export class ColumnHoverService extends BeanStub implements NamedBean {
@@ -13,7 +12,7 @@ export class ColumnHoverService extends BeanStub implements NamedBean {
     public setMouseOver(columns: AgColumn[]): void {
         this.selectedColumns = columns;
         const event: WithoutGridCommon<ColumnHoverChangedEvent> = {
-            type: Events.EVENT_COLUMN_HOVER_CHANGED,
+            type: 'columnHoverChanged',
         };
         this.eventService.dispatchEvent(event);
     }
@@ -21,7 +20,7 @@ export class ColumnHoverService extends BeanStub implements NamedBean {
     public clearMouseOver(): void {
         this.selectedColumns = null;
         const event: WithoutGridCommon<ColumnHoverChangedEvent> = {
-            type: Events.EVENT_COLUMN_HOVER_CHANGED,
+            type: 'columnHoverChanged',
         };
         this.eventService.dispatchEvent(event);
     }

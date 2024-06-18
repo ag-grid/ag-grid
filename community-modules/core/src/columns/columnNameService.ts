@@ -5,6 +5,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { AbstractColDef, ColDef, HeaderLocation, HeaderValueGetterParams, IAggFunc } from '../entities/colDef';
+import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
 import { _camelCaseToHumanText } from '../utils/string';
 import type { ExpressionService } from '../valueService/expressionService';
@@ -57,9 +58,6 @@ export class ColumnNameService extends BeanStub implements NamedBean {
     }
 
     public getDisplayNameForColumnGroup(columnGroup: AgColumnGroup, location: HeaderLocation): string | null {
-        if (columnGroup.getProvidedColumnGroup == null) {
-            console.log('bug');
-        }
         return this.getDisplayNameForProvidedColumnGroup(columnGroup, columnGroup.getProvidedColumnGroup(), location);
     }
 
@@ -89,7 +87,7 @@ export class ColumnNameService extends BeanStub implements NamedBean {
                 // valueGetter is an expression, so execute the expression
                 return this.expressionService.evaluate(headerValueGetter, params);
             }
-            console.warn('AG Grid: headerValueGetter must be a function or a string');
+            _warnOnce('headerValueGetter must be a function or a string');
             return '';
         } else if (colDef.headerName != null) {
             return colDef.headerName;

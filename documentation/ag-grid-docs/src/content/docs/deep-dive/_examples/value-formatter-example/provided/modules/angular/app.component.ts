@@ -6,7 +6,7 @@ import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 // Row Data Interface
 interface IRow {

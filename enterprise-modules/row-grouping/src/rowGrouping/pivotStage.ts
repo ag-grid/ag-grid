@@ -15,9 +15,11 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, Events, _iterateObject, _missing } from '@ag-grid-community/core';
+import { BeanStub, _iterateObject, _missing } from '@ag-grid-community/core';
 
 import type { PivotColDefService } from './pivotColDefService';
+
+const EXCEEDED_MAX_UNIQUE_VALUES = 'Exceeded maximum allowed pivot column count.';
 
 export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'pivotStage' as const;
@@ -33,7 +35,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         this.columnModel = beans.columnModel;
         this.pivotResultColsService = beans.pivotResultColsService;
         this.funcColsService = beans.funcColsService;
-        this.pivotColDefService = beans.pivotColDefService;
+        this.pivotColDefService = beans.pivotColDefService as PivotColDefService;
     }
 
     private uniqueValues: any = {};
@@ -53,7 +55,6 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
     private lastTimeFailed = false;
 
     private maxUniqueValues: number = -1;
-    private static EXCEEDED_MAX_UNIQUE_VALUES = 'Exceeded maximum allowed pivot column count.';
 
     public execute(params: StageExecuteParams): void {
         const changedPath = params.changedPath;
@@ -88,10 +89,10 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
             uniqueValues = this.bucketUpRowNodes(changedPath);
         } catch (e) {
             // message is checked rather than inheritance as the build seems to break instanceof
-            if (e.message === PivotStage.EXCEEDED_MAX_UNIQUE_VALUES) {
+            if (e.message === EXCEEDED_MAX_UNIQUE_VALUES) {
                 this.pivotResultColsService.setPivotResultCols([], 'rowModelUpdated');
                 const event: WithoutGridCommon<PivotMaxColumnsExceededEvent> = {
-                    type: Events.EVENT_PIVOT_MAX_COLUMNS_EXCEEDED,
+                    type: 'pivotMaxColumnsExceeded',
                     message: e.message,
                 };
                 this.eventService.dispatchEvent(event);
@@ -215,8 +216,13 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         }
     }
 
-    private bucketChildren(children: RowNode[], pivotColumns: AgColumn[], pivotIndex: number, uniqueValues: any): any {
-        const mappedChildren: any = {};
+    private bucketChildren(
+        children: RowNode[],
+        pivotColumns: AgColumn[],
+        pivotIndex: number,
+        uniqueValues: any
+    ): Record<string, any> {
+        const mappedChildren: Record<string, any> = {};
         const pivotColumn = pivotColumns[pivotIndex];
 
         // map the children out based on the pivot column
@@ -235,7 +241,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
                 const hasExceededColMax = this.currentUniqueCount > this.maxUniqueValues;
                 if (doesGeneratedColMaxExist && hasExceededColMax) {
                     // throw an error to prevent all additional execution and escape the loops.
-                    throw Error(PivotStage.EXCEEDED_MAX_UNIQUE_VALUES);
+                    throw Error(EXCEEDED_MAX_UNIQUE_VALUES);
                 }
             }
 
@@ -249,7 +255,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         if (pivotIndex === pivotColumns.length - 1) {
             return mappedChildren;
         } else {
-            const result: any = {};
+            const result: Record<string, any> = {};
 
             _iterateObject(mappedChildren, (key: string, value: RowNode[]) => {
                 result[key] = this.bucketChildren(value, pivotColumns, pivotIndex + 1, uniqueValues[key]);

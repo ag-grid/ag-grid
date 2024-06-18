@@ -1,29 +1,24 @@
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
-import { Events } from '../../../eventKeys';
-import type { EventsType } from '../../../eventKeys';
 import type { SortController } from '../../../sortController';
 import { _clearElement, _setDisplayed } from '../../../utils/dom';
 import { _createIconNoSpan } from '../../../utils/icon';
-import type { AgComponentSelector } from '../../../widgets/component';
+import type { ComponentSelector } from '../../../widgets/component';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 
+const SortIndicatorTemplate = /* html */ `<span class="ag-sort-indicator-container">
+        <span data-ref="eSortOrder" class="ag-sort-indicator-icon ag-sort-order ag-hidden" aria-hidden="true"></span>
+        <span data-ref="eSortAsc" class="ag-sort-indicator-icon ag-sort-ascending-icon ag-hidden" aria-hidden="true"></span>
+        <span data-ref="eSortDesc" class="ag-sort-indicator-icon ag-sort-descending-icon ag-hidden" aria-hidden="true"></span>
+        <span data-ref="eSortMixed" class="ag-sort-indicator-icon ag-sort-mixed-icon ag-hidden" aria-hidden="true"></span>
+        <span data-ref="eSortNone" class="ag-sort-indicator-icon ag-sort-none-icon ag-hidden" aria-hidden="true"></span>
+    </span>`;
 export class SortIndicatorComp extends Component {
     private sortController: SortController;
 
     public wireBeans(beans: BeanCollection): void {
         this.sortController = beans.sortController;
     }
-
-    static readonly selector: AgComponentSelector = 'AG-SORT-INDICATOR';
-
-    private static TEMPLATE /* html */ = `<span class="ag-sort-indicator-container">
-            <span data-ref="eSortOrder" class="ag-sort-indicator-icon ag-sort-order ag-hidden" aria-hidden="true"></span>
-            <span data-ref="eSortAsc" class="ag-sort-indicator-icon ag-sort-ascending-icon ag-hidden" aria-hidden="true"></span>
-            <span data-ref="eSortDesc" class="ag-sort-indicator-icon ag-sort-descending-icon ag-hidden" aria-hidden="true"></span>
-            <span data-ref="eSortMixed" class="ag-sort-indicator-icon ag-sort-mixed-icon ag-hidden" aria-hidden="true"></span>
-            <span data-ref="eSortNone" class="ag-sort-indicator-icon ag-sort-none-icon ag-hidden" aria-hidden="true"></span>
-        </span>`;
 
     private eSortOrder: HTMLElement = RefPlaceholder;
     private eSortAsc: HTMLElement = RefPlaceholder;
@@ -38,7 +33,7 @@ export class SortIndicatorComp extends Component {
         super();
 
         if (!skipTemplate) {
-            this.setTemplate(SortIndicatorComp.TEMPLATE);
+            this.setTemplate(SortIndicatorTemplate);
         }
     }
 
@@ -71,12 +66,12 @@ export class SortIndicatorComp extends Component {
         this.addInIcon('sortUnSort', this.eSortNone, column);
 
         this.addManagedPropertyListener('unSortIcon', () => this.updateIcons());
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_NEW_COLUMNS_LOADED]: this.updateIcons.bind(this),
+        this.addManagedEventListeners({
+            newColumnsLoaded: this.updateIcons.bind(this),
             // Watch global events, as row group columns can effect their display column.
-            [Events.EVENT_SORT_CHANGED]: this.onSortChanged.bind(this),
+            sortChanged: this.onSortChanged.bind(this),
             // when grouping changes so can sort indexes and icons
-            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: this.onSortChanged.bind(this),
+            columnRowGroupChanged: this.onSortChanged.bind(this),
         });
 
         this.onSortChanged();
@@ -126,11 +121,11 @@ export class SortIndicatorComp extends Component {
         const isColumnShowingRowGroup = this.column.getColDef().showRowGroup;
         const areGroupsCoupled = this.gos.isColumnsSortingCoupledToGroup();
         if (areGroupsCoupled && isColumnShowingRowGroup) {
-            this.addManagedListeners<EventsType>(this.eventService, {
+            this.addManagedEventListeners({
                 // Watch global events, as row group columns can effect their display column.
-                [Events.EVENT_SORT_CHANGED]: this.updateMultiSortIndicator.bind(this),
+                sortChanged: this.updateMultiSortIndicator.bind(this),
                 // when grouping changes so can sort indexes and icons
-                [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: this.updateMultiSortIndicator.bind(this),
+                columnRowGroupChanged: this.updateMultiSortIndicator.bind(this),
             });
             this.updateMultiSortIndicator();
         }
@@ -167,3 +162,8 @@ export class SortIndicatorComp extends Component {
         }
     }
 }
+
+export const SortIndicatorSelector: ComponentSelector = {
+    selector: 'AG-SORT-INDICATOR',
+    component: SortIndicatorComp,
+};

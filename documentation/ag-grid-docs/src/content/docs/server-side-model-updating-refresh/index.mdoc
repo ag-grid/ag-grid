@@ -24,7 +24,7 @@ The following example provides a simple demonstration of the different behaviour
 * Using the **Refresh** button, you can request that all the rows are requested from the server again, bringing them up to date with the server version.
 * Because [Row IDs](./server-side-model-configuration/#providing-row-ids) have been implemented, the grid is able to detect which rows have been updated, and flash cells when using `enableCellChangeFlash`.
 * The `Purge` checkbox enables the purge option in the API call, this causes all rows (and all row state except row selection state) to be reset when the refresh call is made, and replaced with loading rows.
-* When a refresh is finished, note the `storeRefreshed` event is fired, and logged in the console.
+* When a refresh is finished, note the `storeRefreshed` event is fired, and logged in the console. This is not fired when the purge option is enabled as the rows are reset not refreshed.
 
 {% gridExampleRunner title="Simple Example" name="refreshing-the-grid"  exampleHeight=615 /%}
 

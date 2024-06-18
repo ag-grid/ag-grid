@@ -2,21 +2,21 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, Context } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import { type AgProvidedColumnGroup, isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { Environment } from '../environment';
 import type { ColumnEventType } from '../events';
-import { Events } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { PropertyChangedSource } from '../gridOptionsService';
+import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { Column, ColumnPinnedType } from '../interfaces/iColumn';
+import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { _areEqual, _includes, _insertIntoArray, _moveInArray } from '../utils/array';
 import { _warnOnce } from '../utils/function';
 import { _missingOrEmpty } from '../utils/generic';
 import type { ValueCache } from '../valueService/valueCache';
-import type { AutoColService } from './autoColService';
-import { GROUP_AUTO_COLUMN_ID } from './autoColService';
 import type { ColumnApplyStateService, ColumnState } from './columnApplyStateService';
 import type { ColumnAutosizeService } from './columnAutosizeService';
 import type { ColumnDefFactory } from './columnDefFactory';
@@ -26,11 +26,11 @@ import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnGroupStateService } from './columnGroupStateService';
 import type { ColumnMoveService } from './columnMoveService';
 import type { ColumnSizeService } from './columnSizeService';
+import { GROUP_AUTO_COLUMN_ID } from './columnUtils';
 import { destroyColumnTree, getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
 import type { FuncColsService } from './funcColsService';
 import type { PivotResultColsService } from './pivotResultColsService';
-import type { ShowRowGroupColsService } from './showRowGroupColsService';
 import type { VisibleColsService } from './visibleColsService';
 
 export type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
@@ -56,7 +56,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private columnViewportService: ColumnViewportService;
     private pivotResultColsService: PivotResultColsService;
     private columnAnimationService: ColumnAnimationService;
-    private autoColService: AutoColService;
+    private autoColService?: IAutoColService;
     private valueCache: ValueCache;
     private columnDefFactory: ColumnDefFactory;
     private columnApplyStateService: ColumnApplyStateService;
@@ -66,7 +66,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private columnAutosizeService: ColumnAutosizeService;
     private funcColsService: FuncColsService;
     private quickFilterService?: QuickFilterService;
-    private showRowGroupColsService: ShowRowGroupColsService;
+    private showRowGroupColsService?: IShowRowGroupColsService;
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
@@ -148,7 +148,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('pivotMode', (event) =>
             this.setPivotMode(this.gos.get('pivotMode'), convertSourceType(event.source))
         );
-        this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => this.onFirstDataRendered());
+        this.addManagedEventListeners({ firstDataRendered: () => this.onFirstDataRendered() });
     }
 
     // called from SyncService, when grid has finished initialising
@@ -232,7 +232,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.restoreColOrder();
 
         this.positionLockedCols();
-        this.showRowGroupColsService.refresh();
+        this.showRowGroupColsService?.refresh();
         this.quickFilterService?.refreshQuickFilterCols();
 
         this.setColSpanActive();
@@ -336,12 +336,12 @@ export class ColumnModel extends BeanStub implements NamedBean {
         };
 
         // function
-        if (noAutoCols) {
+        if (noAutoCols || !this.autoColService) {
             destroyPrevious();
             return;
         }
 
-        const list = this.autoColService.createAutoCols(rowGroupCols);
+        const list = this.autoColService.createAutoCols(rowGroupCols) ?? [];
         const autoColsSame = areColIdsEqual(list, this.autoCols?.list || null);
 
         // the new tree dept will equal the current tree dept of cols
@@ -405,7 +405,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
 
         if (this.gos.isDomLayout('print')) {
-            console.warn(`AG Grid: Changing the column pinning status is not allowed with domLayout='print'`);
+            _warnOnce(`Changing the column pinning status is not allowed with domLayout='print'`);
             return;
         }
 
@@ -639,8 +639,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
         newOrder = this.columnMoveService.placeLockedColumns(newOrder);
 
         if (!this.columnMoveService.doesMovePassMarryChildren(newOrder)) {
-            console.warn(
-                'AG Grid: Applying column order broke a group where columns should be married together. Applying new order has been discarded.'
+            _warnOnce(
+                'Applying column order broke a group where columns should be married together. Applying new order has been discarded.'
             );
             return;
         }
@@ -817,7 +817,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         // if we aren't going to force, update the auto cols in place
         if (this.autoCols) {
-            this.autoColService.updateAutoCols(this.autoCols.list, source);
+            this.autoColService!.updateAutoCols(this.autoCols.list, source);
         }
         this.createColsFromColDefs(true, source);
     }
@@ -984,7 +984,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     private onAutoGroupColumnDefChanged(source: ColumnEventType) {
         if (this.autoCols) {
-            this.autoColService.updateAutoCols(this.autoCols.list, source);
+            this.autoColService!.updateAutoCols(this.autoCols.list, source);
         }
     }
 }

@@ -1,6 +1,6 @@
 'use strict';
 
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -13,13 +13,7 @@ import { createRoot } from 'react-dom/client';
 
 import { countries } from './countries.jsx';
 
-ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
-    InfiniteRowModelModule,
-    SetFilterModule,
-    MenuModule,
-    ColumnsToolPanelModule,
-]);
+ModuleRegistry.registerModules([InfiniteRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule]);
 
 const filterParams = { values: countries() };
 

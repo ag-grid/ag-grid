@@ -2,7 +2,7 @@ import React, { memo, useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import type { CellCtrl } from 'ag-grid-community';
-import { PopupEditorWrapper } from 'ag-grid-community';
+import type { PopupEditorWrapper } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { useEffectOnce } from '../useEffectOnce';
@@ -17,7 +17,7 @@ const PopupEditorComp = (props: {
 }) => {
     const [popupEditorWrapper, setPopupEditorWrapper] = useState<PopupEditorWrapper>();
 
-    const { context, popupService, localeService, gos } = useContext(BeansContext);
+    const { context, popupService, localeService, gos, editService } = useContext(BeansContext);
 
     useEffectOnce(() => {
         const { editDetails, cellCtrl, eParentCell } = props;
@@ -25,7 +25,7 @@ const PopupEditorComp = (props: {
 
         const useModelPopup = gos.get('stopEditingWhenCellsLoseFocus');
 
-        const wrapper = context.createBean(new PopupEditorWrapper(compDetails.params));
+        const wrapper = context.createBean(editService!.createPopupEditorWrapper(compDetails.params));
         const ePopupGui = wrapper.getGui();
 
         if (props.jsChildComp) {

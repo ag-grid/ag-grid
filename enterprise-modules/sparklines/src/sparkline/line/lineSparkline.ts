@@ -47,8 +47,6 @@ class SparklineCrosshairs {
 }
 
 export class LineSparkline extends Sparkline {
-    static className = 'LineSparkline';
-
     protected linePath: _Scene.Path = new _Scene.Path();
     protected xCrosshairLine: _Scene.Line = new _Scene.Line();
     protected yCrosshairLine: _Scene.Line = new _Scene.Line();

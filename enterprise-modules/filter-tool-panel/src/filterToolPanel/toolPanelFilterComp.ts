@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     BeanCollection,
     ColumnNameService,
     FilterManager,
@@ -6,9 +7,7 @@ import type {
     IFilterComp,
 } from '@ag-grid-community/core';
 import {
-    AgColumn,
     Component,
-    Events,
     FilterWrapperComp,
     KeyCode,
     RefPlaceholder,
@@ -19,7 +18,8 @@ import {
     _setDisplayed,
 } from '@ag-grid-community/core';
 
-export class ToolPanelFilterComp extends Component {
+export type ToolPanelFilterCompEvent = 'filterChanged';
+export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
     private filterManager?: FilterManager;
     private columnNameService: ColumnNameService;
 
@@ -27,16 +27,6 @@ export class ToolPanelFilterComp extends Component {
         this.filterManager = beans.filterManager;
         this.columnNameService = beans.columnNameService;
     }
-
-    private static TEMPLATE = /* html */ `
-        <div class="ag-filter-toolpanel-instance">
-            <div class="ag-filter-toolpanel-header ag-filter-toolpanel-instance-header" data-ref="eFilterToolPanelHeader" role="button" aria-expanded="false">
-                <div data-ref="eExpand" class="ag-filter-toolpanel-expand"></div>
-                <span data-ref="eFilterName" class="ag-header-cell-text"></span>
-                <span data-ref="eFilterIcon" class="ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon" aria-hidden="true"></span>
-            </div>
-            <div class="ag-filter-toolpanel-instance-body ag-filter" data-ref="agFilterToolPanelBody"></div>
-        </div>`;
 
     private readonly eFilterToolPanelHeader: HTMLElement = RefPlaceholder;
     private readonly eFilterName: HTMLElement = RefPlaceholder;
@@ -56,7 +46,15 @@ export class ToolPanelFilterComp extends Component {
         hideHeader: boolean,
         private readonly expandedCallback: () => void
     ) {
-        super(ToolPanelFilterComp.TEMPLATE);
+        super(/* html */ `
+            <div class="ag-filter-toolpanel-instance">
+                <div class="ag-filter-toolpanel-header ag-filter-toolpanel-instance-header" data-ref="eFilterToolPanelHeader" role="button" aria-expanded="false">
+                    <div data-ref="eExpand" class="ag-filter-toolpanel-expand"></div>
+                    <span data-ref="eFilterName" class="ag-header-cell-text"></span>
+                    <span data-ref="eFilterIcon" class="ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon" aria-hidden="true"></span>
+                </div>
+                <div class="ag-filter-toolpanel-instance-body ag-filter" data-ref="agFilterToolPanelBody"></div>
+            </div>`);
         this.hideHeader = hideHeader;
     }
 
@@ -71,9 +69,11 @@ export class ToolPanelFilterComp extends Component {
         this.column = column;
         this.eFilterName.innerText =
             this.columnNameService.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
-        this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
-        this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', this.onKeyDown.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
+        this.addManagedListeners(this.eFilterToolPanelHeader, {
+            click: this.toggleExpanded.bind(this),
+            keydown: this.onKeyDown.bind(this),
+        });
+        this.addManagedEventListeners({ filterOpened: this.onFilterOpened.bind(this) });
         this.addInIcon('filter', this.eFilterIcon, this.column);
 
         _setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
@@ -86,7 +86,7 @@ export class ToolPanelFilterComp extends Component {
             this.eFilterToolPanelHeader.setAttribute('tabindex', '0');
         }
 
-        this.addManagedListener(this.column, AgColumn.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedListeners(this.column, { filterChanged: this.onFilterChanged.bind(this) });
     }
 
     private onKeyDown(e: KeyboardEvent): void {
@@ -135,7 +135,7 @@ export class ToolPanelFilterComp extends Component {
 
     private onFilterChanged(): void {
         _setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
-        this.dispatchEvent({ type: AgColumn.EVENT_FILTER_CHANGED });
+        this.dispatchLocalEvent({ type: 'filterChanged' });
     }
 
     public toggleExpanded(): void {

@@ -1,10 +1,10 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { GetRowIdParams, GridApi, GridOptions, IRowNode, ValueParserParams, createGrid } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule, SetFilterModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, SetFilterModule]);
 
 var rowIdCounter = 0;
 var callCount = 0;
@@ -69,9 +69,7 @@ const gridOptions: GridOptions = {
     },
     groupDefaultExpanded: 1,
     suppressAggFuncInHeader: true,
-    getRowId: (params: GetRowIdParams) => {
-        return params.data.id;
-    },
+    getRowId: (params: GetRowIdParams) => String(params.data.id),
     onGridReady: (params) => {
         params.api.setGridOption('rowData', createRowData());
     },

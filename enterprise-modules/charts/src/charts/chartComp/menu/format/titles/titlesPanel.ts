@@ -1,7 +1,7 @@
 import type { BeanCollection } from '@ag-grid-community/core';
 import { Component, RefPlaceholder } from '@ag-grid-community/core';
-import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import type { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import { isCartesian, isPolar } from '../../../utils/seriesTypeMapper';
@@ -11,14 +11,10 @@ import { ChartTitlePanel } from './chartTitlePanel';
 import { TitlePanel } from './titlePanel';
 
 export class TitlesPanel extends Component {
-    private static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="titleGroup"></ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
     private readonly titleGroup: AgGroupComponent = RefPlaceholder;
 
@@ -64,7 +60,13 @@ export class TitlesPanel extends Component {
                 ...axisTitlePanels,
             ],
         };
-        this.setTemplate(TitlesPanel.TEMPLATE, [AgGroupComponent], { titleGroup: titleGroupParams });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="titleGroup"></ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector],
+            { titleGroup: titleGroupParams }
+        );
         registerGroupComponent(this.titleGroup);
     }
 }

@@ -745,3 +745,13 @@ ag-grid-aurelia {
         transform: rotate(180deg);
     }
 }
+
+.ag-measurement-container {
+    width: 0;
+    overflow: hidden;
+    visibility: hidden;
+
+    div {
+        position: absolute;
+    }
+}

@@ -12,12 +12,12 @@ import {
     IsGroupOpenByDefaultParams,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 import { createDataItem, getData } from './data';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 var aggCallCount = 0;
 var compareCallCount = 0;
@@ -98,7 +98,7 @@ function getMyFilter(): IFilterType {
 var myFilter = getMyFilter();
 
 function getRowId(params: GetRowIdParams) {
-    return params.data.id;
+    return String(params.data.id);
 }
 
 function onBtDuplicate() {

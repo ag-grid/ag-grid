@@ -19,10 +19,6 @@ const gridOptions = {
 The Detail Cell Renderer should be a [Cell Renderer](./component-cell-renderer/) component. See [Cell Renderer](./component-cell-renderer/) on how to build
 and register a Cell Renderer with the grid.
 
-{% if isFramework("react") %}
-To get refresh working smoothly on a custom Detail Component set the grid option `reactiveCustomComponents`.
-{% /if %}
-
 The following examples demonstrate minimalist custom Detail Cell Renderer. Note that where a Detail Grid would normally appear, only the message "My Custom Detail" is shown.
 
 {% gridExampleRunner title="Simple Detail Cell Renderer" name="simple-custom-detail"  exampleHeight=545 /%}
@@ -80,11 +76,7 @@ The example below shows how components can refresh on updates. The example refre
 {% /if %}
 
 {% if isFramework("react") %}
-If the grid option `reactiveCustomComponents` is enabled, when data is updated in the grid using [Transaction Updates](./data-update-transactions/), Detail Cell Renderers will be refreshed with updated props.
-
-If `reactiveCustomComponents` is not enabled, Detail Cell Renderers will be destroyed and recreated on update, unless the `refresh()` method is implemented (via `useImperativeHandle`) and returns `true`. This behaviour is deprecated, and in v32, `reactiveCustomComponents` will default to true.
-
-The example below demonstrates Detail Cell Renderers refreshing when `reactiveCustomComponents` is enabled.
+When data is updated in the grid using [Transaction Updates](./data-update-transactions/), Detail Cell Renderers will be refreshed with updated props. This is demonstrated in the below example.
 {% /if %}
 
 {% gridExampleRunner title="Custom Detail with Refresh" name="custom-detail-with-refresh"  exampleHeight=545 /%}

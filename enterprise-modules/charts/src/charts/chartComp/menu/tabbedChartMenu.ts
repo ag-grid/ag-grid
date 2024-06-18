@@ -1,5 +1,7 @@
-import type { BeanCollection, ChartToolPanelMenuOptions, TabbedItem } from '@ag-grid-community/core';
-import { AgPromise, Component, TabbedLayout } from '@ag-grid-community/core';
+import type { BeanCollection, ChartToolPanelMenuOptions } from '@ag-grid-community/core';
+import { AgPromise, Component } from '@ag-grid-community/core';
+import type { TabbedItem } from '@ag-grid-enterprise/core';
+import { TabbedLayout } from '@ag-grid-enterprise/core';
 
 import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
 import type { ChartMenuContext } from './chartMenuContext';
@@ -7,14 +9,14 @@ import { ChartDataPanel } from './data/chartDataPanel';
 import { FormatPanel } from './format/formatPanel';
 import { ChartSettingsPanel } from './settings/chartSettingsPanel';
 
-export class TabbedChartMenu extends Component {
+export type TabbedChartMenuEvent = 'closed';
+export class TabbedChartMenu extends Component<TabbedChartMenuEvent> {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
 
-    public static EVENT_CLOSED = 'closed';
     public static TAB_DATA = 'data';
     public static TAB_FORMAT = 'format';
 
@@ -49,7 +51,7 @@ export class TabbedChartMenu extends Component {
             closeButtonAriaLabel: this.chartTranslationService.translate('ariaChartMenuClose'),
             onCloseClicked: () => {
                 this.eventSource?.focus({ preventScroll: true });
-                this.dispatchEvent({ type: TabbedChartMenu.EVENT_CLOSED });
+                this.dispatchLocalEvent({ type: 'closed' });
             },
         });
         this.createBean(this.tabbedLayout);

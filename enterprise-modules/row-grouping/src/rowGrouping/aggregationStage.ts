@@ -15,7 +15,7 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, _missingOrEmpty } from '@ag-grid-community/core';
+import { BeanStub, _errorOnce, _missingOrEmpty } from '@ag-grid-community/core';
 
 import type { AggFuncService } from './aggFuncService';
 
@@ -40,7 +40,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
-        this.aggFuncService = beans.aggFuncService;
+        this.aggFuncService = beans.aggFuncService as AggFuncService;
         this.funcColsService = beans.funcColsService;
         this.pivotResultColsService = beans.pivotResultColsService;
         this.valueService = beans.valueService;
@@ -290,7 +290,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
             typeof aggFuncOrString === 'string' ? this.aggFuncService.getAggFunc(aggFuncOrString) : aggFuncOrString;
 
         if (typeof aggFunc !== 'function') {
-            console.error(`AG Grid: unrecognised aggregation function ${aggFuncOrString}`);
+            _errorOnce(`unrecognised aggregation function ${aggFuncOrString}`);
             return null;
         }
 

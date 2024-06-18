@@ -18,7 +18,7 @@ import type {
     StoreUpdatedEvent,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, Events, NumberSequence, ServerSideTransactionResultStatus } from '@ag-grid-community/core';
+import { BeanStub, NumberSequence, ServerSideTransactionResultStatus, _warnOnce } from '@ag-grid-community/core';
 
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { SSRMParams } from '../../serverSideRowModel';
@@ -32,8 +32,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private funcColsService: FuncColsService;
 
     public wireBeans(beans: BeanCollection) {
-        this.blockUtils = beans.ssrmBlockUtils;
-        this.storeUtils = beans.ssrmStoreUtils;
+        this.blockUtils = beans.ssrmBlockUtils as BlockUtils;
+        this.storeUtils = beans.ssrmStoreUtils as StoreUtils;
         this.selectionService = beans.selectionService;
         this.funcColsService = beans.funcColsService;
     }
@@ -77,7 +77,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             numberOfRows = this.storeUtils.getServerSideInitialRowCount() ?? 1;
 
             this.eventService.dispatchEventOnce({
-                type: Events.EVENT_ROW_COUNT_READY,
+                type: 'rowCountReady',
             });
         }
         this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, this.storeParams));
@@ -116,11 +116,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns an object determining the status of this transaction and effected nodes
      */
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
-        const idFunc = this.gos.getCallback('getRowId');
+        const idFunc = this.gos.getRowIdCallback();
         if (!idFunc) {
-            console.warn(
-                'AG Grid: getRowId callback must be implemented for transactions to work. Transaction was ignored.'
-            );
+            _warnOnce('getRowId callback must be implemented for transactions to work. Transaction was ignored.');
             return {
                 status: ServerSideTransactionResultStatus.Cancelled,
             };
@@ -711,7 +709,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         // this results in row model firing ModelUpdated.
         // server side row model also updates the row indexes first
         const event: WithoutGridCommon<StoreUpdatedEvent> = {
-            type: Events.EVENT_STORE_UPDATED,
+            type: 'storeUpdated',
         };
         this.eventService.dispatchEvent(event);
     }
@@ -719,7 +717,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     // gets called when row data updated, and no more refreshing needed
     public fireRefreshFinishedEvent(): void {
         const event: WithoutGridCommon<StoreRefreshedEvent> = {
-            type: Events.EVENT_STORE_REFRESHED,
+            type: 'storeRefreshed',
             route: this.parentRowNode.getRoute(),
         };
         this.eventService.dispatchEvent(event);

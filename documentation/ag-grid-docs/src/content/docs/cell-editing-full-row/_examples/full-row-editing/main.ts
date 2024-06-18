@@ -12,7 +12,7 @@ import { MenuModule } from '@ag-grid-enterprise/menu';
 
 import { NumericCellEditor } from './numericCellEditor_typescript';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule]);
 
 let gridApi: GridApi;
 

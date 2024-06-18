@@ -58,7 +58,5 @@ export class AgPromise<T> {
         this.waiters.forEach((waiter) => waiter(value));
     }
 
-    private onReject(params: any): void {
-        console.warn('TBI');
-    }
+    private onReject(params: any): void {}
 }

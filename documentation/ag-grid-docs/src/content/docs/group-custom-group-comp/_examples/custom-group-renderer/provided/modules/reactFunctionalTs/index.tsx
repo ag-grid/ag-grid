@@ -11,7 +11,7 @@ import {
     GridReadyEvent,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
@@ -23,7 +23,7 @@ import CustomGroupCellRenderer from './customGroupCellRenderer';
 import { IOlympicData } from './interfaces';
 import './styles.css';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -102,7 +102,6 @@ const GridExample = () => {
                     autoGroupColumnDef={autoGroupColumnDef}
                     defaultColDef={defaultColDef}
                     groupDefaultExpanded={1}
-                    reactiveCustomComponents
                     onGridReady={onGridReady}
                     onCellDoubleClicked={onCellDoubleClicked}
                     onCellKeyDown={onCellKeyDown}

@@ -14,7 +14,7 @@ import { createRoot } from 'react-dom/client';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const GridExample = () => {
     const topGrid = useRef<AgGridReact>(null);

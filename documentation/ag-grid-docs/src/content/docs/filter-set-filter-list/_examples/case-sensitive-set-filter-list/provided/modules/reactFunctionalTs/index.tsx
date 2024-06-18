@@ -13,7 +13,6 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
     ClientSideRowModelModule,
     SetFilterModule,
     MenuModule,

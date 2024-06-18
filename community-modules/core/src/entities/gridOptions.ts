@@ -1,6 +1,8 @@
 /************************************************************************************************
  * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
  ************************************************************************************************/
+import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
+
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AsyncTransactionsFlushed,
@@ -18,10 +20,10 @@ import type {
     CellMouseOutEvent,
     CellMouseOverEvent,
     CellValueChangedEvent,
-    ChartCreated,
-    ChartDestroyed,
-    ChartOptionsChanged,
-    ChartRangeSelectionChanged,
+    ChartCreatedEvent,
+    ChartDestroyedEvent,
+    ChartOptionsChangedEvent,
+    ChartRangeSelectionChangedEvent,
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
     ColumnHeaderClickedEvent,
@@ -44,7 +46,7 @@ import type {
     DisplayedColumnsChangedEvent,
     DragStartedEvent,
     DragStoppedEvent,
-    ExpandCollapseAllEvent,
+    ExpandOrCollapseAllEvent,
     FillEndEvent,
     FillStartEvent,
     FilterChangedEvent,
@@ -71,7 +73,10 @@ import type {
     RowClickedEvent,
     RowDataUpdatedEvent,
     RowDoubleClickedEvent,
-    RowDragEvent,
+    RowDragEndEvent,
+    RowDragEnterEvent,
+    RowDragLeaveEvent,
+    RowDragMoveEvent,
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
     RowGroupOpenedEvent,
@@ -106,7 +111,6 @@ import type {
 } from '../interfaces/exportParams';
 import type { GridState } from '../interfaces/gridState';
 import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
-import type { AgChartTheme, AgChartThemeOverrides } from '../interfaces/iAgChartOptions';
 import type { AlignedGrid } from '../interfaces/iAlignedGrid';
 import type {
     FillOperationParams,
@@ -1598,12 +1602,10 @@ export interface GridOptions<TData = any> {
     /**
      * **React only**.
      *
-     * If enabled, makes it easier to set up custom components.
-     * If disabled, custom components will either need to have methods declared imperatively,
-     * or the component props will not update reactively. The behaviour with this disabled is deprecated,
-     * and in v32 this will default to `true`.
+     * @deprecated As of v32 custom components are created reactively by default.
+     * Set this property to `false` to switch to the legacy way of declaring custom components imperatively.
      * @initial
-     * @default false
+     * @default true
      */
     reactiveCustomComponents?: boolean;
 
@@ -1798,7 +1800,7 @@ export interface GridOptions<TData = any> {
      */
     resetRowDataOnUpdate?: boolean;
     /**
-     * Allows you to process rows after they are created, so you can do final adding of custom attributes etc.
+     * Callback fired after the row is rendered into the DOM. Should not be used to initiate side effects.
      */
     processRowPostCreate?: (params: ProcessRowParams<TData>) => void;
     /**
@@ -2050,19 +2052,19 @@ export interface GridOptions<TData = any> {
     /**
      * A chart has been created.
      */
-    onChartCreated?(event: ChartCreated<TData>): void;
+    onChartCreated?(event: ChartCreatedEvent<TData>): void;
     /**
      * The data range for the chart has been changed.
      */
-    onChartRangeSelectionChanged?(event: ChartRangeSelectionChanged<TData>): void;
+    onChartRangeSelectionChanged?(event: ChartRangeSelectionChangedEvent<TData>): void;
     /**
      * Formatting changes have been made by users through the Format Panel.
      */
-    onChartOptionsChanged?(event: ChartOptionsChanged<TData>): void;
+    onChartOptionsChanged?(event: ChartOptionsChangedEvent<TData>): void;
     /**
      * A chart has been destroyed.
      */
-    onChartDestroyed?(event: ChartDestroyed<TData>): void;
+    onChartDestroyed?(event: ChartDestroyedEvent<TData>): void;
 
     // *** Keyboard Navigation *** //
     /**
@@ -2132,19 +2134,19 @@ export interface GridOptions<TData = any> {
     /**
      * A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid.
      */
-    onRowDragEnter?(event: RowDragEvent<TData>): void;
+    onRowDragEnter?(event: RowDragEnterEvent<TData>): void;
     /**
      * The mouse has moved while dragging.
      */
-    onRowDragMove?(event: RowDragEvent<TData>): void;
+    onRowDragMove?(event: RowDragMoveEvent<TData>): void;
     /**
      * The mouse has left the grid while dragging.
      */
-    onRowDragLeave?(event: RowDragEvent<TData>): void;
+    onRowDragLeave?(event: RowDragLeaveEvent<TData>): void;
     /**
      * The drag has finished over the grid.
      */
-    onRowDragEnd?(event: RowDragEvent<TData>): void;
+    onRowDragEnd?(event: RowDragEndEvent<TData>): void;
 
     // *** Row Grouping *** //
     /**
@@ -2158,7 +2160,7 @@ export interface GridOptions<TData = any> {
     /**
      * Fired when calling either of the API methods `expandAll()` or `collapseAll()`.
      */
-    onExpandOrCollapseAll?(event: ExpandCollapseAllEvent<TData>): void;
+    onExpandOrCollapseAll?(event: ExpandOrCollapseAllEvent<TData>): void;
     /**
      * Exceeded the `pivotMaxGeneratedColumns` limit when generating columns.
      */

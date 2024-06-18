@@ -165,13 +165,14 @@ export interface GetRowIdParams<TData = any, TContext = any> extends AgGridCommo
     parentKeys?: string[];
 }
 
+export type RenderedRowEvent = 'virtualRowRemoved';
 export interface ProcessRowParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     eRow: HTMLElement;
     ePinnedLeftRow?: HTMLElement;
     ePinnedRightRow?: HTMLElement;
     rowIndex: number;
     node: IRowNode<TData>;
-    addRenderedRowListener: (eventType: string, listener: (...args: any[]) => any) => void;
+    addRenderedRowListener: (eventType: RenderedRowEvent, listener: (...args: any[]) => any) => void;
 }
 
 export interface FillOperationParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

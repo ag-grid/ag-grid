@@ -7,13 +7,12 @@ import {
     ToolPanelVisibleChangedEvent,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 
 ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
     FiltersToolPanelModule,

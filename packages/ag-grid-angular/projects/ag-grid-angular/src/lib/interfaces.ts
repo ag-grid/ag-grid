@@ -1,6 +1,7 @@
 import {
     ICellEditor,
     ICellEditorParams,
+    ICellEditorRendererParams,
     ICellRenderer,
     ICellRendererParams,
     IDate,
@@ -45,6 +46,8 @@ export interface IDateAngularComp extends AgFrameworkComponent<IDateParams>, IDa
 export interface IFilterAngularComp extends AgFrameworkComponent<IFilterParams>, IFilter {}
 
 export interface ICellRendererAngularComp extends AgFrameworkComponent<ICellRendererParams>, ICellRenderer {}
+
+export interface ICellEditorRendererAngularComp extends AgFrameworkComponent<ICellEditorRendererParams> {}
 
 export interface ICellEditorAngularComp extends AgFrameworkComponent<ICellEditorParams>, ICellEditor {}
 

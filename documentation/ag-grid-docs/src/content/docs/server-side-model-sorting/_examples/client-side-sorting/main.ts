@@ -6,12 +6,12 @@ import {
     IsServerSideGroupOpenByDefaultParams,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
 
 import { FakeServer } from './fakeServer';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ServerSideRowModelModule]);
+ModuleRegistry.registerModules([ServerSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {

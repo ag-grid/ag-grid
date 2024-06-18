@@ -10,6 +10,6 @@ export const SparklinesModule: Module = {
     version: VERSION,
     moduleName: ModuleNames.SparklinesModule,
     beans: [SparklineTooltipSingleton],
-    userComponents: [{ componentName: 'agSparklineCellRenderer', componentClass: SparklineCellRenderer }],
+    userComponents: [{ name: 'agSparklineCellRenderer', classImp: SparklineCellRenderer }],
     dependantModules: [EnterpriseCoreModule],
 };

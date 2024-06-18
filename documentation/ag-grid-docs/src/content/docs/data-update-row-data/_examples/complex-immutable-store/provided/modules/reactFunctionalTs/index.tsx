@@ -17,7 +17,7 @@ import { createRoot } from 'react-dom/client';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 const MIN_BOOK_COUNT = 10;
 const MAX_BOOK_COUNT = 20;
@@ -371,7 +371,7 @@ const GridExample = () => {
         };
     }, []);
     const getRowId = useCallback(function (params: GetRowIdParams) {
-        return params.data.trade;
+        return String(params.data.trade);
     }, []);
 
     const updateData = useCallback(() => {

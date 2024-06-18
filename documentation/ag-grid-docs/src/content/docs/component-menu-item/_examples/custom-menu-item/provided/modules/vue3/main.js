@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from '@ag-grid-community/vue3';
@@ -7,12 +7,11 @@ import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
-import { createApp, onBeforeMount, ref } from 'vue';
+import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
 import MenuItem from './menuItemVue.js';
 
 ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
     ClientSideRowModelModule,
     MenuModule,
     ExcelExportModule,
@@ -51,7 +50,7 @@ const VueExample = {
             { field: 'silver' },
             { field: 'bronze' },
         ]);
-        const gridApi = ref();
+        const gridApi = shallowRef();
         const defaultColDef = ref({
             flex: 1,
             minWidth: 100,

@@ -61,9 +61,8 @@ export class BatchRemover {
             parent.childrenAfterGroup = parent.childrenAfterGroup!.filter(
                 (child) => !nodeDetails.removeFromChildrenAfterGroup[child.id!]
             );
-            parent.allLeafChildren = parent.allLeafChildren.filter(
-                (child) => !nodeDetails.removeFromAllLeafChildren[child.id!]
-            );
+            parent.allLeafChildren =
+                parent.allLeafChildren?.filter((child) => !nodeDetails.removeFromAllLeafChildren[child.id!]) ?? null;
             parent.updateHasChildren();
 
             if (parent.sibling) {

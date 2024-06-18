@@ -2,6 +2,8 @@ import ChartsActive from '@ag-website-shared/images/inline-svgs/pricing/charts-a
 import ChartsInactive from '@ag-website-shared/images/inline-svgs/pricing/charts-inactive.svg?react';
 import GridActive from '@ag-website-shared/images/inline-svgs/pricing/grid-active.svg?react';
 import GridInactive from '@ag-website-shared/images/inline-svgs/pricing/grid-inactive.svg?react';
+import { gridUrlWithPrefix } from '@ag-website-shared/utils/gridUrlWithPrefix';
+import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import classnames from 'classnames';
 import { type FunctionComponent, useEffect, useRef, useState } from 'react';
 
@@ -23,6 +25,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
     const [showFullWidthBar, setShowFullWidthBar] = useState(false);
 
     const contactSalesRef = useRef(null); // Step 1: Create a ref for the contactSales div
+    const framework = useFrameworkFromStore();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -152,6 +155,16 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                             >
                                 info@ag-grid.com
                             </InfoEmailLink>
+
+                            <p className={styles.licenceKeyDocs}>
+                                Already have a licence and need to install your key?
+                                <br />
+                                Read our documentation on{' '}
+                                <a href={gridUrlWithPrefix({ framework, url: './license-install' })}>
+                                    Installing Your Licence Key
+                                </a>
+                                .
+                            </p>
                         </div>
 
                         <div className={styles.videoPrompt}>

@@ -8,13 +8,6 @@ import type { HeaderFilterCellCtrl } from './headerFilterCellCtrl';
 import type { IHeaderFilterCellComp } from './iHeaderFilterCellComp';
 
 export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCellCtrl> {
-    private static TEMPLATE /* html */ = `<div class="ag-header-cell ag-floating-filter" role="gridcell">
-            <div data-ref="eFloatingFilterBody" role="presentation"></div>
-            <div class="ag-floating-filter-button ag-hidden" data-ref="eButtonWrapper" role="presentation">
-                <button type="button" class="ag-button ag-floating-filter-button-button" data-ref="eButtonShowMainFilter" tabindex="-1"></button>
-            </div>
-        </div>`;
-
     private readonly eFloatingFilterBody: HTMLElement = RefPlaceholder;
     private readonly eButtonWrapper: HTMLElement = RefPlaceholder;
     private readonly eButtonShowMainFilter: HTMLElement = RefPlaceholder;
@@ -23,7 +16,15 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
     private compPromise: AgPromise<IFloatingFilterComp> | null;
 
     constructor(ctrl: HeaderFilterCellCtrl) {
-        super(HeaderFilterCellComp.TEMPLATE, ctrl);
+        super(
+            /* html */ `<div class="ag-header-cell ag-floating-filter" role="gridcell">
+            <div data-ref="eFloatingFilterBody" role="presentation"></div>
+            <div class="ag-floating-filter-button ag-hidden" data-ref="eButtonWrapper" role="presentation">
+                <button type="button" class="ag-button ag-floating-filter-button-button" data-ref="eButtonShowMainFilter" tabindex="-1"></button>
+            </div>
+        </div>`,
+            ctrl
+        );
     }
 
     public postConstruct(): void {

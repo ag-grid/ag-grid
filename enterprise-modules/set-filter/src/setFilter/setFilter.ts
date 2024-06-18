@@ -1,8 +1,9 @@
 import type {
     AgColumn,
+    AgInputTextField,
     BeanCollection,
     CellValueChangedEvent,
-    ComponentClass,
+    ComponentSelector,
     DataTypeService,
     FuncColsService,
     GetDataPath,
@@ -18,9 +19,8 @@ import type {
     ValueService,
 } from '@ag-grid-community/core';
 import {
-    AgInputTextField,
+    AgInputTextFieldSelector,
     AgPromise,
-    Events,
     GROUP_AUTO_COLUMN_ID,
     KeyCode,
     ProvidedFilter,
@@ -32,7 +32,8 @@ import {
     _toStringOrNull,
     _warnOnce,
 } from '@ag-grid-community/core';
-import { VirtualList, type VirtualListModel } from '@ag-grid-enterprise/core';
+import { VirtualList } from '@ag-grid-enterprise/core';
+import type { VirtualListModel } from '@ag-grid-enterprise/core';
 
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { SetFilterDisplayValue } from './iSetDisplayValueModel';
@@ -51,7 +52,7 @@ import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> implements ISetFilter<V> {
     private funcColsService: FuncColsService;
     private valueService: ValueService;
-    private dataTypeService: DataTypeService;
+    private dataTypeService?: DataTypeService;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
@@ -67,7 +68,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     private valueModel: SetValueModel<V> | null = null;
     private setFilterParams: SetFilterParams<any, V> | null = null;
-    private virtualList: VirtualList | null = null;
+    private virtualList: VirtualList<any> | null = null;
     private caseSensitive: boolean = false;
     private treeDataTreeList = false;
     private getDataPath?: GetDataPath<any>;
@@ -101,8 +102,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
                 <div data-ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
             </div>`;
     }
-    protected getAgComponents(): ComponentClass[] {
-        return [AgInputTextField];
+    protected getAgComponents(): ComponentSelector[] {
+        return [AgInputTextFieldSelector];
     }
 
     protected override handleKeyDown(e: KeyboardEvent): void {
@@ -250,7 +251,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return (
             colDef.filterValueGetter !== existingColDef?.filterValueGetter ||
             processedKeyCreator !== (existingKeyCreator ?? existingColDef?.keyCreator) ||
-            (this.dataTypeService.getFormatValue(colDef.cellDataType as string) === processedKeyCreator &&
+            (!!this.dataTypeService &&
+                this.dataTypeService.getFormatValue(colDef.cellDataType as string) === processedKeyCreator &&
                 colDef.valueFormatter !== existingColDef?.valueFormatter)
         );
     }
@@ -340,7 +342,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             valueService: this.valueService,
             treeDataTreeList: this.treeDataTreeList,
             groupingTreeList: this.groupingTreeList,
-            addManagedListener: (event, listener) => this.addManagedListener(this.eventService, event, listener),
+            addManagedEventListeners: (handlers) => this.addManagedEventListeners(handlers),
         });
 
         this.initialiseFilterBodyUi();
@@ -449,11 +451,13 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             return;
         }
 
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, (event: CellValueChangedEvent) => {
-            // only interested in changes to do with this column
-            if (this.setFilterParams && event.column === this.setFilterParams.column) {
-                this.syncAfterDataChange();
-            }
+        this.addManagedEventListeners({
+            cellValueChanged: (event) => {
+                // only interested in changes to do with this column
+                if (this.setFilterParams && event.column === this.setFilterParams.column) {
+                    this.syncAfterDataChange();
+                }
+            },
         });
 
         this.addManagedPropertyListeners(['treeData', 'getDataPath', 'groupAllowUnbalanced'], () => {
@@ -608,9 +612,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         };
         const listItem = this.createBean(new SetFilterListItem<V | string | null>(itemParams));
 
-        listItem.addEventListener(SetFilterListItem.EVENT_SELECTION_CHANGED, selectedListener as any);
+        listItem.addEventListener('selectionChanged', selectedListener as any);
         if (expandedListener) {
-            listItem.addEventListener(SetFilterListItem.EVENT_EXPANDED_CHANGED, expandedListener as any);
+            listItem.addEventListener('expandedChanged', expandedListener as any);
         }
 
         return listItem;
@@ -787,7 +791,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         eMiniFilter.onValueChange(() => this.onMiniFilterInput());
         eMiniFilter.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
 
-        this.addManagedListener(eMiniFilter.getInputElement(), 'keydown', (e) => this.onMiniFilterKeyDown(e));
+        this.addManagedElementListeners(eMiniFilter.getInputElement(), {
+            keydown: (e) => this.onMiniFilterKeyDown(e!),
+        });
     }
 
     private updateMiniFilter() {

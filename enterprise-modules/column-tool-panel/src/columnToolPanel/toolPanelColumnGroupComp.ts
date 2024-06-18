@@ -1,10 +1,13 @@
 import type {
+    AgCheckbox,
+    AgColumn,
     AgProvidedColumnGroup,
     BeanCollection,
     ColumnEventType,
     ColumnModel,
     ColumnPanelItemDragEndEvent,
     ColumnPanelItemDragStartEvent,
+    DragAndDropService,
     DragItem,
     DragSource,
     IAggFunc,
@@ -12,38 +15,26 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    AgCheckbox,
-    AgColumn,
+    AgCheckboxSelector,
     Component,
-    CssClassApplier,
-    DragAndDropService,
     DragSourceType,
-    Events,
     KeyCode,
     RefPlaceholder,
     TouchListener,
     _createIcon,
     _createIconNoSpan,
+    _getToolPanelClassesFromColDef,
     _setAriaDescribedBy,
     _setAriaExpanded,
     _setAriaLabel,
     _setDisplayed,
 } from '@ag-grid-community/core';
 
-import { ColumnModelItem } from './columnModelItem';
+import type { ColumnModelItem } from './columnModelItem';
 import type { ModelItemUtils } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
 export class ToolPanelColumnGroupComp extends Component {
-    private static TEMPLATE /* html */ = `<div class="ag-column-select-column-group" aria-hidden="true">
-            <span class="ag-column-group-icons" data-ref="eColumnGroupIcons" >
-                <span class="ag-column-group-closed-icon" data-ref="eGroupClosedIcon"></span>
-                <span class="ag-column-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
-            </span>
-            <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-select-column-label" data-ref="eLabel"></span>
-        </div>`;
-
     private columnModel: ColumnModel;
     private dragAndDropService: DragAndDropService;
     private modelItemUtils: ModelItemUtils;
@@ -51,7 +42,7 @@ export class ToolPanelColumnGroupComp extends Component {
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.dragAndDropService = beans.dragAndDropService;
-        this.modelItemUtils = beans.modelItemUtils;
+        this.modelItemUtils = beans.modelItemUtils as ModelItemUtils;
     }
 
     private readonly cbSelect: AgCheckbox = RefPlaceholder;
@@ -84,7 +75,17 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     public postConstruct(): void {
-        this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE, [AgCheckbox]);
+        this.setTemplate(
+            /* html */ `<div class="ag-column-select-column-group" aria-hidden="true">
+            <span class="ag-column-group-icons" data-ref="eColumnGroupIcons" >
+                <span class="ag-column-group-closed-icon" data-ref="eGroupClosedIcon"></span>
+                <span class="ag-column-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
+            </span>
+            <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
+            <span class="ag-column-select-column-label" data-ref="eLabel"></span>
+        </div>`,
+            [AgCheckboxSelector]
+        );
 
         this.eDragHandle = _createIconNoSpan('columnDrag', this.gos)!;
         this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-group-drag-handle');
@@ -100,21 +101,15 @@ export class ToolPanelColumnGroupComp extends Component {
 
         this.addCssClass('ag-column-select-indent-' + this.columnDept);
 
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
-            this.onColumnStateChanged.bind(this)
-        );
+        this.addManagedEventListeners({ columnPivotModeChanged: this.onColumnStateChanged.bind(this) });
 
-        this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
-        this.addManagedListener(this.cbSelect, Events.EVENT_FIELD_VALUE_CHANGED, this.onCheckboxChanged.bind(this));
-        this.addManagedListener(
-            this.modelItem,
-            ColumnModelItem.EVENT_EXPANDED_CHANGED,
-            this.onExpandChanged.bind(this)
-        );
-        this.addManagedListener(this.focusWrapper, 'keydown', this.handleKeyDown.bind(this));
-        this.addManagedListener(this.focusWrapper, 'contextmenu', this.onContextMenu.bind(this));
+        this.addManagedElementListeners(this.eLabel, { click: this.onLabelClicked.bind(this) });
+        this.addManagedListeners(this.cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
+        this.addManagedListeners(this.modelItem, { expandedChanged: this.onExpandChanged.bind(this) });
+        this.addManagedListeners(this.focusWrapper, {
+            keydown: this.handleKeyDown.bind(this),
+            contextmenu: this.onContextMenu.bind(this),
+        });
 
         this.setOpenClosedIcons();
         this.setupDragging();
@@ -124,7 +119,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.refreshAriaLabel();
         this.setupTooltip();
 
-        const classes = CssClassApplier.getToolPanelClassesFromColDef(
+        const classes = _getToolPanelClassesFromColDef(
             this.columnGroup.getColGroupDef(),
             this.gos,
             null,
@@ -159,7 +154,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
         refresh();
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+        this.addManagedEventListeners({ newColumnsLoaded: refresh });
     }
 
     public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
@@ -203,11 +198,14 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private addVisibilityListenersToAllChildren(): void {
+        const listener = this.onColumnStateChanged.bind(this);
         this.columnGroup.getLeafColumns().forEach((column) => {
-            this.addManagedListener(column, AgColumn.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
-            this.addManagedListener(column, AgColumn.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
-            this.addManagedListener(column, AgColumn.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
-            this.addManagedListener(column, AgColumn.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
+            this.addManagedListeners(column, {
+                visibleChanged: listener,
+                columnValueChanged: listener,
+                columnPivotChanged: listener,
+                columnRowGroupChanged: listener,
+            });
         });
     }
 
@@ -222,20 +220,19 @@ export class ToolPanelColumnGroupComp extends Component {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            getDefaultIconName: () =>
-                hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: () => (hideColumnOnExit ? 'hide' : 'notAllowed'),
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
                 hideColumnOnExit = !this.gos.get('suppressDragLeaveHidesColumns');
                 const event: WithoutGridCommon<ColumnPanelItemDragStartEvent> = {
-                    type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
+                    type: 'columnPanelItemDragStart',
                     column: this.columnGroup,
                 };
                 this.eventService.dispatchEvent(event);
             },
             onDragStopped: () => {
                 const event: WithoutGridCommon<ColumnPanelItemDragEndEvent> = {
-                    type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END,
+                    type: 'columnPanelItemDragEnd',
                 };
                 this.eventService.dispatchEvent(event);
             },
@@ -290,11 +287,12 @@ export class ToolPanelColumnGroupComp extends Component {
         this.eGroupClosedIcon.appendChild(_createIcon('columnSelectClosed', this.gos, null));
         this.eGroupOpenedIcon.appendChild(_createIcon('columnSelectOpen', this.gos, null));
 
-        this.addManagedListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
-        this.addManagedListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
+        const listener = this.onExpandOrContractClicked.bind(this);
+        this.addManagedElementListeners(this.eGroupClosedIcon, { click: listener });
+        this.addManagedElementListeners(this.eGroupOpenedIcon, { click: listener });
 
         const touchListener = new TouchListener(this.eColumnGroupIcons, true);
-        this.addManagedListener(touchListener, TouchListener.EVENT_TAP, this.onExpandOrContractClicked.bind(this));
+        this.addManagedListeners(touchListener, { tap: listener });
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     }
 

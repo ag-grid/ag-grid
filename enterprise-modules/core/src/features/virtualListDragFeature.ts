@@ -2,18 +2,24 @@ import type {
     AgEvent,
     BeanCollection,
     Component,
+    DragAndDropService,
     DragSourceType,
     DraggingEvent,
     DropTarget,
 } from '@ag-grid-community/core';
-import { AutoScrollService, BeanStub, DragAndDropService, _radioCssClass } from '@ag-grid-community/core';
+import { AutoScrollService, BeanStub, _radioCssClass } from '@ag-grid-community/core';
 
 import type { VirtualList } from '../widgets/virtualList';
 import type { VirtualListDragItem, VirtualListDragParams } from './iVirtualListDragFeature';
 
 const LIST_ITEM_HOVERED = 'ag-list-item-hovered';
 
-export class VirtualListDragFeature<C extends Component, R extends Component, V, E extends AgEvent> extends BeanStub {
+export class VirtualListDragFeature<
+    C extends Component<any>,
+    R extends Component<any>,
+    V,
+    E extends AgEvent,
+> extends BeanStub {
     private dragAndDropService: DragAndDropService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -27,23 +33,17 @@ export class VirtualListDragFeature<C extends Component, R extends Component, V,
 
     constructor(
         private readonly comp: C,
-        private readonly virtualList: VirtualList,
+        private readonly virtualList: VirtualList<any>,
         private readonly params: VirtualListDragParams<C, R, V, E>
     ) {
         super();
     }
 
     public postConstruct(): void {
-        this.addManagedListener(
-            this.params.eventSource,
-            this.params.listItemDragStartEvent,
-            this.listItemDragStart.bind(this)
-        );
-        this.addManagedListener(
-            this.params.eventSource,
-            this.params.listItemDragEndEvent,
-            this.listItemDragEnd.bind(this)
-        );
+        this.addManagedListeners(this.params.eventSource, {
+            [this.params.listItemDragStartEvent]: this.listItemDragStart.bind(this),
+            [this.params.listItemDragEndEvent]: this.listItemDragEnd.bind(this),
+        });
 
         this.createDropTarget();
         this.createAutoScrollService();
@@ -64,7 +64,7 @@ export class VirtualListDragFeature<C extends Component, R extends Component, V,
     private createDropTarget(): void {
         const dropTarget: DropTarget = {
             isInterestedIn: (type: DragSourceType) => type === this.params.dragSourceType,
-            getIconName: () => (this.moveBlocked ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE),
+            getIconName: () => (this.moveBlocked ? 'pinned' : 'move'),
             getContainer: () => this.comp.getGui(),
             onDragging: (e) => this.onDragging(e),
             onDragStop: () => this.onDragStop(),

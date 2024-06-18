@@ -101,20 +101,20 @@ public modules: Module[] = [ServerSideRowModelModule, RowGroupingModule];
 
 {% if isFramework("react") %}
 ```jsx
-<ag-grid-react
+<AgGridReact
    rowData={rowData}
    columnDefs={columnDefs}
    modules={[ServerSideRowModelModule, RowGroupingModule]}>
-</ag-grid-react>
+</AgGridReact>
 ```
 {% /if %}
 
 {% if isFramework("vue") %}
-```js
+```html
 <ag-grid-vue
    :rowData="rowData"
    :columnDefs="columnDefs"
-   :modules="[ServerSideRowModelModule, RowGroupingModule]"
+   :modules="[ServerSideRowModelModule, RowGroupingModule]">
 </ag-grid-vue>
 ```
 {% /if %}
@@ -217,8 +217,8 @@ For example:
 import React from "react";
 import {render} from "react-dom";
 
-import "@ag-grid-enterprise/core/styles/ag-grid.css";
-import "@ag-grid-enterprise/core/styles/ag-theme-quartz.css";
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 import {LicenseManager} from "@ag-grid-enterprise/core";
 LicenseManager.setLicenseKey("your license key");
@@ -245,8 +245,8 @@ For example:
 ```js
 import Vue from "vue";
 
-import "@ag-grid-enterprise/styles/ag-grid.css";
-import "@ag-grid-enterprise/styles/ag-theme-quartz.css";
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 import { LicenseManager } from "@ag-grid-enterprise/core";
 
@@ -272,21 +272,4 @@ You can clone the relevant seed project and use it as a basis for your project, 
 
 You can find the seed projects on [GitHub](https://github.com/ag-grid/ag-grid-seed)
 
-| Build Tool / CLI       | Packages or Modules | GitHub Project Full Path                                                               |
-|------------------------|---------------------|----------------------------------------------------------------------------------------|
-| Angular CLI            | Modules             | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/modules/angular-cli)          |
-| Create React App (CRA) | Modules             | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/modules/create-react-app)     |
-| Nuxt / Vue3            | Modules             | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/modules/nuxt-vue3)            |
-| Vite / React           | Modules             | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/modules/vite-react)           |
-| Vite / TypeScript      | Modules             | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/modules/vite-typescript)      |
-| Vite / Vue 3           | Modules             | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/modules/vite-vue3)            |
-| Webpack 5 / JavaScript | Modules             | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/modules/webpack5-javascript)  |
-| Webpack 5 / TypeScript | Modules             | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/modules/webpack5-typescript)  |
-| Angular CLI            | packages            | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/packages/angular-cli)         |
-| Create React App (CRA) | packages            | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/packages/create-react-app)    |
-| Nuxt / Vue3            | packages            | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/packages/nuxt-vue3)           |
-| Vite / React           | packages            | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/packages/vite-react)          |
-| Vite / TypeScript      | packages            | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/packages/vite-typescript)     |
-| Vite / Vue 3           | packages            | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/packages/vite-vue3)           |
-| Webpack 5 / JavaScript | packages            | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/packages/webpack5-javascript) |
-| Webpack 5 / TypeScript | packages            | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/packages/webpack5-typescript) |
+{% seedProjectsTable /%}

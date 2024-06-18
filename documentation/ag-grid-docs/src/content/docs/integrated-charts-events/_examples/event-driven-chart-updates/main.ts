@@ -1,25 +1,19 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
-    ChartCreated,
-    ChartRangeSelectionChanged,
+    ChartCreatedEvent,
+    ChartRangeSelectionChangedEvent,
     CreateRangeChartParams,
     FirstDataRenderedEvent,
     GridApi,
     GridOptions,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
-    ClientSideRowModelModule,
-    GridChartsModule,
-    MenuModule,
-    RowGroupingModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, MenuModule, RowGroupingModule]);
 
 let gridApi: GridApi;
 
@@ -59,12 +53,12 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
     params.api.createRangeChart(createRangeChartParams);
 }
 
-function onChartCreated(event: ChartCreated) {
+function onChartCreated(event: ChartCreatedEvent) {
     console.log('Created chart with ID ' + event.chartId);
     updateTitle(gridApi!, event.chartId);
 }
 
-function onChartRangeSelectionChanged(event: ChartRangeSelectionChanged) {
+function onChartRangeSelectionChanged(event: ChartRangeSelectionChangedEvent) {
     console.log('Changed range selection of chart with ID ' + event.chartId);
     updateTitle(gridApi!, event.chartId);
 }

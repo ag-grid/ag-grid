@@ -1,63 +1,49 @@
 import type { BeanCollection } from '../context/context';
-import { GridHeaderComp } from '../headerRendering/gridHeaderComp';
+import { GridHeaderSelector } from '../headerRendering/gridHeaderComp';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { ResizeObserverService } from '../misc/resizeObserverService';
-import { OverlayWrapperComponent } from '../rendering/overlays/overlayWrapperComponent';
+import { OverlayWrapperSelector } from '../rendering/overlays/overlayWrapperComponent';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRowCount } from '../utils/aria';
-import type { AgComponentSelector } from '../widgets/component';
+import type { ComponentSelector } from '../widgets/component';
 import { Component, RefPlaceholder } from '../widgets/component';
-import { FakeHScrollComp } from './fakeHScrollComp';
-import { FakeVScrollComp } from './fakeVScrollComp';
-import type { IGridBodyComp } from './gridBodyCtrl';
-import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl, RowAnimationCssClasses } from './gridBodyCtrl';
-import { RowContainerComp } from './rowContainer/rowContainerComp';
-import { RowContainerName } from './rowContainer/rowContainerCtrl';
+import { FakeHScrollSelector } from './fakeHScrollComp';
+import { FakeVScrollSelector } from './fakeVScrollComp';
+import type { IGridBodyComp, RowAnimationCssClasses } from './gridBodyCtrl';
+import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl } from './gridBodyCtrl';
+import { RowContainerSelector } from './rowContainer/rowContainerComp';
+import type { RowContainerName } from './rowContainer/rowContainerCtrl';
 
+function makeRowContainers(names: RowContainerName[]): string {
+    return names.map((name) => `<ag-row-container name="${name}"></ag-row-container>`).join('');
+}
 const GRID_BODY_TEMPLATE =
     /* html */
     `<div class="ag-root ag-unselectable" role="treegrid">
         <ag-header-root></ag-header-root>
         <div class="ag-floating-top" data-ref="eTop" role="presentation">
-            <ag-row-container name="${RowContainerName.TOP_LEFT}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.TOP_CENTER}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.TOP_RIGHT}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.TOP_FULL_WIDTH}"></ag-row-container>
+            ${makeRowContainers(['topLeft', 'topCenter', 'topRight', 'topFullWidth'])}
         </div>
         <div class="ag-body" data-ref="eBody" role="presentation">
             <div class="ag-body-viewport" data-ref="eBodyViewport" role="presentation">
-                <ag-row-container name="${RowContainerName.LEFT}"></ag-row-container>
-                <ag-row-container name="${RowContainerName.CENTER}"></ag-row-container>
-                <ag-row-container name="${RowContainerName.RIGHT}"></ag-row-container>
-                <ag-row-container name="${RowContainerName.FULL_WIDTH}"></ag-row-container>
+            ${makeRowContainers(['left', 'center', 'right', 'fullWidth'])}
             </div>
             <ag-fake-vertical-scroll></ag-fake-vertical-scroll>
         </div>
         <div class="ag-sticky-top" data-ref="eStickyTop" role="presentation">
-            <ag-row-container name="${RowContainerName.STICKY_TOP_LEFT}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.STICKY_TOP_CENTER}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.STICKY_TOP_RIGHT}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.STICKY_TOP_FULL_WIDTH}"></ag-row-container>
+            ${makeRowContainers(['stickyTopLeft', 'stickyTopCenter', 'stickyTopRight', 'stickyTopFullWidth'])}
         </div>
         <div class="ag-sticky-bottom" data-ref="eStickyBottom" role="presentation">
-            <ag-row-container name="${RowContainerName.STICKY_BOTTOM_LEFT}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.STICKY_BOTTOM_CENTER}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.STICKY_BOTTOM_RIGHT}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.STICKY_BOTTOM_FULL_WIDTH}"></ag-row-container>
+            ${makeRowContainers(['stickyBottomLeft', 'stickyBottomCenter', 'stickyBottomRight', 'stickyBottomFullWidth'])}
         </div>
         <div class="ag-floating-bottom" data-ref="eBottom" role="presentation">
-            <ag-row-container name="${RowContainerName.BOTTOM_LEFT}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.BOTTOM_CENTER}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.BOTTOM_RIGHT}"></ag-row-container>
-            <ag-row-container name="${RowContainerName.BOTTOM_FULL_WIDTH}"></ag-row-container>
+            ${makeRowContainers(['bottomLeft', 'bottomCenter', 'bottomRight', 'bottomFullWidth'])}
         </div>
         <ag-fake-horizontal-scroll></ag-fake-horizontal-scroll>
         <ag-overlay-wrapper></ag-overlay-wrapper>
     </div>`;
 
 export class GridBodyComp extends Component {
-    static readonly selector: AgComponentSelector = 'AG-GRID-BODY';
-
     private resizeObserverService: ResizeObserverService;
     private rangeService?: IRangeService;
 
@@ -77,11 +63,11 @@ export class GridBodyComp extends Component {
 
     constructor() {
         super(GRID_BODY_TEMPLATE, [
-            OverlayWrapperComponent,
-            FakeHScrollComp,
-            FakeVScrollComp,
-            GridHeaderComp,
-            RowContainerComp,
+            OverlayWrapperSelector,
+            FakeHScrollSelector,
+            FakeVScrollSelector,
+            GridHeaderSelector,
+            RowContainerSelector,
         ]);
     }
 
@@ -156,13 +142,17 @@ export class GridBodyComp extends Component {
         }
     }
 
-    private setRowAnimationCssOnBodyViewport(cssClass: string, animateRows: boolean): void {
+    private setRowAnimationCssOnBodyViewport(cssClass: RowAnimationCssClasses, animateRows: boolean): void {
         const bodyViewportClassList = this.eBodyViewport.classList;
-        bodyViewportClassList.toggle(RowAnimationCssClasses.ANIMATION_ON, animateRows);
-        bodyViewportClassList.toggle(RowAnimationCssClasses.ANIMATION_OFF, !animateRows);
+        bodyViewportClassList.toggle('ag-row-animation' as RowAnimationCssClasses, animateRows);
+        bodyViewportClassList.toggle('ag-row-no-animation' as RowAnimationCssClasses, !animateRows);
     }
 
     public getFloatingTopBottom(): HTMLElement[] {
         return [this.eTop, this.eBottom];
     }
 }
+export const GridBodySelector: ComponentSelector = {
+    selector: 'AG-GRID-BODY',
+    component: GridBodyComp,
+};

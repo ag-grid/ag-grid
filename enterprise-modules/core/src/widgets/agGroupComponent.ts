@@ -1,6 +1,6 @@
-import type { AgComponentSelector, AgEvent } from '@ag-grid-community/core';
+import type { AgCheckbox, AgEvent, ComponentSelector } from '@ag-grid-community/core';
 import {
-    AgCheckbox,
+    AgCheckboxSelector,
     AgToggleButton,
     Component,
     KeyCode,
@@ -10,7 +10,7 @@ import {
     _setDisplayed,
 } from '@ag-grid-community/core';
 
-type GroupItem = Component | HTMLElement;
+type GroupItem = Component<any> | HTMLElement;
 type Align = 'start' | 'end' | 'center' | 'stretch';
 type Direction = 'horizontal' | 'vertical';
 
@@ -31,21 +31,32 @@ export interface AgGroupComponentParams {
     suppressKeyboardNavigation?: boolean;
 }
 
-interface ExpandChangedEvent extends AgEvent {
+export type AgGroupComponentEvent = 'expanded' | 'collapsed' | 'enableChange';
+export type ExpandedChangedEvent = 'expandedChanged';
+
+interface ExpandChangedEvent extends AgEvent<ExpandedChangedEvent> {
     expanded?: boolean;
 }
 
-interface EnableChangeEvent extends AgEvent {
+interface EnableChangeEvent extends AgEvent<'enableChange'> {
     enabled: boolean;
 }
 
-export class AgGroupComponent extends Component {
-    static readonly selector: AgComponentSelector = 'AG-GROUP-COMPONENT';
+function getAgGroupComponentTemplate(params: AgGroupComponentParams) {
+    const cssIdentifier = params.cssIdentifier || 'default';
+    const direction: Direction = params.direction || 'vertical';
 
-    public static EVENT_EXPANDED = 'expanded';
-    public static EVENT_COLLAPSED = 'collapsed';
-    public static EVENT_ENABLE_CHANGE = 'enableChange';
+    return /* html */ `
+        <div class="ag-group ag-${cssIdentifier}-group" role="presentation">
+            <div data-ref="eToolbar" class="ag-group-toolbar ag-${cssIdentifier}-group-toolbar">
+                <ag-checkbox data-ref="cbGroupEnabled"></ag-checkbox>
+            </div>
+            <div data-ref="eContainer" class="ag-group-container ag-group-container-${direction} ag-${cssIdentifier}-group-container"></div>
+        </div>
+    `;
+}
 
+export class AgGroupComponent extends Component<AgGroupComponentEvent> {
     private items: GroupItem[];
     private cssIdentifier: string;
     private enabled: boolean;
@@ -63,7 +74,7 @@ export class AgGroupComponent extends Component {
     private readonly eContainer: HTMLElement = RefPlaceholder;
 
     constructor(private readonly params: AgGroupComponentParams = {}) {
-        super(AgGroupComponent.getTemplate(params), [AgCheckbox]);
+        super(getAgGroupComponentTemplate(params), [AgCheckboxSelector]);
 
         const {
             enabled,
@@ -91,20 +102,6 @@ export class AgGroupComponent extends Component {
         if (suppressToggleExpandOnEnableChange != null) {
             this.suppressToggleExpandOnEnableChange = suppressToggleExpandOnEnableChange;
         }
-    }
-
-    private static getTemplate(params: AgGroupComponentParams) {
-        const cssIdentifier = params.cssIdentifier || 'default';
-        const direction: Direction = params.direction || 'vertical';
-
-        return /* html */ `
-            <div class="ag-group ag-${cssIdentifier}-group" role="presentation">
-                <div data-ref="eToolbar" class="ag-group-toolbar ag-${cssIdentifier}-group-toolbar">
-                    <ag-checkbox data-ref="cbGroupEnabled"></ag-checkbox>
-                </div>
-                <div data-ref="eContainer" class="ag-group-container ag-group-container-${direction} ag-${cssIdentifier}-group-container"></div>
-            </div>
-        `;
     }
 
     public postConstruct() {
@@ -188,7 +185,9 @@ export class AgGroupComponent extends Component {
         _setDisplayed(this.eContainer, expanded);
 
         if (!silent) {
-            this.dispatchEvent({ type: expanded ? AgGroupComponent.EVENT_EXPANDED : AgGroupComponent.EVENT_COLLAPSED });
+            this.dispatchLocalEvent({
+                type: expanded ? 'expanded' : 'collapsed',
+            });
         }
 
         return this;
@@ -247,10 +246,10 @@ export class AgGroupComponent extends Component {
 
     private dispatchEnableChangeEvent(enabled: boolean): void {
         const event: EnableChangeEvent = {
-            type: AgGroupComponent.EVENT_ENABLE_CHANGE,
+            type: 'enableChange',
             enabled,
         };
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent(event);
     }
 
     public setEnabled(enabled: boolean, skipToggle?: boolean, skipExpand?: boolean): this {
@@ -274,16 +273,16 @@ export class AgGroupComponent extends Component {
     }
 
     public onEnableChange(callbackFn: (enabled: boolean) => void): this {
-        this.addManagedListener(this, AgGroupComponent.EVENT_ENABLE_CHANGE, (event: EnableChangeEvent) =>
-            callbackFn(event.enabled)
-        );
+        this.addManagedListeners(this, { enableChange: (event: EnableChangeEvent) => callbackFn(event.enabled) });
 
         return this;
     }
 
     public onExpandedChange(callbackFn: (expanded: boolean) => void): this {
-        this.addManagedListener(this, AgGroupComponent.EVENT_EXPANDED, () => callbackFn(true));
-        this.addManagedListener(this, AgGroupComponent.EVENT_COLLAPSED, () => callbackFn(false));
+        this.addManagedListeners(this, {
+            expanded: () => callbackFn(true),
+            collapsed: () => callbackFn(false),
+        });
 
         return this;
     }
@@ -317,9 +316,9 @@ export class AgGroupComponent extends Component {
         const titleBar = this.createManagedBean(new DefaultTitleBar(this.params));
         this.eTitleBar = titleBar;
         titleBar.refreshOnExpand(this.expanded);
-        this.addManagedListener(titleBar, DefaultTitleBar.EVENT_EXPAND_CHANGED, (event: ExpandChangedEvent) =>
-            this.toggleGroupExpand(event.expanded)
-        );
+        this.addManagedListeners(titleBar, {
+            expandedChanged: (event: ExpandChangedEvent) => this.toggleGroupExpand(event.expanded),
+        });
         return titleBar;
     }
 
@@ -345,10 +344,20 @@ export class AgGroupComponent extends Component {
 }
 
 const TITLE_BAR_DISABLED_CLASS = 'ag-disabled-group-title-bar';
+function getDefaultTitleBarTemplate(params: AgGroupComponentParams) {
+    const cssIdentifier = params.cssIdentifier ?? 'default';
 
-class DefaultTitleBar extends Component {
-    public static EVENT_EXPAND_CHANGED = 'expandedChanged';
+    const role = params.suppressKeyboardNavigation ? 'presentation' : 'role';
 
+    return /* html */ `
+        <div class="ag-group-title-bar ag-${cssIdentifier}-group-title-bar ag-unselectable" role="${role}">
+            <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" data-ref="eGroupOpenedIcon" role="presentation"></span>
+            <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" data-ref="eGroupClosedIcon" role="presentation"></span>
+            <span data-ref="eTitle" class="ag-group-title ag-${cssIdentifier}-group-title"></span>
+        </div>
+    `;
+}
+class DefaultTitleBar extends Component<ExpandedChangedEvent> {
     private title: string | undefined;
     private suppressOpenCloseIcons: boolean = false;
     private suppressKeyboardNavigation: boolean = false;
@@ -358,7 +367,7 @@ class DefaultTitleBar extends Component {
     private readonly eTitle: HTMLElement = RefPlaceholder;
 
     constructor(params: AgGroupComponentParams = {}) {
-        super(DefaultTitleBar.getTemplate(params));
+        super(getDefaultTitleBarTemplate(params));
 
         const { title, suppressOpenCloseIcons, suppressKeyboardNavigation } = params;
 
@@ -373,20 +382,6 @@ class DefaultTitleBar extends Component {
         this.suppressKeyboardNavigation = suppressKeyboardNavigation ?? false;
     }
 
-    private static getTemplate(params: AgGroupComponentParams) {
-        const cssIdentifier = params.cssIdentifier ?? 'default';
-
-        const role = params.suppressKeyboardNavigation ? 'presentation' : 'role';
-
-        return /* html */ `
-            <div class="ag-group-title-bar ag-${cssIdentifier}-group-title-bar ag-unselectable" role="${role}">
-                <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" data-ref="eGroupOpenedIcon" role="presentation"></span>
-                <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" data-ref="eGroupClosedIcon" role="presentation"></span>
-                <span data-ref="eTitle" class="ag-group-title ag-${cssIdentifier}-group-title"></span>
-            </div>
-        `;
-    }
-
     public postConstruct() {
         this.setTitle(this.title);
 
@@ -398,20 +393,22 @@ class DefaultTitleBar extends Component {
     private setupExpandContract(): void {
         this.eGroupClosedIcon.appendChild(_createIcon('columnSelectClosed', this.gos, null));
         this.eGroupOpenedIcon.appendChild(_createIcon('columnSelectOpen', this.gos, null));
-        this.addManagedListener(this.getGui(), 'click', () => this.dispatchExpandChanged());
-        this.addManagedListener(this.getGui(), 'keydown', (e: KeyboardEvent) => {
-            switch (e.key) {
-                case KeyCode.ENTER:
-                case KeyCode.SPACE:
-                    e.preventDefault();
-                    this.dispatchExpandChanged();
-                    break;
-                case KeyCode.RIGHT:
-                case KeyCode.LEFT:
-                    e.preventDefault();
-                    this.dispatchExpandChanged(e.key === KeyCode.RIGHT);
-                    break;
-            }
+        this.addManagedElementListeners(this.getGui(), {
+            click: () => this.dispatchExpandChanged(),
+            keydown: (e: KeyboardEvent) => {
+                switch (e.key) {
+                    case KeyCode.ENTER:
+                    case KeyCode.SPACE:
+                        e.preventDefault();
+                        this.dispatchExpandChanged();
+                        break;
+                    case KeyCode.RIGHT:
+                    case KeyCode.LEFT:
+                        e.preventDefault();
+                        this.dispatchExpandChanged(e.key === KeyCode.RIGHT);
+                        break;
+                }
+            },
         });
     }
 
@@ -439,10 +436,10 @@ class DefaultTitleBar extends Component {
 
     private dispatchExpandChanged(expanded?: boolean): void {
         const event: ExpandChangedEvent = {
-            type: DefaultTitleBar.EVENT_EXPAND_CHANGED,
+            type: 'expandedChanged',
             expanded,
         };
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent(event);
     }
 
     public setTitle(title: string | undefined): this {
@@ -494,3 +491,8 @@ class DefaultTitleBar extends Component {
         }
     }
 }
+
+export const AgGroupComponentSelector: ComponentSelector = {
+    selector: 'AG-GROUP-COMPONENT',
+    component: AgGroupComponent,
+};

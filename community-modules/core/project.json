@@ -63,7 +63,7 @@
         "tsConfig": "community-modules/core/tsconfig.lib.json",
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
-        "target": "es6",
+        "target": "es2020",
         "format": ["cjs", "esm"],
         "sourcemap": true
       },
@@ -73,7 +73,8 @@
         },
         "production": {
           "sourcemap": false
-        }
+        },
+        "sizing": { "metafile": true }
       }
     },
     "lint": {

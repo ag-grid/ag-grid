@@ -72,7 +72,7 @@
         "esbuildConfig": "esbuild.config.cjs",
         "external": ["@ag-grid-community/core", "@ag-grid-enterprise/core"],
         "platform": "browser",
-        "target": "es6",
+        "target": "es2020",
         "format": ["cjs", "esm"],
         "sourcemap": true
       },
@@ -82,7 +82,8 @@
         },
         "production": {
           "sourcemap": false
-        }
+        },
+        "sizing": { "metafile": true }
       }
     },
     "lint": {

@@ -1,21 +1,21 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { AgColumn } from '../entities/agColumn';
+import type { AgColumn } from '../entities/agColumn';
+import { DEFAULT_COLUMN_MIN_WIDTH } from '../entities/agColumn';
 import type { IAggFunc } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType } from '../events';
-import { Events } from '../events';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { SortController } from '../sortController';
 import { _areEqual, _removeFromArray } from '../utils/array';
+import { _warnOnce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
-import { GROUP_AUTO_COLUMN_ID } from './autoColService';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColumnGetStateService } from './columnGetStateService';
 import type { ColumnModel } from './columnModel';
-import { getColumnsFromTree } from './columnUtils';
+import { GROUP_AUTO_COLUMN_ID, getColumnsFromTree } from './columnUtils';
 import type { FuncColsService } from './funcColsService';
 import type { PivotResultColsService } from './pivotResultColsService';
 import type { VisibleColsService } from './visibleColsService';
@@ -98,8 +98,8 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
         }
 
         if (params && params.state && !params.state.forEach) {
-            console.warn(
-                'AG Grid: applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.'
+            _warnOnce(
+                'applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.'
             );
             return false;
         }
@@ -386,7 +386,7 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
         }
 
         // if width provided and valid, use it, otherwise stick with the old width
-        const minColWidth = column.getColDef().minWidth ?? AgColumn.DEFAULT_MIN_WIDTH;
+        const minColWidth = column.getColDef().minWidth ?? DEFAULT_COLUMN_MIN_WIDTH;
 
         // flex
         const flex = getValue('flex').value1;
@@ -435,8 +435,8 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
                 }
             } else {
                 if (_exists(aggFunc)) {
-                    console.warn(
-                        'AG Grid: stateItem.aggFunc must be a string. if using your own aggregation ' +
+                    _warnOnce(
+                        'stateItem.aggFunc must be a string. if using your own aggregation ' +
                             'functions, register the functions first before using them in get/set state. This is because it is ' +
                             'intended for the column state to be stored and retrieved as simple JSON.'
                     );
@@ -575,14 +575,14 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
             const columnIdMapper = (c: AgColumn) => c.getColId();
 
             dispatchWhenListsDifferent(
-                Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
+                'columnRowGroupChanged',
                 startState.rowGroupColumns,
                 this.funcColsService.getRowGroupColumns(),
                 columnIdMapper
             );
 
             dispatchWhenListsDifferent(
-                Events.EVENT_COLUMN_PIVOT_CHANGED,
+                'columnPivotChanged',
                 startState.pivotColumns,
                 this.funcColsService.getPivotColumns(),
                 columnIdMapper
@@ -599,7 +599,7 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
             };
             const changedValues = getChangedColumns(valueChangePredicate);
             if (changedValues.length > 0) {
-                this.eventDispatcher.columnChanged(Events.EVENT_COLUMN_VALUE_CHANGED, changedValues, source);
+                this.eventDispatcher.columnChanged('columnValueChanged', changedValues, source);
             }
 
             const resizeChangePredicate = (cs: ColumnState, c: AgColumn) => cs.width != c.getActualWidth();

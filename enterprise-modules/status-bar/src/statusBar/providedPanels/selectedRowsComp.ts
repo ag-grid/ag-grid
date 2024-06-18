@@ -1,5 +1,5 @@
 import type { BeanCollection, IRowModel, ISelectionService, IStatusPanelComp } from '@ag-grid-community/core';
-import { Events, _formatNumberCommas } from '@ag-grid-community/core';
+import { _formatNumberCommas, _warnOnce } from '@ag-grid-community/core';
 
 import { AgNameValue } from './agNameValue';
 
@@ -14,9 +14,7 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
 
     public postConstruct(): void {
         if (!this.isValidRowModel()) {
-            console.warn(
-                `AG Grid: agSelectedRowCountComponent should only be used with the client and server side row model.`
-            );
+            _warnOnce(`agSelectedRowCountComponent should only be used with the client and server side row model.`);
             return;
         }
 
@@ -28,8 +26,7 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
         this.onRowSelectionChanged();
 
         const eventListener = this.onRowSelectionChanged.bind(this);
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, eventListener);
-        this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, eventListener);
+        this.addManagedEventListeners({ modelUpdated: eventListener, selectionChanged: eventListener });
     }
 
     private isValidRowModel() {

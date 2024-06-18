@@ -12,10 +12,10 @@ import {
     ValueFormatterParams,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, InfiniteRowModelModule]);
+ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
 const valueFormatter = function (params: ValueFormatterParams) {
     if (typeof params.value === 'number') {

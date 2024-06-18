@@ -1,22 +1,24 @@
-import { Events } from '../eventKeys';
 import type { AgFieldParams } from '../interfaces/agFieldParams';
 import { _getAriaLabel, _setAriaLabel, _setAriaLabelledBy } from '../utils/aria';
 import { _setFixedWidth } from '../utils/dom';
 import { AgAbstractLabel } from './agAbstractLabel';
-import type { ComponentClass } from './component';
+import type { ComponentSelector } from './component';
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+export type AgAbstractFieldEvent = 'fieldValueChanged';
+
 export abstract class AgAbstractField<
     TValue,
     TConfig extends AgFieldParams = AgFieldParams,
-> extends AgAbstractLabel<TConfig> {
+    TEventType extends string = AgAbstractFieldEvent,
+> extends AgAbstractLabel<TConfig, TEventType | AgAbstractFieldEvent> {
     protected previousValue: TValue | null | undefined;
     protected value: TValue | null | undefined;
 
     constructor(
         config?: TConfig,
         template?: string,
-        components?: ComponentClass[],
+        components?: ComponentSelector[],
         protected readonly className?: string
     ) {
         super(config, template, components);
@@ -43,11 +45,19 @@ export abstract class AgAbstractField<
         this.refreshAriaLabelledBy();
     }
 
+    public override setLabel(label: string | HTMLElement): this {
+        super.setLabel(label);
+        this.refreshAriaLabelledBy();
+
+        return this;
+    }
+
     protected refreshAriaLabelledBy() {
         const ariaEl = this.getAriaElement();
         const labelId = this.getLabelId();
+        const label = this.getLabel();
 
-        if (_getAriaLabel(ariaEl) !== null) {
+        if (label == null || label == '' || _getAriaLabel(ariaEl) !== null) {
             _setAriaLabelledBy(ariaEl, '');
         } else {
             _setAriaLabelledBy(ariaEl, labelId ?? '');
@@ -62,7 +72,7 @@ export abstract class AgAbstractField<
     }
 
     public onValueChange(callbackFn: (newValue?: TValue | null) => void) {
-        this.addManagedListener(this, Events.EVENT_FIELD_VALUE_CHANGED, () => callbackFn(this.getValue()));
+        this.addManagedListeners<AgAbstractFieldEvent>(this, { fieldValueChanged: () => callbackFn(this.getValue()) });
 
         return this;
     }
@@ -94,7 +104,7 @@ export abstract class AgAbstractField<
         this.value = value;
 
         if (!silent) {
-            this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
+            this.dispatchLocalEvent({ type: 'fieldValueChanged' });
         }
 
         return this;

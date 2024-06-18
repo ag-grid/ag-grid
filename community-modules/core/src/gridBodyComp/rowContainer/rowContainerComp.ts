@@ -4,41 +4,27 @@ import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
 import { _setAriaRole } from '../../utils/aria';
 import { _ensureDomOrder, _insertWithDomOrder } from '../../utils/dom';
 import { _getAllValuesInObject } from '../../utils/object';
-import type { AgComponentSelector } from '../../widgets/component';
+import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
-import type { IRowContainerComp, RowContainerType } from './rowContainerCtrl';
-import { RowContainerCtrl, RowContainerName, getRowContainerTypeForName } from './rowContainerCtrl';
+import type { IRowContainerComp, RowContainerName, RowContainerOptions } from './rowContainerCtrl';
+import { RowContainerCtrl, _getRowContainerOptions } from './rowContainerCtrl';
 
-function templateFactory(): string {
-    const name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
-
-    const cssClasses = RowContainerCtrl.getRowContainerCssClasses(name);
-
+function templateFactory(options: RowContainerOptions): string {
     let res: string;
-
-    const centerTemplate =
-        name === RowContainerName.CENTER ||
-        name === RowContainerName.TOP_CENTER ||
-        name === RowContainerName.STICKY_TOP_CENTER ||
-        name === RowContainerName.BOTTOM_CENTER ||
-        name === RowContainerName.STICKY_BOTTOM_CENTER;
-
-    if (centerTemplate) {
+    if (options.type === 'center') {
         res =
             /* html */
-            `<div class="${cssClasses.viewport}" data-ref="eViewport" role="presentation">
-                <div class="${cssClasses.container}" data-ref="eContainer"></div>
+            `<div class="${options.viewport}" data-ref="eViewport" role="presentation">
+                <div class="${options.container}" data-ref="eContainer"></div>
             </div>`;
     } else {
-        res = /* html */ `<div class="${cssClasses.container}" data-ref="eContainer"></div>`;
+        res = /* html */ `<div class="${options.container}" data-ref="eContainer"></div>`;
     }
 
     return res;
 }
 
 export class RowContainerComp extends Component {
-    static readonly selector: AgComponentSelector = 'AG-ROW-CONTAINER';
-
     private beans: BeanCollection;
 
     public wireBeans(beans: BeanCollection): void {
@@ -49,7 +35,7 @@ export class RowContainerComp extends Component {
     private readonly eContainer: HTMLElement = RefPlaceholder;
 
     private readonly name: RowContainerName;
-    private readonly type: RowContainerType;
+    private readonly options: RowContainerOptions;
 
     private rowComps: { [id: RowCtrlInstanceId]: RowComp } = {};
 
@@ -60,9 +46,9 @@ export class RowContainerComp extends Component {
 
     constructor() {
         super();
-        this.setTemplate(templateFactory());
         this.name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
-        this.type = getRowContainerTypeForName(this.name);
+        this.options = _getRowContainerOptions(this.name);
+        this.setTemplate(templateFactory(this.options));
     }
 
     public postConstruct(): void {
@@ -73,6 +59,7 @@ export class RowContainerComp extends Component {
                 this.domOrder = domOrder;
             },
             setContainerWidth: (width) => (this.eContainer.style.width = width),
+            setOffsetTop: (offset) => (this.eContainer.style.transform = `translateY(${offset})`),
         };
 
         const ctrl = this.createManagedBean(new RowContainerCtrl(this.name));
@@ -105,7 +92,7 @@ export class RowContainerComp extends Component {
                 if (!rowCon.getRowNode().displayed) {
                     return;
                 }
-                const rowComp = new RowComp(rowCon, this.beans, this.type);
+                const rowComp = new RowComp(rowCon, this.beans, this.options.type);
                 this.rowComps[instanceId] = rowComp;
                 this.appendRow(rowComp.getGui());
             }
@@ -136,3 +123,8 @@ export class RowContainerComp extends Component {
         }
     }
 }
+
+export const RowContainerSelector: ComponentSelector = {
+    selector: 'AG-ROW-CONTAINER',
+    component: RowContainerComp,
+};

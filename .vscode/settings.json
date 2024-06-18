@@ -14,6 +14,9 @@
     "**/node_modules": true,
     "**/typings": true
   },
+  "typescript.preferences.autoImportFileExcludePatterns": [
+    "**/main",
+  ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "eslint.experimental.useFlatConfig": true,
   "[typescript]": {
@@ -28,6 +31,7 @@
     "crosshair",
     "csrm",
     "ctrls",
+    "datasource",
     "lucide",
     "Sparkline",
     "sparklines",

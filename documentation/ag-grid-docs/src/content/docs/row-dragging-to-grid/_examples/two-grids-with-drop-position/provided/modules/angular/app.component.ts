@@ -14,7 +14,7 @@ import { Component, ViewChild } from '@angular/core';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 @Component({
     standalone: true,
     imports: [AgGridAngular],
@@ -150,7 +150,7 @@ export class AppComponent {
     }
 
     getRowId(params: GetRowIdParams) {
-        return params.data.id;
+        return String(params.data.id);
     }
 
     onGridReady(params: GridReadyEvent, side: string) {

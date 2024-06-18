@@ -1,7 +1,7 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact, getInstance } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
@@ -13,12 +13,7 @@ import { createRoot } from 'react-dom/client';
 import ClickableStatusBarComponent from './clickableStatusBarComponent.jsx';
 import './styles.css';
 
-ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
-    ClientSideRowModelModule,
-    StatusBarModule,
-    RangeSelectionModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, StatusBarModule, RangeSelectionModule]);
 
 const GridExample = () => {
     const gridRef = useRef();
@@ -100,7 +95,6 @@ const GridExample = () => {
                     enableRangeSelection={true}
                     rowSelection={'multiple'}
                     statusBar={statusBar}
-                    reactiveCustomComponents
                 />
             </div>
         </div>

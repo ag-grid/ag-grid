@@ -1,15 +1,17 @@
 import type { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaLabel } from '../utils/aria';
 import { _addOrRemoveAttribute, _setDisabled, _setElementWidth } from '../utils/dom';
-import type { FieldElement } from './agAbstractField';
+import type { AgAbstractFieldEvent, FieldElement } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
 import { RefPlaceholder } from './component';
 
+export type AgAbstractInputFieldEvent = AgAbstractFieldEvent;
 export abstract class AgAbstractInputField<
     TElement extends FieldElement,
     TValue,
     TConfig extends AgInputFieldParams = AgInputFieldParams,
-> extends AgAbstractField<TValue, TConfig> {
+    TEventType extends string = AgAbstractInputFieldEvent,
+> extends AgAbstractField<TValue, TConfig, AgAbstractInputFieldEvent | TEventType> {
     protected readonly eLabel: HTMLElement = RefPlaceholder;
     protected readonly eWrapper: HTMLElement = RefPlaceholder;
     protected readonly eInput: TElement = RefPlaceholder;
@@ -59,7 +61,7 @@ export abstract class AgAbstractInputField<
     }
 
     protected addInputListeners() {
-        this.addManagedListener(this.eInput, 'input', (e) => this.setValue(e.target.value));
+        this.addManagedElementListeners(this.eInput, { input: (e: any) => this.setValue(e.target.value) });
     }
 
     private setInputType() {

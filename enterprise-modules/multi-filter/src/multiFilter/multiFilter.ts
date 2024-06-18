@@ -188,39 +188,39 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
 
                 this.guiDestroyFuncs.push(() => this.destroyBean(menuItem));
 
-                this.addManagedListener(
-                    menuItem,
-                    AgMenuItemComponent.EVENT_MENU_ITEM_ACTIVATED,
-                    (event: MenuItemActivatedEvent) => {
+                this.addManagedListeners(menuItem, {
+                    menuItemActivated: (event: MenuItemActivatedEvent) => {
                         if (this.lastActivatedMenuItem && this.lastActivatedMenuItem !== event.menuItem) {
                             this.lastActivatedMenuItem.deactivate();
                         }
 
                         this.lastActivatedMenuItem = event.menuItem;
-                    }
-                );
+                    },
+                });
 
                 const menuItemGui = menuItem.getGui();
-                // `AgMenuList` normally handles keyboard navigation, so need to do here
-                menuItem.addManagedListener(menuItemGui, 'keydown', (e: KeyboardEvent) => {
-                    const { key } = e;
-                    switch (key) {
-                        case KeyCode.UP:
-                        case KeyCode.RIGHT:
-                        case KeyCode.DOWN:
-                        case KeyCode.LEFT:
-                            e.preventDefault();
-                            if (key === KeyCode.RIGHT) {
-                                menuItem.openSubMenu(true);
-                            }
-                            break;
-                    }
-                });
-                menuItem.addManagedListener(menuItemGui, 'focusin', () => menuItem.activate());
-                menuItem.addManagedListener(menuItemGui, 'focusout', () => {
-                    if (!menuItem.isSubMenuOpen() && !menuItem.isSubMenuOpening()) {
-                        menuItem.deactivate();
-                    }
+                menuItem.addManagedElementListeners(menuItemGui, {
+                    // `AgMenuList` normally handles keyboard navigation, so need to do here
+                    keydown: (e: KeyboardEvent) => {
+                        const { key } = e;
+                        switch (key) {
+                            case KeyCode.UP:
+                            case KeyCode.RIGHT:
+                            case KeyCode.DOWN:
+                            case KeyCode.LEFT:
+                                e.preventDefault();
+                                if (key === KeyCode.RIGHT) {
+                                    menuItem.openSubMenu(true);
+                                }
+                                break;
+                        }
+                    },
+                    focusin: () => menuItem.activate(),
+                    focusout: () => {
+                        if (!menuItem.isSubMenuOpen() && !menuItem.isSubMenuOpening()) {
+                            menuItem.deactivate();
+                        }
+                    },
                 });
 
                 return menuItem;
@@ -241,13 +241,14 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         group.toggleGroupExpand(false);
 
         if (filter.afterGuiAttached) {
-            group.addManagedListener(group, AgGroupComponent.EVENT_EXPANDED, () =>
-                filter.afterGuiAttached!({
-                    container: this.lastOpenedInContainer!,
-                    suppressFocus: true,
-                    hidePopup: this.hidePopup,
-                })
-            );
+            group.addManagedListeners(group, {
+                expanded: () =>
+                    filter.afterGuiAttached!({
+                        container: this.lastOpenedInContainer!,
+                        suppressFocus: true,
+                        hidePopup: this.hidePopup,
+                    }),
+            });
         }
 
         return group;
@@ -379,7 +380,8 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             if (filterDefs) {
                 _forEachReverse(filterDefs!, (filterDef, index) => {
                     const isFirst = index === 0;
-                    const suppressFocus = !isFirst || filterDef.display !== 'inline';
+                    const suppressFocus =
+                        params?.suppressFocus || !isFirst || (filterDef.display && filterDef.display !== 'inline');
                     const afterGuiAttachedParams = { ...(params ?? {}), suppressFocus };
                     const filter = this.filters?.[index];
                     if (filter) {

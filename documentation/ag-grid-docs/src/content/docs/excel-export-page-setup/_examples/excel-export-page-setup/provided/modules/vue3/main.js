@@ -1,15 +1,15 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from '@ag-grid-community/vue3';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MenuModule } from '@ag-grid-enterprise/menu';
-import { createApp, onBeforeMount, ref } from 'vue';
+import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, MenuModule, ExcelExportModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
 
 const VueExample = {
     template: `
@@ -115,7 +115,7 @@ const VueExample = {
             },
         ]);
 
-        const gridApi = ref();
+        const gridApi = shallowRef();
         const defaultColDef = ref({
             filter: true,
             minWidth: 100,

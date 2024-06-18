@@ -1,8 +1,7 @@
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import { Events } from '../eventKeys';
 import { _isVisible, _setFixedWidth } from '../utils/dom';
-import type { AgComponentSelector } from '../widgets/component';
+import type { ComponentSelector } from '../widgets/component';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { SetHeightFeature } from './rowContainer/setHeightFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
@@ -17,16 +16,15 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         this.scrollVisibleService = beans.scrollVisibleService;
     }
 
-    static readonly selector: AgComponentSelector = 'AG-FAKE-VERTICAL-SCROLL';
-
-    private static TEMPLATE /* html */ = `<div class="ag-body-vertical-scroll" aria-hidden="true">
+    constructor() {
+        super(
+            /* html */ `<div class="ag-body-vertical-scroll" aria-hidden="true">
             <div class="ag-body-vertical-scroll-viewport" data-ref="eViewport">
                 <div class="ag-body-vertical-scroll-container" data-ref="eContainer"></div>
             </div>
-        </div>`;
-
-    constructor() {
-        super(FakeVScrollComp.TEMPLATE, 'vertical');
+        </div>`,
+            'vertical'
+        );
     }
 
     public override postConstruct(): void {
@@ -35,11 +33,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         this.createManagedBean(new SetHeightFeature(this.eContainer));
         this.ctrlsService.register('fakeVScrollComp', this);
 
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED,
-            this.onRowContainerHeightChanged.bind(this)
-        );
+        this.addManagedEventListeners({ rowContainerHeightChanged: this.onRowContainerHeightChanged.bind(this) });
     }
 
     protected setScrollVisible(): void {
@@ -80,3 +74,8 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         this.getViewport().scrollTop = value;
     }
 }
+
+export const FakeVScrollSelector: ComponentSelector = {
+    selector: 'AG-FAKE-VERTICAL-SCROLL',
+    component: FakeVScrollComp,
+};

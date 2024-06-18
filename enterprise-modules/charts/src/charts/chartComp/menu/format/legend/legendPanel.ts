@@ -1,7 +1,7 @@
 import type { BeanCollection } from '@ag-grid-community/core';
 import { AgCheckbox, AgSelect, Component, RefPlaceholder } from '@ag-grid-community/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import { AgGroupComponent, AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 
 import { AgSlider } from '../../../../../widgets/agSlider';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
@@ -11,15 +11,10 @@ import { FontPanel } from '../fontPanel';
 import type { FormatPanelOptions } from '../formatPanel';
 
 export class LegendPanel extends Component {
-    private static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="legendGroup">
-            </ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
     private readonly legendGroup: AgGroupComponent = RefPlaceholder;
 
@@ -72,13 +67,20 @@ export class LegendPanel extends Component {
             expanded,
             items: [enabledGroup],
         };
-        this.setTemplate(LegendPanel.TEMPLATE, [AgGroupComponent], {
-            legendGroup: legendGroupParams,
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="legendGroup">
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector],
+            {
+                legendGroup: legendGroupParams,
+            }
+        );
         registerGroupComponent(this.legendGroup);
     }
 
-    private getItems(chartMenuParamsFactory: ChartMenuParamsFactory): Component[] {
+    private getItems(chartMenuParamsFactory: ChartMenuParamsFactory): Component<any>[] {
         const createSlider = (expression: string, labelKey: ChartTranslationKey, defaultMaxValue: number) =>
             this.createManagedBean(
                 new AgSlider(
@@ -121,6 +123,7 @@ export class LegendPanel extends Component {
             suppressEnabledCheckbox: true,
             chartMenuParamsFactory,
             keyMapper: (key) => `${rootKey}.${key}`,
+            cssIdentifier: 'charts-format-sub-level-no-header',
         };
 
         return this.createManagedBean(new FontPanel(params));

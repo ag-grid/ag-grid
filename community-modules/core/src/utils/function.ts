@@ -14,11 +14,15 @@ export function _doOnce(func: () => void, key: string) {
     doOnceFlags[key] = true;
 }
 
-export function _warnOnce(msg: string) {
-    _doOnce(() => console.warn('AG Grid: ' + msg), msg);
+export function _log(message: string, ...args: any[]) {
+    console.log('AG Grid: ' + message, ...args);
 }
-export function _errorOnce(msg: string) {
-    _doOnce(() => console.error('AG Grid: ' + msg), msg);
+
+export function _warnOnce(msg: string, ...args: any[]) {
+    _doOnce(() => console.warn('AG Grid: ' + msg, ...args), msg);
+}
+export function _errorOnce(msg: string, ...args: any[]) {
+    _doOnce(() => console.error('AG Grid: ' + msg, ...args), msg);
 }
 
 export function _getFunctionName(funcConstructor: any) {
@@ -129,7 +133,7 @@ export function _waitUntil(
             }
 
             if (reachedTimeout && timeoutMessage) {
-                console.warn(timeoutMessage);
+                _warnOnce(timeoutMessage);
             }
         }
     };

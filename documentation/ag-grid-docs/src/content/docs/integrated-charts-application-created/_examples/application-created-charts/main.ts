@@ -9,16 +9,11 @@ import {
     ValueFormatterParams,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
-    ClientSideRowModelModule,
-    GridChartsModule,
-    RowGroupingModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, RowGroupingModule]);
 
 declare var __basePath: string;
 
@@ -74,7 +69,7 @@ const gridOptions: GridOptions = {
     },
     enableCharts: true,
     suppressAggFuncInHeader: true,
-    getRowId: (params: GetRowIdParams) => params.data.trade,
+    getRowId: (params: GetRowIdParams) => String(params.data.trade),
     getChartToolbarItems: (): ChartToolbarMenuItemOptions[] => [],
     onFirstDataRendered,
 };

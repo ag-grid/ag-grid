@@ -20,13 +20,7 @@ import { createRoot } from 'react-dom/client';
 
 import { IAccount } from './interfaces';
 
-ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
-    ClientSideRowModelModule,
-    MasterDetailModule,
-    MenuModule,
-    ColumnsToolPanelModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule]);
 
 let allRowData: any[];
 
@@ -49,9 +43,7 @@ const GridExample = () => {
         };
     }, []);
     const getRowId = useMemo<GetRowIdFunc>(() => {
-        return (params: GetRowIdParams) => {
-            return params.data.account;
-        };
+        return (params: GetRowIdParams) => String(params.data.account);
     }, []);
     const detailCellRendererParams = useMemo(() => {
         return {
@@ -59,7 +51,7 @@ const GridExample = () => {
             detailGridOptions: {
                 rowSelection: 'multiple',
                 getRowId: (params: GetRowIdParams) => {
-                    return params.data.callId;
+                    return String(params.data.callId);
                 },
                 columnDefs: [
                     { field: 'callId', checkboxSelection: true },

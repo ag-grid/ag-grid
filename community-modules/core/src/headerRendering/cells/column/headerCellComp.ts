@@ -8,11 +8,6 @@ import type { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
 import type { IHeaderComp } from './headerComp';
 
 export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
-    private static TEMPLATE /* html */ = `<div class="ag-header-cell" role="columnheader">
-            <div data-ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
-            <div data-ref="eHeaderCompWrapper" class="ag-header-cell-comp-wrapper" role="presentation"></div>
-        </div>`;
-
     private readonly eResize: HTMLElement = RefPlaceholder;
     private readonly eHeaderCompWrapper: HTMLElement = RefPlaceholder;
 
@@ -24,7 +19,13 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
     private headerCompVersion = 0;
 
     constructor(ctrl: HeaderCellCtrl) {
-        super(HeaderCellComp.TEMPLATE, ctrl);
+        super(
+            /* html */ `<div class="ag-header-cell" role="columnheader">
+            <div data-ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
+            <div data-ref="eHeaderCompWrapper" class="ag-header-cell-comp-wrapper" role="presentation"></div>
+        </div>`,
+            ctrl
+        );
         this.column = ctrl.getColumnGroupChild() as AgColumn;
         this.pinned = ctrl.getPinned();
     }

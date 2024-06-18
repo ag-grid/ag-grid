@@ -1,0 +1,31 @@
+{% if isFramework("angular") %}
+The interface for the Rich CellEditor Component is as follows:
+{% /if %}
+
+{% if isFramework("angular") %}
+```ts
+interface ICellEditorRendererAngularComp {
+   // Mandatory - Params for rendering
+   agInit(params: IRichCellEditorRendererParams): void;
+}
+```
+{% /if %}
+
+{% if isFramework("angular") %}
+The Component is provided `props` containing, amongst other things, the value to be rendered.
+{% /if %}
+
+{% if isFramework("angular") %}
+```ts
+class MyCustomEditorRenderer implements ICellEditorRendererAngularComp {
+  // ...
+  agInit(props: IRichCellEditorRendererParams): void {
+    this.value = props.value;
+  }
+  // ...
+```
+{% /if %}
+
+{% if isFramework("angular") %}
+The provided `props` (interface IRichCellEditorRendererParams) are:
+{% /if %}
