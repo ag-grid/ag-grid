@@ -6,11 +6,8 @@ import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { type FunctionComponent, useCallback, useMemo, useRef, useState } from 'react';
 
-import { quantityCalculator } from '../../utils/valueGetters';
 import { ActionsCellRenderer } from '../actions-cell-renderer/ActionsCellRenderer';
-import { InventoryCountRenderer } from '../inventory-count/InventoryCountRenderer';
 import { ProductCellRenderer } from '../product-cell-renderer/ProductCellRenderer';
-import { ProductDetailsRenderer } from '../product-details-renderer/ProductDetailsRenderer';
 import { StatusCellRenderer } from '../status-cell-renderer/StatusCellRenderer';
 import styles from './EcommerceExample.module.css';
 import { getData } from './data';
@@ -51,7 +48,14 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
         {
             field: 'inventory',
             headerName: 'Inventory',
-            cellRenderer: InventoryCountRenderer,
+            cellRenderer: function (params) {
+                return (
+                    <div className={styles.stock}>
+                        <span>{params.data.available}</span> <span className={styles.stockText}>Stock /</span>{' '}
+                        <span className={styles.variantsText}>{params.data.variants + ' Variants'}</span>
+                    </div>
+                );
+            },
             headerClass: 'header-inventory',
             width: 600,
         },
@@ -71,11 +75,11 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             headerName: 'Price',
             width: 120,
             headerClass: 'header-price',
-            cellRenderer: function (param) {
+            cellRenderer: function (params) {
                 return (
                     <div className={styles.price}>
-                        <span className={styles.priceAmount}>{'£' + param.data.price}</span>
-                        <span className={styles.increase}>{param.data.priceIncrease + '% incease'}</span>
+                        <span className={styles.priceAmount}>{'£' + params.data.price}</span>
+                        <span className={styles.increase}>{params.data.priceIncrease + '% incease'}</span>
                     </div>
                 );
             },
@@ -97,7 +101,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             editable: true,
             width: 130,
         },
-        { field: 'actions', cellRenderer: ActionsCellRenderer, pinned: 'right' },
+        { field: 'actions', cellRenderer: ActionsCellRenderer },
     ]);
     const [rowData] = useState(getData());
     const [defaultColDef] = useState({
@@ -118,25 +122,14 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
     const detailCellRendererParams = useMemo(() => {
         return {
             detailGridOptions: {
-                columnDefs: [
-                    { field: 'value', headerName: 'Type', width: 150, cellRenderer: ProductDetailsRenderer },
-                    { field: 'description', headerName: 'Description', width: 150 },
-                    { field: 'grossAmount', headerName: 'Gross Amount', width: 150 },
-                ],
+                columnDefs: [{ field: 'name', headerName: 'Type', width: 150 }],
                 defaultColDef: {
                     flex: 1,
                     minWidth: 100,
                 },
             },
-            getDetailRowData: function (params: any) {
-                const descriptions = ['TBD'];
-
-                const selectedDescription = descriptions[Math.floor(Math.random() * descriptions.length)];
-
-                params.successCallback([
-                    { type: 'Type 1', description: selectedDescription, grossAmount: 1000 },
-                    { type: 'Type 2', description: selectedDescription, grossAmount: 2000 },
-                ]);
+            getDetailRowData: (params) => {
+                params.successCallback(params.data.variantDetails);
             },
         };
     }, []);

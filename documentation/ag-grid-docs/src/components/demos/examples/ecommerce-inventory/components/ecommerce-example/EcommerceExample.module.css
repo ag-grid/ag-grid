@@ -214,3 +214,11 @@
 :global(.ag-theme-quartz-dark .ag-header-cell-text:before) {
     filter: invert(1);
 }
+
+.stockText {
+    opacity: 0.7;
+}
+
+.variantsText {
+    opacity: 0.7;
+}

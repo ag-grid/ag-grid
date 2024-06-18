@@ -14,25 +14,9 @@ export function getData() {
             soldLastMonth: 15,
             priceIncrease: 5, // in percentage
             category: 'Electronics',
-            variantName: 'Macbook',
+            variants: 2,
+            variant: [{ name: 'abc' }],
         },
-        {
-            product: 'Macbook Pro 14',
-            sku: 'MNTR-XYZ-749',
-            status: 'Active',
-            whenSoldOut: 'Back order',
-            available: 12,
-            committed: 0,
-            unavailable: 29,
-            incoming: 45,
-            image: 'macbook',
-            price: 2499,
-            soldLastMonth: 15,
-            priceIncrease: 5, // in percentage
-            category: 'Electronics',
-            variantName: 'Macbook',
-        },
-
         {
             product: 'Aesop Karst',
             sku: 'MNTR-XYZ-533',
@@ -291,16 +275,8 @@ export function getData() {
         },
     ];
 
-    // Group products by variantName and count the number of variants
-    const variantCounts = data.reduce((acc, product) => {
-        acc[product.variantName] = (acc[product.variantName] || 0) + 1;
-        return acc;
-    }, {});
-
     // Map products to the new structure with variant counts
     return data.map((product) => ({
         ...product,
-        product: product.variantName,
-        variantCount: variantCounts[product.variantName],
     }));
 }
