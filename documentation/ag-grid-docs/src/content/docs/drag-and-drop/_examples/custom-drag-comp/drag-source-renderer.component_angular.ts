@@ -1,11 +1,10 @@
-import { ICellRendererAngularComp } from "@ag-grid-community/angular";
-import { ICellRendererParams } from "@ag-grid-community/core";
-import { Component } from "@angular/core";
+import type { ICellRendererAngularComp } from '@ag-grid-community/angular';
+import type { ICellRendererParams } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
 
 @Component({
     standalone: true,
-    template: `
-        <div draggable="true" (dragstart)="onDragStart($event)">Drag Me!</div>`
+    template: ` <div draggable="true" (dragstart)="onDragStart($event)">Drag Me!</div>`,
 })
 export class DragSourceRenderer implements ICellRendererAngularComp {
     public params!: ICellRendererParams;
@@ -22,4 +21,3 @@ export class DragSourceRenderer implements ICellRendererAngularComp {
         return false;
     }
 }
-

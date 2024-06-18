@@ -1,53 +1,54 @@
-import React, { useState, useRef } from 'react';
-import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import type { ColDef, GridApi, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { AgGridReact } from '@ag-grid-community/react';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import React, { useRef } from 'react';
+import { createRoot } from 'react-dom/client';
 
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
 
-
-import { ColDef, GridApi, GridOptions, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const baseDefaultColDef: ColDef = {
     flex: 1,
     filter: true,
-    
 };
 
 const baseGridOptions: GridOptions = {
-    getRowId: (params) => { return params.data.id; },
+    getRowId: (params) => {
+        return params.data.id;
+    },
     rowClassRules: {
         'red-row': 'data.color == "Red"',
         'green-row': 'data.color == "Green"',
-        'blue-row': 'data.color == "Blue"'
+        'blue-row': 'data.color == "Blue"',
     },
     rowDragManaged: true,
-}
+};
 
 const baseColumnDefs: ColDef[] = [
     { field: 'id', dndSource: true, width: 90 },
     { field: 'color' },
     { field: 'value1' },
-    { field: 'value2' }
+    { field: 'value2' },
 ];
 
 const leftGridOptions: GridOptions = {
     ...baseGridOptions,
     columnDefs: [...baseColumnDefs],
     defaultColDef: {
-        ...baseDefaultColDef
-    }
+        ...baseDefaultColDef,
+    },
 };
 
 const rightGridOptions: GridOptions = {
     ...baseGridOptions,
     columnDefs: [...baseColumnDefs],
     defaultColDef: {
-        ...baseDefaultColDef
-    }
+        ...baseDefaultColDef,
+    },
 };
 
 let nextRowId = 100;
@@ -58,11 +59,11 @@ const GridExample = () => {
 
     const onLeftGridReady = (params: GridReadyEvent) => {
         params.api.setGridOption('rowData', createLeftRowData());
-    }
+    };
 
     const onRightGridReady = (params: GridReadyEvent) => {
         params.api.setGridOption('rowData', []);
-    }
+    };
 
     const createLeftRowData = () => ['Red', 'Green', 'Blue'].map(createDataItem);
 
@@ -71,23 +72,23 @@ const GridExample = () => {
             id: nextRowId++,
             color: color,
             value1: Math.floor(Math.random() * 100),
-            value2: Math.floor(Math.random() * 100)
+            value2: Math.floor(Math.random() * 100),
         };
 
         return newDataItem;
-    }
+    };
 
     const binDragOver = (event: any) => {
         const dragSupported = event.dataTransfer.types.indexOf('application/json') >= 0;
         if (dragSupported) {
-            event.dataTransfer.dropEffect = "move";
+            event.dataTransfer.dropEffect = 'move';
             event.preventDefault();
         }
     };
 
     const binDrop = (event: any) => {
         event.preventDefault();
-        const jsonData = event.dataTransfer.getData("application/json");
+        const jsonData = event.dataTransfer.getData('application/json');
         const data = JSON.parse(jsonData);
 
         // if data missing or data has no id, do nothing
@@ -96,7 +97,7 @@ const GridExample = () => {
         }
 
         const transaction = {
-            remove: [data]
+            remove: [data],
         };
 
         const rowIsInLeftGrid = !!leftGridRef.current!.api.getRowNode(data.id);
@@ -147,48 +148,68 @@ const GridExample = () => {
         }
 
         const transaction = {
-            add: [data]
+            add: [data],
         };
         gridApi.applyTransaction(transaction);
     };
 
     return (
         <div className="outer">
-            <div style={{ height: "100%" }} className={'inner-col ' + /** DARK MODE START **/(document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/}
-            onDragOver={gridDragOver}
-                onDrop={(e) => gridDrop('left', e)}>
+            <div
+                style={{ height: '100%' }}
+                className={
+                    'inner-col ' +
+                    /** DARK MODE START **/ (document.documentElement?.dataset.defaultTheme ||
+                        'ag-theme-quartz') /** DARK MODE END **/
+                }
+                onDragOver={gridDragOver}
+                onDrop={(e) => gridDrop('left', e)}
+            >
                 <AgGridReact ref={leftGridRef} gridOptions={leftGridOptions} onGridReady={onLeftGridReady} />
             </div>
 
             <div className="inner-col factory-panel">
-                <span id="eBin" onDragOver={binDragOver} onDrop={binDrop}
-                    className="factory factory-bin">
-                    <i className="far fa-trash-alt"><span className="filename"> Trash - </span></i>
+                <span id="eBin" onDragOver={binDragOver} onDrop={binDrop} className="factory factory-bin">
+                    <i className="far fa-trash-alt">
+                        <span className="filename"> Trash - </span>
+                    </i>
                     Drop target to destroy row
                 </span>
                 <span draggable="true" onDragStart={(e) => dragStart('Red', e)} className="factory factory-red">
-                    <i className="far fa-plus-square"><span className="filename"> Create - </span></i>
+                    <i className="far fa-plus-square">
+                        <span className="filename"> Create - </span>
+                    </i>
                     Drag source for new red item
                 </span>
-                <span draggable="true" onDragStart={(e) => dragStart('Green', e)}
-                    className="factory factory-green">
-                    <i className="far fa-plus-square"><span className="filename"> Create - </span></i>
+                <span draggable="true" onDragStart={(e) => dragStart('Green', e)} className="factory factory-green">
+                    <i className="far fa-plus-square">
+                        <span className="filename"> Create - </span>
+                    </i>
                     Drag source for new green item
                 </span>
                 <span draggable="true" onDragStart={(e) => dragStart('Blue', e)} className="factory factory-blue">
-                    <i className="far fa-plus-square"><span className="filename"> Create - </span></i>
+                    <i className="far fa-plus-square">
+                        <span className="filename"> Create - </span>
+                    </i>
                     Drag source for new blue item
                 </span>
             </div>
 
-            <div style={{ height: "100%" }} className={'inner-col ' + /** DARK MODE START **/(document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/} 
-            onDragOver={gridDragOver}
-                onDrop={(e) => gridDrop('right', e)}>
+            <div
+                style={{ height: '100%' }}
+                className={
+                    'inner-col ' +
+                    /** DARK MODE START **/ (document.documentElement?.dataset.defaultTheme ||
+                        'ag-theme-quartz') /** DARK MODE END **/
+                }
+                onDragOver={gridDragOver}
+                onDrop={(e) => gridDrop('right', e)}
+            >
                 <AgGridReact ref={rightGridRef} gridOptions={rightGridOptions} onGridReady={onRightGridReady} />
             </div>
         </div>
     );
-}
+};
 
 const root = createRoot(document.getElementById('root')!);
 root.render(<GridExample />);

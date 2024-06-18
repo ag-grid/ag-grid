@@ -1,13 +1,12 @@
+import { AgGridAngular } from '@ag-grid-community/angular';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import type { ColDef, GridApi, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { Component } from '@angular/core';
 
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
-import { AgGridAngular } from '@ag-grid-community/angular';
-import { ColDef, GridApi, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
-
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -17,14 +16,19 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
     selector: 'my-app',
     template: `
         <div class="outer">
-            <div style="height: 100%;" class="inner-col" (dragover)="gridDragOver($event)"
-                 (drop)="gridDrop($event,'left')">
+            <div
+                style="height: 100%;"
+                class="inner-col"
+                (dragover)="gridDragOver($event)"
+                (drop)="gridDrop($event, 'left')"
+            >
                 <ag-grid-angular
-                        style="height: 100%"
-                        [class]="themeClass"
-                        [gridOptions]="leftGridOptions"
-                        [columnDefs]="columnDefs"
-                        (gridReady)="onGridReady($event,'left')">
+                    style="height: 100%"
+                    [class]="themeClass"
+                    [gridOptions]="leftGridOptions"
+                    [columnDefs]="columnDefs"
+                    (gridReady)="onGridReady($event, 'left')"
+                >
                 </ag-grid-angular>
             </div>
 
@@ -33,46 +37,53 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
                     <i class="far fa-trash-alt"><span class="filename"> Trash - </span></i>
                     Drop target to destroy row
                 </span>
-                <span draggable="true" (dragstart)="dragStart($event,'Red')" class="factory factory-red">
+                <span draggable="true" (dragstart)="dragStart($event, 'Red')" class="factory factory-red">
                     <i class="far fa-plus-square"><span class="filename"> Create - </span></i>
                     Drag source for new red item
                 </span>
-                <span draggable="true" (dragstart)="dragStart($event,'Green')" class="factory factory-green">
+                <span draggable="true" (dragstart)="dragStart($event, 'Green')" class="factory factory-green">
                     <i class="far fa-plus-square"><span class="filename"> Create - </span></i>
                     Drag source for new green item
                 </span>
-                <span draggable="true" (dragstart)="dragStart($event,'Blue')" class="factory factory-blue">
+                <span draggable="true" (dragstart)="dragStart($event, 'Blue')" class="factory factory-blue">
                     <i class="far fa-plus-square"><span class="filename"> Create - </span></i>
                     Drag source for new blue item
                 </span>
             </div>
 
-            <div style="height: 100%;" class="inner-col" (dragover)="gridDragOver($event)"
-                 (drop)="gridDrop($event,'right')">
+            <div
+                style="height: 100%;"
+                class="inner-col"
+                (dragover)="gridDragOver($event)"
+                (drop)="gridDrop($event, 'right')"
+            >
                 <ag-grid-angular
-                        style="height: 100%"
-                        [class]="themeClass"
-                        [gridOptions]="rightGridOptions"
-                        [columnDefs]="columnDefs"
-                        (gridReady)="onGridReady($event,'right')">
+                    style="height: 100%"
+                    [class]="themeClass"
+                    [gridOptions]="rightGridOptions"
+                    [columnDefs]="columnDefs"
+                    (gridReady)="onGridReady($event, 'right')"
+                >
                 </ag-grid-angular>
             </div>
         </div>
-    `
+    `,
 })
 export class AppComponent {
-    themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
-    
+    themeClass =
+        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+        'ag-theme-quartz' /** DARK MODE END **/;
+
     private leftGridApi!: GridApi<IOlympicData>;
     private rightGridApi!: GridApi<IOlympicData>;
-    
+
     rowIdSequence = 100;
 
     columnDefs: ColDef[] = [
-        { field: "id", dndSource: true },
-        { field: "color" },
-        { field: "value1" },
-        { field: "value2" }
+        { field: 'id', dndSource: true },
+        { field: 'color' },
+        { field: 'value1' },
+        { field: 'value2' },
     ];
 
     leftGridOptions: GridOptions = {
@@ -81,12 +92,12 @@ export class AppComponent {
             filter: true,
         },
         rowClassRules: {
-            "red-row": 'data.color == "Red"',
-            "green-row": 'data.color == "Green"',
-            "blue-row": 'data.color == "Blue"',
+            'red-row': 'data.color == "Red"',
+            'green-row': 'data.color == "Green"',
+            'blue-row': 'data.color == "Blue"',
         },
         getRowId: (params) => {
-            return params.data.id
+            return params.data.id;
         },
         rowData: this.createLeftRowData(),
         rowDragManaged: true,
@@ -98,12 +109,12 @@ export class AppComponent {
             filter: true,
         },
         rowClassRules: {
-            "red-row": 'data.color == "Red"',
-            "green-row": 'data.color == "Green"',
-            "blue-row": 'data.color == "Blue"',
+            'red-row': 'data.color == "Red"',
+            'green-row': 'data.color == "Green"',
+            'blue-row': 'data.color == "Blue"',
         },
         getRowId: (params) => {
-            return params.data.id
+            return params.data.id;
         },
         rowData: [],
         rowDragManaged: true,
@@ -122,21 +133,21 @@ export class AppComponent {
             id: this.rowIdSequence++,
             color: color,
             value1: Math.floor(Math.random() * 100),
-            value2: Math.floor(Math.random() * 100)
+            value2: Math.floor(Math.random() * 100),
         };
     }
 
     binDragOver(event: any) {
         var dragSupported = event.dataTransfer.types.indexOf('application/json') >= 0;
         if (dragSupported) {
-            event.dataTransfer.dropEffect = "move";
+            event.dataTransfer.dropEffect = 'move';
             event.preventDefault();
         }
     }
 
     binDrop(event: any) {
         event.preventDefault();
-        var jsonData = event.dataTransfer.getData("application/json");
+        var jsonData = event.dataTransfer.getData('application/json');
         var data = JSON.parse(jsonData);
 
         // if data missing or data has no id, do nothing
@@ -145,7 +156,7 @@ export class AppComponent {
         }
 
         var transaction = {
-            remove: [data]
+            remove: [data],
         };
 
         var rowIsInLeftGrid = !!this.leftGridApi.getRowNode(data.id);
@@ -169,7 +180,7 @@ export class AppComponent {
         var dragSupported = event.dataTransfer.types.length;
 
         if (dragSupported) {
-            event.dataTransfer.dropEffect = "copy";
+            event.dataTransfer.dropEffect = 'copy';
             event.preventDefault();
         }
     }
@@ -195,7 +206,7 @@ export class AppComponent {
         }
 
         var transaction = {
-            add: [data]
+            add: [data],
         };
         gridApi!.applyTransaction(transaction);
     }
@@ -207,5 +218,4 @@ export class AppComponent {
             this.rightGridApi = params.api;
         }
     }
-
 }

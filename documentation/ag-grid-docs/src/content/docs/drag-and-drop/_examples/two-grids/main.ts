@@ -1,6 +1,6 @@
-import { ColDef, GridOptions, GetRowIdParams, GridApi, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import type { ColDef, GetRowIdParams, GridApi, GridOptions } from '@ag-grid-community/core';
+import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 var rowIdSequence = 100;
@@ -9,14 +9,14 @@ var leftColumnDefs: ColDef[] = [
     { field: 'id', dndSource: true },
     { field: 'color' },
     { field: 'value1' },
-    { field: 'value2' }
+    { field: 'value2' },
 ];
 
 var rightColumnDefs: ColDef[] = [
     { field: 'id', dndSource: true },
     { field: 'color' },
     { field: 'value1' },
-    { field: 'value2' }
+    { field: 'value2' },
 ];
 
 var leftApi: GridApi;
@@ -30,7 +30,9 @@ var leftGridOptions: GridOptions = {
         'green-row': 'data.color == "Green"',
         'blue-row': 'data.color == "Blue"',
     },
-    getRowId: (params: GetRowIdParams) => { return params.data.id; },
+    getRowId: (params: GetRowIdParams) => {
+        return params.data.id;
+    },
     rowData: createLeftRowData(),
     rowDragManaged: true,
     columnDefs: leftColumnDefs,
@@ -47,7 +49,9 @@ var rightGridOptions: GridOptions = {
         'green-row': 'data.color == "Green"',
         'blue-row': 'data.color == "Blue"',
     },
-    getRowId: (params: GetRowIdParams) => { return params.data.id; },
+    getRowId: (params: GetRowIdParams) => {
+        return params.data.id;
+    },
     rowData: [],
     rowDragManaged: true,
     columnDefs: rightColumnDefs,
@@ -64,7 +68,7 @@ function createDataItem(color: string) {
         id: rowIdSequence++,
         color: color,
         value1: Math.floor(Math.random() * 100),
-        value2: Math.floor(Math.random() * 100)
+        value2: Math.floor(Math.random() * 100),
     };
 }
 
@@ -84,10 +88,12 @@ function binDrop(event: any) {
     var data = JSON.parse(jsonData);
 
     // if data missing or data has no id, do nothing
-    if (!data || data.id == null) { return; }
+    if (!data || data.id == null) {
+        return;
+    }
 
     var transaction = {
-        remove: [data]
+        remove: [data],
     };
 
     var rowIsInLeftGrid = !!leftApi!.getRowNode(data.id);
@@ -115,7 +121,6 @@ function gridDragOver(event: any) {
         event.dataTransfer.dropEffect = 'copy';
         event.preventDefault();
     }
-
 }
 
 function gridDrop(event: any, grid: string) {
@@ -125,7 +130,9 @@ function gridDrop(event: any, grid: string) {
     var data = JSON.parse(jsonData);
 
     // if data missing or data has no it, do nothing
-    if (!data || data.id == null) { return; }
+    if (!data || data.id == null) {
+        return;
+    }
 
     var gridApi = grid == 'left' ? leftApi! : rightApi!;
 
@@ -137,11 +144,10 @@ function gridDrop(event: any, grid: string) {
     }
 
     var transaction = {
-        add: [data]
+        add: [data],
     };
     gridApi.applyTransaction(transaction);
 }
-
 
 var leftGridDiv = document.querySelector<HTMLElement>('#eLeftGrid')!;
 leftApi = createGrid(leftGridDiv, leftGridOptions);

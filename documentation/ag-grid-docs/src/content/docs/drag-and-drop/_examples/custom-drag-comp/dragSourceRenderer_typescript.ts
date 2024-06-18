@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams, IRowNode } from "@ag-grid-community/core";
+import type { ICellRendererComp, ICellRendererParams, IRowNode } from '@ag-grid-community/core';
 
 export class DragSourceRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
@@ -6,7 +6,6 @@ export class DragSourceRenderer implements ICellRendererComp {
     onDragStartListener: any;
 
     init(params: ICellRendererParams) {
-
         var eTemp = document.createElement('div');
         eTemp.innerHTML = '<div draggable="true">Drag Me!</div>';
 
@@ -14,7 +13,7 @@ export class DragSourceRenderer implements ICellRendererComp {
         this.rowNode = params.node;
 
         this.onDragStartListener = this.onDragStart.bind(this);
-        this.eGui.addEventListener('dragstart', this.onDragStartListener)
+        this.eGui.addEventListener('dragstart', this.onDragStartListener);
     }
 
     onDragStart(dragEvent: any) {
@@ -30,6 +29,6 @@ export class DragSourceRenderer implements ICellRendererComp {
     }
 
     destroy() {
-        this.eGui.removeEventListener('dragstart', this.onDragStartListener)
+        this.eGui.removeEventListener('dragstart', this.onDragStartListener);
     }
 }
