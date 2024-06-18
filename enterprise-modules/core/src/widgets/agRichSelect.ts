@@ -528,7 +528,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.searchString = '';
     }
 
-    public override setValue(value: TValue[] | TValue | null, silent?: boolean, fromPicker?: boolean): this {
+    public override setValue(
+        value: TValue[] | TValue | null,
+        silent?: boolean,
+        fromPicker?: boolean,
+        skipRendering?: boolean
+    ): this {
         if (this.value === value) {
             return this;
         }
@@ -551,7 +556,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         super.setValue(value, silent);
-        this.renderSelectedValue();
+
+        if (!skipRendering) {
+            this.renderSelectedValue();
+        }
 
         return this;
     }
@@ -606,8 +614,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (multiSelect) {
             const values = this.getValueFromSet(listComponent.getSelectedItems());
+
             if (values) {
-                this.setValue(values, false, true);
+                this.setValue(values, false, true, true);
             }
         } else {
             this.setValue(listComponent.getLastItemHovered(), false, true);
