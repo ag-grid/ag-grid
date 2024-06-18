@@ -50,11 +50,12 @@ const columnDefs: ColDef[] = [
         } as IRichCellEditorParams,
     },
     {
-        headerName: 'Multi Select (With Pills)',
+        headerName: 'Multi Select (No Pills)',
         field: 'colors',
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
             values: colors,
+            suppressMultiSelectPillRenderer: true,
             multiSelect: true,
             searchType: 'matchAny',
             filterList: true,
